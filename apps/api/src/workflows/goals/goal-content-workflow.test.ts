@@ -244,6 +244,7 @@ async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
 
   const goal = await goalFixture({
     details: { answered: [], level: "basic", purpose: "overview" },
+    planRevealedAt: null,
     prompt: "Understand how vaccines train the immune system",
     title: "How vaccines work",
     userId: user.id,
@@ -1628,7 +1629,12 @@ describe(goalContentWorkflow, () => {
         ...graph,
         courses: [
           ...graph.courses,
-          { key: "electronics", levels: ["overview"], title: `Electronics ${token}` },
+          {
+            countrySpecific: false,
+            key: "electronics",
+            levels: ["overview"],
+            title: `Electronics ${token}`,
+          },
         ],
         skills: graph.skills.map((skill, index) =>
           index % 2 === 0 ? skill : { ...skill, course: "electronics" },
@@ -2241,7 +2247,7 @@ describe(goalContentWorkflow, () => {
     await goalContentWorkflow({ goalId: earlier.goal.id });
 
     expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0]).toMatchObject({
-      context: undefined,
+      context: "Content country: BR",
       goal: "Immunology board exam",
       ownLevel: undefined,
     });
@@ -3142,6 +3148,62 @@ describe(goalContentWorkflow, () => {
           }),
         ],
       }),
+    );
+  });
+
+  it("records a timed-out country question in the answer gate so a later answer can restart it", async () => {
+    const { goal } = await newGoal({
+      details: {
+        answered: ["purpose", "level"],
+        countryDependent: true,
+        level: "basic",
+        onboardingId: crypto.randomUUID(),
+        purpose: "deep",
+      },
+    });
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).rejects.toThrow(
+      "Choose the content country",
+    );
+
+    expect(generateWarmUpCards).not.toHaveBeenCalled();
+    expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      curriculumQuestions: ["contentCountry"],
+    });
+  });
+
+  it("waits for the country before either a warm-up or a skill graph is written", async () => {
+    const details = {
+      answered: ["purpose", "level"],
+      countryDependent: true,
+      level: "basic",
+      onboardingId: crypto.randomUUID(),
+      purpose: "deep",
+    };
+
+    const { goal } = await newGoal({ details });
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      expect(generateWarmUpCards).not.toHaveBeenCalled();
+      expect(generateWholeSkillGraph).not.toHaveBeenCalled();
+
+      await prisma.goal.update({
+        data: {
+          contentCountry: "PT",
+          details: { ...details, answered: [...details.answered, "contentCountry"] },
+        },
+        where: { id: goal.id },
+      });
+    });
+
+    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+      status: "built",
+    });
+
+    expect(generateWholeSkillGraph).toHaveBeenCalledWith(
+      expect.objectContaining({ context: "Content country: PT" }),
     );
   });
 

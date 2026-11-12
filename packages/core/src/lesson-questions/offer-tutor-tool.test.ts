@@ -15,6 +15,7 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { normalizeString } from "@zoonk/utils/string";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { updateGoal } from "../goals/update-goal";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
@@ -675,5 +676,51 @@ describe("every feature the buddy can suggest", () => {
       offer: { kind: "plus", subscribed: true },
       status: "offered",
     });
+  });
+
+  it("offers an older goal's first explicit own-country choice", async () => {
+    const { goal } = await learnSetup();
+    await prisma.goal.update({ data: { language: "pt" }, where: { id: goal.id } });
+    const asked = await askBuddy(goal.id, "Please set my content country to Brazil");
+
+    await expect(
+      offerTutorTool({ ...asked, country: "BR", tool: "contentCountry" }),
+    ).resolves.toMatchObject({
+      offer: { country: "BR", kind: "contentCountry" },
+      status: "offered",
+    });
+
+    await updateGoal({ goalId: goal.id, input: { contentCountry: "BR" } });
+
+    await expect(
+      offerTutorTool({ ...asked, country: "BR", tool: "contentCountry" }),
+    ).resolves.toMatchObject({ reason: "alreadySet", status: "unavailable" });
+  });
+
+  it("offers content-country and home-country cards without saving either choice", async () => {
+    const { goal } = await learnSetup();
+    const asked = await askBuddy(goal.id, "I live in Portugal and need Portugal's finance lessons");
+
+    await expect(
+      offerTutorTool({ ...asked, country: "PT", tool: "contentCountry" }),
+    ).resolves.toMatchObject({
+      offer: { country: "PT", goalId: goal.id, kind: "contentCountry" },
+      status: "offered",
+    });
+
+    await expect(
+      offerTutorTool({ ...asked, country: "PT", tool: "homeCountry" }),
+    ).resolves.toMatchObject({ offer: { country: "PT", kind: "homeCountry" }, status: "offered" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      contentCountry: null,
+    });
+
+    const profile = await prisma.userLearningProfile.findUnique({ where: { userId: goal.userId } });
+    expect(profile?.homeCountry ?? null).toBeNull();
+
+    await expect(
+      offerTutorTool({ ...asked, country: "XX", tool: "contentCountry" }),
+    ).resolves.toMatchObject({ reason: "countryNotOffered", status: "unavailable" });
   });
 });

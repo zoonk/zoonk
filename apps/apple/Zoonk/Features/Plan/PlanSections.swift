@@ -670,6 +670,8 @@ struct PlanSettingsSection: View {
         }
       }
 
+      countryRows
+
       ForEach(context.plan.examChoices) { choice in
         setting(
           label: Text(choice.group), value: choiceValue(choice), section: .choice(choice.group))
@@ -677,6 +679,62 @@ struct PlanSettingsSection: View {
     } header: {
       SectionTitle(Text("Your plan", tableName: "Plan", comment: "Section of the plan's settings"))
     }
+  }
+
+  /// One country row at most, where the language row would be: a goal's content country (with the
+  /// lessons' language when it isn't that country's own), a foreign exam's country, or where a
+  /// general goal's examples come from.
+  @ViewBuilder private var countryRows: some View {
+    if let country = context.goal.contentCountry {
+      if country.kind == .content, country.editable {
+        setting(
+          label: Text(
+            "Content country", tableName: "Plan",
+            comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+          value: Text(country.name)
+        ) {
+          context.show(.country)
+        }
+
+        if let variety = country.lessonVariety {
+          fact(
+            label: Text(
+              "Lesson language", tableName: "Plan",
+              comment:
+                "Row under the content country: the language the lessons are written in, such as Portuguese (Brazil)"
+            ),
+            value: Text(variety.name))
+        }
+      } else {
+        fact(
+          label: country.kind == .exam
+            ? Text(
+              "Exam country", tableName: "Plan",
+              comment: "Row with the country an exam belongs to, such as Argentina")
+            : Text(
+              "Content country", tableName: "Plan",
+              comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+          value: Text(country.name))
+      }
+    } else if let examples = context.goal.examplesCountry {
+      fact(
+        label: Text(
+          "Lesson examples", tableName: "Plan",
+          comment:
+            "Row with the country a general course's examples come from, when the learner lives elsewhere"
+        ),
+        value: Text(examples.name))
+    }
+  }
+
+  /// Read-only: no chevron and not a button, read as one label.
+  private func fact(label: Text, value: Text) -> some View {
+    LabeledContent {
+      value
+    } label: {
+      label.foregroundStyle(.primary)
+    }
+    .accessibilityElement(children: .combine)
   }
 
   private var dateValue: Text {

@@ -17,4 +17,4 @@ Rewrite `SCREEN` as that version. Return the same kind of screen (`SCREEN_KIND`)
 - Keep the length of a screen: an explanation stays under about 600 characters.
 - Keep `image` null and `exampleLineIdea` as in the original.
 - No filler, no introduction ("Here is a version for nurses…"), no promises of results.
-- Write every learner-facing word in `LANGUAGE`. A new example uses the money, names and places in `LOCAL_CONTEXT`, unless the lesson or the screen sets another place.
+- Write every learner-facing word in `LANGUAGE`. A new example uses the money, names and places in `LOCAL_CONTEXT`, the country this lesson is set in, unless the lesson or the screen sets another place.

@@ -50,7 +50,9 @@ test.describe("Goal understandings API", () => {
       goal,
       result: {
         followUps: [],
-        goals: [{ kind: "learn", subject: "Welding", title: "Learn to weld" }],
+        goals: [
+          { countryDependent: false, kind: "learn", subject: "Welding", title: "Learn to weld" },
+        ],
         route: "goals",
       },
       userId,

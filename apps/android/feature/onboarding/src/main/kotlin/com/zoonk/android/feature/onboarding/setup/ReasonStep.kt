@@ -22,7 +22,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.OnboardingAnswerInput
-import com.zoonk.api.models.OnboardingAnswerInputOneOf2
+import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingLanguageAim
 
 @Composable
@@ -45,10 +45,10 @@ internal fun ColumnScope.ReasonStep(
         onContinue = {
             reason.takeIf { it.isNotEmpty() }?.let { chosen ->
                 onAnswer(
-                    OnboardingAnswerInput.OnboardingAnswerInputOneOf2Value(
-                        OnboardingAnswerInputOneOf2(
-                            OnboardingAnswerInputOneOf2.Question.REASON,
-                            OnboardingAnswerInputOneOf2.Reason.entries.first { it.value == chosen },
+                    OnboardingAnswerInput.OnboardingAnswerInputOneOf3Value(
+                        OnboardingAnswerInputOneOf3(
+                            OnboardingAnswerInputOneOf3.Question.REASON,
+                            OnboardingAnswerInputOneOf3.Reason.entries.first { it.value == chosen },
                             typed.trim().takeIf { chosen == "certificate" || chosen == "other" }?.ifBlank { null },
                         ),
                     ),

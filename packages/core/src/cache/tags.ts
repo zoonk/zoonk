@@ -43,6 +43,10 @@ export function getUserSessionCacheTag(userId: string): string {
   return `user-session:${userId}`;
 }
 
+export function getPasskeysCacheTag(userId: string): string {
+  return `passkeys:${userId}`;
+}
+
 export function getUserSubscriptionCacheTag(userId: string): string {
   return `user-subscription:${userId}`;
 }

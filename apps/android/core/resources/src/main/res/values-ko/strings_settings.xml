@@ -21,6 +21,9 @@
   "settings_download_data": "101075f65134ff13afea5b148028e357b6a8d091e72f5e5bf78c3114c304d3b4",
   "settings_download_data_description": "3158d180c0ad265d78daa0a45f37855a8b839bf2028e00f3422b17b990786fd7",
   "settings_download_failed": "172f096e663087bbbb6f1a19688b52e1008295cc4b1a12f3e0b6217adef5cda1",
+  "settings_home_country": "258080d5cd49f0c2d73614b44954f0b5cb27201d3d09d1e03a02cb6583ffe72d",
+  "settings_home_country_description": "2c6a0ab49dabfb991c336f6e02ca0fa255c4d1a571ee521368ead2689b47e46a",
+  "settings_home_country_none": "c88ed3142bdecbddf6314347dd5b8bfbde80b0669f169fb1661a187778daa23e",
   "settings_licenses": "a9b959364b550a8dd3b24267ffadc606a1ce564755937a2af0ffb0cba8089725",
   "settings_licenses_read": "c99a2bb36c5f044dc98cd76aff600743a215087a8a6e76024b0fb569d3e0d452",
   "settings_licenses_website": "caffcd2f6c173e824189cc690cd1652b0fd3fb26437270f43b8aab9e6636e8b2",
@@ -33,7 +36,7 @@
   "settings_preferences_change": "109c361b90abf6432fd2ac5ee1c80a50e71045e58ecf2f17e1298b44fac4c539",
   "settings_preferences_choose_buddy": "8b83762c7e1de140e7cbcb106126ecb77e50f0611dc82c6b77dc34111504384e",
   "settings_preferences_description": "1c9ce2f173fc97e18709f11f313cdf43c73f868e7fbfe7e552149e6eb5cf4d89",
-  "settings_preferences_language": "5b83bc5293bf8ebda5ef36b768608ecf7688cc545a1ad12852f6427e700cb35e",
+  "settings_preferences_language": "b8ea4d496b470e7738a10a6c63f3317a6c888e8c2a4e6440f4a563d279db0a8a",
   "settings_preferences_lessons": "07a6ea93c6d0e36805e92cb346e5b5a069c06d7718f1cc61001b4a795b3cf977",
   "settings_preferences_on_this_device": "79c8e5fea6c4519f49c694132ae69a21f949a2ac9503753c4d1c126e10320f21",
   "settings_preferences_save_failed": "ba7636ee4896cc2dc3de2f91456d72d2a2dac9aff05bade72ebe17f18b82fc77",
@@ -54,6 +57,8 @@
 <resources>
     <string name="settings_preferences">환경 설정</string>
     <string name="settings_memory">메모리</string>
+    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
+    <string name="settings_reminders_off">꺼짐</string>
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
     <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">프로필</string>
@@ -91,7 +96,7 @@
     <string name="settings_preferences_lessons">레슨</string>
     <string name="settings_preferences_sounds">효과음</string>
     <string name="settings_preferences_sounds_description">정답을 맞히거나 학습을 마쳤을 때</string>
-    <string name="settings_preferences_language">언어</string>
+    <string name="settings_preferences_language">언어 및 지역</string>
     <string name="settings_preferences_app_language">앱 언어</string>
     <string name="settings_preferences_on_this_device">이 기기에서</string>
     <string name="settings_preferences_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
@@ -103,6 +108,10 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">앱 사용 데이터 제공</string>
     <string name="settings_preferences_share_usage_data_description">Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요</string>
-    <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
-    <string name="settings_reminders_off">꺼짐</string>
+    <!-- A setting in Preferences: the country the learner lives in. -->
+    <string name="settings_home_country">사는 나라</string>
+    <!-- Under that setting. -->
+    <string name="settings_home_country_description">새 목표와 예시에 반영돼요. 기존 계획은 바뀌지 않아요.</string>
+    <!-- That setting's value when the learner hasn't said where they live, and the picker's first choice, which clears it. -->
+    <string name="settings_home_country_none">설정 안 됨</string>
 </resources>

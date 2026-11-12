@@ -13,6 +13,7 @@ import {
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { cookies, headers } from "next/headers";
+import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { AppearanceSettings } from "./appearance-settings";
 
@@ -45,7 +46,8 @@ async function readShareUsageData(account: boolean | null): Promise<boolean> {
 
 /** Visitors get only the language and usage data, which their browser keeps. */
 async function AppearanceContent() {
-  const [profile, buddy] = await Promise.all([getLearningProfile(), getLearnerBuddy()]);
+  const language = await lang();
+  const [profile, buddy] = await Promise.all([getLearningProfile(language), getLearnerBuddy()]);
   const shareUsageData = await readShareUsageData(profile?.shareUsageData ?? null);
 
   return (
@@ -54,6 +56,11 @@ async function AppearanceContent() {
         availableGlasses: profile?.availableGlasses ?? [buddy.glasses],
         buddy,
         canPersonalize: profile !== null,
+        homeCountry:
+          profile?.homeCountry && profile.homeCountryName
+            ? { code: profile.homeCountry, name: profile.homeCountryName }
+            : null,
+        homeCountrySuggested: profile?.suggested ?? [],
         look: {
           beltColor: buddy.beltColor,
           energy: buddy.energy,
@@ -84,7 +91,7 @@ async function AppearanceSkeleton() {
     <div className="flex flex-col gap-7">
       <SectionSkeleton className="h-15 rounded-lg" label={t("Your buddy")} />
       <SectionSkeleton className="h-30 rounded-lg" label={t("Lessons")} />
-      <SectionSkeleton className="h-15 rounded-lg" label={t("Language")} />
+      <SectionSkeleton className="h-30 rounded-lg" label={t("Language and region")} />
       <SectionSkeleton className="h-15 rounded-lg" label={t("Privacy")} />
     </div>
   );

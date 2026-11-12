@@ -71,6 +71,7 @@ type ChallengeSkillInput = { name: string; description?: string | null };
 
 export type ChallengeCaseParams = {
   language: string;
+  country: string | null;
   level: CourseLevel;
   variant: ChallengeCaseVariant;
   courseTitle: string;

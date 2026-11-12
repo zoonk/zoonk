@@ -10,12 +10,7 @@ import { ChoiceList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
 import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profile-body-parts";
 import { ProfileChip, ProfileChips } from "./profile-chips";
-import {
-  type ChipQuestion,
-  getDeclineExclusive,
-  toggleProfileExclusive,
-  toggleProfilePick,
-} from "./profile-draft";
+import { type ChipQuestion, toggleProfileExclusive, toggleProfilePick } from "./profile-draft";
 
 function useFavoritesField(question: ChipQuestion) {
   const t = useExtracted();
@@ -55,7 +50,6 @@ export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string 
   const picker = usePicker(props);
   const field = useFavoritesField(props.chip);
   const exclusiveLabels = useExclusiveLabels();
-  const exclusive = getDeclineExclusive(question.id);
 
   return (
     <>
@@ -81,9 +75,9 @@ export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string 
 
       <div className="flex">
         <ProfileChip
-          label={exclusiveLabels[exclusive]}
-          onToggle={() => picker.exclusive(exclusive)}
-          pressed={draft.exclusive === exclusive}
+          label={exclusiveLabels.none}
+          onToggle={() => picker.exclusive("none")}
+          pressed={draft.exclusive === "none"}
         />
       </div>
     </>

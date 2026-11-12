@@ -18,6 +18,7 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 const BAND: CourseOutlineParams = {
+  country: null,
   courseTitle: "Statistics",
   language: "en",
   level: "beginner",

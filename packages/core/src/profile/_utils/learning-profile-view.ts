@@ -1,4 +1,10 @@
 import { BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
+import { toCountryChoice } from "../../goals/_utils/content-country-view";
+import {
+  type RecentCountries,
+  getCountrySuggestions,
+  loadRecentCountries,
+} from "../../goals/_utils/country-suggestions";
 import { DEFAULT_BUDDY, resolveProfileBuddy } from "../default-buddy";
 import { type LearningProfileView } from "../learning-profile-contract";
 
@@ -21,30 +27,51 @@ export async function listAvailableGlasses(userId: string): Promise<BuddyGlasses
 function toLearningProfileView({
   availableGlasses,
   profile,
+  language,
+  recent,
 }: {
   availableGlasses: BuddyGlasses[];
   profile: UserLearningProfile | null;
+  language: string;
+  recent: RecentCountries;
 }): LearningProfileView {
   return {
     activeGoalId: profile?.activeGoalId ?? null,
     availableGlasses,
     buddy: resolveProfileBuddy(profile),
+    homeCountry: profile?.homeCountry ?? null,
+    homeCountryName:
+      toCountryChoice({ code: profile?.homeCountry ?? null, language })?.name ?? null,
     shareUsageData: profile?.shareUsageData ?? null,
     soundsEnabled: profile?.soundsEnabled ?? true,
+    // These feed the "Where you live" picker, where a "where you live" tag would repeat its title.
+    suggested: getCountrySuggestions({
+      homeCountry: profile?.homeCountry ?? null,
+      language,
+      recent,
+    }).map((country) => ({ ...country, tag: null })),
   };
 }
 
-/** GETs supply their request fact; write responses omit it for a fresh read. */
-export async function findLearningProfileView(
-  userId: string,
-  knownProfile?: UserLearningProfile | null | Promise<UserLearningProfile | null>,
-): Promise<LearningProfileView> {
-  const [profile, availableGlasses] = await Promise.all([
+/** GETs supply their request facts; write responses omit them for fresh reads. */
+export async function findLearningProfileView({
+  knownProfile,
+  language = "en",
+  readRecentCountries = loadRecentCountries,
+  userId,
+}: {
+  knownProfile?: UserLearningProfile | null | Promise<UserLearningProfile | null>;
+  language?: string;
+  readRecentCountries?: typeof loadRecentCountries;
+  userId: string;
+}): Promise<LearningProfileView> {
+  const [profile, availableGlasses, recent] = await Promise.all([
     knownProfile === undefined
       ? prisma.userLearningProfile.findUnique({ where: { userId } })
       : knownProfile,
     listAvailableGlasses(userId),
+    readRecentCountries(userId),
   ]);
 
-  return toLearningProfileView({ availableGlasses, profile });
+  return toLearningProfileView({ availableGlasses, language, profile, recent });
 }

@@ -32,7 +32,7 @@ const ONBOARDING_QUESTION_ORDER = {
   exam: ONBOARDING_QUESTIONS,
   explain: ONBOARDING_QUESTIONS,
   language: ["reason", "level", "followUps", "targetDate", "schedule"],
-  learn: ["purpose", "level", "role", "followUps", "targetDate", "schedule"],
+  learn: ["contentCountry", "purpose", "level", "role", "followUps", "targetDate", "schedule"],
 } as const satisfies Record<StepGoal["kind"], readonly OnboardingQuestion[]>;
 
 type StepProfile = {
@@ -134,6 +134,10 @@ function isAskedAtCourseStart({
   );
 }
 
+function isContentCountryMissing({ details, kind }: StepGoal): boolean {
+  return kind === "learn" && details.countryDependent === true;
+}
+
 function isQuestionMissing({ goal, question }: { goal: StepGoal; question: OnboardingQuestion }) {
   const { details, kind } = goal;
   const courseStart = readCourseStart(details);
@@ -143,6 +147,8 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
   }
 
   switch (question) {
+    case "contentCountry":
+      return isContentCountryMissing(goal);
     case "purpose":
       return kind === "learn" && !hasText(details.purpose);
     case "role":

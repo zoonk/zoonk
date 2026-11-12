@@ -39,6 +39,21 @@ function getDefaultMainUrl(): string {
 
 export const MAIN_URL = getDefaultMainUrl();
 
+/** Server-only, read at runtime like `MAIN_URL`. */
+function getDefaultAdminUrl(): string {
+  if (process.env.ADMIN_APP_URL) {
+    return process.env.ADMIN_APP_URL;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3200";
+  }
+
+  return "https://admin.zoonk.com";
+}
+
+export const ADMIN_URL = getDefaultAdminUrl();
+
 /**
  * Main picks the language of an address without one from the browser, so a page written in
  * another language links Main's pages through this. English, and a language Main lacks, have no

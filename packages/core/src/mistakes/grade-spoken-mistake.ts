@@ -96,6 +96,7 @@ export async function gradeSpokenMistake({
         step: {
           id: step.id,
           learnerLanguage: lesson.language,
+          storedContent: step.content,
           targetLanguage: step.content.language,
           targetText: step.content.targetText,
         },

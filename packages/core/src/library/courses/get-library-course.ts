@@ -3,6 +3,7 @@ import { CourseLevel, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../../cache/tags";
+import { toContentCountryView } from "../../goals/_utils/content-country-view";
 import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-visibility";
 
 const LEVEL_ORDER = Object.values(CourseLevel);
@@ -91,5 +92,15 @@ export async function getLibraryCourse({ courseId }: { courseId: string }) {
   const { courseChapters, ...details } = course;
   const levels = await toLevelBands(await getVisiblePlacements(courseChapters));
 
-  return { ...details, levels };
+  return {
+    ...details,
+    contentCountry: toContentCountryView({
+      code: course.country,
+      editable: false,
+      kind: "content",
+      language: course.language,
+      source: "default",
+    }),
+    levels,
+  };
 }

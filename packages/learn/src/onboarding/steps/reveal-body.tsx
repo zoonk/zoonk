@@ -9,11 +9,13 @@ import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
+import { safeAsync } from "@zoonk/utils/error";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { ChangeSaveError } from "../../_components/save-error";
+import { StepOpenFailed } from "../../_components/step-open-failed";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { type LearnBuddy, resolveLearnBuddy } from "../../buddies/use-buddy-name";
 import { PlanChoiceLines } from "../../plan/plan-choice-lines";
@@ -21,13 +23,14 @@ import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
+import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
 import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
-import { RevealToday, RevealWeek } from "./reveal-days";
+import { RevealDayOpener, RevealToday, RevealWeek, findRevealStart } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
 
@@ -66,33 +69,25 @@ function PlanCreated() {
  * from `lg`. Start works from the moment's first frame.
  */
 function RevealActions({
+  failure,
   isGuest,
   onAdjust,
   onStart,
+  pending,
   signUpHref,
   started,
 }: {
+  /** What failed, so the learner reads whether the plan didn't save or its step didn't open. */
+  failure: StartFailure | null;
   isGuest: boolean;
   onAdjust: () => void;
-  onStart: () => Promise<boolean>;
+  onStart: () => void;
+  pending: boolean;
   signUpHref: string;
   started: boolean;
 }) {
   const t = useExtracted();
   const startRef = useEnterClick<HTMLButtonElement>();
-  const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
-
-  const start = async () => {
-    setPending(true);
-    setFailed(false);
-
-    // Busy until the next page opens; a failed save keeps the learner here to try again.
-    if (!(await onStart())) {
-      setPending(false);
-      setFailed(true);
-    }
-  };
 
   return (
     <div
@@ -102,25 +97,29 @@ function RevealActions({
       )}
       data-slot="reveal-actions"
     >
-      {failed && <ChangeSaveError />}
+      {failure === "save" && <ChangeSaveError />}
+      {failure === "open" && <StepOpenFailed />}
 
       <div className="flex gap-2 lg:flex-col-reverse">
         <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
           {t("Adjust")}
         </Button>
 
-        <Button
-          aria-keyshortcuts="Enter"
-          busy={pending}
-          className="flex-2 font-[560] lg:flex-none"
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={start}
-          ref={startRef}
-          size="lg"
-        >
-          {started ? t("Continue") : t("Start")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        {/* A submit, so a press before the page hydrates starts once it does. */}
+        <form action={() => onStart()} className="contents">
+          <Button
+            aria-keyshortcuts="Enter"
+            busy={pending}
+            className="flex-2 font-[560] lg:flex-none"
+            icon={<PlayIcon aria-hidden="true" />}
+            ref={startRef}
+            size="lg"
+            type="submit"
+          >
+            {started ? t("Continue") : t("Start")}
+            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          </Button>
+        </form>
       </div>
 
       {isGuest && <SavePlanNote className="lg:text-right" signUpHref={signUpHref} />}
@@ -137,27 +136,62 @@ function RevealRailBlock({ children, title }: { children: React.ReactNode; title
   );
 }
 
-export function RevealBody({
+type StartFailure = "open" | "save";
+
+type RevealBodyProps = {
+  buddy: LearnBuddy | null;
+  isGuest: boolean;
+  onStart: () => Promise<boolean>;
+  reveal: PlanRevealDays | null;
+  signUpHref: string;
+  syllabus: SyllabusView | null;
+};
+
+function RevealColumn({
   buddy,
   isGuest,
-  moment,
+  markRevealed,
   onStart,
+  openStep,
   reveal,
   signUpHref,
   syllabus,
-}: {
-  buddy: LearnBuddy | null;
-  isGuest: boolean;
-  /** False once the learner pressed Start: a reveal they open again shows its end, still. */
-  moment: boolean;
-  onStart: () => Promise<boolean>;
-  signUpHref: string;
-  reveal: PlanRevealDays | null;
-  syllabus: SyllabusView | null;
+}: RevealBodyProps & {
+  markRevealed: () => Promise<boolean>;
+  openStep: ((step: DayStep) => Promise<boolean>) | null;
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
   const started = reveal?.today.blocks.some((block) => isFinished(block)) ?? false;
+  const startStep = findRevealStart(reveal);
+
+  // Saved first on its own, so a failure says whether the plan or the step is what didn't go.
+  const openStart =
+    openStep && startStep
+      ? async (): Promise<StartFailure | null> => {
+          if (!(await markRevealed())) {
+            return "save";
+          }
+
+          return (await openStep(startStep)) ? null : "open";
+        }
+      : null;
+
+  const [starting, startTransition] = useTransition();
+  const [startFailure, setStartFailure] = useState<StartFailure | null>(null);
+
+  // Busy until the next page opens, with the rows waiting; a failed start keeps the learner here.
+  const start = () => {
+    setStartFailure(null);
+
+    startTransition(async () => {
+      const { data, error } = await safeAsync(
+        openStart ?? (async () => ((await onStart()) ? null : "save")),
+      );
+
+      setStartFailure(error ? "save" : data);
+    });
+  };
 
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
@@ -165,65 +199,93 @@ export function RevealBody({
   });
 
   return (
-    <CelebrationScope play={moment}>
-      <OnboardingColumn
-        className="gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-start lg:gap-x-10 lg:*:col-span-2"
-        rail={
-          <>
-            <RevealRailBlock title={t("What fits")}>
-              <RevealCoverage syllabus={syllabus} />
-            </RevealRailBlock>
+    <OnboardingColumn
+      className="gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-start lg:gap-x-10 lg:*:col-span-2"
+      rail={
+        <>
+          <RevealRailBlock title={t("What fits")}>
+            <RevealCoverage syllabus={syllabus} />
+          </RevealRailBlock>
 
-            <RevealRailBlock title={t("Choices")}>
-              <PlanChoices />
-            </RevealRailBlock>
-          </>
-        }
-        wide
-      >
-        <header className="flex min-w-0 flex-col gap-5 pt-2 lg:col-1! lg:row-start-1">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 flex-col gap-1">
-              <PlanCreated />
-              <OnboardingTitle className="text-balance">{goal.displayName}</OnboardingTitle>
-            </div>
-            <RevealBuddy buddy={buddy} />
+          <RevealRailBlock title={t("Choices")}>
+            <PlanChoices />
+          </RevealRailBlock>
+        </>
+      }
+      wide
+    >
+      <header className="flex min-w-0 flex-col gap-5 pt-2 lg:col-1! lg:row-start-1">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-col gap-1">
+            <PlanCreated />
+            <OnboardingTitle className="text-balance">{goal.displayName}</OnboardingTitle>
           </div>
-
-          <RevealReadouts />
-
-          <PlanChoiceLines
-            choices={plan.examChoices}
-            onChange={() => setEditor({ open: true, section: "choices" })}
-          />
-          <RevealNoticeDay />
-        </header>
-
-        <RevealToday reveal={reveal} />
-        <RevealWeek reveal={reveal} />
-
-        <div className="flex flex-col gap-2">
-          <PlanPhasesBar />
-          <PlanChapterList />
-          {plan.notice === "usual" && <UsualStructureNote />}
+          <RevealBuddy buddy={buddy} />
         </div>
 
-        <AreaWeights syllabus={syllabus} />
+        <RevealReadouts />
 
-        <PlanEditor
-          onOpenChange={(open) => setEditor({ ...editor, open })}
-          open={editor.open}
-          section={editor.section}
+        <PlanChoiceLines
+          choices={plan.examChoices}
+          onChange={() => setEditor({ open: true, section: "choices" })}
         />
+        <RevealNoticeDay />
+      </header>
 
-        <RevealActions
-          isGuest={isGuest}
-          onAdjust={() => setEditor({ open: true, section: null })}
-          onStart={onStart}
-          signUpHref={signUpHref}
-          started={started}
-        />
-      </OnboardingColumn>
+      <RevealToday locked={starting} open={openStep} reveal={reveal} />
+      <RevealWeek reveal={reveal} />
+
+      <div className="flex flex-col gap-2">
+        <PlanPhasesBar />
+        <PlanChapterList />
+        {plan.notice === "usual" && <UsualStructureNote />}
+      </div>
+
+      <AreaWeights syllabus={syllabus} />
+
+      <PlanEditor
+        onOpenChange={(open) => setEditor({ ...editor, open })}
+        open={editor.open}
+        section={editor.section}
+      />
+
+      <RevealActions
+        isGuest={isGuest}
+        onAdjust={() => setEditor({ open: true, section: null })}
+        failure={startFailure}
+        onStart={start}
+        pending={starting}
+        signUpHref={signUpHref}
+        started={started}
+      />
+    </OnboardingColumn>
+  );
+}
+
+/** Start opens the step its tagged row opens, and goes to Today only when there's none. */
+export function RevealBody({
+  goalId,
+  markRevealed,
+  moment,
+  refresh,
+  ...props
+}: RevealBodyProps & {
+  goalId: string;
+  markRevealed: () => Promise<boolean>;
+  /** False once the learner pressed Start: a reveal they open again shows its end, still. */
+  moment: boolean;
+  refresh: () => void;
+}) {
+  return (
+    <CelebrationScope play={moment}>
+      <RevealDayOpener
+        goalId={goalId}
+        markRevealed={markRevealed}
+        refresh={refresh}
+        reveal={props.reveal}
+      >
+        {(openStep) => <RevealColumn {...props} markRevealed={markRevealed} openStep={openStep} />}
+      </RevealDayOpener>
     </CelebrationScope>
   );
 }

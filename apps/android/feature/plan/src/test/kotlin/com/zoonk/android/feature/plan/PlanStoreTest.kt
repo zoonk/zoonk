@@ -9,6 +9,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LearnerSummaryStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
+import com.zoonk.api.models.GoalContentCountry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -131,6 +132,11 @@ class PlanStoreTest {
             assertEquals("MX", shown().targetRegion)
             assertEquals("mx", shown().languageFlag)
             assertEquals("Spanish for Mexico City", shown().displayName)
+
+            assertTrue(store.setContentCountry(goalId, "PT") is MutationResult.Done)
+            advanceUntilIdle()
+            assertEquals("PT", shown().contentCountry?.code)
+            assertEquals(GoalContentCountry.Rebuild.PREPARING, shown().contentCountry?.rebuild)
             screen.cancel()
         }
 

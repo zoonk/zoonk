@@ -6,7 +6,13 @@ type GraphSkill = GoalSkillGraph["skills"][number];
 
 /** A goal's first skill and the course that teaches it, saved before its graph is written. */
 export const goalOpeningSkillSchema = z.object({
-  course: z.object({ id: z.string(), key: z.string(), title: z.string() }),
+  course: z.object({
+    // Older saved openings have no classification, so keep them in their original country scope.
+    countrySpecific: z.boolean().default(true),
+    id: z.string(),
+    key: z.string(),
+    title: z.string(),
+  }),
   skill: z.object({
     area: z.string(),
     description: z.string(),
@@ -64,7 +70,15 @@ export function keepOpeningFirst({
 
   const courses = graph.courses.some((item) => item.key === course.key)
     ? graph.courses
-    : [{ key: course.key, levels: [skill.level], title: course.title }, ...graph.courses];
+    : [
+        {
+          countrySpecific: course.countrySpecific,
+          key: course.key,
+          levels: [skill.level],
+          title: course.title,
+        },
+        ...graph.courses,
+      ];
 
   return {
     courseIdsByKey: { [course.key]: course.id },

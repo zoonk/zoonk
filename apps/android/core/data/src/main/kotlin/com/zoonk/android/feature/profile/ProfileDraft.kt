@@ -25,14 +25,12 @@ data class ProfileDraft(
     val text: String = "",
     val subjects: Map<String, String> = emptyMap(),
     val declined: Boolean = false,
-    val declineChoice: String = "none",
-    val consented: Boolean = false,
 ) {
     fun valid(
         question: ProfileQuestion,
         memoryEnabled: Boolean = true,
     ): Boolean =
-        declined ||
+        (declined && question != ProfileQuestion.CONDITIONS) ||
             when (question) {
                 ProfileQuestion.WORK, ProfileQuestion.ADDRESS_FORM -> picks.isNotEmpty()
                 ProfileQuestion.STUDIES -> picks.isNotEmpty() && ("other" !in picks || !subjects["other"].isNullOrBlank())
@@ -53,8 +51,7 @@ data class ProfileDraft(
         return copy(picks = next, declined = false, subjects = subjects.filterKeys { it in next })
     }
 
-    fun decline(choice: String = "none"): ProfileDraft =
-        ProfileDraft(declined = !declined || declineChoice != choice, declineChoice = choice)
+    fun decline(): ProfileDraft = ProfileDraft(declined = !declined)
 
     fun empty(
         question: ProfileQuestion,
@@ -82,7 +79,7 @@ data class ProfileDraft(
         buildJsonObject {
             put("question", question.value)
             putJsonObject("answer") {
-                val decline = declined || (question == ProfileQuestion.CONDITIONS && (!consented || picks.isEmpty()))
+                val decline = declined || (question == ProfileQuestion.CONDITIONS && picks.isEmpty())
                 put("declined", decline)
                 if (question == ProfileQuestion.LEARNING_SUPPORT) put("soundEffects", "noSoundEffects" !in picks)
                 if (question == ProfileQuestion.ADDRESS_FORM) put("form", picks.firstOrNull()?.takeUnless { decline })
@@ -148,8 +145,6 @@ data class ProfileDraft(
                 declined =
                     question.status == ProfileQuestionView.Status.DECLINED &&
                         question.saved.picks.isEmpty() && question.saved.text.isEmpty() && question.saved.studies.isEmpty(),
-                declineChoice = if (question.id in listOf(ProfileQuestion.WORK, ProfileQuestion.CONDITIONS)) "prefer" else "none",
-                consented = question.id == ProfileQuestion.CONDITIONS && question.saved.picks.isNotEmpty(),
             )
     }
 }

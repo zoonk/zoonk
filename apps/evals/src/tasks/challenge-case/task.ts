@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import { sumLanguageModelUsage } from "@zoonk/ai/combine-task-provenance";
 import { assembleChallengeCase } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
@@ -48,10 +48,10 @@ function checkOutput(output: string, variant: ChallengeCaseParams["variant"]): C
   return { judgedOutput: output, passed: problems.length === 0 ? 1 : 0, problems, total: 1 };
 }
 
-export const challengeCaseTask: Task<ChallengeCaseParams, WrittenChallengeCase> = {
+export const challengeCaseTask: Task<OptionalCountry<ChallengeCaseParams>, WrittenChallengeCase> = {
   description:
     "Write the challenge that closes a chapter: a work case with a team and decisions that change the state, or a light What if for overview courses. Code checks the decision graph, then a judge",
-  generate: generateFirstChallengeDraft,
+  generate: (input) => generateFirstChallengeDraft({ ...input, country: input.country ?? null }),
   id: "challenge-case",
   name: "Challenge Case",
   score: ({ output, testCase }) =>

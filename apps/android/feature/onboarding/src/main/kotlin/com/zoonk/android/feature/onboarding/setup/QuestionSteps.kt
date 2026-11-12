@@ -48,7 +48,6 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
-import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.toggled
@@ -70,15 +69,15 @@ import com.zoonk.api.models.BuddyInput
 import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.ExamChoicePick
 import com.zoonk.api.models.OnboardingAnswerInput
-import com.zoonk.api.models.OnboardingAnswerInputOneOf
 import com.zoonk.api.models.OnboardingAnswerInputOneOf1
-import com.zoonk.api.models.OnboardingAnswerInputOneOf10
+import com.zoonk.api.models.OnboardingAnswerInputOneOf11
 import com.zoonk.api.models.OnboardingAnswerInputOneOf2
 import com.zoonk.api.models.OnboardingAnswerInputOneOf3
 import com.zoonk.api.models.OnboardingAnswerInputOneOf4
 import com.zoonk.api.models.OnboardingAnswerInputOneOf5
 import com.zoonk.api.models.OnboardingAnswerInputOneOf6
 import com.zoonk.api.models.OnboardingAnswerInputOneOf7
+import com.zoonk.api.models.OnboardingAnswerInputOneOf8
 import com.zoonk.api.models.OnboardingDateProblem
 import com.zoonk.api.models.OnboardingDateProblemOneOf2
 import com.zoonk.api.models.OnboardingExamDays
@@ -122,8 +121,8 @@ internal fun ColumnScope.StepForm(
 
         StepHeading(title, description, subject)
         content(continueStep)
-        OnboardingActions {
-            PlanStartNotice()
+        PlanStartNotice()
+        PageActions {
             notice?.invoke()
             Button(
                 busy = pending && sender == StepSender.Continue,
@@ -201,43 +200,43 @@ internal fun ColumnScope.PurposeStep(
     pending: Boolean,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var purpose by rememberSaveable { mutableStateOf<OnboardingAnswerInputOneOf.Purpose?>(null) }
-    val answer = { picked: OnboardingAnswerInputOneOf.Purpose ->
+    var purpose by rememberSaveable { mutableStateOf<OnboardingAnswerInputOneOf1.Purpose?>(null) }
+    val answer = { picked: OnboardingAnswerInputOneOf1.Purpose ->
         onAnswer(
-            OnboardingAnswerInput.OnboardingAnswerInputOneOfValue(
-                OnboardingAnswerInputOneOf(picked, OnboardingAnswerInputOneOf.Question.PURPOSE),
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf1Value(
+                OnboardingAnswerInputOneOf1(picked, OnboardingAnswerInputOneOf1.Question.PURPOSE),
             ),
         )
     }
     val choices =
         listOf(
             Choice(
-                OnboardingAnswerInputOneOf.Purpose.OVERVIEW,
+                OnboardingAnswerInputOneOf1.Purpose.OVERVIEW,
                 stringResource(R.string.onboarding_purpose_overview),
                 stringResource(R.string.onboarding_purpose_overview_description),
             ),
             Choice(
-                OnboardingAnswerInputOneOf.Purpose.DEEP,
+                OnboardingAnswerInputOneOf1.Purpose.DEEP,
                 stringResource(R.string.onboarding_purpose_deep),
                 stringResource(R.string.onboarding_purpose_deep_description),
             ),
             Choice(
-                OnboardingAnswerInputOneOf.Purpose.WORK,
+                OnboardingAnswerInputOneOf1.Purpose.WORK,
                 stringResource(R.string.onboarding_purpose_work),
                 stringResource(R.string.onboarding_purpose_work_description),
             ),
             Choice(
-                OnboardingAnswerInputOneOf.Purpose.CAREER_CHANGE,
+                OnboardingAnswerInputOneOf1.Purpose.CAREER_CHANGE,
                 stringResource(R.string.onboarding_purpose_career_change),
                 stringResource(R.string.onboarding_purpose_career_change_description),
             ),
             Choice(
-                OnboardingAnswerInputOneOf.Purpose.REFRESH,
+                OnboardingAnswerInputOneOf1.Purpose.REFRESH,
                 stringResource(R.string.onboarding_purpose_refresh),
                 stringResource(R.string.onboarding_purpose_refresh_description),
             ),
             Choice(
-                OnboardingAnswerInputOneOf.Purpose.OTHER,
+                OnboardingAnswerInputOneOf1.Purpose.OTHER,
                 stringResource(R.string.onboarding_purpose_other),
                 stringResource(R.string.onboarding_purpose_other_description),
             ),
@@ -273,8 +272,8 @@ internal fun ColumnScope.LevelStep(
     var level by remember { mutableStateOf(initial) }
     val answer = { picked: LevelChoice ->
         onAnswer(
-            OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
-                OnboardingAnswerInputOneOf7(OnboardingAnswerInputOneOf7.Question.LEVEL, level = (picked as? LevelChoice.Own)?.level),
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
+                OnboardingAnswerInputOneOf8(OnboardingAnswerInputOneOf8.Question.LEVEL, level = (picked as? LevelChoice.Own)?.level),
             ),
         )
     }
@@ -302,22 +301,22 @@ internal fun LevelChoiceList(
     val choices: List<Choice<LevelChoice>> =
         listOf(
             Choice<LevelChoice>(
-                LevelChoice.Own(OnboardingAnswerInputOneOf7.Level.NONE),
+                LevelChoice.Own(OnboardingAnswerInputOneOf8.Level.NONE),
                 stringResource(R.string.onboarding_level_none),
                 stringResource(R.string.onboarding_level_none_description),
             ),
             Choice(
-                LevelChoice.Own(OnboardingAnswerInputOneOf7.Level.BASIC),
+                LevelChoice.Own(OnboardingAnswerInputOneOf8.Level.BASIC),
                 stringResource(R.string.onboarding_level_basic),
                 stringResource(R.string.onboarding_level_basic_description),
             ),
             Choice(
-                LevelChoice.Own(OnboardingAnswerInputOneOf7.Level.INTERMEDIATE),
+                LevelChoice.Own(OnboardingAnswerInputOneOf8.Level.INTERMEDIATE),
                 stringResource(R.string.onboarding_level_intermediate),
                 stringResource(R.string.onboarding_level_intermediate_description),
             ),
             Choice(
-                LevelChoice.Own(OnboardingAnswerInputOneOf7.Level.ADVANCED),
+                LevelChoice.Own(OnboardingAnswerInputOneOf8.Level.ADVANCED),
                 stringResource(R.string.onboarding_level_advanced),
                 stringResource(R.string.onboarding_level_advanced_description),
             ),
@@ -350,15 +349,15 @@ internal fun ColumnScope.SubjectsLevelStep(
         pending = pending,
         onContinue = {
             onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
-                    OnboardingAnswerInputOneOf7(OnboardingAnswerInputOneOf7.Question.LEVEL, knownSubjects = known, level = null),
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
+                    OnboardingAnswerInputOneOf8(OnboardingAnswerInputOneOf8.Question.LEVEL, knownSubjects = known, level = null),
                 ),
             )
         },
         onSkip = {
             onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
-                    OnboardingAnswerInputOneOf7(OnboardingAnswerInputOneOf7.Question.LEVEL, level = OnboardingAnswerInputOneOf7.Level.NONE),
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
+                    OnboardingAnswerInputOneOf8(OnboardingAnswerInputOneOf8.Question.LEVEL, level = OnboardingAnswerInputOneOf8.Level.NONE),
                 ),
             )
         },
@@ -403,8 +402,8 @@ internal fun ColumnScope.TextStep(
     var value by words.field(0)
     val answer = { text: String? ->
         onAnswer(
-            OnboardingAnswerInput.OnboardingAnswerInputOneOf3Value(
-                OnboardingAnswerInputOneOf3(OnboardingAnswerInputOneOf3.Question.TARGET, text),
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf4Value(
+                OnboardingAnswerInputOneOf4(OnboardingAnswerInputOneOf4.Question.TARGET, text),
             ),
         )
     }
@@ -467,8 +466,8 @@ internal fun ColumnScope.FollowUpsStep(
     val answers = words.values
     val send = { values: List<String?> ->
         onAnswer(
-            OnboardingAnswerInput.OnboardingAnswerInputOneOf5Value(
-                OnboardingAnswerInputOneOf5(values, OnboardingAnswerInputOneOf5.Question.FOLLOW_UPS),
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf6Value(
+                OnboardingAnswerInputOneOf6(values, OnboardingAnswerInputOneOf6.Question.FOLLOW_UPS),
             ),
         )
     }
@@ -513,23 +512,23 @@ internal fun ColumnScope.RoleStep(
         pending = pending,
         onContinue = {
             onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf1Value(
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf2Value(
                     if (careerChange) {
-                        OnboardingAnswerInputOneOf1(
-                            OnboardingAnswerInputOneOf1.Question.ROLE,
+                        OnboardingAnswerInputOneOf2(
+                            OnboardingAnswerInputOneOf2.Question.ROLE,
                             role = answer(role),
                             targetPosition = answer(second),
                         )
                     } else {
-                        OnboardingAnswerInputOneOf1(OnboardingAnswerInputOneOf1.Question.ROLE, role = answer(role), tasks = answer(second))
+                        OnboardingAnswerInputOneOf2(OnboardingAnswerInputOneOf2.Question.ROLE, role = answer(role), tasks = answer(second))
                     },
                 ),
             )
         },
         onSkip = {
             onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf1Value(
-                    OnboardingAnswerInputOneOf1(OnboardingAnswerInputOneOf1.Question.ROLE),
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf2Value(
+                    OnboardingAnswerInputOneOf2(OnboardingAnswerInputOneOf2.Question.ROLE),
                 ),
             )
         },
@@ -610,8 +609,8 @@ internal fun ColumnScope.DateStep(
         }
     val answer = { date: LocalDate? ->
         onAnswer(
-            OnboardingAnswerInput.OnboardingAnswerInputOneOf4Value(
-                OnboardingAnswerInputOneOf4(OnboardingAnswerInputOneOf4.Question.TARGET_DATE, date?.toKotlinLocalDate()),
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf5Value(
+                OnboardingAnswerInputOneOf5(OnboardingAnswerInputOneOf5.Question.TARGET_DATE, date?.toKotlinLocalDate()),
             ),
         )
     }
@@ -777,9 +776,9 @@ internal fun ColumnScope.ExamChoiceStep(
     val takes = choices.sumOf { it.take }
     val answer = { picked: Map<String, List<String>> ->
         onAnswer(
-            OnboardingAnswerInput.OnboardingAnswerInputOneOf6Value(
-                OnboardingAnswerInputOneOf6(
-                    OnboardingAnswerInputOneOf6.Question.EXAM_CHOICE,
+            OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
+                OnboardingAnswerInputOneOf7(
+                    OnboardingAnswerInputOneOf7.Question.EXAM_CHOICE,
                     choices = choices.mapNotNull { choice -> picked[choice.group]?.let { ExamChoicePick(choice.group, it) } },
                     timeZone = TimeZone.getDefault().id,
                 ),
@@ -817,8 +816,8 @@ internal fun ColumnScope.ExamChoiceStep(
         onContinue = { answer(picks) },
         onSkip = {
             onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf6Value(
-                    OnboardingAnswerInputOneOf6(OnboardingAnswerInputOneOf6.Question.EXAM_CHOICE, choices = null),
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
+                    OnboardingAnswerInputOneOf7(OnboardingAnswerInputOneOf7.Question.EXAM_CHOICE, choices = null),
                 ),
             )
         },
@@ -891,10 +890,10 @@ internal fun ColumnScope.BuddyStep(
         pending = pending,
         onContinue = {
             onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value(
-                    OnboardingAnswerInputOneOf10(
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf11Value(
+                    OnboardingAnswerInputOneOf11(
                         BuddyInput(kind = BuddyInput.Kind.entries.first { it.value == kind.key }, name = name.trim().ifEmpty { null }),
-                        OnboardingAnswerInputOneOf10.Question.BUDDY,
+                        OnboardingAnswerInputOneOf11.Question.BUDDY,
                     ),
                 ),
             )

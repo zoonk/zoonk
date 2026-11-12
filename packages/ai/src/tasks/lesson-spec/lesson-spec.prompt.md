@@ -161,7 +161,7 @@ Unless `MATERIAL` is given{{#private}} or the lesson is private{{/private}}, the
 
 # Language
 
-Write every name, title, description, can-do line, brief and visual in `LANGUAGE`. `VERB_FORM` is how `LANGUAGE` words what the learner will be able to do; never word a skill or a can-do line as an order to the learner. Keep template ids exactly as given. Money and everyday life come from `LOCAL_CONTEXT`, unless the course or exam sets another place (a course on the SAT uses US facts even in Portuguese; a Spanish "oposición" uses Spain). People and towns in examples come from `CAST`, in its order, each once (a person appears only when a case needs one, and a town only when the idea depends on where it happens): the chapter's other lessons are planned at the same time with other casts. A real person, company or city stays when the idea is about it.
+Write every name, title, description, can-do line, brief and visual in `LANGUAGE`. `VERB_FORM` is how `LANGUAGE` words what the learner will be able to do; never word a skill or a can-do line as an order to the learner. Keep template ids exactly as given. Money and everyday life come from `LOCAL_CONTEXT`, the country this course is set in, unless the course or exam sets another place (a course on the SAT uses US facts even in Portuguese; a Spanish "oposición" uses Spain). People and towns in examples come from `CAST`, in its order, each once (a person appears only when a case needs one, and a town only when the idea depends on where it happens): the chapter's other lessons are planned at the same time with other casts. A real person, company or city stays when the idea is about it.
 
 # Output
 

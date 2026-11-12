@@ -107,6 +107,8 @@ internal data class PlanEdits(
     val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
     val setRegion: (String?, () -> Unit) -> Unit = { _, _ -> },
+    val setContentCountry: (String, () -> Unit) -> Unit = { _, _ -> },
+    val retryCountryRebuild: () -> Unit = {},
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
@@ -149,8 +151,16 @@ internal class EditorDrafts(
     weekendOn: Boolean? = null,
     bases: BasesDraft? = null,
     tool: ToolDraft? = null,
+    picking: PlanPicker? = null,
+    countryAsked: CountryAsked? = null,
 ) {
     var datePicking by mutableStateOf(datePicking)
+
+    /** The aim's, language's or content country's picker while it's open. */
+    var picking by mutableStateOf(picking)
+
+    /** The new content country while the learner is asked to confirm it. */
+    var countryAsked by mutableStateOf(countryAsked)
 
     /** Null follows the plan: on while its weekend has its own time. */
     var weekendOn by mutableStateOf(weekendOn)
@@ -164,11 +174,29 @@ internal class EditorDrafts(
     companion object {
         val Saver =
             listSaver<EditorDrafts, Any?>(
-                save = { listOf(it.datePicking, it.weekendOn, it.bases, it.tool) },
-                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?, it[2] as BasesDraft?, it[3] as ToolDraft?) },
+                save = { listOf(it.datePicking, it.weekendOn, it.bases, it.tool, it.picking, it.countryAsked) },
+                restore = {
+                    EditorDrafts(
+                        it[0] as Boolean,
+                        it[1] as Boolean?,
+                        it[2] as BasesDraft?,
+                        it[3] as ToolDraft?,
+                        it[4] as PlanPicker?,
+                        it[5] as CountryAsked?,
+                    )
+                },
             )
     }
 }
+
+internal enum class PlanPicker { Aim, Variety, Country }
+
+/** [sent] once the learner confirmed it, so only that save's failure closes the question. */
+internal data class CountryAsked(
+    val code: String,
+    val name: String,
+    val sent: Boolean = false,
+) : Serializable
 
 /** The choices not saved yet, by skill; [opening] tells this opening's save from an earlier one's. */
 internal data class BasesDraft(
@@ -281,11 +309,14 @@ internal fun ColumnScope.PlanEditorBody(
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
+        PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         page.plan.languageAim?.let { languageAim ->
             languageAim.aim?.let { aim ->
                 LanguageAimRow(
                     aim.value,
                     languageAim.choices,
+                    open = drafts.picking == PlanPicker.Aim,
+                    onOpenChange = { open -> drafts.picking = if (open) PlanPicker.Aim else null },
                     onPick = { next, done ->
                         edits.change(PlanPart.Aim, listOf(PlanOp.Aim(next))) {
                             if (it?.status ==
@@ -300,19 +331,10 @@ internal fun ColumnScope.PlanEditorBody(
                     note = stringResource(R.string.onboarding_aim_description),
                     dates = { aimDates },
                     endDate = aimDates[aim.value],
+                    modifier = Modifier.bleed(LIST_ITEM_INSET),
                 )
             }
         }
-        page.variety?.let { variety ->
-            VarietyRow(
-                variety,
-                onPick = edits.setRegion,
-                pending = edits.isPending(PlanPart.Region),
-                failed = edits.hasFailed(PlanPart.Region),
-                modifier = Modifier.section(PlanSection.Language),
-            )
-        }
-        PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         PlanScheduleSection(
             page,
             edits,
@@ -322,6 +344,28 @@ internal fun ColumnScope.PlanEditorBody(
         )
         PlanExamChoices(page, edits, Modifier.section(PlanSection.Choices))
         PlanBases(page, edits, drafts)
+        page.variety?.let { variety ->
+            VarietyRow(
+                variety,
+                drafts,
+                onPick = edits.setRegion,
+                pending = edits.isPending(PlanPart.Region),
+                failed = edits.hasFailed(PlanPart.Region),
+                modifier = Modifier.section(PlanSection.Language).bleed(LIST_ITEM_INSET),
+            )
+        }
+        page.goal.editableCountry?.let { country ->
+            ContentCountryRow(
+                page.goal,
+                country,
+                drafts,
+                onPick = edits.setContentCountry,
+                pending = edits.isPending(PlanPart.Country),
+                failed = edits.hasFailed(PlanPart.Country),
+                modifier = Modifier.section(PlanSection.Country).bleed(LIST_ITEM_INSET),
+            )
+        }
+        CountryFacts(page.goal, Modifier.bleed(LIST_ITEM_INSET))
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
         PlanSteering(page, edits)

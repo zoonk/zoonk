@@ -5,6 +5,7 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.api.models.MemoryChangeReference
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
@@ -16,6 +17,8 @@ class TutorStore(
     val sessions: SessionSource,
     val undoMemory: suspend (List<MemoryChangeReference>) -> MutationResult<Unit>,
     val setRegion: suspend (goalId: UUID, region: String?) -> MutationResult<Unit>,
+    val setContentCountry: suspend (goalId: UUID, country: String) -> MutationResult<Unit>,
+    val setHomeCountry: suspend (CountryChoice) -> Boolean,
     val decidePlanChange: suspend (goalId: UUID, changeId: UUID, PlanChangeDecisionInput.Status) -> MutationResult<PlanChange>,
 ) {
     /** Before its first question a conversation reads as an empty thread, so a sent one can be added to it. */

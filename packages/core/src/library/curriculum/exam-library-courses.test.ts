@@ -26,7 +26,7 @@ const scope = { language: "pt", ownerId: null, targetLanguage: null };
 const provenance = { generatedAt: new Date(), model: "test", promptVersion: "test", runId: "test" };
 
 const frame: Pick<RawSkillGraph, "courses" | "phases"> = {
-  courses: [{ key: "math", levels: ["beginner"], title: "Matemática" }],
+  courses: [{ countrySpecific: false, key: "math", levels: ["beginner"], title: "Matemática" }],
   phases: [{ milestone: "Preparação inicial", title: "Fundamentos" }],
 };
 
@@ -126,8 +126,13 @@ describe("an exam's Library courses and prerequisites", () => {
     const graph = normalizeSkillGraph(
       {
         courses: [
-          { key: "administrative", levels: ["beginner"], title: "Direito Administrativo" },
-          { key: "criminal", levels: ["beginner"], title: "Direito Penal" },
+          {
+            countrySpecific: false,
+            key: "administrative",
+            levels: ["beginner"],
+            title: "Direito Administrativo",
+          },
+          { countrySpecific: false, key: "criminal", levels: ["beginner"], title: "Direito Penal" },
         ],
         phases: frame.phases,
         skills: [

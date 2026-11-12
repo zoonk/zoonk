@@ -74,7 +74,7 @@ function formatList(items: readonly string[]): string {
 function buildUserPrompt(params: ChallengePlanParams): string {
   const lines = [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
-    formatLocalContext(params.language).trim(),
+    formatLocalContext({ country: params.country, language: params.language }).trim(),
     `LEVEL: ${params.level}`,
     params.field && `FIELD: ${params.field}`,
     `COURSE_TITLE: ${params.courseTitle}`,

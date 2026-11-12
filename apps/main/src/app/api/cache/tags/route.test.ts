@@ -26,7 +26,15 @@ describe("course cache notifications", () => {
 
     const response = await postCacheTags(
       new Request("http://main/api/cache/tags", {
-        body: JSON.stringify({ tags: ["course:abc", "course-curriculum:abc", "catalog-courses"] }),
+        body: JSON.stringify({
+          tags: [
+            "course:abc",
+            "course-curriculum:abc",
+            "catalog-courses",
+            "library-chapter:abc",
+            "library-lesson:abc",
+          ],
+        }),
         headers: { "x-app-cache-secret": "expected" },
         method: "POST",
       }),
@@ -34,23 +42,21 @@ describe("course cache notifications", () => {
 
     expect(response.status).toBe(200);
     expect(revalidateTag).toHaveBeenCalledWith("course-curriculum:abc", { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith("library-lesson:abc", { expire: 0 });
   });
 
-  it.each(["user-progress:abc", "library-lesson:abc", "course-route:abc"])(
-    "rejects %s",
-    async (tag) => {
-      vi.stubEnv("APP_CACHE_SECRET", "expected");
+  it.each(["user-progress:abc", "skill:abc", "course-route:abc"])("rejects %s", async (tag) => {
+    vi.stubEnv("APP_CACHE_SECRET", "expected");
 
-      const response = await postCacheTags(
-        new Request("http://main/api/cache/tags", {
-          body: JSON.stringify({ tags: [tag] }),
-          headers: { "x-app-cache-secret": "expected" },
-          method: "POST",
-        }),
-      );
+    const response = await postCacheTags(
+      new Request("http://main/api/cache/tags", {
+        body: JSON.stringify({ tags: [tag] }),
+        headers: { "x-app-cache-secret": "expected" },
+        method: "POST",
+      }),
+    );
 
-      expect(response.status).toBe(400);
-      expect(revalidateTag).not.toHaveBeenCalled();
-    },
-  );
+    expect(response.status).toBe(400);
+    expect(revalidateTag).not.toHaveBeenCalled();
+  });
 });

@@ -68,6 +68,7 @@ export type ChallengeScriptParams = Pick<
   | "analytics"
   | "chapterTitle"
   | "courseTitle"
+  | "country"
   | "field"
   | "language"
   | "level"
@@ -82,7 +83,7 @@ export type ChallengeScriptParams = Pick<
 function buildUserPrompt({ plan, ...params }: ChallengeScriptParams): string {
   return [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
-    formatLocalContext(params.language).trim(),
+    formatLocalContext({ country: params.country, language: params.language }).trim(),
     `LEVEL: ${params.level}`,
     `COURSE_TITLE: ${params.courseTitle}`,
     `CHAPTER_TITLE: ${params.chapterTitle}`,

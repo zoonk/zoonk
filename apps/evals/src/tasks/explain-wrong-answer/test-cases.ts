@@ -1,8 +1,8 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type ExplainWrongAnswerParams } from "@zoonk/ai/tasks/grading/explain-wrong-answer";
 
 type ExplainWrongAnswerInput = Omit<
-  ExplainWrongAnswerParams,
+  OptionalCountry<ExplainWrongAnswerParams>,
   "model" | "useFallback" | "reasoning"
 >;
 

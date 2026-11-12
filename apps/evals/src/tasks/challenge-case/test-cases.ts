@@ -1,8 +1,8 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
 
 type ChallengeCaseInput = Omit<
-  ChallengeCaseParams,
+  OptionalCountry<ChallengeCaseParams>,
   "analytics" | "model" | "problems" | "reasoning" | "useFallback"
 >;
 

@@ -673,4 +673,14 @@
     <string name="onboarding_variety_none">No preference</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">Your buddy and practice calls use %1$s. Lessons and their audio use %2$s.</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">Which country should your lessons be about?</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">What you learn here changes from country to country. You can change it later in your plan.</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">Another country</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">If you skip: %1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">where you live</string>
 </resources>

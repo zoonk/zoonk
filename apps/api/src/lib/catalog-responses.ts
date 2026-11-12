@@ -69,6 +69,7 @@ export function toCourseResource(course: CourseResource) {
     categories: course.categories
       .toSorted((one, other) => one.createdAt.getTime() - other.createdAt.getTime())
       .map((category) => category.category),
+    contentCountry: course.contentCountry,
     description: course.description,
     editions: course.editions.map(({ id, language, title }) => ({ id, language, title })),
     exam: course.exam,

@@ -7,6 +7,7 @@ import {
   type WriterActivityTemplate,
   describeActivityTemplates,
 } from "../../activities/writer-templates";
+import { getLessonCountry } from "../../content-country";
 import { type HeldBackDraft, parseHeldBackDrafts } from "../../generation/held-back-drafts";
 import { type LessonWritingContext } from "../../quality/lesson-quality-gate";
 import { getSiblingsChapterId } from "../../quick-lessons/quick-lesson-identity";
@@ -17,6 +18,7 @@ import { loadLessonDocuments } from "./lesson-sources";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
 export type LessonWritingInputs = {
+  country: string | null;
   activityTemplates: WriterActivityTemplate[];
   chapterLessons: ChapterLesson[];
   chapterTitle: string;
@@ -104,6 +106,7 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       ),
       chapterLessons,
       chapterTitle: lesson.homeChapter?.title ?? lesson.title,
+      country: getLessonCountry({ course, skill: lesson.skills[0]?.skill }),
       courseTitle: course?.title ?? lesson.homeChapter?.title ?? lesson.title,
       exams: material.length > 0 ? [] : exams,
       heldBackDrafts: parseHeldBackDrafts(lesson.heldBackDrafts),
@@ -145,6 +148,7 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
     activityTemplates: inputs.activityTemplates,
     chapterLessons: inputs.chapterLessons,
     chapterTitle: inputs.chapterTitle,
+    country: inputs.country,
     courseTitle: inputs.courseTitle,
     exams: inputs.exams,
     language: inputs.language,

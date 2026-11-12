@@ -224,7 +224,7 @@ function buildLevelPrompt({
   return `
 TARGET_LANGUAGE: ${languages.targetLanguageName}
 LEARNER_LANGUAGE: ${languages.userLanguageName}
-${formatLocalContext(targetLanguage, { register: false })}
+${formatLocalContext({ country: null, language: targetLanguage, register: false })}
 LEVEL: ${level}
 READING_WORDS: ${formatWords(words.reading)}
 LISTENING_WORDS: ${formatWords(words.listening)}

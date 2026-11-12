@@ -1,5 +1,6 @@
 import "server-only";
 import { type BuddyGlasses, prisma } from "@zoonk/db";
+import { isCountryCode } from "@zoonk/utils/countries";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -13,7 +14,7 @@ import {
 
 export type LearningProfileUpdateResult =
   | { profile: LearningProfileView; status: "updated" }
-  | { status: "glassesNotEarned" | "goalNotFound" | "unauthorized" };
+  | { status: "glassesNotEarned" | "goalNotFound" | "invalidCountry" | "unauthorized" };
 
 function getBuddyData(buddy: LearningProfileUpdateInput["buddy"]) {
   if (buddy === undefined) {
@@ -33,6 +34,7 @@ function getBuddyData(buddy: LearningProfileUpdateInput["buddy"]) {
 
 function getProfileData(input: LearningProfileUpdateInput) {
   return {
+    ...(input.homeCountry !== undefined && { homeCountry: input.homeCountry }),
     ...(input.activeGoalId !== undefined && { activeGoalId: input.activeGoalId }),
     ...(input.soundsEnabled !== undefined && { soundsEnabled: input.soundsEnabled }),
     ...(input.shareUsageData !== undefined && { shareUsageData: input.shareUsageData }),
@@ -48,6 +50,7 @@ const UNSAVED_PROFILE = {
   buddyGlasses: DEFAULT_BUDDY.glasses,
   buddyKind: null,
   buddyName: null,
+  homeCountry: null,
   shareUsageData: null,
   soundsEnabled: true,
 } satisfies { [Field in keyof ProfileData]-?: ProfileData[Field] | null };
@@ -113,11 +116,20 @@ async function findInvalidField({
 
 export async function updateLearningProfile(
   input: LearningProfileUpdateInput,
+  language = "en",
 ): Promise<LearningProfileUpdateResult> {
   const session = await getSession();
 
   if (!session) {
     return { status: "unauthorized" };
+  }
+
+  if (
+    input.homeCountry !== undefined &&
+    input.homeCountry !== null &&
+    !isCountryCode(input.homeCountry)
+  ) {
+    return { status: "invalidCountry" };
   }
 
   const userId = session.user.id;
@@ -136,5 +148,5 @@ export async function updateLearningProfile(
     revalidateCacheTags([getLearningProfileCacheTag(userId)]);
   }
 
-  return { profile: await findLearningProfileView(userId), status: "updated" };
+  return { profile: await findLearningProfileView({ language, userId }), status: "updated" };
 }

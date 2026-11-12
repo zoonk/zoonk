@@ -1,6 +1,7 @@
 import "server-only";
 import { type generateWarmUpCards } from "@zoonk/ai/tasks/warm-up/write-warm-up-cards";
 import { type WarmUp, prisma } from "@zoonk/db";
+import { getContentCountryScope } from "../content-country";
 import { type CurriculumScope } from "../curriculum/curriculum-scope";
 import { examStructureSchema } from "../exams/blueprint-contract";
 import { type GoalWarmUp } from "./warm-up-contract";
@@ -8,7 +9,7 @@ import { getWarmUpKey } from "./warm-up-key";
 
 export type WarmUpInput = Pick<
   Parameters<typeof generateWarmUpCards>[0],
-  "goal" | "kind" | "language" | "subjects" | "targetLanguage"
+  "country" | "goal" | "kind" | "language" | "subjects" | "targetLanguage"
 >;
 
 export type WarmUpClaim =
@@ -100,6 +101,7 @@ export async function claimWarmUp({
   return {
     id: stored.id,
     input: {
+      country: getContentCountryScope(scope),
       goal: scope.generalGoal,
       kind: goal.kind,
       language: goal.language,

@@ -2345,120 +2345,61 @@
         }
       }
     },
-    "Optional. Nothing here is saved unless you choose to." : {
+    "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings." : {
       "comment" : "Under the conditions question",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Optional. Hier wird nichts ohne deine Zustimmung gespeichert."
+            "value" : "Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich dein Kumpel auf dich einstellen kann. Du kannst sie jederzeit in den Einstellungen entfernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcional. Nada de esto se guarda a menos que elijas guardarlo."
+            "value" : "Opcional. Lo que elijas se guarda en tu perfil para que tu compañero pueda adaptarse a ti. Puedes eliminarlo cuando quieras en Configuración."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Facultatif. Rien n’est enregistré sans ton accord."
+            "value" : "Facultatif. Tes choix sont enregistrés dans ton profil pour que ton compagnon puisse s’adapter à toi. Tu peux les supprimer à tout moment dans les réglages."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Facoltativo. Salviamo queste informazioni solo se lo vuoi."
+            "value" : "Facoltativo. Le tue scelte vengono salvate nel profilo, così il tuo compagno può adattarsi alle tue esigenze. Puoi rimuoverle in qualsiasi momento dalle Impostazioni."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回答は任意です。保存を選ばない限り、ここでの回答は保存されません。"
+            "value" : "任意です。選んだ内容はプロフィールに保存され、相棒が一人ひとりに合ったサポートをするために使われます。設定からいつでも削除できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "선택 사항이에요. 저장에 동의한 내용만 저장돼요."
+            "value" : "선택 사항이에요. 짝꿍이 나에게 맞춰 도와줄 수 있도록 선택한 내용이 프로필에 저장돼요. 설정에서 언제든 삭제할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcjonalnie. Niczego tu nie zapiszemy bez twojej zgody."
+            "value" : "Opcjonalnie. Twój wybór zapisujemy w profilu, dzięki czemu twój kumpel może lepiej dopasować się do ciebie. Możesz go usunąć w dowolnej chwili w Ustawieniach."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcional. Estas informações só ficam salvas se você quiser."
+            "value" : "Opcional. O que você escolher fica salvo no seu perfil para seu parceiro se adaptar a você. Você pode remover essas informações quando quiser em Ajustes."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İsteğe bağlı. Sen istemedikçe buradaki hiçbir bilgi kaydedilmez."
-          }
-        }
-      }
-    },
-    "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to." : {
-      "comment" : "Under the conditions question, before What helps you learn?",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optional. Auf der nächsten Seite zeigen wir dir, was oft hilft. Hier wird nichts ohne deine Zustimmung gespeichert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opcional. En la siguiente pantalla te sugeriremos lo que suele ayudar. Nada de esto se guarda a menos que elijas guardarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Facultatif. À l’écran suivant, on te proposera des options qui aident souvent à apprendre. Rien n’est enregistré sans ton accord."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Facoltativo. Nella prossima schermata ti suggeriremo cosa aiuta di solito. Salviamo queste informazioni solo se lo vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "回答は任意です。次の画面で、学習に役立ちそうな工夫を提案します。保存を選ばない限り、ここでの回答は保存されません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "선택 사항이에요. 다음 화면에서 학습에 도움이 될 만한 방법을 추천해 드릴게요. 저장에 동의한 내용만 저장돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opcjonalnie. Na następnym ekranie podpowiemy, co często pomaga w nauce. Niczego tu nie zapiszemy bez twojej zgody."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opcional. Na próxima tela, a gente vai sugerir o que costuma ajudar. Estas informações só ficam salvas se você quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İsteğe bağlı. Sonraki ekranda genelde işe yarayan yöntemler önereceğiz. Sen istemedikçe buradaki hiçbir bilgi kaydedilmez."
+            "value" : "İsteğe bağlı. Arkadaşının sana uyum sağlayabilmesi için seçimlerin profiline kaydedilir. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin."
           }
         }
       }
@@ -3049,65 +2990,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydet ve 1. derse başla"
-          }
-        }
-      }
-    },
-    "Save this to my profile" : {
-      "comment" : "Consent to keep the conditions picked",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In meinem Profil speichern"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar esto en mi perfil"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistrer dans mon profil"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salva queste informazioni nel mio profilo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選んだ内容をプロフィールに保存する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 프로필에 저장하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chcę zapisać to w swoim profilu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salvar no meu perfil"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunu profilime kaydet"
           }
         }
       }
@@ -4819,65 +4701,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mesleğin (isteğe bağlı)"
-          }
-        }
-      }
-    },
-    "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings." : {
-      "comment" : "What saving the conditions does",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk nutzt deine Angaben, um sich jetzt und in Zukunft an dich anzupassen. Sie werden nie weitergegeben oder in Lektionsbeispielen verwendet. Du kannst sie jederzeit in den Einstellungen löschen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk usa esta información para adaptarse a ti, ahora y con el tiempo. Nunca se comparte ni se usa en los ejemplos de las lecciones. Elimínala cuando quieras en Configuración."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk utilise ces informations pour s’adapter à toi, dès maintenant et au fil du temps. Elles restent privées et ne sont jamais utilisées dans les exemples des leçons. Tu peux les supprimer à tout moment dans Réglages."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk usa queste informazioni per adattarsi a te, ora e nel tempo. Non vengono mai condivise né usate negli esempi delle lezioni. Eliminale quando vuoi nelle Impostazioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkはこの情報をもとに、今もこれからも学びやすいようにサポートします。ほかの人に伝えたり、レッスンの例に使ったりすることはありません。「設定」でいつでも削除できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk가 이 정보를 바탕으로 지금부터 계속 맞춤형 도움을 줘요. 다른 곳에 알려 주거나 레슨 예시에 쓰지 않아요. 설정에서 언제든 삭제할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk korzysta z tych informacji, by dostosowywać się do ciebie teraz i w przyszłości. Nigdy ich nie udostępnia ani nie wykorzystuje w przykładach na lekcjach. Możesz je w każdej chwili usunąć w Ustawieniach."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk usa essas informações para se adaptar a você, agora e ao longo do tempo. Elas nunca são compartilhadas nem usadas nos exemplos das aulas. Você pode apagar quando quiser em Ajustes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk bu bilgilerle hem şimdi hem de ileride sana uyum sağlar. Bu bilgiler asla paylaşılmaz veya ders örneklerinde kullanılmaz. İstediğin zaman Ayarlar’dan kaldır."
           }
         }
       }

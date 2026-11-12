@@ -7,15 +7,17 @@ import { MenuIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { type AdminAccount } from "./admin-account-menu";
-import { AdminMenuSheet } from "./app-sidebar";
+import { AdminMenuSheet, type AdminNavCounts } from "./app-sidebar";
 
-export function AdminMobileBar({ account }: { account: AdminAccount }) {
+type AdminMobileBarProps = { account: AdminAccount; counts: AdminNavCounts };
+
+export function AdminMobileBar(props: AdminMobileBarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  return <AdminMobileBarContent account={account} key={`${pathname}?${searchParams.toString()}`} />;
+  return <AdminMobileBarContent {...props} key={`${pathname}?${searchParams.toString()}`} />;
 }
 
-function AdminMobileBarContent({ account }: { account: AdminAccount }) {
+function AdminMobileBarContent({ account, counts }: AdminMobileBarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -32,7 +34,7 @@ function AdminMobileBarContent({ account }: { account: AdminAccount }) {
         placement="bar"
       />
 
-      <AdminMenuSheet account={account} onOpenChange={setOpen} open={open} />
+      <AdminMenuSheet account={account} counts={counts} onOpenChange={setOpen} open={open} />
     </header>
   );
 }

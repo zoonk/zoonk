@@ -11,7 +11,9 @@ import { ChangeSaveError } from "../_components/save-error";
 import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
+import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { type AppearanceBuddy, BuddySettings } from "./buddy-settings";
+import { HomeCountrySetting } from "./home-country-setting";
 import { LanguageSetting } from "./language-setting";
 
 export type { AppearanceBuddy } from "./buddy-settings";
@@ -21,6 +23,9 @@ export type AppearanceView = {
   canPersonalize: boolean;
   look: BuddyLook;
   buddy: ResolvedBuddy;
+  /** Where the learner says they live; null until they say. */
+  homeCountry: CountryName | null;
+  homeCountrySuggested: readonly SuggestedCountry[];
   shareUsageData: boolean;
   soundsEnabled: boolean;
 };
@@ -28,6 +33,8 @@ export type AppearanceView = {
 /** How Preferences saves. Each resolves to whether it was saved. */
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
+  /** Null clears it. */
+  setHomeCountry: (country: string | null) => Promise<boolean>;
   setShareUsageData: (share: boolean) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
@@ -44,16 +51,23 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
   const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
+  const [homeCountry, setOptimisticHome] = useOptimistic(view.homeCountry);
 
   const { failed, run } = useOptimisticSave();
 
   return {
     buddy,
     failed,
+    homeCountry,
     saveBuddy: (next: AppearanceBuddy) =>
       run(
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
+      ),
+    setHomeCountry: (next: CountryName | null) =>
+      run(
+        () => setOptimisticHome(next),
+        () => actions.setHomeCountry(next?.code ?? null),
       ),
     setShareUsageData: (next: boolean) =>
       run(
@@ -111,9 +125,18 @@ export function AppearanceScreen({
       )}
 
       <PageSection>
-        <SectionTitle>{t("Language")}</SectionTitle>
+        <SectionTitle>
+          {view.canPersonalize ? t("Language and region") : t("Language")}
+        </SectionTitle>
         <ListGroup>
           <LanguageSetting onChange={onLanguageChange} />
+          {view.canPersonalize && (
+            <HomeCountrySetting
+              onChange={appearance.setHomeCountry}
+              suggested={view.homeCountrySuggested}
+              value={appearance.homeCountry}
+            />
+          )}
         </ListGroup>
       </PageSection>
 

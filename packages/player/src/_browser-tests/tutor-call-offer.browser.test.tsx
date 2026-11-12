@@ -14,6 +14,7 @@ const LEARN_ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
       {children}
     </a>
   ),
+  loadCountries: async () => [],
   routes: { buddy: "/buddy", journey: "/plan", signUp: "/login", today: "/", upgrade: "/plus" },
 };
 
@@ -41,7 +42,9 @@ function renderOffer(
   );
 
   const tools: TutorCardActions["tools"] = {
+    getGoalContentCountry: () => null,
     getGoalRegion: () => null,
+    getHomeCountry: () => null,
     hrefs: {
       chooseFocus: "/focus",
       chooseMock: "/mock",
@@ -54,7 +57,9 @@ function renderOffer(
       stats: "/stats",
       subject: () => "/subject",
     },
+    setGoalContentCountry: vi.fn(),
     setGoalRegion: vi.fn(),
+    setHomeCountry: vi.fn(),
     startConversation,
     startTestOut: vi.fn(),
   };

@@ -8,7 +8,12 @@ import { MAIN_URL } from "@zoonk/utils/url";
 import { type BetterAuthPlugin } from "better-auth";
 import { createAuthEndpoint, isAPIError } from "better-auth/api";
 import { z } from "zod";
-import { CLI_CLIENT_ID, CLI_LOGIN_APPROVAL_PATH, STAFF_READ_SCOPE } from "../cli-login-contract";
+import {
+  CLI_CLIENT_ID,
+  CLI_LOGIN_APPROVAL_PATH,
+  STAFF_PROPOSE_SCOPE,
+  STAFF_READ_SCOPE,
+} from "../cli-login-contract";
 
 /** Agents sharing one login refresh at the same moment; within this window they all get the same new pair. */
 const REFRESH_TOKEN_REUSE_SECONDS = 10;
@@ -26,7 +31,7 @@ const cliOAuthProvider = oauthProvider({
   loginPage: APPROVAL_URL,
   refreshTokenReuseInterval: REFRESH_TOKEN_REUSE_SECONDS,
   resourcePrivileges: () => false,
-  scopes: [STAFF_READ_SCOPE, "offline_access"],
+  scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE, "offline_access"],
 });
 
 /**

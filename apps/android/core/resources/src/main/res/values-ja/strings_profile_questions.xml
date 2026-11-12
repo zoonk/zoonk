@@ -9,12 +9,9 @@
   "profile_questions_address_title": "681eda92c42a26e80731eeea53b70b3b39633e8f580accf5368caf0651bb6a1d",
   "profile_questions_cap": "d53c70b37d98e52129481b1805214d325022d2b08769b8ed9dfc104f79218a95",
   "profile_questions_condition_note": "501c6125d895fab57aa884cad89a346bf60b11bb85487b4c9b491c3938a4150b",
-  "profile_questions_conditions_description": "611104615e72eb49fc373dac0cb014483bbdf41c0d68354582dd75568a83a284",
-  "profile_questions_conditions_next": "2eb498f72362aa3b1e981377242932da52b1e5d62fa7a039a148a2c0fcb94740",
+  "profile_questions_conditions_description": "776fff94dbe22bab2a512ab95a0873087d39257e189acd71020f8312387c4818",
   "profile_questions_conditions_saved": "82d6ffa267e60758d035ab23b19a3da241abc942d04aa4d45613e295a5b3388f",
   "profile_questions_conditions_title": "699c506c665fa9ab545d11496be345aeb1786479ad8879bcb2541a9cce1a57f1",
-  "profile_questions_consent": "d171f99fa31a192254204edf2189cbee6e36db2286ae117e9bd550c4fd377880",
-  "profile_questions_consent_help": "dfa881bc2559bd90da72c5a6d264212087a911e2aa900576e3e046f14f3fa3fa",
   "profile_questions_description": "79c3dbfa373a2988476187c57ffc1f408071828a2b8f39ff84d204cf631cb8fd",
   "profile_questions_earlier_answer": "d49b1cf755b54bd53204342560383dc0dd42b8c65b7492f980fd037bb014534a",
   "profile_questions_for_fun": "ef909e3db5f0e38b4e291c231ed27e3d67dd1bcddedca291653e3da8e46b2882",
@@ -127,11 +124,8 @@
     <string name="profile_questions_activities_favorites">ほかに好きなことはありますか？（任意）</string>
     <string name="profile_questions_activities_placeholder">例：パン作り、車、天文学</string>
     <string name="profile_questions_conditions_title">この中にあてはまるものはありますか？</string>
-    <string name="profile_questions_conditions_description">回答は任意です。保存を選ばない限り、回答は保存されません。</string>
-    <string name="profile_questions_conditions_next">回答は任意です。次の画面で、役立つことの多い工夫を提案します。保存を選ばない限り、回答は保存されません。</string>
+    <string name="profile_questions_conditions_description">任意です。選んだ内容はプロフィールに保存され、相棒がそれに合わせてサポートします。設定からいつでも削除できます。</string>
     <string name="profile_questions_condition_note">知っておいてほしいことはありますか？</string>
-    <string name="profile_questions_consent">プロフィールに保存する</string>
-    <string name="profile_questions_consent_help">Zoonkはこの情報を使って、学習の進め方を今後も継続して調整します。ほかの人に教えたり、レッスンの例に使ったりすることはありません。設定でいつでも削除できます。</string>
     <string name="profile_questions_support_title">どんな工夫があると学びやすいですか？</string>
     <string name="profile_questions_support_description">役立つものをいくつでも選べます。特性に名前がついていなくても、診断を受けていなくても大丈夫です。</string>
     <string name="profile_questions_address_title">どんな表現で話しかけてほしいですか？</string>

@@ -1,3 +1,4 @@
+import { STAFF_PROPOSE_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
@@ -39,6 +40,15 @@ describe(decideCliLogin, () => {
     await expect(redeemCliLogin({ deviceCode: claimed.deviceCode })).rejects.toMatchObject({
       body: { error: "access_denied" },
     });
+  });
+
+  it("turns down a login that asks only to propose fixes for an account without staff access", async () => {
+    const learner = await userFixture();
+    const claimed = await claimAs(learner, [STAFF_PROPOSE_SCOPE, "offline_access"]);
+
+    await expect(
+      decideCliLogin({ decision: "approve", userCode: claimed.userCode }),
+    ).resolves.toStrictEqual({ status: "needsStaff" });
   });
 
   it("lets anyone approve a login that doesn't ask for staff data", async () => {

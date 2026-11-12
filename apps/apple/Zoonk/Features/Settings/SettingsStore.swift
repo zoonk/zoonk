@@ -105,11 +105,21 @@ final class SettingsStore {
     }.value
   }
 
-  func updatePreferences(_ update: PreferencesUpdate) async {
-    _ = await save(update.applied, in: preferenceSaves, changing: [.learningProfile]) { [api] in
+  /// False when it didn't save.
+  @discardableResult
+  func updatePreferences(_ update: PreferencesUpdate) async -> Bool {
+    let result = await save(update.applied, in: preferenceSaves, changing: [.learningProfile]) {
+      [api] in
       try await api.updatePreferences(token: $0.bearerToken, update)
     } confirm: {
       update.copied(from: $1, to: $0)
+    }
+
+    switch result {
+    case .done, .obsolete:
+      return true
+    case .failed, nil:
+      return false
     }
   }
 

@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type CourseOutlineParams } from "@zoonk/ai/tasks/curriculum/course-outline";
 import { type CourseOutlineExpected } from "./scorer";
 
@@ -10,7 +10,7 @@ const SHARED_EXPECTATIONS = `
   - Don't evaluate JSON formatting
 `;
 
-export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] = [
+export const TEST_CASES: TestCase<CourseOutlineExpected, OptionalCountry<CourseOutlineParams>>[] = [
   {
     expectations: `
       - MUST be in US English
@@ -78,6 +78,23 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
     `,
     id: "pt-economia-overview",
     userInput: { courseTitle: "Economia", language: "pt", level: "overview" },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese (você, ônibus, celular), even though the course is set in Portugal
+      - Beginner band of personal finance for someone living in Portugal: a budget, saving, debt and credit, taxes on income (IRS), Segurança Social and retirement, saving and investing products
+      - Every amount and example uses euros and Portugal's own institutions and rules (IRS, Segurança Social, NIF, Multibanco or MB WAY, subsídio de férias and de Natal): never reais, Pix, FGTS, INSS, 13º salário or Imposto de Renda
+      - No tax rate or legal number is stated as current fact unless it's certain; staying general is fine
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-personal-finance-portugal-beginner",
+    userInput: {
+      country: "PT",
+      courseTitle: "Finanças pessoais",
+      language: "pt",
+      level: "beginner",
+    },
   },
   {
     expectations: `

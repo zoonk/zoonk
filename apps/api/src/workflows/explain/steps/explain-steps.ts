@@ -118,6 +118,7 @@ export async function writeExplanationStep({
 
   const { data, provenance } = await generateQuickExplanation({
     analytics: toContentAnalytics({ analytics, scope: { ownerId }, workflowRunId }),
+    country: goal.country,
     language: goal.language,
     question: goal.question,
   });

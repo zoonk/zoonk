@@ -8,6 +8,8 @@ import { type SpokenPracticeWord } from "./practice-words";
 type SpokenStep = {
   id: string;
   learnerLanguage: string;
+  /** The step's content as stored, which a new explanation is saved against. */
+  storedContent: unknown;
   targetLanguage: string;
   targetText: string;
 };
@@ -84,7 +86,8 @@ export async function getSpokenAnswerExplanation({
     language,
     provenance: data.provenance,
     target,
+    targetContent: step.storedContent,
   });
 
-  return saved.explanation;
+  return saved?.explanation ?? null;
 }

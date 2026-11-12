@@ -28,7 +28,14 @@ async function findDraft(prompt: string) {
 
 const QUANTUM: Understanding = {
   followUps: [],
-  goals: [{ kind: "learn", subject: "quantum physics", title: "Understand quantum physics" }],
+  goals: [
+    {
+      countryDependent: false,
+      kind: "learn",
+      subject: "quantum physics",
+      title: "Understand quantum physics",
+    },
+  ],
   route: "goals",
 };
 

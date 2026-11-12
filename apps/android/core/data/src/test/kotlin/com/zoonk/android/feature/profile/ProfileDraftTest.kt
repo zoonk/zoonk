@@ -1,13 +1,11 @@
 package com.zoonk.android.feature.profile
 
 import com.zoonk.api.ApiJson
-import com.zoonk.api.ApiRequestJson
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.ProfileAnswerInput
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
 import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
@@ -30,10 +28,6 @@ class ProfileDraftTest {
             val view = ApiJson.decodeFromJsonElement<ProfileQuestionView>(fixture.jsonObject.getValue("view"))
             val expected = fixture.jsonObject.getValue("answer")
             val draft = ProfileDraft.from(view)
-            if (draft.declined) {
-                val declineRow = if (view.id in listOf(ProfileQuestion.WORK, ProfileQuestion.CONDITIONS)) "prefer" else "none"
-                assertEquals(view.id.value, declineRow, draft.declineChoice)
-            }
             assertEquals(view.id.value, ApiJson.decodeFromJsonElement<ProfileAnswerInput>(expected), draft.input(view.id, true))
             assertEquals(
                 view.id.value,
@@ -44,9 +38,9 @@ class ProfileDraftTest {
     }
 
     @Test
-    fun emptyConditionsNeedAChoice() {
+    fun conditionsContinueOnlyWithAPick() {
         assertFalse(ProfileDraft().valid(ProfileQuestion.CONDITIONS))
-        assertTrue(ProfileDraft(declined = true).valid(ProfileQuestion.CONDITIONS))
+        assertFalse(ProfileDraft(declined = true).valid(ProfileQuestion.CONDITIONS))
         assertTrue(ProfileDraft(picks = listOf("adhd")).valid(ProfileQuestion.CONDITIONS))
     }
 
@@ -66,12 +60,23 @@ class ProfileDraftTest {
     }
 
     @Test
-    fun unconsentedConditionsNeverEnterEitherRequest() {
-        val draft = ProfileDraft(picks = listOf("adhd", "other"), text = "Private note")
-        val expected = ApiJson.parseToJsonElement("""{"question":"conditions","answer":{"declined":true}}""")
+    fun pickedConditionsAreSentWithConsentAndNoPicksAsADecline() {
+        val draft = ProfileDraft(picks = listOf("adhd", "other"), text = " Private note ")
+        val expected =
+            ApiJson.parseToJsonElement(
+                """{"question":"conditions","answer":{"declined":false,"consented":true,""" +
+                    """"conditions":[{"condition":"adhd"},{"condition":"other","note":"Private note"}]}}""",
+            )
         assertEquals(expected, draft.body(ProfileQuestion.CONDITIONS, true))
-        assertEquals(expected, ApiRequestJson.encodeToJsonElement(draft.input(ProfileQuestion.CONDITIONS, true)))
-        assertEquals(expected, ApiRequestJson.encodeToJsonElement(draft.onboardingInput(ProfileQuestion.CONDITIONS, true)))
+        assertEquals(ApiJson.decodeFromJsonElement<ProfileAnswerInput>(expected), draft.input(ProfileQuestion.CONDITIONS, true))
+        assertEquals(
+            ApiJson.decodeFromJsonElement<OnboardingAnswerInput>(expected),
+            draft.onboardingInput(ProfileQuestion.CONDITIONS, true),
+        )
+        assertEquals(
+            ApiJson.parseToJsonElement("""{"question":"conditions","answer":{"declined":true}}"""),
+            draft.copy(picks = emptyList()).body(ProfileQuestion.CONDITIONS, true),
+        )
     }
 
     @Test

@@ -38,6 +38,8 @@ async function findChapterCandidateIds({
   return findRankedIds({
     document: CHAPTER_DOCUMENT,
     filters: sql`c.language = ${request.language}
+      AND (SELECT home.country FROM courses home WHERE home.id = c.home_course_id)
+        IS NOT DISTINCT FROM (SELECT asking.country FROM courses asking WHERE asking.id = ${request.course.id}::uuid)
       AND c.level = ${request.level}::"CourseLevel"
       AND c.visibility = 'public'
       AND c.target_language IS NOT DISTINCT FROM ${request.targetLanguage}

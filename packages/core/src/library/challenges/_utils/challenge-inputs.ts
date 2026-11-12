@@ -11,7 +11,7 @@ export type ChallengeCaseInputs = Omit<
 type ChallengeLesson = Pick<Lesson, "language" | "level" | "title"> & {
   homeChapter: {
     description: string | null;
-    homeCourse: { title: string } | null;
+    homeCourse: { country: string | null; title: string } | null;
     title: string;
   } | null;
 };
@@ -28,6 +28,7 @@ export function toChallengeCaseInputs({
   return {
     chapterDescription: chapter?.description ?? null,
     chapterTitle: chapter?.title ?? lesson.title,
+    country: chapter?.homeCourse?.country ?? null,
     courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? lesson.title,
     language: lesson.language,
     level: lesson.level,

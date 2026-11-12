@@ -1,4 +1,4 @@
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import { type WriteLessonDraftParams, writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { LESSON_WRITER_SCORE_CATEGORIES } from "./score-categories";
 import { checkLessonWriterOutput, scoreLessonWriter } from "./scorer";
@@ -7,13 +7,15 @@ import { TEST_CASES } from "./test-cases";
 type LessonWriterOutput = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 
 export const lessonWriterTask: Task<
-  Omit<WriteLessonDraftParams, "analytics" | "model" | "reasoning" | "useFallback">,
+  OptionalCountry<
+    Omit<WriteLessonDraftParams, "analytics" | "model" | "reasoning" | "useFallback">
+  >,
   LessonWriterOutput
 > = {
   codeChecks: checkLessonWriterOutput,
   description:
     "Write a lesson from its spec: a hook, the idea in small screens, checks with a reason per option, worked examples, calculations as data, planned activities, an application and the summary card",
-  generate: writeLessonDraft,
+  generate: (input) => writeLessonDraft({ ...input, country: input.country ?? null }),
   id: "lesson-writer",
   name: "Lesson Writer",
   score: scoreLessonWriter,

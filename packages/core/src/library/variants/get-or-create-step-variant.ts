@@ -7,6 +7,7 @@ import {
 import { type StepVariant, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { createOrFindByIdentity, toProvenanceData } from "../_utils/library-rows";
+import { getLessonCountry } from "../content-country";
 import { STEP_CONTRACT_VERSION } from "../steps/contract/step-contract";
 import { toVariantContent } from "./_utils/variant-content";
 import { holdBackStepVariantDraft, reserveStepVariantGeneration } from "./variant-generation";
@@ -34,7 +35,16 @@ function isVariantScreen(kind: string): kind is VariantScreenKind {
 function loadStep(stepId: string) {
   return prisma.step.findUnique({
     include: {
-      lesson: { select: { contentStatus: true, language: true, level: true, title: true } },
+      lesson: {
+        select: {
+          contentStatus: true,
+          homeChapter: { select: { homeCourse: { select: { country: true } } } },
+          language: true,
+          level: true,
+          title: true,
+        },
+      },
+      skill: { select: { country: true } },
     },
     where: { id: stepId },
   });
@@ -63,6 +73,7 @@ async function generateVariantContent({
 
   const { data, provenance } = await generateStepVariant({
     analytics,
+    country: getLessonCountry({ course: lesson.homeChapter?.homeCourse, skill: step.skill }),
     key,
     language: lesson.language,
     lessonTitle: lesson.title,

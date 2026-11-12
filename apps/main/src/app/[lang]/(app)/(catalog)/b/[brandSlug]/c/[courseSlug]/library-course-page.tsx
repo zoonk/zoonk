@@ -37,6 +37,7 @@ import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
+import { ContentCountryLine } from "./content-country-line";
 import { CourseFit } from "./course-fit";
 import { CourseStart } from "./course-start";
 import { LibraryCourseOutline } from "./library-course-outline";
@@ -75,6 +76,7 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
 }
 
 function CourseHero({
+  contentCountry,
   course,
   exam,
   isOtherLanguage,
@@ -84,6 +86,7 @@ function CourseHero({
   subject,
   tryId,
 }: {
+  contentCountry: LibraryOutline["contentCountry"];
   course: Course;
   exam: CoursePlanExample["exam"];
   isOtherLanguage: boolean;
@@ -112,6 +115,8 @@ function CourseHero({
       </h1>
 
       {promise && <p className={HERO_LEAD_CLASS}>{promise}</p>}
+
+      <ContentCountryLine country={contentCountry} />
 
       <PlanLine />
 
@@ -273,6 +278,7 @@ export async function LibraryCoursePage({
             <CourseFirstScreen
               hero={
                 <CourseHero
+                  contentCountry={outline.contentCountry}
                   course={course}
                   exam={plan.exam}
                   isOtherLanguage={isOtherLanguage}

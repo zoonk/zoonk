@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type QuickExplanation,
   type QuickExplanationParams,
@@ -23,10 +23,13 @@ function checkOutput(output: string): CodeCheckResult {
   return { judgedOutput: output, passed: problems.length === 0 ? 1 : 0, problems, total: 1 };
 }
 
-export const quickExplanationTask: Task<QuickExplanationParams, QuickExplanation> = {
+export const quickExplanationTask: Task<
+  OptionalCountry<QuickExplanationParams>,
+  QuickExplanation
+> = {
   description:
     "Answer a question in 4 to 6 short screens with one check, a 'Now you know' recap and a 'Want to go further?' hint: code checks, then a judge",
-  generate: generateQuickExplanation,
+  generate: (input) => generateQuickExplanation({ ...input, country: input.country ?? null }),
   id: "quick-explanation",
   latencyBudget: QUICK_EXPLANATION_LATENCY_BUDGET,
   name: "Quick Explanation",

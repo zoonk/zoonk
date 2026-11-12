@@ -411,6 +411,39 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese
+      - A learner wants to organize their personal finances; the goal names no country
+      - Every course whose subject is a country's money system, taxes, retirement, credit rules or public institutions (personal finance, taxes, investing products) has \`countrySpecific\` true
+      - A course that's the same everywhere, such as basic financial math with percentages and interest, has \`countrySpecific\` false
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-personal-finance-country-specific-courses",
+    userInput: {
+      goal: "Organizar as finanças pessoais",
+      goalKind: "learn",
+      language: "pt",
+      ownLevel: "none",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - Statistics is the same in every country: every course has \`countrySpecific\` false, supporting math courses included
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-statistics-general-courses",
+    userInput: {
+      goal: "Learn statistics for data analysis",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "basic",
+      purpose: "work",
+    },
+  },
+  {
+    expectations: `
       - MUST be in US English
       - An adult beginner wants to study economics in depth
       - Begin with economic choices, scarcity, opportunity cost and everyday markets, rather than a separate mathematics or statistics course
