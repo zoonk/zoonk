@@ -462,12 +462,15 @@ final class MindMapsStore {
     return listed && read
   }
 
+  /// A read already on its way may predate what this one is for (a map started, a status read), so
+  /// it's dropped rather than joined.
   private static func reread<Value>(_ resource: Resource<Value>?) async -> Bool {
     guard let resource, resource.value != nil else {
       return true
     }
 
     let revision = resource.revision
+    resource.invalidate()
     await resource.refresh()
     return resource.revision != revision
   }

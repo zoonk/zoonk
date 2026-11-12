@@ -213,6 +213,27 @@ class ResourceTest {
         }
 
     @Test
+    fun aLoadAnInvalidationInterruptsWaitsForTheNewRead() =
+        runTest {
+            val cache = cache(FakeSession(ana))
+            var reads = 0
+            val firstRead = CompletableDeferred<Unit>()
+            val resource =
+                cache.resource<Int>(Audience.SignedIn, setOf(DataDomain.UserProgress)) {
+                    if (++reads == 1) firstRead.await()
+                    reads
+                }
+
+            val load = launch { resource.load() }
+            runCurrent()
+            cache.invalidate(setOf(DataDomain.UserProgress))
+            load.join()
+
+            assertEquals(LoadState.Loaded(2), resource.state.value)
+            assertEquals(2, reads)
+        }
+
+    @Test
     fun mutationsInvalidateOnSuccessAndAreObsoleteAfterASessionChange() =
         runTest {
             val session = FakeSession(ana)
