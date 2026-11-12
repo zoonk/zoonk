@@ -48,6 +48,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,11 +70,13 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -436,17 +439,14 @@ private fun SlideView(
         }
 
         is Slide.Gone -> {
-            Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    stringResource(R.string.mindmaps_map_gone),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            SlideMessage(stringResource(R.string.mindmaps_map_gone))
         }
 
+        // Outlined, so Next stays the screen's one filled button.
         is Slide.Failed -> {
-            LoadFailedMessage(onRetry = slide.retry)
+            SlideMessage(stringResource(R.string.mindmaps_unreachable)) {
+                OutlinedButton(onClick = slide.retry) { Text(stringResource(R.string.mindmaps_try_again)) }
+            }
         }
 
         is Slide.Chapter -> {
@@ -455,6 +455,29 @@ private fun SlideView(
 
         is Slide.Lesson -> {
             slide.lesson.map?.let { LessonSlide(StepContent.Map(it, slide.lesson.title)) }
+        }
+    }
+}
+
+/** A slide with only something to say, and maybe an [action] under it, in the middle of the page before an unfolded book's fold. */
+@Composable
+private fun SlideMessage(
+    text: String,
+    action: (@Composable () -> Unit)? = null,
+) {
+    BeforeFold(Modifier.fillMaxSize()) { beforeFold ->
+        Column(
+            beforeFold.fillMaxSize().padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            action?.invoke()
         }
     }
 }
