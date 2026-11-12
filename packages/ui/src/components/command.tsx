@@ -33,20 +33,26 @@ import type * as React from "react";
 
 const Command = Autocomplete.Root;
 
+/** `overNested` draws the backdrop Base UI skips for a dialog opened inside another one. */
 function CommandDialog({
   children,
   className,
   finalFocus,
+  overNested,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   className?: string;
   children: React.ReactNode;
   finalFocus?: React.ComponentProps<typeof DialogPopup>["finalFocus"];
+  overNested?: boolean;
 }) {
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
+        <DialogOverlay
+          className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50"
+          forceRender={overNested}
+        />
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}

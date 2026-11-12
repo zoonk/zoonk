@@ -140,6 +140,7 @@ export function CountryPicker({
   onOpenChange,
   onPick,
   open,
+  overNested,
   suggested,
   title,
   value,
@@ -151,6 +152,8 @@ export function CountryPicker({
   onOpenChange: (open: boolean) => void;
   onPick: (country: CountryChoice | null) => void;
   open: boolean;
+  /** Opened from inside another dialog, so it dims that one too. */
+  overNested?: boolean;
   suggested: readonly SuggestedCountry[];
   title: string;
   value: string | null;
@@ -190,7 +193,7 @@ export function CountryPicker({
   };
 
   return (
-    <CommandDialog onOpenChange={changeOpen} open={open}>
+    <CommandDialog onOpenChange={changeOpen} open={open} overNested={overNested}>
       <CommandDialogTitle className="not-sr-only px-4 pt-4 text-base font-semibold sm:px-4 sm:pt-3.5 sm:pb-1">
         {title}
       </CommandDialogTitle>
