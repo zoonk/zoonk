@@ -32,7 +32,14 @@ async function storeUnderstanding(
 
 const QUANTUM: Understanding = {
   followUps: [],
-  goals: [{ countryDependent: false, kind: "learn", subject: "quantum physics", title: "Understand quantum physics" }],
+  goals: [
+    {
+      countryDependent: false,
+      kind: "learn",
+      subject: "quantum physics",
+      title: "Understand quantum physics",
+    },
+  ],
   route: "goals",
 };
 

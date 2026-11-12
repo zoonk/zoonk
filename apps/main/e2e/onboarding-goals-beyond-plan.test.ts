@@ -12,14 +12,13 @@ import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
 const ENGLISH = {
-  countryDependent: false,
   kind: "language",
   subject: "English",
   targetLanguage: "en",
   title: "Learn English",
 };
 
-const STATISTICS = { countryDependent: false, kind: "learn", subject: "Statistics", title: "Learn statistics" };
+const STATISTICS = { kind: "learn", subject: "Statistics", title: "Learn statistics" };
 
 const LOCKED_NOTE = /Following more goals at once comes with Plus/u;
 
@@ -51,8 +50,8 @@ async function typeCard({ page, userId }: { page: Page; userId: string }) {
       dailyMinutes: 30,
       followUps: [],
       goals: [
-        { ...ENGLISH, kind: "language", ownLevel: "basic" },
-        { ...STATISTICS, kind: "learn", ownLevel: "none" },
+        { ...ENGLISH, countryDependent: false, kind: "language", ownLevel: "basic" },
+        { ...STATISTICS, countryDependent: false, kind: "learn", ownLevel: "none" },
       ],
       route: "goals",
     },

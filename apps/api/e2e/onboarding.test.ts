@@ -54,7 +54,14 @@ test.describe("Onboarding API", () => {
       goal,
       result: {
         followUps: [],
-        goals: [{ countryDependent: false, kind: "learn", subject: "Quantum physics", title: "Understand quantum physics" }],
+        goals: [
+          {
+            countryDependent: false,
+            kind: "learn",
+            subject: "Quantum physics",
+            title: "Understand quantum physics",
+          },
+        ],
         route: "goals",
         studyTime: "20:00",
       },

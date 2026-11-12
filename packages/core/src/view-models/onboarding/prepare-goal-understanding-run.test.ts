@@ -127,7 +127,15 @@ describe(prepareGoalUnderstandingRun, () => {
       goal: prompt,
       result: {
         followUps: [],
-        goals: [{ countryDependent: false, examName: "TOEFL", kind: "exam", subject: "English", title: "Pass the TOEFL" }],
+        goals: [
+          {
+            countryDependent: false,
+            examName: "TOEFL",
+            kind: "exam",
+            subject: "English",
+            title: "Pass the TOEFL",
+          },
+        ],
         route: "goals",
       },
       userId: user.id,
