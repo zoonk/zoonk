@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { adaptPlanFromMock } from "../../exams/mocks/adapt-plan-from-mock";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
 import {
@@ -15,6 +15,7 @@ import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-stat
 import { proposePlanChange } from "../../plans/propose-plan-change";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../_test-utils/exam-test-goal";
+import * as testSitting from "./_utils/test-sitting";
 import { getGoalPlacement } from "./get-goal-placement";
 
 async function setup(
@@ -196,6 +197,27 @@ describe("weekly reviews of a system-owned focus", () => {
     const { goal, plan, user } = await setup("learner");
     await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
     await expect(proposals(plan.id)).resolves.toHaveLength(0);
+  });
+
+  it("does not recount the test while a week-old proposal is waiting", async () => {
+    const { goal, plan, user } = await setup();
+    await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+    const [waiting] = await proposals(plan.id);
+    expect(waiting).toBeDefined();
+
+    await prisma.planChange.update({
+      data: { createdAt: new Date(Date.now() - 8 * MS_PER_DAY) },
+      where: { id: waiting!.id },
+    });
+
+    const summary = vi.spyOn(testSitting, "saveTestSummary");
+
+    try {
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      expect(summary).not.toHaveBeenCalled();
+    } finally {
+      summary.mockRestore();
+    }
   });
 
   it("keeps one waiting proposal under concurrent settlements and never repeats a declined set", async () => {

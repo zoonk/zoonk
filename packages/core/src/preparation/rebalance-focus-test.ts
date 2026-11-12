@@ -38,7 +38,7 @@ export async function rebalanceFocusTest({
 
   const last = await prisma.planChange.findFirst({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    select: { createdAt: true },
+    select: { createdAt: true, status: true },
     where: { payload: { equals: FOCUS_TEST_SOURCE, path: ["source"] }, planId: plan.id },
   });
 
@@ -49,7 +49,7 @@ export async function rebalanceFocusTest({
     ),
   );
 
-  if (!isRebalanceDue({ lastRebalanceAt: since, now })) {
+  if (last?.status === "proposed" || !isRebalanceDue({ lastRebalanceAt: since, now })) {
     return;
   }
 
