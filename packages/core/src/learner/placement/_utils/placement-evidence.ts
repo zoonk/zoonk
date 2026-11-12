@@ -14,8 +14,25 @@ import {
 
 const MAX_EVIDENCE = 1000;
 
+const ATTEMPT_EVIDENCE_SELECT = {
+  answer: true,
+  answeredAt: true,
+  durationMs: true,
+  id: true,
+  isCorrect: true,
+  isPlacement: true,
+  item: { select: { format: true } },
+  itemId: true,
+  localDate: true,
+  mockExamId: true,
+  skillId: true,
+  stepId: true,
+  studySessionId: true,
+} as const;
+
 type AttemptRow = {
   answer: unknown;
+  id: string;
   answeredAt: Date;
   durationMs: number;
   isCorrect: boolean;
@@ -118,25 +135,12 @@ export async function loadEvidence({
   tx?: TransactionClient;
   userId: string;
 }) {
-  const [attempts, testSkills, sittingAnswers] = await readDatabaseFacts(
+  const [attempts, testSkills, sittingAnswers, testAnswers] = await readDatabaseFacts(
     tx,
     () =>
       tx.attempt.findMany({
         orderBy: { answeredAt: "desc" },
-        select: {
-          answer: true,
-          answeredAt: true,
-          durationMs: true,
-          isCorrect: true,
-          isPlacement: true,
-          item: { select: { format: true } },
-          itemId: true,
-          localDate: true,
-          mockExamId: true,
-          skillId: true,
-          stepId: true,
-          studySessionId: true,
-        },
+        select: ATTEMPT_EVIDENCE_SELECT,
         take: MAX_EVIDENCE,
         where: { skillId: { in: skillIds }, userId },
       }),
@@ -155,9 +159,19 @@ export async function loadEvidence({
             },
           })
         : [],
+    () =>
+      tx.attempt.findMany({
+        select: ATTEMPT_EVIDENCE_SELECT,
+        where: { focusTestId: { not: null }, skillId: { in: skillIds }, userId },
+      }),
   );
 
-  const chronological = attempts.toReversed();
+  const recentIds = new Set(attempts.map((attempt) => attempt.id));
+
+  const chronological = [
+    ...attempts,
+    ...testAnswers.filter((attempt) => !recentIds.has(attempt.id)),
+  ].toSorted((a, b) => a.answeredAt.getTime() - b.answeredAt.getTime() || a.id.localeCompare(b.id));
 
   return {
     attempts: chronological,
