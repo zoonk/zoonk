@@ -25,7 +25,7 @@ import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
 import { type StudyAnswerInput, type StudyAnswerResult } from "./contract";
 import { shouldSuggestPause } from "./pause-suggestion";
 
-/** Placement misses can restore lessons skipped after a single correct answer, even when practice confirmed once. */
+/** Misses restore lessons only for a topic previously skipped as known, even after practice confirmed it. */
 async function isRelearnMiss({
   isCorrect,
   item,
