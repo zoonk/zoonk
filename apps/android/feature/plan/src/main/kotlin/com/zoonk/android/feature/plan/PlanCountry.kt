@@ -33,8 +33,10 @@ import com.zoonk.android.feature.country.CountrySheet
 import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.country.lessonLanguageLine
 import com.zoonk.android.ui.components.AlertDialog
-import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.GoalContentCountry
@@ -188,6 +190,7 @@ internal fun rememberCountryRebuild(
 
 private val REBUILD_REFRESH = 15.seconds
 
+/** Preparing and failed are cards above the roadmap; ready is one quiet line, as main's. */
 @Composable
 internal fun CountryRebuildNotice(
     rebuild: CountryRebuild,
@@ -195,48 +198,43 @@ internal fun CountryRebuildNotice(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
+    val announced = modifier.semantics { liveRegion = LiveRegionMode.Polite }
+    if (rebuild == CountryRebuild.Ready) {
+        Text(
+            stringResource(R.string.country_rebuild_ready),
+            announced,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        return
+    }
+    val failed = rebuild == CountryRebuild.Failed
+    OutlinedCard(announced.fillMaxWidth()) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            when (rebuild) {
-                CountryRebuild.Preparing -> {
-                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                }
-
-                CountryRebuild.Ready -> {
-                    Icon(painterResource(R.drawable.ic_check), contentDescription = null)
-                }
-
-                CountryRebuild.Failed -> {
-                    Icon(
-                        painterResource(R.drawable.ic_warning),
-                        contentDescription = null,
-                        tint = MaterialTheme.zoonk.warning,
-                    )
-                }
+            if (failed) {
+                Icon(painterResource(R.drawable.ic_warning), contentDescription = null, tint = MaterialTheme.zoonk.warning)
+            } else {
+                CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                val title =
-                    when (rebuild) {
-                        CountryRebuild.Preparing -> R.string.country_rebuild_title
-                        CountryRebuild.Ready -> R.string.country_rebuild_ready
-                        CountryRebuild.Failed -> R.string.country_rebuild_failed_title
-                    }
-                Text(stringResource(title), style = MaterialTheme.typography.titleSmall)
-                val body =
-                    when (rebuild) {
-                        CountryRebuild.Preparing -> R.string.country_rebuild_body
-                        CountryRebuild.Ready -> null
-                        CountryRebuild.Failed -> R.string.country_rebuild_failed_body
-                    }
-                body?.let {
-                    Text(
-                        stringResource(it),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-                if (rebuild == CountryRebuild.Failed) {
-                    Button(onClick = onRetry, busy = retrying, enabled = !retrying, modifier = Modifier.padding(top = 8.dp)) {
+                Text(
+                    stringResource(if (failed) R.string.country_rebuild_failed_title else R.string.country_rebuild_title),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    stringResource(if (failed) R.string.country_rebuild_failed_body else R.string.country_rebuild_body),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (failed) {
+                    OutlinedButton(
+                        onClick = onRetry,
+                        busy = retrying,
+                        enabled = !retrying,
+                        size = ButtonSize.Small,
+                        leadingIcon = { ButtonIcon(R.drawable.ic_refresh) },
+                        modifier = Modifier.padding(top = 8.dp),
+                    ) {
                         Text(stringResource(R.string.generation_try_again))
                     }
                 }
