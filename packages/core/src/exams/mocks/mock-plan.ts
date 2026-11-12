@@ -316,6 +316,7 @@ export function listMockClocks(
   }));
 }
 
+/** Read from the first day with something to ask at this length. */
 export function getWeeklyMockMinutes({
   fullLength,
   structure,
@@ -323,7 +324,11 @@ export function getWeeklyMockMinutes({
   fullLength: boolean;
   structure: ExamStructure | null;
 }): number {
-  return getMockClock({ day: getMockDays(structure)[0] ?? null, fullLength, structure });
+  const minutes = listMockClocks(structure).map((clock) =>
+    fullLength ? clock.fullMinutes : clock.minutes,
+  );
+
+  return minutes.find((clock) => clock > 0) ?? 0;
 }
 
 /** Includes both alternatives of routed modules; use `countPlannedQuestions` for the number actually answered. */

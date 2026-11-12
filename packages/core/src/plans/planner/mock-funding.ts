@@ -5,6 +5,7 @@ import {
   type MockClock,
   type MockIdentity,
   type MockResolution,
+  canHoldMock,
   getClockMinutes,
   getMockCursor,
   getNextMockDay,
@@ -14,6 +15,7 @@ import { toIsoDate } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type MovedEvent, type PlanSettings } from "./plan-state";
 import { type DayShape, type PlanDay } from "./schedule-units";
+import { reviewEvent } from "./short-exam-plan";
 
 export type MockFunding = PlanSettings["mockFunding"][number];
 
@@ -120,7 +122,12 @@ export function resolveIdentity({
     return { day: resolved.day, fullLength };
   }
 
-  const day = source && source.day !== undefined ? source.day : getNextMockDay({ after, clocks });
+  const saved = source?.day;
+
+  const day =
+    saved !== undefined && canHoldMock({ clocks, identity: { day: saved, fullLength } })
+      ? saved
+      : getNextMockDay({ after, clocks, fullLength });
 
   return { day, fullLength };
 }
@@ -184,6 +191,14 @@ function fundWindow({
     shapes[windowStart + offset] = fundDay({ minutes, shape: item.shape });
     return [{ date: toIsoDate(item.date), minutes }];
   });
+}
+
+function withoutEmptyMock({ date, day }: { date: Date; day: DayShape }): DayShape {
+  if (day.open || day.minutes <= 0) {
+    return day;
+  }
+
+  return { ...day, events: [...day.events, reviewEvent({ date, minutes: day.minutes })] };
 }
 
 export type FundedMocks = {
@@ -282,6 +297,11 @@ export function fundMocks({
           mock: identity,
         }
       : found;
+
+    if (mock.minutes <= PLAN_EPSILON) {
+      shapes[index] = withoutEmptyMock({ date: day.date, day: ownDay });
+      return;
+    }
 
     const past = [...carried, ...listPast({ saved: source, start: fundFrom })];
 

@@ -131,7 +131,7 @@ export function fundSpareMocks({
     const { spendable, window } = listReviewWindow({ date, fundedDays, result, windowStart });
     const needed = Math.max(0, minutes - review.minutes - sumContributions(past));
 
-    if (needed > spendable + PLAN_EPSILON) {
+    if (minutes <= PLAN_EPSILON || needed > spendable + PLAN_EPSILON) {
       result[index] = review;
       return;
     }

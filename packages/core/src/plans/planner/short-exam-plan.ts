@@ -89,7 +89,7 @@ export function mockEvent({
   };
 }
 
-function reviewEvent({ date, minutes }: { date: Date; minutes: number }): FixedEvent {
+export function reviewEvent({ date, minutes }: { date: Date; minutes: number }): FixedEvent {
   return {
     key: `review:${toIsoDate(date)}`,
     kind: "review",
