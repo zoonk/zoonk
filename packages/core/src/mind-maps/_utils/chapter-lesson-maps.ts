@@ -20,14 +20,12 @@ export type ChapterLessonMap = {
   visibility: LibraryVisibility;
 };
 
-/**
- * Shared content, before any viewer's filter: the chapter's written lessons whose published map
- * reads (never a staged one), in chapter order, with their icons. Maps written before ideas had
- * labels are included. A challenge is left out: its summary recaps a case, not a map the lesson
- * writer drew. The lesson-map counts, saves and the Saved tab read this too, so they match what
- * opens.
- */
-export async function getChapterLessonMaps(chapterId: string): Promise<ChapterLessonMap[]> {
+async function readChapterLessonMaps({
+  chapterId,
+}: {
+  chapterId: string;
+  version: number;
+}): Promise<ChapterLessonMap[]> {
   "use cache";
   cacheTag(getLibraryChapterCacheTag(chapterId));
 
@@ -80,4 +78,43 @@ export async function getChapterLessonMaps(chapterId: string): Promise<ChapterLe
         ]
       : [];
   });
+}
+
+/** Each app has its own cache and the API writes lessons, so a fresh key sees its writes. */
+async function findChapterVersions(chapterIds: readonly string[]): Promise<Map<string, number>> {
+  const placements = await prisma.chapterLesson.findMany({
+    select: { chapterId: true, lesson: { select: { updatedAt: true } } },
+    where: { chapterId: { in: [...chapterIds] } },
+  });
+
+  return placements.reduce(
+    (versions, { chapterId, lesson }) =>
+      versions.set(chapterId, Math.max(versions.get(chapterId) ?? 0, lesson.updatedAt.getTime())),
+    new Map<string, number>(),
+  );
+}
+
+/**
+ * Shared content, before any viewer's filter: each chapter's written lessons whose published map
+ * reads (never a staged one), in chapter order, with their icons. Maps written before ideas had
+ * labels are included. A challenge is left out: its summary recaps a case, not a map the lesson
+ * writer drew. The lesson-map counts, saves and the Saved tab read this too, so they match what
+ * opens.
+ */
+export async function getChapterLessonMaps(
+  chapterIds: readonly string[],
+): Promise<Map<string, ChapterLessonMap[]>> {
+  const versions = await findChapterVersions(chapterIds);
+
+  const loaded = await Promise.all(
+    chapterIds.map(
+      async (chapterId) =>
+        [
+          chapterId,
+          await readChapterLessonMaps({ chapterId, version: versions.get(chapterId) ?? 0 }),
+        ] as const,
+    ),
+  );
+
+  return new Map(loaded);
 }
