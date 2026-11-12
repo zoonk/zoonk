@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SMALL_CHEVRON_CLASS } from "../_components/list-group";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
@@ -84,7 +85,7 @@ function RoadmapCompact({
               })}
             </span>
             <span className="sr-only">{position.place}</span>
-            {onOpen && <ChevronRightIcon aria-hidden="true" className="size-3.5" />}
+            {onOpen && <ChevronRightIcon aria-hidden="true" className={SMALL_CHEVRON_CLASS} />}
           </span>
         </span>
       )}
@@ -97,7 +98,7 @@ function RoadmapCompact({
               total: phases.length,
             })}
           </span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 shrink-0" />
+          <ChevronRightIcon aria-hidden="true" className={SMALL_CHEVRON_CLASS} />
         </span>
       )}
     </>

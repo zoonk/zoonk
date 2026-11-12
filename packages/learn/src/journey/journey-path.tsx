@@ -2,8 +2,9 @@
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, FlagIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ListRowChevron } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
 import { DoneMark } from "../_components/status-mark";
 import { MarkedText } from "../_components/title-row";
@@ -98,8 +99,6 @@ function ChevronSpace() {
   return <span aria-hidden="true" className="size-4 shrink-0" />;
 }
 
-const HEADER_CHEVRON_CLASS = "text-muted-foreground/60 size-4 shrink-0 self-center";
-
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
@@ -185,7 +184,7 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
       {examHref ? (
         <LearnLink className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS)} href={examHref}>
           {content}
-          <ChevronRightIcon aria-hidden="true" className={HEADER_CHEVRON_CLASS} />
+          <ListRowChevron />
         </LearnLink>
       ) : (
         <div className={HEADER_CLASS}>

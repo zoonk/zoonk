@@ -49,7 +49,7 @@ In a list, a menu or the sidebar, every leading mark (icon, avatar, dot, goal ma
 
 ### E5. An icon and its text share a line
 
-An icon beside one line of text is centered on that line. Beside a title with one description line it does what its list does on every row (`ListRowIcon` centers on the row). Beside three or more lines it sits on the first.
+An icon beside one line of text is centered on that line. Beside a title with one description line it is centered on the row, as `ListRowIcon` draws it, level with the row's trailing value and chevron. Beside three or more lines it sits on the first.
 
 - **Check.** Icon center to the line's center: 1px or less. One choice per list.
 - **Usual break.** `items-center` on a wrapper whose text wraps to four lines in a narrow aside.

@@ -679,16 +679,20 @@
  * A bare button at a column's edge, or a bare icon there, lines up by its ink, not its box (craft
  * E2). `--edge-pull` is an icon button's padding plus the glyph's blank side, which Lucide draws
  * in 24ths of the icon: about 2 for most glyphs, more for the narrow ones below. A text button
- * names its own pull, its padding and border, as `--edge-text`.
+ * names its padding and border as `--edge-text`, and a narrow glyph at its edge adds its extra
+ * blank.
  */
 @utility edge {
   --glyph-blank: 2;
-  --edge-pull: var(
-    --edge-text,
-    calc(
-      (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
-        var(--icon-size, 1rem) * var(--glyph-blank) / 24
-    )
+  --edge-pull: calc(
+    var(
+        --edge-text,
+        calc(
+          (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
+            var(--icon-size, 1rem) / 12
+        )
+      ) +
+      var(--icon-size, 1rem) * (var(--glyph-blank) - 2) / 24
   );
 
   &:is(
