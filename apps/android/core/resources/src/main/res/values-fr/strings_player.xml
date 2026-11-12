@@ -39,12 +39,11 @@
   "player_challenge_much_higher": "e9ccd5a47969be53f24ab657dbcbc2defc5583290554d5e3f2de158f3ef65de0",
   "player_challenge_much_lower": "c31945da843dd242e64ee73540c521af344db7fed1e5ae024c9c943a161d17a2",
   "player_challenge_no_change": "a828f68efcfff311e819d3598b96b04b6a48cb5c0102339fee9910599b8e4057",
+  "player_challenge_phase_fix": "c132f840b8bbbfaec366a59fdf37e7c562026e45e98f94a5f484b4219744b7bd",
+  "player_challenge_phase_fix_line_1": "3c96ba7f5bace33cc12441694045aea28c311c3d89fd20689870252fb3d7a280",
   "player_challenge_phase_plan": "b38268c4d2bfe28c2d1bbdf62ef68c14ed93c70986eaefd7fc17e1d8a5f52277",
   "player_challenge_phase_plan_line_1": "580c665e8769468715cca383f5040913cdae9d94923d5bdc39ea0b8fe8a6d069",
   "player_challenge_phase_plan_line_2": "de1747e54589d53feddd9422d749be46445fbec3090218cc6caa736248c96c0f",
-  "player_challenge_phase_redraft": "a31c4fbcad1842ce570e9c2227bcfdcc753275f788bfe1944509ba6d603ad040",
-  "player_challenge_phase_redraft_line_1": "f42da9c3670670b7eccfe629c23fa8b7e663e0f6475733e5299ed320cf3abcd0",
-  "player_challenge_phase_redraft_line_2": "c93e2c0d2ecec5ca4d370ac6fc4980dc38339909fff9592f1626604d639c13b6",
   "player_challenge_phase_write": "fe3b9a31b66597ea182bf3c6fb629223b1b80d0d15bf6f2da24c8c41a95908cd",
   "player_challenge_phase_write_line_1": "129937f49f9aacaa1b7d493f5b29a6c1d6a6ff3067ce708b28be305d8d720d0a",
   "player_challenge_phase_write_line_2": "659ef2391c7f6e1b88dc9bbe745cbf0bc2316967728ffb0211a8bd276e0bf300",
@@ -322,10 +321,9 @@
     <string name="player_challenge_phase_write">Préparation du défi</string>
     <string name="player_challenge_phase_write_line_1">Préparation de la suite pour chaque choix…</string>
     <string name="player_challenge_phase_write_line_2">Vérification de chaque parcours possible…</string>
-    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
-    <string name="player_challenge_phase_redraft">Correction des problèmes détectés</string>
-    <string name="player_challenge_phase_redraft_line_1">Reprise de la planification du défi…</string>
-    <string name="player_challenge_phase_redraft_line_2">Reprise des passages incohérents…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
+    <string name="player_challenge_phase_fix">Correction des problèmes détectés</string>
+    <string name="player_challenge_phase_fix_line_1">Reprise des passages incohérents…</string>
     <string name="player_writing_note">Cela prend généralement quelques minutes. La leçon s’ouvrira ici dès qu’elle sera prête.</string>
     <string name="player_ready_while_waiting">À faire en attendant</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

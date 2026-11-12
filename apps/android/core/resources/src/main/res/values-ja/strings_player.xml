@@ -39,12 +39,11 @@
   "player_challenge_much_higher": "91433a0f9a8f7bbd4c5fac584edc549959c35a6322c4a76669385c86eb9656b2",
   "player_challenge_much_lower": "b7d33b8d7f3fac21fc683167476f4cc405d923ef1cd6af3e7ae5f756facf4cfc",
   "player_challenge_no_change": "e61c09647c22d195038da994c86a6b93d0681fd7f17134617061889b39c3a6c2",
+  "player_challenge_phase_fix": "4648200c8d1418812ef67b537716dda9c527783b6a81747ad24d877377b473fd",
+  "player_challenge_phase_fix_line_1": "87121f37db8c7e9724ae57fb0b3c82400d8bc72eaf12dba007d48e85e852c471",
   "player_challenge_phase_plan": "8d050c57a9be422f1d9cee0cc518733eb0ba00408e71f29d36fb325528795536",
   "player_challenge_phase_plan_line_1": "cb77a63e8eaec375d4ff6a2bb8a8836ff97273d652113b9ce7d6f1e7c137169b",
   "player_challenge_phase_plan_line_2": "d0ca7332ba08bda46931b23376ee30ef22c08e06b2fc0f06ead57ceb4def4d2c",
-  "player_challenge_phase_redraft": "10abc86e472f76358177cddb682d36d8d9fcac52fee8d61e427b2faaf86ce19c",
-  "player_challenge_phase_redraft_line_1": "24123653d9de7dc45a463e44e04d0c93d6a540088d61a6f98bbdc8dfb6f3671d",
-  "player_challenge_phase_redraft_line_2": "3e19c6049ac2eb5c828724a119b47d814b1958b70827c229097a266b838c35cd",
   "player_challenge_phase_write": "8c1951297076de2d98d06345bdff1875bbbbc59c76977bb60409e9f8a3b7b928",
   "player_challenge_phase_write_line_1": "3dadd88b436e87a03daadfc00b88d439655102550df74f0f0257f0ccb48997e3",
   "player_challenge_phase_write_line_2": "32838daa6bf745c8868c99244a7cddb379863fa18f7784a99080c689ed04571f",
@@ -318,10 +317,9 @@
     <string name="player_challenge_phase_write">チャレンジを作成しています</string>
     <string name="player_challenge_phase_write_line_1">選択肢ごとの展開を作成しています…</string>
     <string name="player_challenge_phase_write_line_2">すべての展開を確認しています…</string>
-    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
-    <string name="player_challenge_phase_redraft">チェックで見つかった問題を直しています</string>
-    <string name="player_challenge_phase_redraft_line_1">チャレンジの構成を考え直しています…</string>
-    <string name="player_challenge_phase_redraft_line_2">つじつまが合わない部分を作り直しています…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
+    <string name="player_challenge_phase_fix">チェックで見つかった問題を直しています</string>
+    <string name="player_challenge_phase_fix_line_1">つじつまが合わない部分を作り直しています…</string>
     <string name="player_writing_note">通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。</string>
     <string name="player_ready_while_waiting">待っている間にできること</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
