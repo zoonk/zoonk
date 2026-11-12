@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { cumulativeLayoutShift } from "./checks.mts";
 import { type LoadReport } from "./measure.mts";
+import { type PageWords, wordGrowth } from "./words.mts";
 
 const KILOBYTE = 1024;
 
@@ -19,7 +20,7 @@ type Loaded = Pick<
   | "serverCpuMs"
   | "shifts"
   | "viewport"
->;
+> & { words?: PageWords };
 
 const METRICS = [
   "lcpMs",
@@ -99,24 +100,36 @@ export function compareWithBaseline(
       return `${format(was, metric)} → ${format(measure(now, metric), metric)}`;
     });
 
-    return [now.path, now.viewport, ...cells];
+    return [
+      now.path,
+      now.viewport,
+      ...cells,
+      `${then?.words?.words ?? "–"} → ${now.words?.words ?? "–"}`,
+    ];
   });
 
   const findings = current.flatMap((now) => {
     const then = before.get(key(now));
 
-    if (!judged || !then) {
+    if (!then) {
       return [];
     }
 
-    return METRICS.filter((metric) =>
-      regressed(metric, measure(then, metric), measure(now, metric)),
-    ).map((metric) => ({
-      finding: {
-        check: "regression",
-        level: "warn" as const,
-        message: `${REGRESSION[metric].label} got worse: ${format(measure(then, metric), metric)} → ${format(measure(now, metric), metric)}`,
-      },
+    const regressions = judged
+      ? METRICS.filter((metric) =>
+          regressed(metric, measure(then, metric), measure(now, metric)),
+        ).map((metric) => ({
+          check: "regression",
+          level: "warn" as const,
+          message: `${REGRESSION[metric].label} got worse: ${format(measure(then, metric), metric)} → ${format(measure(now, metric), metric)}`,
+        }))
+      : [];
+
+    // Words don't depend on the build, the throttling or the machine, so they're always compared.
+    const grown = now.words ? wordGrowth(then.words, now.words) : [];
+
+    return [...regressions, ...grown].map((finding) => ({
+      finding,
       path: now.path,
       viewport: now.viewport,
     }));
@@ -124,7 +137,7 @@ export function compareWithBaseline(
 
   return {
     findings,
-    header: ["Page", "Screen", ...METRICS.map((metric) => REGRESSION[metric].label)],
+    header: ["Page", "Screen", ...METRICS.map((metric) => REGRESSION[metric].label), "words"],
     rows,
     sameSettings,
   };
