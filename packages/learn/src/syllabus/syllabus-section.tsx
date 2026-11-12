@@ -13,7 +13,13 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import {
+  PageSection,
+  PageSectionFooter,
+  PageSectionHeader,
+  PageSectionTitle,
+} from "../_components/page";
+import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
 import { SharedExamsNote, useAlsoIn } from "./shared-exams";
@@ -140,18 +146,8 @@ function getGroupId(index: number): string {
   return `${SECTION_TITLE_ID}-group-${index}`;
 }
 
-function GroupHeading({
-  document,
-  fromMaterial,
-  group,
-  id,
-}: {
-  document: SyllabusView["examDocument"];
-  fromMaterial: boolean;
-  group: SubjectGroup<SyllabusSectionSubject>;
-  id: string;
-}) {
-  const name = useGroupName({ document, fromMaterial, group });
+function GroupHeading({ group, id }: { group: SubjectGroup<SyllabusSectionSubject>; id: string }) {
+  const name = useGroupName(group);
 
   if (!name) {
     return null;
@@ -176,6 +172,7 @@ export function SyllabusSection({
   subjectHref: (key: string) => string;
   syllabus: SyllabusSectionView;
 }) {
+  const t = useExtracted();
   const title = useSectionTitle(syllabus);
   const count = useSectionCount(syllabus);
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
@@ -197,12 +194,7 @@ export function SyllabusSection({
       <div className={LIST_GROUP_CLASS}>
         {groups.map((group, index) => (
           <Fragment key={group.extra ? "extra" : (group.name ?? "all")}>
-            <GroupHeading
-              document={syllabus.examDocument}
-              fromMaterial={syllabus.fromMaterial}
-              group={group}
-              id={getGroupId(index)}
-            />
+            <GroupHeading group={group} id={getGroupId(index)} />
 
             <ul aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}>
               {group.subjects.map((subject) => (
@@ -219,8 +211,16 @@ export function SyllabusSection({
         ))}
       </div>
 
-      <QuestionsSourceNote lead={count} source={syllabus.questionsSource} />
-      <CourseWeightsNote subjects={syllabus.subjects} weights={syllabus.courseWeights} />
+      <PageSectionFooter>{count}</PageSectionFooter>
+
+      {(syllabus.questionsSource || syllabus.courseWeights?.source) && (
+        <QuietDisclosure label={t("Sources")}>
+          <div className="flex flex-col gap-2 pt-2">
+            <QuestionsSourceNote source={syllabus.questionsSource} />
+            <CourseWeightsNote subjects={syllabus.subjects} weights={syllabus.courseWeights} />
+          </div>
+        </QuietDisclosure>
+      )}
     </PageSection>
   );
 }

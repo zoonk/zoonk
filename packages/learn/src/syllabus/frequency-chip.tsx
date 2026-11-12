@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 
 type Frequency = "high" | "medium" | "low" | null;
 
-/** "Appears a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
+/** "Asked a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
 export function setsApart(items: readonly { frequency: Frequency }[]): boolean {
   const frequent = items.filter((item) => item.frequency === "high").length;
   return frequent > 0 && frequent < items.length;
@@ -31,10 +31,7 @@ export function FrequencyChip({
         className,
       )}
     >
-      {t({
-        description: "Marks a topic that comes up often in the exam.",
-        message: "Appears a lot",
-      })}
+      {t({ description: "Marks a topic that comes up often in the exam.", message: "Asked a lot" })}
     </span>
   );
 }

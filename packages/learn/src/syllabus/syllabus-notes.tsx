@@ -4,45 +4,22 @@ import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models
 import { FlagIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSectionFooter } from "../_components/page";
+import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { getSourceHost } from "../_utils/source-host";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
-import { FrequencyChip, setsApart } from "./frequency-chip";
 import { type SubjectGroup } from "./group-subjects";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 
-export function useGroupName({
-  document,
-  fromMaterial,
-  group,
-}: {
-  document: SyllabusView["examDocument"];
-  fromMaterial: boolean;
-  group: SubjectGroup<SyllabusSectionSubject>;
-}): string | null {
+export function useGroupName(group: SubjectGroup<SyllabusSectionSubject>): string | null {
   const t = useExtracted();
-
-  if (!group.extra) {
-    return group.name;
-  }
-
-  return fromMaterial
-    ? t("Also in your plan")
-    : t("{document, select, notice {Beyond the notice} other {Beyond the official guide}}", {
-        document,
-      });
+  return group.extra ? t("Also in your plan") : group.name;
 }
 
-export function QuestionsSourceNote({
-  lead,
-  source,
-}: {
-  lead?: string;
-  source: SyllabusView["questionsSource"];
-}) {
+export function QuestionsSourceNote({ source }: { source: SyllabusView["questionsSource"] }) {
   const t = useExtracted();
 
   if (!source) {
-    return lead ? <PageSectionFooter>{lead}</PageSectionFooter> : null;
+    return null;
   }
 
   const publisher = getSourceHost(source.url);
@@ -60,7 +37,6 @@ export function QuestionsSourceNote({
 
   return (
     <PageSectionFooter>
-      {lead && `${lead} · `}
       {source.edition
         ? t.rich(
             "Questions per subject in the {edition}, as counted by <link>{publisher}</link>.",
@@ -74,40 +50,16 @@ export function QuestionsSourceNote({
   );
 }
 
-function frequencyTag() {
-  return <FrequencyChip className="mx-0.5" frequency="high" />;
-}
-
-export function TopicFrequencyNote({
-  fromMaterial,
-  subject,
+/** Where the "Asked a lot" marks come from, for the learner who wants to check. */
+export function TopicFrequencySource({
+  source,
 }: {
-  fromMaterial: boolean;
-  subject: SyllabusSubject;
+  source: SyllabusSubject["topicFrequencySource"];
 }) {
   const t = useExtracted();
-  const source = subject.topicFrequencySource;
-  const tagged = setsApart(subject.topics);
-
-  if (fromMaterial) {
-    return tagged ? (
-      <PageSectionFooter>
-        {t.rich(
-          "Topics marked <tag></tag> are the ones your material says come up a lot. They get more of your time.",
-          { tag: frequencyTag },
-        )}
-      </PageSectionFooter>
-    ) : null;
-  }
 
   if (!source) {
-    return tagged ? (
-      <PageSectionFooter>
-        {t.rich("Topics marked <tag></tag> are the ones past exams asked most.", {
-          tag: frequencyTag,
-        })}
-      </PageSectionFooter>
-    ) : null;
+    return null;
   }
 
   const link = (chunks: React.ReactNode) => (
@@ -121,37 +73,15 @@ export function TopicFrequencyNote({
     </a>
   );
 
-  const values = { basis: source.basis, link, publisher: getSourceHost(source.url) };
-  const waits = subject.topics.some((topic) => topic.notPlannedReason === "time");
-
-  if (tagged) {
-    return (
-      <PageSectionFooter>
-        {waits
-          ? t.rich(
-              "Topics marked <tag></tag> are the ones past exams asked most ({basis}, according to <link>{publisher}</link>). The ones asked least are the ones that wait.",
-              { ...values, tag: frequencyTag },
-            )
-          : t.rich(
-              "Topics marked <tag></tag> are the ones past exams asked most ({basis}, according to <link>{publisher}</link>). They get more of your time.",
-              { ...values, tag: frequencyTag },
-            )}
-      </PageSectionFooter>
-    );
-  }
-
   return (
-    <PageSectionFooter>
-      {waits
-        ? t.rich(
-            "The topics past exams asked least are the ones that wait ({basis}, according to <link>{publisher}</link>).",
-            values,
-          )
-        : t.rich(
-            "The topics past exams asked most get more of your time ({basis}, according to <link>{publisher}</link>).",
-            values,
-          )}
-    </PageSectionFooter>
+    <QuietDisclosure label={t("Sources")}>
+      <PageSectionFooter className="pt-2">
+        {t.rich(
+          "How often past exams asked each topic: {basis}, according to <link>{publisher}</link>.",
+          { basis: source.basis, link, publisher: getSourceHost(source.url) },
+        )}
+      </PageSectionFooter>
+    </QuietDisclosure>
   );
 }
 

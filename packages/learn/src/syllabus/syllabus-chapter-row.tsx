@@ -36,7 +36,7 @@ function ChapterLine({ chapter }: { chapter: SyllabusChapter }) {
   const writingLine = useWritingLine();
 
   if (chapter.known) {
-    return <ListRowDescription>{t("Skipped because you already know it")}</ListRowDescription>;
+    return <ListRowDescription>{t("Skipped · you already know it")}</ListRowDescription>;
   }
 
   if (chapter.writing) {

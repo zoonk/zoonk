@@ -48,7 +48,7 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
 
   const skills =
     group.children.length > 0
-      ? t("{count, plural, one {# skill} other {# skills}}", { count: group.children.length })
+      ? t("{count, plural, one {# topic} other {# topics}}", { count: group.children.length })
       : null;
 
   const line = [label, skills].filter(Boolean).join(" · ");
@@ -110,7 +110,7 @@ export function SubjectMatrix({ matrix }: { matrix: readonly string[] }) {
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{t("What the questions ask")}</PageSectionTitle>
         <PageSectionDetail>
-          {t("{count, plural, one {# skill} other {# skills}}", { count: skills })}
+          {t("{count, plural, one {# topic} other {# topics}}", { count: skills })}
         </PageSectionDetail>
       </PageSectionHeader>
 

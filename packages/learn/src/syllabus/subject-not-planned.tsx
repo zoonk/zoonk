@@ -47,7 +47,7 @@ function RestoreButton({
           type="submit"
           variant="outline"
         >
-          {t("Bring it back")}
+          {t("Add it back")}
         </Button>
       </form>
       {failed && <ChangeSaveError />}
@@ -79,17 +79,14 @@ export function NotPlannedCallout({
         {reason === "skipped" && <p>{t("You took this subject out of your plan.")}</p>}
         {reason === "time" && (
           <p>
-            {t({
-              description: '"It" is the subject this page shows.',
-              message: "It doesn't fit in the time you have.",
-            })}
+            {t("This subject isn't in your plan: your time doesn't cover it.")}
             {space}
             <LearnLink className="font-medium underline underline-offset-4" href={adjustHref}>
               {t("Adjust plan")}
             </LearnLink>
           </p>
         )}
-        {reason === "missing" && <p>{t("Your plan doesn't teach this subject yet.")}</p>}
+        {reason === "missing" && <p>{t("This subject isn't in your plan yet.")}</p>}
         {reason === "skipped" && <RestoreButton areas={subject.areas} restore={actions.restore} />}
       </div>
     </NoticeCard>

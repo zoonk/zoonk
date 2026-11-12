@@ -25,7 +25,7 @@ function SummaryTopic({
       {text}
       {leftOut && (
         <span className="text-muted-foreground ml-1.5 text-xs whitespace-nowrap">
-          {`· ${t("Out of your plan")}`}
+          {`· ${t("Not in your plan")}`}
         </span>
       )}
     </li>

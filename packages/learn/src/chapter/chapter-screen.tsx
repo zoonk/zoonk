@@ -80,7 +80,7 @@ function ChapterSummary({
           >
             {chapter.skills.length > 0 && (
               <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
-                <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
+                <SectionLabel id="chapter-skills-title">{t("Topics")}</SectionLabel>
                 <SkillList skills={chapter.skills} />
               </section>
             )}
