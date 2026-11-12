@@ -1,0 +1,278 @@
+[
+ {
+  "band": "Overview",
+  "chapters": [
+   {
+    "title": "What a stock is",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "What you own when you buy a share",
+      "shared": true,
+      "state": "Written"
+     },
+     {
+      "title": "Why companies sell shares",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Dividends: a share of the profit",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "When ownership is diluted",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Share dilution",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? When ownership is diluted",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "How trading works",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Where a price comes from",
+      "shared": false,
+      "state": "Written"
+     },
+     {
+      "title": "Brokers and exchanges",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Indexes like the S&P 500 and the Ibovespa",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "The price you can trade at",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Bid and ask prices",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? The price you can trade at",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Why prices move",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "News, results and expectations",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Bubbles and crashes",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Investing for the long run",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Compound growth",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Don't put all your eggs in one basket",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Risk and time",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Ownership and raising money",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "What you own when you buy a share",
+      "shared": true,
+      "state": "Written"
+     },
+     {
+      "title": "Raising money by issuing shares",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "New shares versus investor-to-investor trades",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Selling shares versus borrowing",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? Ownership and raising money",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Orders and available prices",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Bids, asking prices, and trades",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Market orders and limit orders",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "The bid-ask spread",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Liquidity and large orders",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? Orders and available prices",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Prices, expectations, and risk",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Expectations and share prices",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Results versus expectations",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Company setbacks and market-wide losses",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Time horizon and short-term swings",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? Prices, expectations, and risk",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Returns and investment choices",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Price changes and dividends",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Individual stocks and funds",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Stock indexes",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Index funds and what they track",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Costs, fees, and taxes",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? Returns and investment choices",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   },
+   {
+    "title": "Information and market safeguards",
+    "tags": [],
+    "lessons": [
+     {
+      "title": "Public company disclosures",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Market rules and ordinary losses",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Trading pauses",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "Checking AI-generated stock claims",
+      "shared": false,
+      "state": "Not written"
+     },
+     {
+      "title": "What if? Information and market safeguards",
+      "shared": false,
+      "state": "Not written"
+     }
+    ]
+   }
+  ]
+ }
+]

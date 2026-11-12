@@ -1,0 +1,43 @@
+{
+ "fields": [],
+ "headings": [
+  "H1: 10+ Completed Lessons"
+ ],
+ "tables": [
+  {
+   "head": [
+    "User",
+    "Lessons",
+    "Days",
+    "Brain Power",
+    "Last completed",
+    "Joined"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/users/01a14c36-7291-7940-ac00-2c45dabad5b9",
+      "text": "Maya Chen\npersona-maya-11475f@zoonk.test"
+     },
+     {
+      "text": "14"
+     },
+     {
+      "text": "23"
+     },
+     {
+      "text": "3,890"
+     },
+     {
+      "text": "11/2/2026"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ]
+   ],
+   "section": ""
+  }
+ ],
+ "text": "Home\nStats\nEngagement & Learning\nLearner milestones\n10+ Completed Lessons\n\nUsers who completed at least 10 lessons.\n\nCompleted lessons\nApply\n\n1 matching users.\n\nLearners matching the selected milestone\nUser\tLessons\tDays\tBrain Power\tLast completed\tJoined\n\nMaya Chen\npersona-maya-11475f@zoonk.test\n\t14\t23\t3,890\t11/2/2026\t10/17/2026"
+}

@@ -1,0 +1,1223 @@
+{
+ "fields": [],
+ "headings": [
+  "H1: Courses"
+ ],
+ "tables": [
+  {
+   "head": [
+    "Title",
+    "Organization",
+    "Language",
+    "Chapters",
+    "Written lessons",
+    "Published",
+    "Created"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/courses/01a174b1-1276-7fbe-a869-2197bd0a1865",
+      "text": "Neurofarmacologia\nneurofarmacologia-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0ee6-7969-a51e-1b951cf78324",
+      "text": "Bioquímica\nbioquimica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0e53-7b6d-91cd-be8720c6fe38",
+      "text": "Neurofisiologia\nneurofisiologia-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0d66-7f40-979f-89e9b7556827",
+      "text": "Estatística\nestatistica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0c54-7486-9ecc-bbfc51d35b64",
+      "text": "Neurociência cognitiva\nneurociencia-cognitiva-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0c23-702d-a241-3f4764fb0ce7",
+      "text": "Neurociência do desenvolvimento\nneurociencia-do-desenvolvimento-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0bb6-7870-8ced-e7e91f5f7297",
+      "text": "Neurociência computacional\nneurociencia-computacional-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0a4a-7f31-be1e-29eb2eab492e",
+      "text": "Biologia celular\nbiologia-celular-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "18"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0948-70f2-a6b6-b80fce318c84",
+      "text": "Métodos em neurociência\nmetodos-em-neurociencia-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0943-7f0b-811f-077cfd375d1e",
+      "text": "Neurociência de sistemas\nneurociencia-de-sistemas-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-0470-7dd0-a42f-5baca96839b0",
+      "text": "Neurociência clínica\nneurociencia-clinica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a174b1-03b8-78d6-9a55-d222c5b68f1f",
+      "text": "Neuroanatomia\nneuroanatomia-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/25/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a128c2-acd8-727a-ab74-af30cbdb750e",
+      "text": "Atualidades\natualidades-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a128c2-ac64-77b9-a780-a544df0c1dd7",
+      "text": "Normas da Corregedoria-Geral da Justiça\nnormas-da-corregedoria-geral-da-justica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a128c2-ab50-7417-bdbe-a06e471d83f4",
+      "text": "Informática\ninformatica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a127b1-792d-7541-b776-f855bc03628d",
+      "text": "Economics\neconomics"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "6"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12781-af18-752f-8ccd-e4d67e54f8f6",
+      "text": "Conversação em espanhol\nconversacao-em-espanhol-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12781-ae53-724e-b0c1-5425d1cad7df",
+      "text": "Escrita em espanhol\nescrita-em-espanhol-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "20"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12781-ad51-77b6-b1c7-22c67c0274f6",
+      "text": "Leitura em espanhol\nleitura-em-espanhol-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12781-ac8f-731e-95c8-22ab9f2a6518",
+      "text": "Vocabulário espanhol\nvocabulario-espanhol-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "11"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12781-aab6-7ee4-9fc5-632f9d53c180",
+      "text": "Gramática espanhola\ngramatica-espanhola-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "16"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12781-a681-743c-b2ee-fcebfe28eee7",
+      "text": "Compreensão auditiva em espanhol\ncompreensao-auditiva-em-espanhol-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "17"
+     },
+     {
+      "text": "2"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-68bd-731a-b240-18731aa2c79c",
+      "text": "Academic Writing\nacademic-writing"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "11"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-67a7-7c4d-b612-ac42f3960c7a",
+      "text": "IELTS Academic Preparation\nielts-academic-preparation"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "17"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-66e5-75c1-ab02-ae4d97abf96c",
+      "text": "English Listening\nenglish-listening"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "10"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-66ac-7966-8603-81b304f309ea",
+      "text": "Spoken English\nspoken-english"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "21"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-6638-77f5-b783-1b06d22c74b4",
+      "text": "English Grammar\nenglish-grammar"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "27"
+     },
+     {
+      "text": "2"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-6415-7299-a148-93c80808dca9",
+      "text": "Academic Reading\nacademic-reading"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "24"
+     },
+     {
+      "text": "7"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a1277f-614a-7a59-9ef8-232143b2bfe0",
+      "text": "English Pronunciation\nenglish-pronunciation"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "13"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/10/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-acfa-75e8-829d-54871f7072b3",
+      "text": "Resolução de Provas\nresolucao-de-provas-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "7"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-5850-7436-84d3-e8c47fd58225",
+      "text": "Redação Oficial e Técnica Legislativa\nredacao-oficial-e-tecnica-legislativa-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-571a-7981-bd47-007221a969e7",
+      "text": "Dados e Visualização\ndados-e-visualizacao-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-56ba-7ea0-b736-45286f49c8a7",
+      "text": "Inteligência Artificial\ninteligencia-artificial-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "16"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-56af-71c9-8417-07cca61d138d",
+      "text": "Linguística\nlinguistica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "34"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-5365-7aad-b17c-8e5f9a2bc5f3",
+      "text": "Ciência Política\nciencia-politica-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "24"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-52d7-7bcd-ade2-a761093a7ecb",
+      "text": "Reconhecimento de Fala e Transcrição\nreconhecimento-de-fala-e-transcricao-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "23"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-51f7-74ad-88ad-e23e7177c417",
+      "text": "Regimento Comum do Congresso Nacional\nregimento-comum-do-congresso-nacional-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "8"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-51d1-770c-aeb5-c38691d91b07",
+      "text": "Estratégia de Prova Objetiva\nestrategia-de-prova-objetiva-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "5"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-4ee1-7b60-9a04-8bd14b7dacbb",
+      "text": "Direito Tributário e Processual Tributário\ndireito-tributario-e-processual-tributario-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "14"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a122ed-4eac-7567-a274-4fcc19e76791",
+      "text": "Ética Profissional e Estatuto da Advocacia\netica-profissional-e-estatuto-da-advocacia-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "16"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c754-7ea2-9876-1a62a5b1742f",
+      "text": "Design de produto digital\ndesign-de-produto-digital-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c68e-702d-a280-6a4582df4da4",
+      "text": "Arquitetura da informação\narquitetura-da-informacao-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "8"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c5de-7a83-9557-b3d3ca2f2409",
+      "text": "Acessibilidade digital\nacessibilidade-digital-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c5d6-7f86-8ed8-7eb6f2683e2b",
+      "text": "Design de interação\ndesign-de-interacao-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "13"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c55f-7963-af2e-c16078b521a3",
+      "text": "Avaliação de usabilidade\navaliacao-de-usabilidade-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "8"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c4e5-7c5f-908f-d5fe76d575b5",
+      "text": "Carreira em UX\ncarreira-em-ux-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "7"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c494-71d0-b64e-264bfe61712a",
+      "text": "Pesquisa com usuários\npesquisa-com-usuarios-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c254-7477-bff1-d8080863a482",
+      "text": "Design de experiência do usuário\ndesign-de-experiencia-do-usuario-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "30"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c15f-7cfd-ba76-a06ce1ec2718",
+      "text": "Portfólio de UX\nportfolio-de-ux-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/courses/01a12245-c0b8-7da8-8a02-47126023989d",
+      "text": "Prototipação de interfaces\nprototipacao-de-interfaces-pt"
+     },
+     {
+      "text": "Zoonk AI"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "9"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "✓"
+     },
+     {
+      "text": "10/9/2026"
+     }
+    ]
+   ],
+   "section": ""
+  }
+ ],
+ "text": "Courses\n\nManage all courses in the system.\n\nTitle\tOrganization\tLanguage\tChapters\tWritten lessons\tPublished\tCreated\n\nNeurofarmacologia\nneurofarmacologia-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nBioquímica\nbioquimica-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeurofisiologia\nneurofisiologia-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nEstatística\nestatistica-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeurociência cognitiva\nneurociencia-cognitiva-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeurociência do desenvolvimento\nneurociencia-do-desenvolvimento-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeurociência computacional\nneurociencia-computacional-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nBiologia celular\nbiologia-celular-pt\n\tZoonk AI\tPT\t18\t1\t✓\t10/25/2026\n\nMétodos em neurociência\nmetodos-em-neurociencia-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeurociência de sistemas\nneurociencia-de-sistemas-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeurociência clínica\nneurociencia-clinica-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nNeuroanatomia\nneuroanatomia-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/25/2026\n\nAtualidades\natualidades-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/10/2026\n\nNormas da Corregedoria-Geral da Justiça\nnormas-da-corregedoria-geral-da-justica-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/10/2026\n\nInformática\ninformatica-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/10/2026\n\nEconomics\neconomics\n\tZoonk AI\tEN\t6\t0\t✓\t10/10/2026\n\nConversação em espanhol\nconversacao-em-espanhol-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/10/2026\n\nEscrita em espanhol\nescrita-em-espanhol-pt\n\tZoonk AI\tPT\t20\t1\t✓\t10/10/2026\n\nLeitura em espanhol\nleitura-em-espanhol-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/10/2026\n\nVocabulário espanhol\nvocabulario-espanhol-pt\n\tZoonk AI\tPT\t11\t0\t✓\t10/10/2026\n\nGramática espanhola\ngramatica-espanhola-pt\n\tZoonk AI\tPT\t16\t1\t✓\t10/10/2026\n\nCompreensão auditiva em espanhol\ncompreensao-auditiva-em-espanhol-pt\n\tZoonk AI\tPT\t17\t2\t✓\t10/10/2026\n\nAcademic Writing\nacademic-writing\n\tZoonk AI\tEN\t11\t0\t✓\t10/10/2026\n\nIELTS Academic Preparation\nielts-academic-preparation\n\tZoonk AI\tEN\t17\t0\t✓\t10/10/2026\n\nEnglish Listening\nenglish-listening\n\tZoonk AI\tEN\t10\t1\t✓\t10/10/2026\n\nSpoken English\nspoken-english\n\tZoonk AI\tEN\t21\t0\t✓\t10/10/2026\n\nEnglish Grammar\nenglish-grammar\n\tZoonk AI\tEN\t27\t2\t✓\t10/10/2026\n\nAcademic Reading\nacademic-reading\n\tZoonk AI\tEN\t24\t7\t✓\t10/10/2026\n\nEnglish Pronunciation\nenglish-pronunciation\n\tZoonk AI\tEN\t13\t1\t✓\t10/10/2026\n\nResolução de Provas\nresolucao-de-provas-pt\n\tZoonk AI\tPT\t7\t0\t✓\t10/9/2026\n\nRedação Oficial e Técnica Legislativa\nredacao-oficial-e-tecnica-legislativa-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/9/2026\n\nDados e Visualização\ndados-e-visualizacao-pt\n\tZoonk AI\tPT\t10\t0\t✓\t10/9/2026\n\nInteligência Artificial\ninteligencia-artificial-pt\n\tZoonk AI\tPT\t16\t0\t✓\t10/9/2026\n\nLinguística\nlinguistica-pt\n\tZoonk AI\tPT\t34\t0\t✓\t10/9/2026\n\nCiência Política\nciencia-politica-pt\n\tZoonk AI\tPT\t24\t0\t✓\t10/9/2026\n\nReconhecimento de Fala e Transcrição\nreconhecimento-de-fala-e-transcricao-pt\n\tZoonk AI\tPT\t23\t0\t✓\t10/9/2026\n\nRegimento Comum do Congresso Nacional\nregimento-comum-do-congresso-nacional-pt\n\tZoonk AI\tPT\t8\t0\t✓\t10/9/2026\n\nEstratégia de Prova Objetiva\nestrategia-de-prova-objetiva-pt\n\tZoonk AI\tPT\t5\t0\t✓\t10/9/2026\n\nDireito Tributário e Processual Tributário\ndireito-tributario-e-processual-tributario-pt\n\tZoonk AI\tPT\t14\t0\t✓\t10/9/2026\n\nÉtica Profissional e Estatuto da Advocacia\netica-profissional-e-estatuto-da-advocacia-pt\n\tZoonk AI\tPT\t16\t0\t✓\t10/9/2026\n\nDesign de produto digital\ndesign-de-produto-digital-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/9/2026\n\nArquitetura da informação\narquitetura-da-informacao-pt\n\tZoonk AI\tPT\t8\t0\t✓\t10/9/2026\n\nAcessibilidade digital\nacessibilidade-digital-pt\n\tZoonk AI\tPT\t0\t0\t—\t10/9/2026\n\nDesign de interação\ndesign-de-interacao-pt\n\tZoonk AI\tPT\t13\t0\t✓\t10/9/2026\n\nAvaliação de usabilidade\navaliacao-de-usabilidade-pt\n\tZoonk AI\tPT\t8\t0\t✓\t10/9/2026\n\nCarreira em UX\ncarreira-em-ux-pt\n\tZoonk AI\tPT\t7\t0\t✓\t10/9/2026\n\nPesquisa com usuários\npesquisa-com-usuarios-pt\n\tZoonk AI\tPT\t10\t1\t✓\t10/9/2026\n\nDesign de experiência do usuário\ndesign-de-experiencia-do-usuario-pt\n\tZoonk AI\tPT\t30\t0\t✓\t10/9/2026\n\nPortfólio de UX\nportfolio-de-ux-pt\n\tZoonk AI\tPT\t10\t0\t✓\t10/9/2026\n\nPrototipação de interfaces\nprototipacao-de-interfaces-pt\n\tZoonk AI\tPT\t9\t0\t✓\t10/9/2026\nPrevious\n1\n2\nNext"
+}

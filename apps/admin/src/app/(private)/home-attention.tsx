@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { AdminSectionEmpty } from "@/components/admin-section";
 import { STUCK_RUNNING_MINUTES, countGenerationFailures } from "@/data/ai/get-generation-failures";
 import { type InboxQueue, getInbox } from "@/data/inbox/get-inbox";
@@ -48,13 +49,13 @@ async function loadAttentionRows(): Promise<AttentionRow[]> {
     },
     {
       count: inbox.sourceChanges.count,
-      detail: "Lessons and questions that cite a changed source",
+      detail: `Lessons and questions that cite a changed source${since(inbox.sourceChanges)}`,
       href: "/review-flags",
       title: "Source changes",
     },
     {
       count: inbox.accountDeletions.count,
-      detail: "Analytics to delete by hand",
+      detail: `Analytics to delete by hand${since(inbox.accountDeletions)}`,
       href: "/account-deletions",
       title: "Account deletions",
     },
@@ -73,7 +74,9 @@ const ROW_CLASS = "flex min-h-14 items-center gap-4 py-2.5";
 
 /** Only what has something waiting: an empty queue isn't a row, and nothing waiting says so. */
 export async function HomeAttention() {
-  const rows = await loadAttentionRows();
+  // Review pack only: Home with nothing waiting.
+  const clear = (await cookies()).get("adm-clear")?.value === "1";
+  const rows = clear ? [] : await loadAttentionRows();
 
   if (rows.length === 0) {
     return <AdminSectionEmpty>Nothing needs attention.</AdminSectionEmpty>;

@@ -8,7 +8,11 @@ import { AdminNotice } from "@/components/admin-notice";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
+import dump from "@/app/(private)/_mock/data/item.json";
+import { type Dump, FactsFrom, readView } from "@/app/(private)/_mock/kit";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
+
+const item = dump as Dump;
 
 const TABS = [
   { label: "Question", value: "question" },
@@ -36,7 +40,71 @@ const OPTIONS: MockOption[] = [
   },
 ];
 
-export default function ItemMockPage() {
+function Question() {
+  return (
+    <AdminDetailColumns
+      aside={
+        <>
+          <AdminSection title="Answers">
+            <AdminSectionEmpty>No learner has answered it yet.</AdminSectionEmpty>
+          </AdminSection>
+
+          <AdminSection title="About">
+            <DetailFields>
+              <DetailField label="Skill">
+                <MockLink>Relacionar água e equilíbrio celular</MockLink>
+              </DetailField>
+              <DetailField label="Difficulty">Easier than most (−1.00)</DetailField>
+              <DetailField label="Written">Oct 26, 2026</DetailField>
+            </DetailFields>
+          </AdminSection>
+        </>
+      }
+    >
+      <AdminSection title="What the learner sees">
+        <div className="flex max-w-2xl flex-col gap-4 text-sm leading-6">
+          <p className="text-muted-foreground">
+            Em uma aula de laboratório, Iara observa que células do sangue colocadas em água
+            destilada ficam maiores.
+          </p>
+          <p className="font-medium">
+            O que explica essa mudança e por que ela pode ser prejudicial?
+          </p>
+          <MockOptions options={OPTIONS} />
+          <a
+            className="text-muted-foreground hover:text-foreground text-xs font-medium"
+            href="#"
+          >
+            Show JSON
+          </a>
+        </div>
+      </AdminSection>
+    </AdminDetailColumns>
+  );
+}
+
+function Details() {
+  return (
+    <AdminSection title="Details">
+      <FactsFrom dump={item} omit={["Skill", "Difficulty"]} section="Details" />
+    </AdminSection>
+  );
+}
+
+function WrittenBy() {
+  return (
+    <AdminSection title="Written by">
+      <FactsFrom dump={item} rename={{ Generated: "Written" }} section="Provenance" />
+    </AdminSection>
+  );
+}
+
+const BODIES: Record<string, () => React.ReactNode> = { details: Details, written: WrittenBy };
+
+export default async function ItemMockPage({ searchParams }: PageProps<"/items/mock">) {
+  const tab = readView((await searchParams).tab) || "question";
+  const Body = BODIES[tab] ?? Question;
+
   return (
     <AdminDetailPage>
       <AdminDetailHeader
@@ -50,46 +118,9 @@ export default function ItemMockPage() {
           <MockLink>Review it in Source changes</MockLink>
         </AdminNotice>
 
-        <AdminTabs current="question" label="Practice question" path="/items/mock" tabs={TABS} />
+        <AdminTabs current={tab as "question"} label="Practice question" path="/items/mock" tabs={TABS} />
 
-        <AdminDetailColumns
-          aside={
-            <>
-              <AdminSection title="Answers">
-                <AdminSectionEmpty>No learner has answered it yet.</AdminSectionEmpty>
-              </AdminSection>
-
-              <AdminSection title="About">
-                <DetailFields>
-                  <DetailField label="Skill">
-                    <MockLink>Relacionar água e equilíbrio celular</MockLink>
-                  </DetailField>
-                  <DetailField label="Difficulty">Easier than most (−1.00)</DetailField>
-                  <DetailField label="Written">Oct 26, 2026</DetailField>
-                </DetailFields>
-              </AdminSection>
-            </>
-          }
-        >
-          <AdminSection title="What the learner sees">
-            <div className="flex max-w-2xl flex-col gap-4 text-sm leading-6">
-              <p className="text-muted-foreground">
-                Em uma aula de laboratório, Iara observa que células do sangue colocadas em água
-                destilada ficam maiores.
-              </p>
-              <p className="font-medium">
-                O que explica essa mudança e por que ela pode ser prejudicial?
-              </p>
-              <MockOptions options={OPTIONS} />
-              <a
-                className="text-muted-foreground hover:text-foreground text-xs font-medium"
-                href="#"
-              >
-                Show JSON
-              </a>
-            </div>
-          </AdminSection>
-        </AdminDetailColumns>
+        <Body />
       </AdminDetailBody>
     </AdminDetailPage>
   );

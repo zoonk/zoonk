@@ -1,0 +1,1726 @@
+{
+ "fields": [],
+ "headings": [
+  "H1: Items"
+ ],
+ "tables": [
+  {
+   "head": [
+    "Item",
+    "Skill",
+    "Format",
+    "Language",
+    "Field",
+    "Exam",
+    "Attempts",
+    "Accuracy",
+    "Provenance",
+    "Created"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/items/01a179f2-e86e-7a26-b465-2297be1b6559",
+      "text": "O que provavelmente aconteceu com as células das raízes?"
+     },
+     {
+      "href": "/skills/01a179f2-53e8-7a92-a003-769e00b1c772",
+      "text": "Relacionar água e equilíbrio celular"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 7c2256d8"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-e86e-798c-a2d2-1fd0c25f5138",
+      "text": "O que explica essa mudança e por que ela pode ser prejudicial?"
+     },
+     {
+      "href": "/skills/01a179f2-53e8-7a92-a003-769e00b1c772",
+      "text": "Relacionar água e equilíbrio celular"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 7c2256d8"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-e842-711d-8a26-a69a7109e4ee",
+      "text": "Qual caminho permite que esses nutrientes sustentem a atividade muscular?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-72f1-bd6e-8509009ff211",
+      "text": "Descrever como células obtêm nutrientes"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 7c2256d8"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-e842-7057-92f0-7b5b9a0639d7",
+      "text": "Como esses sais podem ajudar as células das folhas?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-72f1-bd6e-8509009ff211",
+      "text": "Descrever como células obtêm nutrientes"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 7c2256d8"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-de13-7fec-a6ab-1373b1f69310",
+      "text": "De onde vem a energia que essas células usam nesse trabalho?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-79f1-9902-82e0932cbb9b",
+      "text": "Explicar como células usam energia dos nutrientes"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 47b66a4d"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-de13-7f52-b067-ab3b04a18eba",
+      "text": "Como essas células obtêm energia para ajudar os músculos a se mover?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-79f1-9902-82e0932cbb9b",
+      "text": "Explicar como células usam energia dos nutrientes"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 47b66a4d"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-ddf0-7f88-a970-ea11e712ef2e",
+      "text": "Como as células das algas conseguem produzir o açúcar nessa situação?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-7c12-8778-451cd56ab4ce",
+      "text": "Descrever como células aproveitam a luz"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 47b66a4d"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-ddf0-7ed3-8deb-92858858246b",
+      "text": "Qual é o papel da luz nessa produção?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-7c12-8778-451cd56ab4ce",
+      "text": "Descrever como células aproveitam a luz"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 47b66a4d"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-ccbd-7624-969a-32cdb0e5a664",
+      "text": "Qual movimento explica a diminuição das células?"
+     },
+     {
+      "href": "/skills/01a179f2-53e8-7ab9-aab3-ab9b27ca7769",
+      "text": "Explicar a entrada e saída de substâncias"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 155302d4"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-ccbd-75aa-ac75-8eceb89273cb",
+      "text": "Por que essas substâncias têm comportamentos diferentes?"
+     },
+     {
+      "href": "/skills/01a179f2-53e8-7ab9-aab3-ab9b27ca7769",
+      "text": "Explicar a entrada e saída de substâncias"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 155302d4"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-cc97-73b4-9848-01cf078baec7",
+      "text": "Qual papel da membrana celular explica essas observações em conjunto?"
+     },
+     {
+      "href": "/skills/01a179f2-53e8-7548-8b8f-564df1a136c0",
+      "text": "Explicar o papel da membrana celular"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 155302d4"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-cc97-72da-9e17-011e0e411d69",
+      "text": "O que essa observação mostra sobre o papel da membrana celular?"
+     },
+     {
+      "href": "/skills/01a179f2-53e8-7548-8b8f-564df1a136c0",
+      "text": "Explicar o papel da membrana celular"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 155302d4"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c606-7be7-b468-5b7c838e9684",
+      "text": "Qual é a classificação das células A e B, nessa ordem?"
+     },
+     {
+      "href": "/skills/01a174b1-86b1-7f07-8f83-ae005ebbb28b",
+      "text": "Distinguir células procarióticas e eucarióticas"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 4781c942"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c606-7b37-843e-803d0fb564e4",
+      "text": "Como você classificaria essa célula?"
+     },
+     {
+      "href": "/skills/01a174b1-86b1-7f07-8f83-ae005ebbb28b",
+      "text": "Distinguir células procarióticas e eucarióticas"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 4781c942"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c59c-7cfa-aeb9-e508a5815b73",
+      "text": "Por que essa falha pode aumentar o risco de um tumor?"
+     },
+     {
+      "href": "/skills/01a179f2-5791-722f-ae1a-71da886bd171",
+      "text": "Relacionar falhas na divisão celular a doenças"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 9240781c"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c59c-7af6-862c-11b7db410768",
+      "text": "Se algumas dessas células continuarem se dividindo sem controle depois que o corte fechar, o que pode acontecer?"
+     },
+     {
+      "href": "/skills/01a179f2-5791-722f-ae1a-71da886bd171",
+      "text": "Relacionar falhas na divisão celular a doenças"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 9240781c"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c57d-74fe-bb81-3d1dbafe475c",
+      "text": "Que mudança é esperada na atividade das células das folhas enquanto recebem mais luz?"
+     },
+     {
+      "href": "/skills/01a179f2-5790-7bb6-bebf-5a080fade3e4",
+      "text": "Explicar como células ajustam suas atividades"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 9240781c"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c57d-734f-b46c-f24d71d4e6af",
+      "text": "Como essas células podem ajustar sua atividade em resposta à insulina?"
+     },
+     {
+      "href": "/skills/01a179f2-5790-7bb6-bebf-5a080fade3e4",
+      "text": "Explicar como células ajustam suas atividades"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 9240781c"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c561-71ee-ac37-fb1e7abfc781",
+      "text": "Qual resultado é mais provável?"
+     },
+     {
+      "href": "/skills/01a122ef-ff91-7c00-98ef-3559579f3b82",
+      "text": "Relacionar expressão gênica e diferenciação celular"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 82b3d936"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c560-7fa1-97b0-10ac86137d60",
+      "text": "O que explica essa diferença?"
+     },
+     {
+      "href": "/skills/01a122ef-ff91-7c00-98ef-3559579f3b82",
+      "text": "Relacionar expressão gênica e diferenciação celular"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 82b3d936"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c541-7949-afb3-1b1bdf0e43d2",
+      "text": "Como essas células percebem a mudança no ambiente?"
+     },
+     {
+      "href": "/skills/01a179f2-5790-79de-a400-e71c21a80965",
+      "text": "Descrever como células recebem sinais"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 82b3d936"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-c541-77b5-b3b2-605f18743ed5",
+      "text": "Qual tipo de célula pode perceber esse sinal diretamente?"
+     },
+     {
+      "href": "/skills/01a179f2-5790-79de-a400-e71c21a80965",
+      "text": "Descrever como células recebem sinais"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 82b3d936"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-bff6-7e1b-a740-8c0a50bf9d61",
+      "text": "O que explica a mudança observada nas leveduras?"
+     },
+     {
+      "href": "/skills/01a179f2-53f4-7e7f-8669-a66c4ef570bc",
+      "text": "Explicar como células produzem proteínas"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · d8ce869e"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-bff6-7c92-9a63-aedd6628bdce",
+      "text": "Por que a alteração no DNA pode mudar a insulina produzida?"
+     },
+     {
+      "href": "/skills/01a179f2-53f4-7e7f-8669-a66c4ef570bc",
+      "text": "Explicar como células produzem proteínas"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · d8ce869e"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-bfdc-7cc9-a910-6da2fca70a99",
+      "text": "O que permite que as informações da célula inicial cheguem às células formadas mais tarde?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-7c7b-b6eb-de28c76deaba",
+      "text": "Explicar como o DNA guarda informações"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · d8ce869e"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-bfdc-7c28-9210-3f3e546aa718",
+      "text": "Como as novas células recebem as informações que estavam nas células que se multiplicaram?"
+     },
+     {
+      "href": "/skills/01a179f2-53e9-7c7b-b6eb-de28c76deaba",
+      "text": "Explicar como o DNA guarda informações"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · d8ce869e"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-b2be-7e55-84e6-7da4ad867241",
+      "text": "O que esse caso mostra sobre a célula da levedura?"
+     },
+     {
+      "href": "/skills/01a179f2-53e7-710c-b9de-15a3218731fb",
+      "text": "Reconhecer a célula como unidade da vida"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · a96bbefb"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179f2-b2bd-7333-9ab6-f83dbe1a465a",
+      "text": "O que é verdadeiro sobre a constituição do cacto e da bactéria?"
+     },
+     {
+      "href": "/skills/01a179f2-53e7-710c-b9de-15a3218731fb",
+      "text": "Reconhecer a célula como unidade da vida"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · a96bbefb"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179e1-784c-75b5-af54-e9333fefdda4",
+      "text": "Como o valor recebido por Wagner deve ser determinado?"
+     },
+     {
+      "href": "/skills/47eef3be-780f-8ff9-81e3-717fb0499a45",
+      "text": "Explicar os dividendos"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · cdc6c5f9"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a179e1-784a-7fab-ab23-de34da8f70c0",
+      "text": "Quanto Priscila receberá em dividendos?"
+     },
+     {
+      "href": "/skills/47eef3be-780f-8ff9-81e3-717fb0499a45",
+      "text": "Explicar os dividendos"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · cdc6c5f9"
+     },
+     {
+      "text": "10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c74-e0ee-7143-b409-53292d9dda23",
+      "text": "How hard must Leah pull?"
+     },
+     {
+      "href": "/skills/cc851acb-f6a2-86ba-84db-5e0b049398a0",
+      "text": "Apply F = ma"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 662b3001"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c74-e0ee-710d-94d3-d9afc492c01c",
+      "text": "What net force acts on the robot?"
+     },
+     {
+      "href": "/skills/cc851acb-f6a2-86ba-84db-5e0b049398a0",
+      "text": "Apply F = ma"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 662b3001"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c74-e0ed-7935-b8f3-fd3024f27613",
+      "text": "What is the suitcase's acceleration?"
+     },
+     {
+      "href": "/skills/cc851acb-f6a2-86ba-84db-5e0b049398a0",
+      "text": "Apply F = ma"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · 662b3001"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c6f-a6c0-78f1-b3f5-77556944a901",
+      "text": "Which arrow represents A + B?"
+     },
+     {
+      "href": "/skills/8aa245aa-be5a-8b15-8247-cd8204154c35",
+      "text": "Add vectors"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c6f-674d-71c5-bb2b-3a3949e7fff6",
+      "text": "Approximately how much energy does the photon carry?"
+     },
+     {
+      "href": "/skills/2f94469d-d515-8dd6-8365-c07174f127ec",
+      "text": "Find hydrogen's energy levels"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c6f-6715-7dca-8423-1d557015841b",
+      "text": "What is wrong with the friend's arrow, and where should the arrow for Carlos's total displacement start and end?"
+     },
+     {
+      "href": "/skills/8aa245aa-be5a-8b15-8247-cd8204154c35",
+      "text": "Add vectors"
+     },
+     {
+      "text": "Typed"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c6f-66f0-780e-80f8-0d11468d5962",
+      "text": "Is Darius right? Justify your answer using the energies of the neighboring levels."
+     },
+     {
+      "href": "/skills/2f94469d-d515-8dd6-8365-c07174f127ec",
+      "text": "Find hydrogen's energy levels"
+     },
+     {
+      "text": "Typed"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c6e-fea1-7e67-bf4d-a8aaa840ece9",
+      "text": "What is wrong with your friend's slope, and what does the correct slope mean?"
+     },
+     {
+      "href": "/skills/8c071bd6-8c1b-8870-822a-d7eaec0d40dc",
+      "text": "Read slope as a rate of change"
+     },
+     {
+      "text": "Typed"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\nbfb9fa5dc3aa · 68037ae5"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c6e-fe79-74ce-9940-3dc4adccff85",
+      "text": "What is the slope of the amount of water versus time, in gallons per minute?"
+     },
+     {
+      "href": "/skills/8c071bd6-8c1b-8870-822a-d7eaec0d40dc",
+      "text": "Read slope as a rate of change"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\nbfb9fa5dc3aa · 68037ae5"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c5f-74ce-7e09-b6dd-afe34cc3201b",
+      "text": "What angle does its beam make with the reference line?"
+     },
+     {
+      "href": "/skills/01a12632-3797-73ba-8876-ad0fe0492dc9",
+      "text": "Use an instrument calibration function"
+     },
+     {
+      "text": "Numeric"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-luna\n24ed8f2d6900 · 1ea48c14"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c5f-2c20-797f-9e31-2b8cc70e1cc5",
+      "text": "What angle does its beam make with the reference line?"
+     },
+     {
+      "href": "/skills/01a12632-3797-73ba-8876-ad0fe0492dc9",
+      "text": "Use an instrument calibration function"
+     },
+     {
+      "text": "Numeric"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\nb977f169fe41 · 828d4911"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-f651-7892-8363-06ce8a677945",
+      "text": "How many grams of powder go in each tray?"
+     },
+     {
+      "href": "/skills/46eb4c87-b23a-81aa-8c2c-6bff95419e32",
+      "text": "Multiply and divide in scientific notation"
+     },
+     {
+      "text": "Numeric"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "2"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\nb977f169fe41 · 27fcefb6"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-f650-7f67-bebf-523d1ab816b5",
+      "text": "How many layers fit in the film?"
+     },
+     {
+      "href": "/skills/46eb4c87-b23a-81aa-8c2c-6bff95419e32",
+      "text": "Multiply and divide in scientific notation"
+     },
+     {
+      "text": "Numeric"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "3"
+     },
+     {
+      "text": "33.3%"
+     },
+     {
+      "text": "openai/gpt-6-sol\nb977f169fe41 · 27fcefb6"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-f64f-75e8-a322-cc75fe29eeed",
+      "text": "What is the total mass in grams?"
+     },
+     {
+      "href": "/skills/46eb4c87-b23a-81aa-8c2c-6bff95419e32",
+      "text": "Multiply and divide in scientific notation"
+     },
+     {
+      "text": "Numeric"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "3"
+     },
+     {
+      "text": "33.3%"
+     },
+     {
+      "text": "openai/gpt-6-sol\nb977f169fe41 · 27fcefb6"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-36d8-77f4-9cb5-9ae407167888",
+      "text": "What length should Ryan enter?"
+     },
+     {
+      "href": "/skills/e8e1fd65-0fce-8bfa-8c0d-d4bb445081a4",
+      "text": "Read a fraction as a division"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · de0419a5"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-36d8-77de-9f39-0e3cfd83f5f4",
+      "text": "How many pounds of rice are in each bag?"
+     },
+     {
+      "href": "/skills/e8e1fd65-0fce-8bfa-8c0d-d4bb445081a4",
+      "text": "Read a fraction as a division"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · de0419a5"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-36d8-76f6-bf88-e39e089803d1",
+      "text": "Which calculation does 3/4 represent?"
+     },
+     {
+      "href": "/skills/e8e1fd65-0fce-8bfa-8c0d-d4bb445081a4",
+      "text": "Read a fraction as a division"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "3"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · de0419a5"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-293d-7dd1-9d61-d1ad9ddf1704",
+      "text": "How much does Amara put into the jar?"
+     },
+     {
+      "href": "/skills/b02cebd1-383d-815d-8ac7-dc3b6cb1b3ab",
+      "text": "Find a percent of a number"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · cd640ede"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-293d-7da0-bc5d-391909bbfea8",
+      "text": "How many books does Hector plan to donate?"
+     },
+     {
+      "href": "/skills/b02cebd1-383d-815d-8ac7-dc3b6cb1b3ab",
+      "text": "Find a percent of a number"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · cd640ede"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a14c49-293c-7c77-9c8f-4a148800e41d",
+      "text": "How much should Tanya leave as a tip?"
+     },
+     {
+      "href": "/skills/b02cebd1-383d-815d-8ac7-dc3b6cb1b3ab",
+      "text": "Find a percent of a number"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "3"
+     },
+     {
+      "text": "100.0%"
+     },
+     {
+      "text": "openai/gpt-6-sol\n65d328e18c6e · cd640ede"
+     },
+     {
+      "text": "10/17/2026"
+     }
+    ]
+   ],
+   "section": ""
+  }
+ ],
+ "text": "Items\n\nReview practice questions with their accuracy and provenance.\n\nAll formats\nEssay\nMatch pairs\nMultiple choice\nNumeric\nOrder\nSpoken\nTrue or false\nTyped\nAll languages\nEnglish\nSpanish\nPortuguese\nFrench\nGerman\nItalian\nJapanese\nKorean\nTurkish\nPolish\nItem\tSkill\tFormat\tLanguage\tField\tExam\tAttempts\tAccuracy\tProvenance\tCreated\n\nO que provavelmente aconteceu com as células das raízes?\n\t\nRelacionar água e equilíbrio celular\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 7c2256d8\n\t10/26/2026\n\nO que explica essa mudança e por que ela pode ser prejudicial?\n\t\nRelacionar água e equilíbrio celular\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 7c2256d8\n\t10/26/2026\n\nQual caminho permite que esses nutrientes sustentem a atividade muscular?\n\t\nDescrever como células obtêm nutrientes\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 7c2256d8\n\t10/26/2026\n\nComo esses sais podem ajudar as células das folhas?\n\t\nDescrever como células obtêm nutrientes\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 7c2256d8\n\t10/26/2026\n\nDe onde vem a energia que essas células usam nesse trabalho?\n\t\nExplicar como células usam energia dos nutrientes\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 47b66a4d\n\t10/26/2026\n\nComo essas células obtêm energia para ajudar os músculos a se mover?\n\t\nExplicar como células usam energia dos nutrientes\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 47b66a4d\n\t10/26/2026\n\nComo as células das algas conseguem produzir o açúcar nessa situação?\n\t\nDescrever como células aproveitam a luz\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 47b66a4d\n\t10/26/2026\n\nQual é o papel da luz nessa produção?\n\t\nDescrever como células aproveitam a luz\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 47b66a4d\n\t10/26/2026\n\nQual movimento explica a diminuição das células?\n\t\nExplicar a entrada e saída de substâncias\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 155302d4\n\t10/26/2026\n\nPor que essas substâncias têm comportamentos diferentes?\n\t\nExplicar a entrada e saída de substâncias\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 155302d4\n\t10/26/2026\n\nQual papel da membrana celular explica essas observações em conjunto?\n\t\nExplicar o papel da membrana celular\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 155302d4\n\t10/26/2026\n\nO que essa observação mostra sobre o papel da membrana celular?\n\t\nExplicar o papel da membrana celular\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 155302d4\n\t10/26/2026\n\nQual é a classificação das células A e B, nessa ordem?\n\t\nDistinguir células procarióticas e eucarióticas\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 4781c942\n\t10/26/2026\n\nComo você classificaria essa célula?\n\t\nDistinguir células procarióticas e eucarióticas\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 4781c942\n\t10/26/2026\n\nPor que essa falha pode aumentar o risco de um tumor?\n\t\nRelacionar falhas na divisão celular a doenças\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 9240781c\n\t10/26/2026\n\nSe algumas dessas células continuarem se dividindo sem controle depois que o corte fechar, o que pode acontecer?\n\t\nRelacionar falhas na divisão celular a doenças\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 9240781c\n\t10/26/2026\n\nQue mudança é esperada na atividade das células das folhas enquanto recebem mais luz?\n\t\nExplicar como células ajustam suas atividades\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 9240781c\n\t10/26/2026\n\nComo essas células podem ajustar sua atividade em resposta à insulina?\n\t\nExplicar como células ajustam suas atividades\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 9240781c\n\t10/26/2026\n\nQual resultado é mais provável?\n\t\nRelacionar expressão gênica e diferenciação celular\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 82b3d936\n\t10/26/2026\n\nO que explica essa diferença?\n\t\nRelacionar expressão gênica e diferenciação celular\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 82b3d936\n\t10/26/2026\n\nComo essas células percebem a mudança no ambiente?\n\t\nDescrever como células recebem sinais\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · 82b3d936\n\t10/26/2026\n\nQual tipo de célula pode perceber esse sinal diretamente?\n\t\nDescrever como células recebem sinais\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 82b3d936\n\t10/26/2026\n\nO que explica a mudança observada nas leveduras?\n\t\nExplicar como células produzem proteínas\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · d8ce869e\n\t10/26/2026\n\nPor que a alteração no DNA pode mudar a insulina produzida?\n\t\nExplicar como células produzem proteínas\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · d8ce869e\n\t10/26/2026\n\nO que permite que as informações da célula inicial cheguem às células formadas mais tarde?\n\t\nExplicar como o DNA guarda informações\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · d8ce869e\n\t10/26/2026\n\nComo as novas células recebem as informações que estavam nas células que se multiplicaram?\n\t\nExplicar como o DNA guarda informações\n\tMultiple choice\tPT\t—\t—\t1\t100.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · d8ce869e\n\t10/26/2026\n\nO que esse caso mostra sobre a célula da levedura?\n\t\nReconhecer a célula como unidade da vida\n\tMultiple choice\tPT\t—\t—\t1\t100.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · a96bbefb\n\t10/26/2026\n\nO que é verdadeiro sobre a constituição do cacto e da bactéria?\n\t\nReconhecer a célula como unidade da vida\n\tMultiple choice\tPT\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · a96bbefb\n\t10/26/2026\n\nComo o valor recebido por Wagner deve ser determinado?\n\t\nExplicar os dividendos\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · cdc6c5f9\n\t10/26/2026\n\nQuanto Priscila receberá em dividendos?\n\t\nExplicar os dividendos\n\tMultiple choice\tPT\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · cdc6c5f9\n\t10/26/2026\n\nHow hard must Leah pull?\n\t\nApply F = ma\n\tMultiple choice\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 662b3001\n\t10/17/2026\n\nWhat net force acts on the robot?\n\t\nApply F = ma\n\tMultiple choice\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 662b3001\n\t10/17/2026\n\nWhat is the suitcase's acceleration?\n\t\nApply F = ma\n\tMultiple choice\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · 662b3001\n\t10/17/2026\n\nWhich arrow represents A + B?\n\t\nAdd vectors\n\tMultiple choice\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a\n\t10/17/2026\n\nApproximately how much energy does the photon carry?\n\t\nFind hydrogen's energy levels\n\tMultiple choice\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a\n\t10/17/2026\n\nWhat is wrong with the friend's arrow, and where should the arrow for Carlos's total displacement start and end?\n\t\nAdd vectors\n\tTyped\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a\n\t10/17/2026\n\nIs Darius right? Justify your answer using the energies of the neighboring levels.\n\t\nFind hydrogen's energy levels\n\tTyped\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\nbfb9fa5dc3aa · e4c6312a\n\t10/17/2026\n\nWhat is wrong with your friend's slope, and what does the correct slope mean?\n\t\nRead slope as a rate of change\n\tTyped\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\nbfb9fa5dc3aa · 68037ae5\n\t10/17/2026\n\nWhat is the slope of the amount of water versus time, in gallons per minute?\n\t\nRead slope as a rate of change\n\tMultiple choice\tEN\t—\t—\t1\t100.0%\t\nopenai/gpt-6-sol\nbfb9fa5dc3aa · 68037ae5\n\t10/17/2026\n\nWhat angle does its beam make with the reference line?\n\t\nUse an instrument calibration function\n\tNumeric\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-luna\n24ed8f2d6900 · 1ea48c14\n\t10/17/2026\n\nWhat angle does its beam make with the reference line?\n\t\nUse an instrument calibration function\n\tNumeric\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\nb977f169fe41 · 828d4911\n\t10/17/2026\n\nHow many grams of powder go in each tray?\n\t\nMultiply and divide in scientific notation\n\tNumeric\tEN\t—\t—\t2\t100.0%\t\nopenai/gpt-6-sol\nb977f169fe41 · 27fcefb6\n\t10/17/2026\n\nHow many layers fit in the film?\n\t\nMultiply and divide in scientific notation\n\tNumeric\tEN\t—\t—\t3\t33.3%\t\nopenai/gpt-6-sol\nb977f169fe41 · 27fcefb6\n\t10/17/2026\n\nWhat is the total mass in grams?\n\t\nMultiply and divide in scientific notation\n\tNumeric\tEN\t—\t—\t3\t33.3%\t\nopenai/gpt-6-sol\nb977f169fe41 · 27fcefb6\n\t10/17/2026\n\nWhat length should Ryan enter?\n\t\nRead a fraction as a division\n\tMultiple choice\tEN\t—\t—\t0\t—\t\nopenai/gpt-6-sol\n65d328e18c6e · de0419a5\n\t10/17/2026\n\nHow many pounds of rice are in each bag?\n\t\nRead a fraction as a division\n\tMultiple choice\tEN\t—\t—\t1\t100.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · de0419a5\n\t10/17/2026\n\nWhich calculation does 3/4 represent?\n\t\nRead a fraction as a division\n\tMultiple choice\tEN\t—\t—\t3\t100.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · de0419a5\n\t10/17/2026\n\nHow much does Amara put into the jar?\n\t\nFind a percent of a number\n\tMultiple choice\tEN\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · cd640ede\n\t10/17/2026\n\nHow many books does Hector plan to donate?\n\t\nFind a percent of a number\n\tMultiple choice\tEN\t—\t—\t1\t0.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · cd640ede\n\t10/17/2026\n\nHow much should Tanya leave as a tip?\n\t\nFind a percent of a number\n\tMultiple choice\tEN\t—\t—\t3\t100.0%\t\nopenai/gpt-6-sol\n65d328e18c6e · cd640ede\n\t10/17/2026\nPrevious\n1\n2\nMore pages\n33\nNext"
+}

@@ -1,43 +1,99 @@
+import daily from "@/app/(private)/_mock/data/ai-daily.json";
+import dump from "@/app/(private)/_mock/data/ai.json";
+import { type Cell, type Dump, MockRows, parts, readView } from "@/app/(private)/_mock/kit";
 import { AdminFilterNav } from "@/components/admin-filter-nav";
 import { AdminToolbar } from "@/components/admin-page";
 import { AdminSection } from "@/components/admin-section";
 import { Stats } from "@/components/stats";
 import { AiMockShell } from "../../_mock/ai-shell";
-import { MockMore, MockTable } from "../../_mock/parts";
+import { MockLink, MockMore } from "../../_mock/parts";
 import { AiDailySpendChart } from "../ai-daily-spend-chart";
 
-const SPEND: Record<string, number> = {
-  "Oct 13": 2.55,
-  "Oct 14": 2.78,
-  "Oct 15": 0.36,
-  "Oct 17": 0.32,
-  "Oct 18": 0.49,
-  "Oct 24": 0.29,
-  "Oct 25": 1.8,
-  "Oct 26": 2.29,
+const ai = dump as Dump;
+const SHOWN = 8;
+const RIGHT = "right" as const;
+
+function table(section: string, index = 0): Cell[][] {
+  return ai.tables.filter((item) => item.section === section)[index]?.rows ?? [];
+}
+
+function words(code: string | undefined): string {
+  const text = (code ?? "").replaceAll("-", " ");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function strong(text: string | undefined) {
+  return <span className="text-foreground font-medium">{text}</span>;
+}
+
+const BY = {
+  goal: {
+    columns: [{ label: "Goal" }, { label: "Learner" }, { align: RIGHT, label: "Calls" }, { align: RIGHT, label: "Cost" }],
+    more: "goals",
+    rows: () => table("Top goals").map((row) => [strong(row[0]?.text), row[1]?.text, row[2]?.text, row[3]?.text]),
+  },
+  learner: {
+    columns: [{ label: "Learner" }, { align: RIGHT, label: "Calls" }, { align: RIGHT, label: "Cost" }],
+    more: "learners",
+    rows: () =>
+      table("Top learners").map((row) => [
+        <span className="block" key="who">
+          {strong(parts(row[0])[0])}
+          <span className="block text-xs">{parts(row[0])[1]}</span>
+        </span>,
+        row[1]?.text,
+        row[2]?.text,
+      ]),
+  },
+  model: {
+    columns: [
+      { label: "Model" },
+      { align: RIGHT, label: "Calls" },
+      { align: RIGHT, label: "Input" },
+      { align: RIGHT, label: "Output" },
+      { align: RIGHT, label: "Cost" },
+    ],
+    more: "models",
+    rows: () =>
+      table("Spend by model").map((row) => [
+        <span className="block" key="model">
+          {strong(row[0]?.text)}
+          <span className="block text-xs">{words(row[1]?.text)}</span>
+        </span>,
+        row[2]?.text,
+        row[3]?.text,
+        row[5]?.text,
+        row[6]?.text,
+      ]),
+  },
+  task: {
+    columns: [
+      { label: "Task" },
+      { align: RIGHT, label: "Calls" },
+      { align: RIGHT, label: "Cost" },
+      { align: RIGHT, label: "Per call" },
+      { align: RIGHT, label: "Typical time" },
+    ],
+    more: "tasks",
+    rows: () =>
+      table("Spend by task").map((row) => [
+        strong(words(row[0]?.text)),
+        row[1]?.text,
+        row[2]?.text,
+        row[3]?.text,
+        row[7]?.text,
+      ]),
+  },
 };
 
-const DAYS = [
-  ...Array.from({ length: 19 }, (_, index) => `Oct ${index + 13}`),
-  ...Array.from({ length: 12 }, (_, index) => `Nov ${index + 1}`),
-];
+type By = keyof typeof BY;
 
-const POINTS = DAYS.map((label) => ({ costUsd: SPEND[label] ?? 0, label }));
+function Spend({ by }: { by: By }) {
+  const view = BY[by];
+  const rows = view.rows();
 
-const TASKS = [
-  ["Lesson spec", "36", "$1.65", "$0.0458", "29.8s"],
-  ["Lesson writer", "33", "$1.61", "$0.0488", "22.7s"],
-  ["Course outline", "21", "$0.98", "$0.0469", "25.1s"],
-  ["Lesson quality check", "27", "$0.86", "$0.0320", "13.8s"],
-  ["Lesson image", "76", "$0.67", "$0.0089", "9.7s"],
-  ["Placement items", "20", "$0.57", "$0.0284", "26.6s"],
-  ["Image scene", "64", "$0.29", "$0.0045", "6.7s"],
-  ["Skill graph", "3", "$0.19", "$0.0643", "32.9s"],
-] as const;
-
-export default function AiMockPage() {
   return (
-    <AiMockShell current="spend" notice>
+    <>
       <AdminToolbar>
         <AdminFilterNav
           label="Period"
@@ -47,54 +103,163 @@ export default function AiMockPage() {
             { href: "#90", isActive: false, label: "90 days" },
           ]}
         />
-        <span className="text-muted-foreground text-[0.8125rem]">
-          Compared with the 30 days before
-        </span>
       </AdminToolbar>
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-        <Stats description="Up from $4.12" title="Spend" value="$7.57" />
-        <Stats description="Up from 1,340" title="Calls" value="2,175" />
-        <Stats description="Down from $0.0031" title="Cost per call" value="$0.0035" />
-        <Stats description="1.4M of 6.3M input tokens" title="Read from cache" value="22%" />
+        <Stats description="Gateway estimates $81.22" title="Spend" value="$81.09" />
+        <Stats title="Calls" value="24,744" />
+        <Stats title="Cost per call" value="$0.0033" />
+        <Stats description="15M of 78.6M input tokens" title="Read from cache" value="19%" />
       </div>
 
-      <AiDailySpendChart points={POINTS} />
+      <AiDailySpendChart points={daily} />
 
       <AdminSection
         action={
           <AdminFilterNav
             label="Spend by"
-            options={[
-              { href: "#task", isActive: true, label: "Task" },
-              { href: "#model", isActive: false, label: "Model" },
-              { href: "#goal", isActive: false, label: "Goal" },
-              { href: "#learner", isActive: false, label: "Learner" },
-            ]}
+            options={(["task", "model", "goal", "learner"] as const).map((key) => ({
+              href: `/ai/mock?by=${key}`,
+              isActive: key === by,
+              label: words(key),
+            }))}
           />
         }
         title="Where it went"
       >
-        <MockTable
-          columns={[
-            { label: "Task" },
-            { align: "right", label: "Calls" },
-            { align: "right", label: "Cost" },
-            { align: "right", label: "Per call" },
-            { align: "right", label: "Typical time" },
-          ]}
-          rows={TASKS.map(([task, ...cells]) => ({
-            cells: [
-              <span className="text-foreground font-medium" key={task}>
-                {task}
-              </span>,
-              ...cells,
-            ],
-            key: task,
-          }))}
-        />
-        <MockMore>Show all 54 tasks</MockMore>
+        <MockRows columns={view.columns} rows={rows.slice(0, SHOWN)} />
+        <MockMore>
+          Show all {rows.length} {view.more}
+        </MockMore>
       </AdminSection>
+    </>
+  );
+}
+
+const DAY_MS = 86_400_000;
+
+function state(row: Cell[]) {
+  if (row[2]?.text === "Failed") {
+    return <span className="text-destructive-text font-medium">Failed</span>;
+  }
+
+  const days = Math.round((Date.parse("2026-11-12") - Date.parse(row[3]?.text ?? "")) / DAY_MS);
+  return `Stuck for ${days} days`;
+}
+
+function Failed() {
+  const totals = table("Generation failures");
+  const runs = table("Generation failures", 1);
+
+  return (
+    <>
+      <AdminToolbar>
+        <AdminFilterNav
+          label="Kind"
+          options={[
+            { count: 40, href: "#all", isActive: true, label: "All" },
+            ...totals
+              .filter((row) => Number(row[1]?.text) + Number(row[2]?.text) > 0)
+              .map((row) => ({
+                count: Number(row[1]?.text) + Number(row[2]?.text),
+                href: `#${row[0]?.text}`,
+                isActive: false,
+                label: row[0]?.text ?? "",
+              })),
+          ]}
+        />
+      </AdminToolbar>
+
+      <MockRows
+        columns={[{ label: "What was being written" }, { label: "Kind" }, { label: "State" }, { label: "Last change" }]}
+        rows={runs.slice(0, 10).map((row) => [
+          <span className="text-foreground" key="what">
+            <MockLink>{row[1]?.text}</MockLink>
+          </span>,
+          row[0]?.text,
+          state(row),
+          row[3]?.text,
+        ])}
+      />
+      <MockMore>Show all 40</MockMore>
+    </>
+  );
+}
+
+function Plus() {
+  return (
+    <>
+      <AdminSection title="This month, by plan">
+        <MockRows
+          columns={[
+            { label: "Plan" },
+            { align: RIGHT, label: "Learners" },
+            { align: RIGHT, label: "Pays a month" },
+            { align: RIGHT, label: "AI cost" },
+            { align: RIGHT, label: "Average" },
+            { align: RIGHT, label: "Most" },
+            { align: RIGHT, label: "Cost more than they pay" },
+          ]}
+          rows={table("Plus learners this month").map((row) =>
+            row.map((cell, index) => (index === 0 ? strong(cell.text.replace("Granted", "Given by Zoonk")) : cell.text)),
+          )}
+        />
+      </AdminSection>
+
+      <AdminSection title="Who costs most">
+        <MockRows
+          columns={[
+            { label: "Learner" },
+            { label: "Plan" },
+            { label: "Goal" },
+            { align: RIGHT, label: "Calls" },
+            { align: RIGHT, label: "AI cost" },
+            { align: RIGHT, label: "Pays a month" },
+          ]}
+          rows={table("Plus learners by cost").map((row) => [
+            <span className="block" key="who">
+              {strong(parts(row[0])[0])}
+              <span className="block text-xs">{parts(row[0])[1]}</span>
+            </span>,
+            row[1]?.text.replace("Granted", "Given by Zoonk"),
+            <span className="block max-w-xs" key="goal">
+              {row[2]?.text}
+            </span>,
+            row[3]?.text,
+            row[4]?.text,
+            row[5]?.text,
+          ])}
+        />
+      </AdminSection>
+    </>
+  );
+}
+
+function WrittenBy() {
+  const rows = table("What each model wrote");
+
+  return (
+    <AdminSection title="What each model wrote">
+      <MockRows
+        columns={[{ label: "What" }, { label: "Model" }, { label: "Prompt version" }, { align: RIGHT, label: "How many" }]}
+        rows={rows.slice(0, SHOWN).map((row) => [strong(row[0]?.text), row[1]?.text, row[2]?.text, row[3]?.text])}
+      />
+      <MockMore>Show all {rows.length}</MockMore>
+    </AdminSection>
+  );
+}
+
+export default async function AiMockPage({ searchParams }: PageProps<"/ai/mock">) {
+  const query = await searchParams;
+  const tab = readView(query.tab) || "spend";
+  const by = readView(query.by);
+
+  return (
+    <AiMockShell current={tab}>
+      {tab === "failed" ? <Failed /> : null}
+      {tab === "plus" ? <Plus /> : null}
+      {tab === "written" ? <WrittenBy /> : null}
+      {tab === "spend" ? <Spend by={by in BY ? (by as By) : "task"} /> : null}
     </AiMockShell>
   );
 }

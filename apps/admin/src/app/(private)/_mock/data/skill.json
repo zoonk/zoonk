@@ -1,0 +1,274 @@
+{
+ "fields": [
+  {
+   "label": "Card front",
+   "section": "Details",
+   "value": "Quando duas grandezas crescem juntas, a razão se mantém: se 3 kg custam R$ 12, 5 kg custam R$ 20."
+  },
+  {
+   "label": "Card back",
+   "section": "Details",
+   "value": "—"
+  },
+  {
+   "label": "Identity key",
+   "section": "Details",
+   "value": ":resolver-proporcoes-com-regra-de-tres"
+  },
+  {
+   "label": "Owner",
+   "section": "Details",
+   "value": "—"
+  },
+  {
+   "label": "Merged into",
+   "section": "Details",
+   "value": "—"
+  },
+  {
+   "label": "Merged into this skill",
+   "section": "Details",
+   "value": "—"
+  },
+  {
+   "label": "Created",
+   "section": "Details",
+   "value": "Oct 9, 2026, 4:15 PM"
+  },
+  {
+   "label": "Updated",
+   "section": "Details",
+   "value": "Nov 12, 2026, 1:11 PM"
+  },
+  {
+   "label": "Model",
+   "section": "Provenance",
+   "value": "zoonk/hand-written"
+  },
+  {
+   "label": "Prompt version",
+   "section": "Provenance",
+   "value": "seed-v2"
+  },
+  {
+   "label": "Run",
+   "section": "Provenance",
+   "value": "seed-v2"
+  },
+  {
+   "label": "Generated",
+   "section": "Provenance",
+   "value": "Oct 9, 2026, 4:15 PM"
+  },
+  {
+   "label": "New",
+   "section": "Learners",
+   "value": "0"
+  },
+  {
+   "label": "Learning",
+   "section": "Learners",
+   "value": "0"
+  },
+  {
+   "label": "Solid",
+   "section": "Learners",
+   "value": "49"
+  },
+  {
+   "label": "Mastered",
+   "section": "Learners",
+   "value": "7"
+  }
+ ],
+ "headings": [
+  "H1: Resolver proporções com regra de três",
+  "H2: Details",
+  "H2: Provenance",
+  "H2: Prerequisite graph",
+  "H2: Learners",
+  "H2: Lessons (2)",
+  "H2: Chapters (5)",
+  "H2: Items (4)"
+ ],
+ "tables": [
+  {
+   "head": [
+    "Lesson",
+    "Level",
+    "Visibility",
+    "Content"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/lessons/720169b3-4809-832d-81e0-42d90203f982",
+      "text": "Regra de três"
+     },
+     {
+      "text": "Beginner"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "Pending"
+     }
+    ],
+    [
+     {
+      "href": "/lessons/01a1393f-3d7a-7f90-b94b-b09df1b5648a",
+      "text": "Aula rápida: Resolver proporções com regra de três"
+     },
+     {
+      "text": "Beginner"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "Pending"
+     }
+    ]
+   ],
+   "section": "Lessons (2)"
+  },
+  {
+   "head": [
+    "Chapter",
+    "Level",
+    "Visibility"
+   ],
+   "rows": [
+    [
+     {
+      "text": "Proporcionalidade e variação percentual"
+     },
+     {
+      "text": "Intermediate"
+     },
+     {
+      "text": "Public"
+     }
+    ],
+    [
+     {
+      "text": "Proporcionalidade inversa e composta"
+     },
+     {
+      "text": "Beginner"
+     },
+     {
+      "text": "Public"
+     }
+    ],
+    [
+     {
+      "text": "Escalas em mapas, plantas e maquetes"
+     },
+     {
+      "text": "Beginner"
+     },
+     {
+      "text": "Public"
+     }
+    ],
+    [
+     {
+      "text": "Partilhas e rateios proporcionais"
+     },
+     {
+      "text": "Beginner"
+     },
+     {
+      "text": "Public"
+     }
+    ],
+    [
+     {
+      "text": "Concentrações e transformações de misturas"
+     },
+     {
+      "text": "Beginner"
+     },
+     {
+      "text": "Public"
+     }
+    ]
+   ],
+   "section": "Chapters (5)"
+  },
+  {
+   "head": [
+    "Item",
+    "Format",
+    "Language",
+    "Field"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/items/01a1222e-0bc5-77d2-af6d-c28d9672a098",
+      "text": "Quantos mililitros de suco Leandro deve preparar?"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a1222e-0bc5-7a25-a1f6-fb109a46b234",
+      "text": "Nessas mesmas condições, que distância o carro percorre com 15 L?"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     }
+    ],
+    [
+     {
+      "href": "/items/01a1222e-0bc5-7ee2-865e-3ef3a520d3b8",
+      "text": "Qual deve ser a largura da nova faixa?"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     }
+    ],
+    [
+     {
+      "href": "/items/5283c3e8-29d3-8117-8b9d-09721c7f10e1",
+      "text": "Mantendo o mesmo consumo, quanto etanol a viagem vai gastar?"
+     },
+     {
+      "text": "Multiple choice"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "—"
+     }
+    ]
+   ],
+   "section": "Items (4)"
+  }
+ ],
+ "text": "Skills\nResolver proporções com regra de três\nResolver proporções com regra de três\n\nPT · Beginner · Public\n\nSkill actions\nDetails\nCard front\nQuando duas grandezas crescem juntas, a razão se mantém: se 3 kg custam R$ 12, 5 kg custam R$ 20.\nCard back\n—\nIdentity key\n:resolver-proporcoes-com-regra-de-tres\nOwner\n—\nMerged into\n—\nMerged into this skill\n—\nCreated\nOct 9, 2026, 4:15 PM\nUpdated\nNov 12, 2026, 1:11 PM\nProvenance\nModel\nzoonk/hand-written\nPrompt version\nseed-v2\nRun\nseed-v2\nGenerated\nOct 9, 2026, 4:15 PM\nPrerequisite graph\n\nPrerequisites up to 4 steps back and the skills that list this one as a prerequisite, at most 60 per side.\n\nDirect prerequisites\nOperar com números racionais e reais\nIntermediate\nThis skill\nResolver proporções com regra de três\nBuilds toward\nAplicar semelhança de figuras\nIntermediate\nCalcular probabilidades de eventos\nIntermediate\nCalcular probabilidades simples\nIntermediate\nCalcular variações percentuais\nIntermediate\nConverter unidades e escalas\nIntermediate\nResolver medidas em triângulos\nIntermediate\nUsar escalas\nBeginner\nLearners\n\nLearners by mastery state, without accounts left out of analytics.\n\nNew\n0\nLearning\n0\nSolid\n49\nMastered\n7\nLessons (2)\nLesson\tLevel\tVisibility\tContent\nRegra de três\tBeginner\tPublic\tPending\nAula rápida: Resolver proporções com regra de três\tBeginner\tPublic\tPending\nChapters (5)\nChapter\tLevel\tVisibility\nProporcionalidade e variação percentual\tIntermediate\tPublic\nProporcionalidade inversa e composta\tBeginner\tPublic\nEscalas em mapas, plantas e maquetes\tBeginner\tPublic\nPartilhas e rateios proporcionais\tBeginner\tPublic\nConcentrações e transformações de misturas\tBeginner\tPublic\nItems (4)\nItem\tFormat\tLanguage\tField\n\nQuantos mililitros de suco Leandro deve preparar?\n\tMultiple choice\tPT\t—\n\nNessas mesmas condições, que distância o carro percorre com 15 L?\n\tMultiple choice\tPT\t—\n\nQual deve ser a largura da nova faixa?\n\tMultiple choice\tPT\t—\n\nMantendo o mesmo consumo, quanto etanol a viagem vai gastar?\n\tMultiple choice\tPT\t—"
+}

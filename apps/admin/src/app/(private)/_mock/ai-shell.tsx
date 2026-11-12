@@ -10,25 +10,17 @@ const TABS = [
   { label: "Written by", value: "written" },
 ] as const;
 
-export function AiMockShell({
-  children,
-  current,
-  notice = false,
-}: {
-  children: React.ReactNode;
-  current: (typeof TABS)[number]["value"];
-  notice?: boolean;
-}) {
+export function AiMockShell({ children, current }: { children: React.ReactNode; current: string }) {
   return (
     <AdminPage>
       <AdminPageHeader title="AI" />
       <AdminPageBody className="gap-8">
-        {notice ? (
+        {current === "spend" ? (
           <AdminNotice title="40 AI runs failed or are stuck" tone="destructive">
             5 failed. 35 started over an hour ago and never finished. <MockLink>See them</MockLink>
           </AdminNotice>
         ) : null}
-        <AdminTabs current={current} label="AI" path="/ai/mock" tabs={TABS} />
+        <AdminTabs current={current as "spend"} label="AI" path="/ai/mock" tabs={TABS} />
         {children}
       </AdminPageBody>
     </AdminPage>

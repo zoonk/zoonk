@@ -1,0 +1,1045 @@
+{
+ "fields": [],
+ "headings": [
+  "H1: Sources"
+ ],
+ "tables": [
+  {
+   "head": [
+    "Source",
+    "Kind",
+    "Visibility",
+    "Language",
+    "Fetched",
+    "Valid until",
+    "Next check",
+    "Learners",
+    "Exams"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/sources/4b91f405-f3c8-83f3-8be4-9fcb435ed06b",
+      "text": "Edital do Enem 2026\nInep"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "11/12/2026"
+     },
+     {
+      "text": "11/14/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "2"
+     }
+    ],
+    [
+     {
+      "href": "/sources/4256cede-9799-8019-810c-45900f383278",
+      "text": "Temas recorrentes nas provas do Enem"
+     },
+     {
+      "text": "Secondary"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "11/12/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a174af-cbe3-7497-9e6a-a9df8b123bf2",
+      "text": "0420130 - Neurociência I - Jupiterweb\nUniversidade de São Paulo (USP)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/25/2026"
+     },
+     {
+      "text": "10/25/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a174af-c828-7079-80a5-4fd73913ea30",
+      "text": "DAC - BF587 - Neurociência - 1S/2026\nUniversidade Estadual de Campinas (Unicamp)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/25/2026"
+     },
+     {
+      "text": "10/25/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a174af-c7f5-7e93-bf0e-3543ffb1177f",
+      "text": "DAC - BS220 - Neurociências - 1S/2026\nUniversidade Estadual de Campinas (Unicamp)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/25/2026"
+     },
+     {
+      "text": "10/25/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "1"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12aba-615c-7932-b984-f7417cc9dd58",
+      "text": "Edital TJ SP Escrevente 2025\nGran Cursos Online"
+     },
+     {
+      "text": "Secondary"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/11/2026"
+     },
+     {
+      "text": "11/10/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a128c2-50c1-76ce-8dff-1cd64e245e1d",
+      "text": "TJSP publica edital de abertura de concurso para escrevente técnico judiciário na Capital e CJs da 1ª RAJ\nTribunal de Justiça de São Paulo"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "1"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12781-5422-73e8-b669-16d6b5870049",
+      "text": "Exámenes DELE B2\nInstituto Cervantes"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "ES"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12781-533c-719c-852b-b47270cf9062",
+      "text": "Términos y condiciones | Exámenes\nInstituto Cervantes"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "ES"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12781-527f-74ef-a8de-594e5706d4be",
+      "text": "Modelo de examen DELE B2\nInstituto Cervantes"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "ES"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12781-523f-7268-9960-45377a948fd6",
+      "text": "Cuándo es el DELE | Exámenes\nInstituto Cervantes"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "ES"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12781-4af1-73a9-a67d-fa95d6fb11d9",
+      "text": "Guía de examen DELE B2\nInstituto Cervantes"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "ES"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/12/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "1"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12781-4826-7b5f-841e-d46ccd2c9c45",
+      "text": "Especificaciones de examen DELE B2\nInstituto Cervantes"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "ES"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1277e-1852-7adc-a85c-7b185724ccee",
+      "text": "IELTS Academic: Reading test format\nIELTS"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1277e-14b3-72f0-a55d-db8e84645226",
+      "text": "IELTS | IELTS Academic test format and sections\nIELTS"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "1"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1277e-1478-72cf-9974-ac503a93cbf6",
+      "text": "Writing Band Descriptors - IELTS\nIELTS"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1277e-13e9-73c0-8611-3874572dd7af",
+      "text": "Speaking Band Descriptors\nIELTS"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1277e-118b-77a2-b259-f808c2fee37b",
+      "text": "IELTS | IELTS Academic: Writing test format\nIELTS"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "EN"
+     },
+     {
+      "text": "10/10/2026"
+     },
+     {
+      "text": "11/9/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-4c76-730e-b9c6-2e78f9a3eb90",
+      "text": "MC750 - Construção de Interfaces Homem-Computador\nUniversidade Estadual de Campinas (UNICAMP)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "10/9/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-4bb3-7035-89de-8ad90e3c3054",
+      "text": "Pós-Graduação em Interação Humano-Computador e Experiência do Usuário (UX)\nPontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "10/9/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-48af-710d-96d2-c8aa4864a61b",
+      "text": "INF1039 - PROJETOS: APLICA INTERATIVAS\nPontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "10/9/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-45f8-79e4-ab60-804629299d0d",
+      "text": "UX Design: Projetar para a Experiência do Usuário (Atividade 137478)\nUniversidade de São Paulo (USP)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "10/9/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-455e-7a0f-86e7-b132be09b31a",
+      "text": "SCC0560 - Interação Humano-Computador e Experiência do Usuário\nUniversidade de São Paulo (USP)"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "10/9/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-4255-7dbb-9bb7-b9a9593bf250",
+      "text": "Calendário\nConselho Federal da OAB"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-168b-76d4-b1a7-05ceef135efe",
+      "text": "Edital de Abertura do 48º EOU\nConselho Federal da OAB / FGV"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "1/9/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "1"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-1615-7591-8e9a-f7f4662c16e1",
+      "text": "47º EXAME DE ORDEM UNIFICADO - TIPO 1 – BRANCA\nConselho Federal da OAB / FGV"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-1229-72fe-ae46-fcae88bd7fc6",
+      "text": "Editais e Provas\nConselho Federal da OAB"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-0e76-7baf-9652-ada174258227",
+      "text": "Confira o edital de abertura do 48º Exame de Ordem Unificado\nConselho Federal da OAB"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a12243-063a-7b21-aa78-95dc3d86dc09",
+      "text": "OAB FGV\nFGV Conhecimento"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1221e-709a-7183-844b-9f0292a47288",
+      "text": "Edital nº 2 - Sorteio público destinado à distribuição de duas vagas reservadas de provimento imediato\nCebraspe / Câmara dos Deputados"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1221e-703a-72bf-9706-26e4b358e396",
+      "text": "Edital nº 1 - Abertura - Concurso Público para Provimento de Vagas e Formação de Cadastro de Reserva em Cargos de Analista Legislativo\nCebraspe / Câmara dos Deputados"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "1/16/2027"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "1"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1221e-6eae-708f-ae6d-5f226ffa5b1c",
+      "text": "Editais - Concursos - Portal da Câmara dos Deputados\nCâmara dos Deputados"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1221e-66ca-74e2-9b7a-12e1b1e05fe9",
+      "text": "Câmara divulga edital de novo concurso para Analista Legislativo\nCâmara dos Deputados"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ],
+    [
+     {
+      "href": "/sources/01a1221e-661f-71b3-b1f9-dc99c23982d9",
+      "text": "Câmara dos Deputados 26 - Analista Legislativo\nCebraspe"
+     },
+     {
+      "text": "Official"
+     },
+     {
+      "text": "Public"
+     },
+     {
+      "text": "PT"
+     },
+     {
+      "text": "10/9/2026"
+     },
+     {
+      "text": "11/8/2026"
+     },
+     {
+      "text": "—"
+     },
+     {
+      "text": "0"
+     },
+     {
+      "text": "0"
+     }
+    ]
+   ],
+   "section": ""
+  }
+ ],
+ "text": "Sources\n\nOfficial notices, secondary pages and learner uploads. Private uploads show metadata only.\n\nAll kinds\nOfficial\nSecondary\nUpload\nAll\nPublic\nPrivate\nSource\tKind\tVisibility\tLanguage\tFetched\tValid until\tNext check\tLearners\tExams\nEdital do Enem 2026\nInep\n\tOfficial\tPublic\tPT\t11/12/2026\t11/14/2026\t—\t0\t2\nTemas recorrentes nas provas do Enem\tSecondary\tPublic\tPT\t11/12/2026\t—\t—\t0\t0\n0420130 - Neurociência I - Jupiterweb\nUniversidade de São Paulo (USP)\n\tOfficial\tPublic\tPT\t10/25/2026\t10/25/2027\t—\t1\t0\nDAC - BF587 - Neurociência - 1S/2026\nUniversidade Estadual de Campinas (Unicamp)\n\tOfficial\tPublic\tPT\t10/25/2026\t10/25/2027\t—\t1\t0\nDAC - BS220 - Neurociências - 1S/2026\nUniversidade Estadual de Campinas (Unicamp)\n\tOfficial\tPublic\tPT\t10/25/2026\t10/25/2027\t—\t1\t0\nEdital TJ SP Escrevente 2025\nGran Cursos Online\n\tSecondary\tPublic\tPT\t10/11/2026\t11/10/2026\t—\t0\t0\nTJSP publica edital de abertura de concurso para escrevente técnico judiciário na Capital e CJs da 1ª RAJ\nTribunal de Justiça de São Paulo\n\tOfficial\tPublic\tPT\t10/10/2026\t11/9/2026\t—\t0\t1\nExámenes DELE B2\nInstituto Cervantes\n\tOfficial\tPublic\tES\t10/10/2026\t11/9/2026\t—\t0\t0\nTérminos y condiciones | Exámenes\nInstituto Cervantes\n\tOfficial\tPublic\tES\t10/10/2026\t11/9/2026\t—\t0\t0\nModelo de examen DELE B2\nInstituto Cervantes\n\tOfficial\tPublic\tES\t10/10/2026\t11/9/2026\t—\t0\t0\nCuándo es el DELE | Exámenes\nInstituto Cervantes\n\tOfficial\tPublic\tES\t10/10/2026\t11/9/2026\t—\t0\t0\nGuía de examen DELE B2\nInstituto Cervantes\n\tOfficial\tPublic\tES\t10/10/2026\t11/12/2027\t—\t0\t1\nEspecificaciones de examen DELE B2\nInstituto Cervantes\n\tOfficial\tPublic\tES\t10/10/2026\t11/9/2026\t—\t0\t0\nIELTS Academic: Reading test format\nIELTS\n\tOfficial\tPublic\tEN\t10/10/2026\t11/9/2026\t—\t0\t0\nIELTS | IELTS Academic test format and sections\nIELTS\n\tOfficial\tPublic\tEN\t10/10/2026\t11/9/2026\t—\t0\t1\nWriting Band Descriptors - IELTS\nIELTS\n\tOfficial\tPublic\tEN\t10/10/2026\t11/9/2026\t—\t0\t0\nSpeaking Band Descriptors\nIELTS\n\tOfficial\tPublic\tEN\t10/10/2026\t11/9/2026\t—\t0\t0\nIELTS | IELTS Academic: Writing test format\nIELTS\n\tOfficial\tPublic\tEN\t10/10/2026\t11/9/2026\t—\t0\t0\nMC750 - Construção de Interfaces Homem-Computador\nUniversidade Estadual de Campinas (UNICAMP)\n\tOfficial\tPublic\tPT\t10/9/2026\t10/9/2027\t—\t0\t0\nPós-Graduação em Interação Humano-Computador e Experiência do Usuário (UX)\nPontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)\n\tOfficial\tPublic\tPT\t10/9/2026\t10/9/2027\t—\t0\t0\nINF1039 - PROJETOS: APLICA INTERATIVAS\nPontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)\n\tOfficial\tPublic\tPT\t10/9/2026\t10/9/2027\t—\t0\t0\nUX Design: Projetar para a Experiência do Usuário (Atividade 137478)\nUniversidade de São Paulo (USP)\n\tOfficial\tPublic\tPT\t10/9/2026\t10/9/2027\t—\t0\t0\nSCC0560 - Interação Humano-Computador e Experiência do Usuário\nUniversidade de São Paulo (USP)\n\tOfficial\tPublic\tPT\t10/9/2026\t10/9/2027\t—\t0\t0\nCalendário\nConselho Federal da OAB\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nEdital de Abertura do 48º EOU\nConselho Federal da OAB / FGV\n\tOfficial\tPublic\tPT\t10/9/2026\t1/9/2027\t—\t0\t1\n47º EXAME DE ORDEM UNIFICADO - TIPO 1 – BRANCA\nConselho Federal da OAB / FGV\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nEditais e Provas\nConselho Federal da OAB\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nConfira o edital de abertura do 48º Exame de Ordem Unificado\nConselho Federal da OAB\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nOAB FGV\nFGV Conhecimento\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nEdital nº 2 - Sorteio público destinado à distribuição de duas vagas reservadas de provimento imediato\nCebraspe / Câmara dos Deputados\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nEdital nº 1 - Abertura - Concurso Público para Provimento de Vagas e Formação de Cadastro de Reserva em Cargos de Analista Legislativo\nCebraspe / Câmara dos Deputados\n\tOfficial\tPublic\tPT\t10/9/2026\t1/16/2027\t—\t0\t1\nEditais - Concursos - Portal da Câmara dos Deputados\nCâmara dos Deputados\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nCâmara divulga edital de novo concurso para Analista Legislativo\nCâmara dos Deputados\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0\nCâmara dos Deputados 26 - Analista Legislativo\nCebraspe\n\tOfficial\tPublic\tPT\t10/9/2026\t11/8/2026\t—\t0\t0"
+}

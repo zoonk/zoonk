@@ -1,0 +1,108 @@
+{
+ "fields": [
+  {
+   "label": "Identity key",
+   "section": "Details",
+   "value": "enem"
+  },
+  {
+   "label": "Exam date",
+   "section": "Details",
+   "value": "11/15/2026"
+  },
+  {
+   "label": "Registration ends",
+   "section": "Details",
+   "value": "6/12/2026"
+  },
+  {
+   "label": "Valid until",
+   "section": "Details",
+   "value": "Nov 14, 2026, 9:00 PM"
+  },
+  {
+   "label": "Next check",
+   "section": "Details",
+   "value": "Nov 19, 2026, 1:11 PM"
+  },
+  {
+   "href": "/sources/4b91f405-f3c8-83f3-8be4-9fcb435ed06b",
+   "label": "Source",
+   "section": "Details",
+   "value": "Edital do Enem 2026"
+  },
+  {
+   "label": "Goals",
+   "section": "Details",
+   "value": "60"
+  },
+  {
+   "label": "Items",
+   "section": "Details",
+   "value": "340"
+  },
+  {
+   "label": "Created",
+   "section": "Details",
+   "value": "Oct 9, 2026, 4:15 PM"
+  },
+  {
+   "label": "Updated",
+   "section": "Details",
+   "value": "Nov 12, 2026, 1:11 PM"
+  },
+  {
+   "label": "Skills",
+   "section": "Skill graph",
+   "value": "143"
+  },
+  {
+   "label": "Generated",
+   "section": "Skill graph",
+   "value": "Nov 12, 2026, 1:11 PM"
+  },
+  {
+   "label": "Model",
+   "section": "Skill graph",
+   "value": "zoonk/hand-written"
+  },
+  {
+   "label": "Prompt version",
+   "section": "Skill graph",
+   "value": "seed-v2"
+  },
+  {
+   "label": "Model",
+   "section": "Provenance",
+   "value": "zoonk/hand-written"
+  },
+  {
+   "label": "Prompt version",
+   "section": "Provenance",
+   "value": "seed-v2"
+  },
+  {
+   "label": "Run",
+   "section": "Provenance",
+   "value": "seed-v2"
+  },
+  {
+   "label": "Generated",
+   "section": "Provenance",
+   "value": "Oct 9, 2026, 4:15 PM"
+  }
+ ],
+ "headings": [
+  "H1: ENEM",
+  "H2: Details",
+  "H2: Blueprint",
+  "SUMMARY: Current edition",
+  "SUMMARY: Structure",
+  "SUMMARY: Topic frequency",
+  "H2: Skill graph",
+  "H2: Provenance",
+  "H2: Edition history"
+ ],
+ "tables": [],
+ "text": "Exams\nENEM\nENEM\n\nInep · BR · PT\n\nCheck now\nStop\nDetails\nIdentity key\nenem\nExam date\n11/15/2026\nRegistration ends\n6/12/2026\nValid until\nNov 14, 2026, 9:00 PM\nNext check\nNov 19, 2026, 1:11 PM\nSource\nEdital do Enem 2026\nGoals\n60\nItems\n340\nCreated\nOct 9, 2026, 4:15 PM\nUpdated\nNov 12, 2026, 1:11 PM\nBlueprint\n\nRead from its notice once and reused whatever prompt version read it. Read again to redo it with today's instructions.\n\nRead again\nCurrent edition\n{\n  \"year\": 2026,\n  \"check\": {\n    \"problems\": [],\n    \"checkedAt\": \"2026-11-12T16:11:26.058Z\"\n  },\n  \"dates\": [\n    {\n      \"date\": \"2026-05-25\",\n      \"kind\": \"registrationStart\",\n      \"label\": \"Início das inscrições\",\n      \"citation\": {\n        \"passage\": \"As inscrições vão de 25 de maio de 2026 a 12 de junho de 2026, na Página do Participante.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"startTime\": null\n    },\n    {\n      \"date\": \"2026-06-12\",\n      \"kind\": \"registrationEnd\",\n      \"label\": \"Fim das inscrições\",\n      \"citation\": {\n        \"passage\": \"As inscrições vão de 25 de maio de 2026 a 12 de junho de 2026, na Página do Participante.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"startTime\": null\n    },\n    {\n      \"date\": \"2026-11-08\",\n      \"kind\": \"exam\",\n      \"label\": \"1º dia de provas\",\n      \"citation\": {\n        \"passage\": \"O primeiro dia de provas, em 8 de novembro de 2026, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"startTime\": \"13:30\"\n    },\n    {\n      \"date\": \"2026-11-15\",\n      \"kind\": \"exam\",\n      \"label\": \"2º dia de provas\",\n      \"citation\": {\n        \"passage\": \"O segundo dia, em 15 de novembro de 2026, terá Ciências da Natureza e suas Tecnologias e Matemática e suas Tecnologias, com 5 horas de duração.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"startTime\": \"13:30\"\n    }\n  ],\n  \"timeZone\": \"America/Sao_Paulo\",\n  \"citations\": [\n    {\n      \"passage\": \"Edital do Exame Nacional do Ensino Médio (Enem) 2026.\",\n      \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n    },\n    {\n      \"passage\": \"O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.\",\n      \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n    }\n  ],\n  \"noticeUrl\": \"https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem\",\n  \"sourceHash\": \"124a9ba110fecfbd529630cb8015f84f2bd9e9d3c93d649399dd0f032573dda3\",\n  \"questionCount\": 180\n}\nStructure\n{\n  \"mock\": {\n    \"order\": \"1º dia: Linguagens, Ciências Humanas e redação. 2º dia: Ciências da Natureza e Matemática.\",\n    \"scoring\": {\n      \"method\": \"itemResponseTheory\",\n      \"description\": \"Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.\"\n    },\n    \"adaptive\": false,\n    \"sections\": [\n      {\n        \"day\": 1,\n        \"kind\": \"objective\",\n        \"name\": \"Linguagens, Ciências Humanas e redação\",\n        \"minutes\": 330,\n        \"questions\": 90\n      },\n      {\n        \"day\": 2,\n        \"kind\": \"objective\",\n        \"name\": \"Ciências da Natureza e Matemática\",\n        \"minutes\": 300,\n        \"questions\": 90\n      }\n    ],\n    \"citations\": [\n      {\n        \"passage\": \"O primeiro dia de provas, em 8 de novembro de 2026, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      {\n        \"passage\": \"O segundo dia, em 15 de novembro de 2026, terá Ciências da Natureza e suas Tecnologias e Matemática e suas Tecnologias, com 5 horas de duração.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      {\n        \"passage\": \"As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      }\n    ],\n    \"totalQuestions\": 180,\n    \"timeLimitMinutes\": null\n  },\n  \"rules\": [\n    {\n      \"text\": \"Cada questão tem uma única alternativa correta.\",\n      \"citation\": {\n        \"passage\": \"Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      }\n    },\n    {\n      \"text\": \"As notas das provas objetivas usam a Teoria de Resposta ao Item (TRI).\",\n      \"citation\": {\n        \"passage\": \"As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      }\n    },\n    {\n      \"text\": \"Dois avaliadores dão de 0 a 200 pontos em cada uma das cinco competências da redação.\",\n      \"citation\": {\n        \"passage\": \"A redação é corrigida por dois avaliadores, que atribuem de 0 a 200 pontos a cada uma das cinco competências.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      }\n    },\n    {\n      \"text\": \"Os portões fecham às 13h e as provas começam às 13h30, horário de Brasília.\",\n      \"citation\": {\n        \"passage\": \"Nos dois dias, os portões fecham às 13h e as provas começam às 13h30, no horário de Brasília.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      }\n    }\n  ],\n  \"formats\": [\n    {\n      \"kind\": \"multipleChoice\",\n      \"options\": 5,\n      \"citation\": {\n        \"passage\": \"Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"description\": \"Múltipla escolha com cinco alternativas, de A a E\"\n    },\n    {\n      \"kind\": \"essay\",\n      \"options\": null,\n      \"citation\": {\n        \"passage\": \"A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"description\": \"Redação dissertativo-argumentativa de até 30 linhas\"\n    }\n  ],\n  \"subjects\": [\n    {\n      \"name\": \"Linguagens, Códigos e suas Tecnologias\",\n      \"topics\": [\n        \"Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação\",\n        \"Estudo das práticas corporais: a linguagem corporal como integradora social e formadora de identidade\",\n        \"Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania\",\n        \"Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos\",\n        \"Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos\",\n        \"Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa\",\n        \"Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística\",\n        \"Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": 45\n    },\n    {\n      \"name\": \"Língua Inglesa\",\n      \"partOf\": \"Linguagens, Códigos e suas Tecnologias\",\n      \"topics\": [\n        \"Vocábulos e expressões de textos em inglês e seu tema\",\n        \"O inglês como meio de acesso a informações, tecnologias e culturas\",\n        \"Textos em inglês: estruturas linguísticas, sua função e seu uso social\",\n        \"Produção cultural em inglês como representação da diversidade cultural e linguística\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": null,\n      \"shortName\": \"Inglês\",\n      \"choiceGroup\": \"Língua Estrangeira\"\n    },\n    {\n      \"name\": \"Língua Espanhola\",\n      \"partOf\": \"Linguagens, Códigos e suas Tecnologias\",\n      \"topics\": [\n        \"Vocábulos e expressões de textos em espanhol e seu tema\",\n        \"O espanhol como meio de acesso a informações, tecnologias e culturas\",\n        \"Textos em espanhol: estruturas linguísticas, sua função e seu uso social\",\n        \"Produção cultural em espanhol como representação da diversidade cultural e linguística\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": null,\n      \"shortName\": \"Espanhol\",\n      \"choiceGroup\": \"Língua Estrangeira\"\n    },\n    {\n      \"name\": \"Ciências Humanas e suas Tecnologias\",\n      \"topics\": [\n        \"Diversidade cultural, conflitos e vida em sociedade\",\n        \"Formas de organização social, movimentos sociais, pensamento político e ação do Estado\",\n        \"Características e transformações das estruturas produtivas\",\n        \"Os domínios naturais e a relação do ser humano com o ambiente\",\n        \"Representação espacial\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": 45\n    },\n    {\n      \"name\": \"Ciências da Natureza e suas Tecnologias\",\n      \"topics\": [\n        \"Conhecimentos básicos e fundamentais\",\n        \"O movimento, o equilíbrio e a descoberta de leis físicas\",\n        \"Energia, trabalho e potência\",\n        \"A Mecânica e o funcionamento do Universo\",\n        \"Fenômenos Elétricos e Magnéticos\",\n        \"Oscilações, ondas, óptica e radiação\",\n        \"O calor e os fenômenos térmicos\",\n        \"Transformações Químicas\",\n        \"Representação das transformações químicas\",\n        \"Materiais, suas propriedades e usos\",\n        \"Água\",\n        \"Transformações Químicas e Energia\",\n        \"Dinâmica das Transformações Químicas\",\n        \"Transformação Química e Equilíbrio\",\n        \"Compostos de Carbono\",\n        \"Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente\",\n        \"Energias Químicas no Cotidiano\",\n        \"Moléculas, células e tecidos\",\n        \"Hereditariedade e diversidade da vida\",\n        \"Identidade dos seres vivos\",\n        \"Ecologia e ciências ambientais\",\n        \"Origem e evolução da vida\",\n        \"Qualidade de vida das populações humanas\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": 45,\n      \"topicGroups\": [\n        {\n          \"name\": \"Física\",\n          \"topics\": [\n            \"Conhecimentos básicos e fundamentais\",\n            \"O movimento, o equilíbrio e a descoberta de leis físicas\",\n            \"Energia, trabalho e potência\",\n            \"A Mecânica e o funcionamento do Universo\",\n            \"Fenômenos Elétricos e Magnéticos\",\n            \"Oscilações, ondas, óptica e radiação\",\n            \"O calor e os fenômenos térmicos\"\n          ]\n        },\n        {\n          \"name\": \"Química\",\n          \"topics\": [\n            \"Transformações Químicas\",\n            \"Representação das transformações químicas\",\n            \"Materiais, suas propriedades e usos\",\n            \"Água\",\n            \"Transformações Químicas e Energia\",\n            \"Dinâmica das Transformações Químicas\",\n            \"Transformação Química e Equilíbrio\",\n            \"Compostos de Carbono\",\n            \"Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente\",\n            \"Energias Químicas no Cotidiano\"\n          ]\n        },\n        {\n          \"name\": \"Biologia\",\n          \"topics\": [\n            \"Moléculas, células e tecidos\",\n            \"Hereditariedade e diversidade da vida\",\n            \"Identidade dos seres vivos\",\n            \"Ecologia e ciências ambientais\",\n            \"Origem e evolução da vida\",\n            \"Qualidade de vida das populações humanas\"\n          ]\n        }\n      ]\n    },\n    {\n      \"name\": \"Matemática e suas Tecnologias\",\n      \"topics\": [\n        \"Conhecimentos numéricos\",\n        \"Conhecimentos geométricos\",\n        \"Conhecimentos de estatística e probabilidade\",\n        \"Conhecimentos algébricos\",\n        \"Conhecimentos algébricos/geométricos\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": 45\n    },\n    {\n      \"name\": \"Redação\",\n      \"topics\": [\n        \"Texto dissertativo-argumentativo a partir de uma situação-problema\"\n      ],\n      \"weight\": null,\n      \"citation\": {\n        \"passage\": \"A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.\",\n        \"sourceId\": \"4b91f405-f3c8-83f3-8be4-9fcb435ed06b\"\n      },\n      \"questions\": null\n    }\n  ],\n  \"pastQuestions\": {\n    \"source\": {\n      \"url\": \"https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf\",\n      \"title\": \"Gabarito do Enem 2025, 1º dia, Caderno 1 Azul (Inep)\"\n    },\n    \"edition\": \"Enem 2025\",\n    \"subjects\": [\n      {\n        \"name\": \"Língua Inglesa\",\n        \"questions\": 5\n      },\n      {\n        \"name\": \"Língua Espanhola\",\n        \"questions\": 5\n      }\n    ],\n    \"checkedAt\": \"2026-11-12T16:11:26.058Z\"\n  }\n}\nTopic frequency\n[\n  {\n    \"basis\": \"Porcentagem cai em quase toda edição, em geral em compras, juros e variação de preços.\",\n    \"level\": \"high\",\n    \"topic\": \"Conhecimentos numéricos\",\n    \"subject\": \"Matemática\",\n    \"citation\": {\n      \"passage\": \"Porcentagem aparece em praticamente todas as provas de Matemática, quase sempre em situações de compra, juros e variação de preços.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  },\n  {\n    \"basis\": \"Ler gráficos e tabelas é um dos temas mais frequentes de Matemática.\",\n    \"level\": \"high\",\n    \"topic\": \"Conhecimentos de estatística e probabilidade\",\n    \"subject\": \"Matemática\",\n    \"citation\": {\n      \"passage\": \"Leitura e interpretação de gráficos e tabelas é um dos temas mais frequentes de Matemática.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  },\n  {\n    \"basis\": \"Funções aparecem com regularidade, ligadas a situações do dia a dia.\",\n    \"level\": \"medium\",\n    \"topic\": \"Conhecimentos algébricos\",\n    \"subject\": \"Matemática\",\n    \"citation\": {\n      \"passage\": \"Funções aparecem com frequência média, em geral ligadas a situações do dia a dia.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  },\n  {\n    \"basis\": \"O tema de Biologia mais cobrado em Ciências da Natureza.\",\n    \"level\": \"high\",\n    \"topic\": \"Ecologia e ciências ambientais\",\n    \"subject\": \"Ciências da Natureza\",\n    \"citation\": {\n      \"passage\": \"Ecologia é o tema de Biologia mais cobrado em Ciências da Natureza.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  },\n  {\n    \"basis\": \"Presença constante em Física, principalmente circuitos simples.\",\n    \"level\": \"high\",\n    \"topic\": \"Fenômenos Elétricos e Magnéticos\",\n    \"subject\": \"Ciências da Natureza\",\n    \"citation\": {\n      \"passage\": \"Eletricidade, especialmente circuitos simples, é presença constante nas questões de Física.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  },\n  {\n    \"basis\": \"A Primeira República e a Era Vargas estão entre os temas mais cobrados de História do Brasil.\",\n    \"level\": \"high\",\n    \"topic\": \"Formas de organização social, movimentos sociais, pensamento político e ação do Estado\",\n    \"subject\": \"Ciências Humanas\",\n    \"citation\": {\n      \"passage\": \"A Primeira República e a Era Vargas estão entre os temas de História do Brasil mais cobrados.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  },\n  {\n    \"basis\": \"A maior parte das questões de Linguagens parte da leitura de um texto.\",\n    \"level\": \"high\",\n    \"topic\": \"Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação\",\n    \"subject\": \"Linguagens\",\n    \"citation\": {\n      \"passage\": \"Interpretação de texto é a base da maior parte das questões de Linguagens.\",\n      \"sourceId\": \"4256cede-9799-8019-810c-45900f383278\"\n    },\n    \"appearances\": null\n  }\n]\nSkill graph\n\nEvery new learner of the exam plans from it, whatever prompt version wrote it. Reading the notice again also adds skills for topics none of its skills teaches (an option a new reading names); reset to have the next learner write a new one.\n\nReset\nSkills\n143\nGenerated\nNov 12, 2026, 1:11 PM\nModel\nzoonk/hand-written\nPrompt version\nseed-v2\nProvenance\nModel\nzoonk/hand-written\nPrompt version\nseed-v2\nRun\nseed-v2\nGenerated\nOct 9, 2026, 4:15 PM\nEdition history\n\nWhat learners were told each time a new fetch changed this exam.\n\nNo change since the blueprint was first read."
+}

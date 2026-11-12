@@ -1,0 +1,781 @@
+{
+ "fields": [],
+ "headings": [
+  "H1: Questions"
+ ],
+ "tables": [
+  {
+   "head": [
+    "Question",
+    "Answer",
+    "User",
+    "Course / lesson",
+    "Status / asked"
+   ],
+   "rows": [
+    [
+     {
+      "href": "/questions/01a17997-b0f5-792a-b6c9-4cb0a103c906",
+      "text": "São todos os tipos de células que têm lisossomos ou só algum tipo específico de células? Tipo células vegetais ou células animais?"
+     },
+     {
+      "text": "Lisossomos são característicos das células animais, embora a quantidade varie conforme a função da célula. Células que digerem muitas partículas, como alguns glóbulos brancos, costumam ter bastante. Nas células vegetais, quem faz funções parecidas é principalmente o vacúolo, que pode armazenar substâncias e também ajudar a decompor e reciclar materiais. Em geral, não se considera que plantas tenham lisossomos separados como os das células animais. Já bactérias não têm lisossomos: elas não possuem organelas envolvidas por membranas."
+     },
+     {
+      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+      "text": "Will\nneuro@zoonk.test"
+     },
+     {
+      "text": "Biologia celular\nOrganização e diversidade das células · Compartimentalização celular"
+     },
+     {
+      "text": "Completed\n10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a17993-0e16-7290-b9a7-a85a2c3644ad",
+      "text": "Como que é esse reaproveitamento ou descarte? No reaproveitamento, ele volta para a célula. E no descarte, o que acontece? Eu quero visualizar melhor como funciona esse processo de forma prática."
+     },
+     {
+      "text": "Imagine um neurônio com uma mitocôndria danificada: Isolamento: a célula a envolve numa pequena bolsa, como colocar uma peça quebrada numa caixa. Quebra: essa bolsa se une ao lisossomo. Enzimas ali dentro desmontam a mitocôndria em componentes menores. Reaproveitamento: partes úteis, como aminoácidos e moléculas de gordura, atravessam a membrana e voltam ao citoplasma, onde a célula pode usá-las para construir ou alimentar outras estruturas. Descarte: o que não pode ser aproveitado fica como resíduo. A célula pode expulsá-lo numa vesícula que se funde com a membrana celular; alguns resíduos, porém, podem permanecer acumulados dentro da célula. Então, “descarte” não significa necessariamente que tudo sai da célula: depende do tipo de resíduo e da célula."
+     },
+     {
+      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+      "text": "Will\nneuro@zoonk.test"
+     },
+     {
+      "text": "Biologia celular\nOrganização e diversidade das células · Compartimentalização celular"
+     },
+     {
+      "text": "Completed\n10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a17991-cb87-7338-b164-5f4edcf1d4c2",
+      "text": "me dá um exemplo prático"
+     },
+     {
+      "text": "Imagine um neurônio com uma organela velha ou danificada. A célula pode encaminhá-la ao lisossomo, que a desmonta em partes menores para a célula reaproveitar ou descartar. É como uma área de reciclagem dentro da célula."
+     },
+     {
+      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+      "text": "Will\nneuro@zoonk.test"
+     },
+     {
+      "text": "Biologia celular\nOrganização e diversidade das células · Compartimentalização celular"
+     },
+     {
+      "text": "Completed\n10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a17991-25ad-7a1d-ad0f-25167487610b",
+      "text": "por que ele existe? o que ele faz exatamente?"
+     },
+     {
+      "text": "Ele existe como parte da compartimentalização celular: algumas reações precisam acontecer em um espaço separado e controlado. Repare no papel da membrana da bolsa: o que ela evita que aconteça se as substâncias de desmontagem ficarem soltas pelo resto da célula?"
+     },
+     {
+      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+      "text": "Will\nneuro@zoonk.test"
+     },
+     {
+      "text": "Biologia celular\nOrganização e diversidade das células · Compartimentalização celular"
+     },
+     {
+      "text": "Completed\n10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a17974-5825-7a3e-a5c2-2673972bcb0e",
+      "text": "ela deve acrescentar o citoplasma?"
+     },
+     {
+      "text": "Complete também as outras duas partes: onde ela deve desenhar isso e o que acontece nessa região? Use o espaço entre a membrana e o material genético como referência."
+     },
+     {
+      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+      "text": "Will\nneuro@zoonk.test"
+     },
+     {
+      "text": "Biologia celular\nOrganização e diversidade das células · Componentes comuns das células"
+     },
+     {
+      "text": "Completed\n10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a17973-0ec2-7723-aff7-82bdf0f0795d",
+      "text": "achei a pergunta um pouco confusa. não entendi o que preciso responder aqui"
+     },
+     {
+      "text": "A pergunta quer uma resposta em três partes: o que falta no esquema, onde isso deve aparecer e por que essa parte é importante. A pista é a região dentro da membrana, ao redor do material genético, onde ficam materiais da célula e acontecem muitas atividades. Tente completar: “Iara deve acrescentar ___ na região ___, porque ___.”"
+     },
+     {
+      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+      "text": "Will\nneuro@zoonk.test"
+     },
+     {
+      "text": "Biologia celular\nOrganização e diversidade das células · Componentes comuns das células"
+     },
+     {
+      "text": "Completed\n10/26/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b86-2ada-7e8f-af5c-95a1155d0b02",
+      "text": "How do I change my buddy's name?"
+     },
+     {
+      "text": "Go to Preferences, tap Choose your buddy, change the name, then tap Save."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b85-0cab-7031-9f0c-f207ade96b1f",
+      "text": "Which lesson should I do first?"
+     },
+     {
+      "text": "Do Where a price comes from first. Then do Brokers and exchanges when it comes up on your next study day. Both are lessons from earlier days, and doing them first keeps your plan as it is."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b81-1f90-72ba-92af-db90891f995b",
+      "text": "qual aula preciso fazer primeiro?"
+     },
+     {
+      "text": "Faça primeiro Por que o elétron não cai no núcleo?. Ela já está na sua sessão de hoje."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b7f-dbc3-7a19-a978-d55c1dc38f6d",
+      "text": "quando é meu próximo desafio?"
+     },
+     {
+      "text": "Seu próximo desafio é o desafio semanal, em 18/10: Dentro do átomo. Depois, vem o desafio da fase em 21/10."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b59-76d5-7c16-899a-4345f9869b55",
+      "text": "Can you send me a website to learn more about the stock market?"
+     },
+     {
+      "text": "I can only point you to pages in the app, not send an outside website. Your stock-market course is here: start with Where a price comes from, then see what’s next in Plan."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b57-f3f9-71af-8135-1c66aaf78f3d",
+      "text": "How do I change my buddy's name?"
+     },
+     {
+      "text": "Go to Preferences and open “Choose your buddy” to change your buddy’s name."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b56-bbca-7d5e-b304-73e80c0150e3",
+      "text": "Which lesson should I do first?"
+     },
+     {
+      "text": "Do Where a price comes from first. It’s from an earlier day and opens your session today; after that, do Brokers and exchanges. Doing these first keeps your plan as it is."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b52-da5a-7618-a93c-b607f1671f40",
+      "text": "o que falta fazer nesta semana?"
+     },
+     {
+      "text": "Nesta semana ainda falta: Hoje, 14/10: revisar O experimento da fenda dupla, fazer Por que o elétron não cai no núcleo? e praticar os erros nesta sessão. Também está pendente de dias anteriores: Mais confinado, mais agitado. O Plano não registra um dia específico para ela. 15/10: E se? Quando um átomo perde um elétron. 16/10: Mais confinado, mais agitado e Por que as cores existem. 17/10: Comprimento de onda a partir da energia do fóton e E se? Da energia do fóton ao comprimento de onda. 18/10: desafio da fase. As aulas dos dias 15 a 17 estão no Plano."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b51-da30-76cc-9ac5-db57f968fe64",
+      "text": "por que está dizendo que estou atrasado? qual aula preciso fazer primeiro?"
+     },
+     {
+      "text": "Você está atrasado porque há 2 aulas de dias anteriores pendentes. Faça primeiro Por que o elétron não cai no núcleo?, que abre a sessão de hoje. Depois, faça Mais confinado, mais agitado, que aparece nos próximos dias de estudo no Plano. Ao concluí-las, você mantém o plano como está."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b42-cd49-7d45-bf69-8edbf1bf4c4b",
+      "text": "Can you send me a website to learn more about the stock market?"
+     },
+     {
+      "text": "You can keep learning it here: your goal’s course covers what stocks are, how trading works, why prices move, and long-term investing. Start with Today for your next lesson, or see what’s ahead in Plan. I can also help you think through the basics of investing your first paycheck."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b41-5bda-704f-a2f0-4e706d49faa2",
+      "text": "How do I change my buddy's name?"
+     },
+     {
+      "text": "Go to Preferences to change your buddy’s name."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b40-b571-770a-8377-d77863cd986a",
+      "text": "Which lesson should I do first?"
+     },
+     {
+      "text": "Start with Where a price comes from, then do Brokers and exchanges. They’re both lessons from earlier days; doing them first keeps your plan as it is."
+     },
+     {
+      "href": "/users/01a13b31-6a24-7594-ae31-580893197448",
+      "text": "Pedro Lima\npersona-pedro-f390f6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b3e-4062-7b29-b7f2-a2953888e206",
+      "text": "quantas ainda faltam para completar o curso?"
+     },
+     {
+      "text": "O app mostra que você concluiu 6% do curso, então faltam cerca de 94%. Não tenho o número exato de aulas restantes; você pode acompanhar o curso em Cursos."
+     },
+     {
+      "href": "/users/01a136e5-d98e-7851-972d-6500b86827cd",
+      "text": "Lucas Pereira\npersona-lucas-d6ddfe@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b3d-4f54-7b7b-b7fe-337649d615a4",
+      "text": "quantas aulas eu já completei nesse curso?"
+     },
+     {
+      "text": "Você já completou 6 aulas no curso Física quântica do zero."
+     },
+     {
+      "href": "/users/01a136e5-d98e-7851-972d-6500b86827cd",
+      "text": "Lucas Pereira\npersona-lucas-d6ddfe@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b3c-e034-7404-a7a5-4886104ba8ab",
+      "text": "What can you do for me?"
+     },
+     {
+      "text": "I can answer your ENEM questions, explain your study plan, and suggest changes when you want to adjust it. I can also help you review your mistakes, see what’s ahead in your plan, or take a mock exam."
+     },
+     {
+      "href": "/users/01a13b31-3983-7c3c-9c6e-f9f209f74a27",
+      "text": "Ana Souza\npersona-ana-41211d@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b3c-8c47-71a1-8901-cc5dd4aed4eb",
+      "text": "qual é essa aula atrasada? como eu faço ela?"
+     },
+     {
+      "text": "A aula atrasada é “Por que o elétron não cai no núcleo?”. Ela já está na sessão de hoje e aparece primeiro: toque no link para começar."
+     },
+     {
+      "href": "/users/01a136e5-d98e-7851-972d-6500b86827cd",
+      "text": "Lucas Pereira\npersona-lucas-d6ddfe@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b3c-09b9-7e38-8352-d42c3bda6db4",
+      "text": "When is my next challenge?"
+     },
+     {
+      "text": "Your next challenge is scheduled for October 31, 2027: open the challenge."
+     },
+     {
+      "href": "/users/01a13b31-3983-7c3c-9c6e-f9f209f74a27",
+      "text": "Ana Souza\npersona-ana-41211d@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b3a-2c48-76b7-a801-88f5e934f938",
+      "text": "When is my next mock exam?"
+     },
+     {
+      "text": "Your next mock exam is scheduled for November 8, 2026: open the mock exam."
+     },
+     {
+      "href": "/users/01a13b31-3983-7c3c-9c6e-f9f209f74a27",
+      "text": "Ana Souza\npersona-ana-41211d@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b37-9149-7047-92b3-87cfc24c4de5",
+      "text": "onde vejo meus erros?"
+     },
+     {
+      "text": "No caderno de erros. O cartão também abre a prática para revisar o erro que está esperando."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b36-ea64-741a-8985-1fea00b034be",
+      "text": "O que falta fazer nesta semana? Quais aulas e em quais dias?"
+     },
+     {
+      "text": "Nesta semana, o plano mostra: Hoje, 14/10: revisão de O experimento da fenda dupla, a aula Por que o elétron não cai no núcleo? e uma prática do caderno de erros. 15/10: E se? Quando um átomo perde um elétron. 16/10: Mais confinado, mais agitado e Por que as cores existem. 17/10: Comprimento de onda a partir da energia do fóton e E se? Da energia do fóton ao comprimento de onda. As duas aulas pendentes de dias anteriores não têm dias específicos registrados; você pode ver o que fazer e o plano completo em Hoje e Plano."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13b36-53e8-73bb-9c43-5411d8cdf16d",
+      "text": "por que está dizendo que estou atrasado? qual aula preciso fazer primeiro?"
+     },
+     {
+      "text": "Você está atrasado porque ficaram 2 aulas de dias anteriores por fazer. A primeira é Por que o elétron não cai no núcleo?; depois vem Mais confinado, mais agitado. Elas não estão na sessão de hoje, então aparecem primeiro nos próximos dias de estudo. Fazê-las mantém o plano como está."
+     },
+     {
+      "href": "/users/01a13b31-0afd-7615-96aa-f2bc24050005",
+      "text": "Lucas Pereira\npersona-lucas-57c160@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13abe-fc87-77ed-a4a7-b45334838969",
+      "text": "por que está dizendo que estou atrasado? qual aula preciso fazer primeiro?"
+     },
+     {
+      "text": "Está marcando atrasada porque há 1 aula de um dia anterior que ainda está pendente. Não consigo ver o título dessa aula anterior neste resumo. Na sessão de hoje, a primeira aula é “Por que o elétron não cai no núcleo?”. Para manter o plano como está, tente recuperar também a aula pendente, reservando um pouco mais de tempo hoje ou nesta semana."
+     },
+     {
+      "href": "/users/01a136e5-d98e-7851-972d-6500b86827cd",
+      "text": "Lucas Pereira\npersona-lucas-d6ddfe@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/14/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13641-de4d-7616-9a99-f8f8e775b1e1",
+      "text": "Tira Redação do meu plano. Vou estudar redação com um professor particular."
+     },
+     {
+      "text": "A proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a13641-de4c-723b-a95b-f43b9fca0ed8",
+      "text": "Ana Souza\npersona-ana-c3c1d9-6de8e8@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/13/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13640-0201-7d97-9d76-aa8231c156cc",
+      "text": "Tira Redação do meu plano. Vou estudar redação com um professor particular."
+     },
+     {
+      "text": "A proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a13640-0200-7998-8943-9786834384e4",
+      "text": "Ana Souza\npersona-ana-c3c1d9-07a690@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/13/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a135fb-78c5-7b08-8bc9-13fe5396ab05",
+      "text": "Tira Redação do meu plano. Vou estudar redação com um professor particular."
+     },
+     {
+      "text": "A proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a135b0-9fbb-70d4-8087-64b5785f6f45",
+      "text": "Ana Souza\npersona-ana-c3c1d9@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/13/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a135dc-d109-72e8-a32c-0808e27140a0",
+      "text": "Fiquei uma semana sem estudar. Ainda dá pra chegar no B1 antes da mudança? Se precisar, posso estudar 40 min por dia."
+     },
+     {
+      "text": "Ainda é possível avançar bastante, mas não dá para confirmar pelo plano se você chegará ao B1: ele não mede nem garante esse nível. No ritmo atual, a estimativa é terminar em 14 de março, um dia antes da data da sua meta, e há 5 aulas de dias anteriores esperando para recuperar. Propus aumentar para 40 minutos por dia. Se aplicar no cartão, o plano acrescentará cerca de 278 aulas e incluirá temas como comprar remédio na farmácia e conversar com vizinhos. Isso pode dar mais espaço para praticar, mas não garante o B1."
+     },
+     {
+      "href": "/users/01a135b0-de92-7076-9b16-7b0bc134e4d3",
+      "text": "Marcos Oliveira\npersona-marcos-c101f2@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/13/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a13561-7892-70d3-a3a1-5a4ca745e43c",
+      "text": "Como eu calculo rápido um desconto de 25% numa prova?"
+     },
+     {
+      "text": "No answer yet"
+     },
+     {
+      "href": "/users/01a13551-8bd2-7042-a0d8-d52079ab13bc",
+      "text": "Ana Souza\npersona-ana-917a53@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Pending\n10/13/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a1364c-0518-7999-9022-bb8d01523ca1",
+      "text": "Tira Redação do meu plano. Vou estudar redação com um professor particular."
+     },
+     {
+      "text": "A proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a1364c-0516-7f07-8baf-a5f8a4943c0a",
+      "text": "Ana Souza\npersona-ana-c3c1d9-e06a30@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/12/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a1361d-4e32-7e2c-8e8a-472ffbf291e2",
+      "text": "Tira Redação do meu plano. Vou estudar redação com um professor particular."
+     },
+     {
+      "text": "A proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a1361d-4e31-7a4e-8cdf-22f7612636c9",
+      "text": "Ana Souza\npersona-ana-c3c1d9-ac1df6@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/12/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a1361d-058e-7a23-aab4-e063ea984d50",
+      "text": "Tira Redação do meu plano. Vou estudar redação com um professor particular."
+     },
+     {
+      "text": "A proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a1361d-058d-75e0-9461-cd2c205d0a01",
+      "text": "Ana Souza\npersona-ana-c3c1d9-d476b3@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/12/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a122cd-6570-73f7-99ae-28e6199f43ed",
+      "text": "como estou indo até agora? quantas aulas já fiz e quanto estou acertando?"
+     },
+     {
+      "text": "Você está no ritmo do plano: já fez 3 de 23 aulas e acertou 2 das 3 respostas registradas até agora. Há também 1 erro em aberto para revisar. Abaixo, o cartão de estatísticas mostra outros dados do seu estudo."
+     },
+     {
+      "href": "/users/01a12217-5afb-750e-8e43-78d40ead0a19",
+      "text": "Pedro Lima\nv2-stocks@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a122cc-f185-7a33-a083-fe184d44016d",
+      "text": "o que a aula Corretoras e bolsas ensina? já fiz ela?"
+     },
+     {
+      "text": "A aula “Corretoras e bolsas” explica o caminho de uma ordem de compra: você faz o pedido no app da corretora, ela o encaminha à bolsa, que reúne ofertas de compra e venda. Enviar a ordem não significa que a compra já foi concluída; isso acontece quando há uma oferta compatível e a bolsa registra o negócio. Você ainda não fez essa aula: ela está prevista para 22/10."
+     },
+     {
+      "href": "/users/01a12217-5afb-750e-8e43-78d40ead0a19",
+      "text": "Pedro Lima\nv2-stocks@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a12277-572c-7f3a-97a1-434e4588a201",
+      "text": "posso não estudar aos sábados? quero folga nesse dia"
+     },
+     {
+      "text": "Aos sábados ficará sem estudos, e os desafios semanais passam de sábado para sexta. A mudança acrescenta 8 aulas e deixa 8 aulas de fora, e o plano passaria a terminar em 3 de novembro, em vez de 29 de outubro. Ela só vale se você tocar em Aplicar no cartão."
+     },
+     {
+      "href": "/users/01a12217-5afb-750e-8e43-78d40ead0a19",
+      "text": "Pedro Lima\nv2-stocks@zoonk.test"
+     },
+     {
+      "text": "Como funciona a bolsa de valores\nComo funcionam as negociações · Corretoras e bolsas"
+     },
+     {
+      "text": "Completed\n10/9/2026"
+     }
+    ],
+    [
+     {
+      "href": "/questions/01a12275-d23a-7777-bcca-467c1d901590",
+      "text": "quero criar uma planilha para acompanhar minhas ações já essa semana. dá pra colocar isso no meu plano? e quero folga aos domingos"
+     },
+     {
+      "text": "A planilha entra no plano como “Criar planilha de acompanhamento de ações”, com a primeira aula prevista para 15/10, antes das aulas básicas do plano. Os domingos ficam de folga, e o desafio semanal passa para sábado. A mudança acrescenta 16 aulas e deixa 8 aulas de fora. Com ela, o plano termina em 29/10, em vez de 21/10. Para aplicar, toque no botão do cartão."
+     },
+     {
+      "href": "/users/01a12217-5afb-750e-8e43-78d40ead0a19",
+      "text": "Pedro Lima\nv2-stocks@zoonk.test"
+     },
+     {
+      "text": "Deleted lesson"
+     },
+     {
+      "text": "Completed\n10/9/2026"
+     }
+    ]
+   ],
+   "section": ""
+  }
+ ],
+ "text": "Questions\n\nReview what learners ask and the answers they receive.\n\nQuestion\tAnswer\tUser\tCourse / lesson\tStatus / asked\n\nSão todos os tipos de células que têm lisossomos ou só algum tipo específico de células? Tipo células vegetais ou células animais?\n\t\nLisossomos são característicos das células animais, embora a quantidade varie conforme a função da célula. Células que digerem muitas partículas, como alguns glóbulos brancos, costumam ter bastante. Nas células vegetais, quem faz funções parecidas é principalmente o vacúolo, que pode armazenar substâncias e também ajudar a decompor e reciclar materiais. Em geral, não se considera que plantas tenham lisossomos separados como os das células animais. Já bactérias não têm lisossomos: elas não possuem organelas envolvidas por membranas.\n\t\nWill\nneuro@zoonk.test\n\t\nBiologia celular\nOrganização e diversidade das células · Compartimentalização celular\n\t\nCompleted\n10/26/2026\n\n\nComo que é esse reaproveitamento ou descarte? No reaproveitamento, ele volta para a célula. E no descarte, o que acontece? Eu quero visualizar melhor como funciona esse processo de forma prática.\n\t\nImagine um neurônio com uma mitocôndria danificada: Isolamento: a célula a envolve numa pequena bolsa, como colocar uma peça quebrada numa caixa. Quebra: essa bolsa se une ao lisossomo. Enzimas ali dentro desmontam a mitocôndria em componentes menores. Reaproveitamento: partes úteis, como aminoácidos e moléculas de gordura, atravessam a membrana e voltam ao citoplasma, onde a célula pode usá-las para construir ou alimentar outras estruturas. Descarte: o que não pode ser aproveitado fica como resíduo. A célula pode expulsá-lo numa vesícula que se funde com a membrana celular; alguns resíduos, porém, podem permanecer acumulados dentro da célula. Então, “descarte” não significa necessariamente que tudo sai da célula: depende do tipo de resíduo e da célula.\n\t\nWill\nneuro@zoonk.test\n\t\nBiologia celular\nOrganização e diversidade das células · Compartimentalização celular\n\t\nCompleted\n10/26/2026\n\n\nme dá um exemplo prático\n\t\nImagine um neurônio com uma organela velha ou danificada. A célula pode encaminhá-la ao lisossomo, que a desmonta em partes menores para a célula reaproveitar ou descartar. É como uma área de reciclagem dentro da célula.\n\t\nWill\nneuro@zoonk.test\n\t\nBiologia celular\nOrganização e diversidade das células · Compartimentalização celular\n\t\nCompleted\n10/26/2026\n\n\npor que ele existe? o que ele faz exatamente?\n\t\nEle existe como parte da compartimentalização celular: algumas reações precisam acontecer em um espaço separado e controlado. Repare no papel da membrana da bolsa: o que ela evita que aconteça se as substâncias de desmontagem ficarem soltas pelo resto da célula?\n\t\nWill\nneuro@zoonk.test\n\t\nBiologia celular\nOrganização e diversidade das células · Compartimentalização celular\n\t\nCompleted\n10/26/2026\n\n\nela deve acrescentar o citoplasma?\n\t\nComplete também as outras duas partes: onde ela deve desenhar isso e o que acontece nessa região? Use o espaço entre a membrana e o material genético como referência.\n\t\nWill\nneuro@zoonk.test\n\t\nBiologia celular\nOrganização e diversidade das células · Componentes comuns das células\n\t\nCompleted\n10/26/2026\n\n\nachei a pergunta um pouco confusa. não entendi o que preciso responder aqui\n\t\nA pergunta quer uma resposta em três partes: o que falta no esquema, onde isso deve aparecer e por que essa parte é importante. A pista é a região dentro da membrana, ao redor do material genético, onde ficam materiais da célula e acontecem muitas atividades. Tente completar: “Iara deve acrescentar ___ na região ___, porque ___.”\n\t\nWill\nneuro@zoonk.test\n\t\nBiologia celular\nOrganização e diversidade das células · Componentes comuns das células\n\t\nCompleted\n10/26/2026\n\n\nHow do I change my buddy's name?\n\t\nGo to Preferences, tap Choose your buddy, change the name, then tap Save.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nWhich lesson should I do first?\n\t\nDo Where a price comes from first. Then do Brokers and exchanges when it comes up on your next study day. Both are lessons from earlier days, and doing them first keeps your plan as it is.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nqual aula preciso fazer primeiro?\n\t\nFaça primeiro Por que o elétron não cai no núcleo?. Ela já está na sua sessão de hoje.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nquando é meu próximo desafio?\n\t\nSeu próximo desafio é o desafio semanal, em 18/10: Dentro do átomo. Depois, vem o desafio da fase em 21/10.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nCan you send me a website to learn more about the stock market?\n\t\nI can only point you to pages in the app, not send an outside website. Your stock-market course is here: start with Where a price comes from, then see what’s next in Plan.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nHow do I change my buddy's name?\n\t\nGo to Preferences and open “Choose your buddy” to change your buddy’s name.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nWhich lesson should I do first?\n\t\nDo Where a price comes from first. It’s from an earlier day and opens your session today; after that, do Brokers and exchanges. Doing these first keeps your plan as it is.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\no que falta fazer nesta semana?\n\t\nNesta semana ainda falta: Hoje, 14/10: revisar O experimento da fenda dupla, fazer Por que o elétron não cai no núcleo? e praticar os erros nesta sessão. Também está pendente de dias anteriores: Mais confinado, mais agitado. O Plano não registra um dia específico para ela. 15/10: E se? Quando um átomo perde um elétron. 16/10: Mais confinado, mais agitado e Por que as cores existem. 17/10: Comprimento de onda a partir da energia do fóton e E se? Da energia do fóton ao comprimento de onda. 18/10: desafio da fase. As aulas dos dias 15 a 17 estão no Plano.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\npor que está dizendo que estou atrasado? qual aula preciso fazer primeiro?\n\t\nVocê está atrasado porque há 2 aulas de dias anteriores pendentes. Faça primeiro Por que o elétron não cai no núcleo?, que abre a sessão de hoje. Depois, faça Mais confinado, mais agitado, que aparece nos próximos dias de estudo no Plano. Ao concluí-las, você mantém o plano como está.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nCan you send me a website to learn more about the stock market?\n\t\nYou can keep learning it here: your goal’s course covers what stocks are, how trading works, why prices move, and long-term investing. Start with Today for your next lesson, or see what’s ahead in Plan. I can also help you think through the basics of investing your first paycheck.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nHow do I change my buddy's name?\n\t\nGo to Preferences to change your buddy’s name.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nWhich lesson should I do first?\n\t\nStart with Where a price comes from, then do Brokers and exchanges. They’re both lessons from earlier days; doing them first keeps your plan as it is.\n\t\nPedro Lima\npersona-pedro-f390f6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nquantas ainda faltam para completar o curso?\n\t\nO app mostra que você concluiu 6% do curso, então faltam cerca de 94%. Não tenho o número exato de aulas restantes; você pode acompanhar o curso em Cursos.\n\t\nLucas Pereira\npersona-lucas-d6ddfe@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nquantas aulas eu já completei nesse curso?\n\t\nVocê já completou 6 aulas no curso Física quântica do zero.\n\t\nLucas Pereira\npersona-lucas-d6ddfe@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nWhat can you do for me?\n\t\nI can answer your ENEM questions, explain your study plan, and suggest changes when you want to adjust it. I can also help you review your mistakes, see what’s ahead in your plan, or take a mock exam.\n\t\nAna Souza\npersona-ana-41211d@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nqual é essa aula atrasada? como eu faço ela?\n\t\nA aula atrasada é “Por que o elétron não cai no núcleo?”. Ela já está na sessão de hoje e aparece primeiro: toque no link para começar.\n\t\nLucas Pereira\npersona-lucas-d6ddfe@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nWhen is my next challenge?\n\t\nYour next challenge is scheduled for October 31, 2027: open the challenge.\n\t\nAna Souza\npersona-ana-41211d@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nWhen is my next mock exam?\n\t\nYour next mock exam is scheduled for November 8, 2026: open the mock exam.\n\t\nAna Souza\npersona-ana-41211d@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nonde vejo meus erros?\n\t\nNo caderno de erros. O cartão também abre a prática para revisar o erro que está esperando.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nO que falta fazer nesta semana? Quais aulas e em quais dias?\n\t\nNesta semana, o plano mostra: Hoje, 14/10: revisão de O experimento da fenda dupla, a aula Por que o elétron não cai no núcleo? e uma prática do caderno de erros. 15/10: E se? Quando um átomo perde um elétron. 16/10: Mais confinado, mais agitado e Por que as cores existem. 17/10: Comprimento de onda a partir da energia do fóton e E se? Da energia do fóton ao comprimento de onda. As duas aulas pendentes de dias anteriores não têm dias específicos registrados; você pode ver o que fazer e o plano completo em Hoje e Plano.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\npor que está dizendo que estou atrasado? qual aula preciso fazer primeiro?\n\t\nVocê está atrasado porque ficaram 2 aulas de dias anteriores por fazer. A primeira é Por que o elétron não cai no núcleo?; depois vem Mais confinado, mais agitado. Elas não estão na sessão de hoje, então aparecem primeiro nos próximos dias de estudo. Fazê-las mantém o plano como está.\n\t\nLucas Pereira\npersona-lucas-57c160@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\npor que está dizendo que estou atrasado? qual aula preciso fazer primeiro?\n\t\nEstá marcando atrasada porque há 1 aula de um dia anterior que ainda está pendente. Não consigo ver o título dessa aula anterior neste resumo. Na sessão de hoje, a primeira aula é “Por que o elétron não cai no núcleo?”. Para manter o plano como está, tente recuperar também a aula pendente, reservando um pouco mais de tempo hoje ou nesta semana.\n\t\nLucas Pereira\npersona-lucas-d6ddfe@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/14/2026\n\n\nTira Redação do meu plano. Vou estudar redação com um professor particular.\n\t\nA proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão.\n\t\nAna Souza\npersona-ana-c3c1d9-6de8e8@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/13/2026\n\n\nTira Redação do meu plano. Vou estudar redação com um professor particular.\n\t\nA proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão.\n\t\nAna Souza\npersona-ana-c3c1d9-07a690@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/13/2026\n\n\nTira Redação do meu plano. Vou estudar redação com um professor particular.\n\t\nA proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão.\n\t\nAna Souza\npersona-ana-c3c1d9@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/13/2026\n\n\nFiquei uma semana sem estudar. Ainda dá pra chegar no B1 antes da mudança? Se precisar, posso estudar 40 min por dia.\n\t\nAinda é possível avançar bastante, mas não dá para confirmar pelo plano se você chegará ao B1: ele não mede nem garante esse nível. No ritmo atual, a estimativa é terminar em 14 de março, um dia antes da data da sua meta, e há 5 aulas de dias anteriores esperando para recuperar. Propus aumentar para 40 minutos por dia. Se aplicar no cartão, o plano acrescentará cerca de 278 aulas e incluirá temas como comprar remédio na farmácia e conversar com vizinhos. Isso pode dar mais espaço para praticar, mas não garante o B1.\n\t\nMarcos Oliveira\npersona-marcos-c101f2@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/13/2026\n\n\nComo eu calculo rápido um desconto de 25% numa prova?\n\t\nNo answer yet\n\t\nAna Souza\npersona-ana-917a53@zoonk.test\n\tDeleted lesson\t\nPending\n10/13/2026\n\n\nTira Redação do meu plano. Vou estudar redação com um professor particular.\n\t\nA proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão.\n\t\nAna Souza\npersona-ana-c3c1d9-e06a30@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/12/2026\n\n\nTira Redação do meu plano. Vou estudar redação com um professor particular.\n\t\nA proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão.\n\t\nAna Souza\npersona-ana-c3c1d9-ac1df6@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/12/2026\n\n\nTira Redação do meu plano. Vou estudar redação com um professor particular.\n\t\nA proposta retira Redação do plano. Com isso, ficam de fora as aulas sobre o texto dissertativo-argumentativo e suas competências; a proposta estima adicionar 189 aulas e deixar de incluir 156. Ela só se aplica se você tocar em Aplicar no cartão.\n\t\nAna Souza\npersona-ana-c3c1d9-d476b3@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/12/2026\n\n\ncomo estou indo até agora? quantas aulas já fiz e quanto estou acertando?\n\t\nVocê está no ritmo do plano: já fez 3 de 23 aulas e acertou 2 das 3 respostas registradas até agora. Há também 1 erro em aberto para revisar. Abaixo, o cartão de estatísticas mostra outros dados do seu estudo.\n\t\nPedro Lima\nv2-stocks@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/9/2026\n\n\no que a aula Corretoras e bolsas ensina? já fiz ela?\n\t\nA aula “Corretoras e bolsas” explica o caminho de uma ordem de compra: você faz o pedido no app da corretora, ela o encaminha à bolsa, que reúne ofertas de compra e venda. Enviar a ordem não significa que a compra já foi concluída; isso acontece quando há uma oferta compatível e a bolsa registra o negócio. Você ainda não fez essa aula: ela está prevista para 22/10.\n\t\nPedro Lima\nv2-stocks@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/9/2026\n\n\nposso não estudar aos sábados? quero folga nesse dia\n\t\nAos sábados ficará sem estudos, e os desafios semanais passam de sábado para sexta. A mudança acrescenta 8 aulas e deixa 8 aulas de fora, e o plano passaria a terminar em 3 de novembro, em vez de 29 de outubro. Ela só vale se você tocar em Aplicar no cartão.\n\t\nPedro Lima\nv2-stocks@zoonk.test\n\t\nComo funciona a bolsa de valores\nComo funcionam as negociações · Corretoras e bolsas\n\t\nCompleted\n10/9/2026\n\n\nquero criar uma planilha para acompanhar minhas ações já essa semana. dá pra colocar isso no meu plano? e quero folga aos domingos\n\t\nA planilha entra no plano como “Criar planilha de acompanhamento de ações”, com a primeira aula prevista para 15/10, antes das aulas básicas do plano. Os domingos ficam de folga, e o desafio semanal passa para sábado. A mudança acrescenta 16 aulas e deixa 8 aulas de fora. Com ela, o plano termina em 29/10, em vez de 21/10. Para aplicar, toque no botão do cartão.\n\t\nPedro Lima\nv2-stocks@zoonk.test\n\tDeleted lesson\t\nCompleted\n10/9/2026"
+}
