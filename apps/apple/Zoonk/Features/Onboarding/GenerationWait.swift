@@ -156,7 +156,7 @@ struct GenerationWait: Equatable, Sendable {
   }
 
   /// How long a run usually takes, from its phases' usual durations: a phase only some runs have,
-  /// such as a challenge's redraft, isn't usual.
+  /// such as a challenge's fix, isn't usual.
   static func usualSeconds(_ kind: Kind) -> Double {
     phases(for: kind).filter { !$0.isOptional }.reduce(0) { $0 + $1.seconds }
   }
@@ -280,7 +280,7 @@ struct GenerationWait: Equatable, Sendable {
       phases[index].isReported = true
       phases[index].skillName = event.skillName ?? phases[index].skillName
 
-      // A redraft reports its steps again: the step's first completion keeps its time.
+      // A challenge's redraft reports its steps again: the step's first completion keeps its time.
       if event.status == "completed", completedSteps.insert(event.step).inserted,
         Self.steps(of: id, kind: kind).isSubset(of: completedSteps)
       {
@@ -390,7 +390,8 @@ struct GenerationWait: Equatable, Sendable {
     case .challenge:
       [
         "planChallenge": .phase("plan"), "writeChallenge": .phase("write"),
-        "reviewChallenge": .phase("write"), "redraftChallenge": .phase("redraft"),
+        "reviewChallenge": .phase("write"), "fixChallenge": .phase("fix"),
+        "recheckChallenge": .phase("fix"), "redraftChallenge": .phase("fix"),
         "lessonReady": .done,
       ]
     }
@@ -666,22 +667,20 @@ struct GenerationWait: Equatable, Sendable {
               comment: "What the wait is doing while a challenge is written"),
           ]),
         Phase(
-          id: "redraft",
+          id: "fix",
           label: LocalizedStringResource(
             "Fixing what the check found", table: "Player",
             comment:
-              "A step of the wait while a challenge is written, after \"Writing the challenge\": its check found a problem, so the challenge is written again"
+              "A step of the wait while a challenge is written, after \"Writing the challenge\": its check found a problem, so Zoonk fixes it and checks the challenge again"
           ),
-          isOptional: true, seconds: 125,
+          isOptional: true, seconds: 25,
           lines: [
             LocalizedStringResource(
-              "Planning the challenge again…", table: "Player",
-              comment:
-                "What the wait is doing while a challenge its check held back is written again"),
-            LocalizedStringResource(
               "Rewriting the parts that didn't add up…", table: "Player",
-              comment:
-                "What the wait is doing while a challenge its check held back is written again"),
+              comment: "What the wait is doing while it fixes a challenge its check held back"),
+            LocalizedStringResource(
+              "Checking every path…", table: "Player",
+              comment: "What the wait is doing while a challenge is written"),
           ]),
       ]
     }
