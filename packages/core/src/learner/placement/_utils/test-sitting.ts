@@ -230,7 +230,6 @@ export async function refreshTestSummary({
   await keepTestSummary({ goalId, tx, userId: goal.userId });
 }
 
-/** Keeps the saved summaries of the goals following a notice current after a write to the notice. */
 export async function refreshNoticeTestSummaries(examBlueprintId: string): Promise<void> {
   const goals = await prisma.goal.findMany({
     select: { details: true, id: true, userId: true },
