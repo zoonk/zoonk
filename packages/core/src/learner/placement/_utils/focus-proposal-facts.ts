@@ -23,9 +23,46 @@ export function getProposedAreas(payload: unknown): string[] {
   );
 }
 
+export async function loadFocusOwnership({
+  focusAreas,
+  planId,
+  record,
+  tx,
+}: {
+  focusAreas: readonly string[];
+  planId: string;
+  record: FocusTestRecord | null;
+  tx: TransactionClient;
+}): Promise<{ handPicked: boolean; lastChangedAt: Date | null }> {
+  if (focusAreas.length === 0) {
+    return { handPicked: false, lastChangedAt: null };
+  }
+
+  const latest = await tx.planChange.findFirst({
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: { createdAt: true, payload: true },
+    where: {
+      payload: { array_contains: [{ kind: "focusAreas" }], path: ["operations"] },
+      planId,
+      status: "applied",
+    },
+  });
+
+  const source = parsePlanChangePayload(latest?.payload).source;
+
+  const offered =
+    latest &&
+    [FOCUS_TEST_SOURCE, "mock", "preparation"].includes(source) &&
+    isSameFocus(focusAreas, getProposedAreas(latest.payload));
+
+  const owned = isSameFocus(focusAreas, record?.focus ?? []) || offered;
+
+  return { handPicked: focusAreas.length > 0 && !owned, lastChangedAt: latest?.createdAt ?? null };
+}
+
 /**
  * The test proposes once the daily time is saved and doesn't cover everything, only while the
- * plan's focus is none or the one the test put there, never what the plan already follows, and
+ * plan's focus is none or system-owned, never what the plan already follows, and
  * never a suggestion waiting or dismissed: a replaced one may come back.
  */
 export async function loadFocusProposalFacts({
@@ -48,8 +85,7 @@ export async function loadFocusProposalFacts({
   const timeShort = coveredShare !== null && coveredShare < 1;
   const proposes = asks && timeSaved && timeShort;
 
-  const focus = record?.focus ?? [];
-  const handPicked = focusAreas.length > 0 && !isSameFocus(focusAreas, focus);
+  const { handPicked } = await loadFocusOwnership({ focusAreas, planId: id, record, tx });
 
   const changes = proposes
     ? await tx.planChange.findMany({
@@ -71,6 +107,7 @@ export async function loadFocusProposalFacts({
   const due =
     proposes &&
     !declined &&
+    !waiting &&
     !statuses.has("proposed") &&
     !isSameFocus(focusAreas, suggested) &&
     !handPicked;

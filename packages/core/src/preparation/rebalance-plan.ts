@@ -6,6 +6,7 @@ import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { proposePlanChange } from "../plans/propose-plan-change";
 import { loadPreparationInputs } from "./_utils/load-preparation-inputs";
 import { getAreaPreparations } from "./area-preparation";
+import { rebalanceFocusTest } from "./rebalance-focus-test";
 import { REBALANCE_SOURCE, pickRebalance } from "./rebalance-rule";
 
 const WEEK_DAYS = 7;
@@ -50,13 +51,19 @@ export async function rebalancePlanAfterSession({
   }
 
   const plan = await prisma.plan.findUnique({
-    select: { graph: true, id: true, settings: true },
+    select: { coveredShare: true, graph: true, id: true, settings: true },
     where: { goalId },
   });
 
   const graph = parsePlanGraph(plan?.graph);
 
   if (!plan || graph.skills.length === 0) {
+    return;
+  }
+
+  if (parsePlanSettings(plan.settings).focusAreas.length > 0) {
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+    await rebalanceFocusTest({ goal, now, plan });
     return;
   }
 
