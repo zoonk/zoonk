@@ -203,7 +203,7 @@ private fun Points(points: List<String>) {
     val style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     points.forEach { point ->
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("•", style = style)
+            Text("•", Modifier.clearAndSetSemantics {}, style = style)
             Text(point, Modifier.weight(1f), style = style)
         }
     }
