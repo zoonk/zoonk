@@ -4952,7 +4952,7 @@
       }
     },
     "Fixing what the check found" : {
-      "comment" : "A step of the wait while a challenge is written, after \"Writing the challenge\": its check found a problem, so the challenge is written again",
+      "comment" : "A step of the wait while a challenge is written, after \"Writing the challenge\": its check found a problem, so Zoonk fixes it and checks the challenge again",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8444,65 +8444,6 @@
         }
       }
     },
-    "Planning the challenge again…" : {
-      "comment" : "What the wait is doing while a challenge its check held back is written again",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir planen die Herausforderung noch einmal…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planeando el desafío de nuevo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nouvelle planification du défi…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo riprogettando la sfida…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チャレンジの内容を考え直しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챌린지를 다시 계획하고 있어요…"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ponownie planujemy wyzwanie…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planejando o desafio de novo…"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meydan okumayı yeniden planlıyoruz…"
-          }
-        }
-      }
-    },
     "Planning the lesson" : {
       "comment" : "A step of the wait while a lesson is written",
       "localizations" : {
@@ -9568,7 +9509,7 @@
       }
     },
     "Rewriting the parts that didn't add up…" : {
-      "comment" : "What the wait is doing while a challenge its check held back is written again",
+      "comment" : "What the wait is doing while it fixes a challenge its check held back",
       "localizations" : {
         "de" : {
           "stringUnit" : {
