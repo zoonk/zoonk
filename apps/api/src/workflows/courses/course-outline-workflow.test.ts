@@ -1683,7 +1683,7 @@ describe(courseOutlineWorkflow, () => {
         expect(fetch).not.toHaveBeenCalled();
 
         expect(start).toHaveBeenCalledWith(courseContentNotificationWorkflow, [
-          [`course-curriculum:${course.id}`],
+          [`course-curriculum:${course.id}`, `library-chapter:${band.early?.chapterId}`],
         ]);
       } finally {
         vi.unstubAllEnvs();
