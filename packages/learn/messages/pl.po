@@ -7442,6 +7442,11 @@ msgid "{count, plural, one {# on the way. You can leave while it's made.} other 
 msgstr "{count, plural, one {Przygotowujemy # mapę. Możesz w tym czasie opuścić stronę.} few {Przygotowujemy # mapy. Możesz w tym czasie opuścić stronę.} other {Przygotowujemy # map. Możesz w tym czasie opuścić stronę.}}"
 
 #: src/mind-maps/not-made-yet.tsx
+msgctxt "uSD0Jk"
+msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
+msgstr "{count, plural, one {# mapa nie została ukończona. Spróbuj ponownie.} few {# mapy nie zostały ukończone. Spróbuj ponownie.} other {# map nie zostało ukończonych. Spróbuj ponownie.}}"
+
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "CHNbiu"
 msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
 msgstr "{count, plural, one {Możesz teraz utworzyć jeszcze # mapę.} few {Możesz teraz utworzyć jeszcze # mapy.} other {Możesz teraz utworzyć jeszcze # map.}}"

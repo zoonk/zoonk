@@ -2,6 +2,7 @@ import {
   type BundleClaim,
   type UsageLedger,
   decideBundle,
+  decideNewClaim,
 } from "../../entitlements/_utils/usage-ledger";
 import { getUsageResets } from "../../entitlements/_utils/usage-periods";
 import { type UsageDecision } from "../../entitlements/contract";
@@ -42,6 +43,8 @@ export function sortBulkChapters(chapters: readonly BulkChapter[]) {
   };
 }
 
+const MAP_CLAIM = { generated: true, kind: "mindMap" } as const;
+
 /** A map and each lesson it writes first are claimed together, or not at all. */
 export function chapterMapClaims({
   chapterId,
@@ -51,7 +54,7 @@ export function chapterMapClaims({
   lessonIds: readonly string[];
 }): BundleClaim[] {
   return [
-    { generated: true, kind: "mindMap", targetId: chapterId },
+    { ...MAP_CLAIM, targetId: chapterId },
     ...lessonIds.map((lessonId) => ({
       generated: true,
       kind: "lessonStart" as const,
@@ -88,33 +91,41 @@ export function toAllowanceStop({
   };
 }
 
-type OfferWalk = { ledger: UsageLedger; startable: number; stop: MindMapAllowanceStop | null };
+/** As the write admits them, against the same ledger rules: a map already claimed starts free. */
+function countStartable({
+  eligible,
+  ledger,
+}: {
+  eligible: readonly string[];
+  ledger: UsageLedger;
+}): number {
+  const walked = eligible.reduce(
+    (walk, chapterId) => {
+      const decided = decideBundle({
+        claims: chapterMapClaims({ chapterId, lessonIds: [] }),
+        ledger: walk.ledger,
+      });
 
-function walkOffer({ chapterId, walk }: { chapterId: string; walk: OfferWalk }): OfferWalk {
-  const decided = decideBundle({
-    claims: chapterMapClaims({ chapterId, lessonIds: [] }),
-    ledger: walk.ledger,
-  });
+      return decided.decision.status === "allowed"
+        ? { ledger: decided.ledger, startable: walk.startable + 1 }
+        : walk;
+    },
+    { ledger, startable: 0 },
+  );
 
-  if (decided.decision.status === "allowed") {
-    return { ledger: decided.ledger, startable: walk.startable + 1, stop: walk.stop };
-  }
-
-  if (decided.decision.status === "unauthorized" || walk.stop) {
-    return walk;
-  }
-
-  return {
-    ledger: walk.ledger,
-    startable: walk.startable,
-    stop: toAllowanceStop({ decision: decided.decision, now: walk.ledger.now }),
-  };
+  return walked.startable;
 }
 
-/**
- * The offer walks the eligible chapters as the write admits them, against the same ledger rules.
- * With none eligible, `stop` is what would stop one more map now, asked of the next chapter's map.
- */
+/** What stops a map the learner hasn't claimed yet; a failed map's retry doesn't count as one. */
+function stopNewMap(ledger: UsageLedger): MindMapAllowanceStop | null {
+  const decision = decideNewClaim({ claim: MAP_CLAIM, ledger });
+
+  return decision.status === "allowed" || decision.status === "unauthorized"
+    ? null
+    : toAllowanceStop({ decision, now: ledger.now });
+}
+
+/** What "Create all chapter maps" would start now, and what stops a new map now. */
 export function offerChapterMaps({
   chapters,
   ledger,
@@ -123,23 +134,11 @@ export function offerChapterMaps({
   ledger: UsageLedger | null;
 }): MindMapCreateOffer {
   const { eligible, needLessons } = sortBulkChapters(chapters);
+  const counts = { eligible: eligible.length, needLessons: needLessons.length };
 
   if (!ledger) {
-    return { eligible: eligible.length, needLessons: needLessons.length, startable: 0, stop: null };
+    return { ...counts, startable: 0, stop: null };
   }
 
-  const walked = eligible.reduce<OfferWalk>((walk, chapterId) => walkOffer({ chapterId, walk }), {
-    ledger,
-    startable: 0,
-    stop: null,
-  });
-
-  const [next] = eligible.length > 0 ? [] : needLessons;
-
-  return {
-    eligible: eligible.length,
-    needLessons: needLessons.length,
-    startable: walked.startable,
-    stop: next ? walkOffer({ chapterId: next, walk: walked }).stop : walked.stop,
-  };
+  return { ...counts, startable: countStartable({ eligible, ledger }), stop: stopNewMap(ledger) };
 }

@@ -7442,6 +7442,11 @@ msgid "{count, plural, one {# on the way. You can leave while it's made.} other 
 msgstr "{count, plural, one {# a caminho. Você pode sair enquanto ele é criado.} other {# a caminho. Você pode sair enquanto eles são criados.}}"
 
 #: src/mind-maps/not-made-yet.tsx
+msgctxt "uSD0Jk"
+msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
+msgstr "{count, plural, one {# mapa não foi concluído. Tente de novo.} other {# mapas não foram concluídos. Tente de novo.}}"
+
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "CHNbiu"
 msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
 msgstr "{count, plural, other {Você pode criar mais # agora.}}"

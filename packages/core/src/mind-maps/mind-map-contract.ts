@@ -123,7 +123,7 @@ const lessonMapGroupSchema = z
       .min(1)
       .meta({
         description:
-          "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, locked ones included",
+          "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists",
       }),
     lessonIds: z
       .array(uuidSchema())
@@ -214,13 +214,13 @@ const mindMapCreateOfferSchema = z
       .min(0)
       .meta({
         description:
-          "How many of the `eligible` chapters one request would start now, in course order, within the learner's current allowance; fewer than `eligible` when `stop` says why. 0 with `stop` set means no new map can start now, so no chapter offers to create one",
+          "How many of the `eligible` chapters one request would start now, in course order, within the learner's current allowance. A failed map the learner already claimed starts again for free, so it counts even when `stop` is set. 0 with `stop` set means nothing can start now",
       }),
     stop: mindMapAllowanceStopSchema
       .nullable()
       .meta({
         description:
-          "What would stop it before the last eligible chapter; with none eligible, what stops one more map now. Null when nothing would",
+          "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A chapter offers to create its map only while this is null, or when its map failed (the retry is free)",
       }),
   })
   .meta({ id: "MindMapCreateOffer" });
@@ -247,7 +247,7 @@ export const goalMindMapsSchema = z
       .array(lessonMapGroupSchema)
       .meta({
         description:
-          "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out",
+          "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out. A lesson two chapters share is listed once, under the first",
       }),
     saved: z
       .array(savedMindMapSchema)

@@ -25,8 +25,9 @@ import { type MindMapsLibrary } from "./use-mind-maps-library";
 const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
 
 /**
- * Only the first line that applies shows, so the block never stacks paragraphs. With no chapter
- * ready to make, the maps on their way come before the limit: the learner just started them.
+ * Only the first line that applies shows, so the block never stacks paragraphs. Maps on their way
+ * and maps that didn't finish come before the limit: the learner just started them, and the limit
+ * read first looks like a refusal.
  */
 function NotMadeLine({
   chapters,
@@ -43,8 +44,7 @@ function NotMadeLine({
   const { bulk, follower, page } = library;
   const { eligible, needLessons, startable, stop } = page.createOffer;
   const shownStop = bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null);
-  const { onTheWay } = countChapterMaps(chapters);
-  const stopFirst = eligible > 0 || onTheWay === 0;
+  const { failed, onTheWay } = countChapterMaps(chapters);
 
   if (follower.isStuck) {
     return (
@@ -63,16 +63,6 @@ function NotMadeLine({
     );
   }
 
-  if (shownStop && stopFirst && bulk.status !== "sending") {
-    return (
-      <MindMapLimitNotice
-        limit={toMindMapLimit({ now: mountedAt.getTime(), stop: shownStop, tier })}
-        linkComponent={LearnLink}
-        routes={routes}
-      />
-    );
-  }
-
   if (onTheWay > 0) {
     return (
       <p className={LINE_CLASS}>
@@ -81,6 +71,27 @@ function NotMadeLine({
           { count: onTheWay },
         )}
       </p>
+    );
+  }
+
+  if (failed > 0) {
+    return (
+      <p className={LINE_CLASS}>
+        {t(
+          "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}",
+          { count: failed },
+        )}
+      </p>
+    );
+  }
+
+  if (shownStop && bulk.status !== "sending") {
+    return (
+      <MindMapLimitNotice
+        limit={toMindMapLimit({ now: mountedAt.getTime(), stop: shownStop, tier })}
+        linkComponent={LearnLink}
+        routes={routes}
+      />
     );
   }
 
@@ -155,7 +166,7 @@ export function NotMadeYet({
 
       <ListGroup>
         <Disclosure aside={chapters.length} icon={null} title={t("Show chapters")}>
-          {!plus && needLessons > 0 && !startsNoMap(page.createOffer) && (
+          {!plus && needLessons > 0 && page.createOffer.stop === null && (
             <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
           )}
 

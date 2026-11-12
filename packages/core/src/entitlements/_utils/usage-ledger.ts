@@ -55,6 +55,24 @@ export async function findClaimedTargets({
 
 type Decided = { decision: UsageDecision; recorded: PricedClaim[]; totals: UsageTotals };
 
+/** Whether one more claim of a kind fits the allowance, as if its target were new. */
+export function decideNewClaim({
+  claim,
+  ledger,
+}: {
+  claim: Omit<BundleClaim, "targetId">;
+  ledger: UsageLedger;
+}): UsageDecision {
+  return evaluateUsage({
+    costMicros: getEstimatedCostMicros(claim),
+    counts: getUsageCounts(ledger.totals, claim.kind),
+    generated: claim.generated,
+    kind: claim.kind,
+    now: ledger.now,
+    tier: ledger.viewer.tier,
+  });
+}
+
 function decideClaim({
   claim,
   decided,
@@ -69,15 +87,7 @@ function decideClaim({
   }
 
   const costMicros = getEstimatedCostMicros(claim);
-
-  const decision = evaluateUsage({
-    costMicros,
-    counts: getUsageCounts(decided.totals, claim.kind),
-    generated: claim.generated,
-    kind: claim.kind,
-    now: ledger.now,
-    tier: ledger.viewer.tier,
-  });
+  const decision = decideNewClaim({ claim, ledger: { ...ledger, totals: decided.totals } });
 
   if (decision.status !== "allowed") {
     return { ...decided, decision };
