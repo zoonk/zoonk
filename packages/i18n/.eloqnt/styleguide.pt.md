@@ -76,14 +76,15 @@
 
 ## Plan terminology
 
-- “Paused” (pace): “Em pausa”; paused goal: “Pausado”
+- “Paused” (a plan's state): “Em pausa”; paused goal: “Pausado”
 - “Finished” (plan or goal): “Concluído”
-- “Past date”: “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
+- “Up to date” (a plan's state): “Em dia”, not “Atualizado”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
 - “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
-- “Daily time”: “Tempo diário”, not “Tempo por dia”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tempo diário”, not “Tempo por dia”
 
 ## Buddy names
 
