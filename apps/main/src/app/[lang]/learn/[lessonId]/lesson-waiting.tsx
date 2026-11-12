@@ -29,17 +29,9 @@ type ReadyAlternative = NonNullable<
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
-const ALTERNATIVE_AFTER_MS = 15_000;
-
 const OPEN_RETRY_MS = 2000;
 
-function Alternative({
-  alternative,
-  instead = false,
-}: {
-  alternative: ReadyAlternative;
-  instead?: boolean;
-}) {
+function Alternative({ alternative }: { alternative: ReadyAlternative }) {
   const t = useExtracted();
 
   const rowClass =
@@ -48,13 +40,11 @@ function Alternative({
   return (
     <section className="flex flex-col gap-2">
       <h2 className="text-label">
-        {instead
-          ? t({
-              description:
-                "Heading over a lesson or review the learner can start now, because this lesson couldn't be written.",
-              message: "Ready to do instead",
-            })
-          : t("Ready while you wait")}
+        {t({
+          description:
+            "Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.",
+          message: "Ready now",
+        })}
       </h2>
       {alternative.kind === "lesson" ? (
         <Link className={rowClass} href={`/learn/${alternative.lessonId}`}>
@@ -75,17 +65,6 @@ function Alternative({
       )}
     </section>
   );
-}
-
-function useIsLate() {
-  const [late, setLate] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLate(true), ALTERNATIVE_AFTER_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return late;
 }
 
 /** The wait is measured until the lesson is ready; it opens once the learner moves on. */
@@ -118,18 +97,12 @@ function WritingProgress({
   const t = useExtracted();
 
   return (
-    <>
-      <GenerationWait
-        doneLabel={holding ? t("Your lesson is ready") : undefined}
-        kind="lesson"
-        run={holding ? toHeldRun(run) : run}
-        since={since}
-      />
-
-      {run.status !== "failed" && !holding && (
-        <p className="text-muted-foreground text-sm text-pretty">{t("It takes a few minutes.")}</p>
-      )}
-    </>
+    <GenerationWait
+      doneLabel={holding ? t("Your lesson is ready") : undefined}
+      kind="lesson"
+      run={holding ? toHeldRun(run) : run}
+      since={since}
+    />
   );
 }
 
@@ -156,20 +129,19 @@ function WritingWaitBar({ footer, holding }: { footer?: React.ReactNode; holding
 
 function WritingWait({
   alternative,
-  children,
+  asked,
   footer,
   frame,
   warmUp,
   writing,
 }: {
   alternative: ReadyAlternative | null;
-  children?: React.ReactNode;
+  asked: boolean;
   footer?: React.ReactNode;
   frame: LessonFrame;
   warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
-  const late = useIsLate();
   const since = useMountTime().getTime();
 
   const followed = useWorkflowRun({
@@ -199,8 +171,11 @@ function WritingWait({
 
   return (
     <WaitScreen deck={warmUp} goalId={frame.goalId} hold={hold} surface="lessonWait">
-      <LessonRouteFrame {...frame} footer={<WritingWaitBar footer={footer} holding={holding} />}>
-        {children}
+      <LessonRouteFrame
+        {...frame}
+        footer={<WritingWaitBar footer={footer} holding={holding} />}
+        lead={<WaitNote state={waitState({ asked, holding, run })} />}
+      >
 
         <WaitContent
           progress={progress}
@@ -213,25 +188,52 @@ function WritingWait({
           }
         />
 
-        {!holding && (late || run.status === "failed") && alternative && (
-          <Alternative alternative={alternative} />
-        )}
+        {!holding && alternative && <Alternative alternative={alternative} />}
       </LessonRouteFrame>
     </WaitScreen>
   );
 }
 
-function UnwrittenLessonNote() {
+type WaitState = "notReady" | "gettingReady" | "ready" | "stopped";
+
+function waitState({
+  asked,
+  holding,
+  run,
+}: {
+  asked: boolean;
+  holding: boolean;
+  run: GenerationRun;
+}): WaitState {
+  if (holding) {
+    return "ready";
+  }
+
+  if (run.status === "failed") {
+    return "stopped";
+  }
+
+  return asked ? "gettingReady" : "notReady";
+}
+
+function WaitNote({ state }: { state: WaitState }) {
   const t = useExtracted();
+
+  const title = {
+    gettingReady: t("Getting your lesson ready"),
+    notReady: t("This lesson isn't ready yet"),
+    ready: t("Your lesson is ready"),
+    stopped: t("This lesson isn't ready yet"),
+  }[state];
 
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="text-2xl font-semibold tracking-tight text-balance">
-        {t("This lesson isn't ready yet")}
-      </h1>
-      <p className="text-muted-foreground text-pretty">
-        {t("It takes a few minutes.")}
-      </p>
+      <h1 className="text-2xl font-semibold tracking-tight text-balance">{title}</h1>
+      {(state === "notReady" || state === "gettingReady") && (
+        <p className="text-muted-foreground text-pretty">
+          {t("It takes a few minutes. You can leave and come back.")}
+        </p>
+      )}
     </div>
   );
 }
@@ -297,16 +299,16 @@ export function LessonWaiting({
         footer={footer}
         frame={frame}
         key={writing.attempt}
+        asked={!showsStart}
         warmUp={warmUp}
         writing={writing}
-      >
-        {showsStart && <UnwrittenLessonNote />}
-      </WritingWait>
+      />
     );
   }
 
   return (
-    <LessonRouteFrame {...frame} footer={footer} lead={showsStart && <UnwrittenLessonNote />}>
+    <LessonRouteFrame {...frame} footer={footer} lead={showsStart && <WaitNote state="notReady" />}>
+      {showsStart && alternative && <Alternative alternative={alternative} />}
 
       {(request.status === "refused" ||
         request.status === "plusRequired" ||
@@ -319,7 +321,7 @@ export function LessonWaiting({
             reason={request}
             routes={{ signUp: signUpHref, upgrade: "/subscription" }}
           />
-          {alternative && <Alternative alternative={alternative} instead />}
+          {alternative && <Alternative alternative={alternative} />}
         </>
       )}
     </LessonRouteFrame>

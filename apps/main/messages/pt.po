@@ -2811,16 +2811,11 @@ msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Sobre esta aula"
 
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "Outra opção para começar agora"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "Pronto para fazer enquanto espera"
+msgctxt "cFmAm2"
+msgid "Ready now"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "P0sSfc"
@@ -2833,13 +2828,18 @@ msgid "Your lesson is ready"
 msgstr "Sua aula está pronta"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "v8WYcE"
-msgid "It takes a few minutes."
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
 msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "zvNRS6"
 msgid "This lesson isn't ready yet"
+msgstr ""
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "oD4n76"
+msgid "It takes a few minutes. You can leave and come back."
 msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx

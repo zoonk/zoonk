@@ -85,7 +85,12 @@ export function LessonRouteFrame({
           {lead}
 
           <TaskAsideContent>
-            <p className={cn("text-muted-foreground text-pretty", lead && "text-sm")}>
+            <p
+              className={cn(
+                "text-muted-foreground text-pretty",
+                lead && "with-aside:block hidden text-sm",
+              )}
+            >
               {lesson.description}
             </p>
           </TaskAsideContent>

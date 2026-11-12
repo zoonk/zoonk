@@ -25,7 +25,7 @@ export function LessonWaitStatus({
 
   return (
     <WaitStatus done={holding} value={value}>
-      {holding ? t("Your lesson is ready") : t("Writing your lesson")}
+      {holding ? t("Your lesson is ready") : t("Getting your lesson ready")}
     </WaitStatus>
   );
 }

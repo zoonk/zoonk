@@ -4545,7 +4545,6 @@ msgid "This didn't start"
 msgstr "준비가 시작되지 않았어요"
 
 #: src/generation/lesson-generation-copy.ts
-#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "레슨을 만들고 있어요"
@@ -15371,6 +15370,11 @@ msgstr "시작 준비 완료"
 msgctxt "4Wktrz"
 msgid "Your lesson is ready"
 msgstr "레슨이 준비됐어요"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr ""
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-quiz.tsx
