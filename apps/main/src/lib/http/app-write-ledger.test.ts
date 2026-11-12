@@ -1,6 +1,11 @@
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { noteAppWrite, noteAppWritesSent, takeSettledAppWrites } from "./app-write-ledger";
+import {
+  hasUntakenAppWrites,
+  noteAppWrite,
+  noteAppWritesSent,
+  takeSettledAppWrites,
+} from "./app-write-ledger";
 
 const PAGE = "https://zoonk.test/en/learn/lesson-1";
 
@@ -138,6 +143,25 @@ describe("app write ledger", () => {
       write.save();
 
       await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(true);
+    });
+
+    it("tells a page before the take whether its copy predates the writes", async () => {
+      expect(hasUntakenAppWrites({ to: "/en/today" })).toBe(false);
+
+      const write = heldWrite();
+      await fetch("/en/today", { headers: { RSC: "1" } });
+
+      expect(hasUntakenAppWrites({ to: "/en/today" })).toBe(true);
+
+      write.save();
+      await Promise.resolve();
+      await fetch("/en/today", { headers: { RSC: "1" } });
+
+      expect(hasUntakenAppWrites({ to: "/en/today" })).toBe(false);
+      expect(hasUntakenAppWrites({ to: "/en/plan" })).toBe(true);
+
+      await expect(takeSettledAppWrites({ to: "/en/plan" })).resolves.toBe(true);
+      expect(hasUntakenAppWrites({ to: "/en/plan" })).toBe(false);
     });
 
     it("does not count Next's metadata-only request as reading the page's data", async () => {

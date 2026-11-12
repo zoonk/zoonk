@@ -8,15 +8,14 @@ import { listChapterLessonMaps } from "@zoonk/core/mind-maps/lesson-maps";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { getSession } from "@zoonk/core/users/session";
 import { type MindMapPlace, buildStudyHref, readMindMapTab } from "@zoonk/learn/mind-maps/urls";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { buildMindMapDeck, findDeckStart } from "@zoonk/player/mind-maps/deck";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { MindMapStudyClient } from "./study-client";
+import { StudySkeleton } from "./study-skeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -94,17 +93,6 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
       start={start}
       view={view}
     />
-  );
-}
-
-/** No Previous: Study opens a deck on its first map, which has none. */
-function StudySkeleton() {
-  return (
-    <TaskSkeleton menu title={<Skeleton className="h-4 w-40" />}>
-      <Skeleton className="aspect-square w-full rounded-xl" />
-      <Skeleton className="h-5 w-2/3" />
-      <Skeleton className="h-4 w-full" />
-    </TaskSkeleton>
   );
 }
 

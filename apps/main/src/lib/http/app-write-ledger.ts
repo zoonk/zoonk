@@ -69,6 +69,15 @@ export async function takeSettledAppWrites({
   return true;
 }
 
+/**
+ * Whether a take for `to` would refresh, known before taking: a page whose copy predates the
+ * writes can wait for that refresh instead of showing the copy.
+ */
+export function hasUntakenAppWrites({ to }: { to: string }): boolean {
+  const sending = [...writes].some((write) => !write.settled);
+  return sending || (changed !== refreshed && reads.get(to)?.version !== changed);
+}
+
 export function onOtherTabWrite(onWrite: () => void): () => void {
   const listening = getChannel();
   listening?.addEventListener("message", onWrite);
