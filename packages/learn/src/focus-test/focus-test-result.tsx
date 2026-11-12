@@ -46,7 +46,7 @@ function ResultRows({
   const noteId = useId();
   const [sessionQuestions, setSessionQuestions] = useState(focusTest.sessionQuestions);
   const [failed, setFailed] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const setAsking = (asking: boolean) => {
     const before = sessionQuestions;
@@ -92,10 +92,12 @@ function ResultRows({
             }
           >
             <Switch
+              aria-busy={isPending || undefined}
               aria-describedby={noteId}
               aria-labelledby={labelId}
               checked={sessionQuestions !== "paused"}
               onCheckedChange={setAsking}
+              readOnly={isPending}
             />
           </SettingRow>
         )}
