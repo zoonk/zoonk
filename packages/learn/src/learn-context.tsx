@@ -17,6 +17,8 @@ export type LearnLinkComponentProps = {
   href: LearnRoute;
   lessonWritten?: boolean;
   onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  /** Runs only for a navigation the router makes, so a click with a modifier still opens a new tab. */
+  onNavigate?: (event: { preventDefault: () => void }) => void;
   prefetch?: boolean | "auto";
   ref?: Ref<HTMLAnchorElement>;
   scroll?: boolean;

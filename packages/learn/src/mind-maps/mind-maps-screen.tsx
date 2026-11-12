@@ -237,6 +237,14 @@ function useTabLabels(): Record<MindMapTab, string> {
   };
 }
 
+/**
+ * Tabs switch on the page: a copy of the page from the server, such as one a link prefetched, can
+ * predate the learner's taps and undo them.
+ */
+function showTab(tab: MindMapTab) {
+  globalThis.history.pushState(null, "", buildMindMapsHref({ page: "", tab }));
+}
+
 /** How many maps a tab's deck holds: a saved map that can no longer open isn't in it. */
 function countDeck({ page, tab }: { page: MindMapsPage; tab: MindMapTab }): number {
   return tab === "saved"
@@ -257,7 +265,10 @@ export function MindMapsScreen({
   mindMaps: MindMapsPage;
   /** The subject the page was opened from, whose maps start unfolded. */
   subject: string | null;
-  /** Null opens the tab the server picks: the first one with maps to show. */
+  /**
+   * The tab in the page's address, which a tab switch changes in place. Null opens the tab the
+   * server picks: the first one with maps to show.
+   */
   tab: MindMapTab | null;
   tier: EntitlementTier;
 }) {
@@ -298,6 +309,7 @@ export function MindMapsScreen({
               current={name === current}
               href={buildMindMapsHref({ page: hrefs.page, tab: name })}
               key={name}
+              onSelect={() => showTab(name)}
             >
               {labels[name]}
             </PageTab>
