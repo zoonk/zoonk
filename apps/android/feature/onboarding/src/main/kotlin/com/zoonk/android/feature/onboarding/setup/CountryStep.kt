@@ -74,6 +74,7 @@ internal fun ColumnScope.CountryStep(
         pending = pending,
         onContinue = { picked?.let { answer(it.code) } },
         onSkip = { answer(null) },
+        pinActions = true,
         notice =
             notice?.let {
                 {
