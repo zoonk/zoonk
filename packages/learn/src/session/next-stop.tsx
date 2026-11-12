@@ -20,7 +20,7 @@ import { useLearnAnalytics } from "../learn-context";
 import { useReadyHold } from "../wait/use-ready-hold";
 import { WaitScreen, WaitSlot, useWaitScreen } from "../wait/wait-screen";
 import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
-import { ReviewIntro, noteReviewStart } from "./review-intro";
+import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { useSessionQueueAside } from "./session-queue";
@@ -181,7 +181,7 @@ function NextStopActionBar({
 
       {stop.failed && (
         <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't stop the session. Try again.")}
+          {t("That didn't go through. Try again in a moment.")}
         </p>
       )}
 
@@ -219,11 +219,7 @@ function NextStopActionBar({
         {quizSlot && <WaitSlot enterKey={!alternative} />}
 
         {!isReady && alternative && (
-          <AlternativeButton
-            actions={actions}
-            alternative={alternative}
-            reason={notWritten ? "instead" : "whileWaiting"}
-          />
+          <AlternativeButton actions={actions} alternative={alternative} />
         )}
       </TaskActions>
     </TaskActionBar>
@@ -280,7 +276,7 @@ export function NextStop({
   const title = useBlockTitle();
   const detail = useBlockDetail();
   const isReady = lesson === "ready";
-  const line = detail(block);
+  const line = useReviewLine({ block, detail: detail(block), goalId });
   const rows = getSessionQueue({ blocks, nextPosition: block.position });
   const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
@@ -317,7 +313,7 @@ export function NextStop({
             <TaskMeta facts={facts} />
           </div>
 
-          <ReviewIntro block={block} goalId={goalId} />
+          <ReviewIntro block={block} />
 
           <StatusRegion className="text-sm text-pretty">
             {written && t("Your lesson is ready.")}

@@ -40,7 +40,7 @@ export function PlacementNote({
         </LineMarker>
 
         <span>
-          {t("Fine-tuning your plan. A miss here is never saved as a mistake.")}
+          {t("Checking what you already know.")}
           {onSkipToday && (
             <>
               {space}
