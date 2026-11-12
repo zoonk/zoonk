@@ -3102,14 +3102,9 @@ msgid "Create a free account"
 msgstr "Create a free account"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "i1JCVp"
-msgid "More tomorrow."
-msgstr "More tomorrow."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "GyiSWt"
-msgid "Nothing you did was lost."
-msgstr "Nothing you did was lost."
+msgctxt "M2VnuX"
+msgid "You can still review and practice your mistakes. More tomorrow."
+msgstr "You can still review and practice your mistakes. More tomorrow."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3133,9 +3128,9 @@ msgid "Log in"
 msgstr "Log in"
 
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "x8Qljp"
-msgid "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgctxt "z7s-vx"
+msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3329,9 +3324,9 @@ msgid "Also correct:"
 msgstr "Also correct:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "eP1Qpv"
-msgid "Compare your answer with this one:"
-msgstr "Compare your answer with this one:"
+msgctxt "WGhDaL"
+msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
+msgstr "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"

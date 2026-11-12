@@ -56,7 +56,7 @@ export function ApplyOfferCard({
   };
 
   return (
-    <OfferCard description={description} ref={cardRef} tile={tile} title={title}>
+    <OfferCard description={saved ? null : description} ref={cardRef} tile={tile} title={title}>
       <StatusRegion className="text-muted-foreground text-sm">{saved && savedText}</StatusRegion>
 
       {!saved && (

@@ -55,7 +55,7 @@ export function LessonSlowDown({
   return (
     <AccessLayout
       description={t(
-        "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
+        "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
         { seconds: Math.max(secondsLeft, 0) },
       )}
       icon={<HourglassIcon aria-hidden="true" />}

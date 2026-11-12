@@ -3102,13 +3102,8 @@ msgid "Create a free account"
 msgstr "Załóż bezpłatne konto"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "i1JCVp"
-msgid "More tomorrow."
-msgstr ""
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "GyiSWt"
-msgid "Nothing you did was lost."
+msgctxt "M2VnuX"
+msgid "You can still review and practice your mistakes. More tomorrow."
 msgstr ""
 
 #: src/lesson/access/lesson-access-screen.tsx
@@ -3133,8 +3128,8 @@ msgid "Log in"
 msgstr ""
 
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "x8Qljp"
-msgid "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgctxt "z7s-vx"
+msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
 msgstr ""
 
 #: src/lesson/access/lesson-slow-down.tsx
@@ -3329,8 +3324,8 @@ msgid "Also correct:"
 msgstr "Inna poprawna wersja:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "eP1Qpv"
-msgid "Compare your answer with this one:"
+msgctxt "WGhDaL"
+msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
 msgstr ""
 
 #: src/lesson/feedback/lesson-step-result.tsx

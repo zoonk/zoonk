@@ -98,7 +98,7 @@ function LimitReached({
 
   return (
     <AccessLayout
-      description={t("More tomorrow.")}
+      description={t("You can still review and practice your mistakes. More tomorrow.")}
       icon={<HourglassIcon aria-hidden="true" />}
       title={t("No more new lessons today")}
     >
@@ -121,7 +121,6 @@ function Unavailable({
   if (refusal.reason === "failed") {
     return (
       <AccessLayout
-        description={t("Nothing you did was lost.")}
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
       >

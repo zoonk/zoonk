@@ -775,6 +775,7 @@ msgstr "Something went wrong. Please try again."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -2813,9 +2814,9 @@ msgstr "About this lesson"
 
 #. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "cFmAm2"
-msgid "Ready now"
-msgstr "Ready now"
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "Ready to start now"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "P0sSfc"
@@ -2838,9 +2839,14 @@ msgid "This lesson isn't ready yet"
 msgstr "This lesson isn't ready yet"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "oD4n76"
-msgid "It takes a few minutes. You can leave and come back."
-msgstr "It takes a few minutes. You can leave and come back."
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "We couldn't get this lesson ready"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "It takes a few minutes, and keeps going if you leave."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"

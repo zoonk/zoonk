@@ -2816,8 +2816,8 @@ msgid "Applying it rebuilds your plan for this country. The lessons you've finis
 msgstr "Ao aplicar, seu plano é refeito para esse país. As aulas que você já fez continuam feitas."
 
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "zAGi7T"
-msgid "Saved. Your new plan is getting ready."
+msgctxt "BcB9ZH"
+msgid "Saved. Your new plan is getting ready, and you can keep studying."
 msgstr ""
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
@@ -6139,8 +6139,8 @@ msgid "We couldn't save the call."
 msgstr "Não conseguimos salvar a conversa."
 
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "co1MsJ"
-msgid "Starting this one ends it, without its feedback."
+msgctxt "0QT9qQ"
+msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
 msgstr ""
 
 #: src/language/conversation/call-refusal-copy.ts
@@ -6219,8 +6219,8 @@ msgid "This takes about half a minute."
 msgstr ""
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "bzb7j9"
-msgid "A short call about this unit."
+msgctxt "Qm5B78"
+msgid "A short voice call with an AI character, about this unit."
 msgstr ""
 
 #: src/language/conversation/conversation-intro.tsx
@@ -9674,8 +9674,8 @@ msgid "That's all the goals you can study at once"
 msgstr ""
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "VYYOSB"
-msgid "Pause one from your Plan's menu to start another. Quick questions still work."
+msgctxt "6uyInV"
+msgid "Pause one in your Plan to start another. You can still get a quick explanation here."
 msgstr ""
 
 #: src/onboarding/entry/goal-outcomes.tsx

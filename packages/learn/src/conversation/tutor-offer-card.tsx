@@ -46,7 +46,9 @@ export function OfferCard({
             <span className="text-sm font-medium text-balance">{title}</span>
             {locked && <PlusMark />}
           </h3>
-          <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
+          {description && (
+            <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
+          )}
         </div>
       </div>
       {children}
