@@ -24,11 +24,9 @@ private class SentAnswer(
 internal class PlacementViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
+    private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
 ) : ViewModel() {
-    /** Kept as the screen's [LocalSetupDrafts], which a guest who signs in replaces without leaving the screen. */
-    var drafts: SetupDrafts? = null
-
     private var savedStarted by handle.saved { false }
 
     var started by mutableStateOf(savedStarted)
@@ -127,7 +125,7 @@ internal class PlacementViewModel(
 
     private fun send() {
         val answer = sent ?: return
-        val draft = drafts?.words(goalId, typedDraftStep(answer.question.item.itemId))
+        val draft = drafts?.sending(goalId, typedDraftStep(answer.question.item.itemId))
         markStarted()
         isSaving = true
         viewModelScope.launch {

@@ -5,6 +5,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -63,6 +64,7 @@ class FocusTestScreenTest {
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val session = FakeSession(ana)
+    private val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
     private val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val api =
         FakeOnboardingApi().apply {
@@ -106,7 +108,6 @@ class FocusTestScreenTest {
     private fun SetupDrafts.typedAnswer() = words(GOAL_ID, typedDraftStep(ITEM_ID)).value.stateIn(background, SharingStarted.Eagerly, null)
 
     private fun showTestFromThePlan() {
-        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val summaries = LearnerSummaryStore({ summary(0, Long.MAX_VALUE).copy(goals = listOf(examGoal)) }, cache, background)
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         val plans = PlanStore(FakePlanApi(), cache)
@@ -126,7 +127,7 @@ class FocusTestScreenTest {
 
     @Test
     fun anUnsentAnswerOnATestOpenedFromThePlanComesBackWhenTheScreenIsRebuiltAndGoesOnceItSaves() {
-        val saved = SetupDrafts(draftStore(), ana).also { drafts = it }.typedAnswer()
+        val saved = SetupDrafts(draftStore(), ana, session).also { drafts = it }.typedAnswer()
         showTestFromThePlan()
 
         typeTheAnswer()
@@ -139,20 +140,34 @@ class FocusTestScreenTest {
     }
 
     @Test
-    fun aGuestsUnsentAnswerThatMovedIntoTheAccountTheySignedInToGoesOnceItSaves() {
+    fun aGuestsAnswerSentAsTheySignInGoesFromTheAccountItsWordsMovedInto() {
         val store = draftStore()
-        val typed = SetupDrafts(store, ana).also { drafts = it }.typedAnswer()
+        val typed = SetupDrafts(store, ana, session).also { drafts = it }.typedAnswer()
         showTestFromThePlan()
         typeTheAnswer()
         rule.waitUntil(5_000) { typed.value == listOf(ANSWER) }
+        val confirm =
+            checkNotNull(
+                rule
+                    .onNodeWithText("Confirm")
+                    .fetchSemanticsNode()
+                    .config[SemanticsActions.OnClick]
+                    .action,
+            )
 
         val account = AuthenticatedSession("registered", "token-b", "local-b")
         runBlocking { store.follow { DraftsChange(next = account.accountId, moveFrom = ana.accountId) } }
-        session.session = account
-        val moved = SetupDrafts(store, account).also { drafts = it }.typedAnswer()
+        val accountDrafts = SetupDrafts(store, account, session)
+        val moved = accountDrafts.typedAnswer()
         rule.waitUntil(5_000) { moved.value == listOf(ANSWER) }
 
-        rule.onNodeWithText("Confirm").performClick()
+        // Sent in the turn the session changes, before the screen recomposes with the account's drafts.
+        rule.runOnIdle {
+            session.session = account
+            cache.followSession()
+            drafts = accountDrafts
+            confirm()
+        }
         rule.waitUntil(5_000) { api.placementAnswers.size == 1 }
         rule.waitUntil(5_000) { moved.value == null }
     }

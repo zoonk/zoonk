@@ -103,13 +103,11 @@ internal fun SetupFlow.arriving(
 /** Each answer is a POST from the learner's tap; its reply is the goal's whole new setup. */
 internal class GoalSetupViewModel(
     private val store: OnboardingStore,
+    private val drafts: SetupDrafts?,
     private val handle: SavedStateHandle,
     goalId: String,
     revealMoment: Boolean = false,
 ) : ViewModel() {
-    /** Kept as the screen's [LocalSetupDrafts], which a guest who signs in replaces without leaving the screen. */
-    var drafts: SetupDrafts? = null
-
     private var saved by handle.saved { SetupFlow(goalId) }
     private var savedProfiles by handle.saved { emptyMap<ProfileQuestion, ProfileDraft>() }
     private var profileDrafts by mutableStateOf(savedProfiles)
@@ -247,7 +245,7 @@ internal class GoalSetupViewModel(
         isSaving = true
         clearFailure()
         val answeredGoal = goalId
-        val draft = drafts?.words(answeredGoal, step.value)
+        val draft = drafts?.sending(answeredGoal, step.value)
         return viewModelScope.async {
             val outcome = store.answer(answeredGoal, input)
             when (outcome) {

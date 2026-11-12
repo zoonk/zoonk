@@ -62,7 +62,7 @@ fun FocusTestScreen(
         app.learnerSummary.summary,
         app.onboarding,
         app.plans,
-        drafts = signedIn?.session?.let { SetupDrafts(app.drafts, it) },
+        drafts = signedIn?.session?.let { SetupDrafts(app.drafts, it, app.sessions) },
         navigator,
     )
 }

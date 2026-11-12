@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -101,8 +100,7 @@ internal fun ColumnScope.PlacementStep(
     onReportSaveFailure: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle()) }
-    SideEffect { vm.drafts = drafts }
+    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val phase = vm.phase(placement)

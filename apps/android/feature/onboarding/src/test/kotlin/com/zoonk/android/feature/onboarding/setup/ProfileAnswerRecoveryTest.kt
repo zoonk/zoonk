@@ -41,7 +41,7 @@ class ProfileAnswerRecoveryTest {
                 val api = FakeOnboardingApi()
                 val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
                 val store = OnboardingStore(api, AppCache(session, backgroundScope), session) { SignInResult.SignedIn }
-                val vm = GoalSetupViewModel(store, SavedStateHandle(), GOAL_ID)
+                val vm = GoalSetupViewModel(store, null, SavedStateHandle(), GOAL_ID)
                 models.put("profile", vm)
                 vm.begin(setupView(listOf("watch", "plan")))
                 val question =
