@@ -187,6 +187,7 @@
     "./tasks/research/translate-pass-marks": "./src/tasks/research/translate-pass-marks.ts",
     "./tasks/research/upload-visibility": "./src/tasks/research/upload-visibility.ts",
     "./tasks/challenge/assemble": "./src/tasks/challenge/assemble-challenge-case.ts",
+    "./tasks/challenge/fix": "./src/tasks/challenge/challenge-fix.ts",
     "./tasks/challenge/plan": "./src/tasks/challenge/challenge-plan.ts",
     "./tasks/challenge/plan-fixture": "./src/tasks/challenge/_test-utils/challenge-plan.ts",
     "./tasks/challenge/plan-paths": "./src/tasks/challenge/challenge-plan-paths.ts",

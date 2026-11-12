@@ -1,9 +1,12 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ChallengeFinding } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import {
   type ChallengeDraft,
   type PlannedChallenge,
   type ScriptedChallenge,
+  fixChallenge,
   planChallenge,
+  recheckChallenge,
   reviewChallenge,
   scriptChallenge,
 } from "@zoonk/core/library/challenges/draft";
@@ -89,6 +92,44 @@ export async function reviewChallengeStep({
     lessonId,
     run: () => reviewChallenge({ params: stage.params, scripted }),
     step: "reviewChallenge",
+  });
+}
+
+export async function fixChallengeStep({
+  findings,
+  lessonId,
+  scripted,
+  stage,
+}: {
+  findings: ChallengeFinding[];
+  lessonId?: string;
+  scripted: ScriptedChallenge;
+  stage: ChallengeDraftStage;
+}) {
+  "use step";
+
+  return streamStep({
+    lessonId,
+    run: () => fixChallenge({ findings, params: stage.params, scripted }),
+    step: "fixChallenge",
+  });
+}
+
+export async function recheckChallengeStep({
+  fixed,
+  lessonId,
+  stage,
+}: {
+  fixed: ScriptedChallenge;
+  lessonId?: string;
+  stage: ChallengeDraftStage;
+}) {
+  "use step";
+
+  return streamStep({
+    lessonId,
+    run: () => recheckChallenge({ fixed, params: stage.params }),
+    step: "recheckChallenge",
   });
 }
 

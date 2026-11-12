@@ -68,17 +68,17 @@ export function useChallengeCopy(): KindCopy<"challenge"> {
   return {
     name: t("Writing your challenge"),
     phases: {
+      fix: {
+        label: t({
+          description:
+            'A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again.',
+          message: "Fixing what the check found",
+        }),
+        lines: [t("Rewriting the parts that didn't add up…"), t("Checking every path…")],
+      },
       plan: {
         label: t("Planning the challenge"),
         lines: [t("Picking the situation…"), t("Mapping the choices you'll face…")],
-      },
-      redraft: {
-        label: t({
-          description:
-            'A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again.',
-          message: "Fixing what the check found",
-        }),
-        lines: [t("Planning the challenge again…"), t("Rewriting the parts that didn't add up…")],
       },
       write: {
         label: t("Writing the challenge"),

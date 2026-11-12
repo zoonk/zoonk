@@ -68,7 +68,7 @@ export async function publishChallengeLessonDraft({
         skillId: null,
       },
     ],
-    summary: scripted.summary,
+    summary: { ideas: scripted.written.summary.map((text) => ({ text })), shape: "hub" },
     workflowRunId,
   });
 }

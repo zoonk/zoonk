@@ -725,6 +725,7 @@
     "./users/user-search": "./src/users/user-search.ts",
     "./library/challenges/plan-check": "./src/library/challenges/challenge-plan-check.ts",
     "./library/challenges/draft": "./src/library/challenges/challenge-draft.ts",
+    "./library/challenges/edits": "./src/library/challenges/challenge-edits.ts",
     "./library/challenges/lesson-draft": "./src/library/challenges/challenge-lesson-draft.ts",
     "./library/challenges/render": "./src/library/challenges/render-challenge.ts",
     "./library/challenges/field-token": "./src/library/challenges/field-challenge-token.ts"

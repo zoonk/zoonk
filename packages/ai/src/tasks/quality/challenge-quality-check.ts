@@ -7,11 +7,16 @@ import { type ChallengeCaseParams } from "../challenge/challenge-schema";
 import systemPrompt from "./challenge-quality-check.prompt.md";
 import { getLessonCheckModels } from "./lesson-check-models";
 
-const schema = z.object({
-  findings: z.array(
-    z.object({ error: z.string(), evidence: z.string(), location: z.string(), path: z.string() }),
-  ),
+const findingSchema = z.object({
+  error: z.string(),
+  evidence: z.string(),
+  location: z.string(),
+  path: z.string(),
 });
+
+const schema = z.object({ findings: z.array(findingSchema) });
+
+export type ChallengeFinding = z.infer<typeof findingSchema>;
 
 export async function checkChallengeQuality(
   params: Pick<
