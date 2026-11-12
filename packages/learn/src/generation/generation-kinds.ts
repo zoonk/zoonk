@@ -10,6 +10,7 @@ import {
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
+import { type GenerationStepTimes } from "./generation-run";
 
 type StepPlace<TPhase extends string> = TPhase | "aside" | "done" | "join";
 
@@ -287,4 +288,24 @@ export function isGenerationDone({
   const reportedDone = getDoneSteps(definition).some((step) => steps[step] !== undefined);
 
   return reportedDone || (doneOnCompleted !== undefined && steps[doneOnCompleted] === "completed");
+}
+
+/** When the run reported what `isGenerationDone` ends the wait on, on the server's clock. */
+export function getGenerationDoneAt({
+  definition,
+  stepTimes,
+}: {
+  definition: GenerationKindDefinition<string, string>;
+  stepTimes: Partial<Record<string, GenerationStepTimes>>;
+}): number | null {
+  const { doneOnCompleted } = definition;
+
+  const times = [
+    ...getDoneSteps(definition).map(
+      (step) => stepTimes[step]?.started ?? stepTimes[step]?.completed,
+    ),
+    doneOnCompleted === undefined ? undefined : stepTimes[doneOnCompleted]?.completed,
+  ].filter((time) => time !== undefined);
+
+  return times.length > 0 ? Math.min(...times) : null;
 }

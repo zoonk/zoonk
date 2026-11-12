@@ -1,5 +1,6 @@
 "use client";
 
+import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
@@ -31,7 +32,7 @@ import { PlanBuilding, type PlanNext } from "./plan-building";
 import { WaitBackToQuiz, WaitBar, WaitLinkAction } from "./wait-parts";
 import { type PlanWaitScreen, type WaitStop } from "./wait-run";
 
-type Notice = { stopped: WaitStop | null };
+type Notice = { document: ExamDocument; lastNotice: boolean; stopped: WaitStop | null };
 
 export type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
 
@@ -95,9 +96,17 @@ function BuildStatus({
   );
 }
 
-function NoticeStatus({ holding, since }: { holding: boolean; since: number }) {
+function NoticeStatus({
+  holding,
+  notice,
+  since,
+}: {
+  holding: boolean;
+  notice: Notice;
+  since: number;
+}) {
   const t = useExtracted();
-  const title = useNoticeTitle();
+  const title = useNoticeTitle(notice.lastNotice);
   const value = useNoticeProgress({ holding, since, stopped: null });
 
   return (
@@ -129,7 +138,7 @@ function PlanWaitBar({
         }
       >
         <OnboardingPrimaryButton className="lg:w-auto lg:min-w-40" onClick={release}>
-          {t("Continue")}
+          {next === "plan" ? t("See your plan") : t("Continue")}
         </OnboardingPrimaryButton>
       </WaitBar>
     );
@@ -137,7 +146,7 @@ function PlanWaitBar({
 
   if (lessonReady) {
     return (
-      <WaitBar>
+      <WaitBar note={t("Your plan will be waiting when you finish.")}>
         <WaitLinkAction href={lessonHref(firstLesson.id)}>{t("Start lesson 1")}</WaitLinkAction>
       </WaitBar>
     );
@@ -182,7 +191,7 @@ function PlanWaitPage({
     }
 
     return notice ? (
-      <NoticeStatus holding={holding} since={since} />
+      <NoticeStatus holding={holding} notice={notice} since={since} />
     ) : (
       <BuildStatus firstLesson={firstLesson} holding={holding} run={run} since={since} />
     );

@@ -3,9 +3,10 @@
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 import { PageSectionTitle } from "../_components/page";
 import { ProgressRing } from "../_components/progress-ring";
+import { formatClock } from "../_utils/clock";
 import { getGenerationKind } from "../generation/generation-kinds";
 import { type GenerationFirstLesson, type GenerationRun } from "../generation/generation-run";
 
@@ -17,10 +18,31 @@ const LESSON_MS =
 
 const ALMOST_DONE = 95;
 
-/** When lesson 1 started on this device's clock, if the run reported it. */
-function getLessonStart(run: GenerationRun): number | null {
+function useNow(active: boolean): number {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!active) {
+      return;
+    }
+
+    const timer = setInterval(() => setNow(Date.now()), SECOND_MS);
+    return () => clearInterval(timer);
+  }, [active]);
+
+  return now;
+}
+
+/** When lesson 1 started and finished on this device's clock, as far as the run reported. */
+function getLessonTimes(run: GenerationRun) {
+  const offset = run.clockOffsetMs ?? 0;
   const started = run.stepTimes?.writeFirstLesson?.started;
-  return started === undefined ? null : started + (run.clockOffsetMs ?? 0);
+  const ended = run.stepTimes?.firstLessonReady?.completed;
+
+  return {
+    endedAt: ended === undefined ? null : ended + offset,
+    startedAt: started === undefined ? null : started + offset,
+  };
 }
 
 function LessonMark({
@@ -49,6 +71,33 @@ function LessonMark({
   );
 }
 
+function LessonTime({
+  ready,
+  stopped,
+  run,
+}: {
+  ready: boolean;
+  stopped: boolean;
+  run: GenerationRun;
+}) {
+  const { endedAt, startedAt } = getLessonTimes(run);
+  const now = useNow(!ready && !stopped && startedAt !== null);
+  const end = ready ? endedAt : now;
+
+  if (startedAt === null || end === null) {
+    return null;
+  }
+
+  return (
+    <span
+      aria-hidden="true"
+      className="text-muted-foreground col-start-3 row-start-1 font-mono text-xs leading-5 tabular-nums"
+    >
+      {formatClock(Math.max(0, end - startedAt))}
+    </span>
+  );
+}
+
 /** Lesson 1 in the progress view, below the plan's steps: it's written alongside the plan. */
 export function FirstLessonRow({
   lesson,
@@ -70,14 +119,15 @@ export function FirstLessonRow({
     >
       <PageSectionTitle id={titleId}>{t("Your first lesson")}</PageSectionTitle>
 
-      <div className="grid grid-cols-[1rem_minmax(0,1fr)] gap-x-3">
-        <LessonMark stopped={stopped} ready={ready} startedAt={getLessonStart(run)} />
+      <div className="grid grid-cols-[1rem_minmax(0,1fr)_auto] gap-x-3">
+        <LessonMark stopped={stopped} ready={ready} startedAt={getLessonTimes(run).startedAt} />
         <span className="col-start-2 text-sm leading-5 font-medium">{lesson.title}</span>
+        <LessonTime stopped={stopped} ready={ready} run={run} />
         <span className="text-muted-foreground col-start-2 text-xs">
           {lesson.status === "done" && t("Done")}
           {lesson.status === "ready" && t("Ready to start")}
           {stopped && t("Something went wrong on our side.")}
-          {lesson.status === "writing" && t("Getting it ready")}
+          {lesson.status === "writing" && t("Writing about 5 short screens")}
         </span>
       </div>
     </section>

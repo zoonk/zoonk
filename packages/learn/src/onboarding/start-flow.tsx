@@ -7,7 +7,7 @@ import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
 import { AttachableGoalEntry } from "./entry/goal-attachments";
 import { GoalExamples } from "./entry/goal-examples";
-import { GoalLimitNotice } from "./entry/goal-limit-notice";
+import { GoalLimitNotice, isPlusGoalLimit } from "./entry/goal-limit-notice";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
@@ -285,6 +285,7 @@ function GoalStartFlow({
             error={state.error}
             fromSharedPlan={fromSharedPlan}
             intent={intent}
+            limited={goalLimit !== null && isPlusGoalLimit(goalLimit)}
             notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
             onAttachedChange={setAttached}
             onIntentChange={setIntent}

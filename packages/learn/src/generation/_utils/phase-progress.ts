@@ -19,7 +19,7 @@ export type PhaseProgress<TPhase extends string> = {
 
 const PERCENT = 100;
 
-function getPhaseSteps<TPhase extends string>(
+export function getPhaseSteps<TPhase extends string>(
   definition: Definition<TPhase>,
   phase: TPhase,
 ) {
@@ -55,7 +55,7 @@ function getFinishedShare<TPhase extends string>({
 }
 
 /** Phases that run at the same time make one stage, and stages run in order. */
-function toStages<TItem extends { alongside?: boolean }>(
+export function toStages<TItem extends { alongside?: boolean }>(
   phases: readonly TItem[],
 ): TItem[][] {
   const starts = phases.flatMap((phase, index) => (phase.alongside && index > 0 ? [] : [index]));

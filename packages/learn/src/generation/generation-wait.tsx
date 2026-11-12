@@ -7,13 +7,17 @@ import {
   GenerationTimelineProgress,
   GenerationTimelineStatus,
   GenerationTimelineStep,
+  GenerationTimelineStepDetail,
   GenerationTimelineStepIndicator,
   GenerationTimelineStepLabel,
+  GenerationTimelineStepTime,
   GenerationTimelineSteps,
 } from "@zoonk/ui/components/generation-timeline";
 import { useAnimatedProgress } from "@zoonk/ui/hooks/animated-progress";
+import { useTickCount } from "@zoonk/ui/hooks/tick-count";
 import { CircleAlertIcon, WifiOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useEffect, useState } from "react";
 import {
   NoticeCard,
   NoticeCardActions,
@@ -22,8 +26,12 @@ import {
   NoticeCardLeading,
   NoticeCardTitle,
 } from "../_components/notice-card";
+import { formatClock } from "../_utils/clock";
 import { useAppLocale } from "../_utils/locale";
+import { getDetailLine } from "./_utils/detail-line";
 import { type PhaseProgress, type PhaseStatus, getPhaseProgress } from "./_utils/phase-progress";
+import { type PhaseTime, getPhaseTimes } from "./_utils/phase-times";
+import { type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind, getGenerationKind } from "./generation-kinds";
 import { type GenerationFailure, type GenerationRun } from "./generation-run";
 import { useGenerationCopy } from "./use-generation-copy";
@@ -85,6 +93,74 @@ function WaitProgress({
       weights={weights}
     />
   );
+}
+
+function ActiveDetail({
+  copy,
+  phase,
+  skillName,
+}: {
+  copy: PhaseCopy;
+  phase: string;
+  skillName?: string;
+}) {
+  const tick = useTickCount({ resetKey: phase });
+  const line = getDetailLine({ lines: copy.lines, numbered: copy.numbered, tick });
+
+  if (skillName) {
+    return (
+      <GenerationTimelineStepDetail className="truncate">{skillName}</GenerationTimelineStepDetail>
+    );
+  }
+
+  return line ? (
+    <GenerationTimelineStepDetail key={line}>{line}</GenerationTimelineStepDetail>
+  ) : null;
+}
+
+const SECOND_MS = 1000;
+
+function RunningTime({ offsetMs, startedAt }: { offsetMs: number; startedAt: number }) {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), SECOND_MS);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <GenerationTimelineStepTime aria-hidden="true">
+      {formatClock(Math.max(0, now - offsetMs - startedAt))}
+    </GenerationTimelineStepTime>
+  );
+}
+
+function PhaseTimeText({
+  following,
+  offsetMs,
+  status,
+  time,
+}: {
+  following: boolean;
+  offsetMs?: number;
+  status: PhaseStatus;
+  time?: PhaseTime;
+}) {
+  if (!time || time.startedAt === null) {
+    return null;
+  }
+
+  if (status === "completed" && time.endedAt !== null) {
+    return (
+      <GenerationTimelineStepTime aria-hidden="true">
+        {formatClock(Math.max(0, time.endedAt - time.startedAt))}
+      </GenerationTimelineStepTime>
+    );
+  }
+
+  return status === "active" && following && offsetMs !== undefined ? (
+    <RunningTime offsetMs={offsetMs} startedAt={time.startedAt} />
+  ) : null;
 }
 
 function PhaseStatusText({ status }: { status: PhaseStatus }) {
@@ -166,7 +242,7 @@ function useAnnouncement({
   progress,
   run,
 }: {
-  copy: Record<string, string>;
+  copy: Record<string, PhaseCopy>;
   doneLabel?: string;
   progress: PhaseProgress<string>;
   run: GenerationRun;
@@ -178,7 +254,7 @@ function useAnnouncement({
     return doneLabel ?? t("Done");
   }
 
-  return isFollowing(run) && active ? (copy[active.id] ?? "") : "";
+  return isFollowing(run) && active ? (copy[active.id]?.label ?? "") : "";
 }
 
 export function GenerationWait({
@@ -201,6 +277,12 @@ export function GenerationWait({
   const copy = useGenerationCopy(kind);
   const definition = getGenerationKind(kind);
   const progress = getPhaseProgress({ definition, run });
+
+  const times = getPhaseTimes({
+    definition,
+    phases: progress.phases,
+    stepTimes: run.stepTimes ?? {},
+  });
 
   const announcement = useAnnouncement({ copy: copy.phases, doneLabel, progress, run });
   const failure = run.status === "failed" ? (run.failure ?? "generation") : null;
@@ -228,15 +310,34 @@ export function GenerationWait({
       <GenerationTimelineStatus>{announcement}</GenerationTimelineStatus>
 
       <GenerationTimelineSteps aria-label={copy.name}>
-        {progress.phases.map((phase) => (
-          <GenerationTimelineStep key={phase.id} status={phase.status}>
-            <GenerationTimelineStepIndicator />
-            <GenerationTimelineStepLabel>
-              {copy.phases[phase.id]}
-              <PhaseStatusText status={phase.status} />
-            </GenerationTimelineStepLabel>
-          </GenerationTimelineStep>
-        ))}
+        {progress.phases.map((phase, index) => {
+          const phaseText = copy.phases[phase.id];
+
+          return (
+            <GenerationTimelineStep key={phase.id} status={phase.status}>
+              <GenerationTimelineStepIndicator />
+              <GenerationTimelineStepLabel>
+                {phaseText?.label}
+                <PhaseStatusText status={phase.status} />
+              </GenerationTimelineStepLabel>
+              <PhaseTimeText
+                following={isFollowing(run)}
+                offsetMs={run.clockOffsetMs}
+                status={phase.status}
+                time={times[index]}
+              />
+              {phase.status === "active" && isFollowing(run) && phaseText && (
+                <ActiveDetail
+                  copy={phaseText}
+                  phase={phase.id}
+                  skillName={
+                    phase.id === definition.steps.buildSkillGraph ? run.skillName : undefined
+                  }
+                />
+              )}
+            </GenerationTimelineStep>
+          );
+        })}
       </GenerationTimelineSteps>
     </GenerationTimeline>
   );

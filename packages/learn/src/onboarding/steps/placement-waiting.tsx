@@ -62,19 +62,23 @@ function PlacementProgress({
   const readsMaterial = run.steps.readExamNotice !== undefined;
 
   const description = readsMaterial
-    ? t("Reading your material takes a few minutes.")
-    : t("This takes a minute or two.");
+    ? t("They come from the material you added. Reading it takes a few minutes.")
+    : t({
+        description:
+          "Shown while the learner waits for their first questions to be prepared. “This” is the wait.",
+        message: "This usually takes a minute or two.",
+      });
 
   return (
     <GenerationWait
-      doneLabel={holding ? t("Your test is ready") : undefined}
+      doneLabel={holding ? t("Your questions are ready") : undefined}
       kind="placement"
       run={holding ? toHeldRun(run) : run}
       since={since}
     >
       <WaitHeading
-        description={holding ? null : description}
-        title={holding ? t("Your test is ready") : t("Getting your test ready")}
+        description={holding ? t("Start them whenever you're ready.") : description}
+        title={holding ? t("Your questions are ready") : t("Getting your questions ready")}
       />
     </GenerationWait>
   );
@@ -103,23 +107,25 @@ function PlacementStatus({
 
   return (
     <WaitStatus done={holding} value={value}>
-      {holding ? t("Your test is ready") : t("Getting your test ready")}
+      {holding ? t("Your questions are ready") : t("Getting your questions ready")}
     </WaitStatus>
   );
 }
+
+type SkipCopy = { label: string; note: string | null };
 
 function PlacementBar({
   canSkip,
   holding,
   onSkip,
-  skipLabel,
+  skip,
   skipFailed,
   skipping,
 }: {
   canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
-  skipLabel?: string;
+  skip?: SkipCopy;
   skipFailed: boolean;
   skipping: boolean;
 }) {
@@ -147,9 +153,14 @@ function PlacementBar({
       {canSkip && (
         <div className="flex flex-col gap-1 lg:items-end">
           <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
-            {skipLabel ?? t("Skip")}
+            {skip?.label ?? t("Skip for now")}
           </OnboardingSecondaryButton>
           {skipFailed && <ChangeSaveError className="text-center lg:text-right" />}
+          {skip?.note !== null && (
+            <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
+              {skip?.note ?? t("Your first sessions will ask a few of these instead.")}
+            </p>
+          )}
         </div>
       )}
     </WaitBar>
@@ -161,7 +172,7 @@ function PlacementWaitPage({
   holding,
   onSkip,
   run,
-  skipLabel,
+  skip,
   skipFailed,
   skipping,
 }: {
@@ -169,7 +180,7 @@ function PlacementWaitPage({
   holding: boolean;
   onSkip: () => void;
   run: GenerationRun;
-  skipLabel?: string;
+  skip?: SkipCopy;
   skipFailed: boolean;
   skipping: boolean;
 }) {
@@ -185,7 +196,7 @@ function PlacementWaitPage({
             canSkip={canSkip}
             holding={holding}
             onSkip={onSkip}
-            skipLabel={skipLabel}
+            skip={skip}
             skipFailed={skipFailed}
             skipping={skipping}
           />
@@ -214,7 +225,7 @@ export function PlacementWaiting({
   questionsReady,
   readWarmUp,
   run,
-  skipLabel,
+  skip,
   skipFailed = false,
   skipping,
 }: {
@@ -226,8 +237,8 @@ export function PlacementWaiting({
   questionsReady: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
-  /** What leaving the wait is called, when it isn't placement's own skip. */
-  skipLabel?: string;
+  /** What leaving the wait is called and does, when it isn't placement's own skip. */
+  skip?: SkipCopy;
   /** Leaving didn't save: said beside the control, which stays the retry. */
   skipFailed?: boolean;
   skipping: boolean;
@@ -254,7 +265,7 @@ export function PlacementWaiting({
         holding={holding}
         onSkip={onSkip}
         run={shown}
-        skipLabel={skipLabel}
+        skip={skip}
         skipFailed={skipFailed}
         skipping={skipping}
       />

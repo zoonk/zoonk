@@ -19,7 +19,11 @@ export function PlanReadyHeading({ next }: { next: PlanNext }) {
 
   return (
     <WaitHeading
-      description={next === "timeQuestion" ? t("One last question, then you'll see it.") : null}
+      description={
+        next === "plan"
+          ? t("See it whenever you're ready.")
+          : t("One last question, then you'll see it.")
+      }
       title={t("Your plan is ready")}
     />
   );
@@ -54,7 +58,11 @@ export function PlanBuilding({
         ) : (
           <WaitHeading
             description={
-              isRunStopped(run) ? t("Your answers are saved.") : t("This takes a minute or two.")
+              isRunStopped(run)
+                ? t("Your answers are saved.")
+                : t(
+                    "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+                  )
             }
             title={t("Building your plan")}
           />

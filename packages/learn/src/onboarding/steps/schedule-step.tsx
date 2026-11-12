@@ -1,5 +1,6 @@
 "use client";
 
+import { getExamDocument } from "@zoonk/core/exams/document";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { type LanguageAim, type LanguageAimView } from "@zoonk/core/language/aims";
 import { type PlanReadiness } from "@zoonk/core/plans/time-advice-contract";
@@ -204,7 +205,11 @@ export function ScheduleStep({
       lessonHref={lessonHref}
       library={library}
       next="timeQuestion"
-      notice={{ stopped: getNoticeStop({ poll: schedule.gate, run }) }}
+      notice={{
+        document: getExamDocument(goal),
+        lastNotice: false,
+        stopped: getNoticeStop({ poll: schedule.gate, run }),
+      }}
       readWarmUp={readWarmUp}
       run={getWaitRun({ poll: schedule.gate, run: run ?? WAITING_RUN })}
       wait={wait}

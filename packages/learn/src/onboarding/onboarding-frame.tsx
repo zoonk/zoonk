@@ -222,7 +222,7 @@ export function OnboardingHeading({
     return (
       <div
         className={cn(
-          "flex min-w-0 flex-col gap-1 first:not-has-[>[data-slot=page-eyebrow]]:pt-5 *:data-[slot=onboarding-description]:pt-1",
+          "flex min-w-0 flex-col gap-1 *:data-[slot=onboarding-description]:pt-1",
           className,
         )}
         data-slot="onboarding-heading"

@@ -26,6 +26,7 @@ import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
+import { UsualStructureNote } from "./notice-reading";
 import { PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
 import { RevealDayOpener, RevealToday, RevealWeek, findRevealStart } from "./reveal-days";
@@ -229,6 +230,7 @@ function RevealColumn({
       <div className="flex flex-col gap-2">
         <PlanPhasesBar />
         <PlanChapterList />
+        {plan.notice === "usual" && <UsualStructureNote />}
       </div>
 
       <PlanEditor

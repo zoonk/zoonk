@@ -143,7 +143,15 @@ export function PlanReveal({
       lessonHref={lessonHref}
       library={library}
       next="plan"
-      notice={plan ? { stopped: getNoticeStop({ poll, run }) } : undefined}
+      notice={
+        plan
+          ? {
+              document: plan.examDocument,
+              lastNotice: plan.schedule.targetDateEstimated,
+              stopped: getNoticeStop({ poll, run }),
+            }
+          : undefined
+      }
       readWarmUp={actions.readWarmUp}
       run={waitRun}
       wait={wait}

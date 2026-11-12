@@ -27,11 +27,13 @@ import {
 import { GoalErrorAlert } from "./goal-outcomes";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
-function SubmitButton() {
+function SubmitButton({ explain }: { explain: boolean }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLButtonElement>();
 
-  return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
+  return (
+    <GoalFieldSubmit ref={ref}>{explain ? t("Explain it") : t("Build my plan")}</GoalFieldSubmit>
+  );
 }
 
 export function GoalEntry({
@@ -42,6 +44,7 @@ export function GoalEntry({
   defaultGoal,
   error,
   fromSharedPlan = false,
+  limited = false,
   notice,
   onAttach,
   onSubmit,
@@ -54,6 +57,8 @@ export function GoalEntry({
   defaultGoal: string;
   error: GoalError | null;
   fromSharedPlan?: boolean;
+  /** The learner can't start another goal now, so the box only takes a question to explain. */
+  limited?: boolean;
   notice?: React.ReactNode;
   onAttach?: () => void;
   onSubmit: (goal: string) => void;
@@ -67,45 +72,61 @@ export function GoalEntry({
 
   return (
     <OnboardingColumn className={cn(section && "gap-4")}>
+      {limited && notice}
+
       {section ? (
         <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
       ) : (
         <OnboardingHeading>
-          <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
-          <OnboardingDescription>
-            {fromSharedPlan
-              ? t(
-                  "Tell us in your own words. Your plan starts from the plan someone shared with you.",
-                )
-              : t("Tell us in your own words. We'll build the plan.")}
-          </OnboardingDescription>
+          <OnboardingTitle>
+            {limited ? t("Get a quick explanation") : t("What's your goal?")}
+          </OnboardingTitle>
+          {!limited && (
+            <OnboardingDescription>
+              {fromSharedPlan
+                ? t(
+                    "Tell us in your own words. Your plan starts from the plan someone shared with you.",
+                  )
+                : t("Tell us in your own words. We'll build the plan.")}
+            </OnboardingDescription>
+          )}
         </OnboardingHeading>
       )}
 
-      {notice}
+      {!limited && notice}
 
       <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
         <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
-          <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
+          {limited ? (
+            <label className="sr-only" htmlFor={inputId}>
+              {t("Your question")}
+            </label>
+          ) : (
+            <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
+          )}
 
           <GoalFieldText
             autoFocusOnPointer
             defaultValue={defaultGoal}
             id={inputId}
             maxLength={MAX_GOAL_PROMPT_LENGTH}
-            placeholder={t({
-              description:
-                "Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.",
-              message:
-                "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}",
-              values: example,
-            })}
+            placeholder={
+              limited
+                ? t("How does inflation work?")
+                : t({
+                    description:
+                      "Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.",
+                    message:
+                      "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}",
+                    values: example,
+                  })
+            }
             {...goal.field}
           />
         </div>
 
         <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
-          {onAttach && (
+          {onAttach && !limited && (
             <Button
               aria-expanded={attachOpen}
               aria-label={t("Study your own material")}
@@ -120,7 +141,7 @@ export function GoalEntry({
             </Button>
           )}
 
-          <SubmitButton />
+          <SubmitButton explain={limited} />
         </div>
       </GoalField>
 
@@ -128,7 +149,11 @@ export function GoalEntry({
 
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
 
-      <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
+      <GoalExamples
+        className={cn(section && "min-[72rem]:hidden")}
+        explanationsOnly={limited}
+        onPick={goal.send}
+      />
     </OnboardingColumn>
   );
 }

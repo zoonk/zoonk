@@ -16,11 +16,19 @@ import { useLocalExamGoal, useLocalGoalExample } from "./use-local-goal-example"
 
 type GoalExample = { kind: string; label: string };
 
-function useGoalExamples(): GoalExample[] {
+function useGoalExamples(explanationsOnly: boolean): GoalExample[] {
   const t = useExtracted();
   const quickExplanation = useQuickExplanationLabel();
   const { language } = useLocalGoalExample();
   const exam = useLocalExamGoal();
+
+  if (explanationsOnly) {
+    return [
+      { kind: quickExplanation, label: t("How does inflation work?") },
+      { kind: quickExplanation, label: t("Why is the sky blue?") },
+      { kind: quickExplanation, label: t("What is compound interest?") },
+    ];
+  }
 
   return [
     { kind: t("Exam"), label: exam },
@@ -33,13 +41,16 @@ function useGoalExamples(): GoalExample[] {
 
 export function GoalExamples({
   className,
+  explanationsOnly = false,
   onPick,
 }: {
   className?: string;
+  /** A learner at their goal limit can still ask for an explanation, so only those are offered. */
+  explanationsOnly?: boolean;
   onPick: (goal: string) => void;
 }) {
   const t = useExtracted();
-  const examples = useGoalExamples();
+  const examples = useGoalExamples(explanationsOnly);
   const titleId = useId();
 
   return (

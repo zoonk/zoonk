@@ -17,20 +17,14 @@ import {
 } from "../onboarding-host";
 
 /** The progress view's heading: the page's title, or a block's title in the aside. */
-export function WaitHeading({
-  description,
-  title,
-}: {
-  description: ReactNode | null;
-  title: string;
-}) {
+export function WaitHeading({ description, title }: { description: ReactNode; title: string }) {
   const place = useWaitPlace();
 
   if (place === "aside") {
     return (
       <div className="flex flex-col gap-1">
         <PageSectionTitle>{title}</PageSectionTitle>
-        {description && <p className="text-muted-foreground text-sm text-pretty">{description}</p>}
+        <p className="text-muted-foreground text-sm text-pretty">{description}</p>
       </div>
     );
   }
@@ -38,7 +32,7 @@ export function WaitHeading({
   return (
     <OnboardingHeading>
       <OnboardingTitle>{title}</OnboardingTitle>
-      {description && <OnboardingDescription>{description}</OnboardingDescription>}
+      <OnboardingDescription>{description}</OnboardingDescription>
     </OnboardingHeading>
   );
 }

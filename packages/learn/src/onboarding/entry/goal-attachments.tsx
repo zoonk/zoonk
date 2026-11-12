@@ -127,6 +127,7 @@ export function AttachableGoalEntry({
   error,
   fromSharedPlan,
   intent,
+  limited = false,
   notice,
   onAttachedChange,
   onIntentChange,
@@ -140,6 +141,7 @@ export function AttachableGoalEntry({
   error: GoalError | null;
   fromSharedPlan: boolean;
   intent: MaterialIntent | null;
+  limited?: boolean;
   notice?: React.ReactNode;
   onAttachedChange: (items: AttachedSource[]) => void;
   onIntentChange: (intent: MaterialIntent) => void;
@@ -179,6 +181,7 @@ export function AttachableGoalEntry({
       defaultGoal={defaultGoal}
       error={error}
       fromSharedPlan={fromSharedPlan}
+      limited={limited}
       notice={notice}
       onAttach={() => setOpen((previous) => !previous)}
       onSubmit={onSubmit}

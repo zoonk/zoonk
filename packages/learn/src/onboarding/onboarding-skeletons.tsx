@@ -65,7 +65,7 @@ export function StartEntrySkeleton() {
       <OnboardingFrame>
         <OnboardingColumn aria-busy="true">
           <OnboardingHeading>
-            <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
+            <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>
             <OnboardingDescription>
               {t("Tell us in your own words. We'll build the plan.")}
             </OnboardingDescription>
