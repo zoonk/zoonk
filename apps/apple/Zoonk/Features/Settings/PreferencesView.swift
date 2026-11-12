@@ -125,17 +125,17 @@ struct PreferencesView: View {
       } footer: {
         SectionFooter {
           VStack(alignment: .leading, spacing: 8) {
+            Text(
+              "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
+              tableName: "Settings",
+              comment: "Explains where the app's language is changed on iPhone and iPad")
+
             if settings.preferences.value != nil {
               Text(
                 "For new goals and your examples. It doesn't change the plans you already have.",
                 tableName: "Settings",
                 comment: "What the country the learner lives in changes")
             }
-
-            Text(
-              "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
-              tableName: "Settings",
-              comment: "Explains where the app's language is changed on iPhone and iPad")
           }
         }
       }
