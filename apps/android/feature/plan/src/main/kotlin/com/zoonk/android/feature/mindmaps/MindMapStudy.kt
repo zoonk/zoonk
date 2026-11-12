@@ -403,28 +403,23 @@ private fun StudyMenu(
                     onFirst()
                 },
             )
-            when (slide) {
-                is Slide.Chapter -> {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.mindmaps_open_chapter)) },
-                        onClick = {
-                            open = false
-                            navigate(AppRoute.Chapter(slide.chapterId.toString()))
-                        },
-                    )
-                }
-
-                is Slide.Lesson -> {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.mindmaps_open_lesson)) },
-                        onClick = {
-                            open = false
-                            navigate(AppRoute.Lesson(slide.lesson.lessonId.toString()))
-                        },
-                    )
-                }
-
-                else -> {}
+            chapterOf(slide)?.let { chapterId ->
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.mindmaps_open_chapter)) },
+                    onClick = {
+                        open = false
+                        navigate(AppRoute.Chapter(chapterId.toString()))
+                    },
+                )
+            }
+            if (slide is Slide.Lesson) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.mindmaps_open_lesson)) },
+                    onClick = {
+                        open = false
+                        navigate(AppRoute.Lesson(slide.lesson.lessonId.toString()))
+                    },
+                )
             }
         }
     }
