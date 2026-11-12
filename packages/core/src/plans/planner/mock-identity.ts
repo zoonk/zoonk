@@ -30,15 +30,45 @@ export function getClockMinutes({
   return identity.fullLength ? clock.fullMinutes : clock.minutes;
 }
 
+function asksAnything({ clock, fullLength }: { clock: MockClock; fullLength: boolean }): boolean {
+  return (fullLength ? clock.fullMinutes : clock.minutes) > 0;
+}
+
+export function canHoldMock({
+  clocks,
+  identity,
+}: {
+  clocks: readonly MockClock[];
+  identity: MockIdentity;
+}): boolean {
+  const clock = clocks.find((entry) => entry.day === identity.day);
+  return !clock || asksAnything({ clock, fullLength: identity.fullLength });
+}
+
+/** An exam with nothing to shorten, such as an essay-only one, sits its whole mock every time. */
+export function getMockLength({
+  clocks,
+  fullLength,
+}: {
+  clocks: readonly MockClock[];
+  fullLength: boolean;
+}): boolean {
+  return fullLength || (clocks.length > 0 && clocks.every((clock) => clock.minutes <= 0));
+}
+
+/** Skips days with nothing to ask at this length, such as a written-only day for a weekly mock. */
 export function getNextMockDay({
   after,
   clocks,
+  fullLength,
 }: {
   after: number | null | undefined;
   clocks: readonly MockClock[];
+  fullLength: boolean;
 }): number | null {
   const index = after === undefined ? -1 : clocks.findIndex((clock) => clock.day === after);
-  return clocks[(index + 1) % Math.max(1, clocks.length)]?.day ?? null;
+  const order = [...clocks.slice(index + 1), ...clocks.slice(0, index + 1)];
+  return (order.find((clock) => asksAnything({ clock, fullLength })) ?? order[0])?.day ?? null;
 }
 
 export function getMockCursor({
@@ -166,7 +196,10 @@ export function resolveRetainedMocks({
 
   const identities = new Map(
     ordered.map((mock) => {
-      const day = sourced.has(mock.date) ? mock.day : getNextMockDay({ after, clocks });
+      const day = sourced.has(mock.date)
+        ? mock.day
+        : getNextMockDay({ after, clocks, fullLength: mock.fullLength });
+
       after = day;
       return [mock.date, { day, fullLength: mock.fullLength }] as const;
     }),

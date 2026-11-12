@@ -316,6 +316,7 @@ export function listMockClocks(
   }));
 }
 
+/** Read from the first day with something to ask; an exam with nothing to shorten, such as an essay-only one, sits its whole mock weekly. */
 export function getWeeklyMockMinutes({
   fullLength,
   structure,
@@ -323,7 +324,9 @@ export function getWeeklyMockMinutes({
   fullLength: boolean;
   structure: ExamStructure | null;
 }): number {
-  return getMockClock({ day: getMockDays(structure)[0] ?? null, fullLength, structure });
+  const clocks = listMockClocks(structure);
+  const full = clocks.find((clock) => clock.fullMinutes > 0)?.fullMinutes ?? 0;
+  return fullLength ? full : (clocks.find((clock) => clock.minutes > 0)?.minutes ?? full);
 }
 
 /** Includes both alternatives of routed modules; use `countPlannedQuestions` for the number actually answered. */

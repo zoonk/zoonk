@@ -5,8 +5,10 @@ import {
   type MockClock,
   type MockIdentity,
   type MockResolution,
+  canHoldMock,
   getClockMinutes,
   getMockCursor,
+  getMockLength,
   getNextMockDay,
   matchSavedMocks,
 } from "./mock-identity";
@@ -114,15 +116,21 @@ export function resolveIdentity({
   resolution: MockResolution | null;
   source: MockFunding | undefined;
 }): MockIdentity {
+  const length = getMockLength({ clocks, fullLength });
   const resolved = resolution?.identities.get(date);
 
   if (resolved) {
-    return { day: resolved.day, fullLength };
+    return { day: resolved.day, fullLength: length };
   }
 
-  const day = source && source.day !== undefined ? source.day : getNextMockDay({ after, clocks });
+  const saved = source?.day;
 
-  return { day, fullLength };
+  const day =
+    saved !== undefined && canHoldMock({ clocks, identity: { day: saved, fullLength: length } })
+      ? saved
+      : getNextMockDay({ after, clocks, fullLength: length });
+
+  return { day, fullLength: length };
 }
 
 function fundMockOn({
