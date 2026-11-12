@@ -1903,9 +1903,9 @@ msgid "Belt"
 msgstr "Kuşak"
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "wbDtI_"
-msgid "Every lesson adds {points} Brain Power, and it never goes down."
-msgstr "Her dersle {points} Beyin Gücü kazanırsın ve Beyin Gücün asla azalmaz."
+msgctxt "IxxQzi"
+msgid "You earn Brain Power for everything you study, and it never goes down."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"

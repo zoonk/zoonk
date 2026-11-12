@@ -451,6 +451,12 @@ msgctxt "XjzZDx"
 msgid "<number>+{points}</number> <words>Brain Power</words>"
 msgstr "<number>+{points}</number> <words>脳力</words>"
 
+#. How many answers the learner got right in a challenge.
+#: src/_components/moment-readouts.tsx
+msgctxt "42ufnf"
+msgid "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}"
+msgstr ""
+
 #. Counts words the learner said aloud in pronunciation practice.
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
@@ -2559,11 +2565,12 @@ msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "トリックスターの盾"
 
+#. Right answers the learner still needs to beat the Trickster.
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
-msgctxt "Dd8TiX"
-msgid "{count, plural, one {# to go} other {# to go}}"
-msgstr "{count, plural, other {あと#枚}}"
+msgctxt "yjvTwW"
+msgid "{count, plural, one {# more to win} other {# more to win}}"
+msgstr ""
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "SFplX2"
@@ -2657,14 +2664,14 @@ msgid "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken
 msgstr "{cracked, plural, =0 {壊れた板は#枚です（全{segments}枚）} other {#枚の板が壊れています（全{segments}枚）}}"
 
 #: src/checkpoints/trickster-shield.tsx
-msgctxt "LQxPj3"
-msgid "Broken"
-msgstr "壊れた"
+msgctxt "N6ZXzw"
+msgid "You won"
+msgstr ""
 
 #: src/checkpoints/trickster-shield.tsx
-msgctxt "MTDDcS"
-msgid "Held"
-msgstr "耐えた"
+msgctxt "Cu4K5p"
+msgid "He won"
+msgstr ""
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -13820,12 +13827,6 @@ msgstr "学習の進捗を保存しています…"
 
 #. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
 #: src/session/moment-today.tsx
-msgctxt "mtboPF"
-msgid "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}"
-msgstr "{left, plural, =0 {今日はあと<number>#</number>} other {今日はあと<number>#</number>}}"
-
-#. Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.
-#: src/session/moment-today.tsx
 msgctxt "fIdc7D"
 msgid "{completed, plural, =0 {<number>#</number> done today} one {<number>#</number> done today} other {<number>#</number> done today}}"
 msgstr "{completed, plural, =0 {今日は<number>#</number>完了} other {今日は<number>#</number>完了}}"
@@ -14139,6 +14140,12 @@ msgctxt "axcSXX"
 msgid "{time} today"
 msgstr "今日の{time}"
 
+#: src/session/summary/summary-parts.tsx
+#: src/session/summary/summary-steps.tsx
+msgctxt "vrNWq4"
+msgid "Earned today"
+msgstr "今日の獲得報酬"
+
 #. Image description: the buddy is happy with what the learner studied today.
 #: src/session/summary/summary-rewards.tsx
 msgctxt "okdNHx"
@@ -14159,11 +14166,6 @@ msgstr "+{bonus}"
 msgctxt "Hlc1zt"
 msgid "Getting it ready…"
 msgstr "準備しています…"
-
-#: src/session/summary/summary-steps.tsx
-msgctxt "vrNWq4"
-msgid "Earned today"
-msgstr "今日の獲得報酬"
 
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
