@@ -23,7 +23,7 @@ export function RankingItem({
           <span className="text-sm font-medium">{testCaseId}</span>
           <Badge variant="outline">{anonymousId}</Badge>
         </div>
-        <Badge>{score.toFixed(1)}</Badge>
+        <span className="text-sm font-semibold tabular-nums">{score.toFixed(1)}</span>
       </div>
       {categoryScores && categoryScores.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-1.5">

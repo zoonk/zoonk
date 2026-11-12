@@ -55,7 +55,9 @@ function TaskRow({ showDescription, task }: { showDescription: boolean; task: Ta
       >
         <span className="flex min-w-0 flex-col gap-0.5">
           <span className="font-medium">{task.name}</span>
-          {showDescription && <span className="text-muted-foreground">{task.description}</span>}
+          {showDescription && (
+            <span className="text-muted-foreground max-w-column">{task.description}</span>
+          )}
         </span>
 
         <ScoredModels count={task.scoredModels} />

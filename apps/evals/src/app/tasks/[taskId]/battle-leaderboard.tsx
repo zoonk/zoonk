@@ -12,7 +12,13 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { useState } from "react";
-import { MoreColumnsButton, type SortDirection, SortHead } from "./leaderboard-parts";
+import {
+  MoreColumnsButton,
+  NumberCell,
+  NumberHead,
+  type SortDirection,
+  SortHead,
+} from "./leaderboard-parts";
 
 type SortKey =
   | "modelName"
@@ -101,7 +107,7 @@ export function BattleLeaderboard({
 
   if (sortedEntries.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center text-sm">
+      <p className="text-muted-foreground py-8 text-sm">
         No battles yet. Run a battle to have judges compare the models&apos; outputs side by side.
       </p>
     );
@@ -122,17 +128,25 @@ export function BattleLeaderboard({
           <TableRow>
             <TableHead className="w-10">#</TableHead>
             <SortHead {...sortProps("modelName")}>Model</SortHead>
-            <SortHead {...sortProps("averageScore")}>Score / 10</SortHead>
+            <SortHead isNumber {...sortProps("averageScore")}>
+              Score / 10
+            </SortHead>
             {hasCodeChecks && <TableHead>Parts passing code checks</TableHead>}
-            <SortHead {...sortProps("costPer1000Runs")}>Cost / 1k runs</SortHead>
-            <SortHead {...sortProps("latencyP50")}>Latency p50</SortHead>
+            <SortHead isNumber {...sortProps("costPer1000Runs")}>
+              Cost / 1k runs
+            </SortHead>
+            <SortHead isNumber {...sortProps("latencyP50")}>
+              Latency p50
+            </SortHead>
 
             {showsMore && (
               <>
-                <SortHead {...sortProps("latencyP95")}>p95</SortHead>
+                <SortHead isNumber {...sortProps("latencyP95")}>
+                  p95
+                </SortHead>
                 <SortHead {...sortProps("provider")}>Provider</SortHead>
                 {categories.map((category) => (
-                  <TableHead key={category.categoryId}>{category.label}</TableHead>
+                  <NumberHead key={category.categoryId}>{category.label}</NumberHead>
                 ))}
               </>
             )}
@@ -151,18 +165,18 @@ export function BattleLeaderboard({
                   {entry.modelName}
                 </Link>
               </TableCell>
-              <TableCell className="font-semibold">{entry.averageScore.toFixed(2)}</TableCell>
+              <NumberCell className="font-semibold">{entry.averageScore.toFixed(2)}</NumberCell>
               {hasCodeChecks && (
                 <TableCell>
                   <CodeChecks checks={entry.codeChecks} />
                 </TableCell>
               )}
-              <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
-              <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
+              <NumberCell>{formatDollars(entry.costPer1000Runs)}</NumberCell>
+              <NumberCell>{formatSeconds(entry.latencyP50)}</NumberCell>
 
               {showsMore && (
                 <>
-                  <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
+                  <NumberCell>{formatSeconds(entry.latencyP95)}</NumberCell>
                   <TableCell>{entry.provider}</TableCell>
                   {categories.map((category) => {
                     const categoryScore = entry.categoryScores.find(
@@ -170,9 +184,9 @@ export function BattleLeaderboard({
                     );
 
                     return (
-                      <TableCell key={category.categoryId}>
+                      <NumberCell key={category.categoryId}>
                         {categoryScore?.score.toFixed(2) ?? "—"}
-                      </TableCell>
+                      </NumberCell>
                     );
                   })}
                 </>

@@ -158,8 +158,8 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
 
   return (
     <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
-      <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="text-base font-medium">
+      <AccordionTrigger className="hover:no-underline">
+        <span>
           {testCaseTitle}: <span className={getScoreClassName(score)}>{scoreDisplay}</span>
         </span>
       </AccordionTrigger>
@@ -186,8 +186,8 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
 
   return (
     <AccordionItem id={`case-${output.testCaseId}`} value={`output-test-case-${index}`}>
-      <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="text-base font-medium">{testCaseTitle}: Not scored</span>
+      <AccordionTrigger className="hover:no-underline">
+        {testCaseTitle}: Not scored
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-4 pt-4">

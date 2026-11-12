@@ -22,7 +22,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { LeaderboardExport } from "./leaderboard-export";
-import { MoreColumnsButton, SortHead } from "./leaderboard-parts";
+import { MoreColumnsButton, NumberCell, NumberHead, SortHead } from "./leaderboard-parts";
 
 /** How much of the task a model's score rests on, with failed runs called out. */
 function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns: number }) {
@@ -78,24 +78,24 @@ function MainCells({
           {entry.displayName}
         </Link>
       </TableCell>
-      <TableCell
+      <NumberCell
         className={entry.averageScore === null ? "text-muted-foreground" : "font-semibold"}
       >
         {entry.averageScore?.toFixed(2) ?? "Not scored"}
-      </TableCell>
+      </NumberCell>
       <TableCell>
         <CasesScored entry={entry} totalRuns={totalRuns} />
       </TableCell>
       {columns.showAccuracy && (
-        <TableCell>{entry.accuracy === null ? "—" : formatPercent(entry.accuracy)}</TableCell>
+        <NumberCell>{entry.accuracy === null ? "—" : formatPercent(entry.accuracy)}</NumberCell>
       )}
       {columns.showKeyFlaws && (
         <TableCell>
           <KeyFlawCount model={{ modelId: entry.modelId, taskId }} summary={entry.summary} />
         </TableCell>
       )}
-      <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
-      <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
+      <NumberCell>{formatDollars(entry.costPer1000Runs)}</NumberCell>
+      <NumberCell>{formatSeconds(entry.latencyP50)}</NumberCell>
       {columns.showBudget && (
         <TableCell className={entry.meetsLatencyBudget === false ? "text-warning-text" : undefined}>
           {formatLatencyVerdict(entry.meetsLatencyBudget)}
@@ -118,44 +118,44 @@ function MoreCells({
 
   return (
     <>
-      <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
+      <NumberCell>{formatSeconds(entry.latencyP95)}</NumberCell>
       <TableCell>{entry.provider}</TableCell>
       <TableCell>{entry.reasoning}</TableCell>
       {columns.categories.map((category) => (
-        <TableCell key={category.categoryId}>
+        <NumberCell key={category.categoryId}>
           {entry.categoryScores
             .find((score) => score.categoryId === category.categoryId)
             ?.score.toFixed(2) ?? "—"}
-        </TableCell>
+        </NumberCell>
       ))}
       {formatLanguageResults(entry.languages).map((result) => (
         <TableCell key={result.language}>{result.text}</TableCell>
       ))}
-      <TableCell>
+      <NumberCell>
         <CaseCount
           caseIds={entry.summary.caseIds.attempted}
           count={entry.summary.attempted}
           model={model}
         />
-      </TableCell>
-      <TableCell>
+      </NumberCell>
+      <NumberCell>
         <CaseCount
           caseIds={entry.summary.caseIds.generated}
           count={entry.summary.generated}
           model={model}
         />
-      </TableCell>
-      <TableCell>
+      </NumberCell>
+      <NumberCell>
         <CaseCount
           caseIds={entry.summary.caseIds.scored}
           count={entry.summary.scored}
           model={model}
         />
-      </TableCell>
+      </NumberCell>
       <TableCell>
         <FailureCounts model={model} summary={entry.summary} />
       </TableCell>
-      {columns.showJudgeCost && <TableCell>{formatDollars(entry.judgeCost)}</TableCell>}
+      {columns.showJudgeCost && <NumberCell>{formatDollars(entry.judgeCost)}</NumberCell>}
     </>
   );
 }
@@ -212,30 +212,38 @@ export function Leaderboard({
         <TableHeader>
           <TableRow>
             <SortHead {...sortProps("modelName")}>Model</SortHead>
-            <SortHead {...sortProps("averageScore")}>Score / 10</SortHead>
+            <SortHead isNumber {...sortProps("averageScore")}>
+              Score / 10
+            </SortHead>
             <TableHead title={HISTORICAL_ATTEMPTS_NOTE}>Cases scored</TableHead>
-            {showAccuracy && <TableHead>Accuracy</TableHead>}
+            {showAccuracy && <NumberHead>Accuracy</NumberHead>}
             {showKeyFlaws && <TableHead>Key flaws</TableHead>}
-            <SortHead {...sortProps("costPer1000Runs")}>Cost / 1k runs</SortHead>
-            <SortHead {...sortProps("latencyP50")}>Latency p50</SortHead>
+            <SortHead isNumber {...sortProps("costPer1000Runs")}>
+              Cost / 1k runs
+            </SortHead>
+            <SortHead isNumber {...sortProps("latencyP50")}>
+              Latency p50
+            </SortHead>
             {showBudget && <TableHead>Latency budget</TableHead>}
 
             {showsMore && (
               <>
-                <SortHead {...sortProps("latencyP95")}>p95</SortHead>
+                <SortHead isNumber {...sortProps("latencyP95")}>
+                  p95
+                </SortHead>
                 <SortHead {...sortProps("provider")}>Provider</SortHead>
                 <SortHead {...sortProps("reasoning")}>Reasoning</SortHead>
                 {categories.map((category) => (
-                  <TableHead key={category.categoryId}>{category.label}</TableHead>
+                  <NumberHead key={category.categoryId}>{category.label}</NumberHead>
                 ))}
                 {REQUIRED_LANGUAGES.map((language) => (
                   <TableHead key={language}>{language.toUpperCase()}</TableHead>
                 ))}
-                <TableHead title={HISTORICAL_ATTEMPTS_NOTE}>Attempted</TableHead>
-                <TableHead>Generated</TableHead>
-                <TableHead>Scored</TableHead>
+                <NumberHead title={HISTORICAL_ATTEMPTS_NOTE}>Attempted</NumberHead>
+                <NumberHead>Generated</NumberHead>
+                <NumberHead>Scored</NumberHead>
                 <TableHead>Failed runs</TableHead>
-                {showJudgeCost && <TableHead>Judge cost</TableHead>}
+                {showJudgeCost && <NumberHead>Judge cost</NumberHead>}
               </>
             )}
           </TableRow>

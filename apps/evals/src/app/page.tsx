@@ -41,12 +41,12 @@ export default function Home() {
         <HomePageBreadcrumb />
       </AppBreadcrumb>
 
-      <ContainerHeader>
+      <ContainerHeader className="items-center">
         <ContainerHeaderGroup>
           <ContainerTitle>Evals</ContainerTitle>
         </ContainerHeaderGroup>
 
-        <Link className={buttonVariants({ variant: "outline" })} href="/audio-test">
+        <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/audio-test">
           Audio test
         </Link>
       </ContainerHeader>

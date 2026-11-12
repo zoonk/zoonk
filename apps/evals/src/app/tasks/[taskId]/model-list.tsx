@@ -1,9 +1,9 @@
+import { Fold } from "@/components/fold";
 import { StatusBadge } from "@/components/model-status-badge";
 import { type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type ModelStatus } from "@/lib/utils";
 import { type ModelPricing } from "@zoonk/ai/pricing/gateway-prices";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 
 const TOKENS_PER_MILLION = 1_000_000;
@@ -26,15 +26,11 @@ export function ModelList({
   }
 
   return (
-    <details className="group border-t pt-2" open={!hasResults}>
-      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-semibold [&::-webkit-details-marker]:hidden">
-        <ChevronRightIcon
-          aria-hidden="true"
-          className="text-muted-foreground size-4 transition-transform group-open:rotate-90"
-        />
-        {hasResults ? "Run another model" : "Run a model"}
-      </summary>
-
+    <Fold
+      className="border-t pt-2"
+      isOpen={!hasResults}
+      title={hasResults ? "Run another model" : "Run a model"}
+    >
       <p className="text-muted-foreground text-xs">Price per million tokens: input / output.</p>
 
       <ul className="grid gap-x-10 pt-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,7 +54,7 @@ export function ModelList({
           </li>
         ))}
       </ul>
-    </details>
+    </Fold>
   );
 }
 

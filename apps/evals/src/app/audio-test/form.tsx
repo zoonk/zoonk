@@ -36,7 +36,7 @@ export function AudioTestForm() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="max-w-column flex flex-col gap-6">
       <form action={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="text">Text to speak</Label>
@@ -81,7 +81,7 @@ export function AudioTestForm() {
         <div className="flex flex-col gap-2">
           <Label htmlFor="voice">Voice (Gemini models only)</Label>
           <Select defaultValue="Kore" disabled={isPending} name="voice">
-            <SelectTrigger id="voice">
+            <SelectTrigger className="w-full" id="voice">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

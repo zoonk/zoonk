@@ -1,8 +1,8 @@
 import { CaseCount, FailureCounts, KeyFlawCount } from "@/components/eval-counts";
+import { Fold } from "@/components/fold";
 import { type EvalSummary, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatPercent, formatSeconds } from "@/lib/format";
 import { type TaskStats } from "@/lib/stats";
-import { ChevronRightIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 function Headline({ label, value }: { label: string; value: ReactNode }) {
@@ -48,15 +48,7 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
         <Headline label="Latency p50" value={formatSeconds(stats.latencyP50)} />
       </dl>
 
-      <details className="group">
-        <summary className="text-muted-foreground flex min-h-11 cursor-pointer list-none items-center gap-1.5 text-sm [&::-webkit-details-marker]:hidden">
-          <ChevronRightIcon
-            aria-hidden="true"
-            className="size-4 transition-transform group-open:rotate-90"
-          />
-          Details
-        </summary>
-
+      <Fold title="Details">
         <dl className="grid grid-cols-2 gap-x-6 gap-y-4 pt-2 md:grid-cols-4">
           <Detail label="Latency p95" value={formatSeconds(stats.latencyP95)} />
           <Detail label="Average input tokens" value={Math.round(stats.averageInputTokens)} />
@@ -87,7 +79,7 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
         </dl>
 
         <p className="text-muted-foreground pt-4 text-xs">{HISTORICAL_ATTEMPTS_NOTE}</p>
-      </details>
+      </Fold>
     </section>
   );
 }

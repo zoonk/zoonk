@@ -22,7 +22,7 @@ export function ReasoningSelect({ reasoning }: { reasoning?: Reasoning }) {
         itemToStringLabel={getReasoningLabel}
         name="reasoning"
       >
-        <SelectTrigger className="min-w-40" id={REASONING_SELECT_ID}>
+        <SelectTrigger className="min-w-40 data-[size=default]:h-9" id={REASONING_SELECT_ID}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

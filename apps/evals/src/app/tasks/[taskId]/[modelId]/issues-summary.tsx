@@ -34,9 +34,7 @@ function IssueGroup({ issues, label }: { issues: Issue[]; label: string }) {
   return (
     <AccordionItem value={label}>
       <AccordionTrigger className="hover:no-underline">
-        <span className="text-sm font-medium">
-          {label} ({issues.length})
-        </span>
+        {label} ({issues.length})
       </AccordionTrigger>
 
       <AccordionContent>

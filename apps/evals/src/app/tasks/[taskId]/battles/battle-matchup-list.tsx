@@ -8,7 +8,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
-import { Badge } from "@zoonk/ui/components/badge";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Link from "next/link";
 import { RankingItem } from "./ranking-item";
@@ -24,7 +23,7 @@ type TestCaseEntry = {
 export function BattleMatchupListSkeleton() {
   return (
     <div aria-hidden="true" className="py-8">
-      <Skeleton className="mx-auto h-6 w-48 rounded" />
+      <Skeleton className="h-6 w-48 rounded" />
     </div>
   );
 }
@@ -103,7 +102,7 @@ function ModelItem({
       <AccordionTrigger className="hover:no-underline">
         <div className="flex items-center gap-3">
           <span className="font-medium">{model.modelName}</span>
-          <Badge>{model.averageScore.toFixed(1)}</Badge>
+          <span className="font-semibold tabular-nums">{model.averageScore.toFixed(1)}</span>
           <span className="text-muted-foreground text-xs font-normal">
             {model.testCases.length} {model.testCases.length === 1 ? "case" : "cases"}
           </span>
@@ -135,7 +134,7 @@ export function BattleMatchupList({
 }) {
   if (matchups.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center text-sm">
+      <p className="text-muted-foreground py-8 text-sm">
         No battles yet.{" "}
         <Link className="text-foreground underline underline-offset-4" href={`/tasks/${taskId}`}>
           Run a battle from the task

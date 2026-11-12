@@ -103,7 +103,7 @@ async function TaskHeader({ params }: TaskRouteProps) {
     <ContainerHeader className="flex-col items-start sm:flex-row sm:items-end">
       <ContainerHeaderGroup>
         <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription>{task.description}.</ContainerDescription>
+        <ContainerDescription className="max-w-column">{task.description}.</ContainerDescription>
         <p className="text-muted-foreground font-mono text-xs">
           {formatTestCases(task.testCases.length)}
           {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
