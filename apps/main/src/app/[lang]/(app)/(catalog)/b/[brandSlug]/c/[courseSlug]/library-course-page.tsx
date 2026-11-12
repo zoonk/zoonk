@@ -116,7 +116,7 @@ function CourseHero({
 
       {promise && <p className={HERO_LEAD_CLASS}>{promise}</p>}
 
-      <ContentCountryLine country={contentCountry} locale={locale} />
+      <ContentCountryLine country={contentCountry} />
 
       <PlanLine />
 

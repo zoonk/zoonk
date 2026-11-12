@@ -1,15 +1,15 @@
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { getVarietyName } from "@zoonk/utils/language-regions";
-import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 
-/** Only a course written for another country than its language's own says so; today's say nothing. */
+/**
+ * Only a course written for another country than its language's own says so; today's say nothing.
+ * The variety is named in the course's language, like the country.
+ */
 export async function ContentCountryLine({
   country,
-  locale,
 }: {
   country: LibraryOutline["contentCountry"];
-  locale: SupportedLocale;
 }) {
   const t = await getExtracted();
 
@@ -29,7 +29,7 @@ export async function ContentCountryLine({
         description:
           "{variety} is a language with its country, such as “Portuguese (Brazil)”. It always follows the colon, so it never needs an article or a case.",
         message: "Lesson language: {variety}",
-        values: { variety: getVarietyName({ ...country.lessonVariety, userLanguage: locale }) },
+        values: { variety: getVarietyName({ ...country.lessonVariety, userLanguage: country.lessonVariety.language }) },
       }),
   ].filter(Boolean);
 

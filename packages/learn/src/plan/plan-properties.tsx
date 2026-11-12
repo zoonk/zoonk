@@ -8,7 +8,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatDuration } from "../_utils/time-format";
-import { type LessonVariety } from "../country/use-country-lines";
+import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -82,9 +82,8 @@ function ReadOnlyRow({ children, label }: { children: React.ReactNode; label: st
 
 function LessonLanguageRow({ variety }: { variety: LessonVariety }) {
   const t = useExtracted();
-  const varietyName = useVarietyName();
 
-  return <ReadOnlyRow label={t("Lesson language")}>{varietyName(variety)}</ReadOnlyRow>;
+  return <ReadOnlyRow label={t("Lesson language")}>{getLessonVarietyName(variety)}</ReadOnlyRow>;
 }
 
 /** Content or exam country, then the lessons' language where it could surprise; one slot with Language. */
