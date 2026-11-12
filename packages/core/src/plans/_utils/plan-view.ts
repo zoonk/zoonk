@@ -143,13 +143,8 @@ function buildSteeringView({
 
 type PlanViewInput = { context: PlanContext; now: Date };
 
-function readPlanFocusTest({ goal, state, timeZone, today }: PlanContext) {
-  return readFocusTestSummary({
-    focusAreas: state.settings.focusAreas,
-    goal,
-    localDate: today,
-    timeZone,
-  });
+function readPlanFocusTest({ goal, timeZone, today }: PlanContext) {
+  return readFocusTestSummary({ goal, localDate: today, timeZone });
 }
 
 function readPhaseChallengeAccess(goal: PlanContext["goal"]) {

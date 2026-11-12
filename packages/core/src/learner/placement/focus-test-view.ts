@@ -2,19 +2,25 @@ import { type PlanChangeView } from "../../plans/plan-view-contract";
 import {
   type FocusRow,
   type FocusTestFocus,
-  type FocusTestOffer,
   type FocusTestSitting,
   type FocusTestSubject,
   type FocusTestView,
   type SessionQuestions,
 } from "./focus-test-contract";
 import { type SubjectProgress, type TestProgress } from "./focus-test-progress";
-import { getSittingMinutes, getSittingQuestions, rankFocus } from "./focus-test-rules";
+import {
+  type SittingKind,
+  getSittingMinutes,
+  getSittingQuestions,
+  rankFocus,
+} from "./focus-test-rules";
 import { type FocusTestSummaryRecord } from "./focus-test-state";
-import { isSameFocus } from "./focus-test-summary";
+import { isSameFocus, suggestsFocus } from "./focus-test-summary";
 import { PRIOR_BELIEF, type SkillBeliefs } from "./placement-beliefs";
 
-function toSubjectName(subject: SubjectProgress) {
+type NamedSubject = Pick<SubjectProgress, "areas" | "key" | "name" | "shortName">;
+
+function toSubjectName(subject: NamedSubject) {
   return { key: subject.key, name: subject.name, shortName: subject.shortName };
 }
 
@@ -76,20 +82,43 @@ export function listFocusRows({
     })),
   );
 
-  return ranked.flatMap(({ key, reason }) => {
+  return ranked.flatMap(({ key }) => {
     const subject = subjects.find((candidate) => candidate.key === key);
+    return subject ? [toFocusRow(subject)] : [];
+  });
+}
+
+function toFocusRow(subject: NamedSubject): FocusRow {
+  return { areas: subject.areas, subject: toSubjectName(subject) };
+}
+
+/**
+ * The subjects a waiting proposal gives more time, in its order. A proposal is a snapshot, so they
+ * can differ from what the test would suggest now; an area no subject studies any more keeps its
+ * own name, so the list still says what applying the proposal focuses.
+ */
+function listProposedRows({
+  proposal,
+  subjects,
+}: {
+  proposal: PlanChangeView;
+  subjects: readonly NamedSubject[];
+}): FocusRow[] {
+  const areas = proposal.operations.flatMap((operation) =>
+    operation.kind === "focusAreas" ? operation.areas : [],
+  );
+
+  const rows = areas.map((area) => {
+    const subject = subjects.find((candidate) => candidate.areas.includes(area));
 
     return subject
-      ? [
-          {
-            areas: subject.areas,
-            part: reason === "notChecked" ? subject.part : null,
-            reason,
-            subject: toSubjectName(subject),
-          },
-        ]
-      : [];
+      ? toFocusRow(subject)
+      : { areas: [area], subject: { key: area, name: area, shortName: null } };
   });
+
+  return rows.filter(
+    (row, index) => rows.findIndex((other) => other.subject.key === row.subject.key) === index,
+  );
 }
 
 export type FocusPlan = {
@@ -137,22 +166,18 @@ function getFocusState({
 export function toFocus({
   plan,
   rows,
+  subjects,
 }: {
   plan: FocusPlan;
+  /** What the test suggests now. */
   rows: FocusRow[];
+  subjects: readonly NamedSubject[];
 }): FocusTestFocus | null {
   const state = getFocusState({ plan, suggested: rows.flatMap((row) => row.areas) });
+  const proposal = state === "proposed" ? plan.proposal : null;
+  const shown = proposal ? listProposedRows({ proposal, subjects }) : rows;
 
-  if (rows.length === 0 || state === null) {
-    return null;
-  }
-
-  return {
-    basis: rows.some((row) => row.reason === "answers") ? "answers" : "importance",
-    proposal: state === "proposed" ? plan.proposal : null,
-    rows,
-    state,
-  };
+  return shown.length === 0 || state === null ? null : { proposal, rows: shown, state };
 }
 
 /** What the sitting can still do, from what the engine found to ask next. */
@@ -165,22 +190,24 @@ export type AskingNow = {
   waiting: boolean;
 };
 
-function getSittingEnd({
+/**
+ * The open sitting asks nothing more: its promised count was reached, every starting point is
+ * set, or no question is ready for what's left, which the next sessions ask.
+ */
+export function isSittingOver({
   asking,
-  left,
+  progress,
 }: {
   asking: AskingNow;
-  left: number;
-}): FocusTestSitting["end"] {
-  if (left <= 0) {
-    return "ceiling";
+  progress: TestProgress;
+}): boolean {
+  const { sitting } = progress;
+
+  if (!sitting) {
+    return false;
   }
 
-  if (asking.settled) {
-    return "settled";
-  }
-
-  return asking.nextSubject !== null || asking.waiting ? null : "noQuestionsReady";
+  return sitting.left <= 0 || asking.settled || !(asking.nextSubject !== null || asking.waiting);
 }
 
 function toSitting({
@@ -200,15 +227,15 @@ function toSitting({
 
   return {
     answered: sitting.answered,
-    end: getSittingEnd({ asking, left: sitting.left }),
     hint: sitting.manyUnknown ? "manyUnknown" : null,
-    kind: sitting.kind,
-    left: sitting.left,
     minutes: getSittingMinutes({ paceMs, questions: sitting.left }),
     questions: sitting.questions,
     subject: next ? toSubjectName(next) : null,
   };
 }
+
+/** A sitting as a start would open it; the API says only its `minutes`. */
+export type SittingOffer = { kind: SittingKind; minutes: number; questions: number };
 
 /**
  * The sitting a start opens now. A sitting with no answer yet is still offered as it was promised,
@@ -225,7 +252,7 @@ export function getOffer({
   /** Subjects quick questions can check that still have something to ask. */
   openSubjects: number;
   progress: TestProgress;
-}): FocusTestOffer | null {
+}): SittingOffer | null {
   const { paceMs, sitting } = progress;
 
   if (!askable || (sitting && sitting.answered > 0)) {
@@ -241,24 +268,11 @@ export function getOffer({
     return null;
   }
 
-  return {
-    kind,
-    minutes: getSittingMinutes({ paceMs, questions }),
-    pastCeiling: Math.max(0, listUnasked(progress.subjects).length - questions),
-    questions,
-  };
+  return { kind, minutes: getSittingMinutes({ paceMs, questions }), questions };
 }
 
 function listUnasked(subjects: readonly SubjectProgress[]): SubjectProgress[] {
   return subjects.filter((subject) => subject.part === null && subject.asked === 0);
-}
-
-function getCounts(subjects: readonly SubjectProgress[]): FocusTestView["counts"] {
-  return {
-    asked: subjects.filter((subject) => subject.asked > 0).length,
-    quick: subjects.filter((subject) => subject.part === null).length,
-    total: subjects.length,
-  };
 }
 
 export function toFocusTestSummary({
@@ -271,17 +285,20 @@ export function toFocusTestSummary({
 }: {
   dated: boolean;
   inputsKey: string;
-  offer: FocusTestOffer | null;
+  offer: SittingOffer | null;
   progress: TestProgress;
   rows: readonly FocusRow[];
   settled: boolean;
 }): FocusTestSummaryRecord {
+  const { subjects } = progress;
+
   return {
-    ...getCounts(progress.subjects),
+    asked: subjects.filter((subject) => subject.asked > 0).length,
     complete: settled,
     inputsKey,
     offerQuestions: offer?.questions ?? null,
     paceMs: progress.paceMs,
+    quick: subjects.filter((subject) => subject.part === null).length,
     suggested: dated
       ? rows.map((row) => ({
           areas: row.areas,
@@ -289,7 +306,8 @@ export function toFocusTestSummary({
           shortName: row.subject.shortName,
         }))
       : [],
-    unasked: listUnasked(progress.subjects).length,
+    total: subjects.length,
+    unasked: listUnasked(subjects).length,
   };
 }
 
@@ -306,22 +324,23 @@ export function toFocusTestView({
   asking: AskingNow;
   dated: boolean;
   lessonsSkipped: number;
-  offer: FocusTestOffer | null;
+  offer: SittingOffer | null;
   plan: FocusPlan;
   progress: TestProgress;
   rows: FocusRow[];
   sessionQuestions: SessionQuestions;
 }): FocusTestView {
+  const { subjects } = progress;
+
   return {
     checkpoint:
       progress.answers > 0
-        ? { focus: dated ? toFocus({ plan, rows }) : null, lessonsSkipped }
+        ? { focus: dated ? toFocus({ plan, rows, subjects }) : null, lessonsSkipped }
         : null,
-    counts: getCounts(progress.subjects),
-    dated,
-    offer,
+    offer: offer && { minutes: offer.minutes },
     sessionQuestions,
     sitting: toSitting({ asking, progress }),
-    subjects: progress.subjects.map((subject) => toSubjectView(subject)),
+    subjects: subjects.map((subject) => toSubjectView(subject)),
+    suggestsFocus: suggestsFocus({ dated, subjects: subjects.length }),
   };
 }

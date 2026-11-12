@@ -50,8 +50,7 @@ describe("notebook practice outside the Focus test", () => {
       answered: 0,
       focusTest: {
         checkpoint: null,
-        counts: { asked: 0 },
-        offer: { kind: "first", questions: 15 },
+        offer: { minutes: 15 },
         subjects: [
           { asked: 0, dontKnow: 0, right: 0 },
           { asked: 0, dontKnow: 0, right: 0 },

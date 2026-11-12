@@ -3,12 +3,18 @@ import { type PlanChangeView } from "../../plans/plan-view-contract";
 import { type FocusRow } from "./focus-test-contract";
 import { type FocusPlan, toFocus } from "./focus-test-view";
 
-const ROWS: FocusRow[] = ["Direito", "Português"].map((name) => ({
-  areas: [name],
-  part: null,
-  reason: "answers",
-  subject: { key: name, name, shortName: null },
-}));
+const SUBJECTS = [
+  { areas: ["Direito"], key: "Direito", name: "Direito", shortName: null },
+  { areas: ["Português"], key: "Português", name: "Português", shortName: null },
+  {
+    areas: ["Ética geral", "Ética no serviço público"],
+    key: "Ética na Administração Pública",
+    name: "Ética na Administração Pública",
+    shortName: "Ética",
+  },
+];
+
+const ROWS: FocusRow[] = SUBJECTS.slice(0, 2).map(({ areas, ...subject }) => ({ areas, subject }));
 
 const PROPOSAL: PlanChangeView = {
   behind: null,
@@ -50,13 +56,53 @@ describe(toFocus, () => {
     ["suggested", { ...SHORT, focusAreas: ["Ética"] }],
     ["suggested", SHORT],
   ] as const)("reads %s from the plan's focus and the test's proposals", (state, plan) => {
-    const focus = toFocus({ plan, rows: ROWS });
+    const focus = toFocus({ plan, rows: ROWS, subjects: SUBJECTS });
 
     expect(focus?.state ?? null).toBe(state);
     expect(focus?.proposal ?? null).toBe(state === "proposed" ? PROPOSAL : null);
   });
 
   it("shows no focus without rows", () => {
-    expect(toFocus({ plan: SHORT, rows: [] })).toBeNull();
+    expect(toFocus({ plan: SHORT, rows: [], subjects: SUBJECTS })).toBeNull();
+  });
+
+  it("lists the subjects the waiting proposal names, whatever the test would suggest now", () => {
+    const proposal: PlanChangeView = {
+      ...PROPOSAL,
+      operations: [
+        {
+          areas: ["Ética no serviço público", "Informática", "Ética geral", "Direito"],
+          kind: "focusAreas",
+        },
+      ],
+    };
+
+    const focus = toFocus({ plan: { ...SHORT, proposal }, rows: ROWS, subjects: SUBJECTS });
+
+    expect(focus).toStrictEqual({
+      proposal,
+      rows: [
+        {
+          areas: ["Ética geral", "Ética no serviço público"],
+          subject: {
+            key: "Ética na Administração Pública",
+            name: "Ética na Administração Pública",
+            shortName: "Ética",
+          },
+        },
+        {
+          areas: ["Informática"],
+          subject: { key: "Informática", name: "Informática", shortName: null },
+        },
+        { areas: ["Direito"], subject: { key: "Direito", name: "Direito", shortName: null } },
+      ],
+      state: "proposed",
+    });
+  });
+
+  it("lists a waiting proposal's subjects when the test suggests nothing now", () => {
+    const focus = toFocus({ plan: { ...SHORT, proposal: PROPOSAL }, rows: [], subjects: SUBJECTS });
+
+    expect(focus?.rows.map((row) => row.subject.name)).toStrictEqual(["Direito", "Português"]);
   });
 });

@@ -44,28 +44,21 @@ export async function startPlacementSitting({
 
   const plan = await loadPlacementPlan(goalId);
   const open = await loadPlacementWithSummary({ goalId, plan, timeZone, today, userId });
-  const sitting = open.state.focusTest?.sitting;
+  const test = open.focusTest;
 
-  if (!open.focusTest || (sitting && sitting.end === null)) {
+  if (!test || (test.sittingId && !test.sittingOver)) {
     return { placement: open.state, status: "ready" };
   }
 
-  const { state } = sitting
-    ? await completePlacement({
-        goal,
-        plan,
-        sittingId: open.focusTest?.sittingId ?? null,
-        timeZone,
-      })
-    : open;
-
-  const offer = state.focusTest?.offer;
+  const { offer, state } = test.sittingId
+    ? await completePlacement({ goal, plan, sittingId: test.sittingId, timeZone })
+    : { offer: test.offer, state: open.state };
 
   if (!state.focusTest || !offer) {
     return { placement: state, status: "ready" };
   }
 
-  await openTestSitting({ goal, now, offer, planId: open.focusTest.planId });
+  await openTestSitting({ goal, now, offer, planId: test.planId });
 
   const opened = await saveTestSummary({ goalId, timeZone, today, userId });
 

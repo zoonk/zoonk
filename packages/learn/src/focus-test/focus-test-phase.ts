@@ -6,8 +6,6 @@ import {
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type PlacementOutcome, type PlacementQuestion } from "../onboarding/onboarding-actions";
 
-export type SittingEnd = NonNullable<FocusTestSitting["end"]>;
-
 export type QuestionPhase = {
   failures: number;
   kind: "question";
@@ -18,18 +16,18 @@ export type QuestionPhase = {
 
 export type FocusTestPhase =
   | QuestionPhase
-  | { kind: "loadFailed" | "loading" | "unavailable" }
+  /** `ended`: the open sitting asks nothing more and isn't closed yet. */
+  | { kind: "ended" | "loadFailed" | "loading" | "unavailable" }
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
   | { answered: boolean; kind: "waiting" }
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
   | { kind: "resume"; question: QuestionPhase }
-  | { end: SittingEnd | null; kind: "ended" }
-  | { end: SittingEnd | null; focusTest: FocusTestView; kind: "checkpoint" };
+  | { focusTest: FocusTestView; kind: "checkpoint" };
 
 /** Null when there's no result to show and nothing to offer. */
 function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
   if (focusTest.checkpoint) {
-    return { end: null, focusTest, kind: "checkpoint" };
+    return { focusTest, kind: "checkpoint" };
   }
 
   return focusTest.offer && { focusTest, kind: "invitation", next: focusTest.offer };
@@ -74,7 +72,7 @@ export function toFocusTestPhase({
   }
 
   if (!next) {
-    return { end: sitting.end, kind: "ended" };
+    return { kind: "ended" };
   }
 
   const question: QuestionPhase = {

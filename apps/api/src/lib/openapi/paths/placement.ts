@@ -197,7 +197,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/answers": {
     post: {
       description:
-        'Grades one placement answer, including "I don\'t know yet", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; when the returned sitting has an `end`, finish it with POST /goals/{goalId}/placement/completion.',
+        'Grades one placement answer, including "I don\'t know yet", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.',
       operationId: "createPlacementAnswer",
       requestBody: {
         content: { "application/json": { schema: placementAnswerInputSchema } },
@@ -243,7 +243,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/sittings": {
     post: {
       description:
-        "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, of a promised number of questions, and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
+        "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
       operationId: "createPlacementSitting",
       requestBody: {
         content: { "application/json": { schema: placementSittingInputSchema } },

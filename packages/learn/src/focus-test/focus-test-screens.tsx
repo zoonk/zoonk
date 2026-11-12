@@ -11,7 +11,6 @@ import { useState } from "react";
 import { BigQuantity } from "../_components/big-quantity";
 import { ChangeSaveError } from "../_components/save-error";
 import { TaskMeta } from "../_components/task-meta";
-import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import {
   OnboardingColumn,
@@ -23,10 +22,8 @@ import {
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
-import { FocusTestEvidence, FocusTestResult } from "./focus-test-checkpoint";
-import { type SittingEnd } from "./focus-test-phase";
+import { FocusTestResult } from "./focus-test-checkpoint";
 import { type FocusTestPlanActions } from "./focus-test-proposal";
-import { FocusTestSubjectsSheet } from "./focus-test-subjects";
 import { type Pressed } from "./use-focus-test";
 import { useSittingFacts } from "./use-focus-test-texts";
 
@@ -41,29 +38,6 @@ function SittingSize({ facts, minutes }: { facts: readonly string[]; minutes: nu
       <BigQuantity className="text-4xl leading-none">{about(minutes)}</BigQuantity>
       <TaskMeta facts={facts} />
     </div>
-  );
-}
-
-function PastCeilingNote({ focusTest, next }: { focusTest: FocusTestView; next: FocusTestOffer }) {
-  const t = useExtracted();
-  const space = useSentenceSpace();
-
-  if (next.pastCeiling === 0) {
-    return null;
-  }
-
-  return (
-    <p className="text-muted-foreground text-sm text-pretty">
-      {t({
-        description:
-          "“This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.",
-        message:
-          "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked.",
-        values: { questions: next.questions, subjects: focusTest.counts.total },
-      })}
-      {space}
-      <FocusTestSubjectsSheet answered={false} subjects={focusTest.subjects} />
-    </p>
   );
 }
 
@@ -87,15 +61,14 @@ export function FocusTestInvitation({
   subject: string;
 }) {
   const t = useExtracted();
-  const { upTo } = useSittingFacts();
-  const suggestsFocus = focusTest.dated && focusTest.counts.total > 1;
+  const { suggestsFocus } = focusTest;
 
   return (
     <OnboardingColumn>
       <OnboardingHeading>
         <OnboardingSubject>{subject}</OnboardingSubject>
         <OnboardingTitle>
-          {focusTest.dated
+          {suggestsFocus
             ? t("Let's find where your study time should go")
             : t("Find where to start")}
         </OnboardingTitle>
@@ -110,23 +83,12 @@ export function FocusTestInvitation({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <SittingSize
-        facts={[
-          t("Optional"),
-          upTo(next.questions),
-          t("{count, plural, one {# subject} other {# subjects}}", {
-            count: focusTest.counts.total,
-          }),
-        ]}
-        minutes={next.minutes}
-      />
+      <SittingSize facts={[t("Optional")]} minutes={next.minutes} />
 
       <div className="flex flex-col gap-1.5 text-sm text-pretty">
         <p>{t("There's no grade. “I don't know yet” is a useful answer.")}</p>
         <p>{t("Stop whenever you need to. We save each answer.")}</p>
       </div>
-
-      <PastCeilingNote focusTest={focusTest} next={next} />
 
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
@@ -179,9 +141,6 @@ export function FocusTestResume({
           t("{count, plural, one {# answer saved} other {# answers saved}}", {
             count: sitting.answered,
           }),
-          t("{count, plural, one {Up to # question left} other {Up to # questions left}}", {
-            count: sitting.left,
-          }),
         ]}
         minutes={sitting.minutes}
       />
@@ -206,13 +165,11 @@ export function FocusTestResume({
 
 /** A sitting that's over and not closed yet: the learner came back to it, or closing it failed. */
 export function FocusTestEnded({
-  end,
   failed,
   onFinish,
   pending,
   subject,
 }: {
-  end: SittingEnd | null;
   failed: boolean;
   onFinish: () => void;
   pending: boolean;
@@ -225,14 +182,6 @@ export function FocusTestEnded({
       <OnboardingHeading>
         <OnboardingSubject>{subject}</OnboardingSubject>
         <OnboardingTitle>{t("Your answers are saved")}</OnboardingTitle>
-        {end === "settled" && (
-          <OnboardingDescription>{t("Your starting points are set.")}</OnboardingDescription>
-        )}
-        {end === "noQuestionsReady" && (
-          <OnboardingDescription>
-            {t("That's all the questions ready for now. Your next sessions ask the rest.")}
-          </OnboardingDescription>
-        )}
       </OnboardingHeading>
 
       <OnboardingFooter>
@@ -246,7 +195,6 @@ export function FocusTestEnded({
 }
 
 export function FocusTestCheckpoint({
-  end,
   failed,
   focusTest,
   host,
@@ -256,7 +204,6 @@ export function FocusTestCheckpoint({
   pressed,
   subject,
 }: {
-  end: SittingEnd | null;
   failed: boolean;
   focusTest: FocusTestView;
   host: FocusTestHost;
@@ -282,7 +229,6 @@ export function FocusTestCheckpoint({
       <OnboardingHeading>
         <OnboardingSubject>{subject}</OnboardingSubject>
         <OnboardingTitle>{t("Your starting plan")}</OnboardingTitle>
-        <FocusTestEvidence end={end} focusTest={focusTest} />
       </OnboardingHeading>
 
       <FocusTestResult

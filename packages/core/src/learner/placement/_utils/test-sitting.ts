@@ -15,9 +15,9 @@ import { settleAnsweredActivity } from "../../../stats/_utils/settle-answered-ac
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { writeLearnerChange } from "../../_utils/write-learner-change";
-import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
 import { readFocusTestRecord } from "../focus-test-state";
+import { type SittingOffer } from "../focus-test-view";
 import { isPlacementSkipped } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
@@ -37,7 +37,7 @@ export async function openTestSitting({
 }: {
   goal: Pick<Goal, "details" | "id" | "userId">;
   now: Date;
-  offer: Pick<FocusTestOffer, "kind" | "questions">;
+  offer: Pick<SittingOffer, "kind" | "questions">;
   planId: string;
 }): Promise<void> {
   const at = now.toISOString();

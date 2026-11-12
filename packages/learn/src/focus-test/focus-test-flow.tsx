@@ -157,9 +157,8 @@ export function FocusTestFlow({
     case "ended":
       return (
         <FocusTestEnded
-          end={phase.end}
           failed={failed}
-          onFinish={() => test.onFinish(phase.end)}
+          onFinish={test.onFinish}
           pending={test.isPending}
           subject={subject}
         />
@@ -167,7 +166,6 @@ export function FocusTestFlow({
     case "checkpoint":
       return (
         <FocusTestCheckpoint
-          end={phase.end}
           failed={failed}
           focusTest={phase.focusTest}
           host={host}

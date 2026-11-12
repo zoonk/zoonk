@@ -49,9 +49,8 @@ describe(updateFocusTest, () => {
     await expect(control(goal.id, { sessionQuestions: "on" })).resolves.toStrictEqual({
       offer: null,
       sessionQuestions: "on",
-      setsFocus: false,
       state: "checked",
-      subjects: null,
+      suggestsFocus: true,
     });
 
     await expect(control(goal.id, { sessionQuestions: "paused" })).resolves.toMatchObject({
@@ -83,11 +82,10 @@ describe(updateFocusTest, () => {
     await startSitting(goal.id);
 
     await expect(control(goal.id, { suggestion: "dismissed" })).resolves.toStrictEqual({
-      offer: { minutes: 12, questions: 12 },
+      offer: { minutes: 12 },
       sessionQuestions: "on",
-      setsFocus: false,
       state: "sitting",
-      subjects: null,
+      suggestsFocus: true,
     });
   });
 

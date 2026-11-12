@@ -3973,23 +3973,6 @@ msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com.
 msgstr "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz do nas na hello@zoonk.com."
 
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "md_tC7"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}} so far"
-msgstr "Pytania dotyczyły dotąd {asked, number} z {total, plural, one {# przedmiotu} other {# przedmiotów}}"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dBBQr6"
-msgid "Your starting points are set."
-msgstr "Ustaliliśmy, od czego zaczniesz."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aQrSbp"
-msgid "That's all the questions ready for now. Your next sessions ask the rest."
-msgstr "Na razie to wszystkie przygotowane pytania. Pozostałe zadamy w kolejnych dniach nauki."
-
-#: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "q5QB29"
 msgid "Where you'll start"
 msgstr "Od czego zaczniesz"
@@ -4029,11 +4012,6 @@ msgstr "Twój plan zachowuje wybrane przez ciebie priorytety. Oto sugestie na po
 msgctxt "jSJkc5"
 msgid "You kept your plan as it is."
 msgstr "Twój plan pozostał bez zmian."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "nvNCUr"
-msgid "For now, this follows mainly what counts most in your exam."
-msgstr "Na razie kierujemy się głównie tym, co liczy się najbardziej na twoim egzaminie."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "N09SQx"
@@ -4092,12 +4070,6 @@ msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "Zaktualizuj mój plan"
 
-#. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "J1HRdz"
-msgid "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked."
-msgstr "Twój plan uwzględnia łącznie {subjects, plural, one {# przedmiot} few {# przedmioty} other {# przedmiotów}}. W tym podejściu zadamy {questions, plural, one {maksymalnie # pytanie} few {maksymalnie # pytania} other {maksymalnie # pytań}}, więc możemy nie sprawdzić wszystkich przedmiotów."
-
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "QyMX3n"
 msgid "Let's find where your study time should go"
@@ -4125,13 +4097,6 @@ msgid "Optional"
 msgstr "Opcjonalne"
 
 #: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-view.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, one {# przedmiot} few {# przedmioty} many {# przedmiotów} other {# przedmiotu}}"
-
-#: src/focus-test/focus-test-screens.tsx
 msgctxt "kO1w73"
 msgid "There's no grade. “I don't know yet” is a useful answer."
 msgstr "Nie ma tu ocen. „Jeszcze nie wiem” to przydatna odpowiedź."
@@ -4156,11 +4121,6 @@ msgstr "Kontynuuj test"
 msgctxt "Gwo70s"
 msgid "{count, plural, one {# answer saved} other {# answers saved}}"
 msgstr "{count, plural, one {Zapisano # odpowiedź} other {Zapisano # odpowiedzi}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "c9Xh-2"
-msgid "{count, plural, one {Up to # question left} other {Up to # questions left}}"
-msgstr "{count, plural, one {Zostało maksymalnie # pytanie} few {Zostały maksymalnie # pytania} other {Zostało maksymalnie # pytań}}"
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "n4uIps"
@@ -4229,33 +4189,6 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {Pisanie: nie jest tu sprawdzane} listening {Słuchanie: nie jest tu sprawdzane} speaking {Mówienie: nie jest tu sprawdzane} other {Część praktyczna: nie jest tu sprawdzana}}"
 
-#. A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "kCg3aW"
-msgid "Your answers suggest focusing here."
-msgstr "Twoje odpowiedzi wskazują, że warto nadać temu priorytet."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "51W9Dr"
-msgid "This part has a minimum score."
-msgstr "W tej części trzeba uzyskać minimalny wynik."
-
-#. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "0_2y4Q"
-msgid "This part counts heavily; it isn't checked here."
-msgstr "Ta część ma duży wpływ na wynik; nie sprawdzamy jej w tym teście."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "TEkiKm"
-msgid "This subject counts heavily. Its starting point hasn't been checked yet."
-msgstr "Ten przedmiot ma duży wpływ na wynik. Nie sprawdzono jeszcze twojego poziomu wiedzy."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "8nVO91"
-msgid "This subject counts heavily."
-msgstr "Ten przedmiot ma duży wpływ na wynik."
-
 #. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "sd5daO"
@@ -4269,34 +4202,14 @@ msgid "About {time}"
 msgstr "Około {time}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "1nBn4K"
-msgid "{count, plural, one {Up to # question} other {Up to # questions}}"
-msgstr "{count, plural, one {Maksymalnie # pytanie} many {Maksymalnie # pytań} other {Maksymalnie # pytania}}"
-
-#: src/focus-test/use-focus-test-texts.ts
 msgctxt "xTTP0x"
 msgid "Not started"
 msgstr "Nie rozpoczęto"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "8hg4ei"
-msgid "{count, plural, one {# question left} other {# questions left}}"
-msgstr "{count, plural, one {Zostało # pytanie} few {Zostały # pytania} many {Zostało # pytań} other {Zostało # pytania}}"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTto4O"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}"
-msgstr "Pytania obejmują {asked, number} z {total, plural, one {# przedmiotu} other {# przedmiotów}}"
-
-#: src/focus-test/use-focus-test-texts.ts
 msgctxt "6JsTrv"
 msgid "Your answers are in your plan"
 msgstr "Plan uwzględnia twoje odpowiedzi"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "BgXaSJ"
-msgid "{count, plural, one {Up to # more question} other {Up to # more questions}}"
-msgstr "{count, plural, one {Jeszcze maksymalnie # pytanie} many {Jeszcze maksymalnie # pytań} other {Jeszcze maksymalnie # pytania}}"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
@@ -9226,6 +9139,12 @@ msgstr "{change} w porównaniu z poprzednim wynikiem"
 msgctxt "vWnJcC"
 msgid "{document, select, notice {To pass, the notice says} other {To pass, the official guide says}}"
 msgstr "{document, select, notice {Warunki zdania według ogłoszenia} other {Warunki zdania według oficjalnego informatora}}"
+
+#: src/mock/mock-result-view.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ZH37vY"
+msgid "{count, plural, one {# subject} other {# subjects}}"
+msgstr "{count, plural, one {# przedmiot} few {# przedmioty} many {# przedmiotów} other {# przedmiotu}}"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "zyAru3"

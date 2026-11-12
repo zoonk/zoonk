@@ -3973,23 +3973,6 @@ msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com.
 msgstr "Mesajını gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
 
 #: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "md_tC7"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}} so far"
-msgstr "Şimdiye kadar {asked, number} / {total, plural, other {# branştan}} soru soruldu"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dBBQr6"
-msgid "Your starting points are set."
-msgstr "Nereden başlayacağın belirlendi."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aQrSbp"
-msgid "That's all the questions ready for now. Your next sessions ask the rest."
-msgstr "Şimdilik hazır olan sorular bu kadar. Kalanları sonraki çalışmalarında soracağız."
-
-#: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "q5QB29"
 msgid "Where you'll start"
 msgstr "Nereden başlayacağın"
@@ -4029,11 +4012,6 @@ msgstr "Odaklanacağın branşları kendin seçtin ve planın bu seçimi koruyor
 msgctxt "jSJkc5"
 msgid "You kept your plan as it is."
 msgstr "Planını olduğu gibi bıraktın."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "nvNCUr"
-msgid "For now, this follows mainly what counts most in your exam."
-msgstr "Şimdilik bu öneri daha çok sınavında ağırlığı yüksek branşlara dayanıyor."
 
 #: src/focus-test/focus-test-checkpoint.tsx
 msgctxt "N09SQx"
@@ -4092,12 +4070,6 @@ msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "Planımı güncelle"
 
-#. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "J1HRdz"
-msgid "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked."
-msgstr "Planın {subjects, plural, other {toplam # branşı}} dikkate alıyor. Bu testte {questions, plural, other {en fazla # soru}} var, bu yüzden bazı branşlar değerlendirilmeyebilir."
-
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "QyMX3n"
 msgid "Let's find where your study time should go"
@@ -4125,13 +4097,6 @@ msgid "Optional"
 msgstr "İsteğe bağlı"
 
 #: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-view.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {# branş}}"
-
-#: src/focus-test/focus-test-screens.tsx
 msgctxt "kO1w73"
 msgid "There's no grade. “I don't know yet” is a useful answer."
 msgstr "Not verilmiyor. “Henüz bilmiyorum” da faydalı bir cevap."
@@ -4156,11 +4121,6 @@ msgstr "Testine devam et"
 msgctxt "Gwo70s"
 msgid "{count, plural, one {# answer saved} other {# answers saved}}"
 msgstr "{count, plural, other {# cevap kaydedildi}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "c9Xh-2"
-msgid "{count, plural, one {Up to # question left} other {Up to # questions left}}"
-msgstr "{count, plural, other {En fazla # soru kaldı}}"
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "n4uIps"
@@ -4229,33 +4189,6 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {Yazma: burada değerlendirilmiyor} listening {Dinleme: burada değerlendirilmiyor} speaking {Konuşma: burada değerlendirilmiyor} other {Uygulama bölümü: burada değerlendirilmiyor}}"
 
-#. A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "kCg3aW"
-msgid "Your answers suggest focusing here."
-msgstr "Cevaplarına göre bu branşa odaklanman iyi olur."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "51W9Dr"
-msgid "This part has a minimum score."
-msgstr "Bu bölümde minimum puan şartı var."
-
-#. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "0_2y4Q"
-msgid "This part counts heavily; it isn't checked here."
-msgstr "Bu bölümün puana etkisi büyük; burada değerlendirilmiyor."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "TEkiKm"
-msgid "This subject counts heavily. Its starting point hasn't been checked yet."
-msgstr "Bu branşın puana etkisi büyük. Başlangıç düzeyin henüz değerlendirilmedi."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "8nVO91"
-msgid "This subject counts heavily."
-msgstr "Bu branşın puana etkisi büyük."
-
 #. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "sd5daO"
@@ -4269,34 +4202,14 @@ msgid "About {time}"
 msgstr "Yaklaşık {time}"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "1nBn4K"
-msgid "{count, plural, one {Up to # question} other {Up to # questions}}"
-msgstr "{count, plural, other {En fazla # soru}}"
-
-#: src/focus-test/use-focus-test-texts.ts
 msgctxt "xTTP0x"
 msgid "Not started"
 msgstr "Başlanmadı"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "8hg4ei"
-msgid "{count, plural, one {# question left} other {# questions left}}"
-msgstr "{count, plural, other {# soru kaldı}}"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTto4O"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}"
-msgstr "{asked, number} / {total, plural, other {# branşta soru soruldu}}"
-
-#: src/focus-test/use-focus-test-texts.ts
 msgctxt "6JsTrv"
 msgid "Your answers are in your plan"
 msgstr "Cevapların planına yansıtıldı"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "BgXaSJ"
-msgid "{count, plural, one {Up to # more question} other {Up to # more questions}}"
-msgstr "{count, plural, other {En fazla # soru daha}}"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
@@ -9226,6 +9139,12 @@ msgstr "Son deneme sınavına göre {change}"
 msgctxt "vWnJcC"
 msgid "{document, select, notice {To pass, the notice says} other {To pass, the official guide says}}"
 msgstr "{document, select, notice {İlana göre geçmek için gerekenler} other {Resmî kılavuza göre geçmek için gerekenler}}"
+
+#: src/mock/mock-result-view.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ZH37vY"
+msgid "{count, plural, one {# subject} other {# subjects}}"
+msgstr "{count, plural, other {# branş}}"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "zyAru3"

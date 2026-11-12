@@ -7,12 +7,7 @@ import { type PlacementAnswer, type PlacementOutcome } from "../onboarding/onboa
 import { useReadOnOpen } from "../onboarding/steps/use-read-on-open";
 import { isRunStopped } from "../onboarding/steps/wait-run";
 import { type FocusTestActions } from "./focus-test-actions";
-import {
-  type FocusTestPhase,
-  type QuestionPhase,
-  type SittingEnd,
-  toFocusTestPhase,
-} from "./focus-test-phase";
+import { type FocusTestPhase, type QuestionPhase, toFocusTestPhase } from "./focus-test-phase";
 
 const POLL_MS = 3000;
 
@@ -91,7 +86,7 @@ export function useFocusTest({
   const leave = () => onDone().catch(() => false);
 
   /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */
-  const close = async (end: SittingEnd | null): Promise<boolean> => {
+  const close = async (): Promise<boolean> => {
     const finished = await actions.finish().catch(() => null);
 
     if (!finished) {
@@ -99,7 +94,7 @@ export function useFocusTest({
     }
 
     if (finished.focusTest?.checkpoint) {
-      setPhase({ end, focusTest: finished.focusTest, kind: "checkpoint" });
+      setPhase({ focusTest: finished.focusTest, kind: "checkpoint" });
       return true;
     }
 
@@ -115,7 +110,7 @@ export function useFocusTest({
       return true;
     }
 
-    const closed = await close(next.end);
+    const closed = await close();
 
     if (!closed) {
       setPhase(next);
@@ -159,7 +154,7 @@ export function useFocusTest({
 
   const stop = (from: QuestionPhase) =>
     startTransition(async () => {
-      if (!(await close(null).catch(() => false))) {
+      if (!(await close().catch(() => false))) {
         setPhase((current) => countFailure({ current, from }));
       }
     });
@@ -177,9 +172,9 @@ export function useFocusTest({
     isPending,
     onContinueTest: () => save("other", start),
     onDone: () => save("main", leave),
-    onFinish: (end: SittingEnd | null) => save("main", () => close(end)),
+    onFinish: () => save("main", close),
     /** A learner who never started has nothing to close on a plan that's already theirs. */
-    onLeave: (closes: boolean) => save("other", () => (closes ? close(null) : leave())),
+    onLeave: (closes: boolean) => save("other", () => (closes ? close() : leave())),
     onStart: () => save("main", start),
     phase,
     poll,

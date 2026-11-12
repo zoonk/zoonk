@@ -14582,7 +14582,7 @@
     },
     "/goals/{goalId}/placement/answers": {
       "post": {
-        "description": "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; when the returned sitting has an `end`, finish it with POST /goals/{goalId}/placement/completion.",
+        "description": "Grades one placement answer, including \"I don't know yet\", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.",
         "operationId": "createPlacementAnswer",
         "security": [
           {
@@ -14790,7 +14790,7 @@
     },
     "/goals/{goalId}/placement/sittings": {
       "post": {
-        "description": "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, of a promised number of questions, and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
+        "description": "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
         "operationId": "createPlacementSitting",
         "security": [
           {
@@ -80765,42 +80765,9 @@
               }
             ]
           },
-          "counts": {
-            "type": "object",
-            "properties": {
-              "asked": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Subjects with at least one test answer"
-              },
-              "quick": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Subjects this test can ask about"
-              },
-              "total": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Every subject, written and listening parts included"
-              }
-            },
-            "required": [
-              "asked",
-              "quick",
-              "total"
-            ],
-            "additionalProperties": false
-          },
-          "dated": {
-            "type": "boolean",
-            "description": "The goal has a date, so the test can also suggest where to focus"
-          },
           "offer": {
             "nullable": true,
-            "description": "The sitting POST .../placement/sittings would open; null while one is open and when nothing is left to ask",
+            "description": "The sitting POST .../placement/sittings would open, or the open one before its first answer; null once the open sitting has an answer and when nothing is left to ask",
             "allOf": [
               {
                 "$ref": "#/components/schemas/FocusTestOffer"
@@ -80812,7 +80779,7 @@
           },
           "sitting": {
             "nullable": true,
-            "description": "The open sitting",
+            "description": "The open sitting. Once the placement's `status` is `done` it asks nothing more, whatever is left of its `questions`, and POST .../placement/completion closes it",
             "allOf": [
               {
                 "$ref": "#/components/schemas/FocusTestSitting"
@@ -80825,16 +80792,19 @@
               "$ref": "#/components/schemas/FocusTestSubject"
             },
             "description": "Every subject, in the notice's order"
+          },
+          "suggestsFocus": {
+            "type": "boolean",
+            "description": "The goal has a date and more than one subject, so the test's answers also say where to focus. Without it they only set where each subject starts"
           }
         },
         "required": [
           "checkpoint",
-          "counts",
-          "dated",
           "offer",
           "sessionQuestions",
           "sitting",
-          "subjects"
+          "subjects",
+          "suggestsFocus"
         ],
         "additionalProperties": false
       },
@@ -80866,14 +80836,6 @@
       "FocusTestFocus": {
         "type": "object",
         "properties": {
-          "basis": {
-            "type": "string",
-            "enum": [
-              "answers",
-              "importance"
-            ],
-            "description": "`importance`: no row comes from an answer, so say the suggestion follows mainly what the exam weighs"
-          },
           "proposal": {
             "nullable": true,
             "description": "For `proposed`: the change to apply or decline, with its effect",
@@ -80888,7 +80850,7 @@
             "items": {
               "$ref": "#/components/schemas/FocusTestFocusRow"
             },
-            "description": "Up to three, the most needed first"
+            "description": "The subjects to give more time, up to three, the most needed first. For `proposed`, the subjects the waiting `proposal` gives more time, which may differ from what the test would suggest now"
           },
           "state": {
             "type": "string",
@@ -80904,7 +80866,6 @@
           }
         },
         "required": [
-          "basis",
           "proposal",
           "rows",
           "state"
@@ -80919,29 +80880,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The plan areas a focus on it names, as `focusAreas` takes them"
-          },
-          "part": {
-            "nullable": true,
-            "description": "Set only for `notChecked`",
-            "type": "string",
-            "enum": [
-              "written",
-              "listening",
-              "speaking",
-              "practical"
-            ]
-          },
-          "reason": {
-            "type": "string",
-            "enum": [
-              "answers",
-              "minimumScore",
-              "notChecked",
-              "notAsked",
-              "weight"
-            ],
-            "description": "`answers`: one of its answers was a miss or \"I don't know yet\". `minimumScore`: the part has a minimum score. `notChecked`: it counts heavily and this test can't check it (`part`). `notAsked`: it counts heavily and wasn't asked yet. `weight`: answered right, and still among the heaviest"
+            "description": "The plan areas that study the subject"
           },
           "subject": {
             "type": "object",
@@ -80970,8 +80909,6 @@
         },
         "required": [
           "areas",
-          "part",
-          "reason",
           "subject"
         ],
         "additionalProperties": false
@@ -80983,33 +80920,11 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "About how long `questions` take, from the same count"
-          },
-          "questions": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "The most questions the sitting would ask"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "first",
-              "continuation"
-            ]
-          },
-          "pastCeiling": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Subjects the test can ask about, still without an answer, that this sitting can't reach; above 0, say some subjects may not be checked"
+            "description": "About how long its questions take at the learner's pace"
           }
         },
         "required": [
-          "minutes",
-          "questions",
-          "kind",
-          "pastCeiling"
+          "minutes"
         ],
         "additionalProperties": false
       },
@@ -81029,50 +80944,28 @@
           "answered": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "end": {
-            "nullable": true,
-            "description": "Why this sitting asks nothing more; null while it goes on. `ceiling`: its promised count was reached. `settled`: every starting point is set. `noQuestionsReady`: no question is ready for what's left, which the next sessions ask. Finish the sitting with POST .../placement/completion",
-            "type": "string",
-            "enum": [
-              "ceiling",
-              "settled",
-              "noQuestionsReady"
-            ]
+            "maximum": 9007199254740991,
+            "description": "Answers given in this sitting"
           },
           "hint": {
             "nullable": true,
-            "description": "`manyUnknown` after five \"I don't know yet\" in a row: say that stopping here and starting to learn is fine",
+            "description": "`manyUnknown`: the last five answers in a row were \"I don't know yet\"",
             "type": "string",
             "enum": [
               "manyUnknown"
             ]
           },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "first",
-              "continuation"
-            ]
-          },
-          "left": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "`questions` minus `answered`"
-          },
           "minutes": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "About how long `left` takes at the learner's pace"
+            "description": "About how long the questions it has left take at the learner's pace"
           },
           "questions": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "The most questions this sitting asks, fixed when it started; number the one asked as `answered` + 1 of it"
+            "description": "The most questions this sitting asks, fixed when it started"
           },
           "subject": {
             "nullable": true,
@@ -81103,10 +80996,7 @@
         },
         "required": [
           "answered",
-          "end",
           "hint",
-          "kind",
-          "left",
           "minutes",
           "questions",
           "subject"
@@ -81432,33 +81322,14 @@
           "offer": {
             "nullable": true,
             "description": "`notStarted`: the first sitting. `sitting`: what's left of the open one. `checked`: a further sitting. Null when nothing is left to ask",
-            "type": "object",
-            "properties": {
-              "minutes": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "About how long `questions` take, from the same count"
-              },
-              "questions": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "The most questions the sitting would ask"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FocusTestOffer"
               }
-            },
-            "required": [
-              "minutes",
-              "questions"
-            ],
-            "additionalProperties": false
+            ]
           },
           "sessionQuestions": {
             "$ref": "#/components/schemas/FocusTestSessionQuestions"
-          },
-          "setsFocus": {
-            "type": "boolean",
-            "description": "The plan's focus came from the test, not from the learner's pick"
           },
           "state": {
             "type": "string",
@@ -81469,35 +81340,16 @@
             ],
             "description": "`sitting`: a sitting is open with questions left. `checked`: the learner has test answers and no sitting open"
           },
-          "subjects": {
-            "nullable": true,
-            "description": "Subjects with a test answer, of all of them. Null before the first answer, and for a goal placed before the Focus test until its next test answer",
-            "type": "object",
-            "properties": {
-              "asked": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "total": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "asked",
-              "total"
-            ],
-            "additionalProperties": false
+          "suggestsFocus": {
+            "type": "boolean",
+            "description": "The goal has a date and more than one subject, so the test's answers also say where to focus. Without it they only set where each subject starts"
           }
         },
         "required": [
           "offer",
           "sessionQuestions",
-          "setsFocus",
           "state",
-          "subjects"
+          "suggestsFocus"
         ],
         "additionalProperties": false
       },
@@ -96253,18 +96105,11 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "About how long `questions` take, from the same count"
-          },
-          "questions": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "The most questions the sitting would ask"
+            "description": "About how long its questions take at the learner's pace"
           }
         },
         "required": [
-          "minutes",
-          "questions"
+          "minutes"
         ],
         "additionalProperties": false
       },

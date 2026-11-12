@@ -44,14 +44,17 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
     schema: placementResponseSchema,
   });
 
-  expect(initial).toMatchObject({ focusTest: { counts: { total: 2 }, sitting: null }, next: null });
+  expect(initial).toMatchObject({
+    focusTest: { sitting: null, subjects: [{ asked: 0 }, { asked: 0 }] },
+    next: null,
+  });
 
   const opened = await readBody({
     response: await api.post(`${path}/sittings`, { data: {} }),
     schema: placementResponseSchema,
   });
 
-  expect(opened.focusTest?.sitting).toMatchObject({ answered: 0, kind: "first", questions: 8 });
+  expect(opened.focusTest?.sitting).toMatchObject({ answered: 0, questions: 8 });
 
   const input = { answer: { dontKnow: true }, durationMs: 10_000, itemId: opened.next?.itemId };
 
@@ -75,7 +78,7 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
     schema: placementResponseSchema,
   });
 
-  expect(resumed.focusTest?.sitting).toMatchObject({ answered: 1, left: 7 });
+  expect(resumed.focusTest?.sitting).toMatchObject({ answered: 1, minutes: 7, questions: 8 });
 
   const completion = await readBody({
     response: await api.post(`${path}/completion`, { data: {} }),
@@ -90,7 +93,7 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
     schema: placementResponseSchema,
   });
 
-  expect(continued.focusTest?.sitting).toMatchObject({ kind: "continuation" });
+  expect(continued.focusTest?.sitting).toMatchObject({ answered: 0 });
 
   const paused = await readBody({
     response: await api.patch(path, { data: { sessionQuestions: "paused" } }),

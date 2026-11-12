@@ -91,11 +91,7 @@ describe("test progress while a sitting stays open", () => {
       { asked: 3, right: 2 },
     ]);
 
-    expect(placement?.focusTest?.offer).toMatchObject({
-      kind: "continuation",
-      minutes: 5,
-      questions: 10,
-    });
+    expect(placement?.focusTest?.offer).toStrictEqual({ minutes: 5 });
   });
 
   it.each(["mock", "chapter test-out"])(
@@ -157,7 +153,7 @@ describe("test progress while a sitting stays open", () => {
       const resumed = await getGoalPlacement({ goalId: goal.id });
       const placement = resumed.status === "ready" ? resumed.placement : null;
 
-      expect(placement?.focusTest?.sitting).toMatchObject({ answered: 1, end: null, left: 14 });
+      expect(placement?.focusTest?.sitting).toMatchObject({ answered: 1, questions: 15 });
       expect(placement?.next).not.toBeNull();
 
       expect(placement?.focusTest?.subjects.reduce((sum, subject) => sum + subject.asked, 0)).toBe(

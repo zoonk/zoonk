@@ -189,7 +189,6 @@ test.describe("An exam's Focus test in onboarding", () => {
 
     await page.getByRole("button", { name: "Stop and use my answers" }).click();
     await expect(page.getByRole("heading", { name: "Your starting plan" })).toBeVisible();
-    await expect(page.getByText(/^Questions on 2 of 3 subjects/u)).toBeVisible();
 
     await page.getByRole("button", { name: "View all subjects" }).click();
     await expect(page.getByText("Not known yet")).toBeVisible();

@@ -1,8 +1,4 @@
-import {
-  type FOCUS_REASONS,
-  type SessionQuestions,
-  type UncheckedPart,
-} from "./focus-test-contract";
+import { type SessionQuestions, type UncheckedPart } from "./focus-test-contract";
 import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
 
 const MS_PER_MINUTE = 60_000;
@@ -84,7 +80,7 @@ export function hasUnknownStreak(outcomes: readonly ("correct" | "dontKnow" | "w
   return streak >= UNKNOWN_STREAK;
 }
 
-export type FocusReason = (typeof FOCUS_REASONS)[number];
+export type FocusReason = "answers" | "minimumScore" | "notAsked" | "notChecked" | "weight";
 
 export type FocusCandidate = {
   /** Has a test answer. */

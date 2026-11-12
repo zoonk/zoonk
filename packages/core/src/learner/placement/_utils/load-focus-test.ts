@@ -6,6 +6,7 @@ import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { type FocusRow, type FocusTestView } from "../focus-test-contract";
+import { type SubjectProgress } from "../focus-test-progress";
 import { getSessionQuestions } from "../focus-test-rules";
 import {
   type FocusTestSummaryRecord,
@@ -14,7 +15,9 @@ import {
 } from "../focus-test-state";
 import {
   type FocusPlan,
+  type SittingOffer,
   getOffer,
+  isSittingOver,
   listFocusRows,
   toFocusTestSummary,
   toFocusTestView,
@@ -28,9 +31,14 @@ type FocusTestLoad = {
   planId: string;
   plan: FocusPlan;
   sittingId: string | null;
+  /** The open sitting asks nothing more. */
+  sittingOver: boolean;
   /** The focus to propose now; null when none is due. */
   dueFocus: string[] | null;
+  /** The sitting a start opens now. */
+  offer: SittingOffer | null;
   rows: FocusRow[];
+  subjects: readonly SubjectProgress[];
   summary: FocusTestSummaryRecord;
   view: FocusTestView;
 };
@@ -97,12 +105,21 @@ async function loadTurnFocusTest({
     progress,
   });
 
+  const asking = {
+    nextSubject: found.asked && found.nextSkillId ? subjectOf(found.nextSkillId) : null,
+    settled,
+    waiting: found.waiting,
+  };
+
   return {
     dueFocus: focusPlan.due,
+    offer,
     plan: focusPlan,
     planId: setup.plan.id,
     rows,
     sittingId: progress.sitting?.id ?? null,
+    sittingOver: isSittingOver({ asking, progress }),
+    subjects: progress.subjects,
     summary: toFocusTestSummary({
       dated,
       inputsKey: setup.inputsKey,
@@ -112,11 +129,7 @@ async function loadTurnFocusTest({
       settled,
     }),
     view: toFocusTestView({
-      asking: {
-        nextSubject: found.asked && found.nextSkillId ? subjectOf(found.nextSkillId) : null,
-        settled,
-        waiting: found.waiting,
-      },
+      asking,
       dated,
       lessonsSkipped: plan.items.filter((item) => item.status === "testedOut").length,
       offer,

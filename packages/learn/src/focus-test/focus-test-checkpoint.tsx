@@ -8,71 +8,15 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import {
-  ListGroup,
-  ListRow,
-  ListRowContent,
-  ListRowDescription,
-  ListRowTitle,
-} from "../_components/list-group";
+import { ListGroup, ListRow, ListRowContent, ListRowTitle } from "../_components/list-group";
 import { PageSection, PageSectionTitle } from "../_components/page";
-import { useSentenceSpace } from "../_utils/locale";
 import { LearnLink } from "../learn-link";
-import { type SittingEnd } from "./focus-test-phase";
 import { FocusProposal, type FocusTestPlanActions } from "./focus-test-proposal";
 import { FocusTestSubjectsSheet } from "./focus-test-subjects";
-import {
-  getSubjectName,
-  useFocusReasonText,
-  useSessionQuestionsNote,
-} from "./use-focus-test-texts";
+import { getSubjectName, useSessionQuestionsNote } from "./use-focus-test-texts";
 
 const SECTION_TEXT_CLASS = "text-sm text-pretty";
 const SECTION_NOTE_CLASS = "text-muted-foreground text-sm text-pretty";
-
-function useEvidenceText() {
-  const t = useExtracted();
-
-  return ({ asked, total }: { asked: number; total: number }): string =>
-    t(
-      "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}} so far",
-      { asked, total },
-    );
-}
-
-function EndLine({ end }: { end: SittingEnd | null }) {
-  const t = useExtracted();
-
-  if (end === "settled") {
-    return t("Your starting points are set.");
-  }
-
-  return end === "noQuestionsReady"
-    ? t("That's all the questions ready for now. Your next sessions ask the rest.")
-    : null;
-}
-
-export function FocusTestEvidence({
-  end = null,
-  focusTest,
-}: {
-  end?: SittingEnd | null;
-  focusTest: FocusTestView;
-}) {
-  const evidenceText = useEvidenceText();
-  const { asked, total } = focusTest.counts;
-
-  return (
-    <div className="flex flex-col gap-1">
-      <p className={SECTION_NOTE_CLASS}>{evidenceText({ asked, total })}</p>
-      {(end === "settled" || end === "noQuestionsReady") && (
-        <p className={SECTION_NOTE_CLASS} role="status">
-          <EndLine end={end} />
-        </p>
-      )}
-    </div>
-  );
-}
 
 function StartingPoints({ lessonsSkipped }: { lessonsSkipped: number }) {
   const t = useExtracted();
@@ -93,8 +37,6 @@ function StartingPoints({ lessonsSkipped }: { lessonsSkipped: number }) {
 }
 
 function FocusRows({ rows }: { rows: readonly FocusRow[] }) {
-  const reasonText = useFocusReasonText();
-
   return (
     <ListGroup>
       <ul>
@@ -103,7 +45,6 @@ function FocusRows({ rows }: { rows: readonly FocusRow[] }) {
             <ListRow>
               <ListRowContent>
                 <ListRowTitle>{getSubjectName(row.subject)}</ListRowTitle>
-                <ListRowDescription>{reasonText(row.reason)}</ListRowDescription>
               </ListRowContent>
             </ListRow>
           </li>
@@ -156,16 +97,8 @@ function SuggestedFocus({
 }) {
   const t = useExtracted();
   const intro = useFocusIntro();
-  const space = useSentenceSpace();
-
   const changesFocus = plan && focus.state !== "ifTimeShort" && focus.state !== "proposed";
-
-  const basis =
-    focus.basis === "importance"
-      ? t("For now, this follows mainly what counts most in your exam.")
-      : null;
-
-  const note = proposalAnswered ? [] : [intro(focus.state), basis].filter(Boolean);
+  const note = proposalAnswered ? null : intro(focus.state);
 
   if (focus.rows.length === 0) {
     return null;
@@ -175,7 +108,7 @@ function SuggestedFocus({
     <PageSection>
       <PageSectionTitle>{t("Suggested focus")}</PageSectionTitle>
 
-      {note.length > 0 && <p className={SECTION_NOTE_CLASS}>{note.join(space)}</p>}
+      {note && <p className={SECTION_NOTE_CLASS}>{note}</p>}
 
       <FocusRows rows={focus.rows} />
 

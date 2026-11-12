@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  type FocusRow,
   type FocusTestSubject,
   type FocusTestSummary,
 } from "@zoonk/core/learner/placement/focus-test-contract";
@@ -54,36 +53,6 @@ export function useSubjectStateText() {
   };
 }
 
-/** The row's title already names the subject, so no reason says it again. */
-export function useFocusReasonText() {
-  const t = useExtracted();
-
-  return (reason: FocusRow["reason"]): string => {
-    switch (reason) {
-      case "answers":
-        return t({
-          description:
-            "A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.",
-          message: "Your answers suggest focusing here.",
-        });
-      case "minimumScore":
-        return t("This part has a minimum score.");
-      case "notChecked":
-        return t({
-          description:
-            "Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.",
-          message: "This part counts heavily; it isn't checked here.",
-        });
-      case "notAsked":
-        return t("This subject counts heavily. Its starting point hasn't been checked yet.");
-      case "weight":
-        return t("This subject counts heavily.");
-      default:
-        return reason satisfies never;
-    }
-  };
-}
-
 export function useSessionQuestionsNote(): string {
   const t = useExtracted();
 
@@ -100,8 +69,6 @@ export function useSittingFacts() {
 
   return {
     about: (minutes: number): string => t("About {time}", { time: formatDuration(minutes) }),
-    upTo: (questions: number): string =>
-      t("{count, plural, one {Up to # question} other {Up to # questions}}", { count: questions }),
   };
 }
 
@@ -109,36 +76,13 @@ export function useFocusTestStateFacts() {
   const t = useExtracted();
   const { about } = useSittingFacts();
 
-  return ({ offer, state, subjects }: FocusTestSummary): string[] => {
+  return ({ offer, state }: FocusTestSummary): string[] => {
+    const time = offer ? [about(offer.minutes)] : [];
+
     if (state === "notStarted") {
-      return [t("Not started"), ...(offer ? [about(offer.minutes)] : [])];
+      return [t("Not started"), ...time];
     }
 
-    if (state === "sitting" && offer) {
-      return [
-        t("Continue"),
-        t("{count, plural, one {# question left} other {# questions left}}", {
-          count: offer.questions,
-        }),
-      ];
-    }
-
-    const result = subjects
-      ? t(
-          "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}",
-          subjects,
-        )
-      : t("Your answers are in your plan");
-
-    return [
-      result,
-      ...(offer
-        ? [
-            t("{count, plural, one {Up to # more question} other {Up to # more questions}}", {
-              count: offer.questions,
-            }),
-          ]
-        : []),
-    ];
+    return state === "sitting" ? [t("Continue"), ...time] : [t("Your answers are in your plan")];
   };
 }

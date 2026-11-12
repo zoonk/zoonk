@@ -412,12 +412,10 @@ describe("the saved Focus test summary", () => {
       }),
     ).resolves.toMatchObject({ status: "saved" });
 
-    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
-      plan: { focusTest: { subjects: { asked: 1, total: 6 } } },
-      status: "ready",
-    });
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({ status: "ready" });
 
     const summary = await readSummary(goal.id);
+    expect(summary).toMatchObject({ asked: 1, total: 6 });
     expect(summary).toStrictEqual(await computeSummary(goal));
   });
 

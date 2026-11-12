@@ -6,7 +6,7 @@ import { proposePlanChange } from "../../../plans/propose-plan-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { FOCUS_TEST_SOURCE } from "../focus-test-contract";
-import { toFocus } from "../focus-test-view";
+import { type SittingOffer, toFocus } from "../focus-test-view";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 import { saveTestSummary } from "./test-sitting";
 
@@ -30,7 +30,8 @@ export async function startFocusTestSummary(goalId: string): Promise<void> {
 /**
  * Where an exam goal's test stands once its answers were applied or a session with its questions
  * ended: saves what the cheap reads show and proposes a focus when one is due, never while a
- * sitting or a session is still asking. Returns the state after both; other goals only read it.
+ * sitting or a session is still asking. Returns the state after both, with the sitting a start
+ * would open next; other goals only read it.
  */
 export async function settleFocusTest({
   goalId,
@@ -42,13 +43,13 @@ export async function settleFocusTest({
   today: Date;
   timeZone: string;
   userId: string;
-}): Promise<PlacementState> {
+}): Promise<{ offer: SittingOffer | null; state: PlacementState }> {
   const { focusTest, state } = await saveTestSummary({ goalId, timeZone, today, userId });
-
+  const offer = focusTest?.offer ?? null;
   const checkpoint = state.focusTest?.checkpoint;
 
   if (!focusTest?.dueFocus || !checkpoint || !state.focusTest) {
-    return state;
+    return { offer, state };
   }
 
   const areas = focusTest.dueFocus;
@@ -63,28 +64,34 @@ export async function settleFocusTest({
   });
 
   if (proposed.status === "notDue") {
-    return loadPlacementState({
+    const reread = await loadPlacementState({
       goalId,
       plan: await loadPlacementPlan(goalId),
       timeZone,
       today,
       userId,
     });
+
+    return { offer, state: reread };
   }
 
   if (proposed.status !== "proposed") {
-    return state;
+    return { offer, state };
   }
 
   const proposal = await loadPlanChangeView(proposed.changeId, { timeZone });
+  const { plan, rows, subjects } = focusTest;
 
   return {
-    ...state,
-    focusTest: {
-      ...state.focusTest,
-      checkpoint: {
-        ...checkpoint,
-        focus: toFocus({ plan: { ...focusTest.plan, proposal }, rows: focusTest.rows }),
+    offer,
+    state: {
+      ...state,
+      focusTest: {
+        ...state.focusTest,
+        checkpoint: {
+          ...checkpoint,
+          focus: toFocus({ plan: { ...plan, proposal }, rows, subjects }),
+        },
       },
     },
   };
