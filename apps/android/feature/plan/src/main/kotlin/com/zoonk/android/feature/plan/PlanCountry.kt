@@ -119,12 +119,19 @@ internal fun ContentCountryRow(
 
 /** The read-only country rows, where Adjust plan is the only place a phone lists the plan's settings: a foreign exam's country, a general course's examples. */
 @Composable
-internal fun CountryFacts(goal: LearnerSummaryGoal) {
+internal fun CountryFacts(
+    goal: LearnerSummaryGoal,
+    modifier: Modifier = Modifier,
+) {
     goal.contentCountry?.takeIf { goal.editableCountry == null }?.let { exam ->
-        ListRow(headline = { Text(stringResource(R.string.country_exam_label)) }, supporting = { Text(exam.name) })
+        ListRow(headline = { Text(stringResource(R.string.country_exam_label)) }, supporting = { Text(exam.name) }, modifier = modifier)
     }
     goal.examplesCountry?.let { examples ->
-        ListRow(headline = { Text(stringResource(R.string.country_lesson_examples_label)) }, supporting = { Text(examples.name) })
+        ListRow(
+            headline = { Text(stringResource(R.string.country_lesson_examples_label)) },
+            supporting = { Text(examples.name) },
+            modifier = modifier,
+        )
     }
 }
 

@@ -67,6 +67,7 @@ fun LanguageAimRow(
     description: String? = null,
     note: String? = null,
     dates: @Composable () -> Map<String, LocalDate?> = { emptyMap() },
+    modifier: Modifier = Modifier,
 ) {
     if (choices.isEmpty()) return
     ListRow(
@@ -78,6 +79,7 @@ fun LanguageAimRow(
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,
         onClick = { onOpenChange(true) },
+        modifier = modifier,
     )
     if (open) {
         LanguageAimSheet(

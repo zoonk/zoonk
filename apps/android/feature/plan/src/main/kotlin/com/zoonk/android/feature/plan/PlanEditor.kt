@@ -309,6 +309,7 @@ internal fun ColumnScope.PlanEditorBody(
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
+        PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
         page.plan.languageAim?.let { languageAim ->
             languageAim.aim?.let { aim ->
                 LanguageAimRow(
@@ -330,9 +331,19 @@ internal fun ColumnScope.PlanEditorBody(
                     note = stringResource(R.string.onboarding_aim_description),
                     dates = { aimDates },
                     endDate = aimDates[aim.value],
+                    modifier = Modifier.bleed(LIST_ITEM_INSET),
                 )
             }
         }
+        PlanScheduleSection(
+            page,
+            edits,
+            drafts,
+            modifier = Modifier.section(PlanSection.Time),
+            daysModifier = Modifier.section(PlanSection.Days),
+        )
+        PlanExamChoices(page, edits, Modifier.section(PlanSection.Choices))
+        PlanBases(page, edits, drafts)
         page.variety?.let { variety ->
             VarietyRow(
                 variety,
@@ -340,7 +351,7 @@ internal fun ColumnScope.PlanEditorBody(
                 onPick = edits.setRegion,
                 pending = edits.isPending(PlanPart.Region),
                 failed = edits.hasFailed(PlanPart.Region),
-                modifier = Modifier.section(PlanSection.Language),
+                modifier = Modifier.section(PlanSection.Language).bleed(LIST_ITEM_INSET),
             )
         }
         page.goal.editableCountry?.let { country ->
@@ -351,20 +362,10 @@ internal fun ColumnScope.PlanEditorBody(
                 onPick = edits.setContentCountry,
                 pending = edits.isPending(PlanPart.Country),
                 failed = edits.hasFailed(PlanPart.Country),
-                modifier = Modifier.section(PlanSection.Country),
+                modifier = Modifier.section(PlanSection.Country).bleed(LIST_ITEM_INSET),
             )
         }
-        CountryFacts(page.goal)
-        PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
-        PlanScheduleSection(
-            page,
-            edits,
-            drafts,
-            modifier = Modifier.section(PlanSection.Time),
-            daysModifier = Modifier.section(PlanSection.Days),
-        )
-        PlanExamChoices(page, edits, Modifier.section(PlanSection.Choices))
-        PlanBases(page, edits, drafts)
+        CountryFacts(page.goal, Modifier.bleed(LIST_ITEM_INSET))
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
         PlanSteering(page, edits)
