@@ -192,6 +192,8 @@ describe("challenge prepublication review", () => {
   it.each([
     ["names text the case doesn't have", { find: "Day 9", replace: "Day 10" }],
     ["breaks the case's code checks", { find: "1,200", replace: "1,\n200" }],
+    ["renames a choice id", { find: "skip", replace: "renamed-choice" }],
+    ["flips what a meter counts as good", { find: "low", replace: "high" }],
     ["sets a meter to a value it can't have", { find: "low", replace: "lower" }],
   ])("writes a fresh draft from the review's findings when the fix %s", async (_label, edit) => {
     const target = await lesson();

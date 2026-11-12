@@ -1,11 +1,17 @@
 import { assembleChallengeCase, draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
 import { describe, expect, it } from "vitest";
+import { checkWrittenChallenge } from "./challenge-case-content";
 import { applyChallengeEdits } from "./challenge-edits";
 
 function written() {
   const plan = challengePlanFixture();
   return assembleChallengeCase({ plan, script: draftEmptyScript(plan) }).written;
+}
+
+function nextOf(fixed: ReturnType<typeof written> | null, choiceId: string) {
+  return fixed?.nodes.flatMap((node) => node.choices).find((choice) => choice.id === choiceId)
+    ?.next;
 }
 
 describe(applyChallengeEdits, () => {
@@ -41,12 +47,32 @@ describe(applyChallengeEdits, () => {
     ).toBeNull();
   });
 
-  it.each([["sets a meter to a value it can't have", { find: "low", replace: "lower" }]])(
-    "fails an edit that %s instead of changing words learners read",
-    (_label, edit) => {
-      expect(applyChallengeEdits({ edits: [edit], written: written() })).toBeNull();
-    },
-  );
+  it.each([
+    ["renames a choice id", { find: "skip", replace: "renamed-choice" }],
+    ["flips what a meter counts as good", { find: "low", replace: "high" }],
+    ["sets a meter to a value it can't have", { find: "low", replace: "lower" }],
+  ])("fails an edit that %s instead of changing words learners read", (_label, edit) => {
+    expect(applyChallengeEdits({ edits: [edit], written: written() })).toBeNull();
+  });
+
+  it("lets edits send choices to other existing endings, for the content check to judge", () => {
+    const fixed = applyChallengeEdits({
+      edits: [
+        { find: "a sentence", replace: "one line" },
+        { find: "sent", replace: "pending" },
+        { find: "unclear", replace: "sent" },
+        { find: "pending", replace: "unclear" },
+      ],
+      written: written(),
+    });
+
+    expect(nextOf(fixed, "plain")).toBe("unclear");
+    expect(nextOf(fixed, "short")).toBe("sent");
+
+    expect(
+      fixed && checkWrittenChallenge({ variant: "work", written: fixed }).problems,
+    ).toStrictEqual([]);
+  });
 
   it("fails an edit with no text to find", () => {
     expect(
