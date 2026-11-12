@@ -8,26 +8,11 @@ import { safeAsync } from "@zoonk/utils/error";
 import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
-import { CHIP_CLASS } from "../_components/chip";
 import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { SURFACE_CLASS } from "../_components/surface";
-import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
-import {
-  getFocusedAreas,
-  useAddedTopicsStartText,
-  useAreaEndTexts,
-  useAreaStartTexts,
-  useReviewFirstText,
-} from "../plan/use-area-start-texts";
-import {
-  useAppliedLine,
-  useChangeSentence,
-  useKeepOfficialDateLabel,
-  useOfficialDateLine,
-} from "../plan/use-change-sentence";
-import { useLessonsEffectText, useTopicsEffectText } from "../plan/use-effect-counts";
+import { useAppliedLine, useChangeWords, useOfficialDateLine } from "../plan/use-change-sentence";
 import { TUTOR_CARD_WIDTH_CLASS } from "./tutor-offer-card";
 
 type Decision = Extract<PlanChangeDecisionInput["status"], "applied" | "declined" | "undone">;
@@ -38,70 +23,6 @@ export type DecideTutorPlanChange = (input: {
   status: Decision;
 }) => Promise<PlanChangeView | null>;
 
-type ChangeEffect = NonNullable<PlanChangeView["effect"]>;
-
-function useChangeFootnote() {
-  const lessonsText = useLessonsEffectText();
-  const topicsText = useTopicsEffectText();
-  const areaStartTexts = useAreaStartTexts();
-  const areaEndTexts = useAreaEndTexts();
-  const addedTopicsStartText = useAddedTopicsStartText();
-  const reviewFirstText = useReviewFirstText();
-  const space = useSentenceSpace();
-
-  return function changeFootnote({
-    effect,
-    operations,
-  }: Pick<PlanChangeView, "effect" | "operations">): string | null {
-    if (!effect) {
-      return null;
-    }
-
-    const ends: ChangeEffect["areaEnds"] = effect.areaEnds ?? [];
-
-    const starts = (effect.areaStarts ?? []).filter(
-      (start) =>
-        start.after !== start.before ||
-        (!effect.reviewFirst && !ends.some((areaEnd) => areaEnd.area === start.area)),
-    );
-
-    const focused = getFocusedAreas(operations);
-
-    const gains = ends.filter(
-      ({ after, area, before, lessonsGained = 0 }) =>
-        focused.includes(area) && lessonsGained > 0 && after > before,
-    );
-
-    const sentences = [
-      // An end that moves is in the diff, but a focus still says what its subjects gain first.
-      ...areaEndTexts(gains, { estimated: effect.lessonsAddedEstimated }),
-      ...areaStartTexts(starts),
-      // An end that stays says why.
-      ...areaEndTexts(ends.filter((areaEnd) => areaEnd.after === areaEnd.before)),
-      reviewFirstText(effect),
-      lessonsText(effect, { named: true }),
-      addedTopicsStartText(effect),
-      topicsText(effect),
-    ].filter(Boolean);
-
-    return sentences.length > 0 ? sentences.join(space) : null;
-  };
-}
-
-function ChangeScope({ operations }: { operations: PlanChangeView["operations"] }) {
-  const t = useExtracted();
-
-  const oneWeek = operations.some(
-    (operation) => operation.kind === "addLightWeek" || operation.kind === "moveWeeklyEvent",
-  );
-
-  if (!oneWeek) {
-    return null;
-  }
-
-  return <span className={CHIP_CLASS}>{t("1 week")}</span>;
-}
-
 function useStatusLine(change: PlanChangeView): string | null {
   const t = useExtracted();
   const appliedLine = useAppliedLine();
@@ -110,7 +31,7 @@ function useStatusLine(change: PlanChangeView): string | null {
     case "applied":
       return appliedLine(change.todaySession);
     case "declined":
-      return t("Not applied. Your plan stays as it was.");
+      return t("Your plan stays as it was.");
     case "undone":
       return t("Undone. Your plan is back as it was.");
     case "replaced":
@@ -160,7 +81,6 @@ function ChangeActions({
   answer,
   canUndo,
   canApply,
-  document,
   isPending,
   overridesNotice,
   status,
@@ -168,13 +88,11 @@ function ChangeActions({
   answer: (status: Decision) => void;
   canUndo: boolean;
   canApply: boolean;
-  document: PlanChangeView["examDocument"];
   isPending: boolean;
   overridesNotice: boolean;
   status: PlanChangeView["status"];
 }) {
   const t = useExtracted();
-  const keepOfficialDate = useKeepOfficialDateLabel();
 
   if (status === "proposed") {
     return (
@@ -189,7 +107,7 @@ function ChangeActions({
             type="submit"
           >
             <span className="truncate">
-              {overridesNotice ? t("Use my date anyway") : t("Apply")}
+              {overridesNotice ? t("Use my date") : t("Change my plan")}
             </span>
           </Button>
         )}
@@ -203,7 +121,7 @@ function ChangeActions({
           variant="outline"
         >
           <span className="truncate">
-            {overridesNotice ? keepOfficialDate(document) : t("Not now")}
+            {overridesNotice ? t("Keep official date") : t("Not now")}
           </span>
         </Button>
       </form>
@@ -238,16 +156,13 @@ export function TutorPlanChange({
   decide: DecideTutorPlanChange;
   onAnswered: (change: PlanChangeView) => void;
 }) {
-  const t = useExtracted();
   const titleId = useId();
   const cardRef = useRef<HTMLElement>(null);
-  const changeFootnote = useChangeFootnote();
-  const sentence = useChangeSentence()(change);
+  const words = useChangeWords()(change);
   const officialDate = useOfficialDateLine()(change);
   const statusLine = useStatusLine(change);
   const { answer, failed, isPending } = useAnswer({ cardRef, change, decide, onAnswered });
   const proposed = change.status === "proposed";
-  const footnote = proposed ? changeFootnote(change) : null;
 
   return (
     <section
@@ -261,18 +176,12 @@ export function TutorPlanChange({
       ref={cardRef}
       tabIndex={-1}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-[0.8125rem] leading-snug font-semibold" id={titleId}>
-            {t("Change to your plan")}
-          </h3>
-        </div>
-        <ChangeScope operations={change.operations} />
-      </div>
+      <h3 className="text-sm leading-snug font-semibold text-pretty" id={titleId}>
+        {words.title}
+      </h3>
 
-      <p className="text-sm leading-snug">{sentence}</p>
+      {words.why && <p className="text-muted-foreground text-sm leading-snug">{words.why}</p>}
       {proposed && <PlanEffectDiff effect={change.effect} />}
-      {footnote && <p className="text-muted-foreground text-xs leading-snug">{footnote}</p>}
       {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
       <StatusRegion className="text-muted-foreground text-sm">{statusLine}</StatusRegion>
@@ -281,7 +190,6 @@ export function TutorPlanChange({
         answer={answer}
         canApply={change.canApply}
         canUndo={change.canUndo}
-        document={change.examDocument}
         isPending={isPending}
         overridesNotice={change.officialDate !== null}
         status={change.status}

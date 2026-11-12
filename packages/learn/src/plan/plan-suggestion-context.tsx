@@ -5,7 +5,7 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon, Undo2Icon } from "lucide-react";
+import { ChevronRightIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { DoneMark } from "../_components/status-mark";
@@ -29,11 +29,17 @@ import { type PlanPreviewState } from "./plan-preview-state";
 import { useUndoChange } from "./use-undo-change";
 
 export type SlotItem =
-  | { key: string; kind: "behind" | "tooTight"; text: string }
   | { choice: ExamChoiceView; key: string; kind: "choice" }
   | {
       key: string;
-      kind: "courseComplete" | "coverage" | "finished" | "fitLessons" | "freeWeekOver" | "paused";
+      kind:
+        | "courseComplete"
+        | "coverage"
+        | "doesNotFit"
+        | "finished"
+        | "fitLessons"
+        | "freeWeekOver"
+        | "paused";
     }
   | { key: string; kind: "pastDate"; lessons: number };
 
@@ -57,7 +63,7 @@ type SlotValue = {
   host: PlanSuggestionHost;
   index: number;
   items: SlotItem[];
-  move: (step: -1 | 1) => void;
+  showNext: () => void;
   preview: SlotPreview;
   result: SlotResult | null;
   requestPreview: (operations: LearnerPlanOperation[]) => Promise<void>;
@@ -82,10 +88,10 @@ export function useSlotAnswer(item: Pick<SlotItem, "key">): SlotResult | null {
   return result?.item.key === item.key ? result : null;
 }
 
-/** Lives outside the keyed suggestion on every width, so paging preserves keyboard focus. */
+/** Lives outside the keyed suggestion on every width, so bringing up the next keeps keyboard focus. */
 export function SlotPager({ className }: { className?: string }) {
   const t = useExtracted();
-  const { count, index, move, result } = usePlanSuggestionSlot();
+  const { count, result, showNext } = usePlanSuggestionSlot();
 
   if (count < 2) {
     return null;
@@ -93,24 +99,17 @@ export function SlotPager({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn("-my-1 flex items-center justify-end gap-1", result && "invisible", className)}
+      className={cn("-my-1 flex items-center justify-end", result && "invisible", className)}
       data-slot="suggestion-pager"
     >
-      <Button onClick={() => move(-1)} size="icon-sm" variant="ghost">
-        <ChevronLeftIcon aria-hidden="true" />
-        <span className="sr-only">
-          {t({
-            description: "An arrow button that goes back to the previous plan suggestion.",
-            message: "Previous",
-          })}
-        </span>
-      </Button>
-      <span className="text-muted-foreground font-mono text-[0.6875rem] tabular-nums">
-        {t("{number, number} of {total, number}", { number: index + 1, total: count })}
-      </span>
-      <Button onClick={() => move(1)} size="icon-sm" variant="ghost">
-        <ChevronRightIcon aria-hidden="true" />
-        <span className="sr-only">{t("Next")}</span>
+      <Button
+        className="text-muted-foreground"
+        onClick={showNext}
+        size="sm"
+        variant="ghost"
+      >
+        {t("{count, plural, one {# more} other {# more}}", { count: count - 1 })}
+        <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
       </Button>
     </div>
   );

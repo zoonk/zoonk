@@ -20,16 +20,16 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { getLongerTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { type GoalDateMove } from "../plan-diff/change-names";
 import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useFullCourseText } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
-import { useChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { readTimeToCover } from "./use-time-to-cover";
 
-type GoalDateMove = { after: string; before: string | null };
 
 export function getGoalDateMove({
   operations,
@@ -47,7 +47,7 @@ export function getGoalDateMove({
 
 export function useApplyPreview(item: SlotItem) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
+  const sentence = usePlanChangeSentence();
   const { change, failed, isPending } = usePlanChange();
   const { setPreview, setResult } = usePlanSuggestionSlot();
 
@@ -130,7 +130,7 @@ export function OfferPreview({
     return null;
   }
 
-  const { effect, feasibility, unchanged } = preview.preview;
+  const { effect, unchanged } = preview.preview;
 
   return (
     <>
@@ -140,20 +140,11 @@ export function OfferPreview({
         <PlanEffectDiff effect={effect} goalDate={goalDate} />
       )}
 
-      {!unchanged && feasibility?.fits && (
-        <SuggestionDescription>
-          {t({
-            description: '"Then" means "with this change".',
-            message: "Your plan then covers everything in depth.",
-          })}
-        </SuggestionDescription>
-      )}
-
       <SuggestionActions>
-        {/* Never applied without the diff it makes, as Today's proposals. */}
+        {/* Never applied before its effect is worked out, as Today's proposals. */}
         {!unchanged && effect !== null && (
           <SuggestionAction action={onApply} busy={pending} icon={<CheckIcon aria-hidden="true" />}>
-            {t("Apply")}
+            {t("Change my plan")}
           </SuggestionAction>
         )}
         <SuggestionAction disabled={pending} onClick={() => setPreview()} variant="outline">

@@ -20,8 +20,8 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine } from "../plan/use-change-sentence";
-import { useProposalEffectText } from "../plan/use-effect-text";
 import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";
@@ -82,23 +82,6 @@ function useAnsweredText(insight: MemoryInsightView) {
 
     return t("Noted.");
   };
-}
-
-function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["planChange"] }) {
-  const proposalEffectText = useProposalEffectText();
-  const { planEnd, today } = useTodayScreen();
-  const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
-
-  const effect =
-    planChange?.status === "proposed"
-      ? proposalEffectText(planChange, { endDate: planEnd, targetDate })
-      : null;
-
-  if (!effect) {
-    return null;
-  }
-
-  return <SuggestionDescription>{effect}</SuggestionDescription>;
 }
 
 function useInsightAnswer(insight: MemoryInsightView) {
@@ -185,7 +168,9 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
       <SuggestionContent>
         <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
         <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
-        <InsightPlanEffect planChange={insight.planChange} />
+        {insight.planChange?.status === "proposed" && (
+          <PlanEffectDiff effect={insight.planChange.effect} />
+        )}
 
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>

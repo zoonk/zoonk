@@ -12,7 +12,6 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -20,7 +19,6 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
@@ -32,7 +30,7 @@ import {
   usePlanSuggestionSlot,
   useSlotAnswer,
 } from "./plan-suggestion-context";
-import { useChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence } from "./use-change-sentence";
 import { useTappedChoice } from "./use-tapped-choice";
 
 function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => void } = {}) {
@@ -98,7 +96,6 @@ function OneOptionChoice({
 }
 
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
-  const leftOutLine = useChoiceLeftOutLine();
   const { choose, failed, isPending } = useExamChoice();
 
   return (
@@ -115,10 +112,6 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
         <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
       )}
 
-      {choice.subjects.length === 0 && (
-        <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>
-      )}
-
       {failed && <ChangeSaveError />}
     </fieldset>
   );
@@ -132,8 +125,7 @@ export function PlanExamChoices() {
 
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
-  const leftOutLine = useChoiceLeftOutLine();
+  const sentence = usePlanChangeSentence();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const { choice } = item;
@@ -175,7 +167,6 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
           </>
         ) : (
           <>
-            <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
             {choice.take > 1 ? (
               <ExamChoicePicks
                 choice={choice}

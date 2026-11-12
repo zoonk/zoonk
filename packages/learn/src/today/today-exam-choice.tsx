@@ -10,7 +10,6 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -18,11 +17,10 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { ExamChoicePicks } from "../plan/exam-choice-picks";
-import { useChangeSentence } from "../plan/use-change-sentence";
+import { useTodayChangeWords } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
-import { ProposalEffect } from "./today-plan-change";
 
 type ExamChoice = NonNullable<ReturnType<typeof useTodayScreen>["today"]["examChoice"]>;
 
@@ -62,7 +60,6 @@ function ChoiceQuestion({
   onPick: (input: { group: string; subjects: string[] }) => void;
 }) {
   const t = useExtracted();
-  const leftOutLine = useChoiceLeftOutLine();
 
   const question =
     choice.take > 1
@@ -78,7 +75,6 @@ function ChoiceQuestion({
 
       <SuggestionContent>
         <SuggestionHeader>{question}</SuggestionHeader>
-        <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
 
         {choice.take > 1 ? (
           <ExamChoicePicks
@@ -110,7 +106,8 @@ function ChoiceQuestion({
 
 function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: () => void }) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
+  const words = useTodayChangeWords();
+  const sentence = (shown: PlanChangeView) => words(shown).title;
   const { actions } = useTodayScreen();
   const { failed, isPending, save } = useSave();
 
@@ -137,7 +134,7 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
 
       <SuggestionContent>
         <SuggestionResult>{sentence(change)}</SuggestionResult>
-        <ProposalEffect change={change} />
+        <PlanEffectDiff effect={change.effect} />
         {undoButton && <SuggestionActions>{undoButton}</SuggestionActions>}
         {failed && <SuggestionSaveError />}
       </SuggestionContent>

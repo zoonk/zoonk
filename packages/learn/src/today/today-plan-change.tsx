@@ -1,6 +1,5 @@
 "use client";
 
-import { FOCUS_TEST_SOURCE } from "@zoonk/core/learner/placement/focus-test-contract";
 import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
@@ -23,14 +22,9 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
-import {
-  useAppliedLine,
-  useKeepOfficialDateLabel,
-  useOfficialDateLine,
-} from "../plan/use-change-sentence";
-import { useProposalEffectText } from "../plan/use-effect-text";
+import { useAppliedLine, useOfficialDateLine } from "../plan/use-change-sentence";
 import { getChangeMark } from "./today-change-mark";
-import { useTodayChangeSentence, useTodayCountsByDate } from "./today-change-sentence";
+import { useTodayChangeWords, useTodayCountsByDate } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
 import { useShownChange } from "./use-shown-change";
@@ -38,36 +32,6 @@ import { useShownChange } from "./use-shown-change";
 type Change = NonNullable<TodayView["planChange"]>;
 type Decision = PlanChangeDecisionInput["status"];
 type Answered = { answer: Decision; answered: PlanChangeView };
-
-function useChangeTitle() {
-  const t = useExtracted();
-  return (change: Change): string => (change.source === NOTICE_SOURCE ? "" : t("Plan suggestion"));
-}
-
-export function ProposalEffect({
-  byDate = true,
-  change,
-}: {
-  byDate?: boolean;
-  change: Pick<PlanChangeView, "effect" | "operations">;
-}) {
-  const proposalEffectText = useProposalEffectText();
-  const { planEnd, today } = useTodayScreen();
-  const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
-
-  const effect = proposalEffectText(
-    change,
-    { endDate: planEnd, targetDate },
-    { besideDiff: true, byDate },
-  );
-
-  return (
-    <>
-      {effect && <SuggestionDescription>{effect}</SuggestionDescription>}
-      <PlanEffectDiff byDate={byDate} effect={change.effect} />
-    </>
-  );
-}
 
 function useAnsweredText() {
   const t = useExtracted();
@@ -99,7 +63,6 @@ function ChangeActions({
   onAnswer: (answer: Decision) => void;
 }) {
   const t = useExtracted();
-  const keepOfficialDate = useKeepOfficialDateLabel();
   const overridesNotice = change.officialDate !== null;
   // Answering the notice or the phase dates keeps what the learner has, and the answer stays.
   const keepsMine = change.source === NOTICE_SOURCE || change.source === PHASE_DATES_SOURCE;
@@ -108,15 +71,13 @@ function ChangeActions({
     <SuggestionActions>
       {change.canApply && (
         <SuggestionAction action={() => onAnswer("applied")} disabled={disabled}>
-          {overridesNotice && t("Use my date anyway")}
-          {!overridesNotice &&
-            (change.source === FOCUS_TEST_SOURCE ? t("Update my plan") : t("Apply"))}
+          {overridesNotice ? t("Use my date") : t("Change my plan")}
         </SuggestionAction>
       )}
 
       <SuggestionAction action={() => onAnswer("declined")} disabled={disabled} variant="outline">
         {keepsMine && !overridesNotice && t("Keep mine")}
-        {overridesNotice && keepOfficialDate(change.examDocument)}
+        {overridesNotice && t("Keep official date")}
         {!keepsMine && !overridesNotice && t("Not now")}
       </SuggestionAction>
     </SuggestionActions>
@@ -219,14 +180,11 @@ function PlanChangeNotice({
   onNext: (() => void) | null;
 }) {
   const t = useExtracted();
-  const sentence = useTodayChangeSentence();
-  const changeTitle = useChangeTitle();
   const { answer, answered, change, failed, isPending } = useAnswer(opened, onHold);
+  const words = useTodayChangeWords()(change);
   const answeredText = useAnsweredText();
   const officialDate = useOfficialDateLine()(change);
   const byDate = useTodayCountsByDate()(change);
-  const title = changeTitle(change);
-  const summary = sentence(change);
   const result = answered ? answeredText(answered) : null;
 
   const after = answered && (
@@ -238,26 +196,22 @@ function PlanChangeNotice({
       answered={answered?.answer ?? false}
       data-slot="today-plan-change"
       focusOnMount={focusOnMount}
-      label={t("Suggested change")}
+      label={t("Plan suggestion")}
       mark={getChangeMark(change)}
     >
       <SuggestionLine>
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
-          <SuggestionSummary>{summary}</SuggestionSummary>
+          <SuggestionSummary>{words.title}</SuggestionSummary>
         )}
         {result ? after : <SuggestionOpen />}
       </SuggestionLine>
 
       <SuggestionContent>
-        <SuggestionHeader>{title || summary}</SuggestionHeader>
-        {title && <SuggestionDescription>{summary}</SuggestionDescription>}
-        {change.source === FOCUS_TEST_SOURCE ? (
-          <PlanEffectDiff byDate={byDate} effect={change.effect} />
-        ) : (
-          <ProposalEffect byDate={byDate} change={change} />
-        )}
+        <SuggestionHeader>{words.title}</SuggestionHeader>
+        {words.why && <SuggestionDescription>{words.why}</SuggestionDescription>}
+        <PlanEffectDiff byDate={byDate} effect={change.effect} />
         {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
 
         {result ? (

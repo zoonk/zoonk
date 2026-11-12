@@ -1,59 +1,35 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
-import { useSentenceSpace } from "../_utils/locale";
-import { useCoverageSentence, useTopicsMovedSentence } from "./use-coverage-sentence";
-import { useEstimateSentence } from "./use-estimate-sentence";
-import { usePhaseEndsText } from "./use-phase-ends-text";
 import { useRelearnSentence } from "./use-relearn-sentence";
 
 /** Without `id`: a change Today worked out has none until it's saved. */
 export type PlanChangeContent = Omit<PlanChangeView, "id">;
 
-export function useSystemChangeSentence({
-  targetDate = null,
-}: { targetDate?: string | null } = {}) {
+/** A change the plan made by itself says why in one sentence; what moved is the change's effect. */
+export function useSystemChangeSentence() {
   const t = useExtracted();
   const relearnSentence = useRelearnSentence();
-  const coverageSentence = useCoverageSentence();
-  const topicsMoved = useTopicsMovedSentence();
-  const phaseEndsText = usePhaseEndsText();
-  const estimateSentence = useEstimateSentence({ targetDate });
-  const space = useSentenceSpace();
-
-  const withTopics = (sentence: string, change: PlanChangeContent, added = true): string =>
-    [sentence, topicsMoved(change, { added })].filter(Boolean).join(space);
 
   return function systemChangeSentence(change: PlanChangeContent): string | null {
     switch (change.kind) {
       case "missedDays":
-        return withTopics(
-          [
-            t("Lessons left from earlier days come first, and the rest of your plan moved later."),
-            phaseEndsText(change.effect),
-          ]
-            .filter(Boolean)
-            .join(space),
-          change,
-        );
+        return t("Your plan moved to fit the days you missed.");
       case "estimateUpdated":
-        return (
-          [estimateSentence(change.effect), phaseEndsText(change.effect)]
-            .filter(Boolean)
-            .join(space) || null
-        );
+        return change.effect &&
+          change.effect.lessonsAdded !== change.effect.lessonsRemoved
+          ? t("Your plan changed to match the time your lessons take.")
+          : null;
       case "testedOut":
-        return withTopics(
-          t(
-            "{lessons, plural, one {You tested out of # lesson} other {You tested out of # lessons}}, so it's off your plan.",
-            { lessons: change.lessonsSkipped },
-          ),
-          change,
+        return t(
+          "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}",
+          { lessons: change.lessonsSkipped },
         );
-      // Its own sentence names the topics it brings back.
       case "relearn":
-        return withTopics(relearnSentence(change), change, false);
+        return relearnSentence(change);
       case "coverageChanged":
-        return coverageSentence(change);
+        return change.effect?.fromPlacement
+          ? t("Your test answers changed your plan.")
+          : t("Your plan changed.");
       default:
         return null;
     }

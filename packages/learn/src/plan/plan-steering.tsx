@@ -6,7 +6,7 @@ import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
-import { useDifficultySentence } from "./use-change-sentence";
+import { useDifficultySentence } from "./use-operation-statement";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 

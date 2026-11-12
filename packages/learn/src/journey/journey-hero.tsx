@@ -24,7 +24,7 @@ import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
-import { PaceDetails, usePaceNumber } from "./pace-details";
+import { ScheduleDetails, useScheduleNumber } from "./schedule-details";
 import { NumberButton, type PlanNumber, type PlanNumberVariant } from "./plan-number-button";
 import { PreparationDetails } from "./preparation/preparation-details";
 
@@ -45,13 +45,8 @@ export type JourneyStanding =
       startSpeakingMock: () => Promise<CallStartOutcome>;
     };
 
-function WeekGain({ gain }: { gain: number }) {
+function WeekGain({ points }: { points: number }) {
   const t = useExtracted();
-  const points = Math.round(gain * PERCENT);
-
-  if (points === 0) {
-    return t("No change this week");
-  }
 
   return (
     <span className={cn(points > 0 && "text-success-text")}>
@@ -68,8 +63,10 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const formatGoalProgress = useFormatGoalProgress();
 
   if (standing.kind === "preparation" && standing.forExam) {
+    const points = Math.round(standing.preparation.weekGain * PERCENT);
+
     return {
-      detail: <WeekGain gain={standing.preparation.weekGain} />,
+      detail: points === 0 ? null : <WeekGain points={points} />,
       label: t("Preparation"),
       numeric: true,
       share: standing.preparation.value,
@@ -200,12 +197,12 @@ export function PlanNumbers({
   variant: PlanNumberVariant;
 }) {
   const t = useExtracted();
-  const [open, setOpen] = useState<"pace" | "standing" | null>(null);
+  const [open, setOpen] = useState<"schedule" | "standing" | null>(null);
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
-  const paceNumber = usePaceNumber({ paused, status: status ?? { kind: "onTrack" } });
+  const scheduleNumber = useScheduleNumber({ paused, status: status ?? { kind: "onTrack" } });
 
-  const sheetChange = (sheet: "pace" | "standing") => (next: boolean) =>
+  const sheetChange = (sheet: "schedule" | "standing") => (next: boolean) =>
     setOpen(next ? sheet : null);
 
   return (
@@ -227,7 +224,11 @@ export function PlanNumbers({
         </li>
         {status && (
           <li className="min-w-0">
-            <NumberButton number={paceNumber} onOpen={() => setOpen("pace")} variant={variant} />
+            <NumberButton
+              number={scheduleNumber}
+              onOpen={() => setOpen("schedule")}
+              variant={variant}
+            />
           </li>
         )}
       </ul>
@@ -238,11 +239,11 @@ export function PlanNumbers({
 
       {status && (
         <NumberSheet
-          onOpenChange={sheetChange("pace")}
-          open={open === "pace"}
-          title={t("Your pace")}
+          onOpenChange={sheetChange("schedule")}
+          open={open === "schedule"}
+          title={t("Your schedule")}
         >
-          <PaceDetails
+          <ScheduleDetails
             logbookHref={logbookHref}
             onAdjust={() => {
               setOpen(null);

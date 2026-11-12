@@ -40,7 +40,7 @@ export function NumberButton({
   return (
     <button aria-haspopup="dialog" className={NUMBER_CLASS[variant]} onClick={onOpen} type="button">
       <span className={NUMBER_LABEL_CLASS[variant]}>{number.label}</span>{" "}
-      {/* The spaces keep "Pace On pace" phrases apart for screen readers; the column hides them. */}
+      {/* The spaces keep "Schedule Up to date" apart for screen readers; the column hides them. */}
       <span
         className={cn(
           "text-2xl leading-tight",

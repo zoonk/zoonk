@@ -15,6 +15,7 @@ import {
   SuggestionActions,
   SuggestionDescription,
 } from "../_components/suggestion";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
 import {
   CheckingChange,
@@ -60,6 +61,7 @@ type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
  */
 export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const t = useExtracted();
+  const formatDate = useFormatIsoDate();
   const pastDateText = usePastDateText();
   const texts = useTimeToCoverTexts();
   const finder = useTimeToCover();
@@ -119,9 +121,16 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   };
 
   const retry = search === "failed" || search === "building";
+  const previewing = preview.status !== "idle" && operations !== null;
+  const [moved] = operations ?? [];
+
+  const question =
+    moved?.kind === "setTargetDate" && moved.targetDate
+      ? t("Move your end date to {date}?", { date: formatDate(moved.targetDate, "long") })
+      : t("Keep studying after the exam?");
 
   const body = () => {
-    if (preview.status !== "idle" && operations) {
+    if (previewing) {
       return (
         <OfferPreview
           goalDate={getGoalDateMove({ operations, targetDate: plan.schedule.targetDate })}
@@ -153,20 +162,27 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       );
     }
 
-    const doesText = isExam
-      ? t("Every topic, even after the exam, at your own pace.")
-      : t("Move your date so your time covers what's left.");
+    const offerText = isExam
+      ? t(
+          "{count, plural, one {You have # lesson left. Keep studying it after the exam?} other {You have # lessons left. Keep studying them after the exam?}}",
+          { count: item.lessons },
+        )
+      : t(
+          "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}",
+          { count: item.lessons },
+        );
 
     const retryText = search === "building" ? texts.building : t("We couldn't check what changes.");
+    const start = isExam ? t("Keep studying") : t("Find a date");
 
     return (
       <>
         <SuggestionDescription role={retry ? "status" : undefined}>
-          {retry ? retryText : doesText}
+          {retry ? retryText : offerText}
         </SuggestionDescription>
         <SuggestionActions>
           <SuggestionAction action={() => void showChange()} key="preview">
-            {retry ? t("Try again") : t("Preview")}
+            {retry ? t("Try again") : start}
           </SuggestionAction>
           <OtherOptions item={item} />
         </SuggestionActions>
@@ -175,7 +191,12 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   };
 
   return (
-    <PlanChangeSuggestion failed={failed} item={item} mark={<CalendarClockIcon />} title={title}>
+    <PlanChangeSuggestion
+      failed={failed}
+      item={item}
+      mark={<CalendarClockIcon />}
+      title={previewing ? question : title}
+    >
       {body()}
     </PlanChangeSuggestion>
   );

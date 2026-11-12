@@ -1,211 +1,95 @@
 "use client";
 
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@zoonk/ui/components/collapsible";
+import { cn } from "@zoonk/ui/lib/utils";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type DiffLine, DiffLines } from "../_components/diff-lines";
-import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatWeekday } from "../_utils/use-format-weekday";
-import { getShownEndMove } from "./end-move";
-import { getLessonLineTone } from "./line-tone";
+import { type GoalDateMove, type PlanEffect } from "./change-names";
+import { usePlanChangeConsequence } from "./use-change-consequence";
+import { type ChangeRow, usePlanChangeRows } from "./use-change-rows";
 
-type PlanEffect = NonNullable<PlanChangeView["effect"]>;
-
-type GoalDateMove = { after: string; before: string | null };
-
-const NO_BREAK_SPACE = "\u00A0";
-
-function useDiffDate() {
-  const formatDate = useFormatIsoDate();
-
-  return (...args: Parameters<typeof formatDate>): string =>
-    formatDate(...args).replaceAll(" ", NO_BREAK_SPACE);
+function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
+  return (
+    <dl className="flex flex-col pt-1 text-[0.8125rem] leading-snug [&>div+div]:border-t">
+      {rows.map((row) => (
+        <div className="flex flex-col gap-0.5 py-2" key={row.key}>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+            <dt className="text-muted-foreground">{row.label}</dt>
+            <dd className="tabular-nums">
+              {row.before && (
+                <>
+                  <span className="text-muted-foreground">{row.before}</span>
+                  <span aria-hidden="true" className="text-muted-foreground">
+                    {" → "}
+                  </span>
+                  <span className="sr-only">{", "}</span>
+                </>
+              )}
+              {row.after}
+            </dd>
+          </div>
+          {row.detail && <dd className="text-muted-foreground text-xs text-pretty">{row.detail}</dd>}
+        </div>
+      ))}
+    </dl>
+  );
 }
 
-function moved({ after, before }: { after: string; before: string }): DiffLine[] {
-  return after === before
-    ? []
-    : [
-        { kind: "removed", text: before, tone: "neutral" },
-        { kind: "added", text: after, tone: "neutral" },
-      ];
-}
-
-function asLine(sentence: string): string {
-  return sentence.replace(/\.$/u, "");
-}
-
-function useLessonLines() {
-  const t = useExtracted();
-
-  const addedText = (effect: PlanEffect, byDate: boolean): string => {
-    const lessons = effect.lessonsAdded;
-
-    if (!byDate) {
-      return effect.lessonsAddedEstimated
-        ? t("About {lessons, plural, one {# more lesson} other {# more lessons}}.", { lessons })
-        : t("{lessons, plural, one {# more lesson} other {# more lessons}}.", { lessons });
-    }
-
-    return effect.lessonsAddedEstimated
-      ? t("Adds about {lessons, plural, one {# lesson} other {# lessons}}.", { lessons })
-      : t("Adds {lessons, plural, one {# lesson} other {# lessons}}.", { lessons });
-  };
-
-  const removedText = (effect: PlanEffect, byDate: boolean): string => {
-    const lessons = effect.lessonsRemoved;
-
-    return byDate
-      ? t("Leaves out {lessons, plural, one {# lesson} other {# lessons}}.", { lessons })
-      : t("{lessons, plural, one {# fewer lesson} other {# fewer lessons}}.", { lessons });
-  };
-
-  return (effect: PlanEffect, byDate: boolean): DiffLine[] => {
-    // Without a date only the net count changes, never "8 fewer" beside "1 more".
-    const net = effect.lessonsAdded - effect.lessonsRemoved;
-
-    const counts = byDate
-      ? effect
-      : { ...effect, lessonsAdded: Math.max(net, 0), lessonsRemoved: Math.max(-net, 0) };
-
-    const added = addedText(counts, byDate);
-    const removed = removedText(counts, byDate);
-
-    return [
-      counts.lessonsRemoved > 0 && {
-        kind: "removed" as const,
-        label: null,
-        text: asLine(removed),
-        tone: getLessonLineTone({ byDate, kind: "removed" }),
-      },
-      counts.lessonsAdded > 0 && {
-        kind: "added" as const,
-        label: null,
-        text: asLine(added),
-        tone: getLessonLineTone({ byDate, kind: "added" }),
-      },
-    ].filter((line) => line !== false);
-  };
-}
-
-function useGoalDateLines() {
-  const t = useExtracted();
-  const formatDate = useDiffDate();
-  const line = (isoDate: string) => t("Goal date {date}", { date: formatDate(isoDate, "long") });
-
-  return ({ after, before }: GoalDateMove): DiffLine[] => {
-    if (after === before) {
-      return [];
-    }
-
-    const added: DiffLine = { kind: "added", text: line(after), tone: "neutral" };
-    return before ? [{ kind: "removed", text: line(before), tone: "neutral" }, added] : [added];
-  };
-}
-
-function usePlanEffectLines() {
-  const t = useExtracted();
-  const formatDate = useDiffDate();
-  const weekdayName = useFormatWeekday();
-  const lessonLines = useLessonLines();
-  const goalDateLines = useGoalDateLines();
-
-  return (effect: PlanEffect | null, goalDate?: GoalDateMove, byDate = true): DiffLine[] => {
-    if (!effect) {
-      return [];
-    }
-
-    const lessons = lessonLines(effect, byDate);
-
-    const date = goalDate ? goalDateLines(goalDate) : [];
-
-    const endMove = getShownEndMove(effect);
-
-    const end = endMove
-      ? moved({
-          after: t("Plan ends {date}", { date: formatDate(endMove.after, "long") }),
-          before: t("Plan ends {date}", { date: formatDate(endMove.before, "long") }),
-        })
-      : [];
-
-    const phases = (effect.phaseEnds ?? []).flatMap((phase) =>
-      moved({
-        after: t("{name} until {date}", { date: formatDate(phase.after), name: phase.name }),
-        before: t("{name} until {date}", { date: formatDate(phase.before), name: phase.name }),
-      }),
-    );
-
-    const areas = (effect.areaEnds ?? []).flatMap((area) =>
-      moved({
-        after: t("{name} until {date}", { date: formatDate(area.after), name: area.area }),
-        before: t("{name} until {date}", { date: formatDate(area.before), name: area.area }),
-      }),
-    );
-
-    const areaLessons = (effect.areaLessons ?? []).flatMap((area) =>
-      moved({
-        after: t("{name}: {count, plural, one {# lesson} other {# lessons}} to go", {
-          count: area.after,
-          name: area.area,
-        }),
-        before: t("{name}: {count, plural, one {# lesson} other {# lessons}} to go", {
-          count: area.before,
-          name: area.area,
-        }),
-      }),
-    );
-
-    const mock = effect.nextMock
-      ? moved({
-          after: t("Next mock {date}", { date: formatDate(effect.nextMock.after) }),
-          before: t("Next mock {date}", { date: formatDate(effect.nextMock.before) }),
-        })
-      : [];
-
-    const weekly = effect.weeklyEvents;
-
-    const week = weekly
-      ? moved(
-          weekly.kind === "mock"
-            ? {
-                after: t("Mock exams on {weekday}", { weekday: weekdayName(weekly.after) }),
-                before: t("Mock exams on {weekday}", { weekday: weekdayName(weekly.before) }),
-              }
-            : {
-                after: t("Weekly challenges on {weekday}", { weekday: weekdayName(weekly.after) }),
-                before: t("Weekly challenges on {weekday}", {
-                  weekday: weekdayName(weekly.before),
-                }),
-              },
-        )
-      : [];
-
-    return [...lessons, ...date, ...end, ...phases, ...areas, ...areaLessons, ...mock, ...week];
-  };
-}
-
+/**
+ * What a plan change does: the one consequence a learner would notice, and every other change
+ * behind "See all changes".
+ */
 export function PlanEffectDiff({
   byDate = true,
   className,
   effect,
   goalDate,
+  summary = true,
 }: {
   byDate?: boolean;
   className?: string;
   effect: PlanEffect | null;
   goalDate?: GoalDateMove;
+  /** False where the screen's own sentence already says what matters most. */
+  summary?: boolean;
 }) {
   const t = useExtracted();
-  const lines = usePlanEffectLines()(effect, goalDate, byDate);
+  const found = usePlanChangeConsequence()(effect, { byDate, goalDate });
+  const consequence = summary ? found : null;
+  const rows = usePlanChangeRows()(effect, { byDate, goalDate });
+  const onlyRow = rows.length === 1 && rows[0]?.key === consequence?.key;
+  const hasMore = rows.length > 0 && !(onlyRow && consequence?.whole);
 
-  if (lines.length === 0) {
+  if (!consequence && !hasMore) {
     return null;
   }
 
   return (
-    <DiffLines
-      className={className}
-      labels={{ added: t("After the change"), removed: t("Now") }}
-      lines={lines}
-    />
+    <div className={cn("flex flex-col gap-1.5", className)} data-slot="plan-change-effect">
+      {consequence && (
+        <p className="text-sm text-pretty" data-slot="plan-change-consequence">
+          {consequence.text}
+        </p>
+      )}
+
+      {hasMore && (
+        <Collapsible>
+          <CollapsibleTrigger className="group/changes text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 hit-area -mx-1 inline-flex items-center gap-1 rounded-md px-1 text-[0.8125rem] leading-snug underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]">
+            {t("See all changes")}
+            <ChevronDownIcon
+              aria-hidden="true"
+              className="size-3.5 transition-transform group-data-panel-open/changes:rotate-180 motion-reduce:transition-none"
+            />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+            <ChangeRows rows={rows} />
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+    </div>
   );
 }

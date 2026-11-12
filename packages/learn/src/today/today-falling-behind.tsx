@@ -3,14 +3,21 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarClockIcon, CheckIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
+import { CalendarClockIcon, CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
+  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionLinkAction,
@@ -21,16 +28,15 @@ import {
 } from "../_components/suggestion";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
-import { MovedTopicsLine } from "./moved-topics-line";
+import { LearnLink } from "../learn-link";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useTodayScreen } from "./today-context";
 import { isWelcomeBackDay } from "./use-today-copy";
 
 type Change = NonNullable<TodayView["planChange"]>;
 type Behind = NonNullable<PlanChangeView["behind"]>;
 type Answer = { kept: true } | { failed: true } | null;
-type Option = "adjustTime" | "focus" | "keep" | "studyEverything";
-
-const NAMED_TOPICS = 2;
+type Option = "adjustTime" | "focus" | "studyEverything";
 
 function useBehindSentence() {
   const t = useExtracted();
@@ -45,33 +51,42 @@ function useBehindSentence() {
     };
 
     return behind.measure === "exam"
-      ? t("At {time} a day, your plan now covers {after} of the exam, down from {before}.", values)
-      : t(
-          "At {time} a day, your plan now covers {after} of your goal, down from {before}.",
-          values,
-        );
+      ? t("{time} a day now covers {after} of the exam, down from {before}.", values)
+      : t("{time} a day now covers {after} of your goal, down from {before}.", values);
   };
 }
 
-function useAdjustTimeLabel(): string {
-  const t = useExtracted();
-  const { today } = useTodayScreen();
-  return today.goal.kind === "exam" ? t("More time a day") : t("More time or a later date");
-}
-
 /** On a return after a break, nothing that asks for more hours leads. */
-function getOptionOrder({ behind, returnDay }: { behind: Behind; returnDay: boolean }): {
-  order: Option[];
-  primary: Option | null;
-} {
-  if (returnDay) {
-    return {
-      order: ["focus", "keep", "adjustTime", "studyEverything"],
-      primary: behind.canFocus ? "focus" : null,
-    };
+function getLeadingOption({ behind, returnDay }: { behind: Behind; returnDay: boolean }): Option | null {
+  if (!returnDay) {
+    return "adjustTime";
   }
 
-  return { order: ["adjustTime", "focus", "studyEverything", "keep"], primary: "adjustTime" };
+  return behind.canFocus ? "focus" : null;
+}
+
+function useOptions(behind: Behind): { href: string; label: string; option: Option }[] {
+  const t = useExtracted();
+  const { actions, today } = useTodayScreen();
+  const isExam = today.goal.kind === "exam";
+
+  return [
+    {
+      href: actions.adjustTimeHref,
+      label: isExam ? t("Add time") : t("Adjust plan"),
+      option: "adjustTime" as const,
+    },
+    behind.canFocus && {
+      href: actions.chooseFocusHref,
+      label: t("Choose where to focus"),
+      option: "focus" as const,
+    },
+    {
+      href: actions.studyEverythingHref,
+      label: isExam ? t("Keep studying after the exam") : t("Study everything"),
+      option: "studyEverything" as const,
+    },
+  ].filter((option) => option !== false);
 }
 
 function BehindChoices({
@@ -86,42 +101,46 @@ function BehindChoices({
   superseded: boolean;
 }) {
   const t = useExtracted();
-  const adjustTimeLabel = useAdjustTimeLabel();
-  const { actions, today } = useTodayScreen();
-  const { order, primary } = getOptionOrder({ behind, returnDay: isWelcomeBackDay(today.session) });
+  const { today } = useTodayScreen();
+  const options = useOptions(behind);
+  const leading = getLeadingOption({ behind, returnDay: isWelcomeBackDay(today.session) });
+  const lead = options.find(({ option }) => option === leading);
+  const others = options.filter(({ option }) => option !== leading);
 
-  const variant = (option: Option) => (option === primary ? "default" : "outline");
+  return (
+    <SuggestionActions>
+      {lead && <SuggestionLinkAction href={lead.href}>{lead.label}</SuggestionLinkAction>}
 
-  const link = (option: Option, href: string, label: string) => (
-    <SuggestionLinkAction href={href} key={option} variant={variant(option)}>
-      {label}
-    </SuggestionLinkAction>
-  );
-
-  const options: Record<Option, ReactNode> = {
-    adjustTime: link("adjustTime", actions.adjustTimeHref, adjustTimeLabel),
-    focus: behind.canFocus && link("focus", actions.chooseFocusHref, t("Choose where to focus")),
-    keep: (
       <SuggestionAction
         action={keep}
         busy={isPending}
         disabled={superseded}
         icon={<CheckIcon aria-hidden="true" />}
         key="keep"
-        variant={variant("keep")}
+        variant="outline"
       >
         {t({
-          description: "Keeps the learner's daily study time as it is.",
+          description: "Keeps the learner's time a day as it is.",
           message: "Keep my time",
         })}
       </SuggestionAction>
-    ),
-    studyEverything: link("studyEverything", actions.studyEverythingHref, t("Study everything")),
-  };
 
-  const sorted = primary ? [primary, ...order.filter((option) => option !== primary)] : order;
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<SuggestionAction variant="ghost" />}>
+          {t("More options")}
+          <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
+        </DropdownMenuTrigger>
 
-  return <SuggestionActions>{sorted.map((option) => options[option])}</SuggestionActions>;
+        <DropdownMenuContent align="start" className="w-64">
+          {others.map(({ href, label, option }) => (
+            <DropdownMenuItem key={option} render={<LearnLink href={href} />}>
+              {label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SuggestionActions>
+  );
 }
 
 /** Keeping their time changes nothing: the learner's "seen" is their answer. */
@@ -175,7 +194,8 @@ export function FallingBehindNotice({
   const { isPending, keep, superseded } = useKeepTime({ change, onAnswer: setAnswer, onHold });
   const answered = answer !== null && !("failed" in answer);
 
-  const result = t("Noted. You keep your time, with less depth where it counts least.");
+  const title = t("You missed a few days");
+  const result = t("Okay. Your time stays the same.");
 
   return (
     <Suggestion
@@ -189,15 +209,16 @@ export function FallingBehindNotice({
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>{sentence(behind)}</SuggestionSummary>
+            <SuggestionSummary>{title}</SuggestionSummary>
             <SuggestionOpen />
           </>
         )}
       </SuggestionLine>
 
       <SuggestionContent>
-        <SuggestionHeader>{sentence(behind)}</SuggestionHeader>
-        <MovedTopicsLine change={change} named={NAMED_TOPICS} />
+        <SuggestionHeader>{title}</SuggestionHeader>
+        <SuggestionDescription>{sentence(behind)}</SuggestionDescription>
+        <PlanEffectDiff effect={change.effect} summary={false} />
 
         {answered ? (
           <SuggestionResult>{result}</SuggestionResult>
