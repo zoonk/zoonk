@@ -218,7 +218,8 @@ private struct MindMapCreateSection: View {
   var body: some View {
     let offer = maps.createOffer
     let line = line(offer)
-    let canStart = offer.startable > 0 || offer.stop == nil
+    // A failed map's row keeps its Try again, whose retry is free.
+    let canStart = offer.stop == nil
 
     Section {
       if offer.startable > 0 || line != nil {
@@ -274,10 +275,13 @@ private struct MindMapCreateSection: View {
     }
   }
 
-  /// The one line under the button: the first of these that applies.
+  /// The one line under the button: the first of these that applies. Maps on their way and maps
+  /// that didn't finish come before the limit: the learner just started them, and the limit read
+  /// first looks like a refusal.
   private enum Line {
     case unreachable
     case onTheWay(Int)
+    case unfinished(Int)
     case stopped(MindMapLimit)
     case fewer(Int)
     case needLessons(Int)
@@ -285,6 +289,9 @@ private struct MindMapCreateSection: View {
 
   private func line(_ offer: MindMapCreateOffer) -> Line? {
     let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
+    // Only the ones the button retries: a failed map whose lessons aren't written says so in its
+    // own row.
+    let unfinished = maps.chapters.count { $0.status == .failed && $0.lessonsToWrite == 0 }
 
     if store.createAllFailures[goalId] == .unreachable {
       return .unreachable
@@ -294,11 +301,15 @@ private struct MindMapCreateSection: View {
       return .onTheWay(onTheWay)
     }
 
+    if unfinished > 0 {
+      return .unfinished(unfinished)
+    }
+
     if offer.startable == 0, let stop = offer.stop {
       return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 
-    if offer.startable < offer.eligible {
+    if offer.startable > 0, offer.startable < offer.eligible {
       return .fewer(offer.startable)
     }
 
@@ -319,7 +330,7 @@ private struct MindMapCreateSection: View {
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
       HelpLimitNotice(limit: limit.limit, message: limit.message)
-    case .onTheWay, .fewer, .needLessons:
+    case .onTheWay, .unfinished, .fewer, .needLessons:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -333,6 +344,11 @@ private struct MindMapCreateSection: View {
       String(
         localized: "\(count) on the way. You can leave while they're made.", table: "MindMaps",
         comment: "How many chapter maps are being made now")
+    case .unfinished(let count):
+      String(
+        localized: "\(count) maps didn't finish. Try again.", table: "MindMaps",
+        comment:
+          "Chapter maps whose making failed; the button above makes them again, for free")
     case .fewer(let count):
       String(
         localized: "You can make \(count) more right now.", table: "MindMaps",
