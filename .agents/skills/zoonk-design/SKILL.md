@@ -1,6 +1,6 @@
 ---
 name: zoonk-design
-description: Design, implement, or review Zoonk interfaces on the web, iOS and Android, in one visual language across all three. Hold every screen to a principal designer's bar on clarity, typography, hierarchy, spacing and density, color and contrast, iconography, and consistency and polish; write it in the learner's words, to a word budget; rethink it from first principles with alternative concepts when it falls short; and finish with a first-glance test by an agent that sees only the screenshot.
+description: Design, implement, or review Zoonk interfaces on the web, iOS and Android, in one visual language across all three. Hold every screen to a principal designer's bar on clarity, typography, hierarchy, spacing and density, color and contrast, iconography, and consistency and polish; write an app screen in the learner's words, to a word budget, and a marketing page (landing, catalog, public course pages, pricing, blog) to its own standard for a visitor deciding whether to start; rethink it from first principles with alternative concepts when it falls short; and finish with a first-glance test by an agent that sees only the screenshot.
 license: MIT
 metadata:
   author: zoonk
@@ -32,6 +32,8 @@ For the reasoning behind these principles, see [Design foundations](references/d
 
 ## Words
 
+These rules are for the product's own screens: the app a learner operates, on the web, iOS and Android, and the tools staff operate. [Marketing pages](#marketing-pages) do a different job and have their own standard.
+
 A learner gives a screen about two seconds and knows only what earlier screens showed them. Write for that person, never for someone who knows how Zoonk works.
 
 - **One message.** Before writing, finish this sentence: "This screen tells the learner ___ so they can ___." The title says it. Everything else supports it or leaves.
@@ -52,6 +54,20 @@ When a review or a walk finds that a learner wouldn't understand something, fix 
 5. Add a sentence, and take another one out.
 
 Fewer words is not less structure: a page still has its title, its sections and one main action.
+
+## Marketing pages
+
+The landing page, the catalog, public course, chapter and lesson pages, pricing, shared links and the blog are read by someone who doesn't use Zoonk yet, and by search engines. That person is deciding whether to try it, not operating it, so the Words budget doesn't apply. This does:
+
+- **One decision: "is this for me, and is it worth starting?"** In this order: what this is, in the visitor's words; what they get; why to believe it; what it costs them; how to start. A section that answers none of those goes.
+- **Enough, in order.** More text is fine when each section answers a question a visitor really has and the page can be scanned: a headline that carries the point alone, one line under it, then the detail for those who read on. One point per section.
+- **One action, repeated.** One primary call to action per page, in the same words each time, visible without scrolling and again after each major section. It may name what the visitor gets ("Start learning free").
+- **Specific beats clever.** Outcomes and concrete things (what you'll be able to do, what a day looks like, the real product on screen) over adjectives and over how the system works. Every claim is one we can support, and none promises a result.
+- **No insider words.** A stranger knows none of our terms, so the style guide's "never" and "before that, say" columns apply in full. A plan's numbers and states (what fits, phases, lessons not ready yet) are for learners who have a plan.
+- **Search matters.** Course, chapter and lesson pages are found through search. Keep what earns the visit (what the course covers, the outline, real lesson text, the questions people ask), with real headings and metadata. Cutting words people search for is a loss; cutting words nobody reads or searches for isn't.
+- **Hierarchy still rules.** One thing leads in every view, and a visitor knows where to look: clear, not sparse.
+
+Write and edit this copy with [copywriting](../copywriting/SKILL.md) and [copy-editing](../copy-editing/SKILL.md), check it with [seo-audit](../seo-audit/SKILL.md), and use [marketing-psychology](../marketing-psychology/SKILL.md) for how people decide. Those skills are general: where one suggests urgency, scarcity, fear of loss or a promised result, Zoonk's rules win (no pressure, no guilt, nothing we can't support). A blog post follows [zoonk-blog-post](../zoonk-blog-post/SKILL.md).
 
 ## Zoonk's learning experience
 
@@ -90,7 +106,7 @@ The look is **Instrument**: a calm study instrument in the spirit of Linear and 
 
 Hold every screen you design, build or review to one bar: a principal designer like Jony Ive, or one at Linear, Vercel or Apple, would love it, not merely accept it. It is clean, quiet and exact, so the person sees their task and not the interface. Judge it on the running product against all seven aspects below, every time, clarity first. Where one falls short, don't decorate it or nudge pixels: find what makes the screen harder than it needs to be, and change the UI, the UX or both until it's simpler and better. Matching the mockup or what's already there doesn't clear the bar.
 
-- **Clarity.** Someone who has never seen Zoonk can say what this screen is and what to do, from the title and the main action alone. Count it: text elements between the title and the main action (four at most), words on a screen that asks for a decision (60 at most), terms no earlier screen taught (none), places the same fact appears (one). Then subtract: remove a box, a label, a divider or a sentence; if the screen still works, leave it out.
+- **Clarity.** Someone who has never seen Zoonk can say what this screen is and what to do, from the title and the main action alone. On an app screen, count it: text elements between the title and the main action (four at most), words on a screen that asks for a decision (60 at most), terms no earlier screen taught (none), places the same fact appears (one). On a [marketing page](#marketing-pages) the counts don't apply: check that each section answers a question a visitor has, in order, under a headline that carries its point alone. Then subtract: remove a box, a label, a divider or a sentence; if the screen still works, leave it out.
 - **Typography.** One role per job from the type scale, three levels in a block at most. The right face for every number: a readout in Geist with tabular figures, data in mono, a number inside a sentence in the sentence's face. Reading text keeps a comfortable measure; no uppercase sentences, no orphaned word in a title, en dashes for ranges and an ellipsis character instead of three dots. Balance the lines of short titles, captions and centered text (`text-balance`, Android's `LineBreak.Heading`); left-aligned sentences, such as a question, a description or an error, fill their lines and only avoid a lone last word (`text-pretty`, `LineBreak.Paragraph`), since even lines there leave a ragged gap on the right.
 - **Hierarchy.** Squint: what you see first is what matters first, and there is one strongest thing (the main action, or a moment's hero). The eye moves in the task's order, from what this is to what to do next. Anything competing with the strongest thing goes quieter or goes away; order comes from size, weight, tone and position, not from boxes or decoration.
 - **Spacing and density.** Everything snaps to shared edges (the column's left edge, readouts' baselines, a row's text start) and spacing comes from the 4px scale. Related things sit closer than unrelated ones, and the same gap separates the same kinds of things on every screen. Density fits the job: a list to scan stays compact, a decision gets room, nothing is cramped at 390px or stranded in empty space at 2560px.
@@ -120,7 +136,9 @@ You can't judge your own screen: you know what it means. For every new or change
 - What would you tap, and what do you expect to happen?
 - Which words or lines don't you understand, or wouldn't miss?
 
-A wrong guess, an unknown word or a "not sure" is a finding. Don't explain the screen and ask again: change the screen, by the fix order in [Words](#words), or [rethink it](#rethink-when-stuck). Then use the flow yourself, start to finish, as a learner with a real goal.
+For a [marketing page](#marketing-pages) the reader changes: the agent is someone who has never heard of Zoonk and arrived from a search or a link, it gets the whole page at phone size, and the questions are: what is this, is it for you, what would you do next, and what would make you leave?
+
+A wrong guess, an unknown word or a "not sure" is a finding. Don't explain the screen and ask again: change it, by the fix order in [Words](#words) for an app screen and by the list in [Marketing pages](#marketing-pages) for one of those, or [rethink it](#rethink-when-stuck). Then use the flow yourself, start to finish, as a learner with a real goal.
 
 ## Related guidance
 
