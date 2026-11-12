@@ -1719,7 +1719,6 @@ msgid "Activity"
 msgstr "활동"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1836,9 +1835,9 @@ msgid "Energy by day"
 msgstr "일별 에너지"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "1bzMX0"
-msgid "At 100%"
-msgstr "100% 달성"
+msgctxt "bPZR0t"
+msgid "Days at 100%"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
@@ -1887,10 +1886,11 @@ msgctxt "2Zh-AP"
 msgid "{points} Brain Power"
 msgstr "두뇌력 {points}"
 
+#. {next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt's last number, 10.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "ZqevEW"
-msgid "Next: {belt} at <mono>{points}</mono> Brain Power"
-msgstr "다음: {belt}, 두뇌력 <mono>{points}</mono>부터"
+msgctxt "aFJB29"
+msgid "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "h06pGR"
@@ -2027,6 +2027,11 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "최근 90일간의 정답률과 주별 변화를 확인해 보세요."
 
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "정답"
+
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
@@ -2048,14 +2053,14 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {응답 #개}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "YbbjEZ"
-msgid "{correct} of {total} in the last {days} days"
-msgstr "정답 {correct}개 / 총 {total}문제 (최근 {days}일)"
+msgctxt "3YnSzO"
+msgid "{correct} of {total}"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "정답"
+msgctxt "AprlUR"
+msgid "Last {days} days"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx

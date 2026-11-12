@@ -2165,6 +2165,11 @@ msgid "Mock exams come with Plus: whenever you want, and every week in your plan
 msgstr "Les examens blancs sont inclus dans Plus : quand tu veux, et chaque semaine dans ton plan."
 
 #: src/challenge/challenge-footer.tsx
+msgctxt "L_nv1C"
+msgid "After today's lessons"
+msgstr ""
+
+#: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "4tdaRm"
 msgid "See result"
@@ -2501,9 +2506,9 @@ msgid "His shield is broken. You won!"
 msgstr "Son bouclier est brisé. Tu as gagné !"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
-msgctxt "NrKNlR"
-msgid "His shield held this time."
-msgstr "Son bouclier a tenu cette fois."
+msgctxt "FhXNnE"
+msgid "The Trickster won this time."
+msgstr ""
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2566,6 +2571,7 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {Plus aucune question} one {# question restante} other {# questions restantes}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
+#: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
 msgstr "{count, plural, one {# bonne réponse pour gagner} other {# bonnes réponses pour gagner}}"
@@ -2610,11 +2616,6 @@ msgctxt "U_fdgH"
 msgid "What's next"
 msgstr "La suite"
 
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "Y8UC-X"
-msgid "Your next lessons are already open."
-msgstr "Tes prochaines leçons sont déjà accessibles."
-
 #: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "5oy0X2"
 msgid "Weekly challenge done"
@@ -2625,11 +2626,6 @@ msgstr "Défi hebdomadaire terminé"
 msgctxt "1VpodI"
 msgid "Not this time"
 msgstr "Pas cette fois"
-
-#: src/checkpoints/checkpoint-result-view.tsx
-msgctxt "4YXH09"
-msgid "{count, plural, one {# of {total} right to win} other {# of {total} right to win}}"
-msgstr "{count, plural, one {# bonne réponse sur {total} pour gagner} other {# bonnes réponses sur {total} pour gagner}}"
 
 #: src/checkpoints/checkpoint-review.tsx
 msgctxt "hmBFza"
@@ -2676,9 +2672,9 @@ msgid "You won the rematch"
 msgstr "Tu as gagné la revanche"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "3EE-ok"
-msgid "{lessons, plural, =0 {Nothing is lost.} one {After # short lesson on what tripped you up. Nothing is lost.} other {After # short lessons on what tripped you up. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {Rien n’est perdu.} one {Après # courte leçon sur ce qui t’a posé problème. Rien n’est perdu.} other {Après # courtes leçons sur ce qui t’a posé problème. Rien n’est perdu.}}"
+msgctxt "s4X2yE"
+msgid "{lessons, plural, =0 {} one {After # short lesson on what tripped you up.} other {After # short lessons on what tripped you up.}}"
+msgstr ""
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "eqfxQN"
@@ -14041,21 +14037,11 @@ msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Une mauvaise réponse annule une bonne réponse. Tu hésites ? Ne réponds pas."
 
-#. Under a belt and its number, such as "White belt 4": how many numbers are left before the next belt. {belt} is that belt's name, such as "Yellow belt".
+#. Under a belt and its number, such as "White belt 4": which belt comes next, and after which number. {next} and {belt} are belt names, such as "Yellow belt" and "White belt".
 #: src/session/reached-moment.tsx
-msgctxt "YKiliC"
-msgid "{count, plural, one {# more to {belt}} other {# more to {belt}}}"
-msgstr "{count, plural, one {Encore # niveau avant la {belt}} other {Encore # niveaux avant la {belt}}}"
-
-#: src/session/reached-moment.tsx
-msgctxt "-wkcC0"
-msgid "Energy at {energy}"
-msgstr "Énergie à {energy}"
-
-#: src/session/reached-moment.tsx
-msgctxt "cTmMW5"
-msgid "{buddy} is glowing"
-msgstr "Ça brille autour de {buddy}"
+msgctxt "JxJr5v"
+msgid "{next} comes after {belt} {count}"
+msgstr ""
 
 #: src/session/review-intro.tsx
 msgctxt "6UUFQv"
@@ -14144,11 +14130,6 @@ msgid "Done in {time}"
 msgstr "Terminé en {time}"
 
 #: src/session/summary/summary-parts.tsx
-msgctxt "mMqedZ"
-msgid "You got better at {topics}."
-msgstr "Tu as progressé sur {topics}."
-
-#: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
 msgid "Done for now"
 msgstr "C’est tout pour le moment"
@@ -14174,16 +14155,15 @@ msgctxt "4VMsuw"
 msgid "+{bonus}"
 msgstr "+{bonus}"
 
-#: src/session/summary/summary-rewards.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "vrNWq4"
-msgid "Earned today"
-msgstr "Gagné aujourd’hui"
-
 #: src/session/summary/summary-steps.tsx
 msgctxt "Hlc1zt"
 msgid "Getting it ready…"
 msgstr "Préparation en cours…"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "vrNWq4"
+msgid "Earned today"
+msgstr "Gagné aujourd’hui"
 
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"

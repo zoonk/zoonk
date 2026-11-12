@@ -1719,7 +1719,6 @@ msgid "Activity"
 msgstr "Etkinlik"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1836,9 +1835,9 @@ msgid "Energy by day"
 msgstr "Günlere göre Enerji"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "1bzMX0"
-msgid "At 100%"
-msgstr "%100’de"
+msgctxt "bPZR0t"
+msgid "Days at 100%"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
@@ -1887,10 +1886,11 @@ msgctxt "2Zh-AP"
 msgid "{points} Brain Power"
 msgstr "{points} Beyin Gücü"
 
+#. {next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt's last number, 10.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "ZqevEW"
-msgid "Next: {belt} at <mono>{points}</mono> Brain Power"
-msgstr "Sıradaki: {belt}, <mono>{points}</mono> Beyin Gücüne ulaştığında"
+msgctxt "aFJB29"
+msgid "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "h06pGR"
@@ -2027,6 +2027,11 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "Son 90 gündeki doğru cevap oranını ve haftalık değişimini gör."
 
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Doğru cevaplar"
+
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
@@ -2048,14 +2053,14 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {# cevap}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "YbbjEZ"
-msgid "{correct} of {total} in the last {days} days"
-msgstr "{correct} / {total} (son {days} gün)"
+msgctxt "3YnSzO"
+msgid "{correct} of {total}"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Doğru cevaplar"
+msgctxt "AprlUR"
+msgid "Last {days} days"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx

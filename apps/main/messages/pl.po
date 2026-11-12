@@ -1719,7 +1719,6 @@ msgid "Activity"
 msgstr "Aktywność"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1836,9 +1835,9 @@ msgid "Energy by day"
 msgstr "Energia każdego dnia"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "1bzMX0"
-msgid "At 100%"
-msgstr "100% Energii"
+msgctxt "bPZR0t"
+msgid "Days at 100%"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
@@ -1887,10 +1886,11 @@ msgctxt "2Zh-AP"
 msgid "{points} Brain Power"
 msgstr "{points} pkt Mocy Umysłu"
 
+#. {next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt's last number, 10.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "ZqevEW"
-msgid "Next: {belt} at <mono>{points}</mono> Brain Power"
-msgstr "Następny: {belt} przy <mono>{points}</mono> pkt Mocy Umysłu"
+msgctxt "aFJB29"
+msgid "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "h06pGR"
@@ -2027,6 +2027,11 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "Zobacz procent poprawnych odpowiedzi i tygodniowe zmiany wyniku z ostatnich 90 dni."
 
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Poprawne odpowiedzi"
+
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
@@ -2048,14 +2053,14 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# odpowiedź} other {# odpowiedzi}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "YbbjEZ"
-msgid "{correct} of {total} in the last {days} days"
-msgstr "{correct} z {total} w ostatnich {days} dniach"
+msgctxt "3YnSzO"
+msgid "{correct} of {total}"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Poprawne odpowiedzi"
+msgctxt "AprlUR"
+msgid "Last {days} days"
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
