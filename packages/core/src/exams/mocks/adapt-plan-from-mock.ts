@@ -68,9 +68,14 @@ export async function adaptPlanFromMock({
     return { reason: null, status: "unchanged" };
   }
 
+  const plan = await prisma.plan.findUniqueOrThrow({
+    select: { id: true },
+    where: { goalId: goal.id },
+  });
+
   const { handPicked } = await loadFocusOwnership({
     focusAreas: offers.focusAreas,
-    planId: offers.planId,
+    planId: plan.id,
     record: readFocusTestRecord(goal),
     tx: prisma,
   });
