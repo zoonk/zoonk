@@ -134,6 +134,7 @@ struct MindMapUnreachable: View {
 /// numbered branches, the comparison, and the gist last.
 struct MindMapOutlineView: View {
   @Environment(\.legibilityWeight) private var legibility
+  @ScaledMetric(relativeTo: .caption) private var numberSize = 24.0
 
   let outline: ChapterMindMap.Outline
 
@@ -148,7 +149,7 @@ struct MindMapOutlineView: View {
             Text(verbatim: (index + 1).formatted())
               .typeStyle(.data.weight(.medium))
               .foregroundStyle(.mutedForeground)
-              .frame(width: 24, height: 24)
+              .frame(width: numberSize, height: numberSize)
               .background(.muted, in: .rect(cornerRadius: Radius.sm, style: .continuous))
               .accessibilityHidden(true)
 
@@ -201,9 +202,7 @@ private struct OutlinePoints: View {
   var body: some View {
     ForEach(points, id: \.self) { point in
       HStack(alignment: .firstTextBaseline, spacing: 8) {
-        Image(systemName: "circle.fill")
-          .typeStyle(.small)
-          .imageScale(.small)
+        Text(verbatim: "•")
           .accessibilityHidden(true)
         Text(point)
       }
