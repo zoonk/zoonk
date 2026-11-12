@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -204,6 +205,7 @@ private fun NotMadeSummary(
             OutlinedButton(
                 onClick = actions.page.createAll,
                 busy = actions.state.createAll == CreateAll.Pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_add) },
             ) { Text(pluralStringResource(R.plurals.mindmaps_create_count, count, formatNumber(count.toDouble(), currentLocale()))) }
         }
 
