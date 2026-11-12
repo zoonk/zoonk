@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 export function LogoutButton() {
   return (
     <Button onClick={() => logout()} type="button">
-      Logout
+      Use another account
     </Button>
   );
 }

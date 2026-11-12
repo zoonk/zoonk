@@ -1,4 +1,5 @@
 import { LogoutButton } from "@/components/logout";
+import { getSession } from "@zoonk/core/users/session";
 import {
   Container,
   ContainerBody,
@@ -7,15 +8,24 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { Suspense } from "react";
+
+async function SignedInAs() {
+  const session = await getSession();
+  return session ? `You're signed in as ${session.user.email}. ` : null;
+}
 
 export default function Unauthorized() {
   return (
     <Container variant="centered">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>401 - Unauthorized</ContainerTitle>
+          <ContainerTitle>This account can&apos;t open Admin</ContainerTitle>
           <ContainerDescription>
-            Log in with a different account to access this page.
+            <Suspense fallback={null}>
+              <SignedInAs />
+            </Suspense>
+            Admin is for Zoonk staff.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
