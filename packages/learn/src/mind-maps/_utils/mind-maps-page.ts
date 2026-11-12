@@ -52,7 +52,12 @@ export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
   const open = chapters.filter((chapter) => chapter.status !== "plusRequired");
 
   return {
-    failed: open.filter((chapter) => chapter.status === "failed").length,
+    /**
+     * Only the failed maps creating all chapter maps retries. One whose chapter still needs its
+     * lessons shows in its own row, with that row's Try again.
+     */
+    failed: open.filter((chapter) => chapter.status === "failed" && chapter.lessonsToWrite === 0)
+      .length,
     onTheWay: open.filter(
       (chapter) => chapter.status === "drawing" || chapter.status === "writingLessons",
     ).length,
