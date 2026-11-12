@@ -316,6 +316,33 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(otherMap.value?.saved, true)
   }
 
+  func testASaveTheServerTookIsReadAgainInEveryOtherGoalWhenALaterTapFails() async {
+    let api = MindMapsAPIStub(server: .ready, statuses: [])
+    let store = makeStore(api: api)
+    let other = store.list(goalId: "other goal")
+    await store.list(goalId: "goal").load()
+    await other.load()
+    await api.holdNextSave()
+
+    store.setSaved(true, target: Self.chapterTarget, goalId: "goal")
+    while await !api.isHoldingSave {
+      await Task.yield()
+    }
+
+    store.setSaved(false, target: Self.chapterTarget, goalId: "goal")
+    await api.failSaves(1)
+    await api.releaseSave()
+    while !store.pendingSaves.isEmpty {
+      await Task.yield()
+    }
+
+    await other.load()
+    let calls = await api.calls
+    XCTAssertEqual(calls.saves, [true, false])
+    XCTAssertTrue(store.saveFailed(goalId: "goal"))
+    XCTAssertEqual(other.value?.saved.map(\.targetId), ["chapter"])
+  }
+
   func testASaveOnItsWayStaysWithTheLearnerWhoAskedForIt() async {
     let accounts = SwitchingAccountAPI()
     let session = await accounts.signedIn(as: "learner-a")
@@ -641,14 +668,18 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool {
     calls.saves.append(saved)
     calls.saveTokens.append(token)
+    let fails = saveFailures > 0
+
+    if fails {
+      saveFailures -= 1
+    }
 
     if holdsNextSave {
       holdsNextSave = false
       await withCheckedContinuation { heldSave = $0 }
     }
 
-    if saveFailures > 0 {
-      saveFailures -= 1
+    if fails {
       throw APIError.network
     }
 

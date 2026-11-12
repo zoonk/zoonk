@@ -337,7 +337,6 @@ final class MindMapsStore {
       case .failed:
         pendingSaves[pending] = nil
         saveFailure = SaveFailure(goalId: goalId, key: key, session: pending.session)
-        return
       case .obsolete:
         pendingSaves[pending] = nil
         return
@@ -346,9 +345,12 @@ final class MindMapsStore {
 
     pendingSaves[pending] = nil
 
-    // A save is the learner's in every goal whose maps hold it, and the Saved tab lists saves in
-    // syllabus order, which only the server knows.
-    cache.invalidate([.savedMindMaps])
+    // A save the server took is the learner's in every goal whose maps hold it, a later tap's
+    // failure included, and the Saved tab lists saves in syllabus order, which only the server
+    // knows.
+    if sent != nil {
+      cache.invalidate([.savedMindMaps])
+    }
   }
 
   /// Every copy of the map read so far says it, so dropping the pending save changes nothing shown.
