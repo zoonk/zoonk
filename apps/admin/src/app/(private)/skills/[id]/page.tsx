@@ -63,7 +63,9 @@ async function SkillDetailContent({ params }: Pick<PageProps<"/skills/[id]">, "p
   return (
     <>
       <AdminDetailHeader
-        menu={skill.mergedInto ? null : <SkillActionsMenu skillId={skill.id} />}
+        menu={
+          skill.mergedInto ? null : <SkillActionsMenu skillId={skill.id} skillName={skill.name} />
+        }
         facts={[
           skill.targetLanguage ? `${language} → ${skill.targetLanguage.toUpperCase()}` : language,
           skill.level && capitalize(skill.level),
