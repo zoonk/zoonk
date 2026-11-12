@@ -71,7 +71,21 @@ async function createLearner() {
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
-  return { first, second, user };
+  return { first, goal, second, user };
+}
+
+function saveChapterMap({
+  chapter,
+  goalId,
+  userId,
+}: {
+  chapter: { id: string; title: string };
+  goalId: string;
+  userId: string;
+}) {
+  return prisma.savedMindMap.create({
+    data: { goalId, kind: "chapter", targetId: chapter.id, title: chapter.title, userId },
+  });
 }
 
 /** The model's part: the API's E2E build holds a workflow's model calls, so its run never ends. */
@@ -278,6 +292,110 @@ test.describe("Mind maps", () => {
         page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }),
       ).toBeVisible({ timeout: 15_000 });
     } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a save stored while the page mends an older copy leaves the map the learner started on its way", async ({
+    browser,
+  }) => {
+    const { first, goal, second, user } = await createLearner();
+
+    await Promise.all([
+      drawMap(first.chapter.id),
+      saveChapterMap({ chapter: first.chapter, goalId: goal.id, userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+    const tabs = page.getByRole("navigation", { name: "Mind maps" });
+    const tab = (name: string) => tabs.getByRole("link", { name: new RegExp(`^${name}`, "u") });
+    const routerCopy = Promise.withResolvers<null>();
+    const answered = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+    const delivered = Promise.withResolvers<null>();
+    const reads = { count: 0 };
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("button", { name: /^Show chapters/u }).click();
+
+      await page
+        .getByRole("listitem")
+        .filter({ hasText: second.chapter.title })
+        .getByRole("button", { name: "Create" })
+        .click();
+
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      // The list read the Create started has come back, so no reply in flight can mend an older copy.
+      await expect(page.getByRole("button", { name: "Create 1 chapter map" })).toBeHidden();
+
+      // The sidebar hands back the copy prefetched before the Create, so the page reads its list
+      // again. That read is answered before the removal and arrives after it.
+      await page.route(
+        (url) => url.pathname.endsWith("/mind-maps"),
+        async (route) => {
+          const headers = route.request().headers();
+
+          if (headers.rsc && !headers["next-router-prefetch"]) {
+            await routerCopy.promise;
+          }
+
+          await route.fallback();
+        },
+      );
+
+      await page.route("**/v1/goals/*/mind-maps", async (route) => {
+        reads.count += 1;
+
+        if (reads.count !== 1) {
+          await route.continue();
+          return;
+        }
+
+        const response = await route.fetch();
+        answered.resolve(null);
+        await release.promise;
+
+        try {
+          await route.fulfill({ response });
+        } finally {
+          delivered.resolve(null);
+        }
+      });
+
+      await sidebar.getByRole("link", { exact: true, name: "Mind maps" }).click();
+      await answered.promise;
+      await tab("Saved").click();
+
+      const storing = page.waitForResponse(
+        (response) =>
+          response.url().endsWith("/mind-maps/saved") && response.request().method() === "POST",
+      );
+
+      await page
+        .getByRole("list", { name: "Saved maps" })
+        .getByRole("button", { name: "Saved" })
+        .click();
+
+      const stored = await storing;
+      await stored.finished();
+
+      release.resolve(null);
+      await delivered.promise;
+
+      await tab("Chapters").click();
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      await drawMap(second.chapter.id);
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }),
+      ).toBeVisible({ timeout: 15_000 });
+    } finally {
+      routerCopy.resolve(null);
+      release.resolve(null);
       await page.context().close();
     }
   });
