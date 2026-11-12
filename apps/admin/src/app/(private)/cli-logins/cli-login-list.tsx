@@ -27,7 +27,7 @@ export async function CliLoginList() {
     >
       {people.map((person) => (
         <TableRow key={person.user.id}>
-          <TableCell className="whitespace-normal">
+          <TableCell>
             <Link
               className="font-medium underline-offset-3 hover:underline"
               href={`/users/${person.user.id}`}
@@ -35,7 +35,7 @@ export async function CliLoginList() {
             >
               {person.user.name}
             </Link>
-            <div className="text-muted-foreground text-xs break-all">{person.user.email}</div>
+            <div className="text-muted-foreground text-xs">{person.user.email}</div>
           </TableCell>
           <TableCell>{formatCount(person.machines, "machine")}</TableCell>
           <TableCell className="text-muted-foreground">{formatDate(person.lastUsedAt)}</TableCell>

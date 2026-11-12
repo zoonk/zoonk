@@ -33,7 +33,7 @@ function SessionRow({ session, showGoal }: { session: UserStudySession; showGoal
       <TableCell className="text-right tabular-nums">
         {done} of {session.blocks.length}
       </TableCell>
-      <TableCell className="text-muted-foreground whitespace-normal">
+      <TableCell className="text-muted-foreground min-w-48 whitespace-normal">
         {describeBlocks(session.blocks) || "—"}
       </TableCell>
     </TableRow>
