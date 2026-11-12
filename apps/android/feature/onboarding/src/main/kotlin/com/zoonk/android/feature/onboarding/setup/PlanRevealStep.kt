@@ -40,6 +40,7 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.READING_RUN
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -48,6 +49,8 @@ import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.studyDaysWords
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
@@ -92,7 +95,7 @@ import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-/** Reading the plan starts no work; only Start and Adjust leave. */
+/** Reading the plan starts no work; opening a step is a learner tap. */
 @Composable
 internal fun ColumnScope.PlanRevealStep(
     goal: Goal,
@@ -108,6 +111,10 @@ internal fun ColumnScope.PlanRevealStep(
     saveFailed: Boolean = false,
     playMoment: () -> Boolean = { false },
     planRevealed: Boolean = false,
+    onOpenStep: ((DayView, DayStep, Boolean) -> Unit)? = null,
+    openingStep: Long? = null,
+    failedStep: Long? = null,
+    startStepFailed: Boolean = false,
     today: com.zoonk.android.data.Resource<com.zoonk.api.models.PlanRevealToday>? = null,
 ) {
     val resource = plans.plan[goal.id]
@@ -131,16 +138,12 @@ internal fun ColumnScope.PlanRevealStep(
                 starting = true
             }
         try {
-            prepareToday()
+            openRevealedPlan(navigator, here, prepareToday)
         } finally {
             progress.cancel()
             starting = false
         }
         opening = false
-        if (navigator.currentRoute == here) {
-            navigator.closeSection()
-            navigator.open(AppRoute.Today)
-        }
     }
 
     when {
@@ -174,16 +177,40 @@ internal fun ColumnScope.PlanRevealStep(
                 val syllabus by plans.syllabus[goal.id].collectShown()
                 val todayState = today?.collectShown()?.value
                 val preview = todayState?.value
+                val day = preview?.today?.toDayView()
                 RevealBody(
                     plan = plan,
                     reveal = preview,
+                    studyDay = day,
+                    onOpenStep =
+                        onOpenStep?.takeUnless { opening || (saving && openingStep == null) }?.let { open ->
+                            { rowDay, rowStep ->
+                                open(rowDay, rowStep, false)
+                            }
+                        },
+                    openingStep = openingStep,
+                    failedStep = failedStep,
                     goal = goal,
                     syllabus = syllabus.value,
                     isGuest = isGuest,
-                    starting = starting || saving,
-                    saveFailed = saveFailed,
+                    starting =
+                        starting || (saving && openingStep == null) ||
+                            todayState == LoadState.Idle || todayState == LoadState.Loading,
+                    startError =
+                        when {
+                            saveFailed -> R.string.onboarding_save_failed
+                            startStepFailed -> R.string.today_step_open_failed
+                            else -> null
+                        },
                     playMoment = !planRevealed && remember { playMoment() },
-                    onStart = { if (onReveal != null) onReveal { opening = true } else opening = true },
+                    onStart = {
+                        val step = day?.steps?.firstOrNull { it.position == day.nextPosition && it.canOpen }
+                        if (day != null && step != null && onOpenStep != null) {
+                            onOpenStep(day, step, true)
+                        } else {
+                            if (onReveal != null) onReveal { opening = true } else opening = true
+                        }
+                    },
                     // Adjust opens the Plan tab until the plan editor (F16) can open here.
                     onAdjust = {
                         navigator.closeSection()
@@ -203,6 +230,20 @@ internal fun ColumnScope.PlanRevealStep(
 
 /** Where the learner goes once the plan is ready: the time question, or the plan itself. */
 internal enum class PlanNext { TimeQuestion, Plan }
+
+internal suspend fun openRevealedPlan(
+    navigator: AppNavigator,
+    here: AppRoute,
+    prepareToday: suspend () -> Unit,
+    destination: AppRoute? = null,
+) {
+    prepareToday()
+    if (navigator.currentRoute == here) {
+        navigator.closeSection()
+        navigator.open(AppRoute.Today)
+        destination?.let(navigator::open)
+    }
+}
 
 @Composable
 internal fun ColumnScope.PlanBuilding(
@@ -331,12 +372,16 @@ internal fun ColumnScope.NoticeReading(
 private fun ColumnScope.RevealBody(
     plan: Plan,
     reveal: com.zoonk.api.models.PlanRevealToday?,
+    studyDay: DayView?,
     goal: Goal,
     syllabus: Syllabus?,
     isGuest: Boolean,
     starting: Boolean,
-    saveFailed: Boolean,
+    startError: Int?,
     playMoment: Boolean,
+    onOpenStep: ((DayView, DayStep) -> Unit)? = null,
+    openingStep: Long? = null,
+    failedStep: Long? = null,
     onStart: () -> Unit,
     onAdjust: () -> Unit,
     onChangeChoice: () -> Unit,
@@ -344,7 +389,6 @@ private fun ColumnScope.RevealBody(
     onSeePlus: () -> Unit,
 ) {
     SetupContent {
-        val studyDay = reveal?.today?.toDayView()
         val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
         val coverage = revealCoverage(plan, goal.kind, syllabus)
 
@@ -352,14 +396,14 @@ private fun ColumnScope.RevealBody(
         PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
         PaceLine(plan, goal.kind)
         NoticeDayLine(plan)
-        studyDay?.let { RevealToday(it, reveal.minutes, playMoment) }
+        studyDay?.let { RevealToday(it, requireNotNull(reveal).minutes, playMoment, onOpenStep, openingStep, failedStep) }
         reveal?.let { RevealWeek(it) }
 
         val started = studyDay?.steps?.any { it.isFinished } == true
         PageActions {
-            if (saveFailed) {
+            if (startError != null) {
                 Text(
-                    stringResource(R.string.onboarding_save_failed),
+                    stringResource(startError),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.semantics { liveRegion = androidx.compose.ui.semantics.LiveRegionMode.Polite },
                 )
@@ -369,6 +413,7 @@ private fun ColumnScope.RevealBody(
                     Text(stringResource(R.string.onboarding_reveal_adjust))
                 }
                 Button(
+                    enabled = openingStep == null,
                     busy = starting,
                     onClick = onStart,
                     modifier = Modifier.weight(2f),

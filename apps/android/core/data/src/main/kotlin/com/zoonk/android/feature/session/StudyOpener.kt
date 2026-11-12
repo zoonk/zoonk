@@ -136,6 +136,15 @@ class StudyOpener(
         }
     }
 
+    suspend fun openRow(
+        day: DayView,
+        step: DayStep,
+        goalId: UUID,
+        next: Boolean = false,
+    ): MutationResult<AppRoute?> =
+        day.introTo(step, goalId)?.let { MutationResult.Done(it) }
+            ?: open(day, step, next, goalId)
+
     /** A block a mission card or a buddy answer links, which opens only while it's still free to start. */
     suspend fun openMission(blockId: UUID): MutationResult<AppRoute?> =
         cache.mutate(invalidating = OPENING) { session ->

@@ -21386,7 +21386,7 @@
     },
     "/goals/{goalId}/plan-reveal/views": {
       "post": {
-        "description": "Records that the learner pressed the plan reveal's action (Start, or Continue after their first lesson), which ends the goal's onboarding: its `planRevealed` turns true, `GET /me/onboarding-resume` stops bringing it back and Today stops answering `preparing`. Send it before opening Today. Pressing it again keeps the first time.",
+        "description": "Records that the learner pressed the plan reveal's action (Start, or Continue after their first lesson), which ends the goal's onboarding: its `planRevealed` turns true, `GET /me/onboarding-resume` stops bringing it back and Today stops answering `preparing`. It also makes the goal the learner's active goal, so Today and a step opened from the reveal are this goal's. Send it before opening Today or a step. Pressing it again keeps the first time.",
         "operationId": "markPlanRevealed",
         "security": [
           {
