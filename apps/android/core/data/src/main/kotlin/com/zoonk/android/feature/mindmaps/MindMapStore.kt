@@ -179,6 +179,7 @@ class MindMapStore(
         cache.keyed(Audience.SignedIn, DOMAINS) { session, goalId ->
             session?.let {
                 read(goalId, wholeList = true, { maps -> maps.chapters.map { it.chapterId } }) { api.list(it, goalId) }
+                    .also { listed(goalId, it) }
             }
         }
 
@@ -238,7 +239,7 @@ class MindMapStore(
     suspend fun createAll(goalId: UUID): Boolean? =
         when (cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
             is MutationResult.Done -> {
-                chapter.invalidate { it.goalId == goalId }
+                chapter.invalidate { key, _ -> key.goalId == goalId }
                 list[goalId].reread()
             }
 
@@ -250,6 +251,25 @@ class MindMapStore(
                 null
             }
         }
+
+    /**
+     * A chapter's lesson maps read before the list showed more of them (a map's run wrote the rest)
+     * read again when they next show, since the study deck takes its lessons from the list.
+     */
+    private fun listed(
+        goalId: UUID,
+        maps: GoalMindMaps,
+    ) {
+        val listed = maps.lessonGroups.associate { it.chapterId to it.lessonIds }
+        lessonMaps.invalidate { key, read ->
+            read != null &&
+                key.goalId == goalId &&
+                !read.lessons
+                    .filter { !it.locked }
+                    .map { it.lessonId }
+                    .containsAll(listed[key.chapterId].orEmpty())
+        }
+    }
 
     /** The number of the last read started: what a screen notes now gives way to any read started later. */
     fun readMark(): Long = readsStarted.get()
