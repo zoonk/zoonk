@@ -12,6 +12,7 @@ import { useRouter } from "@/i18n/navigation";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
+import { readGoalRebuild } from "@/lib/goals/read-goal-rebuild";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
@@ -30,9 +31,10 @@ import {
   type StudyNext,
 } from "@zoonk/learn/journey";
 import { JourneyBuilding, JourneySetup } from "@zoonk/learn/journey/planless";
+import { usePoll } from "@zoonk/learn/poll";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 function useGoalStatus({
   goalId,
@@ -73,30 +75,34 @@ export function JourneySetupClient({ goalId, goalStatus, goalTitle }: PlanlessGo
   );
 }
 
-/** "Try again" starts the run only on the learner's tap. */
-/** A new country's plan is prepared in the background: the Plan reads itself again once it's done. */
+const REBUILD_POLL_MS = 10_000;
+
+/**
+ * A new country's plan is prepared in the background. The goal's run ID can still be the previous
+ * run's until the rebuild starts, so the Plan follows the rebuild itself and reads itself again once
+ * it's saved or failed.
+ */
 function PlanRebuildFollower({ goalId }: { goalId: string }) {
   const router = useRouter();
 
-  const run = useWorkflowRun({
-    generationId: null,
-    kind: "curriculum",
-    onReady: () => router.refresh(),
-    readGenerationId: () => readGoalGenerationId(goalId),
-    restart: () => retryGenerationAction(goalId),
+  usePoll({
+    active: true,
+    intervalMs: REBUILD_POLL_MS,
+    onPoll: async (signal) => {
+      const rebuild = await readGoalRebuild(goalId);
+
+      if (rebuild && rebuild !== "preparing" && !signal.aborted) {
+        router.refresh();
+      }
+    },
+    startNow: false,
+    timeoutMs: Number.POSITIVE_INFINITY,
   });
-
-  const failed = run.status === "failed";
-
-  useEffect(() => {
-    if (failed) {
-      router.refresh();
-    }
-  }, [failed, router]);
 
   return null;
 }
 
+/** "Try again" starts the run only on the learner's tap. */
 export function JourneyBuildingClient({ goalId, goalStatus, goalTitle }: PlanlessGoal) {
   const router = useRouter();
   const status = useGoalStatus({ goalId, resume: false, status: goalStatus });

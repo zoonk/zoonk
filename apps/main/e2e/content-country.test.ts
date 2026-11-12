@@ -126,6 +126,18 @@ test.describe("Content country", () => {
 
       await expect(page.getByText("Preparing your new plan")).toBeVisible();
       await expect(page.locator('[data-slot="journey"]')).toBeVisible();
+
+      // E2E has no models, so the test saves the new graph's mark as the rebuild would; the Plan
+      // stays open and follows the rebuild itself, not the goal's last run.
+      await prisma.followUp.update({
+        data: { input: { goalId: goal.id, graphSaved: true } },
+        where: {
+          userKindKey: { key: goal.id, kind: "rebuildGoalCurriculum", userId: goal.userId },
+        },
+      });
+
+      await expect(page.getByText("Your new plan is ready.")).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByText("Preparing your new plan")).toBeHidden();
     });
   });
 });
