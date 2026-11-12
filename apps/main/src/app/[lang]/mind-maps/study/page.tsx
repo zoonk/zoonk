@@ -96,13 +96,10 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
   );
 }
 
+/** No Previous: Study opens a deck on its first map, which has none. */
 function StudySkeleton() {
   return (
-    <TaskSkeleton
-      actions={<Skeleton className="size-11 shrink-0 rounded-lg" />}
-      menu
-      title={<Skeleton className="h-4 w-40" />}
-    >
+    <TaskSkeleton menu title={<Skeleton className="h-4 w-40" />}>
       <Skeleton className="aspect-square w-full rounded-xl" />
       <Skeleton className="h-5 w-2/3" />
       <Skeleton className="h-4 w-full" />
