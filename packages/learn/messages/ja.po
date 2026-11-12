@@ -13144,14 +13144,9 @@ msgid "Past or present, finished or not. It can be different from your work."
 msgstr "過去に学んだことも、今学んでいることも選べます。学び終えていなくても、仕事と違う分野でも大丈夫です。"
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "htoNlH"
-msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-msgstr "任意です。次の画面で、役立つことの多い工夫を提案します。保存を選ばない限り、ここでの回答は保存されません。"
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "iAG-dQ"
-msgid "Optional. Nothing here is saved unless you choose to."
-msgstr "任意です。保存を選ばない限り、ここでの回答は保存されません。"
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "回答は任意です。選んだ内容はプロフィールに保存され、相棒が一人ひとりに合ったサポートをするために使われます。設定からいつでも削除できます。"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "310Na4"
@@ -13167,16 +13162,6 @@ msgstr "相棒の言葉やフィードバックに、この表現を使います
 msgctxt "vHNPYm"
 msgid "Pick up to 3. We'll use them for examples in your lessons."
 msgstr "3つまで選んでください。選んだものをレッスンの例に取り入れます。"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "4gqzob"
-msgid "Save this to my profile"
-msgstr "プロフィールに保存する"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "rMR6gV"
-msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
-msgstr "Zoonkはこの情報を使って、学びやすくなるよう継続的に調整します。この情報を共有したり、レッスンの例に使ったりすることはありません。設定からいつでも削除できます。"
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

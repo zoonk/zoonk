@@ -108,7 +108,6 @@ export function CountryStep({
       onContinue={() => picked && onAnswer({ country: picked.code, question: "contentCountry" })}
       onSkip={() => onAnswer({ country: null, question: "contentCountry" })}
       pending={pending}
-      pinFooter
       subject={subject}
       title={t("Which country should your lessons be about?")}
     >

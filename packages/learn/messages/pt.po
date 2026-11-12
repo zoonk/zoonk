@@ -13144,14 +13144,9 @@ msgid "Past or present, finished or not. It can be different from your work."
 msgstr "Vale o que você estuda ou já estudou, mesmo sem concluir. Não precisa ter a ver com seu trabalho."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "htoNlH"
-msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-msgstr "Opcional. Na próxima tela, a gente vai sugerir o que costuma ajudar. A gente só salva essas informações se você quiser."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "iAG-dQ"
-msgid "Optional. Nothing here is saved unless you choose to."
-msgstr "Opcional. A gente só salva essas informações se você quiser."
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "Opcional. Suas escolhas ficam salvas no seu perfil para seu parceiro se adaptar a você. Você pode remover essas informações quando quiser nas Configurações."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "310Na4"
@@ -13167,16 +13162,6 @@ msgstr "Seu parceiro e o feedback vão falar com você assim. As aulas continuam
 msgctxt "vHNPYm"
 msgid "Pick up to 3. We'll use them for examples in your lessons."
 msgstr "Escolha até 3. A gente vai usar isso nos exemplos das suas aulas."
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "4gqzob"
-msgid "Save this to my profile"
-msgstr "Salvar isso no meu perfil"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "rMR6gV"
-msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
-msgstr "O Zoonk usa essas informações para se adaptar a você, agora e com o tempo. Elas nunca são compartilhadas nem usadas nos exemplos das aulas. Remova quando quiser em Configurações."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
