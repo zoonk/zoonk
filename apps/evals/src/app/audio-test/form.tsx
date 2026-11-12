@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@zoonk/ui/components/select";
 import { TTS_VOICES } from "@zoonk/utils/languages";
-import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { generateAudioAction } from "./actions";
 import { AUDIO_MODEL_OPTIONS, DEFAULT_AUDIO_MODEL_VALUE } from "./models";
@@ -52,7 +51,7 @@ export function AudioTestForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="language">Language (ISO 639-1 code)</Label>
+          <Label htmlFor="language">Language code</Label>
           <Input
             disabled={isPending}
             id="language"
@@ -95,30 +94,27 @@ export function AudioTestForm() {
           </Select>
         </div>
 
-        <Button className="self-start" disabled={isPending} type="submit">
-          {isPending && <Loader2 className="animate-spin" />}
-          Generate Audio
+        <Button busy={isPending} className="self-start" type="submit">
+          Generate audio
         </Button>
       </form>
 
       {result?.error && (
-        <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4 text-red-500">
-          <p className="font-medium">Error</p>
-          <p className="text-sm">{result.error}</p>
-        </div>
+        <p className="text-destructive-text text-sm" role="alert">
+          {result.error}
+        </p>
       )}
 
       {result?.audioUrl && (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <p className="font-medium">Generated Audio</p>
             {/* oxlint-disable-next-line jsx-a11y/media-has-caption -- internal testing tool */}
             <audio controls src={result.audioUrl}>
               Your browser does not support the audio element.
             </audio>
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="audioUrl">Audio URL</Label>
+            <Label htmlFor="audioUrl">Audio file</Label>
             <Input className="font-mono text-sm" id="audioUrl" readOnly value={result.audioUrl} />
           </div>
         </div>

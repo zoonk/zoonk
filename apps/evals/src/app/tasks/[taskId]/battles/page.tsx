@@ -9,7 +9,6 @@ import { getBattleMatchups } from "@/lib/battle-loader";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
-  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   ContainerTitle,
@@ -30,7 +29,7 @@ async function BattleResults({ params }: BattlesRouteProps) {
   const { taskId } = await getTaskRouteFromParams(params);
   const matchups = await getBattleMatchups(taskId);
 
-  return <BattleMatchupList matchups={matchups} />;
+  return <BattleMatchupList matchups={matchups} taskId={taskId} />;
 }
 
 export default function BattlesPage({ params }: BattlesRouteProps) {
@@ -48,10 +47,7 @@ export default function BattlesPage({ params }: BattlesRouteProps) {
 
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>Battle Results</ContainerTitle>
-          <ContainerDescription>
-            View judge comments and reasoning for each test case
-          </ContainerDescription>
+          <ContainerTitle>Judge comments</ContainerTitle>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

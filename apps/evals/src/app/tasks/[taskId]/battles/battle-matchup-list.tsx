@@ -10,6 +10,7 @@ import {
 } from "@zoonk/ui/components/accordion";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import Link from "next/link";
 import { RankingItem } from "./ranking-item";
 
 type TestCaseEntry = {
@@ -36,7 +37,6 @@ function buildJudgeViews(
   models: {
     modelId: string;
     modelName: string;
-    totalScore: number;
     averageScore: number;
     testCases: TestCaseEntry[];
   }[];
@@ -87,31 +87,26 @@ function buildJudgeViews(
           modelId,
           modelName: model ? getModelDisplayName(model) : modelId,
           testCases,
-          totalScore,
         };
       })
-      .toSorted((a, b) => b.totalScore - a.totalScore),
+      .toSorted((a, b) => b.averageScore - a.averageScore),
   }));
 }
 
 function ModelItem({
   model,
 }: {
-  model: {
-    modelId: string;
-    modelName: string;
-    totalScore: number;
-    averageScore: number;
-    testCases: TestCaseEntry[];
-  };
+  model: { modelId: string; modelName: string; averageScore: number; testCases: TestCaseEntry[] };
 }) {
   return (
     <AccordionItem value={model.modelId}>
       <AccordionTrigger className="hover:no-underline">
         <div className="flex items-center gap-3">
           <span className="font-medium">{model.modelName}</span>
-          <Badge variant="secondary">{model.totalScore.toFixed(1)} pts</Badge>
-          <Badge variant="outline">avg: {model.averageScore.toFixed(1)}</Badge>
+          <Badge>{model.averageScore.toFixed(1)}</Badge>
+          <span className="text-muted-foreground text-xs font-normal">
+            {model.testCases.length} {model.testCases.length === 1 ? "case" : "cases"}
+          </span>
         </div>
       </AccordionTrigger>
 
@@ -131,11 +126,21 @@ function ModelItem({
   );
 }
 
-export function BattleMatchupList({ matchups }: { matchups: BattleMatchup[] }) {
+export function BattleMatchupList({
+  matchups,
+  taskId,
+}: {
+  matchups: BattleMatchup[];
+  taskId: string;
+}) {
   if (matchups.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center">
-        No battle results yet. Run Battle Mode first.
+      <p className="text-muted-foreground py-8 text-center text-sm">
+        No battles yet.{" "}
+        <Link className="text-foreground underline underline-offset-4" href={`/tasks/${taskId}`}>
+          Run a battle from the task
+        </Link>
+        .
       </p>
     );
   }
@@ -146,7 +151,7 @@ export function BattleMatchupList({ matchups }: { matchups: BattleMatchup[] }) {
     <div className="flex flex-col gap-10">
       {judgeViews.map((judge) => (
         <section key={judge.judgeId}>
-          <h3 className="mb-4 text-lg font-semibold">{judge.judgeName}</h3>
+          <h2 className="mb-4 text-lg font-semibold">Judged by {judge.judgeName}</h2>
 
           <Accordion>
             {judge.models.map((model) => (

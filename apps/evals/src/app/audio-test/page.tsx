@@ -1,9 +1,11 @@
 import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/components/breadcrumb";
-import { BreadcrumbItem, BreadcrumbPage } from "@zoonk/ui/components/breadcrumb";
 import {
-  Container,
+  BreadcrumbItem,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@zoonk/ui/components/breadcrumb";
+import {
   ContainerBody,
-  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   ContainerTitle,
@@ -12,26 +14,24 @@ import { AudioTestForm } from "./form";
 
 export default function AudioTestPage() {
   return (
-    <Container>
+    <main className="flex flex-col gap-4">
       <AppBreadcrumb>
         <HomeLinkBreadcrumb />
+        <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Audio Test</BreadcrumbPage>
+          <BreadcrumbPage>Audio test</BreadcrumbPage>
         </BreadcrumbItem>
       </AppBreadcrumb>
 
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>Audio Generator</ContainerTitle>
-          <ContainerDescription>
-            Test AI-generated audio for words and sentences
-          </ContainerDescription>
+          <ContainerTitle>Audio test</ContainerTitle>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
         <AudioTestForm />
       </ContainerBody>
-    </Container>
+    </main>
   );
 }

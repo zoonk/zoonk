@@ -68,7 +68,7 @@ function ModelPageBreadcrumb({ modelName }: { modelName: string }) {
 function BattlesPageBreadcrumb() {
   return (
     <BreadcrumbItem>
-      <BreadcrumbPage>Battles</BreadcrumbPage>
+      <BreadcrumbPage>Judge comments</BreadcrumbPage>
     </BreadcrumbItem>
   );
 }
