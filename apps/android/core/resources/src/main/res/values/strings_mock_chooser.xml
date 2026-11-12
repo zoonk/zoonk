@@ -27,12 +27,6 @@
         <item quantity="one">%1$d question, about %2$s</item>
         <item quantity="other">%1$d questions, about %2$s</item>
     </plurals>
-    <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d q</string>
-    <plurals name="mock_chooser_placement_size_spoken">
-        <item quantity="one">%d question</item>
-        <item quantity="other">%d questions</item>
-    </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
         <item quantity="one">%1$d of the %2$s questions is ready now, so this mock takes about %3$s.</item>
@@ -55,28 +49,12 @@
     <string name="mock_chooser_usually_takes">Usually takes</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">About %1$s</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="mock_chooser_about_recommended">About %1$s (recommended)</string>
     <string name="mock_chooser_subjects">Subjects</string>
     <!-- The exam's sections a mock sits, such as Listening and Reading. -->
     <string name="mock_chooser_parts">Parts</string>
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">Written part</string>
     <string name="mock_chooser_last_mock">Your last mock exam</string>
-    <string name="mock_chooser_placement_title">A mock exam to find your level</string>
-    <string name="mock_chooser_placement_detail">In the exam\'s format. Your plan starts from your answers.</string>
-    <string name="mock_chooser_placement_start">Start the mock exam</string>
-    <string name="mock_chooser_placement_note">Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.</string>
-    <string name="mock_chooser_placement_plus">Mock exams come with Plus. Without it, the quick questions find your starting point.</string>
-    <string name="mock_chooser_placement_top_subject">The subject worth most. Your first days ask about the rest.</string>
-    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
-    <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">The %d subject worth most. Your first days ask about the rest.</item>
-        <item quantity="other">The %d subjects worth most. Your first days ask about the rest.</item>
-    </plurals>
-    <string name="mock_chooser_placement_short">A quick check. Your first days fine-tune it.</string>
-    <string name="mock_chooser_placement_medium">Every subject. A good starting point.</string>
-    <string name="mock_chooser_placement_long">The most precise starting point.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">Questions per subject in the %1$s, as counted by %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

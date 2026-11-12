@@ -33,7 +33,13 @@ protocol PlanAPIClient: Sendable {
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome
   /// Nil when the plan can't take the change.
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
-  func undo(token: String, goalId: String, changeId: String) async throws -> Bool
+  /// False when the change is out of date: answered elsewhere, or the plan moved on.
+  /// The change as it stands after the answer; nil when it can't take that answer anymore.
+  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
+    async throws -> TodayView.PlanChange?
+  /// The learner's switches on an exam goal's Focus test.
+  func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
+    -> FocusTestSummary
   /// Replaces the choice's whole pick.
   func chooseExamOption(token: String, goalId: String, group: String, subjects: [String])
     async throws -> PlanChangeOutcome
@@ -248,17 +254,34 @@ struct PlanAPI: PlanAPIClient {
   }
 
   /// Undoes the plan's latest change while the plan is still as it left it.
-  func undo(token: String, goalId: String, changeId: String) async throws -> Bool {
+  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
+    async throws -> TodayView.PlanChange?
+  {
     let body: Components.Schemas.PlanChangeDecisionInput = try PracticeJSON.recode(
-      PlanDecision(status: "undone", timeZone: timeZone))
+      PlanDecision(status: decision.rawValue, timeZone: timeZone))
 
     return try await clients.perform(token: token) { client in
       switch try await client.decidePlanChange(
         path: .init(goalId: goalId, changeId: changeId), body: .json(body))
       {
-      case .ok: return true
-      case .conflict, .unprocessableContent: return false
+      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
+      case .conflict, .unprocessableContent: return nil
       case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
+      }
+    }
+  }
+
+  func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
+    -> FocusTestSummary
+  {
+    let body: Components.Schemas.FocusTestControlsInput = try PracticeJSON.recode(controls)
+
+    return try await clients.perform(token: token) { client in
+      switch try await client.updateGoalFocusTest(path: .init(goalId: goalId), body: .json(body)) {
+      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }

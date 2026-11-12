@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listSectionParts } from "./exam-parts";
 import {
-  ONE_PICK_MIX,
   getAreaFormat,
   getFormatMixSource,
   getFormatQuotas,
@@ -150,7 +149,15 @@ describe(getMockFormatMix, () => {
       },
     ]);
 
-    expect(getMockFormatMix(null)).toStrictEqual(ONE_PICK_MIX);
+    expect(getMockFormatMix(null)).toStrictEqual([
+      {
+        key: "choice",
+        sections: [],
+        share: 1,
+        style: null,
+        writer: { choice: null, kind: "quick" },
+      },
+    ]);
   });
 
   it("asks the GRE's Verbal formats in Verbal sections and its Quant formats in Quant ones", () => {

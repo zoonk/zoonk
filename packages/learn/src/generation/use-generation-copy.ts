@@ -206,22 +206,6 @@ function useTestOutQuestionsCopy(): KindCopy<"testOutQuestions"> {
   };
 }
 
-function useFocusTestQuestionsCopy(): KindCopy<"focusTestQuestions"> {
-  const t = useExtracted();
-  const questionLines = useQuestionLines();
-
-  return {
-    name: t("Writing your questions"),
-    phases: {
-      questions: {
-        label: t("Writing questions on each subject"),
-        lines: [t("Picking what to ask in each subject…")],
-        numbered: questionLines({ count: 8 }),
-      },
-    },
-  };
-}
-
 function useChallengeQuestionsCopy(): KindCopy<"challengeQuestions"> {
   const t = useExtracted();
   const questionLines = useQuestionLines();
@@ -286,7 +270,6 @@ export function useGenerationCopy(kind: GenerationKind): {
     examSpeaking: useExamSpeakingCopy(),
     explanation: useExplanationCopy(),
     firstLesson: useFirstLessonCopy(),
-    focusTestQuestions: useFocusTestQuestionsCopy(),
     lesson: useLessonCopy(),
     levelTestBank: useLevelTestBankCopy(),
     mockQuestions: useMockQuestionsCopy(),

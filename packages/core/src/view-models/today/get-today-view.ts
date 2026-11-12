@@ -10,6 +10,7 @@ import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-sug
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
 import { readDuePronunciation } from "../../learner/facts/due-pronunciation";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { type TodayFocusTest } from "../../learner/placement/focus-test-contract";
 import { type LessonGenerationState } from "../../library/generation/lesson-generation-state";
 import {
   type GoalUploadRequest,
@@ -36,6 +37,7 @@ import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { readDaySession } from "./_utils/day-session";
 import { listEarlierWork } from "./_utils/earlier-work";
 import { loadAroundSession } from "./_utils/load-around-session";
+import { loadFocusTestSuggestion } from "./_utils/load-focus-test-suggestion";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
 import { hasStudiedOn } from "./_utils/studied-on-day";
 import { type TodayNoticeKind, pickTodayNotice } from "./today-notice";
@@ -78,6 +80,8 @@ export type TodayView = {
   /** Earlier unfinished teaching, in saved order, without a promise that it fits one session. */
   earlierWork?: { id: string | null; title: string }[];
   exam: ExamMomentView | null;
+  /** Suggests an exam goal's Focus test in its first week, while its time doesn't cover everything. */
+  focusTest: TodayFocusTest | null;
   /** Unselected options are not studied until the learner chooses. */
   examChoice: ExamChoiceView | null;
   goal: TodayGoal;
@@ -255,6 +259,7 @@ async function readAdmittedToday({
     noticedPattern,
     sourceChange,
     pronunciationDue,
+    focusTest,
   ] = await Promise.all([
     loadSessionDay({ day, goal: owned.goal, userId }),
     loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
@@ -265,6 +270,7 @@ async function readAdmittedToday({
     loadNoticedPattern({ goal: owned.goal, userId }),
     loadSourceChange(id),
     hasPronunciationDue(owned.goal),
+    loadFocusTestSuggestion({ goal: owned.goal, localDate: day.session.localDate, timeZone }),
   ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
@@ -293,6 +299,7 @@ async function readAdmittedToday({
     today: {
       exam,
       examChoice,
+      focusTest,
       insight: shownInsight,
       planChange: shownChange,
       session: studySession,
@@ -307,6 +314,7 @@ async function readAdmittedToday({
       earlierWork: listEarlierWork({ day, session: studySession }),
       exam,
       examChoice,
+      focusTest,
       goal: {
         dateEstimated: dateKind.estimated,
         daysLeft: getDaysLeft({ localDate: studySession.localDate, targetDate }),

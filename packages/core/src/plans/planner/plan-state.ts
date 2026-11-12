@@ -1,4 +1,5 @@
 import { CourseLevel } from "@zoonk/db/enums";
+import { logError } from "@zoonk/utils/logger";
 import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
@@ -184,27 +185,109 @@ export const planStateSchema = z.object({
 
 export type PlanState = z.infer<typeof planStateSchema>;
 
-function parseOr<T>({
+type Issues = readonly z.core.$ZodIssue[];
+
+const fieldsSchema = z.record(z.string(), z.unknown());
+
+function withoutEntries({ issues, list }: { issues: Issues; list: unknown[] }): unknown[] {
+  const invalid = new Set(issues.map((issue) => issue.path[0]));
+  return list.filter((_, index) => !invalid.has(index));
+}
+
+function withoutInvalidEntries({ issues, value }: { issues: Issues; value: unknown }): unknown {
+  if (Array.isArray(value)) {
+    return withoutEntries({ issues, list: value });
+  }
+
+  const fields = fieldsSchema.safeParse(value).data;
+
+  if (!fields) {
+    return value;
+  }
+
+  return Object.fromEntries(
+    Object.entries(fields).map(([key, field]) => {
+      const own = issues.flatMap((issue) =>
+        issue.path[0] === key ? [{ ...issue, path: issue.path.slice(1) }] : [],
+      );
+
+      return [
+        key,
+        Array.isArray(field) && own.length > 0
+          ? withoutEntries({ issues: own, list: field })
+          : field,
+      ];
+    }),
+  );
+}
+
+function withoutInvalidFields({ issues, value }: { issues: Issues; value: unknown }): unknown {
+  const invalid = new Set(issues.map((issue) => issue.path[0]));
+  const fields = fieldsSchema.safeParse(value).data ?? {};
+  return Object.fromEntries(Object.entries(fields).filter(([key]) => !invalid.has(key)));
+}
+
+/** A saved value that no longer parses loses only its invalid entries or fields, never the rest. */
+function parseKeepingValid<T>({
   fallback,
+  name,
   schema,
   value,
 }: {
   fallback: T;
+  name: string;
   schema: z.ZodType<T>;
   value: unknown;
-}) {
+}): T {
+  if (value === null || value === undefined) {
+    return fallback;
+  }
+
   const parsed = schema.safeParse(value);
-  return parsed.success ? parsed.data : fallback;
+
+  if (parsed.success) {
+    return parsed.data;
+  }
+
+  logError(`Saved plan ${name} has invalid values; only the valid ones are read.`, parsed.error);
+
+  const pruned = withoutInvalidEntries({ issues: parsed.error.issues, value });
+  const retried = schema.safeParse(pruned);
+
+  if (retried.success) {
+    return retried.data;
+  }
+
+  const kept = schema.safeParse(
+    withoutInvalidFields({ issues: retried.error.issues, value: pruned }),
+  );
+
+  return kept.success ? kept.data : fallback;
 }
 
 export function parsePlanGraph(value: unknown): PlanGraph {
-  return parseOr({ fallback: { phases: [], skills: [] }, schema: planGraphSchema, value });
+  return parseKeepingValid({
+    fallback: { phases: [], skills: [] },
+    name: "graph",
+    schema: planGraphSchema,
+    value,
+  });
 }
 
 export function parsePlanSettings(value: unknown): PlanSettings {
-  return parseOr({ fallback: planSettingsSchema.parse({}), schema: planSettingsSchema, value });
+  return parseKeepingValid({
+    fallback: planSettingsSchema.parse({}),
+    name: "settings",
+    schema: planSettingsSchema,
+    value,
+  });
 }
 
 export function parsePlanPhases(value: unknown): PlanPhase[] {
-  return parseOr({ fallback: [], schema: z.array(planPhaseSchema), value });
+  return parseKeepingValid({
+    fallback: [],
+    name: "phases",
+    schema: z.array(planPhaseSchema),
+    value,
+  });
 }

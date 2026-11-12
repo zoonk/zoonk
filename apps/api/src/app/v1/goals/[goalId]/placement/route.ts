@@ -1,16 +1,17 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
-import { learnerAccessError } from "@/lib/learner-errors";
+import { learnerAccessError, noFocusTestError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { readPathParams, readQueryParams } from "@/lib/request-input";
+import { readBody, readPathParams, readQueryParams } from "@/lib/request-input";
 import { placementQuerySchema } from "@zoonk/core/learner/placement/contract";
+import { updateFocusTest } from "@zoonk/core/learner/placement/controls";
+import { focusTestControlsInputSchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-async function getPlacement(
-  request: Request,
-  context: RouteContext<"/v1/goals/[goalId]/placement">,
-) {
+type PlacementContext = RouteContext<"/v1/goals/[goalId]/placement">;
+
+async function getPlacement(request: Request, context: PlacementContext) {
   const query = readQueryParams(request, placementQuerySchema);
   const path = await readPathParams(context, goalPathParamsSchema);
 
@@ -23,4 +24,24 @@ async function getPlacement(
   return NextResponse.json(withApiImageUrls(result.placement));
 }
 
+async function updateControls(request: NextRequest, context: PlacementContext) {
+  const [body, path] = await Promise.all([
+    readBody(request, focusTestControlsInputSchema),
+    readPathParams(context, goalPathParamsSchema),
+  ]);
+
+  const result = await updateFocusTest({ goalId: path.goalId, input: body });
+
+  if (result.status === "unavailable") {
+    return noFocusTestError();
+  }
+
+  if (result.status !== "ready") {
+    return learnerAccessError(result.status);
+  }
+
+  return NextResponse.json(result.focusTest);
+}
+
 export const GET = withApiErrorBoundary(getPlacement);
+export const PATCH = withApiErrorBoundary(updateControls);

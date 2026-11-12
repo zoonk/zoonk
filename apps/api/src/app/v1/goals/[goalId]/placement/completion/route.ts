@@ -1,5 +1,5 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { learnerAccessError } from "@/lib/learner-errors";
+import { learnerAccessError, noFromScratchError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { placementCompletionInputSchema } from "@zoonk/core/learner/placement/contract";
@@ -16,6 +16,10 @@ async function completePlacement(
   ]);
 
   const result = await finishGoalPlacement({ goalId: path.goalId, input: body });
+
+  if (result.status === "unavailable") {
+    return noFromScratchError();
+  }
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);

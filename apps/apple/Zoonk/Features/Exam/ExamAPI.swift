@@ -104,11 +104,11 @@ struct ExamAPI {
     }
   }
 
-  func startMock(token: String, goalId: String, choice: MockChoice, acceptFewer: Bool)
+  func startMock(token: String, goalId: String, shape: MockShape, acceptFewer: Bool)
     async throws -> MockStartOutcome
   {
     let body: Components.Schemas.AnytimeMockInput = try PracticeJSON.recode(
-      MockStartRequest(choice: choice, acceptFewer: acceptFewer))
+      MockStartRequest(shape: shape, acceptFewer: acceptFewer))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let started: Components.Schemas.AnytimeMock
@@ -141,11 +141,11 @@ struct ExamAPI {
   }
 
   /// Only from a learner's tap: a run may write the questions.
-  func requestMockQuestions(token: String, goalId: String, choice: MockChoice) async throws
+  func requestMockQuestions(token: String, goalId: String, shape: MockShape) async throws
     -> MockQuestionsStart
   {
     let body: Components.Schemas.MockQuestionsInput = try PracticeJSON.recode(
-      MockStartRequest(choice: choice, acceptFewer: nil))
+      MockStartRequest(shape: shape, acceptFewer: nil))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let generation: Components.Schemas.MockQuestionsGeneration
@@ -372,31 +372,18 @@ struct ExamAPI {
   }
 }
 
-enum MockChoice: Hashable, Sendable {
-  case practice(MockShape)
-  case placement(PlacementMockOption.Length)
-}
-
 private struct MockStartRequest: Encodable {
-  let choice: MockChoice
+  let shape: MockShape
   let acceptFewer: Bool?
 
   private enum CodingKeys: String, CodingKey {
-    case acceptFewer, length, purpose, shape
+    case acceptFewer, shape
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encodeIfPresent(acceptFewer, forKey: .acceptFewer)
-
-    switch choice {
-    case .practice(let shape):
-      try container.encode("practice", forKey: .purpose)
-      try container.encode(ShapeBody(shape), forKey: .shape)
-    case .placement(let length):
-      try container.encode("placement", forKey: .purpose)
-      try container.encode(length, forKey: .length)
-    }
+    try container.encode(ShapeBody(shape), forKey: .shape)
   }
 
   /// The API takes every key of a shape, nulls included.

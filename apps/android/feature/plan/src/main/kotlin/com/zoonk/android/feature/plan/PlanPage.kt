@@ -109,6 +109,8 @@ class PlanLinks(
 
     fun speaking() = open(AppRoute.Speaking())
 
+    fun focusTest() = open(AppRoute.FocusTest(page.goal.id.toString()))
+
     /** Null where the page shows no far topic's sheet. */
     fun farTopic(topic: FarTopic): (() -> Unit)? =
         openFarTopic?.let { open ->
@@ -183,6 +185,7 @@ internal fun PlanPage(
             null
         }
     val claim = viewModel(key = "certificate-claim-${page.goal.id}") { CertificateClaimModel(app.certificates, page.goal.id) }
+    val focusTest = page.plan.focusTest
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
         mutableStateOf(
@@ -234,6 +237,7 @@ internal fun PlanPage(
         countryRebuild = countryRebuild,
         standing = standing,
         alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
+        focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =
@@ -312,7 +316,7 @@ internal fun PlanPage(
             onFocusTest = {
                 choosingFocus = false
                 editing = false
-                navigator.open(AppRoute.FocusTest())
+                links.focusTest()
             },
             onDismiss = { choosingFocus = false },
         )
@@ -367,6 +371,7 @@ internal fun PlanContent(
     slot: SlotHost = SlotHost(),
     slotState: SlotState = remember { SlotState() },
     alphabet: (@Composable () -> Unit)? = null,
+    focusTest: (@Composable () -> Unit)? = null,
     countryRebuild: CountryRebuild? = null,
 ) {
     val adjust = onAdjust?.let { { it(null) } }
@@ -426,9 +431,10 @@ internal fun PlanContent(
                     item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
                     if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
                 }
-                if (completedLessonsRow || mindMapsRow) {
+                if (focusTest != null || completedLessonsRow || mindMapsRow) {
                     item(key = "places", contentType = "places") {
                         Column {
+                            focusTest?.invoke()
                             if (completedLessonsRow) {
                                 PlaceRow(
                                     R.drawable.ic_history,

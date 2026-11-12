@@ -22,7 +22,6 @@ final class AppNavigationTests: XCTestCase {
       ),
       ("https://www.zoonk.com/content/chapters/c1", .route(.chapter(chapterId: "c1"))),
       ("https://www.zoonk.com/mock/new", .route(.mockChooser)),
-      ("https://www.zoonk.com/mock/placement/g1", .route(.placementMock(goalId: "g1"))),
       ("https://www.zoonk.com/mock/b1?session=s1", .route(.mock(blockId: "b1", sessionId: "s1"))),
       (
         "https://www.zoonk.com/learn/l1?session=s1",
@@ -100,6 +99,17 @@ final class AppNavigationTests: XCTestCase {
 
     router.open(.essay(blockId: "b1"))
     XCTAssertFalse(router.isHidden(taskAt: 0), "Once shown, it stays shown under later tasks")
+  }
+
+  @MainActor
+  func testOpeningATaskAlreadyOpenGoesBackToItInsteadOfStackingACopy() {
+    let router = AppRouter()
+    router.open(.focusTest(goalId: "g1"))
+    router.open(.essay(blockId: "b1"))
+
+    router.open(.focusTest(goalId: "g1"))
+
+    XCTAssertEqual(router.tasks, [.focusTest(goalId: "g1")])
   }
 
   @MainActor

@@ -459,13 +459,17 @@ class OnboardingStore(
             api.answerPlacement(session, goalId, input)
         }
 
+    /** Starting the test turns its questions on in sessions, which the plan and Today say. */
+    suspend fun startPlacementSitting(goalId: String): WriteOutcome<Placement> =
+        write(setOf(DataDomain.Goals), replacing = { listOf(placements[goalId].replacing(it)) }) { api.startPlacementSitting(it, goalId) }
+
     /** The API starts writing the lessons the plan now opens with, so nothing else prepares them. */
     suspend fun finishPlacement(
         goalId: String,
         fromScratch: Boolean,
-    ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel)) { api.finishPlacement(it, goalId, fromScratch) }
-
-    suspend fun stopPlacementMock(mockId: String) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
+    ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) {
+        api.finishPlacement(it, goalId, fromScratch)
+    }
 
     /** A language goal's level test; each answer replies with its next step. */
     val levelTests =

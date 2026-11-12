@@ -1,4 +1,4 @@
-import { type ItemFormat, type StudySessionBlock } from "@zoonk/db";
+import { type StudySessionBlock } from "@zoonk/db";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { applyPlacement } from "../../learner/placement/_utils/apply-placement";
 import { type LearnerAnswer } from "../../learner/record-learner-answer";
@@ -15,7 +15,6 @@ type StudyAnswerRecord = {
   /** A net-scored statement left blank: no notebook entry, since it isn't a mistake. */
   blank: boolean;
   drilled: ReturnType<typeof applyDrillRules>;
-  format: ItemFormat;
   graded: GradedSessionAnswer;
   input: StudyAnswerInput;
   item: SessionItem;
@@ -33,7 +32,6 @@ export async function recordStudyAnswer({
   blank,
   block,
   drilled,
-  format,
   graded,
   input,
   item,
@@ -73,9 +71,7 @@ export async function recordStudyAnswer({
 
   if (placement && session.goalId) {
     const { changeId } = await applyPlacement({
-      answer: item.skillId
-        ? { format, outcome: drilled.isCorrect ? "correct" : "wrong", skillId: item.skillId }
-        : null,
+      followToday: false,
       goalId: session.goalId,
       now: new Date(),
       timeZone,

@@ -11,7 +11,6 @@ import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
 import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
-import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { LEARN_KINDS } from "../../../plans/planner/plan-item-rules";
 import {
@@ -154,7 +153,6 @@ export async function loadSyllabusInput(
 
   const settings = parsePlanSettings(plan.settings);
   const pastBasicsSkillIds = getPastBasicsSkillIds({ graph, items, prerequisites, settings });
-  const focused = listFocusedSkillIds({ graph, settings });
 
   const skippedBaseIds = new Set(
     settings.baseChoices.flatMap((entry) => (entry.choice === "skip" ? [entry.skillId] : [])),
@@ -172,11 +170,7 @@ export async function loadSyllabusInput(
       targetDate: goal.targetDate,
     }),
     items,
-    knownSkillIds: listKnownSkills({
-      events: claimEvents,
-      focused: (skillId) => focused.has(skillId),
-      passedOver,
-    }),
+    knownSkillIds: listKnownSkills({ events: claimEvents, passedOver }),
     notice,
     pastBasicsSkillIds,
     skills: toSkills(graph),

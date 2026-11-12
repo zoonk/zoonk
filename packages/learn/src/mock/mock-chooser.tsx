@@ -1,14 +1,10 @@
 "use client";
 
-import {
-  type MockOptionView,
-  type MockOptionsView,
-  type PlacementMockLength,
-} from "@zoonk/core/exams/mocks/contract";
+import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
-import { DetailAsideSection, DetailContent } from "../_components/detail-page";
+import { DetailContent } from "../_components/detail-page";
 import { PageSectionLabel } from "../_components/page";
 import {
   ChooserHeader,
@@ -19,19 +15,10 @@ import {
   MockWriting,
 } from "./mock-chooser-page";
 import { type MockChooserStatus, MockPlusNotice } from "./mock-chooser-parts";
-import { ChooserPicked, type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
-import {
-  useMockOptionDetail,
-  useMockOptionName,
-  useMockOptionSize,
-  usePlacementLengthChoices,
-} from "./mock-option-labels";
+import { type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
+import { useMockOptionDetail, useMockOptionName, useMockOptionSize } from "./mock-option-labels";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
-
-export type MockStart =
-  | { option: MockOptionView; purpose: "practice" }
-  | { length: PlacementMockLength; purpose: "placement" };
 
 export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
@@ -109,7 +96,7 @@ function PracticeChooser({
   bar: ReactNode;
   busy: boolean;
   hrefs: MockChooserHrefs;
-  onStart: (start: MockStart) => void;
+  onStart: (option: MockOptionView) => void;
   status: MockChooserStatus;
   view: MockOptionsView;
 }) {
@@ -137,7 +124,7 @@ function PracticeChooser({
             <ChooserStartButton
               busy={busy}
               disabled={!option}
-              onClick={() => option && onStart({ option, purpose: "practice" })}
+              onClick={() => option && onStart(option)}
             >
               {short
                 ? t("Start with {count, plural, one {# question} other {# questions}}", {
@@ -168,115 +155,23 @@ function PracticeChooser({
   );
 }
 
-function PlacementChooser({
-  bar,
-  busy,
-  hrefs,
-  onStart,
-  placement,
-  status,
-  view,
-}: {
-  bar: ReactNode;
-  busy: boolean;
-  hrefs: MockChooserHrefs;
-  onStart: (start: MockStart) => void;
-  placement: NonNullable<MockOptionsView["placement"]>;
-  status: MockChooserStatus;
-  view: MockOptionsView;
-}) {
-  const t = useExtracted();
-  const choices = usePlacementLengthChoices(placement);
-  const [length, setLength] = useState<PlacementMockLength>(placement.recommended);
-  const picked = placement.options.find((option) => option.length === length) ?? null;
-  const pickedChoice = choices.find((choice) => choice.value === length);
-  const open = view.access === "open";
-
-  return (
-    <ChooserLayout
-      aside={
-        picked && (
-          <DetailAsideSection
-            title={pickedChoice?.label ?? t("The picked mock exam")}
-            titleId="mock-chooser-picked-title"
-          >
-            <ChooserPicked asks={{ names: picked.areas, title: t("Subjects") }} size={picked} />
-          </DetailAsideSection>
-        )
-      }
-      asideClassName="hidden min-[72rem]:flex"
-      bar={bar}
-    >
-      <ChooserHeader
-        action={
-          open ? (
-            <ChooserStartButton
-              busy={busy}
-              onClick={() => onStart({ length, purpose: "placement" })}
-            >
-              {t("Start the mock exam")}
-            </ChooserStartButton>
-          ) : (
-            <ChooserPlusLink href={hrefs.plus} />
-          )
-        }
-        detail={t("In the exam's format. Your plan starts from your answers.")}
-        eyebrow={view.examName}
-        status={status}
-        title={t("A mock exam to find your level")}
-      />
-
-      <DetailContent>
-        <ChooserRefusal busy={busy} status={status} />
-        <ChoiceRows choices={choices} label={t("How long")} onChange={setLength} value={length} />
-
-        {open ? (
-          <p className="text-muted-foreground text-[0.8125rem] leading-5">
-            {t(
-              "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.",
-            )}
-          </p>
-        ) : (
-          <MockPlusNotice placement />
-        )}
-      </DetailContent>
-    </ChooserLayout>
-  );
-}
-
 export function MockChooserScreen({
   bar,
   busy,
   hrefs,
   onStart,
-  placement = false,
   status,
   view,
 }: {
   bar: ReactNode;
   busy: boolean;
   hrefs: MockChooserHrefs;
-  onStart: (start: MockStart) => void;
-  placement?: boolean;
+  onStart: (option: MockOptionView) => void;
   status: MockChooserStatus;
   view: MockOptionsView;
 }) {
   if (status.kind === "writing") {
     return <MockWriting bar={bar} run={status.run} />;
-  }
-
-  if (placement && view.placement) {
-    return (
-      <PlacementChooser
-        bar={bar}
-        busy={busy}
-        hrefs={hrefs}
-        onStart={onStart}
-        placement={view.placement}
-        status={status}
-        view={view}
-      />
-    );
   }
 
   return (

@@ -95,7 +95,7 @@ internal fun TutorOffer(
                 description = stringResource(R.string.tutor_offer_choose_focus_description),
                 tile = { OfferIcon(R.drawable.ic_target) },
                 modifier = modifier,
-            ) { OfferButton(stringResource(R.string.tutor_offer_choose)) { routes.open(AppRoute.Plan(focus = "choose")) } }
+            ) { OfferButton(stringResource(R.string.tutor_offer_open)) { routes.open(AppRoute.FocusTest()) } }
         }
 
         is TutorToolOffer.TutorToolOfferOneOf3Value -> {

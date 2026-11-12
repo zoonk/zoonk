@@ -3,6 +3,8 @@ import { type PlanChange, prisma } from "@zoonk/db";
 import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+import { keepTestFocus } from "../learner/placement/_utils/focus-test-record";
+import { FOCUS_TEST_SOURCE } from "../learner/placement/focus-test-contract";
 import { commitPlan } from "./_utils/commit-plan";
 import { computeChange } from "./_utils/compute-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
@@ -78,6 +80,15 @@ async function acceptProposal({ change, context }: Decision) {
       });
 
       await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
+
+      if (payload.source === FOCUS_TEST_SOURCE) {
+        await keepTestFocus({
+          areas: computed.state.settings.focusAreas,
+          goalId: context.goal.id,
+          tx,
+          userId: context.goal.userId,
+        });
+      }
     },
     phaseDates: {
       ...getChangePlanning(payload.operations),

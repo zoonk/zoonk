@@ -246,6 +246,12 @@ internal fun CoverageSuggestion(slot: Slot) {
                             edits.studyEverything()
                         })
                     }
+                    if (focusTestOffer(plan) != null) {
+                        SuggestionAction(stringResource(R.string.focustest_take_test), onClick = {
+                            close()
+                            slot.links.focusTest()
+                        }, secondary = true)
+                    }
                     if (coverage != null) {
                         OtherOptions { done ->
                             if (moveDate) Option(stringResource(R.string.plan_move_date), done) { ask(CoverageIntent.Date, focus) }

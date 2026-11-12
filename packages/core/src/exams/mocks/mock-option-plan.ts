@@ -1,13 +1,7 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listAreaParts } from "./exam-parts";
 import { type MockOption, findAreaSubject, getSubjectShares, isOptionArea } from "./mock-options";
-import {
-  type MockCandidate,
-  type MockPlan,
-  getMockDays,
-  getPlannedItemIds,
-  planMock,
-} from "./mock-plan";
+import { type MockCandidate, type MockPlan, getMockDays, planMock } from "./mock-plan";
 import { type MockEssayCandidate } from "./written-parts";
 import { isQuestionSubject } from "./written-subject";
 
@@ -35,41 +29,6 @@ export function toSubjectCandidates({
   return matched.flatMap(({ candidate, subject }) =>
     subject ? [{ ...candidate, area: subject.name }] : [],
   );
-}
-
-/** Never adaptive: callers must pass only the selected questions for a diagnostic mock. */
-export function planWholeExam({
-  candidates,
-  structure,
-}: {
-  candidates: readonly MockCandidate[];
-  structure: ExamStructure | null;
-}): MockPlan {
-  const plans = getMockDays(structure).reduce<MockPlan[]>((done, _day, index) => {
-    const used = new Set(done.flatMap((plan) => getPlannedItemIds(plan)));
-    const left = candidates.filter((candidate) => !used.has(candidate.itemId));
-
-    return [
-      ...done,
-      planMock({
-        adaptive: false,
-        candidates: left,
-        fullLength: true,
-        mockNumber: index,
-        structure,
-        subjectShares: getSubjectShares(structure),
-      }),
-    ];
-  }, []);
-
-  return {
-    day: null,
-    fullLength: true,
-    minutes: plans.reduce((sum, plan) => sum + plan.minutes, 0),
-    reused: plans.reduce((sum, plan) => sum + plan.reused, 0),
-    sections: plans.flatMap((plan) => plan.sections),
-    written: [],
-  };
 }
 
 function getSubjectSectionName(option: MockOption): string {

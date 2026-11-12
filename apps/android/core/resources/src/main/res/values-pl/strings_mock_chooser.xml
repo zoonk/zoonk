@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "mock_chooser_about": "9a98078c281609853537d20e245478a62bdd042ba308a8c08f75f0b36f0ae98e",
-  "mock_chooser_about_recommended": "92e7b84ed17be42ae837a5dc6a1cc21fe180ed8852eae59afc2d540ebbbef719",
   "mock_chooser_failed": "b780d74b0af959a6bd01356150e3ebbaea3a11d764898deaa3aadeefeb055ef3",
   "mock_chooser_full_day_number_without": "49622aead131901fcaf4c28ea6a4e61ba2ce02ff14f2381f6f24ba09fbddcdfe",
   "mock_chooser_full_day_without": "eca724014e8a2324a8542903ebe70cedba23b7bd64c65ca010eadd96b839e4c7",
@@ -24,18 +23,6 @@
   "mock_chooser_parts": "622378beeb5b0b07221f38b6adab0ab2353a4b0660235025f46e7e80d0f7a894",
   "mock_chooser_pick_free": "32c23a48c61bbd60e70a0279af49d2499ed64db79163f065eec2786ecac0f11e",
   "mock_chooser_picked": "90b608bff9681d853c489724b038f06a792422d8dab754f875918196604ed1c4",
-  "mock_chooser_placement_detail": "3842742c00696be2950e1d22aafff07d82bceac6674b1cabdb70ce20fdfd3ac4",
-  "mock_chooser_placement_long": "56b8161cc045a1ea68a1e6337dfe68489f7e1aa95f82d28aa15622f9b2eda21b",
-  "mock_chooser_placement_medium": "4af89e23eddae320e6f0bfdd90bf88c2fdb6658de07aaf2e1e75978649081e1a",
-  "mock_chooser_placement_note": "b28da02a3fa3e066b67676cd44456ba2e91d49377de6a015a51834b941926ab8",
-  "mock_chooser_placement_plus": "cf02aa0f2c44f383f994dd5758a5dca40a642c47134f07ce9a98fd915fc4be99",
-  "mock_chooser_placement_short": "2deef0e07f90bbc4a9de4e776b94429940017b6a89aa8d6af5b157228926404c",
-  "mock_chooser_placement_size": "6e90cf7e1fe3e1ffd3e05dd0005b2b8726e993b9b109e0639e67f181c6ede59f",
-  "mock_chooser_placement_size_spoken": "71292497d37007b9d49fe6c9d8d7380cedcdc2e480b867c69f2f69ed417b2478",
-  "mock_chooser_placement_start": "3ed5aafdcb1ff3b295f587c503233cb1d5f2b5356a0c0482b1e05982a14c392e",
-  "mock_chooser_placement_title": "a72718b31ce1ec1e892d7fc3f0d6fd7cc863b91cfd3914d5a012e9a322145f8d",
-  "mock_chooser_placement_top_subject": "37882414ee84db17a771bc14642322654c5917e7e4b7a76e2c073964b7585b3d",
-  "mock_chooser_placement_top_subjects": "19e317f6575b0548f72aeb9465596b212ab92d0367114f25ac45b2feed8c3504",
   "mock_chooser_plus": "bbaaaaa1c44895b04b11d219c10e1605955951c9ad62fb149776b0a28f0816d3",
   "mock_chooser_preparing": "b1da094a0b434725ae5d3b37716842fca39e6a26f6622cb429ef6af706b6983d",
   "mock_chooser_preparing_detail": "eab9db4249c33a374766bbb01604cd66f7cb76eee9f94e3a07494f1040a6f95e",
@@ -105,14 +92,6 @@
         <item quantity="many">%1$d pytań, około %2$s</item>
         <item quantity="other">%1$d pytania, około %2$s</item>
     </plurals>
-    <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d pytań</string>
-    <plurals name="mock_chooser_placement_size_spoken">
-        <item quantity="one">%d pytanie</item>
-        <item quantity="few">%d pytania</item>
-        <item quantity="many">%d pytań</item>
-        <item quantity="other">%d pytania</item>
-    </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
         <item quantity="one">Na razie mamy %1$d z %2$s pytań, więc około %3$s zajmie ten egzamin próbny.</item>
@@ -137,30 +116,12 @@
     <string name="mock_chooser_usually_takes">Zwykle zajmuje</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">Około %1$s</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="mock_chooser_about_recommended">Około %1$s (polecamy)</string>
     <string name="mock_chooser_subjects">Przedmioty</string>
     <!-- The exam's sections a mock sits, such as Listening and Reading. -->
     <string name="mock_chooser_parts">Części</string>
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">Część pisemna</string>
     <string name="mock_chooser_last_mock">Twój ostatni egzamin próbny</string>
-    <string name="mock_chooser_placement_title">Egzamin próbny, który określi twój poziom</string>
-    <string name="mock_chooser_placement_detail">Tak jak na egzaminie. Twój plan powstaje na podstawie twoich odpowiedzi.</string>
-    <string name="mock_chooser_placement_start">Rozpocznij egzamin próbny</string>
-    <string name="mock_chooser_placement_note">Możesz przerwać w każdej chwili: twój plan powstanie na podstawie twoich odpowiedzi. Wynik zobaczysz na końcu.</string>
-    <string name="mock_chooser_placement_plus">Egzaminy próbne są dostępne w Plus. Bez niego krótki zestaw pytań pomoże ustalić, od czego zacząć.</string>
-    <string name="mock_chooser_placement_top_subject">Przedmiot, który daje najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</string>
-    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
-    <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">%d przedmiotów, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
-        <item quantity="few">%d przedmioty, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
-        <item quantity="many">%d przedmiotów, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
-        <item quantity="other">%d przedmiotów, które dają najwięcej punktów. W pierwszych dniach nauki dostaniesz pytania z pozostałych.</item>
-    </plurals>
-    <string name="mock_chooser_placement_short">Krótki test. W pierwszych dniach dokładniej określimy twój poziom.</string>
-    <string name="mock_chooser_placement_medium">Wszystkie przedmioty. Dobry punkt wyjścia.</string>
-    <string name="mock_chooser_placement_long">Najdokładniejsze określenie poziomu na początek.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">%1$s: liczba pytań z każdego przedmiotu według wyliczeń %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

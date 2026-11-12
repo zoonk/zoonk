@@ -221,7 +221,12 @@ async function SavedDayView({
 
     return (
       <SessionMain>
-        <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
+        <SessionBlockClient
+          detail={detail.detail}
+          goal={facts.goal}
+          session={session}
+          tutor={tutor}
+        />
       </SessionMain>
     );
   }

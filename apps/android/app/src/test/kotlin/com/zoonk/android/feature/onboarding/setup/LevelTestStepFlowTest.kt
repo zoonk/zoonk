@@ -28,8 +28,6 @@ import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.PlaybackEnd
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -94,7 +92,6 @@ class LevelTestStepFlowTest {
                             AppRoute.GoalSetup(GOAL_ID),
                             store,
                             PlanStore(FakePlanApi(), cache),
-                            MockStore(FakeMockApi(options = null), cache),
                             false,
                             rememberAppNavigator(),
                         )

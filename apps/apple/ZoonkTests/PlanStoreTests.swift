@@ -91,6 +91,23 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(calls.plan, 2)
   }
 
+  func testSavedFocusTestSwitchShowsOnThePlanAtOnce() async throws {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    let saved = try JSONDecoder().decode(
+      FocusTestSummary.self,
+      from: Data(
+        #"{"offer":null,"sessionQuestions":"paused","state":"sitting","suggestsFocus":false}"#
+          .utf8))
+    await api.setSavedFocusTest(saved)
+
+    _ = await store.updateFocusTest(goalId: "goal", FocusTestControls(sessionQuestions: .paused))
+
+    XCTAssertEqual(plan.value?.plan.focusTest, saved)
+  }
+
   func testUnchangedAndRefusedChangesSaySo() async {
     let api = PlanAPIStub()
     let editor = PlanEditor(goalId: "goal", store: makeStore(api: api))
@@ -232,11 +249,13 @@ private actor PlanAPIStub: PlanAPIClient {
   private var changeError: Error?
   private var changeOutcome = PlanChangeOutcome.applied(.stub)
   private var undoes = true
+  private var savedFocusTest: FocusTestSummary?
 
   func setChanged(_ changed: Bool) { self.changed = changed }
   func setChangeError(_ error: Error) { changeError = error }
   func setChangeOutcome(_ outcome: PlanChangeOutcome) { changeOutcome = outcome }
   func setUndoes(_ undoes: Bool) { self.undoes = undoes }
+  func setSavedFocusTest(_ summary: FocusTestSummary) { savedFocusTest = summary }
 
   func plan(token: String, goalId: String) async throws -> GoalPlan {
     calls.plan += 1
@@ -258,9 +277,32 @@ private actor PlanAPIStub: PlanAPIClient {
     return changeOutcome
   }
 
-  func undo(token: String, goalId: String, changeId: String) async throws -> Bool {
+  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
+    async throws -> TodayView.PlanChange?
+  {
     calls.undone.append(changeId)
-    return undoes
+    guard undoes else {
+      return nil
+    }
+
+    return try JSONDecoder().decode(TodayView.PlanChange.self, from: Self.undoneChange)
+  }
+
+  private static let undoneChange = Data(
+    #"""
+    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice",
+    "id":"change-1","kind":"edited","officialDate":null,"operations":[],"reason":null,
+    "source":"planEdit","status":"undone","todaySession":null}
+    """#.utf8)
+
+  func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
+    -> FocusTestSummary
+  {
+    guard let savedFocusTest else {
+      throw APIError.notFound
+    }
+
+    return savedFocusTest
   }
 
   func syllabus(token: String, goalId: String) async throws -> GoalSyllabus {

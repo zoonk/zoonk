@@ -66,6 +66,7 @@ import com.zoonk.android.feature.questions.DrillStartButton
 import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.NotSureButton
+import com.zoonk.android.feature.questions.NotToday
 import com.zoonk.android.feature.questions.PlacementNote
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionAnswer
@@ -125,6 +126,9 @@ interface RunControls {
 
     /** Continue: after a verdict, or after [RunPhase.AlreadyAnswered] in a session's block. */
     fun next(questions: List<Question>)
+
+    /** A session's block puts off today's Focus test questions; other runs have none. */
+    val notToday: NotToday? get() = null
 }
 
 /**
@@ -326,7 +330,7 @@ internal fun RunQuestion(
     }
 
     if (part.showsScreen) {
-        if (question.placement) PlacementNote()
+        if (question.placement) PlacementNote(notToday = controls.notToday)
         question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
 
         question.set?.let { set ->

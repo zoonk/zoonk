@@ -65,6 +65,11 @@ export async function getPlanChangedSince({
   }
 
   const after = { gt: new Date(since - CLOCK_MARGIN_MS) };
+
+  if (owned.goal.updatedAt > after.gt) {
+    return { changed: true, status: "ready" };
+  }
+
   const changedLesson = { lesson: { updatedAt: after } };
 
   const [plans, courses, sessions] = await Promise.all([

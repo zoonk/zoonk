@@ -2,8 +2,8 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { getRequestPlatform } from "../../analytics/request-platform";
 import { type AnalyticsPlatform } from "../../analytics/shared-properties";
-import { claimAssist, claimUsage } from "../../entitlements/claim-usage";
-import { type RefusedUsage, type UsageDecision } from "../../entitlements/contract";
+import { claimUsage } from "../../entitlements/claim-usage";
+import { type RefusedUsage } from "../../entitlements/contract";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import {
   type PlacementQuickFormat,
@@ -11,7 +11,6 @@ import {
 } from "../../learner/placement/placement-quick-format";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import {
-  type AnytimeMockPick,
   listMissingRecordings,
   loadAnytimeMockSetup,
   resolveAnytimeOption,
@@ -33,12 +32,6 @@ export type MockQuestionsRequest =
     }
   | { decision: RefusedUsage; status: "refused" }
   | { status: "invalidOption" | "notExam" | "notFound" | "plusRequired" | "unauthorized" };
-
-function claimMockQuestions(pick: AnytimeMockPick): Promise<UsageDecision> {
-  return pick.purpose === "placement"
-    ? claimAssist()
-    : claimUsage({ kind: "mockQuestions", targetId: randomUUID() });
-}
 
 export async function requestMockQuestions({
   goalId,
@@ -68,31 +61,31 @@ export async function requestMockQuestions({
     return { status: access };
   }
 
-  const pick = resolveAnytimeOption({ choice: input, setup });
+  const option = resolveAnytimeOption({ choice: input, setup });
 
-  if (!pick) {
+  if (!option) {
     return { status: "invalidOption" };
   }
 
-  const writes = await planMockWrites({ goal, pick, setup, userId });
+  const writes = await planMockWrites({ goal, option, setup, userId });
 
   if (!writes) {
     return { status: "preparing" };
   }
 
-  const listening = listMissingRecordings({ pick, setup }).length > 0;
+  const listening = listMissingRecordings({ option, setup }).length > 0;
 
   if (writes.length === 0 && !listening) {
     return { status: "ready" };
   }
 
-  const decision = await claimMockQuestions(pick);
+  const decision = await claimUsage({ kind: "mockQuestions", targetId: randomUUID() });
 
   if (decision.status === "unauthorized") {
     return decision;
   }
 
-  if (decision.status === "limitReached" && pick.purpose === "practice") {
+  if (decision.status === "limitReached") {
     return { status: "ready" };
   }
 

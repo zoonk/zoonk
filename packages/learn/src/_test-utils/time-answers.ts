@@ -37,6 +37,7 @@ export function adviceAt(advice: Partial<PlanTimeAdvice> = {}): PlanTimeAdvice {
   return {
     coveredShare: 0.48,
     endDate: null,
+    focusSubjects: [],
     fullCourseEndDate: null,
     measure: "goal",
     numbers: null,

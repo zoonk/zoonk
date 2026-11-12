@@ -6,6 +6,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLeastDailyBudget, splitDailyBudget } from "../../../goals/daily-budget";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { refreshTestSummary } from "../../../learner/placement/_utils/test-sitting";
 import { getPlanState } from "../../../plans/_utils/plan-context";
 import { type PlanOperation } from "../../../plans/plan-contract";
 import { fromIsoDate, toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -259,6 +260,8 @@ export async function saveAnswerInputs({
 
         if (goalChanged || settingsChanged) {
           changedGoalIds.push(current.id);
+          // oxlint-disable-next-line no-await-in-loop -- Shared answers commit on one transaction client.
+          await refreshTestSummary({ goalId: current.id, tx });
         }
       }
 

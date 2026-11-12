@@ -1,20 +1,21 @@
 import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
+import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
+import { readSessionQuestions } from "../../learner/placement/focus-test-summary";
 import {
   PLACEMENT_WEEK_DAYS,
   SESSION_PLACEMENT_QUESTIONS,
 } from "../../learner/placement/placement-budget";
 import { isPlacementSkipped } from "../../learner/placement/placement-contract";
+import { getGoalDay } from "../../learner/placement/placement-day";
 import { getPlacementQuickFormat } from "../../learner/placement/placement-quick-format";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAreaShares } from "../../plans/_utils/exam-subject-shares";
-import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type PlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 
 export type SessionDayContext = {
@@ -37,18 +38,25 @@ type PlacementDay = Pick<BuildContext, "localDate" | "timeZone"> & {
   goal: Pick<Goal, "createdAt" | "details">;
 };
 
-function getGoalDay({ goal, localDate, timeZone }: PlacementDay): number {
-  return daysBetween(getDateInTimeZone({ date: goal.createdAt, timeZone }), localDate);
+function getDay({ goal, localDate, timeZone }: PlacementDay): number {
+  return getGoalDay({ createdAt: goal.createdAt, localDate, timeZone });
 }
 
 /** Placement is limited to the first week unless the learner skipped it. */
 export function isPlacementWeek(day: PlacementDay): boolean {
-  return getGoalDay(day) < PLACEMENT_WEEK_DAYS && !isPlacementSkipped(day.goal);
+  return getDay(day) < PLACEMENT_WEEK_DAYS && !isPlacementSkipped(day.goal);
 }
 
-/** Skip goal-creation day: the learner just answered placement, so open with teaching rather than an empty review. */
-function asksPlacement(day: PlacementDay) {
-  return getGoalDay(day) >= 1 && isPlacementWeek(day);
+/**
+ * Skip goal-creation day: the learner just answered placement, so open with teaching rather than
+ * an empty review. An exam goal's sessions follow its Focus test instead of the first week.
+ */
+function asksPlacement(day: PlacementDay & { goal: Pick<Goal, "kind"> }) {
+  if (getDay(day) < 1) {
+    return false;
+  }
+
+  return day.goal.kind === "exam" ? readSessionQuestions(day) === "on" : isPlacementWeek(day);
 }
 
 /** Review-only days have no new teaching for placement to skip. */
@@ -98,16 +106,31 @@ export async function loadSessionPlacement({
     return [];
   }
 
+  const settings = parsePlanSettings(plan.settings);
+
   return pickSessionPlacementItems({
     areaShares: structure ? getAreaShares({ graph, structure }) : null,
     blueprint: context.blueprint,
     excludeItemIds: used,
-    focusAreas: parsePlanSettings(plan.settings).focusAreas,
+    focusAreas: settings.focusAreas,
     goal: context.goal,
     limit: SESSION_PLACEMENT_QUESTIONS,
     listeningSkillIds: plan.listeningSkillIds,
     quickFormat: getPlacementQuickFormat(structure),
     skills,
+    test:
+      context.goal.kind === "exam"
+        ? {
+            areaOf: mapSkillAreas(graph),
+            subjects: listTestSubjects({
+              graph,
+              listeningSkillIds: plan.listeningSkillIds,
+              settings,
+              structure,
+            }),
+            unaskedOnly: getDay(context) >= PLACEMENT_WEEK_DAYS,
+          }
+        : undefined,
     userId: context.userId,
   });
 }

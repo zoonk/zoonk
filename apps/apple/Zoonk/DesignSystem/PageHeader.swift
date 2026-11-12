@@ -7,6 +7,7 @@ import SwiftUI
 struct PageHeader<Trailing: View>: View {
   var eyebrow: Text?
   private var isEyebrowAsWritten = false
+  private var isEyebrowDone = false
   let title: Text
   var supporting: Text?
   @ViewBuilder let trailing: Trailing
@@ -23,7 +24,9 @@ struct PageHeader<Trailing: View>: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      if let eyebrow {
+      if let eyebrow, isEyebrowDone {
+        DoneLabel(text: eyebrow)
+      } else if let eyebrow {
         eyebrow
           .typeStyle(isEyebrowAsWritten ? .eyebrow.asWritten() : .eyebrow)
           .foregroundStyle(.faint)
@@ -57,6 +60,30 @@ extension PageHeader {
     var header = self
     header.isEyebrowAsWritten = true
     return header
+  }
+
+  /// The eyebrow says something just saved, with the reveal's check.
+  func eyebrowDone(_ isDone: Bool = true) -> Self {
+    var header = self
+    header.isEyebrowDone = isDone
+    return header
+  }
+}
+
+/// Main's done line over a page's title, such as "Plan created": a check and what just saved. Its
+/// check lands with the moment when the page celebrates.
+struct DoneLabel: View {
+  let text: Text
+
+  var body: some View {
+    Label {
+      text
+    } icon: {
+      Image(systemName: "checkmark.circle.fill")
+        .settles()
+    }
+    .typeStyle(.body.weight(.semibold))
+    .foregroundStyle(.successText)
   }
 }
 

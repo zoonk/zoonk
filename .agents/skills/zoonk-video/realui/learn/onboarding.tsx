@@ -172,6 +172,7 @@ function timeAdvice(lang: "en" | "pt", minutes: number): PlanTimeAdvice {
   return {
     coveredShare: minutes >= EVERYTHING_MINUTES ? 1 : S(lang).career.coverage,
     endDate: null,
+    focusSubjects: [],
     fullCourseEndDate: null,
     measure: "goal",
     numbers: null,

@@ -11,6 +11,7 @@ import { toLanguageAimView } from "../../language/aims/language-aims";
 import { readChallengeResults } from "../../learner/facts/challenge-results";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { readTaughtStandInSkills } from "../../learner/facts/taught-stand-in-skills";
+import { readFocusTestSummary } from "../../learner/placement/focus-test-summary";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -24,6 +25,7 @@ import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
 import { findPlanPhase } from "./phase-states";
+import { listPlanAreaNames } from "./plan-area-order";
 import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
@@ -41,10 +43,6 @@ import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
-function listAreaNames(graph: PlanGraph): string[] {
-  return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
-}
-
 function buildAreas({
   graph,
   partAreas,
@@ -56,7 +54,7 @@ function buildAreas({
 }): PlanView["areas"] {
   const names = graph.skills.map((skill) => getSkillArea({ graph, skill }));
 
-  return listAreaNames(graph).map((name) => ({
+  return listPlanAreaNames({ focusAreas: settings.focusAreas, graph }).map((name) => ({
     focusPart: settings.focusParts.find((part) => part.area === name)?.name ?? null,
     focused: settings.focusAreas.includes(name),
     name,
@@ -145,6 +143,10 @@ function buildSteeringView({
 
 type PlanViewInput = { context: PlanContext; now: Date };
 
+function readPlanFocusTest({ goal, timeZone, today }: PlanContext) {
+  return readFocusTestSummary({ goal, localDate: today, timeZone });
+}
+
 function readPhaseChallengeAccess(goal: PlanContext["goal"]) {
   return arePhaseChallengesRequired({
     goalKind: goal.kind,
@@ -169,8 +171,6 @@ export async function buildPlanView({
     context,
     summary,
   } = await loadPlanReadProjection({ context: savedContext, now });
-
-  const feasibility = readSavedFeasibility(summary);
 
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
@@ -284,11 +284,12 @@ export async function buildPlanView({
     estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility,
+    feasibility: readSavedFeasibility(summary),
     fitOffer: fitOffer && {
       ...foldChangeAreas({ change: fitOffer, partAreas }),
       canApply: fresh !== null,
     },
+    focusTest: readPlanFocusTest(context),
     goalId: goal.id,
     languageAim:
       goal.kind === "language" && isJsonObject(goal.details)

@@ -567,23 +567,6 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   var shape: MockShape { MockShape(area: area, day: day, kind: kind) }
 }
 
-struct PlacementMockOption: Hashable, Decodable, Sendable, Identifiable {
-  enum Length: String, Codable, Sendable {
-    case short
-    case medium
-    case long
-  }
-
-  var areas: [String]
-  var coversAllAreas: Bool
-  var estimatedMinutes: Int
-  var length: Length
-  var minutes: Int
-  var questions: Int
-
-  var id: Length { length }
-}
-
 struct ExamMockSummary: Hashable, Decodable, Sendable, Identifiable {
   var blockId: String?
   var correct: Double
@@ -605,22 +588,6 @@ struct MockOptions: Hashable, Decodable, Sendable {
     case plusRequired
   }
 
-  struct Placement: Hashable, Decodable, Sendable {
-    struct Mock: Hashable, Decodable, Sendable {
-      enum Status: String, Decodable, Sendable {
-        case finished
-        case running
-      }
-
-      var id: String
-      var status: Status
-    }
-
-    var mock: Mock?
-    var options: [PlacementMockOption]
-    var recommended: PlacementMockOption.Length
-  }
-
   struct Running: Hashable, Decodable, Sendable {
     var id: String
     var purpose: MockPurpose
@@ -631,7 +598,6 @@ struct MockOptions: Hashable, Decodable, Sendable {
   var examName: String
   var lastMock: ExamMockSummary?
   var options: [MockOption]
-  var placement: Placement?
   var running: Running?
   var sizeSource: MockSizeSource
 

@@ -17,7 +17,7 @@ export type PlacementEvidence = { format: ItemFormat; outcome: PlacementOutcome;
 /** Probability from 0 to 1. */
 export type SkillBeliefs = ReadonlyMap<string, number>;
 
-const PRIOR_BELIEF = 0.5;
+export const PRIOR_BELIEF = 0.5;
 
 const KNOWN_BY_LEVEL = 0.85;
 

@@ -181,23 +181,12 @@
   "onboarding_placement_answer_failed": "2808bf12c12da45bea49f19931e82b8b3bcb0475d5e707e7fbbf09ff34f4c7ee",
   "onboarding_placement_answered": "4af89ae3136f1f5f9bc042f4d9af94b55a942523b0e8a57772d45fdb86185d4e",
   "onboarding_placement_confirm": "cfb698156ee7a9af3eb6e58e0257743a3f5a5b20f109be1ca0ac473a17bb902f",
-  "onboarding_placement_continue_mock": "ca9240bf0d297d1737dd8aead1d43b773e09d6224ebece16e63a8d294557adea",
   "onboarding_placement_description": "ae3bf13edc73ade39f613608845ffda790fd3e79bf3cc05368c02476099dc862",
   "onboarding_placement_description_areas": "06637016a948d9d3e0c095b4b378d42c8ac0f762edec2d36e6b1468b26c9a373",
   "onboarding_placement_dont_know": "58bbfe8d7ea000a82977cf708e10a6a678641224019e0b52ec728a2b13fbd377",
   "onboarding_placement_enough_description": "f92a88bcf38d784752f54553fc50c38e4ab231a687bee888c1f9480dc57d56e3",
   "onboarding_placement_enough_title": "92d429d149c2b2f36564c12508578f9388fd8e002f9dd5427025aae67552a6e0",
   "onboarding_placement_false": "44b8a8d35c4e1b0238938d43ec1ea41e10c977df2bb4e4891b8ffc62d527f617",
-  "onboarding_placement_mock_about": "abd619c49490e9ac4fa64396f329b72d3632fd567202410902689a25c12a0075",
-  "onboarding_placement_mock_done": "41e319b48cc1cac03d9efb2524d9501ffbdc4a8ef18052a6c5d740660a464d72",
-  "onboarding_placement_mock_range": "e3879dd126cfca59da8541901730e4e008c566389f2996afcca9ae1fa11f4505",
-  "onboarding_placement_mock_set_description": "2075909d6b08d77e0d9b6b61f9241a3073828cae61329dabb208f13607fb53d4",
-  "onboarding_placement_mock_set_title": "919bca329f9e55b86190f80a779c66ebc45f8cb9a1fa526beaf1006cf3f452ea",
-  "onboarding_placement_mock_title": "4d3de00ea933707622d0fd6cb24c26ec3bb2de522b7f84cbdf1efc7cfb0f4115",
-  "onboarding_placement_mock_waiting_description": "bae66915c7847a3fdefd50bd9a9f98d517f2a41543e1cbe9187ede59a4ffc007",
-  "onboarding_placement_mock_waiting_title": "0e4ec2def4324badda02d36f83c572870abae98f95a36624a76bd5aacea4c6d5",
-  "onboarding_placement_plus": "108108c2a0ba0459b1fb4216e9dc358af9e8e387336c312a919ef78da9b540c8",
-  "onboarding_placement_plus_description": "3e2ad8af003f931dd9005f2fd2ea28da809f7bf353e91855b216abdeb55fc48a",
   "onboarding_placement_progress": "0ede62889428674da1dcb5071327961525284e27850f5b594456f1309691b7f4",
   "onboarding_placement_question_number": "0244ad899e4231a04fb7ad16a4792e1d12cf52c742f9ac2b319d44370358932f",
   "onboarding_placement_right": "74455806749c008c649b1b9db826b74ac9885ceac3221638b023e660ac0673fe",
@@ -209,13 +198,12 @@
   "onboarding_placement_skip_note": "ecb27fb60a01cf60b43fc43a5a46ea80902e5ea4f6ae407486eb60d3a2268fbb",
   "onboarding_placement_start": "41f95c4010570365e6945a35fe6b12427499d51e304a55ee2a147471cb122391",
   "onboarding_placement_stop": "2fab3f647591af5d1d2c203c569d66671b92abf7da4087bb1770a587a6d11fec",
-  "onboarding_placement_stop_mock": "5b6c9d3274c97653a2c1fa9e200fec173ea10d429a097b92d1ac4fb6b08b4ac3",
   "onboarding_placement_title": "45e03a12db525e25a1f640a92c44bebe6a061aa812def140346abb6523ca4c87",
   "onboarding_placement_true": "16af2dbe9cbfa732b57c0254dc7dd79181c68e689831cd827beaa49528778b10",
   "onboarding_placement_unavailable_description": "9a26d37c833460a6a828c806c716279dc5aa2813dcf935705c2238906b8c5929",
   "onboarding_placement_unavailable_title": "7133a6d3913d7d2555dc551f91794f90d1052f8138b28045db10503e49a2f95b",
   "onboarding_placement_waiting_material": "84e4973bca178ebd749fb3088f9c796477a45b1136860a52953bd8e0e3b9c8f7",
-  "onboarding_placement_waiting_skills": "ab844cfe36b69afbc47a320802f3d06c950ad6d56d4d9023e3f0a55c89990e87",
+  "onboarding_placement_waiting_time": "8a39d62dfc8fb23d028339a5fe6f85a4b5a324fd5406edd927ac6de9990ecd00",
   "onboarding_placement_waiting_title": "f496a4a2194722ce0b54940c10e1a8c1eb7b6d160987038779b8285914c9c1b9",
   "onboarding_placement_wrong": "ef28abd1857c6f2b3360f10748df2de15432293930a589d04b1a972946d8d4ca",
   "onboarding_placement_your_answer": "50ae3e13d5b747c7bd384f70927d2649ab10e85920e001a709bbf7c68ac94671",
@@ -687,19 +675,11 @@
         <item quantity="other">Planının zaten bildiğin konuları atlaması için %d alandan birkaç kısa soru. Puan verilmiyor ve “Henüz bilmiyorum” da gayet iyi bir cevap.</item>
     </plurals>
     <string name="onboarding_placement_description">Planın zaten bildiklerini atlasın diye birkaç kısa soru. Puan yok, “Henüz bilmiyorum” da diyebilirsin.</string>
-    <string name="onboarding_placement_mock_title">Ya da deneme sınavına gir</string>
-    <!-- %1$s is a duration, such as "45 min". -->
-    <string name="onboarding_placement_mock_about">Sınav formatında, yaklaşık %1$s sürer.</string>
-    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
-    <string name="onboarding_placement_mock_range">Sınav formatında, %1$s ile %2$s arasında sürer. Süreyi sen seç.</string>
-    <!-- The name of Zoonk's paid plan, on a chip beside what needs it. -->
-    <string name="onboarding_placement_plus">Plus</string>
-    <string name="onboarding_placement_plus_description">Plus ile kullanılabilir</string>
     <string name="onboarding_placement_start">Başla</string>
     <string name="onboarding_placement_skip_basics">Atla ve temelden başla</string>
     <string name="onboarding_placement_waiting_title">Sorularını hazırlıyoruz</string>
     <string name="onboarding_placement_waiting_material">Soruları eklediğin materyale göre hazırlıyoruz. Materyali okumamız birkaç dakika sürüyor.</string>
-    <string name="onboarding_placement_waiting_skills">Soruları hedefine ulaşman için gereken becerilere göre hazırlıyoruz. Bu genelde bir iki dakika sürüyor.</string>
+    <string name="onboarding_placement_waiting_time">Bu genelde bir iki dakika sürer.</string>
     <string name="onboarding_placement_skip_for_now">Şimdilik atla</string>
     <string name="onboarding_placement_skip_note">Bunun yerine ilk çalışmalarında bu sorulardan birkaçını soracağız.</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
@@ -722,13 +702,6 @@
         <item quantity="one">%d soru cevaplandı</item>
         <item quantity="other">%d soru cevaplandı</item>
     </plurals>
-    <string name="onboarding_placement_mock_done">Deneme sınavı tamamlandı</string>
-    <string name="onboarding_placement_mock_set_title">Deneme sınavı başlangıç noktanı belirledi</string>
-    <!-- %d is how many questions the learner answered in the mock exam. "It" is the estimate of where the learner starts. -->
-    <plurals name="onboarding_placement_mock_set_description">
-        <item quantity="one">Verdiğin %d cevaba dayanıyor. Her gün daha isabetli hâle gelir.</item>
-        <item quantity="other">Verdiğin %d cevaba dayanıyor. Her gün daha isabetli hâle gelir.</item>
-    </plurals>
     <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
     <string name="onboarding_placement_enough_title">Bugünlük yeterince soru cevapladın</string>
     <string name="onboarding_placement_enough_description">İlk çalışmalarında planını daha iyi ayarlamak için birkaç soru daha soracağız.</string>
@@ -737,10 +710,6 @@
     <string name="onboarding_placement_set_description">Her gün daha isabetli hâle gelir.</string>
     <string name="onboarding_placement_unavailable_title">Soruları atlayalım</string>
     <string name="onboarding_placement_unavailable_description">Bu hedef için soru hazırlayamadık. Başlangıç noktanı ilk çalışmalarında belirleyeceğiz.</string>
-    <string name="onboarding_placement_mock_waiting_title">Deneme sınavın seni bekliyor</string>
-    <string name="onboarding_placement_mock_waiting_description">Kaldığın yerden devam et ya da şimdi bitir: planının başlangıcı cevapladığın sorulara göre belirlenir.</string>
-    <string name="onboarding_placement_continue_mock">Deneme sınavına devam et</string>
-    <string name="onboarding_placement_stop_mock">Bitir ve planını gör</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">%1$s seviyene bakalım</string>

@@ -24,20 +24,18 @@ function hasMiss({
 }
 
 function toOwnAnswer(answer: PlacementEvidence): OwnAnswer {
-  return { isCorrect: answer.outcome === "correct", trueFalse: answer.format === "trueFalse" };
+  return { format: answer.format, isCorrect: answer.outcome === "correct" };
 }
 
 /** Only own answers justify skipping; any miss rules it out even if prerequisite inference is confident. */
 export function listKnownSkillIds({
   answers,
   evidence,
-  focusedSkillIds,
   skillIds,
 }: {
   /** The answers to placement's own questions (see `isPlacementAnswer`). */
   answers: readonly PlacementEvidence[];
   evidence: readonly PlacementEvidence[];
-  focusedSkillIds: ReadonlySet<string>;
   skillIds: readonly string[];
 }): string[] {
   return skillIds.filter((skillId) =>
@@ -46,7 +44,6 @@ export function listKnownSkillIds({
         ...evidence.filter((answer) => answer.skillId === skillId && answer.outcome !== "correct"),
         ...answers.filter((answer) => answer.skillId === skillId && answer.outcome === "correct"),
       ].map((answer) => toOwnAnswer(answer)),
-      focused: focusedSkillIds.has(skillId),
     }),
   );
 }
@@ -97,7 +94,6 @@ export function readSkillStatuses({
   answeredOnly = false,
   answers,
   evidence,
-  focusedSkillIds,
   knownAreas = [],
   ownLevel = null,
   skills,
@@ -107,7 +103,6 @@ export function readSkillStatuses({
   /** The answers to placement's own questions (see `isPlacementAnswer`). */
   answers: readonly PlacementEvidence[];
   evidence: readonly PlacementEvidence[];
-  focusedSkillIds: ReadonlySet<string>;
   knownAreas?: readonly string[];
   ownLevel?: OwnLevel | null;
   skills: readonly PlacementSkill[];
@@ -116,7 +111,7 @@ export function readSkillStatuses({
   const priors = getPlacementPriors({ answeredOnly, knownAreas, ownLevel, skills });
   const ownBeliefs = getOwnBeliefs({ evidence, priors });
   const skillIds = skills.map((skill) => skill.id);
-  const confirmed = new Set(listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }));
+  const confirmed = new Set(listKnownSkillIds({ answers, evidence, skillIds }));
   const pointedAt = answeredOnly ? new Set<string>() : listPointedAt({ evidence, skills });
 
   const statusOf = (skillId: string): SkillPlacementStatus => {

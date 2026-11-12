@@ -1,4 +1,4 @@
-import { getToolVersionToken } from "@zoonk/core/library/variants/get-or-create";
+import { getToolVersionToken } from "@zoonk/core/library/variants/tool-token";
 import { type ToolVersionTarget } from "@zoonk/core/library/variants/version-targets";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { claimRunToken } from "../_shared/run-token";

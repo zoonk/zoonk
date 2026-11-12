@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
@@ -113,6 +114,14 @@ fun materialCitationLabel(
 fun IconNote(
     @DrawableRes icon: Int,
     text: String,
+    modifier: Modifier = Modifier,
+) = IconNote(icon, AnnotatedString(text), modifier)
+
+/** The same note with a link in its words, such as an action that ends its sentence. */
+@Composable
+fun IconNote(
+    @DrawableRes icon: Int,
+    text: AnnotatedString,
     modifier: Modifier = Modifier,
 ) {
     val style = MaterialTheme.typography.labelMedium

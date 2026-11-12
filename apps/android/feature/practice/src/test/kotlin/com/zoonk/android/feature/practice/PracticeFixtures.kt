@@ -3,6 +3,7 @@ package com.zoonk.android.feature.practice
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.practice.block.BlockKey
 import com.zoonk.android.feature.practice.block.QuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
@@ -114,6 +115,7 @@ internal fun practiceViewModel(
             "UTC"
         },
         UnusedSessionSteps,
+        unusedFocusTests(cache),
     )
 }
 

@@ -96,6 +96,7 @@ export function examPlanView(lang: Lang) {
     numbers: null,
     examChoices: [],
     examDocument: "notice",
+    focusTest: null,
     feasibility: {
       coreFits: true,
       coveredShare: exam.coverage,

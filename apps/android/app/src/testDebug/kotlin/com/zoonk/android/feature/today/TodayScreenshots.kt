@@ -27,6 +27,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
@@ -124,6 +125,44 @@ class TodayScreenshots {
         capture("book-font200", fold = true)
     }
 
+    /** Beside the day, as a phone's sheet shows it. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun focusTestProposal() = captureFocusTestNotice("today-proposal-sheet-light", day = "notice-plan-change-focus-test")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun focusTestProposalDark() = captureFocusTestNotice("today-proposal-sheet-dark", dark = true, day = "notice-plan-change-focus-test")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun focusTestNotice() = captureFocusTestNotice("today-light")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun focusTestNoticeDark() = captureFocusTestNotice("today-dark", dark = true)
+
+    /** Beside the day, the suggestion opens as a panel with what a phone's sheet shows; the sheet's dialog window isn't captured. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun focusTestNoticePanel() = captureFocusTestNotice("today-sheet-light")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun focusTestNoticePanelDark() = captureFocusTestNotice("today-sheet-dark", dark = true)
+
+    /** The Focus test's suggestion on Today, or its proposal on [day]. */
+    private fun captureFocusTestNotice(
+        name: String,
+        dark: Boolean = false,
+        day: String = "notice-focus-test",
+    ) {
+        val read = DAYS.first { it.first == day }.second
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Screen(read) } }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
@@ -149,7 +188,7 @@ class TodayScreenshots {
         val context = LocalContext.current
         val app = remember { AppContainer.preview(context) }
         val navigator = rememberAppNavigator()
-        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans) }
+        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans, app.focusTests) }
 
         WithTabRootBar(app, navigator) {
             TabRootScaffold { padding ->
@@ -306,6 +345,35 @@ class TodayScreenshots {
                                     examChoice("Módulos disciplinares", listOf("Biología", "Química", "Derecho", "Premedicina"), take = 2),
                             ),
                     ),
+                "notice-plan-change-focus-test" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "notice" to "planChange",
+                                "planChange" to
+                                    fixture(
+                                        "plan-change",
+                                        "status" to "proposed",
+                                        "canApply" to true,
+                                        "source" to "focusTest",
+                                        "kind" to "edited",
+                                        "operations" to
+                                            ApiJson.parseToJsonElement(
+                                                """[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}]""",
+                                            ),
+                                        "effect" to
+                                            ApiJson.parseToJsonElement(
+                                                """
+                                                {"endDateAfter":"2026-12-10","endDateBefore":"2026-12-10","lessonsAdded":0,"lessonsRemoved":2,
+                                                 "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
+                                                  {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}]}
+                                                """.trimIndent(),
+                                            ),
+                                    ),
+                            ),
+                    ),
                 "notice-plan-change" to
                     day(
                         blocks = lessons(3),
@@ -357,6 +425,19 @@ class TodayScreenshots {
                                         "message" to "You get more right in the evening. Studying around 7 PM could help.",
                                         "studyTime" to "7:00 PM",
                                     ),
+                            ),
+                    ),
+                "notice-focus-test" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "notice" to "focusTest",
+                                "focusTest" to
+                                    buildJsonObject {
+                                        put("minutes", 15)
+                                    },
                             ),
                     ),
                 "notice-access" to

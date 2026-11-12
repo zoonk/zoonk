@@ -8,11 +8,8 @@ import {
 } from "@zoonk/db";
 import { toListeningExam } from "../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../exams/listening/listening-skills";
-import {
-  getKnownSubjects,
-  getOwnLevel,
-  isPlacementSkipped,
-} from "../learner/placement/placement-contract";
+import { wantsPlacementQuestions } from "../learner/placement/focus-test-state";
+import { getKnownSubjects, getOwnLevel } from "../learner/placement/placement-contract";
 import { pickPlacementItemSkillIds } from "../learner/placement/placement-item-picks";
 import { isOwnMaterialTest } from "../learner/placement/placement-material";
 import {
@@ -60,7 +57,7 @@ async function readPickedSkillIds({
   listeningSkillIds: ReadonlySet<string>;
   skillIds?: string[];
 }): Promise<string[]> {
-  if (forPlacement && goal && isPlacementSkipped(goal)) {
+  if (forPlacement && goal && !wantsPlacementQuestions(goal)) {
     return [];
   }
 

@@ -1,13 +1,12 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { proposePlanChange } from "../plans/propose-plan-change";
 import { loadPreparationInputs } from "./_utils/load-preparation-inputs";
 import { getAreaPreparations } from "./area-preparation";
+import { rebalanceFocusTest } from "./rebalance-focus-test";
 import { REBALANCE_SOURCE, pickRebalance } from "./rebalance-rule";
 
 const WEEK_DAYS = 7;
@@ -36,25 +35,35 @@ function toRebalanceAreas({
   }));
 }
 
-async function rebalance({
+export async function rebalancePlanAfterSession({
   goalId,
-  now,
-  retryOnConflict,
+  now = new Date(),
+  retryOnConflict = true,
   userId,
 }: {
-  goalId: string;
-  now: Date;
-  retryOnConflict: boolean;
+  goalId: string | null;
+  now?: Date;
+  retryOnConflict?: boolean;
   userId: string;
-}) {
+}): Promise<void> {
+  if (!goalId) {
+    return;
+  }
+
   const plan = await prisma.plan.findUnique({
-    select: { graph: true, id: true, settings: true },
+    select: { coveredShare: true, graph: true, id: true, settings: true },
     where: { goalId },
   });
 
   const graph = parsePlanGraph(plan?.graph);
 
   if (!plan || graph.skills.length === 0) {
+    return;
+  }
+
+  if (parsePlanSettings(plan.settings).focusAreas.length > 0) {
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+    await rebalanceFocusTest({ goal, now, plan });
     return;
   }
 
@@ -75,7 +84,6 @@ async function rebalance({
 
   const focus = pickRebalance({
     areas: toRebalanceAreas({ areas, graph, skills: inputs.skills }),
-    focusAreas: parsePlanSettings(plan.settings).focusAreas,
     lastRebalanceAt: last?.createdAt ?? null,
     now,
     weakestAreaId,
@@ -89,28 +97,5 @@ async function rebalance({
       retryOnConflict,
       source: REBALANCE_SOURCE,
     });
-  }
-}
-
-/** Never throws: a failure is logged. */
-export async function rebalancePlanAfterSession({
-  goalId,
-  now = new Date(),
-  retryOnConflict = true,
-  userId,
-}: {
-  goalId: string | null;
-  now?: Date;
-  retryOnConflict?: boolean;
-  userId: string;
-}): Promise<void> {
-  if (!goalId) {
-    return;
-  }
-
-  const { error } = await safeAsync(() => rebalance({ goalId, now, retryOnConflict, userId }));
-
-  if (error) {
-    logError(`Could not rebalance the plan of goal ${goalId}.`, error);
   }
 }

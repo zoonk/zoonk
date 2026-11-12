@@ -1,10 +1,8 @@
 import "server-only";
-import { after } from "next/server";
-import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSessionMemoryFollowUps } from "../memory/memory-follow-ups";
-import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
+import { oweSessionPlanSettlement } from "./_utils/owe-session-plan-settlement";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { settleSessionDay } from "./_utils/settle-session-day";
@@ -31,8 +29,8 @@ async function settleActiveBlocks({ session, timeZone, userId }: StopContext) {
   );
 }
 
-/** Returns true only to the request that records the first stop, which owes what follows it. */
-async function markFirstStop({ session, timeZone, userId }: StopContext) {
+/** Returns true only to the request that records the first stop. */
+async function markSessionStop({ session, timeZone, userId }: StopContext) {
   const stoppedAt = new Date();
 
   const followUps = await getSessionMemoryFollowUps({
@@ -44,20 +42,29 @@ async function markFirstStop({ session, timeZone, userId }: StopContext) {
   });
 
   return writeLearnerChange({ userId }, async (tx) => {
-    const { count } = await tx.studySession.updateMany({
+    await tx.$queryRaw`
+      SELECT id FROM study_sessions WHERE id = ${session.id}::uuid FOR NO KEY UPDATE
+    `;
+
+    const current = await tx.studySession.findUniqueOrThrow({ where: { id: session.id } });
+
+    const [stopped] = await tx.studySession.updateManyAndReturn({
       data: { stoppedAt },
       where: { id: session.id, stoppedAt: null },
     });
 
-    if (count === 0) {
-      return unchanged(false);
-    }
-
-    await oweFollowUps({
-      db: tx,
-      followUps: [{ input: { sessionId: session.id }, kind: "prepareSession" }, ...followUps],
-      userId,
+    const planOwed = await oweSessionPlanSettlement(tx, {
+      followUps: stopped
+        ? [{ input: { sessionId: session.id }, kind: "prepareSession" }, ...followUps]
+        : [],
+      goal: session.goal,
+      session: current,
+      timeZone,
     });
+
+    if (!stopped) {
+      return planOwed ? false : unchanged(false);
+    }
 
     return true;
   });
@@ -84,12 +91,8 @@ export async function stopStudySession({
   const settled = await settleSessionDay({ sessionId: session.id, timeZone, userId });
 
   // Completion already owes memory; repeated stops must not run another model.
-  if (!settled.sessionCompleted && (await markFirstStop({ session, timeZone, userId }))) {
-    const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
-
-    if (refreshed) {
-      after(() => rebalancePlanAfterSession({ goalId: session.goalId, userId }));
-    }
+  if (!settled.sessionCompleted && (await markSessionStop({ session, timeZone, userId }))) {
+    await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
   }
 
   return getStudySessionSummary({ input, sessionId });

@@ -71,15 +71,25 @@ class TutorScreenshots {
     }
 
     @Test
-    @Config(qualifiers = "w411dp-h3200dp-xhdpi")
+    @Config(qualifiers = "w411dp-h3800dp-xhdpi")
     fun planChanges() = capture("tutor-plan-changes", dark = false, turns = planChangeTurns())
 
     @Test
-    @Config(qualifiers = "w411dp-h3200dp-night-xhdpi")
+    @Config(qualifiers = "w411dp-h3800dp-night-xhdpi")
     fun planChangesDark() = capture("tutor-plan-changes-dark", dark = true, turns = planChangeTurns())
 
     private fun planChangeTurns() =
         listOf(
+            planChange(
+                operations = """[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}]""",
+                status = "proposed",
+                effect =
+                    effect(
+                        """"areaStarts":[{"area":"Mathematics","after":"2026-11-20","before":"2026-11-17"}],
+                        "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
+                        {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}]""",
+                    ),
+            ),
             planChange(
                 operations = """[{"kind":"setDailyMinutes","minutes":40}]""",
                 status = "proposed",

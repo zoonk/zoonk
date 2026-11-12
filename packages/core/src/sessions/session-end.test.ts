@@ -267,6 +267,7 @@ describe("ending a session", () => {
       ["checkDailyInsight", "2026-09-30"],
       ["settleSessionDay", first?.id],
       ["refreshStudyDay", today.session.id],
+      ["settleSessionPlan", today.session.id],
     ]);
 
     vi.setSystemTime(SESSION_NOW.getTime() + 60_000);
@@ -335,6 +336,11 @@ describe("ending a session", () => {
       { input: { sessionId: session.id }, key: session.id, kind: "prepareSession" },
       { input: { ...end, sessionId: session.id }, key: session.id, kind: "rememberSession" },
       { input: { ...end, date: "2026-09-30" }, key: "2026-09-30", kind: "checkDailyInsight" },
+      {
+        input: { goalId: goal.id, sessionId: session.id, timeZone: "UTC" },
+        key: session.id,
+        kind: "settleSessionPlan",
+      },
     ]);
 
     await expect(

@@ -31,8 +31,6 @@ import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.PlaybackEnd
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.plan.FakePlanApi
@@ -148,7 +146,6 @@ class OnboardingSpreadScreenshots {
             AppRoute.GoalSetup(GOAL_ID),
             remember { OnboardingStore(api, cache, session) { SignInResult.SignedIn } },
             remember { PlanStore(FakePlanApi(), cache) },
-            remember { MockStore(FakeMockApi(options = null), cache) },
             isGuest = false,
             rememberAppNavigator(),
         )

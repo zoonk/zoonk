@@ -66,17 +66,6 @@ export type TestOutQuestionsStepName = (typeof TEST_OUT_QUESTIONS_STEPS)[number]
 
 export const TEST_OUT_QUESTIONS_READY_STEP: TestOutQuestionsStepName = "testOutQuestionsReady";
 
-const FOCUS_TEST_QUESTIONS_STEPS = [
-  "joinFocusTestQuestions",
-  "writeFocusTestQuestions",
-  "focusTestQuestionsReady",
-] as const;
-
-export type FocusTestQuestionsStepName = (typeof FOCUS_TEST_QUESTIONS_STEPS)[number];
-
-export const FOCUS_TEST_QUESTIONS_READY_STEP: FocusTestQuestionsStepName =
-  "focusTestQuestionsReady";
-
 const MOCK_QUESTIONS_STEPS = [
   "joinMockQuestions",
   "writeMockQuestions",

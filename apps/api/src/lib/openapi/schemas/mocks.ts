@@ -2,8 +2,6 @@ import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   type MockOptionView,
   type MockOptionsView,
-  PLACEMENT_MOCK_LENGTHS,
-  type PlacementMockOptionView,
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -55,35 +53,13 @@ const mockOptionSchema = mockShapeSchema
   })
   .meta({ id: "MockOption" }) satisfies z.ZodType<MockOptionView>;
 
-const placementMockOptionSchema = z
-  .object({
-    areas: z
-      .array(z.string())
-      .meta({ description: "The notice's subjects it asks: every one, or the ones worth most" }),
-    coversAllAreas: z
-      .boolean()
-      .meta({
-        description:
-          "It asks every subject the plan has; a short one may leave the smallest to the first days' questions",
-      }),
-    estimatedMinutes: estimatedMinutesSchema,
-    length: z.enum(PLACEMENT_MOCK_LENGTHS),
-    minutes: z
-      .number()
-      .int()
-      .min(1)
-      .meta({ description: "The exam's time for it, which its clock gives" }),
-    questions: z.number().int().min(1),
-  })
-  .meta({ id: "PlacementMockOption" }) satisfies z.ZodType<PlacementMockOptionView>;
-
 export const mockOptionsResponseSchema = z
   .object({
     access: z
       .enum(["open", "plusRequired"])
       .meta({
         description:
-          "`plusRequired`: every mock exam comes with Plus (the placement one included); show the options with what it takes",
+          "`plusRequired`: every mock exam comes with Plus; show the options with what it takes",
       }),
     examDocument: examDocumentSchema,
     examName: z.string(),
@@ -99,27 +75,6 @@ export const mockOptionsResponseSchema = z
       .meta({
         description:
           "Each exam day in full, half of the day in turn, then each objective subject, biggest first",
-      }),
-    placement: z
-      .object({
-        mock: z
-          .object({ id: uuidSchema(), status: z.enum(["finished", "running"]) })
-          .nullable()
-          .meta({ description: "The goal's placement mock, once started" }),
-        options: z
-          .array(placementMockOptionSchema)
-          .meta({
-            description:
-              "Its lengths, shortest first: a quick check, about half an hour, about an hour (fewer when two would ask as many questions)",
-          }),
-        recommended: z
-          .enum(PLACEMENT_MOCK_LENGTHS)
-          .meta({ description: "The length to suggest first" }),
-      })
-      .nullable()
-      .meta({
-        description:
-          "A diagnostic mock in the exam's format, taken in onboarding instead of the quick placement (POST with `purpose: placement` and a `length`): its questions spread over every subject's topics set where the plan starts. Null when the exam has no questions to ask",
       }),
     running: z
       .object({ id: uuidSchema(), purpose: mockPurposeSchema, shape: mockShapeSchema.nullable() })

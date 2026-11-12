@@ -5,6 +5,7 @@ import {
   findOfficialDateConflict,
   loadExamNoticeFacts,
 } from "../../exams/_utils/exam-notice-facts";
+import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
 import { type PlanOperation } from "../plan-contract";
 import { getFocusTargets } from "../planner/focus-targets";
 import { toIsoDate } from "../planner/plan-calendar";
@@ -29,6 +30,7 @@ import { getGoalUpdate } from "./plan-unchanged";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { replaceWaitingProposals } from "./replace-waiting-proposals";
 import { type ComputedChange, type PlanChangeRecord, revalidatePlanTags } from "./replan";
+import { savePlanProposal } from "./save-plan-proposal";
 import { getAskedAreas, getChangePlanning } from "./steered-areas";
 
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
@@ -37,7 +39,7 @@ export type AppliedChange =
   | { changeId: string; replaced?: string[]; status: "applied" | "proposed" }
   | PlanChangeRefusal;
 
-type UnchangedPlan = { status: "unchanged" };
+export type UnchangedPlan = { reason: UnchangedFocusReason; status: "unchanged" };
 
 export type UnchangedFocusReason = "alreadyIn" | "cantMove";
 
@@ -147,6 +149,7 @@ async function savePlanState({
       }
 
       await tx.plan.update({ data: { settings: state.settings }, where: { id: context.plan.id } });
+      await clearChangedTestFocus({ areas: state.settings.focusAreas, goal: context.goal, tx });
 
       await replaceWaitingProposals({
         applied: false,
@@ -287,7 +290,7 @@ export async function proposeChange({
   approval?: "always" | "whenLarge";
   notice?: NoticeChange | null;
   payload?: Pick<PlanChangePayload, "releaseId">;
-}): Promise<AppliedChange | UnchangedPlan | { status: "saved" }> {
+}): Promise<AppliedChange | UnchangedPlan | { status: "notDue" | "saved" }> {
   const result = await applyChangeOperations({ context, noticeGraph: notice?.graph, operations });
 
   if ("error" in result) {
@@ -306,51 +309,41 @@ export async function proposeChange({
   ]);
 
   if (change.unchanged) {
-    return { status: "unchanged" };
+    const areas = getAskedAreas({ focused: context.state.settings.focusAreas, operations });
+
+    return {
+      reason: hasEveryLesson({ areas, computed: change.computed }) ? "alreadyIn" : "cantMove",
+      status: "unchanged",
+    };
   }
 
   if (approval === "whenLarge" && !officialDate && !needsApproval(change.effect)) {
     return commitEdit({ change, context, extraWrites, operations, provenance, reason, source });
   }
 
-  const proposal = await writePlanMetadata({
+  const proposal = await savePlanProposal({
     context,
-    write: async (tx) => {
-      const created = await tx.planChange.create({
-        data: {
-          kind: "edited",
-          payload: toPlanChangePayload({
-            ...payload,
-            effect: change.effect,
-            noticeEdition: notice?.edition ?? null,
-            noticeGraph: notice?.graph ?? null,
-            noticeId: notice?.noticeId ?? null,
-            officialDate,
-            operations: [...operations],
-            previewBasis: getPlanPreviewBasis(context),
-            source,
-          }),
-          planId: context.plan.id,
-          reason,
-          status: "proposed",
-          ...provenance,
-        },
-      });
-
-      await extraWrites?.(tx);
-
-      const replaced = await replaceWaitingProposals({
-        applied: false,
-        except: created.id,
-        operations,
-        planId: context.plan.id,
-        source,
-        tx,
-      });
-
-      return { id: created.id, replaced };
-    },
+    extraWrites,
+    operations,
+    payload: toPlanChangePayload({
+      ...payload,
+      effect: change.effect,
+      noticeEdition: notice?.edition ?? null,
+      noticeGraph: notice?.graph ?? null,
+      noticeId: notice?.noticeId ?? null,
+      officialDate,
+      operations: [...operations],
+      previewBasis: getPlanPreviewBasis(context),
+      source,
+    }),
+    provenance,
+    reason,
+    source,
   });
+
+  if (!proposal) {
+    return { status: "notDue" };
+  }
 
   revalidatePlanTags(context.goal.userId);
 

@@ -21,7 +21,7 @@ import { useMemo } from "react";
 import { useTutorAppLinks } from "./use-tutor-app-links";
 
 const TOOL_HREFS: TutorCardActions["tools"]["hrefs"] = {
-  chooseFocus: "/plan?focus=choose",
+  chooseFocus: "/focus-test",
   chooseMock: MOCK_ENTRY_HREFS.choose,
   course: ({ brandSlug, slug }) => getCourseHref({ brandSlug, courseSlug: slug }),
   logbook: "/logbook",

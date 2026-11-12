@@ -27,7 +27,6 @@ const weak: RebalanceArea = {
 function pick(overrides: Partial<Parameters<typeof pickRebalance>[0]> = {}) {
   return pickRebalance({
     areas: [strong, weak],
-    focusAreas: [],
     lastRebalanceAt: null,
     now: NOW,
     weakestAreaId: "science",
@@ -46,10 +45,6 @@ describe(pickRebalance, () => {
     expect(pick({ lastRebalanceAt: new Date(NOW.getTime() - 8 * DAY_MS) })).toStrictEqual([
       "Science",
     ]);
-  });
-
-  it("leaves a plan alone when the learner chose their own focus", () => {
-    expect(pick({ focusAreas: ["Humanities"] })).toBeNull();
   });
 
   it("needs an area that's really going well: mostly Solid and still gaining", () => {

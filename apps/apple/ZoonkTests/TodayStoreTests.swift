@@ -884,8 +884,8 @@ private func planChange(
   try decode(
     """
     {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
-    "id":"\(id)","kind":"edited","officialDate":null,"reason":"Rest on Saturdays?",
-    "source":"memory","status":"\(status)","todaySession":null}
+    "id":"\(id)","kind":"edited","officialDate":null,"operations":[],
+    "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)
 }
 
@@ -893,7 +893,7 @@ private func today(
   session: StudyDay, planChange: TodayView.PlanChange? = nil, lessonStatus: [String: String] = [:]
 ) throws -> TodayView {
   TodayView(
-    earlierWork: [], exam: nil, examChoice: nil,
+    earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
     insight: nil, lessonStatus: lessonStatus, mockFunding: nil, notice: nil, pattern: nil,

@@ -7,7 +7,6 @@ import {
   failEssayGrading,
 } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
-import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -134,57 +133,5 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /^Your answer\s*6–8$/u }),
     ).toBeVisible();
-  });
-
-  test("a diagnostic mock as placement: stopped midway, the questions answered set where the plan starts", async ({
-    browser,
-  }) => {
-    const { answers, goal, user } = await createAnytimeMockLearner({
-      onboarding: true,
-      plus: true,
-    });
-
-    const page = await openAs(browser, user);
-
-    const unanswered: string[] = [];
-    const mockPage = Promise.withResolvers<null>();
-
-    page.on("response", (response) => {
-      if (response.headers()["x-nextjs-action-not-found"]) {
-        unanswered.push(response.url());
-      }
-    });
-
-    await page.route(new RegExp(`/mock/placement/${goal.id}(?:\\?|$)`, "u"), async (route) => {
-      await mockPage.promise;
-      await route.continue();
-    });
-
-    await page.clock.install();
-    await page.goto(`/start/${goal.id}`);
-    await page.getByRole("link", { name: /^Or take a mock exam/u }).click();
-    await page.clock.runFor(2000);
-    mockPage.resolve(null);
-    await expect(page).toHaveURL(new RegExp(`/mock/placement/${goal.id}$`, "u"));
-    await page.getByRole("button", { name: "Start the mock exam" }).click();
-
-    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
-    expect(unanswered).toStrictEqual([]);
-    await answerMockQuestions({ answers, count: 2, knows: () => true, page });
-
-    await page.getByRole("link", { name: "Leave" }).click();
-    await expect(page).toHaveURL(new RegExp(`/start/${goal.id}$`, "u"));
-    await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeVisible();
-    await page.getByRole("button", { name: "Stop and see my plan" }).click();
-
-    await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeHidden({
-      timeout: REPLAN_TIMEOUT_MS,
-    });
-
-    const mock = await prisma.mockExam.findFirstOrThrow({ where: { goalId: goal.id } });
-
-    expect(mock).toMatchObject({ conditions: { purpose: "placement" }, status: "finished" });
-
-    await expect(prisma.attempt.count({ where: { mockExamId: mock.id } })).resolves.toBe(2);
   });
 });

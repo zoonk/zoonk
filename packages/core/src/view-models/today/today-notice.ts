@@ -4,6 +4,7 @@ export const TODAY_NOTICE_KINDS = [
   "exam",
   "examAccess",
   "examChoice",
+  "focusTest",
   "insight",
   "planChange",
   "practice",
@@ -25,6 +26,7 @@ type TodaySession = TodayView["session"];
 type NoticeTodayView = {
   exam: Pick<NonNullable<TodayView["exam"]>, "resultReported" | "stage"> | null;
   examChoice: Pick<NonNullable<TodayView["examChoice"]>, "group"> | null;
+  focusTest: TodayView["focusTest"];
   insight: Pick<NonNullable<TodayView["insight"]>, "kind" | "planChange"> | null;
   planChange: Pick<NonNullable<TodayView["planChange"]>, "behind" | "id" | "status"> | null;
   session: {
@@ -95,6 +97,7 @@ export function pickTodayNotice({
     ["planChange", planChange === "applied"],
     ["insight", insight !== null],
     ["practice", host.practice],
+    ["focusTest", today.focusTest !== null],
     ["suggestedGoal", today.suggestedGoal !== null && !showsFreshStart(today)],
   ];
 

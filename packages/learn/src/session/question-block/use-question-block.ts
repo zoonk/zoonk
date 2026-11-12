@@ -24,6 +24,11 @@ export type QuestionBlockActions = {
   }) => Promise<StudyAnswerOutcome>;
   finish: () => Promise<StudyFinishOutcome>;
   refresh: () => void;
+  /**
+   * An exam goal's "Not today": takes today's unanswered Focus test questions out of the session and
+   * shows what the session asks next. Resolves to whether it was saved.
+   */
+  skipTestQuestions?: () => Promise<boolean>;
 };
 
 export function useQuestionBlock({
@@ -122,6 +127,7 @@ export function useQuestionBlock({
       }
     },
     retryFinish: () => dispatch({ type: "finish" }),
+    skipTestQuestions: actions.skipTestQuestions,
     state,
     submit,
     total,

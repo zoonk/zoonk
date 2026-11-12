@@ -7,7 +7,6 @@ import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
-import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { readExamPicks } from "../../choices/exam-choices";
 import { loadExamPicks } from "../../choices/load-exam-choices";
@@ -19,12 +18,6 @@ import { type MockTypedPart } from "../mock-left-out";
 import { type MockOption, findMockOption, listMockOptions } from "../mock-options";
 import { type MockCandidate, getMockDays } from "../mock-plan";
 import { type MockSizeSource } from "../mock-view-contract";
-import {
-  type PlacementMockOption,
-  type PlacementSkill,
-  getRecommendedPlacementLength,
-  listPlacementMockOptions,
-} from "../placement-mock";
 import { type MockEssayCandidate } from "../written-parts";
 import { loadSkillAreas } from "./mock-candidates";
 import { loadMockEssays } from "./mock-essays";
@@ -43,7 +36,6 @@ export type AnytimeMockSetup = {
   listening: ReadonlyMap<string, readonly MockCandidate[]>;
   unvoiced: ReadonlySet<string>;
   options: MockOption[];
-  placement: PlacementMockOption[];
   sizeSource: MockSizeSource;
   speaking: boolean;
   structure: ExamStructure | null;
@@ -130,7 +122,6 @@ export async function loadAnytimeMockSetup(
           unpicked: readUnpickedChoices({ blueprint, picks }),
         })
       : [],
-    placement: buildable ? listPlacementMockOptions({ goalAreas, pace, structure }) : [],
     sizeSource: readMockSizeSource(blueprint),
     speaking: speaking !== null,
     structure,
@@ -139,28 +130,20 @@ export async function loadAnytimeMockSetup(
 }
 
 export function listMissingRecordings({
-  pick,
+  option,
   setup,
 }: {
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
 }): string[] {
-  if (pick.purpose !== "practice" || pick.option.kind === "area" || setup.unvoiced.size === 0) {
+  if (option.kind === "area" || setup.unvoiced.size === 0) {
     return [];
   }
 
-  return getDaySections({
-    day: pick.option.day,
-    listening: setup.unvoiced,
-    structure: setup.structure,
-  })
+  return getDaySections({ day: option.day, listening: setup.unvoiced, structure: setup.structure })
     .filter((section) => section.kind === "listening")
     .flatMap((section) => section.name ?? []);
 }
-
-export type AnytimeMockPick =
-  | { option: MockOption; purpose: "practice" }
-  | { option: PlacementMockOption; purpose: "placement" };
 
 export function resolveAnytimeOption({
   choice,
@@ -168,19 +151,8 @@ export function resolveAnytimeOption({
 }: {
   choice: AnytimeMockChoice;
   setup: AnytimeMockSetup;
-}): AnytimeMockPick | null {
-  if (choice.purpose === "placement") {
-    const length = choice.length ?? getRecommendedPlacementLength(setup.placement);
-    const option = setup.placement.find((candidate) => candidate.length === length);
-
-    return option ? { option, purpose: "placement" } : null;
-  }
-
-  const option = choice.shape
-    ? findMockOption({ options: setup.options, shape: choice.shape })
-    : null;
-
-  return option ? { option, purpose: "practice" } : null;
+}): MockOption | null {
+  return findMockOption({ options: setup.options, shape: choice.shape });
 }
 
 const ANYTIME_MOCK_FILTER = {
@@ -211,18 +183,6 @@ export async function findRunningAnytimeMock({
   return active.find((mock) => !hasStoredTimeRunOutAway({ mock, now })) ?? null;
 }
 
-export function findPlacementMock({ goalId, userId }: { goalId: string; userId: string }) {
-  return prisma.mockExam.findFirst({
-    orderBy: { startedAt: "desc" },
-    where: {
-      blockId: null,
-      conditions: { equals: "placement", path: ["purpose"] },
-      goalId,
-      userId,
-    },
-  });
-}
-
 export async function loadMockSkillIds(goalId: string): Promise<string[]> {
   const [plan, lessonSkillIds] = await Promise.all([
     prisma.plan.findUnique({ select: { graph: true }, where: { goalId } }),
@@ -231,14 +191,4 @@ export async function loadMockSkillIds(goalId: string): Promise<string[]> {
 
   const graphSkillIds = parsePlanGraph(plan?.graph).skills.map((skill) => skill.skillId);
   return [...new Set([...graphSkillIds, ...lessonSkillIds])];
-}
-
-export async function loadPlacementSkills(goalId: string): Promise<PlacementSkill[]> {
-  const plan = await prisma.plan.findUnique({ select: { graph: true }, where: { goalId } });
-  const graph = parsePlanGraph(plan?.graph);
-
-  return graph.skills.map((skill) => ({
-    area: getSkillArea({ graph, skill }),
-    skillId: skill.skillId,
-  }));
 }

@@ -30,6 +30,7 @@ export type LearnerAnswer = {
   answeredAt?: Date;
   /** Reuse the client attempt id across retries to prevent recording the same answer twice. */
   attemptId?: string;
+  focusTestId?: string | null;
   graded: GradedAnswer;
   /** Placement remains diagnostic evidence even when asked inside a session. */
   isPlacement?: boolean;

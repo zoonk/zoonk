@@ -8,7 +8,6 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { AREAS, WRITTEN_ESSAY, getStructure } from "./anytime-mock-exams";
-import { ANSWERED } from "./onboarding-fixtures";
 
 const SHORT_ID_LENGTH = 6;
 const LOWERCASE_A_CODE_POINT = 97;
@@ -22,11 +21,9 @@ function areaOf(index: number): string {
 }
 
 export async function createAnytimeMockLearner({
-  onboarding = false,
   plus,
   written = false,
 }: {
-  onboarding?: boolean;
   plus: boolean;
   written?: boolean;
 }) {
@@ -54,7 +51,6 @@ export async function createAnytimeMockLearner({
   ]);
 
   const goal = await goalFixture({
-    details: onboarding ? { answered: [...ANSWERED, "target"], level: "basic" } : {},
     examBlueprintId: blueprint.id,
     kind: "exam",
     timezone: "UTC",
@@ -135,12 +131,10 @@ export async function createAnytimeMockLearner({
 
 export async function answerMockQuestions({
   answers,
-  count,
   knows,
   page,
 }: {
   answers: Map<string, Question>;
-  count?: number;
   knows: (question: Question) => boolean;
   page: Page;
 }) {
@@ -149,9 +143,8 @@ export async function answerMockQuestions({
   const groups = /^Question (?<first>\d+) of (?<total>\d+)/u.exec(counter ?? "")?.groups;
   const first = Number(groups?.first ?? 1);
   const total = Number(groups?.total ?? 0);
-  const last = count === undefined ? total : first + count - 1;
 
-  for (let number = first; number <= last; number += 1) {
+  for (let number = first; number <= total; number += 1) {
     // oxlint-disable-next-line no-await-in-loop -- A mock is answered one question at a time.
     await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 

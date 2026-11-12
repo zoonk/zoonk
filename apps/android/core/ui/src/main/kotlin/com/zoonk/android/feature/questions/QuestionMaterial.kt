@@ -33,9 +33,12 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.IconNote
@@ -44,6 +47,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SourcesChip
+import com.zoonk.android.ui.components.statusLink
+import com.zoonk.android.ui.format.spaceAfterSentence
 import java.time.Instant
 
 /** What a question stands on before it's asked: its situation, picture and chart. Pictures load through [com.zoonk.android.ui.components.LocalPrivatePictures]. */
@@ -156,10 +161,42 @@ fun SetPlace(
     Text(text = text, modifier = modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
 }
 
-/** Over a placement question, so a miss feels safe. */
+/** "Not today" on a session's Focus test question: today's test questions go, and another day asks them. */
+class NotToday(
+    val failed: Boolean,
+    val onSkip: () -> Unit,
+)
+
+/** Over a placement question, so a miss feels safe; a session's test question can be put off with [notToday], which ends the note's sentence. */
 @Composable
-fun PlacementNote(modifier: Modifier = Modifier) {
-    IconNote(R.drawable.ic_explore, stringResource(R.string.questions_placement_note), modifier)
+fun PlacementNote(
+    modifier: Modifier = Modifier,
+    notToday: NotToday? = null,
+) {
+    val note = stringResource(R.string.questions_placement_note)
+    if (notToday == null) {
+        IconNote(R.drawable.ic_explore, note, modifier)
+        return
+    }
+
+    val skip = statusLink(stringResource(R.string.focustest_not_today), notToday.onSkip)
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        IconNote(
+            R.drawable.ic_explore,
+            buildAnnotatedString {
+                append(note + spaceAfterSentence(note))
+                append(skip)
+            },
+        )
+        if (notToday.failed) {
+            Text(
+                stringResource(R.string.focustest_not_today_failed),
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
 }
 
 /** Past exam questions are only copied where their organizer allows it with the source cited. */

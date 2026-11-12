@@ -13,21 +13,9 @@ import com.zoonk.api.models.AnytimeMockInput
 import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
-import com.zoonk.api.models.PlacementMockOption
 import kotlinx.coroutines.delay
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
-
-/** What the learner picked: one of the goal's mocks, or how long a placement mock runs. */
-sealed interface MockChoice {
-    data class Practice(
-        val shape: MockShape,
-    ) : MockChoice
-
-    data class Placement(
-        val length: PlacementMockOption.Length,
-    ) : MockChoice
-}
 
 sealed interface MockStartOutcome {
     /** Started now, or the one already running: either way the learner goes on in it. */
@@ -69,14 +57,14 @@ interface MockStartApi {
     suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
         acceptFewer: Boolean,
     ): AnytimeMock
 
     suspend fun writeQuestions(
         session: AuthenticatedSession,
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
     ): MockQuestionsGeneration
 }
 
@@ -86,50 +74,20 @@ class LiveMockStartApi(
     override suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
         acceptFewer: Boolean,
     ) = perform {
-        api.clients(session).exams.startAnytimeMock(
-            goalId,
-            when (choice) {
-                is MockChoice.Practice -> {
-                    AnytimeMockInput(
-                        purpose = AnytimeMockInput.Purpose.PRACTICE,
-                        shape = choice.shape,
-                        acceptFewer = acceptFewer,
-                    )
-                }
-
-                is MockChoice.Placement -> {
-                    AnytimeMockInput(
-                        length = AnytimeMockInput.Length.valueOf(choice.length.name),
-                        purpose = AnytimeMockInput.Purpose.PLACEMENT,
-                        acceptFewer = acceptFewer,
-                    )
-                }
-            },
-        )
+        api.clients(session).exams.startAnytimeMock(goalId, AnytimeMockInput(shape = shape, acceptFewer = acceptFewer))
     }
 
     override suspend fun writeQuestions(
         session: AuthenticatedSession,
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
     ) = perform {
         api.clients(session).exams.createMockQuestionsGeneration(
             goalId,
-            when (choice) {
-                is MockChoice.Practice -> {
-                    MockQuestionsInput(purpose = MockQuestionsInput.Purpose.PRACTICE, shape = choice.shape)
-                }
-
-                is MockChoice.Placement -> {
-                    MockQuestionsInput(
-                        length = MockQuestionsInput.Length.valueOf(choice.length.name),
-                        purpose = MockQuestionsInput.Purpose.PLACEMENT,
-                    )
-                }
-            },
+            MockQuestionsInput(shape = shape),
         )
     }
 }
@@ -144,13 +102,13 @@ class MockStarter(
 ) {
     suspend fun start(
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
         acceptFewer: Boolean,
     ): MutationResult<MockStartOutcome> {
         val result =
             cache.mutate { session ->
                 try {
-                    outcome(api.start(session, goalId, choice, acceptFewer))
+                    outcome(api.start(session, goalId, shape, acceptFewer))
                 } catch (e: ApiException) {
                     when (e.code) {
                         PLUS_REQUIRED -> MockStartOutcome.PlusRequired
@@ -168,16 +126,16 @@ class MockStarter(
     /** While the goal's skill map is still drawn (a goal in onboarding), it asks again for a while. */
     suspend fun writeQuestions(
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
     ): MutationResult<QuestionWriting> {
         val result =
             cache.mutate { session ->
                 try {
-                    var writing = api.writeQuestions(session, goalId, choice)
+                    var writing = api.writeQuestions(session, goalId, shape)
                     var asked = 1
                     while (writing.status == MockQuestionsGeneration.Status.PREPARING && asked < PREPARING_TRIES) {
                         delay(PREPARING_RETRY)
-                        writing = api.writeQuestions(session, goalId, choice)
+                        writing = api.writeQuestions(session, goalId, shape)
                         asked++
                     }
                     writing.generationId?.takeIf { writing.status == MockQuestionsGeneration.Status.GENERATING }?.let(

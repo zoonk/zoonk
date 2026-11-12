@@ -499,6 +499,15 @@ struct PlanSuggestionSection: View {
             comment: "Opens the plan's study time a day to change it")
         }
 
+        // Where the time should go, for a learner who hasn't taken the Focus test.
+        if context.plan.focusTest?.notStartedOffer != nil {
+          Button {
+            router.open(.focusTest(goalId: context.goal.id))
+          } label: {
+            Text(FocusTestCopy.takeTest)
+          }
+        }
+
         notNow(item)
       }
     case .courseComplete:

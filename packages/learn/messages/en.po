@@ -63,6 +63,7 @@ msgstr "Skipped"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/explain/explain-ending.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -152,6 +153,9 @@ msgstr "Time a day"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-result.tsx
+#: src/focus-test/focus-test-screens.tsx
 #: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
@@ -403,6 +407,7 @@ msgstr "{done, number} of {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
+#: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -1437,11 +1442,15 @@ msgstr "Zu"
 
 #: src/ceremonies/milestone-ceremony.tsx
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/research/upload-request-card.tsx
+#: src/today/today-focus-test.tsx
 #: src/today/today-insight.tsx
 #: src/today/today-plan-change.tsx
 #: src/today/today-suggested-goal.tsx
@@ -2123,7 +2132,6 @@ msgid "Still starting. This is taking longer than usual."
 msgstr "Still starting. This is taking longer than usual."
 
 #: src/challenge/challenge-footer.tsx
-#: src/mock/mock-chooser.tsx
 msgctxt "-HglUD"
 msgid "Start the mock exam"
 msgstr "Start the mock exam"
@@ -2158,7 +2166,6 @@ msgstr "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try t
 #: src/exam/exam-format-section.tsx
 #: src/exam/exam-map-section.tsx
 #: src/exam/exam-next-mock.tsx
-#: src/plan/focus-test/focus-test-screen.tsx
 #: src/session/use-block-copy.ts
 #: src/syllabus/subject-screen.tsx
 #: src/syllabus/syllabus-section.tsx
@@ -2338,6 +2345,7 @@ msgstr "Back to Today"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2880,6 +2888,7 @@ msgid "Essay practice with grading comes with Plus."
 msgstr "Essay practice with grading comes with Plus."
 
 #: src/conversation/tutor-feature-offers.tsx
+#: src/conversation/tutor-tool-offer.tsx
 #: src/language/today/language-today-section.tsx
 #: src/mind-maps/mind-map-row.tsx
 msgctxt "JfG49w"
@@ -2966,6 +2975,7 @@ msgid "Not applied. Your plan stays as it was."
 msgstr "Not applied. Your plan stays as it was."
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/use-result-line.ts
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/today/today-plan-change.tsx
@@ -3000,9 +3010,9 @@ msgid "Test: {chapter}"
 msgstr "Test: {chapter}"
 
 #: src/conversation/tutor-tool-offer.tsx
-msgctxt "acrRyV"
-msgid "Pick the subjects that get more depth, or take a short test that picks them."
-msgstr "Pick the subjects that get more depth, or take a short test that picks them."
+msgctxt "1Qd90j"
+msgid "Find which subjects should get more of your study time."
+msgstr "Find which subjects should get more of your study time."
 
 #: src/conversation/tutor-tool-offer.tsx
 #: src/plan/plan-focus.tsx
@@ -3011,16 +3021,6 @@ msgstr "Pick the subjects that get more depth, or take a short test that picks t
 msgctxt "RQQnfC"
 msgid "Choose where to focus"
 msgstr "Choose where to focus"
-
-#: src/conversation/tutor-tool-offer.tsx
-#: src/plan/plan-choice-lines.tsx
-#: src/plan/plan-exam-choices.tsx
-#: src/plan/plan-properties.tsx
-#: src/plan/plan-tools.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "TuQ18m"
-msgid "Choose"
-msgstr "Choose"
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "T4Jya7"
@@ -3043,6 +3043,16 @@ msgstr "A short call out loud, at your level."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "Take a mock exam"
+
+#: src/conversation/tutor-tool-offer.tsx
+#: src/plan/plan-choice-lines.tsx
+#: src/plan/plan-exam-choices.tsx
+#: src/plan/plan-properties.tsx
+#: src/plan/plan-tools.tsx
+#: src/today/today-exam-choice.tsx
+msgctxt "TuQ18m"
+msgid "Choose"
+msgstr "Choose"
 
 #. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/conversation/tutor-variety-offer.tsx
@@ -4060,6 +4070,336 @@ msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-screens.tsx
+#: src/onboarding/steps/placement-waiting.tsx
+msgctxt "WYzHAI"
+msgid "Skip for now"
+msgstr "Skip for now"
+
+#: src/focus-test/focus-test-flow.tsx
+msgctxt "BGeoDm"
+msgid "You can take the test later, from your plan."
+msgstr "You can take the test later, from your plan."
+
+#: src/focus-test/focus-test-flow.tsx
+msgctxt "29365H"
+msgid "Haven't studied most of this yet? That's fine. You can stop here and start learning."
+msgstr "Haven't studied most of this yet? That's fine. You can stop here and start learning."
+
+#: src/focus-test/focus-test-flow.tsx
+msgctxt "8Zf--i"
+msgid "Stop and use my answers"
+msgstr "Stop and use my answers"
+
+#. Under “Focusing never removes a subject”. “The ones” are exam subjects. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ebBs5s"
+msgid "The ones you need most get more time when your time can't cover everything."
+msgstr "The ones you need most get more time when your time can't cover everything."
+
+#. Title of a short fact about the Focus test. Say only this: giving some exam subjects more study time (focusing) is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "auxYjk"
+msgid "Focusing never removes a subject"
+msgstr "Focusing never removes a subject"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3eMENr"
+msgid "The test starts with the subjects that weigh most in your exam."
+msgstr "The test starts with the subjects that weigh most in your exam."
+
+#. Title of a short fact about the Focus test: its first questions are on the exam subjects that weigh most in the score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ia0ABg"
+msgid "What counts most comes first"
+msgstr "What counts most comes first"
+
+#. “I don't know yet” is the button on every Focus test question; use the same words as that button.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "r7JaA6"
+msgid "“I don't know yet” is a fine answer."
+msgstr "“I don't know yet” is a fine answer."
+
+#. Title of a short fact about the Focus test: it gives no grade or score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "rIfFed"
+msgid "There's no grade"
+msgstr "There's no grade"
+
+#. Under “Stop anytime”: every Focus test answer is saved as soon as it is given.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3YgnmP"
+msgid "Each answer is saved."
+msgstr "Each answer is saved."
+
+#. Title of a short fact about the Focus test: the learner can stop it whenever they want.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "g1Knsp"
+msgid "Stop anytime"
+msgstr "Stop anytime"
+
+#. Under “A few more in your first week”. “These questions” are the Focus test's questions; “that” is the study sessions asking them.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "m3Cw5S"
+msgid "Your study sessions ask a few more of these questions. You can pause that."
+msgstr "Your study sessions ask a few more of these questions. You can pause that."
+
+#. Title of a short fact about the Focus test: during the learner's first week, their study sessions ask a few more of its questions. “A few more” means questions.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "Y6o_Rw"
+msgid "A few more in your first week"
+msgstr "A few more in your first week"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "HK3ph8"
+msgid "How it works"
+msgstr "How it works"
+
+#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/focus-test-result.tsx
+#: src/focus-test/focus-test-screens.tsx
+#: src/plan/plan-focus-test.tsx
+#: src/plan/plan-focus.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "Focus test"
+
+#. Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "nWvvzY"
+msgid "Give these subjects more time?"
+msgstr "Give these subjects more time?"
+
+#. Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "ZQfsV7"
+msgid "Your time can't cover everything before your exam."
+msgstr "Your time can't cover everything before your exam."
+
+#: src/focus-test/focus-test-proposal.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "YWfqky"
+msgid "Update my plan"
+msgstr "Update my plan"
+
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "s2lEZy"
+msgid "Change focus"
+msgstr "Change focus"
+
+#. Under the switch “Ask a few more in my sessions”: sessions ask those questions only during the learner's first week.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "fkY35_"
+msgid "During your first week"
+msgstr "During your first week"
+
+#. Label of an on/off switch on the Focus test's result: whether the learner's study sessions ask a few more Focus test questions. “A few more” means questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "ksG62i"
+msgid "Ask a few more in my sessions"
+msgstr "Ask a few more in my sessions"
+
+#. Shown with a check mark above the Focus test's result: the learner's answers were saved.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "g2pcsk"
+msgid "Answers saved"
+msgstr "Answers saved"
+
+#. Headline of the Focus test's result, above a short numbered list of the exam subjects that need most of the learner's study time. It answers the invitation “Find out where to focus”. Keep it short. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "K9pcMz"
+msgid "Here's where to focus"
+msgstr "Here's where to focus"
+
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "ZrB8AL"
+msgid "Your starting point is set"
+msgstr "Your starting point is set"
+
+#: src/focus-test/focus-test-result.tsx
+msgctxt "qI81MQ"
+msgid "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
+msgstr "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
+
+#. Button on the Focus test's result: continues the test with more questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "X1M8Kl"
+msgid "Answer more questions"
+msgstr "Answer more questions"
+
+#. Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "67jQK8"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most."
+msgstr "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most."
+
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "JFKisp"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know."
+msgstr "Quick questions on your exam's subjects. Your plan skips what you already know."
+
+#: src/focus-test/focus-test-screens.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "SKxNcp"
+msgid "Start the test"
+msgstr "Start the test"
+
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "G9nQHt"
+msgid "Continue your test"
+msgstr "Continue your test"
+
+#. Shown when the learner comes back to a Focus test they left halfway: the answers they already gave are kept.
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "BwHZIs"
+msgid "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}"
+msgstr "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}"
+
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "n4uIps"
+msgid "Your answers are saved"
+msgstr "Your answers are saved"
+
+#. Opens the list of every exam subject with how its Focus test questions went.
+#: src/focus-test/focus-test-subjects.tsx
+msgctxt "a9uRoF"
+msgid "See all subjects"
+msgstr "See all subjects"
+
+#: src/focus-test/focus-test-subjects.tsx
+#: src/mock/mock-chooser-picked.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ay-crl"
+msgid "Subjects"
+msgstr "Subjects"
+
+#. A short fact beside a subject in a list: every answer the learner gave on it was “I don't know yet”. It is not a grade.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "lJ7_om"
+msgid "Not known yet"
+msgstr "Not known yet"
+
+#. A short fact: how many of the questions asked the learner got right, such as “1 of 2 right”. Word every form the same way, so it reads well for 0, 1 and more right answers.
+#: src/focus-test/use-focus-test-texts.ts
+#: src/questions/test-out-run.tsx
+msgctxt "sgSz4r"
+msgid "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
+msgstr "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
+
+#. A subject the Focus test hasn't asked a question about yet.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "aFU9NJ"
+msgid "Not asked yet"
+msgstr "Not asked yet"
+
+#. A part of the exam the Focus test's quick questions can't check, such as the essay.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "DjRHAP"
+msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
+msgstr "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
+
+#. Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sdUdiu"
+msgid "Find out where to focus"
+msgstr "Find out where to focus"
+
+#. The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "Hz7C8k"
+msgid "Find out where to start"
+msgstr "Find out where to start"
+
+#: src/focus-test/use-focus-test-texts.ts
+#: src/mock/mock-chooser-picked.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "About {time}"
+
+#. {time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "About {time} left"
+
+#. Button that ends the Focus test with the answers given so far and shows its result.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "AcDjzM"
+msgid "See my result"
+msgstr "See my result"
+
+#. Under “Focus test” in a list: the learner started the test and has not finished it.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "q1WWIr"
+msgid "In progress"
+msgstr "In progress"
+
+#. Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "KAccXF"
+msgid "Paused in your sessions"
+msgstr "Paused in your sessions"
+
+#. Under “Focus test” in a list, once the learner took the test: opens its result.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "TZTNNl"
+msgid "See your result"
+msgstr "See your result"
+
+#: src/focus-test/use-result-line.ts
+msgctxt "vKUJpo"
+msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+
+#. The Focus test's result when no answer showed something the learner already knows: every exam subject starts at its first lessons.
+#: src/focus-test/use-result-line.ts
+msgctxt "PLJ-7h"
+msgid "Your plan starts each subject from the basics."
+msgstr "Your plan starts each subject from the basics."
+
+#. After the learner agreed to give the listed exam subjects more time: the study plan changed.
+#: src/focus-test/use-result-line.ts
+msgctxt "G-NFHn"
+msgid "Your plan now gives these subjects more time."
+msgstr "Your plan now gives these subjects more time."
+
+#: src/focus-test/use-result-line.ts
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "Your plan stays as it was."
+
+#. Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.
+#: src/focus-test/use-result-line.ts
+msgctxt "60Ever"
+msgid "Your plan gives these subjects more time."
+msgstr "Your plan gives these subjects more time."
+
+#. Above the exam subjects the Focus test suggests: the learner picked other subjects to focus on, and the study plan keeps their pick. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "Q9-GXF"
+msgid "Your plan keeps the focus you chose. This is what the test suggests."
+msgstr "Your plan keeps the focus you chose. This is what the test suggests."
+
+#. Above the exam subjects the Focus test suggests: the learner answered “Not now” to giving them more time, so the study plan was left unchanged.
+#: src/focus-test/use-result-line.ts
+msgctxt "wMXRsU"
+msgid "You kept your plan as it is. This is what the test suggests."
+msgstr "You kept your plan as it is. This is what the test suggests."
+
+#. Under “Here's where to focus”, above a list of exam subjects: why the Focus test suggests these subjects, then the fact that focusing on them is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "98jjZc"
+msgid "Based on your answers and what counts most in your exam. Focusing never removes a subject."
+msgstr "Based on your answers and what counts most in your exam. Focusing never removes a subject."
+
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
 msgid "Writing your call"
@@ -4197,6 +4537,7 @@ msgid "Connection lost"
 msgstr "Connection lost"
 
 #: src/generation/generation-wait.tsx
+#: src/onboarding/steps/step-parts.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
@@ -4591,16 +4932,6 @@ msgid "Writing questions on this chapter"
 msgstr "Writing questions on this chapter"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "My88im"
-msgid "Writing questions on each subject"
-msgstr "Writing questions on each subject"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "bLGs-q"
-msgid "Picking what to ask in each subject…"
-msgstr "Picking what to ask in each subject…"
-
-#: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"
 msgid "Writing questions on what you studied"
 msgstr "Writing questions on what you studied"
@@ -4614,6 +4945,11 @@ msgstr "Writing your mock exam"
 msgctxt "M1AYoH"
 msgid "Writing questions like the exam's"
 msgstr "Writing questions like the exam's"
+
+#: src/generation/use-generation-copy.ts
+msgctxt "bLGs-q"
+msgid "Picking what to ask in each subject…"
+msgstr "Picking what to ask in each subject…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "_49owu"
@@ -8264,7 +8600,6 @@ msgid "Your last mock exam"
 msgstr "Your last mock exam"
 
 #: src/mock/mock-chooser-page.tsx
-#: src/mock/mock-chooser.tsx
 msgctxt "C0vG_3"
 msgid "The picked mock exam"
 msgstr "The picked mock exam"
@@ -8309,11 +8644,6 @@ msgctxt "4FZiEz"
 msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 
-#: src/mock/mock-chooser-parts.tsx
-msgctxt "ASWZtq"
-msgid "Mock exams come with Plus. Without it, the quick questions find your starting point."
-msgstr "Mock exams come with Plus. Without it, the quick questions find your starting point."
-
 #: src/mock/mock-chooser-picked.tsx
 msgctxt "y0zaf-"
 msgid "Time limit"
@@ -8325,23 +8655,9 @@ msgid "Usually takes"
 msgstr "Usually takes"
 
 #: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-option-labels.ts
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "About {time}"
-
-#: src/mock/mock-chooser-picked.tsx
 msgctxt "TX7Ut7"
 msgid "Parts"
 msgstr "Parts"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-chooser.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ay-crl"
-msgid "Subjects"
-msgstr "Subjects"
 
 #: src/mock/mock-chooser.tsx
 msgctxt "fxqPQZ"
@@ -8363,26 +8679,6 @@ msgstr "Start with {count, plural, one {# question} other {# questions}}"
 msgctxt "AJEiDR"
 msgid "Pick how much of the exam to take now."
 msgstr "Pick how much of the exam to take now."
-
-#: src/mock/mock-chooser.tsx
-msgctxt "V9sJcj"
-msgid "In the exam's format. Your plan starts from your answers."
-msgstr "In the exam's format. Your plan starts from your answers."
-
-#: src/mock/mock-chooser.tsx
-msgctxt "irPOsS"
-msgid "A mock exam to find your level"
-msgstr "A mock exam to find your level"
-
-#: src/mock/mock-chooser.tsx
-msgctxt "5K_dtm"
-msgid "How long"
-msgstr "How long"
-
-#: src/mock/mock-chooser.tsx
-msgctxt "afPppd"
-msgid "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end."
-msgstr "Stop whenever you want: your plan uses the questions you answered. Your result shows at the end."
 
 #: src/mock/mock-clock.tsx
 msgctxt "_Romna"
@@ -8658,37 +8954,6 @@ msgstr "objective part only"
 msgctxt "7wpzd1"
 msgid "{count} q · ~{time}"
 msgstr "{count} q · ~{time}"
-
-#: src/mock/mock-option-labels.ts
-msgctxt "1RT7Ay"
-msgid "The {count, plural, one {subject} other {# subjects}} worth most. Your first days ask about the rest."
-msgstr "The {count, plural, one {subject} other {# subjects}} worth most. Your first days ask about the rest."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "hRYljY"
-msgid "A quick check. Your first days fine-tune it."
-msgstr "A quick check. Your first days fine-tune it."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "qdBCMU"
-msgid "The most precise starting point."
-msgstr "The most precise starting point."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "CBjY-g"
-msgid "Every subject. A good starting point."
-msgstr "Every subject. A good starting point."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "AIzXTP"
-msgid "About {time} (recommended)"
-msgstr "About {time} (recommended)"
-
-#. {count} is a number of questions in a mock exam.
-#: src/mock/mock-option-labels.ts
-msgctxt "7G7WCP"
-msgid "{count} q"
-msgstr "{count} q"
 
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
@@ -9114,7 +9379,6 @@ msgid "{document, select, notice {To pass, the notice says} other {To pass, the 
 msgstr "{document, select, notice {To pass, the notice says} other {To pass, the official guide says}}"
 
 #: src/mock/mock-result-view.tsx
-#: src/plan/focus-test/focus-test-screen.tsx
 #: src/syllabus/syllabus-section.tsx
 msgctxt "ZH37vY"
 msgid "{count, plural, one {# subject} other {# subjects}}"
@@ -9857,11 +10121,6 @@ msgctxt "bL7-Qo"
 msgid "Get a plan with dates, and your first lesson"
 msgstr "Get a plan with dates, and your first lesson"
 
-#: src/onboarding/how-it-works.tsx
-msgctxt "HK3ph8"
-msgid "How it works"
-msgstr "How it works"
-
 #: src/onboarding/library-course-offer.tsx
 msgctxt "u1Zt5F"
 msgid "A Library course fits your goal. Start it now"
@@ -10219,14 +10478,14 @@ msgid "This plan follows the exam's usual structure while we finish reading its 
 msgstr "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today."
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "s7LDgm"
-msgid "Your answer, in your own words"
-msgstr "Your answer, in your own words"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "Question {number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "Question {number, number} of {total, number}"
 
 #: src/onboarding/steps/placement-question.tsx
 msgctxt "76_ax9"
@@ -10234,29 +10493,9 @@ msgid "Stop here and see my plan"
 msgstr "Stop here and see my plan"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "L4poYE"
-msgid "In the exam's format, about {time}."
-msgstr "In the exam's format, about {time}."
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "JVCngo"
-msgid "In the exam's format, from {shortest} to {longest}. You pick how long."
-msgstr "In the exam's format, from {shortest} to {longest}. You pick how long."
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "9REw3l"
-msgid "Or take a mock exam"
-msgstr "Or take a mock exam"
-
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "RMYAm8"
 msgid "Let's see what you already know"
 msgstr "Let's see what you already know"
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "FaKYJe"
-msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
-msgstr "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "BzVgDK"
@@ -10269,35 +10508,14 @@ msgid "Skip and start from the basics"
 msgstr "Skip and start from the basics"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "oj1-Qw"
-msgid "Mock exam done"
-msgstr "Mock exam done"
-
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "PoSPxI"
 msgid "{count, plural, =0 {# questions answered} one {# question answered} other {# questions answered}}"
 msgstr "{count, plural, =0 {# questions answered} one {# question answered} other {# questions answered}}"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "RcbDkF"
-msgid "Your mock exam set your starting point"
-msgstr "Your mock exam set your starting point"
-
-#. "It" is the learner's starting point, named in the title.
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "DYttBE"
-msgid "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day."
-msgstr "Based on {count, plural, one {your # answer} other {your # answers}}. It gets more accurate every day."
-
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "HiDu8F"
 msgid "That's enough questions for today"
 msgstr "That's enough questions for today"
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "ZrB8AL"
-msgid "Your starting point is set"
-msgstr "Your starting point is set"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "_8ObLn"
@@ -10320,35 +10538,16 @@ msgctxt "XFK0hn"
 msgid "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead."
 msgstr "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead."
 
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "FgQ9-w"
-msgid "Your mock exam is waiting"
-msgstr "Your mock exam is waiting"
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "7TmSOg"
-msgid "Go on where you left it, or stop now: your plan starts from the questions you answered."
-msgstr "Go on where you left it, or stop now: your plan starts from the questions you answered."
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "xQDh33"
-msgid "Continue the mock exam"
-msgstr "Continue the mock exam"
-
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "9Glrm7"
-msgid "Stop and see my plan"
-msgstr "Stop and see my plan"
-
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "They come from the material you added. Reading it takes a few minutes."
 
+#. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "1bV_YK"
-msgid "They come from the skills your goal needs. It usually takes a minute or two."
-msgstr "They come from the skills your goal needs. It usually takes a minute or two."
+msgctxt "WFtloO"
+msgid "This usually takes a minute or two."
+msgstr "This usually takes a minute or two."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "QRwbAL"
@@ -10359,11 +10558,6 @@ msgstr "Your questions are ready"
 msgctxt "7yADK5"
 msgid "Start them whenever you're ready."
 msgstr "Start them whenever you're ready."
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "WYzHAI"
-msgid "Skip for now"
-msgstr "Skip for now"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "8S9f9-"
@@ -10424,7 +10618,6 @@ msgstr "Your answers are saved. Try again so it's ready when you finish."
 
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/schedule-step.tsx
-#: src/plan/focus-test/focus-test-result.tsx
 #: src/today/today-action.tsx
 #: src/today/today-progress-card.tsx
 msgctxt "SedhMm"
@@ -10654,6 +10847,22 @@ msgctxt "7T47RX"
 msgid "Choices"
 msgstr "Choices"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "4 hr"; {areas} lists up to three exam subjects.
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "vVVeMO"
+msgid "{dateKind, select, month {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.} other {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.}}"
+msgstr "{dateKind, select, month {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.} other {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.}}"
+
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "m4vIdH"
+msgid "See what fits"
+msgstr "See what fits"
+
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "4znkhu"
+msgid "What your test changed"
+msgstr "What your test changed"
+
 #: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
@@ -10812,6 +11021,11 @@ msgctxt "YYDGLc"
 msgid "{level, select, none {From scratch, at {time} a day.} basic {From the basics, at {time} a day.} intermediate {From an intermediate level, at {time} a day.} advanced {From an advanced level, at {time} a day.} other {From {level}, at {time} a day.}}"
 msgstr "{level, select, none {From scratch, at {time} a day.} basic {From the basics, at {time} a day.} intermediate {From an intermediate level, at {time} a day.} advanced {From an advanced level, at {time} a day.} other {From {level}, at {time} a day.}}"
 
+#: src/onboarding/steps/schedule-focus-line.tsx
+msgctxt "odA2oU"
+msgid "With this time, we suggest giving {subjects} more attention."
+msgstr "With this time, we suggest giving {subjects} more attention."
+
 #. A link under the daily study time that opens the question about the goal's date, to change it.
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "pttbjJ"
@@ -10834,6 +11048,12 @@ msgstr "How much time can you study each day?"
 msgctxt "_4tOwT"
 msgid "Skip"
 msgstr "Skip"
+
+#. Headline when a screen failed to load. Next to it is a “Try again” button.
+#: src/onboarding/steps/step-parts.tsx
+msgctxt "jNPr7M"
+msgid "This didn't open"
+msgstr "This didn't open"
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
@@ -10872,6 +11092,11 @@ msgstr "Which subjects do you already know well?"
 msgctxt "65ILOx"
 msgid "Subjects you know well"
 msgstr "Subjects you know well"
+
+#: src/onboarding/steps/typed-answer-field.tsx
+msgctxt "s7LDgm"
+msgid "Your answer, in your own words"
+msgstr "Your answer, in your own words"
 
 #: src/onboarding/understood/understood-aim-picker.tsx
 #: src/onboarding/understood/understood-country-picker.tsx
@@ -11145,84 +11370,6 @@ msgstr "Weekly challenges on {weekday}"
 msgctxt "j46Zxi"
 msgid "After the change"
 msgstr "After the change"
-
-#: src/plan/focus-test/focus-test-result.tsx
-#: src/questions/test-out-run.tsx
-msgctxt "sgSz4r"
-msgid "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
-msgstr "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
-
-#: src/plan/focus-test/focus-test-result.tsx
-msgctxt "J3M17v"
-msgid "How you did"
-msgstr "How you did"
-
-#: src/plan/focus-test/focus-test-result.tsx
-msgctxt "s3sSPs"
-msgid "Your plan is back as it was"
-msgstr "Your plan is back as it was"
-
-#: src/plan/focus-test/focus-test-result.tsx
-msgctxt "mv8XQE"
-msgid "Your new focus"
-msgstr "Your new focus"
-
-#: src/plan/focus-test/focus-test-result.tsx
-msgctxt "fBkTTq"
-msgid "{count, plural, one {This subject counts a lot, and it's where you missed most.} other {These subjects count a lot, and they're where you missed most.}} Your plan now gives {count, plural, one {it} other {them}} more depth, and every other topic stays in it."
-msgstr "{count, plural, one {This subject counts a lot, and it's where you missed most.} other {These subjects count a lot, and they're where you missed most.}} Your plan now gives {count, plural, one {it} other {them}} more depth, and every other topic stays in it."
-
-#: src/plan/focus-test/focus-test-screen.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "SKxNcp"
-msgid "Start the test"
-msgstr "Start the test"
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "R4YPYi"
-msgid "Where should you focus?"
-msgstr "Where should you focus?"
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "tT0fNw"
-msgid "A few questions on each subject. The ones you need most come first and get more depth."
-msgstr "A few questions on each subject. The ones you need most come first and get more depth."
-
-#: src/plan/focus-test/focus-test-screen.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "Ge7HX4"
-msgid "Getting your test ready"
-msgstr "Getting your test ready"
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "DmNMa-"
-msgid "We're writing a few questions on each subject. The test opens here when they're ready."
-msgstr "We're writing a few questions on each subject. The test opens here when they're ready."
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "OQOaU-"
-msgid "Some questions couldn't be written"
-msgstr "Some questions couldn't be written"
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "tc21O5"
-msgid "Your next questions are on the way"
-msgstr "Your next questions are on the way"
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "1PjKY8"
-msgid "Finish with the answers you gave: they still choose where your plan goes deeper."
-msgstr "Finish with the answers you gave: they still choose where your plan goes deeper."
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "1vTk3k"
-msgid "We're writing the rest of the test. It goes on here when they're ready."
-msgstr "We're writing the rest of the test. It goes on here when they're ready."
-
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "Focus test"
 
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
@@ -11553,15 +11700,11 @@ msgctxt "JzlCcg"
 msgid "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}"
 msgstr "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}"
 
-#: src/plan/plan-focus.tsx
-msgctxt "HxjAUb"
-msgid "Take a short test"
-msgstr "Take a short test"
-
-#: src/plan/plan-focus.tsx
-msgctxt "ADDyA9"
-msgid "Your answers choose for you"
-msgstr "Your answers choose for you"
+#. Link that opens the Focus test, for a learner who has not taken it.
+#: src/plan/plan-focus-test.tsx
+msgctxt "rSLsxO"
+msgid "Take the Focus test"
+msgstr "Take the Focus test"
 
 #: src/plan/plan-focus.tsx
 msgctxt "pt8kOU"
@@ -11592,6 +11735,11 @@ msgstr "Or choose them yourself"
 msgctxt "JLgN5q"
 msgid "Subjects to focus on"
 msgstr "Subjects to focus on"
+
+#: src/plan/plan-focus.tsx
+msgctxt "gRHXuD"
+msgid "Remove focus"
+msgstr "Remove focus"
 
 #: src/plan/plan-focus.tsx
 msgctxt "MWvL4r"
@@ -12008,6 +12156,11 @@ msgid "More time for {areas}."
 msgstr "More time for {areas}."
 
 #: src/plan/use-area-sentence.ts
+msgctxt "eEjhoj"
+msgid "Your plan has no focus."
+msgstr "Your plan has no focus."
+
+#: src/plan/use-area-sentence.ts
 msgctxt "ocTqQ4"
 msgid "Less time for {areas}."
 msgstr "Less time for {areas}."
@@ -12296,6 +12449,11 @@ msgstr "For your new level, these come first: {skills}."
 msgctxt "Bot8U5"
 msgid "More time for {areas}, where it's needed most."
 msgstr "More time for {areas}, where it's needed most."
+
+#: src/plan/use-change-sentence.ts
+msgctxt "a_18ck"
+msgid "Your Focus test suggests more time for {subjects}."
+msgstr "Your Focus test suggests more time for {subjects}."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "O1UIS5"
@@ -13247,11 +13405,6 @@ msgid "{current, number} of {total, number}"
 msgstr "{current, number} of {total, number}"
 
 #: src/questions/choice-questions-run.tsx
-msgctxt "GujE46"
-msgid "Finish with these answers"
-msgstr "Finish with these answers"
-
-#: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-finish-ready.tsx
 #: src/session/summary/summary-actions.tsx
 msgctxt "2O2sfp"
@@ -13354,6 +13507,11 @@ msgstr "A few questions on this chapter. Do well, and your plan skips what you a
 msgctxt "uHFced"
 msgid "Test out: {chapter}"
 msgstr "Test out: {chapter}"
+
+#: src/questions/test-out-preparing.tsx
+msgctxt "Ge7HX4"
+msgid "Getting your test ready"
+msgstr "Getting your test ready"
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
@@ -13796,6 +13954,11 @@ msgstr "A few misses in a row. A short break often helps, and everything you did
 msgctxt "lTfSB-"
 msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
 msgstr "Fine-tuning your plan. A miss here is never saved as a mistake."
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "0z8Wa1"
+msgid "Not today"
+msgstr "Not today"
 
 #: src/session/question-block/question-block-header.tsx
 msgctxt "JJytYK"
@@ -14923,6 +15086,23 @@ msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Plan change"
 
+#: src/today/today-focus-test.tsx
+msgctxt "44Z30Y"
+msgid "Noted. You can take the test from your plan."
+msgstr "Noted. You can take the test from your plan."
+
+#. One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.
+#: src/today/today-focus-test.tsx
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "The Focus test shows what to study most."
+
+#. {time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.
+#: src/today/today-focus-test.tsx
+msgctxt "o-vRxa"
+msgid "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most."
+msgstr "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most."
+
 #: src/today/today-heading.tsx
 msgctxt "FR3uzc"
 msgid "{exam} tomorrow"
@@ -14963,12 +15143,6 @@ msgstr "Move my study time to {time}"
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Got it"
-
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "Your plan stays as it was."
 
 #. The time of day the learner studies changed.
 #: src/today/today-insight.tsx

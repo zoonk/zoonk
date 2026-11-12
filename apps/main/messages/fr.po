@@ -103,7 +103,6 @@ msgid "Help"
 msgstr "Aide"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 #: src/app/[lang]/(app)/(onboarding)/start/[goalId]/page.tsx
 msgctxt "ChuNUI"
 msgid "Your plan"
@@ -951,7 +950,6 @@ msgid "The questions you got wrong, why, and practice until you get them right."
 msgstr "Les questions auxquelles tu as mal répondu, pourquoi tu t’es trompé et de quoi t’entraîner jusqu’à trouver les bonnes réponses."
 
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
 msgctxt "OsH_hN"
 msgid "Mock exam, timed like the real one"
 msgstr "Un examen blanc chronométré comme le vrai"
@@ -1109,10 +1107,15 @@ msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuer"
 
-#: src/app/[lang]/(app)/(onboarding)/mock/placement/[goalId]/page.tsx
-msgctxt "irPOsS"
-msgid "A mock exam to find your level"
-msgstr "Un examen blanc pour évaluer ton niveau"
+#: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "Test de priorités"
+
+#: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
+msgctxt "ko7e4v"
+msgid "Quick questions that find where your study time should go"
+msgstr "Des questions rapides pour savoir à quoi consacrer ton temps d’étude"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
@@ -2785,11 +2788,6 @@ msgstr "Créer un plan pour toute la matière"
 msgctxt "xuyfqZ"
 msgid "I want to understand {topic} in depth"
 msgstr "Je veux comprendre {topic} en profondeur"
-
-#: src/app/[lang]/focus-test/page.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "Test de priorités"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx

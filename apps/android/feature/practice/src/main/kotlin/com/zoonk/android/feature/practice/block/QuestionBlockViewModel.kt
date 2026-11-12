@@ -1,11 +1,16 @@
 package com.zoonk.android.feature.practice.block
 
 import android.os.SystemClock
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.focustest.FocusTestStore
 import com.zoonk.android.feature.player.SessionMove
 import com.zoonk.android.feature.player.SessionMover
 import com.zoonk.android.feature.player.SessionSteps
@@ -16,8 +21,10 @@ import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.practice.Submission
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerFeedback
+import com.zoonk.android.feature.questions.NotToday
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.api.models.CheckpointQuestionsInner
+import com.zoonk.api.models.FocusTestControlsInput
 import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockDetail
@@ -27,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 
@@ -44,6 +52,7 @@ class QuestionBlockViewModel(
     private val key: BlockKey,
     private val store: QuestionBlockStore,
     steps: SessionSteps,
+    private val focusTests: FocusTestStore,
     private val now: () -> Long = SystemClock::elapsedRealtime,
 ) : ViewModel(),
     RunControls {
@@ -78,6 +87,7 @@ class QuestionBlockViewModel(
         if (run.value != null) return
         run.value = QuestionRun.begin(questions)
         shownAt = now()
+        if (questions.any { it.placement }) viewModelScope.launch { examGoal = focusTests.examGoal(key.sessionId) }
     }
 
     override fun startDrill() = run.update { it?.start() }
@@ -162,13 +172,46 @@ class QuestionBlockViewModel(
     fun reread() {
         viewModelScope.launch {
             block.refresh()
-            val loaded = (block.state.value as? LoadState.Loaded)?.value ?: return@launch
+            val state = block.state.value
+            if (state == LoadState.Failed(ApiError.NotFound)) {
+                closing.value = true
+                return@launch
+            }
+            val loaded = (state as? LoadState.Loaded)?.value ?: return@launch
             if (loaded.block.status != StudyBlock.Status.ACTIVE) {
                 closing.value = true
                 return@launch
             }
             run.value = QuestionRun.begin(questions(loaded).questions)
             shownAt = now()
+        }
+    }
+
+    /** Only an exam's placement questions are its Focus test's, which "Not today" can skip. */
+    private var examGoal by mutableStateOf<UUID?>(null)
+    private var skipping = false
+    private var skipFailed by mutableStateOf(false)
+
+    override val notToday get() = examGoal?.let { NotToday(skipFailed) { skipTestQuestions(it) } }
+
+    /** Today's test questions leave the session; the block read again goes on without them, or closes once it has none. */
+    private fun skipTestQuestions(goalId: UUID) {
+        if (skipping) return
+        skipping = true
+        skipFailed = false
+        viewModelScope.launch {
+            when (focusTests.setSessionQuestions(goalId, FocusTestControlsInput.SessionQuestions.SKIPPED_TODAY)) {
+                is MutationResult.Done -> {
+                    reread()
+                }
+
+                is MutationResult.Failed -> {
+                    skipFailed = true
+                }
+
+                MutationResult.Obsolete -> {}
+            }
+            skipping = false
         }
     }
 

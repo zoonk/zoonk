@@ -25,20 +25,6 @@ export function getFocusTargets({
   });
 }
 
-export function listFocusedSkillIds({
-  graph,
-  settings,
-}: {
-  graph: PlanGraph;
-  settings: Pick<PlanSettings, "focusAreas" | "focusParts">;
-}): Set<string> {
-  return new Set(
-    getFocusTargets({ areas: settings.focusAreas, graph, settings }).flatMap((target) => [
-      ...target.skillIds,
-    ]),
-  );
-}
-
 export function getTargetOf(targets: readonly FocusTarget[]): (skillId: string) => string | null {
   return function targetOf(skillId) {
     return targets.find((target) => target.skillIds.has(skillId))?.name ?? null;

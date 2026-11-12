@@ -79,11 +79,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
 import com.zoonk.api.models.MockOptions
-import com.zoonk.api.models.MockOptionsPlacement
-
-@Composable
-internal fun chooserTitle(placement: Boolean): String =
-    stringResource(if (placement) R.string.mock_chooser_placement_title else R.string.mock_chooser_title)
 
 @Composable
 internal fun PracticeChooser(
@@ -110,7 +105,7 @@ internal fun PracticeChooser(
     val start = {
         option?.let {
             onStart()
-            viewModel.start(MockChoice.Practice(it.shape), it.key)
+            viewModel.start(it.shape, it.key)
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
@@ -180,99 +175,6 @@ internal fun PracticeChooser(
             }
         }
         if (!asideBeside) item(key = "notes", contentType = "notes") { notes() }
-    }
-}
-
-@Composable
-internal fun PlacementChooser(
-    view: MockOptions,
-    viewModel: MockChooserViewModel,
-    navigator: AppNavigator,
-    listState: LazyListState,
-    replacementFocus: FocusRequester? = null,
-    onStart: () -> Unit = {},
-) {
-    val placement = view.placement ?: return
-    val status by viewModel.status.collectAsStateWithLifecycle()
-    val busy by viewModel.busy.collectAsStateWithLifecycle()
-    var picked by rememberSaveable { mutableStateOf(recommendedKey(placement)) }
-    val option = placement.options.firstOrNull { it.key == picked }
-    val open = view.access == MockOptions.Access.OPEN
-    val choices =
-        placement.options.map {
-            RowChoice(
-                key = it.key,
-                label = placementLength(it, recommended = it.key == recommendedKey(placement)),
-                description = placementPrecision(it),
-                trailing = stringResource(R.string.mock_chooser_placement_size, it.questions.toInt()),
-                spokenTrailing =
-                    pluralStringResource(
-                        R.plurals.mock_chooser_placement_size_spoken,
-                        it.questions.toInt(),
-                        it.questions.toInt(),
-                    ),
-            )
-        }
-
-    val start = {
-        option?.let {
-            onStart()
-            viewModel.start(MockChoice.Placement(it.length), it.key)
-        }
-    }
-    val action: @Composable (Modifier) -> Unit = { modifier ->
-        if (open) {
-            Button(
-                busy = busy,
-                onClick = { start() },
-                modifier = modifier.focus(replacementFocus),
-                enabled = option != null,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-            ) {
-                Text(stringResource(R.string.mock_chooser_placement_start))
-            }
-        } else {
-            SeePlusButton(navigator, modifier.focus(replacementFocus))
-        }
-    }
-
-    ChooserPage(
-        listState = listState,
-        onEnter = { if (open) start() else navigator.open(AppRoute.Subscription) },
-        bar = { StartBar(status, navigator, action) },
-        aside = {
-            option?.let {
-                PickedMock(
-                    title = choices.first { choice -> choice.key == it.key }.label,
-                    size = PickedSize(it.questions, it.minutes, it.estimatedMinutes),
-                    namesTitle = stringResource(R.string.mock_chooser_subjects),
-                    names = it.areas,
-                )
-            }
-        },
-    ) { asideBeside ->
-        item(key = "hero", contentType = "hero") {
-            ChooserHero(
-                eyebrow = view.examName,
-                title = stringResource(R.string.mock_chooser_placement_title),
-                line = stringResource(R.string.mock_chooser_placement_detail),
-                status = if (asideBeside) ChooserStatus.Choosing else status,
-                action = action.takeUnless { asideBeside },
-            )
-        }
-        if (!asideBeside) refusal(status, navigator)
-        item(key = "lengths", contentType = "choices") { ChoiceRows(choices, picked) { picked = it } }
-        item(key = "note", contentType = "note") {
-            if (open) {
-                Text(
-                    stringResource(R.string.mock_chooser_placement_note),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            } else {
-                PlusNotice(onSeePlus = null, description = stringResource(R.string.mock_chooser_placement_plus))
-            }
-        }
     }
 }
 
@@ -632,7 +534,5 @@ private fun PickedName(
         detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }
-
-private fun recommendedKey(placement: MockOptionsPlacement): String = "placement:${placement.recommended.value}"
 
 private val STACK_BELOW = 480.dp

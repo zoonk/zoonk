@@ -6,6 +6,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.practice.block.BlockKey
 import com.zoonk.android.feature.practice.block.QuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
@@ -111,7 +112,7 @@ class QuestionBlockViewModelTest {
                     timeZone: String,
                 ) = finish()
             }
-        return QuestionBlockViewModel(key, QuestionBlockStore(api, cache) { "UTC" }, UnusedSessionSteps, clock)
+        return QuestionBlockViewModel(key, QuestionBlockStore(api, cache) { "UTC" }, UnusedSessionSteps, unusedFocusTests(cache), clock)
     }
 
     private suspend fun TestScope.started(viewModel: QuestionBlockViewModel) =

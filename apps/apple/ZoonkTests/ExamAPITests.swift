@@ -14,7 +14,7 @@ final class ExamAPITests: XCTestCase {
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
 
     let outcome = try await api.startMock(
-      token: "token", goalId: goalId, choice: .practice(MockShape(kind: .half)),
+      token: "token", goalId: goalId, shape: MockShape(kind: .half),
       acceptFewer: false)
 
     XCTAssertEqual(outcome, .needsQuestions)

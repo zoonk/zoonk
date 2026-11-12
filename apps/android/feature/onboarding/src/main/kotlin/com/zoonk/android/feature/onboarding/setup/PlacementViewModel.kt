@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
-import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswer
 import kotlinx.coroutines.launch
@@ -52,14 +51,11 @@ internal class PlacementViewModel(
     private var sent: SentAnswer? = null
     private var shown = Shown()
 
-    fun phase(
-        placement: LoadState<Placement>,
-        mocks: LoadState<MockOptions>,
-    ): PlacementPhase =
+    fun phase(placement: LoadState<Placement>): PlacementPhase =
         if (awaitingRead) {
             PlacementPhase.Waiting
         } else {
-            placementPhase(placement, mocks, started, shown).also {
+            placementPhase(placement, started, shown).also {
                 if (it is PlacementPhase.Question) shown = Shown(answered = it.number - 1, spent = it.spent)
             }
         }
@@ -97,10 +93,8 @@ internal class PlacementViewModel(
         send()
     }
 
-    /** Stopping a mock exam the learner left first finishes it, so its answers place them too. */
     fun finish(
         fromScratch: Boolean,
-        stopMockId: String? = null,
         fromQuestion: Boolean = false,
         onDone: suspend () -> WriteOutcome<*>,
     ) {
@@ -108,8 +102,7 @@ internal class PlacementViewModel(
         isSaving = true
         finishFailed = false
         viewModelScope.launch {
-            val stopped = stopMockId?.let { store.stopPlacementMock(it) }
-            val outcome = if (stopped == null || stopped is WriteOutcome.Done) store.finishPlacement(goalId, fromScratch) else stopped
+            val outcome = store.finishPlacement(goalId, fromScratch)
             val completed = if (outcome is WriteOutcome.Done) onDone() else outcome
             when (completed) {
                 is WriteOutcome.Done -> {
@@ -132,6 +125,7 @@ internal class PlacementViewModel(
 
     private fun send() {
         val answer = sent ?: return
+        val draft = drafts?.sending(goalId, typedDraftStep(answer.question.item.itemId))
         markStarted()
         isSaving = true
         viewModelScope.launch {
@@ -141,7 +135,7 @@ internal class PlacementViewModel(
                     finishFailed = false
                     shown = shown.copy(answered = maxOf(shown.answered, answer.question.number))
                     sent = null
-                    drafts?.words(goalId, typedDraftStep(answer.question.item.itemId))?.remove()
+                    draft?.remove()
                 }
 
                 WriteOutcome.Obsolete -> {}

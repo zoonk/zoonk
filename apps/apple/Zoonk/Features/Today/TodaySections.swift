@@ -387,7 +387,13 @@ struct TodayPlanChangeSection: View {
   }
 
   private var summary: String {
-    change.reason
+    if change.source == "focusTest", let areas = change.operations.first?.areas, !areas.isEmpty {
+      return String(
+        localized: "Your Focus test suggests more time for \(areas.formatted(.list(type: .and))).",
+        table: "Today", comment: "A focus the learner's Focus test answers propose; then subjects")
+    }
+
+    return change.reason
       ?? String(
         localized: "Your plan has a change for you to look at.", table: "Today",
         comment: "A proposed plan change")
@@ -395,14 +401,21 @@ struct TodayPlanChangeSection: View {
 
   @ViewBuilder
   private var details: some View {
-    let effect = [
-      // Only a plan without a date says its new end, as main does.
-      view.goal.targetDate == nil
-        ? planEffectText(change.effect, today: view.session.localDate, isEstimated: true) : nil,
-      planLessonsEffectText(change.effect),
-    ].compactMap(\.self)
+    let today = view.session.localDate
+    let effect =
+      (change.setsFocus ? planAreaEndTexts(change.effect, today: today) : [])
+      + [
+        // Only a plan without a date says its new end, as main does.
+        view.goal.targetDate == nil
+          ? planEffectText(change.effect, today: today, isEstimated: true) : nil,
+        planLessonsEffectText(change.effect),
+      ].compactMap(\.self)
 
-    if !effect.isEmpty {
+    // A focus the Focus test proposes says what it changes with the diff alone, as the test's own
+    // proposal does.
+    if change.source == "focusTest" {
+      PlanEffectDiff(effect: change.effect, today: today)
+    } else if !effect.isEmpty {
       Text(effect.joinedSentences())
         .foregroundStyle(.mutedForeground)
     }
@@ -444,7 +457,9 @@ struct TodayPlanChangeSection: View {
       ? Text(
         "Use my date anyway", tableName: "Today",
         comment: "Applies a change that moves the exam off the notice's date")
-      : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
+      : change.source == "focusTest"
+        ? Text(FocusTestCopy.updatePlan)
+        : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
   }
 
   private var declineLabel: Text {
@@ -456,6 +471,10 @@ struct TodayPlanChangeSection: View {
         : Text(
           "Keep the official date", tableName: "Today",
           comment: "Declines a change and keeps the date the exam's official calendar sets")
+    }
+
+    if change.source == "focusTest" {
+      return Text(FocusTestCopy.notNow)
     }
 
     return keepsMine
