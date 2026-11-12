@@ -41,7 +41,7 @@ export function ComingLessonsRow() {
       className={cn(getRowClass({ finished: false, isNext: false }), "flex-wrap")}
       data-slot="today-coming-lessons"
     >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />
       </span>
 

@@ -14,7 +14,7 @@ function DayRowsSkeleton() {
     <div className="mt-3 flex flex-col">
       {Array.from({ length: SHELL_ROWS }, (_, index) => (
         <div className="flex items-center gap-3 border-b py-2.75 last:border-b-0" key={index}>
-          <Skeleton className="size-3 shrink-0 rounded-full" />
+          <Skeleton className="mx-0.5 size-3 shrink-0 rounded-full" />
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <Skeleton className="h-3.5 w-3/5 rounded-sm" />
             <Skeleton className="h-3 w-1/4 rounded-sm" />

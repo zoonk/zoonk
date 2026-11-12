@@ -45,7 +45,7 @@ export function MockEntryRow({
   if (view.running) {
     return (
       <ListRowLink href={hrefs.mock(view.running.id)}>
-        <ListRowLeading>
+        <ListRowLeading className="w-4 justify-center">
           <KindDot kind="mock" />
         </ListRowLeading>
         <ListRowContent>
@@ -58,7 +58,7 @@ export function MockEntryRow({
 
   return (
     <ListRowLink href={hrefs.choose}>
-      <ListRowLeading>
+      <ListRowLeading className="w-4 justify-center">
         <KindDot kind="mock" />
       </ListRowLeading>
       <ListRowBody>

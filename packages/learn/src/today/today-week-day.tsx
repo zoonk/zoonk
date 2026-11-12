@@ -30,7 +30,7 @@ type WeekDay = StudySession["week"]["days"][number];
 export const WEEK_DAY_SLOT = "today-week-day";
 
 const DAY_BUTTON_CLASS =
-  "flex min-h-11 w-full cursor-pointer flex-col items-center gap-1.5 rounded-md py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "hit-area relative -mx-1 flex min-h-11 cursor-pointer flex-col items-center gap-1.5 rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 const RING_CLASS = "size-7.5";
 

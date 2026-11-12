@@ -24,7 +24,7 @@ export function FoldRow({
       onClick={onToggle}
       type="button"
     >
-      <span aria-hidden="true" className="flex w-3 shrink-0 justify-center">
+      <span aria-hidden="true" className="flex w-4 shrink-0 justify-center">
         {done && <DoneMark className="size-3.5" />}
       </span>
       <span className="flex min-w-0 flex-1 items-center gap-1.5 font-medium">

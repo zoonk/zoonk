@@ -50,7 +50,7 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
   const t = await getExtracted();
 
   return (
-    <section aria-label={t("Your quick explanation")} className="flex flex-col gap-3">
+    <section aria-label={t("Your quick explanation")} className="flex flex-col gap-4">
       <div className="bg-muted -mx-2.5 flex items-start gap-3 rounded-[0.625rem] px-2.5 py-2.75">
         <PlayIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
         <span className="flex min-w-0 flex-col gap-px">

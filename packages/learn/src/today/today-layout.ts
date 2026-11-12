@@ -19,8 +19,9 @@ export const TODAY_ASIDE_CLASS = cn(
   CLEAR_OF_DOCK_CLASS,
 );
 
+/** From `sm` the button centers on the title's line, under the eyebrow's, and adds no height to the heading's row. */
 export const TODAY_ACTION_CLASS = cn(
-  "[grid-area:action] sm:self-end",
+  "[grid-area:action] sm:mt-3.5 sm:-mb-1.5 sm:self-start",
   "max-sm:bg-background max-sm:fixed max-sm:inset-x-0 max-sm:z-20 max-sm:px-4 max-sm:pt-3 max-sm:pb-3",
   // Only docked on a phone, so its offset does nothing from `sm`.
   ABOVE_BOTTOM_TABS_CLASS,
