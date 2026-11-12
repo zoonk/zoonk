@@ -1,10 +1,9 @@
 "use client";
 
-import { ArrowRightIcon, CheckIcon, RotateCcwIcon, SearchCheckIcon } from "lucide-react";
+import { CheckIcon, RotateCcwIcon, SearchCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
-import { type ResultRows } from "./checkpoint-result";
 import { useIsWon, useRetry } from "./use-checkpoint-outcome";
 
 function DetailsSection({ children, title }: { children: React.ReactNode; title: string }) {
@@ -34,7 +33,7 @@ function WonDetails() {
   );
 }
 
-function NotWonDetails({ rows }: { rows: ResultRows }) {
+function NotWonDetails() {
   const t = useExtracted();
   const retry = useRetry();
 
@@ -51,22 +50,13 @@ function NotWonDetails({ rows }: { rows: ResultRows }) {
           </span>
         </StepRow>
       )}
-
-      {rows.nextLessonsOpen && (
-        <StepRow>
-          <ArrowRightIcon aria-hidden="true" />
-          <span className="min-w-0 flex-1 text-pretty">
-            {t("Your next lessons are already open.")}
-          </span>
-        </StepRow>
-      )}
     </DetailsSection>
   );
 }
 
 /** Shown only when `hasResultRows`, so a win reaches here with its badge. */
-export function CheckpointResultDetails({ rows }: { rows: ResultRows }) {
+export function CheckpointResultDetails() {
   const won = useIsWon();
 
-  return won ? <WonDetails /> : <NotWonDetails rows={rows} />;
+  return won ? <WonDetails /> : <NotWonDetails />;
 }

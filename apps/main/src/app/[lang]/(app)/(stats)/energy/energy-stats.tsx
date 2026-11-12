@@ -1,4 +1,3 @@
-import { getProgressDayCountLabel } from "@/components/progress/progress-day-count-label";
 import { type EnergyData } from "@zoonk/core/progress/energy";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { BatteryFullIcon, ZapIcon } from "lucide-react";
@@ -18,9 +17,7 @@ export async function EnergyTiles({
   const t = await getExtracted();
   const format = await getFormatter();
 
-  const fullDays = insights
-    ? await getProgressDayCountLabel({ count: insights.fullEnergyDays })
-    : DASH;
+  const fullDays = insights ? format.number(insights.fullEnergyDays) : DASH;
 
   return (
     <StatTiles>
@@ -34,7 +31,12 @@ export async function EnergyTiles({
           style: "percent",
         })}
       />
-      <StatTile icon={<BatteryFullIcon />} label={t("At 100%")} tone="energy" value={fullDays} />
+      <StatTile
+        icon={<BatteryFullIcon />}
+        label={t("Days at 100%")}
+        tone="energy"
+        value={fullDays}
+      />
     </StatTiles>
   );
 }

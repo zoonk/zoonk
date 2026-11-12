@@ -219,10 +219,17 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
         <p className="text-muted-foreground flex items-center gap-2 text-sm">
           <BeltIndicator aria-hidden color={nextBelt.key} label={nextBelt.label} size="sm" />
           <span>
-            {t.rich("Next: {belt} at <mono>{points}</mono> Brain Power", {
-              belt: nextBelt.label,
-              mono: renderNumber,
-              points: formatWholeNumber({ format, value: currentBelt.nextBelt.startBrainPower }),
+            {t.rich({
+              description:
+                '{next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt\'s last number, 10.',
+              message: "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power",
+              values: {
+                belt: belt.label,
+                count: String(LEVELS_PER_COLOR),
+                mono: renderNumber,
+                next: nextBelt.label,
+                points: formatWholeNumber({ format, value: currentBelt.nextBelt.startBrainPower }),
+              },
             })}
           </span>
         </p>

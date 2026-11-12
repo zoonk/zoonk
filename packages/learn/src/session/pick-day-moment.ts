@@ -40,24 +40,16 @@ export function getMissionMomentKind(facts: MissionMomentFacts): "all" | "one" |
     : "one";
 }
 
-/** Where the buddy starts glowing (`getBuddyEnergyState`). */
-const GLOWING_ENERGY = 80;
-
-/** Energy gets a moment only where the buddy shows it: any other tenth is a number moving. */
-function isGlowReached(reached: Reached): boolean {
-  return reached.energy !== null && reached.energy >= GLOWING_ENERGY;
-}
-
 /**
- * A task's end shows one extra moment at most, the rarest that applies. The others aren't lost: the
- * day's summary, the top bar and the buddy's page show them.
+ * A task's end shows one extra moment at most, the rarest that applies, and only what was earned:
+ * one mission done or Energy moving is progress the day's bar, Today and the buddy's page show.
  */
 export function pickDayMoment({
   ceremony,
   finishedChapter,
   missionMoment,
   reached,
-}: DayMomentFacts): "belt" | "chapter" | "glow" | "mission" | "missions" | null {
+}: DayMomentFacts): "belt" | "chapter" | "missions" | null {
   const missions = missionMoment ? getMissionMomentKind(missionMoment) : null;
 
   if (reached.level && ceremony?.kind !== "belt") {
@@ -68,13 +60,5 @@ export function pickDayMoment({
     return "missions";
   }
 
-  if (finishedChapter) {
-    return "chapter";
-  }
-
-  if (isGlowReached(reached)) {
-    return "glow";
-  }
-
-  return missions === "one" ? "mission" : null;
+  return finishedChapter ? "chapter" : null;
 }

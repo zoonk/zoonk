@@ -38,7 +38,7 @@ export function useRetry(): { detail: string | null; passed: boolean; title: str
 
   return {
     detail: t(
-      "{lessons, plural, =0 {Nothing is lost.} one {After # short lesson on what tripped you up. Nothing is lost.} other {After # short lessons on what tripped you up. Nothing is lost.}}",
+      "{lessons, plural, =0 {} one {After # short lesson on what tripped you up.} other {After # short lessons on what tripped you up.}}",
       { lessons },
     ),
     passed: false,

@@ -8,7 +8,10 @@ import { getDuelScore } from "./checkpoint-duel-state";
 
 function DecisionLine({ decision }: { decision: DuelDecision }) {
   const t = useExtracted();
-  return decision === "won" ? t("His shield is broken. You won!") : t("His shield held this time.");
+
+  return decision === "won"
+    ? t("His shield is broken. You won!")
+    : t("The Trickster won this time.");
 }
 
 export function Verdict({

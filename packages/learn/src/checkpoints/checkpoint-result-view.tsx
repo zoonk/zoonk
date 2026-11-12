@@ -58,12 +58,15 @@ function ScoreLine() {
       facts={[
         !won &&
           duel.state.completion?.checkpoint &&
-          t("{count, plural, one {# of {total} right to win} other {# of {total} right to win}}", {
+          t("{count, plural, one {# right to win} other {# right to win}}", {
             count: duel.state.completion.checkpoint.passMark,
-            total: String(checkpoint.questions.length),
           }),
       ]}
-      score={{ answered: outcome.total, correct: outcome.correct }}
+      score={{
+        // A duel stops once it's decided, so its score is out of the questions it was set to ask.
+        answered: Math.max(outcome.total, checkpoint.questions.length),
+        correct: outcome.correct,
+      }}
     />
   );
 }
@@ -107,6 +110,8 @@ function DuelDayMoment() {
 
 function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boolean }) {
   const headline = useHeadline();
+  // A loss says one thing: not this time, and when the rematch is.
+  const won = useIsWon();
 
   return (
     <StepCard className="gap-6">
@@ -117,11 +122,11 @@ function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boo
         <ScoreLine />
       </StepHeader>
 
-      <DuelDayMoment />
+      {won && <DuelDayMoment />}
 
       {hasResultRows(rows) && (
         <div className="with-aside:hidden flex w-full flex-col gap-6">
-          <CheckpointResultDetails rows={rows} />
+          <CheckpointResultDetails />
         </div>
       )}
 
@@ -146,9 +151,7 @@ export function CheckpointResultView() {
   return (
     <Steps
       aside={
-        hasDetails
-          ? { children: <CheckpointResultDetails rows={rows} />, label: name, title: name }
-          : null
+        hasDetails ? { children: <CheckpointResultDetails />, label: name, title: name } : null
       }
       exitHref={hrefs.exit}
       finalAction={

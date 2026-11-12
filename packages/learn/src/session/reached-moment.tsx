@@ -5,19 +5,13 @@ import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BELT_COLORS_ORDER, type BeltColor, LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
-import { ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { BeltTicks } from "../_components/belt-ticks";
-import { Meter, MeterFill } from "../_components/meter";
 import { StepRow, StepRows } from "../_components/step-card";
-import { useFormatShare } from "../_utils/percent";
 import { useBeltName, useBeltStep } from "../_utils/use-belt-name";
-import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { type StudyMomentView } from "./session-types";
 
 type Reached = StudyMomentView["reached"];
-
-const PERCENT = 100;
 
 const LIGHT_BELTS: ReadonlySet<BeltColor> = new Set(["white", "yellow", "orange"]);
 
@@ -81,12 +75,12 @@ function BeltBadge({
   );
 }
 
-/** Where the learner is on the way to the next belt, which starts after this belt's last number. */
+/** Which belt comes next: it starts after this belt's last number. */
 function useNextBeltLine() {
   const t = useExtracted();
   const beltName = useBeltName();
 
-  function describe({ color, level }: NonNullable<Reached["level"]>): string | null {
+  function describe({ color }: NonNullable<Reached["level"]>): string | null {
     const next = BELT_COLORS_ORDER[BELT_COLORS_ORDER.indexOf(color) + 1];
 
     if (!next) {
@@ -95,9 +89,9 @@ function useNextBeltLine() {
 
     return t({
       description:
-        'Under a belt and its number, such as "White belt 4": how far along the belt\'s ten numbers the learner is, on the way to the next belt. {belt} is that belt\'s name, such as "Yellow belt".',
-      message: "{level} of {count} to {belt}",
-      values: { belt: beltName(next), count: String(LEVELS_PER_COLOR), level: String(level) },
+        'Under a belt and its number, such as "White belt 4": which belt comes next, and after which number. {next} and {belt} are belt names, such as "Yellow belt" and "White belt".',
+      message: "{next} comes after {belt} {count}",
+      values: { belt: beltName(color), count: String(LEVELS_PER_COLOR), next: beltName(next) },
     });
   }
 
@@ -132,69 +126,14 @@ function BeltReached({
   );
 }
 
-/**
- * Its bar shows where Energy is now, never filling from empty: the moment doesn't know where it
- * came from.
- */
-function EnergyReached({
-  buddy,
-  energy,
-  motion,
-}: {
-  buddy?: LearnBuddy | null;
-  energy: number;
-  motion: RowMotion;
-}) {
-  const t = useExtracted();
-  const formatShare = useFormatShare();
-  const name = useBuddyName(resolveLearnBuddy(buddy ?? null));
-  const energyLine = t("Energy at {energy}", { energy: formatShare(energy / PERCENT) });
-
-  return (
-    <ReachedRow
-      bar={
-        <Meter>
-          <MeterFill className="bg-energy" share={energy / PERCENT} />
-        </Meter>
-      }
-      detail={buddy === undefined ? null : energyLine}
-      mark={
-        <span
-          aria-hidden="true"
-          className="flex size-10 shrink-0 items-center justify-center"
-          data-slot="energy-mark"
-        >
-          <ZapIcon
-            className={cn("text-energy size-5", motion && "animate-pop")}
-            style={beatStyle(motion)}
-          />
-        </span>
-      }
-      slot="reached-energy"
-      title={buddy === undefined ? energyLine : t("{buddy} is glowing", { buddy: name })}
-    />
-  );
-}
-
-/** One row: the belt's new number, or the buddy glowing. The day's moment picks which. */
-export function ReachedMoment({
-  buddy,
-  reached,
-  show,
-}: {
-  buddy?: LearnBuddy | null;
-  reached: Reached;
-  show: "belt" | "glow";
-}) {
+/** The belt's new number. */
+export function ReachedMoment({ reached }: { reached: Reached }) {
   const celebrate = useCelebration();
   const motion = celebrate ? { delayMs: BEAT_MS } : null;
 
   return (
     <StepRows data-slot="reached-moment">
-      {show === "belt" && reached.level && <BeltReached level={reached.level} motion={motion} />}
-      {show === "glow" && reached.energy !== null && (
-        <EnergyReached buddy={buddy} energy={reached.energy} motion={motion} />
-      )}
+      {reached.level && <BeltReached level={reached.level} motion={motion} />}
     </StepRows>
   );
 }

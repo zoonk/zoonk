@@ -42,28 +42,17 @@ describe(getResultRows, () => {
       won: true,
     });
 
-    expect(rows).toStrictEqual({ badge: true, nextLessonsOpen: false, retry: false });
+    expect(rows).toStrictEqual({ badge: true, retry: false });
   });
 
-  it("lists a loss's rematch and the already open next lessons", () => {
+  it("lists only the rematch after a loss", () => {
     const rows = getResultRows({
       checkpoint: checkpoint({ retry: "tomorrow" }),
       hasRetry: true,
       won: false,
     });
 
-    expect(rows).toStrictEqual({ badge: false, nextLessonsOpen: true, retry: true });
-  });
-
-  it("drops the next lessons after a loss a rematch won", () => {
-    const rows = getResultRows({
-      checkpoint: checkpoint({ nextPhase: NEXT, retry: "passed" }),
-      hasRetry: true,
-      won: false,
-    });
-
-    expect(rows.nextLessonsOpen).toBe(false);
-    expect(hasResultRows(rows)).toBe(true);
+    expect(rows).toStrictEqual({ badge: false, retry: true });
   });
 });
 

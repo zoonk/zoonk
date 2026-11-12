@@ -230,7 +230,14 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "ready":
     case "started":
       if (challenge.waitReason) {
-        return { actions: null, line: <LessonsFirstLine /> };
+        return {
+          actions: null,
+          line: (
+            <StatusLine icon={<CalendarClockIcon className="size-4" />}>
+              {t("After today's lessons")}
+            </StatusLine>
+          ),
+        };
       }
 
       if (challenge.status === "ready" && writing?.kind === "refused") {

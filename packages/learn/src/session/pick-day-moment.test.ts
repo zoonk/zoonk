@@ -56,7 +56,7 @@ describe(pickDayMoment, () => {
     expect(pick).toBe("missions");
   });
 
-  it("puts a finished chapter before the buddy's glow and one mission", () => {
+  it("shows a finished chapter when nothing rarer happened", () => {
     const pick = pickDayMoment({
       ceremony: null,
       finishedChapter: CHAPTER,
@@ -67,11 +67,14 @@ describe(pickDayMoment, () => {
     expect(pick).toBe("chapter");
   });
 
-  it("shows Energy only once the buddy glows", () => {
-    const facts = { ceremony: null, missionMoment: ONE_MISSION };
+  it("gives one mission done and Energy moving no moment: the day's bar shows the progress", () => {
+    const pick = pickDayMoment({
+      ceremony: null,
+      missionMoment: ONE_MISSION,
+      reached: { energy: 80, level: null },
+    });
 
-    expect(pickDayMoment({ ...facts, reached: { energy: 80, level: null } })).toBe("glow");
-    expect(pickDayMoment({ ...facts, reached: { energy: 70, level: null } })).toBe("mission");
+    expect(pick).toBeNull();
   });
 
   it("shows nothing extra when the activity moved none of them", () => {

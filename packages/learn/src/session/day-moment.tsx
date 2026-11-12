@@ -19,7 +19,7 @@ export function DayMoment({
     return <FinishedChapterMoment chapter={finishedChapter} />;
   }
 
-  if ((pick === "missions" || pick === "mission") && missionMoment) {
+  if (pick === "missions" && missionMoment) {
     return (
       <MissionMoment
         buddy={buddy}
@@ -30,11 +30,7 @@ export function DayMoment({
     );
   }
 
-  if (pick === "belt" || pick === "glow") {
-    return <ReachedMoment buddy={buddy} reached={reached} show={pick} />;
-  }
-
-  return null;
+  return pick === "belt" ? <ReachedMoment reached={reached} /> : null;
 }
 
 export function StepWithDayMoment({

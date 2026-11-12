@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t("See your answer accuracy and weekly trend over the past 90 days."),
-    title: t("Score"),
+    title: t("Right answers"),
   };
 }
 
@@ -18,7 +18,7 @@ export default async function ScorePage() {
   const t = await getExtracted();
 
   return (
-    <StatsPage title={t("Score")}>
+    <StatsPage title={t("Right answers")}>
       <ScoreChartPreload />
       <Suspense fallback={<ScoreContentSkeleton />}>
         <ScoreContent />

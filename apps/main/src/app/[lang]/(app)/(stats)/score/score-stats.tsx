@@ -13,13 +13,12 @@ export async function ScoreTile({ performance }: { performance: ScorePerformance
   return (
     <StatTiles>
       <StatTile
-        detail={t("{correct} of {total} in the last {days} days", {
+        detail={t("{correct} of {total}", {
           correct: formatWholeNumber({ format, value: performance.correctAnswers }),
-          days: String(SCORE_WINDOW_DAYS),
           total: formatWholeNumber({ format, value: performance.totalAnswers }),
         })}
         icon={<TargetIcon />}
-        label={t("Right answers")}
+        label={t("Last {days} days", { days: String(SCORE_WINDOW_DAYS) })}
         tone="success"
         value={formatMetricPercent({ format, value: performance.score })}
       />
