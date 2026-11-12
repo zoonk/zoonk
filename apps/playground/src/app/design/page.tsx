@@ -76,9 +76,9 @@ export default function DesignOverviewPage() {
   return (
     <>
       <DocHeader title="Design system">
-        Instrument: a calm study instrument. Neutral tone steps set a page&apos;s parts apart, and
-        soft color goes only to what carries meaning: progress, wrong answers, flags, rewards, kinds
-        and subjects. Every page keeps its structure; this is its visual language.
+        What every color, type role, shape, pattern and moment means and where it goes, so every
+        screen looks and reads like one product. Each screen says one thing, color marks only what
+        carries meaning, and every page keeps its structure.
       </DocHeader>
 
       <DocSection title="Principles">

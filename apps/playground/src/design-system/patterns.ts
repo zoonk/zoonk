@@ -9,13 +9,36 @@ export type Pattern = {
 export const PATTERNS: readonly Pattern[] = [
   {
     avoid: [
+      "A second paragraph, or the same fact twice on a screen.",
+      "How Zoonk picks, counts, saves or schedules, where the learner needs what they get.",
+      "A caveat on the screen where the learner decides to start: say it where and when it applies.",
+      "A button that names the next screen, a duration or a consequence (Continue to daily time).",
+      "A count or a system state shown because we have it (Questions on 2 of 18 subjects).",
+      "A word no earlier screen taught (sitting, checked, daily time).",
+    ],
+    follow: [
+      "The title says the screen's one message: what the learner gets or does here. One thing leads; everything else supports it or leaves.",
+      "Between the title and the main action: one sentence (20 words at most) and one line of facts (three at most). More becomes a step, or goes behind one Details link.",
+      "A list row is a title and at most one short line. A result leads with one number or one sentence.",
+      "A button is a verb the learner already knows, in one to three words: Start, Continue, Skip, Save, Try again.",
+      "A product term (plan, focus, phase, Brain Power) appears only on or after the screen that shows what it is.",
+      "This budget is for the product's own screens. Marketing pages (the landing, the catalog, public course pages, pricing, the blog) are read by someone deciding whether to start, and follow their own standard: more text in order, one action repeated, no insider words.",
+      "The full rules are in the `zoonk-design` skill: Words, Marketing pages and The first-glance test.",
+    ],
+    id: "words",
+    summary: "One message per screen, in the learner's words, with one thing leading.",
+    title: "Words and hierarchy",
+  },
+  {
+    avoid: [
       "A colored button.",
       "Two primaries in one area.",
       "An underlined word for a screen's main or secondary action.",
     ],
     follow: [
       "One main action per area, inverted (`Button`); secondary actions outline, tertiary ghost.",
-      "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it. A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
+      "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it.",
+      "A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
       "The main action shows its key as a keycap on pointer devices (`ShortcutKbd`).",
     ],
     id: "actions",
@@ -65,16 +88,18 @@ export const PATTERNS: readonly Pattern[] = [
     avoid: [
       "A number without its words.",
       "A meter part colored for decoration: each color is a meaning or a kind.",
+      "A count, a percent and a meter that say the same thing: pick one.",
+      "A number shown because we have it: it stays only when it changes what the learner does next.",
     ],
     follow: [
       "One big number per block (`BigQuantity`), its unit small and muted.",
       "Under it a meter of parts sized by what they measure (`MeterParts`): progress blue, the learner's place as a blue ring, a kind in its hue, the rest on the track.",
-      "The day's blocks are equal parts (`DayMeter`), one per block plus one for time held for lessons not on the list yet, so the meter, the count and the percent say one thing; Today and every block's end inside a session draw the same meter.",
-      'At a task\'s end, under its title (`MomentHeader`), `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small), the facts on one mono line under them. Inside a session, today\'s progress follows: the count that matters ("2 of 8 done today", then "3 left today" past the midpoint) with its percent, and the day\'s meter, where only the block just finished fills.',
+      "The day's blocks are equal parts (`DayMeter`), the same meter on Today and at every block's end inside a session, where only the block just finished fills.",
+      "At a task's end, under its title (`MomentHeader`), `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small).",
       "On a result's tiles (`StatTile`), the icon takes its stat's tone and Brain Power's number its violet, as every Brain Power amount.",
     ],
     id: "readouts",
-    summary: "Readouts with meters: the number that matters and what it's made of.",
+    summary: "The one number that matters, and what it's made of.",
     title: "Readouts and meters",
   },
   {

@@ -27,6 +27,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
 import { DevOnlySpecimen, DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { WordsSpecimen } from "./words-specimen";
 
 export const metadata: Metadata = { title: "Components and patterns" };
 
@@ -142,10 +143,7 @@ function KindsSpecimen() {
 function ReadoutsSpecimen() {
   return (
     <div className="max-w-column flex flex-col gap-3">
-      <div className="flex items-baseline justify-between gap-4">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">1 of 12 done</p>
-        <BigQuantity className="text-2xl">43 min left</BigQuantity>
-      </div>
+      <BigQuantity className="text-2xl">43 min left</BigQuantity>
       <MeterParts>
         <MeterPart className="bg-success" weight={2} />
         <MeterPart className="ring-success bg-transparent ring-[1.5px] ring-inset" weight={5} />
@@ -284,6 +282,7 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   structure: StructureSpecimen,
   subjects: SubjectsSpecimen,
   titles: TitlesSpecimen,
+  words: WordsSpecimen,
 };
 
 export default function PatternsPage() {

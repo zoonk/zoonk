@@ -53,7 +53,7 @@ export default function TypographyPage() {
           <BigQuantity className="text-[2.5rem]">43 min left</BigQuantity>
           <BigQuantity className="text-[3.5rem]">~38 weeks</BigQuantity>
           <p className="text-muted-foreground font-mono text-xs tabular-nums">
-            MON, OCT 26 · 1 of 12 done
+            MON, OCT 26 · 15 MIN
           </p>
         </Specimen>
       </DocSection>
