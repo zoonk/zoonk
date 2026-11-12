@@ -404,31 +404,24 @@ final class MindMapsStore {
     failedAt[goalId] = failure == nil ? nil : reads
   }
 
-  /// A map read on its own before the list said it moved on (Create all started it, or the list's
-  /// follower saw it drawn) reads again when it next shows: only a single map's tap reads both. So do
-  /// a chapter's lesson maps read before the list showed more of them (a map's run wrote the rest),
-  /// since the reader's deck takes its lessons from the list.
+  /// What a list read shows that the list didn't before marks that chapter's reads stale, one still
+  /// on its way included, since it may predate the change: its map once the map moved on (Create all
+  /// started it, or the list's follower saw it drawn; only a single map's tap reads both), and its
+  /// lesson maps once more of its lessons show (a map's run wrote them; the reader's deck takes them
+  /// from the list). Only a change does, so the follower's beats don't restart a read on its way.
   private func listed(_ read: GoalMindMaps, goalId: String) {
-    for chapter in read.chapters {
-      guard let map = maps["\(goalId):\(chapter.chapterId)"], let value = map.value,
-        value.status != chapter.status
-      else {
-        continue
-      }
+    let before = lists[goalId]?.value
 
-      map.invalidate()
+    for chapter in read.chapters
+    where before?.chapter(chapter.chapterId)?.status != chapter.status {
+      maps["\(goalId):\(chapter.chapterId)"]?.invalidate()
     }
 
     for group in read.lessonGroups {
-      guard let resource = lessons["\(goalId):\(group.chapterId)"], let value = resource.value
-      else {
-        continue
-      }
+      let shown = before?.lessonGroups.first { $0.chapterId == group.chapterId }?.lessonIds ?? []
 
-      let opens = Set(value.lessons.filter { !$0.locked }.map(\.lessonId))
-
-      if !group.lessonIds.allSatisfy(opens.contains) {
-        resource.invalidate()
+      if !Set(shown).isSuperset(of: group.lessonIds) {
+        lessons["\(goalId):\(group.chapterId)"]?.invalidate()
       }
     }
   }
