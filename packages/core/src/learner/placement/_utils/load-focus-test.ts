@@ -103,7 +103,14 @@ async function loadTurnFocusTest({
     planId: setup.plan.id,
     rows,
     sittingId: progress.sitting?.id ?? null,
-    summary: toFocusTestSummary({ dated, offer, progress, rows, settled }),
+    summary: toFocusTestSummary({
+      dated,
+      inputsKey: setup.inputsKey,
+      offer,
+      progress,
+      rows,
+      settled,
+    }),
     view: toFocusTestView({
       asking: {
         nextSubject: found.asked && found.nextSkillId ? subjectOf(found.nextSkillId) : null,

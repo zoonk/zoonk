@@ -263,12 +263,14 @@ function getCounts(subjects: readonly SubjectProgress[]): FocusTestView["counts"
 
 export function toFocusTestSummary({
   dated,
+  inputsKey,
   offer,
   progress,
   rows,
   settled,
 }: {
   dated: boolean;
+  inputsKey: string;
   offer: FocusTestOffer | null;
   progress: TestProgress;
   rows: readonly FocusRow[];
@@ -277,6 +279,7 @@ export function toFocusTestSummary({
   return {
     ...getCounts(progress.subjects),
     complete: settled,
+    inputsKey,
     offerQuestions: offer?.questions ?? null,
     paceMs: progress.paceMs,
     suggested: dated

@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import {
@@ -9,6 +9,7 @@ import {
   getUserProgressCacheTag,
 } from "../../../cache/tags";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
+import { getPlanState } from "../../../plans/_utils/plan-context";
 import { type PlanState } from "../../../plans/planner/plan-state";
 import { settleAnsweredActivity } from "../../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
@@ -17,10 +18,10 @@ import { writeLearnerChange } from "../../_utils/write-learner-change";
 import { type FocusTestOffer } from "../focus-test-contract";
 import { type SittingKind } from "../focus-test-rules";
 import { readFocusTestRecord } from "../focus-test-state";
-import { changesTestSubjects } from "../focus-test-subjects";
 import { isPlacementSkipped } from "../placement-contract";
 import { type OwnLevel } from "../placement-steps";
 import { changeFocusTestRecord } from "./focus-test-record";
+import { summaryInputsKey } from "./focus-test-setup";
 import { loadPlacementWithSummary } from "./load-placement-state";
 import { SITTING_ANSWER_FILTER } from "./placement-answers";
 
@@ -207,53 +208,51 @@ export async function saveTestSummary(read: SummaryRead) {
 }
 
 /**
- * Keeps a saved summary current in a write that changed what the test counts: the plan's subjects,
- * the learner's picks or the notice the goal follows. Call after that write, in its transaction,
- * which holds the learner's lock.
+ * Counts the saved summary again when what it was counted from changed. Call in a transaction that
+ * holds the learner's lock, with the goal and plan as committed there.
  */
+export async function keepSummaryCurrent({
+  tx,
+  ...inputs
+}: Parameters<typeof summaryInputsKey>[0] & { tx: TransactionClient }): Promise<boolean> {
+  const summary = readFocusTestRecord(inputs.goal)?.summary;
+
+  if (!summary || summary.inputsKey === summaryInputsKey(inputs)) {
+    return false;
+  }
+
+  await keepTestSummary({ goalId: inputs.goal.id, tx, userId: inputs.goal.userId });
+  return true;
+}
+
+/** `keepSummaryCurrent` for a write that has the goal's id; pass the plan it wrote, if it wrote one. */
 export async function refreshTestSummary({
   goalId,
+  plan,
   tx,
 }: {
   goalId: string;
+  plan?: Pick<PlanState, "graph" | "settings">;
   tx: TransactionClient;
-}): Promise<void> {
+}): Promise<boolean> {
   const goal = await tx.goal.findUnique({
-    select: { details: true, userId: true },
+    include: { examBlueprint: true },
     where: { id: goalId },
   });
 
   if (!goal || !readFocusTestRecord(goal)?.summary) {
-    return;
+    return false;
   }
 
-  await keepTestSummary({ goalId, tx, userId: goal.userId });
-}
+  const { graph, settings } =
+    plan ??
+    getPlanState({
+      goal,
+      plan: await tx.plan.findUniqueOrThrow({
+        select: { graph: true, settings: true },
+        where: { goalId },
+      }),
+    });
 
-export async function refreshNoticeTestSummaries(examBlueprintId: string): Promise<void> {
-  const goals = await prisma.goal.findMany({
-    select: { details: true, id: true, userId: true },
-    where: { examBlueprintId },
-  });
-
-  for (const goal of goals.filter((following) => readFocusTestRecord(following)?.summary)) {
-    // oxlint-disable-next-line no-await-in-loop -- Each summary owns a transaction; a popular notice must not exhaust the pool.
-    await saveTestSummary({ goalId: goal.id, userId: goal.userId });
-  }
-}
-
-export async function keepPlanTestSummary({
-  after,
-  before,
-  goalId,
-  tx,
-}: {
-  after: PlanState;
-  before: PlanState;
-  goalId: string;
-  tx: TransactionClient;
-}): Promise<void> {
-  if (changesTestSubjects({ after, before })) {
-    await refreshTestSummary({ goalId, tx });
-  }
+  return keepSummaryCurrent({ goal, graph, settings, tx });
 }

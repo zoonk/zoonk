@@ -1,13 +1,17 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { toListeningExam } from "../../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
+import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type PlanGraph, type PlanSettings } from "../../../plans/planner/plan-state";
 import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
 import { type TestProgress, getAreaOrder, getTestProgress } from "../focus-test-progress";
 import { type FocusTestRecord, readFocusTestRecord } from "../focus-test-state";
 import { type TestSubject, listTestSubjects, mapSkillAreas } from "../focus-test-subjects";
+import { getKnownSubjects, getOwnLevel, isLevelMeasured } from "../placement-contract";
+import { isOwnMaterialTest } from "../placement-material";
 import { type TestSkillAnswers } from "./placement-evidence";
 
 type TestGoal = Goal & { examBlueprint: ExamBlueprint | null };
@@ -16,10 +20,55 @@ export type TestSetup = {
   /** Each graph skill's plan area, which a skill with no area of its own takes from its phase. */
   areaOf: ReadonlyMap<string, string>;
   goal: TestGoal;
+  inputsKey: string;
   plan: { coveredShare: number | null; focusAreas: string[]; id: string };
   record: FocusTestRecord | null;
   subjects: TestSubject[];
 };
+
+type SummaryInputs = { goal: TestGoal; graph: PlanGraph; settings: PlanSettings };
+
+function listGoalSubjects({
+  goal,
+  graph,
+  settings,
+  structure,
+}: SummaryInputs & { structure: ExamStructure | null }): TestSubject[] {
+  return listTestSubjects({
+    graph,
+    listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(goal), graph }),
+    settings,
+    structure,
+  });
+}
+
+function keySubjects({
+  goal,
+  graph,
+  settings,
+  subjects,
+}: SummaryInputs & { subjects: TestSubject[] }): string {
+  const inputs = {
+    areas: [...mapSkillAreas(graph)].toSorted(([first], [second]) => first.localeCompare(second)),
+    dated: goal.targetDate !== null,
+    focusAreas: settings.focusAreas,
+    knownAreas: getKnownSubjects(goal),
+    level: getOwnLevel({ goal }),
+    measured: isLevelMeasured(goal),
+    ownMaterial: isOwnMaterialTest(goal.examBlueprint),
+    subjects,
+  };
+
+  return createHash("sha256").update(JSON.stringify(inputs)).digest("hex");
+}
+
+/** What a Focus test summary is counted from besides the answers, as one comparable key. */
+export function summaryInputsKey(inputs: SummaryInputs): string {
+  const blueprint = inputs.goal.examBlueprint;
+  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+
+  return keySubjects({ ...inputs, subjects: listGoalSubjects({ ...inputs, structure }) });
+}
 
 /** Only an exam goal's placement is a Focus test. */
 export function toTestSetup({
@@ -39,17 +88,15 @@ export function toTestSetup({
     return null;
   }
 
+  const subjects = listGoalSubjects({ goal, graph, settings, structure });
+
   return {
     areaOf: mapSkillAreas(graph),
     goal,
+    inputsKey: keySubjects({ goal, graph, settings, subjects }),
     plan: { coveredShare: plan.coveredShare, focusAreas: settings.focusAreas, id: plan.id },
     record: readFocusTestRecord(goal),
-    subjects: listTestSubjects({
-      graph,
-      listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(goal), graph }),
-      settings,
-      structure,
-    }),
+    subjects,
   };
 }
 

@@ -23,6 +23,8 @@ const suggestedSubjectSchema = z.object({
 const summarySchema = z.object({
   asked: z.int().min(0),
   complete: z.boolean(),
+  /** `summaryInputsKey` of what it was counted from; another key means it's out of date. */
+  inputsKey: z.string().nullable().default(null),
   /** The questions a start would open with no sitting open; null when nothing can be asked. */
   offerQuestions: z.int().min(1).nullable(),
   paceMs: z.number().positive(),

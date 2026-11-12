@@ -1,7 +1,7 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
-import { keepPlanTestSummary } from "../../learner/placement/_utils/test-sitting";
+import { refreshTestSummary } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import {
@@ -186,12 +186,9 @@ export async function writePlan({
 
   await saveProposalPreviews({ previews: plan.previews, tx });
 
-  await keepPlanTestSummary({
-    after: plan.state,
-    before: context.state,
-    goalId: context.goal.id,
-    tx,
-  });
+  if (context.goal.kind === "exam") {
+    await refreshTestSummary({ goalId: context.goal.id, plan: plan.state, tx });
+  }
 }
 
 /** Keeps the plan's version, so a learner's open plan editor isn't in conflict. */

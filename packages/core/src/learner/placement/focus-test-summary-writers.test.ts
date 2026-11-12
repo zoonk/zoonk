@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import {
@@ -8,14 +10,17 @@ import {
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
+import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import {
   linkGoalToExamBlueprint,
+  refreshFollowerSummaries,
   unlinkGoalFromSharedExam,
 } from "../../library/exams/exam-learners";
 import {
   findSubjectQuestionsLookup,
   recordSubjectQuestions,
 } from "../../library/exams/record-subject-questions";
+import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { getPlanTimeAdvice } from "../../plans/get-time-advice";
@@ -34,6 +39,16 @@ const PLAN_LOCK = /FOR UPDATE OF plan/u;
 /** A plan write locks its learners as a list, other learner writes lock one. */
 const LEARNER_LOCK = /FROM users\s+WHERE id/u;
 const ALL_BUT_DIREITO = ["Português", "Informática", "Raciocínio", "Atualidades", "Ética"];
+
+const WRITTEN_PORTUGUES: ExamStructure["mock"] = {
+  adaptive: false,
+  citations: [],
+  order: null,
+  scoring: { description: "", method: "raw" },
+  sections: [{ day: 1, kind: "written", minutes: 30, name: "Português", questions: 1 }],
+  timeLimitMinutes: 30,
+  totalQuestions: 1,
+};
 
 async function readSummary(goalId: string) {
   return readFocusTestRecord(await prisma.goal.findUniqueOrThrow({ where: { id: goalId } }))
@@ -111,6 +126,31 @@ async function answerDontKnow(goalId: string) {
   return answerPlacementQuestion({
     goalId,
     input: { answer: { dontKnow: true }, durationMs: 30_000, itemId: sitting.next?.itemId ?? "" },
+  });
+}
+
+function setTargetDate(goalId: string, targetDate: string | null) {
+  return changeGoalPlan({ goalId, input: { operations: [{ kind: "setTargetDate", targetDate }] } });
+}
+
+/** The learner's next Start, with a review due so the day has something to open. */
+async function startNextDay({ id, userId }: { id: string; userId: string }) {
+  const { graph } = await prisma.plan.findUniqueOrThrow({ where: { goalId: id } });
+  const skillId = (graph as { skills: { skillId: string }[] }).skills[0]?.skillId ?? "";
+
+  await learnerSkillFixture({
+    due: new Date(Date.now() - 60 * 60 * 1000),
+    lastReviewedAt: new Date(Date.now() - MS_PER_DAY),
+    reps: 2,
+    skillId,
+    state: "learning",
+    userId,
+  });
+
+  return openStudyDay({
+    goalId: id,
+    shownDate: new Date().toISOString().slice(0, 10),
+    timeZone: "UTC",
   });
 }
 
@@ -218,25 +258,9 @@ describe("the saved Focus test summary", () => {
       }),
     ).resolves.toMatchObject({ status: "saved" });
 
-    const { graph } = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-    const skillId = (graph as { skills: { skillId: string }[] }).skills[0]?.skillId ?? "";
-
-    await learnerSkillFixture({
-      due: new Date(Date.now() - 60 * 60 * 1000),
-      lastReviewedAt: new Date(Date.now() - MS_PER_DAY),
-      reps: 2,
-      skillId,
-      state: "learning",
-      userId: user.id,
+    await expect(startNextDay({ id: goal.id, userId: user.id })).resolves.toMatchObject({
+      status: "opened",
     });
-
-    await expect(
-      openStudyDay({
-        goalId: goal.id,
-        shownDate: new Date().toISOString().slice(0, 10),
-        timeZone: "UTC",
-      }),
-    ).resolves.toMatchObject({ status: "opened" });
 
     const summary = await readSummary(goal.id);
     expect(summary).toMatchObject({ quick: 5, total: 5, unasked: 5 });
@@ -249,15 +273,7 @@ describe("the saved Focus test summary", () => {
     const blueprintId = await laterOptionNotice({
       details: { targetPosition: "Português" },
       goal,
-      mock: {
-        adaptive: false,
-        citations: [],
-        order: null,
-        scoring: { description: "", method: "raw" },
-        sections: [{ day: 1, kind: "written", minutes: 30, name: "Português", questions: 1 }],
-        timeLimitMinutes: 30,
-        totalQuestions: 1,
-      },
+      mock: WRITTEN_PORTUGUES,
     });
 
     await expect(
@@ -327,6 +343,8 @@ describe("the saved Focus test summary", () => {
       subjects,
     });
 
+    await refreshFollowerSummaries(blueprintId);
+
     const summary = await computeSummary(goal);
     expect(summary?.suggested[0]).toMatchObject({ name: "Ética" });
     await expect(readSummary(goal.id)).resolves.toStrictEqual(summary);
@@ -337,5 +355,109 @@ describe("the saved Focus test summary", () => {
       },
       status: "ready",
     });
+  });
+
+  it("suggests subjects to focus only while the goal has an exam date", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
+    const dated = await readSummary(goal.id);
+    expect(dated?.suggested.length).toBeGreaterThan(0);
+
+    await expect(setTargetDate(goal.id, null)).resolves.toMatchObject({ status: "applied" });
+    const undated = await readSummary(goal.id);
+    expect(undated?.suggested).toStrictEqual([]);
+    expect(undated).toStrictEqual(await computeSummary(goal));
+
+    const date = new Date(Date.now() + 30 * MS_PER_DAY).toISOString().slice(0, 10);
+    await expect(setTargetDate(goal.id, date)).resolves.toMatchObject({ status: "applied" });
+    const redated = await readSummary(goal.id);
+    expect(redated?.suggested).toStrictEqual(dated?.suggested);
+    expect(redated).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("counts a subject a notice read again tests in writing by the learner's next Start", async () => {
+    const { goal, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
+    await expect(readSummary(goal.id)).resolves.toMatchObject({ quick: 6, total: 6 });
+
+    const identity = {
+      board: null,
+      country: "BR",
+      language: "en",
+      name: `Concurso ${randomUUID()}`,
+      ownerId: null,
+      role: null,
+    };
+
+    const [blueprint, source] = await Promise.all([
+      prisma.examBlueprint.update({
+        data: { identityKey: buildExamIdentityKey(identity), name: identity.name },
+        where: { id: goal.examBlueprintId ?? "" },
+      }),
+      sourceFixture(),
+    ]);
+
+    const content = readBlueprintContent(blueprint);
+
+    await saveExamBlueprint({
+      content: {
+        ...content,
+        edition: { ...content.edition, sourceHash: source.contentHash },
+        structure: { ...content.structure, mock: WRITTEN_PORTUGUES },
+      },
+      identity,
+      provenance: {
+        generatedAt: new Date(),
+        model: "test/fixture",
+        promptVersion: "test",
+        runId: randomUUID(),
+      },
+      sourceId: source.id,
+    });
+
+    await expect(startNextDay({ id: goal.id, userId: user.id })).resolves.toMatchObject({
+      status: "opened",
+    });
+
+    const summary = await readSummary(goal.id);
+    expect(summary).toMatchObject({ quick: 5, total: 6 });
+    expect(summary).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("catches up at the learner's next Start with a change no write recounted", async () => {
+    const { goal, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      where: { id: goal.examBlueprintId ?? "" },
+    });
+
+    const structure = examStructureSchema.parse(blueprint.structure);
+
+    await prisma.examBlueprint.update({
+      data: {
+        structure: {
+          ...structure,
+          subjects: structure.subjects.map((subject) => ({
+            ...subject,
+            shortName: `${subject.name} (short)`,
+          })),
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    await expect(startNextDay({ id: goal.id, userId: user.id })).resolves.toMatchObject({
+      status: "opened",
+    });
+
+    const summary = await readSummary(goal.id);
+    expect(summary?.suggested.length).toBeGreaterThan(0);
+
+    expect(summary?.suggested.map(({ shortName }) => shortName)).toStrictEqual(
+      summary?.suggested.map(({ name }) => `${name} (short)`),
+    );
+
+    expect(summary).toStrictEqual(await computeSummary(goal));
   });
 });
