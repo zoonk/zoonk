@@ -8,10 +8,9 @@ import { type CourseWithOrg } from "@zoonk/core/courses/list";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { SubjectLabel, getSubject } from "@zoonk/learn/subject-label";
 import { useFormatDuration } from "@zoonk/learn/time-format";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -20,7 +19,7 @@ import {
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { getFirstSentence } from "@zoonk/utils/string";
-import { ArrowRightIcon, Loader2Icon, NotebookPenIcon, RefreshCwIcon } from "lucide-react";
+import { Loader2Icon, NotebookPenIcon, RefreshCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { loadMoreCourses } from "./actions";
 import {
@@ -158,18 +157,14 @@ export function CourseListClient({
           </EmptyMedia>
           <EmptyTitle>{t("No courses here yet")}</EmptyTitle>
           <EmptyDescription>
-            {t("Tell Zoonk what you want to learn and get a plan for it.")}
+            {t({
+              description:
+                "Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.",
+              message:
+                "Write what you want to learn in the box above, and Zoonk builds a plan for it.",
+            })}
           </EmptyDescription>
         </EmptyHeader>
-
-        {category && (
-          <EmptyContent>
-            <Link className={buttonVariants({ variant: "outline" })} href="/start" prefetch>
-              {t("Build my plan")}
-              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
-            </Link>
-          </EmptyContent>
-        )}
       </Empty>
     );
   }
