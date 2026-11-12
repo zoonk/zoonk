@@ -7,7 +7,7 @@ import { type RegisteredTask, type TaskEvalResults } from "./types";
 
 export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 
-export async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
+async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
   const task = getTaskById(taskId);
 
   if (!task) {
