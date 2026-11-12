@@ -58,7 +58,7 @@ Below Highlights, each item is one bullet of one or two sentences. Leave out an 
 
 Write the way someone on the team would explain the change to a learner:
 
-- "You" for the learner, "we" for Zoonk, in plain words. No internal names: packages, tables, workflows, components, file paths, model or provider names. Names learners know, such as an exam, a browser or LinkedIn, are fine.
+- "You" for the learner, "we" for Zoonk, in plain words. No internal names: packages, tables, workflows, components, file paths, model or provider names, or a product word the [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md#plain-words-first) keeps away from learners (session, pace, placement). Names learners know, such as an exam, a browser or LinkedIn, are fine.
 - Say what changed. "Bug fixes and improvements", "improved performance" and "a better experience" say nothing; "Lessons open about twice as fast on a phone" does, when a PR measured it. Quote a number only from a PR that measured it, after checking that no later PR in the release measured it differently. A number measured only before the change describes the wait that went away, not how much faster things got, and a projected number isn't a measurement. Never invent one.
 - Run the self-check in [copywriting's AI tells](../copywriting/references/ai-tells.md) on the draft and rewrite what it flags. No em dashes, no "we're excited to", no closing line that sums up the release.
 
