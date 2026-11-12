@@ -74,8 +74,9 @@ internal fun ColumnScope.FocusTestFlow(
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
     val onboarding = plan == null
     // Today's "Start the test" already made the offer; until the start answers, the offer waits behind a spinner.
+    // A start the app was closed during runs again when the test comes back: the API answers it with the open sitting.
     val starting = plan?.startOnOpen == true && shown is FocusTestPhase.Offer && !vm.failed
-    if (starting) LaunchedEffect(Unit) { vm.startOnOpen(onDone) }
+    if (starting) LaunchedEffect(Unit) { vm.start(onDone) }
 
     when {
         shown == FocusTestPhase.Loading || starting -> {

@@ -53,8 +53,6 @@ internal class FocusTestViewModel(
 
     private var closed by mutableStateOf<FocusTest?>(null)
 
-    private var savedStartedOnOpen by handle.saved { false }
-
     var pressed by mutableStateOf<Pressed?>(null)
         private set
 
@@ -101,13 +99,6 @@ internal class FocusTestViewModel(
                 }
             }
         }
-
-    /** Today's "Start the test" opens the test to start it, once, instead of offering it again. */
-    fun startOnOpen(onDone: LeaveTest) {
-        if (savedStartedOnOpen) return
-        savedStartedOnOpen = true
-        start(onDone)
-    }
 
     /** The result's "Answer more questions": the same start, from its other button. */
     fun continueTest() =
