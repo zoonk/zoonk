@@ -689,9 +689,7 @@ describe(proposeContentFixRevert, () => {
       throw new Error(`Expected two reverts, got ${JSON.stringify([first, second])}`);
     }
 
-    expect(first.fix.changes).toStrictEqual([
-      { id: item.id, model: "Item", op: "unretire", retiredAt: expect.any(String) },
-    ]);
+    expect(first.fix.changes).toStrictEqual([{ id: item.id, model: "Item", op: "unretire" }]);
 
     const approver = await signInApprover();
 
@@ -838,4 +836,83 @@ describe("content fix approval regressions", () => {
       prisma.contentFix.findUniqueOrThrow({ where: { id: fix.id } }),
     ).resolves.toMatchObject({ status: "proposed" });
   });
+});
+
+describe("stale removal reverts", () => {
+  it.each(["item", "picture"] as const)(
+    "an old pending revert of a %s restore cannot remove after a newer restore",
+    async (kind) => {
+      const skill = await skillFixture();
+      const item = await itemFixture({ format: "typed", skillId: skill.id });
+      const lesson = await libraryLessonFixture({ contentStatus: "completed" });
+      const asset = await mediaAssetFixture();
+      const step = await libraryStepFixture({ lessonId: lesson.id, mediaAssetId: asset.id });
+
+      const changes =
+        kind === "item"
+          ? [{ id: item.id, model: "Item", retire: true }]
+          : [{ detachPicture: true, id: step.id, model: "Step" }];
+
+      const read = () =>
+        kind === "item"
+          ? prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: item.id } })
+          : prisma.step.findUniqueOrThrow({
+              select: { mediaAssetId: true },
+              where: { id: step.id },
+            });
+
+      await signInProposer();
+      const firstRemoval = await proposeFix({ changes, reason: "First removal" });
+      const approver = await signInApprover();
+      await approve({ fixId: firstRemoval.id, key: approver.key });
+
+      const firstRestore = await proposeContentFixRevertInAdmin({
+        fixId: firstRemoval.id,
+        reason: "Undo first removal",
+      });
+
+      if (firstRestore.status !== "proposed") {
+        throw new Error("Expected restore");
+      }
+
+      await approve({ fixId: firstRestore.fix.id, key: approver.key });
+
+      const oldUndoOfRestore = await proposeContentFixRevertInAdmin({
+        fixId: firstRestore.fix.id,
+        reason: "Undo the first restore",
+      });
+
+      if (oldUndoOfRestore.status !== "proposed") {
+        throw new Error(`Expected old undo, got ${JSON.stringify(oldUndoOfRestore)}`);
+      }
+
+      await signInProposer();
+      const newerRemoval = await proposeFix({ changes, reason: "Newer removal" });
+      mockSession(approver.user.id);
+      await approve({ fixId: newerRemoval.id, key: approver.key });
+
+      const newerRestore = await proposeContentFixRevertInAdmin({
+        fixId: newerRemoval.id,
+        reason: "Newer removal was a mistake; keep it",
+      });
+
+      if (newerRestore.status !== "proposed") {
+        throw new Error("Expected newer restore");
+      }
+
+      await approve({ fixId: newerRestore.fix.id, key: approver.key });
+
+      const before = await read();
+
+      expect(before).toStrictEqual(
+        kind === "item" ? { retiredAt: null } : { mediaAssetId: asset.id },
+      );
+
+      const result = await approve({ fixId: oldUndoOfRestore.fix.id, key: approver.key });
+      const after = await read();
+
+      expect(result).toMatchObject({ fix: { status: "stale" } });
+      expect(after).toStrictEqual(before);
+    },
+  );
 });

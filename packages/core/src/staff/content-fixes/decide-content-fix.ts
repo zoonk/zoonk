@@ -130,8 +130,31 @@ type Approval =
 
 async function staleReasonFor(
   tx: TransactionClient,
-  stored: ReturnType<typeof contentFixChangesSchema.parse>,
+  {
+    fixId,
+    reverts,
+    stored,
+  }: {
+    fixId: string;
+    reverts: { decidedAt: Date | null } | null;
+    stored: ReturnType<typeof contentFixChangesSchema.parse>;
+  },
 ): Promise<string | null> {
+  if (reverts?.decidedAt) {
+    const newer = await tx.contentFix.findFirst({
+      where: {
+        OR: stored.map(({ id, model }) => ({ changes: { array_contains: [{ id, model }] } })),
+        decidedAt: { gt: reverts.decidedAt },
+        id: { not: fixId },
+        status: "applied",
+      },
+    });
+
+    if (newer) {
+      return STALE_CONTENT;
+    }
+  }
+
   const fresh = await prepareContentFix(tx, toProposedChanges(stored));
 
   if (!fresh.ok) {
@@ -179,7 +202,7 @@ function applyApproval({
     }
 
     const fix = await tx.contentFix.findUniqueOrThrow({
-      select: { changes: true, unit: true, unitId: true },
+      select: { changes: true, reverts: { select: { decidedAt: true } }, unit: true, unitId: true },
       where: { id: fixId },
     });
 
@@ -189,7 +212,7 @@ function applyApproval({
     await lockRetiredItemPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
 
-    const staleReason = await staleReasonFor(tx, changes);
+    const staleReason = await staleReasonFor(tx, { fixId, reverts: fix.reverts, stored: changes });
 
     if (staleReason) {
       await tx.contentFix.update({ data: { staleReason, status: "stale" }, where: { id: fixId } });

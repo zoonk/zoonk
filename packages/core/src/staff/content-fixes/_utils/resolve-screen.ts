@@ -281,13 +281,7 @@ export async function resolvePictureAttach(
   return {
     effects: [],
     ok: true,
-    stored: {
-      id,
-      mediaAssetId,
-      model: "Step",
-      op: "attachPicture",
-      pictureRemovedAt: step.pictureRemovedAt.toISOString(),
-    },
+    stored: { id, mediaAssetId, model: "Step", op: "attachPicture" },
     unit: { id: step.lessonId, kind: "lesson" },
   };
 }

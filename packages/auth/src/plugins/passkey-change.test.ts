@@ -248,3 +248,28 @@ describe("staff authority", () => {
     ).resolves.toMatchObject({ status: 200 });
   });
 });
+
+describe("staff authority restoration", () => {
+  it("cannot unban a revoked admin through a browser session", async () => {
+    const admin = await signUp();
+    await prisma.user.update({ data: { role: "admin" }, where: { id: admin.userId } });
+    await admin.register(makeRestoreKey());
+    const revoked = await signUp();
+    await revoked.register(makeRestoreKey());
+
+    await prisma.user.update({
+      data: { banReason: "Staff access revoked", banned: true, role: "admin" },
+      where: { id: revoked.userId },
+    });
+
+    await expect(
+      admin.request("/admin/unban-user", { userId: revoked.userId }),
+    ).resolves.toMatchObject({ body: { code: "STAFF_AUTHORITY_LOCKED" }, status: 403 });
+
+    await expect(
+      prisma.user.findUniqueOrThrow({ where: { id: revoked.userId } }),
+    ).resolves.toMatchObject({ banned: true, role: "admin" });
+
+    await expect(revoked.passkeys()).resolves.toHaveLength(1);
+  });
+});

@@ -125,7 +125,8 @@ export function accessGuardsPlugin() {
           matcher: (context) =>
             context.path === "/admin/set-role" ||
             context.path === "/admin/create-user" ||
-            context.path === "/admin/update-user",
+            context.path === "/admin/update-user" ||
+            context.path === "/admin/unban-user",
         },
         {
           handler: guardPlusPurchase,
