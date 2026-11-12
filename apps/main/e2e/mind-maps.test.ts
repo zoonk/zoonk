@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -102,7 +103,10 @@ test.describe("Mind maps", () => {
     try {
       await page.goto(`/learn/${lessonId}`);
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-      await page.getByRole("button", { name: /^Continue/u }).click();
+
+      const next = page.getByRole("button", { name: /^Continue/u });
+      await expectHydrated(next);
+      await next.click();
 
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
