@@ -73,14 +73,7 @@ export function StartGoalOffer({
       title={t("Start a new goal")}
     >
       {locked ? (
-        <PlusNotice inset>
-          {t({
-            description:
-              "On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.",
-            message:
-              "Starting another goal right now comes with Plus. Until then, keep going with your current goals.",
-          })}
-        </PlusNotice>
+        <PlusNotice inset title={t("Starting another goal now comes with Plus")} />
       ) : (
         <OfferLink href={hrefs.start}>{t("Start")}</OfferLink>
       )}
@@ -126,7 +119,7 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
       title={offer.subject}
     >
       {locked ? (
-        <PlusNotice inset>{t("Essay practice with grading comes with Plus.")}</PlusNotice>
+        <PlusNotice inset title={t("Essay practice comes with Plus")} />
       ) : (
         <OfferLink href={href}>{t("Open")}</OfferLink>
       )}
@@ -204,7 +197,7 @@ export function PlaceOffer({
       title: t("Memory"),
     },
     stats: {
-      description: t("Energy, level, right answers and when you study best."),
+      description: t("Energy, belt, right answers and when you study best."),
       icon: <ChartColumnIcon />,
       title: t("Statistics"),
     },

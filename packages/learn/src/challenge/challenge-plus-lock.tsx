@@ -10,8 +10,8 @@ export function ChallengeCallPlusNotice({ cta = false }: { cta?: boolean }) {
   const t = useExtracted();
 
   return (
-    <PlusNotice cta={cta}>
-      {t("Challenge calls come with Plus. Your plan keeps going without them.")}
+    <PlusNotice cta={cta} title={t("This call comes with Plus")}>
+      {t("Your plan goes on without it.")}
     </PlusNotice>
   );
 }

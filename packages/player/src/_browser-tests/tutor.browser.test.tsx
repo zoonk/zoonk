@@ -287,8 +287,8 @@ describe("asking the tutor", () => {
   });
 
   it.each([
-    { action: "Sign in", status: 401 },
-    { action: "View plans", status: 402 },
+    { action: "Log in", status: 401 },
+    { action: "See Plus", status: 402 },
   ])("offers $action when the API refuses a question with $status", async ({ action, status }) => {
     const { api, lesson } = lessonWithTutor();
     api.fail("create", status);
@@ -328,7 +328,7 @@ describe("asking the tutor", () => {
 
     playLesson({ lesson });
     const sheet = await openTutor();
-    const limitReached = sheet.getByRole("alert").filter({ hasText: /used today's help/iu });
+    const limitReached = sheet.getByRole("alert").filter({ hasText: /No more messages today/iu });
     const seePlus = sheet.getByRole("link", { name: "See Plus" });
 
     await ask(sheet, "Explain this within my limit.");
@@ -928,8 +928,8 @@ describe("answers still being written", () => {
     const sheet = await openTutor();
     await expect.element(sheet.getByText(running.question)).toBeVisible();
     await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
-    await expect.element(sheet.getByText(/session expired/iu)).toBeVisible();
-    await expect.element(sheet.getByRole("link", { name: "Sign in" })).toBeVisible();
+    await expect.element(sheet.getByText(/logged out/iu)).toBeVisible();
+    await expect.element(sheet.getByRole("link", { name: "Log in" })).toBeVisible();
 
     await vi.advanceTimersByTimeAsync(5000);
     expect(api.requests.thread).toBe(1);
@@ -949,8 +949,8 @@ describe("answers still being written", () => {
 
     const sheet = await openTutor();
     await checkAgain(sheet);
-    await expect.element(sheet.getByText("Subscribe to ask questions")).toBeVisible();
-    await expect.element(sheet.getByRole("link", { name: "View plans" })).toBeVisible();
+    await expect.element(sheet.getByText("Asking questions comes with Plus.")).toBeVisible();
+    await expect.element(sheet.getByRole("link", { name: "See Plus" })).toBeVisible();
     expect(api.requests.answer).toBe(0);
     expect(api.requests.question).toBe(1);
   });

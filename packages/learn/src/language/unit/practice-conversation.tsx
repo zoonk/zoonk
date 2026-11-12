@@ -135,7 +135,7 @@ function CallSetup({
         selected={minutes}
       />
       {isLocked ? (
-        <PlusNotice inset>{t("Longer calls come with Plus.")}</PlusNotice>
+        <PlusNotice inset title={t("Longer calls come with Plus")} />
       ) : (
         // It opens the call's intro, whose button is the one that calls.
         <Button

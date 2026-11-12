@@ -199,9 +199,7 @@ function MockExamOffer({
       title={t("Take a mock exam")}
     >
       {locked ? (
-        <PlusNotice inset>
-          {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-        </PlusNotice>
+        <PlusNotice inset title={t("Mock exams come with Plus")} />
       ) : (
         <OfferLink href={href}>{t("Choose")}</OfferLink>
       )}

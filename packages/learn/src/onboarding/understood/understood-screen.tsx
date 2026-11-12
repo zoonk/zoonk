@@ -131,14 +131,11 @@ function LockedGoalsNote({
 
   if (hasAccount) {
     return (
-      <PlusNotice cta={offersRemedy}>
-        {t({
-          description:
-            "Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.",
-          message:
-            "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}",
-          values: { count },
-        })}
+      <PlusNotice cta={offersRemedy} title={t("More goals at once come with Plus")}>
+        {t(
+          "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}",
+          { count },
+        )}
       </PlusNotice>
     );
   }
@@ -147,20 +144,8 @@ function LockedGoalsNote({
     <PlusNotice
       action={offersRemedy && <CreateAccountLink />}
       cta={false}
-      title={t({
-        description:
-          "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.",
-        message: "Available with a free account",
-      })}
-    >
-      {t({
-        description:
-          "Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.",
-        message:
-          "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}",
-        values: { count },
-      })}
-    </PlusNotice>
+      title={t("More goals at once come with a free account")}
+    />
   );
 }
 

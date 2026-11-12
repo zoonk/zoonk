@@ -160,7 +160,7 @@ function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: Composer
       tabIndex={-1}
     >
       <QuestionLimitNotice
-        className="flex-1 flex-row items-center justify-between gap-3 [&>p]:min-w-0"
+        className="flex-1 flex-row items-center justify-between gap-3"
         limit={limit}
       />
     </div>

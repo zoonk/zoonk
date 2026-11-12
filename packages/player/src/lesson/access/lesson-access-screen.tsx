@@ -29,18 +29,12 @@ function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
     <AccessLayout
       description={
         period === "month"
-          ? t(
-              "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now.",
-            )
-          : t(
-              "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now.",
-            )
+          ? t("You can still review and practice your mistakes. More next month, or now with Plus.")
+          : t("You can still review and practice your mistakes. More tomorrow, or now with Plus.")
       }
       icon={<SparklesIcon aria-hidden="true" />}
       title={
-        period === "month"
-          ? t("That's all the new lessons for this month")
-          : t("That's all the new lessons for today")
+        period === "month" ? t("No more new lessons this month") : t("No more new lessons today")
       }
     >
       <LinkComponent className={PRIMARY_BUTTON} href={routes.upgrade}>
@@ -87,11 +81,9 @@ function LimitReached({
   if (tier === "guest") {
     return (
       <AccessLayout
-        description={t(
-          "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.",
-        )}
+        description={t("Everything you learned comes with you.")}
         icon={<UserRoundPlusIcon aria-hidden="true" />}
-        title={t("Save your progress to keep going")}
+        title={t("No more lessons without an account")}
       >
         <a className={PRIMARY_BUTTON} href={routes.signUp}>
           {t("Create a free account")}
@@ -106,9 +98,9 @@ function LimitReached({
 
   return (
     <AccessLayout
-      description={t("You've reached today's limit. New lessons open again tomorrow.")}
+      description={t("More tomorrow.")}
       icon={<HourglassIcon aria-hidden="true" />}
-      title={t("That's a lot of learning today")}
+      title={t("No more new lessons today")}
     >
       <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
         {t("Back")}
@@ -129,7 +121,7 @@ function Unavailable({
   if (refusal.reason === "failed") {
     return (
       <AccessLayout
-        description={t("Try again in a moment. Nothing you did was lost.")}
+        description={t("Nothing you did was lost.")}
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
       >
@@ -142,19 +134,16 @@ function Unavailable({
 
   return (
     <AccessLayout
-      description={
-        refusal.reason === "unauthorized"
-          ? t("Sign in to keep learning.")
-          : t("This lesson isn't available anymore.")
-      }
       icon={<CircleAlertIcon aria-hidden="true" />}
       title={
-        refusal.reason === "unauthorized" ? t("Sign in to continue") : t("Lesson not available")
+        refusal.reason === "unauthorized"
+          ? t("You've been logged out")
+          : t("This lesson isn't available")
       }
     >
       {refusal.reason === "unauthorized" ? (
         <a className={PRIMARY_BUTTON} href={routes.signUp}>
-          {t("Sign in")}
+          {t("Log in")}
         </a>
       ) : (
         <LinkComponent className={PRIMARY_BUTTON} href={routes.exit}>

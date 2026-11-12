@@ -203,11 +203,7 @@ function PlusRequiredNotice() {
   const { challenge } = useChallengeScreen();
 
   if (challenge.mock) {
-    return (
-      <PlusNotice cta={false}>
-        {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-      </PlusNotice>
-    );
+    return <PlusNotice cta={false} title={t("Mock exams come with Plus")} />;
   }
 
   if (challenge.call) {

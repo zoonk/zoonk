@@ -20,9 +20,9 @@ const ENGLISH = {
 
 const STATISTICS = { kind: "learn", subject: "Statistics", title: "Learn statistics" };
 
-const LOCKED_NOTE = /Following more goals at once comes with Plus/u;
+const LOCKED_NOTE = /More goals at once come with Plus/u;
 
-const FULL = "You're following as many goals as the free plan allows.";
+const FULL = "That's all the goals you can study at once without Plus.";
 
 async function createLearnerFollowing(count: number) {
   const user = await createE2EUser(getBaseURL());

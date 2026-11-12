@@ -40,9 +40,24 @@ type LimitNoticeProps = {
 
 const TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
+/** What ran out as the title, and when it comes back as the one line under it. */
+type LimitWords = { line?: string; title?: string };
+
+/** What the learner asked for when the day's help ran out; without it the notice names no kind. */
+export type HelpKind = "explanations" | "messages";
+
 export function needsAccount(limit: HelpLimit): boolean {
   return (
     limit.status === "signUpRequired" || (limit.status === "limitReached" && limit.tier === "guest")
+  );
+}
+
+function LimitWordsLines({ line, title }: LimitWords) {
+  return (
+    <div className="flex min-w-0 flex-col gap-0.5" data-slot="limit-words">
+      {title && <p className="text-sm font-medium text-pretty">{title}</p>}
+      {line && <p className={TEXT_CLASS}>{line}</p>}
+    </div>
   );
 }
 
@@ -50,19 +65,23 @@ function LimitNoticeBody({
   className,
   limit,
   linkComponent: LinkComponent,
-  message,
   routes,
-}: LimitNoticeProps & { limit: HelpLimit; message: string }) {
+  words,
+}: LimitNoticeProps & { limit: HelpLimit; words: LimitWords }) {
   const t = useExtracted();
   const action = buttonVariants({ size: "sm", variant: "outline" });
 
   if (limit.status === "slowDown" || (limit.status === "limitReached" && limit.tier === "plus")) {
-    return <p className={cn(TEXT_CLASS, className)}>{message}</p>;
+    return (
+      <div className={className}>
+        <LimitWordsLines {...words} />
+      </div>
+    );
   }
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <p className={TEXT_CLASS}>{message}</p>
+      <LimitWordsLines {...words} />
 
       {needsAccount(limit) ? (
         <PendingLink
@@ -81,198 +100,175 @@ function LimitNoticeBody({
   );
 }
 
-function useSignUpRequiredMessage(): string {
-  const t = useExtracted();
-  return t("Create your free account to continue.");
+type ReachedLimit = Extract<HelpLimit, { status: "limitReached" }>;
+
+function isMonthly(limit: ReachedLimit): boolean {
+  return limit.period === "month" || limit.period === "total";
 }
 
-export function useHelpLimitMessage(limit: HelpLimit): string {
+/** A guest's way on is the button, so their notice has no line. */
+function useComesBackLine() {
   const t = useExtracted();
-  const signUpRequired = useSignUpRequiredMessage();
 
-  if (limit.status === "slowDown") {
-    return t("Take a short break, then try again.");
-  }
+  return (limit: ReachedLimit): string | undefined => {
+    if (limit.tier === "guest") {
+      return undefined;
+    }
 
-  if (limit.status === "signUpRequired") {
-    return signUpRequired;
-  }
+    if (limit.tier === "plus") {
+      return isMonthly(limit) ? t("More next month.") : t("More tomorrow.");
+    }
 
-  const thisMonth = limit.period === "month" || limit.period === "total";
-
-  if (limit.tier === "guest") {
-    return thisMonth
-      ? t(
-          "You've used the free help you can get without an account. Create a free account to keep going.",
-        )
-      : t("You've used today's free help. Create a free account to keep going.");
-  }
-
-  if (limit.tier === "plus") {
-    return t("You've used today's help. It comes back tomorrow.");
-  }
-
-  return thisMonth
-    ? t("You've used this month's help. It comes back next month, or get Plus to keep going now.")
-    : t("You've used today's help. It comes back tomorrow, or get Plus to keep going now.");
+    return isMonthly(limit)
+      ? t("More next month, or now with Plus.")
+      : t("More tomorrow, or now with Plus.");
+  };
 }
 
-function useLessonLimitMessage(limit: LessonLimit): string {
+function useRefusalWords() {
   const t = useExtracted();
-  const signUpRequired = useSignUpRequiredMessage();
 
-  if (limit.status === "slowDown") {
-    return t("Take a short break, then try again.");
-  }
-
-  if (limit.status === "signUpRequired") {
-    return signUpRequired;
-  }
-
-  if (limit.tier === "guest") {
-    return t(
-      "You've taken the lessons you can try without an account. Create a free account to keep going.",
-    );
-  }
-
-  if (limit.tier === "plus") {
-    return t("That's all the new lessons for today. They open again tomorrow.");
-  }
-
-  return limit.period === "month"
-    ? t(
-        "That's all the new lessons for this month. They open again next month, or get Plus to keep going now.",
-      )
-    : t(
-        "That's all the new lessons for today. They open again tomorrow, or get Plus to keep going now.",
-      );
+  return (limit: Exclude<HelpLimit, ReachedLimit>): LimitWords =>
+    limit.status === "slowDown"
+      ? { line: t("Take a short break, then try again.") }
+      : { title: t("This needs a free account") };
 }
 
-function useMindMapLimitMessage(limit: MindMapLimit): string {
+function useHelpTitle(kind: HelpKind | undefined) {
   const t = useExtracted();
-  const signUpRequired = useSignUpRequiredMessage();
 
-  if (limit.status === "slowDown") {
-    return t("Take a short break, then try again.");
-  }
+  return (limit: ReachedLimit): string => {
+    if (limit.tier === "guest") {
+      return t("That's all you can try without an account");
+    }
 
-  if (limit.status === "signUpRequired") {
-    return signUpRequired;
+    if (kind === "messages") {
+      return isMonthly(limit) ? t("No more messages this month") : t("No more messages today");
+    }
+
+    if (kind === "explanations") {
+      return isMonthly(limit)
+        ? t("No more explanations this month")
+        : t("No more explanations today");
+    }
+
+    return isMonthly(limit)
+      ? t("You've reached this month's limit")
+      : t("You've reached today's limit");
+  };
+}
+
+export function useHelpLimitWords(limit: HelpLimit, kind?: HelpKind): LimitWords {
+  const refusal = useRefusalWords();
+  const comesBack = useComesBackLine();
+  const title = useHelpTitle(kind);
+
+  return limit.status === "limitReached"
+    ? { line: comesBack(limit), title: title(limit) }
+    : refusal(limit);
+}
+
+function useLessonLimitWords(limit: LessonLimit): LimitWords {
+  const t = useExtracted();
+  const refusal = useRefusalWords();
+  const comesBack = useComesBackLine();
+
+  if (limit.status !== "limitReached") {
+    return refusal(limit);
   }
 
   if (limit.tier === "guest") {
-    return t(
-      "You've made the mind map you can try without an account. Create a free account to make more.",
-    );
+    return { title: t("No more lessons without an account") };
   }
 
-  if (limit.tier === "plus") {
-    return limit.period === "month"
-      ? t("That's all the new mind maps for this month. You can make more next month.")
-      : t("That's all the new mind maps for today. You can make more tomorrow.");
-  }
-
-  return limit.period === "month"
-    ? t(
-        "That's all the new mind maps for this month. You can make more next month, or get Plus to keep going now.",
-      )
-    : t(
-        "That's all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now.",
-      );
+  return {
+    line: comesBack(limit),
+    title: isMonthly(limit) ? t("No more new lessons this month") : t("No more new lessons today"),
+  };
 }
 
-function useMindMapRefusalMessage(limit: MindMapLimit): string {
-  const helpMessage = useHelpLimitMessage(limit);
-  const lessonMessage = useLessonLimitMessage(limit);
-  const mapMessage = useMindMapLimitMessage(limit);
+function useMindMapLimitWords(limit: MindMapLimit): LimitWords {
+  const t = useExtracted();
+  const refusal = useRefusalWords();
+  const comesBack = useComesBackLine();
+
+  if (limit.status !== "limitReached") {
+    return refusal(limit);
+  }
+
+  if (limit.tier === "guest") {
+    return { title: t("No more mind maps without an account") };
+  }
+
+  return {
+    line: comesBack(limit),
+    title: isMonthly(limit)
+      ? t("No more new mind maps this month")
+      : t("No more new mind maps today"),
+  };
+}
+
+function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
+  const help = useHelpLimitWords(limit);
+  const lesson = useLessonLimitWords(limit);
+  const map = useMindMapLimitWords(limit);
 
   if (limit.resource === "aiSpend") {
-    return helpMessage;
+    return help;
   }
 
-  return limit.resource === "lessonStart" || limit.resource === "generatedLessons"
-    ? lessonMessage
-    : mapMessage;
+  return limit.resource === "lessonStart" || limit.resource === "generatedLessons" ? lesson : map;
 }
 
-function useOutlineLimitMessage(limit: OutlineLimit): string {
+function useOutlineLimitWords(limit: OutlineLimit): LimitWords {
   const t = useExtracted();
-  const signUpRequired = useSignUpRequiredMessage();
+  const refusal = useRefusalWords();
+  const comesBack = useComesBackLine();
 
-  if (limit.status === "slowDown") {
-    return t("Take a short break, then try again.");
-  }
-
-  if (limit.status === "signUpRequired") {
-    return signUpRequired;
+  if (limit.status !== "limitReached") {
+    return refusal(limit);
   }
 
   if (limit.tier === "guest") {
-    return t(
-      "You've seen the topic you can see ahead of time without an account. Create a free account to see more.",
-    );
+    return { title: t("No more previews without an account") };
   }
 
-  if (limit.tier === "plus") {
-    return t("That's all the topics you can see ahead of time today. You can see more tomorrow.");
-  }
-
-  return limit.period === "month"
-    ? t(
-        "That's all the topics you can see ahead of time this month. You can see more next month, or get Plus to keep going now.",
-      )
-    : t(
-        "That's all the topics you can see ahead of time today. You can see more tomorrow, or get Plus to keep going now.",
-      );
+  return {
+    line: comesBack(limit),
+    title: isMonthly(limit) ? t("No more previews this month") : t("No more previews today"),
+  };
 }
 
-function useCallLimitMessage(limit: CallLimit): string {
-  const t = useExtracted();
-
-  if (limit.tier === "guest") {
-    return t("Speaking calls come with a free account. Create one to practice out loud.");
-  }
-
-  if (limit.tier === "plus") {
-    return limit.period === "month"
-      ? t("Your calls come back next month.")
-      : t("Your calls come back tomorrow.");
-  }
-
-  return limit.period === "month"
-    ? t("Your calls come back next month, or get Plus for higher call limits.")
-    : t("Your calls come back tomorrow, or get Plus for higher call limits.");
-}
-
-export function HelpLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: HelpLimit }) {
-  return <LimitNoticeBody {...props} limit={limit} message={useHelpLimitMessage(limit)} />;
+export function HelpLimitNotice({
+  kind,
+  limit,
+  ...props
+}: LimitNoticeProps & { kind?: HelpKind; limit: HelpLimit }) {
+  return <LimitNoticeBody {...props} limit={limit} words={useHelpLimitWords(limit, kind)} />;
 }
 
 export function LessonLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: LessonLimit }) {
-  return <LimitNoticeBody {...props} limit={limit} message={useLessonLimitMessage(limit)} />;
+  return <LimitNoticeBody {...props} limit={limit} words={useLessonLimitWords(limit)} />;
 }
 
 export function MindMapLimitNotice({
   limit,
   ...props
 }: LimitNoticeProps & { limit: MindMapLimit }) {
-  return <LimitNoticeBody {...props} limit={limit} message={useMindMapRefusalMessage(limit)} />;
+  return <LimitNoticeBody {...props} limit={limit} words={useMindMapRefusalWords(limit)} />;
 }
 
 export function OutlineLimitNotice({
   limit,
   ...props
 }: LimitNoticeProps & { limit: OutlineLimit }) {
-  return <LimitNoticeBody {...props} limit={limit} message={useOutlineLimitMessage(limit)} />;
+  return <LimitNoticeBody {...props} limit={limit} words={useOutlineLimitWords(limit)} />;
 }
 
-/** Never says how much call time a plan has. */
+/** Its screen's title says what ran out, so this is only the line and the way on. */
 export function CallLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: CallLimit }) {
-  return (
-    <LimitNoticeBody
-      {...props}
-      limit={{ status: "limitReached", tier: limit.tier }}
-      message={useCallLimitMessage(limit)}
-    />
-  );
+  const comesBack = useComesBackLine();
+  const reached: ReachedLimit = { period: limit.period, status: "limitReached", tier: limit.tier };
+
+  return <LimitNoticeBody {...props} limit={reached} words={{ line: comesBack(reached) }} />;
 }

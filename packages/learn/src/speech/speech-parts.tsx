@@ -7,11 +7,7 @@ import { RotateCcwIcon, SquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { CreateAccountLink } from "../_components/create-account-link";
-import {
-  type HelpLimit,
-  needsAccount,
-  useHelpLimitMessage,
-} from "../_components/help-limit-notice";
+import { type HelpLimit, needsAccount, useHelpLimitWords } from "../_components/help-limit-notice";
 import { useSentenceSpace } from "../_utils/locale";
 import { type SpokenAudioState } from "./use-spoken-audio";
 
@@ -57,8 +53,9 @@ export function useSpeechActionLabel(state: SpokenAudioState, idle: string): str
   return state.status === "failed" ? t("Try the audio again") : idle;
 }
 
-function LimitMessage({ limit }: { limit: HelpLimit }) {
-  return <>{useHelpLimitMessage(limit)}</>;
+function LimitTitle({ limit }: { limit: HelpLimit }) {
+  const { line, title } = useHelpLimitWords(limit);
+  return <p className="font-medium text-pretty">{title ?? line}</p>;
 }
 
 export function SpeechFailedNote({
@@ -80,11 +77,15 @@ export function SpeechFailedNote({
 
   return (
     <div className={cn("flex flex-col items-start gap-2 text-sm", className)} role="status">
-      <p className="text-muted-foreground text-pretty">
-        {limit ? <LimitMessage limit={limit} /> : t("The audio didn't play.")}
-        {space}
-        {text && t("Here's what it says:")}
-      </p>
+      {limit && <LimitTitle limit={limit} />}
+
+      {(text || !limit) && (
+        <p className="text-muted-foreground text-pretty">
+          {!limit && t("The audio didn't play.")}
+          {!limit && space}
+          {text && t("Here's what it says:")}
+        </p>
+      )}
 
       {text && (
         <p className="text-foreground text-base text-pretty" lang={language}>

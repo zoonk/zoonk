@@ -14,7 +14,7 @@ export function AccessLayout({
   title,
 }: {
   children?: React.ReactNode;
-  description: string;
+  description?: string;
   icon: React.ReactNode;
   title: string;
 }) {
@@ -23,7 +23,9 @@ export function AccessLayout({
       <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
       <div className="flex flex-col gap-2" role="status">
         <h2 className="text-title">{title}</h2>
-        <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
+        {description && (
+          <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
+        )}
       </div>
       {children && <div className="flex flex-col gap-2 sm:flex-row">{children}</div>}
     </PlayerContentFrame>
@@ -53,7 +55,7 @@ export function LessonSlowDown({
   return (
     <AccessLayout
       description={t(
-        "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
+        "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
         { seconds: Math.max(secondsLeft, 0) },
       )}
       icon={<HourglassIcon aria-hidden="true" />}
