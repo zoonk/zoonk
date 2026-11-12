@@ -250,6 +250,7 @@ describe(sessionPreparationWorkflow, () => {
           goalId: goal.id,
           targets: expect.arrayContaining([expect.objectContaining({ lessonId: todayLesson.id })]),
         }),
+        wait: "soon",
       },
     ]);
 

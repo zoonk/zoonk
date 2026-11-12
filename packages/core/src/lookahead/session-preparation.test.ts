@@ -6,6 +6,7 @@ import {
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
 import {
+  type LessonAttrs,
   chapterLessonFixture,
   heldBackDraftFixture,
   libraryLessonFixture,
@@ -15,6 +16,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
@@ -25,6 +27,7 @@ import {
   getSessionPreparationAccess,
   listSessionPreparation,
 } from "./session-preparation";
+import { createPlanGenerationManifest } from "./speculative-lessons";
 
 const TIME_ZONE = "UTC";
 
@@ -233,7 +236,229 @@ async function planTomorrowLesson(goalId: string) {
   });
 }
 
+async function chapterWithChallenge(attrs: LessonAttrs = {}) {
+  const chapter = await libraryChapterFixture();
+
+  const [first, challenge] = await Promise.all([
+    libraryLessonFixture({ homeChapterId: chapter.id }),
+    libraryLessonFixture({
+      homeChapterId: chapter.id,
+      identityKey: scopeIdentityKey({
+        key: `challenge:${chapter.id}`,
+        ownerId: attrs.ownerId ?? null,
+      }),
+      ...attrs,
+    }),
+  ]);
+
+  return { challenge, first };
+}
+
+async function chapterPreparationPlan() {
+  const user = await userFixture();
+  const goal = await goalFixture({ details: { placementDeclined: true }, userId: user.id });
+  const plan = await planFixture({ goalId: goal.id });
+
+  const list = () =>
+    listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+
+  return { goal, list, plan, user };
+}
+
 describe(listSessionPreparation, () => {
+  it("prepares challenges from today's and next day's chapters at the immediate tier only once", async () => {
+    const { list, plan } = await chapterPreparationPlan();
+
+    const [current, next, outside] = await Promise.all([
+      chapterWithChallenge(),
+      chapterWithChallenge(),
+      chapterWithChallenge(),
+    ]);
+
+    await Promise.all([
+      planItemFixture({
+        lessonId: current.first.id,
+        planId: plan.id,
+        position: 0,
+        scheduledFor: today(),
+      }),
+      planItemFixture({
+        lessonId: current.challenge.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: null,
+      }),
+      planItemFixture({
+        lessonId: next.first.id,
+        planId: plan.id,
+        position: 2,
+        scheduledFor: addDays(today(), 1),
+      }),
+      planItemFixture({
+        lessonId: next.challenge.id,
+        planId: plan.id,
+        position: 3,
+        scheduledFor: addDays(today(), 2),
+      }),
+      planItemFixture({
+        lessonId: outside.first.id,
+        planId: plan.id,
+        position: 4,
+        scheduledFor: addDays(today(), 3),
+      }),
+      planItemFixture({
+        lessonId: outside.challenge.id,
+        planId: plan.id,
+        position: 5,
+        scheduledFor: addDays(today(), 3),
+      }),
+    ]);
+
+    await expect(list()).resolves.toMatchObject({
+      laterLessonIds: [next.first.id],
+      lessonIds: [current.first.id, current.challenge.id, next.challenge.id],
+      plannedLessonIds: [current.first.id, current.challenge.id, next.challenge.id, next.first.id],
+    });
+  });
+
+  it("promotes a challenge already in the next-day window without listing it twice", async () => {
+    const { list, plan } = await chapterPreparationPlan();
+    const { first, challenge } = await chapterWithChallenge();
+
+    await Promise.all([
+      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0, scheduledFor: today() }),
+      planItemFixture({
+        lessonId: challenge.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: addDays(today(), 1),
+      }),
+    ]);
+
+    await expect(list()).resolves.toMatchObject({
+      laterLessonIds: [],
+      lessonIds: [first.id, challenge.id],
+      plannedLessonIds: [first.id, challenge.id],
+    });
+  });
+
+  it.each([
+    { contentStatus: "completed" as const },
+    {
+      contentStatus: "failed" as const,
+      heldBackDrafts: [heldBackDraftFixture()],
+      setAsideAt: new Date(),
+    },
+    { contentRunId: "already-writing-challenge", contentStatus: "running" as const },
+  ])("does not restart a challenge with state %j", async (attrs) => {
+    const { list, plan } = await chapterPreparationPlan();
+    const { first, challenge } = await chapterWithChallenge(attrs);
+
+    await Promise.all([
+      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0, scheduledFor: today() }),
+      planItemFixture({ lessonId: challenge.id, planId: plan.id, position: 1, scheduledFor: null }),
+    ]);
+
+    const result = await list();
+    expect(result.lessonIds).toStrictEqual([first.id]);
+    expect(result.plannedLessonIds.includes(challenge.id)).toBe(attrs.setAsideAt === undefined);
+  });
+
+  it("requires current plan membership and visibility, allowing the learner's own private challenge", async () => {
+    const { goal, list, plan, user } = await chapterPreparationPlan();
+    const other = await userFixture();
+
+    const [own, hidden, unplanned] = await Promise.all([
+      chapterWithChallenge({ ownerId: user.id, visibility: "private" }),
+      chapterWithChallenge({ ownerId: other.id, visibility: "private" }),
+      chapterWithChallenge(),
+    ]);
+
+    await Promise.all([
+      ...[own, hidden, unplanned].map(({ first }, position) =>
+        planItemFixture({ lessonId: first.id, planId: plan.id, position, scheduledFor: today() }),
+      ),
+      ...[own, hidden].map(({ challenge }, position) =>
+        planItemFixture({
+          lessonId: challenge.id,
+          planId: plan.id,
+          position: position + 3,
+          scheduledFor: null,
+        }),
+      ),
+    ]);
+
+    const result = await list();
+
+    expect(result.lessonIds).toStrictEqual([
+      own.first.id,
+      hidden.first.id,
+      unplanned.first.id,
+      own.challenge.id,
+    ]);
+
+    const manifest = await createPlanGenerationManifest({
+      goalId: goal.id,
+      lessonIds: result.lessonIds,
+    });
+
+    expect(manifest?.targets.map((target) => target.lessonId)).toStrictEqual(result.lessonIds);
+
+    await prisma.planItem.updateMany({
+      data: { status: "skipped" },
+      where: { lessonId: own.challenge.id, planId: plan.id },
+    });
+
+    const changed = await createPlanGenerationManifest({
+      goalId: goal.id,
+      lessonIds: [own.challenge.id],
+    });
+
+    expect(changed?.targets).toStrictEqual([]);
+
+    await expect(
+      listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: other.id }),
+    ).resolves.toMatchObject({ lessonIds: [], plannedLessonIds: [] });
+  });
+
+  it("keeps private challenges behind placement admission and gives guests no additional writing", async () => {
+    const { goal, list, plan, user } = await chapterPreparationPlan();
+
+    const { first, challenge } = await chapterWithChallenge({
+      ownerId: user.id,
+      visibility: "private",
+    });
+
+    await Promise.all([
+      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0, scheduledFor: today() }),
+      planItemFixture({ lessonId: challenge.id, planId: plan.id, position: 1, scheduledFor: null }),
+      prisma.goal.update({ data: { details: {} }, where: { id: goal.id } }),
+    ]);
+
+    const preparation = await list();
+
+    const manifest = await createPlanGenerationManifest({
+      goalId: goal.id,
+      lessonIds: preparation.lessonIds,
+    });
+
+    expect(manifest?.targets.map((target) => target.lessonId)).toStrictEqual([first.id]);
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+
+    await expect(list()).resolves.toMatchObject({
+      laterLessonIds: [],
+      lessonIds: [],
+      plannedLessonIds: [],
+    });
+
+    mockGuestSession(user.id);
+
+    await expect(getGoalPreparationAccess({ goalId: goal.id })).resolves.toMatchObject({
+      lessonId: first.id,
+      status: "guest",
+    });
+  });
+
   it("lists this session's next lessons and the next study day's first one, not the next chapter's specs", async () => {
     freezeClock();
 

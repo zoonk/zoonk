@@ -118,7 +118,7 @@ async function startLessonWork({
       .filter((lessonId) => admitted.has(lessonId))
       .map((lessonId) =>
         start(lessonContentWorkflow, [
-          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest },
+          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "soon" },
         ]),
       ),
     ...laterLessonIds
@@ -131,7 +131,19 @@ async function startLessonWork({
     ...outlines.map((outline) => startPlanOutline({ analytics, outline, started })),
   ]);
 
-  return { conflict: false, value: preparation };
+  const requested = new Set([...lessonIds, ...laterLessonIds]);
+
+  return {
+    conflict: false,
+    value: {
+      ...preparation,
+      laterLessonIds: laterLessonIds.filter((id) => admitted.has(id)),
+      lessonIds: lessonIds.filter((id) => admitted.has(id)),
+      plannedLessonIds: preparation.plannedLessonIds.filter(
+        (id) => !requested.has(id) || admitted.has(id),
+      ),
+    },
+  };
 }
 
 function waitForWrittenLessons(lessonIds: string[]): Promise<number> {
@@ -162,7 +174,7 @@ async function personalizeLessons({
     return;
   }
 
-  await waitForWrittenLessons(preparation.lessonIds);
+  await waitForWrittenLessons(preparation.plannedLessonIds);
 
   await preparePersonalLayer({
     analytics,
