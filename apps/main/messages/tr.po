@@ -1953,8 +1953,8 @@ msgid "See when you perform best over the past 90 days."
 msgstr "Son 90 günde en başarılı olduğun zamanları gör."
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-msgctxt "YSaA5q"
-msgid "When you answer best, from your last 90 days."
+msgctxt "SXjWkq"
+msgid "When you answer best, over the last 90 days."
 msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
