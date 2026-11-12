@@ -166,7 +166,8 @@ function AsTextToggle({
   return (
     <Button
       aria-pressed={pressed}
-      className="min-[72rem]:hidden"
+      // From 72rem the outline shows beside the picture, so only an "on" toggle stays, to turn off.
+      className={cn(!pressed && "min-[72rem]:hidden")}
       onClick={() => onChange(!pressed)}
       size="icon-bar"
       variant={pressed ? "secondary" : "ghost"}
