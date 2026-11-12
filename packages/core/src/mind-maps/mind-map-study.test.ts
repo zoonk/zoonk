@@ -193,6 +193,39 @@ describe("mind maps study page", () => {
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 
+  it("lists a lesson two chapters share once, under the first in course order", async () => {
+    const { beginner, extra, first, goal, lessons, second } = await writtenCourseGoal();
+    const [shared, firstOther, ...secondLessons] = lessons;
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: second, lessonId: shared?.id ?? "", position: 2 }),
+      chapterLessonFixture({ chapterId: beginner.id, lessonId: shared?.id ?? "", position: 1 }),
+      prisma.lesson.updateMany({
+        data: { contentStatus: "pending" },
+        where: { id: { in: secondLessons.map((lesson) => lesson.id) } },
+      }),
+    ]);
+
+    await saveMindMap({ goalId: goal.id, kind: "lesson", saved: true, targetId: shared?.id ?? "" });
+
+    const list = await readyList(goal.id);
+
+    expect(list.lessonGroups).toStrictEqual([
+      { chapterId: first, count: 2, lessonIds: [shared?.id, firstOther?.id], locked: 0 },
+      { chapterId: beginner.id, count: 1, lessonIds: [extra.id], locked: 0 },
+    ]);
+
+    expect(list.saved).toStrictEqual([
+      {
+        available: true,
+        chapterId: first,
+        kind: "lesson",
+        targetId: shared?.id,
+        title: shared?.title,
+      },
+    ]);
+  });
+
   it("saves a map once, lists saves in syllabus order, and removes them", async () => {
     const { extra, first, goal, lessons } = await writtenCourseGoal();
     const lessonId = lessons[0]?.id ?? "";

@@ -27,6 +27,23 @@ function isListed(
   return view.status !== "unavailable";
 }
 
+/**
+ * A lesson two chapters share stays under the first, in course order, so the Lessons tab, its deck
+ * and Saved list it once. `lessonMaps` keeps the chapters' order.
+ */
+function listEachLessonOnce(
+  lessonMaps: ReadonlyMap<string, ScopeLessonMap[]>,
+): Map<string, ScopeLessonMap[]> {
+  const placements = Map.groupBy([...lessonMaps.values()].flat(), (map) => map.lessonId);
+
+  return new Map(
+    [...lessonMaps].map(([chapterId, maps]) => [
+      chapterId,
+      maps.filter((map) => placements.get(map.lessonId)?.[0]?.chapterId === chapterId),
+    ]),
+  );
+}
+
 function toLessonGroups({
   chapters,
   lessonMaps,
@@ -111,7 +128,7 @@ export async function listGoalMindMaps(
   const chapters = listed.map((row) => row.view);
   const bulk = sortBulkChapters(chapters);
 
-  const [lessonMaps, ledger] = await Promise.all([
+  const [scopeLessonMaps, ledger] = await Promise.all([
     loadScopeLessonMaps({ chapters: listed.map((row) => row.facts), userId: goal.userId }),
     viewer &&
       readUsageLedger({
@@ -123,6 +140,7 @@ export async function listGoalMindMaps(
       }),
   ]);
 
+  const lessonMaps = listEachLessonOnce(scopeLessonMaps);
   const lessonGroups = toLessonGroups({ chapters, lessonMaps });
 
   return {

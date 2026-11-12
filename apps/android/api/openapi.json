@@ -86730,7 +86730,7 @@
             "items": {
               "$ref": "#/components/schemas/LessonMapGroup"
             },
-            "description": "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out"
+            "description": "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out. A lesson two chapters share is listed once, under the first"
           },
           "saved": {
             "type": "array",
@@ -86940,7 +86940,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991,
-            "description": "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, locked ones included"
+            "description": "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists"
           },
           "lessonIds": {
             "type": "array",

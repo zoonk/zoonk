@@ -123,7 +123,7 @@ const lessonMapGroupSchema = z
       .min(1)
       .meta({
         description:
-          "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, locked ones included",
+          "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists",
       }),
     lessonIds: z
       .array(uuidSchema())
@@ -247,7 +247,7 @@ export const goalMindMapsSchema = z
       .array(lessonMapGroupSchema)
       .meta({
         description:
-          "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out",
+          "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out. A lesson two chapters share is listed once, under the first",
       }),
     saved: z
       .array(savedMindMapSchema)
