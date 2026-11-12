@@ -4,14 +4,15 @@ import {
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
 import { listCliLoginsByPerson } from "@/data/cli-logins/list-cli-logins-by-person";
-import { formatDateTime } from "@/lib/format";
+import { formatCount, formatDate } from "@/lib/format";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { RevokeCliLoginsForm } from "./revoke-cli-logins-form";
 
 const COLUMNS: AdminTableColumn[] = [
   { label: "Person" },
-  { label: "CLI logins" },
+  { label: "Logged in on" },
+  { label: "Last used" },
   { align: "right", label: "" },
 ];
 
@@ -28,7 +29,7 @@ export async function CliLoginList() {
         <TableRow key={person.user.id}>
           <TableCell className="whitespace-normal">
             <Link
-              className="font-medium hover:underline"
+              className="font-medium underline-offset-3 hover:underline"
               href={`/users/${person.user.id}`}
               prefetch
             >
@@ -36,15 +37,8 @@ export async function CliLoginList() {
             </Link>
             <div className="text-muted-foreground text-xs break-all">{person.user.email}</div>
           </TableCell>
-          <TableCell className="whitespace-normal">
-            <div>{person.machines === 1 ? "1 machine" : `${person.machines} machines`}</div>
-            <div className="text-muted-foreground text-xs">
-              Last renewed {formatDateTime(person.lastRenewedAt)}
-            </div>
-            <div className="text-muted-foreground text-xs">
-              Ends {formatDateTime(person.endsAt)} if unused
-            </div>
-          </TableCell>
+          <TableCell>{formatCount(person.machines, "machine")}</TableCell>
+          <TableCell className="text-muted-foreground">{formatDate(person.lastUsedAt)}</TableCell>
           <TableCell className="text-right">
             <RevokeCliLoginsForm name={person.user.name} userId={person.user.id} />
           </TableCell>

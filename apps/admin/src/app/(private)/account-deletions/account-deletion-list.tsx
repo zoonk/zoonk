@@ -10,7 +10,7 @@ import { MarkAnalyticsRemovedForm } from "./mark-analytics-removed-form";
 
 const COLUMNS: AdminTableColumn[] = [
   { label: "PostHog distinct id" },
-  { label: "Deleted" },
+  { label: "Account deleted" },
   { align: "right", label: "" },
 ];
 
@@ -20,7 +20,7 @@ export async function AccountDeletionList() {
   return (
     <AdminTableColumns
       columns={COLUMNS}
-      emptyLabel="No deleted accounts are waiting for their analytics to be removed."
+      emptyLabel="No analytics left to remove."
       isEmpty={deletions.length === 0}
     >
       {deletions.map((deletion) => (
@@ -32,7 +32,7 @@ export async function AccountDeletionList() {
             {formatDateTime(deletion.deletedAt)}
           </TableCell>
           <TableCell className="text-right">
-            <MarkAnalyticsRemovedForm deletionId={deletion.id} />
+            <MarkAnalyticsRemovedForm deletionId={deletion.id} distinctId={deletion.userId} />
           </TableCell>
         </TableRow>
       ))}
