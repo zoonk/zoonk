@@ -46,6 +46,8 @@ export type GenerateStepVariantParams = {
   lessonTitle: string;
   level: CourseLevel;
   language: string;
+  /** The country the screen's lesson is set in; null is the language's own. */
+  country: string | null;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -64,7 +66,7 @@ function buildUserPrompt(params: GenerateStepVariantParams): string {
   return `
     SCREEN_KIND: ${params.screen.kind}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatLocalContext(params.language)}
+${formatLocalContext({ country: params.country, language: params.language })}
     LEVEL: ${params.level}
     LESSON_TITLE: ${params.lessonTitle}
     SCREEN: ${JSON.stringify(params.screen.content)}

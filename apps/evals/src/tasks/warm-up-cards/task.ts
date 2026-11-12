@@ -1,5 +1,5 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type RawWarmUpCard,
   WARM_UP_DECK_SIZE,
@@ -41,10 +41,10 @@ function checkOutput(output: string): CodeCheckResult {
   };
 }
 
-export const warmUpCardsTask: Task<WriteWarmUpCardsParams, WarmUpCardsOutput> = {
+export const warmUpCardsTask: Task<OptionalCountry<WriteWarmUpCardsParams>, WarmUpCardsOutput> = {
   description:
     "Write about 10 guess cards (a question, 2 or 3 options with one right, a short reveal) a new learner plays while their plan is built: the shared validator, then a judge",
-  generate: generateWarmUpCards,
+  generate: (input) => generateWarmUpCards({ ...input, country: input.country ?? null }),
   id: "warm-up-cards",
   name: "Warm-Up Cards",
   score: ({ output, testCase }) =>

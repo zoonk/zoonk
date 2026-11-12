@@ -22,6 +22,7 @@ import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
+import { PlanCountry } from "./plan-country";
 import { PlanDate } from "./plan-date";
 import { PlanEditRequest } from "./plan-edit-request";
 import { PlanEditorChange } from "./plan-editor-change";
@@ -54,6 +55,9 @@ function EditorSections() {
       <PlanBases />
       <div className={SECTION_CLASS} id={getEditorSectionId("language")}>
         <PlanLanguage />
+      </div>
+      <div className={SECTION_CLASS} id={getEditorSectionId("country")}>
+        <PlanCountry />
       </div>
       <div className={SECTION_CLASS} id={getEditorSectionId("practice")}>
         <PlanActivities />

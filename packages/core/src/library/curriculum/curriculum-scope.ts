@@ -1,15 +1,27 @@
 import { type CallReuse } from "@zoonk/ai/provider-options";
 import { type SearchTermsParams } from "@zoonk/ai/tasks/identity/search-terms";
 import { type CourseLevel } from "@zoonk/db";
+import { getContentCountryScope } from "../content-country";
 import { type CandidateExam } from "../exams/candidate-exams";
 
 export type CurriculumScope = {
+  country?: string | null;
   exams?: CandidateExam[];
   generalGoal: string | null;
   language: string;
   ownerId: string | null;
   targetLanguage: string | null;
 };
+
+export function getGraphCourseCountry({
+  course,
+  scope,
+}: {
+  course: { key: string; countrySpecific?: boolean };
+  scope: CurriculumScope;
+}): string | null {
+  return course.countrySpecific ? getContentCountryScope(scope) : null;
+}
 
 /**
  * Private content can't spread its cost, so it takes the cheapest model that keeps quality. On the

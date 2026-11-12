@@ -206,6 +206,8 @@ internal fun PlanPage(
             change = viewModel::change,
             undo = viewModel::undo,
             setRegion = viewModel::setRegion,
+            setContentCountry = viewModel::setContentCountry,
+            retryCountryRebuild = viewModel::retryCountryRebuild,
             timeToCover = timeToCover,
             findTimeToCover = viewModel::findTimeToCover,
             chooseFocus = { choosingFocus = true },
@@ -225,9 +227,11 @@ internal fun PlanPage(
         )
 
     PlanEvents(viewModel, navigator)
+    val countryRebuild = rememberCountryRebuild(page.goal, app)
 
     PlanContent(
         page = page,
+        countryRebuild = countryRebuild,
         standing = standing,
         alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
@@ -363,6 +367,7 @@ internal fun PlanContent(
     slot: SlotHost = SlotHost(),
     slotState: SlotState = remember { SlotState() },
     alphabet: (@Composable () -> Unit)? = null,
+    countryRebuild: CountryRebuild? = null,
 ) {
     val adjust = onAdjust?.let { { it(null) } }
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
@@ -408,6 +413,11 @@ internal fun PlanContent(
                         report = report,
                         onAdjust = adjust,
                     )
+                }
+                countryRebuild?.let { rebuild ->
+                    item(key = "country-rebuild", contentType = "notice") {
+                        CountryRebuildNotice(rebuild, edits.isPending(PlanPart.CountryRebuild), edits.retryCountryRebuild)
+                    }
                 }
                 item(key = "roadmap", contentType = "roadmap") {
                     PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)

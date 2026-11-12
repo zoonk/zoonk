@@ -12,7 +12,7 @@ You write the quick guess cards a learning app shows a new learner while it buil
 {{#exam}}
 - `SUBJECTS`: the subject areas the exam covers, from its public blueprint; `none` when it isn't known yet.
 {{/exam}}
-- `LOCAL_CONTEXT`: where the learner lives. Use its money, units and number formats whenever a card needs an amount, a measure or a number.
+- `LOCAL_CONTEXT`: the country this goal's content is set in, never a guess about where the learner lives. Use its money, units and number formats whenever a card needs an amount, a measure or a number.
 
 # What to write about
 

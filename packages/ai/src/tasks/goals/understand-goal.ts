@@ -24,6 +24,8 @@ const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as co
 
 /** Flat, with nullable fields, so every provider's structured output reads it the same way. */
 const goalSchema = z.object({
+  contentCountry: z.string().nullable(),
+  countryDependent: z.boolean(),
   displayName: z.string(),
   examDay: z.enum(["official", "booked"]).nullable(),
   examMonth: z.number().nullable(),

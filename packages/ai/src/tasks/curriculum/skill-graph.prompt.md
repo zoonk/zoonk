@@ -94,6 +94,8 @@ The product's skills are tasks done in it, named as actions ("Pull a double shot
 Also set each course's `supporting`: true for a course outside the requested subject whose skills exist only to supply prerequisites for its skills, false for the subject's own courses and subfields. A subfield is part of the goal, not a supporting course. The app places supporting skills just before their first use and keeps their full depth. Phase milestones describe the subject capabilities reached, not completion of supporting coursework.
 
 {{/subjectStart}}
+Set each course's `countrySpecific`: true when what it teaches depends on a country, because its subject is that country's laws, taxes, money system, school system, public institutions or national exams ("Personal income tax", "Labor law", "Driving rules"), supporting courses included; false when it's the same everywhere ("Statistics", "Python", "Physics", "World history", "Mathematics"), and for a course teaching a language. When unsure about a course on the goal's own subject, true.
+
 # Areas
 
 Areas are how the learner sees the whole path and checks that nothing is missing, so they follow the way the learner thinks about the goal.

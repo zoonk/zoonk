@@ -3,6 +3,7 @@ import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { prisma } from "@zoonk/db";
 import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { listPlannerTemplates } from "../activities/writer-templates";
+import { getLessonCountry } from "../content-country";
 import { loadChapterLessons } from "../lessons/_utils/chapter-lessons";
 import { loadLessonExams, loadLessonShortAnswers } from "../lessons/_utils/lesson-exams";
 import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
@@ -26,10 +27,14 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
   const lesson = await prisma.lesson.findUnique({
     include: {
       homeChapter: {
-        include: { homeCourse: { select: { ...COURSE_PRODUCT_SELECT, id: true, title: true } } },
+        include: {
+          homeCourse: {
+            select: { ...COURSE_PRODUCT_SELECT, country: true, id: true, title: true },
+          },
+        },
       },
       skills: {
-        include: { skill: { select: { identityKey: true, name: true } } },
+        include: { skill: { select: { country: true, identityKey: true, name: true } } },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -42,6 +47,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
   }
 
   const chapter = lesson.homeChapter;
+  const country = getLessonCountry({ course: chapter?.homeCourse, skill: lesson.skills[0]?.skill });
   const skills = lesson.skills.map((entry) => entry.skill.name);
 
   const goalsOf = {
@@ -70,6 +76,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       activityTemplates: listPlannerTemplates(),
       chapterLessons,
       chapterTitle: chapter?.title ?? lesson.title,
+      country,
       courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? lesson.title,
       exams: material.length > 0 ? [] : exams,
       isPrivate: lesson.visibility === "private",
@@ -87,6 +94,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       sources: sources.length > 0 ? formatMaterialPages(sources) : undefined,
     },
     scope: {
+      country,
       generalGoal: null,
       language: lesson.language,
       ownerId: lesson.ownerId,

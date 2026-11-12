@@ -371,6 +371,11 @@ msgid "Below you can choose where to focus, or take a short test that chooses fo
 msgstr "Abajo puedes elegir en qué enfocarte o hacer una prueba breve que elija por ti."
 
 #: src/lib/tutor-confirmation.ts
+msgctxt "lW8O7a"
+msgid "Below you can change the country your lessons are about."
+msgstr "Más abajo puedes cambiar el país del que tratan tus lecciones."
+
+#: src/lib/tutor-confirmation.ts
 msgctxt "ejo0Qg"
 msgid "Below you can start a short practice call whenever you're ready."
 msgstr "Abajo puedes iniciar una llamada breve de práctica cuando quieras."
@@ -379,6 +384,11 @@ msgstr "Abajo puedes iniciar una llamada breve de práctica cuando quieras."
 msgctxt "c7OWI5"
 msgid "Below you can see when your plan practices {subject}."
 msgstr "Abajo puedes ver cuándo practicarás {subject} según tu plan."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "3zTiTF"
+msgid "Below you can save where you live for new goals and your examples."
+msgstr "Más abajo puedes guardar dónde vives para tus nuevos objetivos y tus ejemplos."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "zPC6bz"

@@ -188,7 +188,7 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("See your plan").performClick()
         rule.waitForIdle()
 
-        assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value.dailyMinutes)
+        assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value).value.dailyMinutes)
     }
 
     @Test

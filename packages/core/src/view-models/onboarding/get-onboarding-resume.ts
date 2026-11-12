@@ -127,7 +127,7 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
       },
       where: { userId },
     }),
-    findLearningProfileView(userId),
+    findLearningProfileView({ userId }),
   ]);
 
   return { resume: await toResume({ draft, goals, profile }), status: "ready" };

@@ -14,6 +14,7 @@ import { certificatePaths } from "./paths/certificates";
 import { checkpointPaths } from "./paths/checkpoints";
 import { completedLessonPaths } from "./paths/completed-lessons";
 import { contentGenerationPaths } from "./paths/content-generation";
+import { countryPaths } from "./paths/countries";
 import { courseEstimatePaths } from "./paths/course-estimates";
 import { courseGoalPaths } from "./paths/course-goals";
 import { currentLearningPaths } from "./paths/current-learning";
@@ -109,6 +110,7 @@ const paths = withInternalErrorResponses({
   ...contentGenerationPaths,
   ...courseGoalPaths,
   ...courseEstimatePaths,
+  ...countryPaths,
   ...currentLearningPaths,
   ...examPaths,
   ...generationPaths,

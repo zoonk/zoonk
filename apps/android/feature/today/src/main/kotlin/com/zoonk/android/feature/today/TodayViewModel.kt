@@ -70,9 +70,8 @@ class TodayViewModel(
         step: DayStep,
         next: Boolean,
     ) {
-        if (showIntro(read, step)) return
         run(read, if (next) TodayTap.Continue else TodayTap.Step(step.position)) {
-            opener.open(read.day, step, next, read.today.goal.id)
+            opener.openRow(read.day, step, read.today.goal.id, next)
         }
     }
 
@@ -181,11 +180,14 @@ class TodayViewModel(
     var noticeHold by mutableStateOf<NoticeHold?>(null)
         private set
 
+    val isAnsweringNotice get() = isAnswering || isAnsweringInsight || isSavingPlanChange || isSavingExamChoice
+
     fun holdNotice(
         read: TodayRead.Day,
         picked: Today.Notice?,
+        opens: Boolean,
     ) {
-        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight)
+        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight, opens)
     }
 
     /**

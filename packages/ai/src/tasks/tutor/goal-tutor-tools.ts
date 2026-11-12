@@ -12,6 +12,8 @@ export const GOAL_TUTOR_APP_TOOLS = [
   "conversationCall",
   "pronunciation",
   "variety",
+  "contentCountry",
+  "homeCountry",
   "stats",
   "logbook",
   "memory",
@@ -25,10 +27,14 @@ const APP_TOOL_USES: Record<GoalTutorAppTool, string> = {
     "a short test on the next chapter (of `area`, when they name a subject); passing it skips the lessons it covers. For lessons that feel too easy or a chapter they say they know.",
   chooseFocus:
     "choosing which subjects get the plan's depth, with a short test that chooses for them. When their time doesn't cover everything in depth and they want to decide, or don't know, where to focus.",
+  contentCountry:
+    'changing the country this goal\'s course is set in (its money, taxes, laws, schools and institutions), only for a goal whose subject depends on a country, older goals included: the plan is rebuilt for that country, done lessons stay done, and lessons stay written in their language. Give `country`, its two-letter code ("PT", "DE"). Offer it when they say they want the course for another country than `goal.contentCountry`, or that it teaches another country\'s rules; never from their nationality, the language they write in, their time zone or their device.',
   conversationCall:
     "a short spoken practice call with a character from their current unit, in the language they're learning. When they want to practise speaking, a conversation or an interview.",
   essay:
     "the page of their exam's written test (an essay, such as the redação): when their plan practices it, each draft graded with the exam's criteria, and changing when. When they want to practise or improve their essay.",
+  homeCountry:
+    'saving where they live, which the app uses for their new goals and personal examples, never to change an existing plan. Give `country`, its two-letter code ("PT"). Offer it when they say where they live and it isn\'t `learnerHomeCountry`, or ask the app to remember it; never from their nationality, the language they write in, their time zone or their device.',
   logbook:
     "their week in review: what they did this week next to the last, their biggest step forward and what comes next. When they ask what they did or achieved this week.",
   memory:

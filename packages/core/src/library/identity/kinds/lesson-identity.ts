@@ -5,6 +5,7 @@ import {
 } from "@zoonk/ai/tasks/identity/subject";
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { getContentCountryScope } from "../../content-country";
 import { QUICK_LESSON_KEY_SQL_PATTERN } from "../../quick-lessons/quick-lesson-identity";
 import { listChaptersCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
@@ -63,6 +64,14 @@ function toOutsidePinnedSql(courseId: string | null): Sql {
 
 function toEligibleLessonSql(request: LessonIdentityRequest): Sql {
   return sql`l.language = ${request.language}
+    AND NOT EXISTS (
+      SELECT 1 FROM library_chapters ch JOIN courses home ON home.id = ch.home_course_id
+      WHERE ch.id = l.home_chapter_id AND home.country IS DISTINCT FROM ${getContentCountryScope(request)}
+    )
+    AND NOT EXISTS (
+      SELECT 1 FROM lesson_skills cs JOIN skills country_skill ON country_skill.id = cs.skill_id
+      WHERE cs.lesson_id = l.id AND country_skill.country IS DISTINCT FROM ${getContentCountryScope(request)}
+    )
     AND l.level = ${request.level}::"CourseLevel"
     AND l.visibility = 'public'
     AND l.target_language IS NOT DISTINCT FROM ${request.targetLanguage}

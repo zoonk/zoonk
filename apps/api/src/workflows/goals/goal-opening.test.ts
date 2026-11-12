@@ -438,10 +438,11 @@ describe("a learn goal's opening", () => {
 
     // An earlier run saved the opening and stopped before its lesson's run started.
     await openingSteps.saveGoalOpeningStep({
+      country: null,
       goalId: goal.id,
       lessonId: picked.id,
       opening: {
-        course: { id: course.id, key: "immunology", title: course.title },
+        course: { countrySpecific: false, id: course.id, key: "immunology", title: course.title },
         skill: {
           area: "Immunology",
           description: skill.description,
@@ -468,6 +469,60 @@ describe("a learn goal's opening", () => {
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       openingLessonId: picked.id,
     });
+  });
+
+  it("replaces an opening an earlier run picked for another country", async () => {
+    const { goal } = await newGoal();
+    const token = crypto.randomUUID().slice(0, 8);
+
+    const [course, chapter, skill] = await Promise.all([
+      courseFixture({ country: "DE", title: `German taxes ${token}` }),
+      libraryChapterFixture({ outlineStatus: "completed" }),
+      skillFixture({ level: "overview", name: `File a German return ${token}` }),
+    ]);
+
+    const picked = await libraryLessonFixture({ homeChapterId: chapter.id });
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, level: "overview" }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+    ]);
+
+    // The first run saved Germany's opening and failed before its graph; then the country changed.
+    await openingSteps.saveGoalOpeningStep({
+      country: "DE",
+      goalId: goal.id,
+      lessonId: picked.id,
+      opening: {
+        course: { countrySpecific: true, id: course.id, key: "taxes", title: course.title },
+        skill: {
+          area: "Taxes",
+          description: skill.description,
+          estimatedLessons: 1,
+          id: skill.id,
+          key: "file-a-return",
+          level: "overview",
+          name: skill.name,
+        },
+      },
+    });
+
+    await prisma.goal.update({ data: { contentCountry: "PT" }, where: { id: goal.id } });
+
+    await goalContentWorkflow({ goalId: goal.id });
+
+    expect(generateGoalOpening).toHaveBeenCalledOnce();
+
+    expect(vi.mocked(generateWholeSkillGraph).mock.calls[0]?.[0].firstSkill).toMatchObject({
+      name: opening.skill.name,
+    });
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(saved.openingLessonId).not.toBe(picked.id);
+
+    expect(openingLessonStarts().map((input) => input.lessonId)).toStrictEqual([
+      saved.openingLessonId,
+    ]);
   });
 
   it("plans the first lesson as before when the opening fails for good", async () => {

@@ -20,7 +20,7 @@ import { goalUnderstandingWorkflow } from "./goal-understanding-workflow";
 const LEARN: GoalUnderstanding = {
   dailyMinutes: 20,
   followUps: [],
-  goals: [{ kind: "learn", subject: "Welding", title: "Learn to weld" }],
+  goals: [{ countryDependent: false, kind: "learn", subject: "Welding", title: "Learn to weld" }],
   route: "goals",
 };
 
@@ -64,7 +64,7 @@ async function storedExam(examName: string) {
       timeZone: null,
       year: 2099,
     },
-    identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
+    identityKey: buildExamIdentityKey({ country: "BR", name: examName, ownerId: null, role: null }),
     name: examName,
   });
 
@@ -135,6 +135,7 @@ describe(goalUnderstandingWorkflow, () => {
         followUps: [],
         goals: [
           {
+            countryDependent: false,
             examName: "IELTS",
             kind: "exam",
             subject: "English",
@@ -159,7 +160,7 @@ describe(goalUnderstandingWorkflow, () => {
     expect(findExamDate).not.toHaveBeenCalled();
   });
 
-  it("reuses words read today without a model call, keeps that reading's age and gives the exam its stored days", async () => {
+  it("reuses words read today, checks the unknown-country exam and keeps the reading's age", async () => {
     const user = await userFixture();
     const examName = `Test Exam ${randomUUID()}`;
     const prompt = `pass the exam in 2099 ${randomUUID()}`;
@@ -170,12 +171,23 @@ describe(goalUnderstandingWorkflow, () => {
         goal: prompt,
         result: {
           followUps: [],
-          goals: [{ examName, examYear: 2099, kind: "exam", subject: examName, title: "Pass it" }],
+          goals: [
+            {
+              countryDependent: false,
+              examName,
+              examYear: 2099,
+              kind: "exam",
+              subject: examName,
+              title: "Pass it",
+            },
+          ],
           route: "goals",
         },
         userId: user.id,
       }),
     ]);
+
+    vi.mocked(decideExamIdentity).mockResolvedValue({ id: blueprint.id, probability: 1 });
 
     const draft = await createDraft({ prompt, userId: user.id });
 
@@ -185,7 +197,11 @@ describe(goalUnderstandingWorkflow, () => {
 
     expect(understandGoal).not.toHaveBeenCalled();
     expect(classifyCourseIntent).not.toHaveBeenCalled();
-    expect(decideExamIdentity).not.toHaveBeenCalled();
+
+    expect(decideExamIdentity).toHaveBeenCalledWith(
+      expect.objectContaining({ request: expect.objectContaining({ country: null }) }),
+    );
+
     expect(findExamDate).not.toHaveBeenCalled();
 
     await expect(readCard(draft.id)).resolves.toMatchObject({
@@ -227,6 +243,7 @@ describe(goalUnderstandingWorkflow, () => {
         followUps: [],
         goals: [
           {
+            countryDependent: false,
             examDay: "official",
             examName: `Unstored Exam ${randomUUID()}`,
             kind: "exam",
@@ -248,7 +265,9 @@ describe(goalUnderstandingWorkflow, () => {
 
     await expect(readCard(draft.id)).resolves.toMatchObject({
       status: "understood",
-      understanding: { goals: [{ draft: { title: "Pass the bar" }, examDates: [] }] },
+      understanding: {
+        goals: [{ countryDependent: false, draft: { title: "Pass the bar" }, examDates: [] }],
+      },
     });
 
     expect(getStreamedEvents().at(-1)).toStrictEqual({
@@ -263,7 +282,13 @@ describe(goalUnderstandingWorkflow, () => {
       understanding: {
         followUps: [],
         goals: [
-          { kind: "language", subject: "Japanese", targetLanguage: "ja", title: "Speak Japanese" },
+          {
+            countryDependent: false,
+            kind: "language",
+            subject: "Japanese",
+            targetLanguage: "ja",
+            title: "Speak Japanese",
+          },
         ],
         route: "goals",
       },
@@ -293,7 +318,13 @@ describe(goalUnderstandingWorkflow, () => {
       understanding: {
         followUps: [],
         goals: [
-          { kind: "language", subject: "Korean", targetLanguage: "ko", title: "Learn Korean" },
+          {
+            countryDependent: false,
+            kind: "language",
+            subject: "Korean",
+            targetLanguage: "ko",
+            title: "Learn Korean",
+          },
         ],
         route: "goals",
       },

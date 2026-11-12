@@ -13,7 +13,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.goalLimitReason
 import com.zoonk.android.feature.onboarding.setup.LevelChoice
-import com.zoonk.api.models.OnboardingAnswerInputOneOf7
+import com.zoonk.api.models.OnboardingAnswerInputOneOf8
 import kotlinx.coroutines.launch
 
 internal sealed interface CourseStartFailure {
@@ -93,7 +93,7 @@ private fun levelOf(key: String): LevelChoice? =
     if (key == QUICK_TEST) {
         LevelChoice.QuickTest
     } else {
-        OnboardingAnswerInputOneOf7.Level.entries
+        OnboardingAnswerInputOneOf8.Level.entries
             .find { it.value == key }
             ?.let(LevelChoice::Own)
     }

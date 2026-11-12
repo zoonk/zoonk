@@ -45,6 +45,8 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.feature.country.CountrySheet
+import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
@@ -71,6 +73,7 @@ import com.zoonk.api.models.OnboardingDraftEditOneOf1
 import com.zoonk.api.models.OnboardingDraftEditOneOf2
 import com.zoonk.api.models.OnboardingDraftEditOneOf3
 import com.zoonk.api.models.OnboardingDraftEditOneOf4
+import com.zoonk.api.models.OnboardingDraftEditOneOf5
 import com.zoonk.api.models.UnderstoodGoal
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
@@ -145,6 +148,7 @@ internal fun ColumnScope.UnderstoodScreen(
                     timeZone = timeZone,
                     languageAim = understood.languageAim.takeIf { row.id == "targetScore" },
                     variety = understood.variety().takeIf { row.editable == EditableField.TargetRegion },
+                    country = understood.takeIf { row.editable == EditableField.ContentCountry },
                     editValue = editValue(understood, row),
                     editing = edits.editing == key,
                     saving = edits.saving != null,
@@ -288,6 +292,7 @@ private fun FactRow(
     row: UnderstoodRow,
     languageAim: com.zoonk.api.models.LanguageAim? = null,
     variety: Variety? = null,
+    country: UnderstoodGoal? = null,
     timeZone: String,
     editValue: String,
     editing: Boolean,
@@ -384,6 +389,18 @@ private fun FactRow(
     }
     if (editing && editor == EditorKind.Time) {
         TimeEditor(initial = editValue, onDismiss = { onEdit(false) }, onPick = save)
+    }
+    if (editing && country != null) {
+        CountrySheet(
+            title = stringResource(R.string.onboarding_variety_title),
+            suggested = country.suggested.choices(),
+            language = country.draft.language,
+            selected = country.contentCountry?.code,
+            onPick = { it?.let { picked -> save(picked.code) } },
+            onDismiss = { onEdit(false) },
+            pending = saving,
+            failed = failed,
+        )
     }
     if (editing && variety != null) {
         VarietySheet(variety, onDismiss = { onEdit(false) }, onPick = { save(it.orEmpty()) }, pending = saving, failed = failed)
@@ -484,7 +501,7 @@ private fun editValue(
     row: UnderstoodRow,
 ): String =
     when (row.editable) {
-        null, EditableField.StudyTime, EditableField.TargetRegion -> {
+        null, EditableField.StudyTime, EditableField.TargetRegion, EditableField.ContentCountry -> {
             row.editDefault ?: row.value
         }
 
@@ -510,25 +527,31 @@ private fun draftEdit(
 ): OnboardingDraftEdit =
     when (field) {
         EditableField.StudyTime -> {
-            OnboardingDraftEdit.OnboardingDraftEditOneOf4Value(OnboardingDraftEditOneOf4(OnboardingDraftEditOneOf4.Field.STUDY_TIME, value))
+            OnboardingDraftEdit.OnboardingDraftEditOneOf5Value(OnboardingDraftEditOneOf5(OnboardingDraftEditOneOf5.Field.STUDY_TIME, value))
+        }
+
+        EditableField.ContentCountry -> {
+            OnboardingDraftEdit.OnboardingDraftEditOneOfValue(
+                OnboardingDraftEditOneOf(OnboardingDraftEditOneOf.Field.CONTENT_COUNTRY, goal.toLong(), value),
+            )
         }
 
         EditableField.TargetRegion -> {
-            OnboardingDraftEdit.OnboardingDraftEditOneOf3Value(
-                OnboardingDraftEditOneOf3(OnboardingDraftEditOneOf3.Field.TARGET_REGION, goal.toLong(), value.ifEmpty { null }),
+            OnboardingDraftEdit.OnboardingDraftEditOneOf4Value(
+                OnboardingDraftEditOneOf4(OnboardingDraftEditOneOf4.Field.TARGET_REGION, goal.toLong(), value.ifEmpty { null }),
             )
         }
 
         EditableField.DisplayName -> {
-            OnboardingDraftEdit.OnboardingDraftEditOneOfValue(
-                OnboardingDraftEditOneOf(OnboardingDraftEditOneOf.Field.DISPLAY_NAME, goal.toLong(), value),
+            OnboardingDraftEdit.OnboardingDraftEditOneOf1Value(
+                OnboardingDraftEditOneOf1(OnboardingDraftEditOneOf1.Field.DISPLAY_NAME, goal.toLong(), value),
             )
         }
 
         EditableField.TargetDate -> {
-            OnboardingDraftEdit.OnboardingDraftEditOneOf1Value(
-                OnboardingDraftEditOneOf1(
-                    OnboardingDraftEditOneOf1.Field.TARGET_DATE,
+            OnboardingDraftEdit.OnboardingDraftEditOneOf2Value(
+                OnboardingDraftEditOneOf2(
+                    OnboardingDraftEditOneOf2.Field.TARGET_DATE,
                     goal.toLong(),
                     LocalDate.parse(value).toKotlinLocalDate(),
                 ),
@@ -536,8 +559,8 @@ private fun draftEdit(
         }
 
         else -> {
-            OnboardingDraftEdit.OnboardingDraftEditOneOf2Value(
-                OnboardingDraftEditOneOf2(OnboardingDraftEditOneOf2.Field.entries.first { it.value == field.key }, goal.toLong(), value),
+            OnboardingDraftEdit.OnboardingDraftEditOneOf3Value(
+                OnboardingDraftEditOneOf3(OnboardingDraftEditOneOf3.Field.entries.first { it.value == field.key }, goal.toLong(), value),
             )
         }
     }

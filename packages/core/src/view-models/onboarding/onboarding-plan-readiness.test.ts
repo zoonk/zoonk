@@ -20,7 +20,12 @@ const READY = { readingNotice: false, ready: true };
 async function setup() {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
-  const { goal } = await unplannedGoalFixture({ dailyMinutes: 15, userId: user.id });
+
+  const { goal } = await unplannedGoalFixture({
+    dailyMinutes: 15,
+    planRevealedAt: null,
+    userId: user.id,
+  });
 
   mockSession(user.id);
 

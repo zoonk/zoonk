@@ -62,6 +62,10 @@ async function StepsGate({ goalId }: { goalId: string }) {
   );
 }
 
+function toShownLearner(session: Awaited<ReturnType<typeof getSession>>) {
+  return { isGuest: Boolean(session?.user.isAnonymous), userId: session?.user.id ?? "" };
+}
+
 async function StepsContent({ params }: Props) {
   // Every read here is the learner's own and changes with each answer: render per request.
   await connection();
@@ -120,7 +124,7 @@ async function StepsContent({ params }: Props) {
             : null
         }
         deck={deck?.data?.status === "ready" ? deck.data.deck : null}
-        isGuest={Boolean(session?.user.isAnonymous)}
+        {...toShownLearner(session)}
         onboarding={result.onboarding}
         planActions={{
           change: changePlanAction.bind(null, goalId),

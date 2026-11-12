@@ -327,6 +327,7 @@ async function writeAfterEarlyAttempt(firstStatus: "completed" | "failed") {
   const band = await writeOutlineBandStep({
     courseId: course.id,
     plan: {
+      country: null,
       courseTitle: course.title,
       extensions: [],
       isNewBand: true,

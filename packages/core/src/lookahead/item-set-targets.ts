@@ -61,6 +61,7 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
   const [rows, sets] = await Promise.all([
     prisma.skill.findMany({
       select: {
+        country: true,
         description: true,
         id: true,
         language: true,
@@ -81,7 +82,13 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
   const usedTitles = sets.flatMap((set) => readTitle(set.content) ?? []);
   const exam = toItemExam(blueprint);
   const format = getPlacementQuickFormat(readBlueprintContent(blueprint).structure);
-  const areas = Map.groupBy(firstSkills, (skill) => getSkillArea({ graph, skill }));
+
+  const areas = Map.groupBy(firstSkills, (skill) =>
+    JSON.stringify([
+      getSkillArea({ graph, skill }),
+      rows.find((row) => row.id === skill.skillId)?.country ?? null,
+    ]),
+  );
 
   const targets = [...areas.values()]
     .filter((skills) => skills.length >= 2 && !skills.some((skill) => covered.has(skill.skillId)))

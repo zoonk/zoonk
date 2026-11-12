@@ -11,9 +11,11 @@ import {
   toProvenanceData,
 } from "../_utils/library-rows";
 import { writePlanInputs } from "../_utils/plan-input-write";
+import { getContentCountryScope } from "../content-country";
 import { lockSkillPlanInputs } from "./_utils/skill-input-write";
 
 export type CreateSkillInput = {
+  country?: string | null;
   identityKey: string;
   language: string;
   targetLanguage: string | null;
@@ -35,6 +37,7 @@ export async function createSkill(
     create: () =>
       prisma.skill.create({
         data: {
+          country: getContentCountryScope(input),
           description: input.description,
           example: input.example,
           identityKey: input.identityKey,

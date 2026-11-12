@@ -1,9 +1,6 @@
 import { type ServiceTier } from "@zoonk/ai/provider-options";
 import { writeGoalCourseSearchTerms } from "@zoonk/core/library/curriculum/find-or-create-course";
-import {
-  getGoalCourseFormat,
-  setGoalPrimaryCourse,
-} from "@zoonk/core/library/curriculum/goal-primary-course";
+import { getGoalCourseFormat } from "@zoonk/core/library/curriculum/goal-primary-course";
 import { findGoalCourse, findGoalProductCourse } from "@zoonk/core/library/products/goal-courses";
 import { type GoalKind } from "@zoonk/db";
 
@@ -33,9 +30,4 @@ export async function findGoalCourseStep({
   const format = getGoalCourseFormat({ kind, ownerId: input.scope.ownerId });
   const { course } = await findGoalCourse({ ...input, format });
   return course.id;
-}
-
-export async function setGoalPrimaryCourseStep(input: Parameters<typeof setGoalPrimaryCourse>[0]) {
-  "use step";
-  return setGoalPrimaryCourse(input);
 }

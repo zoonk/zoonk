@@ -5,6 +5,7 @@ function buildInputs(hasMaterial: boolean): Parameters<typeof toScopedGraphPromp
   return {
     examIdentity: null,
     goal: {
+      contentCountry: null,
       examBlueprintId: null,
       id: "goal-1",
       kind: "learn",

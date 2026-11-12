@@ -146,25 +146,31 @@ describe("learning profile request facts", () => {
     await expect(listCurrentUserGoals()).rejects.toBe(error);
   });
 
-  it("projects a supplied GET profile while keeping the omitted write-response lookup fresh", async () => {
+  it("projects supplied GET facts while keeping the omitted write-response lookups fresh", async () => {
     const user = await userFixture();
     const profile = await learningProfileFixture({ soundsEnabled: false, userId: user.id });
 
     const profileReads = vi.spyOn(prisma.userLearningProfile, "findUnique");
+    const goalReads = vi.spyOn(prisma.goal, "findMany");
 
     const supplied = await countDatabaseStatements(() =>
-      findLearningProfileView(user.id, Promise.resolve(profile)),
+      findLearningProfileView({
+        knownProfile: Promise.resolve(profile),
+        readRecentCountries: async () => [],
+        userId: user.id,
+      }),
     );
 
     expect(supplied).toMatchObject({ result: { soundsEnabled: false }, writes: 0 });
     expect(profileReads).not.toHaveBeenCalled();
+    expect(goalReads).not.toHaveBeenCalled();
 
     await prisma.userLearningProfile.update({
       data: { soundsEnabled: true },
       where: { userId: user.id },
     });
 
-    const fresh = await countDatabaseStatements(() => findLearningProfileView(user.id));
+    const fresh = await countDatabaseStatements(() => findLearningProfileView({ userId: user.id }));
 
     expect(fresh).toMatchObject({ result: { soundsEnabled: true }, writes: 0 });
   });
@@ -182,7 +188,7 @@ describe("learning profile request facts", () => {
 
     await expect(findActiveGoalId(user.id)).resolves.toBe(goal.id);
 
-    await expect(findLearningProfileView(user.id)).resolves.toMatchObject({
+    await expect(findLearningProfileView({ userId: user.id })).resolves.toMatchObject({
       activeGoalId: goal.id,
       soundsEnabled: true,
     });

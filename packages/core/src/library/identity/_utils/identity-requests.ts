@@ -4,6 +4,7 @@ import { type CourseLevel } from "@zoonk/db";
 import { type TextSearch } from "./text-search-sql";
 
 type IdentityRequestBase = {
+  country?: string | null;
   language: string;
   /** Only the general part of the goal; personal details never reach shared content. */
   goal?: string | null;

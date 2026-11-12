@@ -1,4 +1,11 @@
-export type PlanEditorSection = "choices" | "date" | "days" | "language" | "practice" | "time";
+export type PlanEditorSection =
+  | "choices"
+  | "country"
+  | "date"
+  | "days"
+  | "language"
+  | "practice"
+  | "time";
 
 export function getEditorSectionId(section: PlanEditorSection): string {
   return `plan-editor-${section}`;

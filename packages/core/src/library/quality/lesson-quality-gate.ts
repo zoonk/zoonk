@@ -19,6 +19,7 @@ export type LessonWritingContext = Pick<
   | "activityTemplates"
   | "chapterLessons"
   | "chapterTitle"
+  | "country"
   | "courseTitle"
   | "exams"
   | "language"

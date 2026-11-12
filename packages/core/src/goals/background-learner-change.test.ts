@@ -56,17 +56,29 @@ describe("background goal plan marks", () => {
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
   });
 
-  it("marks a build failure once and leaves a missing goal alone", async () => {
-    const { goal, plan, user } = await setup();
-    await recordGoalGeneration({ generationId: "failing-run", goalId: goal.id });
-    const before = await stamp(user.id, plan.id);
-    const input = { generationId: "failing-run", goalId: goal.id };
-    await Promise.all([recordGoalBuildFailure(input), recordGoalBuildFailure(input)]);
+  it.each([false, true])(
+    "records build failure only before reveal (revealed: %s)",
+    async (revealed) => {
+      const { goal, plan, user } = await setup();
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
+      await prisma.goal.update({
+        data: { planRevealedAt: revealed ? new Date() : null },
+        where: { id: goal.id },
+      });
 
-    await recordGoalBuildFailure({ generationId: "failing-run", goalId: randomUUID() });
-  });
+      await recordGoalGeneration({ generationId: "failing-run", goalId: goal.id });
+      const before = await stamp(user.id, plan.id);
+      const input = { generationId: "failing-run", goalId: goal.id };
+      await Promise.all([recordGoalBuildFailure(input), recordGoalBuildFailure(input)]);
+
+      const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+      expect(Boolean(saved.buildFailedAt)).toBe(!revealed);
+
+      await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
+
+      await recordGoalBuildFailure({ generationId: "failing-run", goalId: randomUUID() });
+    },
+  );
 
   it("does not let an earlier run's failure mark the rebuilt plan as failed", async () => {
     const { goal, plan } = await setup();

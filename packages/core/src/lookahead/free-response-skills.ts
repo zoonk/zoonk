@@ -146,6 +146,7 @@ export async function pickFreeResponseSkills({
 
   const skills = await prisma.skill.findMany({
     select: {
+      country: true,
       description: true,
       id: true,
       language: true,

@@ -315,6 +315,15 @@ describe(getLearnerSummary, () => {
     expect(summary?.goals.map((goal) => goal.languageFlag)).toStrictEqual(["mx", null, null]);
   });
 
+  it("carries each goal's language, so its country picker names countries in that language", async () => {
+    const { user } = await learnerWithGoal({ language: "pt" });
+    await goalFixture({ language: "en", userId: user.id });
+
+    const summary = await getLearnerSummary();
+
+    expect(summary?.goals.map((goal) => goal.language)).toStrictEqual(["pt", "en"]);
+  });
+
   it("says which goals still have setup questions, so continuing one opens its setup", async () => {
     const course = await courseFixture({ isPublished: true });
     const courseStart = { chapterId: null };

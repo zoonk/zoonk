@@ -139,7 +139,7 @@ function buildUserPrompt(params: GenerateExamSpeakingCardParams): string {
     LEVEL: ${params.level}
     TARGET_LANGUAGE: ${SPEAKING_EXAM_VARIETIES[params.exam]}
     LEARNER_LANGUAGE: ${getPromptLanguageName({ language: params.learnerLanguage })}
-    ${formatCast({ language: SPEAKING_EXAM_LANGUAGES[params.exam], seed: `${params.title}:${params.task.name}:${Date.now()}` })}${topic}
+    ${formatCast({ country: null, language: SPEAKING_EXAM_LANGUAGES[params.exam], seed: `${params.title}:${params.task.name}:${Date.now()}` })}${topic}
   `;
 }
 

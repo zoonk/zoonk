@@ -8,7 +8,7 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { closeStepStream } from "../_shared/stream-status";
 import { updateCoursesBehind } from "../products/product-releases";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
-import { isBuiltBeforeResearch } from "./goal-content-inputs";
+import { isBuiltBeforeResearch, waitForContentCountry } from "./goal-content-inputs";
 import { followPlanStart } from "./goal-lookahead";
 import { outlinePlanAhead } from "./goal-outlines";
 import { preparePlanPlacement } from "./goal-placement-items";
@@ -223,7 +223,8 @@ async function loadInitialCurriculum({
   input: GoalContentInput;
   workflowRunId: string;
 }) {
-  const initial = await loadGoalCurriculumStep(input.goalId);
+  const read = await loadGoalCurriculumStep(input.goalId);
+  const initial = read ? await waitForContentCountry(read) : null;
 
   if (!initial) {
     return null;

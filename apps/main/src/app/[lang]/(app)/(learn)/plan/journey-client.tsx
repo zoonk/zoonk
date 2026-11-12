@@ -12,6 +12,7 @@ import { useRouter } from "@/i18n/navigation";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
+import { readGoalRebuild } from "@/lib/goals/read-goal-rebuild";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
@@ -30,6 +31,7 @@ import {
   type StudyNext,
 } from "@zoonk/learn/journey";
 import { JourneyBuilding, JourneySetup } from "@zoonk/learn/journey/planless";
+import { usePoll } from "@zoonk/learn/poll";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useState, useSyncExternalStore } from "react";
@@ -71,6 +73,34 @@ export function JourneySetupClient({ goalId, goalStatus, goalTitle }: PlanlessGo
   return (
     <JourneySetup continueHref={`/start/${goalId}`} goalStatus={status} goalTitle={goalTitle} />
   );
+}
+
+const REBUILD_POLL_MS = 10_000;
+
+/**
+ * A new country's plan is prepared in the background. The goal's run ID can still be the previous
+ * run's until the rebuild starts, so the Plan follows the rebuild itself and reads itself again once
+ * it's saved or failed.
+ */
+function PlanRebuildFollower({ goalId }: { goalId: string }) {
+  const router = useRouter();
+
+  usePoll({
+    active: true,
+    intervalMs: REBUILD_POLL_MS,
+    // A read that keeps failing (the goal gone, the API down) stops after usePoll's few errors.
+    onPoll: async (signal) => {
+      const rebuild = await readGoalRebuild(goalId);
+
+      if (rebuild !== "preparing" && !signal.aborted) {
+        router.refresh();
+      }
+    },
+    startNow: false,
+    timeoutMs: Number.POSITIVE_INFINITY,
+  });
+
+  return null;
 }
 
 /** "Try again" starts the run only on the learner's tap. */
@@ -238,8 +268,12 @@ export function JourneyClient({
     return started;
   };
 
+  const { contentCountry } = props.goal;
+
   return (
     <TopicOutlineProvider value={outlineActions}>
+      {contentCountry?.rebuild === "preparing" && <PlanRebuildFollower goalId={goalId} />}
+
       <JourneyScreen
         {...props}
         actions={{
@@ -263,6 +297,21 @@ export function JourneyClient({
             view: getCertificatesView(certificates.earned),
           },
           next: next && { ...next, onContinue: () => continueNextLevel(next.onContinue) },
+        }}
+        goal={{
+          ...props.goal,
+          contentCountry: contentCountry && {
+            ...contentCountry,
+            onRetry: async () => {
+              const started = await contentCountry.onRetry();
+
+              if (started) {
+                router.refresh();
+              }
+
+              return started;
+            },
+          },
         }}
         goalStatus={status}
         links={getJourneyLinks({ completedLessons, goalKind: props.goal.kind, hasMindMaps })}

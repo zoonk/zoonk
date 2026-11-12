@@ -106,6 +106,14 @@
     func setTargetRegion(token: String, goalID: String, region: String?) async throws -> Bool {
       true
     }
+
+    func setContentCountry(token: String, goalID: String, country: String?) async throws
+      -> ContentCountryChange
+    {
+      .saved(nil)
+    }
+
+    func retryRebuild(token: String, goalID: String) async throws {}
   }
 
   private struct UITestBuddyAPI: BuddyAPIClient {

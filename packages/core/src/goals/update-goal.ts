@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
+import { isCountryCode } from "@zoonk/utils/countries";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -34,7 +35,7 @@ export type GoalUpdateResult =
   | { change: PlanChangeView | null; goal: GoalView; status: "updated" }
   | { error: PlanOperationError; status: "invalid" }
   | { limit: AllowanceLimit; status: "limitReached" }
-  | { status: "notFound" | "regionNotOffered" | "unauthorized" };
+  | { status: "countryNotOffered" | "notFound" | "regionNotOffered" | "unauthorized" };
 
 /** For logs and admin only; the apps word these changes from their operations. */
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
@@ -52,7 +53,10 @@ async function saveMetadata({
   return writeLearnerChange(
     {
       planInputs:
-        input.details !== undefined || input.status !== undefined || input.timeZone !== undefined,
+        input.contentCountry !== undefined ||
+        input.details !== undefined ||
+        input.status !== undefined ||
+        input.timeZone !== undefined,
       userId,
     },
     async (tx) => {
@@ -200,6 +204,15 @@ export async function updateGoal({
 
   if (input.targetRegion && !isGoalRegion({ goal, region: input.targetRegion })) {
     return { status: "regionNotOffered" };
+  }
+
+  if (
+    input.contentCountry !== undefined &&
+    (goal.kind === "exam" ||
+      goal.kind === "language" ||
+      (input.contentCountry !== null && !isCountryCode(input.contentCountry)))
+  ) {
+    return { status: "countryNotOffered" };
   }
 
   const isActivating = input.status === "active" && goal.status !== "active";

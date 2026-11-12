@@ -6,16 +6,18 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { getAvailableCourseSlug } from "../_utils/available-course-slug";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
+import { getContentCountryScope } from "../content-country";
 import { findCourseByTitle, getCourseIdentitySearch } from "../identity/kinds/course-identity";
 import { resolveLibraryIdentity } from "../identity/resolve-library-identity";
 import { writeSearchTerms } from "../identity/write-search-terms";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 
-type CourseScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage"> &
+type CourseScope = Pick<CurriculumScope, "country" | "language" | "ownerId" | "targetLanguage"> &
   Partial<Pick<CurriculumScope, "generalGoal">>;
 
 function toCourseRequest({ scope, title }: { scope: CourseScope; title: string }) {
   return {
+    country: getContentCountryScope(scope),
     goal: scope.generalGoal,
     kind: "course" as const,
     language: scope.language,
@@ -89,6 +91,7 @@ async function createCourse({
     const course = await tx.course.create({
       data: {
         ...toProvenanceData(provenance),
+        country: getContentCountryScope(scope),
         format,
         isPublished: false,
         language: scope.language,

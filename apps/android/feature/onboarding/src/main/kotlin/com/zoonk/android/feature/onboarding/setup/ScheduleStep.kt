@@ -64,7 +64,7 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
-import com.zoonk.api.models.OnboardingAnswerInputOneOf8
+import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.OnboardingPlanReadiness
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
@@ -282,10 +282,10 @@ private fun ColumnScope.ScheduleTime(
         onContinue = {
             val time = minutes ?: return@StepForm
             vm.answer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
-                    OnboardingAnswerInputOneOf8(
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value(
+                    OnboardingAnswerInputOneOf9(
                         dailyMinutes = time.toLong(),
-                        question = OnboardingAnswerInputOneOf8.Question.SCHEDULE,
+                        question = OnboardingAnswerInputOneOf9.Question.SCHEDULE,
                         fullCourse = if (exam) keepsFullCourse(fullCourse, line) else null,
                         studyDays = days.takeIf { it.size < EVERY_DAY.size }?.map(Int::toLong),
                         timeZone = TimeZone.getDefault().id,

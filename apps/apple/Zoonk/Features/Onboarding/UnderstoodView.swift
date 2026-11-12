@@ -114,6 +114,7 @@ private struct UnderstoodCard: View {
   @State private var rewriting = false
   @State private var editing: FieldEdit?
   @State private var choosingVariety: VarietyChoice?
+  @State private var choosingCountry: VarietyChoice?
   @State private var countryAsked: Set<Int> = []
 
   private struct FieldEdit: Equatable {
@@ -154,6 +155,8 @@ private struct UnderstoodCard: View {
               onEdit: { isEditing in
                 if row.field == .targetRegion {
                   choosingVariety = isEditing ? VarietyChoice(goal: index) : nil
+                } else if row.field == .contentCountry {
+                  choosingCountry = isEditing ? VarietyChoice(goal: index) : nil
                 } else {
                   editing = isEditing ? row.field.map { FieldEdit(goal: index, field: $0) } : nil
                 }
@@ -212,6 +215,9 @@ private struct UnderstoodCard: View {
         }
       }
     }
+    .sheet(item: $choosingCountry) { choice in
+      countryPicker(goal: choice.goal)
+    }
     .sheet(item: $choosingVariety) { choice in
       if let variety = variety(goal: choice.goal) {
         LanguageVarietySheet(variety: variety) { region in
@@ -219,6 +225,28 @@ private struct UnderstoodCard: View {
         }
         .zoonkStyles()
       }
+    }
+  }
+
+  @ViewBuilder
+  private func countryPicker(goal index: Int) -> some View {
+    if understood.goals.indices.contains(index) {
+      let goal = understood.goals[index]
+
+      CountryPickerSheet(
+        title: Text(
+          "Country", tableName: "Plan",
+          comment:
+            "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
+        ),
+        language: (try? UnderstoodFacts(goal.draft.value1))?.language ?? OnboardingAPI.language,
+        suggested: .init(suggested: goal.suggested),
+        selected: ContentCountry(goal.contentCountry)?.code
+      ) { choice in
+        // Nothing is built yet, so a pick saves on the draft without asking.
+        await save(field: .contentCountry, goal: index, value: choice?.code)
+      }
+      .zoonkStyles()
     }
   }
 

@@ -3,7 +3,11 @@ import { findTwinCandidates, mergeSkillTwins } from "@zoonk/ai/tasks/curriculum/
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { type LibraryIdentityItem } from "@zoonk/ai/tasks/identity/subject";
 import { safeAsync } from "@zoonk/utils/error";
-import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
+import {
+  type CurriculumAnalytics,
+  type CurriculumScope,
+  getGraphCourseCountry,
+} from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 type GraphSkill = GoalSkillGraph["skills"][number];
@@ -84,9 +88,19 @@ export async function mergeGraphSkillTwins({
     return graph;
   }
 
+  const countryOf = (skill: GraphSkill) => {
+    const course = graph.courses.find((candidate) => candidate.key === skill.course);
+    return course ? getGraphCourseCountry({ course, scope }) : null;
+  };
+
   const decided = await Promise.all(
     listQuestions({ graph, newKeys }).map(({ siblings, skill }) =>
-      findTwinOf({ analytics, scope, siblings, skill }),
+      findTwinOf({
+        analytics,
+        scope,
+        siblings: siblings.filter((sibling) => countryOf(sibling) === countryOf(skill)),
+        skill,
+      }),
     ),
   );
 

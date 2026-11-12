@@ -29,27 +29,49 @@ import {
 } from "@zoonk/ui/components/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SearchIcon } from "lucide-react";
+import { useRef } from "react";
 import type * as React from "react";
 
 const Command = Autocomplete.Root;
 
+/**
+ * `overNested` draws the backdrop Base UI skips for a dialog opened inside another one.
+ * `suggestionsFirst` is for a list whose rows are the likely answer: on touch screens the popup
+ * takes focus instead of the search field, so the keyboard doesn't cover them. Its `CommandInput`
+ * then needs `autoFocus={false}`.
+ */
 function CommandDialog({
   children,
   className,
   finalFocus,
+  overNested,
+  suggestionsFirst,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   className?: string;
   children: React.ReactNode;
   finalFocus?: React.ComponentProps<typeof DialogPopup>["finalFocus"];
+  overNested?: boolean;
+  suggestionsFirst?: boolean;
 }) {
+  const popupRef = useRef<HTMLDivElement>(null);
+
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
+        <DialogOverlay
+          className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50"
+          forceRender={overNested}
+        />
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}
+            initialFocus={
+              suggestionsFirst
+                ? () => globalThis.matchMedia("(pointer: fine)").matches || popupRef.current
+                : undefined
+            }
+            ref={popupRef}
             className={cn(
               "flex h-dvh w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)]",
               "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] sm:ring-1 sm:ring-inset",
@@ -112,7 +134,13 @@ function CommandInput({
   );
 }
 
-function CommandList({ children, className, ...props }: Omit<AutocompleteListProps, "render">) {
+/** `after` scrolls with the list, outside it, for what isn't an option: a loading or failed state. */
+function CommandList({
+  after,
+  children,
+  className,
+  ...props
+}: Omit<AutocompleteListProps, "render"> & { after?: React.ReactNode }) {
   return (
     <ScrollAreaRoot
       className="flex min-h-0 flex-1 flex-col sm:flex-none"
@@ -130,6 +158,7 @@ function CommandList({ children, className, ...props }: Omit<AutocompleteListPro
           >
             {children}
           </Autocomplete.List>
+          {after}
         </ScrollAreaContent>
       </ScrollAreaViewport>
       <ScrollAreaScrollbar>
@@ -149,13 +178,13 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   );
 }
 
+const COMMAND_GROUP_LABEL_CLASS =
+  "text-faint pt-3.5 pb-1.5 text-[0.71875rem] font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
+
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
     <Autocomplete.GroupLabel
-      className={cn(
-        "text-faint pt-3.5 pb-1.5 text-[0.71875rem] font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case",
-        className,
-      )}
+      className={cn(COMMAND_GROUP_LABEL_CLASS, className)}
       data-slot="command-group-label"
       {...props}
     />
@@ -197,6 +226,7 @@ function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 export {
+  COMMAND_GROUP_LABEL_CLASS,
   Command,
   CommandCollection,
   CommandDialog,

@@ -42,6 +42,11 @@
   "onboarding_change_date": "4efbe0e10feede8619f1ca6f0f229312debdcad02e60618bc2b2db857efef38b",
   "onboarding_choose_date": "9757cb69d2f7234a564b6e75a670d82f8655224fb01ad1a9ccdd018d84f4e660",
   "onboarding_continue": "c2eb49cc176f22d161eafb034252df622cd409ad39257f066d8a76b0f64274d6",
+  "onboarding_country_description": "a83cc6077e6d923458f4241629ac3c8c3ab285b9ff52e0fd0802443763789790",
+  "onboarding_country_from_home": "9147b7ac85f02e845d22c3edcb0730cf72b07e311acf47d6b34c8772d1a4491a",
+  "onboarding_country_other": "4cdbec7bf4795c0c6396ef5fcfa72e75788d351cb44a7797eff897e9f29832e9",
+  "onboarding_country_skip_default": "5390383f5adc15a6b8f576c3b4f86dd60b480877c79ee8000b122d5d4464132a",
+  "onboarding_country_title": "919c9b3e3961f9979bf23c1def97dee2f3c94b1529dfa5138c7f73670b55ab93",
   "onboarding_course_build": "a771d8bcf0479148630cd30f5c0c515b11b14bd4cc60785399fe7c4170563e84",
   "onboarding_course_chapter_description": "4393acf3b3527d157877c5361d938efa90be263465a3bc0ee47cc5a37b583982",
   "onboarding_course_chapters": "50375ff7c64bcb7200debca8f3f533d3e66ce4ab6ed30b3dcfe0ee48b3ecb2e8",
@@ -1162,4 +1167,14 @@
     <string name="onboarding_variety_none">Nessuna preferenza</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">Il tuo compagno e le conversazioni di allenamento usano %1$s. Le lezioni e il loro audio usano %2$s.</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">A quale paese devono riferirsi le tue lezioni?</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">Quello che impari qui cambia da paese a paese. Puoi cambiare questa scelta in seguito nel tuo piano.</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">Un altro paese</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">Se salti: %1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">dove vivi</string>
 </resources>
