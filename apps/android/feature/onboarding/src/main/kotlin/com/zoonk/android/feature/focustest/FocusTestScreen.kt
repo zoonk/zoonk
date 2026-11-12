@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,14 +18,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.setup.LocalSetupDrafts
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
+import com.zoonk.android.feature.onboarding.setup.SetupDrafts
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -32,6 +40,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.launch
 
@@ -46,7 +55,28 @@ fun FocusTestScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val signedIn = session as? SessionState.SignedIn
+    FocusTestScreen(
+        route,
+        app.learnerSummary.summary,
+        app.onboarding,
+        app.plans,
+        drafts = signedIn?.session?.let { SetupDrafts(app.drafts, it) },
+        navigator,
+    )
+}
+
+@Composable
+internal fun FocusTestScreen(
+    route: AppRoute.FocusTest,
+    summaries: Resource<LearnerSummary>,
+    store: OnboardingStore,
+    plans: PlanStore,
+    drafts: SetupDrafts?,
+    navigator: AppNavigator,
+) {
+    val summary by summaries.collectShown()
     val goal = summary.value?.goals?.firstOrNull { goal -> route.goalId?.let { goal.id.toString() == it } ?: goal.isActive }
     var progress by remember { mutableStateOf<Float?>(null) }
     val scope = rememberCoroutineScope()
@@ -67,25 +97,27 @@ fun FocusTestScreen(
         Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             when {
                 goal?.kind == LearnerSummaryGoal.Kind.EXAM -> {
-                    SetupColumn {
-                        FocusTestFlow(
-                            goalId = goal.id.toString(),
-                            host = FocusTestHost.Plan,
-                            subject = goal.displayName,
-                            store = app.onboarding,
-                            plans = app.plans,
-                            run = remember { GenerationRun() },
-                            onRetryRun = null,
-                            onProgress = { progress = it },
-                            onDone = {
-                                navigator.closeTask()
-                                WriteOutcome.Done(Unit)
-                            },
-                            onChangeFocus = {
-                                navigator.closeTask()
-                                navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
-                            },
-                        )
+                    CompositionLocalProvider(LocalSetupDrafts provides drafts) {
+                        SetupColumn {
+                            FocusTestFlow(
+                                goalId = goal.id.toString(),
+                                host = FocusTestHost.Plan,
+                                subject = goal.displayName,
+                                store = store,
+                                plans = plans,
+                                run = remember { GenerationRun() },
+                                onRetryRun = null,
+                                onProgress = { progress = it },
+                                onDone = {
+                                    navigator.closeTask()
+                                    WriteOutcome.Done(Unit)
+                                },
+                                onChangeFocus = {
+                                    navigator.closeTask()
+                                    navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
+                                },
+                            )
+                        }
                     }
                 }
 
@@ -99,7 +131,7 @@ fun FocusTestScreen(
                 }
 
                 summary is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = { scope.launch { app.learnerSummary.summary.refresh() } })
+                    LoadFailedMessage(onRetry = { scope.launch { summaries.refresh() } })
                 }
 
                 summary is LoadState.Loaded || summary == LoadState.Empty -> {
