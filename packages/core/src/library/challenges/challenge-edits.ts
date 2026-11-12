@@ -51,12 +51,14 @@ function applyEdit({
     return null;
   }
 
-  return challengeCaseSchema.parse(
+  const parsed = challengeCaseSchema.safeParse(
     mapTexts(written, (text) => text.replace(edit.find, () => edit.replace)),
   );
+
+  return parsed.success ? parsed.data : null;
 }
 
-/** Null when an edit's text doesn't occur exactly once in the case, so it can't say what to change. */
+/** Null when an edit's text doesn't occur exactly once in the case, or leaves an invalid case. */
 export function applyChallengeEdits({
   edits,
   written,

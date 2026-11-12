@@ -41,6 +41,13 @@ describe(applyChallengeEdits, () => {
     ).toBeNull();
   });
 
+  it.each([["sets a meter to a value it can't have", { find: "low", replace: "lower" }]])(
+    "fails an edit that %s instead of changing words learners read",
+    (_label, edit) => {
+      expect(applyChallengeEdits({ edits: [edit], written: written() })).toBeNull();
+    },
+  );
+
   it("fails an edit with no text to find", () => {
     expect(
       applyChallengeEdits({ edits: [{ find: "", replace: "x" }], written: written() }),
