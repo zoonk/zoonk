@@ -19,7 +19,6 @@ export function MessageRow({
 }) {
   const { context, email, user } = message;
   const subject = getFeedbackSubject(context);
-  const page = context.screen ?? context.url;
 
   return (
     <AdminTableRow>
@@ -37,8 +36,10 @@ export function MessageRow({
       </TableCell>
       <TableCell className="max-w-72">
         <span className="block truncate">{subject}</span>
-        {page && page !== subject ? (
-          <span className="text-muted-foreground block truncate text-xs">{page}</span>
+        {context.screen && context.screen !== subject ? (
+          <span className="text-muted-foreground block truncate text-xs">
+            Sent from the {context.screen} screen
+          </span>
         ) : null}
       </TableCell>
       <TableCell className="text-muted-foreground">{getFeedbackPlatform(context) ?? "—"}</TableCell>

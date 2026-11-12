@@ -72,7 +72,7 @@ export const adminNavigation: { items: AdminNavItem[]; label?: string }[] = [
     items: [
       { icon: UsersIcon, label: "Users", url: "/users" },
       { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
-      { icon: TargetIcon, label: "Goal prompts", url: "/prompts" },
+      { icon: TargetIcon, label: "Goal requests", url: "/prompts" },
       { icon: MessagesSquareIcon, label: "Buddy questions", url: "/questions" },
     ],
     label: "Learners",

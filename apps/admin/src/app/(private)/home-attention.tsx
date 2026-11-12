@@ -32,7 +32,7 @@ async function loadAttentionRows(): Promise<AttentionRow[]> {
       count: failed + stuck,
       detail: `${failed} failed · ${stuck} stuck for over ${STUCK_RUNNING_MINUTES / MINUTES_PER_HOUR} hour`,
       href: "/ai",
-      title: "Generation failures",
+      title: "Failed AI runs",
     },
     {
       count: inbox.feedback.count,

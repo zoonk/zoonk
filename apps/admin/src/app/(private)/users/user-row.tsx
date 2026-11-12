@@ -27,7 +27,7 @@ export function UserRow({
       </TableCell>
 
       <TableCell className="text-muted-foreground">
-        {formatDate(user.progress?.lastActiveAt)}
+        {user.progress ? formatDate(user.progress.lastActiveAt) : "Never"}
       </TableCell>
 
       <TableCell className="text-muted-foreground">{formatDate(user.createdAt)}</TableCell>

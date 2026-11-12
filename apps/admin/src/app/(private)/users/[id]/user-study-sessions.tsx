@@ -7,12 +7,23 @@ import {
 import { formatDate, toWords } from "@/lib/format";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 
-/** "Review, Learn ×5, Practice": each kind once, in the session's order. */
+/** What learners call each part of a day. */
+const BLOCK_LABELS: Record<UserStudySession["blocks"][number]["kind"], string> = {
+  checkpoint: "Test",
+  learn: "Lesson",
+  practice: "Practice",
+  produce: "Writing or speaking",
+  review: "Review",
+};
+
+/** "Review, Lesson ×5, Practice": each kind once, in the day's order. */
 function describeBlocks(blocks: UserStudySession["blocks"]): string {
   const counts = Map.groupBy(blocks, (block) => block.kind);
 
   return [...counts]
-    .map(([kind, rows]) => (rows.length > 1 ? `${toWords(kind)} ×${rows.length}` : toWords(kind)))
+    .map(([kind, rows]) =>
+      rows.length > 1 ? `${BLOCK_LABELS[kind]} ×${rows.length}` : BLOCK_LABELS[kind],
+    )
     .join(", ");
 }
 
@@ -50,16 +61,16 @@ export async function UserStudySessions({ userId }: { userId: string }) {
     { label: "Day" },
     ...(showGoal ? [{ label: "Goal" }] : []),
     { label: "State" },
-    { align: "right", label: "Planned" },
-    { align: "right", label: "Done" },
-    { label: "What was in it" },
+    { align: "right", label: "Time planned" },
+    { align: "right", label: "Parts done" },
+    { label: "Parts" },
   ];
 
   return (
-    <AdminSection title="Recent sessions">
+    <AdminSection title="Recent days">
       <AdminTableColumns
         columns={columns}
-        emptyLabel="No study sessions yet."
+        emptyLabel="No study days yet."
         isEmpty={sessions.length === 0}
       >
         {sessions.map((session) => (

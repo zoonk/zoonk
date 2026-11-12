@@ -49,7 +49,9 @@ function ActiveSubscriptionFields({
       ) : null}
 
       {!cancels && subscription.periodEnd ? (
-        <DetailField label="Renews on">{formatDate(subscription.periodEnd)}</DetailField>
+        <DetailField label={getSubscriptionStore(subscription.provider) ? "Renews on" : "Ends on"}>
+          {formatDate(subscription.periodEnd)}
+        </DetailField>
       ) : null}
 
       {subscription.stripeCustomerId ? (

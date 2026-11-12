@@ -62,7 +62,7 @@ export function MessageActions({
             render={<a href={`mailto:${email}?subject=${encodeURIComponent("Your message to Zoonk")}`} />}
             size="lg"
           >
-            Reply
+            Reply by email
           </Button>
         ) : null}
 

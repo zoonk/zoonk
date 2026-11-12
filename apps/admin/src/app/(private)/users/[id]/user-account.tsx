@@ -14,7 +14,10 @@ export async function UserAccount({ userId }: { userId: string }) {
   }
 
   const lastSignIn = user.sessions[0]?.updatedAt;
-  const providers = user.accounts.map((account) => toWords(account.providerId));
+
+  const providers = user.accounts.map((account) =>
+    account.providerId === "credential" ? "Email and password" : toWords(account.providerId),
+  );
 
   return (
     <AdminSection title="Account">

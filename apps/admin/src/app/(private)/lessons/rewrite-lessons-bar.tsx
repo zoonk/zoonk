@@ -40,7 +40,7 @@ export function RewriteLessonsBar({
         <AdminConfirmDialog
           action={regenerateLessonsAction}
           confirmLabel="Rewrite"
-          description="They're hidden from learners until the new version passes review. Learners keep their answers."
+          description={`The oldest ${batch} written by ${[model, promptVersion && `prompt ${promptVersion}`].filter(Boolean).join(", ")}. They're hidden from learners until the new version passes review. Learners keep their answers.`}
           onConfirmed={() => setStarted(batch)}
           title={`Rewrite ${batch}?`}
           trigger={

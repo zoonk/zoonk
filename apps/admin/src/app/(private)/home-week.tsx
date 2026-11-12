@@ -21,7 +21,7 @@ function change({
   previous: number;
 }): string {
   if (current === previous) {
-    return `Same as before (${format(previous)})`;
+    return "Same as before";
   }
 
   return `${current > previous ? "Up" : "Down"} from ${format(previous)}`;

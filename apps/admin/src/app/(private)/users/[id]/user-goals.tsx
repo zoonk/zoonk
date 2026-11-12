@@ -10,7 +10,7 @@ const GOAL_COLUMNS: AdminTableColumn[] = [
   { label: "State" },
   { align: "right", label: "Time a day" },
   { label: "Date" },
-  { align: "right", label: "Plan done" },
+  { align: "right", label: "Plan" },
 ];
 
 const PLAN_COLUMNS: AdminTableColumn[] = [
@@ -56,7 +56,7 @@ function GoalRow({ goal }: { goal: UserGoal }) {
       <TableCell>{formatDate(goal.targetDate)}</TableCell>
       <TableCell className="text-right tabular-nums">
         {goal.plan
-          ? `${goal.doneItems.toLocaleString("en")} of ${goal.totalItems.toLocaleString("en")}`
+          ? `${goal.doneItems.toLocaleString("en")} of ${goal.totalItems.toLocaleString("en")} done`
           : "No plan"}
       </TableCell>
     </AdminTableRow>

@@ -104,7 +104,7 @@ export function UserActionsMenu({
         {...dialogProps("ban")}
         action={banUserAction}
         confirmLabel="Ban"
-        description="They're signed out everywhere and can't sign back in."
+        description="They're signed out everywhere and can't sign back in until you unban them."
         destructive
         title={`Ban ${userName}?`}
       >
