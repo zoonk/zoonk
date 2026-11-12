@@ -158,4 +158,26 @@ export const TEST_CASES: TestCase<unknown, ChallengeCaseInput>[] = [
       variant: "work",
     },
   },
+  {
+    expectations: `A work case for a learner who works in research: reading values off plots of detector measurements (points, a curve, axis ticks, a truncated axis). The app shows a panel's metrics as short lines of text, never a drawn plot, so every value a decision asks the learner to read comes as metrics: the plotted points, the curve's readings and the axis ranges and intervals, each a short label and value. No metric value or label is a chart, table or picture drawn in text, no note tells anyone how to draw or display something, and no decision asks for a value the panels, messages and replies never give. General to the field, with no real lab.`,
+    id: "en-plot-reading-field-research",
+    userInput: {
+      chapterDescription:
+        "Read values from plots of detector measurements while accounting for the ways real experimental plots are displayed.",
+      chapterTitle: "Reading quantum experiment plots",
+      courseTitle: "Quantum physics from scratch",
+      field: "research",
+      language: "en",
+      level: "beginner",
+      skills: [
+        { description: null, name: "Read values from an experimental plot" },
+        { description: null, name: "Estimate values between axis ticks" },
+        { description: null, name: "Read values from plotted data points" },
+        { description: null, name: "Estimate values from a plotted curve" },
+        { description: null, name: "Read values on a truncated axis" },
+        { description: null, name: "Interpret axis intervals" },
+      ],
+      variant: "work",
+    },
+  },
 ];

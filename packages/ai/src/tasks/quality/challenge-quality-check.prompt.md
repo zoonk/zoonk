@@ -10,6 +10,7 @@ Report only these:
 4. A number or count that changes along a path with no step that changes it, or that differs between a panel, a message, a note and an ending on the same path.
 5. An ending, reply or note that contradicts the path's picks: it credits a step the learner skipped or a result they didn't get, blames one they avoided, or quietly fixes a skipped check later as if the learner had done it.
 6. In a health, law or safety case, a path where harm reaches a person, or an unsafe act praised.
+7. A step that asks the learner to use something the screen never shows them: a value to read off a chart, table or picture the case only describes or draws in text, or a figure no panel, message or reply on that path gives.
 
 Decisions and endings are often reached by several routes. For each decision, read its messages once for every route listed under "Reached after", and for each ending, once for every path that reaches it: everything it says must be true for that route. Then follow every path from the first decision to its ending: its figures must agree everywhere, and whatever it concludes from them must hold.
 

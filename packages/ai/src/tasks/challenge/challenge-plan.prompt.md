@@ -106,6 +106,8 @@ A "What if" has few facts, and they may be plain statements of what happens ("Ti
 `panels`: at most one panel with the `start` facts the learner begins from: 1 to 4 `metrics`, each a short `label`, a `value` and an optional `note`; an optional `title` and a `note` line under them. A "What if" may have no panel.
 {{/whatIf}}
 
+A panel shows numbers and short facts, never a chart, table or picture drawn in text, and never instructions about how to show something: the app shows each metric as one short line. When a skill is about reading a chart, give the data the learner needs as metrics.
+
 # The decisions
 
 The case is a small graph. `startDecisionId` is the first decision.

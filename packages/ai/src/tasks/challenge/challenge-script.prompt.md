@@ -67,7 +67,7 @@ A decision reached by several choices is the same text on every path, so its mes
 
 A meter starts at its `start` and every choice on a path adds its change, so the app shows the running total, stopped at 0 and at 100: whatever a change pushes past those ends is lost, and the learner sees a choice that did less than it should. Add up each meter along every path, choice by choice, and keep every total from 0 to 100. Size a change by the room the meter has left on the longest path through that choice, so choices that move the same meter the same way in a row each take a smaller step.
 
-`panel`: for a choice with `timePasses`, the new numbers the learner sees after the wait, taken from the facts the choice establishes: 1 to 4 `metrics`, each a short `label`, a `value` and an optional `note`; an optional `title` and a `note` line under them. A choice with `timePasses` that `establishes` facts always gets a panel showing them. Null for a choice with no `timePasses`.
+`panel`: for a choice with `timePasses`, the new numbers the learner sees after the wait, taken from the facts the choice establishes: 1 to 4 `metrics`, each a short `label`, a `value` and an optional `note`; an optional `title` and a `note` line under them. A choice with `timePasses` that `establishes` facts always gets a panel showing them. Null for a choice with no `timePasses`. A panel shows numbers and short facts, never a chart, table or picture drawn in text, and never instructions about how to show something: the app shows each metric as one short line. When a skill is about reading a chart, give the data the learner needs as metrics.
 
 # Debrief: `notes` and `summary`
 
