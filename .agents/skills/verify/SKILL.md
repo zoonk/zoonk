@@ -42,6 +42,8 @@ Then `pnpm verify:diff` (`--base <ref>` for a branch) reads the change as a prin
 
 `Repeated definition` is a nonblocking review prompt. For module-level `ALL_CAPS` constants and lowercase-named functions (declarations or direct function/arrow initializers), it lists same-name definitions in TypeScript source under `apps/*/src` and `packages/*/src`, excluding test files, `_test-utils` and generated paths. An added diff line must overlap the declaration, including an initializer- or body-only edit. It does not cover camelCase schema constants, wrapped helpers such as `cache(...)`, classes, deletion-only changes or equivalent rules under other names. Use the `rg` searches above for those cases and compare complete implementations and consumers for drift; matching names are not proof of shared semantics.
 
+For copy, it reads the English catalogs (the web's `messages/en.po`, run the app's `i18n` first; Apple's String Catalogs; Android's `values/strings*.xml`) and lists each string the change adds or rewords that runs past 20 words, is a button label over three words (web only, where its source sits inside a `<…Button>`), hedges ("for now", "so far", "may", "up to"), uses a term the English style guide's "Plain words first" table never shows learners, or comes with a translator note that defines a word. Strings used only on marketing pages (landing, catalog, pricing, shared links, blog) skip the two length checks. They're leads for the designer, never blocking.
+
 Answer every item in your report, by fixing the code or saying why it's right; credentials, env files, focused tests and a vulnerable dependency the change adds block.
 
 ## 3. Use the change in the running app
@@ -67,6 +69,7 @@ Passing checks don't show the change working. Run the app and do what the change
 - For loads and taps, read each tap's response, content and whether it came from its prefetch, and run `--nav` once with `--no-prefetch` and once with `--early`: a tap whose prefetch never landed, and one right after a cold load. They catch a frozen screen that a prefetched walk never shows.
 - Narrow the run while you fix (`--viewports phone,laptop`), then run every screen once at the end.
 - Timings measure the machine as much as the page when other work is running: past three runnable tasks per core, the report marks speed, memory, slow queries and regressions inconclusive. Main-thread work, request and statement counts and bytes still hold. Compare timings back to back on a quiet machine, or measure on GitHub while this one stays busy ([measuring pages](references/pages.md#on-github)).
+- Each load also reports its words, the text elements between the title and the main action, and its longest button label, and leads to a page past zoonk-design's Words budget (and, with `--baseline`, words up by more than 20%). Long-form and marketing pages report counts without leads ([measuring pages](references/pages.md)).
 - Look at each page's contact sheets first (`screens.png`: every screen in each scheme; `paints.png`: every paint of each load), then open a full screenshot or frame where something looks off. A change to speed or server cost reports the numbers before and after on the same setup.
 
 ## 5. Review it as a principal engineer, a security researcher and a designer

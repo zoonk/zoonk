@@ -63,12 +63,13 @@
 ## Plan terminology
 
 - “Finished”: “Terminé”
-- “Past date”: “Date passée”, not “Clos” or “Expiré”
+- “Up to date” (a plan's state): “À jour”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Date passée”, not “Clos” or “Expiré”
 - “Needs adjusting”: “À ajuster”
 - “Too tight”: “Trop serré”
 - “left out”: “laissé de côté”, not “passé” or “sauté”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “sauter” / “sauté”, never “passer” or “passé”
-- “Daily time”: “Durée quotidienne”, not “Temps par jour”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Durée quotidienne”, not “Temps par jour”
 
 ## Buddy names
 

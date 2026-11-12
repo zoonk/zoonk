@@ -6,6 +6,7 @@ import { parseArgs } from "node:util";
 import { addsVulnerability, auditDependencies } from "./dependencies.mts";
 import { type ChangedFile, auditDiff, parseDiff, renderAudit } from "./diff-audit.mts";
 import { auditDuplicatedDefinitions } from "./duplication.mts";
+import { auditStrings } from "./strings.mts";
 import { auditWaterfalls } from "./waterfalls.mts";
 
 /**
@@ -24,6 +25,19 @@ function git(args: string[]): string {
 function read(path: string): string {
   try {
     return readFileSync(join(repository, path), "utf8");
+  } catch {
+    return "";
+  }
+}
+
+function readBase(path: string): string {
+  try {
+    return execFileSync("git", ["show", `${values.base}:${path}`], {
+      cwd: repository,
+      encoding: "utf8",
+      maxBuffer: OUTPUT_LIMIT,
+      stdio: ["ignore", "pipe", "ignore"],
+    });
   } catch {
     return "";
   }
@@ -58,6 +72,7 @@ const flags = [
       .filter(Boolean),
     read,
   ),
+  ...auditStrings(files, { read, readBase }),
 ];
 // What production installs changes only through the lockfile or the workspace's overrides.
 const installsChanged = files.some((file) =>

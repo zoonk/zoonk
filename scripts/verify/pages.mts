@@ -116,6 +116,7 @@ const queries = values.queries ? resolve(values.queries) : undefined;
 
 const target = {
   actions,
+  app: values.app,
   baseUrl,
   browser,
   out,

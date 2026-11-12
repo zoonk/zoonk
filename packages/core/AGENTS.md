@@ -8,6 +8,7 @@
 - Public authenticated core functions call the shared `getSession()` capability themselves and own every permission check. Apps may pass untrusted resource IDs and validated input, but they must never pass a caller-selected acting `userId` to a public core capability.
 - Internal core helpers may receive a user ID only after a public core boundary derives it from the authenticated session. Do not export those helpers as authorization boundaries. On GET paths, load each request-stable fact through its one canonical private leaf in `learner/facts/`, behind the public capability's authorization. Helpers receive already-loaded facts instead of IDs to re-read. Write and workflow preconditions keep fresh reads.
 - Import core capabilities through direct package subpath leaf exports. Do not create a monolithic facade or root barrel that imports every feature; client-only, workflow-safe, and server-only leaves must remain separate so unused dependencies stay outside each consumer's module graph.
+- A field's description says what the value means and when it's set. It never tells a client what to say, show or word ("say so", "say it with the change", "show a quiet notice"). A value a client receives is not a sentence it owes the learner: what a screen says is designed for that screen under [zoonk-design's Words](../../.agents/skills/zoonk-design/SKILL.md#words). Web, iOS and Android match by making the same decisions and using the same words where words are shown.
 
 ## Reads, caching, and invalidation
 

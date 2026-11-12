@@ -75,12 +75,12 @@
 
 - Phases “Foundations” / “Fill the gaps” / “Practice” / “Final stretch”: “Bases” / “Cubrir lo que falta” / “Práctica” / “Recta final”
 - “Finished”: “Completado”
-- “Past date” / “Past your date”: “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
+- “Date passed”, “Exam date passed” (formerly “Past date” / “Past your date”): “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
 - “Needs adjusting”: “Necesita ajustes”
 - “Too tight”: “Demasiado ajustado”
 - “left out”: “omitir”, not “saltar”
-- “On pace” / “Keeping pace”: “Al día”, not “A buen ritmo”
-- “Daily time”: “Tiempo diario”
+- “Up to date” (a plan's state; formerly “On pace” / “Keeping pace”): “Al día”, not “A buen ritmo”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tiempo diario”
 
 ## Buddy names
 
