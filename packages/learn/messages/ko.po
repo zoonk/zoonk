@@ -3820,6 +3820,11 @@ msgid "Exam · {days, plural, =0 {The day is here} one {# day left} other {# day
 msgstr "시험 · {days, plural, =0 {바로 오늘} other {#일 남음}}"
 
 #: src/exam/exam-screen.tsx
+msgctxt "Akn-bs"
+msgid "Exam options"
+msgstr "시험 옵션"
+
+#: src/exam/exam-screen.tsx
 msgctxt "1L3MIn"
 msgid "Day not set yet"
 msgstr ""
@@ -3838,11 +3843,6 @@ msgstr ""
 msgctxt "TEnkdT"
 msgid "From past editions. We'll tell you when the official dates are out."
 msgstr ""
-
-#: src/exam/exam-screen.tsx
-msgctxt "Akn-bs"
-msgid "Exam options"
-msgstr "시험 옵션"
 
 #: src/exam/exam-screen.tsx
 #: src/journey/journey-menu.tsx

@@ -3820,6 +3820,11 @@ msgid "Exam · {days, plural, =0 {The day is here} one {# day left} other {# day
 msgstr "Esame · {days, plural, =0 {Il giorno è arrivato} one {Manca # giorno} other {Mancano # giorni}}"
 
 #: src/exam/exam-screen.tsx
+msgctxt "Akn-bs"
+msgid "Exam options"
+msgstr "Opzioni dell’esame"
+
+#: src/exam/exam-screen.tsx
 msgctxt "1L3MIn"
 msgid "Day not set yet"
 msgstr ""
@@ -3838,11 +3843,6 @@ msgstr ""
 msgctxt "TEnkdT"
 msgid "From past editions. We'll tell you when the official dates are out."
 msgstr ""
-
-#: src/exam/exam-screen.tsx
-msgctxt "Akn-bs"
-msgid "Exam options"
-msgstr "Opzioni dell’esame"
 
 #: src/exam/exam-screen.tsx
 #: src/journey/journey-menu.tsx
