@@ -65,7 +65,7 @@ internal fun displayName(
 ) = shortName ?: name
 
 /** A proposal still waiting for the learner's answer, which then is the screen's question. */
-private fun FocusTestFocus.waitingProposal(plan: PlanControls?): PlanChange? =
+internal fun FocusTestFocus.waitingProposal(plan: PlanControls?): PlanChange? =
     proposal?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
 
 /** The test's result: where to focus, or where the plan starts. On a plan, a proposal asks first. */

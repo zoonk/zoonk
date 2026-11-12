@@ -183,10 +183,13 @@ internal class FocusTestViewModel(
         }
     }
 
+    /** A sitting's answers make a new result, so the answer to the last result's proposal stays with it. */
     private fun enter() {
         entered = true
         savedEntered = true
         closed = null
+        proposalAnswer = null
+        decisionFailed = false
     }
 
     /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */

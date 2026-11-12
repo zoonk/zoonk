@@ -19,7 +19,11 @@ import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.decodeFixture
+import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,11 +35,12 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.UUID
 
-/** Today's "Start the test" starts the sitting as the test opens; the app can be killed while it does. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class FocusTestViewModelTest {
@@ -118,5 +123,26 @@ class FocusTestViewModelTest {
             restored(api, handle)
 
             assertEquals(2, api.sittingsStarted)
+        }
+
+    @Test
+    fun aNewProposalFromMoreAnswersAsksAgainAfterTheLearnerDecidedTheLastOne() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api = FakeOnboardingApi().apply { placement = placementOf(next = null, focusTest = focusTestOf()) }
+            val vm = viewModel(api, SavedStateHandle())
+            val proposal = decodeFixture<PlanChange>("plan-change").copy(source = "focusTest", canApply = true)
+            vm.decide(proposal, PlanChangeDecisionInput.Status.APPLIED)
+            runCurrent()
+            assertNotNull(vm.proposalAnswer)
+
+            vm.continueTest()
+            runCurrent()
+
+            val next = proposal.copy(id = UUID.randomUUID())
+            val focus = FocusTestFocus(proposal = next, rows = emptyList(), state = FocusTestFocus.State.PROPOSED)
+            val questions = SessionQuestionsModel(unusedFocusTests(AppCache(FakeSession(ana), backgroundScope)), UUID.fromString(GOAL_ID))
+            val plan = PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, {}, questions)
+            assertEquals(next.id, focus.waitingProposal(plan)?.id)
         }
 }
