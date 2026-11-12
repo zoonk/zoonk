@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
@@ -19,7 +20,6 @@ import {
   createPlanGenerationManifest,
 } from "@zoonk/core/lookahead/speculative-lessons";
 import { prisma } from "@zoonk/db";
-import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
   chapterSkillFixture,

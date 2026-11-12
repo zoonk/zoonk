@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { prisma } from "@zoonk/db";
-import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";

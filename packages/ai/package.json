@@ -188,6 +188,7 @@
     "./tasks/research/upload-visibility": "./src/tasks/research/upload-visibility.ts",
     "./tasks/challenge/assemble": "./src/tasks/challenge/assemble-challenge-case.ts",
     "./tasks/challenge/plan": "./src/tasks/challenge/challenge-plan.ts",
+    "./tasks/challenge/plan-fixture": "./src/tasks/challenge/_test-utils/challenge-plan.ts",
     "./tasks/challenge/plan-paths": "./src/tasks/challenge/challenge-plan-paths.ts",
     "./tasks/challenge/script": "./src/tasks/challenge/challenge-script.ts",
     "./tasks/quality/challenge-quality-check": "./src/tasks/quality/challenge-quality-check.ts",
@@ -212,7 +213,6 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "tsx": "catalog:",
     "typescript": "catalog:",

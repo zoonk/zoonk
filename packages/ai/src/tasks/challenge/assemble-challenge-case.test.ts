@@ -1,5 +1,5 @@
-import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { describe, expect, it } from "vitest";
+import { challengePlanFixture } from "./_test-utils/challenge-plan";
 import { assembleChallengeCase, draftEmptyScript } from "./assemble-challenge-case";
 
 describe(assembleChallengeCase, () => {

@@ -1,5 +1,6 @@
 import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { generateItems } from "@zoonk/ai/tasks/items/generate";
 import { generatePlacementItems } from "@zoonk/ai/tasks/items/placement-items";
@@ -9,7 +10,6 @@ import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality
 import { generateStepVariant } from "@zoonk/ai/tasks/variants/step-variant";
 import { requestClaimQuestionsFor } from "@zoonk/core/lookahead/claim-questions";
 import { prisma } from "@zoonk/db";
-import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";

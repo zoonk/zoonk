@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { assembleChallengeCase, draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
 import { prisma } from "@zoonk/db";
-import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
