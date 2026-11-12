@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { deviceStorage } from "../_utils/device-storage";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { MissionMoment } from "../missions/mission-moment";
@@ -14,12 +16,18 @@ export function DayMoment({
   reached,
 }: DayMomentFacts & { buddy?: LearnBuddy | null }) {
   const pick = pickDayMoment({ ceremony, finishedChapter, missionMoment, reached });
+  // Prototype only, for the founder's review (B2-017's second option): a slim card for one mission done.
+  const [slimCard, setSlimCard] = useState(false);
+
+  useEffect(() => {
+    setSlimCard(deviceStorage.get("zoonk:b2-mission-card") === "1");
+  }, []);
 
   if (pick === "chapter") {
     return <FinishedChapterMoment chapter={finishedChapter} />;
   }
 
-  if (pick === "missions" && missionMoment) {
+  if ((pick === "missions" || (pick === null && slimCard)) && missionMoment) {
     return (
       <MissionMoment
         buddy={buddy}

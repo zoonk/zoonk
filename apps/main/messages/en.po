@@ -1699,10 +1699,10 @@ msgid "Overview"
 msgstr "Overview"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Level"
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Belt"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
@@ -1719,10 +1719,10 @@ msgid "Activity"
 msgstr "Activity"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Score"
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Right answers"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
@@ -1898,11 +1898,6 @@ msgid "Your belt and Brain Power."
 msgstr "Your belt and Brain Power."
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Belt"
-
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "IxxQzi"
 msgid "You earn Brain Power for everything you study, and it never goes down."
 msgstr "You earn Brain Power for everything you study, and it never goes down."
@@ -2027,11 +2022,6 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "See your answer accuracy and weekly trend over the past 90 days."
 
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Right answers"
-
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
@@ -2106,6 +2096,11 @@ msgid "Your belt, Energy, study days, right answers and when you do best."
 msgstr "Your belt, Energy, study days, right answers and when you do best."
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Level"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "AezvZG"
 msgid "Average {value}"
 msgstr "Average {value}"
@@ -2114,6 +2109,11 @@ msgstr "Average {value}"
 msgctxt "I5Pid5"
 msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
 msgstr "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
+
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Score"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "_qHKLY"

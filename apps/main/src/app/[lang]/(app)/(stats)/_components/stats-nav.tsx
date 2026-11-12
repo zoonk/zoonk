@@ -11,10 +11,10 @@ export function StatsNav() {
     <SectionNav
       items={[
         { label: t("Overview"), url: getMenu("stats").url },
-        { label: t("Level"), url: getMenu("level").url },
+        { label: t("Belt"), url: getMenu("level").url },
         { label: t("Energy"), url: getMenu("energy").url },
         { label: t("Activity"), url: getMenu("activity").url },
-        { label: t("Score"), url: getMenu("score").url },
+        { label: t("Right answers"), url: getMenu("score").url },
         { label: t("Patterns"), url: getMenu("patterns").url },
       ]}
       label={t("Your stats")}
