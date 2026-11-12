@@ -199,7 +199,7 @@
   "onboarding_placement_unavailable_description": "a919acc588eb2e5d4ecbc8301bb75285d822b5d9425ea5ba58f2c7ecc3b9f57c",
   "onboarding_placement_unavailable_title": "53fc3229175254059a1b3d8ddbe4ceae90a0b8cdc3c24cca9b681922f55a2f7f",
   "onboarding_placement_waiting_material": "13875ae4c16f03be4fb4dccdbfabaa776c31fbb9b1bb3d013e6c23f3b8c015c3",
-  "onboarding_placement_waiting_skills": "8454fa7afa56a286bdc8430e8ede8b4a912952862009445c1c8283a94c356c07",
+  "onboarding_placement_waiting_time": "dc197096cdf6e38715375472010ca1b1bff78a60a9016ec32a52dc1f0c2b043b",
   "onboarding_placement_waiting_title": "c670ee548c2caf2e072b8277aead6b19394a0f6adbe45cc43207550bb97828f2",
   "onboarding_placement_wrong": "c9bac29490f4a2bfff337fb88ff62813dc9877064e0169aa2e3e966e652898e6",
   "onboarding_placement_your_answer": "9d229aa7c2ea1ef86af59768e33ebf67265c2cc5beb3aa69db0d06574a4a26df",
@@ -673,7 +673,7 @@
     <string name="onboarding_placement_skip_basics">건너뛰고 기초부터 시작하기</string>
     <string name="onboarding_placement_waiting_title">문제를 준비하고 있어요</string>
     <string name="onboarding_placement_waiting_material">추가한 자료를 바탕으로 문제를 만들고 있어요. 자료를 읽는 데 몇 분 걸려요.</string>
-    <string name="onboarding_placement_waiting_skills">목표를 이루는 데 필요한 능력을 바탕으로 문제를 만들고 있어요. 보통 1~2분 정도 걸려요.</string>
+    <string name="onboarding_placement_waiting_time">보통 1~2분 정도 걸려요.</string>
     <string name="onboarding_placement_skip_for_now">지금은 건너뛰기</string>
     <string name="onboarding_placement_skip_note">대신 처음 몇 번의 학습에서 이 중 몇 문제를 풀게 돼요.</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->

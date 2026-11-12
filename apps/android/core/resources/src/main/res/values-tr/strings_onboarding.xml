@@ -199,7 +199,7 @@
   "onboarding_placement_unavailable_description": "9a26d37c833460a6a828c806c716279dc5aa2813dcf935705c2238906b8c5929",
   "onboarding_placement_unavailable_title": "7133a6d3913d7d2555dc551f91794f90d1052f8138b28045db10503e49a2f95b",
   "onboarding_placement_waiting_material": "84e4973bca178ebd749fb3088f9c796477a45b1136860a52953bd8e0e3b9c8f7",
-  "onboarding_placement_waiting_skills": "ab844cfe36b69afbc47a320802f3d06c950ad6d56d4d9023e3f0a55c89990e87",
+  "onboarding_placement_waiting_time": "8a39d62dfc8fb23d028339a5fe6f85a4b5a324fd5406edd927ac6de9990ecd00",
   "onboarding_placement_waiting_title": "f496a4a2194722ce0b54940c10e1a8c1eb7b6d160987038779b8285914c9c1b9",
   "onboarding_placement_wrong": "ef28abd1857c6f2b3360f10748df2de15432293930a589d04b1a972946d8d4ca",
   "onboarding_placement_your_answer": "50ae3e13d5b747c7bd384f70927d2649ab10e85920e001a709bbf7c68ac94671",
@@ -676,7 +676,7 @@
     <string name="onboarding_placement_skip_basics">Atla ve temelden başla</string>
     <string name="onboarding_placement_waiting_title">Sorularını hazırlıyoruz</string>
     <string name="onboarding_placement_waiting_material">Soruları eklediğin materyale göre hazırlıyoruz. Materyali okumamız birkaç dakika sürüyor.</string>
-    <string name="onboarding_placement_waiting_skills">Soruları hedefine ulaşman için gereken becerilere göre hazırlıyoruz. Bu genelde bir iki dakika sürüyor.</string>
+    <string name="onboarding_placement_waiting_time">Bu genelde bir iki dakika sürer.</string>
     <string name="onboarding_placement_skip_for_now">Şimdilik atla</string>
     <string name="onboarding_placement_skip_note">Bunun yerine ilk çalışmalarında bu sorulardan birkaçını soracağız.</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->

@@ -199,7 +199,7 @@
   "onboarding_placement_unavailable_description": "43855d9f46e230e82cf7c04c0f8a692c352d14d01ddd17b6bfe5c213c8745835",
   "onboarding_placement_unavailable_title": "d6c0e563b268f63cf1b1aed10cd6b4fd10783ba86db3a51cf9060bc3d381de67",
   "onboarding_placement_waiting_material": "beac84b6fc3153d15e51c95c1b74f91e8e19a54ada52e188829b7f52c3cb32a7",
-  "onboarding_placement_waiting_skills": "d9c634f4a06f7180a17cb66bd4730f0bc33fd2fb17dbe385e9c86024f3d6b7af",
+  "onboarding_placement_waiting_time": "83e6cc9bb970dc961e9bca2f18d192ec673441481a0712f03b64f10f6b7240ac",
   "onboarding_placement_waiting_title": "ac03d6610e03d5706137a6323c7623e921031c91b9e0ac574798276c5524a5ce",
   "onboarding_placement_wrong": "2e9523ad41eff1c2e2db8b9eb1f453f5ed0e5cc867b399192a5f582060e10f30",
   "onboarding_placement_your_answer": "764828c6850f733a4494dbcaab2f9ed7c1ed79edb6855bc1b4374b76f116e4ce",
@@ -676,7 +676,7 @@
     <string name="onboarding_placement_skip_basics">Überspringen und mit den Grundlagen beginnen</string>
     <string name="onboarding_placement_waiting_title">Wir bereiten deine Fragen vor</string>
     <string name="onboarding_placement_waiting_material">Die Fragen basieren auf dem Material, das du hinzugefügt hast. Es zu lesen dauert ein paar Minuten.</string>
-    <string name="onboarding_placement_waiting_skills">Die Fragen beziehen sich auf die Fähigkeiten, die du für dein Ziel brauchst. Das dauert normalerweise ein bis zwei Minuten.</string>
+    <string name="onboarding_placement_waiting_time">Das dauert meist ein bis zwei Minuten.</string>
     <string name="onboarding_placement_skip_for_now">Vorerst überspringen</string>
     <string name="onboarding_placement_skip_note">Stattdessen bekommst du in deinen ersten Lerneinheiten ein paar dieser Fragen.</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
