@@ -186,7 +186,6 @@ internal fun PlanPage(
         }
     val claim = viewModel(key = "certificate-claim-${page.goal.id}") { CertificateClaimModel(app.certificates, page.goal.id) }
     val focusTest = page.plan.focusTest
-    val focusTestModel = viewModel(key = "focus-test-${page.goal.id}") { PlanFocusTestModel(app.focusTests, page.goal.id) }
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME || focus == ADJUST_CHOICES) }
     var editingAt by rememberSaveable {
         mutableStateOf(
@@ -234,7 +233,7 @@ internal fun PlanPage(
         page = page,
         standing = standing,
         alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
-        focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest, focusTestModel) } },
+        focusTest = focusTest?.let { { PlanFocusTestRow(it, page.plan, links::focusTest) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =

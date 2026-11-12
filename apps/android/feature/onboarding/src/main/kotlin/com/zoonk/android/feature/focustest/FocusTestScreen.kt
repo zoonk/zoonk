@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.GenerationRun
@@ -62,6 +62,7 @@ fun FocusTestScreen(
         app.learnerSummary.summary,
         app.onboarding,
         app.plans,
+        app.focusTests,
         drafts = signedIn?.session?.let { SetupDrafts(app.drafts, it, app.sessions) },
         navigator,
     )
@@ -73,6 +74,7 @@ internal fun FocusTestScreen(
     summaries: Resource<LearnerSummary>,
     store: OnboardingStore,
     plans: PlanStore,
+    focusTests: FocusTestStore,
     drafts: SetupDrafts?,
     navigator: AppNavigator,
 ) {
@@ -81,6 +83,7 @@ internal fun FocusTestScreen(
     var progress by remember { mutableStateOf<Float?>(null) }
     val scope = rememberCoroutineScope()
 
+    // The screens name the test above their headlines; the bar shows the questions' progress.
     TaskScaffold(
         onClose = navigator::closeTask,
         title = {
@@ -91,17 +94,17 @@ internal fun FocusTestScreen(
                     color = MaterialTheme.colorScheme.primary,
                     contentDescription = stringResource(R.string.onboarding_placement_progress),
                 )
-            } ?: Text(stringResource(R.string.focustest_title))
+            }
         },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
             when {
                 goal?.kind == LearnerSummaryGoal.Kind.EXAM -> {
                     CompositionLocalProvider(LocalSetupDrafts provides drafts) {
+                        val questions = viewModel(key = "focus-test-questions:${goal.id}") { SessionQuestionsModel(focusTests, goal.id) }
                         SetupColumn {
                             FocusTestFlow(
                                 goalId = goal.id.toString(),
-                                host = FocusTestHost.Plan,
                                 subject = goal.displayName,
                                 store = store,
                                 plans = plans,
@@ -112,10 +115,15 @@ internal fun FocusTestScreen(
                                     navigator.closeTask()
                                     WriteOutcome.Done(Unit)
                                 },
-                                onChangeFocus = {
-                                    navigator.closeTask()
-                                    navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
-                                },
+                                plan =
+                                    OnPlan(
+                                        onChangeFocus = {
+                                            navigator.closeTask()
+                                            navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
+                                        },
+                                        questions = questions,
+                                        startOnOpen = route.start,
+                                    ),
                             )
                         }
                     }

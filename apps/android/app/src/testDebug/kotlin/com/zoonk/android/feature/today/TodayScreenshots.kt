@@ -124,6 +124,34 @@ class TodayScreenshots {
         capture("book-font200", fold = true)
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun focusTestNotice() = captureFocusTestNotice("today-light")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun focusTestNoticeDark() = captureFocusTestNotice("today-dark", dark = true)
+
+    /** Beside the day, the suggestion opens as a panel with what a phone's sheet shows; the sheet's dialog window isn't captured. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun focusTestNoticePanel() = captureFocusTestNotice("today-sheet-light")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun focusTestNoticePanelDark() = captureFocusTestNotice("today-sheet-dark", dark = true)
+
+    /** The Focus test's suggestion on Today. */
+    private fun captureFocusTestNotice(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val read = DAYS.first { it.first == "notice-focus-test" }.second
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Screen(read) } }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,

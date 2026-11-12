@@ -221,7 +221,7 @@
     <string name="onboarding_placement_skip_basics">Skip and start from the basics</string>
     <string name="onboarding_placement_waiting_title">Getting your questions ready</string>
     <string name="onboarding_placement_waiting_material">They come from the material you added. Reading it takes a few minutes.</string>
-    <string name="onboarding_placement_waiting_skills">They come from the skills your goal needs. It usually takes a minute or two.</string>
+    <string name="onboarding_placement_waiting_time">This usually takes a minute or two.</string>
     <string name="onboarding_placement_skip_for_now">Skip for now</string>
     <string name="onboarding_placement_skip_note">Your first sessions will ask a few of these instead.</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->

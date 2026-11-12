@@ -15,7 +15,7 @@ import com.zoonk.android.feature.onboarding.setup.SetupDrafts
 import com.zoonk.android.feature.onboarding.setup.refreshed
 import com.zoonk.android.feature.onboarding.setup.typedDraftStep
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.api.models.FocusTestSitting
+import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlanChange
@@ -51,7 +51,9 @@ internal class FocusTestViewModel(
     /** The learner started or resumed a sitting in this visit, so its questions show instead of its resume screen. */
     private var entered by mutableStateOf(savedEntered)
 
-    private var closed by mutableStateOf<Closed?>(null)
+    private var closed by mutableStateOf<FocusTest?>(null)
+
+    private var savedStartedOnOpen by handle.saved { false }
 
     var pressed by mutableStateOf<Pressed?>(null)
         private set
@@ -87,7 +89,7 @@ internal class FocusTestViewModel(
             when (val started = store.startPlacementSitting(goalId)) {
                 is WriteOutcome.Done -> {
                     enter()
-                    started.value.sittingOver()?.let { close(it.end, onDone) } ?: true
+                    started.value.sittingOver()?.let { close(onDone) } ?: true
                 }
 
                 WriteOutcome.Obsolete -> {
@@ -100,7 +102,14 @@ internal class FocusTestViewModel(
             }
         }
 
-    /** The checkpoint's "Continue the test": the same start, from its other button. */
+    /** Today's "Start the test" opens the test to start it, once, instead of offering it again. */
+    fun startOnOpen(onDone: LeaveTest) {
+        if (savedStartedOnOpen) return
+        savedStartedOnOpen = true
+        start(onDone)
+    }
+
+    /** The result's "Answer more questions": the same start, from its other button. */
     fun continueTest() =
         save(Pressed.Other) {
             val started = store.startPlacementSitting(goalId)
@@ -126,9 +135,7 @@ internal class FocusTestViewModel(
                     saveFailures = 0
                     draft?.remove()
                     // A sitting that's over closes in the same save; if that fails, its screen holds the retry.
-                    sent.value.placement
-                        .sittingOver()
-                        ?.let { failed = !close(it.end, onDone) }
+                    if (sent.value.placement.sittingOver() != null) failed = !close(onDone)
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -146,22 +153,19 @@ internal class FocusTestViewModel(
         if (busy) return
         answering = true
         viewModelScope.launch {
-            if (!close(end = null, onDone)) saveFailures++
+            if (!close(onDone)) saveFailures++
             answering = false
         }
     }
 
-    /** "See your starting plan" on a sitting that's over. */
-    fun finish(
-        end: FocusTestSitting.End?,
-        onDone: LeaveTest,
-    ) = save(Pressed.Main) { close(end, onDone) }
+    /** "See my result" on a sitting that's over. */
+    fun finish(onDone: LeaveTest) = save(Pressed.Main) { close(onDone) }
 
     /** A learner who never started has nothing to close on a plan that's already theirs. */
     fun leave(
         closes: Boolean,
         onDone: LeaveTest,
-    ) = save(Pressed.Other) { if (closes) close(end = null, onDone) else handBack(onDone) }
+    ) = save(Pressed.Other) { if (closes) close(onDone) else handBack(onDone) }
 
     fun done(onDone: LeaveTest) = save(Pressed.Main) { handBack(onDone) }
 
@@ -195,16 +199,13 @@ internal class FocusTestViewModel(
     }
 
     /** Closing applies the answers; a test that still has none is only skipped, and the host moves on. */
-    private suspend fun close(
-        end: FocusTestSitting.End?,
-        onDone: LeaveTest,
-    ): Boolean {
+    private suspend fun close(onDone: LeaveTest): Boolean {
         val finished = store.finishPlacement(goalId, fromScratch = false)
         if (finished !is WriteOutcome.Done) return finished == WriteOutcome.Obsolete
         val test = finished.value.focusTest?.takeIf { it.checkpoint != null } ?: return handBack(onDone)
         entered = false
         savedEntered = false
-        closed = Closed(test, end)
+        closed = test
         return true
     }
 

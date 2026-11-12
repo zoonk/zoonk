@@ -114,7 +114,15 @@ class FocusTestScreenTest {
         rule.setContent {
             ZoonkTheme {
                 key(screen) {
-                    FocusTestScreen(AppRoute.FocusTest(GOAL_ID), summaries.summary, store, plans, drafts, rememberAppNavigator())
+                    FocusTestScreen(
+                        AppRoute.FocusTest(GOAL_ID),
+                        summaries.summary,
+                        store,
+                        plans,
+                        unusedFocusTests(cache),
+                        drafts,
+                        rememberAppNavigator(),
+                    )
                 }
             }
         }

@@ -246,8 +246,8 @@ internal fun CoverageSuggestion(slot: Slot) {
                             edits.studyEverything()
                         })
                     }
-                    focusTestOffer(plan)?.let {
-                        SuggestionAction(checkFocusLabel(it.minutes.toInt()), onClick = {
+                    if (focusTestOffer(plan) != null) {
+                        SuggestionAction(stringResource(R.string.focustest_take_test), onClick = {
                             close()
                             slot.links.focusTest()
                         }, secondary = true)

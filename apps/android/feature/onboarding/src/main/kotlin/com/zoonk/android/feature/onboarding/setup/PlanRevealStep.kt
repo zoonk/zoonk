@@ -50,7 +50,6 @@ import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.canChooseFocus
-import com.zoonk.android.feature.plan.checkFocusLabel
 import com.zoonk.android.feature.plan.focusTestOffer
 import com.zoonk.android.feature.plan.studyDaysWords
 import com.zoonk.android.feature.session.toDayView
@@ -787,7 +786,7 @@ private fun CoverageWords(
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         // A learner who skipped the test, short on time, gets no focus: the test is what would suggest one.
-        focusTestOffer(plan)?.let { RevealLink(checkFocusLabel(it.minutes.toInt()), focus.onTest) }
+        if (focusTestOffer(plan) != null) RevealLink(stringResource(R.string.focustest_take_test), focus.onTest)
     }
 }
 

@@ -33,15 +33,21 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.api.models.FocusTestSitting
 import kotlinx.coroutines.launch
 
+/** The test opened on a plan the learner already has: its focus sheet, the switch for its questions in sessions, and whether Today's "Start the test" opened it. */
+internal class OnPlan(
+    val onChangeFocus: () -> Unit,
+    val questions: SessionQuestionsModel,
+    val startOnOpen: Boolean,
+)
+
 /**
  * An exam goal's Focus test, the same in onboarding's placement step and opened from the plan.
- * [onDone] leaves it: onboarding saves its step, a plan goes back to it. [onChangeFocus] is the
- * plan's focus sheet, for a checkpoint on a plan the learner already has.
+ * [onDone] leaves it: onboarding saves its step, a plan goes back to it. [plan] is set when the
+ * plan is already the learner's.
  */
 @Composable
 internal fun ColumnScope.FocusTestFlow(
     goalId: String,
-    host: FocusTestHost,
     subject: String,
     store: OnboardingStore,
     plans: PlanStore,
@@ -49,7 +55,7 @@ internal fun ColumnScope.FocusTestFlow(
     onRetryRun: (() -> Unit)?,
     onProgress: (Float?) -> Unit,
     onDone: LeaveTest,
-    onChangeFocus: (() -> Unit)? = null,
+    plan: OnPlan? = null,
     onReportSaveFailure: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
@@ -66,21 +72,25 @@ internal fun ColumnScope.FocusTestFlow(
     val progress = question?.sitting?.let { if (it.questions > 0) it.answered.toFloat() / it.questions else 0f }
     LaunchedEffect(progress) { onProgress(progress) }
     DisposableEffect(Unit) { onDispose { onProgress(null) } }
+    val onboarding = plan == null
+    // Today's "Start the test" already made the offer; until the start answers, the offer waits behind a spinner.
+    val starting = plan?.startOnOpen == true && shown is FocusTestPhase.Offer && !vm.failed
+    if (starting) LaunchedEffect(Unit) { vm.startOnOpen(onDone) }
 
-    when (shown) {
-        FocusTestPhase.Loading -> {
+    when {
+        shown == FocusTestPhase.Loading || starting -> {
             StepLoading()
         }
 
-        FocusTestPhase.LoadFailed -> {
+        shown == FocusTestPhase.LoadFailed -> {
             SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
         }
 
-        is FocusTestPhase.Waiting -> {
+        shown is FocusTestPhase.Waiting -> {
             val skip =
                 when {
-                    shown.answered -> stringResource(R.string.focustest_use_my_answers)
-                    host == FocusTestHost.Onboarding -> stringResource(R.string.focustest_skip_for_now)
+                    shown.answered -> stringResource(R.string.focustest_see_my_result)
+                    onboarding -> stringResource(R.string.focustest_skip_for_now)
                     else -> stringResource(R.string.focustest_not_now)
                 }
             PlacementWaiting(
@@ -89,67 +99,61 @@ internal fun ColumnScope.FocusTestFlow(
                 hold = hold,
                 pending = vm.busy,
                 failed = vm.failed,
-                onSkip = { vm.leave(closes = shown.answered || host == FocusTestHost.Onboarding, onDone) },
+                onSkip = { vm.leave(closes = shown.answered || onboarding, onDone) },
                 skipLabel = skip,
-                skipNote = stringResource(R.string.focustest_skip_note).takeIf { !shown.answered && host == FocusTestHost.Onboarding },
+                skipNote = stringResource(R.string.focustest_skip_note).takeIf { !shown.answered && onboarding },
             )
         }
 
-        FocusTestPhase.Unavailable -> {
-            FocusTestUnavailable(vm, host, onDone)
+        shown == FocusTestPhase.Unavailable -> {
+            PlacementUnavailable(
+                pending = vm.pressed != null,
+                failed = vm.failed,
+                onContinue = { vm.leave(closes = onboarding, onDone) },
+            )
         }
 
-        is FocusTestPhase.Invitation -> {
-            if (host == FocusTestHost.Onboarding) TrackOnboardingQuestion(goalId, "placement")
-            FocusTestInvitation(
+        shown is FocusTestPhase.Offer -> {
+            if (onboarding) TrackOnboardingQuestion(goalId, "placement")
+            FocusTestOffer(
                 test = shown.test,
-                next = shown.next,
-                host = host,
-                subject = subject,
+                minutes = shown.minutes,
+                onPlan = !onboarding,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onStart = { vm.start(onDone) },
-                onSkip = { vm.leave(closes = host == FocusTestHost.Onboarding, onDone) },
+                onSkip = { vm.leave(closes = onboarding, onDone) },
             )
         }
 
-        is FocusTestPhase.Resume -> {
+        shown is FocusTestPhase.Resume -> {
             FocusTestResume(
                 sitting = shown.question.sitting,
-                subject = subject,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onContinue = vm::resume,
-                onUseAnswers = { vm.leave(closes = true, onDone) },
+                onSeeResult = { vm.leave(closes = true, onDone) },
             )
         }
 
-        is FocusTestPhase.Question -> {
+        shown is FocusTestPhase.Question -> {
             TestQuestion(goalId, shown, subject, vm, onDone, onReportSaveFailure)
         }
 
-        is FocusTestPhase.Ended -> {
-            FocusTestEnded(
-                end = shown.end,
-                subject = subject,
-                pending = vm.pressed == Pressed.Main,
-                failed = vm.failed,
-                onFinish = { vm.finish(shown.end, onDone) },
-            )
+        shown == FocusTestPhase.Ended -> {
+            FocusTestEnded(pending = vm.pressed == Pressed.Main, failed = vm.failed, onFinish = { vm.finish(onDone) })
         }
 
-        is FocusTestPhase.Checkpoint -> {
+        shown is FocusTestPhase.Checkpoint -> {
             FocusTestCheckpoint(
                 test = shown.test,
-                end = shown.end,
-                host = host,
-                subject = subject,
+                plan =
+                    plan?.let {
+                        PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, it.onChangeFocus, it.questions)
+                    },
+                canContinue = nextSittingMinutes(shown.test) != null,
                 pressed = vm.pressed,
                 failed = vm.failed,
-                proposal =
-                    onChangeFocus?.let {
-                        ProposalControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, onChangeFocus = it)
-                    },
                 onDone = { vm.done(onDone) },
                 onContinueTest = vm::continueTest,
             )
@@ -190,18 +194,4 @@ private fun ColumnScope.TestQuestion(
             )
         }
     }
-}
-
-/** Nothing to ask and nothing answered: onboarding passes the step, a plan goes back. */
-@Composable
-private fun ColumnScope.FocusTestUnavailable(
-    vm: FocusTestViewModel,
-    host: FocusTestHost,
-    onDone: LeaveTest,
-) {
-    PlacementUnavailable(
-        pending = vm.pressed != null,
-        failed = vm.failed,
-        onContinue = { vm.leave(closes = host == FocusTestHost.Onboarding, onDone) },
-    )
 }

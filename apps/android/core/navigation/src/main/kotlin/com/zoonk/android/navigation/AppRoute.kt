@@ -230,10 +230,11 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
     ) : AppRoute
 
-    /** Without `goalId`, the goal in the switcher. */
+    /** Without `goalId`, the goal in the switcher. [start]: Today's "Start the test" already offered it, so it starts on open; no link sets it. */
     @Serializable
     data class FocusTest(
         val goalId: String? = null,
+        val start: Boolean = false,
     ) : AppRoute
 
     @Serializable

@@ -291,7 +291,7 @@ internal fun ColumnScope.PlacementWaiting(
                     when {
                         hold.holding -> R.string.warm_up_questions_ready_description
                         READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
-                        else -> R.string.onboarding_placement_waiting_skills
+                        else -> R.string.onboarding_placement_waiting_time
                     },
                 ),
             )
@@ -560,6 +560,7 @@ internal fun ColumnScope.PlacementUnavailable(
         pending = pending,
         failed = failed,
         onContinue = onContinue,
+        action = stringResource(R.string.onboarding_continue),
     )
 }
 
@@ -571,6 +572,7 @@ private fun ColumnScope.PlacementOutcome(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    action: String = stringResource(R.string.onboarding_placement_see_plan),
 ) {
     SetupContent {
         eyebrow?.let { SuccessEyebrow(it) }
@@ -583,7 +585,7 @@ private fun ColumnScope.PlacementOutcome(
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
-                Text(stringResource(R.string.onboarding_placement_see_plan))
+                Text(action)
             }
         }
     }

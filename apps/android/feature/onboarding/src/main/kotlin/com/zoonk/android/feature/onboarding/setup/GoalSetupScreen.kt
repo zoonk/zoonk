@@ -54,7 +54,6 @@ import com.zoonk.android.data.withRead
 import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.feedback.rememberSaveFailureReport
 import com.zoonk.android.feature.focustest.FocusTestFlow
-import com.zoonk.android.feature.focustest.FocusTestHost
 import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
@@ -519,7 +518,6 @@ private fun ColumnScope.QuestionStep(
             } else if (view.goal.kind == Goal.Kind.EXAM) {
                 FocusTestFlow(
                     goalId = view.goal.id.toString(),
-                    host = FocusTestHost.Onboarding,
                     subject = subject,
                     store = store,
                     plans = plans,

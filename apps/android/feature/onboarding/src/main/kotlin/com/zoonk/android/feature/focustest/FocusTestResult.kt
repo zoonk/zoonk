@@ -1,51 +1,46 @@
 package com.zoonk.android.feature.focustest
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
+import com.zoonk.android.feature.onboarding.setup.SetupContent
+import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.plan.PlanEffectDiff
-import com.zoonk.android.feature.plan.focusedAreas
-import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
-import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.leadingIconInset
 import com.zoonk.android.ui.components.textInset
-import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.FocusTestFocusRow
@@ -54,231 +49,266 @@ import com.zoonk.api.models.FocusTestSubject
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 
-/** What a checkpoint on a plan the learner already has can do about its focus. */
-internal class ProposalControls(
+/** What the result can do on a plan that's already the learner's: answer its proposal, change its focus, pause its questions. */
+internal class PlanControls(
     val answer: ProposalAnswer?,
     val deciding: PlanChangeDecisionInput.Status?,
     val failed: Boolean,
     val onDecide: (PlanChange, PlanChangeDecisionInput.Status) -> Unit,
     val onChangeFocus: () -> Unit,
+    val questions: SessionQuestionsModel,
 )
-
-/** A proposal the learner can still apply, whose "Update my plan" is then the screen's one filled button. */
-internal fun ProposalControls?.waitsOn(test: FocusTest): Boolean =
-    this != null &&
-        answer == null &&
-        test.checkpoint
-            ?.focus
-            ?.takeIf { it.state == FocusTestFocus.State.PROPOSED }
-            ?.proposal
-            ?.canApply == true
 
 internal fun displayName(
     name: String,
     shortName: String?,
 ) = shortName ?: name
 
-/** "Your starting plan" without its title and actions: where the plan starts, its suggested focus and every subject. */
+/** A proposal still waiting for the learner's answer, which then is the screen's question. */
+private fun FocusTestFocus.waitingProposal(plan: PlanControls?): PlanChange? =
+    proposal?.takeIf { plan != null && plan.answer == null && state == FocusTestFocus.State.PROPOSED && it.canApply }
+
+/** The test's result: where to focus, or where the plan starts. On a plan, a proposal asks first. */
 @Composable
-internal fun FocusTestResult(
+internal fun ColumnScope.FocusTestCheckpoint(
     test: FocusTest,
-    plan: ProposalControls?,
+    plan: PlanControls?,
+    canContinue: Boolean,
+    pressed: Pressed?,
+    failed: Boolean,
+    onDone: () -> Unit,
+    onContinueTest: () -> Unit,
 ) {
     val checkpoint = test.checkpoint ?: return
-    val lessons = checkpoint.lessonsSkipped.toInt()
-
-    Section(stringResource(R.string.focustest_where_you_start)) {
-        Text(
-            if (lessons > 0) {
-                pluralStringResource(R.plurals.focustest_lessons_skipped, lessons, lessons)
-            } else {
-                stringResource(R.string.focustest_from_basics)
-            },
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    val focus = checkpoint.focus?.takeIf { it.rows.isNotEmpty() }
+    val proposal = focus?.waitingProposal(plan)
+    if (plan != null && focus != null && proposal != null) {
+        FocusProposal(focus.rows, proposal, plan)
+        return
     }
 
-    checkpoint.focus?.takeIf { it.rows.isNotEmpty() }?.let { SuggestedFocus(it, plan) }
+    val lessons = checkpoint.lessonsSkipped.toInt()
+    val answer = plan?.answer
+    SetupContent {
+        TestHeader(
+            title = stringResource(if (focus != null) R.string.focustest_result_title else R.string.focustest_starting_point_title),
+            description = answer?.let { outcomeLine(it) } ?: resultLine(focus, lessons, onPlan = plan != null),
+            eyebrow = { if (plan == null) SuccessEyebrow(stringResource(R.string.focustest_answers_saved)) else TestEyebrow() },
+            announced = answer != null,
+        )
+        if (plan != null && answer != null) Undo(answer, plan)
+        if (focus != null) {
+            FocusRows(focus.rows)
+            if (lessons > 0) Note(pluralStringResource(R.plurals.focustest_also_skips, lessons, lessons))
+        }
+        if (plan != null) PlanRows(test, plan, changesFocus = focus != null)
+        OnboardingActions {
+            FinishFailed(failed || plan?.failed == true)
+            Button(
+                busy = pressed == Pressed.Main,
+                onClick = onDone,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = pressed != Pressed.Other,
+            ) {
+                Text(stringResource(if (plan == null) R.string.focustest_continue else R.string.focustest_done))
+            }
+            if (plan != null && canContinue) {
+                TextButton(
+                    busy = pressed == Pressed.Other,
+                    onClick = onContinueTest,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = pressed != Pressed.Main,
+                ) {
+                    Text(stringResource(R.string.focustest_answer_more))
+                }
+            }
+        }
+    }
+}
 
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        SubjectsButton(test.subjects, answered = true)
-        if (test.sessionQuestions == FocusTestSessionQuestions.ON) {
-            Text(
-                stringResource(R.string.focustest_session_questions_on),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
+/** One line under the headline: why these subjects, or what the plan already does with them. */
+@Composable
+private fun resultLine(
+    focus: FocusTestFocus?,
+    lessons: Int,
+    onPlan: Boolean,
+): String =
+    when {
+        focus == null && lessons > 0 -> pluralStringResource(R.plurals.focustest_lessons_skipped, lessons, lessons)
+        focus == null -> stringResource(R.string.focustest_from_basics)
+        onPlan && focus.state == FocusTestFocus.State.CURRENT -> stringResource(R.string.focustest_result_current)
+        onPlan && focus.state == FocusTestFocus.State.HAND_PICKED -> stringResource(R.string.focustest_result_hand_picked)
+        onPlan && focus.state == FocusTestFocus.State.DECLINED -> stringResource(R.string.focustest_result_declined)
+        else -> stringResource(R.string.focustest_result_description)
+    }
+
+/** The subjects that need the most time, most needed first. */
+@Composable
+private fun FocusRows(rows: List<FocusTestFocusRow>) {
+    Column(Modifier.bleed(LIST_ITEM_INSET)) {
+        rows.forEachIndexed { index, row ->
+            if (index > 0) HorizontalDivider()
+            ListRow(
+                headline = { Text(displayName(row.subject.name, row.subject.shortName)) },
+                leading = {
+                    Text(
+                        "${index + 1}",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.zoonkType.data,
+                    )
+                },
             )
         }
     }
 }
 
+/** The test asking before it changes a plan the learner already has; the diff says what "Update my plan" does. */
 @Composable
-private fun Section(
-    title: String,
-    content: @Composable () -> Unit,
+private fun ColumnScope.FocusProposal(
+    rows: List<FocusTestFocusRow>,
+    proposal: PlanChange,
+    plan: PlanControls,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(title)
-        content()
+    val pending = plan.deciding != null
+    SetupContent {
+        TestHeader(stringResource(R.string.focustest_proposal_title), stringResource(R.string.focustest_proposal_description))
+        FocusRows(rows)
+        PlanEffectDiff(proposal.effect)
+        OnboardingActions {
+            FinishFailed(plan.failed)
+            Button(
+                onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.APPLIED) },
+                modifier = Modifier.fillMaxWidth(),
+                busy = plan.deciding == PlanChangeDecisionInput.Status.APPLIED,
+                enabled = !pending,
+            ) {
+                Text(stringResource(R.string.focustest_update_plan))
+            }
+            TextButton(
+                onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.DECLINED) },
+                modifier = Modifier.fillMaxWidth(),
+                busy = plan.deciding == PlanChangeDecisionInput.Status.DECLINED,
+                enabled = !pending,
+            ) {
+                Text(stringResource(R.string.focustest_not_now))
+            }
+        }
     }
 }
 
-/** A suggestion with no claim about the plan has no intro: the heading and its rows say it. */
+/** What the learner's answer to the proposal did, in place of the result's line. */
 @Composable
-private fun focusIntro(state: FocusTestFocus.State): String? =
-    when (state) {
-        FocusTestFocus.State.IF_TIME_SHORT -> R.string.focustest_focus_if_short
-        FocusTestFocus.State.PROPOSED -> R.string.focustest_focus_proposed
-        FocusTestFocus.State.CURRENT -> R.string.focustest_focus_current
-        FocusTestFocus.State.HAND_PICKED -> R.string.focustest_focus_hand_picked
-        FocusTestFocus.State.DECLINED -> R.string.focustest_focus_declined
-        FocusTestFocus.State.SUGGESTED -> null
-    }?.let { stringResource(it) }
-
-/** The row's title already names the subject, so no reason says it again. */
-@Composable
-private fun reasonText(reason: FocusTestFocusRow.Reason): String =
+private fun outcomeLine(answer: ProposalAnswer): String =
     stringResource(
-        when (reason) {
-            FocusTestFocusRow.Reason.ANSWERS -> R.string.focustest_reason_answers
-            FocusTestFocusRow.Reason.MINIMUM_SCORE -> R.string.focustest_reason_minimum_score
-            FocusTestFocusRow.Reason.NOT_CHECKED -> R.string.focustest_reason_not_checked
-            FocusTestFocusRow.Reason.NOT_ASKED -> R.string.focustest_reason_not_asked
-            FocusTestFocusRow.Reason.WEIGHT -> R.string.focustest_reason_weight
+        when (answer.status) {
+            PlanChangeDecisionInput.Status.APPLIED -> R.string.focustest_proposal_applied
+            PlanChangeDecisionInput.Status.UNDONE -> R.string.focustest_proposal_undone
+            else -> R.string.focustest_proposal_declined
         },
     )
 
 @Composable
-private fun SuggestedFocus(
-    focus: FocusTestFocus,
-    plan: ProposalControls?,
-) {
-    val importance = stringResource(R.string.focustest_focus_importance).takeIf { focus.basis == FocusTestFocus.Basis.IMPORTANCE }
-    val proposal = focus.proposal?.takeIf { focus.state == FocusTestFocus.State.PROPOSED }
-    val changesFocus =
-        focus.state == FocusTestFocus.State.CURRENT ||
-            focus.state == FocusTestFocus.State.HAND_PICKED ||
-            focus.state == FocusTestFocus.State.DECLINED ||
-            focus.state == FocusTestFocus.State.SUGGESTED
-
-    // Once the proposal is answered in any way, the answer's line says what happened instead.
-    val answered = proposal != null && plan?.answer?.change?.id == proposal.id
-    val intro = if (answered) emptyList() else listOfNotNull(focusIntro(focus.state), importance)
-
-    Section(stringResource(R.string.focustest_suggested_focus)) {
-        if (intro.isNotEmpty()) {
-            Text(
-                intro.joinSentences(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            focus.rows.forEachIndexed { index, row ->
-                if (index > 0) HorizontalDivider()
-                ListRow(
-                    headline = { Text(displayName(row.subject.name, row.subject.shortName)) },
-                    supporting = { Text(reasonText(row.reason)) },
-                )
-            }
-        }
-        if (plan != null && proposal != null) Proposal(proposal, plan)
-        if (plan != null && changesFocus) {
-            TextButton(
-                onClick = plan.onChangeFocus,
-                modifier = Modifier.offset(x = -LocalButtonSize.current.leadingIconInset),
-                leadingIcon = { ButtonIcon(R.drawable.ic_my_location) },
-            ) {
-                Text(stringResource(R.string.focustest_change_focus))
-            }
-        }
-    }
-}
-
-/** The test's suggestion for a plan that's already the learner's: their call, with what it changes. */
-@Composable
-private fun Proposal(
-    proposal: PlanChange,
-    plan: ProposalControls,
-) {
-    val answer = plan.answer?.takeIf { it.change.id == proposal.id }
-    val pending = plan.deciding != null
-
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (answer == null) {
-            planChangeProposalEffect(proposal.effect, besideDiff = true, focused = proposal.focusedAreas)?.let {
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-            }
-            PlanEffectDiff(proposal.effect)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (proposal.canApply) {
-                    Button(
-                        onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.APPLIED) },
-                        busy = plan.deciding == PlanChangeDecisionInput.Status.APPLIED,
-                        enabled = !pending,
-                        focusableWhenDisabled = pending,
-                        size = ButtonSize.Small,
-                    ) {
-                        Text(stringResource(R.string.focustest_update_plan))
-                    }
-                }
-                OutlinedButton(
-                    onClick = { plan.onDecide(proposal, PlanChangeDecisionInput.Status.DECLINED) },
-                    busy = plan.deciding == PlanChangeDecisionInput.Status.DECLINED,
-                    enabled = !pending,
-                    focusableWhenDisabled = pending,
-                    size = ButtonSize.Small,
-                ) {
-                    Text(stringResource(R.string.focustest_not_now))
-                }
-            }
-        } else {
-            ProposalOutcome(answer, plan)
-        }
-
-        FinishFailed(plan.failed)
-    }
-}
-
-@Composable
-private fun ProposalOutcome(
+private fun Undo(
     answer: ProposalAnswer,
-    plan: ProposalControls,
+    plan: PlanControls,
 ) {
-    val said = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
-    when (answer.status) {
-        PlanChangeDecisionInput.Status.APPLIED -> {
-            FlowRow(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                itemVerticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    stringResource(R.string.focustest_proposal_applied),
-                    said.padding(end = 12.dp),
-                    style = MaterialTheme.typography.bodyMedium,
+    if (answer.status != PlanChangeDecisionInput.Status.APPLIED || !answer.change.canUndo) return
+    TextButton(
+        onClick = { plan.onDecide(answer.change, PlanChangeDecisionInput.Status.UNDONE) },
+        modifier = Modifier.bleed(LocalButtonSize.current.textInset),
+        busy = plan.deciding == PlanChangeDecisionInput.Status.UNDONE,
+        leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
+    ) {
+        Text(stringResource(R.string.focustest_undo))
+    }
+}
+
+/** The learner's choices about the result on their plan. The pause shows while sessions still have questions to ask. */
+@Composable
+private fun PlanRows(
+    test: FocusTest,
+    plan: PlanControls,
+    changesFocus: Boolean,
+) {
+    var subjects by rememberSaveable { mutableStateOf(false) }
+    val questions = plan.questions.shown ?: test.sessionQuestions
+
+    Column {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            if (changesFocus) {
+                ListRow(headline = { Text(stringResource(R.string.focustest_change_focus)) }, onClick = plan.onChangeFocus)
+                HorizontalDivider()
+            }
+            ListRow(headline = { Text(stringResource(R.string.focustest_see_all_subjects)) }, onClick = { subjects = true })
+            if (questions != FocusTestSessionQuestions.OFF) {
+                val on = questions == FocusTestSessionQuestions.ON
+                HorizontalDivider()
+                ListRow(
+                    headline = { Text(stringResource(R.string.focustest_session_questions)) },
+                    modifier =
+                        Modifier.toggleable(
+                            value = on,
+                            enabled = !plan.questions.saving,
+                            role = Role.Switch,
+                            onValueChange = plan.questions::set,
+                        ),
+                    supporting = { Text(stringResource(R.string.focustest_session_questions_when)) },
+                    trailing = { Switch(checked = on, onCheckedChange = null, enabled = !plan.questions.saving) },
                 )
-                if (answer.change.canUndo) {
-                    OutlinedButton(
-                        onClick = { plan.onDecide(answer.change, PlanChangeDecisionInput.Status.UNDONE) },
-                        busy = plan.deciding == PlanChangeDecisionInput.Status.UNDONE,
-                        size = ButtonSize.Small,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
-                    ) {
-                        Text(stringResource(R.string.focustest_undo))
-                    }
-                }
             }
         }
+        FinishFailed(plan.questions.failed)
+    }
 
-        PlanChangeDecisionInput.Status.UNDONE -> {
-            Text(stringResource(R.string.focustest_proposal_undone), said, style = MaterialTheme.typography.bodyMedium)
-        }
+    if (subjects) {
+        FocusTestSheet(stringResource(R.string.focustest_subjects), onDismiss = { subjects = false }) { SubjectsList(test.subjects) }
+    }
+}
 
-        else -> {
-            Text(stringResource(R.string.focustest_proposal_declined), said, style = MaterialTheme.typography.bodyMedium)
+/** "How it works": what a learner may want to know before starting, for whoever asks. */
+@Composable
+internal fun HowItWorks() {
+    var open by rememberSaveable { mutableStateOf(false) }
+    val title = stringResource(R.string.focustest_how_it_works)
+    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) { Text(title) }
+    if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows() }
+}
+
+@Composable
+internal fun HowItWorksRows() {
+    val rows =
+        listOf(
+            R.string.focustest_how_weight_title to R.string.focustest_how_weight,
+            R.string.focustest_how_grade_title to R.string.focustest_how_grade,
+            R.string.focustest_how_stop_title to R.string.focustest_how_stop,
+            R.string.focustest_how_subjects_title to R.string.focustest_how_subjects,
+            R.string.focustest_how_sessions_title to R.string.focustest_how_sessions,
+        )
+    Column(Modifier.bleed(LIST_ITEM_INSET)) {
+        rows.forEachIndexed { index, (title, line) ->
+            if (index > 0) HorizontalDivider()
+            ListRow(headline = { Text(stringResource(title)) }, supporting = { Text(stringResource(line)) })
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FocusTestSheet(
+    title: String,
+    onDismiss: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    ModalBottomSheet(onDismissRequest = onDismiss, modifier = Modifier.semantics { paneTitle = title }) {
+        Text(
+            title,
+            Modifier.padding(horizontal = SHEET_MARGIN).semantics { heading() },
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Column(
+            Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 8.dp, bottom = 24.dp),
+            content = content,
+        )
     }
 }
 
@@ -310,54 +340,15 @@ private fun subjectState(subject: FocusTestSubject): String =
         }
     }
 
-/**
- * Every subject, in the notice's order, in plain words. Before the first answer every quick subject
- * would read "Not asked yet", so only what the test can't check is said.
- */
-@OptIn(ExperimentalMaterial3Api::class)
+/** Every subject, in the notice's order, with what the test found on it so far. */
 @Composable
-internal fun SubjectsButton(
-    subjects: List<FocusTestSubject>,
-    answered: Boolean,
-) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) {
-        Text(stringResource(if (answered) R.string.focustest_view_all_subjects else R.string.focustest_view_subjects))
-    }
-    if (!open) return
-
-    val title = stringResource(R.string.focustest_subjects)
-    ModalBottomSheet(onDismissRequest = { open = false }, modifier = Modifier.semantics { paneTitle = title }) {
-        Text(
-            title,
-            Modifier.padding(horizontal = SHEET_MARGIN).semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 8.dp, bottom = 24.dp),
-        ) {
-            SubjectsList(subjects, answered)
-        }
-    }
-}
-
-/** The subjects sheet's rows. */
-@Composable
-internal fun SubjectsList(
-    subjects: List<FocusTestSubject>,
-    answered: Boolean,
-) {
+internal fun SubjectsList(subjects: List<FocusTestSubject>) {
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         subjects.forEachIndexed { index, subject ->
             if (index > 0) HorizontalDivider()
             ListRow(
                 headline = { Text(displayName(subject.name, subject.shortName)) },
-                meta =
-                    if (answered || subject.state == FocusTestSubject.State.NOT_CHECKED) {
-                        { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                    } else {
-                        null
-                    },
+                meta = { Text(subjectState(subject), color = MaterialTheme.colorScheme.onSurfaceVariant) },
             )
         }
     }

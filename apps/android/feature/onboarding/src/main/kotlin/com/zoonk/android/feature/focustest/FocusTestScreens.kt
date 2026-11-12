@@ -17,107 +17,75 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.onboarding.setup.SetupContent
-import com.zoonk.android.feature.onboarding.setup.labelCase
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.Facts
-import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestSitting
-
-/** Where the test runs: inside onboarding, before the plan is shown, or on a plan already there. */
-internal enum class FocusTestHost { Onboarding, Plan }
 
 @Composable
 internal fun aboutMinutes(minutes: Int): String = stringResource(R.string.focustest_about, formatMinutes(minutes, currentLocale()))
 
-/** The time is the screen's one big number: it's what decides whether someone starts. */
 @Composable
-private fun SittingSize(
-    minutes: Int,
-    facts: List<String>,
+internal fun aboutMinutesLeft(minutes: Int): String = stringResource(R.string.focustest_about_left, formatMinutes(minutes, currentLocale()))
+
+/** The line above a test screen's headline: the test's name, and what starting it costs when it does. */
+@Composable
+internal fun TestEyebrow(cost: String? = null) {
+    Eyebrow(listOfNotNull(stringResource(R.string.focustest_title), cost).factsLine())
+}
+
+/** A test screen's one headline, with its line above and at most one line under it, said again when [announced] and it changes. */
+@Composable
+internal fun TestHeader(
+    title: String,
+    description: String? = null,
+    eyebrow: @Composable () -> Unit = { TestEyebrow() },
+    announced: Boolean = false,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Readout(aboutMinutes(minutes), style = MaterialTheme.typography.displaySmall)
-        Facts(facts)
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        eyebrow()
+        OnboardingHeading(title)
+        description?.let { Note(it, if (announced) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier) }
     }
 }
 
 @Composable
-private fun TestHeading(
-    subject: String,
-    title: String,
-    description: String? = null,
-) {
-    Eyebrow(subject.labelCase())
-    OnboardingHeading(title, description)
-}
-
-@Composable
-private fun Note(
+internal fun Note(
     text: String,
     modifier: Modifier = Modifier,
 ) {
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
+/** Only a dated exam with several subjects has a focus to find; any other has a starting point. */
+private fun FocusTest.findsFocus() = dated && subjects.size > 1
+
+/** [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. */
 @Composable
-internal fun ColumnScope.FocusTestInvitation(
+internal fun ColumnScope.FocusTestOffer(
     test: FocusTest,
-    next: NextSitting,
-    host: FocusTestHost,
-    subject: String,
+    minutes: Int,
+    onPlan: Boolean,
     pressed: Pressed?,
     failed: Boolean,
     onStart: () -> Unit,
     onSkip: () -> Unit,
 ) {
-    val subjects = test.counts.total.toInt()
+    val focus = test.findsFocus()
     SetupContent {
-        TestHeading(
-            subject,
-            stringResource(if (test.dated) R.string.focustest_invitation_title_dated else R.string.focustest_invitation_title),
-            stringResource(
-                if (test.dated &&
-                    subjects > 1
-                ) {
-                    R.string.focustest_invitation_description_focus
-                } else {
-                    R.string.focustest_invitation_description
-                },
-            ),
+        TestHeader(
+            title = stringResource(if (focus) R.string.focustest_find_focus else R.string.focustest_find_start),
+            description = stringResource(if (focus) R.string.focustest_offer_description_focus else R.string.focustest_offer_description),
+            eyebrow = { TestEyebrow(aboutMinutes(minutes)) },
         )
-        SittingSize(
-            next.minutes,
-            listOf(
-                stringResource(R.string.focustest_optional),
-                pluralStringResource(R.plurals.focustest_up_to_questions, next.questions, next.questions),
-                pluralStringResource(R.plurals.focustest_subjects_count, subjects, subjects),
-            ),
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.focustest_no_grade), style = MaterialTheme.typography.bodyMedium)
-            Text(stringResource(R.string.focustest_stop_any_time), style = MaterialTheme.typography.bodyMedium)
-        }
-        if (next.pastCeiling > 0) {
-            Column {
-                Note(
-                    joinSentences(
-                        pluralStringResource(R.plurals.focustest_past_ceiling_subjects, subjects, subjects),
-                        pluralStringResource(R.plurals.focustest_past_ceiling_questions, next.questions, next.questions),
-                    ),
-                )
-                SubjectsButton(test.subjects, answered = false)
-            }
-        }
+        HowItWorks()
         OnboardingActions {
             FinishFailed(failed)
             Button(
@@ -135,7 +103,7 @@ internal fun ColumnScope.FocusTestInvitation(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = pressed != Pressed.Main,
             ) {
-                Text(stringResource(if (host == FocusTestHost.Onboarding) R.string.focustest_skip_for_now else R.string.focustest_not_now))
+                Text(stringResource(if (onPlan) R.string.focustest_not_now else R.string.focustest_skip_for_now))
             }
         }
     }
@@ -144,22 +112,17 @@ internal fun ColumnScope.FocusTestInvitation(
 @Composable
 internal fun ColumnScope.FocusTestResume(
     sitting: FocusTestSitting,
-    subject: String,
     pressed: Pressed?,
     failed: Boolean,
     onContinue: () -> Unit,
-    onUseAnswers: () -> Unit,
+    onSeeResult: () -> Unit,
 ) {
     val answered = sitting.answered.toInt()
-    val left = sitting.left.toInt()
     SetupContent {
-        TestHeading(subject, stringResource(R.string.focustest_resume_title))
-        SittingSize(
-            sitting.minutes.toInt(),
-            listOf(
-                pluralStringResource(R.plurals.focustest_answers_saved, answered, answered),
-                pluralStringResource(R.plurals.focustest_up_to_questions_left, left, left),
-            ),
+        TestHeader(
+            title = stringResource(R.string.focustest_resume_title),
+            description = pluralStringResource(R.plurals.focustest_answers_saved_line, answered, answered),
+            eyebrow = { TestEyebrow(aboutMinutesLeft(sitting.minutes.toInt())) },
         )
         OnboardingActions {
             FinishFailed(failed)
@@ -171,92 +134,26 @@ internal fun ColumnScope.FocusTestResume(
             ) {
                 Text(stringResource(R.string.focustest_continue))
             }
-            OutlinedButton(busy = pressed == Pressed.Other, onClick = onUseAnswers, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.focustest_use_my_answers))
+            TextButton(busy = pressed == Pressed.Other, onClick = onSeeResult, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.focustest_see_my_result))
             }
         }
     }
 }
 
-@Composable
-internal fun endLine(end: FocusTestSitting.End?): String? =
-    when (end) {
-        FocusTestSitting.End.SETTLED -> stringResource(R.string.focustest_end_settled)
-        FocusTestSitting.End.NO_QUESTIONS_READY -> stringResource(R.string.focustest_end_no_questions)
-        FocusTestSitting.End.CEILING, null -> null
-    }
-
+/** A sitting with nothing more to ask that isn't closed yet: the learner came back to it, or closing it failed. */
 @Composable
 internal fun ColumnScope.FocusTestEnded(
-    end: FocusTestSitting.End?,
-    subject: String,
     pending: Boolean,
     failed: Boolean,
     onFinish: () -> Unit,
 ) {
     SetupContent {
-        TestHeading(subject, stringResource(R.string.focustest_answers_saved_title), endLine(end))
+        TestHeader(stringResource(R.string.focustest_answers_saved_title))
         OnboardingActions {
             FinishFailed(failed)
             Button(busy = pending, onClick = onFinish, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.focustest_see_starting_plan))
-            }
-        }
-    }
-}
-
-@Composable
-internal fun ColumnScope.FocusTestCheckpoint(
-    test: FocusTest,
-    end: FocusTestSitting.End?,
-    host: FocusTestHost,
-    subject: String,
-    pressed: Pressed?,
-    failed: Boolean,
-    proposal: ProposalControls?,
-    onDone: () -> Unit,
-    onContinueTest: () -> Unit,
-) {
-    val next = nextSitting(test)
-    SetupContent {
-        TestHeading(subject, stringResource(R.string.focustest_checkpoint_title))
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            val asked = test.counts.asked.toInt()
-            val total = test.counts.total.toInt()
-            Note(pluralStringResource(R.plurals.focustest_evidence, total, asked, total))
-            endLine(end)?.let { Note(it, Modifier.semantics { liveRegion = LiveRegionMode.Polite }) }
-        }
-        FocusTestResult(test, proposal)
-        OnboardingActions {
-            FinishFailed(failed)
-            val done =
-                stringResource(
-                    if (host == FocusTestHost.Onboarding) R.string.focustest_continue_to_daily_time else R.string.focustest_done,
-                )
-            if (proposal.waitsOn(test)) {
-                OutlinedButton(
-                    busy = pressed == Pressed.Main,
-                    onClick = onDone,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = pressed != Pressed.Other,
-                ) { Text(done) }
-            } else {
-                Button(
-                    busy = pressed == Pressed.Main,
-                    onClick = onDone,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = pressed != Pressed.Other,
-                ) { Text(done) }
-            }
-            next?.let {
-                OutlinedButton(
-                    busy = pressed == Pressed.Other,
-                    onClick = onContinueTest,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = pressed != Pressed.Main,
-                ) {
-                    Text(stringResource(R.string.focustest_continue_test, formatMinutes(it.minutes, currentLocale())))
-                }
+                Text(stringResource(R.string.focustest_see_my_result))
             }
         }
     }

@@ -21,7 +21,6 @@ import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.android.feature.plan.checkFocusLabel
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeProposalEffect
@@ -40,6 +39,8 @@ import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsight
@@ -341,24 +342,24 @@ private fun FocusTestNotice(
 
     Suggestion(
         label = stringResource(R.string.focustest_title),
-        summary = result ?: stringResource(R.string.focustest_suggestion_summary),
+        summary = result ?: stringResource(R.string.focustest_suggestion_line),
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_my_location),
         answered = result != null,
         lineAction = if (result != null) null else ({ SuggestionOpen() }),
     ) {
-        SuggestionHeader(stringResource(R.string.focustest_suggestion_title))
+        SuggestionHeader(stringResource(R.string.focustest_find_focus))
         if (result != null) {
             SuggestionResult(result)
         } else {
-            SuggestionDescription(stringResource(R.string.focustest_suggestion_description))
+            SuggestionDescription(stringResource(R.string.focustest_suggestion_body, formatMinutes(test.minutes.toInt(), currentLocale())))
             SuggestionActions {
                 SuggestionAction(
-                    text = checkFocusLabel(test.minutes.toInt()),
+                    text = stringResource(R.string.focustest_start),
                     onClick = {
                         close()
-                        state.navigate(AppRoute.FocusTest(goalId.toString()))
+                        state.navigate(AppRoute.FocusTest(goalId.toString(), start = true))
                     },
                 )
                 SuggestionAction(
