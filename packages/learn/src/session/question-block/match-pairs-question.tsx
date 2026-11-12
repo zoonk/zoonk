@@ -6,9 +6,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { ANSWER_TONE } from "../../_components/answer-tone";
+import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemLine } from "../../questions/item-text";
-import { useFocusCheckWhenComplete } from "./question-actions";
 
 type Matches = number[];
 
@@ -52,7 +52,7 @@ export function MatchPairsQuestion({
   const [selected, setSelected] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  useFocusCheckWhenComplete({
+  useFocusMainActionWhenComplete({
     complete: matches.every((match) => match !== UNMATCHED),
     containerRef: listRef,
   });

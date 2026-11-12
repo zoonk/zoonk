@@ -2,10 +2,10 @@
 
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { QuestionDontKnow, QuestionMainAction } from "../../_components/question-actions";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { type ListeningQuestions } from "../../listening/listening-stimulus";
 import { DrillAnswerNotes } from "../../mistakes/drill/drill-answer-notes";
-import { NotSureButton } from "../../mistakes/drill/drill-controls";
 import { DrillCountdown } from "../../mistakes/drill/drill-countdown";
 import { DrillIntro } from "../../mistakes/drill/drill-intro";
 import {
@@ -24,7 +24,6 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 import { PlacementNote } from "./placement-note";
-import { QuestionMainButton } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
 import { QuestionTitle } from "./question-title";
 import { QuestionView } from "./question-view";
@@ -273,7 +272,7 @@ type BlockActionsProps = {
 function getMainAction({
   draft,
   run,
-}: BlockActionsProps): React.ComponentProps<typeof QuestionMainButton> {
+}: BlockActionsProps): React.ComponentProps<typeof QuestionMainAction> {
   const { phase } = run.state;
 
   if (phase.kind === "feedback") {
@@ -304,15 +303,16 @@ export function BlockQuestionActions(props: BlockActionsProps) {
   return (
     <>
       {asking && notSureFits && (
-        <NotSureButton
+        <QuestionDontKnow
           busy={checking && phase.sender === "notSure"}
           disabled={checking}
-          label={noGuessing ? undefined : t("I don't know yet")}
-          onClick={() => void props.run.submit(NOT_SURE, { sender: "notSure" })}
-        />
+          onPress={() => void props.run.submit(NOT_SURE, { sender: "notSure" })}
+        >
+          {noGuessing && t("I'm not sure")}
+        </QuestionDontKnow>
       )}
 
-      <QuestionMainButton {...getMainAction(props)} />
+      <QuestionMainAction {...getMainAction(props)} />
     </>
   );
 }

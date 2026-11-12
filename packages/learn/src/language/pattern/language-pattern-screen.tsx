@@ -1,7 +1,7 @@
 "use client";
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -20,6 +20,7 @@ import { BookOpenIcon, CheckIcon, EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { DrawerCloseButton } from "../../_components/details-drawer";
+import { QuestionActions, QuestionMainAction } from "../../_components/question-actions";
 import { AnswersSaveError } from "../../_components/save-error";
 import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
@@ -212,21 +213,21 @@ export function LanguagePatternScreen({
           {drill.failures > 0 && !drill.isSaving && (
             <AnswersSaveError failures={drill.failures} onRetry={drill.retry} />
           )}
-          <TaskActions>
+          <QuestionActions>
             {checked ? (
-              <TaskMainButton busy={drill.isSaving} onClick={drill.next} {...FORWARD_ICON}>
-                {isLast ? t("See how you did") : t("Continue")}
-              </TaskMainButton>
+              <QuestionMainAction
+                action={isLast ? "seeResult" : "continue"}
+                busy={drill.isSaving}
+                onPress={drill.next}
+              />
             ) : (
-              <TaskMainButton
+              <QuestionMainAction
+                action="check"
                 disabled={drill.picked === null}
-                icon={<CheckIcon aria-hidden="true" />}
-                onClick={drill.check}
-              >
-                {t("Check")}
-              </TaskMainButton>
+                onPress={drill.check}
+              />
             )}
-          </TaskActions>
+          </QuestionActions>
         </>
       }
       headerEnd={<RuleMenu pattern={pattern} />}

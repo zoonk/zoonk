@@ -1,18 +1,20 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  QuestionActions,
+  QuestionDontKnow,
+  QuestionMainAction,
+} from "../_components/question-actions";
 import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
-import { TaskActions } from "../_components/task-layout";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { type AnswerSender } from "../mistakes/drill/drill-types";
 import { usePreloadMath } from "../rich-text/use-preload-math";
-import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { TaskFrame, type TaskFrameAside } from "../shell/task-frame";
 import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
 import {
   CHOICE_QUESTION_TITLE_SLOT,
@@ -267,30 +269,19 @@ function QuestionsFooter({
   selected: boolean;
   sender: AnswerSender | null;
 }) {
-  const t = useExtracted();
-
   return (
-    <TaskActions>
-      <Button
+    <QuestionActions>
+      <QuestionDontKnow
         busy={pending && sender === "notSure"}
-        className="shrink-0"
         disabled={locked}
-        focusableWhenDisabled
-        icon={<HelpCircleIcon aria-hidden="true" />}
-        onClick={onDontKnow}
-        size="xl"
-        variant="outline"
-      >
-        {t("I don't know yet")}
-      </Button>
-      <TaskMainButton
+        onPress={onDontKnow}
+      />
+      <QuestionMainAction
+        action={isLast ? "finish" : "next"}
         busy={pending && sender === "check"}
         disabled={locked || !selected}
-        onClick={onNext}
-        {...FORWARD_ICON}
-      >
-        {isLast ? t("Finish") : t("Next")}
-      </TaskMainButton>
-    </TaskActions>
+        onPress={onNext}
+      />
+    </QuestionActions>
   );
 }
