@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
@@ -59,9 +60,12 @@ test.describe("Pronunciation reviews", () => {
 
       await page.reload();
 
-      const mission = page
-        .getByRole("region", { name: "Today's missions" })
-        .getByRole("link", { name: /^Practice pronunciation/u });
+      const missions = page.getByRole("region", { name: "Today's missions" });
+      const showMissions = missions.getByRole("button", { name: "Today's missions" });
+      const mission = missions.getByRole("link", { name: /^Practice pronunciation/u });
+
+      await expectHydrated(showMissions);
+      await showMissions.click();
 
       await expect(mission).toHaveAttribute("href", `/pronunciation?goal=${user.goalId}`);
       await mission.click();

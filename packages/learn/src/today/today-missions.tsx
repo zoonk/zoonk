@@ -12,6 +12,7 @@ export function TodayMissions({ className }: { className?: string }) {
       buddy={buddy}
       className={className}
       collapseWhenDone
+      foldRows
       links={actions.missionLinks}
       today={missions}
     />

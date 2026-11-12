@@ -15,9 +15,7 @@ import {
   type LearnTabMissions,
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
-import { SIDEBAR_COUNT_CLASS } from "@zoonk/ui/components/sidebar";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
 import { VisitorSideLinks } from "./learn-sidebar-learner";
@@ -76,35 +74,12 @@ function useFrameTabs(learner: LearnerSummaryState): TabsProps {
 
 const UNREAD: LearnerSummaryState = { status: "not-loaded" };
 
-function TodayCount({ learner }: { learner: LearnerSummaryState }) {
-  const t = useExtracted();
-  const blocksLeft = learner.status === "ready" ? (learner.summary.today?.blocksLeft ?? 0) : 0;
-
-  if (!blocksLeft) {
-    return null;
-  }
-
-  return (
-    <span className={SIDEBAR_COUNT_CLASS}>
-      <span aria-hidden="true">{blocksLeft}</span>
-      <span className="sr-only">
-        {t("{count, plural, one {# activity left} other {# activities left}}", {
-          count: blocksLeft,
-        })}
-      </span>
-    </span>
-  );
-}
-
-type SideTabsProps = TabsProps & { todayCount: React.ReactNode };
-
-function CurrentSideTabs({ buddy, missions, todayCount }: SideTabsProps) {
+function CurrentSideTabs({ buddy, missions }: TabsProps) {
   return (
     <LearnSideNavigation
       activeTab={useActiveTab({ sidebar: true })}
       buddy={buddy}
       missions={missions}
-      todayCount={todayCount}
     />
   );
 }
@@ -127,20 +102,10 @@ const ONBOARDING_FIRST_PAINT_CLASS =
 /** A page with its own id has a path only known once it's open, so the tabs are unmarked until then. */
 function LearnerSideTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
-  const todayCount = <TodayCount learner={learner} />;
 
   return (
-    <Suspense
-      fallback={
-        <LearnSideNavigation
-          activeTab={null}
-          buddy={buddy}
-          missions={missions}
-          todayCount={todayCount}
-        />
-      }
-    >
-      <CurrentSideTabs buddy={buddy} missions={missions} todayCount={todayCount} />
+    <Suspense fallback={<LearnSideNavigation activeTab={null} buddy={buddy} missions={missions} />}>
+      <CurrentSideTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
 }

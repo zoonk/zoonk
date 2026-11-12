@@ -2,8 +2,9 @@
 
 import { countDoneMissions, isFullMeal } from "@zoonk/core/sessions/missions";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useFormatter } from "next-intl";
-import { useId } from "react";
+import { ChevronDownIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { useId, useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
@@ -18,19 +19,12 @@ import { MissionTrack } from "./mission-track";
 
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
 
-function MissionsStatus({
-  missions,
-  points,
-}: {
-  missions: readonly MissionView[];
-  points: number;
-}) {
+function MissionsStatus({ missions }: { missions: readonly MissionView[] }) {
   const t = useExtracted();
-  const format = useFormatter();
   const left = missions.filter((mission) => mission.status !== "done").length;
 
   if (left === 0) {
-    return t("You earned +{points} Brain Power.", { points: format.number(points) });
+    return null;
   }
 
   return left === missions.length
@@ -71,31 +65,55 @@ function MissionRow({
   );
 }
 
+type RowsFold = { listId: string; onToggle: () => void; open: boolean };
+
+function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
+  const t = useExtracted();
+  const title = won ? t("Missions done") : t("Today's missions");
+
+  if (!fold) {
+    return title;
+  }
+
+  return (
+    <button
+      aria-controls={fold.listId}
+      aria-expanded={fold.open}
+      className="hit-area focus-visible:ring-ring/50 relative flex items-center gap-1 rounded-sm text-left outline-none focus-visible:ring-[3px]"
+      onClick={fold.onToggle}
+      type="button"
+    >
+      {title}
+      <ChevronDownIcon
+        aria-hidden="true"
+        className={cn("text-muted-foreground size-3.5 shrink-0", fold.open && "rotate-180")}
+      />
+    </button>
+  );
+}
+
 function MissionsHeading({
+  fold,
   missions,
-  points,
   titleId,
   won,
 }: {
+  fold: RowsFold | null;
   missions: readonly MissionView[];
-  points: number;
   titleId: string;
   won: boolean;
 }) {
-  const t = useExtracted();
-
   return (
     <div className="flex flex-col gap-0.5">
       <h2 className="text-sm leading-snug font-semibold wrap-break-word" id={titleId}>
-        {won ? t("Missions done") : t("Today's missions")}
+        <MissionsTitle fold={fold} won={won} />
       </h2>
-      <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums">
-        <MissionsStatus missions={missions} points={points} />
-        <span className="sr-only">
-          {", "}
-          <ProgressCount done={countDoneMissions(missions)} total={missions.length} />
-        </span>
+      <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums empty:hidden">
+        <MissionsStatus missions={missions} />
       </p>
+      <span className="sr-only">
+        <ProgressCount done={countDoneMissions(missions)} total={missions.length} />
+      </span>
     </div>
   );
 }
@@ -113,7 +131,8 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
 
 /**
  * One list with one look wherever it shows: every mission is a row, named by what to do, and the
- * reward says what doing them all earns.
+ * reward says what doing them all earns. Today folds the rows behind the title (`foldRows`),
+ * since most of them are already rows of the day's list right above the card.
  */
 export function MissionsCard({
   brainPower,
@@ -121,6 +140,7 @@ export function MissionsCard({
   className,
   showBuddy = true,
   collapseWhenDone = false,
+  foldRows = false,
   links,
   today,
 }: {
@@ -128,6 +148,7 @@ export function MissionsCard({
   buddy: LearnBuddy | null;
   className?: string;
   collapseWhenDone?: boolean;
+  foldRows?: boolean;
   links: MissionLinks;
   showBuddy?: boolean;
   today: MissionsDay | null;
@@ -135,6 +156,9 @@ export function MissionsCard({
   const t = useExtracted();
   const missionName = useMissionName(buddy);
   const titleId = useId();
+  const listId = useId();
+  const [unfolded, setUnfolded] = useState(false);
+  const open = !foldRows || unfolded;
 
   if (!today || today.missions.length === 0) {
     return null;
@@ -163,21 +187,33 @@ export function MissionsCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(SURFACE_CLASS, "flex flex-col px-4 pt-3.5 pb-1", className)}
+      className={cn(
+        SURFACE_CLASS,
+        "flex flex-col px-4 pt-3.5",
+        open ? "pb-1" : "pb-3.5",
+        className,
+      )}
       data-slot="missions-card"
     >
       <div className="flex items-start gap-2.5">
         {showBuddy && <BuddyFace buddy={buddy} className="mt-0.5 size-6" />}
 
         <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 items-start gap-y-1")}>
-          <MissionsHeading missions={missions} points={points} titleId={titleId} won={won} />
+          <MissionsHeading
+            fold={
+              foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null
+            }
+            missions={missions}
+            titleId={titleId}
+            won={won}
+          />
           <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
         </div>
       </div>
 
       <MissionTrack className="mt-3.5" missions={missions} />
 
-      <ListGroup className="mt-1.5">
+      <ListGroup className="mt-1.5" hidden={!open} id={listId}>
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>
