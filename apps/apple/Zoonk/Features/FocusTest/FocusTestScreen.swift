@@ -31,7 +31,8 @@ struct FocusTestScreen: View {
         } else {
           FocusTestFlow(
             goalID: goalId, subject: goal?.displayName ?? "", host: .plan,
-            changeFocus: canChangeFocus ? { choosesFocus = true } : nil, startsTest: startsTest
+            changeFocus: canChangeFocus ? { choosesFocus = true } : nil,
+            isChoosingFocus: choosesFocus, startsTest: startsTest
           ) {
             dismiss()
           }

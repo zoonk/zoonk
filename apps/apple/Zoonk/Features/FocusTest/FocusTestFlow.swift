@@ -24,6 +24,9 @@ struct FocusTestFlow: View {
   var onboarding: GoalOnboarding?
   /// On a plan: the focus sheet, for the checkpoint's Change focus.
   var changeFocus: (() -> Void)?
+  /// The focus sheet is open over the checkpoint. Coming back from it opens the checkpoint again,
+  /// as a new visit, since the focus it explains may have changed.
+  var isChoosingFocus = false
   /// The learner already chose to start, such as on Today: the test opens on its first question
   /// instead of offering itself again.
   var startsTest = false
@@ -52,12 +55,19 @@ struct FocusTestFlow: View {
       if let opening {
         test(opening)
           .loads(opening, refreshable: false)
+          .id(ObjectIdentifier(opening))
       } else {
         StepLoading()
       }
     }
     .onAppear {
       if opening == nil {
+        opening = store.openingPlacement(goalID: goalID)
+      }
+    }
+    .onChange(of: isChoosingFocus) {
+      if !isChoosingFocus, case .checkpoint = phase {
+        reached = nil
         opening = store.openingPlacement(goalID: goalID)
       }
     }
