@@ -82,6 +82,7 @@ export async function saveBlueprintStep({
   reading: BlueprintReading;
   sourceId: string;
 }): Promise<{
+  changed: boolean;
   created: boolean;
   examBlueprintId: string;
   movesExamDays: boolean;
@@ -107,6 +108,7 @@ export async function saveBlueprintStep({
   }
 
   return {
+    changed: saved.changes.length > 0,
     created: saved.created,
     examBlueprintId: saved.blueprint.id,
     movesExamDays: saved.movesExamDays,

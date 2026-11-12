@@ -15,7 +15,11 @@ import { lookUpChoiceOptionsStep } from "./steps/choice-options-step";
 import { lookUpCourseWeightsStep } from "./steps/course-weights-step";
 import { findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
 import { hasPrivateUploadsStep } from "./steps/inspect-uploads-step";
-import { linkGoalToBlueprintStep, unlinkGoalFromSharedExamStep } from "./steps/link-goal-step";
+import {
+  linkGoalToBlueprintStep,
+  refreshFollowerSummariesStep,
+  unlinkGoalFromSharedExamStep,
+} from "./steps/link-goal-step";
 import { type ResearchGoal, loadResearchGoalStep } from "./steps/load-research-goal-step";
 import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
 import { planExamResearchStep, planSourceResearchStep } from "./steps/plan-research-step";
@@ -30,6 +34,12 @@ export type ResearchInput = {
   /** When absent or empty, research reads the material the learner uploaded with the goal. */
   sourceIds?: string[];
 };
+
+async function weighSubjects(lookup: { analytics: ResearchAnalytics; examBlueprintId: string }) {
+  if (await lookUpSubjectQuestionsStep(lookup)) {
+    await refreshFollowerSummariesStep(lookup.examBlueprintId);
+  }
+}
 
 async function finishExam({
   analytics,
@@ -49,7 +59,7 @@ async function finishExam({
     await Promise.all([
       Promise.allSettled([
         lookUpChoiceOptionsStep({ analytics, examBlueprintId }),
-        lookUpSubjectQuestionsStep({ analytics, examBlueprintId }),
+        weighSubjects({ analytics, examBlueprintId }),
         lookUpTopicFrequencyStep({ analytics, examBlueprintId }),
         lookUpCourseWeightsStep({ analytics, goalId: goal.id }),
         lookUpTargetCutoffStep({ analytics, goalId: goal.id }),

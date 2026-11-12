@@ -3,6 +3,7 @@ import { listNoticeGoalsStep, proposeNoticeDatesStep } from "../goals/steps/noti
 import { type ResearchAnalytics } from "./_utils/research-analytics";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
+import { refreshFollowerSummariesStep } from "./steps/link-goal-step";
 import { saveBlueprintStep } from "./steps/save-blueprint-step";
 
 export type SavedBlueprint = { created: boolean; examBlueprintId: string; movesExamDays: boolean };
@@ -95,6 +96,10 @@ export async function readExamBlueprint({
     reading,
     sourceId: noticeId,
   });
+
+  if (saved.changed) {
+    await refreshFollowerSummariesStep(saved.examBlueprintId);
+  }
 
   if (saved.movesExamDays) {
     await proposeNoticeDates({

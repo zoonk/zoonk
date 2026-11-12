@@ -11,13 +11,13 @@ export async function lookUpSubjectQuestionsStep({
 }: {
   analytics: ResearchAnalytics;
   examBlueprintId: string;
-}): Promise<void> {
+}): Promise<boolean> {
   "use step";
 
   const lookup = await findSubjectQuestionsLookup({ examBlueprintId });
 
   if (!lookup) {
-    return;
+    return false;
   }
 
   const { data } = await findSubjectQuestions({
@@ -34,4 +34,6 @@ export async function lookUpSubjectQuestionsStep({
     source: data.source,
     subjects: lookup.subjects,
   });
+
+  return true;
 }

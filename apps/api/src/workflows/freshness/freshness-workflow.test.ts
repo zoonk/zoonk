@@ -504,6 +504,58 @@ describe(freshnessWorkflow, () => {
     expect(kept.targetDate).toStrictEqual(new Date("2026-11-29T00:00:00.000Z"));
   });
 
+  it("counts again the Focus test summary of a learner following a notice that a reading changed", async () => {
+    const { blueprint, extraction, notice } = await examWithLearner();
+    serveNotice(`${notice}\n${NEW_DATE_LINE}`);
+
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+
+    const outdated = {
+      asked: 0,
+      complete: false,
+      offerQuestions: 9,
+      paceMs: 30_000,
+      quick: 9,
+      suggested: [],
+      total: 9,
+      unasked: 9,
+    };
+
+    const goal = await goalFixture({
+      details: { focusTest: { summary: outdated } },
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [{ lessons: 2, name: skill.name, phase: 0, skillId: skill.id }],
+      },
+      phases: [],
+    });
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...TASK,
+      data: withExamDate({ extraction, line: NEW_DATE_LINE }),
+    });
+
+    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
+      ...TASK,
+      data: { message: "O edital mudou: a prova agora é em 29 de novembro de 2026." },
+    });
+
+    await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+
+    const { details } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+
+    expect(details).toMatchObject({
+      focusTest: { summary: { inputsKey: expect.any(String), quick: 1, total: 1 } },
+    });
+  });
+
   it("searches for the next notice once the stored edition passed, and proposes its exam day to the learners preparing for it", async () => {
     const { blueprint, extraction, notice } = await examWithLearner();
     const nextUrl = `https://cdn.cebraspe.org.br/concursos/tc_df_27_analista/${randomUUID()}.txt`;
