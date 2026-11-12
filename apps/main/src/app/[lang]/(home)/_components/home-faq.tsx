@@ -38,7 +38,7 @@ export async function HomeFaq() {
   const questions = [
     {
       answer: t(
-        "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed.",
+        "Yes. You start free, no account needed. A free account has {goals, plural, one {one goal} other {up to # goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}} are free. No card needed.",
         { days: limits.examPrepDays ?? 0, goals: limits.activeGoals ?? 0 },
       ),
       id: "free",
@@ -87,7 +87,7 @@ export async function HomeFaq() {
     },
     {
       answer: t(
-        "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want.",
+        "What's left comes first the next day. If a date changes, your plan tells you. You can also change how long you study each day whenever you want.",
       ),
       id: "missed",
       question: t({

@@ -1,8 +1,6 @@
-import { NUMERIC_CLASS, PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { ProductWindow } from "@/components/public/product-window";
 import { getAppLocale } from "@/i18n/locale";
-import { DaySegment } from "@zoonk/learn/day-segments";
-import { MeterParts } from "@zoonk/learn/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { ExampleCardHead, ExampleDay, getExampleDailyTime } from "./example-card";
@@ -14,15 +12,6 @@ import { LandingGoalBox } from "./landing-goal-box";
 
 const TITLE_ID = "home-title";
 
-const PHASES = [
-  { id: "foundations", weight: 3 },
-  { id: "gaps", weight: 4 },
-  { id: "practice", weight: 4 },
-  { id: "finalStretch", weight: 2 },
-];
-
-const PLAN_DAY = 3;
-
 function renderLine(chunks: React.ReactNode) {
   return <span className="block text-balance">{chunks}</span>;
 }
@@ -32,8 +21,6 @@ function renderMore(chunks: React.ReactNode) {
 }
 
 async function ExamPlan() {
-  const t = await getExtracted();
-  const tPhases = await getExtracted("planPhases");
   const { exam } = await getExampleSet();
   const steps = toExampleSteps(exam.day);
   const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
@@ -42,33 +29,6 @@ async function ExamPlan() {
     <ProductWindow className="mt-18 lg:mt-0 lg:shadow-[0_24px_60px_-28px_oklch(0_0_0/22%)] dark:lg:shadow-[0_24px_60px_-28px_oklch(0_0_0/70%)]">
       <div className="px-5 pt-5 pb-4">
         <ExampleCardHead detail={await getExampleDailyTime(minutes)} title={exam.headline} />
-
-        <MeterParts className="mt-4">
-          {PHASES.map((phase, index) => (
-            <DaySegment
-              key={phase.id}
-              weight={phase.weight}
-              state={index === 0 ? "current" : "ahead"}
-            />
-          ))}
-        </MeterParts>
-
-        <p className="mt-2 flex justify-between gap-3 text-xs">
-          <span>
-            <b className="font-[550]">{tPhases("Foundations")}</b>
-            <span className="text-muted-foreground">
-              {` · ${t("day {number, number}", { number: PLAN_DAY })}`}
-            </span>
-          </span>
-          <span className={cn(NUMERIC_CLASS, "text-muted-foreground")}>
-            {t({
-              description:
-                "Which of the example plan's phases it's in, under a meter of its phases.",
-              message: "{number, number} of {total, number}",
-              values: { number: 1, total: PHASES.length },
-            })}
-          </span>
-        </p>
       </div>
 
       <div className="border-t px-5 pt-4 pb-1.5">

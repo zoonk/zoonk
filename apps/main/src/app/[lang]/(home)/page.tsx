@@ -83,7 +83,7 @@ export default async function HomePage() {
         hideWhileVisibleIds={[FINAL_GOAL_ID, PUBLIC_FOOTER_ID]}
       >
         <Link className={cn(buttonVariants({ size: "lg" }), "w-full")} href="/start">
-          {t("Start free")}
+          {t("Build my plan")}
         </Link>
       </StickyStartBar>
     </div>

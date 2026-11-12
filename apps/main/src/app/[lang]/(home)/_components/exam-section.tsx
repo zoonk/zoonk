@@ -77,7 +77,14 @@ async function MockResult() {
       <ul className="divided-rows mt-6 border-t text-[0.9375rem] leading-snug">
         <li className="flex min-h-12 items-center gap-3 py-2.5">
           <DoneMark />
-          <span>{t.rich("<b>Solid:</b> {topics}", { b: bold, topics: list(mock.firm) })}</span>
+          <span>
+            {t.rich({
+              description:
+                "Before the topics a mock exam's answers were mostly right on. In Brazilian Portuguese: “<b>Indo bem:</b> {topics}”.",
+              message: "<b>Going well:</b> {topics}",
+              values: { b: bold, topics: list(mock.firm) },
+            })}
+          </span>
         </li>
         <li className="flex min-h-12 items-center gap-3 py-2.5">
           <KindMark className="size-4" kind="review" />
@@ -90,20 +97,14 @@ async function MockResult() {
           <span>
             {t.rich({
               description:
-                "In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.",
+                "In Brazilian Portuguese: “<b>7 erros</b> guardados para você praticar”.",
               message:
-                "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook",
+                "<b>{count, plural, one {# mistake} other {# mistakes}}</b> saved for you to practice",
               values: { b: bold, count: mock.mistakes },
             })}
           </span>
         </li>
       </ul>
-
-      <p className="text-muted-foreground mt-3 text-[0.8125rem] leading-normal text-pretty">
-        {t(
-          "The score is only an estimate, made from your answers. Mock exams are available with Plus.",
-        )}
-      </p>
     </ExampleCard>
   );
 }
