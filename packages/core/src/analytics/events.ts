@@ -268,11 +268,14 @@ export type AnalyticsEvent = {
 
 type ProfileQuestionProperties = { from: "onboarding" | "settings" } & (
   | { question: "conditions" }
-  | { question: "learningSupport"; outcome: "answered" | "declined" | "skipped" }
+  | { question: "learningSupport" | "addressForm"; outcome: "answered" | "declined" | "skipped" }
   | ({ outcome: "answered" | "declined" | "skipped"; picks: number; typedText: boolean } & (
       | { question: "work" }
       | {
-          question: Exclude<ProfileQuestion, "work" | "conditions" | "learningSupport">;
+          question: Exclude<
+            ProfileQuestion,
+            "work" | "conditions" | "learningSupport" | "addressForm"
+          >;
           options: string[];
         }
     ))

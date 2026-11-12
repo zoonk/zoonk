@@ -23,13 +23,11 @@ const ALPHABET_REVIEWERS = [
 ] as const;
 
 /**
- * On 10 slips learners met (#2506, #2414, #2509) and 4 clean lessons, 3 runs each (11 Nov 2026),
- * Sonnet 5.5 caught 25 of 30 slips on their screen at $18 per 1k reviews, but caught the gendered
- * line in only 1 of 3 runs; Gemini 3.8 Flash caught 27, the gendered line every time, at $20 per 1k
- * with an 88 s p95. Each blocked 2 of the 12 clean runs; Sonnet's were wrong open-vowel findings,
- * which the writer usually declines. Haiku 5.5 and Gemini 3.5 Flash-Lite missed a third of the
- * slips. Luna, Terra and Sol blocked 9 to 12 of the 12 clean runs over respelling conventions, so
- * no OpenAI model reviews these lessons.
+ * On 9 slips learners met (#2506, #2414) and 4 clean lessons, 3 runs each (11 Nov 2026), Sonnet 5.5
+ * caught 26 of 27 slips on their screen and blocked no clean lesson, at $18 per 1k reviews; Gemini
+ * 3.8 Flash caught 24, blocked 2 and costs about the same, with a 76 s p95. Haiku 5.5 and Gemini
+ * 3.5 Flash-Lite missed a third of the slips. Luna, Terra and Sol blocked 9 to 12 of the 12 clean
+ * runs over respelling conventions, so no OpenAI model reviews these lessons.
  */
 const LANGUAGE_REVIEWERS = ["anthropic/claude-sonnet-5.5", "google/gemini-3.8-flash"] as const;
 

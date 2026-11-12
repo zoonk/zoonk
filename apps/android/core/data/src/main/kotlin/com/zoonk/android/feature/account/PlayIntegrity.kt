@@ -64,15 +64,11 @@ class PlayIntegrity(
 }
 
 /** The request a token covers: SHA-256 of App Attest's client data, as the API rebuilds it from the body. */
-fun BotProofRequest.requestHash(challenge: String): String {
-    val binding =
-        when (this) {
-            BotProofRequest.Guest -> listOf("guest")
-            is BotProofRequest.EmailCode -> listOf("email-code", email)
-            is BotProofRequest.EmailSession -> listOf("email-session", email, code)
-            is BotProofRequest.RestoreKey -> listOf("restore-key", credentialId)
-        }
-    val clientData = (listOf("zoonk-app-attest:1", challenge) + binding).joinToString("\n")
+private fun restoreKeyRequestHash(
+    challenge: String,
+    credentialId: String,
+): String {
+    val clientData = listOf("zoonk-app-attest:1", challenge, "restore-key", credentialId).joinToString("\n")
     val digest = MessageDigest.getInstance("SHA-256").digest(clientData.toByteArray(Charsets.UTF_8))
     return Base64.getUrlEncoder().withoutPadding().encodeToString(digest)
 }
@@ -86,7 +82,7 @@ data class PlayIntegrityProof(
 /** Null when Play can't make a token: the request then goes anyway, and the server decides as it does for iOS. */
 suspend fun IntegrityTokens.proof(
     api: ApiClients,
-    request: BotProofRequest,
+    credentialId: String,
 ): PlayIntegrityProof? {
     val challenge =
         try {
@@ -94,5 +90,5 @@ suspend fun IntegrityTokens.proof(
         } catch (e: ApiException) {
             return null
         }
-    return token(request.requestHash(challenge))?.let { PlayIntegrityProof(it, challenge) }
+    return token(restoreKeyRequestHash(challenge, credentialId))?.let { PlayIntegrityProof(it, challenge) }
 }

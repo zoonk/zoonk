@@ -8,15 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -25,12 +30,21 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.OnboardingApi
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.examGoal
 import com.zoonk.android.feature.onboarding.planOf
+import com.zoonk.android.feature.onboarding.revealTodayOf
 import com.zoonk.android.feature.onboarding.syllabusOf
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
+import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
@@ -39,10 +53,18 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.PlanRevealToday
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Rule
@@ -66,10 +88,32 @@ class PlanRevealStepFlowTest {
     private fun show(
         prepareToday: suspend () -> Unit = {},
         restoration: StateRestorationTester? = null,
+        reveal: PlanRevealToday? = null,
+        onOpenStep: ((DayView, DayStep) -> Unit)? = null,
+        readReveal: (suspend () -> PlanRevealToday)? = null,
+        mark: suspend () -> Unit = {},
+        open: (suspend (DayView, DayStep) -> MutationResult<AppRoute?>)? = null,
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val plans = PlanStore(planApi, cache)
+        val onboarding =
+            OnboardingStore(
+                object : OnboardingApi by FakeOnboardingApi() {
+                    override suspend fun revealToday(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                    ) = readReveal?.invoke() ?: requireNotNull(reveal)
+
+                    override suspend fun markPlanRevealed(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                    ) = mark()
+                },
+                cache,
+                session,
+            ) { SignInResult.SignedIn }
+        val vm = GoalSetupViewModel(onboarding, null, SavedStateHandle(), GOAL_ID)
         val warmUps = WarmUpStore({ _, _ -> beekeepingDeck() }, cache, session)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
@@ -86,6 +130,21 @@ class PlanRevealStepFlowTest {
                             navigator,
                             SETUP,
                             prepareToday,
+                            onReveal = vm::reveal,
+                            saving = vm.isSaving,
+                            saveFailed = vm.saveFailed,
+                            startStepFailed = vm.startStepFailed,
+                            openingStep = vm.openingStep,
+                            failedStep = vm.failedStep,
+                            onOpenStep =
+                                if (open != null) {
+                                    { day, step, fromStart ->
+                                        vm.openRevealStep(day, step, { d, s, _ -> open(d, s) }, fromStart = fromStart) {}
+                                    }
+                                } else {
+                                    onOpenStep?.let { callback -> { day, step, _ -> callback(day, step) } }
+                                },
+                            today = if (reveal != null || readReveal != null) onboarding.revealToday[GOAL_ID] else null,
                         )
                     }
                 }
@@ -118,6 +177,119 @@ class PlanRevealStepFlowTest {
         rule.waitForIdle()
         assertEquals(1, opened)
         rule.onNodeWithText("Start lesson 1").assertExists()
+    }
+
+    @Test
+    fun startOpensTheTaggedStepThroughTheRowCallback() {
+        val reveal = revealWithNextPosition(1)
+        var opened: Pair<DayView, DayStep>? = null
+        show(reveal = reveal, onOpenStep = { day, step -> opened = day to step })
+        navigator.open(SETUP)
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        val day = reveal.today.toDayView()
+        assertEquals(day to day.steps.first { it.position == day.nextPosition }, opened)
+        assertEquals(SETUP, navigator.currentRoute)
+    }
+
+    @Test
+    fun onlyStartIsBusyWhileItOpensTheTaggedStep() {
+        val opened = CompletableDeferred<MutationResult<AppRoute?>>()
+        val reveal = revealWithNextPosition(0)
+        show(reveal = reveal, open = { _, _ -> opened.await() })
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.onNodeWithText("Start").assertIsNotEnabled()
+        rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
+        val title = "How birds use sound"
+        rule.onNodeWithText(title).performScrollTo().assertHasNoClickAction()
+        opened.complete(MutationResult.Done(null))
+    }
+
+    @Test
+    fun openingRowKeepsItsClickActionWhileStartIsDisabled() {
+        val opened = CompletableDeferred<MutationResult<AppRoute?>>()
+        val reveal = revealWithNextPosition(0)
+        show(reveal = reveal, open = { _, _ -> opened.await() })
+        val title = "How birds use sound"
+        rule
+            .onNodeWithText(title)
+            .performScrollTo()
+            .performClick()
+            .assertHasClickAction()
+        rule.onAllNodes(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertCountEquals(1)
+        rule.onNodeWithText("Start").performScrollTo().assertIsNotEnabled()
+        opened.complete(MutationResult.Done(null))
+    }
+
+    @Test
+    fun startShowsSaveFailureBeforeOpenFailureAndNeverDuplicatesItOnTheRow() {
+        var markFails = true
+        var opens = 0
+        show(reveal = revealWithNextPosition(1), mark = {
+            if (markFails) throw ApiException(ApiError.Network)
+        }, open = { _, _ ->
+            opens++
+            MutationResult.Failed(ApiError.Network)
+        })
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertExists()
+        rule.onNodeWithText("We couldn't open this step. Try again.").assertDoesNotExist()
+        assertEquals(0, opens)
+        markFails = false
+        rule.onNodeWithText("Start").performClick()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
+        rule.onAllNodesWithText("We couldn't open this step. Try again.").assertCountEquals(1)
+        assertEquals(1, opens)
+    }
+
+    @Test
+    fun startIsNotActionableUntilTheRevealTodayReadSettles() {
+        val loaded = CompletableDeferred<PlanRevealToday>()
+        var opened = false
+        show(readReveal = { loaded.await() }, onOpenStep = { _, _ -> opened = true })
+        navigator.open(SETUP)
+        rule
+            .onNodeWithText("Start")
+            .performScrollTo()
+            .assertIsNotEnabled()
+            .performClick()
+        assertEquals(SETUP, navigator.currentRoute)
+        loaded.complete(revealWithNextPosition(1))
+        rule.waitUntil { rule.onAllNodesWithText("Start here").fetchSemanticsNodes().isNotEmpty() }
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.runOnIdle { assertEquals(true, opened) }
+        assertEquals(SETUP, navigator.currentRoute)
+    }
+
+    @Test
+    fun aFailedRevealTodayReadAllowsTheTodayFallbackAndShowsSaveFailure() {
+        show(readReveal = { throw ApiException(ApiError.Network) }, mark = { throw ApiException(ApiError.Network) })
+        navigator.open(SETUP)
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.onNodeWithText("We couldn't save that. Try again.").assertExists()
+        rule.onNodeWithText("We couldn't open this step. Try again.").assertDoesNotExist()
+        assertEquals(SETUP, navigator.currentRoute)
+    }
+
+    @Test
+    fun startFallsBackToTodayWhenThereIsNoNextStep() {
+        show(reveal = revealWithNextPosition(null), onOpenStep = { _, _ -> error("Must not open a step") })
+        navigator.open(SETUP)
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    private fun revealWithNextPosition(position: Long?): PlanRevealToday {
+        val reveal = ApiJson.encodeToJsonElement(revealTodayOf()).jsonObject
+        val today = reveal.getValue("today").jsonObject
+        return ApiJson.decodeFromJsonElement(
+            JsonObject(reveal + ("today" to JsonObject(today + ("nextPosition" to (position?.let(::JsonPrimitive) ?: JsonNull))))),
+        )
     }
 
     @Test

@@ -95,7 +95,7 @@ describe("a goal rebuild's owed work", () => {
   });
 
   it.each(["unsaved", "saved", "revealed"])(
-    "keeps only an unsaved, unseen failed graph owed (state: %s)",
+    "keeps an unsaved failed graph owed even after reveal (state: %s)",
     async (state) => {
       const { goal, user } = await savedGoal();
 
@@ -123,7 +123,7 @@ describe("a goal rebuild's owed work", () => {
 
       const row = await prisma.followUp.findUnique({ where: { id: owed.id } });
       const failedRow = expect.objectContaining({ failedAt: expect.any(Date) });
-      expect(row).toStrictEqual(state === "unsaved" ? failedRow : null);
+      expect(row).toStrictEqual(state === "saved" ? null : failedRow);
     },
   );
 

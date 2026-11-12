@@ -1,5 +1,7 @@
 import { isJsonObject } from "./json";
 import { getFormattingLocale } from "./locale";
+import { splitLinesAndCells } from "./markdown-table";
+import { splitAtMath } from "./math-spans";
 
 /**
  * Five or more ungrouped digits outside a decimal, code, date or word. A leading 0 is a postal code
@@ -8,13 +10,6 @@ import { getFormattingLocale } from "./locale";
 const LONG_NUMBER = /(?<![\d.,\p{L}/-])[1-9]\d{4,}(?![\d\p{L}/-]|[.,]\d)/gu;
 
 const CODE = /```[\s\S]*?```|`[^`\n]+`/gu;
-
-/**
- * `$$display$$` and `$inline$` math by Pandoc's rule, as the player reads it: an opening `$` has
- * text right after it and no letter before it ("R$ 80" is money), and a closing `$` has text right
- * before it and no digit after it, so "$5 and $10" stay text.
- */
-const MATH = /\$\$(?<display>[^$]+)\$\$|(?<![\p{L}\\$])\$(?=\S)(?<inline>[^$\n]*?\S)\$(?!\d)/gu;
 
 /** A comma between digits, which KaTeX sets as a list ("0, 5") unless it's braced ("0{,}5"). */
 const BARE_COMMA = /\d,\d/u;
@@ -46,11 +41,13 @@ function splitText({ latex, text }: { latex: boolean; text: string }): TextParts
     return { math: [written], prose: "" };
   }
 
+  const segments = splitLinesAndCells(written)
+    .flat()
+    .flatMap((cell) => splitAtMath(cell));
+
   return {
-    math: [...written.matchAll(MATH)].map(
-      (match) => match.groups?.display ?? match.groups?.inline ?? "",
-    ),
-    prose: written.replaceAll(MATH, " "),
+    math: segments.flatMap((segment) => (segment.kind === "text" ? [] : [segment.text])),
+    prose: segments.flatMap((segment) => (segment.kind === "text" ? [segment.text] : [])).join(" "),
   };
 }
 

@@ -76,7 +76,11 @@ export async function recordGoalBuildFailure({
   await writeLearnerChange({ lockPlanIds: [planId], userId: goal.userId }, async (tx) => {
     const updated = await tx.plan.updateMany({
       data: { buildFailedAt: new Date() },
-      where: { buildFailedAt: null, goal: { generationRunId: generationId }, id: planId },
+      where: {
+        buildFailedAt: null,
+        goal: { generationRunId: generationId, planRevealedAt: null },
+        id: planId,
+      },
     });
 
     if (updated.count === 0) {

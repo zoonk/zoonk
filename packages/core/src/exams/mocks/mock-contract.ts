@@ -14,7 +14,7 @@ import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
-import { mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
+import { areaPointsShape, mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
 import {
   type MockAdaptView,
   type MockCurrentSection,
@@ -110,6 +110,7 @@ export type MockTimeZoneInput = z.infer<typeof mockTimeZoneInputSchema>;
 const areaResultSchema = z.object({
   correct: z.number(),
   name: z.string(),
+  ...areaPointsShape,
   score: z.object({ high: z.number(), low: z.number(), score: z.number() }).nullable(),
   secondsPerQuestion: z.number(),
   targetSecondsPerQuestion: z.number().nullable(),

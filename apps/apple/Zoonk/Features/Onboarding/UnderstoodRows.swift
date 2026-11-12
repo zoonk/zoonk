@@ -10,6 +10,7 @@ enum UnderstoodField: String, Equatable, Sendable {
   case targetPosition
   case targetScore
   case targetRegion
+  case contentCountry
   case studyTime
 
   enum Editor {
@@ -122,6 +123,10 @@ enum UnderstoodRows {
       rows.append(date)
     }
 
+    if let country = countryRow(goal) {
+      rows.append(country)
+    }
+
     rows += languageRows(facts: facts, countryAsked: countryAsked, locale: locale)
 
     if let target = facts.targetLanguage,
@@ -161,6 +166,45 @@ enum UnderstoodRows {
     }
 
     return rows
+  }
+
+  /// A country-dependent goal's country, once the words or where the learner lives named it; a
+  /// foreign exam's, read-only. Shown even when the title names it: its row is where it changes.
+  static func countryRow(_ goal: Components.Schemas.UnderstoodGoal) -> UnderstoodRow? {
+    guard let country = ContentCountry(goal.contentCountry) else {
+      return nil
+    }
+
+    let isExam = country.kind == .exam
+    let badge: LocalizedStringResource? =
+      switch country.source {
+      case .said where !isExam:
+        LocalizedStringResource(
+          "you said", table: "Onboarding",
+          comment: "Marks a level row as the learner's own words")
+      case .home:
+        LocalizedStringResource(
+          "where you live", table: "Onboarding",
+          comment:
+            "Marks the content country row as the country the learner said they live in, in Settings"
+        )
+      default:
+        nil
+      }
+
+    return UnderstoodRow(
+      id: "contentCountry",
+      label: isExam
+        ? LocalizedStringResource(
+          "Exam country", table: "Plan",
+          comment: "Row with the country an exam belongs to, such as Argentina")
+        : LocalizedStringResource(
+          "Content country", table: "Plan",
+          comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+      value: country.name,
+      badge: badge,
+      note: country.lessonVariety.map(lessonLanguageLine),
+      field: country.editable && !isExam ? .contentCountry : nil)
   }
 
   static func scheduleRow(

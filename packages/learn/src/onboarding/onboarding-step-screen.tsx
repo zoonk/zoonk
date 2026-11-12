@@ -10,6 +10,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
 import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
+import { getExamTarget, readKnownSubjects } from "./_utils/onboarding-view-reads";
 import { getGoalSubject } from "./goal-subject";
 import {
   type OnboardingActions,
@@ -18,19 +19,14 @@ import {
 } from "./onboarding-actions";
 import { OnboardingScreenTop } from "./onboarding-frame";
 import { BuddyStep } from "./steps/buddy-step";
+import { CountryStep } from "./steps/country-step";
 import { DateStep } from "./steps/date-step";
 import { ExamChoiceStep } from "./steps/exam-choice-step";
 import { readLevelChoice } from "./steps/level-choices";
 import { PlacementStepScreen } from "./steps/placement-step-screen";
 import { PlanReveal } from "./steps/plan-reveal";
 import { ProfileStepScreen, type ProfileStepState } from "./steps/profile-step";
-import {
-  type ExamTarget,
-  FollowUpsStep,
-  LevelStep,
-  PurposeStep,
-  TextStep,
-} from "./steps/question-steps";
+import { FollowUpsStep, LevelStep, PurposeStep, TextStep } from "./steps/question-steps";
 import { ReasonStep } from "./steps/reason-step";
 import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
@@ -38,18 +34,8 @@ import { SubjectsLevelStep } from "./steps/subjects-level-step";
 import { type ScheduleDraft } from "./steps/use-schedule";
 import { getFirstLesson } from "./steps/wait-run";
 
-function readKnownSubjects(details: Record<string, unknown>): string[] {
-  const known = details.knownSubjects;
-  return Array.isArray(known) ? known.filter((name) => typeof name === "string") : [];
-}
-
-const EXAM_TARGETS: readonly ExamTarget[] = ["admission", "position", "score"];
-
-function getExamTarget(details: Record<string, unknown>): ExamTarget {
-  return EXAM_TARGETS.find((target) => target === details.examTarget) ?? "admission";
-}
-
 const QUESTION_STEPS = [
+  "contentCountry",
   "purpose",
   "role",
   "reason",
@@ -82,6 +68,15 @@ function QuestionStepScreen({
   const props = { onAnswer, pending };
 
   switch (step) {
+    case "contentCountry":
+      return (
+        <CountryStep
+          {...props}
+          {...view.contentCountry}
+          language={view.goal.language}
+          subject={subject}
+        />
+      );
     case "purpose":
       return <PurposeStep {...props} subject={subject} />;
     case "role":

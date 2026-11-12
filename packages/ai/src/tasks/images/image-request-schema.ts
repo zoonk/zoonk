@@ -5,7 +5,9 @@ import { z } from "zod";
 const IMAGE_PROMPT_TARGET = 400;
 const IMAGE_ALT_TARGET = 160;
 const MIN_NUMBERED_PARTS = 2;
-const MAX_NUMBERED_PARTS = 6;
+
+/** The app lays a question's picture options out two by two. */
+export const MAX_PICTURE_OPTIONS = 4;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what to draw, then how to describe it. */
 
@@ -22,7 +24,7 @@ export const imageRequestSchema = pictureRequest.nullable();
  * the first. Null on a picture without numbers.
  */
 export const numberedImageRequestSchema = pictureRequest
-  .extend({ parts: z.array(z.string()).min(MIN_NUMBERED_PARTS).max(MAX_NUMBERED_PARTS).nullable() })
+  .extend({ parts: z.array(z.string()).min(MIN_NUMBERED_PARTS).nullable() })
   .nullable();
 
 /* oxlint-enable eslint/sort-keys */

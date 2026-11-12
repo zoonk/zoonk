@@ -24,7 +24,10 @@ export async function banUserAction(formData: FormData) {
     prisma.$transaction([
       prisma.user.update({
         data: { banExpires, banReason: reason, banned: true },
-        where: { id: userId },
+        // Better Auth lifts an expired ban at the next sign-in, which would make an admin staff again.
+        where: banExpires
+          ? { OR: [{ role: { not: "admin" } }, { role: null }], id: userId }
+          : { id: userId },
       }),
       prisma.session.deleteMany({ where: { userId } }),
     ]),

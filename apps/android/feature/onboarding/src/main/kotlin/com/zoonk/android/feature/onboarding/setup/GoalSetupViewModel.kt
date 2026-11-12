@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -17,6 +18,9 @@ import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.profile.profileSkipAll
 import com.zoonk.android.feature.profile.suggestedSupports
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingStep
@@ -171,16 +175,76 @@ internal class GoalSetupViewModel(
         }
     }
 
-    fun reveal(onSaved: () -> Unit) {
+    fun reveal(onSaved: () -> Unit) =
+        reveal(null) {
+            onSaved()
+            true
+        }
+
+    var openingStep by mutableStateOf<Long?>(null)
+        private set
+
+    var failedStep by mutableStateOf<Long?>(null)
+        private set
+
+    var startStepFailed by mutableStateOf(false)
+        private set
+
+    fun openRevealStep(
+        day: DayView,
+        step: DayStep,
+        open: suspend (DayView, DayStep, java.util.UUID) -> MutationResult<AppRoute?>,
+        fromStart: Boolean = false,
+        isCurrent: () -> Boolean = { true },
+        onOpened: suspend (AppRoute) -> Unit,
+    ) {
+        val tappedGoal = java.util.UUID.fromString(goalId)
+        reveal(step.position, fromStart) {
+            if (!isCurrent()) return@reveal true
+            when (val result = open(day, step, tappedGoal)) {
+                is MutationResult.Done -> {
+                    result.value?.let { onOpened(it) }
+                    true
+                }
+
+                MutationResult.Obsolete -> {
+                    true
+                }
+
+                is MutationResult.Failed -> {
+                    false
+                }
+            }
+        }
+    }
+
+    private fun reveal(
+        position: Long?,
+        fromStart: Boolean = false,
+        onSaved: suspend () -> Boolean,
+    ) {
         if (isSaving) return
         isSaving = true
+        openingStep = position.takeUnless { fromStart }
+        failedStep = null
+        startStepFailed = false
         clearFailure()
+        val revealingGoal = goalId
         viewModelScope.launch {
-            when (store.markPlanRevealed(goalId)) {
-                is WriteOutcome.Done -> onSaved()
-                WriteOutcome.Obsolete -> Unit
-                else -> saveFailed = true
+            when (store.markPlanRevealed(revealingGoal)) {
+                is WriteOutcome.Done -> {
+                    if (!onSaved()) {
+                        if (fromStart) startStepFailed = true else failedStep = position
+                    }
+                }
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    if (position == null || fromStart) saveFailed = true else failedStep = position
+                }
             }
+            openingStep = null
             isSaving = false
         }
     }
@@ -252,8 +316,11 @@ internal class GoalSetupViewModel(
                 is WriteOutcome.Done -> {
                     draft?.remove()
                     step.profileQuestion?.takeIf { profileAnswer == null }?.let {
-                        profileDrafts = profileDrafts - it
+                        // Skipping conditions takes back the supports their picks prechecked.
+                        val unchecks = it == ProfileQuestion.CONDITIONS && supportsSuggested
+                        profileDrafts = profileDrafts - it - if (unchecks) setOf(ProfileQuestion.LEARNING_SUPPORT) else emptySet()
                         savedProfiles = profileDrafts - ProfileQuestion.CONDITIONS
+                        if (unchecks) supportsSuggested = false
                     }
                     if (step == OnboardingStep.CONDITIONS && profileAnswer != null && flow.current == step &&
                         outcome.value.steps.firstOrNull() == OnboardingStep.LEARNING_SUPPORT

@@ -314,6 +314,7 @@ msgstr "Profil"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/layout.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/[question]/page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "c2z6MR"
@@ -355,7 +356,6 @@ msgid "Reminders"
 msgstr "Rappels"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/footer-languages.tsx
 msgctxt "y1Z3or"
 msgid "Language"
@@ -385,6 +385,7 @@ msgstr "Accède à une page, lance une action ou pose une question."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Annuler"
@@ -570,6 +571,18 @@ msgstr "Options du chapitre"
 msgctxt "DcXGUl"
 msgid "{chapter}: {course} course"
 msgstr "{chapter} : cours {course}"
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/content-country-line.tsx
+msgctxt "RZJ-9n"
+msgid "Content country: {country}"
+msgstr "Pays du contenu : {country}"
+
+#. {variety} is a language with its country, such as “Portuguese (Brazil)”. It always follows the colon, so it never needs an article or a case.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/content-country-line.tsx
+msgctxt "J3aEI6"
+msgid "Lesson language: {variety}"
+msgstr "Langue des leçons : {variety}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
 msgctxt "kRwSyb"
@@ -1190,6 +1203,7 @@ msgid "For your safety, sign in again, then delete your account."
 msgstr "Pour ta sécurité, reconnecte-toi avant de supprimer ton compte."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "scfgdM"
 msgid "Sign in again"
 msgstr "Se reconnecter"
@@ -1303,6 +1317,125 @@ msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "Ton nom, ton nom d’utilisateur et ton compte."
 
+#. The name of a passkey the person hasn't named yet, in their list of passkeys.
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "unnamedPasskey"
+msgid "Passkey"
+msgstr "Clé d’accès"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fermer"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "2Hinlp"
+msgid "Rename passkey"
+msgstr "Renommer la clé d’accès"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "IKuKBl"
+msgid "Passkey name"
+msgstr "Nom de la clé d’accès"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "0gDM9C"
+msgid "Such as “MacBook” or “Phone”"
+msgstr "Par exemple « MacBook » ou « Téléphone »"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Enregistrer"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "YhaU4B"
+msgid "Delete “{name}”?"
+msgstr "Supprimer « {name} » ?"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "JrYshd"
+msgid "It won't approve content fixes anymore. You'll confirm with one of your passkeys first."
+msgstr "Elle ne permettra plus d’approuver les corrections de contenu. Tu devras d’abord confirmer avec l’une de tes clés d’accès."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "-G_yv9"
+msgid "Delete passkey"
+msgstr "Supprimer la clé d’accès"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "xEwuru"
+msgid "For your safety, sign in again, then add your passkey."
+msgstr "Pour ta sécurité, reconnecte-toi, puis ajoute ta clé d’accès."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "AadXSK"
+msgid "This device already has a passkey for your account."
+msgstr "Cet appareil a déjà une clé d’accès pour ton compte."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "Ça n’a pas marché. Réessaie dans un instant."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Cuv8_X"
+msgid "That wasn't confirmed with one of your passkeys. Try again."
+msgstr "Cette action n’a pas été confirmée avec l’une de tes clés d’accès. Réessaie."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "jUqYir"
+msgid "Added {date}"
+msgstr "Ajoutée le {date}"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "_IFxIZ"
+msgid "Options for “{name}”"
+msgstr "Options pour « {name} »"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "iXNbPf"
+msgid "Rename"
+msgstr "Renommer"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "K3r6DQ"
+msgid "Delete"
+msgstr "Supprimer"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "QCATv6"
+msgid "You'll confirm with a passkey you already have first."
+msgstr "Tu devras d’abord confirmer avec une clé d’accès que tu as déjà."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "guwku_"
+msgid "Your fingerprint, face or screen lock on this device"
+msgstr "Ton empreinte digitale, ton visage ou le verrouillage de l’écran de cet appareil"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Ck5euH"
+msgid "Add a passkey"
+msgstr "Ajouter une clé d’accès"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Ajouter"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "ASrBq8"
+msgid "Passkeys"
+msgstr "Clés d’accès"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "G9nqiW"
+msgid "You approve content fixes in Admin with a passkey."
+msgstr "Tu approuves les corrections de contenu dans Admin avec une clé d’accès."
+
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
@@ -1324,11 +1457,6 @@ msgid "{username} is already taken"
 msgstr "{username} est déjà pris"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "Enregistrer"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Enregistré."
@@ -1337,6 +1465,11 @@ msgstr "Enregistré."
 msgctxt "JXl2gz"
 msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
 msgstr "Ce que tu nous dis ici nous aide à personnaliser tes exemples et ton compagnon. Tout est facultatif."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "uOIiKt"
+msgid "Language and region"
+msgstr "Langue et région"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx
@@ -2540,9 +2673,14 @@ msgid "The CLI reads production data as {email}, such as accounts, plans and ans
 msgstr "L’outil CLI permet de consulter les données de production avec le compte {email}, comme les comptes, les plans et les réponses."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "d6AYf2"
-msgid "It can't change anything."
-msgstr "Il ne peut rien modifier."
+msgctxt "IpYj6L"
+msgid "It can propose fixes to course content. Each one waits until a person approves it in Admin with a passkey."
+msgstr "Il peut proposer des corrections au contenu des cours. Chaque correction reste en attente jusqu’à ce qu’une personne l’approuve dans Admin avec une clé d’accès."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "ngUvxA"
+msgid "It can't change anything by itself."
+msgstr "Il ne peut rien modifier de lui-même."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
@@ -2563,12 +2701,6 @@ msgstr "Refuser"
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
 msgstr "Ce code a expiré. Relance {command} pour en obtenir un nouveau."
-
-#: src/app/[lang]/device/cli-login-form.tsx
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "Ça n’a pas marché. Réessaie dans un instant."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "rl-7PV"

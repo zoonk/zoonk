@@ -24,7 +24,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -107,7 +107,7 @@ fun TimeAnswer(
             )
             when {
                 failed -> {
-                    TextButton(onClick = onRetry, modifier = Modifier.offset(x = -LocalButtonSize.current.textInset)) {
+                    TextButton(onClick = onRetry, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset)) {
                         Text(stringResource(R.string.plan_try_again))
                     }
                 }
@@ -119,7 +119,7 @@ fun TimeAnswer(
                 offered != null -> {
                     TextButton(
                         onClick = { onUseOffer(offered.minutes) },
-                        modifier = Modifier.offset(x = -LocalButtonSize.current.textInset),
+                        modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset),
                     ) {
                         Text(offerLabel(offered))
                     }

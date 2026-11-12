@@ -45,7 +45,6 @@ catalog:
   "@vercel/analytics": 2.0.1
   "@vitejs/plugin-react": 6.2.1
   ai: 7.0.164
-  botid: 1.5.12
   fast-check: 4.10.2
   icu-minify: 4.14.9
   jose: 6.2.15
@@ -78,6 +77,8 @@ overrides:
   "ai-sdk-provider-codex-cli>@openai/codex": "-"
   # Lesson math and buddy answers share one KaTeX, so they draw formulas alike.
   katex: "catalog:"
+  # Better Auth's passkey plugin asks for SimpleWebAuthn 13, whose certificate library loads before its Reflect polyfill in a Turbopack build ("tsyringe requires a reflect polyfill") and fails every app that imports auth. 14 loads the polyfill itself, is what the approval check already verifies with, and keeps the four functions the plugin calls.
+  "@better-auth/passkey>@simplewebauthn/server": 14.1.0
   # Audit remediation (Neon CLI 9 pins 2.0.4): 2.1.3 covers the serveStatic double-decoding and WebSocket handshake advisories in 2.0.x.
   "@hono/node-server@>=1.19.10 <2.1.3": ^2.1.3
   # Audit remediation (Neon CLI 9 pins 5.2.0): diff 5.2.2 stops parsePatch and applyPatch from looping on crafted patches.

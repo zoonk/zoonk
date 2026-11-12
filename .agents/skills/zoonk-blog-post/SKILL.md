@@ -51,6 +51,6 @@ Capture from the running app (`pnpm start`), using sample learners only (`pnpm d
 
 - The post goes in `apps/blog/src/app/(post)/<year>/<slug>/page.mdx`, with `metadata` (`title` and `description`) and `PostMeta`. Add it to the top of `apps/blog/src/app/posts.json` with the same date.
 - A release post's title is "Zoonk <version>: <what the reader gets>". The intro is two or three sentences on what's new for the reader.
-- End with the `Cta` block, as the 2.0 post does.
-- The components are in `apps/blog/src/components`: `Cover`, `Screens` and `Screen`, `CardLinks` and `Cta`.
+- End with `<StartCta />`, as the 2.0 post does.
+- The components are in `apps/blog/src/components`: `Cover`, `Screens` and `Screen`, `CardLinks` and `StartCta`.
 - Open the PR with [zoonk-pull-request](../zoonk-pull-request/SKILL.md).

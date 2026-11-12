@@ -5,8 +5,11 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import systemPrompt from "./answer-from-material.prompt.md";
+import taskPrompt from "./answer-from-material.prompt.md";
+
+const systemPrompt = `${taskPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 
 /**
  * Luna and Flash Lite both scored 10.0 on the answer-from-material eval; Luna is cheaper (27 Sep

@@ -75,6 +75,7 @@ async function writeFieldItemsStep({
   const { data, provenance } = await generateItems({
     analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
     count: FIELD_ITEMS_PER_SKILL,
+    country: skill.country,
     field,
     format: "multipleChoice",
     language: skill.language,

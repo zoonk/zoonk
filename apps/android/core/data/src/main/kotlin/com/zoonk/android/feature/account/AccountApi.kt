@@ -57,61 +57,20 @@ interface AccountApi {
     ): Boolean?
 }
 
-/** The request a bot-checked call proves, as App Attest's client data names it. */
-sealed interface BotProofRequest {
-    data object Guest : BotProofRequest
-
-    data class EmailCode(
-        val email: String,
-    ) : BotProofRequest
-
-    data class EmailSession(
-        val email: String,
-        val code: String,
-    ) : BotProofRequest
-
-    /** [credentialId] is the `id` of the restore key's registration. */
-    data class RestoreKey(
-        val credentialId: String,
-    ) : BotProofRequest
-}
-
 class LiveAccountApi(
     private val api: ApiClients,
-    private val integrity: IntegrityTokens?,
 ) : AccountApi {
     override suspend fun sendEmailCode(email: String) {
-        val proof = proof(BotProofRequest.EmailCode(email))
-        perform {
-            api.clients(null).sessions.createEmailSignInCode(
-                EmailSignInCodeRequest(email),
-                xPlayIntegrityChallenge = proof?.challenge,
-                xPlayIntegrityToken = proof?.token,
-            )
-        }
+        perform { api.clients(null).sessions.createEmailSignInCode(EmailSignInCodeRequest(email)) }
     }
 
     override suspend fun emailSession(
         email: String,
         code: String,
         current: AuthenticatedSession?,
-    ): String {
-        val proof = proof(BotProofRequest.EmailSession(email, code))
-        return perform {
-            api.clients(current).sessions.createEmailCodeSession(
-                EmailCodeSessionRequest(code, email),
-                xPlayIntegrityChallenge = proof?.challenge,
-                xPlayIntegrityToken = proof?.token,
-            )
-        }.token
-    }
+    ): String = perform { api.clients(current).sessions.createEmailCodeSession(EmailCodeSessionRequest(code, email)) }.token
 
-    override suspend fun guest(): String {
-        val proof = proof(BotProofRequest.Guest)
-        return perform {
-            api.clients(null).sessions.createGuestSession(xPlayIntegrityChallenge = proof?.challenge, xPlayIntegrityToken = proof?.token)
-        }.token
-    }
+    override suspend fun guest(): String = perform { api.clients(null).sessions.createGuestSession() }.token
 
     override suspend fun google(
         idToken: String,
@@ -154,6 +113,4 @@ class LiveAccountApi(
             }
         return perform { api.clients(session).account.deleteCurrentUser(body) }.appleAuthorizationRevoked
     }
-
-    private suspend fun proof(request: BotProofRequest) = integrity?.proof(api, request)
 }

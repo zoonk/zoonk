@@ -21,7 +21,6 @@ export type ProfileDraft = {
   text: string;
   studies: ProfileStudyDraft[];
   exclusive: ProfileExclusive | null;
-  consented: boolean;
 };
 
 const CHIP_QUESTIONS = new Set<ProfileQuestion>([
@@ -49,10 +48,12 @@ function isChipQuestion(question: ProfileQuestion): boolean {
   return CHIP_QUESTIONS.has(question);
 }
 
-export function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive {
+function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive | null {
   switch (question) {
-    case "work":
     case "conditions":
+      return null;
+    case "work":
+    case "addressForm":
       return "ratherNot";
     case "studies":
       return "nothing";
@@ -71,7 +72,7 @@ export function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive
 }
 
 function emptyProfileDraft(): ProfileDraft {
-  return { consented: false, exclusive: null, picks: [], studies: [], text: "" };
+  return { exclusive: null, picks: [], studies: [], text: "" };
 }
 
 export function getProfileJobPrefill(role: string | null): string | null {
@@ -87,7 +88,6 @@ export function toProfileDraft(view: ProfileQuestionView): ProfileDraft {
   const hasSaved = view.saved.picks.length > 0 || view.saved.text !== "" || studies.length > 0;
 
   return {
-    consented: view.id === "conditions" && view.saved.picks.length > 0,
     exclusive: view.status === "declined" && !hasSaved ? getDeclineExclusive(view.id) : null,
     picks: view.saved.picks,
     studies,
@@ -119,7 +119,7 @@ export function toggleProfilePick({
   id: string;
   question: ProfileQuestion;
 }): { capped: boolean; draft: ProfileDraft } {
-  if (question === "work") {
+  if (question === "work" || question === "addressForm") {
     return { capped: false, draft: { ...draft, exclusive: null, picks: [id] } };
   }
 
@@ -150,15 +150,7 @@ export function toggleProfilePick({
 
   const picks = picked ? draft.picks.filter((pick) => pick !== id) : [...draft.picks, id];
 
-  return {
-    capped: false,
-    draft: {
-      ...draft,
-      consented: question === "conditions" && picks.length > 0 && draft.consented,
-      exclusive: null,
-      picks,
-    },
-  };
+  return { capped: false, draft: { ...draft, exclusive: null, picks } };
 }
 
 /** Picking an exclusive row clears the screen; picking it again clears it too. */
@@ -188,6 +180,7 @@ function hasContent({
       return draft.studies.length > 0;
     case "work":
     case "conditions":
+    case "addressForm":
       return draft.picks.length > 0;
     case "learningSupport":
     case "tools":
@@ -207,17 +200,14 @@ function isComplete({ draft, question }: { draft: ProfileDraft; question: Profil
     return draft.studies.every((study) => study.field !== "other" || study.subject.trim() !== "");
   }
 
-  if (question === "conditions" && draft.consented) {
+  if (question === "conditions") {
     return !draft.picks.includes("other") || draft.text.trim() !== "";
   }
 
   return true;
 }
 
-/**
- * Onboarding sends a screen only once it holds an answer; Settings saves an empty screen as
- * declined, but never conditions picked without consent.
- */
+/** Onboarding sends a screen only once it holds an answer; Settings saves an empty screen as declined. */
 export function canSendProfileDraft({
   draft,
   from,
@@ -231,11 +221,7 @@ export function canSendProfileDraft({
     return false;
   }
 
-  if (from === "onboarding") {
-    return hasContent({ draft, question });
-  }
-
-  return question !== "conditions" || draft.picks.length === 0 || draft.consented;
+  return from === "settings" || hasContent({ draft, question });
 }
 
 function toAnswer({
@@ -260,15 +246,15 @@ function toAnswer({
         })),
       };
     case "conditions":
-      return draft.consented
-        ? {
-            conditions: draft.picks.map((condition) => ({
-              condition,
-              note: condition === "other" ? text || null : null,
-            })),
-            consented: true,
-          }
-        : { declined: true };
+      return {
+        conditions: draft.picks.map((condition) => ({
+          condition,
+          note: condition === "other" ? text || null : null,
+        })),
+        consented: true,
+      };
+    case "addressForm":
+      return { form: draft.picks[0] ?? null };
     case "learningSupport":
       return {
         needs: draft.picks.filter((pick) => pick !== NO_SOUND_EFFECTS),
@@ -287,7 +273,7 @@ function toAnswer({
   }
 }
 
-/** An empty or exclusive screen declines; unconsented conditions never leave the device. */
+/** An empty or exclusive screen declines. */
 export function toProfileAnswer({
   draft,
   memoryEnabled,

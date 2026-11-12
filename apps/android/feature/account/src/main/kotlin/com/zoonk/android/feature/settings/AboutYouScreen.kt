@@ -3,10 +3,11 @@ package com.zoonk.android.feature.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.fitInside
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.WindowInsetsRulers
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -59,6 +61,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
@@ -93,13 +96,8 @@ private fun AboutYouRows(
     if (!view.memoryEnabled) {
         Box(Modifier.padding(horizontal = LIST_ITEM_INSET)) { MemoryOffNotice(navigator) }
     }
-    val groups =
-        listOf(
-            R.string.profile_questions_your_day to view.questions.take(3),
-            R.string.profile_questions_for_fun to view.questions.drop(3).take(5),
-            R.string.profile_questions_how_learn to view.questions.takeLast(2),
-        )
-    groups.forEach { (title, questions) ->
+    ABOUT_YOU_GROUPS.forEach { (title, ids) ->
+        val questions = ids.mapNotNull { id -> view.questions.find { it.id == id } }
         Column {
             SectionHeader(stringResource(title), Modifier.padding(horizontal = LIST_ITEM_INSET))
             questions.forEachIndexed { index, question ->
@@ -107,13 +105,23 @@ private fun AboutYouRows(
                 ListRow(
                     headline = { Text(profileRowTitle(question.id)) },
                     supporting = { Text(profileSummary(question), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                    enabled = view.memoryEnabled || question.id in listOf(ProfileQuestion.CONDITIONS, ProfileQuestion.LEARNING_SUPPORT),
+                    enabled = view.memoryEnabled || question.id in HOW_YOU_LEARN,
                     onClick = { navigator.open(AppRoute.ProfileQuestionEdit(question.id.value)) },
                 )
             }
         }
     }
 }
+
+private val HOW_YOU_LEARN = listOf(ProfileQuestion.ADDRESS_FORM, ProfileQuestion.CONDITIONS, ProfileQuestion.LEARNING_SUPPORT)
+
+private val ABOUT_YOU_GROUPS =
+    listOf(
+        R.string.profile_questions_your_day to listOf(ProfileQuestion.WORK, ProfileQuestion.TOOLS, ProfileQuestion.STUDIES),
+        R.string.profile_questions_for_fun to
+            listOf(ProfileQuestion.WATCH, ProfileQuestion.LISTEN, ProfileQuestion.PLAY, ProfileQuestion.READ, ProfileQuestion.ACTIVITIES),
+        R.string.profile_questions_how_learn to HOW_YOU_LEARN,
+    )
 
 @Composable
 private fun profileRowTitle(question: ProfileQuestion): String =
@@ -129,12 +137,16 @@ private fun profileRowTitle(question: ProfileQuestion): String =
             ProfileQuestion.ACTIVITIES -> R.string.profile_questions_row_activities
             ProfileQuestion.CONDITIONS -> R.string.profile_questions_row_conditions
             ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_row_support
+            ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_row_address
         },
     )
 
 @Composable
 private fun profileSummary(question: ProfileQuestionView): String {
     if (question.status == ProfileQuestionView.Status.DECLINED) return stringResource(R.string.profile_questions_not_shared)
+    if (question.id == ProfileQuestion.ADDRESS_FORM && question.saved.picks.isNotEmpty()) {
+        return stringResource(R.string.profile_questions_saved)
+    }
     if (question.id == ProfileQuestion.CONDITIONS &&
         question.saved.picks.isNotEmpty()
     ) {
@@ -188,60 +200,67 @@ fun ProfileQuestionScreen(
             fresh !is LoadState.Loaded -> LoadState.Loading
             else -> state
         }
-    ProfilePage(navigator, stringResource(R.string.profile_questions_title)) {
-        when (val shown = editorState) {
-            is LoadState.Loaded -> {
-                val question = shown.value.questions.find { it.id.value == id }
-                if (question != null) {
-                    val editor = viewModel(key = id) { ProfileQuestionViewModel(app.profileQuestions, question, createSavedStateHandle()) }
-                    LaunchedEffect(question) { editor.read(question) }
-                    PageHeader(
-                        profileQuestionTitle(question.id),
-                        profileQuestionDescription(question.id),
-                        Modifier.padding(horizontal = LIST_ITEM_INSET),
-                    )
-                    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                        val canEdit =
-                            shown.value.memoryEnabled || question.id in listOf(ProfileQuestion.CONDITIONS, ProfileQuestion.LEARNING_SUPPORT)
-                        if (!canEdit) {
-                            MemoryOffNotice(navigator)
-                        }
-                        ProfileQuestionBody(
-                            question,
-                            editor.draft,
-                            editor::change,
-                            enabled = canEdit && !editor.saving && editor.source == question,
-                            memoryEnabled = shown.value.memoryEnabled,
+    val loaded = (editorState as? LoadState.Loaded)?.value
+    val question = loaded?.questions?.find { it.id.value == id }
+    val editor = question?.let { viewModel(key = id) { ProfileQuestionViewModel(app.profileQuestions, it, createSavedStateHandle()) } }
+    val memoryEnabled = loaded?.memoryEnabled == true
+    val canEdit = memoryEnabled || question?.id in HOW_YOU_LEARN
+    ProfilePage(
+        navigator,
+        stringResource(R.string.profile_questions_title),
+        bar =
+            if (question != null && editor != null) {
+                {
+                    if (editor.failed) {
+                        Text(
+                            stringResource(R.string.onboarding_save_failed),
+                            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                            color = MaterialTheme.colorScheme.error,
                         )
-                        if (editor.failed) {
-                            Text(
-                                stringResource(R.string.onboarding_save_failed),
-                                Modifier.semantics {
-                                    liveRegion =
-                                        LiveRegionMode.Polite
-                                },
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                        val empty = editor.draft.empty(question.id, shown.value.memoryEnabled)
-                        val valid = empty || editor.draft.valid(question.id, shown.value.memoryEnabled)
-                        val consent = question.id != ProfileQuestion.CONDITIONS || editor.draft.picks.isEmpty() || editor.draft.consented
-                        Button(
-                            onClick = { editor.save(question.id, shown.value.memoryEnabled) { navigator.back() } },
-                            busy = editor.saving,
-                            enabled =
-                                canEdit && valid && consent && !editor.saving && editor.source == question,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(stringResource(R.string.settings_save))
-                        }
                     }
-                } else {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(com.zoonk.android.navigation.AppTab.Today) })
+                    val empty = editor.draft.empty(question.id, memoryEnabled)
+                    Button(
+                        onClick = { editor.save(question.id, memoryEnabled) { navigator.back() } },
+                        busy = editor.saving,
+                        enabled =
+                            canEdit && (empty || editor.draft.valid(question.id, memoryEnabled)) && !editor.saving &&
+                                editor.source == question,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.settings_save))
+                    }
+                }
+            } else {
+                null
+            },
+    ) {
+        when {
+            question != null && editor != null -> {
+                LaunchedEffect(question) { editor.read(question) }
+                PageHeader(
+                    profileQuestionTitle(question.id),
+                    profileQuestionDescription(question.id),
+                    Modifier.padding(horizontal = LIST_ITEM_INSET),
+                )
+                Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    if (!canEdit) {
+                        MemoryOffNotice(navigator)
+                    }
+                    ProfileQuestionBody(
+                        question,
+                        editor.draft,
+                        editor::change,
+                        enabled = canEdit && !editor.saving && editor.source == question,
+                        memoryEnabled = memoryEnabled,
+                    )
                 }
             }
 
-            is LoadState.Failed -> {
+            loaded != null -> {
+                NotFoundMessage(onGoHome = { navigator.showRoot(com.zoonk.android.navigation.AppTab.Today) })
+            }
+
+            editorState is LoadState.Failed -> {
                 LoadFailedMessage(onRetry = { app.scope.launch { app.profileQuestions.questions.refresh() } })
             }
 
@@ -319,26 +338,48 @@ internal class ProfileQuestionViewModel(
 private fun ProfilePage(
     navigator: AppNavigator,
     title: String,
+    bar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     PageScaffold(onBack = { navigator.back() }, title = { Text(title) }) { padding ->
         BeforeFold {
-            Box(
+            Column(
                 it
                     .fillMaxSize()
                     .padding(padding)
                     .consumeWindowInsets(padding)
-                    .imePadding()
-                    .verticalScroll(rememberScrollState()),
-                contentAlignment = Alignment.TopCenter,
+                    .fitInside(WindowInsetsRulers.Ime.current),
             ) {
-                Column(
-                    Modifier.widthIn(max = 640.dp).fillMaxWidth().padding(vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.TopCenter,
                 ) {
-                    content()
+                    Column(
+                        Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        content()
+                    }
+                }
+                if (bar != null) {
+                    DockedActionBar {
+                        Column(
+                            Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .widthIn(max = PAGE_WIDTH)
+                                .fillMaxWidth()
+                                .padding(horizontal = LIST_ITEM_INSET, vertical = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            content = bar,
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+private val PAGE_WIDTH = 640.dp

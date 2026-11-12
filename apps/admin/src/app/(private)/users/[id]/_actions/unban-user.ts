@@ -18,7 +18,7 @@ export async function unbanUserAction(formData: FormData) {
   const { error } = await safeAsync(() =>
     prisma.user.update({
       data: { banExpires: null, banReason: null, banned: false },
-      where: { id: userId },
+      where: { OR: [{ role: { not: "admin" } }, { role: null }], id: userId },
     }),
   );
 

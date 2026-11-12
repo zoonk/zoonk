@@ -42,6 +42,11 @@
   "onboarding_change_date": "f6436978fb8d9af3cea9ece875b3a71a339dcaed452ed10dc2773dbed03319e6",
   "onboarding_choose_date": "022d735d2bca516e9859a552d1792850c3b5cf3ba75a5596cdb355341878f47d",
   "onboarding_continue": "64393e0ccd7cc3b6790c81b16e4b579c3d79095cf83307672fb4368f9e42ccb8",
+  "onboarding_country_description": "da5bcb450aa23bbd17a90d537d89c03ea586d481bcab195b77955b7c798375de",
+  "onboarding_country_from_home": "b24a2cdff13af208c072f1bc9b37d29719538582279a63d143a7984ad6b9e6ea",
+  "onboarding_country_other": "82fada3e67461075265881644845d7d848deebdc565b0590d6f82c94d3e2173a",
+  "onboarding_country_skip_default": "a2134a5432ae535677572160041e06c170df7812d07962c6ed11ecb6ce54badd",
+  "onboarding_country_title": "b20596ce456c0ad12463d7f23b239ac2a426b05d5bdef6fc61e68bd3e79fd8c8",
   "onboarding_course_build": "14763a5e1414c4f6f99e866e919fb8a2701b1aaa7a8a899fa4f4b7984a87edb4",
   "onboarding_course_chapter_description": "095b057c67d4e785891fa4086789b046be13ce6cd715a7ad614080380385d12b",
   "onboarding_course_chapters": "99fec4c02b107eca987853a6d63fa47d5754f5c17b2a066bd75c466a93c8edf0",
@@ -153,7 +158,6 @@
   "onboarding_limit_daily_explanations": "380cbc02ac0237eec5fdf3ac3a77d32ee8bd43b76eae35ea6c37662c11097242",
   "onboarding_limit_daily_goals": "b4e99cf3e9bc5a665415cfb7ba8f26872961893fd65e86a4124cd292788cfcc9",
   "onboarding_limit_guest": "609a5efc12907487641bda0aa43648aa7d5a9990cc40d670983b83c6691fc49c",
-  "onboarding_limit_guest_blocked": "56287b4907c683d1933185edaa603b1aeef0271782b600e8957516d996f17281",
   "onboarding_limit_monthly_explanations": "d3e6bc6e7afaf5a6d0a84841f1764268e2185e6eeea023dc79eff0a38f636bf0",
   "onboarding_limit_monthly_goals": "6685cf451113b255715af26ee6515dbbeade466d950105a71b4b41b8261ed238",
   "onboarding_limit_sign_up_required": "7a9e8d014c9eccbc139be7847a4019fc8d6e191e44430b8a9a798490bbcb68bb",
@@ -489,7 +493,6 @@
     <string name="onboarding_limit_daily_goals">현재 요금제에서는 오늘 새 목표를 더 시작할 수 없어요. 내일 다시 시도해 보세요.</string>
     <string name="onboarding_limit_guest">계정이 없으면 목표 하나만 진행할 수 있어요. 계속하려면 무료 계정을 만드세요.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">보안 검사로 계정 없이 시작할 수 없어요. 계속하려면 무료 계정을 만드세요.</string>
     <string name="onboarding_limit_monthly_explanations">무료 요금제에서는 이번 달에 새 질문을 더 할 수 없어요. 다음 달에 다시 시도해 보세요. 지금 계속하려면 Plus를 구독해 주세요.</string>
     <string name="onboarding_limit_monthly_goals">무료 요금제에서는 이번 달에 새 목표를 더 시작할 수 없어요. 다음 달에 다시 시도해 보세요. 지금 계속하려면 Plus를 구독해 주세요.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
@@ -1084,4 +1087,14 @@
     <string name="onboarding_variety_none">상관없어요</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">짝꿍과 대화 연습에는 %1$s을(를) 사용해요. 레슨과 오디오에는 %2$s을(를) 사용해요.</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">어느 나라를 기준으로 배울까요?</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">나라에 따라 배우는 내용이 달라요. 나중에 계획에서 바꿀 수 있어요.</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">다른 나라</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">건너뛰면: %1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">사는 나라</string>
 </resources>

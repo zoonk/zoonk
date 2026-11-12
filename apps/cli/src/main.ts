@@ -20,14 +20,21 @@ function apiError({ origin, result }: { origin: string; result: HttpResult }): C
     return notLoggedIn(origin);
   }
 
+  const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
+
+  if (result.status === FORBIDDEN && error?.code === "SCOPE_REQUIRED") {
+    return new CliError(
+      `This login to ${origin} can only read. Log in again to propose content fixes: ` +
+        `\`${loginCommand(origin)}\`.`,
+    );
+  }
+
   if (result.status === FORBIDDEN) {
     return new CliError(
       `This login to ${origin} has no staff access. Log in with a Zoonk staff account: ` +
         `\`${loginCommand(origin)}\`.`,
     );
   }
-
-  const error = isRecord(result.body) && isRecord(result.body.error) ? result.body.error : null;
 
   if (typeof error?.message !== "string") {
     return unexpectedResponse(result);

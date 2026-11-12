@@ -58,6 +58,8 @@ export type GenerateItemsParams = {
   format: ItemFormat;
   level: CourseLevel;
   language: string;
+  /** The country the skills are set in; null is the language's own. */
+  country: string | null;
   /** A language exam's questions practice it. */
   targetLanguage?: string | null;
   count?: number;
@@ -96,7 +98,7 @@ function buildUserPrompt(params: GenerateItemsParams): string {
     COUNT: ${count}${optionCount}${select}${entryLine}
     LEVEL: ${params.level}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatItemSetting({ language: params.language, seed, targetLanguage: params.targetLanguage })}
+${formatItemSetting({ country: params.country, language: params.language, seed, targetLanguage: params.targetLanguage })}
     SKILL: ${skill.name}
     SKILL_DESCRIPTION: ${skill.description}
     SKILL_EXAMPLE: ${skill.example ?? "none"}${fieldLine}

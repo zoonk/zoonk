@@ -204,11 +204,16 @@ private struct MonthYear: View {
 }
 
 /// Main's `RevealToday`: the goal's first day as Today will show it, drawn with Today's rows, the
-/// next one tagged where to start.
+/// next one tagged where to start. A step still to do opens from its row, as on Today.
 struct RevealToday: View {
   let day: StudyDay
   /// What `day` lists, in minutes.
   let minutes: Int
+  /// The position of the row opening, or of the one that failed to.
+  let busy: Int?
+  let failed: Int?
+  /// Nil while Start opens.
+  let open: ((StudyBlock) -> Void)?
 
   var body: some View {
     let next = day.nextBlock
@@ -223,11 +228,25 @@ struct RevealToday: View {
       Section {
         ForEach(rows, id: \.position) { block in
           let isNext = block.position == next?.position
-
-          BlockRow(
+          let row = BlockRow(
             block: block, view: nil, isNext: isNext, countsTowardMission: false,
-            tag: isNext ? tag : nil
-          )
+            isBusy: busy == block.position, failed: failed == block.position,
+            tag: isNext ? tag : nil)
+
+          Group {
+            if block.opensFromReveal {
+              Button {
+                open?(block)
+              } label: {
+                row
+              }
+              .tint(.primary)
+              .disabled(open == nil || (busy != nil && busy != block.position))
+              .accessibilityBusy(busy == block.position)
+            } else {
+              row
+            }
+          }
           .currentRow(isNext)
         }
       } header: {
@@ -240,6 +259,12 @@ struct RevealToday: View {
         }
       }
     }
+  }
+}
+
+extension StudyBlock {
+  var opensFromReveal: Bool {
+    !isFinished && waitReason == nil
   }
 }
 

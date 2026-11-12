@@ -124,13 +124,13 @@ export async function finishGoalRebuild({
       const failedAt = new Date();
       const ownFailure = failed && saved?.goal.generationRunId === generationId;
 
-      if (ownFailure) {
+      if (ownFailure && saved.goal.planRevealedAt === null) {
         await tx.plan.updateMany({ data: { buildFailedAt: failedAt }, where: { goalId } });
       }
 
       const graphSaved = isJsonObject(current.input) && current.input.graphSaved === true;
 
-      if (ownFailure && !saved.goal.planRevealedAt && !graphSaved) {
+      if (ownFailure && !graphSaved) {
         await tx.followUp.update({ data: { failedAt }, where: { id: row.id } });
       } else {
         await tx.followUp.deleteMany({ where: { id: row.id, revision: followUp.revision } });

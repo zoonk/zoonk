@@ -108,6 +108,9 @@ data class DayStep(
     val isFinished: Boolean
         get() = status == StudyBlock.Status.COMPLETED || status == StudyBlock.Status.SKIPPED
 
+    val canOpen: Boolean
+        get() = !isFinished && waitReason == null
+
     /**
      * A finished lesson opens again on its own, outside the session. A skipped one comes back in the
      * plan, and finished review or practice was made for that day, so neither opens.

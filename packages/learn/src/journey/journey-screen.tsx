@@ -18,6 +18,7 @@ import { PlanEditor } from "../plan/plan-editor";
 import { type PlanEditorSection } from "../plan/plan-editor-sections";
 import { PlanFocusTest } from "../plan/plan-focus-test";
 import { PlanProperties } from "../plan/plan-properties";
+import { PlanRebuildNotice } from "../plan/plan-rebuild-notice";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
 import { type PlanEnd } from "../plan/plan-suggestion-context";
@@ -150,6 +151,8 @@ function JourneyBody({
             <AdjustPlanButton onAdjust={() => editor.open()} />
             <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>
+
+          <PlanRebuildNotice />
 
           <PlanRoadmap
             className="sm:hidden"

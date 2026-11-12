@@ -147,7 +147,12 @@ const context = { analytics: { distinctId: "learner" }, workflowRunId: "goal-run
 
 function oneCoursePerSkill(keys: string[]): GoalSkillGraph {
   return {
-    courses: keys.map((key) => ({ key, levels: ["beginner"], title: `Course ${key}` })),
+    courses: keys.map((key) => ({
+      countrySpecific: false,
+      key,
+      levels: ["beginner"],
+      title: `Course ${key}`,
+    })),
     estimatedHours: 10,
     phases: [{ estimatedHours: 10, milestone: "Milestone", title: "Phase 1" }],
     skills: keys.map((key) => ({

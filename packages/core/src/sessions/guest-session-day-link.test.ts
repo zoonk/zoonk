@@ -20,11 +20,6 @@ import { toBlockPayload } from "./block-payload";
 import { BRAIN_POWER_BONUS } from "./brain-power";
 import { finishStudyBlock } from "./finish-study-block";
 
-/** BotID needs Vercel; Better Auth linking and all database operations remain real. */
-vi.mock("../../../auth/node_modules/botid/server", () => ({
-  checkBotId: vi.fn().mockResolvedValue({ isBot: false }),
-}));
-
 async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly") {
   const [skill, goal] = await Promise.all([skillFixture(), goalFixture({ userId })]);
   const planItemId = crypto.randomUUID();

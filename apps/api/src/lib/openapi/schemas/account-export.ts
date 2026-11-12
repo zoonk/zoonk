@@ -1,5 +1,5 @@
 import { profileQuestionSchema } from "@zoonk/core/profile/questions/contract";
-import { LearnerConditionKind, LearningNeed } from "@zoonk/db/enums";
+import { AddressForm, LearnerConditionKind, LearningNeed } from "@zoonk/db/enums";
 import { z } from "zod";
 import { learningProfileSchema } from "./learning-profile";
 import { memoryExportSchema } from "./memory";
@@ -17,6 +17,10 @@ export const accountDataExportSchema = z
         username: z.string().nullable(),
       })
       .meta({ description: "The account's name, username, email and creation date" }),
+    addressForm: z
+      .enum(AddressForm)
+      .nullable()
+      .meta({ description: "How the learner asked to be addressed; null when not chosen" }),
     answers: z.object({ attempts: rowsSchema }).meta({ description: "Every answer" }),
     buddy: z
       .object({ conversations: rowsSchema, exampleLines: rowsSchema })

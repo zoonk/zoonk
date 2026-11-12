@@ -29,6 +29,7 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
             <SettingsNavbar />
           </Suspense>
         }
+        parents={[{ href: getMenu("aboutYou").url, title: t("About you") }]}
       >
         {children}
       </SectionPage>

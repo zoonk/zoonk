@@ -27,6 +27,9 @@ import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
 
+/** These goals are in English, whose "you" never marks gender, so the address question stays in Settings. */
+const ENGLISH_PROFILE_STEPS = PROFILE_QUESTIONS.filter((question) => question !== "addressForm");
+
 const MEMORY_PROVENANCE = {
   generatedAt: "2026-10-08T12:00:00.000Z",
   model: "openai/gpt-6-luna",
@@ -251,7 +254,7 @@ describe("onboarding a new goal", () => {
           "purpose",
           "level",
           "targetDate",
-          ...PROFILE_QUESTIONS,
+          ...ENGLISH_PROFILE_STEPS,
           "buddy",
           "placement",
           "schedule",
@@ -406,7 +409,7 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { level: "basic", question: "level" } });
 
     await expect(getSteps(goalId)).resolves.toStrictEqual([
-      ...PROFILE_QUESTIONS,
+      ...ENGLISH_PROFILE_STEPS,
       "buddy",
       "placement",
       "schedule",
@@ -788,7 +791,7 @@ describe("onboarding a new goal", () => {
     await expect(getSteps(goal?.id ?? "")).resolves.toStrictEqual([
       "target",
       "level",
-      ...PROFILE_QUESTIONS,
+      ...ENGLISH_PROFILE_STEPS,
       "placement",
       "schedule",
       "plan",

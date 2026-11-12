@@ -42,6 +42,11 @@
   "onboarding_change_date": "b071660b0d568f8a2693de8a969230b1cf06867c9ebf1e7092b700aa94af518b",
   "onboarding_choose_date": "c9e912c3ece8fcbc2ba03c9310d3863755d544a975aca563da7cab5df5f4aa12",
   "onboarding_continue": "9df52770977ac6b6565f3132a901b54600ad82674dae33f75cb2e55a7769d171",
+  "onboarding_country_description": "5efb2461e973eac172c3c847bf03091900e1dc943af0cf9f2c1bb3a8919ed08f",
+  "onboarding_country_from_home": "b151c40c804b9812b88ef7e8f474a89235e0af9887708d1d08df771808be973f",
+  "onboarding_country_other": "ab57bef6494e4ba6d6b3c48ac8f41877a92843fe210a5370964ac46158f5185f",
+  "onboarding_country_skip_default": "9ccd3223435184000be11f95d88626ad679027e9e809a11fbdce6ce7dc24a39d",
+  "onboarding_country_title": "4f418de36534abbfab024f0f9851bbe17b103b8aab585fac72d2e6a091922e84",
   "onboarding_course_build": "f7b03256c7c4602e8fe74fe6d4e3f9534066f319ae779d05862411b1250ccef2",
   "onboarding_course_chapter_description": "cd4460cd5446d9414d3ce127184497896505234dda02f5085736fbf1f1073ee6",
   "onboarding_course_chapters": "3006bcdb0bd65e90138b3fcddf249938dd571b0f3127298aff391f87684341cd",
@@ -153,7 +158,6 @@
   "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
-  "onboarding_limit_guest_blocked": "fd33f4ba4430cd629a269b7be9e0d0ebe7ddbee397257cf702ed6cd860b08ca0",
   "onboarding_limit_monthly_explanations": "ddb33b219c6de18a63c48f1bbeb2d135c92ba917d16dc80a26effa933d63d9b7",
   "onboarding_limit_monthly_goals": "6d69741c7e9fe04eb0c022e8b91bf5251bda41fc804126d9b5519c0e03e55e50",
   "onboarding_limit_sign_up_required": "536e537ec53aeb02218c5fb948c96ea6db3fb5d9ea544aaf37db0b78ca13555e",
@@ -489,7 +493,6 @@
     <string name="onboarding_limit_daily_goals">今日始めた新しい目標の数が、ご利用のプランの上限に達しました。明日もう一度試してください。</string>
     <string name="onboarding_limit_guest">アカウントなしで取り組める目標は1つです。続けるには、無料アカウントを作成してください。</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">セキュリティチェックにより、アカウントなしでは始められません。無料アカウントを作成して続けてください。</string>
     <string name="onboarding_limit_monthly_explanations">今月の新しい質問の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <string name="onboarding_limit_monthly_goals">今月始めた新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
@@ -1084,4 +1087,14 @@
     <string name="onboarding_variety_none">指定なし</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">相棒とのやり取りや会話練習では%1$sを使います。レッスンとその音声では%2$sを使います。</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">どの国に合わせたレッスンにしますか？</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">ここで学ぶ内容は国によって変わります。あとで学習計画から変更できます。</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">ほかの国</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">スキップした場合：%1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">住んでいる国</string>
 </resources>

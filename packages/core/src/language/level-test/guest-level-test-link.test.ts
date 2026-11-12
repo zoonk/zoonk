@@ -12,11 +12,6 @@ import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { type LevelTestBank } from "./level-test-contract";
 
-/** BotID requires Vercel; sign-in, ownership transfer and all database writes stay real. */
-vi.mock("../../../../auth/node_modules/botid/server", () => ({
-  checkBotId: vi.fn().mockResolvedValue({ isBot: false }),
-}));
-
 async function createAnsweredTest(targetLanguage = "fr") {
   const [account, guest] = await Promise.all([
     createExistingAccount({ createdAt: new Date("2026-09-01T00:00:00Z") }),

@@ -83,7 +83,10 @@ export async function buildPlanSkillGraph({
       select: { prerequisiteId: true, skillId: true },
       where: { prerequisiteId: { in: skillIds }, skillId: { in: skillIds } },
     }),
-    prisma.course.findMany({ select: { id: true, title: true }, where: { id: { in: courseIds } } }),
+    prisma.course.findMany({
+      select: { country: true, id: true, title: true },
+      where: { id: { in: courseIds } },
+    }),
   ]);
 
   const prerequisites = new Map(
@@ -103,7 +106,12 @@ export async function buildPlanSkillGraph({
     courseIdsByKey: Object.fromEntries(courseIds.map((id) => [id, id])),
     graph: {
       ...(planGraph.courseOutline && { courseOutline: planGraph.courseOutline }),
-      courses: courses.map((course) => ({ key: course.id, levels: [], title: course.title })),
+      courses: courses.map((course) => ({
+        countrySpecific: Boolean(course.country),
+        key: course.id,
+        levels: [],
+        title: course.title,
+      })),
       estimatedHours: toHours(planGraph.skills),
       phases: planGraph.phases.map((phase, index) => ({
         estimatedHours: toHours(planGraph.skills.filter((skill) => skill.phase === index)),

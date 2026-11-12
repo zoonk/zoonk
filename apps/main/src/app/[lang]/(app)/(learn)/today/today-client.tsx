@@ -33,6 +33,7 @@ import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
+import { useTodayVisit } from "@zoonk/learn/today/visit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type TodayScreenData } from "./today-view";
@@ -58,6 +59,9 @@ function usePrefetchSessionFrame(href: string) {
     };
   }, [href, router]);
 }
+
+/** `answered` is null when the learner dismissed the request. */
+type UploadAnswer = { answered: GoalUploadRequest | null; visit: number };
 
 /**
  * An upload ask answered here shows its thanks while the learner stays, whatever Today read since,
@@ -195,8 +199,9 @@ export function TodayClient({
     showIntro,
   });
 
-  const [answeredUpload, setAnsweredUpload] = useState<GoalUploadRequest | null>(null);
-  const [uploadDismissed, setUploadDismissed] = useState(false);
+  const visit = useTodayVisit();
+  const [upload, setUpload] = useState<UploadAnswer | null>(null);
+  const uploadThisVisit = upload?.visit === visit ? upload : null;
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
   const sessionHref = getSessionHref({ goalId, limit: null });
@@ -286,12 +291,12 @@ export function TodayClient({
       mistakes={data.mistakes}
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
       notices={toHostNotices({
-        answeredUpload,
+        answeredUpload: uploadThisVisit?.answered ?? null,
         data,
         goalId: today.goal.id,
-        onUploadAnswered: setAnsweredUpload,
-        onUploadDismissed: () => setUploadDismissed(true),
-        uploadDismissed,
+        onUploadAnswered: (request) => setUpload({ answered: request, visit }),
+        onUploadDismissed: () => setUpload({ answered: null, visit }),
+        uploadDismissed: uploadThisVisit !== null,
       })}
       planEnd={data.planEnd}
       speakingEntry={

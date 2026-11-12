@@ -5,14 +5,13 @@
   "profile_questions_activities_placeholder": "c4ea7a1677902aac6a1c2ae74ae42282b4cd2e89a4d2bd15e32ce52909789e85",
   "profile_questions_activities_title": "69df7d2459221d53ce8f4b370c0c4243f2a83d329937c9ccf23b345f2a45cc0e",
   "profile_questions_add": "e8b231bf87d02431bc4fcd6de16144e7ff1c50dbc5965847ba7ee618877cab8b",
+  "profile_questions_address_description": "e978a5b986f22e96d6edf36c223cb8fdf58e122fdef192dbb4430a5999dee6cc",
+  "profile_questions_address_title": "d9b43ea257959ea0bd80acf62cadd1aedbe564d122b47970547716d29da94a8b",
   "profile_questions_cap": "72ad43cecd26f3d6ddfe1029d2c7f6c77594d6c6140405f39a6ff311d9dce6d6",
   "profile_questions_condition_note": "0001558653d4e1ab3513e6e7420e84dd4882eb7c1996a2d0ca046f12f933f107",
-  "profile_questions_conditions_description": "1d930fbfbcbea8f030a705718f941c28853b9ed4d0ed1943b13e8cb0d6624738",
-  "profile_questions_conditions_next": "cd4e12e41fe9dd1b566da570ebd627d309527c60bf72ea5e1d5824823c3fda78",
+  "profile_questions_conditions_description": "a063195c6f0544127dd5ff350f9e6c3e5c6b7943b7f96810235b1fdf0785d0f5",
   "profile_questions_conditions_saved": "86ec00d74d7376305826ab16e72230ac4696a80d1b6e49bffc06d6faa40b27b4",
   "profile_questions_conditions_title": "99566990e145924f88e9f0572425f61bbeac8231772071820417c64545d5f7c7",
-  "profile_questions_consent": "e89a668f2fe6eb0b63ceecf39149496e54d9e0ccb03c678fa7347ed1d881333b",
-  "profile_questions_consent_help": "af53550af8d2169cacdbf7fec3dad609462fcf84d4c4156a4b29779fd27e0c63",
   "profile_questions_description": "eff7545ef4c45ab4756611f5f39c776e07f544fb4ec1e527336f86a79e93f27f",
   "profile_questions_earlier_answer": "5bc8c6f824ab9ff113e54a0bed254166ff467a9539ea289abd76fa3b44d7f352",
   "profile_questions_for_fun": "d18f084b9524305cad455cb36112c39e7d7629da45ea8e6562001a227dddb9cb",
@@ -41,6 +40,7 @@
   "profile_questions_read_placeholder": "88296d0d230fecc1b5bc085d84efb1a82ba41e3242f935f2d0fc9c65d8ad8a28",
   "profile_questions_read_title": "dde79dbf3991dcfaf886cbf3056708a96767fdf4f5018d8d02abafa2b7c1d169",
   "profile_questions_row_activities": "1151c4644d38cf8468e6c7fd4c4fcec02f99fe7ce84529af44cce212c0dac406",
+  "profile_questions_row_address": "5ec6ef14c4bf9dfbb823e75ae52bc6b405ad3b60c524a3a30c60306e02d47c49",
   "profile_questions_row_conditions": "3ff8370d8a3cdbb6fc44b2cd3fca09ff01a8c336f61c776cd6eda1b7a908829f",
   "profile_questions_row_listen": "cbe046b2881de4b4ad2543150f96f37532d75576e56a414511eba2bea7068c2f",
   "profile_questions_row_play": "e5a209ed65f7d4f7a4bbe020e07648b611257cc07d6badd3ad0952800ac7c50a",
@@ -51,6 +51,7 @@
   "profile_questions_row_watch": "511696ce09187f6038168d70edc46f30efb744339af0acf2dcc99b9f8fe9e71e",
   "profile_questions_row_work": "a67aa21eb8edfc4a750288a2562bc9997710f26e31f61ef55322ed8538d0369a",
   "profile_questions_save_start_lesson": "147725cf0e5d68e3682a9b41314feabb0215f484a4cb5c60738bf5d67783dec0",
+  "profile_questions_saved": "0baeaeea295af9684d34a2c8730cfac2b77fdae6181182c7c8618abeef20c2d7",
   "profile_questions_skip_all": "36d571455753b0f6e6e7d9e2cfe7bbf03261ccb8355e10747077703a881810b0",
   "profile_questions_skip_all_label": "22f08f8f48f82332e38495c71a420dec97ae968962e58c9bc7dc89f4e864ee85",
   "profile_questions_something_else": "c7e094cd6eadc3a5c9c0c82dfc5077ce8016cca9109b12e8016cf78faecb863a",
@@ -123,13 +124,12 @@
     <string name="profile_questions_activities_favorites">Co jeszcze cię interesuje? (opcjonalnie)</string>
     <string name="profile_questions_activities_placeholder">Np. pieczenie chleba, samochody, astronomia</string>
     <string name="profile_questions_conditions_title">Czy coś z tej listy cię dotyczy?</string>
-    <string name="profile_questions_conditions_description">Opcjonalnie. Niczego nie zapiszemy bez twojej zgody.</string>
-    <string name="profile_questions_conditions_next">Opcjonalnie. Na następnym ekranie podpowiemy, co często pomaga. Niczego nie zapiszemy bez twojej zgody.</string>
+    <string name="profile_questions_conditions_description">Opcjonalnie. Wybrane opcje zapisujemy w twoim profilu, dzięki czemu twój kumpel może lepiej dostosować się do ciebie. Możesz je w każdej chwili usunąć w Ustawieniach.</string>
     <string name="profile_questions_condition_note">Co powinniśmy wiedzieć?</string>
-    <string name="profile_questions_consent">Chcę zapisać te informacje w swoim profilu</string>
-    <string name="profile_questions_consent_help">Zoonk wykorzystuje te informacje, by dopasowywać się do ciebie teraz i w przyszłości. Nigdy ich nie udostępniamy ani nie używamy w przykładach na lekcjach. Możesz je usunąć w każdej chwili w ustawieniach.</string>
     <string name="profile_questions_support_title">Co pomaga ci w nauce?</string>
     <string name="profile_questions_support_description">Wybierz wszystko, co ci pomaga. Nie musisz niczego nazywać ani mieć diagnozy.</string>
+    <string name="profile_questions_address_title">Jak mamy się do ciebie zwracać?</string>
+    <string name="profile_questions_address_description">Twój kumpel będzie się tak do ciebie zwracać. Takich form użyjemy też w informacjach zwrotnych. Lekcje pozostaną bez zmian.</string>
     <string name="profile_questions_suggested">Na podstawie twoich odpowiedzi sprawdziliśmy, co często pomaga. Zmień, co chcesz.</string>
     <string name="profile_questions_nothing_particular">Nic szczególnego</string>
     <string name="profile_questions_something_else">+ Coś jeszcze, co mi pomaga</string>
@@ -157,8 +157,10 @@
     <string name="profile_questions_row_activities">Zajęcia</string>
     <string name="profile_questions_row_conditions">Stan zdrowia</string>
     <string name="profile_questions_row_support">Co pomaga ci w nauce</string>
+    <string name="profile_questions_row_address">Sposób zwracania się do ciebie</string>
     <string name="profile_questions_not_answered">Brak odpowiedzi</string>
     <string name="profile_questions_not_shared">Nie podano</string>
+    <string name="profile_questions_saved">Zapisano</string>
     <string name="profile_questions_add">Dodaj</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">Zapisano %1$d</item>

@@ -45,7 +45,9 @@ describe(findTwinCandidates, () => {
 
 describe(mergeSkillTwins, () => {
   const graph: SkillGraph = {
-    courses: [{ key: "portugues", levels: ["intermediate"], title: "Português" }],
+    courses: [
+      { countrySpecific: false, key: "portugues", levels: ["intermediate"], title: "Português" },
+    ],
     estimatedHours: 1.2,
     phases: [
       { estimatedHours: 0.6, milestone: "Ler", title: "Base" },

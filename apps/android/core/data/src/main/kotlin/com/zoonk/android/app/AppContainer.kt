@@ -56,6 +56,8 @@ import com.zoonk.android.feature.completedlessons.CompletedLessonsStore
 import com.zoonk.android.feature.completedlessons.LiveCompletedLessonsApi
 import com.zoonk.android.feature.conversation.ConversationStore
 import com.zoonk.android.feature.conversation.LiveConversationApi
+import com.zoonk.android.feature.country.CountryStore
+import com.zoonk.android.feature.country.LiveCountryApi
 import com.zoonk.android.feature.essay.EssayStore
 import com.zoonk.android.feature.essay.LiveEssayApi
 import com.zoonk.android.feature.exam.ExamStore
@@ -223,7 +225,7 @@ class AppContainer private constructor(
     val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 
     // Account and Plus (L1).
-    val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
+    val account = AccountStore(LiveAccountApi(api), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val profileQuestions = ProfileQuestionsStore(LiveProfileQuestionsApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
@@ -246,7 +248,17 @@ class AppContainer private constructor(
                 },
         )
 
-    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::setRegion, plans::decideChange)
+    val tutor =
+        TutorStore(
+            LiveTutorApi(api),
+            cache,
+            sessions,
+            memory::undo,
+            plans::setRegion,
+            plans::setContentCountry,
+            learningProfile::setHomeCountry,
+            plans::decideChange,
+        )
     val earlierQuestions =
         EarlierQuestionsStore(
             api = { session, cursor -> perform { api.clients(session).lessons.listEarlierQuestions(cursor) } },
@@ -345,6 +357,7 @@ class AppContainer private constructor(
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
 
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
+    val countries = CountryStore(LiveCountryApi(api), cache)
     val stats = StatsStore(LiveStatsApi(api), cache)
 
     // Exams and mocks (L7).

@@ -41,6 +41,7 @@ export async function loadGoalCurriculumStep(goalId: string): Promise<GoalCurric
 
 function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
   return {
+    country: goal.contentCountry,
     generalGoal: null,
     language: goal.language,
     ownerId: goal.userId,
@@ -66,7 +67,13 @@ export async function decideGoalScopeStep({
   "use step";
 
   const { goal, startedCourse } = inputs;
-  const shared = { language: goal.language, ownerId: null, targetLanguage: goal.targetLanguage };
+
+  const shared = {
+    country: goal.contentCountry,
+    language: goal.language,
+    ownerId: null,
+    targetLanguage: goal.targetLanguage,
+  };
 
   if (startedCourse) {
     const scope = getStartedCourseScope({ course: startedCourse, goal });
@@ -147,12 +154,14 @@ export async function checkGraphCoverageStep({
 
 export async function saveGoalSkillsStep({
   analytics,
+  courses,
   provenance,
   scope,
   serviceTier,
   skills,
   workflowRunId,
 }: RunScope & {
+  courses?: GoalSkillGraph["courses"];
   provenance: GraphProvenance;
   scope: CurriculumScope;
   serviceTier?: ServiceTier;
@@ -162,6 +171,7 @@ export async function saveGoalSkillsStep({
 
   return saveGoalSkills({
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    courses,
     provenance,
     scope,
     serviceTier,

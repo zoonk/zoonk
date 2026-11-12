@@ -1,6 +1,7 @@
 /** The values live in `packages/ui/src/styles/globals.css`; `/design/color` shows them live. */
 
 import { BELT_GROUP } from "./belts";
+import { VIZ_GROUP } from "./viz";
 
 export type ColorToken = {
   avoid?: string;
@@ -256,32 +257,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
       },
     ],
   },
-  {
-    id: "viz",
-    intro:
-      "Three hues for data inside interactive activities, apart from every meaning outside the canvas. Never blue (progress) or violet (Brain Power).",
-    title: "Activity visuals",
-    tokens: [
-      {
-        meaning: "The thing the learner moves.",
-        name: "viz-accent",
-        text: true,
-        use: "A slider's point, a moved body.",
-      },
-      {
-        meaning: "A target, a highlight or a prize.",
-        name: "viz-highlight",
-        text: true,
-        use: "A target line, look here inside a chart.",
-      },
-      {
-        meaning: "A second series.",
-        name: "viz-secondary",
-        text: true,
-        use: "The other line or set in a comparison.",
-      },
-    ],
-  },
+  VIZ_GROUP,
   BELT_GROUP,
 ];
 

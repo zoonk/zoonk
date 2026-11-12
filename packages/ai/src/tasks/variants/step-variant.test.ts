@@ -30,7 +30,13 @@ const written = {
   visual: null,
 };
 
-const params = { language: "en", lessonTitle: "Averages", level: "beginner", screen } as const;
+const params = {
+  country: null,
+  language: "en",
+  lessonTitle: "Averages",
+  level: "beginner",
+  screen,
+} as const;
 
 describe(generateStepVariant, () => {
   beforeEach(() => {

@@ -57,12 +57,16 @@
   "tutor_offer_choose": "ed91e7580dfc17d7e673a2af082a98ffc7bfc9d429a22149f55e991ef91d53ae",
   "tutor_offer_choose_focus": "f83306c5374a5e590c38a86a4e72aa694462b7338a1a1470889dfc678e5f1821",
   "tutor_offer_choose_focus_description": "e40d6b630489501fe6dd8f5249ddb135b72a40292873811efaac006b954ededd",
+  "tutor_offer_country_applied": "0d94ab6b78955b043b80bbfb2b2eeddb4d3070dad6c2baba2d1d7a3945e3cdae",
+  "tutor_offer_country_description": "e7525dff32628e0b73a601886b023f696859ce5622a5d6ffaabc7d50c558f3a6",
   "tutor_offer_essay_biweekly": "fe6451741876b12a0d92fbe72398181e00a217665080546614e684dea9b51338",
   "tutor_offer_essay_final_weeks": "da1c2614b5145634ac7ee814aba2c7dd41a056ca662ccc91a739ee6e247476d8",
   "tutor_offer_essay_plus": "91672936cdfd76700264369b2f74b460b42304dfd74dff015d956c5135d93ede",
   "tutor_offer_essay_weekly": "d36af3f84a68f7d687fb1e9b97a73ea903981a14a070f8c31311ea9083f5e6f1",
   "tutor_offer_goal": "bc4682eac036a3c3b1b71a87eb6e153023aba0210004251061bfaa4a9751e89d",
   "tutor_offer_goal_limit": "283d0c5dfeec029e1e29f8d7d511a6781bd2ac4c7c0f5f9f94798b46931669bd",
+  "tutor_offer_home_country_saved": "1e4741e3664c741ac73bed8060eaa325449a6eb845bd572fa22c8b1cacddcd6d",
+  "tutor_offer_home_country_title": "6780258adfbba139ee1efb1c8e2a1e3d73f1199a61f349a0ac3cdfe794a138f7",
   "tutor_offer_logbook": "1b6e3c0845a0387d0298a167ce69a072aee4504985fd5ace83c4c7f3b1ba92f1",
   "tutor_offer_logbook_description": "536831fd6c7b9539585300282bd7e7c9d56bce412666538a67b2fab15a7f4132",
   "tutor_offer_manage": "08663edebad949480acce71052bbceb65c354aea61acd804c4f9313012893a35",
@@ -280,4 +284,12 @@
     <string name="tutor_today">오늘</string>
     <string name="tutor_yesterday">어제</string>
     <string name="tutor_page_sign_up">무료 계정을 만들어 대화를 시작해 보세요.</string>
+    <!-- A buddy's card offering to save where the learner lives; %1$s is the country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="tutor_offer_home_country_title">사는 나라: %1$s</string>
+    <!-- A buddy's card offering a new content country for the plan, under its title "Content country: …". -->
+    <string name="tutor_offer_country_description">적용하면 이 나라에 맞춰 계획을 다시 만들어요. 끝낸 레슨은 완료 상태로 남아요.</string>
+    <!-- Replaces that card's Apply button once the country is saved. -->
+    <string name="tutor_offer_country_applied">저장했어요. 새 계획을 준비하고 있어요. 그동안에도 계속 공부할 수 있어요.</string>
+    <!-- Replaces the where-you-live card's Save button once it's saved. -->
+    <string name="tutor_offer_home_country_saved">저장했어요. 환경설정에서 바꿀 수 있어요.</string>
 </resources>

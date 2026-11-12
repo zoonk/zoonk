@@ -107,7 +107,7 @@ function buildUserPrompt(params: WriteListeningSetParams): string {
     PLAYS: ${params.plays}
     SKILLS:
 ${formatSkills(params.skills)}
-    ${formatCast({ language: params.scriptLanguage, seed: `${params.exam}:${params.task}` })}
+    ${formatCast({ country: null, language: params.scriptLanguage, seed: `${params.exam}:${params.task}` })}
   `;
 }
 

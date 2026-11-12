@@ -5,37 +5,6 @@ import XCTest
 @testable import Zoonk
 
 final class AccountAPITests: XCTestCase {
-  func testDeletionCodeDeliveryForwardsExistingBearer() async throws {
-    let api = AccountAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!,
-        transport: EmailCodeTransport(expectedToken: "existing-session")))
-    try await api.sendEmailCode(email: "learner@zoonk.test", token: "existing-session")
-  }
-
-  func testLoginCodeDeliveryRemainsAnonymous() async throws {
-    let api = AccountAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!,
-        transport: EmailCodeTransport(expectedToken: nil)))
-    try await api.sendEmailCode(email: "learner@zoonk.test")
-  }
-
-  func testProductionBotGuardIsTypedDeliveryError() async {
-    let api = AccountAPI(
-      clients: APIClientFactory(
-        baseURL: URL(string: "https://api.zoonk.test")!,
-        transport: EmailPolicyTransport(code: "BOT_DETECTED", status: .forbidden)))
-    do {
-      try await api.sendEmailCode(email: "learner@zoonk.test", token: "existing-session")
-      XCTFail("Expected the production guard to reject delivery")
-    } catch let error as AccountAPIError {
-      XCTAssertEqual(error, .botDetected)
-    } catch {
-      XCTFail("Unexpected error: \(error)")
-    }
-  }
-
   func testDisposableEmailRejectionRemainsDistinctWhenRequestingCode() async {
     let api = AccountAPI(
       clients: APIClientFactory(
@@ -173,7 +142,6 @@ private enum CurrentAccountTransportError: Error {
 
 private struct EmailPolicyTransport: ClientTransport {
   let code: String
-  var status: HTTPResponse.Status = .badRequest
 
   func send(
     _ request: HTTPRequest,
@@ -185,7 +153,7 @@ private struct EmailPolicyTransport: ClientTransport {
     headerFields[.contentType] = "application/json"
 
     return (
-      HTTPResponse(status: status, headerFields: headerFields),
+      HTTPResponse(status: .badRequest, headerFields: headerFields),
       HTTPBody(#"{"error":{"code":"\#(code)","message":"Email cannot be used"}}"#)
     )
   }
@@ -282,22 +250,5 @@ private struct CancelledURLTransport: ClientTransport {
     operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     throw URLError(.cancelled)
-  }
-}
-
-private struct EmailCodeTransport: ClientTransport {
-  let expectedToken: String?
-
-  func send(_ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String)
-    async throws -> (HTTPResponse, HTTPBody?)
-  {
-    XCTAssertEqual(operationID, "createEmailSignInCode")
-    XCTAssertEqual(request.headerFields[.authorization], expectedToken.map { "Bearer \($0)" })
-    let body = try XCTUnwrap(body)
-    let payload = try await String(collecting: body, upTo: 1_024)
-    XCTAssertEqual(
-      try JSONSerialization.jsonObject(with: Data(payload.utf8)) as? [String: String],
-      ["email": "learner@zoonk.test"])
-    return (HTTPResponse(status: .noContent), nil)
   }
 }

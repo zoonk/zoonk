@@ -16,6 +16,7 @@ struct PlanScreen: View {
 }
 
 private struct GoalPlanView: View {
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var store
 
   let goal: LearnerGoal
@@ -41,6 +42,9 @@ private struct GoalPlanView: View {
     }
     .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
     .navigationSubtitle(daysLeft(plan.value?.plan) ?? "")
+    .task(id: goal.contentCountry?.rebuild) {
+      await learner.followRebuild(goalID: goal.id)
+    }
   }
 
   @ViewBuilder
@@ -192,6 +196,8 @@ private struct PlanContent: View {
   @State private var isReporting = false
   @State private var claimed: [CertificateFacts] = []
   @State private var slotAnswer: PlanSlotAnswer?
+  /// The new plan arrived while the learner watched; gone on the next visit.
+  @State private var rebuildReady = false
 
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -206,6 +212,7 @@ private struct PlanContent: View {
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
         header
+        rebuildNotice
         PlanRoadmapSection(context: context, structure: structure)
         structureSections(context: context, structure: structure, namesChoices: false)
       }
@@ -220,6 +227,7 @@ private struct PlanContent: View {
     } single: {
       ZoonkList {
         header
+        rebuildNotice
         PlanRoadmapSection(context: context, structure: structure)
         PlanNumbersSection(context: context, syllabus: syllabus)
         PlanSuggestionSection(context: context, answer: $slotAnswer)
@@ -240,6 +248,10 @@ private struct PlanContent: View {
       }
     }
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
+    .announcesStatus(rebuildStatus)
+    .onChange(of: goal.contentCountry?.rebuild) { old, new in
+      rebuildReady = old == .preparing && new == ContentCountry.Rebuild.none
+    }
     .modifier(PlanToolbar(context: context))
     .planSheets($sheet, context: context, syllabus: syllabus, slotAnswer: $slotAnswer)
     .completionMoments(certificates: claimed)
@@ -251,6 +263,40 @@ private struct PlanContent: View {
     .feedbackSheet(
       isPresented: $isReporting,
       context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
+  }
+
+  @ViewBuilder private var rebuildNotice: some View {
+    if let rebuild = goal.contentCountry?.rebuild, rebuild != .none {
+      PlanRebuildNotice(goalID: goal.id, failed: rebuild == .failed)
+    } else if rebuildReady {
+      Section {
+        Text(
+          "Your new plan is ready.", tableName: "Plan",
+          comment: "Replaces the notice that a new plan was being prepared, once it's ready"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+
+  private var rebuildStatus: String? {
+    switch goal.contentCountry?.rebuild {
+    case .preparing:
+      String(
+        localized: "Preparing your new plan", table: "Plan",
+        comment: "Title of the notice while a goal's plan is rebuilt for its new content country")
+    case .failed:
+      String(
+        localized: "Your new plan couldn't be prepared", table: "Plan",
+        comment: "Title of the notice when rebuilding a goal's plan failed")
+    case .some(.none), nil:
+      rebuildReady
+        ? String(
+          localized: "Your new plan is ready.", table: "Plan",
+          comment: "Replaces the notice that a new plan was being prepared, once it's ready")
+        : nil
+    }
   }
 
   private var header: some View {
@@ -335,4 +381,95 @@ struct PlanContext {
   var showClaim: (PlanClaim) -> Void = { _ in }
 
   var isPaused: Bool { goal.status == .paused }
+}
+
+/// Main's notice above the roadmap while the plan is rebuilt for a new content country: the old plan
+/// stays usable meanwhile, and a failure keeps it.
+private struct PlanRebuildNotice: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @State private var isRetrying = false
+  @State private var retryFailed = false
+
+  let goalID: String
+  let failed: Bool
+
+  var body: some View {
+    Section {
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        Group {
+          if failed {
+            Image(systemName: "exclamationmark.triangle.fill")
+              .foregroundStyle(.warning)
+          } else {
+            ProgressView()
+          }
+        }
+        .accessibilityHidden(true)
+
+        VStack(alignment: .leading, spacing: 4) {
+          title
+            .typeStyle(.rowTitle)
+            .foregroundStyle(Color(.foreground))
+
+          description
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+
+          if failed {
+            BusyButton(isBusy: isRetrying, action: retry) {
+              Text("Try again", tableName: "Plan", comment: "Starts preparing the new plan again")
+            }
+            .buttonStyle(.outline)
+            .controlSize(.small)
+            .padding(.top, 8)
+
+            if retryFailed {
+              FailureLine(
+                message: LocalizedStringResource(
+                  "That didn't save. Try again.", table: "Plan",
+                  comment: "Starting the new plan again failed")
+              )
+              .typeStyle(.note)
+            }
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+      }
+      .padding(16)
+      .panel()
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+    }
+  }
+
+  private var title: Text {
+    failed
+      ? Text(
+        "Your new plan couldn't be prepared", tableName: "Plan",
+        comment: "Title of the notice when rebuilding a goal's plan failed")
+      : Text(
+        "Preparing your new plan", tableName: "Plan",
+        comment: "Title of the notice while a goal's plan is rebuilt for its new content country")
+  }
+
+  private var description: Text {
+    failed
+      ? Text(
+        "Your plan still has the lessons it had before.", tableName: "Plan",
+        comment: "Under the notice that a goal's new plan couldn't be prepared")
+      : Text(
+        "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done.",
+        tableName: "Plan",
+        comment: "Under the notice while a goal's plan is rebuilt for its new content country")
+  }
+
+  private func retry() {
+    isRetrying = true
+    retryFailed = false
+
+    Task {
+      retryFailed = !(await learner.retryRebuild(goalID: goalID))
+      isRetrying = false
+    }
+  }
 }

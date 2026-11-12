@@ -77,6 +77,7 @@ export async function getCourseBandContext({
   courseId: string;
   level: CourseLevel;
 }): Promise<{
+  country: string | null;
   chapterTitles: string[];
   material: string | null;
   nextPosition: number;
@@ -98,6 +99,7 @@ export async function getCourseBandContext({
 
   return {
     chapterTitles: course.courseChapters.map((placement) => placement.chapter.title),
+    country: course.country,
     material: await loadCourseMaterial(course),
     nextPosition:
       band.length === 0 ? 0 : Math.max(...band.map((placement) => placement.position)) + 1,

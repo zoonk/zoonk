@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/lesson-writer/schema";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
@@ -9,7 +9,7 @@ import { RECORDED_SCIENTIFIC_NOTATION_FIX } from "./scientific-notation-case";
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
 
 type LessonFixInput = Omit<
-  FixLessonDraftParams,
+  OptionalCountry<FixLessonDraftParams>,
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 

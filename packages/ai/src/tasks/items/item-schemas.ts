@@ -17,14 +17,10 @@ const ITEM_FORMATS = [
 export type ItemFormat = (typeof ITEM_FORMATS)[number];
 
 const MIN_OPTIONS = 2;
-/** USMLE and the PMP print up to 8 options; most exams print 4 or 5. */
-const MAX_OPTIONS = 8;
+/** USMLE and the PMP print up to 8 options and the solver letters them A to H, so code drops wrong ones past it. */
+export const MAX_OPTIONS = 8;
 /** JEE Advanced asks numbers to 2 decimal places; no exam asks more than 4. */
 const MAX_DECIMAL_PLACES = 4;
-const MIN_KEY_POINTS = 1;
-const MAX_KEY_POINTS = 5;
-const MAX_PAIRS = 6;
-const MAX_ORDER_STEPS = 7;
 /** An AP scoring guideline's row is worth up to 6 points (a long essay's evidence row is 3 or 4). */
 const MAX_RUBRIC_ROW_POINTS = 6;
 
@@ -78,8 +74,7 @@ const multipleChoiceItem = z.object({
         misconception: z.string().nullable(),
       }),
     )
-    .min(MIN_OPTIONS)
-    .max(MAX_OPTIONS),
+    .min(MIN_OPTIONS),
   /**
    * For a set whose order means something (True, False, Not given). Every other question's options
    * are shuffled once when stored.
@@ -103,7 +98,7 @@ const openAnswerSetup = { difficulty, context: z.string().nullable() };
 
 const openAnswerFields = {
   question: z.string(),
-  keyPoints: z.array(z.string()).min(MIN_KEY_POINTS).max(MAX_KEY_POINTS),
+  keyPoints: z.array(z.string()).min(1),
   acceptedAnswers: z.array(z.string()),
   sampleAnswer: z.string(),
 };
@@ -127,8 +122,8 @@ const essayItem = z.object({
   difficulty,
   context: z.string().nullable(),
   question: z.string(),
-  rubric: z.array(essayRubricRowSchema).min(2),
-  keyPoints: z.array(z.string()).min(MIN_KEY_POINTS).max(MAX_KEY_POINTS),
+  rubric: z.array(essayRubricRowSchema).min(1),
+  keyPoints: z.array(z.string()).min(1),
   sampleOutline: z.string(),
 });
 
@@ -136,10 +131,7 @@ const matchPairsItem = z.object({
   format: z.literal("matchPairs"),
   difficulty,
   question: z.string(),
-  pairs: z
-    .array(z.object({ left: z.string(), right: z.string() }))
-    .min(2)
-    .max(MAX_PAIRS),
+  pairs: z.array(z.object({ left: z.string(), right: z.string() })).min(2),
   reason: z.string(),
 });
 
@@ -147,7 +139,7 @@ const orderItem = z.object({
   format: z.literal("order"),
   difficulty,
   question: z.string(),
-  steps: z.array(z.string()).min(2).max(MAX_ORDER_STEPS),
+  steps: z.array(z.string()).min(2),
   reason: z.string(),
 });
 

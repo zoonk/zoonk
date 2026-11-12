@@ -32,8 +32,6 @@ filter:
     - completePronunciationRound
     - connectLanguageConversation
     - continueGoalAtNextLevel
-    - createAppAttestChallenge
-    - createAppAttestKey
     - createAppleSession
     - createAppleSubscription
     - createAreaPractice
@@ -186,6 +184,7 @@ filter:
     - leaveInstrumentWaitlist
     - listCertificates
     - listChapterLessons
+    - listCountries
     - listCourseCategoryCounts
     - listCourseChapters
     - listCourses

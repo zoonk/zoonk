@@ -31,7 +31,7 @@ const fallbackModels = [
 ] as const;
 
 const TEST_SKILLS = ["reading", "listening"] as const;
-const QUESTIONS_PER_SKILL = 2;
+/** The test's scoring counts on a one-in-four guess, so every question shows four options. */
 const WRONG_OPTIONS = 3;
 const OPTIONS_PER_QUESTION = WRONG_OPTIONS + 1;
 
@@ -112,12 +112,12 @@ function createLevelSchema(level: TestLevel) {
     evidence: z.string(),
     lowerLevelMistake: z.string(),
     correctOption: z.string(),
-    wrongOptions: z.array(z.string()).length(WRONG_OPTIONS),
+    wrongOptions: z.array(z.string()),
   });
 
   return z.object({
-    reading: z.array(questionSchema).length(QUESTIONS_PER_SKILL),
-    listening: z.array(questionSchema).length(QUESTIONS_PER_SKILL),
+    reading: z.array(questionSchema),
+    listening: z.array(questionSchema),
     speaking: z.object({ sentence: z.string(), translation: z.string() }),
   });
 }
@@ -179,7 +179,7 @@ function toTestQuestion({
   return {
     answerIndex,
     level,
-    options: wrongOptions.toSpliced(answerIndex, 0, correctOption),
+    options: wrongOptions.slice(0, WRONG_OPTIONS).toSpliced(answerIndex, 0, correctOption),
     passage,
     question: question.question,
     skill,
@@ -194,7 +194,9 @@ function toLevelQuestions({
   output: GeneratedLevel;
 }): LevelTestQuestion[] {
   return TEST_SKILLS.flatMap((skill) =>
-    output[skill].map((question) => toTestQuestion({ level, question, skill })),
+    output[skill]
+      .filter((question) => question.wrongOptions.length >= WRONG_OPTIONS)
+      .map((question) => toTestQuestion({ level, question, skill })),
   );
 }
 
@@ -222,7 +224,7 @@ function buildLevelPrompt({
   return `
 TARGET_LANGUAGE: ${languages.targetLanguageName}
 LEARNER_LANGUAGE: ${languages.userLanguageName}
-${formatLocalContext(targetLanguage, { register: false })}
+${formatLocalContext({ country: null, language: targetLanguage, register: false })}
 LEVEL: ${level}
 READING_WORDS: ${formatWords(words.reading)}
 LISTENING_WORDS: ${formatWords(words.listening)}

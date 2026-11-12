@@ -166,4 +166,12 @@
     <string name="tutor_today">Today</string>
     <string name="tutor_yesterday">Yesterday</string>
     <string name="tutor_page_sign_up">Create a free account to start the conversation.</string>
+    <!-- A buddy's card offering to save where the learner lives; %1$s is the country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="tutor_offer_home_country_title">Where you live: %1$s</string>
+    <!-- A buddy's card offering a new content country for the plan, under its title "Content country: …". -->
+    <string name="tutor_offer_country_description">Applying it rebuilds your plan for this country. The lessons you\'ve finished stay done.</string>
+    <!-- Replaces that card's Apply button once the country is saved. -->
+    <string name="tutor_offer_country_applied">Saved. Your new plan is being prepared, and you can keep studying meanwhile.</string>
+    <!-- Replaces the where-you-live card's Save button once it's saved. -->
+    <string name="tutor_offer_home_country_saved">Saved. You can change it in Preferences.</string>
 </resources>

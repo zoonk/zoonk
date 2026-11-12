@@ -11,8 +11,6 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Replacement
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.account.AccountFailure
-import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
@@ -80,9 +78,6 @@ sealed interface Refusal {
 
     /** Research already read this upload for an earlier ask, so it needs a different one. */
     data object AlreadyRead : Refusal
-
-    /** The security check refused to make this visitor a guest: only an account gets past it. */
-    data object GuestBlocked : Refusal
 
     /** The day the goals typed together share is shorter than [minutes], the least that gives each of the [goals] its share. */
     @Serializable
@@ -252,14 +247,13 @@ class OnboardingStore(
     /** A visitor's write starts a guest first; what it returns instead when none started. */
     private suspend fun startAsGuest(): WriteOutcome<Nothing>? {
         if (sessions.current != null) return null
-        return when (val started = startGuest()) {
+        return when (startGuest()) {
             SignInResult.SignedIn -> {
                 null
             }
 
             is SignInResult.Failed -> {
-                val blocked = accountFailure(started.error, started.code) == AccountFailure.BotDetected
-                if (blocked) WriteOutcome.Refused(Refusal.GuestBlocked) else WriteOutcome.Failed
+                WriteOutcome.Failed
             }
 
             SignInResult.Obsolete -> {

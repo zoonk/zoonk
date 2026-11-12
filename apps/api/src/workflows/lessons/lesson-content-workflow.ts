@@ -17,6 +17,7 @@ import {
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { type LessonContentResult, getLessonContentHookToken } from "./lesson-content-result";
 import { markAndDraw } from "./mark-and-draw";
+import { readLessonLaws } from "./read-lesson-laws";
 import { admitLessonContentStep, claimLessonContentStep } from "./steps/claim-lesson-content-step";
 import { failLessonContentStep } from "./steps/fail-lesson-content-step";
 import {
@@ -236,6 +237,7 @@ async function planAndWrite({
   const failed = { analytics: input.analytics, contentKind: "lesson", task: LESSON_TASK } as const;
 
   try {
+    await readLessonLaws({ analytics: input.analytics, lessonId: input.lessonId, workflowRunId });
     const spec = await planWhenFree({ input, workflowRunId });
 
     if (spec !== "ready") {

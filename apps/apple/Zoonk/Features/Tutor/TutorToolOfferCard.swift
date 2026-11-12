@@ -72,6 +72,10 @@ struct TutorToolOfferCard: View {
             .buttonStyle(.outline)
           case .chooseVariety(let goalID, let region):
             TutorVarietyApply(goalID: goalID, region: region)
+          case .chooseCountry(let country, let goalID):
+            TutorContentCountryApply(goalID: goalID, country: country)
+          case .setHomeCountry(let country, let name):
+            TutorHomeCountryApply(country: CountryChoice(code: country, name: name))
           }
         }
       }
@@ -136,6 +140,8 @@ struct TutorToolOfferCard: View {
     case open(Text, TutorPlace)
     case practiceCall(Text)
     case chooseVariety(goalID: String, region: String)
+    case chooseCountry(String, goalID: String)
+    case setHomeCountry(String, name: String)
   }
 
   private struct Content {
@@ -266,28 +272,61 @@ struct TutorToolOfferCard: View {
               "The buddy offers the language as the country lessons already teach speaks it; the argument is like 'Spanish (Mexico)'"
           ),
         action: .chooseVariety(goalID: variety.goalId, region: variety.targetRegion))
-    case .case10:
+    case .case10(let country):
+      let variety = country.lessonVariety.flatMap {
+        try? PracticeJSON.recode($0, as: LessonVariety.self)
+      }
+
+      switch country.kind {
+      case .contentCountry:
+        return Content(
+          flag: flagEmoji(country.country),
+          title: Text(contentCountryLine(country.countryName)),
+          description: Text(
+            [
+              String(
+                localized:
+                  "Applying it rebuilds your plan for this country. The lessons you've finished stay done.",
+                table: "Tutor",
+                comment: "What applying the content country the buddy offered does"),
+              variety.map(lessonLanguageLine),
+            ].compactMap(\.self).joined(separator: "\n")),
+          action: .chooseCountry(country.country, goalID: country.goalId))
+      case .homeCountry:
+        return Content(
+          flag: flagEmoji(country.country),
+          title: Text(
+            "Where you live: \(country.countryName)", tableName: "Tutor",
+            comment:
+              "The buddy offers saving the country the learner lives in; the argument is a country's name, such as Portugal"
+          ),
+          description: Text(
+            "For new goals and your examples. It doesn't change the plans you already have.",
+            tableName: "Tutor", comment: "What the country the learner lives in changes"),
+          action: .setHomeCountry(country.country, name: country.countryName))
+      }
+    case .case11:
       return Content(
         title: Text("Statistics", tableName: "Tutor", comment: "The buddy offers the statistics"),
         description: Text(
           "Energy, level, right answers and when you study best.", tableName: "Tutor",
           comment: "What the statistics show"),
         action: .open(open, .statistics))
-    case .case11:
+    case .case12:
       return Content(
         title: Text("Logbook", tableName: "Tutor", comment: "The buddy offers the week's logbook"),
         description: Text(
           "What you did this week next to the last, and what comes next.", tableName: "Tutor",
           comment: "What the logbook shows"),
         action: .open(open, .logbook))
-    case .case12:
+    case .case13:
       return Content(
         title: Text("Memory", tableName: "Tutor", comment: "The buddy offers what it remembers"),
         description: Text(
           "See, correct or delete what your buddy remembers about you.", tableName: "Tutor",
           comment: "What the memory settings do"),
         action: .open(open, .memory))
-    case .case13(let plus):
+    case .case14(let plus):
       return Content(
         title: Text("Plus", tableName: "Tutor", comment: "The buddy offers the subscription"),
         description: plus.subscribed
@@ -328,25 +367,95 @@ struct TutorToolOfferCard: View {
 /// Applied once the goal has the country, so it stays applied when the thread opens again.
 private struct TutorVarietyApply: View {
   @Environment(LearnerSummaryStore.self) private var learner
-  @State private var isSaving = false
-  @State private var failed = false
-  @AccessibilityFocusState private var isResultFocused: Bool
 
   let goalID: String
   let region: String
 
   var body: some View {
-    if isApplied {
-      Text(
+    TutorApplyButton(
+      isApplied: learner.summary.value?.goals.first { $0.id == goalID }?.variety?.region == region,
+      label: Text("Apply", tableName: "Tutor", comment: "Applies a plan change the buddy proposed"),
+      applied: Text(
         "Saved. You can change it in your plan.", tableName: "Tutor",
-        comment: "The learner saved the country the buddy offered; the plan is the Plan tab"
+        comment: "The learner saved the country the buddy offered; the plan is the Plan tab")
+    ) {
+      await learner.setTargetRegion(region, goalID: goalID)
+    }
+  }
+}
+
+/// Applied once the goal has the country; the card already said what applying rebuilds, so it
+/// doesn't ask again.
+private struct TutorContentCountryApply: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  let goalID: String
+  let country: String
+
+  var body: some View {
+    TutorApplyButton(
+      isApplied: learner.summary.value?.goals.first { $0.id == goalID }?.contentCountry?.code
+        == country,
+      label: Text("Apply", tableName: "Tutor", comment: "Applies a plan change the buddy proposed"),
+      applied: Text(
+        "Saved. Your new plan is being prepared, and you can keep studying meanwhile.",
+        tableName: "Tutor",
+        comment:
+          "The learner applied the content country the buddy offered; the plan is rebuilt for it"
       )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-      .accessibilityFocused($isResultFocused)
+    ) {
+      await learner.setContentCountry(country, goalID: goalID)
+    }
+  }
+}
+
+/// Applied once the learner's profile has the country, which never rebuilds a plan.
+private struct TutorHomeCountryApply: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(SettingsStore.self) private var settings
+
+  let country: CountryChoice
+
+  var body: some View {
+    TutorApplyButton(
+      isApplied: learner.summary.value?.homeCountry == country.code,
+      label: Text("Save", tableName: "Tutor", comment: "Saves what the buddy offered"),
+      applied: Text(
+        "Saved. You can change it in Preferences.", tableName: "Tutor",
+        comment: "The learner saved the country they live in, which the buddy offered")
+    ) {
+      let saved = await settings.updatePreferences(.homeCountry(country))
+
+      if saved {
+        learner.showHomeCountry(country.code)
+      }
+
+      return saved
+    }
+  }
+}
+
+/// The button leaves once it's applied, and VoiceOver lands on what it did.
+private struct TutorApplyButton: View {
+  let isApplied: Bool
+  let label: Text
+  let applied: Text
+  /// False when it didn't save.
+  let apply: () async -> Bool
+
+  @State private var isSaving = false
+  @State private var failed = false
+  @AccessibilityFocusState private var isResultFocused: Bool
+
+  var body: some View {
+    if isApplied {
+      applied
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .accessibilityFocused($isResultFocused)
     } else {
-      BusyButton(isBusy: isSaving, action: apply) {
-        Text("Apply", tableName: "Tutor", comment: "Applies a plan change the buddy proposed")
+      BusyButton(isBusy: isSaving, action: run) {
+        label
       }
       .buttonStyle(.outline)
 
@@ -361,18 +470,13 @@ private struct TutorVarietyApply: View {
     }
   }
 
-  private var isApplied: Bool {
-    learner.summary.value?.goals.first { $0.id == goalID }?.variety?.region == region
-  }
-
-  private func apply() {
+  private func run() {
     isSaving = true
     failed = false
 
     Task {
-      failed = !(await learner.setTargetRegion(region, goalID: goalID))
+      failed = !(await apply())
       isSaving = false
-      // The button leaves once it's applied, so VoiceOver lands on what it did.
       isResultFocused = !failed
     }
   }

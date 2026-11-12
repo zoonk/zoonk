@@ -396,6 +396,7 @@ msgstr "{done, number} su {total, number}"
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
 #: src/_components/time-answer.tsx
+#: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-intro-footer.tsx
@@ -411,6 +412,7 @@ msgstr "{done, number} su {total, number}"
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
+#: src/plan/plan-rebuild-notice.tsx
 #: src/plan/use-time-to-cover.ts
 #: src/session/failed-moment.tsx
 #: src/session/open-next-step.tsx
@@ -1000,6 +1002,11 @@ msgid "Sounds"
 msgstr "Suoni"
 
 #: src/appearance/appearance-screen.tsx
+msgctxt "uOIiKt"
+msgid "Language and region"
+msgstr "Lingua e area geografica"
+
+#: src/appearance/appearance-screen.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -1034,6 +1041,7 @@ msgstr "Occhiali"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
@@ -1041,6 +1049,7 @@ msgstr "Occhiali"
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
+#: src/plan/plan-country.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/plan/study-everything.tsx
 msgctxt "47FYwb"
@@ -1049,6 +1058,7 @@ msgstr "Annulla"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/conversation/tutor-country-offer.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/onboarding/understood/understood-row.tsx
@@ -1076,6 +1086,23 @@ msgstr "Cambia"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "Scegli il tuo compagno"
+
+#: src/appearance/home-country-setting.tsx
+#: src/country/country-picker.tsx
+msgctxt "h4cg3V"
+msgid "Where you live"
+msgstr "Dove vivi"
+
+#: src/appearance/home-country-setting.tsx
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "i8Cibb"
+msgid "For new goals and your examples. It doesn't change the plans you already have."
+msgstr "Per i nuovi obiettivi e gli esempi pensati per te. Non cambia i piani che hai già."
+
+#: src/appearance/home-country-setting.tsx
+msgctxt "p5LNtB"
+msgid "Not set"
+msgstr "Non impostato"
 
 #: src/appearance/language-setting.tsx
 msgctxt "V1yMTL"
@@ -2778,6 +2805,44 @@ msgctxt "Dij_iT"
 msgid "Message {name}"
 msgstr "Scrivi a {name}"
 
+#: src/conversation/tutor-country-offer.tsx
+#: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
+#: src/mock/mock-result-plan.tsx
+#: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-offer-suggestion.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "EWw_tK"
+msgid "Apply"
+msgstr "Applica"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "-DMpal"
+msgid "Applying it rebuilds your plan for this country. The lessons you've finished stay done."
+msgstr "Applicando la modifica, ricreiamo il tuo piano per questo paese. Le lezioni già completate restano tali."
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "Ol1JfV"
+msgid "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
+msgstr "Salvato. Stiamo preparando il tuo nuovo piano e nel frattempo puoi continuare a studiare."
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "RZJ-9n"
+msgid "Content country: {country}"
+msgstr "Paese di riferimento: {country}"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "EWygiy"
+msgid "Saved. You can change it in Preferences."
+msgstr "Salvato. Puoi modificarlo nelle Preferenze."
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "Iecqzz"
+msgid "Where you live: {country}"
+msgstr "Dove vivi: {country}"
+
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_b0lor"
 msgid "A ready course in the catalog"
@@ -2930,16 +2995,6 @@ msgid "Use my date anyway"
 msgstr "Usa comunque la mia data"
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/conversation/tutor-variety-offer.tsx
-#: src/mock/mock-result-plan.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-offer-suggestion.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "EWw_tK"
-msgid "Apply"
-msgstr "Applica"
-
-#: src/conversation/tutor-plan-change.tsx
 msgctxt "eUZEWb"
 msgid "Change to your plan"
 msgstr "Modifica al tuo piano"
@@ -3009,6 +3064,48 @@ msgstr "Il tuo compagno e le conversazioni di allenamento usano {variety}."
 msgctxt "n-Iy44"
 msgid "Saved. You can change it in your plan."
 msgstr "Scelta salvata. Puoi cambiarla nel tuo piano."
+
+#. Spoken only. {country} is a country's name.
+#: src/country/country-picker.tsx
+msgctxt "WOyCjS"
+msgid "{country}, where you live"
+msgstr "{country}, dove vivi"
+
+#: src/country/country-picker.tsx
+msgctxt "Gw94lo"
+msgid "No country found"
+msgstr "Nessun paese trovato"
+
+#: src/country/country-picker.tsx
+msgctxt "p57kAv"
+msgid "{count, plural, one {# country} other {# countries}}"
+msgstr "{count, plural, one {# paese} other {# paesi}}"
+
+#: src/country/country-picker.tsx
+msgctxt "n6WiTf"
+msgid "All countries"
+msgstr "Tutti i paesi"
+
+#: src/country/country-picker.tsx
+msgctxt "hKUYhf"
+msgid "Couldn't load the list."
+msgstr "Non siamo riusciti a caricare l’elenco."
+
+#: src/country/country-picker.tsx
+msgctxt "a0lFbM"
+msgid "Suggested"
+msgstr "Suggeriti"
+
+#: src/country/country-picker.tsx
+msgctxt "4Ythsw"
+msgid "Search countries"
+msgstr "Cerca un paese"
+
+#. {variety} is a language with its country, such as “Portuguese (Brazil)”. It always follows the colon, so it never needs an article or a case.
+#: src/country/use-country-lines.ts
+msgctxt "J3aEI6"
+msgid "Lesson language: {variety}"
+msgstr "Lingua delle lezioni: {variety}"
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -9871,12 +9968,6 @@ msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
 msgstr "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, metti in pausa uno dei tuoi obiettivi dal menu del tuo Piano, oppure passa a Plus."
 
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qi0x0O"
-msgid "A security check blocked this browser. Try another browser, or create a free account."
-msgstr "Un controllo di sicurezza ha bloccato questo browser. Prova con un altro browser o crea un account gratuito."
-
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
@@ -10098,6 +10189,36 @@ msgstr "{count, plural, one {Scegli almeno {time} al giorno per raggiungere # ob
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Il tuo compagno cresce mentre impari."
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/onboarding/steps/country-step.tsx
+msgctxt "IQvff3"
+msgid "If you skip: {country}"
+msgstr "Se salti: {country}"
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "neuUHE"
+msgid "What you learn here changes from country to country. You can change it later in your plan."
+msgstr "Quello che impari qui cambia da paese a paese. Puoi cambiare questa scelta in seguito nel tuo piano."
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "jFT6CV"
+msgid "Which country should your lessons be about?"
+msgstr "A quale paese devono riferirsi le tue lezioni?"
+
+#: src/onboarding/steps/country-step.tsx
+#: src/onboarding/understood/understood-country-picker.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-country.tsx
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "Paese"
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "4D1yJQ"
+msgid "Another country"
+msgstr "Un altro paese"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "5ib3Bu"
@@ -10930,6 +11051,7 @@ msgid "Your answer, in your own words"
 msgstr "La tua risposta, con parole tue"
 
 #: src/onboarding/understood/understood-aim-picker.tsx
+#: src/onboarding/understood/understood-country-picker.tsx
 #: src/onboarding/understood/understood-row.tsx
 msgctxt "C9D4Tz"
 msgid "Edit {field}"
@@ -10992,12 +11114,6 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "Stima basata sulle date abituali. Ti avviseremo quando usciranno quelle ufficiali."
 
-#: src/onboarding/understood/understood-row.tsx
-#: src/visuals/chart-visual.tsx
-msgctxt "_gUYR-"
-msgid "Source: {source}"
-msgstr "Fonte: {source}"
-
 #. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "Hs12te"
@@ -11041,6 +11157,12 @@ msgctxt "An59dM"
 msgid "Fix something"
 msgstr "Correggi qualcosa"
 
+#: src/onboarding/understood/understood-source-link.tsx
+#: src/visuals/chart-visual.tsx
+msgctxt "_gUYR-"
+msgid "Source: {source}"
+msgstr "Fonte: {source}"
+
 #: src/onboarding/understood/understood-words.tsx
 msgctxt "YC2aql"
 msgid "What you wrote"
@@ -11056,11 +11178,29 @@ msgctxt "Q47TXB"
 msgid "Read it again"
 msgstr "Rileggi"
 
+#: src/onboarding/understood/use-content-country-row.ts
+msgctxt "countryFromHomeBadge"
+msgid "where you live"
+msgstr "dove vivi"
+
+#: src/onboarding/understood/use-content-country-row.ts
 #: src/onboarding/understood/use-understood-rows.ts
-#: src/plan/plan-language.tsx
-msgctxt "vONi-O"
-msgid "Country"
-msgstr "Paese"
+msgctxt "bSoy_7"
+msgid "you said"
+msgstr "hai detto"
+
+#: src/onboarding/understood/use-content-country-row.ts
+#: src/plan/plan-properties.tsx
+msgctxt "lbfh2z"
+msgid "Exam country"
+msgstr "Paese dell’esame"
+
+#: src/onboarding/understood/use-content-country-row.ts
+#: src/plan/plan-country.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "2NB2XO"
+msgid "Content country"
+msgstr "Paese di riferimento"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
@@ -11096,11 +11236,6 @@ msgstr "Dove"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "Motivo"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "bSoy_7"
-msgid "you said"
-msgstr "hai detto"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "0l2vvH"
@@ -11413,6 +11548,22 @@ msgctxt "MYtZfb"
 msgid "Change how you study them."
 msgstr "Cambia il modo in cui li studi."
 
+#: src/plan/plan-country.tsx
+msgctxt "BiNqQt"
+msgid "Change the content country?"
+msgstr "Cambiare il paese di riferimento?"
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/plan/plan-country.tsx
+msgctxt "tkfoYf"
+msgid "New country: {country}. Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready."
+msgstr "Nuovo paese: {country}. Ricreeremo il tuo piano per adattarlo a questo paese. Le lezioni già completate resteranno tali e potrai continuare a studiare con il piano attuale finché quello nuovo non sarà pronto."
+
+#: src/plan/plan-country.tsx
+msgctxt "xZIG58"
+msgid "Rebuild plan"
+msgstr "Ricrea il piano"
+
 #: src/plan/plan-coverage-suggestion.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "TJo5E6"
@@ -11662,6 +11813,16 @@ msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
 msgstr "<mono>{weekdays}</mono> · <mono>{weekend}</mono> nel fine settimana"
 
 #: src/plan/plan-properties.tsx
+msgctxt "7X2m8_"
+msgid "Lesson language"
+msgstr "Lingua delle lezioni"
+
+#: src/plan/plan-properties.tsx
+msgctxt "ONsenW"
+msgid "Lesson examples"
+msgstr "Esempi nelle lezioni"
+
+#: src/plan/plan-properties.tsx
 msgctxt "burjuf"
 msgid "{weekday, select, sunday {Sundays} monday {Mondays} tuesday {Tuesdays} wednesday {Wednesdays} thursday {Thursdays} friday {Fridays} saturday {Saturdays} other {}}"
 msgstr "{weekday, select, sunday {La domenica} monday {Il lunedì} tuesday {Il martedì} wednesday {Il mercoledì} thursday {Il giovedì} friday {Il venerdì} saturday {Il sabato} other {}}"
@@ -11680,6 +11841,31 @@ msgstr "Prossima: <date></date>"
 msgctxt "mWKPwa"
 msgid "Everything"
 msgstr "Tutto"
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "a1BrGF"
+msgid "Preparing your new plan"
+msgstr "Stiamo preparando il tuo nuovo piano"
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "_K_Sir"
+msgid "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done."
+msgstr "Continua a studiare: questo piano resta attivo finché quello nuovo non sarà pronto e le lezioni già completate restano tali."
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "WIKiub"
+msgid "Your new plan couldn't be prepared"
+msgstr "Non siamo riusciti a preparare il tuo nuovo piano"
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "JQ6rKG"
+msgid "Your plan still has the lessons it had before."
+msgstr "Il tuo piano ha ancora le stesse lezioni di prima."
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "jvdY5E"
+msgid "Your new plan is ready."
+msgstr "Il tuo nuovo piano è pronto."
 
 #: src/plan/plan-schedule.tsx
 msgctxt "b9QpDx"
@@ -12884,6 +13070,12 @@ msgctxt "hguHsn"
 msgid "What helps you learn"
 msgstr "Cosa ti aiuta a imparare"
 
+#. Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "DGS8Ad"
+msgid "How we address you"
+msgstr "Come ci rivolgiamo a te"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "LveDpT"
 msgid "Not shared"
@@ -12904,6 +13096,12 @@ msgstr "Senza risposta"
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
 msgstr "{count, plural, one {# salvata} other {# salvate}}"
+
+#. An answer the learner saved, without showing it.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Salvata"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "AYPOzn"
@@ -13082,6 +13280,12 @@ msgctxt "W7cEaa"
 msgid "What helps you learn?"
 msgstr "Cosa ti aiuta a imparare?"
 
+#. Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "MgGE60"
+msgid "How should we address you?"
+msgstr "Come preferisci che ci rivolgiamo a te?"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "jA1Ffb"
 msgid "We'll use situations from your day in your examples."
@@ -13098,14 +13302,9 @@ msgid "Past or present, finished or not. It can be different from your work."
 msgstr "Studi passati o attuali, conclusi o meno. Anche se non sono legati al tuo lavoro."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "htoNlH"
-msgid "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to."
-msgstr "Facoltativo. Nella prossima schermata ti suggeriremo cosa di solito aiuta. Salveremo queste informazioni solo se lo scegli tu."
-
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "iAG-dQ"
-msgid "Optional. Nothing here is saved unless you choose to."
-msgstr "Facoltativo. Salveremo queste informazioni solo se lo scegli tu."
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "Facoltativo. Le tue scelte vengono salvate nel tuo profilo, così il tuo compagno può adattarsi a te. Puoi rimuoverle quando vuoi dalle Impostazioni."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "310Na4"
@@ -13113,19 +13312,14 @@ msgid "Pick anything that helps. No label or diagnosis needed."
 msgstr "Scegli tutto ciò che ti aiuta. Non servono etichette né diagnosi."
 
 #: src/profile-questions/profile-question-copy.ts
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "Il tuo compagno e i commenti che ricevi useranno queste forme. Le lezioni restano uguali."
+
+#: src/profile-questions/profile-question-copy.ts
 msgctxt "vHNPYm"
 msgid "Pick up to 3. We'll use them for examples in your lessons."
 msgstr "Scegli fino a 3 opzioni. Le useremo per gli esempi delle tue lezioni."
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "4gqzob"
-msgid "Save this to my profile"
-msgstr "Salva queste informazioni nel mio profilo"
-
-#: src/profile-questions/profile-row-bodies.tsx
-msgctxt "rMR6gV"
-msgid "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings."
-msgstr "Zoonk usa queste informazioni per adattarsi a te, da subito e nel tempo. Non vengono mai condivise né usate negli esempi delle lezioni. Puoi eliminarle quando vuoi nelle Impostazioni."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"

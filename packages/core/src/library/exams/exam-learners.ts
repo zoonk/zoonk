@@ -49,9 +49,29 @@ async function listProductGoalFilters(product: ProductWhereInput) {
   return [{ product }, ...mainCourses.flatMap((course) => courseFollowersFilter(course.id).OR)];
 }
 
+/** A law a lesson reads counts the learners of the courses that teach that lesson. */
+async function listLessonLawGoalFilters(sourceId: string) {
+  const chapters = await prisma.chapter.findMany({
+    select: { courses: { select: { courseId: true } }, homeCourseId: true },
+    where: { lessons: { some: { lesson: { sources: { some: { sourceId } } } } } },
+  });
+
+  const courseIds = new Set(
+    chapters.flatMap((chapter) => [
+      ...(chapter.homeCourseId ? [chapter.homeCourseId] : []),
+      ...chapter.courses.map((course) => course.courseId),
+    ]),
+  );
+
+  return [...courseIds].flatMap((courseId) => courseFollowersFilter(courseId).OR);
+}
+
 /** A product's page counts the goals about its product and the learners of its main courses. */
 export async function countActiveSourceGoals(sourceId: string): Promise<number> {
-  const productGoals = await listProductGoalFilters(readsProductPage(sourceId));
+  const [productGoals, lessonGoals] = await Promise.all([
+    listProductGoalFilters(readsProductPage(sourceId)),
+    listLessonLawGoalFilters(sourceId),
+  ]);
 
   return prisma.goal.count({
     where: {
@@ -59,6 +79,7 @@ export async function countActiveSourceGoals(sourceId: string): Promise<number> 
         { learnerSources: { some: { sourceId } } },
         { examBlueprint: { sourceId } },
         ...productGoals,
+        ...lessonGoals,
       ],
       status: "active",
     },

@@ -24,9 +24,9 @@ export async function answerLanguageLevelTest({
     return context;
   }
 
-  const { bank, bankWrittenAt, owned, progress } = context;
+  const { bank, bankRunId, bankWrittenAt, owned, progress } = context;
 
-  if (!bank) {
+  if (!bank || !bankRunId) {
     return { status: "notReady" };
   }
 
@@ -52,9 +52,25 @@ export async function answerLanguageLevelTest({
     ...(input.skipped && { skipped: true }),
   };
 
-  const next = { ...progress, answers: [...progress.answers, answer] };
+  const recordId = progress.recordId ?? crypto.randomUUID();
+  const next = { ...progress, answers: [...progress.answers, answer], recordId };
 
-  if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
+  const saved = await saveLevelTestProgress({
+    from: progress,
+    goal: owned.goal,
+    progress: next,
+    record: {
+      answer,
+      bankRunId,
+      language: owned.goal.language,
+      question: step.question,
+      recordId,
+      startScore: progress.start,
+      targetLanguage: owned.goal.targetLanguage,
+    },
+  });
+
+  if (!saved) {
     return { status: "invalid" };
   }
 

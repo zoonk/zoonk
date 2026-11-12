@@ -47,18 +47,18 @@ export function useProfileQuestionTitle(question: ProfileQuestion): string {
       });
     case "learningSupport":
       return t("What helps you learn?");
+    case "addressForm":
+      return t({
+        description:
+          "Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.",
+        message: "How should we address you?",
+      });
     default:
       return question satisfies never;
   }
 }
 
-export function useProfileQuestionDescription({
-  nextIsSupport = false,
-  question,
-}: {
-  nextIsSupport?: boolean;
-  question: ProfileQuestion;
-}): string {
+export function useProfileQuestionDescription(question: ProfileQuestion): string {
   const t = useExtracted();
 
   switch (question) {
@@ -69,13 +69,13 @@ export function useProfileQuestionDescription({
     case "studies":
       return t("Past or present, finished or not. It can be different from your work.");
     case "conditions":
-      return nextIsSupport
-        ? t(
-            "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to.",
-          )
-        : t("Optional. Nothing here is saved unless you choose to.");
+      return t(
+        "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.",
+      );
     case "learningSupport":
       return t("Pick anything that helps. No label or diagnosis needed.");
+    case "addressForm":
+      return t("Your buddy and your feedback will talk to you this way. Lessons stay the same.");
     case "watch":
     case "listen":
     case "play":

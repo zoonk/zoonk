@@ -17,7 +17,7 @@ import {
 } from "./profile-draft";
 
 function draft(overrides: Partial<ProfileDraft> = {}): ProfileDraft {
-  return { consented: false, exclusive: null, picks: [], studies: [], text: "", ...overrides };
+  return { exclusive: null, picks: [], studies: [], text: "", ...overrides };
 }
 
 function view(overrides: Partial<ProfileQuestionView> & Pick<ProfileQuestionView, "id">) {
@@ -112,32 +112,24 @@ describe(toggleProfilePick, () => {
     );
   });
 
-  it("condition rows have no cap, and removing the last one drops consent", () => {
+  it("condition rows have no cap", () => {
     const picked = toggleProfilePick({
-      draft: draft({ consented: true, picks: ["adhd", "autism", "dyslexia"] }),
+      draft: draft({ picks: ["adhd", "autism", "dyslexia"] }),
       id: "anxiety",
       question: "conditions",
     });
 
     expect(picked).toStrictEqual({
       capped: false,
-      draft: draft({ consented: true, picks: ["adhd", "autism", "dyslexia", "anxiety"] }),
+      draft: draft({ picks: ["adhd", "autism", "dyslexia", "anxiety"] }),
     });
-
-    const cleared = toggleProfilePick({
-      draft: draft({ consented: true, picks: ["adhd"] }),
-      id: "adhd",
-      question: "conditions",
-    });
-
-    expect(cleared.draft.consented).toBe(false);
   });
 });
 
 describe(toggleProfileExclusive, () => {
   it("clears everything else, and toggles off", () => {
     const picked = toggleProfileExclusive({
-      draft: draft({ consented: true, picks: ["adhd"], text: "note" }),
+      draft: draft({ picks: ["student"], text: "note" }),
       exclusive: "ratherNot",
     });
 
@@ -172,37 +164,41 @@ describe(canSendProfileDraft, () => {
     );
   });
 
-  it("Settings refuses unconsented conditions, onboarding sends them as declined", () => {
-    const picked = draft({ picks: ["adhd"] });
+  it("Something else needs its words, in onboarding and Settings", () => {
+    const blank = draft({ picks: ["adhd", "other"], text: " " });
+    const filled = draft({ picks: ["adhd", "other"], text: "Migraines" });
 
-    expect(canSendProfileDraft({ draft: picked, from: "settings", question: "conditions" })).toBe(
-      false,
-    );
+    for (const from of ["onboarding", "settings"] as const) {
+      expect(canSendProfileDraft({ draft: blank, from, question: "conditions" })).toBe(false);
+      expect(canSendProfileDraft({ draft: filled, from, question: "conditions" })).toBe(true);
+    }
+  });
 
-    expect(canSendProfileDraft({ draft: picked, from: "onboarding", question: "conditions" })).toBe(
-      true,
-    );
+  it("Settings saves picked conditions", () => {
+    expect(
+      canSendProfileDraft({
+        draft: draft({ picks: ["adhd"] }),
+        from: "settings",
+        question: "conditions",
+      }),
+    ).toBe(true);
   });
 });
 
 describe(toProfileAnswer, () => {
-  it("unconsented conditions send only a decline", () => {
+  it("an empty conditions screen declines", () => {
     expect(
-      toProfileAnswer({
-        draft: draft({ picks: ["adhd", "other"], text: "Migraines" }),
-        memoryEnabled: true,
-        question: "conditions",
-      }),
+      toProfileAnswer({ draft: draft(), memoryEnabled: true, question: "conditions" }),
     ).toStrictEqual({
       answer: { conditions: [], consented: false, declined: true },
       question: "conditions",
     });
   });
 
-  it("consented conditions keep the note only on other", () => {
+  it("picked conditions are saved with consent, the note only on other", () => {
     expect(
       toProfileAnswer({
-        draft: draft({ consented: true, picks: ["adhd", "other"], text: " Migraines " }),
+        draft: draft({ picks: ["adhd", "other"], text: " Migraines " }),
         memoryEnabled: true,
         question: "conditions",
       }),
@@ -217,6 +213,26 @@ describe(toProfileAnswer, () => {
       },
       question: "conditions",
     });
+  });
+
+  it("the address form sends one form, and I'd rather not say declines it", () => {
+    const picked = toggleProfilePick({
+      draft: toggleProfilePick({ draft: draft(), id: "feminine", question: "addressForm" }).draft,
+      id: "neutral",
+      question: "addressForm",
+    }).draft;
+
+    expect(
+      toProfileAnswer({ draft: picked, memoryEnabled: false, question: "addressForm" }),
+    ).toStrictEqual({ answer: { declined: false, form: "neutral" }, question: "addressForm" });
+
+    expect(
+      toProfileAnswer({
+        draft: toggleProfileExclusive({ draft: picked, exclusive: "ratherNot" }),
+        memoryEnabled: true,
+        question: "addressForm",
+      }),
+    ).toStrictEqual({ answer: { declined: true, form: null }, question: "addressForm" });
   });
 
   it("the job goes only with a working status", () => {
@@ -283,7 +299,7 @@ describe(toProfileDraft, () => {
     );
   });
 
-  it("saved answers fill the screen, and saved conditions keep their consent", () => {
+  it("saved answers fill the screen", () => {
     expect(
       toProfileDraft(
         view({
@@ -292,7 +308,11 @@ describe(toProfileDraft, () => {
           status: "answered",
         }),
       ),
-    ).toStrictEqual(draft({ consented: true, picks: ["other"], text: "Migraines" }));
+    ).toStrictEqual(draft({ picks: ["other"], text: "Migraines" }));
+  });
+
+  it("declined conditions show nothing picked, since the screen has no decline row", () => {
+    expect(toProfileDraft(view({ id: "conditions", status: "declined" }))).toStrictEqual(draft());
   });
 
   it("a sound-only decline shows No sound effects, not the exclusive row", () => {

@@ -155,6 +155,13 @@ function readPhaseChallengeAccess(goal: PlanContext["goal"]) {
   });
 }
 
+function isPlanReady(context: PlanContext): boolean {
+  return (
+    context.phases.length > 0 &&
+    (context.goal.planRevealedAt !== null || !context.plan.buildFailedAt)
+  );
+}
+
 export async function buildPlanView({
   context: savedContext,
   now,
@@ -306,7 +313,7 @@ export async function buildPlanView({
       today,
     }),
     planId: context.plan.id,
-    ready: savedContext.phases.length > 0 && !savedContext.plan.buildFailedAt,
+    ready: isPlanReady(savedContext),
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,

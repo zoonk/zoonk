@@ -57,12 +57,16 @@
   "tutor_offer_choose": "de5b7d66ab11a467d443cf24902bc1cb424b4875ef231abe27920f0252707c2f",
   "tutor_offer_choose_focus": "2ce6a5471718886dca72d9b2d74811f9d540cef432be6140d12ff023c5c421af",
   "tutor_offer_choose_focus_description": "1af2c35c0218a02ea275b13d1354ef2743181c5492f8b77f86b0d3a7dfcf5c8c",
+  "tutor_offer_country_applied": "0633c9b7d22989f9d8c4a687125153e6a2837f74c8a060c672711b4c807d9a7d",
+  "tutor_offer_country_description": "494e8814aac403d5649d4cb9e9ad9238a8d6e839e4a4f239e3adf0d6eeae3d5f",
   "tutor_offer_essay_biweekly": "63bcec1ba6d8bc81234d84c7b2edd439e119840122955ebca8c82d211f55b017",
   "tutor_offer_essay_final_weeks": "a7b94bc87ec235173446d9aff7a44d58d494d57d915e42b129477c2446cdff43",
   "tutor_offer_essay_plus": "e007728f9245eb1dc77956c7e94d7f571d6be6fe5fc5afdf694027e32f2582a8",
   "tutor_offer_essay_weekly": "323995331a685d2f6a4c6aa2269faa5ead92f5ce9abcce798d3be7b59ffa9ee5",
   "tutor_offer_goal": "97a349212ec4d256c6dc2ab377b7c16ba2b4495f6104551a7e8d2fbb9e63f37b",
   "tutor_offer_goal_limit": "5716203b5a4d959b2d29ce4ccb4319df5d3bbe8a7f3c788ad93a1a091a7f486d",
+  "tutor_offer_home_country_saved": "bc324101a539f0a3148e57bd7a1ebccf3446d7f3db0be7c25dafc3106c30dbbb",
+  "tutor_offer_home_country_title": "e3c7ce6f7b707524877bb0c51f7fde1f2d21056d93d7c41c88dc7162c2f07277",
   "tutor_offer_logbook": "52fd336542c96caaf71adbde892c48b0eceb64139abcc8d26abf158a8043abb0",
   "tutor_offer_logbook_description": "4626c106fd6cc689f8f8695dd62a7605ad760e712cd2d51fab4a9f430d0d0d9d",
   "tutor_offer_manage": "dffa2e5a712f91f10cff1609989ceeacfc467bae22637dcc465cf5448d941c65",
@@ -286,4 +290,12 @@
     <string name="tutor_today">Aujourd’hui</string>
     <string name="tutor_yesterday">Hier</string>
     <string name="tutor_page_sign_up">Crée un compte gratuit pour commencer la conversation.</string>
+    <!-- A buddy's card offering to save where the learner lives; %1$s is the country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="tutor_offer_home_country_title">Là où tu vis : %1$s</string>
+    <!-- A buddy's card offering a new content country for the plan, under its title "Content country: …". -->
+    <string name="tutor_offer_country_description">Ce changement recrée ton plan pour ce pays. Les leçons déjà terminées le restent.</string>
+    <!-- Replaces that card's Apply button once the country is saved. -->
+    <string name="tutor_offer_country_applied">Enregistré. Ton nouveau plan est en préparation et tu peux continuer à étudier en attendant.</string>
+    <!-- Replaces the where-you-live card's Save button once it's saved. -->
+    <string name="tutor_offer_home_country_saved">Enregistré. Tu peux modifier ce choix dans les Préférences.</string>
 </resources>

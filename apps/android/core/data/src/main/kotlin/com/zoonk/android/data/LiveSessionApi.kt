@@ -1,6 +1,5 @@
 package com.zoonk.android.data
 
-import com.zoonk.android.feature.account.BotProofRequest
 import com.zoonk.android.feature.account.IntegrityTokens
 import com.zoonk.android.feature.account.proof
 import com.zoonk.api.models.MeResponse
@@ -36,7 +35,7 @@ class LiveSessionApi(
                 .jsonObject
                 .getValue("id")
                 .jsonPrimitive.content
-        val proof = integrity?.proof(api, BotProofRequest.RestoreKey(credentialId))
+        val proof = integrity?.proof(api, credentialId)
         perform {
             api.clients(session).sessions.createRestoreKey(
                 RestoreKeyRequest(registrationResponseJson),

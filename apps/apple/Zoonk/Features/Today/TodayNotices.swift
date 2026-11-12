@@ -419,6 +419,7 @@ struct TodayFocusTestSection: View {
   let offer: FocusTestSummary.Size?
   /// Kept by Today for the visit, since Today stops holding the suggestion once it's dismissed.
   @Binding var dismissed: Bool
+  let onAnswer: () -> Void
 
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
@@ -511,6 +512,7 @@ struct TodayFocusTestSection: View {
       return
     }
 
+    onAnswer()
     isDismissing = true
     failed = false
 

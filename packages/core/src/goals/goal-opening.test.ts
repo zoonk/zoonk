@@ -18,7 +18,7 @@ import { findOpeningLesson, readSavedGoalOpening, saveGoalOpening } from "./goal
 
 function openingFor({ course, skill }: { course: Course; skill: Skill }): GoalOpeningSkill {
   return {
-    course: { id: course.id, key: "chosen-course", title: course.title },
+    course: { countrySpecific: false, id: course.id, key: "chosen-course", title: course.title },
     skill: {
       area: "Chosen area",
       description: skill.description,
@@ -94,8 +94,18 @@ describe(saveGoalOpening, () => {
     const secondOpening = openingFor({ course: secondCourse, skill: secondSkill });
 
     const saved = await Promise.all([
-      saveGoalOpening({ goalId: goal.id, lessonId: first.id, opening: firstOpening }),
-      saveGoalOpening({ goalId: goal.id, lessonId: second.id, opening: secondOpening }),
+      saveGoalOpening({
+        country: null,
+        goalId: goal.id,
+        lessonId: first.id,
+        opening: firstOpening,
+      }),
+      saveGoalOpening({
+        country: null,
+        goalId: goal.id,
+        lessonId: second.id,
+        opening: secondOpening,
+      }),
     ]);
 
     const [kept] = saved;
@@ -104,10 +114,15 @@ describe(saveGoalOpening, () => {
     expect(saved).toStrictEqual([kept, kept]);
 
     await expect(
-      saveGoalOpening({ goalId: goal.id, lessonId: second.id, opening: secondOpening }),
+      saveGoalOpening({
+        country: null,
+        goalId: goal.id,
+        lessonId: second.id,
+        opening: secondOpening,
+      }),
     ).resolves.toStrictEqual(kept);
 
-    await expect(readSavedGoalOpening(goal.id)).resolves.toStrictEqual({
+    await expect(readSavedGoalOpening(goal.id, null)).resolves.toStrictEqual({
       lesson: kept,
       skill: kept?.id === first.id ? firstOpening : secondOpening,
     });
@@ -151,8 +166,8 @@ describe(readSavedGoalOpening, () => {
 
     expect(chosen).toBe(lesson.id);
     const opening = openingFor({ course, skill: openingSkill });
-    await saveGoalOpening({ goalId: goal.id, lessonId: lesson.id, opening });
-    const resumed = await readSavedGoalOpening(goal.id);
+    await saveGoalOpening({ country: null, goalId: goal.id, lessonId: lesson.id, opening });
+    const resumed = await readSavedGoalOpening(goal.id, null);
     expect(resumed?.skill).toStrictEqual(opening);
   });
 
@@ -188,8 +203,64 @@ describe(readSavedGoalOpening, () => {
 
     expect(chosen).toBe(lesson.id);
     const opening = openingFor({ course, skill });
-    await saveGoalOpening({ goalId: goal.id, lessonId: lesson.id, opening });
-    const resumed = await readSavedGoalOpening(goal.id);
+    await saveGoalOpening({ country: null, goalId: goal.id, lessonId: lesson.id, opening });
+    const resumed = await readSavedGoalOpening(goal.id, null);
     expect(resumed?.skill).toStrictEqual(opening);
+  });
+
+  it("keeps a legacy opening without a country reading in its original country", async () => {
+    const user = await userFixture();
+
+    const [{ course, first, skill }, goal] = await Promise.all([
+      taughtCourse(),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const opening = openingFor({ course, skill });
+
+    await prisma.goal.update({
+      data: {
+        openingLessonId: first.id,
+        openingSkill: { ...opening, course: { id: course.id, key: "legacy", title: course.title } },
+      },
+      where: { id: goal.id },
+    });
+
+    await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toBeNull();
+
+    await expect(readSavedGoalOpening(goal.id, null)).resolves.toMatchObject({
+      lesson: { id: first.id },
+    });
+  });
+
+  it("never reuses an opening from another country when rebuilding", async () => {
+    const user = await userFixture();
+
+    const [{ course, first, skill }, goal] = await Promise.all([
+      taughtCourse(),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    await saveGoalOpening({
+      country: null,
+      goalId: goal.id,
+      lessonId: first.id,
+      opening: {
+        ...openingFor({ course, skill }),
+        course: { ...openingFor({ course, skill }).course, countrySpecific: true },
+      },
+    });
+
+    await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toBeNull();
+
+    await expect(readSavedGoalOpening(goal.id, null)).resolves.toMatchObject({
+      lesson: { id: first.id },
+    });
+
+    await prisma.course.update({ data: { country: "PT" }, where: { id: course.id } });
+
+    await expect(readSavedGoalOpening(goal.id, "PT")).resolves.toMatchObject({
+      skill: { course: { countrySpecific: true } },
+    });
   });
 });

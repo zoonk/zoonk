@@ -3,7 +3,6 @@
 import { MAX_MEMORY_STATEMENT_LENGTH } from "@zoonk/core/memory/memory-limits";
 import { MAX_CONDITION_NOTE_LENGTH } from "@zoonk/core/profile/questions/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { PlusIcon } from "lucide-react";
@@ -18,41 +17,12 @@ function changedRow(previous: readonly string[], next: readonly string[]): strin
   return next.find((id) => !previous.includes(id)) ?? previous.find((id) => !next.includes(id));
 }
 
-function ConsentBox({
-  checked,
-  onChange,
-}: {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  const t = useExtracted();
-  const boxId = useId();
-  const descriptionId = useId();
+const NO_EXCLUSIVES: ProfileExclusive[] = [];
 
-  return (
-    <div className="border-border flex items-start gap-3 border-t pt-4">
-      <Checkbox
-        aria-describedby={descriptionId}
-        checked={checked}
-        className="mt-0.5 size-5 [&_svg]:size-3.5"
-        id={boxId}
-        onCheckedChange={onChange}
-      />
-      <div className="flex flex-col gap-1">
-        <Label className="cursor-pointer text-[0.9375rem]" htmlFor={boxId}>
-          {t("Save this to my profile")}
-        </Label>
-        <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
-          {t(
-            "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings.",
-          )}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function RowsBody(props: BodyProps & { exclusives: ProfileExclusive[]; label: string }) {
+function RowsBody({
+  exclusives = NO_EXCLUSIVES,
+  ...props
+}: BodyProps & { exclusives?: ProfileExclusive[]; label: string }) {
   const { draft, question } = props;
   const exclusiveLabels = useExclusiveLabels();
   const value = draft.exclusive ? [draft.exclusive] : draft.picks;
@@ -66,15 +36,12 @@ function RowsBody(props: BodyProps & { exclusives: ProfileExclusive[]; label: st
           label: option.label,
           value: option.id,
         })),
-        ...props.exclusives.map((exclusive) => ({
-          label: exclusiveLabels[exclusive],
-          value: exclusive,
-        })),
+        ...exclusives.map((exclusive) => ({ label: exclusiveLabels[exclusive], value: exclusive })),
       ]}
       label={props.label}
       onChange={(next) => {
         const changed = changedRow(value, next);
-        const exclusive = props.exclusives.find((id) => id === changed);
+        const exclusive = exclusives.find((id) => id === changed);
 
         if (exclusive) {
           picker.exclusive(exclusive);
@@ -93,23 +60,16 @@ export function ConditionsBody(props: BodyProps & { label: string }) {
 
   return (
     <>
-      <RowsBody {...props} exclusives={["none", "ratherNot"]} />
+      <RowsBody {...props} />
 
       {draft.picks.includes("other") && (
         <TextField
-          autoFocus={false}
+          autoFocus={!props.question.saved.picks.includes("other")}
           label={t("What should we know?")}
           maxLength={MAX_CONDITION_NOTE_LENGTH}
           onChange={(text) => setText(props, text)}
           required
           value={draft.text}
-        />
-      )}
-
-      {draft.picks.length > 0 && (
-        <ConsentBox
-          checked={draft.consented}
-          onChange={(consented) => props.onChange({ ...draft, consented })}
         />
       )}
     </>

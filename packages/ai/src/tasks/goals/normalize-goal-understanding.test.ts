@@ -12,6 +12,8 @@ const TODAY = "2026-09-26";
 
 function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal {
   return {
+    contentCountry: null,
+    countryDependent: false,
     examDay: null,
     examMonth: null,
     examName: null,
@@ -312,6 +314,45 @@ describe(normalizeGoalUnderstanding, () => {
         { targetLanguage: "en", targetRegion: undefined },
       ],
     });
+  });
+
+  it("keeps a learn goal's country only as a real code, and only for learn goals", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({ contentCountry: " de ", countryDependent: true, title: "Impostos" }),
+          rawGoal({ contentCountry: "ZZ", countryDependent: true, title: "Finanças" }),
+          rawGoal({ contentCountry: "PT", examName: "Exame", kind: "exam", title: "Exame" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        { contentCountry: "DE", countryDependent: true },
+        { contentCountry: undefined, countryDependent: true },
+        { contentCountry: undefined, countryDependent: false },
+      ],
+    });
+  });
+
+  it("never marks an exam or a language as waiting for a country", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({ countryDependent: true, examName: "ENEM", kind: "exam", title: "ENEM" }),
+          rawGoal({ countryDependent: true, kind: "language", targetLanguage: "en", title: "En" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(
+      result.route === "goals" && result.goals.map((goal) => goal.countryDependent),
+    ).toStrictEqual([false, false]);
   });
 
   it("asks for more when nothing usable is left", () => {

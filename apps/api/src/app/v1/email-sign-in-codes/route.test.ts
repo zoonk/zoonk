@@ -1,15 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { list } from "@vercel/blob";
 import { prisma } from "@zoonk/db";
-import { checkBotId } from "botid/server";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sendVerificationOTP } from "../../../../../../packages/auth/src/plugins/otp";
 import { DELETE as deleteCurrentAccount } from "../me/route";
 import { POST as sendEmailCode } from "./route";
-
-vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
 
 vi.mock("../../../../../../packages/auth/src/plugins/otp", () => ({
   sendVerificationOTP: vi.fn(),
@@ -28,7 +25,6 @@ vi.mock("@zoonk/auth", async () => {
   const { baseAuthConfig, baseAuthPlugins } =
     await import("../../../../../../packages/auth/src/server");
 
-  const { botCheckPlugin } = await import("../../../../../../packages/auth/src/plugins/bot-check");
   const { guestPlugin } = await import("../../../../../../packages/auth/src/plugins/guest");
 
   const { createEmailOTPPlugin } =
@@ -44,7 +40,6 @@ vi.mock("@zoonk/auth", async () => {
       advanced: { ...baseAuthConfig.advanced, disableOriginCheck: false },
       plugins: [
         ...baseAuthPlugins,
-        botCheckPlugin(),
         createEmailOTPPlugin({ storeOTP: "hashed" }),
         bearer(),
         guestPlugin(),
@@ -121,13 +116,6 @@ describe("native account deletion through the production email-code API", () => 
     vi.stubEnv("E2E_TESTING", "false");
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_private");
 
-    vi.mocked(checkBotId).mockResolvedValue({
-      bypassed: false,
-      isBot: true,
-      isHuman: false,
-      isVerifiedBot: false,
-    });
-
     vi.mocked(list).mockResolvedValue({ blobs: [], hasMore: false } as never);
   });
 
@@ -177,7 +165,7 @@ describe("native account deletion through the production email-code API", () => 
   });
 
   it.each(["missing", "another account"])(
-    "refuses code delivery with a %s bearer",
+    "sends a code with a %s bearer without requiring app proof",
     async (kind) => {
       const [user, other] = await Promise.all([emailOnlyLearner(), emailOnlyLearner()]);
 
@@ -186,9 +174,8 @@ describe("native account deletion through the production email-code API", () => 
         requestHeaders: nativeHeaders(kind === "missing" ? undefined : other.token),
       });
 
-      expect(response.status).toBe(403);
-      await expect(response.json()).resolves.toMatchObject({ error: { code: "BOT_DETECTED" } });
-      expect(sendVerificationOTP).not.toHaveBeenCalled();
+      expect(response.status).toBe(204);
+      expect(sendVerificationOTP).toHaveBeenCalledOnce();
     },
   );
 

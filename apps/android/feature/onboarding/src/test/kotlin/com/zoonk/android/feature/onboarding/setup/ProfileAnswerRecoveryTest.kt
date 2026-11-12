@@ -25,6 +25,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,6 +57,43 @@ class ProfileAnswerRecoveryTest {
                 api.reply = { _, _ -> setupView(listOf("plan")) }
                 vm.answer(profileSkip(ProfileQuestion.WATCH))!!.await()
                 assertEquals(ProfileDraft(), vm.profileDraft(question, null))
+            } finally {
+                models.clear()
+                Dispatchers.resetMain()
+            }
+        }
+
+    @Test
+    fun skippingConditionsTakesBackTheSupportsTheirPicksPrechecked() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val models = ViewModelStore()
+            try {
+                val support =
+                    ProfileQuestionView(
+                        ProfileQuestion.LEARNING_SUPPORT,
+                        emptyList(),
+                        ProfileQuestionViewSaved(emptyList(), emptyList(), ""),
+                        null,
+                        1,
+                    )
+                val view = { steps: List<String> ->
+                    setupView(steps).let { it.copy(profile = it.profile.copy(questions = listOf(support))) }
+                }
+                val api = FakeOnboardingApi()
+                api.reply = { _, _ -> view(listOf("learningSupport", "plan")) }
+                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                val store = OnboardingStore(api, AppCache(session, backgroundScope), session) { SignInResult.SignedIn }
+                val vm = GoalSetupViewModel(store, null, SavedStateHandle(), GOAL_ID)
+                models.put("profile", vm)
+                vm.begin(view(listOf("conditions", "learningSupport", "plan")))
+                val picks = ProfileDraft(picks = listOf("adhd"))
+                vm.answer(picks.onboardingInput(ProfileQuestion.CONDITIONS, true), profileAnswer = picks)!!.await()
+                assertTrue(vm.supportsSuggested)
+                vm.back()
+                vm.answer(ProfileDraft(declined = true).onboardingInput(ProfileQuestion.CONDITIONS, true))!!.await()
+                assertFalse(vm.supportsSuggested)
+                assertEquals(ProfileDraft.from(support), vm.profileDraft(support, null))
             } finally {
                 models.clear()
                 Dispatchers.resetMain()

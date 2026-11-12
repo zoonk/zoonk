@@ -134,12 +134,12 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
         rule.onNode(hasSetTextAction()).performTextInput("DELE B2 in May")
         api.generationReads.clear()
-        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.onNodeWithText("Continue").performClick()
 
         rule.onNodeWithText("Is there a date you're aiming for?").assertIsDisplayed()
         assertEquals(listOf(EXAM_GOAL_ID), api.generationReads.distinct())
         api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
-        rule.onNodeWithText("Continue without a date").performScrollTo().performClick()
+        rule.onNodeWithText("Continue without a date").performClick()
         rule.waitForIdle()
 
         assertEquals(listOf(GOAL_ID, EXAM_GOAL_ID), api.answers.map { it.first })
@@ -151,7 +151,7 @@ class GoalSetupFlowTest {
         api.answerGate = CompletableDeferred()
         show()
 
-        rule.onNodeWithText("Skip").performScrollTo().performClick()
+        rule.onNodeWithText("Skip").performClick()
         rule.waitForIdle()
 
         rule.onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
@@ -187,14 +187,14 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
         rule.mainClock.advanceTimeBy(1_000)
-        rule.onNodeWithText("See your plan").performScrollTo().assertIsNotEnabled()
+        rule.onNodeWithText("See your plan").assertIsNotEnabled()
 
         rule.mainClock.advanceTimeBy(45_000)
         rule.onNodeWithText("We couldn't work out the time your goal needs.").performScrollTo().assertIsDisplayed()
-        rule.onNodeWithText("See your plan").performScrollTo().performClick()
+        rule.onNodeWithText("See your plan").performClick()
         rule.waitForIdle()
 
-        assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value.dailyMinutes)
+        assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value).value.dailyMinutes)
     }
 
     @Test
@@ -391,7 +391,7 @@ class GoalSetupFlowTest {
 
         rule.onNodeWithText("To pass the DELE").assertIsDisplayed()
         api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
-        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.onNodeWithText("Continue").performClick()
         rule.waitForIdle()
         assertEquals(listOf(GOAL_ID), api.answers.map { it.first })
         rule.waitUntil(5_000) { saved.value == null }

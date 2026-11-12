@@ -4,7 +4,8 @@ import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
 import { progressCelebrationShape } from "../../sessions/progress-celebration";
 
-const MAX_DRILL_QUESTIONS = 10;
+/** Code keeps a drill to this many questions, so all its answers can be sent back. */
+export const MAX_DRILL_QUESTIONS = 10;
 const MAX_DRILL_ANSWER_LENGTH = 200;
 
 export const mistakePatternContentSchema = z.object({

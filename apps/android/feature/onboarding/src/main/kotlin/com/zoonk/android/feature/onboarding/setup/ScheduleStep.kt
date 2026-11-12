@@ -55,7 +55,7 @@ import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
-import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -65,7 +65,7 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
-import com.zoonk.api.models.OnboardingAnswerInputOneOf8
+import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.OnboardingPlanReadiness
 import com.zoonk.api.models.OnboardingTimeChoicesInner
 import com.zoonk.api.models.PlanTimeAdvice
@@ -283,10 +283,10 @@ private fun ColumnScope.ScheduleTime(
         onContinue = {
             val time = minutes ?: return@StepForm
             vm.answer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
-                    OnboardingAnswerInputOneOf8(
+                OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value(
+                    OnboardingAnswerInputOneOf9(
                         dailyMinutes = time.toLong(),
-                        question = OnboardingAnswerInputOneOf8.Question.SCHEDULE,
+                        question = OnboardingAnswerInputOneOf9.Question.SCHEDULE,
                         fullCourse = if (exam) keepsFullCourse(fullCourse, line) else null,
                         studyDays = days.takeIf { it.size < EVERY_DAY.size }?.map(Int::toLong),
                         timeZone = TimeZone.getDefault().id,
@@ -393,7 +393,7 @@ private fun DateLink(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.textInset), enabled = enabled) {
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset), enabled = enabled) {
         Text(stringResource(if (dated) R.string.onboarding_change_date else R.string.onboarding_choose_date))
     }
 }

@@ -57,12 +57,16 @@
   "tutor_offer_choose": "b871ef7f4cfc1a1d3ad6e6a92d2acb290844c5b5d4b381534f9731d64ee9d04a",
   "tutor_offer_choose_focus": "fcfb00401b190a24fc17ffa9e549ba67236f52e4db66138332533733df08093a",
   "tutor_offer_choose_focus_description": "63e432b5404c05ea077a8740c3f9822561011afbdef896b71c4035a55d5bd21a",
+  "tutor_offer_country_applied": "7c8d5b65851de74df45b215fb11ca6872ed7e33c245b18c8fb2b88535328d9e8",
+  "tutor_offer_country_description": "8b99f8d507048b99cda35942218bbc8b2b0ada3eb64b115ea6f01693a222b5fc",
   "tutor_offer_essay_biweekly": "3cd7c27b501d2b073d310325b7f547f30010120cd07467f7b6b78f54c37c8bb1",
   "tutor_offer_essay_final_weeks": "0f501986557477856f4cdd0cdac8f83f1fc1e40df3dbf1b285985333e70b668f",
   "tutor_offer_essay_plus": "fcc70cae9ce18eaa86ca37a26e80ff87d12f031139e69c1910f12e9b02592e6e",
   "tutor_offer_essay_weekly": "de83316b0cda3691d18871ac08f4b9bafde6d6cfb4f950f836492a0ad803c713",
   "tutor_offer_goal": "f3b12b93174567311d66308058903b723985effb2b2053570c49d8e32aa6dd18",
   "tutor_offer_goal_limit": "d12349765e107173a1fcd86019fd4e7afbee9e0ba782285f5845834429ef60c8",
+  "tutor_offer_home_country_saved": "fab2dea53508ab0b4cb0ce99f1bb2e5bfb2ec7a9d4b3b8ce84e74a78696c2e9f",
+  "tutor_offer_home_country_title": "ebcedf228817ced55bebbe9eace67eed1c21ca80e1d614701fab2195db464b2a",
   "tutor_offer_logbook": "9edd1ef149ed0976a2ebb56f79475a4955320c451ffe1eb55ab32670c8f69cf8",
   "tutor_offer_logbook_description": "1e653811a081dc546ba1a90e64ede14c4a24a4009e560b13243ff014501f9279",
   "tutor_offer_manage": "de797e742950fbebbfd64c927389ee43d88b3a0fb5407d2bd9157df831c8f304",
@@ -283,4 +287,12 @@
     <string name="tutor_today">Bugün</string>
     <string name="tutor_yesterday">Dün</string>
     <string name="tutor_page_sign_up">Sohbete başlamak için ücretsiz bir hesap oluştur.</string>
+    <!-- A buddy's card offering to save where the learner lives; %1$s is the country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="tutor_offer_home_country_title">Yaşadığın ülke: %1$s</string>
+    <!-- A buddy's card offering a new content country for the plan, under its title "Content country: …". -->
+    <string name="tutor_offer_country_description">Uygulandığında planın bu ülkeye göre yeniden hazırlanır. Bitirdiğin dersler tamamlanmış olarak kalır.</string>
+    <!-- Replaces that card's Apply button once the country is saved. -->
+    <string name="tutor_offer_country_applied">Kaydedildi. Yeni planını hazırlıyoruz. Bu sırada çalışmaya devam edebilirsin.</string>
+    <!-- Replaces the where-you-live card's Save button once it's saved. -->
+    <string name="tutor_offer_home_country_saved">Kaydedildi. Tercihler bölümünden değiştirebilirsin.</string>
 </resources>

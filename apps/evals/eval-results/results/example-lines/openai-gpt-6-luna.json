@@ -304,146 +304,6 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "The bus-fare example naturally uses the learner's bus routine. The conditional wording makes the prices hypothetical rather than invented personal facts, and no city is named. There is no repeated scene.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The increase from R$ 4,00 to R$ 4,50 is R$ 0,50, and dividing that increase by the initial R$ 4,00 gives exactly 12,5%, correctly applying the screen's idea.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The line is one natural Brazilian Portuguese sentence under 200 characters, addresses the learner as 'você', and uses Brazilian currency and decimal notation. It does not begin with 'For example' or its Portuguese equivalent and contains no question, praise, promise, or sensitive personal assumption.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1780,
-          "outputTokens": 405,
-          "reasoningTokens": 77
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner's facts are about their routine: two buses to work every morning. A line about a bus fare going up, as a percent change in reais written the Brazilian way (R$ 4,40 → R$ 5,00), with correct math, fits\n      - The learner never said where they live, so the line MUST NOT name a city\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-routine-commute-fare-1",
-        "userInput": {
-          "facts": [
-            "Pega dois ônibus para ir ao trabalho toda manhã",
-            "Estuda depois do jantar"
-          ],
-          "goal": "Revisar matemática básica",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "Um preço do dia a dia da pessoa que sobe.",
-              "text": "A variação percentual compara a mudança com o valor inicial. Um preço que vai de R$ 4,00 para R$ 5,00 subiu R$ 1,00, que é 25% de R$ 4,00."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The line naturally connects compound interest to the learner’s house down payment savings. The conditional makes the amount illustrative rather than an invented financial fact. It does not misuse the learning preference as a life situation, and there is no repeated moment.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The calculation is correct for annual compounding: $10,000 × 1.05² = $11,025. The line explicitly explains that interest earns interest, matching the screen’s idea.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The line is one short sentence addressed to “you,” uses US dollar formatting, and contains no question, praise, promise, or unsupported personal assumption. However, “save an example $10,000” is awkward phrasing that slightly weakens its naturalness.",
-          "score": 8,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1755,
-          "outputTokens": 607,
-          "reasoningTokens": 252
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "“Save an example $10,000” is slightly awkward US English; “save $10,000” within the existing conditional would sound more natural while remaining hypothetical.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - The learner is saving for a house down payment within five years: a line where that saving earns compound interest, in dollars written the US way, with correct math, fits\n      - \"Understands faster with numbers\" is how they learn, not a moment of their life: it may shape the line's numbers but is never its situation\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-goal-fact-down-payment-1",
-        "userInput": {
-          "facts": [
-            "Is saving for a house down payment within five years",
-            "Understands faster with numbers"
-          ],
-          "goal": "Understand personal finance",
-          "language": "en",
-          "screens": [
-            {
-              "idea": "Money the learner saves earning interest on its interest.",
-              "text": "Compound interest pays interest on the interest already earned. $1,000 at 5% a year becomes $1,050 after one year and $1,102.50 after two."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
           "reasoning": "The learner shared only learning preferences, not a purchase or other relevant life moment. The single null entry correctly follows the explicit requirement for this screen.",
           "score": 10,
           "label": "Uses what fits, never the same moment twice",
@@ -1012,76 +872,6 @@
       "categoryScores": [
         {
           "categoryId": "fit",
-          "reasoning": "Naturally connects equal division to the learner sharing rent with two friends. The rent amount is explicitly hypothetical, no location is invented, and no earlier moment is repeated.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "Correctly divides R$ 1.500 among three people to give R$ 500 each, using Brazilian currency notation and the screen's equal-sharing concept.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "One short, natural sentence in Brazilian Portuguese directly addresses the learner as você, without a question, praise, promise, or unsupported personal claim.",
-          "score": 10,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1843,
-          "outputTokens": 414,
-          "reasoningTokens": 138
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner shares the rent with two friends: a line splitting a rent in reais three ways fits, with the money written the Brazilian way (R$ 1.200, R$ 400) and correct math\n      - The learner never said where they live, so the line MUST NOT name a city, neighborhood or region\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-rent-split-no-city-1",
-        "userInput": {
-          "facts": [
-            "Faz faculdade à noite",
-            "Divide o aluguel com duas amigas"
-          ],
-          "goal": "Organizar as finanças pessoais",
-          "language": "pt",
-          "screens": [
-            {
-              "idea": "Uma conta dividida em partes iguais.",
-              "text": "Dividir uma conta em partes iguais é dividir o total pelo número de pessoas. Uma conta de R$ 90 entre 3 pessoas dá R$ 30 para cada uma."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
           "reasoning": "Software engineering clearly fits a discount on software used for work, and EARLIER_LINES contains no competing example. Returning null triggers the explicit maximum score of 7 and leaves the required example missing.",
           "score": 7,
           "label": "Uses what fits, never the same moment twice",
@@ -1213,76 +1003,6 @@
             {
               "idea": "Um desconto em algo que a pessoa compra ou vende.",
               "text": "Um desconto de 25% tira um quarto do preço original. Num produto de R$ 80, isso é R$ 20 a menos: você paga R$ 60."
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "fit",
-          "reasoning": "The line naturally uses the learner's car-saving goal without inventing a location or asserting an actual savings balance. The amount is explicitly hypothetical, and no earlier moment is repeated.",
-          "score": 10,
-          "label": "Uses what fits, never the same moment twice",
-          "weight": 40
-        },
-        {
-          "categoryId": "accuracy",
-          "reasoning": "The line correctly applies a percentage to savings: 10% of $1,000 is $100. Dollar amounts use US formatting.",
-          "score": 10,
-          "label": "Correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "It is one short US English sentence addressed to \"you,\" with no question, praise, promise, or unsupported personal assumption. The only small polish issue is the awkward phrase \"an example $1,000.\"",
-          "score": 9,
-          "label": "One natural sentence each",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1821,
-          "outputTokens": 439,
-          "reasoningTokens": 119
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The phrase \"set aside an example $1,000\" sounds awkward; \"set aside $1,000\" already reads as hypothetical because it follows \"if.\"",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - The learner is saving for a car: a line with a percent of what they save, in dollars written the US way ($2,500), with correct math, fits\n      - The learner never said where they live, so the line MUST NOT name a city or state\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-car-savings-no-city-1",
-        "userInput": {
-          "facts": [
-            "Works night shifts as a nurse",
-            "Saving for a car"
-          ],
-          "goal": null,
-          "language": "en",
-          "screens": [
-            {
-              "idea": "A percent of an amount the learner saves or spends.",
-              "text": "A percent is a number out of 100. 20% of $500 is 20 out of every 100 dollars: $100."
             }
           ]
         }
@@ -1635,6 +1355,357 @@
             {
               "idea": "A corrente em um resistor ligado a uma fonte de tensão.",
               "text": "Se a resistência de um componente permanece constante, você pode calcular a corrente pela **lei de Ohm**: $V = R \\times I$. Aqui, $V$ é a tensão, $R$ é a resistência e $I$ é a corrente. Para achar a corrente, divida a tensão pela resistência: $I = V \\div R$."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The rent-sharing situation naturally fits equal division and uses the learner’s two friends concretely, without repetition, invented geography, or an asserted actual rent. However, “cada uma” adds an unsupported implication about the learner’s gender.",
+          "score": 8,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The line correctly divides a clearly hypothetical R$ 1.200 among three people, yielding R$ 400 each, exactly matching the screen’s idea.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The line is one short sentence in Brazilian Portuguese, directly addresses “você,” and uses Brazilian currency notation. However, the unsupported feminine reference to the learner triggers the maximum score of 7 for a gender assumption.",
+          "score": 7,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1878,
+          "outputTokens": 774,
+          "reasoningTokens": 402
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "“Cada uma” refers to the learner and the two friends as an all-female group, although only the friends’ gender was provided. This introduces an unsupported gender assumption.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use gender-neutral wording and a smoother conditional: “Se o aluguel que você divide com suas duas amigas fosse R$ 1.200, cada pessoa pagaria R$ 400.”",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner shares the rent with two friends: a line splitting a rent three ways fits, with correct math\n      - The learner never said where they live, so the line MUST NOT name a city, neighborhood or region, and MUST NOT state an amount as the rent they really pay: an amount is a clearly hypothetical example (\"se o aluguel fosse R$ 1.200…\") in the lesson's money, written the Brazilian way\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-rent-split-no-city-1",
+        "userInput": {
+          "facts": [
+            "Faz faculdade à noite",
+            "Divide o aluguel com duas amigas"
+          ],
+          "goal": "Organizar as finanças pessoais",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "Uma conta dividida em partes iguais.",
+              "text": "Dividir uma conta em partes iguais é dividir o total pelo número de pessoas. Uma conta de R$ 90 entre 3 pessoas dá R$ 30 para cada uma."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The line naturally applies equal splitting to the learner's shared rent with two friends. The amount is explicitly hypothetical, no city is invented, and no earlier moment is repeated.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The learner and two friends make three people, and 900 divided by three is correctly stated as 300. Both amounts use Portugal's euro notation rather than Brazilian reais.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The line is one concise, natural Brazilian Portuguese sentence addressed to the learner through 'suas'. It contains no question, praise, promise, or unsupported personal assertion.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1888,
+          "outputTokens": 392,
+          "reasoningTokens": 108
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner lives in Portugal (HOME_COUNTRY) and shares the rent with two friends: a line splitting their rent three ways fits, in euros written as Portugal writes them (900 €, 300 €), with correct math\n      - MUST NOT use reais or R$ for the learner's own rent, even though the lesson is set in Brazil\n      - The learner never named a city, so the line MUST NOT name one (not even Lisboa)\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-rent-split-lives-in-portugal-1",
+        "userInput": {
+          "facts": [
+            "Faz faculdade à noite",
+            "Divide o aluguel com duas amigas"
+          ],
+          "goal": "Organizar as finanças pessoais",
+          "language": "pt",
+          "learnerHomeCountry": "PT",
+          "screens": [
+            {
+              "idea": "Uma conta dividida em partes iguais.",
+              "text": "Dividir uma conta em partes iguais é dividir o total pelo número de pessoas. Uma conta de R$ 90 entre 3 pessoas dá R$ 30 para cada uma."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The line concretely connects percentages to the learner’s car-saving goal. The conditional makes $500 hypothetical rather than asserting actual savings, and no location or other learner detail is invented. There is no repeated moment.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The line correctly applies the screen’s concept: 20% of $500 is $100. Dollar amounts use US notation.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "It is one short sentence in US English, addresses “you,” and contains no prohibited opening, question, praise, promise, or personal assumption. However, “put an example $500” sounds unnatural and could be phrased more smoothly.",
+          "score": 8,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1841,
+          "outputTokens": 489,
+          "reasoningTokens": 159
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "“Put an example $500” is awkward phrasing. “If you put aside $500 for your car” would sound more natural while keeping the amount clearly hypothetical.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The learner is saving for a car: a line with a percent of a clearly hypothetical saving (\"if you put aside $2,500…\"), in dollars written the US way, with correct math, fits\n      - The learner never said where they live, so the line MUST NOT name a city or state, and MUST NOT state an amount as what they really save\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-car-savings-no-city-1",
+        "userInput": {
+          "facts": [
+            "Works night shifts as a nurse",
+            "Saving for a car"
+          ],
+          "goal": null,
+          "language": "en",
+          "screens": [
+            {
+              "idea": "A percent of an amount the learner saves or spends.",
+              "text": "A percent is a number out of 100. 20% of $500 is 20 out of every 100 dollars: $100."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The line naturally connects the learner's bus routine to an everyday price increase. The fare is explicitly hypothetical, no city or actual payment is invented, and no moment is repeated.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "An increase from R$ 5,00 to R$ 6,00 is R$ 1,00 divided by the initial R$ 5,00, correctly yielding 20% and illustrating the screen's concept.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The line is one natural Brazilian Portuguese sentence under 200 characters, addresses the learner as 'você', and uses Brazilian currency formatting. It contains no prohibited opening, question, praise, promise, or personal assumption.",
+          "score": 10,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1912,
+          "outputTokens": 389,
+          "reasoningTokens": 82
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The learner's facts are about their routine: two buses to work every morning. A line about a bus fare going up, as a percent change on a clearly hypothetical fare in reais written the Brazilian way (\"se a passagem fosse de R$ 4,40 para R$ 5,00\"), with correct math, fits; the learner never said what they pay\n      - The learner never said where they live, so the line MUST NOT name a city\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-routine-commute-fare-1",
+        "userInput": {
+          "facts": [
+            "Pega dois ônibus para ir ao trabalho toda manhã",
+            "Estuda depois do jantar"
+          ],
+          "goal": "Revisar matemática básica",
+          "language": "pt",
+          "screens": [
+            {
+              "idea": "Um preço do dia a dia da pessoa que sobe.",
+              "text": "A variação percentual compara a mudança com o valor inicial. Um preço que vai de R$ 4,00 para R$ 5,00 subiu R$ 1,00, que é 25% de R$ 4,00."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "fit",
+          "reasoning": "The line naturally connects compound interest to the learner’s house down payment, uses a clearly hypothetical dollar amount, and stays within the five-year horizon. It neither invents a personal financial fact nor treats the learning preference as a life situation.",
+          "score": 10,
+          "label": "Uses what fits, never the same moment twice",
+          "weight": 40
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The calculation is correct: $2,000 × 1.05² = $2,205. The line explicitly describes interest earning interest, matching the screen’s explanation.",
+          "score": 10,
+          "label": "Correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "This is one short sentence addressed to “you,” in US English with US dollar formatting and no prohibited question, praise, promise, or personal assumption. The hypothetical phrasing could be slightly more conversational.",
+          "score": 9,
+          "label": "One natural sentence each",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1880,
+          "outputTokens": 498,
+          "reasoningTokens": 168
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Replace “an example $2,000 saved” with “if you saved $2,000” for more conversational hypothetical phrasing.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The learner is saving for a house down payment within five years: a line where that saving earns compound interest, on a clearly hypothetical amount in dollars written the US way (\"if you saved $20,000…\"), with correct math, fits\n      - \"Understands faster with numbers\" is how they learn, not a moment of their life: it may shape the line's numbers but is never its situation\n      \n  - The output is `lines`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-goal-fact-down-payment-1",
+        "userInput": {
+          "facts": [
+            "Is saving for a house down payment within five years",
+            "Understands faster with numbers"
+          ],
+          "goal": "Understand personal finance",
+          "language": "en",
+          "screens": [
+            {
+              "idea": "Money the learner saves earning interest on its interest.",
+              "text": "Compound interest pays interest on the interest already earned. $1,000 at 5% a year becomes $1,050 after one year and $1,102.50 after two."
             }
           ]
         }

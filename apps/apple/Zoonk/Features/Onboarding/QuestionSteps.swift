@@ -11,9 +11,8 @@ struct QuestionStep: View {
   let onAnswer: ([String: Any]) -> Void
 
   var body: some View {
-    QuestionForm(isSaving: isSaving, failed: failed) {
-      content
-    }
+    content
+      .sendsAnswer(isSaving: isSaving, failed: failed)
   }
 
   @ViewBuilder
@@ -48,8 +47,10 @@ struct QuestionStep: View {
       }
     case .buddy:
       BuddyQuestion(onAnswer: onAnswer)
-    case .work, .tools, .studies, .watch, .listen, .play, .read, .activities, .conditions,
-      .learningSupport:
+    case .contentCountry:
+      CountryQuestion(view: view, subject: subject, onAnswer: onAnswer)
+    case .addressForm, .work, .tools, .studies, .watch, .listen, .play, .read, .activities,
+      .conditions, .learningSupport:
       EmptyView()
     case .schedule, .placement, .plan:
       EmptyView()
@@ -69,35 +70,71 @@ private struct OnboardingDetail: Decodable {
   }
 }
 
-/// While an answer saves, its fields lock (`locksWhileSaving`) and only the button that sent it
-/// spins. The list itself stays enabled, so that button keeps its focus.
-struct QuestionForm<Content: View>: View {
-  let isSaving: Bool
-  let failed: Bool
-  /// Says why a save failed, when the answer itself was refused.
-  var failure: String?
+/// A question's list, with its buttons pinned under it so they stay in reach however long the list
+/// is. While an answer saves (`sendsAnswer`), its fields lock (`locksWhileSaving`) and only the
+/// button that sent it spins; the list itself stays enabled, so that button keeps its focus. A failed
+/// save says so over the buttons.
+struct QuestionForm<Content: View, Buttons: View>: View {
   @ViewBuilder let content: Content
+  @ViewBuilder let buttons: Buttons
+  private var hasButtons = true
+
+  @Environment(\.answerFailure) private var failure
+
+  init(@ViewBuilder content: () -> Content, @ViewBuilder buttons: () -> Buttons) {
+    self.content = content()
+    self.buttons = buttons()
+  }
 
   var body: some View {
     ZoonkList {
       content
+    }
+    .scrollDismissesKeyboard(.interactively)
+    .safeAreaBar(edge: .bottom) {
+      if hasButtons || failure != nil {
+        VStack(spacing: 12) {
+          if let failure {
+            FailureLine(message: failure)
+          }
 
-      if failed {
-        Section {
-          FailureLine(
-            message: failure
-              ?? String(
-                localized: "That didn't save. Try again.", table: "Onboarding",
-                comment: "A change couldn't be saved"))
+          buttons
         }
+        .keepsOffFold()
+        .scenePadding(.horizontal)
+        .padding(.vertical, 10)
       }
     }
-    .environment(\.isSavingAnswer, isSaving)
+    // Skip's outline is see-through, so what scrolls under the bar stops at its edge.
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
+  }
+}
+
+extension QuestionForm where Buttons == EmptyView {
+  init(@ViewBuilder content: () -> Content) {
+    self.init(content: content) {}
+    hasButtons = false
   }
 }
 
 extension EnvironmentValues {
   @Entry var isSavingAnswer = false
+  @Entry fileprivate var answerFailure: String?
+}
+
+extension View {
+  /// The answer this question screen sends: `failure` says why a failed save was refused.
+  func sendsAnswer(isSaving: Bool, failed: Bool, failure: String? = nil) -> some View {
+    environment(\.isSavingAnswer, isSaving)
+      .environment(
+        \.answerFailure,
+        failed
+          ? failure
+            ?? String(
+              localized: "That didn't save. Try again.", table: "Onboarding",
+              comment: "A change couldn't be saved")
+          : nil)
+  }
 }
 
 extension View {
@@ -152,56 +189,26 @@ struct StepHeader: View {
   }
 }
 
-/// A step's Continue, with an optional Skip under it. A label passed in takes its own icon, or none
-/// where no idea fits it; the defaults are Continue's forward arrow and Skip's. Either one's request
-/// is `isSavingAnswer`; the one pressed spins.
+/// A step's Continue, with an optional Skip under it: a list's last section, or a `QuestionForm`'s
+/// pinned bar.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
   var continueLabel: Text?
   var continueIcon: ActionIcon? = .forward
-  /// False while another button on the screen is the filled one.
-  var continueIsMain = true
   var skipLabel: Text?
   var skipIcon: ActionIcon? = .skip
   var note: Text?
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
-  @Environment(\.isSavingAnswer) private var isSaving
-  @State private var sender = StepSender()
-
   var body: some View {
-    let proceeds = sender.sent(.proceed, isSaving: isSaving)
-    let skips = sender.sent(.skip, isSaving: isSaving)
-
     Section {
-      VStack(spacing: 12) {
-        BusyButton(isBusy: proceeds, icon: continueIcon) {
-          sender.press(.proceed)
-          onContinue()
-        } label: {
-          continueLabel
-            ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
-        }
-        .buttonStyle(continueIsMain ? ZoonkButtonStyle.mainAction : .ghost)
-        .disabled((!canContinue || isSaving) && !proceeds)
-
-        if let onSkip {
-          BusyButton(isBusy: skips, icon: skipIcon) {
-            sender.press(.skip)
-            onSkip()
-          } label: {
-            skipLabel
-              ?? Text(
-                "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
-          }
-          .buttonStyle(.outline)
-          .disabled((!canSkip || isSaving) && !skips)
-        }
-      }
-      .buttonSizing(.flexible)
-      .controlSize(.large)
+      StepButtonStack(
+        canContinue: canContinue, canSkip: canSkip, continueLabel: continueLabel,
+        continueIcon: continueIcon, skipLabel: skipLabel, skipIcon: skipIcon,
+        onContinue: onContinue, onSkip: onSkip
+      )
       .keepsOffFold()
       .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
@@ -214,6 +221,54 @@ struct StepButtons: View {
         }
       }
     }
+  }
+}
+
+/// A label passed in takes its own icon, or none where no idea fits it; the defaults are Continue's
+/// forward arrow and Skip's. Either one's request is `isSavingAnswer`; the one pressed spins.
+struct StepButtonStack: View {
+  var canContinue = true
+  var canSkip = true
+  var continueLabel: Text?
+  var continueIcon: ActionIcon? = .forward
+  var skipLabel: Text?
+  var skipIcon: ActionIcon? = .skip
+  let onContinue: () -> Void
+  var onSkip: (() -> Void)?
+
+  @Environment(\.isSavingAnswer) private var isSaving
+  @State private var sender = StepSender()
+
+  var body: some View {
+    let proceeds = sender.sent(.proceed, isSaving: isSaving)
+    let skips = sender.sent(.skip, isSaving: isSaving)
+
+    VStack(spacing: 12) {
+      BusyButton(isBusy: proceeds, icon: continueIcon) {
+        sender.press(.proceed)
+        onContinue()
+      } label: {
+        continueLabel
+          ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+      }
+      .buttonStyle(.mainAction)
+      .disabled((!canContinue || isSaving) && !proceeds)
+
+      if let onSkip {
+        BusyButton(isBusy: skips, icon: skipIcon) {
+          sender.press(.skip)
+          onSkip()
+        } label: {
+          skipLabel
+            ?? Text(
+              "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
+        }
+        .buttonStyle(.outline)
+        .disabled((!canSkip || isSaving) && !skips)
+      }
+    }
+    .buttonSizing(.flexible)
+    .controlSize(.large)
     .onChange(of: isSaving) {
       if !isSaving {
         sender.saveEnded()
@@ -284,71 +339,207 @@ struct ChoiceRows<Value: Hashable>: View {
   }
 }
 
+/// Main's `CountryStep`: a pick waits for Continue, since a mis-tap would start a course about the
+/// wrong country. Skip keeps the language's own country, which the line above the buttons names.
+private struct CountryQuestion: View {
+  let view: GoalOnboarding
+  let subject: String
+  let onAnswer: ([String: Any]) -> Void
+
+  @State private var picked: CountryChoice?
+  @State private var isPickingAnother = false
+  @State private var pickedInSheet = false
+  /// A country picked in the sheet becomes the list's selected row; VoiceOver lands on it once the
+  /// sheet is gone, instead of on "Another country", so it says which one it is.
+  @AccessibilityFocusState private var focusedCountry: String?
+
+  var body: some View {
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: Text(
+          "Which country should your lessons be about?", tableName: "Onboarding",
+          comment: "Onboarding question for a goal whose content changes from country to country"),
+        description: Text(
+          "What you learn here changes from country to country. You can change it later in your plan.",
+          tableName: "Onboarding", comment: "Under the content country question"))
+
+      Section {
+        ForEach(choices) { choice in
+          Button {
+            picked = choice
+          } label: {
+            Text(choice.name)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
+              .frame(maxWidth: .infinity, alignment: .leading)
+              .contentShape(.rect)
+          }
+          .pickedRow(picked?.code == choice.code)
+          .accessibilityAddTraits(picked?.code == choice.code ? .isSelected : [])
+          .accessibilityFocused($focusedCountry, equals: choice.code)
+        }
+
+        Button {
+          isPickingAnother = true
+        } label: {
+          Text(
+            "Another country", tableName: "Onboarding",
+            comment: "Opens every country, after the ones the content country question suggests"
+          )
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .disclosureChevron()
+          .contentShape(.rect)
+        }
+        // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
+        .sheet(isPresented: $isPickingAnother) {
+          if pickedInSheet {
+            pickedInSheet = false
+            focusedCountry = picked?.code
+          }
+        } content: {
+          CountryPickerSheet(
+            title: Text(
+              "Country", tableName: "Plan",
+              comment:
+                "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
+            ),
+            language: view.goal.language,
+            suggested: suggested,
+            selected: picked?.code
+          ) { choice in
+            picked = choice
+            pickedInSheet = true
+            return true
+          }
+          .zoonkStyles()
+        }
+      }
+      .locksWhileSaving()
+    } buttons: {
+      VStack(alignment: .leading, spacing: 12) {
+        if let notice {
+          Text(notice)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        StepButtonStack(canContinue: picked != nil) {
+          if let picked {
+            onAnswer(["country": picked.code, "question": "contentCountry"])
+          }
+        } onSkip: {
+          onAnswer(["question": "contentCountry"])
+        }
+      }
+      .announcesStatus(notice)
+    }
+  }
+
+  private var suggested: [CountryChoice] {
+    .init(suggested: view.contentCountry.suggested)
+  }
+
+  private var defaultCountry: CountryChoice? {
+    CountryChoice(view.contentCountry.defaultCountry)
+  }
+
+  /// Core's suggestions, or the language's own country without any; a country picked from the rest
+  /// comes first, picked.
+  private var choices: [CountryChoice] {
+    let listed = suggested.isEmpty ? (defaultCountry.map { [$0] } ?? []) : suggested
+
+    guard let picked, !listed.contains(where: { $0.code == picked.code }) else {
+      return listed
+    }
+
+    return [picked] + listed
+  }
+
+  private var notice: String? {
+    if let variety = picked?.lessonVariety {
+      return lessonLanguageLine(variety)
+    }
+
+    return defaultCountry.map { country in
+      String(
+        localized: "If you skip: \(country.name)", table: "Onboarding",
+        comment:
+          "Above the content country question's buttons: the country Skip keeps; the argument is a country's name, such as Brazil"
+      )
+    }
+  }
+}
+
 private struct PurposeQuestion: View {
   let subject: String
   let onAnswer: ([String: Any]) -> Void
 
   var body: some View {
-    StepHeader(
-      subject: subject,
-      title: Text(
-        "What do you want from it?", tableName: "Onboarding",
-        comment: "Onboarding question: what the learner hopes to get from learning it"),
-      description: Text(
-        "It sets how deep your course goes, and so how long it is.", tableName: "Onboarding",
-        comment: "Under the purpose question"))
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: Text(
+          "What do you want from it?", tableName: "Onboarding",
+          comment: "Onboarding question: what the learner hopes to get from learning it"),
+        description: Text(
+          "It sets how deep your course goes, and so how long it is.", tableName: "Onboarding",
+          comment: "Under the purpose question"))
 
-    ChoiceRows(
-      choices: [
-        .init(
-          value: "overview",
-          label: String(
-            localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
-          detail: Text(
-            "A short course: the big ideas, no formulas", tableName: "Onboarding",
-            comment: "Purpose choice detail")
-        ),
-        .init(
-          value: "deep",
-          label: String(
-            localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
-          detail: Text(
-            "The full path, from the basics to advanced", tableName: "Onboarding",
-            comment: "Purpose choice detail")),
-        .init(
-          value: "work",
-          label: String(
-            localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
-          detail: Text(
-            "Only what your work uses, in the order it needs", tableName: "Onboarding",
-            comment: "Purpose choice detail")),
-        .init(
-          value: "careerChange",
-          label: String(
-            localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
-          detail: Text(
-            "What the new role needs, portfolio included", tableName: "Onboarding",
-            comment: "Purpose choice detail")),
-        .init(
-          value: "refresh",
-          label: String(
-            localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
-          detail: Text(
-            "Back to the level you had, after a quick test", tableName: "Onboarding",
-            comment: "Purpose choice detail")),
-        .init(
-          value: "other",
-          label: String(
-            localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
-          detail: Text(
-            "Tell us later, in your own words", tableName: "Onboarding",
-            comment: "Purpose choice detail")),
-      ],
-      movesOn: true
-    ) { purpose in
-      onAnswer(["purpose": purpose, "question": "purpose"])
+      ChoiceRows(
+        choices: [
+          .init(
+            value: "overview",
+            label: String(
+              localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
+            detail: Text(
+              "A short course: the big ideas, no formulas", tableName: "Onboarding",
+              comment: "Purpose choice detail")
+          ),
+          .init(
+            value: "deep",
+            label: String(
+              localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
+            detail: Text(
+              "The full path, from the basics to advanced", tableName: "Onboarding",
+              comment: "Purpose choice detail")),
+          .init(
+            value: "work",
+            label: String(
+              localized: "Use it at work", table: "Onboarding", comment: "Purpose choice"),
+            detail: Text(
+              "Only what your work uses, in the order it needs", tableName: "Onboarding",
+              comment: "Purpose choice detail")),
+          .init(
+            value: "careerChange",
+            label: String(
+              localized: "Change careers", table: "Onboarding", comment: "Purpose choice"),
+            detail: Text(
+              "What the new role needs, portfolio included", tableName: "Onboarding",
+              comment: "Purpose choice detail")),
+          .init(
+            value: "refresh",
+            label: String(
+              localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
+            detail: Text(
+              "Back to the level you had, after a quick test", tableName: "Onboarding",
+              comment: "Purpose choice detail")),
+          .init(
+            value: "other",
+            label: String(
+              localized: "Something else", table: "Onboarding", comment: "Purpose choice"),
+            detail: Text(
+              "Tell us later, in your own words", tableName: "Onboarding",
+              comment: "Purpose choice detail")),
+        ],
+        movesOn: true
+      ) { purpose in
+        onAnswer(["purpose": purpose, "question": "purpose"])
+      }
+      .locksWhileSaving()
     }
-    .locksWhileSaving()
   }
 }
 
@@ -363,44 +554,47 @@ private struct ReasonQuestion: View {
   @State private var words = ""
 
   var body: some View {
-    StepHeader(
-      subject: subject,
-      title: Text(
-        "Why are you learning it?", tableName: "Onboarding",
-        comment: "Onboarding question for a language goal"),
-      description: Text(
-        "Your answer sets how far your course goes.", tableName: "Onboarding",
-        comment: "Under the language reason question"))
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: Text(
+          "Why are you learning it?", tableName: "Onboarding",
+          comment: "Onboarding question for a language goal"),
+        description: Text(
+          "Your answer sets how far your course goes.", tableName: "Onboarding",
+          comment: "Under the language reason question"))
 
-    Section {
-      ForEach(reasons, id: \.reason) { reason in
-        Button {
-          pick(reason.reason)
-        } label: {
-          row(reason)
+      Section {
+        ForEach(reasons, id: \.reason) { reason in
+          Button {
+            pick(reason.reason)
+          } label: {
+            row(reason)
+          }
+          .pickedRow(picked == reason.reason)
+          .accessibilityAddTraits(picked == reason.reason ? .isSelected : [])
+
+          if picked == reason.reason, Self.asksWords(reason.reason) {
+            wordsField(reason.reason)
+          }
         }
-        .pickedRow(picked == reason.reason)
-        .accessibilityAddTraits(picked == reason.reason ? .isSelected : [])
-
-        if picked == reason.reason, Self.asksWords(reason.reason) {
-          wordsField(reason.reason)
+      } footer: {
+        SectionFooter {
+          Text(
+            "Hours of study from scratch, practice included. Less if you already know some.",
+            tableName: "Onboarding",
+            comment: "Under the reasons to learn a language, with their hours")
         }
       }
-    } footer: {
-      SectionFooter {
-        Text(
-          "Hours of study from scratch, practice included. Less if you already know some.",
-          tableName: "Onboarding",
-          comment: "Under the reasons to learn a language, with their hours")
-      }
-    }
-    .locksWhileSaving()
+      .locksWhileSaving()
 
-    if let picked, Self.asksWords(picked) {
-      StepButtons(
-        canContinue: picked != "certificate" || !trimmed(words).isEmpty, canSkip: false
-      ) {
-        answer(picked)
+    } buttons: {
+      if let picked, Self.asksWords(picked) {
+        StepButtons(
+          canContinue: picked != "certificate" || !trimmed(words).isEmpty, canSkip: false
+        ) {
+          answer(picked)
+        }
       }
     }
   }
@@ -539,62 +733,66 @@ private struct RoleQuestion: View {
   @State private var second = ""
 
   var body: some View {
-    StepHeader(
-      subject: subject,
-      title: isCareerChange
-        ? Text(
-          "Where are you headed?", tableName: "Onboarding",
-          comment: "Onboarding question for a career change")
-        : Text("What do you do at work?", tableName: "Onboarding", comment: "Onboarding question"),
-      description: isCareerChange
-        ? Text(
-          "The plan covers what that role needs on day one.", tableName: "Onboarding",
-          comment: "Under the career change question")
-        : Text(
-          "We'll use cases from your work.", tableName: "Onboarding",
-          comment: "Under the work role question"))
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: isCareerChange
+          ? Text(
+            "Where are you headed?", tableName: "Onboarding",
+            comment: "Onboarding question for a career change")
+          : Text(
+            "What do you do at work?", tableName: "Onboarding", comment: "Onboarding question"),
+        description: isCareerChange
+          ? Text(
+            "The plan covers what that role needs on day one.", tableName: "Onboarding",
+            comment: "Under the career change question")
+          : Text(
+            "We'll use cases from your work.", tableName: "Onboarding",
+            comment: "Under the work role question"))
 
-    Section {
-      if isCareerChange {
-        LabeledField(
-          label: Text(
-            "The role you want", tableName: "Onboarding",
-            comment: "Box for the role a career change aims for"),
-          prompt: Text(
-            "E.g., data analyst, nurse", tableName: "Onboarding",
-            comment: "Example roles a career change aims for"),
-          text: $second)
-        LabeledField(
-          label: Text(
-            "What you do now", tableName: "Onboarding",
-            comment: "Box for the learner's work before a career change"),
-          prompt: Text(
-            "E.g., teacher, student", tableName: "Onboarding", comment: "Example current roles"),
-          text: $role)
-      } else {
-        LabeledField(
-          label: Text(
-            "Your role", tableName: "Onboarding", comment: "Box for the learner's role at work"),
-          prompt: Text(
-            "E.g., nurse, teacher", tableName: "Onboarding", comment: "Example roles at work"),
-          text: $role)
-        LabeledField(
-          label: Text(
-            "What you'll use it for", tableName: "Onboarding",
-            comment: "Box for what the learner uses the subject for at work"),
-          prompt: Text(
-            "E.g., reports, A/B tests", tableName: "Onboarding", comment: "Example uses at work"),
-          text: $second)
+      Section {
+        if isCareerChange {
+          LabeledField(
+            label: Text(
+              "The role you want", tableName: "Onboarding",
+              comment: "Box for the role a career change aims for"),
+            prompt: Text(
+              "E.g., data analyst, nurse", tableName: "Onboarding",
+              comment: "Example roles a career change aims for"),
+            text: $second)
+          LabeledField(
+            label: Text(
+              "What you do now", tableName: "Onboarding",
+              comment: "Box for the learner's work before a career change"),
+            prompt: Text(
+              "E.g., teacher, student", tableName: "Onboarding", comment: "Example current roles"),
+            text: $role)
+        } else {
+          LabeledField(
+            label: Text(
+              "Your role", tableName: "Onboarding", comment: "Box for the learner's role at work"),
+            prompt: Text(
+              "E.g., nurse, teacher", tableName: "Onboarding", comment: "Example roles at work"),
+            text: $role)
+          LabeledField(
+            label: Text(
+              "What you'll use it for", tableName: "Onboarding",
+              comment: "Box for what the learner uses the subject for at work"),
+            prompt: Text(
+              "E.g., reports, A/B tests", tableName: "Onboarding", comment: "Example uses at work"),
+            text: $second)
+        }
       }
-    }
-    .locksWhileSaving()
+      .locksWhileSaving()
 
-    StepButtons(canContinue: !trimmed(isCareerChange ? second : role).isEmpty) {
-      var input: [String: Any] = ["question": "role", "role": value(role)]
-      input[isCareerChange ? "targetPosition" : "tasks"] = value(second)
-      onAnswer(input)
-    } onSkip: {
-      onAnswer(["question": "role", "role": NSNull()])
+    } buttons: {
+      StepButtons(canContinue: !trimmed(isCareerChange ? second : role).isEmpty) {
+        var input: [String: Any] = ["question": "role", "role": value(role)]
+        input[isCareerChange ? "targetPosition" : "tasks"] = value(second)
+        onAnswer(input)
+      } onSkip: {
+        onAnswer(["question": "role", "role": NSNull()])
+      }
     }
   }
 }
@@ -646,17 +844,20 @@ private struct TextQuestion: View {
   @State private var text = ""
 
   var body: some View {
-    StepHeader(subject: subject, title: title, description: description)
+    QuestionForm {
+      StepHeader(subject: subject, title: title, description: description)
 
-    Section {
-      LabeledField(label: label, prompt: prompt, text: $text)
-    }
-    .locksWhileSaving()
+      Section {
+        LabeledField(label: label, prompt: prompt, text: $text)
+      }
+      .locksWhileSaving()
 
-    StepButtons(canContinue: !trimmed(text).isEmpty) {
-      onAnswer(answer(trimmed(text)))
-    } onSkip: {
-      onAnswer(answer(nil))
+    } buttons: {
+      StepButtons(canContinue: !trimmed(text).isEmpty) {
+        onAnswer(answer(trimmed(text)))
+      } onSkip: {
+        onAnswer(answer(nil))
+      }
     }
   }
 
@@ -764,60 +965,62 @@ private struct DateQuestion: View {
           "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
           table: "Onboarding", comment: "Under the date question"))
 
-      StepHeader(
-        subject: subject,
-        title: Text(
-          "Is there a date you're aiming for?", tableName: "Onboarding",
-          comment: "Onboarding question"),
-        description: Text([passedNote, withoutDate].compactMap { $0 }.joinedSentences()))
+      QuestionForm {
+        StepHeader(
+          subject: subject,
+          title: Text(
+            "Is there a date you're aiming for?", tableName: "Onboarding",
+            comment: "Onboarding question"),
+          description: Text([passedNote, withoutDate].compactMap { $0 }.joinedSentences()))
 
-      Section {
-        if let date {
-          DatePicker(
-            selection: Binding {
-              date
-            } set: {
-              self.date = $0
-            }, in: GoalDate.range(today: today),
-            displayedComponents: .date
-          ) {
-            Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
-          }
-
-          noSittingRows(for: date)
-
-          Button {
-            self.date = nil
-          } label: {
-            Text("Remove date", tableName: "Onboarding", comment: "Clears the goal's date")
-              .underline()
-          }
-        } else {
-          Button {
-            date = Calendar.isoLocal.date(byAdding: .month, value: 3, to: .now)
-          } label: {
-            LabeledContent {
-              Text(
-                "Choose a date", tableName: "Onboarding", comment: "Shows the goal's date picker")
-            } label: {
+        Section {
+          if let date {
+            DatePicker(
+              selection: Binding {
+                date
+              } set: {
+                self.date = $0
+              }, in: GoalDate.range(today: today),
+              displayedComponents: .date
+            ) {
               Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
-                .foregroundStyle(.primary)
+            }
+
+            noSittingRows(for: date)
+
+            Button {
+              self.date = nil
+            } label: {
+              Text("Remove date", tableName: "Onboarding", comment: "Clears the goal's date")
+                .underline()
+            }
+          } else {
+            Button {
+              date = Calendar.isoLocal.date(byAdding: .month, value: 3, to: .now)
+            } label: {
+              LabeledContent {
+                Text(
+                  "Choose a date", tableName: "Onboarding", comment: "Shows the goal's date picker")
+              } label: {
+                Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
+                  .foregroundStyle(.primary)
+              }
             }
           }
         }
-      }
-      .locksWhileSaving()
-
-      StepButtons(
-        continueLabel: date == nil
-          ? Text(
-            "Continue without a date", tableName: "Onboarding",
-            comment: "Saves the goal without a date")
-          : nil
-      ) {
-        onAnswer([
-          "question": "targetDate", "targetDate": date.map { isoDay($0) as Any } ?? NSNull(),
-        ])
+        .locksWhileSaving()
+      } buttons: {
+        StepButtons(
+          continueLabel: date == nil
+            ? Text(
+              "Continue without a date", tableName: "Onboarding",
+              comment: "Saves the goal without a date")
+            : nil
+        ) {
+          onAnswer([
+            "question": "targetDate", "targetDate": date.map { isoDay($0) as Any } ?? NSNull(),
+          ])
+        }
       }
     }
   }
@@ -895,24 +1098,26 @@ private struct DateQuestion: View {
           comment: "Under an exam date estimated from past years"))
       : nil
 
-    StepHeader(
-      subject: subject,
-      title: second.map {
-        Text(
-          "Your exam is on \(date) (and \($0.formatted(.dateTime.day().month(.wide))))",
-          tableName: "Onboarding",
-          comment: "An exam held over two days")
-      } ?? Text("Your exam is on \(date)", tableName: "Onboarding", comment: "An exam's date"),
-      description: Text([passedNote, ready, estimated].compactMap { $0 }.joinedSentences()))
-
-    StepButtons(
-      skipLabel: Text(
-        "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
-      skipIcon: nil
-    ) {
-      onAnswer(["question": "targetDate", "targetDate": first])
-    } onSkip: {
-      picksOtherDate = true
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: second.map {
+          Text(
+            "Your exam is on \(date) (and \($0.formatted(.dateTime.day().month(.wide))))",
+            tableName: "Onboarding",
+            comment: "An exam held over two days")
+        } ?? Text("Your exam is on \(date)", tableName: "Onboarding", comment: "An exam's date"),
+        description: Text([passedNote, ready, estimated].compactMap { $0 }.joinedSentences()))
+    } buttons: {
+      StepButtons(
+        skipLabel: Text(
+          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
+        skipIcon: nil
+      ) {
+        onAnswer(["question": "targetDate", "targetDate": first])
+      } onSkip: {
+        picksOtherDate = true
+      }
     }
   }
 }
@@ -993,29 +1198,32 @@ private struct FollowUpsQuestion: View {
   }
 
   var body: some View {
-    StepHeader(
-      title: Text(
-        "Tell us a bit more", tableName: "Onboarding",
-        comment: "Onboarding question about an unusual goal"),
-      description: Text(
-        "A couple of details make your plan fit better.", tableName: "Onboarding",
-        comment: "Under the follow-up questions"))
+    QuestionForm {
+      StepHeader(
+        title: Text(
+          "Tell us a bit more", tableName: "Onboarding",
+          comment: "Onboarding question about an unusual goal"),
+        description: Text(
+          "A couple of details make your plan fit better.", tableName: "Onboarding",
+          comment: "Under the follow-up questions"))
 
-    ForEach(questions.indices, id: \.self) { index in
-      Section {
-        LabeledField(
-          label: Text(questions[index]),
-          prompt: Text(
-            "Your answer", tableName: "Onboarding", comment: "Box answering a follow-up question"),
-          text: $answers[index])
+      ForEach(questions.indices, id: \.self) { index in
+        Section {
+          LabeledField(
+            label: Text(questions[index]),
+            prompt: Text(
+              "Your answer", tableName: "Onboarding", comment: "Box answering a follow-up question"),
+            text: $answers[index])
+        }
       }
-    }
-    .locksWhileSaving()
+      .locksWhileSaving()
 
-    StepButtons {
-      onAnswer(["answers": answers.map(value), "question": "followUps"])
-    } onSkip: {
-      onAnswer(["answers": questions.map { _ in NSNull() }, "question": "followUps"])
+    } buttons: {
+      StepButtons {
+        onAnswer(["answers": answers.map(value), "question": "followUps"])
+      } onSkip: {
+        onAnswer(["answers": questions.map { _ in NSNull() }, "question": "followUps"])
+      }
     }
   }
 }
@@ -1067,81 +1275,84 @@ private struct ExamChoiceQuestion: View {
   }
 
   var body: some View {
-    let takes = choices.map(\.take).reduce(0, +)
+    QuestionForm {
+      let takes = choices.map(\.take).reduce(0, +)
 
-    StepHeader(
-      subject: subject,
-      title: takes == 1
-        ? Text(
-          "Which one will you take?", tableName: "Onboarding",
-          comment: "Asks which of an exam's optional subjects the learner takes")
-        : Text(
-          "Which ones will you take?", tableName: "Onboarding",
-          comment:
-            "Asks which of an exam's optional subjects the learner takes, for several choices"),
-      description: Text(examChoiceQuestionDescription(choices)))
+      StepHeader(
+        subject: subject,
+        title: takes == 1
+          ? Text(
+            "Which one will you take?", tableName: "Onboarding",
+            comment: "Asks which of an exam's optional subjects the learner takes")
+          : Text(
+            "Which ones will you take?", tableName: "Onboarding",
+            comment:
+              "Asks which of an exam's optional subjects the learner takes, for several choices"),
+        description: Text(examChoiceQuestionDescription(choices)))
 
-    ForEach(choices, id: \.group) { choice in
-      let options = choice.options.map {
-        GoalPlan.ExamChoice.Option(name: $0.name, shortName: $0.shortName)
-      }
-      let leftOut = Text(
-        ExamChoiceLeftOut(
-          examPoints: choice.leftOut.examPoints, examQuestions: choice.leftOut.examQuestions,
-          name: choice.leftOut.name, points: choice.leftOut.points,
-          questions: choice.leftOut.questions
-        ).line)
+      ForEach(choices, id: \.group) { choice in
+        let options = choice.options.map {
+          GoalPlan.ExamChoice.Option(name: $0.name, shortName: $0.shortName)
+        }
+        let leftOut = Text(
+          ExamChoiceLeftOut(
+            examPoints: choice.leftOut.examPoints, examQuestions: choice.leftOut.examQuestions,
+            name: choice.leftOut.name, points: choice.leftOut.points,
+            questions: choice.leftOut.questions
+          ).line)
 
-      if choice.take > 1 {
-        Section {
-          Text.examPickLimit(choice.take)
-            .typeStyle(.body)
-            .foregroundStyle(.mutedForeground)
-            .listRowSeparator(.hidden)
+        if choice.take > 1 {
+          Section {
+            Text.examPickLimit(choice.take)
+              .typeStyle(.body)
+              .foregroundStyle(.mutedForeground)
+              .listRowSeparator(.hidden)
 
-          ExamOptionToggles(
-            options: options, take: choice.take,
-            picked: Binding(
-              get: { picks[choice.group] ?? [] },
-              set: { picks[choice.group] = $0 }))
-        } header: {
-          SectionTitle(Text(choice.group))
-        } footer: {
-          SectionFooter {
-            leftOut
+            ExamOptionToggles(
+              options: options, take: choice.take,
+              picked: Binding(
+                get: { picks[choice.group] ?? [] },
+                set: { picks[choice.group] = $0 }))
+          } header: {
+            SectionTitle(Text(choice.group))
+          } footer: {
+            SectionFooter {
+              leftOut
+            }
+          }
+        } else {
+          ChoiceRows(
+            choices: options.map { option in
+              .init(
+                value: option.name,
+                label: option.shortName ?? option.name,
+                detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
+            },
+            picked: picks[choice.group]?.first,
+            header: Text(choice.group),
+            footer: leftOut,
+            movesOn: takes == 1
+          ) { name in
+            picks[choice.group] = [name]
+
+            // One option to pick moves on once it's picked; more wait for Continue.
+            if takes == 1 {
+              submit()
+            }
           }
         }
-      } else {
-        ChoiceRows(
-          choices: options.map { option in
-            .init(
-              value: option.name,
-              label: option.shortName ?? option.name,
-              detail: option.shortName.flatMap { $0 == option.name ? nil : Text(option.name) })
-          },
-          picked: picks[choice.group]?.first,
-          header: Text(choice.group),
-          footer: leftOut,
-          movesOn: takes == 1
-        ) { name in
-          picks[choice.group] = [name]
-
-          // One option to pick moves on once it's picked; more wait for Continue.
-          if takes == 1 {
-            submit()
-          }
-        }
       }
-    }
-    .locksWhileSaving()
+      .locksWhileSaving()
 
-    StepButtons(
-      canContinue: choices.allSatisfy { !(picks[$0.group] ?? []).isEmpty },
-      skipLabel: Text(
-        "Decide later", tableName: "Onboarding", comment: "Leaves an exam's choice for later"),
-      onContinue: submit
-    ) {
-      onAnswer(["choices": NSNull(), "question": "examChoice"])
+    } buttons: {
+      StepButtons(
+        canContinue: choices.allSatisfy { !(picks[$0.group] ?? []).isEmpty },
+        skipLabel: Text(
+          "Decide later", tableName: "Onboarding", comment: "Leaves an exam's choice for later"),
+        onContinue: submit
+      ) {
+        onAnswer(["choices": NSNull(), "question": "examChoice"])
+      }
     }
   }
 
@@ -1164,18 +1375,20 @@ private struct LevelQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 
   var body: some View {
-    StepHeader(
-      subject: subject,
-      title: Text(
-        "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"),
-      description: Text(
-        "It only changes where your plan starts.", tableName: "Onboarding",
-        comment: "Under the level question"))
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: Text(
+          "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"),
+        description: Text(
+          "It only changes where your plan starts.", tableName: "Onboarding",
+          comment: "Under the level question"))
 
-    ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
-      onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
+      ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
+        onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
+      }
+      .locksWhileSaving()
     }
-    .locksWhileSaving()
   }
 }
 
@@ -1254,57 +1467,60 @@ private struct SubjectsLevelQuestion: View {
   @State private var known: Set<String> = []
 
   var body: some View {
-    StepHeader(
-      subject: subject,
-      title: Text(
-        "Which subjects do you already know well?", tableName: "Onboarding",
-        comment: "Onboarding question for an exam with several subjects"),
-      description: Text(
-        "Your plan starts past their basics. A quick test places you in the rest.",
-        tableName: "Onboarding",
-        comment:
-          "Under the known subjects question: the plan skips the basics of the subjects picked, and a test finds the level in the others"
-      ))
+    QuestionForm {
+      StepHeader(
+        subject: subject,
+        title: Text(
+          "Which subjects do you already know well?", tableName: "Onboarding",
+          comment: "Onboarding question for an exam with several subjects"),
+        description: Text(
+          "Your plan starts past their basics. A quick test places you in the rest.",
+          tableName: "Onboarding",
+          comment:
+            "Under the known subjects question: the plan skips the basics of the subjects picked, and a test finds the level in the others"
+        ))
 
-    Section {
-      ForEach(subjects, id: \.name) { item in
-        Toggle(
-          isOn: Binding(
-            get: { known.contains(item.name) },
-            set: { isOn in
-              if isOn {
-                known.insert(item.name)
-              } else {
-                known.remove(item.name)
-              }
-            })
-        ) {
-          Text(item.shortName ?? item.name)
-          if let short = item.shortName, short != item.name {
-            Text(item.name)
+      Section {
+        ForEach(subjects, id: \.name) { item in
+          Toggle(
+            isOn: Binding(
+              get: { known.contains(item.name) },
+              set: { isOn in
+                if isOn {
+                  known.insert(item.name)
+                } else {
+                  known.remove(item.name)
+                }
+              })
+          ) {
+            Text(item.shortName ?? item.name)
+            if let short = item.shortName, short != item.name {
+              Text(item.name)
+            }
           }
         }
       }
-    }
-    .locksWhileSaving()
+      .locksWhileSaving()
 
-    StepButtons(
-      continueLabel: known.isEmpty
-        ? Text(
-          "None of them yet", tableName: "Onboarding",
-          comment: "Continues without any of the listed subjects known well")
-        : nil,
-      skipLabel: Text(
-        "I'm starting from scratch", tableName: "Onboarding",
-        comment: "Says the learner knows none of the exam yet"),
-      skipIcon: nil
-    ) {
-      onAnswer([
-        "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),
-        "question": "level",
-      ])
-    } onSkip: {
-      onAnswer(["level": "none", "question": "level"])
+    } buttons: {
+      StepButtons(
+        continueLabel: known.isEmpty
+          ? Text(
+            "None of them yet", tableName: "Onboarding",
+            comment: "Continues without any of the listed subjects known well")
+          : nil,
+        skipLabel: Text(
+          "I'm starting from scratch", tableName: "Onboarding",
+          comment: "Says the learner knows none of the exam yet"),
+        skipIcon: nil
+      ) {
+        onAnswer([
+          "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),
+          "question": "level",
+        ])
+      } onSkip: {
+        onAnswer(["level": "none", "question": "level"])
+      }
     }
   }
 }
@@ -1317,16 +1533,20 @@ private struct BuddyQuestion: View {
   @State private var name = ""
 
   var body: some View {
-    StepHeader(
-      title: Text("Choose your buddy", tableName: "Onboarding", comment: "Onboarding step"),
-      description: Text(
-        "Your buddy grows as you learn.", tableName: "Onboarding", comment: "Under the buddy step"))
+    QuestionForm {
+      StepHeader(
+        title: Text("Choose your buddy", tableName: "Onboarding", comment: "Onboarding step"),
+        description: Text(
+          "Your buddy grows as you learn.", tableName: "Onboarding", comment: "Under the buddy step"
+        ))
 
-    BuddyPickerSections(kind: $kind, name: $name)
-      .locksWhileSaving()
+      BuddyPickerSections(kind: $kind, name: $name)
+        .locksWhileSaving()
 
-    StepButtons {
-      onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
+    } buttons: {
+      StepButtons {
+        onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
+      }
     }
   }
 }

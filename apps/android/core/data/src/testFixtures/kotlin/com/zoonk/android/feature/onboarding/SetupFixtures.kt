@@ -358,6 +358,7 @@ fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {
                     put("dailyGoal", kotlinx.serialization.json.JsonPrimitive(0))
                     put("done", kotlinx.serialization.json.JsonPrimitive(0))
                     put("planned", kotlinx.serialization.json.JsonPrimitive(15))
+                    put("left", kotlinx.serialization.json.JsonPrimitive(15))
                 },
         )
     return com.zoonk.api.models.PlanRevealToday(

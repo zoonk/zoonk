@@ -67,6 +67,8 @@ type ActivityTemplateOption = { id: string; description: string; explore: boolea
 
 export type LessonSpecParams = {
   language: string;
+  /** The country the course is set in; null is the language's own. */
+  country: string | null;
   level: CourseLevel;
   courseTitle: string;
   chapterTitle: string;
@@ -133,8 +135,8 @@ function buildUserPrompt(params: LessonSpecParams): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
     VERB_FORM: ${getVerbForm(params.language)}
-${formatLocalContext(params.language)}
-    ${formatCast({ language: params.language, seed: `${params.courseTitle}:${params.lessonTitle}` })}
+${formatLocalContext({ country: params.country, language: params.language })}
+    ${formatCast({ country: params.country, language: params.language, seed: `${params.courseTitle}:${params.lessonTitle}` })}
     LEVEL: ${params.level}
     COURSE_TITLE: ${params.courseTitle}${params.product ? `\n    ${formatProduct(params.product)}` : ""}
     CHAPTER_TITLE: ${params.chapterTitle}

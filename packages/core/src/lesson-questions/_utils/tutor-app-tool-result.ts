@@ -23,6 +23,9 @@ function describeOffer(offer: TutorToolOffer): OfferedDetails {
         : { minutes: offer.call.minutes, unit: offer.unitTitle };
     case "pronunciation":
       return { words: offer.words };
+    case "contentCountry":
+    case "homeCountry":
+      return { country: offer.country };
     case "variety":
       return { country: offer.targetRegion };
     case "plus":

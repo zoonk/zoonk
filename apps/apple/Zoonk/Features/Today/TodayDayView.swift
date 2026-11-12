@@ -13,6 +13,10 @@ struct TodayDayView: View {
   @State private var tapTask: Task<Void, Never>?
   @State private var disclosures = TodayDisclosures()
   @State private var writingStalled = false
+  /// The notice Today opened with stays while the learner is here, so answering it shows what the
+  /// answer did; the next waits for the next visit. Today opens on its first settled read, not on
+  /// the stored one shown while a newer read loads.
+  @State private var shownNotice: TodayView.Notice?
   /// The learner said Not now to the Focus test on this visit.
   @State private var focusTestNoted = false
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
@@ -20,6 +24,9 @@ struct TodayDayView: View {
   @State private var examChoiceDraft: [String] = []
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var answeredUpload: TodayView.UploadRequest?
+  /// Today stops carrying an insight once it's answered, so its card keeps it to show the answer.
+  @State private var answeredInsight: MemoryInsight?
+  @State private var insightAnswers: [String: Bool] = [:]
   @State private var uploadDraft = MaterialDraft()
 
   enum Tap: Equatable {
@@ -87,8 +94,16 @@ struct TodayDayView: View {
         startVisit()
       }
     }
-    .onChange(of: view.notice) {
-      countNotice()
+    .onChange(of: settledNotice) {
+      if shownNotice == nil {
+        shownNotice = settledNotice
+        countNotice()
+      }
+    }
+    .onChange(of: examChoice != nil) {
+      if examChoice != nil {
+        holdShownNotice()
+      }
     }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
@@ -198,6 +213,7 @@ struct TodayDayView: View {
         isOpen: $disclosures.planChange, isSaving: busy == .planChange,
         failed: failed == .planChange
       ) { decision in
+        holdShownNotice()
         perform(.planChange) { await store.answer(shown.change, with: decision, in: view) }
       } showNext: {
         disclosures.planChange = false
@@ -216,31 +232,22 @@ struct TodayDayView: View {
     view.goal.kind == .language ? store.languageToday(goalID: view.goal.id).value : nil
   }
 
-  /// Main's `useShownNotice`: a notice the learner answered on this visit stays to say what the
-  /// answer did, even once Today has moved on; otherwise it's the one Today holds now.
-  private var shownNotice: TodayView.Notice? {
-    if store.hasAnsweredPlanChange(in: view) {
-      .planChange
-    } else if examChoice != nil {
-      .examChoice
-    } else if answeredUpload != nil {
-      .uploadRequest
-    } else if focusTestNoted {
-      .focusTest
-    } else {
-      view.notice
-    }
-  }
-
   @ViewBuilder
   private var notice: some View {
-    switch shownNotice {
+    switch shownNotice ?? view.notice {
     case .planChange:
       planChange
     case .insight:
-      if let insight = view.insight {
+      if let insight = view.insight ?? answeredInsight {
         Section {
-          MemoryInsightCard(insight: insight)
+          MemoryInsightCard(
+            insight: insight,
+            answer: Binding(
+              get: { insightAnswers[insight.id] }, set: { insightAnswers[insight.id] = $0 })
+          ) {
+            holdShownNotice()
+            answeredInsight = insight
+          }
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.vertical, 0)
@@ -275,7 +282,8 @@ struct TodayDayView: View {
         draft: $examChoiceDraft)
     case .focusTest:
       TodayFocusTestSection(
-        goalID: view.goal.id, offer: view.focusTest, dismissed: $focusTestNoted)
+        goalID: view.goal.id, offer: view.focusTest, dismissed: $focusTestNoted,
+        onAnswer: holdShownNotice)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
         SuggestedGoalSection(suggestion: suggestion)
@@ -285,6 +293,7 @@ struct TodayDayView: View {
         TodayUploadRequestSection(
           request: request, answered: answeredUpload != nil, draft: $uploadDraft
         ) {
+          holdShownNotice()
           answeredUpload = request
         }
       }
@@ -338,7 +347,7 @@ struct TodayDayView: View {
   }
 
   private func open(_ block: StudyBlock, next: Bool) {
-    if waitsForStart(block) {
+    if view.session.waitsForStart(block) {
       showIntro(of: block)
       return
     }
@@ -351,7 +360,7 @@ struct TodayDayView: View {
   }
 
   private func openMission(_ block: StudyBlock) {
-    if waitsForStart(block) {
+    if view.session.waitsForStart(block) {
       showIntro(of: block)
       return
     }
@@ -361,23 +370,13 @@ struct TodayDayView: View {
     }
   }
 
-  /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
-  /// Start there, so the learner reads what it is before it starts. An unopened day's session shows
-  /// only its next step.
-  private func waitsForStart(_ block: StudyBlock) -> Bool {
-    block.screen == .session && block.kind != .learn && block.status != .active
-      && (block.id != nil || block.position == view.session.nextPosition)
-  }
-
-  /// Opens nothing on the server: the intro's Start does.
   private func showIntro(of block: StudyBlock) {
     guard busy == nil else {
       return
     }
 
     failed = nil
-    router.playback.show(blockID: block.id)
-    router.openStudy(.session)
+    router.showIntro(of: block)
   }
 
   /// A tap whose screen went (another day, another tab, a task over it) or whose learner left is
@@ -461,14 +460,37 @@ struct TodayDayView: View {
     writingStalled = true
   }
 
+  private var settledNotice: TodayView.Notice? {
+    if store.today.isRefreshing {
+      return nil
+    }
+
+    if case .loading = store.today.freshState {
+      return nil
+    }
+
+    return view.notice
+  }
+
+  /// Answering the stored day's notice before the newer read lands holds it, so its result stays.
+  private func holdShownNotice() {
+    if shownNotice == nil {
+      shownNotice = view.notice
+      countNotice()
+    }
+  }
+
   /// Main reads Today afresh on each visit (back from a lesson or another tab): what the learner
   /// answered stays only while they're here.
   private func startVisit() {
+    shownNotice = settledNotice
     disclosures.showsDone = false
     disclosures.showsMore = false
     examChoice = nil
     examChoiceDraft = []
     answeredUpload = nil
+    answeredInsight = nil
+    insightAnswers = [:]
     focusTestNoted = false
     store.dropAnsweredPlanChange()
     UsageAnalytics.track(.todayViewed)
@@ -508,6 +530,12 @@ extension AppRouter {
 
       return result
     }
+  }
+
+  /// Opens nothing on the server: the intro's Start does.
+  func showIntro(of block: StudyBlock) {
+    playback.show(blockID: block.id)
+    openStudy(.session)
   }
 
   /// Anything but a question block opens its own screen over the session, so closing it goes on with

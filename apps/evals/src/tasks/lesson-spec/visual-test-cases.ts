@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 
@@ -19,7 +19,7 @@ const VISUAL_EXPECTATIONS = `
   - Don't evaluate JSON formatting; estimated minutes are computed by code
 `;
 
-type VisualCase = TestCase<LessonSpecExpected, LessonSpecParams>;
+type VisualCase = TestCase<LessonSpecExpected, OptionalCountry<LessonSpecParams>>;
 
 function visualCase({
   expectations,
@@ -27,7 +27,7 @@ function visualCase({
   pictures,
   questionPicture,
   ...input
-}: Omit<LessonSpecParams, "activityTemplates"> &
+}: Omit<OptionalCountry<LessonSpecParams>, "activityTemplates"> &
   Pick<LessonSpecExpected, "questionPicture"> & {
     expectations: string;
     id: string;

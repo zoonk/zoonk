@@ -1,3 +1,4 @@
+import { fallsShort } from "../scoring/mock-points";
 import { type MockResult } from "./mock-contract";
 
 /** Guessing three five-option answers correctly has less than a 1% chance. */
@@ -56,10 +57,41 @@ export function findSkippableItems<TItem extends PlanItemSkills>({
   );
 }
 
-function share(area: Pick<MockResult["areas"][number], "correct" | "total">): number {
-  return area.total > 0 ? area.correct / area.total : 0;
+type AreaResult = MockResult["areas"][number];
+
+/** Mocks graded before areas kept their points have only right answers. */
+function getPoints(area: AreaResult): { asked: number; earned: number } {
+  return area.points ?? { asked: area.total, earned: area.correct };
 }
 
+function share(area: AreaResult): number {
+  const { asked, earned } = getPoints(area);
+  return asked > 0 ? earned / asked : 0;
+}
+
+function lost(area: AreaResult): number {
+  const { asked, earned } = getPoints(area);
+  return asked - earned;
+}
+
+/** A verdict covers the whole test; a projection needs as many of its questions as an area does. */
+function listShortParts({ areas, points }: Pick<MockResult, "areas" | "points">): Set<string> {
+  const questions = (part: string) =>
+    areas.reduce((sum, area) => (area.part === part ? sum + area.total : sum), 0);
+
+  return new Set(
+    points?.parts.flatMap((part) =>
+      fallsShort(part) && (part.met !== null || questions(part.name) >= MIN_AREA_QUESTIONS)
+        ? [part.name]
+        : [],
+    ),
+  );
+}
+
+/**
+ * A test below its minimum eliminates the learner whatever the total, so time goes to it first:
+ * to its subject that lost the most points, and nowhere else while all of them are focused.
+ */
 export function findWeakestArea({
   focusAreas,
   planAreas,
@@ -67,18 +99,25 @@ export function findWeakestArea({
 }: {
   focusAreas: readonly string[];
   planAreas: readonly string[];
-  result: Pick<MockResult, "areas">;
-}): MockResult["areas"][number] | null {
+  result: Pick<MockResult, "areas" | "points">;
+}): AreaResult | null {
   if (planAreas.length < 2 || result.areas.length < 2) {
     return null;
   }
 
+  const open = (area: AreaResult) =>
+    planAreas.includes(area.name) && !focusAreas.includes(area.name);
+
+  const short = listShortParts(result);
+  const inShortParts = result.areas.filter((area) => area.part && short.has(area.part));
+
+  if (inShortParts.length > 0) {
+    const losing = inShortParts.filter((area) => open(area) && lost(area) > 0);
+    return losing.toSorted((first, second) => lost(second) - lost(first))[0] ?? null;
+  }
+
   const weak = result.areas.filter(
-    (area) =>
-      area.total >= MIN_AREA_QUESTIONS &&
-      share(area) < WEAK_AREA_SHARE &&
-      planAreas.includes(area.name) &&
-      !focusAreas.includes(area.name),
+    (area) => open(area) && area.total >= MIN_AREA_QUESTIONS && share(area) < WEAK_AREA_SHARE,
   );
 
   return weak.toSorted((first, second) => share(first) - share(second))[0] ?? null;

@@ -39,7 +39,7 @@ import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.components.textInset
+import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
@@ -215,7 +215,7 @@ private fun Undo(
     if (answer.status != PlanChangeDecisionInput.Status.APPLIED || !answer.change.canUndo) return
     TextButton(
         onClick = { plan.onDecide(answer.change, PlanChangeDecisionInput.Status.UNDONE) },
-        modifier = Modifier.bleed(LocalButtonSize.current.textInset),
+        modifier = Modifier.bleed(LocalButtonSize.current.labelInset),
         busy = plan.deciding == PlanChangeDecisionInput.Status.UNDONE,
         leadingIcon = { ButtonIcon(R.drawable.ic_undo) },
     ) {
@@ -270,7 +270,7 @@ private fun PlanRows(
 internal fun HowItWorks(suggestsFocus: Boolean) {
     var open by rememberSaveable { mutableStateOf(false) }
     val title = stringResource(R.string.focustest_how_it_works)
-    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) { Text(title) }
+    TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.labelInset)) { Text(title) }
     if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows(suggestsFocus) }
 }
 

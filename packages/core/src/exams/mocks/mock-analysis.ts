@@ -1,5 +1,5 @@
 import { type IrtItem, estimateAbility, getIrtCoherence, toScaleRange } from "../scoring/irt";
-import { getPointsScope, scoreMockPoints } from "../scoring/mock-points";
+import { getPointsScope, scoreMockPoints, sumAnswerPoints } from "../scoring/mock-points";
 import { type NetOutcome, getNetCalibration, getNetScore } from "../scoring/net-score";
 import { type MockConditions, type MockResult, type MockScoring } from "./mock-contract";
 import { type ItemMarking } from "./mock-points-contract";
@@ -80,10 +80,14 @@ function toAreaResult({
   scoring: MockScoring;
 }): MockResult["areas"][number] {
   const { answers, name } = group;
+  const parts = new Set(answers.map((answer) => answer.marking.part));
+  const [part = null] = parts.size === 1 ? parts : [];
 
   return {
     correct: countPoints(answers),
     name,
+    part,
+    points: sumAnswerPoints(answers),
     score: scoring === "irt" ? toScaleRange(estimateAbility(toResponses(answers))) : null,
     secondsPerQuestion: averageSeconds(answers),
     targetSecondsPerQuestion: getTargetSeconds({

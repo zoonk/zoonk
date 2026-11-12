@@ -33,28 +33,47 @@ final class ProfileDraftTests: XCTestCase {
       let draft = ProfileDraft(fixture.view)
 
       XCTAssertEqual(
-        try sent(draft), fixture.answer, "\(fixture.view.id) \(fixture.view.saved)")
+        try sent(draft.input), fixture.answer, "\(fixture.view.id) \(fixture.view.saved)")
     }
   }
 
-  func testConditionsPickedWithoutConsentNeverLeaveTheDevice() throws {
-    let empty = try XCTUnwrap(
-      Self.fixtures.first { $0.view.id == .conditions && $0.view.saved.picks.isEmpty }?.view)
-    var draft = ProfileDraft(empty)
+  func testPickingConditionsSavesThemAndSkipDeclinesThem() throws {
+    let declined = try XCTUnwrap(
+      Self.fixtures.first { $0.view.id == .conditions && $0.view.status == .declined }?.view)
+    var draft = ProfileDraft(declined)
+
+    XCTAssertTrue(draft.isEmpty, "a declined conditions screen opens with nothing to send")
+
     draft.toggle("adhd")
     draft.toggle("other")
     draft.text = "migraines"
 
-    XCTAssertFalse(draft.consented)
     XCTAssertEqual(
-      try sent(draft),
+      try sent(draft.input),
+      try decode(
+        #"{"question":"conditions","answer":{"conditions":[{"condition":"adhd","note":null},{"condition":"other","note":"migraines"}],"consented":true,"declined":false}}"#
+      ))
+    XCTAssertEqual(
+      try sent(draft.skipInput),
       try decode(
         #"{"question":"conditions","answer":{"conditions":[],"consented":false,"declined":true}}"#))
+  }
 
-    let body = String(
-      decoding: try JSONSerialization.data(withJSONObject: draft.input), as: UTF8.self)
-    XCTAssertFalse(body.contains("adhd"))
-    XCTAssertFalse(body.contains("migraines"))
+  func testTheAddressFormSendsOneFormAndRatherNotSayDeclinesIt() throws {
+    let feminine = try XCTUnwrap(
+      Self.fixtures.first { $0.view.id == .addressForm && $0.view.saved.picks == ["feminine"] })
+    var draft = ProfileDraft(feminine.view)
+    draft.toggle("neutral")
+
+    XCTAssertEqual(
+      try sent(draft.input),
+      try decode(#"{"question":"addressForm","answer":{"declined":false,"form":"neutral"}}"#))
+
+    let declined = try XCTUnwrap(
+      Self.fixtures.first { $0.view.id == .addressForm && $0.view.status == .declined })
+    XCTAssertEqual(try sent(draft.skipInput), declined.answer)
+    XCTAssertEqual(
+      try sent(ProfileDraft(declined.view).declining(.ratherNotSay).input), declined.answer)
   }
 
   func testAboutYouScreensAreNeverSetupLeft() {
@@ -63,10 +82,10 @@ final class ProfileDraftTests: XCTestCase {
     XCTAssertTrue([Components.Schemas.OnboardingStep.work, .schedule, .plan].hasSetupQuestions)
   }
 
-  private func sent(_ draft: ProfileDraft) throws -> Components.Schemas.ProfileAnswerInput {
+  private func sent(_ input: [String: Any]) throws -> Components.Schemas.ProfileAnswerInput {
     try JSONDecoder().decode(
       Components.Schemas.ProfileAnswerInput.self,
-      from: JSONSerialization.data(withJSONObject: draft.input))
+      from: JSONSerialization.data(withJSONObject: input))
   }
 
   private func decode(_ json: String) throws -> Components.Schemas.ProfileAnswerInput {

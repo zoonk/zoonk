@@ -1,7 +1,8 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { readBody } from "@/lib/request-input";
+import { readBody, readQueryParams } from "@/lib/request-input";
+import { countryLanguageQuerySchema } from "@zoonk/core/goals/countries";
 import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import {
@@ -11,8 +12,9 @@ import {
 import { type NextRequest } from "next/server";
 import { createLearningProfileResponse } from "./_utils/learning-profile-response";
 
-async function getProfile() {
-  const profile = await getLearningProfile();
+async function getProfile(request: Request) {
+  const { language } = readQueryParams(request, countryLanguageQuerySchema);
+  const profile = await getLearningProfile(language);
 
   if (!profile) {
     return errors.unauthorized();
@@ -26,6 +28,14 @@ function getUpdateErrorResponse(
 ) {
   if (result.status === "unauthorized") {
     return errors.unauthorized();
+  }
+
+  if (result.status === "invalidCountry") {
+    return createErrorResponse({
+      code: "INVALID_COUNTRY",
+      message: "Unknown country",
+      status: httpStatus.unprocessableEntity,
+    });
   }
 
   if (result.status === "goalNotFound") {
@@ -44,9 +54,10 @@ function getUpdateErrorResponse(
 }
 
 async function updateProfile(request: NextRequest) {
+  const { language } = readQueryParams(request, countryLanguageQuerySchema);
   const parsed = await readBody(request, learningProfileUpdateSchema);
 
-  const result = await updateLearningProfile(parsed);
+  const result = await updateLearningProfile(parsed, language);
 
   if (result.status !== "updated") {
     return getUpdateErrorResponse(result);

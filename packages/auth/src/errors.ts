@@ -6,7 +6,6 @@ const PRODUCT_CODES: Record<string, string> = {
   CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: ACCESS_ERROR_CODES.untrustedOrigin,
   INVALID_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
   MISSING_OR_NULL_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
-  VERIFICATION_FAILED: ACCESS_ERROR_CODES.botDetected,
 };
 
 function toProductCode(code: string | null): string | null {

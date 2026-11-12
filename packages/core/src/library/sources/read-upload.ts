@@ -93,7 +93,7 @@ async function readLinkedPage(value: string): Promise<ReadContent> {
   }
 
   const { data: parsed } = await safeAsync(() =>
-    parseDocument({ bytes: fetched.bytes, contentType }),
+    parseDocument({ bytes: fetched.bytes, charset: fetched.charset, contentType }),
   );
 
   if (!parsed?.text) {

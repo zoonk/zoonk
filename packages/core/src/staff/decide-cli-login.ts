@@ -1,6 +1,5 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
-import { STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
 import { headers } from "next/headers";
 import { getSession } from "../users/get-session";
@@ -14,7 +13,7 @@ function toProviderUserCode(userCode: string): string {
 /**
  * Approves or denies a CLI login the signed-in person already claimed with the provider's
  * rate-limited check (`GET /device`), so this never looks up a code anyone else could be waiting on.
- * A login that asks to read staff data needs a staff account: without one it's denied instead, so
+ * A login that asks for any staff scope needs a staff account: without one it's denied instead, so
  * the CLI stops waiting rather than getting a token every staff route refuses.
  */
 export async function decideCliLogin({
@@ -54,8 +53,8 @@ export async function decideCliLogin({
     return { status: "notFound" };
   }
 
-  const needsStaff =
-    login.scope?.split(" ").includes(STAFF_READ_SCOPE) === true && !isStaffAccount(user);
+  const asksForStaff = login.scope?.split(" ").some((scope) => scope.startsWith("staff:")) ?? false;
+  const needsStaff = asksForStaff && !isStaffAccount(user);
 
   const request = { body: { userCode: login.userCode }, headers: await headers() };
 

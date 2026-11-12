@@ -1,12 +1,12 @@
 # Agent orchestration
 
-First, discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. When delegating multiple sub-agents, split them into multiple providers (if available) based on remaining quota.
+First, discover providers, current models, supported effort settings, and remaining quotas/reset times where exposed. Then pick providers by which weekly window resets first ([pick the provider](#pick-the-provider)).
 
 Always use the latest version of each model, resolved from the live catalog. Never pin a version in these instructions or in a brief: write "the latest Opus", not a version number. Map effort names to each provider's supported equivalents. Existing approval and verification rules still apply.
 
 ## Pick the model
 
-Claude and OpenAI models pair by tier: Haiku and Luna, Sonnet and Terra, Opus and Sol, Fable and Astra. Where a row names both families, pick the one with more remaining capacity ([spread the load](#spread-the-load)).
+Claude and OpenAI models pair by tier: Haiku and Luna, Sonnet and Terra, Opus and Sol, Fable and Astra. Where a row names both families, pick the one whose provider comes first by reset ([pick the provider](#pick-the-provider)).
 
 | Task                                                                | Model and reasoning                                                                                                                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -31,11 +31,13 @@ Claude and OpenAI models pair by tier: Haiku and Luna, Sonnet and Terra, Opus an
 - **Switch models at natural breaks:** A model can't reuse another's prompt cache, so its first turn on a long conversation pays to cache all of it. Hand a new model a short written brief, not the whole history.
 - **Design debate:** Only a big new feature or an architecture decision gets one, never a bug fix, a small change or a minor choice ([when](../../AGENTS.md#agent-orchestration)). Fable and Astra debate it at xhigh until they agree ([protocol](#design-debate)). When only one family is available, two fresh agents of it debate, and the handoff says so.
 
-## Spread the load
+## Pick the provider
 
-- **Large tasks:** Split independent work across subagents and providers to avoid exhausting one provider. Among providers meeting the task's model requirements, prefer those with the most remaining capacity and assign non-overlapping edits. Every slice lands on the task's one branch, and the lead opens the task's one PR ([finishing a task](../../AGENTS.md#finishing-a-task)).
-- **Each new agent:** Give each new subagent, review or helper to the eligible provider with the most remaining capacity at that moment, so usage grows a little on every provider instead of draining one or two. A provider past about 70% of its window takes no new work while another eligible one has room.
-- **Nested delegation:** These rules apply at every level. A subagent that splits work delegates to the providers with the most remaining capacity instead of fanning out on its own provider.
+- **Soonest reset first:** Weekly usage a provider doesn't spend before its reset is lost, so give each new subagent, review or helper to the eligible provider (one that meets the task's model requirements) whose weekly window resets soonest, however little it has left. A provider at 20% that resets in two days takes the work before one at 75% that resets in six. Keep using it until it has 2% or less of its weekly window left, then move to the eligible provider that resets next.
+- **The 2% floor:** A provider with 2% or less of its weekly window left takes no new work. Work it already runs keeps going; if it hits the limit, move it as **Usage limits** says. A provider that keeps running on paid credits past its weekly window, such as Codex with credits, has no floor.
+- **Session window:** The 5-hour window doesn't change the order, it only pauses it: while the soonest-resetting provider's session window is spent, new work goes to the next one by reset, and returns once the session resets.
+- **Large tasks:** Split independent work into subagents with non-overlapping edits, and place each one by the rules above. Every slice lands on the task's one branch, and the lead opens the task's one PR ([finishing a task](../../AGENTS.md#finishing-a-task)).
+- **Nested delegation:** These rules apply at every level. A subagent that splits work picks providers the same way, and its brief says so, since it may see only the usage numbers.
 - **Usage limits:** Recheck quotas periodically, at task boundaries, and when a provider is limited. If its reset is less than 15 minutes away, waiting is acceptable; otherwise transfer unfinished work to an eligible provider with quota. Include the brief, decisions, changed files, verification, and open issues in the handoff; stop the original task to avoid duplicate work. Keep checking so available providers take over work blocked by longer resets.
 - **Lane health:** A lane's failure notice doesn't always reach its lead. After a machine-wide failure (a full disk, a reboot, a provider outage), or when a lane has been quiet for about an hour, read each lane's status yourself, and resume a failed lane where it ran so it keeps its context and worktree.
 - **Waiting inside the turn:** A lane that waits on a build or a review waits inside its turn, with a background command it then waits on. Wait with the harness's wait for that command, which returns when it ends, not a sleep or polling loop over its log. Nothing wakes a lane whose turn has ended, so it stops until its lead notices.

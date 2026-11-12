@@ -156,7 +156,7 @@ struct ScheduleQuestion: View {
   }
 
   private func question(_ shown: Shown) -> some View {
-    QuestionForm(isSaving: isSaving, failed: failed, failure: refusalWords) {
+    QuestionForm {
       // The date and its days left inform the time to pick.
       StepHeader(
         title: Text(
@@ -203,7 +203,7 @@ struct ScheduleQuestion: View {
         }
         .locksWhileSaving()
       }
-
+    } buttons: {
       StepButtons(
         canContinue: ScheduleTime.canContinue(
           hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked),
@@ -217,6 +217,7 @@ struct ScheduleQuestion: View {
         \.isSavingAnswer,
         isSaving || ScheduleTime.waitsToSave(line: shown.line, picked: picked))
     }
+    .sendsAnswer(isSaving: isSaving, failed: failed, failure: refusalWords)
   }
 
   private func gate(_ shown: Shown) -> Gate {

@@ -5,14 +5,13 @@
   "profile_questions_activities_placeholder": "72051acd53e17f3b0b99dd436616d50aca25f936e537c64b0f84067de58e12a4",
   "profile_questions_activities_title": "eec95564c9d96f5bf4394ed78ceb25c8c70aced28844594734a401259db6d5b8",
   "profile_questions_add": "a589bbd9b8cbd77e4a8bb38936ba8b29753c9dcabc98d16bb6f6022cef159420",
+  "profile_questions_address_description": "149d6ba3055dddcf84ffcf9c04440d01a13b6d88c32c3889a4b2cfd5fe2591a2",
+  "profile_questions_address_title": "8c746490751ae6d78f1198301cfbeede800e5a0b06a91064adf5501330e93bde",
   "profile_questions_cap": "5e4bb7344677c0f0cc207b106d149173e716d75a966ea74f8425c014867b6f8a",
   "profile_questions_condition_note": "88842dd86e189e000d33973e65a2e1ce9f8bb923d29b407640423fd7d7c40dea",
-  "profile_questions_conditions_description": "cafcd14e49011d4d2e26d7de9a74a0e78e42e8e91ae1782a77ec0ce09e14eee2",
-  "profile_questions_conditions_next": "a163eb1c9ae9b5675f05d0fbbab9ca0e8a786ce4881e6664a0470712f69adb53",
+  "profile_questions_conditions_description": "1c0181737b72794824cb29dffb5dffb860759b975a3a6cba99b377ead9965dbd",
   "profile_questions_conditions_saved": "642ac4860fb448cfe551ff752a93f84b06f6ebb05f57fd00749c349918420a00",
   "profile_questions_conditions_title": "f8e222e2ff5f428cd85f9b8646558a48412a8b9feaf801862e9ef3d2b570e899",
-  "profile_questions_consent": "c5c4b6b17a83bde3dd90a2d3b5fa91801cc1423db216f4fae3385125e78c6617",
-  "profile_questions_consent_help": "2427a16a20778ccb79d21e3ac2a383665c8c4d93b5be6b8ccd89e393759283e8",
   "profile_questions_description": "cd68a2bf08dafdf6f82043e5cc73fc0aad29eb5be3bb129ec121f2b31856c5b6",
   "profile_questions_earlier_answer": "817c74f735a4040672f6a2e425e0fa8a8dc8de4473d8d713f9d48bd2792e03eb",
   "profile_questions_for_fun": "297a17d7b0a150255b77025c0518e58a7a88e4f27542c143102cf5c7d590cccb",
@@ -41,6 +40,7 @@
   "profile_questions_read_placeholder": "89d80d7df69cb133e0ff32dc433076f282157386a68594aa1d5b6f404daaa44d",
   "profile_questions_read_title": "47be6a7680294a7630817206c31edd9fa4e987fca5f0ab45bedb9f196faf9989",
   "profile_questions_row_activities": "75cd2759eef9aa32d3c5416c9773423733042dc4303917f327479bd05d20eee9",
+  "profile_questions_row_address": "d91ad76c9d0ee5872974bfc99624825fc446651621a50a6e713245f86ca0eb29",
   "profile_questions_row_conditions": "e69c5f9df24e8eeb14259cfb3e4d01c9e7c699438f674143309e45eec02168b7",
   "profile_questions_row_listen": "ca65ce6ad5f3b0d84dfe4239d151ec2f8ae3a860ba1f8d8250360ee74ec77014",
   "profile_questions_row_play": "5650051a58b64664d6373fd1c1d6cff110c21b9ba94dbced07db73ceac9da9e6",
@@ -51,6 +51,7 @@
   "profile_questions_row_watch": "d509433abc8bf17c836c2b8cba27870a8ee52347f7173c156b6eef17a9e0c833",
   "profile_questions_row_work": "10a9735da4c55383b63bcf2c7078c61113813b70242c63ea157cf682f2b23595",
   "profile_questions_save_start_lesson": "f92240faec2ef19304669dd43ff94317c695ffd4221b42f4e90e01a0a2067e44",
+  "profile_questions_saved": "3184804eea13ea3c0072655cee9d1fa22b29e8a9a157c8550c91048d73beb36b",
   "profile_questions_skip_all": "ddc3f02ff85b9d6fc311f99a7361e64e230ff4a57937db16e1c3b1c2bfe34084",
   "profile_questions_skip_all_label": "35c4affa8b272b9e6975631b265a4d6a7c352a53249517e599aa28be2b55be2d",
   "profile_questions_something_else": "57b216226c49c533ef3f0806e5552f685c7a199bcb2e43da58385ff544455e71",
@@ -123,13 +124,12 @@
     <string name="profile_questions_activities_favorites">D’autres centres d’intérêt ? (facultatif)</string>
     <string name="profile_questions_activities_placeholder">Ex. : faire du pain, voitures, astronomie</string>
     <string name="profile_questions_conditions_title">Est-ce que l’une de ces situations te concerne ?</string>
-    <string name="profile_questions_conditions_description">Facultatif. Rien n’est enregistré ici sans ton accord.</string>
-    <string name="profile_questions_conditions_next">Facultatif. À l’écran suivant, nous te proposerons des options souvent utiles. Rien n’est enregistré ici sans ton accord.</string>
+    <string name="profile_questions_conditions_description">Facultatif. Tes choix sont enregistrés dans ton profil pour que ton compagnon puisse s’adapter à toi. Tu peux les supprimer à tout moment dans les paramètres.</string>
     <string name="profile_questions_condition_note">Que devrions-nous savoir ?</string>
-    <string name="profile_questions_consent">Enregistrer dans mon profil</string>
-    <string name="profile_questions_consent_help">Zoonk utilise ces informations pour s’adapter à toi, maintenant et au fil du temps. Elles ne sont jamais partagées ni utilisées dans les exemples des leçons. Tu peux les supprimer à tout moment dans Paramètres.</string>
     <string name="profile_questions_support_title">Qu’est-ce qui t’aide à apprendre ?</string>
     <string name="profile_questions_support_description">Choisis tout ce qui t’aide. Pas besoin d’étiquette ni de diagnostic.</string>
+    <string name="profile_questions_address_title">Tu préfères le féminin, le masculin ou des mots neutres ?</string>
+    <string name="profile_questions_address_description">Ton compagnon et les commentaires utiliseront ces formulations. Les leçons restent les mêmes.</string>
     <string name="profile_questions_suggested">Nous avons coché les options qui aident souvent dans les situations que tu as indiquées. Modifie ce que tu veux.</string>
     <string name="profile_questions_nothing_particular">Rien de particulier</string>
     <string name="profile_questions_something_else">+ Autre chose qui m’aide</string>
@@ -157,8 +157,10 @@
     <string name="profile_questions_row_activities">Activités</string>
     <string name="profile_questions_row_conditions">Particularités</string>
     <string name="profile_questions_row_support">Ce qui t’aide à apprendre</string>
+    <string name="profile_questions_row_address">Comment on s’adresse à toi</string>
     <string name="profile_questions_not_answered">Sans réponse</string>
     <string name="profile_questions_not_shared">Non renseigné</string>
+    <string name="profile_questions_saved">Enregistrée</string>
     <string name="profile_questions_add">Ajouter</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d enregistrée</item>

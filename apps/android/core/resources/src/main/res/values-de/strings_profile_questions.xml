@@ -5,14 +5,13 @@
   "profile_questions_activities_placeholder": "a3cd2e6d1cc8e8edce74257deeb42fb66da1a92242917dfc4918e9000a6b31c0",
   "profile_questions_activities_title": "13d0d9dea7eb40469c744db0a1549722b8306bd7323f9f31bfae56d6d1a34a4f",
   "profile_questions_add": "a4834ff8cdd6ef4db326f67bf4717fdefbbc98906054c9663d63122f92ec0347",
+  "profile_questions_address_description": "aa861c8fa8c2913d594e019f600e7c9eb9e2f37645c1b00c9c18c5a78d8db604",
+  "profile_questions_address_title": "5f7568b4c765600ad83992072af199c844a63823330daa0f30ff1c1bcaa96e46",
   "profile_questions_cap": "676dac0fdd74598ea0f78b435fe5b730bd9f4693888bddc24a9d3fcf0e5a9e2b",
   "profile_questions_condition_note": "3755ca4e26ecc66304955e5ac8b631939a662645b59b3861896f4b6875c93337",
-  "profile_questions_conditions_description": "5947d96fce09ef37570f680cfb8659abb7789b214e70c0e40c12c56b9dd0d559",
-  "profile_questions_conditions_next": "00db986648945b9d82e824b9766bc8ea42f46ee3c1da7059cf89c6911885e1e6",
+  "profile_questions_conditions_description": "495b707a386d3d5100e4d9649f9e0eb89542e8719ea591d8b08901b820e6df03",
   "profile_questions_conditions_saved": "aab2c5c87dbcceadc28c28fb26535f0905f5a37d283e8cff168f332fb5c2ee37",
   "profile_questions_conditions_title": "ef93abd7458af85bb6ece2f06c99891f0ac6f1978bbaf78f068268f5536d0ac4",
-  "profile_questions_consent": "6ed291ac6adbb9d32165ae300fa3c0c88f7354b50cbef34b419d3a64f8734c5d",
-  "profile_questions_consent_help": "f0d18d8bc35908d6f2e61ecf827c9509a5af61f87f54abc7806a990dd926fd1d",
   "profile_questions_description": "95cd7e28d4db70e734b891dfbe1edc8545e2572a9e865856c55111d1fde15748",
   "profile_questions_earlier_answer": "a86197e622ef28ba27096f566be987bb4b56efd8334bee55631f22cf8bd660e2",
   "profile_questions_for_fun": "6f8248563a67e46dd041c7f63a828ae91fb42855b3a377e7f5f5c86194e9c5de",
@@ -41,6 +40,7 @@
   "profile_questions_read_placeholder": "6b68d6668b98d02243e642d967b2b18633d296711db01ba915f1a48e50a68815",
   "profile_questions_read_title": "536cf81f3a6c80c483cb4d871d73308282177b1092ee9316efe56c6aff94aee1",
   "profile_questions_row_activities": "5af4597a4ebda0919df5054710dc44d17fe3ccf7b5b66d99ca851e4acf88c0ce",
+  "profile_questions_row_address": "27b392a1df9dace8c7cf168998ea49825efcbf6c7a6aa02a3cffb8abcb935d46",
   "profile_questions_row_conditions": "9ec54749b929446ae9f5cb64ac4ad7767d91da878fbafcae5fa0a14728319819",
   "profile_questions_row_listen": "4f91f37f7907b80c0ab134b2db1fae4c2207e0f3214946ce5623c0d366b354ff",
   "profile_questions_row_play": "f65bbef2aaa0ee997cfd03c29c36085d7a2af38401a8beae730f74551340e34d",
@@ -51,6 +51,7 @@
   "profile_questions_row_watch": "d432f189822abad7c7191c3f4f1e0a6b40a07587f25f1047282a53311a33b5ec",
   "profile_questions_row_work": "a2772dd2b3b7ce5448db4df6d6cf610f85aa888329810ff9018f0cbb3462ac0f",
   "profile_questions_save_start_lesson": "a7e2d44a43e8200482143181589c38919a3c1f788faee4d3b18dc29abc098e82",
+  "profile_questions_saved": "09ede0ac1404598b30c2c957ea50fe5fc6f5f42c63efa7436d12850da78956e9",
   "profile_questions_skip_all": "e0da62311fce83fd910b7a5a0247cde1a3d93c41242c1f9599db2855f12bb7fe",
   "profile_questions_skip_all_label": "11098b191e32e29980cd84667933dd8d7fb2db39ac0c83411ea6a013a0cc4c90",
   "profile_questions_something_else": "66bac93bde18dce1439e3e0e99e0aa5db8e7c73a58f7f0805cc84d5aac3be227",
@@ -123,13 +124,12 @@
     <string name="profile_questions_activities_favorites">Was interessiert dich sonst noch? (optional)</string>
     <string name="profile_questions_activities_placeholder">Z. B. Brot backen, Autos, Astronomie</string>
     <string name="profile_questions_conditions_title">Trifft etwas davon auf dich zu?</string>
-    <string name="profile_questions_conditions_description">Freiwillig. Nichts davon wird ohne deine Zustimmung gespeichert.</string>
-    <string name="profile_questions_conditions_next">Freiwillig. Auf der nächsten Seite zeigen wir dir Vorschläge, die oft helfen. Nichts davon wird ohne deine Zustimmung gespeichert.</string>
+    <string name="profile_questions_conditions_description">Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich dein Kumpel auf dich einstellen kann. Du kannst sie jederzeit in den Einstellungen entfernen.</string>
     <string name="profile_questions_condition_note">Was sollten wir wissen?</string>
-    <string name="profile_questions_consent">In meinem Profil speichern</string>
-    <string name="profile_questions_consent_help">Zoonk nutzt diese Angaben, um sich jetzt und auch in Zukunft an dich anzupassen. Sie werden nie weitergegeben oder in Beispielen für Lektionen verwendet. Du kannst sie jederzeit in den Einstellungen entfernen.</string>
     <string name="profile_questions_support_title">Was hilft dir beim Lernen?</string>
     <string name="profile_questions_support_description">Wähl alles aus, was dir hilft. Du brauchst dafür keine Einordnung oder Diagnose.</string>
+    <string name="profile_questions_address_title">Wie sollen wir dich ansprechen?</string>
+    <string name="profile_questions_address_description">Dein Kumpel spricht dich so an. Auch die Rückmeldungen sind so formuliert. Die Lektionen bleiben gleich.</string>
     <string name="profile_questions_suggested">Wir haben geprüft, was bei deiner Auswahl oft hilft. Pass alles so an, wie du möchtest.</string>
     <string name="profile_questions_nothing_particular">Nichts Bestimmtes</string>
     <string name="profile_questions_something_else">+ Etwas anderes, das dir hilft</string>
@@ -157,8 +157,10 @@
     <string name="profile_questions_row_activities">Aktivitäten</string>
     <string name="profile_questions_row_conditions">Gesundheitliche Besonderheiten</string>
     <string name="profile_questions_row_support">Was dir beim Lernen hilft</string>
+    <string name="profile_questions_row_address">Wie wir dich ansprechen</string>
     <string name="profile_questions_not_answered">Nicht beantwortet</string>
     <string name="profile_questions_not_shared">Nicht angegeben</string>
+    <string name="profile_questions_saved">Gespeichert</string>
     <string name="profile_questions_add">Hinzufügen</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d gespeichert</item>

@@ -135,6 +135,7 @@ export async function outlineWhatsNewChapterStep({
 
   const { data, provenance } = await generateCourseOutline({
     analytics: toAnalytics(workflowRunId),
+    country: course.country,
     courseTitle: course.courseTitle,
     language: course.language,
     level: whatsNew.level,

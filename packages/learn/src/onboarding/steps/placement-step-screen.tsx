@@ -4,13 +4,9 @@ import { type OnboardingView } from "@zoonk/core/view-models/onboarding/contract
 import { FocusTestFlow } from "../../focus-test/focus-test-flow";
 import { type GenerationRun } from "../../generation/generation-run";
 import { LanguageLevelTestStep } from "../../language/level-test/level-test-step";
+import { getNativeLanguage } from "../_utils/onboarding-view-reads";
 import { type OnboardingActions } from "../onboarding-actions";
 import { PlacementStep } from "./placement-step";
-
-function getNativeLanguage(view: OnboardingView): string {
-  const native = view.goal.details.nativeLanguage;
-  return typeof native === "string" && native.trim() ? native : view.goal.language;
-}
 
 /** Each kind of goal finds where the learner starts its own way; an exam's is its Focus test. */
 export function PlacementStepScreen({

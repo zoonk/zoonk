@@ -113,6 +113,7 @@ describe(writeLessonDraft, () => {
     const params = {
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       level: "intermediate",
@@ -198,6 +199,7 @@ describe(writeLessonDraft, () => {
     const params = {
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       level: "beginner",
@@ -240,6 +242,7 @@ describe(writeLessonDraft, () => {
     const { data } = await writeLessonDraft({
       activityTemplates: [],
       chapterTitle: "Heredity",
+      country: null,
       courseTitle: "Biology",
       language: "en",
       level: "beginner",
@@ -275,6 +278,7 @@ describe(writeLessonDraft, () => {
     const { data } = await writeLessonDraft({
       activityTemplates: [],
       chapterTitle: "Sensors",
+      country: null,
       courseTitle: "Instrumentation",
       language: "en",
       level: "intermediate",

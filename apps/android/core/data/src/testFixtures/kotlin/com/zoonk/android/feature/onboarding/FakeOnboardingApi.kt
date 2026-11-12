@@ -89,7 +89,7 @@ internal fun goalCreated(): GoalCreateResponse =
         {"generations":[],"refused":[],"research":[],"goals":[{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":15,"details":{},
          "examBlueprintId":null,"id":"$GOAL_ID","isActive":true,"kind":"exam","language":"en","plan":null,"primaryCourseId":null,
          "prompt":"pass the bar exam","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,
-         "targetRegion":null,"regionChoices":[],"timezone":null,"title":"Pass the bar exam","displayName":"Bar exam"}]}
+         "targetRegion":null,"regionChoices":[],"contentCountry":null,"countryDependent":false,"examCountry":null,"examplesCountry":null,"languageCountry":{"code":"US","name":"United States"},"suggested":[],"timezone":null,"title":"Pass the bar exam","displayName":"Bar exam"}]}
         """.trimIndent(),
     )
 
@@ -121,7 +121,7 @@ fun setupView(
 ): Onboarding =
     ApiJson.decodeFromString(
         """
-        {"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
+        {"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
          "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
@@ -132,7 +132,7 @@ fun setupView(
             "\"$it\""
         } ?: "null"},"targetLanguage":${targetLanguage?.let {
             "\"$it\""
-        } ?: "null"},"targetRegion":null,"regionChoices":[],"timezone":null,"title":"Learn statistics","displayName":"Statistics"}}
+        } ?: "null"},"targetRegion":null,"regionChoices":[],"contentCountry":null,"countryDependent":false,"examCountry":null,"examplesCountry":null,"languageCountry":{"code":"US","name":"United States"},"suggested":[],"timezone":null,"title":"Learn statistics","displayName":"Statistics"}}
         """.trimIndent(),
     )
 

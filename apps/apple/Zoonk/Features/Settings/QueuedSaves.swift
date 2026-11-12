@@ -17,6 +17,8 @@ final class QueuedSaves<Value: Equatable & Sendable> {
   private var waiting: [Change] = []
   private var changed: Set<DataDomain> = []
   private var lastID = 0
+  /// Changes made before the resource was read, still waiting for their turn to read it.
+  private var unread = 0
   private var tail: Task<Void, Never>?
 
   init(_ resource: Resource<Value>, cache: AppCache) {
@@ -24,32 +26,48 @@ final class QueuedSaves<Value: Equatable & Sendable> {
     self.cache = cache
   }
 
-  /// `confirm` gives what the server took from its reply. Nothing is sent while nothing is shown,
-  /// nor once the learner who made the change is gone.
+  /// `confirm` gives what the server took from its reply. A change made before any screen read the
+  /// resource reads it first, in its turn, so it keeps its place among the changes made after it.
+  /// Nothing is sent when it can't be read (nil), nor once the learner who made the change is gone.
   func save<Reply: Sendable>(
     _ apply: @escaping (Value) -> Value,
     invalidating domains: Set<DataDomain>,
     _ write: @escaping (AuthenticatedSession) async throws -> Reply,
     confirm: @escaping (Value, Reply) -> Value
   ) async -> MutationResult<Reply>? {
-    guard let shown = resource.value else {
-      return nil
-    }
-
     let owner = cache.session.authenticatedSession
-
-    if saved?.owner != owner || !waiting.contains(where: { $0.owner == owner }) {
-      saved = (owner, shown)
-    }
-
     lastID += 1
     let change = Change(id: lastID, owner: owner, apply: apply)
-    waiting.append(change)
-    resource.update(apply)
+    // It shows on top of the changes made before it, so it waits while one of them waits to read.
+    let shown = unread == 0 ? resource.value : nil
+
+    if let shown {
+      show(change, over: shown)
+    } else {
+      unread += 1
+    }
 
     let previous = tail
-    let turn = Task {
+    let turn = Task { () -> MutationResult<Reply>? in
       await previous?.value
+
+      if shown == nil {
+        defer { unread -= 1 }
+
+        if resource.value == nil, cache.session.authenticatedSession == owner {
+          await resource.load()
+        }
+
+        guard cache.session.authenticatedSession == owner else {
+          return .obsolete
+        }
+
+        guard let value = resource.value else {
+          return nil
+        }
+
+        show(change, over: value)
+      }
 
       let result: MutationResult<Reply> =
         cache.session.authenticatedSession == owner ? await cache.mutate(write) : .obsolete
@@ -59,8 +77,20 @@ final class QueuedSaves<Value: Equatable & Sendable> {
     }
     tail = Task { _ = await turn.value }
 
-    let result = await turn.value
+    guard let result = await turn.value else {
+      return nil
+    }
+
     return cache.session.authenticatedSession == owner ? result : .obsolete
+  }
+
+  private func show(_ change: Change, over value: Value) {
+    if saved?.owner != change.owner || !waiting.contains(where: { $0.owner == change.owner }) {
+      saved = (change.owner, value)
+    }
+
+    waiting.append(change)
+    resource.update(change.apply)
   }
 
   private func settle<Reply: Sendable>(

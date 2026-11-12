@@ -1,8 +1,10 @@
 "use client";
 
 import { FORWARD_ICON } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../../_components/pinned-actions";
 import { usePendingSender } from "../../_utils/use-pending-sender";
 import {
   OnboardingColumn,
@@ -65,15 +67,17 @@ export function StepForm({
           }
         }}
       >
-        <OnboardingHeading>
-          {subject && <OnboardingSubject>{subject}</OnboardingSubject>}
-          <OnboardingTitle>{title}</OnboardingTitle>
-          {description && <OnboardingDescription>{description}</OnboardingDescription>}
-        </OnboardingHeading>
+        <div className={cn("contents", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
+          <OnboardingHeading>
+            {subject && <OnboardingSubject>{subject}</OnboardingSubject>}
+            <OnboardingTitle>{title}</OnboardingTitle>
+            {description && <OnboardingDescription>{description}</OnboardingDescription>}
+          </OnboardingHeading>
 
-        {children}
+          {children}
+        </div>
 
-        <OnboardingFooter>
+        <OnboardingFooter pinned>
           {notice}
           <OnboardingPrimaryButton
             busy={sender === "continue"}

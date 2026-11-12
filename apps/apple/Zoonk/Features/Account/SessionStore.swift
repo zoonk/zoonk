@@ -201,7 +201,6 @@ final class SessionStore {
     }
   }
 
-  /// Uses the account's own bearer, without creating or refreshing a session.
   func sendAccountDeletionEmailCode() async -> Bool {
     guard let authenticatedSession, let account else { return false }
 
@@ -212,15 +211,13 @@ final class SessionStore {
     defer { finishWorkingOperation(workingRevision) }
 
     do {
-      try await api.sendEmailCode(
-        email: account.user.email, token: authenticatedSession.bearerToken)
+      try await api.sendEmailCode(email: account.user.email)
       return isCurrentAccountSession(authenticatedSession)
     } catch {
       guard isCurrentAccountOperation(authenticatedSession, revision: revision) else {
         return false
       }
       switch error as? AccountAPIError {
-      case .botDetected: failure = .botDetected
       case .disposableEmail: failure = .disposableEmail
       case .invalidEmail: failure = .invalidEmail
       case .network: failure = .network
@@ -820,8 +817,6 @@ final class SessionStore {
     switch apiError {
     case .accountDisabled, .accountMismatch, .appleCredentialMismatch:
       return .signIn
-    case .botDetected:
-      return .botDetected
     case .disposableEmail:
       return .disposableEmail
     case .invalidCode:
@@ -851,8 +846,6 @@ final class SessionStore {
     }
 
     switch apiError {
-    case .botDetected:
-      return .botDetected
     case .accountMismatch:
       return .accountMismatch
     case .accountDisabled, .appleCredentialMismatch, .disposableEmail:

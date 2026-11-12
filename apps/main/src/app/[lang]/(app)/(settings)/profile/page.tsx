@@ -11,6 +11,7 @@ import { ProtectedSection } from "../_components/protected-section";
 import { DeleteAccountSection } from "./delete-account-section";
 import { DeletionPlusNotice } from "./deletion-plus-notice";
 import { ExportDataButton } from "./export-data-button";
+import { PasskeysSection } from "./passkeys-section";
 import { ProfileForm } from "./profile-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,6 +38,8 @@ async function ProfileContent() {
           defaultUsername={session?.user.username ?? ""}
         />
       </PageSection>
+
+      <PasskeysSection />
 
       <PageSection aria-labelledby={YOUR_DATA_ID}>
         <PageSectionHeader>

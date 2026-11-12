@@ -1,33 +1,56 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
-import { LearnSectionBar } from "@zoonk/learn/bar";
+import { LearnBackLink, LearnSectionBar } from "@zoonk/learn/bar";
 
-function usePageUnderHub(hub?: { href: string }): boolean {
+export type SectionLink = { href: string; title: string };
+
+type SectionPlaces = { hub: SectionLink; parents?: SectionLink[] };
+
+/** A page under one of `parents` goes back to it; any other page but the hub goes back to the hub. */
+function useSectionParent({ hub, parents }: SectionPlaces): SectionLink | undefined {
   const pathname = usePathname();
-  return Boolean(hub && pathname !== hub.href);
+
+  if (pathname === hub.href) {
+    return undefined;
+  }
+
+  return parents?.find((parent) => pathname.startsWith(`${parent.href}/`)) ?? hub;
 }
 
 export function SectionBarFrame({
   backHref,
   className,
   end,
-  hub,
-}: {
-  backHref: string;
-  className?: string;
-  end?: React.ReactNode;
-  hub?: { href: string; title: string };
-}) {
-  const underHub = usePageUnderHub(hub);
+  ...places
+}: SectionPlaces & { backHref: string; className?: string; end?: React.ReactNode }) {
+  const parent = useSectionParent(places);
 
   return (
     <LearnSectionBar
       backHref={backHref}
       className={className}
       end={end}
-      parent={hub && underHub ? { href: hub.href, label: hub.title } : undefined}
-      title={hub && !underHub ? hub.title : undefined}
+      parent={parent && { href: parent.href, label: parent.title }}
+      title={parent ? undefined : places.hub.title}
+    />
+  );
+}
+
+/** From a tablet up the bar is gone and the tabs mark the hub's pages, so only a page under a tab links back to it. */
+export function SectionParentLink(places: SectionPlaces) {
+  const parent = useSectionParent(places);
+
+  if (!parent || parent === places.hub) {
+    return null;
+  }
+
+  return (
+    <LearnBackLink
+      className="-ml-2 hidden self-start md:inline-flex"
+      crumb
+      href={parent.href}
+      label={parent.title}
     />
   );
 }

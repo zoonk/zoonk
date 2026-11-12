@@ -42,6 +42,11 @@
   "onboarding_change_date": "988214b47a17985867ace91debba46af131ebfa76fec83168d48bc017f03d1d1",
   "onboarding_choose_date": "4e1dec3cd8673780c36b526528b781261399c13ece3ffd06e6e655c0a785fa14",
   "onboarding_continue": "deeaf079beb4d803bd47aa48cb8d28ff425ef667b0bab1f1c254058036aad89c",
+  "onboarding_country_description": "aa2aacb4ba89a7d04b01a959fa4742c7248b7745fdac7131080ab51319ab0a1a",
+  "onboarding_country_from_home": "1fb2943ebe6041981c98553db95dca2c1c8b18c9fd7d76f78451beb41bd70fca",
+  "onboarding_country_other": "408374ff49b8d6f410b54359f666de50b72418ee923c56325261d6bfb95fb8b9",
+  "onboarding_country_skip_default": "a05a63348fdb36a07df3f1226c3f98eeb08c80c7c1672ec02ee66f7cc8ba9f16",
+  "onboarding_country_title": "3217cbd355f73d96771f3a65cfeae1681902adefa1ac94ba2c389de664ee7e41",
   "onboarding_course_build": "7d3f86de7eb76b08dbc6272474e19b2bb9a71bf89ad0e956eadef1cd13b1b5ad",
   "onboarding_course_chapter_description": "ad6b5b65a12515e08053ce8e1aedc46938bae934a8b1905cfa6d8788084812b4",
   "onboarding_course_chapters": "f0fd50c34f454d6891307022baa6832fc3f46701dcade4da527899355be2959f",
@@ -153,7 +158,6 @@
   "onboarding_limit_daily_explanations": "6a0e0d7ebe95b40d879aa3383de4bae7a4c1300343dbf1a6eee0db3423153187",
   "onboarding_limit_daily_goals": "a4aa13d88bfda35d03749c6fd78a1d0acda60df7fa0ed96de5ad5285c086d0a9",
   "onboarding_limit_guest": "3407e42e8c02cb0b3a2b891aaea5e30de1ad0d9ea6ca3fedb37a37e027e5064f",
-  "onboarding_limit_guest_blocked": "d42c0af562b4a980c1a8b3787902ec08d3f496a224016c05e80173af79285170",
   "onboarding_limit_monthly_explanations": "ffaa65386e52531d50f5ec7e07458f33f23b1e0328d4854c7cbc6f30418db436",
   "onboarding_limit_monthly_goals": "fc5485a83c5d3d53ee2382acbdd9fbd0fd4e8398f2f5e941774971f317e38dd1",
   "onboarding_limit_sign_up_required": "ef3694d22ea1af9265f540862138527eb5b57e558ac6c21cf11a5935187c2292",
@@ -489,7 +493,6 @@
     <string name="onboarding_limit_daily_goals">Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen noch einmal.</string>
     <string name="onboarding_limit_guest">Ohne Konto kannst du ein Ziel verfolgen. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">Eine Sicherheitsprüfung hat den Start ohne Konto verhindert. Erstell ein kostenloses Konto, um weiterzumachen.</string>
     <string name="onboarding_limit_monthly_explanations">Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen.</string>
     <string name="onboarding_limit_monthly_goals">Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
@@ -1108,4 +1111,14 @@
     <string name="onboarding_variety_none">Keine Präferenz</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">Dein Kumpel und die Übungsgespräche verwenden %1$s. Die Lektionen und ihre Audioaufnahmen sind auf %2$s.</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">Um welches Land soll es in deinen Lektionen gehen?</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">Was du hier lernst, hängt vom Land ab. Du kannst das Land später in deinem Plan ändern.</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">Anderes Land</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">Wenn du diesen Schritt überspringst: %1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">wo du lebst</string>
 </resources>

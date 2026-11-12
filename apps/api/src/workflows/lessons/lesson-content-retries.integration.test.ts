@@ -16,6 +16,11 @@ import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { getLessonContentHookToken } from "./lesson-content-result";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
+vi.mock("@zoonk/ai/tasks/lesson-laws", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  generateLessonLaws: vi.fn().mockResolvedValue({ data: { laws: [] } }),
+}));
+
 vi.mock("@zoonk/ai/tasks/lesson-marks", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   tagLesson: vi.fn(),

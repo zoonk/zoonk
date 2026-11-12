@@ -4,6 +4,7 @@ import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
+import { WebDayStepOpenerProvider } from "@/lib/session/day-step-opener";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
@@ -23,6 +24,7 @@ export function StepsClient(props: {
   isGuest: boolean;
   onboarding: OnboardingView;
   planActions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
+  userId: string;
 }) {
   const navigation = useOnboardingNavigation();
   const routes = useWebOnboardingRoutes();
@@ -39,29 +41,31 @@ export function StepsClient(props: {
   return (
     <PageDeckProvider deck={props.deck}>
       <GenerationFollowerProvider follower={WorkflowRunFollower}>
-        <StepsFlow
-          {...props}
-          actions={WEB_ONBOARDING_ACTIONS}
-          buddy={learner.status === "ready" ? learner.summary.buddy : null}
-          planActions={{
-            ...props.planActions,
-            adviseOnBases: () => getGoalBasesAdvice(goalId),
-            // The API saves the choice, so unlike the other changes nothing drops the pages kept.
-            chooseTools: async (input) => {
-              const chosen = await props.planActions.chooseTools(input);
+        <WebDayStepOpenerProvider userId={props.userId}>
+          <StepsFlow
+            {...props}
+            actions={WEB_ONBOARDING_ACTIONS}
+            buddy={learner.status === "ready" ? learner.summary.buddy : null}
+            planActions={{
+              ...props.planActions,
+              adviseOnBases: () => getGoalBasesAdvice(goalId),
+              // The API saves the choice, so unlike the other changes nothing drops the pages kept.
+              chooseTools: async (input) => {
+                const chosen = await props.planActions.chooseTools(input);
 
-              if (chosen === true) {
-                navigation.refreshPages();
-              }
+                if (chosen === true) {
+                  navigation.refreshPages();
+                }
 
-              return chosen;
-            },
-            findTimeToCover: () => findGoalTimeToCover({ goalId }),
-          }}
-          generation={generation}
-          navigation={navigation}
-          routes={routes}
-        />
+                return chosen;
+              },
+              findTimeToCover: () => findGoalTimeToCover({ goalId }),
+            }}
+            generation={generation}
+            navigation={navigation}
+            routes={routes}
+          />
+        </WebDayStepOpenerProvider>
       </GenerationFollowerProvider>
     </PageDeckProvider>
   );

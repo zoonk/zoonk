@@ -12,6 +12,7 @@ type AlphabetLessonCheck = Pick<
   | "activityTemplates"
   | "alphabet"
   | "chapterTitle"
+  | "country"
   | "courseTitle"
   | "language"
   | "lesson"
@@ -36,6 +37,7 @@ export function toAlphabetLessonCheck({
     activityTemplates: [],
     alphabet: true,
     chapterTitle: lesson.title,
+    country: null,
     courseTitle: getLanguageName({ targetLanguage, userLanguage: "en" }),
     language: learnerLanguage,
     lesson: {

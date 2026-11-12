@@ -72,9 +72,9 @@ async function languageMistakes(count: number) {
   return { ...setup, mistakes };
 }
 
-function mockPatternFound() {
+function mockPatternFound(data = PATTERN_OUTPUT) {
   vi.mocked(findMistakePattern).mockResolvedValue({
-    data: PATTERN_OUTPUT,
+    data,
     provenance: {
       generatedAt: new Date().toISOString(),
       latencyMs: 1,
@@ -165,6 +165,18 @@ describe("mistake patterns", () => {
     expect(findMistakePattern).toHaveBeenCalledWith(
       expect.objectContaining({ learnerLanguage: "pt" }),
     );
+  });
+
+  it("keeps a drill to the questions its answers can be sent back for", async () => {
+    const { user } = await languageMistakes(3);
+    const drill = Array.from({ length: 12 }, (_, index) => DRILL[index % DRILL.length]!);
+    mockPatternFound({ ...PATTERN_OUTPUT, drill });
+
+    await checkMistakePattern({ language: "en", userId: user.id });
+
+    const saved = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
+
+    expect(saved.content).toMatchObject({ drill: drill.slice(0, 10) });
   });
 
   it("waits for a few new mistakes before checking", async () => {

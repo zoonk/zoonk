@@ -123,6 +123,12 @@ async function loadLessonMaterial(lessonId: string): Promise<MaterialSource[]> {
   return findMaterial(goals.map((goal) => goal.id));
 }
 
+/** Internal: the lesson must come from the workflow holding its claim. */
+export async function hasLessonMaterial(lessonId: string): Promise<boolean> {
+  const material = await loadLessonMaterial(lessonId);
+  return material.length > 0;
+}
+
 export async function loadLessonMaterialPages({
   lessonId,
   query,

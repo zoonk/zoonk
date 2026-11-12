@@ -2,7 +2,8 @@ import { type ChartVisual } from "@zoonk/core/library/steps/contract";
 import { useFormatNumber } from "../_utils/use-format-number";
 import { clampLabelCenter } from "./_utils/category-labels";
 import { BAR_THICKNESS, LABEL_LINE_HEIGHT, type RowLayout, VALUE_GAP } from "./_utils/chart-layout";
-import { getTone } from "./_utils/series-tones";
+import { getSeriesMark } from "./_utils/series-marks";
+import { SeriesBar } from "./series-marks";
 
 function ValueTicks({ layout, width }: { layout: RowLayout; width: number }) {
   return layout.xTicks.map((tick) => {
@@ -51,10 +52,9 @@ function RowBar({
 
   return (
     <g>
-      <rect
-        className={getTone(seriesIndex).fill}
+      <SeriesBar
         height={BAR_THICKNESS}
-        rx={3}
+        mark={getSeriesMark(seriesIndex)}
         width={Math.max(Math.abs(end - origin), 1)}
         x={Math.min(origin, end)}
         y={top}

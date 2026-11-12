@@ -30,6 +30,7 @@ function reviewAlphabetLesson({
 }: AlphabetCheckInput & ModelOptions) {
   return checkLessonQuality({
     ...toAlphabetLessonCheck({ learnerLanguage, lesson: alphabet, targetLanguage }),
+    country: null,
     ...options,
     writerModel: ALPHABET_WRITER_MODEL,
   });
@@ -55,6 +56,7 @@ function reviewWrittenLesson({
     activityTemplates: describeActivityTemplates(
       context.spec.screens.flatMap((screen) => screen.activityTemplate ?? []),
     ),
+    country: context.country ?? null,
     lesson: toReviewedLesson({ lesson, screens }),
     model,
     reasoning,
@@ -71,6 +73,7 @@ function reviewLesson(
 
     return checkLessonQuality({
       ...recorded.context,
+      country: recorded.context.country ?? null,
       lesson: recorded.lesson,
       ...options,
       writerModel: "anthropic/claude-opus-5.5",

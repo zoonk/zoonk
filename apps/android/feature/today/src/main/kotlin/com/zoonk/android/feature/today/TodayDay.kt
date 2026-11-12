@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
@@ -111,6 +112,7 @@ fun TodayDay(
             poll = refreshIfChanged,
         )
     val model = remember(read, poll.stalled) { TodayDayModel(read, poll.stalled) }
+    val fresh by today.freshState.collectAsStateWithLifecycle()
     val activity = LocalActivity.current
     DisposableEffect(viewModel, read.noticeVisit()) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
     TrackShown(AnalyticsEvent.TodayViewed)
@@ -152,7 +154,18 @@ fun TodayDay(
                 brainPower = brainPower,
                 practice = practice,
                 notice = { layout ->
-                    TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, language?.value, onboarding), layout)
+                    TodayNotice(
+                        TodayNoticeState(
+                            read,
+                            fresh is LoadState.Loaded || fresh is LoadState.Failed,
+                            viewModel,
+                            navigator::open,
+                            plans,
+                            language?.value,
+                            onboarding,
+                        ),
+                        layout,
+                    )
                     if (onboarding != null) UnfinishedGoal(onboarding, navigator::open)
                 },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },

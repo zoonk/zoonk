@@ -1,5 +1,6 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { type z } from "zod";
+import { type ActivityExpectedAnswer } from "./activity-expected-answer";
 import { type ActivityCheck } from "./activity-schemas";
 import {
   type ActivityStepContent,
@@ -18,7 +19,7 @@ import {
 } from "./define-activity-template";
 import { sampleExpression } from "./expression/sample-expression";
 import { withinTolerance } from "./templates/_utils/pattern-checks";
-import { issue } from "./templates/_utils/template-helpers";
+import { answerCapacityIssues, issue } from "./templates/_utils/template-helpers";
 
 const CHOICE_VALUE_TOLERANCE = 0.2;
 const MIN_CHOICE_GAP = 1e-9;
@@ -134,9 +135,45 @@ function checkIssues(template: ActivityTemplate, content: ActivityStepContent): 
     return choiceIssues(template, content, check);
   }
 
-  return template.computeExpected(content.fields)
-    ? []
-    : [issue("answerMismatch", "fields", "Code can't compute the answer this interaction expects")];
+  const expected = template.computeExpected(content.fields);
+
+  if (!expected) {
+    return [
+      issue("answerMismatch", "fields", "Code can't compute the answer this interaction expects"),
+    ];
+  }
+
+  return sentLists(expected).flatMap((list) =>
+    answerCapacityIssues({ count: list.length, path: "fields", what: "items" }),
+  );
+}
+
+/** The lists a learner's answer sends back. */
+function sentLists(expected: ActivityExpectedAnswer): readonly (readonly unknown[])[] {
+  switch (expected.kind) {
+    case "grid":
+      return [expected.cells];
+    case "links":
+      return [expected.links];
+    case "order":
+    case "selection":
+      return [expected.ids];
+    case "pitchClasses":
+      return [expected.pitchClasses];
+    case "rhythm":
+      return [expected.tapTimesMs];
+    case "rows":
+      return [expected.rows, ...expected.rows];
+    case "assignment":
+    case "curveShift":
+    case "formula":
+    case "molecule":
+    case "output":
+    case "regex":
+      return [];
+    default:
+      return expected satisfies never;
+  }
 }
 
 function formulaIssues(template: ActivityTemplate, fields: unknown): ActivityIssue[] {

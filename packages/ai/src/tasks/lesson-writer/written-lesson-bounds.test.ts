@@ -77,6 +77,17 @@ describe(fitWrittenBounds, () => {
     expect(screen.options).toStrictEqual(options.slice(0, MAX_CHECK_OPTIONS));
   });
 
+  it("keeps a check whose options are pictures to the four the app lays out", () => {
+    const options = [true, false, false, false, false].map((isCorrect, index) => ({
+      ...option(String(index), isCorrect),
+      picture: { alt: `Shape ${index}.`, prompt: `Shape ${index}.` },
+    }));
+
+    const screen = firstScreen(fitWrittenBounds({ screens: [{ kind: "check", options }] }));
+
+    expect(screen.options).toStrictEqual(options.slice(0, 4));
+  });
+
   it("leaves options alone when only dropping a right one would make them fit", () => {
     const options = [true, true, true, true, true, true, false].map((isCorrect, index) =>
       option(String(index), isCorrect),

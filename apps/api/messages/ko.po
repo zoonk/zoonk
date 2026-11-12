@@ -371,6 +371,11 @@ msgid "Below you can choose where to focus, or take a short test that chooses fo
 msgstr "아래에서 집중할 부분을 직접 고르거나, 짧은 테스트로 정할 수 있어요."
 
 #: src/lib/tutor-confirmation.ts
+msgctxt "lW8O7a"
+msgid "Below you can change the country your lessons are about."
+msgstr "레슨에서 다루는 나라는 아래에서 바꿀 수 있어요."
+
+#: src/lib/tutor-confirmation.ts
 msgctxt "ejo0Qg"
 msgid "Below you can start a short practice call whenever you're ready."
 msgstr "준비되면 언제든 아래에서 짧은 대화 연습을 시작할 수 있어요."
@@ -379,6 +384,11 @@ msgstr "준비되면 언제든 아래에서 짧은 대화 연습을 시작할 �
 msgctxt "c7OWI5"
 msgid "Below you can see when your plan practices {subject}."
 msgstr "아래에서 계획에 포함된 {subject} 연습 일정을 확인할 수 있어요."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "3zTiTF"
+msgid "Below you can save where you live for new goals and your examples."
+msgstr "아래에서 사는 곳을 저장해 새 목표와 예시에 반영할 수 있어요."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "zPC6bz"

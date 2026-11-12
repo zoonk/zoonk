@@ -1,7 +1,11 @@
 "use client";
 
-import { applyGoalCountryAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
+import {
+  applyGoalContentCountryAction,
+  applyGoalCountryAction,
+} from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { applyHomeCountryAction } from "@/app/[lang]/(app)/(settings)/settings/appearance/actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { getCourseHref } from "@/data/courses/course-href";
@@ -11,6 +15,7 @@ import { getLearnerGeneration, mergeLearnerSummary } from "@/lib/learner/learner
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
+import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { type TutorCardActions, type TutorCards, getTutorCards } from "@zoonk/learn/tutor-cards";
 import { useMemo } from "react";
 import { useTutorAppLinks } from "./use-tutor-app-links";
@@ -33,10 +38,24 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
   const startTestOut = useStartTestOut();
   const startConversation = useStartLanguageConversation();
   const learner = useFrameLearner();
-  const goals = learner.status === "ready" ? learner.summary.goals : null;
+  const summary = learner.status === "ready" ? learner.summary : null;
+  const goals = summary?.goals ?? null;
+  const homeCountry = summary?.homeCountry ?? null;
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const apply = async (save: () => Promise<LearnerSummary | null>) => {
+      const generation = getLearnerGeneration();
+      const savedSummary = await save();
+      mergeLearnerSummary({ generation, summary: savedSummary });
+
+      if (savedSummary) {
+        router.refresh();
+      }
+
+      return savedSummary !== null;
+    };
+
+    return {
       decide: async ({ changeId, status }) => {
         const answered = await answerPlanChangeAction(goalId, {
           changeId,
@@ -51,26 +70,21 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
         return answered;
       },
       tools: {
+        getGoalContentCountry: (id) =>
+          goals?.find((goal) => goal.id === id)?.contentCountry?.code ?? null,
         getGoalRegion: (id) => goals?.find((goal) => goal.id === id)?.targetRegion ?? null,
+        getHomeCountry: () => homeCountry,
         hrefs: TOOL_HREFS,
-        setGoalRegion: async ({ goalId: id, region }) => {
-          const generation = getLearnerGeneration();
-          const summary = await applyGoalCountryAction(id, region);
-          mergeLearnerSummary({ generation, summary });
-
-          if (summary) {
-            router.refresh();
-          }
-
-          return summary !== null;
-        },
+        setGoalContentCountry: ({ country, goalId: id }) =>
+          apply(() => applyGoalContentCountryAction(id, country)),
+        setGoalRegion: ({ goalId: id, region }) => apply(() => applyGoalCountryAction(id, region)),
+        setHomeCountry: (country) => apply(() => applyHomeCountryAction(country)),
         startConversation: ({ chapterId, goalId: callGoalId, minutes }) =>
           startConversation({ chapterId, goalId: callGoalId, kind: "practice", minutes }),
         startTestOut,
       },
-    }),
-    [goalId, goals, router, startConversation, startTestOut],
-  );
+    };
+  }, [goalId, goals, homeCountry, router, startConversation, startTestOut]);
 }
 
 export type MainTutorCards = TutorCards & { appLinks: ReturnType<typeof useTutorAppLinks> };

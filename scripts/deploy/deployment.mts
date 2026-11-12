@@ -183,6 +183,7 @@ export async function cancelBuilds({ runId }: { runId?: string } = {}): Promise<
 async function deployApp({
   project,
   target,
+  adminAppUrl,
   apiUrl,
   cache,
   mainAppUrl,
@@ -190,6 +191,7 @@ async function deployApp({
 }: {
   project: Project;
   target: Target;
+  adminAppUrl: string;
   apiUrl: string;
   cache: CourseCacheAccess | null;
   mainAppUrl: string;
@@ -206,7 +208,7 @@ async function deployApp({
     DATABASE_URL_UNPOOLED: requiredEnv("DATABASE_URL_UNPOOLED"),
     NEXT_PUBLIC_API_URL: target === "preview" && project.app === "api" ? "" : apiUrl,
     NEXT_PUBLIC_APP_DOMAIN: target === "preview" ? "" : domain,
-    ...(project.app === "api" ? { MAIN_APP_URL: mainAppUrl } : {}),
+    ...(project.app === "api" ? { ADMIN_APP_URL: adminAppUrl, MAIN_APP_URL: mainAppUrl } : {}),
     ...(cache && project.app !== "admin" ? { APP_CACHE_SECRET: cache.secret } : {}),
     ...(cache?.bypass && project.app === "api" ? { MAIN_CACHE_BYPASS_SECRET: cache.bypass } : {}),
   };
@@ -300,9 +302,12 @@ export async function deploy(target: Target): Promise<void> {
 
   const apiUrl = getAppUrl({ app: "api", target, teamSlug });
   const mainAppUrl = getAppUrl({ app: "main", target, teamSlug });
+  const adminAppUrl = getAppUrl({ app: "admin", target, teamSlug });
 
   const results = await Promise.allSettled(
-    PROJECTS.map((project) => deployApp({ apiUrl, cache, mainAppUrl, project, target, teamSlug })),
+    PROJECTS.map((project) =>
+      deployApp({ adminAppUrl, apiUrl, cache, mainAppUrl, project, target, teamSlug }),
+    ),
   );
 
   const failures = results.filter((result) => result.status === "rejected");

@@ -464,7 +464,7 @@ async function learnerWithSharedContent() {
       goal: "passar no concurso para direito na unb, tenho 17 anos",
       result: {
         followUps: [],
-        goals: [{ kind: "exam", subject: "Direito", title: "Passar" }],
+        goals: [{ countryDependent: true, kind: "exam", subject: "Direito", title: "Passar" }],
         route: "goals",
       },
       userId,
