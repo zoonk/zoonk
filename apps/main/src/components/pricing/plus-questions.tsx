@@ -43,7 +43,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
             "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
             { count: limits.guestLessons },
           )
-        : t("With the free plan, you get:")}
+        : t("Without Plus, you get:")}
     </p>
   );
 
@@ -63,7 +63,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
       "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day",
       { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
     ),
-    t("Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"),
+    t("Speaking practice calls, fewer than with Plus (exam speaking tasks come with Plus)"),
   ];
 
   return (
@@ -116,14 +116,14 @@ export async function PlusQuestions({
       </div>
 
       <div>
-        <PublicDisclosure summary={t("What's in the free plan?")}>
+        <PublicDisclosure summary={t("What's free?")}>
           <FreePlanAnswer viewerState={viewerState} />
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
             {t.rich(
-              "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>.",
+              "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
             )}
           </p>
@@ -132,7 +132,7 @@ export async function PlusQuestions({
         <PublicDisclosure summary={t("What happens if I cancel?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
             {t(
-              "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you.",
+              "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
             )}
           </p>
         </PublicDisclosure>

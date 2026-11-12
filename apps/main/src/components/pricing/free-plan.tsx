@@ -47,7 +47,11 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
   if (viewerState.status === "free") {
     return (
       <p className="text-muted-foreground flex min-h-10 items-center justify-center text-sm">
-        {t("Your current plan")}
+        {t({
+          description:
+            "On the Free tier's card, in the button's place, for a learner who doesn't have Plus: Free is what they have today.",
+          message: "What you have now",
+        })}
       </p>
     );
   }
@@ -104,7 +108,7 @@ export async function FreePlan({
             {
               id: "exam",
               text: t(
-                "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}",
+                "For an exam: your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}",
                 { days: limits.examPrepDays ?? 0 },
               ),
             },
@@ -115,7 +119,7 @@ export async function FreePlan({
                 { count: limits.tutorMessagesPerDay ?? 0 },
               ),
             },
-            { id: "calls", text: t("Speaking practice calls, with lower limits than Plus") },
+            { id: "calls", text: t("Speaking practice calls") },
           ]}
           summary={t(
             "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month",

@@ -25,9 +25,10 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free.",
+      "Start free with {goals, plural, one {one goal} other {up to # goals}}. Zoonk Plus adds every goal and every lesson, your whole exam plan with mock exams, and your AI study buddy whenever you need it.",
+      { goals: getFreePlanLimits().activeGoals ?? 0 },
     ),
-    title: t("Zoonk Plus: plans and pricing"),
+    title: t("Zoonk pricing: free and Plus"),
   };
 }
 
@@ -52,9 +53,9 @@ export async function PricingHero() {
       <p className={cn(LEAD_CLASS, "mt-4.5")}>
         {t({
           description:
-            "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.",
+            "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals a learner without Plus can study at once, not how many new goals they start per day or month.",
           message:
-            "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day.",
+            "Free: {goals, plural, one {one goal} other {up to # goals}} at a time. Plus: every goal and every lesson, all the way to the big day.",
           values: { goals: getFreePlanLimits().activeGoals ?? 0 },
         })}
       </p>

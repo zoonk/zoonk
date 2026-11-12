@@ -5,7 +5,6 @@ import {
   StopBody,
   StopEyebrow,
   StopHeader,
-  StopLead,
   StopMark,
   StopTitle,
 } from "@/components/public/stop";
@@ -21,7 +20,7 @@ const WEEKDAYS_A_MONTH = 20;
 
 const DAYS_PER_WEEK = 7;
 
-/** So "Diagnostic and week 1" fits. */
+/** So "Week 1" fits. */
 const FREE_BAND_ROOM = 5;
 
 /** Named by what they're for, not by week numbers, since a real plan's length follows the exam date. */
@@ -41,10 +40,9 @@ async function getExamRoad(): Promise<RoadBand[]> {
   return [
     {
       id: "free",
-      name: t(
-        "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}",
-        { days: freeDays },
-      ),
+      name: t("{days, plural, =7 {Week 1} one {Day 1} other {The first # days}}", {
+        days: freeDays,
+      }),
       state: "current",
       todayShare: 0,
       weight: freeDays + FREE_BAND_ROOM,
@@ -104,7 +102,7 @@ async function ExamPlanRoad() {
       <PlanRoad
         bands={bands}
         caption={t(
-          "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}",
+          "{days, plural, =7 {Free: your plan and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: your plan and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: your plan and the first # days · Plus: every day after them to exam day, with mock exams}}",
           { days: freeDays },
         )}
         end={t("Exam day")}
@@ -123,15 +121,7 @@ async function FreeMonth() {
 
   return (
     <div className="flex flex-col gap-3 border-t pt-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <p className="text-sm font-semibold">{t("Any other goal")}</p>
-        <p className="text-muted-foreground text-xs">
-          {t(
-            "{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day",
-            { day: limits.lessonsPerDay ?? 0, month: perMonth },
-          )}
-        </p>
-      </div>
+      <p className="text-sm font-semibold">{t("Any other goal")}</p>
 
       <p className="text-muted-foreground text-[0.8125rem]">
         {t(
@@ -153,16 +143,14 @@ export async function PricingCovers() {
           <StopMark>
             <FlagIcon className="size-3.5" />
           </StopMark>
-          {t("What free covers")}
+          {t({
+            description:
+              "Small label over a section that shows what a learner gets without paying.",
+            message: "What's free",
+          })}
         </StopEyebrow>
 
         <StopTitle id={COVERS_TITLE_ID}>{t("See your whole plan before you pay.")}</StopTitle>
-
-        <StopLead>
-          {t(
-            "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way.",
-          )}
-        </StopLead>
       </StopHeader>
 
       <StopBody>

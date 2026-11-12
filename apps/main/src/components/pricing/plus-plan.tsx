@@ -101,7 +101,10 @@ async function PlusAction({
         className={cn(buttonVariants({ size: "lg", variant: "outline" }), PLUS_CTA_CLASS)}
         href="/subscription"
       >
-        {t("Manage your plan")}
+        {t({
+          description: "Button for a subscriber: opens the page where they change or cancel Plus.",
+          message: "Manage Plus",
+        })}
       </Link>
     );
   }

@@ -1,7 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   EYEBROW_CLASS,
-  LEAD_CLASS,
   PUBLIC_BAND_CLASS,
   PUBLIC_CONTAINER_CLASS,
   STOP_TITLE_CLASS,
@@ -83,10 +82,6 @@ export function StopTitle({ children, className, ...props }: React.ComponentProp
       {children}
     </h2>
   );
-}
-
-export function StopLead({ className, ...props }: React.ComponentProps<"p">) {
-  return <p className={cn(LEAD_CLASS, "-mt-1", className)} data-slot="stop-lead" {...props} />;
 }
 
 export function StopBody({ className, ...props }: React.ComponentProps<"div">) {
