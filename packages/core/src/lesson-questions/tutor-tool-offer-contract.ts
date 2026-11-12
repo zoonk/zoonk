@@ -151,6 +151,16 @@ export const tutorToolOfferSchema = z
           .meta({ description: "The country whose variety lessons and their audio keep" }),
       })
       .strict(),
+    z
+      .object({
+        country: z.string(),
+        countryName: z.string(),
+        goalId: uuidSchema(),
+        kind: z.enum(["contentCountry", "homeCountry"]),
+        languageFlag: z.string(),
+        lessonVariety: z.object({ language: z.string(), region: z.string() }).nullable(),
+      })
+      .strict(),
     placeOfferSchema({ description: "The learner's statistics", kind: "stats" }),
     placeOfferSchema({ description: "The learner's week in review", kind: "logbook" }),
     placeOfferSchema({ description: "What the app remembers about the learner", kind: "memory" }),

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "country_all": "ce0146beeb773fc5be5cdcc6af7cfda8f086aab2cf3d92adb1c6d1954e9ffe10",
+  "country_change_body": "7b5c63c8eed5bbf65b9fa9df02368c0fba36f1fd457bbbdc5c824ea7d43b6fa2",
+  "country_change_confirm": "811e6a55175748d00c2b1e5a8155b906e8c503f8e2eb3155a5339f6e9d022a32",
+  "country_change_title": "4cd864351fd6e7569a45c78f2259021c2d14655c56a0db9bfac5242e33e9adb4",
+  "country_content_label": "da9362ff98fd9a174800632f70576aa637f2c2d060ed5b91f36fa97c79f75c6e",
+  "country_content_value": "c9ce4b59dcfcfc2a95ca7585b1ef5d4b6e32a42fa47f934e38e1a9e08ebdeff7",
+  "country_exam_label": "47c62621496fc04feae581ba76a22403bfb1021cb620c3d26fdd2a01d93c465a",
+  "country_home_label": "9b89299bf8c263a1210a164d3157434f5c975e25a9b05e0850bb5b3e8343f05e",
+  "country_lesson_examples_label": "0cf43fce04d38a3196a77abf49ff3673ef56edfc7372c814035944aa948e3edf",
+  "country_lesson_language_label": "260705dcd2ccdd9c60fbbde3adeee4849065b6f17e7d48710ff3f46d6c555ec9",
+  "country_lesson_language_value": "5fcee43704cbf1b19ae2867f348bb5bd0b7dcd04fa9557e6ec9eb07a9cb139c6",
+  "country_load_failed": "a7f6189b2fb391b59a600f8ebeef756050b2b9580e6dd31d0452ccbdf5043efd",
+  "country_no_match": "9b00360ee1dba5595b116a584fbb8dc788d552e79212a62a8b298f7b372c8a2d",
+  "country_rebuild_body": "e03dd20bc4a73135ad03ef6bbaf2ee0ed6e9ae4cbe7a58ed4b5d5fe1644adfc3",
+  "country_rebuild_failed_body": "adc92748edf0ea515b0b3c755112a06356a3227230ba2ebede91dd075c029581",
+  "country_rebuild_failed_title": "b49a2aadd70634c31280ca327dc0ee04b8ee09f7a9c97fb5b98c60ce800172c8",
+  "country_rebuild_ready": "9d7dce9c5c3a45ecc1e9d4638f641094f03e0d564296128a3820e91f950a429e",
+  "country_rebuild_title": "2fe6227c21a5532b77d17668dd9a49d40bd7b0351678cd9c14f230acd92a797f",
+  "country_result_count": "fa73ceea8c836f59c2ca9002cff5d73504ceb1cb7ad963f8608af2a3ce95f485",
+  "country_search": "574d8078c2769e54a8dcb91b7f707cd8fa1cba6d3ec1f9ce1c00cac7ebd6a27d",
+  "country_suggested": "6e272d6773ae40e3ccd912ffe335b9da61b0be5df33910877cffd97a681fda18"
+}
+-->
+<resources>
+    <!-- The search field at the top of the country picker. -->
+    <string name="country_search">Ülke ara</string>
+    <!-- A heading in the country picker over a few countries picked for the learner: earlier answers, where they live, the countries of their language. -->
+    <string name="country_suggested">Önerilenler</string>
+    <!-- A heading in the country picker over every country, A to Z. -->
+    <string name="country_all">Tüm ülkeler</string>
+    <!-- Shown in the country picker when the search matches no country. -->
+    <string name="country_no_match">Ülke bulunamadı</string>
+    <!-- Read by TalkBack as the country picker's search changes: how many countries match. -->
+    <plurals name="country_result_count">
+        <item quantity="one">%1$d ülke</item>
+        <item quantity="other">%1$d ülke</item>
+    </plurals>
+    <!-- Shown in the country picker when the full list of countries didn't load; a Try again button follows. -->
+    <string name="country_load_failed">Listeyi yükleyemedik.</string>
+    <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
+    <string name="country_home_label">%1$s, yaşadığın ülke</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
+    <string name="country_content_label">İçerik ülkesi</string>
+    <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_content_value">İçerik ülkesi: %1$s</string>
+    <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
+    <string name="country_exam_label">Sınav ülkesi</string>
+    <!-- A label in the plan: the language lessons use, such as "Portuguese (Brazil)", shown when the content's country speaks the language another way. -->
+    <string name="country_lesson_language_label">Ders dili</string>
+    <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_lesson_language_value">Ders dili: %1$s</string>
+    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
+    <string name="country_lesson_examples_label">Derslerdeki örnekler</string>
+    <!-- The title of a dialog confirming a new content country for a started plan. -->
+    <string name="country_change_title">İçerik ülkesi değiştirilsin mi?</string>
+    <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="country_change_body">Yeni ülke: %1$s. Planın bu ülkeye göre yeniden hazırlanacak. Tamamladığın derslerdeki ilerlemen korunacak. Yeni planın hazır olana kadar şu anki planınla çalışmaya devam edebilirsin.</string>
+    <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
+    <string name="country_change_confirm">Planı yeniden hazırla</string>
+    <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
+    <string name="country_rebuild_title">Yeni planını hazırlıyoruz</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_body">Çalışmaya devam et: Yeni planın hazır olana kadar bu planı kullanabilirsin. Tamamladığın derslerdeki ilerlemen korunur.</string>
+    <!-- Replaces that notice once the new plan is saved and shown. -->
+    <string name="country_rebuild_ready">Yeni planın hazır.</string>
+    <!-- A notice at the top of the plan when the new plan for the new content country couldn't be prepared; a Try again button follows. -->
+    <string name="country_rebuild_failed_title">Yeni planın hazırlanamadı</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_failed_body">Planındaki dersler aynı kaldı.</string>
+</resources>

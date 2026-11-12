@@ -206,6 +206,7 @@ private func makeCourse(
 ) -> Course {
   Course(
     categories: payload.categories.map(makeCourseCategory),
+    contentCountry: ContentCountry(payload.contentCountry),
     description: payload.description,
     editions: payload.editions.map {
       CourseEdition(id: $0.id, language: $0.language, title: $0.title)

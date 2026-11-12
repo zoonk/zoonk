@@ -19,6 +19,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.country.CountryChoice
 import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.memoryUndo
 import com.zoonk.android.navigation.AppRoute
@@ -55,8 +56,8 @@ data class TutorConversationState(
     val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
-    /** A variety card's Apply in flight or failed, by its turn; whether it's saved is the goal's country. */
-    val varieties: Map<String, VarietySave> = emptyMap(),
+    /** A setting card's (variety, content country, where you live) save in flight or failed, by its turn; whether it's saved is the setting itself. */
+    val offerSaves: Map<String, OfferSave> = emptyMap(),
     val missionMoment: StudyMissionMoment? = null,
     val loadingEarlier: Boolean = false,
     val earlierFailed: Boolean = false,
@@ -108,6 +109,14 @@ class TutorViewModel internal constructor(
 
     /** Each goal's chosen country, from the learner summary, so a variety card already in effect shows applied. */
     var goalRegions: Map<UUID, String?> by mutableStateOf(emptyMap())
+        internal set
+
+    /** Each goal's content country, from the learner summary, so a content country card already in effect shows applied. */
+    var goalCountries: Map<UUID, String?> by mutableStateOf(emptyMap())
+        internal set
+
+    /** Where the learner lives, from the learner summary. */
+    var homeCountry: String? by mutableStateOf(null)
         internal set
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
@@ -299,33 +308,55 @@ class TutorViewModel internal constructor(
         turnId: String,
         goalId: UUID,
         region: String,
-    ) {
-        if (state.value.varieties[turnId] == VarietySave.Saving) return
-        mutableState.update { it.copy(varieties = it.varieties + (turnId to VarietySave.Saving)) }
-        viewModelScope.launch {
-            val result = store.setRegion(goalId, region)
-            // Ahead of the summary's own update, so the card never shows Apply between the save and it.
-            if (result is MutationResult.Done) goalRegions = goalRegions + (goalId to region)
-            mutableState.update {
-                it.copy(
-                    varieties =
-                        if (result is MutationResult.Failed) {
-                            it.varieties + (turnId to VarietySave.Failed)
-                        } else {
-                            it.varieties -
-                                turnId
-                        },
-                )
-            }
-        }
-    }
+    ) = applyOffer(turnId, { store.setRegion(goalId, region).saved() }) { goalRegions = goalRegions + (goalId to region) }
 
     /** A variety card reads saved exactly while its goal has the country it offers, so a later card's country takes over. */
     fun varietySave(
         turnId: String,
         goalId: UUID,
         region: String,
-    ): VarietySave? = VarietySave.Saved.takeIf { goalRegions[goalId] == region } ?: state.value.varieties[turnId]
+    ): OfferSave? = OfferSave.Saved.takeIf { goalRegions[goalId] == region } ?: state.value.offerSaves[turnId]
+
+    /** Saves the content country a card offers, which rebuilds the plan for it; nothing changed before this tap. */
+    fun applyContentCountry(
+        turnId: String,
+        goalId: UUID,
+        country: String,
+    ) = applyOffer(turnId, { store.setContentCountry(goalId, country).saved() }) { goalCountries = goalCountries + (goalId to country) }
+
+    fun contentCountrySave(
+        turnId: String,
+        goalId: UUID,
+        country: String,
+    ): OfferSave? = OfferSave.Saved.takeIf { goalCountries[goalId] == country } ?: state.value.offerSaves[turnId]
+
+    /** Saves where the learner lives, as a card offers; no plan changes. */
+    fun applyHomeCountry(
+        turnId: String,
+        country: CountryChoice,
+    ) = applyOffer(turnId, { store.setHomeCountry(country) }) { homeCountry = country.code }
+
+    fun homeCountrySave(
+        turnId: String,
+        country: String,
+    ): OfferSave? = OfferSave.Saved.takeIf { homeCountry == country } ?: state.value.offerSaves[turnId]
+
+    /** [saved] runs ahead of the summary's own update, so the card never shows its button between the save and it. */
+    private fun applyOffer(
+        turnId: String,
+        write: suspend () -> Boolean?,
+        saved: () -> Unit,
+    ) {
+        if (state.value.offerSaves[turnId] == OfferSave.Saving) return
+        mutableState.update { it.copy(offerSaves = it.offerSaves + (turnId to OfferSave.Saving)) }
+        viewModelScope.launch {
+            val result = write()
+            if (result == true) saved()
+            mutableState.update {
+                it.copy(offerSaves = if (result == false) it.offerSaves + (turnId to OfferSave.Failed) else it.offerSaves - turnId)
+            }
+        }
+    }
 
     fun loadEarlier() {
         val page = thread.state.value.value ?: return
@@ -650,7 +681,15 @@ private const val MAX_POLL_MILLIS = 5_000.0
 private const val MIN_JITTER = 0.8
 private const val JITTER_RANGE = 0.4
 
-enum class VarietySave { Saving, Saved, Failed }
+enum class OfferSave { Saving, Saved, Failed }
+
+/** True once saved, false when it failed, null when it no longer matters (the session changed). */
+private fun MutationResult<*>.saved(): Boolean? =
+    when (this) {
+        is MutationResult.Done -> true
+        is MutationResult.Failed -> false
+        MutationResult.Obsolete -> null
+    }
 
 @Immutable
 data class BlockNotice(

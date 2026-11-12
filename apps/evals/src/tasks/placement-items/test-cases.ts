@@ -1,8 +1,11 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type PlacementItemsParams } from "@zoonk/ai/tasks/items/placement-items";
 import { CEBRASPE, ENEM, SAT_MATH } from "../generate-items/test-cases";
 
-type PlacementItemsInput = Omit<PlacementItemsParams, "model" | "useFallback" | "reasoning">;
+type PlacementItemsInput = Omit<
+  OptionalCountry<PlacementItemsParams>,
+  "model" | "useFallback" | "reasoning"
+>;
 
 const PLACEMENT_COUNTS = { quickCount: 2, typedCount: 0 } as const;
 

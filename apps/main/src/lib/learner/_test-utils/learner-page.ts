@@ -23,6 +23,7 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
     },
     day: null,
     goals: [],
+    homeCountry: null,
     identity: {
       expiresAt: SIGNED_IN_AT + 2 * DAY_MS,
       isAnonymous: false,

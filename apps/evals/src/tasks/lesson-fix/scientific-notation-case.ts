@@ -1,3 +1,4 @@
+import { type OptionalCountry } from "@/lib/types";
 import { type FixLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer/fix";
 
 export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
@@ -425,4 +426,7 @@ export const RECORDED_SCIENTIFIC_NOTATION_FIX = {
     ],
     title: "Writing very big and very small numbers",
   },
-} satisfies Omit<FixLessonDraftParams, "analytics" | "model" | "reasoning" | "useFallback">;
+} satisfies Omit<
+  OptionalCountry<FixLessonDraftParams>,
+  "analytics" | "model" | "reasoning" | "useFallback"
+>;

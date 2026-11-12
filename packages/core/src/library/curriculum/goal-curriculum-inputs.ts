@@ -5,6 +5,7 @@ import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { listChoiceGroups } from "../../exams/choices/choice-groups";
+import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
 import { isOwnMaterialTest } from "../../learner/placement/placement-material";
@@ -13,6 +14,7 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding-contract";
 import { getMissingQuestions } from "../../view-models/onboarding/onboarding-steps";
+import { getContentCountryScope } from "../content-country";
 import {
   type ExamStructure,
   examStructureSchema,
@@ -53,6 +55,7 @@ const OMITTED_CONTEXT_FIELDS = new Set([
 export type GoalCurriculumInputs = {
   goal: Pick<
     Goal,
+    | "contentCountry"
     | "examBlueprintId"
     | "id"
     | "kind"
@@ -222,18 +225,22 @@ export function getReferenceSyllabusNeed(
 }
 
 function toStartedCourse({
+  country,
+  kind,
   course,
   details,
 }: {
-  course: Pick<Course, "id" | "title" | "userId" | "visibility"> | null;
+  country: string | null;
+  kind: Goal["kind"];
+  course: Pick<Course, "country" | "id" | "title" | "userId" | "visibility"> | null;
   details: Details;
 }): StartedCourse | null {
-  if (!course || !readCourseStart(details)) {
+  if (!course || (kind === "learn" && course.country !== country) || !readCourseStart(details)) {
     return null;
   }
 
   const ownerId = course.visibility === "private" ? course.userId : null;
-  return { id: course.id, ownerId, title: course.title };
+  return { country: course.country, id: course.id, ownerId, title: course.title };
 }
 
 /** Internal workflow bridge: the public boundary must already have authorized the goal. */
@@ -244,7 +251,9 @@ export async function loadGoalCurriculumInputs(
     include: {
       examBlueprint: true,
       plan: { select: { graph: true } },
-      primaryCourse: { select: { id: true, title: true, userId: true, visibility: true } },
+      primaryCourse: {
+        select: { country: true, id: true, title: true, userId: true, visibility: true },
+      },
       ...GOAL_PRODUCT_SELECT,
       user: { select: { isAnonymous: true } },
     },
@@ -272,11 +281,20 @@ export async function loadGoalCurriculumInputs(
   const exams = toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind });
   const product = toGoalProduct(goal);
 
+  const country = getContentCountryScope({
+    country:
+      goal.kind === "exam"
+        ? (goal.examBlueprint?.country ?? null)
+        : getGoalContentCountry({ existingCountry: goal.primaryCourse?.country, goal }),
+    language: goal.language,
+  });
+
   return {
     blueprintReference: blueprint,
     examIdentity: goal.kind === "exam" ? toExamIdentity({ details, exams }) : null,
     exams,
     goal: {
+      contentCountry: country,
       examBlueprintId: goal.examBlueprintId,
       id: goal.id,
       kind: goal.kind,
@@ -311,7 +329,12 @@ export async function loadGoalCurriculumInputs(
     productChecked: goal.productCheckedAt !== null,
     references,
     sharedContext: toSharedContext(details),
-    startedCourse: toStartedCourse({ course: goal.primaryCourse, details }),
+    startedCourse: toStartedCourse({
+      country,
+      course: goal.primaryCourse,
+      details,
+      kind: goal.kind,
+    }),
     unansweredQuestions: getUnansweredQuestions(goal, details),
     usesTools: usesTools({ examStructure: goal.examBlueprint?.structure ?? null, kind: goal.kind }),
   };

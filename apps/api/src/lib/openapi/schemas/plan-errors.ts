@@ -73,6 +73,12 @@ const targetRegionNotOfferedErrorSchema = errorSchema
   })
   .meta({ id: "TargetRegionNotOfferedError" });
 
+const contentCountryNotOfferedErrorSchema = errorSchema
+  .extend({
+    error: errorSchema.shape.error.extend({ code: z.literal("CONTENT_COUNTRY_NOT_OFFERED") }),
+  })
+  .meta({ id: "ContentCountryNotOfferedError" });
+
 export const goalUpdateInvalidResponse = {
   content: {
     "application/json": {
@@ -80,8 +86,9 @@ export const goalUpdateInvalidResponse = {
         planChangeInvalidErrorSchema,
         targetDateOutOfRangeErrorSchema,
         targetRegionNotOfferedErrorSchema,
+        contentCountryNotOfferedErrorSchema,
       ]),
     },
   },
-  description: `${planDateChangeInvalidResponse.description} TARGET_REGION_NOT_OFFERED: the \`targetRegion\` isn't one of the goal's \`regionChoices\`, or the goal isn't a language goal. Nothing was saved.`,
+  description: `${planDateChangeInvalidResponse.description} TARGET_REGION_NOT_OFFERED: the \`targetRegion\` isn't one of the goal's \`regionChoices\`, or the goal isn't a language goal. Nothing was saved. CONTENT_COUNTRY_NOT_OFFERED: content countries cannot be changed on exam or language goals.`,
 } as const;

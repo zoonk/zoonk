@@ -20,8 +20,8 @@ function graphSkill(overrides: Partial<PlannedSkillGraph["skills"][number]> & { 
 
 const graph: GoalSkillGraph = {
   courses: [
-    { key: "math", levels: ["beginner"], title: "Math foundations" },
-    { key: "physics", levels: ["beginner"], title: "Classical mechanics" },
+    { countrySpecific: false, key: "math", levels: ["beginner"], title: "Math foundations" },
+    { countrySpecific: false, key: "physics", levels: ["beginner"], title: "Classical mechanics" },
   ],
   estimatedHours: 10,
   phases: [

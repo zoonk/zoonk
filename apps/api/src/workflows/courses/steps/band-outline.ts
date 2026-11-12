@@ -20,6 +20,7 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 export type OutlineProvenance = Awaited<ReturnType<typeof generateCourseOutline>>["provenance"];
 
 export type BandPlan = {
+  country: string | null;
   courseTitle: string;
   level: CourseBandNeed["level"];
   isNewBand: boolean;
@@ -122,6 +123,7 @@ export function toOutlineParams({
 
   return {
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    country: plan.country,
     courseTitle: plan.courseTitle,
     exams: scope.exams,
     extendSkills: plan.extensions.map(({ chapters, lessons, skill }) => ({

@@ -64,6 +64,7 @@ async function writeExamFormatItemsStep({
   const { data, provenance } = await generateItems({
     analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
     count,
+    country: skill.country,
     examFormat: exam ? { ...exam, entry, select } : null,
     format,
     language: skill.language,

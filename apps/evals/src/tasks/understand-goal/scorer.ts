@@ -7,6 +7,9 @@ const MIN_SCORE = 1;
 const MISS_PENALTY = 2;
 
 type ExpectedGoal = {
+  /** Null when the words name no country the content is for. */
+  contentCountry?: string | null;
+  countryDependent?: boolean;
   displayName?: RegExp;
   examDay?: "booked" | "official" | null;
   examMonth?: number;
@@ -146,6 +149,16 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
     [
       expected.targetRegion === undefined || (goal.targetRegion ?? null) === expected.targetRegion,
       `country ${show(goal.targetRegion)}`,
+    ],
+    [
+      expected.contentCountry === undefined ||
+        (goal.contentCountry ?? null) === expected.contentCountry,
+      `content country ${show(goal.contentCountry)}`,
+    ],
+    [
+      expected.countryDependent === undefined ||
+        goal.countryDependent === expected.countryDependent,
+      `country dependent ${show(goal.countryDependent)}`,
     ],
     [
       !expected.nativeLanguage || goal.nativeLanguage === expected.nativeLanguage,

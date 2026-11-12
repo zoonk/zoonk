@@ -143,7 +143,7 @@ export function formatLanguageLessonInputs(params: LanguageLessonInputs): string
   return `
     TARGET_LANGUAGE: ${languages.targetLanguageName}
     LEARNER_LANGUAGE: ${languages.userLanguageName}
-${formatLocalContext(params.targetLanguage, { register: false })}
+${formatLocalContext({ country: null, language: params.targetLanguage, register: false })}
     NEEDS_ROMANIZATION: ${usesNonLatinScript(params.targetLanguage) ? "yes" : "no"}
     LEVEL: ${params.level}
     UNIT: ${params.unitTitle}

@@ -1,4 +1,4 @@
-import { accessError } from "@/lib/api-errors";
+import { accessError, createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { goalRefusedError, planChangeInvalid, targetRegionNotOffered } from "@/lib/plan-errors";
@@ -30,6 +30,14 @@ async function editGoal(request: NextRequest, context: RouteContext<"/v1/goals/[
 
   if (result.status === "limitReached") {
     return goalRefusedError({ limit: result.limit, status: "limitReached" });
+  }
+
+  if (result.status === "countryNotOffered") {
+    return createErrorResponse({
+      code: "CONTENT_COUNTRY_NOT_OFFERED",
+      message: "This goal cannot use that content country",
+      status: httpStatus.unprocessableEntity,
+    });
   }
 
   if (result.status === "regionNotOffered") {

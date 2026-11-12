@@ -2,6 +2,7 @@
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type MouseEvent, type ReactNode, type Ref, createContext, use } from "react";
+import { type CountryChoice } from "./country/country-choice";
 import { type LearnTab } from "./shell/learn-tabs";
 
 type LearnRoute = string;
@@ -32,6 +33,8 @@ type LearnRoutes = Record<LearnTab, LearnRoute> & { signUp: LearnRoute; upgrade:
 /** Keep the object stable (define it at module level) so consumers don't re-render needlessly. */
 export type LearnAdapters = {
   analytics: LearnAnalytics;
+  /** Every country, named and sorted in `language`; null when it couldn't be read. */
+  loadCountries: (language: string) => Promise<CountryChoice[] | null>;
   linkComponent: LearnLinkComponent;
   routes: LearnRoutes;
 };
@@ -54,6 +57,10 @@ export function useLearnLinkComponent(): LearnLinkComponent {
 
 export function useLearnAnalytics(): LearnAnalytics {
   return useLearnAdapters().analytics;
+}
+
+export function useLoadCountries(): LearnAdapters["loadCountries"] {
+  return useLearnAdapters().loadCountries;
 }
 
 export function useLearnRoutes(): LearnRoutes {

@@ -57,12 +57,16 @@
   "tutor_offer_choose": "5e88ced79d9876da353f4fbfc131a6cf4e55b039cc7ad7645c9f44bc0a1d6795",
   "tutor_offer_choose_focus": "db4c5f8239342d8608bf68bee4992d97ac8e0a0941a1972eeae039ab067e70f4",
   "tutor_offer_choose_focus_description": "31f9916a62f3e55cdcd1c432f8995be52e128af5f5833ae200d7176c8db7ee89",
+  "tutor_offer_country_applied": "65fed8fe5afaf5f0cfafbb60cb3531abd56c1d62a7d6d51e9ea6695fadc195b3",
+  "tutor_offer_country_description": "8d740f777e018e1ba0ff8308eaef220b395c3a739d25d921f61992941297a682",
   "tutor_offer_essay_biweekly": "72941d899134c2422ddb64e445f28224779e7fe63e438e6f720847a2ac8d0543",
   "tutor_offer_essay_final_weeks": "868e5566ae29c9a392eb6260543d15b6c28119202d9413d5750706042412c94e",
   "tutor_offer_essay_plus": "64d67cdf7590b7492168de46c341141c8d91ed360d2161826ed74d47bf953f0d",
   "tutor_offer_essay_weekly": "a9172750f9031443baaab54258a0c6a717fa94d954df75f5bb9dca1c7b2b8289",
   "tutor_offer_goal": "098d3d189edd1d1ba22ed74044056d3e8b1a3803bfa0324ee97c3d45d7911dca",
   "tutor_offer_goal_limit": "0a22c1a4ff01ca71d1da7c501fe3a9d14cb3326fad947ad590d408faad85cd5c",
+  "tutor_offer_home_country_saved": "1915a7003b219889c510465798902a04103e8f09ee5d0e9a2dec095db4c7746c",
+  "tutor_offer_home_country_title": "d7e4a8c2beb1d4e0b379cc821b157af5e2b2be14ea8ee04b6a3190928baba5ea",
   "tutor_offer_logbook": "80595a35567b06081aef0b93ba266c7df7ecbaf06842e0323a9c44bfdf5aa804",
   "tutor_offer_logbook_description": "f99d898932861db68112e38016af28935a4c8219dbd73830f99f9d0439a833e9",
   "tutor_offer_manage": "eb3c140c1d224562464a233737f204d4b00902468f3e368c4d9b3ced10520ab3",
@@ -289,4 +293,12 @@
     <string name="tutor_today">Dziś</string>
     <string name="tutor_yesterday">Wczoraj</string>
     <string name="tutor_page_sign_up">Załóż bezpłatne konto, aby rozpocząć rozmowę.</string>
+    <!-- A buddy's card offering to save where the learner lives; %1$s is the country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="tutor_offer_home_country_title">Kraj zamieszkania: %1$s</string>
+    <!-- A buddy's card offering a new content country for the plan, under its title "Content country: …". -->
+    <string name="tutor_offer_country_description">Po zastosowaniu tej zmiany układamy twój plan od nowa dla tego kraju. Ukończone lekcje pozostają ukończone.</string>
+    <!-- Replaces that card's Apply button once the country is saved. -->
+    <string name="tutor_offer_country_applied">Zapisano. Przygotowujemy twój nowy plan, a ty możesz w tym czasie uczyć się dalej.</string>
+    <!-- Replaces the where-you-live card's Save button once it's saved. -->
+    <string name="tutor_offer_home_country_saved">Zapisano. Możesz to zmienić w Preferencjach.</string>
 </resources>

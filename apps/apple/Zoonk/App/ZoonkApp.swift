@@ -6,6 +6,7 @@ struct ZoonkApp: App {
   @State private var buddy: BuddyStore
   @State private var certificates: CertificatesStore
   @State private var completedLessons: CompletedLessonsStore
+  @State private var countryCatalog: CountryCatalogStore
   @State private var courseCatalog: CourseCatalogStore
   @State private var exam: ExamStore
   @State private var explain: ExplainStore
@@ -53,6 +54,7 @@ struct ZoonkApp: App {
     cache = dependencies.cache
     _certificates = State(initialValue: dependencies.certificatesStore)
     _completedLessons = State(initialValue: dependencies.completedLessonsStore)
+    _countryCatalog = State(initialValue: dependencies.countryCatalogStore)
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
     _exam = State(initialValue: dependencies.examStore)
     _explain = State(initialValue: dependencies.explainStore)
@@ -93,6 +95,7 @@ struct ZoonkApp: App {
         .environment(buddy)
         .environment(certificates)
         .environment(completedLessons)
+        .environment(countryCatalog)
         .environment(courseCatalog)
         .environment(exam)
         .environment(explain)

@@ -1,10 +1,10 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type GenerateExampleLinesParams } from "@zoonk/ai/tasks/variants/example-lines";
 
 type ExampleLinesInput = Omit<
-  GenerateExampleLinesParams,
-  "analytics" | "model" | "reasoning" | "useFallback"
->;
+  OptionalCountry<GenerateExampleLinesParams>,
+  "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback"
+> & { learnerHomeCountry?: string | null };
 
 const SHARED_EXPECTATIONS = `
   - The output is \`lines\`: one entry per screen in screen order (the first entry is screen 1), each one sentence or null when nothing the learner shared fits
@@ -55,8 +55,8 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - The learner shares the rent with two friends: a line splitting a rent in reais three ways fits, with the money written the Brazilian way (R$ 1.200, R$ 400) and correct math
-      - The learner never said where they live, so the line MUST NOT name a city, neighborhood or region
+      - The learner shares the rent with two friends: a line splitting a rent three ways fits, with correct math
+      - The learner never said where they live, so the line MUST NOT name a city, neighborhood or region, and MUST NOT state an amount as the rent they really pay: an amount is a clearly hypothetical example ("se o aluguel fosse R$ 1.200…") in the lesson's money, written the Brazilian way
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-rent-split-no-city",
@@ -74,9 +74,31 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese
+      - The learner lives in Portugal (HOME_COUNTRY) and shares the rent with two friends: a line splitting their rent three ways fits, in euros written as Portugal writes them (900 €, 300 €), with correct math
+      - MUST NOT use reais or R$ for the learner's own rent, even though the lesson is set in Brazil
+      - The learner never named a city, so the line MUST NOT name one (not even Lisboa)
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-rent-split-lives-in-portugal",
+    userInput: {
+      facts: ["Faz faculdade à noite", "Divide o aluguel com duas amigas"],
+      goal: "Organizar as finanças pessoais",
+      language: "pt",
+      learnerHomeCountry: "PT",
+      screens: [
+        {
+          idea: "Uma conta dividida em partes iguais.",
+          text: "Dividir uma conta em partes iguais é dividir o total pelo número de pessoas. Uma conta de R$ 90 entre 3 pessoas dá R$ 30 para cada uma.",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
       - MUST be in US English
-      - The learner is saving for a car: a line with a percent of what they save, in dollars written the US way ($2,500), with correct math, fits
-      - The learner never said where they live, so the line MUST NOT name a city or state
+      - The learner is saving for a car: a line with a percent of a clearly hypothetical saving ("if you put aside $2,500…"), in dollars written the US way, with correct math, fits
+      - The learner never said where they live, so the line MUST NOT name a city or state, and MUST NOT state an amount as what they really save
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-car-savings-no-city",
@@ -331,7 +353,7 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - The learner's facts are about their routine: two buses to work every morning. A line about a bus fare going up, as a percent change in reais written the Brazilian way (R$ 4,40 → R$ 5,00), with correct math, fits
+      - The learner's facts are about their routine: two buses to work every morning. A line about a bus fare going up, as a percent change on a clearly hypothetical fare in reais written the Brazilian way ("se a passagem fosse de R$ 4,40 para R$ 5,00"), with correct math, fits; the learner never said what they pay
       - The learner never said where they live, so the line MUST NOT name a city
       ${SHARED_EXPECTATIONS}
     `,
@@ -351,7 +373,7 @@ export const TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   {
     expectations: `
       - MUST be in US English
-      - The learner is saving for a house down payment within five years: a line where that saving earns compound interest, in dollars written the US way, with correct math, fits
+      - The learner is saving for a house down payment within five years: a line where that saving earns compound interest, on a clearly hypothetical amount in dollars written the US way ("if you saved $20,000…"), with correct math, fits
       - "Understands faster with numbers" is how they learn, not a moment of their life: it may shape the line's numbers but is never its situation
       ${SHARED_EXPECTATIONS}
     `,

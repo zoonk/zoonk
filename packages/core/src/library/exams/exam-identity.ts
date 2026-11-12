@@ -13,16 +13,18 @@ export type ExamIdentity = {
 };
 
 export function buildExamIdentityKey({
+  country,
   name,
   ownerId,
   role,
 }: {
+  country: string | null;
   name: string;
   ownerId: string | null;
   role: string | null;
 }): string {
   return scopeIdentityKey({
-    key: normalizeIdentityText([name, role].filter(Boolean).join(" ")),
+    key: `${country ?? "ZZ"}:${normalizeIdentityText([name, role].filter(Boolean).join(" "))}`,
     ownerId,
   });
 }

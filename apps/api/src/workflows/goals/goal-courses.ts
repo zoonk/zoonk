@@ -1,5 +1,5 @@
 import { type ServiceTier } from "@zoonk/ai/provider-options";
-import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope, getGraphCourseCountry } from "@zoonk/core/library/curriculum/scope";
 import { type GoalProduct } from "@zoonk/core/library/products/goal-product";
 import { type GoalKind } from "@zoonk/db";
 import { type ContentAnalytics, toContentAnalytics } from "../_shared/content-analytics";
@@ -21,7 +21,7 @@ export async function findGoalCourses({
   workflowRunId,
 }: {
   analytics?: ContentAnalytics;
-  courses: readonly { key: string; title: string }[];
+  courses: readonly { key: string; title: string; countrySpecific?: boolean }[];
   goal: { kind: GoalKind };
   /** The product the graph was told about, so a graph built without it gets no product course. */
   product: GoalProduct | null;
@@ -35,17 +35,19 @@ export async function findGoalCourses({
   const context = toContentAnalytics({ analytics, scope, workflowRunId });
 
   const found = await Promise.all(
-    courses.map(async ({ key, title }) => {
+    courses.map(async (course) => {
+      const { key, title } = course;
+      const courseScope = { ...scope, country: getGraphCourseCountry({ course, scope }) };
       const existing = resolved[key];
 
       if (existing) {
         return [key, existing] as const;
       }
 
-      const input = { analytics: context, scope, title };
+      const input = { analytics: context, scope: courseScope, title };
 
       const productCourseId = product
-        ? await findGoalProductCourseStep({ product, provenance, scope, title })
+        ? await findGoalProductCourseStep({ product, provenance, scope: courseScope, title })
         : null;
 
       if (productCourseId) {

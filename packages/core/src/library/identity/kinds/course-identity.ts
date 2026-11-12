@@ -4,13 +4,14 @@ import { type Course, type TransactionClient, prisma, sql } from "@zoonk/db";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
+import { countryIdentityKey, getContentCountryScope } from "../../content-country";
 import { type CourseIdentityRequest, type IdentityKindSearch } from "../_utils/identity-requests";
 import { COURSE_DOCUMENT } from "../_utils/search-documents";
 import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
 
 type CourseTitleRequest = Pick<
   CourseIdentityRequest,
-  "language" | "ownerId" | "targetLanguage" | "title"
+  "country" | "language" | "ownerId" | "targetLanguage" | "title"
 >;
 
 export async function findCourseByTitle(
@@ -23,6 +24,7 @@ export async function findCourseByTitle(
       ...(request.ownerId
         ? { userId: request.ownerId, visibility: "private" }
         : { organization: { slug: AI_ORG_SLUG }, visibility: "public" }),
+      country: getContentCountryScope(request),
       language: request.language,
       normalizedTitle: normalizeString(request.title),
       targetLanguage: request.targetLanguage,
@@ -51,6 +53,7 @@ async function findCourseCandidateIds({
   return findRankedIds({
     document: COURSE_DOCUMENT,
     filters: sql`c.organization_id = ${organization.id}::uuid
+      AND c.country IS NOT DISTINCT FROM ${getContentCountryScope(request)}
       AND c.language = ${request.language}
       AND c.visibility = 'public'
       AND c.target_language IS NOT DISTINCT FROM ${request.targetLanguage}`,
@@ -75,7 +78,10 @@ export async function loadCourseCandidates(
 
 export function getCourseIdentitySearch(request: CourseIdentityRequest): IdentityKindSearch {
   const identityKey = scopeIdentityKey({
-    key: normalizeString(request.title),
+    key: countryIdentityKey({
+      country: getContentCountryScope(request),
+      key: normalizeString(request.title),
+    }),
     ownerId: request.ownerId,
   });
 

@@ -12,6 +12,7 @@ async function pickFor(answerFormat: ExamFormatPick["answerFormat"]): Promise<Ex
   return {
     answerFormat,
     skill: {
+      country: null,
       description: skill.description,
       exam: null,
       id: skill.id,

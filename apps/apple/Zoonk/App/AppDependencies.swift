@@ -4,6 +4,7 @@ struct AppDependencies {
   let cache: AppCache
   let certificatesStore: CertificatesStore
   let completedLessonsStore: CompletedLessonsStore
+  let countryCatalogStore: CountryCatalogStore
   let courseCatalogStore: CourseCatalogStore
   let examStore: ExamStore
   let explainStore: ExplainStore
@@ -56,6 +57,7 @@ struct AppDependencies {
     certificatesStore = CertificatesStore(api: CertificatesAPI(clients: clients), cache: cache)
     completedLessonsStore = CompletedLessonsStore(
       api: CompletedLessonsAPI(clients: clients), cache: cache)
+    countryCatalogStore = CountryCatalogStore(clients: clients, cache: cache)
     courseCatalogStore = CourseCatalogStore(
       api: CourseCatalogAPI(clients: clients),
       language: currentCourseCatalogLanguage(),

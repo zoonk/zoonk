@@ -95,6 +95,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountMenu
 import com.zoonk.android.feature.buddy.BuddyTabIcon
 import com.zoonk.android.feature.buddy.buddyTabMissions
+import com.zoonk.android.feature.country.LocalCountryCatalog
 import com.zoonk.android.feature.feedback.rememberSendFeedback
 import com.zoonk.android.feature.search.SearchHost
 import com.zoonk.android.feature.search.TabSearchBar
@@ -180,6 +181,7 @@ fun ZoonkApp(
         LocalUriHandler provides links,
         LocalTabRootBar provides rememberTabRootBar(app, navigator),
         LocalEventTracker provides app.analytics,
+        LocalCountryCatalog provides app.countries.catalog,
     ) {
         val sendFeedback = rememberSendFeedback(app, "sidebar")
 

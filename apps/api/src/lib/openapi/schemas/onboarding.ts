@@ -1,4 +1,5 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { countryChoiceSchema, suggestedCountriesSchema } from "@zoonk/core/goals/country-contract";
 import { languageAimViewSchema, languageReasonViewSchema } from "@zoonk/core/language/aims/schemas";
 import { daySplitSchema, planReadinessSchema } from "@zoonk/core/plans/time-advice-contract";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
@@ -41,6 +42,10 @@ const dateProblemSchema = z
 
 export const onboardingResponseSchema = z
   .object({
+    contentCountry: z.object({
+      defaultCountry: countryChoiceSchema.nullable(),
+      suggested: suggestedCountriesSchema,
+    }),
     dateProblem: dateProblemSchema,
     examChoices: z
       .array(examChoiceViewSchema)

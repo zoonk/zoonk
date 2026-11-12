@@ -57,6 +57,8 @@ type DetailsChapter = { description: string; level: string; title: string };
 export type CourseDetailsParams = {
   courseTitle: string;
   language: string;
+  /** The country the course is set in; null is the language's own. */
+  country: string | null;
   targetLanguage?: string | null;
   chapters: DetailsChapter[];
   model?: string;
@@ -85,7 +87,7 @@ function buildUserPrompt(params: CourseDetailsParams): string {
     TARGET_LANGUAGE: ${targetLanguage}
     CHAPTERS: ${formatChapters(params.chapters)}
 
-${formatLocalContext(params.language)}
+${formatLocalContext({ country: params.country, language: params.language })}
   `;
 }
 

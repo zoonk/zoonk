@@ -53,7 +53,13 @@ export async function saveAddedSkills({
 
   const saved = await Promise.all(
     toSlices(added).map((skills) =>
-      saveGoalSkillsStep({ ...context, provenance: curriculum.provenance, scope, skills }),
+      saveGoalSkillsStep({
+        courses: graph.courses,
+        ...context,
+        provenance: curriculum.provenance,
+        scope,
+        skills,
+      }),
     ),
   );
 

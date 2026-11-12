@@ -1,10 +1,11 @@
 import "server-only";
-import { type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
+import { DbNull, type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { getNamedMonthStart } from "../exams/_utils/exam-edition-days";
 import { getExamCalendarDay, getPlanExamDays } from "../exams/_utils/plan-exam-days";
 import { getKeptMonthStart } from "../exams/kept-month";
+import { type GoalRebuildFollowUp } from "../goals/goal-rebuild-follow-up";
 import {
   getAnsweredQuestions,
   isCourseDateSkipped,
@@ -116,7 +117,14 @@ async function findNoticeNextDay({
   );
 }
 
+function getPreviousCourseId(goal: Goal): string | null {
+  const openingCourse = isJsonObject(goal.openingSkill) ? goal.openingSkill.course : null;
+  return goal.primaryCourseId ?? getString(openingCourse, "id");
+}
+
 type GraphPlanning = {
+  primaryCourseId?: string;
+  followUp?: GoalRebuildFollowUp;
   followNotice: boolean;
   goalId: string;
   graph: PlanGraph;
@@ -125,6 +133,8 @@ type GraphPlanning = {
 };
 
 async function planFromGraph({
+  followUp,
+  primaryCourseId,
   followNotice,
   goalId,
   graph,
@@ -160,7 +170,11 @@ async function planFromGraph({
 
   const computed = isFirst ? await planOnRecommendedBases({ computed: planned, context }) : planned;
 
-  if (!isFirst && isPlanUnchanged({ computed, context })) {
+  if (
+    !isFirst &&
+    (!primaryCourseId || primaryCourseId === goal.primaryCourseId) &&
+    isPlanUnchanged({ computed, context })
+  ) {
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 
@@ -185,6 +199,34 @@ async function planFromGraph({
     computed,
     context,
     extraWrites: async (tx) => {
+      if (followUp) {
+        const owed = await tx.followUp.findUnique({ where: { id: followUp.id } });
+
+        if (owed?.revision !== followUp.revision) {
+          throw new Error("A newer content-country change replaced this curriculum rebuild.");
+        }
+      }
+
+      if (primaryCourseId && primaryCourseId !== goal.primaryCourseId) {
+        await tx.goal.update({
+          data: {
+            primaryCourseId,
+            ...(!isFirst &&
+              primaryCourseId !== getPreviousCourseId(goal) && {
+                details: isJsonObject(goal.details)
+                  ? Object.fromEntries(
+                      Object.entries(goal.details).filter(([key]) => key !== "courseStart"),
+                    )
+                  : undefined,
+                openingLessonId: null,
+                openingSkill: DbNull,
+                warmUpId: null,
+              }),
+          },
+          where: { id: goalId },
+        });
+      }
+
       if (followNotice) {
         await checkNoticeLanding(tx, context.plan.id);
       }
@@ -234,6 +276,8 @@ async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> 
  * also when the plan was already built, for the goal's run to apply.
  */
 export async function createGoalPlan({
+  followUp,
+  primaryCourseId,
   followNotice = false,
   fromPlanLink = false,
   goalId,
@@ -247,6 +291,8 @@ export async function createGoalPlan({
    * day.
    */
   followNotice?: boolean;
+  followUp?: GoalRebuildFollowUp;
+  primaryCourseId?: string;
   fromPlanLink?: boolean;
   goalId: string;
   graph: PlanGraph;
@@ -270,8 +316,10 @@ export async function createGoalPlan({
   const built = await withPlanRetry(() =>
     planFromGraph({
       followNotice,
+      followUp,
       goalId,
       graph: planGraphSchema.parse(graph),
+      primaryCourseId,
       provenance,
       waitsForNotice,
     }),

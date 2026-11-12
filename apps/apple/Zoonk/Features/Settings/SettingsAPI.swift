@@ -33,7 +33,9 @@ struct SettingsAPI: SettingsAPIClient {
 
   func getPreferences(token: String) async throws -> LearningPreferences {
     try await clients.perform(token: token) { client in
-      switch try await client.getCurrentUserLearningProfile(.init()) {
+      switch try await client.getCurrentUserLearningProfile(
+        query: .init(language: .init(rawValue: OnboardingAPI.language) ?? .en))
+      {
       case .ok(let response):
         return LearningPreferences(try response.body.json.profile)
       case .unauthorized:
@@ -47,8 +49,11 @@ struct SettingsAPI: SettingsAPIClient {
   func updatePreferences(token: String, _ update: PreferencesUpdate) async throws
     -> LearningPreferences
   {
-    try await clients.perform(token: token) { client in
-      switch try await client.updateCurrentUserLearningProfile(body: .json(update.body)) {
+    try await clients.perform(token: token, sendingNull: update.nullKeys) { client in
+      switch try await client.updateCurrentUserLearningProfile(
+        query: .init(language: .init(rawValue: OnboardingAPI.language) ?? .en),
+        body: .json(update.body))
+      {
       case .ok(let response):
         return LearningPreferences(try response.body.json.profile)
       case .unauthorized:

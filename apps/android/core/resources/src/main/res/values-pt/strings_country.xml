@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "country_all": "7fa5e0d3e109dfe0ee013e44c6be8eb017390c4ef027aa250f5481bdfcd11b1d",
+  "country_change_body": "f6e7375e44b338051463ef8211e8d66565fd7d573fc5e5c1f492c7d45a41e78d",
+  "country_change_confirm": "a5989c3a0ed8c4df92fb02be68b2358afa9cfb4f7472299cff96844a892569cd",
+  "country_change_title": "baab43f1ff3c4e164aafc9964fcaac1027f41e9b76345b6c1be5a644418005aa",
+  "country_content_label": "8c750acfed87757e4fb796a1d802bb31a5f5c97d5c7e2b49fa788c2c1415fefa",
+  "country_content_value": "3fca6f7b11d40f296c473291ffbff668a425bc4454fe89e7eab05f4a9d504516",
+  "country_exam_label": "453e429f8e6d981aa1c42aebbdba9e51f1750763ef55727505712ee005535ab2",
+  "country_home_label": "f35512f939674526d4807671d7d7109a3ad59b328d7ef21cd532180834146c34",
+  "country_lesson_examples_label": "47f4ae7b3a8606bfe21ead1b63c2e646b70dad105ea9c1399ff96a0f9d2efee7",
+  "country_lesson_language_label": "2db70096e2b490fa7123b25a0e14ff63c31a5b9035ed8288ba62ecd9e2da400d",
+  "country_lesson_language_value": "3e3f42ba3174240b7cf490ac797943a0a65085dc17a0ccf7bb76d388b09fa928",
+  "country_load_failed": "8cf3a81dbb69752a96d75677c33bb8295e10f4a9be5b2a69876662ff02c314d3",
+  "country_no_match": "cf33bc7d084f2877bdeac414c517825260fb9ce230d4d8a7a9ed972638e73e98",
+  "country_rebuild_body": "a65b76130290179c3af54161069ebc2122fb3bbb32c4fbf7b5b457bd0cf116db",
+  "country_rebuild_failed_body": "30b70ff8923f205c38b0e8e654a899d9328699ab7b570b1b7cec2e83ebeae39b",
+  "country_rebuild_failed_title": "bd314dbe30ea46b7d1416d9541b32d14988b8d1678fc38fb693d77a34d90b8a0",
+  "country_rebuild_ready": "f3c477dd5a903d7ec4d3e0843312aa4f82db0ecd62a39b878254ea0a9054e727",
+  "country_rebuild_title": "3cc95e008f763ab57dd69809a34f6f7aca8bdb4a6c2848e3a684f3fd9b2362cd",
+  "country_result_count": "625c8c1b6e6c3fd4a56d8f7e5c24fe4f5a5536e3ea2b6c7580a43fe46098ea0e",
+  "country_search": "1acde245e424b9ce19367ef617bfd54ab85cdfd79a5e0365ddcbebe04bb6d6d6",
+  "country_suggested": "1fe96ee03148336f4fdb97391323cb12b2ed85b561b16c903a9c06f9fc0ea23b"
+}
+-->
+<resources>
+    <!-- The search field at the top of the country picker. -->
+    <string name="country_search">Buscar país</string>
+    <!-- A heading in the country picker over a few countries picked for the learner: earlier answers, where they live, the countries of their language. -->
+    <string name="country_suggested">Sugestões</string>
+    <!-- A heading in the country picker over every country, A to Z. -->
+    <string name="country_all">Todos os países</string>
+    <!-- Shown in the country picker when the search matches no country. -->
+    <string name="country_no_match">Nenhum país encontrado</string>
+    <!-- Read by TalkBack as the country picker's search changes: how many countries match. -->
+    <plurals name="country_result_count">
+        <item quantity="one">%1$d país</item>
+        <item quantity="many">%1$d países</item>
+        <item quantity="other">%1$d países</item>
+    </plurals>
+    <!-- Shown in the country picker when the full list of countries didn't load; a Try again button follows. -->
+    <string name="country_load_failed">Não deu para carregar a lista.</string>
+    <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
+    <string name="country_home_label">%1$s, onde você mora</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
+    <string name="country_content_label">País do conteúdo</string>
+    <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_content_value">País do conteúdo: %1$s</string>
+    <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
+    <string name="country_exam_label">País da prova</string>
+    <!-- A label in the plan: the language lessons use, such as "Portuguese (Brazil)", shown when the content's country speaks the language another way. -->
+    <string name="country_lesson_language_label">Idioma das aulas</string>
+    <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_lesson_language_value">Idioma das aulas: %1$s</string>
+    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
+    <string name="country_lesson_examples_label">Exemplos das aulas</string>
+    <!-- The title of a dialog confirming a new content country for a started plan. -->
+    <string name="country_change_title">Alterar o país do conteúdo?</string>
+    <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="country_change_body">Novo país: %1$s. Seu plano vai ser refeito para esse país. As aulas que você já fez continuam feitas, e dá para seguir estudando o plano atual até o novo ficar pronto.</string>
+    <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
+    <string name="country_change_confirm">Refazer plano</string>
+    <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
+    <string name="country_rebuild_title">Preparando seu novo plano</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_body">Pode seguir estudando: este plano fica até o novo ficar pronto, e as aulas que você já fez continuam feitas.</string>
+    <!-- Replaces that notice once the new plan is saved and shown. -->
+    <string name="country_rebuild_ready">Seu novo plano está pronto.</string>
+    <!-- A notice at the top of the plan when the new plan for the new content country couldn't be prepared; a Try again button follows. -->
+    <string name="country_rebuild_failed_title">Não deu para preparar seu novo plano</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_failed_body">Seu plano continua com as aulas de antes.</string>
+</resources>

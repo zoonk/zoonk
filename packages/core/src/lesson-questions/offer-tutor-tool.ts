@@ -23,6 +23,7 @@ import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getSession } from "../users/get-session";
 import { findAnsweringGoal } from "./_utils/answering-question";
 import {
+  offerCountry,
   offerEssay,
   offerMistakes,
   offerPlus,
@@ -234,6 +235,9 @@ function resolveOffer({
       return offerConversationCall(goal);
     case "pronunciation":
       return offerPronunciation(goal);
+    case "contentCountry":
+    case "homeCountry":
+      return offerCountry({ country, goal, kind: tool });
     case "variety":
       return Promise.resolve(offerVariety({ country, goal }));
     case "stats":

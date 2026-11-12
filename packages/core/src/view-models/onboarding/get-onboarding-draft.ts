@@ -1,4 +1,5 @@
 import "server-only";
+import { readRecentCountries } from "../../learner/facts/recent-countries";
 import { getSession } from "../../users/get-session";
 import { findOwnedDraft, loadDraftView } from "./_utils/onboarding-draft";
 import { type OnboardingDraftView } from "./onboarding-contract";
@@ -25,5 +26,5 @@ export async function getOnboardingDraft({
     return { status: "notFound" };
   }
 
-  return { draft: await loadDraftView(draft), status: "ready" };
+  return { draft: await loadDraftView(draft, readRecentCountries), status: "ready" };
 }

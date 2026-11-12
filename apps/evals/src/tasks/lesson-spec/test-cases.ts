@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { LEI_12813_ARTICLES, WRONG_PARAGRAPH_PLAN } from "../lesson-fix/wrong-paragraph-plan";
@@ -24,6 +24,7 @@ const CONFLICT_OF_INTEREST_LESSON: LessonSpecParams = {
   activityTemplates: ACTIVITY_TEMPLATES,
   chapterLessons: WRONG_PARAGRAPH_PLAN.chapterLessons,
   chapterTitle: WRONG_PARAGRAPH_PLAN.chapterTitle,
+  country: null,
   courseTitle: WRONG_PARAGRAPH_PLAN.courseTitle,
   exams: WRONG_PARAGRAPH_PLAN.exams,
   language: "pt",
@@ -45,7 +46,7 @@ function outlined({ after = [], before = [] }: { after?: string[]; before?: stri
   ] satisfies ChapterLessons;
 }
 
-function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): LessonSpecParams {
+function budgetLesson(key: keyof typeof BUDGET_LESSON_SPECS): OptionalCountry<LessonSpecParams> {
   const spec = BUDGET_LESSON_SPECS[key];
 
   return {
@@ -115,7 +116,7 @@ const UNANSWERABLE_GUESS = `
   - No option but the tempting one is right under another common reading, and a later screen says why the tempting one's reasoning doesn't give the answer
 `;
 
-export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
+export const TEST_CASES: TestCase<LessonSpecExpected, OptionalCountry<LessonSpecParams>>[] = [
   {
     expectations: `
       - MUST be in US English, with US examples (dollars, US names and cities)
@@ -194,6 +195,31 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       lessonTitle: "Percent change",
       level: "beginner",
       skills: ["Calculate a percent change"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese (você, celular, ônibus), even though the course is set in Portugal
+      - Beginner lesson on reading a payslip in Portugal: gross pay, the IRS withheld (retenção na fonte), the 11% Segurança Social contribution and net pay, and the subsídio de férias and de Natal that make 14 payments a year
+      - Every amount is in euros, written as Portugal writes them (1250 € or 1250,00 €), and every institution is Portugal's: never reais, R$, INSS, FGTS, CLT or 13º salário
+      - People and towns come from CAST (Portuguese names and towns), never Brazilian cities
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-payslip-portugal-beginner",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ after: ["IRS: como funciona o imposto"], before: ["Orçamento"] }),
+      chapterTitle: "Salário e impostos",
+      country: "PT",
+      courseTitle: "Finanças pessoais",
+      language: "pt",
+      lessonCanDo: "Ler um recibo de vencimento e entender o salário líquido",
+      lessonDescription:
+        "O que sai do salário bruto até o líquido: retenção de IRS, Segurança Social e os subsídios.",
+      lessonTitle: "O recibo de vencimento",
+      level: "beginner",
+      skills: ["Ler um recibo de vencimento"],
     },
   },
   {

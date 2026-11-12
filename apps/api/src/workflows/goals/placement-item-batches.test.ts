@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { toPlacementItemBatches } from "./placement-item-batches";
 
-function skillsOf(count: number, attrs: { needsTyped?: boolean; ownerId?: string | null } = {}) {
+function skillsOf(
+  count: number,
+  attrs: { country?: string; needsTyped?: boolean; ownerId?: string | null } = {},
+) {
   return Array.from({ length: count }, (_, index) => ({
+    country: attrs.country ?? null,
     id: `${attrs.ownerId ?? "shared"}-${String(attrs.needsTyped ?? true)}-${index}`,
     needsTyped: attrs.needsTyped ?? true,
     ownerId: attrs.ownerId ?? null,
@@ -62,5 +66,14 @@ describe(toPlacementItemBatches, () => {
 
   it("makes no call when every picked skill already has its questions", () => {
     expect(toPlacementItemBatches({ quickCount: 1, skills: [] })).toStrictEqual([]);
+  });
+
+  it("never writes two countries' skills in the same batch", () => {
+    const skills = [...skillsOf(2, { country: "PT" }), ...skillsOf(2, { country: "BR" })];
+    const batches = toPlacementItemBatches({ quickCount: 1, skills });
+
+    expect(batches.every((batch) => new Set(batch.map((skill) => skill.country)).size === 1)).toBe(
+      true,
+    );
   });
 });

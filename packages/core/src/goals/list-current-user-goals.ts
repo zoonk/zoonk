@@ -7,6 +7,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../cache/tags";
 import { readLearningProfile } from "../learner/facts/learning-profile";
+import { readRecentCountries } from "../learner/facts/recent-countries";
 import { readActiveSubscription } from "../learner/facts/subscription";
 import { getSession } from "../users/get-session";
 import { loadGoalViews } from "./_utils/goal-view";
@@ -60,6 +61,7 @@ export async function listCurrentUserGoals(): Promise<GoalList | null> {
     goals: await loadGoalViews({
       activeGoalId,
       goals: ordered,
+      readRecentCountries,
       readSubscription: readActiveSubscription,
     }),
   };

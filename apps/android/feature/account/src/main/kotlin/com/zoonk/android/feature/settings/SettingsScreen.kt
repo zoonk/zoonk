@@ -200,8 +200,7 @@ private fun remindersSummary(reminder: StudyReminder): String =
 /** The buddy's name and the app's language, as main's hub sums up Preferences. */
 @Composable
 private fun preferencesSummary(summary: LearnerSummary?): String {
-    val locale = currentLocale()
-    val language = locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }
+    val language = appLanguageName(currentLocale())
     // Main's `BuddyTabName`: the buddy's own name, or its kind's when the learner gave it none.
     val buddy = summary?.buddy?.let { buddyName(BuddyKind.of(it.kind.value), it.name) }
     return if (buddy == null) language else stringResource(R.string.settings_preferences_summary, buddy, language)

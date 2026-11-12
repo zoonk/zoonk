@@ -12,6 +12,7 @@ import { buildGoalSkillGraph } from "../goal-skill-graph";
 import { decideGoalScopeStep, keepMaterialPrivate } from "./goal-curriculum-steps";
 
 const goal = {
+  contentCountry: null,
   examBlueprintId: null,
   id: "goal",
   kind: "learn" as const,
@@ -34,6 +35,7 @@ describe(keepMaterialPrivate, () => {
     expect(
       keepMaterialPrivate({ inputs: { goal, hasMaterial: true }, scope: shared }),
     ).toStrictEqual({
+      country: null,
       generalGoal: null,
       language: "pt",
       ownerId: "learner",

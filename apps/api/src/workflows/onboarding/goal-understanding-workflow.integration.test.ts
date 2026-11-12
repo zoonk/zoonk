@@ -49,6 +49,7 @@ describe(goalUnderstandingWorkflow, () => {
           followUps: [],
           goals: [
             {
+              countryDependent: false,
               examDay: "official",
               examName: `Unstored Exam ${randomUUID()}`,
               kind: "exam",
@@ -79,7 +80,9 @@ describe(goalUnderstandingWorkflow, () => {
       prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } }),
     ).resolves.toMatchObject({
       status: "understood",
-      understanding: { goals: [{ draft: { title: "Pass the bar" }, examDates: [] }] },
+      understanding: {
+        goals: [{ countryDependent: false, draft: { title: "Pass the bar" }, examDates: [] }],
+      },
     });
   });
 
@@ -122,6 +125,7 @@ describe(goalUnderstandingWorkflow, () => {
         followUps: [],
         goals: [
           {
+            countryDependent: false,
             examDay: "official",
             examName: `The ${town} County Bar Exam`,
             examYear: 2027,
@@ -174,7 +178,9 @@ describe(goalUnderstandingWorkflow, () => {
       prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } }),
     ).resolves.toMatchObject({
       status: "understood",
-      understanding: { goals: [{ examDates: [{ date: "2027-03-14", estimated: false }] }] },
+      understanding: {
+        goals: [{ countryDependent: false, examDates: [{ date: "2027-03-14", estimated: false }] }],
+      },
     });
   });
 });
