@@ -87,7 +87,7 @@ export default async function SourceMockPage({ searchParams }: PageProps<"/sourc
                   rows={[
                     ["Last checked", field(source, "Fetched")],
                     ["Good until", field(source, "Valid until")],
-                    ["Next check", "Not planned"],
+                    ["Next check", "—"],
                   ]}
                 />
               </AdminSection>
@@ -105,11 +105,11 @@ export default async function SourceMockPage({ searchParams }: PageProps<"/sourc
                   [<MockLink key="en">ENEM</MockLink>, "Brazil", "English"],
                 ]}
               />
-              <AdminSectionEmpty>No practice question cites it.</AdminSectionEmpty>
+              <AdminSectionEmpty>No practice question cites this source.</AdminSectionEmpty>
             </AdminSection>
 
             <AdminSection title="What changed">
-              <AdminSectionEmpty>No check has found a change yet.</AdminSectionEmpty>
+              <AdminSectionEmpty>No fetch has changed this source yet.</AdminSectionEmpty>
             </AdminSection>
           </AdminDetailColumns>
         ) : null}

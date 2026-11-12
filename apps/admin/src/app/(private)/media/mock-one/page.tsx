@@ -42,11 +42,11 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
             <AdminSection title="Prompt">
               <p className="text-sm leading-6">{prompt}</p>
               <a className="text-muted-foreground text-xs font-medium" href="#">
-                Show the scene as JSON
+                Scene
               </a>
             </AdminSection>
             <AdminSection title="Written by">
-              <FactsFrom dump={asset} rename={{ Generated: "Made" }} section="Provenance" />
+              <FactsFrom dump={asset} section="Provenance" />
             </AdminSection>
           </div>
         ) : null}
@@ -57,6 +57,7 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
               rows={[
                 ["Key", KEY],
                 ["URL", field(asset, "URL")],
+                ["Language", "Portuguese"],
                 ["Size", field(asset, "Size")],
                 ["Style version", field(asset, "Style version")],
                 ["Palette", field(asset, "Palette")],
@@ -76,7 +77,7 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
                   rows={uses.map((row) => [
                     <MockLink key="lesson">{row[0]?.text}</MockLink>,
                     row[1]?.text,
-                    row[2]?.text === "check" ? "Check" : row[2]?.text,
+                    row[2]?.text,
                   ])}
                 />
               </AdminSection>

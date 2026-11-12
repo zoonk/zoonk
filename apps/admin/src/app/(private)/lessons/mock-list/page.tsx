@@ -21,7 +21,7 @@ export default function LessonsMockPage() {
       actions={
         <MockConfirmButton
           confirmLabel="Rewrite 25 lessons"
-          description="The oldest 25 lessons this model wrote. They're hidden from learners until the new version passes review. Learners keep their answers."
+          description="31 published lessons match. This rewrites the oldest 25: they leave play until the new version passes the checks. Learners keep their answers."
           label="Rewrite by model"
           title="Rewrite lessons by model"
         >

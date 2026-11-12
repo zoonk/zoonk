@@ -50,10 +50,10 @@ function Overview() {
         <>
           <AdminSection title="Learners">
             <DetailFields>
-              <DetailField label="Mastered">7</DetailField>
-              <DetailField label="Solid">49</DetailField>
-              <DetailField label="Learning">0</DetailField>
               <DetailField label="New">0</DetailField>
+              <DetailField label="Learning">0</DetailField>
+              <DetailField label="Solid">49</DetailField>
+              <DetailField label="Mastered">7</DetailField>
             </DetailFields>
           </AdminSection>
 
@@ -97,7 +97,7 @@ function UsedIn() {
   return (
     <>
       <AdminSection title="Lessons (2)">
-        <TableFrom dump={skill} omit={["Visibility"]} rename={{ Content: "State" }} section="Lessons" />
+        <TableFrom dump={skill} omit={["Visibility"]} section="Lessons" />
       </AdminSection>
       <AdminSection title="Chapters (5)">
         <TableFrom dump={skill} omit={["Visibility"]} section="Chapters" />
@@ -113,10 +113,10 @@ function Details() {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <AdminSection title="Details">
-        <FactsFrom dump={skill} omit={["Card front", "Card back"]} section="Details" />
+        <FactsFrom dump={skill} omit={["Card front"]} section="Details" />
       </AdminSection>
       <AdminSection title="Written by">
-        <FactsFrom dump={skill} rename={{ Generated: "Written" }} section="Provenance" />
+        <FactsFrom dump={skill} section="Provenance" />
       </AdminSection>
     </div>
   );

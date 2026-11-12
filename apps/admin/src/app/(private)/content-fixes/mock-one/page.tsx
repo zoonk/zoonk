@@ -31,7 +31,7 @@ export default async function ContentFixMockPage({
             <Button size="lg">Add a passkey to approve</Button>
           </>
         }
-        facts={["Waiting", "Proposed Nov 12, 2026 by Admin User in the CLI"]}
+        facts={["Waiting for review", "Proposed Nov 12, 2026, 4:16 AM by Admin User in the CLI"]}
         parents={[{ href: "/content-fixes", label: "Content fixes" }]}
         title="Fix to Where a price comes from"
       />
@@ -81,7 +81,11 @@ export default async function ContentFixMockPage({
             <div className="grid gap-4 md:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <span className="text-muted-foreground text-xs font-medium">Before</span>
-                <p className="bg-muted rounded-lg p-3 text-sm leading-6">{BEFORE}</p>
+                <p className="bg-muted rounded-lg p-3 text-sm leading-6">
+                  {BEFORE.split("just ")[0]}
+                  <span className="bg-destructive/15 text-destructive-text rounded px-0.5">just</span>{" "}
+                  {BEFORE.split("just ")[1]}
+                </p>
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-muted-foreground text-xs font-medium">After</span>

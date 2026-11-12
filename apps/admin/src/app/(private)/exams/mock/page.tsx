@@ -97,7 +97,7 @@ function Overview() {
       </AdminSection>
 
       <AdminSection title="What changed">
-        <AdminSectionEmpty>No change since the notice was first read.</AdminSectionEmpty>
+        <AdminSectionEmpty>No change since the blueprint was first read.</AdminSectionEmpty>
       </AdminSection>
     </AdminDetailColumns>
   );
@@ -184,10 +184,10 @@ function WrittenBy() {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <AdminSection title="Blueprint">
-        <FactsFrom dump={exam} rename={{ Generated: "Written" }} section="Provenance" />
+        <FactsFrom dump={exam} section="Provenance" />
       </AdminSection>
       <AdminSection title="Skill graph">
-        <FactsFrom dump={exam} omit={["Skills"]} rename={{ Generated: "Written" }} section="Skill graph" />
+        <FactsFrom dump={exam} omit={["Skills"]} section="Skill graph" />
       </AdminSection>
     </div>
   );

@@ -8,7 +8,7 @@ import { AdminSection } from "@/components/admin-section";
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import dump from "@/app/(private)/_mock/data/lesson.json";
-import { type Dump, Facts, FactsFrom, readView } from "@/app/(private)/_mock/kit";
+import { type Dump, FactsFrom, TableFrom, readView } from "@/app/(private)/_mock/kit";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
 
 const lesson = dump as Dump;
@@ -238,8 +238,8 @@ function Details() {
     <AdminSection title="Details">
       <FactsFrom
         dump={lesson}
-        omit={["Held back", "Spec", "Skills", "Chapters"]}
-        rename={{ "Can do": "What the learner can do after", Visibility: "Open to" }}
+        omit={["Held back", "Spec", "Skills", "Chapters", "Visibility"]}
+        rename={{ "Can do": "What the learner can do after" }}
         section="Details"
       />
     </AdminSection>
@@ -250,17 +250,18 @@ function WrittenBy() {
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <AdminSection title="Outline">
-        <FactsFrom dump={lesson} rename={{ Generated: "Written" }} section="Outline" />
+        <FactsFrom dump={lesson} section="Outline" />
+        <span className="flex gap-4">
+          <a className="text-muted-foreground text-xs font-medium" href="#">
+            Spec
+          </a>
+          <a className="text-muted-foreground text-xs font-medium" href="#">
+            Summary card
+          </a>
+        </span>
       </AdminSection>
-      <AdminSection title="Screens">
-        <Facts
-          rows={[
-            ["Model", "zoonk/hand-written"],
-            ["Prompt version", "seed-v2"],
-            ["Screen format", "v1"],
-            ["Screens", "10"],
-          ]}
-        />
+      <AdminSection title="Versions">
+        <TableFrom dump={lesson} section="Versions" />
       </AdminSection>
     </div>
   );

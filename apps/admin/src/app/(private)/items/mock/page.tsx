@@ -94,7 +94,7 @@ function Details() {
 function WrittenBy() {
   return (
     <AdminSection title="Written by">
-      <FactsFrom dump={item} rename={{ Generated: "Written" }} section="Provenance" />
+      <FactsFrom dump={item} section="Provenance" />
     </AdminSection>
   );
 }
@@ -114,7 +114,7 @@ export default async function ItemMockPage({ searchParams }: PageProps<"/items/m
       />
 
       <AdminDetailBody>
-        <AdminNotice title="A source this question was built on changed after it was written.">
+        <AdminNotice title="A source this was built on changed after it was written (1 open flag).">
           <MockLink>Review it in Source changes</MockLink>
         </AdminNotice>
 

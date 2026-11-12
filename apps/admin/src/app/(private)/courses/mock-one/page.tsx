@@ -4,7 +4,6 @@ import { AdminDetailBody, AdminDetailHeader, AdminDetailPage } from "@/component
 import { AdminSection } from "@/components/admin-section";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import { MockLink } from "../../_mock/parts";
 
 export default function CourseMockPage() {
   const chapters = curriculum.flatMap((band) => band.chapters);
@@ -16,7 +15,7 @@ export default function CourseMockPage() {
       <AdminDetailHeader
         actions={
           <MockConfirmButton
-            confirmLabel="Save"
+            confirmLabel="Save changes"
             description="What learners see as the course's name, and its address."
             label="Edit"
             title="Edit this course"
@@ -64,7 +63,7 @@ export default function CourseMockPage() {
                       {chapter.lessons.map((lesson) => (
                         <li className="flex items-baseline justify-between gap-4 text-sm" key={lesson.title}>
                           <span className="flex items-baseline gap-2">
-                            <MockLink>{lesson.title}</MockLink>
+                            <a href="#">{lesson.title}</a>
                             {lesson.shared ? (
                               <span className="text-muted-foreground text-xs">Shared lesson</span>
                             ) : null}

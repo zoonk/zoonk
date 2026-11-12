@@ -143,7 +143,7 @@ function state(row: Cell[]) {
     return <span className="text-destructive-text font-medium">Failed</span>;
   }
 
-  const days = Math.round((Date.parse("2026-11-12") - Date.parse(row[3]?.text ?? "")) / DAY_MS);
+  const days = Math.ceil((Date.parse("2026-11-12") - Date.parse(row[3]?.text ?? "")) / DAY_MS);
   return `Stuck for ${days} days`;
 }
 
@@ -171,7 +171,7 @@ function Failed() {
       </AdminToolbar>
 
       <MockRows
-        columns={[{ label: "What was being written" }, { label: "Kind" }, { label: "State" }, { label: "Last change" }]}
+        columns={[{ label: "What was being written" }, { label: "Kind" }, { label: "State" }, { label: "Updated" }]}
         rows={runs.slice(0, 10).map((row) => [
           <span className="text-foreground" key="what">
             <MockLink>{row[1]?.text}</MockLink>
@@ -189,16 +189,23 @@ function Failed() {
 function Plus() {
   return (
     <>
-      <AdminSection title="This month, by plan">
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+        <Stats description="1 paying" title="Plus learners" value="83" />
+        <Stats description="$0.0095 a learner on average" title="Cost this month" value="$0.785" />
+        <Stats description="of 1 paying" title="Above their plan" value="0" />
+        <Stats description="persona-maya-2acb17@zoonk.test" title="Most expensive" value="$0.2568" />
+      </div>
+
+      <AdminSection title="Plus learners this month">
         <MockRows
           columns={[
             { label: "Plan" },
             { align: RIGHT, label: "Learners" },
             { align: RIGHT, label: "Pays a month" },
-            { align: RIGHT, label: "AI cost" },
+            { align: RIGHT, label: "Cost" },
             { align: RIGHT, label: "Average" },
             { align: RIGHT, label: "Most" },
-            { align: RIGHT, label: "Cost more than they pay" },
+            { align: RIGHT, label: "Above plan" },
           ]}
           rows={table("Plus learners this month").map((row) =>
             row.map((cell, index) => (index === 0 ? strong(cell.text.replace("Granted", "Given by Zoonk")) : cell.text)),
@@ -206,14 +213,14 @@ function Plus() {
         />
       </AdminSection>
 
-      <AdminSection title="Who costs most">
+      <AdminSection title="Plus learners by cost">
         <MockRows
           columns={[
             { label: "Learner" },
             { label: "Plan" },
-            { label: "Goal" },
+            { label: "Goals" },
             { align: RIGHT, label: "Calls" },
-            { align: RIGHT, label: "AI cost" },
+            { align: RIGHT, label: "Cost" },
             { align: RIGHT, label: "Pays a month" },
           ]}
           rows={table("Plus learners by cost").map((row) => [

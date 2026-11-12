@@ -1,3 +1,5 @@
+import saved from "@/app/(private)/_mock/data/question-answer.json";
+import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import dump from "@/app/(private)/_mock/data/question.json";
 import { type Dump, Facts, field, readView } from "@/app/(private)/_mock/kit";
 import {
@@ -18,7 +20,6 @@ const TABS = [
 ] as const;
 
 const lines = question.text.split("\n").map((line) => line.trim());
-const answer = lines.slice(lines.indexOf("Answer") + 1, lines.indexOf("Details")).filter(Boolean);
 const title = lines.find(Boolean) === "Questions" ? (lines.filter(Boolean)[1] ?? "") : "";
 
 export default async function BuddyQuestionMockPage({
@@ -29,10 +30,10 @@ export default async function BuddyQuestionMockPage({
   return (
     <AdminDetailPage>
       <AdminDetailHeader
-        facts={["Will", "Asked Oct 26, 2026"]}
+        facts={["Will", "Asked Oct 26, 2026, 4:02 PM"]}
         parents={[{ href: "/questions", label: "Buddy questions" }]}
         title={title}
-        titleClassName="text-xl leading-7 max-w-3xl"
+        titleClassName="max-w-3xl text-xl leading-7 font-semibold"
       />
 
       <AdminDetailBody>
@@ -56,7 +57,13 @@ export default async function BuddyQuestionMockPage({
                     ["Screen", "3"],
                     ["Chapter", field(question, "Chapter")],
                     ["Course", <MockLink key="course">{field(question, "Course")}</MockLink>],
-                    ["Asked by", <MockLink key="who">Will</MockLink>],
+                    [
+                      "Asked by",
+                      <span className="flex flex-col" key="who">
+                        <MockLink>Will</MockLink>
+                        <span className="text-muted-foreground text-xs">neuro@zoonk.test</span>
+                      </span>,
+                    ],
                   ]}
                 />
               </AdminSection>
@@ -64,9 +71,7 @@ export default async function BuddyQuestionMockPage({
           >
             <AdminSection title="The buddy answered">
               <div className="flex max-w-2xl flex-col gap-3 text-sm leading-6">
-                {answer.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
+                <AdminAnswerMarkdown answer={saved.answer} />
               </div>
             </AdminSection>
           </AdminDetailColumns>
