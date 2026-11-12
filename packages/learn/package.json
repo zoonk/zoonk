@@ -167,6 +167,7 @@
     "./today/preparing": "./src/today/today-preparing.tsx",
     "./today/shell": "./src/today/today-shell.tsx",
     "./today/suggested-goal": "./src/today/today-suggested-goal.tsx",
+    "./today/visit": "./src/today/use-today-visit.ts",
     "./tutor-cards": "./src/conversation/tutor-cards.tsx",
     "./tutor-composer": "./src/conversation/tutor-composer.tsx",
     "./mission-moment": "./src/missions/mission-moment.tsx",
