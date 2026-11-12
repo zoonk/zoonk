@@ -581,21 +581,14 @@ msgid "Already know this?"
 msgstr "Lo sai già?"
 
 #: src/_components/test-out-start-link.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
-msgctxt "May4OJ"
-msgid "Take the test"
-msgstr "Fai il test"
+msgctxt "2xFPbE"
+msgid "Take the test and skip the chapter"
+msgstr "Fai il test e salta il capitolo"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "osZ9ZA"
 msgid "Opening the test…"
 msgstr "Stiamo aprendo il test…"
-
-#: src/_components/test-out-start-link.tsx
-msgctxt "2xFPbE"
-msgid "Take the test and skip the chapter"
-msgstr "Fai il test e salta il capitolo"
 
 #: src/_components/test-out-start-link.tsx
 msgctxt "vnQGJG"
@@ -1453,7 +1446,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -2997,9 +2989,17 @@ msgid "{lessons, plural, one {Pass it to skip # lesson you already know.} other 
 msgstr "{lessons, plural, one {Superalo per saltare # lezione su argomenti che conosci già.} other {Superalo per saltare fino a # lezioni su argomenti che conosci già.}}"
 
 #: src/conversation/tutor-tool-offer.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/questions/test-out-run.tsx
 msgctxt "JQ5vQE"
 msgid "Test: {chapter}"
 msgstr "Test: {chapter}"
+
+#: src/conversation/tutor-tool-offer.tsx
+#: src/session/test-out-offer.tsx
+msgctxt "May4OJ"
+msgid "Take the test"
+msgstr "Fai il test"
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "1Qd90j"
@@ -3030,6 +3030,7 @@ msgid "A short call out loud, at your level."
 msgstr "Una breve conversazione a voce, al tuo livello."
 
 #: src/conversation/tutor-tool-offer.tsx
+#: src/exam/exam-mocks-section.tsx
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-entry.tsx
 msgctxt "g5EneG"
@@ -3566,12 +3567,6 @@ msgstr "I tuoi progressi"
 msgctxt "zP4GPk"
 msgid "Mock exams"
 msgstr "Simulazioni d’esame"
-
-#: src/exam/exam-mocks-section.tsx
-#: src/mock/mock-chooser-parts.tsx
-msgctxt "FbDzRa"
-msgid "Mock exams are part of Plus"
-msgstr ""
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "5LQ3R0"
@@ -6982,12 +6977,6 @@ msgid "“{sentence}”"
 msgstr "“{sentence}”"
 
 #: src/language/pattern/pattern-intro.tsx
-#: src/language/today/language-today-section.tsx
-msgctxt "VR3SAU"
-msgid "We noticed a pattern"
-msgstr "Abbiamo notato un errore ricorrente"
-
-#: src/language/pattern/pattern-intro.tsx
 msgctxt "PoDUV8"
 msgid "{count, plural, =0 {It came up in your recent answers.} one {It came up once in your recent answers.} other {It came up # times in your recent answers.}}"
 msgstr "{count, plural, =0 {È comparso nelle tue risposte recenti.} one {È comparso una volta nelle tue risposte recenti.} other {È comparso # volte nelle tue risposte recenti.}}"
@@ -7202,6 +7191,11 @@ msgstr "Stiamo ascoltando la tua pronuncia…"
 msgctxt "we8m4p"
 msgid "Press Record and say the word out loud"
 msgstr "Premi Registra e di’ la parola ad alta voce"
+
+#: src/language/today/language-today-section.tsx
+msgctxt "VR3SAU"
+msgid "We noticed a pattern"
+msgstr "Abbiamo notato un errore ricorrente"
 
 #: src/language/today/language-today-section.tsx
 msgctxt "1Vekac"
@@ -7802,14 +7796,9 @@ msgid "Other chapters"
 msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "Q3GPLT"
-msgid "Create all"
+msgctxt "KSrqvC"
+msgid "{count, plural, one {Create # map} other {Create # maps}}"
 msgstr ""
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "BZ0-yt"
-msgid "Show chapters"
-msgstr "Mostra i capitoli"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -8265,17 +8254,6 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Rispondi solo se non hai dubbi. Va bene anche dire che ne hai."
 
 #: src/mistakes/mistake-entry.tsx
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "jzcSPW"
-msgid "Fixed"
-msgstr "Corretti"
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "gENrdL"
-msgid "{cause} · Fixed"
-msgstr "{cause} · Corretto"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "VM0Q1f"
 msgid "Right answer:"
 msgstr "Risposta corretta:"
@@ -8328,6 +8306,11 @@ msgid "To fix"
 msgstr "Da correggere"
 
 #: src/mistakes/mistakes-notebook.tsx
+msgctxt "jzcSPW"
+msgid "Fixed"
+msgstr "Corretti"
+
+#: src/mistakes/mistakes-notebook.tsx
 msgctxt "8anod9"
 msgid "Mistakes"
 msgstr "Errori"
@@ -8373,7 +8356,6 @@ msgid "Today's mistakes return tomorrow"
 msgstr "Gli errori di oggi tornano domani"
 
 #: src/mistakes/mistakes-row.tsx
-#: src/mistakes/notebook-availability-text.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {# pronti per esercitarti} one {# pronto per esercitarti} other {# pronti per esercitarti}}"
@@ -8447,8 +8429,8 @@ msgstr "Risposta corretta: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
-msgctxt "qCC0US"
-msgid "Didn't know it yet"
+msgctxt "zQSk8k"
+msgid "Didn't know it"
 msgstr ""
 
 #. Why the learner got a question wrong: they misread the question.
@@ -8623,6 +8605,11 @@ msgstr "Una materia"
 #: src/mock/mock-chooser.tsx
 msgctxt "M9XI2S"
 msgid "Timed like the real exam. You see your result at the end."
+msgstr ""
+
+#: src/mock/mock-chooser.tsx
+msgctxt "m0Gz7o"
+msgid "Mock exams are part of Plus."
 msgstr ""
 
 #: src/mock/mock-clock.tsx
@@ -9103,6 +9090,11 @@ msgid "Change my plan"
 msgstr ""
 
 #: src/mock/mock-result-plan.tsx
+msgctxt "uFDpFL"
+msgid "Keep my plan"
+msgstr ""
+
+#: src/mock/mock-result-plan.tsx
 msgctxt "b4G-y7"
 msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
 msgstr ""
@@ -9342,11 +9334,6 @@ msgstr "Contrassegna"
 #: src/mock/mock-speaking.tsx
 msgctxt "mPbiU_"
 msgid "Hand in section"
-msgstr ""
-
-#: src/mock/mock-runner-view.tsx
-msgctxt "YQJ4cZ"
-msgid "Flag a question you're not sure about."
 msgstr ""
 
 #: src/mock/mock-screen.tsx
@@ -13354,12 +13341,6 @@ msgstr "Cosa salti se superi il test"
 msgctxt "2L2enW"
 msgid "A few questions on this chapter. Do well, and your plan skips what you already know."
 msgstr "Qualche domanda su questo capitolo. Se rispondi bene, il tuo piano salta quello che sai già."
-
-#: src/questions/test-out-preparing.tsx
-#: src/questions/test-out-run.tsx
-msgctxt "uHFced"
-msgid "Test out: {chapter}"
-msgstr "Test per saltare il capitolo: {chapter}"
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "Ge7HX4"
