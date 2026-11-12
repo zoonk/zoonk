@@ -21,7 +21,7 @@ export function SpeechStatusIcon({
   state: SpokenAudioState;
 }) {
   if (state.status === "loading") {
-    return <Spinner aria-hidden="true" className={cn("size-5", className)} />;
+    return <Spinner aria-hidden="true" className={className} />;
   }
 
   if (state.status === "playing") {

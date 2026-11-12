@@ -5,6 +5,7 @@ import { placeChartUnit } from "@zoonk/core/library/steps/contract/chart-unit";
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { SURFACE_CLASS } from "../_components/surface";
 import { useFormatNumber } from "../_utils/use-format-number";
 import { clampLabelCenter } from "./_utils/category-labels";
 import {
@@ -272,7 +273,7 @@ export function ChartVisualView({
 
   return (
     <figure
-      className={cn("bg-card flex w-full flex-col gap-3 rounded-xl border p-4", className)}
+      className={cn(SURFACE_CLASS, "flex w-full flex-col gap-3 p-4", className)}
       data-slot="chart-visual"
     >
       <figcaption className="text-foreground text-sm font-semibold text-balance">

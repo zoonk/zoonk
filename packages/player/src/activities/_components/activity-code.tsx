@@ -11,6 +11,7 @@ import {
 } from "../_utils/highlight-code";
 import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
+import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
   builtin: "text-viz-secondary",
@@ -184,13 +185,7 @@ export function ActivityCodeEditor({
   const kept = useKeptTyping({ value });
 
   return (
-    <div
-      className={cn(
-        "bg-background focus-within:border-ring focus-within:ring-ring/50 rounded-xl border focus-within:ring-[3px]",
-        className,
-      )}
-      data-slot="activity-code-editor"
-    >
+    <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
       <div className="scroll-fade-x overflow-x-auto px-4 py-3">
         <div className={cn("grid w-max min-w-full", CODE_TEXT)}>
           <div aria-hidden="true" className="col-start-1 row-start-1 whitespace-pre">

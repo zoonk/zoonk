@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_ACTIVE_CLASS } from "../_components/activity-canvas";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { blankStem, splitForm } from "./pattern-cells";
@@ -72,9 +73,9 @@ function OpenBlank({
       })}
       aria-pressed={isActive}
       className={cn(
-        "-ml-2 flex h-11 min-w-24 items-center rounded-xl border-2 bg-transparent pl-2 text-left outline-none select-none",
+        "-ml-2 flex h-11 min-w-24 items-center rounded-xl border pl-1.75 text-left outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        isActive ? "border-viz-accent bg-background" : "border-transparent",
+        isActive ? cn(ACTIVITY_ACTIVE_CLASS, "bg-background") : "border-transparent",
       )}
       onClick={onSelect}
       onKeyDown={keepArrowKeys}

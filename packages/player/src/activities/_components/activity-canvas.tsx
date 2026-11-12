@@ -1,6 +1,28 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 
+/** A box inside an activity's panel. Every card, slot, cell and code block there is this box. */
+export const ACTIVITY_BOX_CLASS = "bg-background rounded-xl border";
+
+/** A box that holds a line or two of text. */
+export const ACTIVITY_CARD_CLASS = cn(ACTIVITY_BOX_CLASS, "px-3 py-2.5");
+
+/** Added to a box the learner taps or drags. */
+export const ACTIVITY_PRESS_CLASS =
+  "focus-visible:ring-ring/50 min-h-11 text-left outline-none select-none focus-visible:ring-[3px]";
+
+/** A box the learner types in. */
+export const ACTIVITY_FIELD_CLASS = cn(
+  ACTIVITY_BOX_CLASS,
+  "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
+);
+
+/** A place still to fill: the same 1px line, dashed. */
+export const ACTIVITY_EMPTY_CLASS = "border-dashed bg-transparent";
+
+/** The box the learner is working in. Its 2px line is drawn inside the box, so nothing around it moves. */
+export const ACTIVITY_ACTIVE_CLASS = "border-viz-accent ring-viz-accent ring-1 ring-inset";
+
 export function ActivityCanvas({
   className,
   labelId,

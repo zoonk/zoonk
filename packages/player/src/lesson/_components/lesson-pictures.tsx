@@ -180,10 +180,7 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
 
 function PictureFrame({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div
-      className={cn("flex w-full justify-start max-sm:justify-center", className)}
-      data-slot="lesson-picture"
-    >
+    <div className={cn("flex w-full justify-start", className)} data-slot="lesson-picture">
       {children}
     </div>
   );

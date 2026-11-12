@@ -3,9 +3,14 @@
 import { useSentenceSpace } from "@zoonk/learn/locale";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ACTIVITY_BOX_CLASS,
+  ActivityCanvas,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -128,7 +133,7 @@ export function CodeTracerActivity({
     <ActivityCanvas className="gap-3" labelId={labelId}>
       <TracerVariables values={values} />
 
-      <div className="bg-background flex flex-col gap-1 rounded-xl border px-2 pt-2 pb-2.5">
+      <div className={cn(ACTIVITY_BOX_CLASS, "flex flex-col gap-1 px-2 pt-2 pb-2.5")}>
         <div className="pl-2">
           <TracerControls
             canGoBack={step > start}

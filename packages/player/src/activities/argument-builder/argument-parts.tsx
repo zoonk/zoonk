@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Check, GripVertical, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_CARD_CLASS, ACTIVITY_PRESS_CLASS } from "../_components/activity-canvas";
 import { useActivityDraggable, useActivityDropTarget } from "../_components/activity-drag-drop";
 
 export type ArgumentPart = "evidence" | "reasoning";
@@ -57,7 +58,9 @@ export function ArgumentCandidate({
       {...dragProps}
       aria-label={label}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full touch-manipulation items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left outline-none select-none focus-visible:ring-[3px]",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_PRESS_CLASS,
+        "focus-visible:border-ring hover:bg-accent flex w-full touch-manipulation items-start gap-2.5",
         !disabled && "cursor-grab active:cursor-grabbing",
         isDragging && "relative z-20 shadow-lg",
       )}
@@ -105,7 +108,7 @@ export function ArgumentSlot({
     <section
       aria-label={label}
       className={cn(
-        "flex flex-col gap-1.5 rounded-xl border-2 border-dashed px-3.5 py-2.5",
+        "flex flex-col gap-1.5 rounded-xl border border-dashed px-3 py-2.5",
         isOpen && "border-viz-accent/60 bg-viz-accent-soft/40",
         isOver && "border-viz-accent bg-viz-accent-soft",
         isFilled && "bg-background border-solid",

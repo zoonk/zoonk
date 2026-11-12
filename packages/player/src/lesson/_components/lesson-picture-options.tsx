@@ -21,6 +21,9 @@ type PictureOption = {
   text: string;
 };
 
+/** A picture 8px inside a 12px option, in every state: drawn, being drawn and described. */
+const OPTION_PICTURE_CLASS = "mx-auto rounded-sm";
+
 function PictureOptionContent({
   isChecked,
   option,
@@ -36,14 +39,22 @@ function PictureOptionContent({
 
   function picture() {
     if (image) {
-      return <LessonStepImage className="mx-auto" frame="question" image={image} kind="option" />;
+      return (
+        <LessonStepImage
+          className={OPTION_PICTURE_CLASS}
+          frame="question"
+          image={image}
+          kind="option"
+        />
+      );
     }
 
     if (pending) {
       return (
         <div
           className={cn(
-            "text-muted-foreground relative mx-auto flex items-center justify-center overflow-hidden rounded-lg",
+            "text-muted-foreground relative flex items-center justify-center overflow-hidden",
+            OPTION_PICTURE_CLASS,
             PICTURE_BOX_CLASS,
             PICTURE_FRAME_CLASS.question,
           )}
@@ -62,7 +73,12 @@ function PictureOptionContent({
     }
 
     return (
-      <p className="bg-muted/50 text-muted-foreground flex aspect-square w-full items-center rounded-lg p-3 text-sm leading-snug">
+      <p
+        className={cn(
+          "bg-muted/50 text-muted-foreground flex aspect-square w-full items-center p-3 text-sm leading-snug",
+          OPTION_PICTURE_CLASS,
+        )}
+      >
         {pictureText}
       </p>
     );

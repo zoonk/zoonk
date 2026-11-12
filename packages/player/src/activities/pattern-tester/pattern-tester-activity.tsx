@@ -6,6 +6,8 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_FIELD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -143,7 +145,8 @@ export function PatternTesterActivity({
 
         <div
           className={cn(
-            "bg-background focus-within:border-primary flex h-14 items-center gap-0.5 rounded-xl border-2 px-4 font-mono text-xl",
+            ACTIVITY_FIELD_CLASS,
+            "flex h-14 items-center gap-0.5 px-4 font-mono text-xl",
             isChecked && "opacity-80",
           )}
         >
@@ -203,7 +206,7 @@ export function PatternTesterActivity({
           <ActivityCanvasLabel className="font-medium">
             {isRegex ? t("A pattern that works") : t("A formula that works")}
           </ActivityCanvasLabel>
-          <code className="bg-background w-fit rounded-xl border px-3 py-2 font-mono text-base break-all">
+          <code className={cn(ACTIVITY_CARD_CLASS, "w-fit font-mono text-base break-all")}>
             {isRegex ? `/${fields.solution}/` : `=${fields.solution}`}
           </code>
         </div>

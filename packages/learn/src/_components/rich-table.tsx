@@ -1,6 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type MarkdownTableAlign } from "@zoonk/utils/markdown-table";
 import { SpokenMath } from "../rich-text/spoken-math";
+import { SURFACE_CLASS } from "./surface";
 
 function getCellClass(align: MarkdownTableAlign | undefined) {
   return cn(
@@ -43,7 +44,8 @@ export function RichTable<TCell>({
   return (
     <div
       className={cn(
-        "border-border has-focus-visible:ring-ring/50 max-w-full overflow-hidden rounded-xl border has-focus-visible:ring-[3px]",
+        SURFACE_CLASS,
+        "has-focus-visible:ring-ring/50 max-w-full overflow-hidden has-focus-visible:ring-[3px]",
         className,
       )}
       data-slot="rich-table"

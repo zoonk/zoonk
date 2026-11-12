@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_CARD_CLASS, ACTIVITY_PRESS_CLASS } from "../_components/activity-canvas";
 
 export type MatchCardState = "idle" | "matched" | "missed" | "noMatch" | "selected";
 
@@ -26,7 +27,9 @@ export function MatchPairsCard({
       aria-label={label}
       aria-pressed={state === "matched" || state === "noMatch" ? undefined : state === "selected"}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-2 rounded-xl border px-3.5 py-2 text-left leading-snug font-medium outline-none select-none focus-visible:ring-[3px]",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_PRESS_CLASS,
+        "focus-visible:border-ring flex min-h-12 w-full items-center gap-2 leading-snug font-medium",
         state === "idle" && "hover:bg-accent",
         state === "selected" && "border-primary ring-primary/15 ring-[3px]",
         state === "matched" && "border-success/40 bg-success/10 text-success-text",

@@ -11,6 +11,7 @@ import {
   PlayerChoiceSceneOptions,
 } from "../../../components/player-choice-scene";
 import { PlayerReadScene } from "../../../components/player-read-scene";
+import { QUESTION_TEXT_CLASS } from "../../../components/question-text";
 import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
 import { type StepOf } from "../lesson-step-view-props";
@@ -78,9 +79,13 @@ function ChallengeDecision({
   const { node } = progress.walk;
 
   return (
-    <div className="flex flex-col gap-3" data-slot="challenge-decision">
-      <div className="text-foreground text-lg font-semibold" id={`challenge-prompt-${node.id}`}>
-        <RichTextBlocks text={names.fill(node.prompt)} paragraphTag="h3" />
+    <div className="flex flex-col gap-6" data-slot="challenge-decision">
+      <div id={`challenge-prompt-${node.id}`}>
+        <RichTextBlocks
+          className={QUESTION_TEXT_CLASS}
+          paragraphTag="h3"
+          text={names.fill(node.prompt)}
+        />
       </div>
 
       <PlayerChoiceSceneOptions

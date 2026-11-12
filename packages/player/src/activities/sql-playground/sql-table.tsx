@@ -5,6 +5,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDown, Table2 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { keyedByPosition } from "../_utils/position-keys";
 
 type RowState = "extra" | "missing" | "plain" | "right";
@@ -67,7 +68,12 @@ export function SqlRowsTable({
   rows: readonly (readonly ActivityCell[])[];
 }) {
   return (
-    <div className="bg-background has-focus-visible:ring-ring/50 overflow-hidden rounded-xl border has-focus-visible:ring-[3px]">
+    <div
+      className={cn(
+        ACTIVITY_BOX_CLASS,
+        "has-focus-visible:ring-ring/50 overflow-hidden has-focus-visible:ring-[3px]",
+      )}
+    >
       <div
         aria-label={caption}
         className="scroll-fade-x overflow-x-auto outline-none"
@@ -114,10 +120,7 @@ export function SqlTableViewer({ table }: { table: Table }) {
   const t = useExtracted();
 
   return (
-    <details
-      className="group bg-background rounded-xl border"
-      open={table.rows.length <= OPEN_ROW_LIMIT}
-    >
+    <details className={cn(ACTIVITY_BOX_CLASS, "group")} open={table.rows.length <= OPEN_ROW_LIMIT}>
       <summary className="focus-visible:ring-ring/50 flex min-h-11 cursor-pointer list-none items-center gap-2.5 rounded-xl px-3.5 py-2 outline-none select-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden">
         <Table2 aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="font-mono text-sm font-semibold">{table.name}</span>
