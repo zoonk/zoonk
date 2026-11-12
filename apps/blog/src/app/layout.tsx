@@ -1,16 +1,19 @@
 import { Logo } from "@/components/logo";
 import { SocialLinks } from "@/components/social-links";
 import { Analytics } from "@vercel/analytics/next";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { BLOG_URL } from "@zoonk/utils/url";
 import { type Metadata } from "next";
 import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {
   alternates: { canonical: "./" },
-  description: "Thoughts on education, technology, and open source.",
+  description: "What we're building at Zoonk, and why: a study plan for each day, from any goal.",
   metadataBase: new URL(BLOG_URL),
   title: { default: "Zoonk Blog", template: "%s | Zoonk Blog" },
 };
+
+const TRY_ZOONK = { href: "https://www.zoonk.com", label: "Try Zoonk" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -20,11 +23,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <header className="mb-10 flex items-center justify-between">
             <Logo />
 
-            <a
-              href="https://zoonk.com"
-              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
-            >
-              zoonk.com
+            <a href={TRY_ZOONK.href} className={buttonVariants({ size: "sm", variant: "outline" })}>
+              {TRY_ZOONK.label}
             </a>
           </header>
 
