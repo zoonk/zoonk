@@ -5,11 +5,9 @@ import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
-import Link from "next/link";
 import { PreviewIntlProvider } from "../preview/preview-intl-provider";
-import { DevOnlySpecimen, DocHeader, DocRules, DocSection, renderCode } from "./_components/doc";
+import { DevOnlySpecimen, DocHeader, DocRules, DocSection } from "./_components/doc";
 import { MODES, modeClass } from "./_components/modes";
-import { DESIGN_PAGES } from "./_components/pages";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -100,22 +98,6 @@ export default function DesignOverviewPage() {
 
       <DocSection title="Modes">
         <DocRules rules={MODE_CHECKS} />
-      </DocSection>
-
-      <DocSection title="Pages">
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {DESIGN_PAGES.slice(1).map((page) => (
-            <li key={page.href}>
-              <Link
-                className="hover:bg-muted ring-border block rounded-lg px-3 py-2.5 text-sm font-medium ring-1"
-                href={page.href}
-                prefetch
-              >
-                {renderCode(page.label)}
-              </Link>
-            </li>
-          ))}
-        </ul>
       </DocSection>
     </>
   );
