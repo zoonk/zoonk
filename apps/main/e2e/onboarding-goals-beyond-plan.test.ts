@@ -12,13 +12,14 @@ import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
 const ENGLISH = {
+  countryDependent: false,
   kind: "language",
   subject: "English",
   targetLanguage: "en",
   title: "Learn English",
 };
 
-const STATISTICS = { kind: "learn", subject: "Statistics", title: "Learn statistics" };
+const STATISTICS = { countryDependent: false, kind: "learn", subject: "Statistics", title: "Learn statistics" };
 
 const LOCKED_NOTE = /Following more goals at once comes with Plus/u;
 
