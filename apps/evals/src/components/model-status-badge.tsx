@@ -1,6 +1,5 @@
 import { type ModelStatus, getModelStatus } from "@/lib/utils";
 import { Badge } from "@zoonk/ui/components/badge";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 
 const labelMap: Record<ModelStatus, string> = {
   completed: "Evaluated",
@@ -16,12 +15,10 @@ const variantMap: Record<ModelStatus, "default" | "secondary" | "destructive" | 
   outputsReady: "secondary",
 };
 
-export async function ModelStatusBadge({ taskId, modelId }: { taskId: string; modelId: string }) {
-  const status = await getModelStatus(taskId, modelId);
-
+export function StatusBadge({ status }: { status: ModelStatus }) {
   return <Badge variant={variantMap[status]}>{labelMap[status]}</Badge>;
 }
 
-export function ModelStatusBadgeSkeleton() {
-  return <Skeleton className="h-5 w-20 rounded-full" />;
+export async function ModelStatusBadge({ taskId, modelId }: { taskId: string; modelId: string }) {
+  return <StatusBadge status={await getModelStatus(taskId, modelId)} />;
 }

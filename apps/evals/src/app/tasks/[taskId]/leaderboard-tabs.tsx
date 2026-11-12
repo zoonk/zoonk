@@ -30,22 +30,25 @@ export function LeaderboardTabs({
   battleEntries,
   battleJudgeCost,
   supportsJudgeMode,
+  totalRuns,
 }: {
   taskId: string;
   entries: LeaderboardEntry[];
   battleEntries: BattleLeaderboardEntry[];
   battleJudgeCost: number;
   supportsJudgeMode: boolean;
+  totalRuns: number;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentTab = searchParams.get("tab") ?? "battle";
-
   const hasRegularResults = entries.length > 0;
   const hasBattleResults = battleEntries.length > 0;
+  const currentTab = searchParams.get("tab") ?? (hasBattleResults ? "battle" : "regular");
 
   if (!supportsJudgeMode) {
-    return hasRegularResults ? <Leaderboard entries={entries} taskId={taskId} /> : null;
+    return hasRegularResults ? (
+      <Leaderboard entries={entries} taskId={taskId} totalRuns={totalRuns} />
+    ) : null;
   }
 
   if (!(hasRegularResults || hasBattleResults)) {
@@ -61,8 +64,8 @@ export function LeaderboardTabs({
   return (
     <Tabs onValueChange={handleTabChange} value={currentTab}>
       <TabsList variant="line">
-        <TabsTrigger value="battle">Battle Mode</TabsTrigger>
-        <TabsTrigger value="regular">Regular Leaderboard</TabsTrigger>
+        <TabsTrigger value="battle">Battles</TabsTrigger>
+        <TabsTrigger value="regular">Scores</TabsTrigger>
       </TabsList>
 
       <TabsContent value="battle">
@@ -70,7 +73,7 @@ export function LeaderboardTabs({
       </TabsContent>
 
       <TabsContent value="regular">
-        <Leaderboard entries={entries} taskId={taskId} />
+        <Leaderboard entries={entries} taskId={taskId} totalRuns={totalRuns} />
       </TabsContent>
     </Tabs>
   );

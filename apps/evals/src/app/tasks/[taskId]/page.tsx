@@ -7,10 +7,9 @@ import {
 import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
 import { formatLatencyBudget } from "@/lib/format";
 import { getLeaderboardEntries } from "@/lib/leaderboard";
-import { EVAL_MODELS } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { supportsJudgeMode } from "@/lib/types";
-import { getModelsWithResults, getSortedModels } from "@/lib/utils";
+import { getModelsToRun, getModelsWithResults } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
@@ -30,7 +29,7 @@ import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "./_utils/task-route";
 import { runBattleModeAction } from "./actions";
 import { LeaderboardTabs, LeaderboardTabsSkeleton } from "./leaderboard-tabs";
-import { ModelCard, ModelCardSkeleton } from "./model-card";
+import { ModelList, ModelListSkeleton } from "./model-list";
 
 type TaskRouteProps = { params: TaskRouteParams };
 
@@ -45,11 +44,11 @@ function TaskHeaderActionsSkeleton() {
     <div aria-hidden="true" className="flex items-center gap-2">
       <ButtonSkeleton variant="outline">
         <MessageSquareTextIcon />
-        View Judge Comments
+        Judge comments
       </ButtonSkeleton>
       <ButtonSkeleton>
         <SwordsIcon />
-        Run Battle Mode
+        Run battle
       </ButtonSkeleton>
     </div>
   );
@@ -61,20 +60,31 @@ async function TaskHeaderActions({ params }: TaskRouteProps) {
   const canRunBattle = modelsReadyForBattle.length >= 2;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
+      {!canRunBattle && (
+        <p className="text-muted-foreground text-xs">A battle needs 2 models with every output.</p>
+      )}
+
       <Link className={buttonVariants({ variant: "outline" })} href={`/tasks/${taskId}/battles`}>
         <MessageSquareTextIcon className="size-4" />
-        View Judge Comments
+        Judge comments
       </Link>
 
       <form action={runBattleModeAction}>
         <input name="taskId" type="hidden" value={taskId} />
         <SubmitButton disabled={!canRunBattle} icon={<SwordsIcon />}>
-          Run Battle Mode
+          Run battle
         </SubmitButton>
       </form>
     </div>
   );
+}
+
+function formatTestCases(count: number): string {
+  const cases = `${count} ${count === 1 ? "test case" : "test cases"}`;
+  const runs: number = RUNS_PER_TEST_CASE;
+
+  return runs === 1 ? cases : `${cases}, ${runs} runs each`;
 }
 
 async function TaskHeader({ params }: TaskRouteProps) {
@@ -83,14 +93,14 @@ async function TaskHeader({ params }: TaskRouteProps) {
   const judgeModeSupported = supportsJudgeMode(task);
 
   return (
-    <ContainerHeader>
+    <ContainerHeader className="flex-col items-start sm:flex-row sm:items-end">
       <ContainerHeaderGroup>
         <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription>
-          Choose a model to run evaluations on {task.testCases.length} test cases (
-          {RUNS_PER_TEST_CASE} runs each)
-          {task.latencyBudget && `. Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
-        </ContainerDescription>
+        <ContainerDescription>{task.description}.</ContainerDescription>
+        <p className="text-muted-foreground font-mono text-xs">
+          {formatTestCases(task.testCases.length)}
+          {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
+        </p>
       </ContainerHeaderGroup>
 
       {judgeModeSupported && (
@@ -119,36 +129,20 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
       entries={getLeaderboardEntries({ prices: GATEWAY_PRICES, results: modelsWithResults, task })}
       supportsJudgeMode={judgeModeSupported}
       taskId={taskId}
+      totalRuns={task.testCases.length * RUNS_PER_TEST_CASE}
     />
   );
 }
 
-async function TaskModelGrid({ params }: TaskRouteProps) {
+async function TaskModels({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
-  const sortedModels = await getSortedModels(task);
 
-  return (
-    <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {sortedModels.map((model) => (
-        <ModelCard
-          key={model.id}
-          model={model}
-          pricing={GATEWAY_PRICES.models[model.gatewayModelId]}
-          taskId={taskId}
-        />
-      ))}
-    </section>
-  );
-}
+  const [models, modelsWithResults] = await Promise.all([
+    getModelsToRun(task),
+    getModelsWithResults(taskId),
+  ]);
 
-function TaskModelGridSkeleton() {
-  return (
-    <section aria-hidden="true" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {EVAL_MODELS.map((model) => (
-        <ModelCardSkeleton key={model.id} />
-      ))}
-    </section>
-  );
+  return <ModelList models={models} open={modelsWithResults.length === 0} taskId={taskId} />;
 }
 
 export default function TaskPage({ params }: TaskRouteProps) {
@@ -171,8 +165,8 @@ export default function TaskPage({ params }: TaskRouteProps) {
           <TaskLeaderboard params={params} />
         </Suspense>
 
-        <Suspense fallback={<TaskModelGridSkeleton />}>
-          <TaskModelGrid params={params} />
+        <Suspense fallback={<ModelListSkeleton />}>
+          <TaskModels params={params} />
         </Suspense>
       </ContainerBody>
     </main>

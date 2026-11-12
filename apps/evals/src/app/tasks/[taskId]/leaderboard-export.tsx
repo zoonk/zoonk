@@ -141,9 +141,11 @@ export function LeaderboardExport({
         Export
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>Export All Data</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>
+          With model names
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => exportAsMarkdown(true)}>
-          Export Anonymous Data
+          Without model names
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

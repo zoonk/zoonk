@@ -12,6 +12,7 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { useState } from "react";
+import { MoreColumnsButton, type SortDirection, SortHead } from "./leaderboard-parts";
 
 type SortKey =
   | "modelName"
@@ -20,8 +21,6 @@ type SortKey =
   | "latencyP50"
   | "latencyP95"
   | "costPer1000Runs";
-
-type SortDirection = "asc" | "desc";
 
 const DEFAULT_SORT_DIRECTIONS: Record<SortKey, SortDirection> = {
   averageScore: "desc",
@@ -57,6 +56,24 @@ function sortEntries(
   });
 }
 
+function CodeChecks({ checks }: { checks: BattleLeaderboardEntry["codeChecks"] }) {
+  if (!checks) {
+    return "—";
+  }
+
+  return (
+    <>
+      {checks.passed}/{checks.total} parts
+      {checks.problems > 0 && (
+        <span className="text-warning-text">
+          {" "}
+          · {checks.problems} {checks.problems === 1 ? "problem" : "problems"}
+        </span>
+      )}
+    </>
+  );
+}
+
 export function BattleLeaderboard({
   taskId,
   entries,
@@ -68,6 +85,7 @@ export function BattleLeaderboard({
 }) {
   const [sortKey, setSortKey] = useState<SortKey>("averageScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [showsMore, setShowsMore] = useState(false);
 
   const sortedEntries = sortEntries(entries, sortKey, sortDirection);
   const categories = entries[0]?.categoryScores ?? [];
@@ -83,95 +101,93 @@ export function BattleLeaderboard({
     setSortDirection(getDefaultSortDirection(key));
   }
 
+  function sortProps(key: SortKey) {
+    return { direction: sortDirection, isActive: sortKey === key, onSort: () => handleSort(key) };
+  }
+
   if (sortedEntries.length === 0) {
     return (
-      <div className="text-muted-foreground py-8 text-center">
-        No battle results yet. Run Battle Mode to compare models.
-      </div>
+      <p className="text-muted-foreground py-8 text-center text-sm">
+        No battles yet. Run a battle to have judges compare the models&apos; outputs side by side.
+      </p>
     );
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-sm">
-        Judges never score their own model family, so models are ranked by average score. Judge cost
-        so far: {formatDollars(judgeCost)}.
-      </p>
+      <div className="flex items-center justify-end gap-2">
+        <MoreColumnsButton isOpen={showsMore} onToggle={() => setShowsMore((shown) => !shown)} />
+      </div>
 
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-10">#</TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
-              Model {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
-              Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
-              Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            {categories.map((category) => (
-              <TableHead key={category.categoryId}>{category.label}</TableHead>
-            ))}
-
+            <SortHead {...sortProps("modelName")}>Model</SortHead>
+            <SortHead {...sortProps("averageScore")}>Score</SortHead>
             {hasCodeChecks && <TableHead>Code checks</TableHead>}
+            <SortHead {...sortProps("costPer1000Runs")}>Cost / 1k runs</SortHead>
+            <SortHead {...sortProps("latencyP50")}>p50</SortHead>
 
-            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP50")}>
-              p50 {sortKey === "latencyP50" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP95")}>
-              p95 {sortKey === "latencyP95" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("costPer1000Runs")}>
-              Cost / 1k runs{" "}
-              {sortKey === "costPer1000Runs" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
+            {showsMore && (
+              <>
+                <SortHead {...sortProps("latencyP95")}>p95</SortHead>
+                <SortHead {...sortProps("provider")}>Provider</SortHead>
+                {categories.map((category) => (
+                  <TableHead key={category.categoryId}>{category.label}</TableHead>
+                ))}
+              </>
+            )}
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {sortedEntries.map((entry, index) => (
             <TableRow key={entry.modelId}>
-              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell className="text-muted-foreground">{index + 1}</TableCell>
               <TableCell>
-                <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
+                <Link
+                  className="font-medium underline-offset-4 hover:underline"
+                  href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
+                >
                   {entry.modelName}
                 </Link>
               </TableCell>
-              <TableCell>{entry.provider}</TableCell>
               <TableCell className="font-semibold">{entry.averageScore.toFixed(2)}</TableCell>
-              {categories.map((category) => {
-                const categoryScore = entry.categoryScores.find(
-                  (score) => score.categoryId === category.categoryId,
-                );
-
-                return (
-                  <TableCell key={category.categoryId}>
-                    {categoryScore?.score.toFixed(2) ?? "—"}
-                  </TableCell>
-                );
-              })}
               {hasCodeChecks && (
                 <TableCell>
-                  {entry.codeChecks
-                    ? `${entry.codeChecks.passed}/${entry.codeChecks.total} parts, ${entry.codeChecks.problems} problems`
-                    : "—"}
+                  <CodeChecks checks={entry.codeChecks} />
                 </TableCell>
               )}
-              <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
-              <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
               <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
+              <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
+
+              {showsMore && (
+                <>
+                  <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
+                  <TableCell>{entry.provider}</TableCell>
+                  {categories.map((category) => {
+                    const categoryScore = entry.categoryScores.find(
+                      (score) => score.categoryId === category.categoryId,
+                    );
+
+                    return (
+                      <TableCell key={category.categoryId}>
+                        {categoryScore?.score.toFixed(2) ?? "—"}
+                      </TableCell>
+                    );
+                  })}
+                </>
+              )}
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      <p className="text-muted-foreground text-xs">
+        A judge never scores its own model family. Judges have cost {formatDollars(judgeCost)} so
+        far.
+      </p>
     </div>
   );
 }

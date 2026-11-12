@@ -2,7 +2,7 @@
 
 import { CaseCount, FailureCounts, KeyFlawCount } from "@/components/eval-counts";
 import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
-import { HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
+import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatLatencyVerdict, formatPercent, formatSeconds } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
 import {
@@ -22,30 +22,153 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { LeaderboardExport } from "./leaderboard-export";
+import { MoreColumnsButton, SortHead } from "./leaderboard-parts";
 
-function getSortArrow({
-  direction,
-  isActive,
-}: {
-  direction: SortDirection;
-  isActive: boolean;
-}): string {
-  if (!isActive) {
-    return "";
-  }
+/** How much of the task a model's score rests on, with failed runs called out. */
+function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns: number }) {
+  const failed = FAILURE_REASONS.reduce(
+    (total, reason) => total + entry.summary.failures[reason].count,
+    0,
+  );
 
-  return direction === "asc" ? "↑" : "↓";
+  return (
+    <>
+      {entry.summary.scored}/{totalRuns}
+      {failed > 0 && <span className="text-destructive-text"> · {failed} failed</span>}
+    </>
+  );
 }
 
-export function Leaderboard({ taskId, entries }: { taskId: string; entries: LeaderboardEntry[] }) {
+/** A column shows only when some model has a value for it. */
+function getColumns(entries: LeaderboardEntry[]) {
+  return {
+    categories: entries.find((entry) => entry.categoryScores.length > 0)?.categoryScores ?? [],
+    showAccuracy: entries.some((entry) => entry.accuracy !== null),
+    showBudget: entries.some((entry) => entry.meetsLatencyBudget !== null),
+    showJudgeCost: entries.some((entry) => entry.judgeCost > 0),
+    showKeyFlaws: entries.some((entry) => entry.summary.keyFlaws.recordedOutputs > 0),
+  };
+}
+
+type Columns = ReturnType<typeof getColumns>;
+
+function MainCells({
+  columns,
+  entry,
+  taskId,
+  totalRuns,
+}: {
+  columns: Columns;
+  entry: LeaderboardEntry;
+  taskId: string;
+  totalRuns: number;
+}) {
+  return (
+    <>
+      <TableCell>
+        <Link
+          className="font-medium underline-offset-4 hover:underline"
+          href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
+        >
+          {entry.displayName}
+        </Link>
+      </TableCell>
+      <TableCell className="font-semibold">
+        {entry.averageScore?.toFixed(2) ?? "Not scored"}
+      </TableCell>
+      {columns.showAccuracy && (
+        <TableCell>{entry.accuracy === null ? "—" : formatPercent(entry.accuracy)}</TableCell>
+      )}
+      {columns.showKeyFlaws && (
+        <TableCell>
+          <KeyFlawCount model={{ modelId: entry.modelId, taskId }} summary={entry.summary} />
+        </TableCell>
+      )}
+      <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
+      <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
+      {columns.showBudget && (
+        <TableCell className={entry.meetsLatencyBudget === false ? "text-warning-text" : undefined}>
+          {formatLatencyVerdict(entry.meetsLatencyBudget)}
+        </TableCell>
+      )}
+      <TableCell>
+        <CasesScored entry={entry} totalRuns={totalRuns} />
+      </TableCell>
+    </>
+  );
+}
+
+function MoreCells({
+  columns,
+  entry,
+  taskId,
+}: {
+  columns: Columns;
+  entry: LeaderboardEntry;
+  taskId: string;
+}) {
+  const model = { modelId: entry.modelId, taskId };
+
+  return (
+    <>
+      <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
+      <TableCell>{entry.provider}</TableCell>
+      <TableCell>{entry.reasoning}</TableCell>
+      {columns.categories.map((category) => (
+        <TableCell key={category.categoryId}>
+          {entry.categoryScores
+            .find((score) => score.categoryId === category.categoryId)
+            ?.score.toFixed(2) ?? "—"}
+        </TableCell>
+      ))}
+      {formatLanguageResults(entry.languages).map((result) => (
+        <TableCell key={result.language}>{result.text}</TableCell>
+      ))}
+      <TableCell>
+        <CaseCount
+          caseIds={entry.summary.caseIds.attempted}
+          count={entry.summary.attempted}
+          model={model}
+        />
+      </TableCell>
+      <TableCell>
+        <CaseCount
+          caseIds={entry.summary.caseIds.generated}
+          count={entry.summary.generated}
+          model={model}
+        />
+      </TableCell>
+      <TableCell>
+        <CaseCount
+          caseIds={entry.summary.caseIds.scored}
+          count={entry.summary.scored}
+          model={model}
+        />
+      </TableCell>
+      <TableCell>
+        <FailureCounts model={model} summary={entry.summary} />
+      </TableCell>
+      {columns.showJudgeCost && <TableCell>{formatDollars(entry.judgeCost)}</TableCell>}
+    </>
+  );
+}
+
+export function Leaderboard({
+  taskId,
+  entries,
+  totalRuns,
+}: {
+  taskId: string;
+  entries: LeaderboardEntry[];
+  totalRuns: number;
+}) {
   const [sortKey, setSortKey] = useState<SortKey>("averageScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [showsMore, setShowsMore] = useState(false);
 
   const sortedEntries = sortLeaderboardEntries(entries, sortKey, sortDirection);
-  const categories = entries.find((entry) => entry.categoryScores.length > 0)?.categoryScores ?? [];
-  const showAccuracy = entries.some((entry) => entry.accuracy !== null);
-  const showJudgeCost = entries.some((entry) => entry.judgeCost > 0);
-  const showBudget = entries.some((entry) => entry.meetsLatencyBudget !== null);
+  const columns = getColumns(entries);
+  const { categories, showAccuracy, showBudget, showJudgeCost, showKeyFlaws } = columns;
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -57,139 +180,59 @@ export function Leaderboard({ taskId, entries }: { taskId: string; entries: Lead
     setSortDirection(getDefaultSortDirection(key));
   }
 
+  function sortProps(key: SortKey) {
+    return { direction: sortDirection, isActive: sortKey === key, onSort: () => handleSort(key) };
+  }
+
   if (sortedEntries.length === 0) {
     return null;
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Leaderboard</h2>
+      <div className="flex items-center justify-end gap-2">
+        <MoreColumnsButton isOpen={showsMore} onToggle={() => setShowsMore((shown) => !shown)} />
         <LeaderboardExport entries={sortedEntries} taskId={taskId} />
       </div>
-      <p className="text-muted-foreground text-sm">{HISTORICAL_ATTEMPTS_NOTE}</p>
 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
-              Model {getSortArrow({ direction: sortDirection, isActive: sortKey === "modelName" })}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
-              Provider{" "}
-              {getSortArrow({ direction: sortDirection, isActive: sortKey === "provider" })}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("reasoning")}>
-              Reasoning{" "}
-              {getSortArrow({ direction: sortDirection, isActive: sortKey === "reasoning" })}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
-              Avg score (scored outputs){" "}
-              {getSortArrow({ direction: sortDirection, isActive: sortKey === "averageScore" })}
-            </TableHead>
-
-            <TableHead>Attempted (recorded)</TableHead>
-            <TableHead>Generated</TableHead>
-            <TableHead>Scored outputs</TableHead>
-            <TableHead>Generation failures</TableHead>
-            <TableHead>Judge-flagged key flaws</TableHead>
-
-            {categories.map((category) => (
-              <TableHead key={category.categoryId}>{category.label}</TableHead>
-            ))}
-
+            <SortHead {...sortProps("modelName")}>Model</SortHead>
+            <SortHead {...sortProps("averageScore")}>Score</SortHead>
             {showAccuracy && <TableHead>Accuracy</TableHead>}
-
-            {REQUIRED_LANGUAGES.map((language) => (
-              <TableHead key={language}>{language.toUpperCase()}</TableHead>
-            ))}
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP50")}>
-              p50 {getSortArrow({ direction: sortDirection, isActive: sortKey === "latencyP50" })}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP95")}>
-              p95 {getSortArrow({ direction: sortDirection, isActive: sortKey === "latencyP95" })}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("costPer1000Runs")}>
-              Cost / 1k runs{" "}
-              {getSortArrow({ direction: sortDirection, isActive: sortKey === "costPer1000Runs" })}
-            </TableHead>
-
+            {showKeyFlaws && <TableHead>Key flaws</TableHead>}
+            <SortHead {...sortProps("costPer1000Runs")}>Cost / 1k runs</SortHead>
+            <SortHead {...sortProps("latencyP50")}>p50</SortHead>
             {showBudget && <TableHead>Latency budget</TableHead>}
+            <TableHead title={HISTORICAL_ATTEMPTS_NOTE}>Cases scored</TableHead>
 
-            {showJudgeCost && <TableHead>Judge cost</TableHead>}
+            {showsMore && (
+              <>
+                <SortHead {...sortProps("latencyP95")}>p95</SortHead>
+                <SortHead {...sortProps("provider")}>Provider</SortHead>
+                <SortHead {...sortProps("reasoning")}>Reasoning</SortHead>
+                {categories.map((category) => (
+                  <TableHead key={category.categoryId}>{category.label}</TableHead>
+                ))}
+                {REQUIRED_LANGUAGES.map((language) => (
+                  <TableHead key={language}>{language.toUpperCase()}</TableHead>
+                ))}
+                <TableHead title={HISTORICAL_ATTEMPTS_NOTE}>Attempted</TableHead>
+                <TableHead>Generated</TableHead>
+                <TableHead>Scored</TableHead>
+                <TableHead>Failed runs</TableHead>
+                {showJudgeCost && <TableHead>Judge cost</TableHead>}
+              </>
+            )}
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {sortedEntries.map((entry) => (
             <TableRow key={entry.modelId}>
-              <TableCell>
-                <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
-                  {entry.modelName}
-                </Link>
-              </TableCell>
-              <TableCell>{entry.provider}</TableCell>
-              <TableCell>{entry.reasoning}</TableCell>
-              <TableCell>{entry.averageScore?.toFixed(2) ?? "Unscored"}</TableCell>
-              <TableCell>
-                <CaseCount
-                  caseIds={entry.summary.caseIds.attempted}
-                  count={entry.summary.attempted}
-                  model={{ modelId: entry.modelId, taskId }}
-                />
-              </TableCell>
-              <TableCell>
-                <CaseCount
-                  caseIds={entry.summary.caseIds.generated}
-                  count={entry.summary.generated}
-                  model={{ modelId: entry.modelId, taskId }}
-                />
-              </TableCell>
-              <TableCell>
-                <CaseCount
-                  caseIds={entry.summary.caseIds.scored}
-                  count={entry.summary.scored}
-                  model={{ modelId: entry.modelId, taskId }}
-                />
-              </TableCell>
-              <TableCell>
-                <FailureCounts model={{ modelId: entry.modelId, taskId }} summary={entry.summary} />
-              </TableCell>
-              <TableCell>
-                <KeyFlawCount model={{ modelId: entry.modelId, taskId }} summary={entry.summary} />
-              </TableCell>
-              {categories.map((category) => {
-                const categoryScore = entry.categoryScores.find(
-                  (score) => score.categoryId === category.categoryId,
-                );
-
-                return (
-                  <TableCell key={category.categoryId}>
-                    {categoryScore?.score.toFixed(2) ?? "—"}
-                  </TableCell>
-                );
-              })}
-              {showAccuracy && (
-                <TableCell>
-                  {entry.accuracy === null ? "—" : formatPercent(entry.accuracy)}
-                </TableCell>
-              )}
-              {formatLanguageResults(entry.languages).map((result) => (
-                <TableCell key={result.language}>{result.text}</TableCell>
-              ))}
-              <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
-              <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
-              <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
-              {showBudget && (
-                <TableCell>{formatLatencyVerdict(entry.meetsLatencyBudget)}</TableCell>
-              )}
-              {showJudgeCost && <TableCell>{formatDollars(entry.judgeCost)}</TableCell>}
+              <MainCells columns={columns} entry={entry} taskId={taskId} totalRuns={totalRuns} />
+              {showsMore && <MoreCells columns={columns} entry={entry} taskId={taskId} />}
             </TableRow>
           ))}
         </TableBody>

@@ -43,9 +43,15 @@ export function FailureCounts({
   summary: EvalSummary;
   model?: { modelId: string; taskId: string };
 }) {
+  const reasons = FAILURE_REASONS.filter((reason) => summary.failures[reason].count > 0);
+
+  if (reasons.length === 0) {
+    return <span>None</span>;
+  }
+
   return (
     <div className="flex flex-col gap-1 text-sm">
-      {FAILURE_REASONS.map((reason) => (
+      {reasons.map((reason) => (
         <div className="flex gap-2" key={reason}>
           <span>{reason}:</span>
           <CaseCount {...summary.failures[reason]} model={model} />
