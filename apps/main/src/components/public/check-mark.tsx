@@ -11,11 +11,7 @@ const SIZES = {
 export function CheckMark({ size }: { size: keyof typeof SIZES }) {
   return (
     <span className={cn("flex items-center justify-center", SIZES[size].box)}>
-      <CheckIcon
-        aria-hidden="true"
-        className={cn("text-muted-foreground", SIZES[size].icon)}
-        strokeWidth={2.5}
-      />
+      <CheckIcon aria-hidden="true" className={cn("text-muted-foreground", SIZES[size].icon)} />
     </span>
   );
 }
