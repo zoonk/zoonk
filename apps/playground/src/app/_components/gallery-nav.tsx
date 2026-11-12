@@ -15,7 +15,7 @@ export function GalleryNav({
   return (
     <nav
       aria-label="Screens"
-      className="flex flex-col gap-5 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto"
+      className="flex flex-col gap-5 max-lg:order-last lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto"
     >
       {groupEntries().map(({ entries, group }) => (
         <div className="flex flex-col gap-1" key={group}>

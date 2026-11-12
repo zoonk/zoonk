@@ -11,7 +11,7 @@ export function DesignNav() {
   return (
     <nav
       aria-label="Design system"
-      className="flex flex-col gap-0.5 lg:sticky lg:top-6 lg:self-start"
+      className="flex gap-0.5 max-lg:-mx-4 max-lg:overflow-x-auto max-lg:px-4 max-lg:whitespace-nowrap lg:sticky lg:top-6 lg:flex-col lg:self-start"
     >
       {DESIGN_PAGES.map((page) => (
         <Link

@@ -96,8 +96,7 @@ export default function GalleryPage({ searchParams }: PageProps<"/">) {
         <div className="flex flex-col gap-1">
           <h1 className="text-xl font-semibold">Player playground</h1>
           <p className="text-muted-foreground text-sm">
-            Every activity, lesson screen and picture as learners see it, from the player&apos;s
-            shared fixtures. Nothing here is saved.
+            Every activity, lesson screen and picture, as learners see it. Nothing is saved.
           </p>
         </div>
 
