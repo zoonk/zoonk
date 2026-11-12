@@ -162,7 +162,7 @@ export async function loadEvidence({
     () =>
       tx.attempt.findMany({
         select: ATTEMPT_EVIDENCE_SELECT,
-        where: { focusTestId: { not: null }, skillId: { in: skillIds }, userId },
+        where: { ...COVERAGE_ANSWER_FILTER, skillId: { in: skillIds }, userId },
       }),
   );
 

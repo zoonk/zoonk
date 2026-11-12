@@ -58,7 +58,8 @@ describe("diagnostic progress outside the recent model evidence window", () => {
     });
 
     const read = await loadEvidence({ skillIds: skills.map((skill) => skill.id), userId: user.id });
-    expect(read.evidence).toHaveLength(1000);
+    expect(read.evidence).toHaveLength(1005);
+    expect(read.placementAnswers).toHaveLength(5);
 
     expect(read.testSkills).toMatchObject([
       { answered: 5, paceAnswers: 5, paceDurationMs: 660_000 },
@@ -75,7 +76,8 @@ describe("diagnostic progress outside the recent model evidence window", () => {
     await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     const continued = await startSitting(goal.id);
-    expect(continued.next?.itemId).toBe(items[5]!.id);
+    expect(continued.complete).toBe(true);
+    expect(continued.next).toBeNull();
 
     const after = readFocusTestRecord(
       await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
