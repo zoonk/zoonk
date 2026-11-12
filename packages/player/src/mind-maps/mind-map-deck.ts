@@ -52,12 +52,7 @@ function toLessonSlide({
   chapter: GoalMindMapView;
   lessonId: string;
 }): LessonSlide {
-  return {
-    chapterId: chapter.chapterId,
-    chapterTitle: chapter.title,
-    kind: "lesson",
-    lessonId,
-  };
+  return { chapterId: chapter.chapterId, chapterTitle: chapter.title, kind: "lesson", lessonId };
 }
 
 function buildLessonsDeck(mindMaps: GoalMindMapsView): DeckSlide[] {

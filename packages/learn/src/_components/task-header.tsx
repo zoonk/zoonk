@@ -52,6 +52,9 @@ export function TaskHeaderSide({
 
 export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
 
+/** A task's title, wherever its header shows one: the Study view's and its zoom alike. */
+export const TASK_TITLE_CLASS = "text-foreground text-sm leading-5 font-medium";
+
 export function TaskHeaderTitle({
   announce = true,
   detail,
@@ -63,7 +66,7 @@ export function TaskHeaderTitle({
 }) {
   return (
     <div className="flex min-w-0 shrink flex-col items-center text-center text-balance">
-      <h1 className="text-foreground text-sm leading-5 font-medium">{title}</h1>
+      <h1 className={TASK_TITLE_CLASS}>{title}</h1>
       {detail && (
         <p
           aria-live={announce ? "polite" : undefined}

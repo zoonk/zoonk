@@ -16,7 +16,8 @@ export type ChapterMapAdmission =
 
 /**
  * Waits for any request deciding on these maps, in chapter id order so writes that lock several
- * never wait on each other in a circle, then reads each map as it is now.
+ * never wait on each other in a circle, then reads each map as it is now. A row it adds to lock a
+ * chapter the write then refuses stays `pending`, which reads as no map.
  */
 export async function lockMindMapRows(
   transaction: TransactionClient,

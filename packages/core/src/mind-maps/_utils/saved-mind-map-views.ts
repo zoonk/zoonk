@@ -63,9 +63,9 @@ function findScopeChapter({
 }
 
 /**
- * The Saved tab: saves that open now in syllabus order (a lesson held by two chapters shows under
- * the first), then those of this goal's scope or saved from this goal that no longer open, newest
- * first, under their saved titles. Saves from other goals outside this scope aren't listed.
+ * The Saved tab: saves that open now in syllabus order, then those of this goal's scope or saved
+ * from this goal that no longer open, newest first, under their saved titles. Saves from other
+ * goals outside this scope aren't listed.
  */
 export function toSavedMindMaps({
   chapters,
@@ -77,6 +77,7 @@ export function toSavedMindMaps({
   chapters: readonly GoalMindMapView[];
   facts: readonly Pick<MindMapChapterFacts, "chapterId" | "lessonIds">[];
   goalId: string;
+  /** Each lesson under one chapter. */
   lessonMaps: ReadonlyMap<string, ScopeLessonMap[]>;
   /** Oldest first. */
   savedRows: readonly SavedRow[];
@@ -87,13 +88,11 @@ export function toSavedMindMaps({
 
   const saved = toSavedKeys(shown.map(({ row }) => row));
 
-  const listed = chapters.flatMap((chapter) =>
+  const open = chapters.flatMap((chapter) =>
     listOpenSaves({ chapter, lessonMaps: lessonMaps.get(chapter.chapterId) ?? [], saved }),
   );
 
-  const keys = listed.map((view) => toSavedKey(view));
-  const open = listed.filter((_view, index) => keys.indexOf(keys[index] ?? "") === index);
-  const opens = new Set(keys);
+  const opens = toSavedKeys(open);
 
   const closed = shown
     .filter(({ row }) => !opens.has(toSavedKey(row)))

@@ -7442,6 +7442,11 @@ msgid "{count, plural, one {# on the way. You can leave while it's made.} other 
 msgstr "{count, plural, other {#章分のマップを作成しています。作成中はこの画面を離れても大丈夫です。}}"
 
 #: src/mind-maps/not-made-yet.tsx
+msgctxt "uSD0Jk"
+msgid "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}"
+msgstr "{count, plural, other {マップ#件の作成が完了しませんでした。もう一度お試しください。}}"
+
+#: src/mind-maps/not-made-yet.tsx
 msgctxt "CHNbiu"
 msgid "{count, plural, one {You can make # more right now.} other {You can make # more right now.}}"
 msgstr "{count, plural, other {今すぐあと#章分のマップを作成できます。}}"

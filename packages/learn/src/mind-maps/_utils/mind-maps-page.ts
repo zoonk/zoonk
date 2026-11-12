@@ -52,6 +52,7 @@ export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
   const open = chapters.filter((chapter) => chapter.status !== "plusRequired");
 
   return {
+    failed: open.filter((chapter) => chapter.status === "failed").length,
     onTheWay: open.filter(
       (chapter) => chapter.status === "drawing" || chapter.status === "writingLessons",
     ).length,
@@ -100,7 +101,7 @@ export function getIndexLayout<Row>(groups: readonly IndexGroup<Row>[]) {
   return groups.some((group) => group.name !== null) ? ("folded" as const) : ("preview" as const);
 }
 
-/** No new map can start now: no chapter offers to create one, and the page says why. */
+/** Nothing can start now, not even a failed map's free retry: the page says why. */
 export function startsNoMap({ startable, stop }: MindMapCreateOffer): boolean {
   return startable === 0 && stop !== null;
 }
