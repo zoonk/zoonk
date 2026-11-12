@@ -18,7 +18,7 @@ This skill is a workflow, not a frozen copy of Google's Android or Material Desi
 3. If a Material page requires JavaScript, use the official Material sitemap to find the current page:
    - `https://m3.material.io/sitemap.xml`
 4. Choose the default Material or AndroidX component first, styled only through `MaterialTheme` roles and [the design-system mapping](references/design-system.md). Only build custom UI when no platform component can carry the design, and give it the same accessibility, input, and adaptive behavior as the platform one.
-5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) with the matching `main` screen.
+5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) and its words with the matching `main` screen: the copy is main's, written to zoonk-design's [Words](../zoonk-design/SKILL.md#words), and a Material slot with room for a sentence (supporting text, a dialog's body) doesn't earn one.
 
 ## Product Rule
 

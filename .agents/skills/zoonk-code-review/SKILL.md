@@ -4,7 +4,7 @@ description: Review Zoonk diffs or assess supplied review comments against actua
 license: MIT
 metadata:
   author: zoonk
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Zoonk code review
@@ -46,7 +46,7 @@ Choose the relevant areas below rather than running a fixed audit of every subsy
 - **Performance:** Preserve independent async work; examine added queries, model calls, unbounded results, reads whose cost grows with a learner's history or the catalog, or client payloads. Repeated cheap translation calls are expected. Require evidence before proposing performance machinery.
 - **Data and workflows:** Check uniqueness, transactions, retry safety, freshness, and invalidation. Public API changes must preserve the OpenAPI contract; distinguish public product endpoints from the same-origin transport exception in [API guidance](../../../apps/api/AGENTS.md).
 - **UI and native behavior:** Judge the whole changed flow, including accessibility and recovery states, in the actual application when relevant. Distinguish rendered observations from static inference.
-- **Learner experience:** When the diff changes what learners see or do, walk the affected journeys on the running app with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md): two or three personas from its catalog, including at least one bad-day path. You didn't build the change, so you have the fresh eyes the walk needs. Use the PR's Verification section to choose what it didn't cover, not as a reason to skip the walk. Report experience problems as findings with the persona, the journey and what they saw. When the app can't run, say so as a limitation.
+- **Learner experience:** When the diff changes what learners see or do, walk the affected journeys on the running app with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md): two or three personas from its catalog, including at least one bad-day path. You didn't build the change, so you have the fresh eyes the walk needs. Use the PR's Verification section to choose what it didn't cover, not as a reason to skip the walk. Report experience problems as findings with the persona, the journey and what they saw. When the app can't run, say so as a limitation. A finding that a learner can't tell or doesn't know something comes with the fix order in zoonk-design's [Words](../zoonk-design/SKILL.md#words): remove, rename, show, move, and only then a sentence. Never propose "add a line saying…" first. Don't ask a screen to state a caveat because it is true: say what a learner would do wrong without it, or drop the finding. On an app screen, gained words, a label that names the next screen or a consequence, and a term no earlier screen taught are findings too. A marketing page (the landing page, the catalog and its course pages, pricing, the blog) is judged by zoonk-design's [Marketing pages](../zoonk-design/SKILL.md#marketing-pages) instead: not by how many words it has, but by whether each section answers a question a visitor has.
 - **Coverage:** Check whether assertions would catch the real defect and whether fixtures isolate persisted state. Do not request tests that only mirror copy, styles, schemas, or library behavior.
 
 ## Conditional references
@@ -55,7 +55,7 @@ Choose the relevant areas below rather than running a fixed audit of every subsy
 - For component architecture, use [compound components](../zoonk-compound-components/SKILL.md); for visual or interaction judgment, use [design guidance](../zoonk-design/SKILL.md), which routes native platform work.
 - For effect or React performance questions, consult the relevant [React best practices](../vercel-react-best-practices/SKILL.md). Load [next-dev-loop](../next-dev-loop/SKILL.md) when runtime investigation is needed, not for every TSX diff.
 - For test design or fixture questions, use [testing guidance](../zoonk-testing/SKILL.md). Internal app exclusions and the prohibition on React component unit tests still apply.
-- For user-facing copy, consult the [shared](../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../packages/i18n/.eloqnt/styleguide.en.md) style guides. Check translations against the [translation rules](../../guides/translations.md).
+- For user-facing copy, consult zoonk-design's [Words](../zoonk-design/SKILL.md#words) and the [shared](../../../packages/i18n/.eloqnt/styleguide.md) and [English](../../../packages/i18n/.eloqnt/styleguide.en.md) style guides. Check translations against the [translation rules](../../guides/translations.md).
 
 ## Checks and output
 

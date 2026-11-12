@@ -69,13 +69,13 @@
 
 ## Plan terminology
 
-- “Pace”: “Tempo”; the “On pace” / “Keeping pace” status: “Im Zeitplan”
+- “Pace”: “Tempo”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “Im Zeitplan”
 - “Finished”: “Abgeschlossen”
-- “Past date”: “Nach dem Zieldatum”, not “Beendet” or “Abgelaufen”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Nach dem Zieldatum”, not “Beendet” or “Abgelaufen”
 - “Needs adjusting”: “Anpassung nötig”
 - “Too tight”: “Zu knapp”
 - “left out”: “ausgelassen”, not “übersprungen”
-- “Daily time”: “Tägliche Lernzeit”, not “Zeitbudget”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tägliche Lernzeit”, not “Zeitbudget”
 - “rest day”: “Pausentag”, not “Ruhetag”
 
 ## Buddy names

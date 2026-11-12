@@ -79,14 +79,14 @@
 
 ## Plan terminology
 
-- “Pace”: “Ritmo”; the “On pace” / “Keeping pace” status: “Al passo”
+- “Pace”: “Ritmo”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “Al passo”
 - “Finished”: “Completato”
-- “Past date”: “Data superata”, not “Scaduto” or “Terminato”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Data superata”, not “Scaduto” or “Terminato”
 - “Needs adjusting”: “Da adattare”
 - “Too tight”: “Troppo serrato”
 - “left out”: “lasciato fuori”, not “saltato”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “saltare” / “saltato”
-- “Daily time”: “Tempo giornaliero”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Tempo giornaliero”
 - “rest day”: “giorno di riposo”
 
 ## Buddy names

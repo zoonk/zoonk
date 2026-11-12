@@ -33,7 +33,7 @@ Web, iOS and Android are one product, so the content layer looks the same on all
 - **Shape and spacing:** the generated `Radius` constants with `.continuous` corners; nothing is a capsule except avatars, dots and rings. Page margins come from `ZoonkList`, the rest from safe areas, size classes, `ViewThatFits` and adaptive grids. No fixed frames or device checks.
 - **Custom** artwork only where no piece carries the meaning (belts and characters, for example), and it still adapts to dark, Increase Contrast and Dynamic Type.
 
-From `main` take the product and its look: copy, flows, information hierarchy, screen structure, icons (as SF Symbols) and the content layer's design through the shared pieces. Take controls, navigation, gestures, input and accessibility from the platform. Don't port web implementation details (HTML layout tricks, hover-only affordances, custom replacements for native controls, hex colors, pixel sizes at the call site).
+From `main` take the product and its look: copy, flows, information hierarchy, screen structure, icons (as SF Symbols) and the content layer's design through the shared pieces. The words are main's too, written to zoonk-design's [Words](../zoonk-design/SKILL.md#words): a native slot with room for a sentence (a footer, a description, an alert's message) doesn't earn one. Take controls, navigation, gestures, input and accessibility from the platform. Don't port web implementation details (HTML layout tricks, hover-only affordances, custom replacements for native controls, hex colors, pixel sizes at the call site).
 
 ## Liquid Glass (iOS 26 and later)
 
