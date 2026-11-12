@@ -572,7 +572,7 @@ final class LessonPlayerStore {
     }
 
     alternative = lesson?.alternative?.value1
-    writingKind = lesson?.kind == .challenge ? .challenge : .lesson
+    writingKind = lesson.map(GenerationWait.Kind.init) ?? .lesson
 
     switch lesson?.status {
     case .generating: waitForWriting(outline)

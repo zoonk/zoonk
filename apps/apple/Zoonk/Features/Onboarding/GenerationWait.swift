@@ -155,8 +155,11 @@ struct GenerationWait: Equatable, Sendable {
     return (done / total, (done + running.reduce(0, +)) / total, running.max())
   }
 
-  /// How long a lesson usually takes to write, from its phases' usual durations.
-  static let lessonSeconds = phases(for: .lesson).reduce(0) { $0 + $1.seconds }
+  /// How long a run usually takes, from its phases' usual durations: a phase only some runs have,
+  /// such as a challenge's redraft, isn't usual.
+  static func usualSeconds(_ kind: Kind) -> Double {
+    phases(for: kind).filter { !$0.isOptional }.reduce(0) { $0 + $1.seconds }
+  }
 
   /// Estimates are never the finish line: only the end of the work fills the bar.
   private static let driftCap = 0.97
@@ -1201,6 +1204,10 @@ private struct GenerationWaitBar: View {
 }
 
 extension GenerationWait.Kind {
+  init(_ readiness: Components.Schemas.LessonReadiness) {
+    self = readiness.kind == .challenge ? .challenge : .lesson
+  }
+
   /// What the wait is for, as its bar and strip say it.
   var name: LocalizedStringResource {
     switch self {

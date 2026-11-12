@@ -186,6 +186,11 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .done, .done])
   }
 
+  func testAChallengesUsualTimeLeavesOutTheRedraftOnlySomeChallengesNeed() {
+    XCTAssertEqual(GenerationWait.usualSeconds(.challenge), 75 + 50)
+    XCTAssertEqual(GenerationWait.usualSeconds(.lesson), 145)
+  }
+
   func testWritingALessonCountsItsScreensWithAChecksBetweenThenKeepsChecking() {
     let write = GenerationWait(kind: .lesson).phases[1]
     let lines = (0..<10).map { write.detailLine(tick: $0).map { String(localized: $0) } }
