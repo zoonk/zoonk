@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -214,7 +215,7 @@ internal fun CountryRebuildNotice(
             if (failed) {
                 Icon(painterResource(R.drawable.ic_warning), contentDescription = null, tint = MaterialTheme.zoonk.warning)
             } else {
-                CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                CircularProgressIndicator(Modifier.size(20.dp).semantics { hideFromAccessibility() }, strokeWidth = 2.dp)
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
