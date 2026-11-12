@@ -32,11 +32,13 @@ import {
 import { readCpuMs } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
+import { type PageWords, pageKind, readWords, summarizeWords, wordFindings } from "./words.mts";
 
 export const NETWORK_IDLE_MS = 15_000;
 
 export type Target = {
   actions: Map<string, string>;
+  app: string;
   queries?: string;
   baseUrl: string;
   browser: Browser;
@@ -56,6 +58,7 @@ export type LoadReport = LoadMeasurement & {
   path: string;
   screenshots: string[];
   viewport: ViewportName;
+  words: PageWords;
 };
 
 const QUERY_HASH_LENGTH = 8;
@@ -117,6 +120,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     unprefetchedLinks: links
       .filter((link) => !prefetched.has(link))
       .map((link) => redactQuery(link)),
+    words: await page.evaluate(readWords),
   };
 }
 
@@ -167,7 +171,8 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, timeOrigin: _, ...measured } = loaded;
+    const { bytes, timeOrigin: _, words: text, ...measured } = loaded;
+    const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
       ...measured,
@@ -192,13 +197,14 @@ export async function measureLoad(
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
       },
-      findings: judgeLoad(measurement),
+      findings: [...judgeLoad(measurement), ...wordFindings(words)],
       frames: paints,
       framesDirectory: `${name}-frames`,
       mainThreadMs,
       path: redactQuery(path),
       screenshots: appearances.screenshots,
       viewport,
+      words,
     };
   } finally {
     await context.close();
