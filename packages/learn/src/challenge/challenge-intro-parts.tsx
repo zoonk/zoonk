@@ -4,7 +4,6 @@ import { useExtracted, useFormatter } from "next-intl";
 import { PageEyebrow } from "../_components/page";
 import { StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
 import { toLabelCase } from "../_utils/label-case";
-import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { useChallengeScreen } from "./challenge-context";
 
 export function IntroHeading({
@@ -41,10 +40,10 @@ export function usePrizeFact(): string {
   return t("+{points} Brain Power", { points: format.number(challenge.reward.brainPower) });
 }
 
-export function useEyebrow(): string {
+/** A second go says so; a first one needs no label over its title. */
+export function useRematchEyebrow(): string | null {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
-  const name = useCheckpointEyebrow(challenge);
 
-  return challenge.rematch ? t("New try · {name}", { name }) : name;
+  return challenge.rematch ? t("Rematch") : null;
 }

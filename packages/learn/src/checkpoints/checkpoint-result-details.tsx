@@ -1,11 +1,9 @@
 "use client";
 
-import { ArrowRightIcon, CheckIcon, FlagIcon, RotateCcwIcon, SearchCheckIcon } from "lucide-react";
+import { ArrowRightIcon, CheckIcon, RotateCcwIcon, SearchCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
-import { useCheckpointScreen } from "./checkpoint-context";
-import { phaseNumber, usePhaseLabel } from "./checkpoint-labels";
 import { type ResultRows } from "./checkpoint-result";
 import { useIsWon, useRetry } from "./use-checkpoint-outcome";
 
@@ -18,54 +16,26 @@ function DetailsSection({ children, title }: { children: React.ReactNode; title:
   );
 }
 
-function WonDetails({ rows }: { rows: ResultRows }) {
+function WonDetails() {
   const t = useExtracted();
-  const phaseLabel = usePhaseLabel();
-  const { checkpoint } = useCheckpointScreen();
-  const phase = phaseNumber(checkpoint);
 
   return (
-    <>
-      {(rows.phaseComplete || rows.badge) && (
-        <DetailsSection title={t("Rewards")}>
-          {rows.phaseComplete && (
-            <StepRow>
-              <FlagIcon aria-hidden="true" />
-              <span className="font-medium">
-                {phase ? t("Phase {phase} complete", { phase }) : t("Phase complete")}
-              </span>
-            </StepRow>
-          )}
-
-          {rows.badge && (
-            <StepRow>
-              <SearchCheckIcon aria-hidden="true" />
-              <span className="font-medium">
-                {t({
-                  description: "A badge for catching the Trickster's traps.",
-                  message: "Trap hunter badge",
-                })}
-              </span>
-            </StepRow>
-          )}
-        </DetailsSection>
-      )}
-
-      {rows.nextPhase && (
-        <DetailsSection title={t("Next phase")}>
-          <StepRow>
-            <ArrowRightIcon aria-hidden="true" />
-            <span className="font-medium">{phaseLabel(rows.nextPhase)}</span>
-          </StepRow>
-        </DetailsSection>
-      )}
-    </>
+    <DetailsSection title={t("Rewards")}>
+      <StepRow>
+        <SearchCheckIcon aria-hidden="true" />
+        <span className="font-medium">
+          {t({
+            description: "A badge for catching the Trickster's traps.",
+            message: "Trap hunter badge",
+          })}
+        </span>
+      </StepRow>
+    </DetailsSection>
   );
 }
 
 function NotWonDetails({ rows }: { rows: ResultRows }) {
   const t = useExtracted();
-  const phaseLabel = usePhaseLabel();
   const retry = useRetry();
 
   return (
@@ -75,16 +45,18 @@ function NotWonDetails({ rows }: { rows: ResultRows }) {
           {retry.passed ? <CheckIcon aria-hidden="true" /> : <RotateCcwIcon aria-hidden="true" />}
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="font-medium">{retry.title}</span>
-            <span className="text-muted-foreground text-xs text-pretty">{retry.detail}</span>
+            {retry.detail && (
+              <span className="text-muted-foreground text-xs text-pretty">{retry.detail}</span>
+            )}
           </span>
         </StepRow>
       )}
 
-      {rows.nextPhase && (
+      {rows.nextLessonsOpen && (
         <StepRow>
           <ArrowRightIcon aria-hidden="true" />
           <span className="min-w-0 flex-1 text-pretty">
-            {t("The next phase, {phase}, is already open.", { phase: phaseLabel(rows.nextPhase) })}
+            {t("Your next lessons are already open.")}
           </span>
         </StepRow>
       )}
@@ -92,8 +64,9 @@ function NotWonDetails({ rows }: { rows: ResultRows }) {
   );
 }
 
+/** Shown only when `hasResultRows`, so a win reaches here with its badge. */
 export function CheckpointResultDetails({ rows }: { rows: ResultRows }) {
   const won = useIsWon();
 
-  return won ? <WonDetails rows={rows} /> : <NotWonDetails rows={rows} />;
+  return won ? <WonDetails /> : <NotWonDetails rows={rows} />;
 }

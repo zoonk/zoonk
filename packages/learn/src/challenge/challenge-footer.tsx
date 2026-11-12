@@ -49,15 +49,15 @@ function OpensLine() {
     );
   }
 
-  return <PhaseLessonsLine />;
+  return <LessonsFirstLine />;
 }
 
-function PhaseLessonsLine() {
+function LessonsFirstLine() {
   const t = useExtracted();
 
   return (
     <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      {t("Opens after this phase's lessons")}
+      {t("Opens when you finish the lessons before it")}
     </StatusLine>
   );
 }
@@ -73,7 +73,7 @@ function WaitingLine() {
 
   return (
     <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      {empty ? t("This challenge isn't ready yet.") : t("In your next session")}
+      {empty ? t("This challenge isn't ready yet.") : t("Next time you study")}
     </StatusLine>
   );
 }
@@ -103,7 +103,7 @@ function StartProblem() {
 
 function StartButton() {
   const t = useExtracted();
-  const { challenge, move, start } = useChallengeScreen();
+  const { move, start } = useChallengeScreen();
 
   return (
     <>
@@ -117,7 +117,7 @@ function StartButton() {
           icon={<PlayIcon aria-hidden="true" />}
           onClick={() => void start.start()}
         >
-          {challenge.mock ? t("Start the mock exam") : t("Start")}
+          {t("Start")}
         </TaskMainButton>
       </TaskActions>
     </>
@@ -230,7 +230,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "ready":
     case "started":
       if (challenge.waitReason) {
-        return { actions: null, line: <PhaseLessonsLine /> };
+        return { actions: null, line: <LessonsFirstLine /> };
       }
 
       if (challenge.status === "ready" && writing?.kind === "refused") {
@@ -246,18 +246,18 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
       };
     case "tried":
       return {
-        actions: <OpenLink>{t("See how it went")}</OpenLink>,
+        actions: <OpenLink>{t("See result")}</OpenLink>,
         line: (
           <StatusLine icon={<RotateCcwIcon className="size-4" />}>
             {t(
-              "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}",
+              "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}",
               { lessons: challenge.reinforcementLessons },
             )}
           </StatusLine>
         ),
       };
     case "done":
-      return { actions: <OpenLink>{t("See how it went")}</OpenLink>, line: null };
+      return { actions: <OpenLink>{t("See result")}</OpenLink>, line: null };
     case "plusRequired":
       return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
     case "waiting":

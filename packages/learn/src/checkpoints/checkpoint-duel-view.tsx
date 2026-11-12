@@ -18,7 +18,7 @@ import { getCurrentQuestion, getDuelScore } from "./checkpoint-duel-state";
 import { DuelOver, Verdict } from "./checkpoint-duel-verdict";
 import { NoVerdictStep } from "./checkpoint-empty";
 import { CheckpointError, CheckpointFrame } from "./checkpoint-frame";
-import { phaseNumber, useCheckpointEyebrow } from "./checkpoint-labels";
+import { useChallengeName } from "./checkpoint-labels";
 import { CheckpointOptions } from "./checkpoint-options";
 import { TricksterArt } from "./trickster-art";
 import { TricksterShield, TricksterShieldPlates } from "./trickster-shield";
@@ -159,7 +159,7 @@ function DuelAction() {
   const { question, score } = useDuelNumbers();
   const { feedback, pending, selected } = duel.state;
   const answered = !question || feedback !== null;
-  const nextLabel = score.done ? t("See how it went") : t("Next");
+  const nextLabel = score.done ? t("See result") : t("Next");
 
   return (
     <TaskMainButton
@@ -173,21 +173,11 @@ function DuelAction() {
   );
 }
 
-function reward(chunks: React.ReactNode) {
-  return <span className="text-brain-text">{chunks}</span>;
-}
-
 function PrizeRow() {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
   const points = useFormatter().number(checkpoint.reward.brainPower);
-  const phase = phaseNumber(checkpoint);
   const isWeekly = checkpoint.kind === "weekly";
-
-  const value =
-    phase && checkpoint.reward.phaseComplete
-      ? t.rich("<reward>+{points}</reward> · phase {phase} done", { phase, points, reward })
-      : reward(t("+{points}", { points }));
 
   return (
     <StepRows>
@@ -206,8 +196,8 @@ function PrizeRow() {
                 message: "Winning",
               })}
         </span>
-        <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-          {value}
+        <span className="text-brain-text shrink-0 font-mono text-xs tabular-nums">
+          {t("+{points}", { points })}
         </span>
       </StepRow>
     </StepRows>
@@ -232,9 +222,6 @@ function TricksterPanel() {
           <TricksterShieldPlates broken={score.correct} segments={checkpoint.passMark} />
           <TaskMeta
             facts={[
-              t("{count, plural, =0 {# broken} one {# broken} other {# broken}}", {
-                count: broken,
-              }),
               !score.decision &&
                 toGo > 0 &&
                 t("{count, plural, one {# to go} other {# to go}}", { count: toGo }),
@@ -246,12 +233,6 @@ function TricksterPanel() {
             ]}
           />
         </section>
-
-        <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
-          {t(
-            "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set.",
-          )}
-        </p>
       </div>
 
       {score.decision !== "lost" && <PrizeRow />}
@@ -259,28 +240,14 @@ function TricksterPanel() {
   );
 }
 
-function WeeklyPanel() {
-  const t = useExtracted();
-
-  return (
-    <>
-      <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
-        {t("No hints. You'll see right or wrong after each answer, and why at the end.")}
-      </p>
-
-      <PrizeRow />
-    </>
-  );
-}
-
 function useDuelAside(): TaskFrameAside {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
-  const name = useCheckpointEyebrow(checkpoint);
+  const name = useChallengeName(checkpoint);
   const isBoss = checkpoint.kind !== "weekly";
 
   return {
-    children: isBoss ? <TricksterPanel /> : <WeeklyPanel />,
+    children: isBoss ? <TricksterPanel /> : <PrizeRow />,
     label: name,
     meta: isBoss
       ? t("{count, plural, one {# right to win} other {# right to win}}", {
@@ -296,6 +263,7 @@ export function CheckpointDuelView() {
   const { checkpoint } = useCheckpointScreen();
   const { position, question, score, segments, total } = useDuelNumbers();
   const aside = useDuelAside();
+  const name = useChallengeName(checkpoint);
   const isBoss = checkpoint.kind !== "weekly";
   const empty = total === 0;
   const current = Math.min(position + 1, total);
@@ -331,7 +299,7 @@ export function CheckpointDuelView() {
           </TaskActions>
         </>
       }
-      headerTitle={<TaskHeaderTitle title={isBoss ? t("The Trickster") : t("Weekly challenge")} />}
+      headerTitle={<TaskHeaderTitle title={name} />}
       progress={empty ? undefined : progress}
     >
       {question && <DuelRecording question={question} />}

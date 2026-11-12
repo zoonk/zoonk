@@ -12,7 +12,7 @@ import { getCeremonyMoment } from "../session/moment-ceremony";
 import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { NoVerdictStep } from "./checkpoint-empty";
-import { useCheckpointEyebrow } from "./checkpoint-labels";
+import { useChallengeName } from "./checkpoint-labels";
 import { type ResultRows, hasResultRows } from "./checkpoint-result";
 import { CheckpointResultDetails } from "./checkpoint-result-details";
 import {
@@ -133,7 +133,7 @@ function OutcomeStep({ rows, showsReview }: { rows: ResultRows; showsReview: boo
 export function CheckpointResultView() {
   const t = useExtracted();
   const { checkpoint, duel, hrefs, renderCeremony } = useCheckpointScreen();
-  const name = useCheckpointEyebrow(checkpoint);
+  const name = useChallengeName(checkpoint);
   const outcome = useCheckpointOutcome();
   const rows = useResultRows();
   const hasDetails = outcome !== null && hasResultRows(rows);

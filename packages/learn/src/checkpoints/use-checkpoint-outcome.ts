@@ -22,18 +22,14 @@ export function useIsWon(): boolean {
   return outcome !== null && (checkpoint.kind === "weekly" || outcome.passed);
 }
 
-export function useRetry(): { detail: string; passed: boolean; title: string } | null {
+export function useRetry(): { detail: string | null; passed: boolean; title: string } | null {
   const t = useExtracted();
   const { checkpoint, duel } = useCheckpointScreen();
   const lessons = duel.state.reinforcementLessons;
   const retry = duel.state.completion ? "tomorrow" : checkpoint.retry;
 
   if (retry === "passed") {
-    return {
-      detail: t("This phase is complete."),
-      passed: true,
-      title: t("Passed on a later try"),
-    };
+    return { detail: null, passed: true, title: t("You won the rematch") };
   }
 
   if (!retry) {
@@ -46,7 +42,7 @@ export function useRetry(): { detail: string; passed: boolean; title: string } |
       { lessons },
     ),
     passed: false,
-    title: retry === "tomorrow" ? t("New try tomorrow") : t("New try in your next session"),
+    title: retry === "tomorrow" ? t("Rematch tomorrow") : t("Rematch next time you study"),
   };
 }
 

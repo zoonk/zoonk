@@ -34,7 +34,7 @@ function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
       <GenerationWait kind="challengeQuestions" run={run}>
         <GenerationTimelineTitle>{t("Getting your challenge ready")}</GenerationTimelineTitle>
         <GenerationTimelineDescription>
-          {t("We're writing its questions. It starts here when they're ready.")}
+          {t("It starts here when it's ready.")}
         </GenerationTimelineDescription>
       </GenerationWait>
     </TaskFrame>
