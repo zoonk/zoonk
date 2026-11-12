@@ -54,11 +54,11 @@ final class MindMapsStore {
         return nil
       }
 
-      let started = await self?.readStarted()
+      let started = self?.readStarted()
       let read = try await api.list(token: session.bearerToken, goalId: goalId)
-      await self?.readCameThrough(
+      self?.readCameThrough(
         started, keys: [goalId] + read.chapters.map { "\(goalId):\($0.chapterId)" })
-      await self?.listed(read, goalId: goalId)
+      self?.listed(read, goalId: goalId)
       return read
     }
 
@@ -81,10 +81,10 @@ final class MindMapsStore {
         return nil
       }
 
-      let started = await self?.readStarted()
+      let started = self?.readStarted()
       let read = try await api.map(
         token: session.bearerToken, goalId: goalId, chapterId: chapterId)
-      await self?.readCameThrough(started, keys: [key])
+      self?.readCameThrough(started, keys: [key])
       return read
     }
 
