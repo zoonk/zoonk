@@ -8,6 +8,8 @@ Rewrite `SCREEN` as that version. Return the same kind of screen (`SCREEN_KIND`)
 
 # Rules
 
+- Avoid everything listed in `PROBLEMS_TO_AVOID`.
+
 - Stay faithful: the same idea, the same facts and the same answer. Every fact and number must be correct.
 - Stay at the original's `LEVEL`. An `overview` lesson never gets formulas, equations or code.
 - A check keeps testing the same skill: exactly one right option, and a `reason` on every option (why the right one is right, why each wrong one is tempting and wrong).

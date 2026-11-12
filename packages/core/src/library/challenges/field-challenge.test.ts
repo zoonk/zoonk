@@ -1,38 +1,21 @@
 import { randomUUID } from "node:crypto";
-import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
-import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
+import { assembleChallengeCase, draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { parseStepContent } from "../steps/contract/step-contract";
-import { getOrCreateFieldChallenge } from "./field-challenge";
+import { describe, expect, it } from "vitest";
+import { checkWrittenChallenge } from "./challenge-case-content";
+import { type ScriptedChallenge } from "./challenge-draft";
+import { loadChallengeLessonDraft } from "./challenge-lesson-draft";
+import { finishFieldChallengeDraft, prepareFieldChallengeDraft } from "./field-challenge";
+import { getFieldChallengeToken } from "./field-challenge-token";
 
-type Written = Awaited<ReturnType<typeof generateChallengeCase>>;
-
-function mockCase(data: Written["data"]) {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the data and provenance are read.
-  vi.mocked(generateChallengeCase).mockResolvedValueOnce({
-    data,
-    provenance: {
-      generatedAt: new Date().toISOString(),
-      model: "openai/gpt-6-sol",
-      promptVersion: "test",
-      runId: randomUUID(),
-    },
-  } as Written);
-}
-
-const SKILLS = [{ description: null, name: "Judge whether a gap is chance" }];
-
-async function challengeLesson({
-  ownerId = null,
-  variant = "work",
-}: { ownerId?: string | null; variant?: "whatIf" | "work" } = {}) {
+async function step() {
   const { steps } = await playableLessonFixture({
     lesson: {
-      ownerId,
-      spec: { kind: "challenge", skills: SKILLS, variant },
-      visibility: ownerId ? "private" : "public",
+      spec: { kind: "challenge", skills: [{ description: null, name: "Chance" }], variant: "work" },
     },
     steps: ["challenge"],
   });
@@ -40,66 +23,125 @@ async function challengeLesson({
   return steps[0]?.id ?? "";
 }
 
-describe(getOrCreateFieldChallenge, () => {
-  beforeEach(() => {
-    vi.mocked(generateChallengeCase).mockReset();
-  });
+function scripted(): ScriptedChallenge {
+  const plan = challengePlanFixture();
+  const { written } = assembleChallengeCase({ plan, script: draftEmptyScript(plan) });
+  const { content } = checkWrittenChallenge({ variant: "work", written });
 
-  it("writes the work case in the field once and shares it with everyone in the field", async () => {
-    const stepId = await challengeLesson();
+  if (!content) {
+    throw new Error("The plan fixture's empty script should pass the content check");
+  }
 
-    const nursingCase = {
-      ...writtenChallengeCaseFixture(),
-      title: "Is the ward's infection rate up?",
-    };
+  return {
+    content,
+    provenance: {
+      generatedAt: new Date().toISOString(),
+      latencyMs: 0,
+      model: "openai/gpt-6.1-sol",
+      promptVersion: "test",
+      provider: "openai",
+      requestedModel: "openai/gpt-6.1-sol",
+      runId: randomUUID(),
+      usage: {},
+    },
+    scriptModel: "openai/gpt-6.1-sol",
+    writerModels: ["openai/gpt-6.1-sol"],
+    written,
+  };
+}
 
-    mockCase(nursingCase);
+describe("field challenge admission", () => {
+  it.each(["PT", null])(
+    "loads the course country %s for chapter and field drafts",
+    async (country) => {
+      const course = await courseFixture({ country, language: "pt" });
+      const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+      const workflowRunId = randomUUID();
 
-    const first = await getOrCreateFieldChallenge({ field: "nursing", stepId });
-    const second = await getOrCreateFieldChallenge({ field: "nursing", stepId });
+      const { lesson, steps } = await playableLessonFixture({
+        lesson: {
+          contentRunId: workflowRunId,
+          contentStatus: "running",
+          homeChapterId: chapter.id,
+          language: "pt",
+          spec: {
+            kind: "challenge",
+            skills: [{ description: null, name: "Chance" }],
+            variant: "work",
+          },
+        },
+        steps: ["challenge"],
+      });
 
-    expect(first).toMatchObject({ created: true, status: "ready" });
-    expect(second).toMatchObject({ created: false, status: "ready" });
+      await expect(
+        loadChallengeLessonDraft({ lessonId: lesson.id, workflowRunId }),
+      ).resolves.toMatchObject({ params: { country, language: "pt" } });
 
-    expect(generateChallengeCase).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ field: "nursing", skills: SKILLS, variant: "work" }),
+      await prisma.lesson.update({
+        data: { contentStatus: "completed" },
+        where: { id: lesson.id },
+      });
+
+      await expect(
+        prepareFieldChallengeDraft({ field: "nursing", stepId: steps[0]?.id ?? "", workflowRunId }),
+      ).resolves.toMatchObject({ params: { country, language: "pt" }, status: "challengeDraft" });
+    },
+  );
+
+  it("normalizes tokens and reservation keys, then replays published content", async () => {
+    const stepId = await step();
+    const input = { field: "Nursing", stepId, workflowRunId: randomUUID() };
+
+    expect(getFieldChallengeToken(input)).toBe(
+      getFieldChallengeToken({ ...input, field: "nursing" }),
     );
 
-    const variant = first.status === "ready" ? first.variant : null;
-    expect(variant).toMatchObject({ key: "nursing", kind: "field", stepId });
-    expect(parseStepContent("challenge", variant?.content).title).toBe(nursingCase.title);
+    await expect(prepareFieldChallengeDraft(input)).resolves.toMatchObject({
+      params: { field: "nursing" },
+      status: "challengeDraft",
+    });
+
+    await expect(finishFieldChallengeDraft({ ...input, draft: scripted() })).resolves.toMatchObject(
+      { created: true, status: "ready" },
+    );
+
+    await expect(prepareFieldChallengeDraft(input)).resolves.toMatchObject({ status: "ready" });
   });
 
-  it("tries once more with the problems, and keeps the general case when both drafts fail", async () => {
-    const stepId = await challengeLesson();
-    const broken = { ...writtenChallengeCaseFixture(), startNodeId: "missing" };
-    mockCase(broken);
-    mockCase(broken);
+  it("records one rejection per preparation, sends earlier problems, and exhausts after three", async () => {
+    const stepId = await step();
+    const input = { field: "retail", stepId, workflowRunId: randomUUID() };
+    await prepareFieldChallengeDraft(input);
 
-    const result = await getOrCreateFieldChallenge({ field: "retail", stepId });
+    await finishFieldChallengeDraft({
+      ...input,
+      draft: { model: "openai/gpt-6.1-sol", problems: ["Wrong result"] },
+    });
 
-    expect(result.status).toBe("failed");
-    expect(generateChallengeCase).toHaveBeenCalledTimes(2);
+    await expect(prepareFieldChallengeDraft(input)).resolves.toMatchObject({ status: "heldBack" });
 
-    expect(vi.mocked(generateChallengeCase).mock.calls[1]?.[0].problems).not.toHaveLength(0);
-  });
+    await Promise.all(
+      [randomUUID(), randomUUID()].map(async (run) => {
+        const next = { ...input, workflowRunId: run };
 
-  it("leaves a What if challenge and a private course's challenge as they are", async () => {
-    const user = await userFixture();
+        await expect(prepareFieldChallengeDraft(next)).resolves.toMatchObject({
+          params: { problems: expect.arrayContaining(["Wrong result"]) },
+          status: "challengeDraft",
+        });
 
-    const [whatIf, privateCase] = await Promise.all([
-      challengeLesson({ variant: "whatIf" }),
-      challengeLesson({ ownerId: user.id }),
-    ]);
+        await finishFieldChallengeDraft({
+          ...next,
+          draft: { model: "openai/gpt-6.1-sol", problems: ["Wrong result"] },
+        });
+      }),
+    );
 
     await expect(
-      getOrCreateFieldChallenge({ field: "law", stepId: whatIf }),
-    ).resolves.toStrictEqual({ status: "unsupported" });
+      prepareFieldChallengeDraft({ ...input, workflowRunId: randomUUID() }),
+    ).resolves.toMatchObject({ status: "exhausted" });
 
-    await expect(
-      getOrCreateFieldChallenge({ field: "law", stepId: privateCase }),
-    ).resolves.toStrictEqual({ status: "unsupported" });
-
-    expect(generateChallengeCase).not.toHaveBeenCalled();
+    const generation = await prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId } });
+    expect(generation.heldBackDrafts).toHaveLength(3);
+    await expect(prisma.stepVariant.count({ where: { stepId } })).resolves.toBe(0);
   });
 });

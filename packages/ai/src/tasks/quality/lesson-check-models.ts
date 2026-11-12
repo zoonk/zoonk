@@ -40,9 +40,11 @@ const REVIEWERS = {
 export function getLessonCheckModels({
   kind = "written",
   writerModel,
+  writerModels,
 }: {
   kind?: keyof typeof REVIEWERS;
-  writerModel: string;
+  writerModel?: string;
+  writerModels?: readonly string[];
 }): { fallbackModels: string[]; model: string } {
-  return pickReviewers({ reviewers: REVIEWERS[kind], writerModel });
+  return pickReviewers({ reviewers: REVIEWERS[kind], writerModel, writerModels });
 }
