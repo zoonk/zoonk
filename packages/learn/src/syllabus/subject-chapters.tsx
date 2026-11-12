@@ -116,7 +116,7 @@ function MindMapsLink({ href }: { href: string }) {
 
   return (
     <LearnLink
-      className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-my-1 -mr-2.5")}
+      className={buttonVariants({ className: "-my-1", edge: "end", size: "sm", variant: "ghost" })}
       href={href}
     >
       <NetworkIcon aria-hidden="true" data-icon="inline-start" />
