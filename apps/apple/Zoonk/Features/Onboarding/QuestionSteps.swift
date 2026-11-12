@@ -319,6 +319,10 @@ private struct CountryQuestion: View {
 
   @State private var picked: CountryChoice?
   @State private var isPickingAnother = false
+  @State private var pickedInSheet = false
+  /// A country picked in the sheet becomes the list's selected row; VoiceOver lands on it once the
+  /// sheet is gone, instead of on "Another country", so it says which one it is.
+  @AccessibilityFocusState private var focusedCountry: String?
   /// Where the rows' text starts and where the bar starts, on screen: the bar lines its notice and
   /// buttons up with the rows, whose margin the list picks for the device.
   @State private var rowEdge: CGFloat?
@@ -353,6 +357,7 @@ private struct CountryQuestion: View {
           }
           .pickedRow(picked?.code == choice.code)
           .accessibilityAddTraits(picked?.code == choice.code ? .isSelected : [])
+          .accessibilityFocused($focusedCountry, equals: choice.code)
         }
 
         Button {
@@ -370,6 +375,11 @@ private struct CountryQuestion: View {
         }
         // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
         .sheet(isPresented: $isPickingAnother) {
+          if pickedInSheet {
+            pickedInSheet = false
+            focusedCountry = picked?.code
+          }
+        } content: {
           CountryPickerSheet(
             title: Text(
               "Country", tableName: "Plan",
@@ -381,6 +391,7 @@ private struct CountryQuestion: View {
             selected: picked?.code
           ) { choice in
             picked = choice
+            pickedInSheet = true
             return true
           }
           .zoonkStyles()
