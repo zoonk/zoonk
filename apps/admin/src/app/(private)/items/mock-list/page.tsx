@@ -1,5 +1,13 @@
 import dump from "@/app/(private)/_mock/data/items.json";
-import { type Dump, Lead, MockList, MockSearch, MockSelect, language, readView } from "@/app/(private)/_mock/kit";
+import {
+  type Dump,
+  Lead,
+  MockList,
+  MockSearch,
+  MockSelect,
+  language,
+  readView,
+} from "@/app/(private)/_mock/kit";
 
 const COLUMNS = [
   { label: "Question" },
@@ -9,12 +17,28 @@ const COLUMNS = [
   { align: "right" as const, label: "Accuracy" },
 ];
 
+// A real question from the same database that today's search by skill name can't find.
+const FOUND_BY_TEXT = [
+  [
+    { text: "Qual será o volume da nova maquete?" },
+    { text: "Usar potências e raízes" },
+    { text: "Multiple choice" },
+    { text: "PT" },
+    { text: "—" },
+    { text: "—" },
+    { text: "0" },
+    { text: "—" },
+  ],
+];
+
 export default async function ItemsMockPage({ searchParams }: PageProps<"/items/mock-list">) {
   const search = readView((await searchParams).search);
   const all = (dump as Dump).tables[0]?.rows ?? [];
 
   const rows = search
-    ? all.filter((row) => row[0]?.text.toLowerCase().includes(search.toLowerCase()))
+    ? [...all, ...FOUND_BY_TEXT].filter((row) =>
+        row[0]?.text.toLowerCase().includes(search.toLowerCase()),
+      )
     : all.slice(0, 14);
 
   return (

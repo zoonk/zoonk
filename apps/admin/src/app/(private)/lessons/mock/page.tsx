@@ -1,3 +1,5 @@
+import dump from "@/app/(private)/_mock/data/lesson.json";
+import { type Dump, FactsFrom, TableFrom, readView } from "@/app/(private)/_mock/kit";
 import {
   AdminDetailBody,
   AdminDetailColumns,
@@ -7,8 +9,6 @@ import {
 import { AdminSection } from "@/components/admin-section";
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
-import dump from "@/app/(private)/_mock/data/lesson.json";
-import { type Dump, FactsFrom, TableFrom, readView } from "@/app/(private)/_mock/kit";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
 
 const lesson = dump as Dump;
@@ -90,9 +90,7 @@ function Screens({ json }: { json: boolean }) {
               <DetailField label="Chapter">
                 <span className="flex flex-col">
                   <MockLink>How trading works</MockLink>
-                  <span className="text-muted-foreground text-xs">
-                    How the stock market works
-                  </span>
+                  <span className="text-muted-foreground text-xs">How the stock market works</span>
                 </span>
               </DetailField>
               <DetailField label="Open to">Everyone</DetailField>
@@ -118,27 +116,26 @@ function Screens({ json }: { json: boolean }) {
         <ol className="divide-y">
           <Screen kind="Hook" number={1}>
             <p>
-              Lia opens her broker app: a share of the bakery chain shows $20.10. A second later
-              it shows $20.12. Nobody at the company did anything. So who just changed the
-              price?
+              Lia opens her broker app: a share of the bakery chain shows $20.10. A second later it
+              shows $20.12. Nobody at the company did anything. So who just changed the price?
             </p>
             {json ? (
-                  <pre className="bg-muted overflow-x-auto rounded-lg p-3 font-mono text-xs leading-5 whitespace-pre-wrap">
-                    {HOOK_JSON}
-                  </pre>
-                ) : null}
-              </Screen>
+              <pre className="bg-muted overflow-x-auto rounded-lg p-3 font-mono text-xs leading-5 whitespace-pre-wrap">
+                {HOOK_JSON}
+              </pre>
+            ) : null}
+          </Screen>
 
           <Screen kind="Explanation" number={2}>
             <p className="font-medium">Two lines of people</p>
             <p>
-              At every moment, buyers post the most they&apos;ll pay, called{" "}
-              <strong>bids</strong>, and sellers post the least they&apos;ll accept, called{" "}
-              <strong>asks</strong>. Together they form the <strong>order book</strong>.
+              At every moment, buyers post the most they&apos;ll pay, called <strong>bids</strong>,
+              and sellers post the least they&apos;ll accept, called <strong>asks</strong>. Together
+              they form the <strong>order book</strong>.
             </p>
             <p>
-              While the best bid is below the best ask, nothing happens. A trade happens only
-              when someone accepts the other side&apos;s price.
+              While the best bid is below the best ask, nothing happens. A trade happens only when
+              someone accepts the other side&apos;s price.
             </p>
           </Screen>
 
@@ -154,8 +151,7 @@ function Screens({ json }: { json: boolean }) {
             <p className="font-medium">Buying more than the first seller has</p>
             <p>
               The order book has 200 shares for sale at <strong>$20.12</strong> and 500 at{" "}
-              <strong>$20.15</strong>. You buy 300 shares at the market price. How much do you
-              pay?
+              <strong>$20.15</strong>. You buy 300 shares at the market price. How much do you pay?
             </p>
             <ol className="text-muted-foreground flex flex-col gap-1">
               <li>
@@ -179,8 +175,8 @@ function Screens({ json }: { json: boolean }) {
 
           <Screen answers="No answers yet" kind="Check" number={5}>
             <p>
-              The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What
-              do you pay per share?
+              The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do
+              you pay per share?
             </p>
             <MockOptions options={CHECK_ONE} />
           </Screen>
@@ -188,9 +184,9 @@ function Screens({ json }: { json: boolean }) {
           <Screen kind="Explanation" number={6}>
             <p className="font-medium">Why the price moves</p>
             <p>
-              The price changes whenever the balance changes. If more people want to buy than
-              sell at today&apos;s price, buyers raise their bids and trades happen higher. If
-              sellers rush out, they accept lower bids and the price falls.
+              The price changes whenever the balance changes. If more people want to buy than sell
+              at today&apos;s price, buyers raise their bids and trades happen higher. If sellers
+              rush out, they accept lower bids and the price falls.
             </p>
           </Screen>
 
@@ -198,8 +194,7 @@ function Screens({ json }: { json: boolean }) {
             <p>By what percent did the price move in the hour after the results?</p>
             <p className="text-muted-foreground">
               A price chart from 10:00 to 15:00, with the hour after the results marked. Answer:{" "}
-              <span className="text-foreground font-medium">11.88%</span> (0.1 either way
-              counts).
+              <span className="text-foreground font-medium">11.88%</span> (0.1 either way counts).
             </p>
           </Screen>
 
@@ -212,8 +207,8 @@ function Screens({ json }: { json: boolean }) {
 
           <Screen answers="No answers yet" kind="Check" number={9}>
             <p className="text-muted-foreground">
-              A company&apos;s share price dropped this morning, but nothing at the company
-              changed: same sales, same plans, no news from it.
+              A company&apos;s share price dropped this morning, but nothing at the company changed:
+              same sales, same plans, no news from it.
             </p>
             <p>Why did the price drop?</p>
             <MockOptions options={CHECK_THREE} />
@@ -238,7 +233,7 @@ function Details() {
     <AdminSection title="Details">
       <FactsFrom
         dump={lesson}
-        omit={["Held back", "Spec", "Skills", "Chapters", "Visibility"]}
+        omit={["Held back", "Spec", "Skills", "Chapters", "Visibility", "In plans"]}
         rename={{ "Can do": "What the learner can do after" }}
         section="Details"
       />
