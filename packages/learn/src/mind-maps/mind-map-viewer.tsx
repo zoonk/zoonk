@@ -224,7 +224,10 @@ export function MindMapViewer({
             </DialogClose>
 
             <DialogTitle
-              className={cn("min-w-0 flex-1 text-center text-balance", TASK_TITLE_CLASS)}
+              className={cn(
+                "line-clamp-2 min-w-0 flex-1 text-center text-balance",
+                TASK_TITLE_CLASS,
+              )}
             >
               {title}
             </DialogTitle>
