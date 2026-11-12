@@ -95,7 +95,7 @@ function PlanWeek() {
         )}
       </div>
 
-      <ol className="grid grid-cols-7 gap-1">
+      <ol className="flex justify-between">
         {days.map((day) => {
           const date = isoDateToUtc(day.date);
 
