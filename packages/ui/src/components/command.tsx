@@ -30,22 +30,32 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { SearchIcon } from "lucide-react";
 import type * as React from "react";
+import { useRef } from "react";
 
 const Command = Autocomplete.Root;
 
-/** `overNested` draws the backdrop Base UI skips for a dialog opened inside another one. */
+/**
+ * `overNested` draws the backdrop Base UI skips for a dialog opened inside another one.
+ * `suggestionsFirst` is for a list whose rows are the likely answer: on touch screens the popup
+ * takes focus instead of the search field, so the keyboard doesn't cover them. Its `CommandInput`
+ * then needs `autoFocus={false}`.
+ */
 function CommandDialog({
   children,
   className,
   finalFocus,
   overNested,
+  suggestionsFirst,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   className?: string;
   children: React.ReactNode;
   finalFocus?: React.ComponentProps<typeof DialogPopup>["finalFocus"];
   overNested?: boolean;
+  suggestionsFirst?: boolean;
 }) {
+  const popupRef = useRef<HTMLDivElement>(null);
+
   return (
     <Dialog {...props}>
       <DialogPortal>
@@ -56,6 +66,12 @@ function CommandDialog({
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}
+            initialFocus={
+              suggestionsFirst
+                ? () => globalThis.matchMedia("(pointer: fine)").matches || popupRef.current
+                : undefined
+            }
+            ref={popupRef}
             className={cn(
               "flex h-dvh w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)]",
               "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] sm:ring-1 sm:ring-inset",

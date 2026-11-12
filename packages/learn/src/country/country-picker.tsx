@@ -193,7 +193,7 @@ export function CountryPicker({
   };
 
   return (
-    <CommandDialog onOpenChange={changeOpen} open={open} overNested={overNested}>
+    <CommandDialog onOpenChange={changeOpen} open={open} overNested={overNested} suggestionsFirst>
       <CommandDialogTitle className="not-sr-only px-4 pt-4 text-base font-semibold sm:px-4 sm:pt-3.5 sm:pb-1">
         {title}
       </CommandDialogTitle>
@@ -210,6 +210,7 @@ export function CountryPicker({
       >
         <CommandInput
           aria-label={t("Search countries")}
+          autoFocus={false}
           cancelLabel={t("Cancel")}
           placeholder={t("Search countries")}
         />
