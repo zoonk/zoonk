@@ -2,7 +2,7 @@
 
 import { type SpeakingTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { formatClock } from "../../_utils/clock";
 import { deviceStorage, subscribeToDeviceStorage } from "../../_utils/device-storage";
@@ -29,30 +29,11 @@ function PrepTimeLeft({ deadline }: { deadline: number }) {
 
   if (leftMs === 0) {
     return (
-      <p className="text-[0.8125rem] leading-snug text-pretty">
-        {t("Preparation time is over. Start the call when you're ready.")}
-      </p>
+      <p className="text-[0.8125rem] leading-snug text-pretty">{t("Preparation time is over.")}</p>
     );
   }
 
   return <p className="text-readout text-2xl leading-tight">{formatClock(leftMs)}</p>;
-}
-
-function usePrepLine() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const formatDuration = useFormatDuration();
-
-  return (task: Pick<SpeakingTaskView, "prepMinutes" | "prepShared">) =>
-    task.prepShared
-      ? t("The exam gives {total} to prepare tasks {tasks} together, about {time} for this one.", {
-          tasks: format.list(task.prepShared.tasks.map(String), { type: "conjunction" }),
-          time: formatDuration(task.prepMinutes),
-          total: formatDuration(task.prepShared.minutes),
-        })
-      : t("The exam gives {time} to prepare with the card.", {
-          time: formatDuration(task.prepMinutes),
-        });
 }
 
 export function PrepTimer({
@@ -60,10 +41,10 @@ export function PrepTimer({
   task,
 }: {
   cardId: string;
-  task: Pick<SpeakingTaskView, "prepMinutes" | "prepShared">;
+  task: Pick<SpeakingTaskView, "prepMinutes">;
 }) {
   const t = useExtracted();
-  const prepLine = usePrepLine();
+  const formatDuration = useFormatDuration();
   const clock = useRef<HTMLDivElement>(null);
   // The device's copy, read after hydration so the server's render and the first one match.
   const saved = useSyncExternalStore(
@@ -89,7 +70,7 @@ export function PrepTimer({
         <div className="flex min-w-0 flex-col gap-1">
           <p className="text-sm leading-5 font-medium">{t("Preparation")}</p>
           <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
-            {prepLine(task)}
+            {t("{time}, as in the exam", { time: formatDuration(task.prepMinutes) })}
           </p>
         </div>
         <Button className="shrink-0" onClick={start} size="sm" variant="outline">

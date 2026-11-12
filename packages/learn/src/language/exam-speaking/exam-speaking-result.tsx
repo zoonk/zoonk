@@ -88,10 +88,7 @@ function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedbackView }):
 
   return [
     !feedback.heard && t("You typed your replies, so this estimate leaves out how you sound."),
-    feedback.brief &&
-      t(
-        "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate.",
-      ),
+    feedback.brief && t("You said little, so this estimate is rough."),
   ].filter((note) => typeof note === "string");
 }
 
@@ -137,7 +134,6 @@ function CriteriaStep({
   const title = useExamTaskTitle();
   const levelLine = useLevelLine({ examTask });
   const notes = useEvidenceNotes({ feedback });
-  const aboutSound = feedback.heard && examTask.criteria.some((criterion) => criterion.sound);
 
   return (
     <>
@@ -168,13 +164,7 @@ function CriteriaStep({
         </ResultRows>
       </StepCard>
 
-      <EstimateNote>
-        {aboutSound
-          ? t(
-              "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
-            )
-          : t("An estimate from one practice task, not an official score.")}
-      </EstimateNote>
+      <EstimateNote>{t("An estimate, not an official score.")}</EstimateNote>
     </>
   );
 }
@@ -208,7 +198,6 @@ function NoGradeStep() {
   return (
     <StepCard>
       <StepTitle>{t("This task has no estimate")}</StepTitle>
-      <StepDetail>{t("Try the task again when you're ready.")}</StepDetail>
     </StepCard>
   );
 }
@@ -271,9 +260,7 @@ export function ExamSpeakingResult({
       exitHref={exitHref}
       finalAction={
         nextTaskHref ? (
-          <TaskMainLink href={nextTaskHref}>
-            {t("Go to task {number}", { number: String(examTask.number + 1) })}
-          </TaskMainLink>
+          <TaskMainLink href={nextTaskHref}>{t("Next task")}</TaskMainLink>
         ) : (
           <TaskMainLink href={nextHref}>{t("Continue")}</TaskMainLink>
         )
@@ -286,7 +273,7 @@ export function ExamSpeakingResult({
               kind="examSpeaking"
               onTryAgain={onTryAgain}
             >
-              {t("Try this task with a new card")}
+              {t("Try again")}
             </TryCallAgain>
           )}
           {graded.length > 0 && (

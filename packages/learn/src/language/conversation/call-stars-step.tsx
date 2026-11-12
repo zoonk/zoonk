@@ -162,7 +162,7 @@ export function StarsStep({
 
       {lost && !conversation.locked && (
         <p className="text-muted-foreground text-[0.8125rem] text-pretty">
-          {t("Nothing is lost: the call comes back so you can try again.")}
+          {t("The call comes back so you can try again.")}
         </p>
       )}
 

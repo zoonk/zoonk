@@ -3,16 +3,16 @@
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { PageEyebrow, PageSectionTitle } from "../../_components/page";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { TaskFrame } from "../../shell/task-frame";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
-import { CallIntroFooter, type CallIntroFooterState, callsCharacter } from "./call-intro-footer";
+import { CallIntroFooter, type CallIntroFooterState } from "./call-intro-footer";
 import { useConversationTitle } from "./conversation-labels";
-import { CharacterRow, MicNote } from "./conversation-parts";
+import { CharacterRow, SoundNote } from "./conversation-parts";
 import {
   type CallAudio,
   type MicrophoneProblem,
@@ -127,45 +127,6 @@ export function ConversationIntro({
   );
 }
 
-function HowTheCallWorks({ conversation }: { conversation: LanguageConversationIntro }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const titleId = useId();
-  const { name } = conversation.character;
-  const time = formatDuration(conversation.minutes);
-
-  const steps = [
-    t("{name} answers and speaks first.", { name }),
-    t("Then it's your turn: answer out loud, or type if you can't talk."),
-    t(
-      "When you've done everything, or after about {time}, {name} says goodbye and the call ends.",
-      { name, time },
-    ),
-  ];
-
-  return (
-    <section aria-labelledby={titleId} className="flex flex-col gap-2">
-      <PageSectionTitle id={titleId}>{t("How the call works")}</PageSectionTitle>
-      <ol className="flex flex-col gap-2">
-        {steps.map((step, index) => (
-          <li
-            className="flex items-baseline gap-3 text-[0.9375rem] leading-snug text-pretty"
-            key={step}
-          >
-            <span
-              aria-hidden="true"
-              className="text-muted-foreground w-3 shrink-0 font-mono text-[0.8125rem] tabular-nums"
-            >
-              {index + 1}
-            </span>
-            <span>{step}</span>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
 function CallIntro({
   conversation,
   exitHref,
@@ -180,7 +141,6 @@ function CallIntro({
   const eyebrow = useConversationTitle(conversation);
   const { character } = conversation;
   const time = formatDuration(conversation.minutes);
-  const isCall = callsCharacter(conversation);
 
   return (
     <TaskFrame
@@ -192,23 +152,16 @@ function CallIntro({
     >
       <header className="flex flex-col gap-2">
         <PageEyebrow>
-          {t("About {time} · Level {level}", { level: conversation.level, time })}
+          {t("{time} · Level {level}", { level: conversation.level, time })}
         </PageEyebrow>
         <h1 className="text-title text-balance">{conversation.title}</h1>
         <p className="text-muted-foreground text-pretty">{conversation.situation}</p>
-        {!isCall && (
-          <p className="text-muted-foreground text-sm text-pretty">
-            {t("It ends on its own after about {time}.", { time })}
-          </p>
-        )}
       </header>
 
       <CharacterRow
         detail={t("{role} · {place}", { place: character.place, role: character.role })}
         name={character.name}
       />
-
-      {isCall && <HowTheCallWorks conversation={conversation} />}
 
       <TaskAsideContent
         aria-labelledby="call-goals"
@@ -232,7 +185,7 @@ function CallIntro({
         </ChecklistRows>
       </TaskAsideContent>
 
-      <MicNote>{t("Turn your sound on. The microphone is on only during the call.")}</MicNote>
+      <SoundNote />
     </TaskFrame>
   );
 }

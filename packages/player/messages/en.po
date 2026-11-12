@@ -3056,26 +3056,27 @@ msgid "Tap an idea to see what it covers"
 msgstr "Tap an idea to see what it covers"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "P0MjYO"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
+msgctxt "VdUknp"
+msgid "You can still review and practice your mistakes. More next month, or now with Plus."
+msgstr "You can still review and practice your mistakes. More next month, or now with Plus."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "SDARaX"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
+msgctxt "qbilHX"
+msgid "You can still review and practice your mistakes. More tomorrow, or now with Plus."
+msgstr "You can still review and practice your mistakes. More tomorrow, or now with Plus."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "o_xO7j"
-msgid "That's all the new lessons for this month"
-msgstr "That's all the new lessons for this month"
+msgctxt "VGhCC9"
+msgid "No more new lessons this month"
+msgstr "No more new lessons this month"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "PXe9T_"
-msgid "That's all the new lessons for today"
-msgstr "That's all the new lessons for today"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "No more new lessons today"
 
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/questions/lesson-question-errors.tsx
 msgctxt "xANHtD"
 msgid "See Plus"
 msgstr "See Plus"
@@ -3087,14 +3088,14 @@ msgid "Back"
 msgstr "Back"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "q-Zgbe"
-msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
-msgstr "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
+msgctxt "KFO_vV"
+msgid "Everything you learned comes with you."
+msgstr "Everything you learned comes with you."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "gojCcS"
-msgid "Save your progress to keep going"
-msgstr "Save your progress to keep going"
+msgctxt "2LDIQ9"
+msgid "No more lessons without an account"
+msgstr "No more lessons without an account"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3104,19 +3105,14 @@ msgid "Create a free account"
 msgstr "Create a free account"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "nkKtmz"
-msgid "You've reached today's limit. New lessons open again tomorrow."
-msgstr "You've reached today's limit. New lessons open again tomorrow."
+msgctxt "i1JCVp"
+msgid "More tomorrow."
+msgstr "More tomorrow."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "8aKab6"
-msgid "That's a lot of learning today"
-msgstr "That's a lot of learning today"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "jdlHSh"
-msgid "Try again in a moment. Nothing you did was lost."
-msgstr "Try again in a moment. Nothing you did was lost."
+msgctxt "GyiSWt"
+msgid "Nothing you did was lost."
+msgstr "Nothing you did was lost."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3124,35 +3120,25 @@ msgid "We couldn't open this lesson"
 msgstr "We couldn't open this lesson"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "hp9pnq"
-msgid "Sign in to keep learning."
-msgstr "Sign in to keep learning."
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "You've been logged out"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "QvYlF0"
-msgid "This lesson isn't available anymore."
-msgstr "This lesson isn't available anymore."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "szo7Rq"
-msgid "Sign in to continue"
-msgstr "Sign in to continue"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "A_VPtF"
-msgid "Lesson not available"
-msgstr "Lesson not available"
+msgctxt "t12Boe"
+msgid "This lesson isn't available"
+msgstr "This lesson isn't available"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
-msgctxt "SQJto2"
-msgid "Sign in"
-msgstr "Sign in"
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Log in"
 
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "fKzrQy"
-msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgctxt "x8Qljp"
+msgid "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "This lesson opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3933,14 +3919,14 @@ msgid "⏎ send · ⇧⏎ new line"
 msgstr "⏎ send · ⇧⏎ new line"
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "2P8sqa"
-msgid "Your session expired. Sign in again."
-msgstr "Your session expired. Sign in again."
+msgctxt "NYRAZH"
+msgid "You've been logged out."
+msgstr "You've been logged out."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "iVOq9B"
-msgid "Subscribe to ask questions"
-msgstr "Subscribe to ask questions"
+msgctxt "2SD7dI"
+msgid "Asking questions comes with Plus."
+msgstr "Asking questions comes with Plus."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3961,11 +3947,6 @@ msgstr "Take a short break, then ask again."
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Something went wrong. Try again."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "EaucLA"
-msgid "View plans"
-msgstr "View plans"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"

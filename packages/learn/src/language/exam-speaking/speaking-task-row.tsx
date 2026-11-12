@@ -87,7 +87,7 @@ function useLastTryText() {
     }
 
     if (atLevel > 0) {
-      return t("Last try: {count} of {rated} at {level}", {
+      return t("Last try: at {level} on {count} of {rated} criteria", {
         count: String(atLevel),
         level,
         rated: String(rated),
@@ -95,7 +95,7 @@ function useLastTryText() {
     }
 
     return nearLevel > 0
-      ? t("Last try: {count} of {rated} near {level}", {
+      ? t("Last try: near {level} on {count} of {rated} criteria", {
           count: String(nearLevel),
           level,
           rated: String(rated),
@@ -177,7 +177,7 @@ export function TaskRow({
                 onClick={onStart}
                 size="sm"
               >
-                {t("Start this task")}
+                {t("Start")}
               </Button>
             )}
             {task.lastTry && (
@@ -185,7 +185,7 @@ export function TaskRow({
                 className={buttonVariants({ size: "sm", variant: "outline" })}
                 href={resultHref(task.lastTry.conversationId)}
               >
-                {t("See your last result")}
+                {t("Last result")}
               </LearnLink>
             )}
           </div>

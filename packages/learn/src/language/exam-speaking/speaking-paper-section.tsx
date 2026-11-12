@@ -20,7 +20,6 @@ import {
   PageSectionTitle,
 } from "../../_components/page";
 import { PlusNotice } from "../../_components/plus-lock";
-import { useSentenceSpace } from "../../_utils/locale";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
@@ -55,7 +54,6 @@ export function SpeakingPaperSection({
 }) {
   const t = useExtracted();
   const titleId = useId();
-  const space = useSentenceSpace();
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
@@ -85,13 +83,7 @@ export function SpeakingPaperSection({
         {!title && <PageSectionDetail>{paper.title}</PageSectionDetail>}
       </PageSectionHeader>
 
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-          )}
-        </PlusNotice>
-      )}
+      {locked && <PlusNotice title={t("Speaking practice comes with Plus")} />}
 
       {(paused || call.paused) && (
         <NoticeCard>
@@ -155,14 +147,6 @@ export function SpeakingPaperSection({
       )}
 
       <PageSectionFooter>
-        {paper.tasks.some((task) => task.role === "partner")
-          ? t(
-              "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )
-          : t(
-              "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )}
-        {space}
         <a href={paper.source} rel="noreferrer" target="_blank">
           {t("Official format")}
         </a>

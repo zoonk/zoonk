@@ -74,13 +74,13 @@ function useRisenEstimate() {
   return ({ label, skill }: LanguageSkillLevel): string => {
     switch (skill) {
       case "listening":
-        return t("Your listening estimate went up to {level}", { level: label });
+        return t("Listening went up to {level}", { level: label });
       case "reading":
-        return t("Your reading estimate went up to {level}", { level: label });
+        return t("Reading went up to {level}", { level: label });
       case "speaking":
-        return t("Your speaking estimate went up to {level}", { level: label });
+        return t("Speaking went up to {level}", { level: label });
       case "writing":
-        return t("Your writing estimate went up to {level}", { level: label });
+        return t("Writing went up to {level}", { level: label });
       default:
         return skill satisfies never;
     }
@@ -141,8 +141,8 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
         ? risenEstimate(only)
         : t({
             description:
-              'Two or more skills\' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".',
-            message: "{skills} estimates went up",
+              'Two or more skills\' levels rose since the level test. {skills} lists them: "Speaking and Writing".',
+            message: "{skills} went up",
             values: { skills: format.list(rises.map((rise) => skillName(rise.skill))) },
           })}
     </p>
@@ -157,7 +157,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
   if (levels.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
-        {t("Levels move as you practice. They get more accurate every week.")}
+        {t("Your level shows here once you practice.")}
       </p>
     );
   }
@@ -165,13 +165,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
   return (
     <section aria-labelledby="language-levels-title" className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <SectionLabel id="language-levels-title">
-          {t({
-            description:
-              "Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.",
-            message: "Practice estimates",
-          })}
-        </SectionLabel>
+        <SectionLabel id="language-levels-title">{t("Your level")}</SectionLabel>
         <TargetLabel target={target} targetDate={progress.goal.targetDate} />
       </div>
 
@@ -194,7 +188,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
             style={{ left: `calc(${BAR_START} + (${BAR_WIDTH}) * ${targetShare})` }}
           />
         )}
-        <ul aria-label={t("Practice estimates")} className="flex flex-col [&>li+li]:border-t">
+        <ul aria-label={t("Your level")} className="flex flex-col [&>li+li]:border-t">
           {levels.map((level) => (
             <LevelRow key={level.skill} level={level} />
           ))}
@@ -202,12 +196,6 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
       </div>
 
       <RiseLine levels={levels} />
-
-      <p className="text-muted-foreground text-sm">
-        {t(
-          "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan.",
-        )}
-      </p>
     </section>
   );
 }

@@ -31,7 +31,7 @@ export function CheckpointCallPreparing({
         <WritingWait className="pt-4" kind="conversationCall" writing={call.writing}>
           <GenerationTimelineTitle>{t("Getting your call ready")}</GenerationTimelineTitle>
           <GenerationTimelineDescription>
-            {t("It opens here as soon as it's ready.")}
+            {t("This takes about half a minute.")}
           </GenerationTimelineDescription>
         </WritingWait>
       </TaskFrame>
@@ -48,7 +48,7 @@ export function CheckpointCallPreparing({
             icon={<PhoneIcon aria-hidden="true" />}
             onClick={call.start}
           >
-            {t("Get the call ready")}
+            {t("Start")}
           </TaskMainButton>
         </TaskActions>
       }
@@ -56,11 +56,7 @@ export function CheckpointCallPreparing({
     >
       <header className="flex flex-col gap-2">
         <h1 className="text-title text-balance">{unitTitle}</h1>
-        <p className="text-muted-foreground text-pretty">
-          {t(
-            "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
-          )}
-        </p>
+        <p className="text-muted-foreground text-pretty">{t("A short call about this unit.")}</p>
         {call.failed && (
           <p className="text-destructive-text text-sm" role="alert">
             {t("The call didn't start. Try again in a moment.")}

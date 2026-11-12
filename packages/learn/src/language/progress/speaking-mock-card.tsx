@@ -90,7 +90,7 @@ export function SpeakingMockCard({
               size="lg"
               variant="outline"
             >
-              {t("Start the mock")}
+              {t("Start")}
             </Button>
 
             {call.failed && (

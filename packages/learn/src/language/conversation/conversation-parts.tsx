@@ -3,7 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MicIcon, Volume2Icon } from "lucide-react";
+import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
@@ -117,13 +117,15 @@ export function SpeakButton({
   );
 }
 
-export function MicNote({ children }: { children: React.ReactNode }) {
+export function SoundNote() {
+  const t = useExtracted();
+
   return (
     <p className="text-muted-foreground flex items-start gap-2 text-[0.8125rem] leading-snug text-pretty">
       <LineMarker>
-        <MicIcon aria-hidden="true" className="size-3.5" />
+        <Volume2Icon aria-hidden="true" className="size-3.5" />
       </LineMarker>
-      {children}
+      {t("Turn your sound on.")}
     </p>
   );
 }

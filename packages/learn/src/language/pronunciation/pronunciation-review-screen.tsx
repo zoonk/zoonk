@@ -61,10 +61,7 @@ function RoundResult({
 
   return (
     <>
-      <MomentHeader
-        detail={t("An accent never blocks you.")}
-        title={result ? t("Practice done") : t("Nothing said this time")}
-      >
+      <MomentHeader title={result ? t("Practice done") : t("Nothing said this time")}>
         {result && (
           <MomentReadouts
             brainPower={result.brainPower}
