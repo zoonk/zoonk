@@ -45,7 +45,7 @@ extension View {
           .padding(.vertical, 2)
         : nil
     )
-    .listRowSeparator(isCurrent ? .hidden : .automatic)
+    .hidesSeparators(isCurrent)
   }
 
   /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
@@ -60,6 +60,31 @@ extension View {
           .padding(.vertical, -10)
       }
     }
-    .listRowSeparator(isPicked ? .hidden : .automatic)
+    .hidesSeparators(isPicked)
+  }
+
+  private func hidesSeparators(_ isHidden: Bool) -> some View {
+    modifier(HidesSeparators(isHidden: isHidden))
+  }
+}
+
+/// SwiftUI hides a row's hairlines as soon as it's asked, but leaves them hidden while the row stays
+/// on screen when asked to show them again (iOS 27.2). The row that stops hiding them is drawn anew,
+/// which draws its hairlines and its neighbor's; the row being picked keeps its identity, so
+/// VoiceOver stays on it.
+private struct HidesSeparators: ViewModifier {
+  let isHidden: Bool
+
+  @State private var redraws = 0
+
+  func body(content: Content) -> some View {
+    content
+      .listRowSeparator(isHidden ? .hidden : .automatic)
+      .id(redraws)
+      .onChange(of: isHidden) { wasHidden, _ in
+        if wasHidden {
+          redraws += 1
+        }
+      }
   }
 }
