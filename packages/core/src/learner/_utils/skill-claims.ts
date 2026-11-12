@@ -114,12 +114,8 @@ function readClaimStates(events: readonly ClaimEvent[]) {
 
 export function listTakenToKnow(events: readonly ClaimEvent[]): Set<string> {
   return new Set(
-    [...readClaimStates(events)].flatMap(([skillId, { answers, claim, claimed, studied }]) =>
-      !studied &&
-      (claim === "toConfirm" || claim === "confirmed") &&
-      (claimed || meetsKnownBar({ answers }))
-        ? [skillId]
-        : [],
+    [...readClaimStates(events)].flatMap(([skillId, state]) =>
+      !state.studied && isKnownClaim({ passedOver: false, state }) ? [skillId] : [],
     ),
   );
 }

@@ -12,6 +12,7 @@ export type MockPlanOffers = {
   aced: Set<string>;
   focusAreas: string[];
   plan: GoalPlan;
+  planId: string;
   view: MockAdaptView;
 };
 
@@ -30,7 +31,10 @@ export async function loadMockPlanOffers({
 
   const [plan, row] = await Promise.all([
     loadGoalPlan(goal.id),
-    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
+    prisma.plan.findUnique({
+      select: { graph: true, id: true, settings: true },
+      where: { goalId: goal.id },
+    }),
   ]);
 
   if (!row) {
@@ -60,6 +64,7 @@ export async function loadMockPlanOffers({
     aced,
     focusAreas,
     plan,
+    planId: row.id,
     view: {
       focus: focus && { area: focus.name, correct: focus.correct, total: focus.total },
       skip: skippable.length > 0 ? { lessons: countLessons(skippedItems), topics } : null,
