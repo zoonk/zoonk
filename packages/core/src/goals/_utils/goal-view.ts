@@ -1,12 +1,15 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type UserLearningProfile, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type findActiveSubscription } from "../../auth/subscription";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { countLessonProgress } from "../../plans/_utils/work-progress";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { type GoalCountryFields } from "../country-contract";
 import { type GoalView } from "../goal-contract";
+import { type loadRecentCountries } from "./country-suggestions";
+import { loadGoalCountryViews } from "./goal-country-views";
 import { getGoalLanguageFlag } from "./goal-language-flag";
 import { getGoalRegionChoices } from "./goal-region";
 import {
@@ -110,16 +113,19 @@ function toPlanSummary({
 
 function toGoalView({
   activeGoalId,
+  countries,
   goal,
   plan,
   progress,
 }: {
   activeGoalId: string | null;
+  countries: GoalCountryFields;
   goal: Goal;
   plan: PlanRow | undefined;
   progress: Awaited<ReturnType<typeof loadPlanProgress>>;
 }): GoalView {
   return {
+    ...countries,
     createdAt: goal.createdAt.toISOString(),
     dailyMinutes: goal.dailyMinutes,
     details: isJsonObject(goal.details) ? goal.details : {},
@@ -145,14 +151,16 @@ function toGoalView({
   };
 }
 
-/** GET callers pass `readActiveSubscription`; writes read the subscription fresh. */
+/** GET callers pass `readActiveSubscription` and `readRecentCountries`; writes read both fresh. */
 export async function loadGoalViews({
   activeGoalId,
   goals,
+  readRecentCountries,
   readSubscription,
 }: {
   activeGoalId: string | null;
   goals: readonly Goal[];
+  readRecentCountries?: typeof loadRecentCountries;
   readSubscription?: typeof findActiveSubscription;
 }): Promise<GoalView[]> {
   const plans = await prisma.plan.findMany({
@@ -160,11 +168,15 @@ export async function loadGoalViews({
     where: { goalId: { in: goals.map((goal) => goal.id) } },
   });
 
-  const progress = await loadPlanProgress(plans, readSubscription);
+  const [progress, countries] = await Promise.all([
+    loadPlanProgress(plans, readSubscription),
+    loadGoalCountryViews({ goals, readRecentCountries }),
+  ]);
 
-  return goals.map((goal) =>
+  return countries.map(({ countries: countryView, goal }) =>
     toGoalView({
       activeGoalId,
+      countries: countryView,
       goal,
       plan: plans.find((plan) => plan.goalId === goal.id),
       progress,
@@ -172,11 +184,17 @@ export async function loadGoalViews({
   );
 }
 
-export async function findActiveGoalId(userId: string): Promise<string | null> {
-  const profile = await prisma.userLearningProfile.findUnique({
-    select: { activeGoalId: true },
-    where: { userId },
-  });
+export async function findActiveGoalId(
+  userId: string,
+  knownProfile?: Pick<UserLearningProfile, "activeGoalId"> | null,
+): Promise<string | null> {
+  const profile =
+    knownProfile === undefined
+      ? await prisma.userLearningProfile.findUnique({
+          select: { activeGoalId: true },
+          where: { userId },
+        })
+      : knownProfile;
 
   if (profile?.activeGoalId) {
     return profile.activeGoalId;

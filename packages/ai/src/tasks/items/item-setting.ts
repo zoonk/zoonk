@@ -4,24 +4,28 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 
 /**
  * The `TARGET_LANGUAGE`, `LOCAL_CONTEXT` and `CAST` lines of an item prompt. A language goal's
- * questions happen where its language is spoken, while their setup still addresses the learner in
- * `language`, so another language's register stays out.
+ * questions happen where its taught variety is spoken, while their setup still addresses the
+ * learner in `language`, so another language's register stays out.
  */
 export function formatItemSetting({
+  country,
   language,
   seed,
   targetLanguage,
 }: {
+  country: string | null;
   language: string;
   seed: string;
   targetLanguage?: string | null;
 }): string {
-  const settingLanguage = targetLanguage ?? language;
+  const place = targetLanguage
+    ? { country: null, language: targetLanguage }
+    : { country, language };
 
   const targetLanguageLine = targetLanguage
     ? `    TARGET_LANGUAGE: ${getPromptLanguageName({ language: targetLanguage, userLanguage: language })}\n`
     : "";
 
-  return `${targetLanguageLine}${formatLocalContext(settingLanguage, { register: settingLanguage === language })}
-    ${formatCast({ language: settingLanguage, seed })}`;
+  return `${targetLanguageLine}${formatLocalContext({ ...place, register: place.language === language })}
+    ${formatCast({ ...place, seed })}`;
 }

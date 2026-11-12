@@ -46,6 +46,8 @@ export type PlacementItemsParams = {
   /** They confirm a right quick answer; 0 for quick questions only. */
   typedCount: number;
   language: string;
+  /** The country the skills are set in; null is the language's own. */
+  country: string | null;
   /** A language goal's questions are written in it. */
   targetLanguage?: string | null;
   examFormat?: ItemExamFormat | null;
@@ -95,7 +97,7 @@ function buildSystemPrompt(params: PlacementItemsParams): string {
 }
 
 function buildUserPrompt(params: PlacementItemsParams): string {
-  const { examFormat, language, quickFormat, targetLanguage, typedCount } = params;
+  const { country, examFormat, language, quickFormat, targetLanguage, typedCount } = params;
 
   const typedLine = typedCount > 0 ? `\n    TYPED_COUNT: ${typedCount}` : "";
 
@@ -108,7 +110,7 @@ function buildUserPrompt(params: PlacementItemsParams): string {
     QUICK_FORMAT: ${quickFormat}
     QUICK_COUNT: ${params.quickCount}${typedLine}${optionCount}
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatItemSetting({ language, seed: getSituationSeed(params.skills), targetLanguage })}
+${formatItemSetting({ country, language, seed: getSituationSeed(params.skills), targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}
     SKILLS:

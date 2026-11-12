@@ -129,7 +129,11 @@ class TutorScreenshots {
                 TutorScope.Plan("goal"),
                 TutorStore(api, cache, session, {
                     MutationResult.Done(Unit)
-                }, { _, _ -> MutationResult.Done(Unit) }) { _, _, _ -> MutationResult.Obsolete },
+                }, { _, _ ->
+                    MutationResult.Done(
+                        Unit,
+                    )
+                }, { _, _ -> MutationResult.Done(Unit) }, { true }) { _, _, _ -> MutationResult.Obsolete },
                 SavedStateHandle(),
             ) { MutationResult.Obsolete }
         val routes =

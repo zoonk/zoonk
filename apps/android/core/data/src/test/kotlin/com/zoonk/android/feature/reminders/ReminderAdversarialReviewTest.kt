@@ -212,7 +212,7 @@ class ReminderAdversarialReviewTest {
             val changes = mutableListOf<JsonObject>()
             val profile: LearningProfile =
                 ApiJson.decodeFromString(
-                    """{"activeGoalId":null,"availableGlasses":["round"],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"shareUsageData":null,"soundsEnabled":true}""",
+                    """{"activeGoalId":null,"availableGlasses":["round"],"homeCountry":null,"homeCountryName":null,"suggested":[],"buddy":{"glasses":"round","kind":"zu","name":null,"picked":false},"dailyLimitMinutes":45,"dailyTimes":[5,10,15],"shareUsageData":null,"soundsEnabled":true}""",
                 )
             val api =
                 object : LearningProfileApi {

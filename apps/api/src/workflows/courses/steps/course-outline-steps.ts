@@ -101,6 +101,7 @@ export async function planOutlineBandStep({
   }
 
   return {
+    country: context.country,
     courseTitle: context.title,
     extensions: extended,
     isNewBand: context.nextPosition === 0,

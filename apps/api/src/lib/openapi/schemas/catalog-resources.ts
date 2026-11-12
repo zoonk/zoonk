@@ -1,5 +1,6 @@
 import { courseExamDaysSchema } from "@zoonk/core/catalog/course-exam-days-contract";
 import { coursePlanExampleSchema } from "@zoonk/core/catalog/course-plan-example-contract";
+import { goalContentCountrySchema } from "@zoonk/core/goals/country-contract";
 import { lessonMapSchema } from "@zoonk/core/library/lessons/map";
 import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
@@ -89,6 +90,7 @@ export const courseResourceSchema = z
     categories: z
       .array(z.enum(COURSE_CATEGORIES))
       .meta({ description: "Oldest first: the first is the course's subject, its pages' color" }),
+    contentCountry: goalContentCountrySchema.nullable(),
     description: z.string().nullable(),
     editions: z
       .array(z.object({ id: uuidSchema(), language: z.string(), title: z.string() }))

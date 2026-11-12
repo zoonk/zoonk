@@ -92,6 +92,26 @@ describe("the plan the buddy reads", () => {
     mockSession(null);
   });
 
+  it("stores the goal's content country and learner's home as separate English facts", async () => {
+    const { goal, user } = await learnerBehind();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { contentCountry: "PT", details: { countryDependent: true }, language: "pt" },
+        where: { id: goal.id },
+      }),
+      prisma.userLearningProfile.update({
+        data: { homeCountry: "DE" },
+        where: { userId: user.id },
+      }),
+    ]);
+
+    const { snapshot } = await askAboutPlan({ goalId: goal.id, userId: user.id });
+    const plan = readPlanSnapshot(snapshot);
+    expect(plan.goal.contentCountry).toBe("Portugal");
+    expect(plan.learnerHomeCountry).toBe("Germany");
+  });
+
   it("names the lessons earlier days left, with where they open, and only the learner's own", async () => {
     const [learner, other] = await Promise.all([learnerBehind(), learnerBehind()]);
 
@@ -103,6 +123,7 @@ describe("the plan the buddy reads", () => {
     const plan = readPlanSnapshot(snapshot);
 
     expect(plan.selectedGoal).toBe(true);
+    expect(plan).not.toHaveProperty("learnerHomeCountry");
 
     const blocks = await readTodayBlocks(learner.goal.id);
 

@@ -9,6 +9,7 @@ import {
 } from "@zoonk/core/language/aims";
 import {
   type OnboardingExamDate,
+  type UnderstoodGoalView,
   type UnderstoodSchedule,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { type RegionChoice } from "@zoonk/utils/language-regions";
@@ -16,6 +17,7 @@ import { getLanguageName } from "@zoonk/utils/languages";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration, useFormatTimeOfDay } from "../../_utils/time-format";
+import { type SuggestedCountry } from "../../country/country-choice";
 import { useCutoffWords } from "../../exam/target-cutoff";
 import { useAimWords } from "../../language-aim/use-aim-words";
 import { useReasonCopy } from "../../language-aim/use-reason-copy";
@@ -26,9 +28,11 @@ import {
 } from "../../language-variety/use-variety-words";
 import { isSaidInTitle } from "./said-in-title";
 import { useDateRow } from "./understood-date-row";
+import { useContentCountryRow } from "./use-content-country-row";
 
 export type EditableField =
   | { kind: "aim"; key: "targetScore" }
+  | { kind: "contentCountry"; key: "contentCountry" }
   | { kind: "country"; key: "targetRegion" }
   | { kind: "date"; key: "targetDate" }
   | {
@@ -43,6 +47,8 @@ export type UnderstoodRow = {
   aimChoices?: readonly LanguageAimChoice[];
   badge?: string;
   choiceDates?: string[];
+  /** For a `contentCountry` row, the country and the ones its picker suggests first. */
+  contentCountry?: { code: string; language: string; suggested: readonly SuggestedCountry[] };
   /** For a `country` row, the language and the countries it can change to. */
   country?: { choices: readonly RegionChoice[]; language: string };
   editable?: EditableField;
@@ -245,15 +251,18 @@ export function useUnderstoodRows() {
   const dateRow = useDateRow();
   const languageRows = useLanguageRows();
   const detailRows = useDetailRows();
+  const contentCountryRow = useContentCountryRow();
 
   return ({
+    contentCountry,
     countryAsked,
     cutoff,
     draft,
     examDates,
     languageAim,
     regionChoices,
-  }: {
+    suggested,
+  }: Pick<UnderstoodGoalView, "contentCountry" | "suggested"> & {
     countryAsked?: boolean;
     cutoff: TargetCutoff | null;
     draft: GoalDraft;
@@ -272,6 +281,7 @@ export function useUnderstoodRows() {
       },
       dateRow({ draft, examDates }),
       ...languageRows({ countryAsked, draft, regionChoices }),
+      contentCountryRow({ contentCountry, language: draft.language, suggested }),
       ...detailRows(draft, cutoff, languageAim),
       Boolean(levelNote) && {
         badge: t("you said"),

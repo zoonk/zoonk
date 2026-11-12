@@ -2,6 +2,7 @@ import "server-only";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
 import decisionPrompt from "./exam-identity-decision.prompt.md";
+import { formatExamIdentityInput } from "./exam-identity-input";
 
 /** The Library identity decisions' cutoff; the exam eval can move it. */
 const MIN_PROBABILITY = 0.6;
@@ -19,7 +20,8 @@ export const EXAM_IDENTITY_INSTRUCTIONS: string = decisionPrompt;
 /** Never a learner's personal details. */
 export type ExamDescription = {
   board: string | null;
-  country: string;
+  /** Null when nobody knows it; never filled in from a candidate. */
+  country: string | null;
   name: string;
   role: string | null;
 };
@@ -35,11 +37,6 @@ const SAME_EXAM_QUESTION = {
   },
 } as const;
 
-/** Only the identifying fields, in one order, so both sides read alike. */
-function describeExam(exam: ExamDescription): ExamDescription {
-  return { board: exam.board, country: exam.country, name: exam.name, role: exam.role };
-}
-
 /** Both sides are delimited data, so a name claiming "same exam" can't move the verdict. */
 export async function evaluateExamIdentityPair({
   candidate,
@@ -52,10 +49,7 @@ export async function evaluateExamIdentityPair({
 }) {
   const { answers, ...run } = await evaluateQuestions({
     fallbackModel: FALLBACK_EVALUATION_MODEL,
-    input: {
-      CANDIDATE: JSON.stringify(describeExam(candidate)),
-      REQUEST: JSON.stringify(describeExam(request)),
-    },
+    input: formatExamIdentityInput({ candidate, request }),
     // Only shared blueprints are compared, and their names are stored with them.
     keepInput: true,
     model,

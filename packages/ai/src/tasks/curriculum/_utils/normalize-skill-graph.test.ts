@@ -27,8 +27,13 @@ function rawGraph(
 ): RawSkillGraph {
   return {
     courses: [
-      { key: "math", levels: ["beginner"], title: " Mathematics " },
-      { key: "physics", levels: ["beginner"], title: "Classical mechanics" },
+      { countrySpecific: true, key: "math", levels: ["beginner"], title: " Mathematics " },
+      {
+        countrySpecific: false,
+        key: "physics",
+        levels: ["beginner"],
+        title: "Classical mechanics",
+      },
     ],
     phases: [
       { milestone: "Solve equations", title: "The math physics uses" },
@@ -283,8 +288,18 @@ describe(normalizeSkillGraph, () => {
     );
 
     expect(graph.courses).toStrictEqual([
-      { key: "math", levels: ["beginner", "intermediate"], title: "Mathematics" },
-      { key: "physics", levels: ["beginner"], title: "Classical mechanics" },
+      {
+        countrySpecific: true,
+        key: "math",
+        levels: ["beginner", "intermediate"],
+        title: "Mathematics",
+      },
+      {
+        countrySpecific: false,
+        key: "physics",
+        levels: ["beginner"],
+        title: "Classical mechanics",
+      },
     ]);
 
     expect(graph.skills.map((skill) => skill.course)).toStrictEqual(["math", "math"]);

@@ -23,7 +23,11 @@ import { getExtracted } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
-import { setGoalCountryAction } from "../_components/goal-status-action";
+import {
+  retryGoalRebuildAction,
+  setGoalContentCountryAction,
+  setGoalCountryAction,
+} from "../_components/goal-status-action";
 import {
   changePlanAction,
   chooseExamOptionAction,
@@ -83,6 +87,34 @@ function getGoalCountry(goal: ReturnType<typeof findActiveGoal>) {
         region: goal.targetRegion,
       }
     : null;
+}
+
+function getGoalContentCountry(goal: ReturnType<typeof findActiveGoal>) {
+  return goal?.contentCountry
+    ? {
+        ...goal.contentCountry,
+        language: goal.language,
+        onChange: setGoalContentCountryAction.bind(null, goal.id),
+        onRetry: retryGoalRebuildAction.bind(null, goal.id),
+        suggested: goal.suggested,
+      }
+    : null;
+}
+
+function getPlanGoal({
+  activeGoal,
+  goal,
+}: {
+  activeGoal: ReturnType<typeof findActiveGoal>;
+  goal: { displayName: string; kind: "exam" | "explain" | "language" | "learn" };
+}) {
+  return {
+    contentCountry: getGoalContentCountry(activeGoal),
+    country: getGoalCountry(activeGoal),
+    displayName: goal.displayName,
+    examplesCountry: activeGoal?.examplesCountry ?? null,
+    kind: goal.kind,
+  };
 }
 
 /** Kept with the page's prefetch, so the tab opens on the right screen; goal and profile writes expire it. */
@@ -187,7 +219,7 @@ async function JourneyContent() {
       buddy={buddy}
       certificates={end?.certificates ?? null}
       completedLessons={completedLessons}
-      goal={{ country: getGoalCountry(activeGoal), displayName: goal.displayName, kind: goal.kind }}
+      goal={getPlanGoal({ activeGoal, goal })}
       goalId={goal.id}
       goalStatus={goalStatus}
       hasMindMaps={hasMindMapsPage(goal.kind)}

@@ -398,6 +398,7 @@ msgstr "{done, number}/{total, number}"
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
 #: src/_components/time-answer.tsx
+#: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-intro-footer.tsx
@@ -413,6 +414,7 @@ msgstr "{done, number}/{total, number}"
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
+#: src/plan/plan-rebuild-notice.tsx
 #: src/plan/use-time-to-cover.ts
 #: src/session/failed-moment.tsx
 #: src/session/open-next-step.tsx
@@ -1002,6 +1004,11 @@ msgid "Sounds"
 msgstr "효과음"
 
 #: src/appearance/appearance-screen.tsx
+msgctxt "uOIiKt"
+msgid "Language and region"
+msgstr "언어 및 지역"
+
+#: src/appearance/appearance-screen.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
 #: src/onboarding/entry/goal-examples.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -1036,6 +1043,7 @@ msgstr "안경"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/language/conversation/call-control.tsx
@@ -1043,6 +1051,7 @@ msgstr "안경"
 #: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
+#: src/plan/plan-country.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/plan/study-everything.tsx
 msgctxt "47FYwb"
@@ -1051,6 +1060,7 @@ msgstr "취소"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
+#: src/conversation/tutor-country-offer.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-save-button.tsx
@@ -1079,6 +1089,23 @@ msgstr "바꾸기"
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
 msgstr "짝꿍 고르기"
+
+#: src/appearance/home-country-setting.tsx
+#: src/country/country-picker.tsx
+msgctxt "h4cg3V"
+msgid "Where you live"
+msgstr "사는 나라"
+
+#: src/appearance/home-country-setting.tsx
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "i8Cibb"
+msgid "For new goals and your examples. It doesn't change the plans you already have."
+msgstr "새 목표와 예시에 반영돼요. 기존 계획은 바뀌지 않아요."
+
+#: src/appearance/home-country-setting.tsx
+msgctxt "p5LNtB"
+msgid "Not set"
+msgstr "설정 안 됨"
 
 #: src/appearance/language-setting.tsx
 msgctxt "V1yMTL"
@@ -2778,6 +2805,44 @@ msgctxt "Dij_iT"
 msgid "Message {name}"
 msgstr "{name}에게 메시지 보내기"
 
+#: src/conversation/tutor-country-offer.tsx
+#: src/conversation/tutor-plan-change.tsx
+#: src/conversation/tutor-variety-offer.tsx
+#: src/mock/mock-result-plan.tsx
+#: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-offer-suggestion.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "EWw_tK"
+msgid "Apply"
+msgstr "적용"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "-DMpal"
+msgid "Applying it rebuilds your plan for this country. The lessons you've finished stay done."
+msgstr "적용하면 이 나라에 맞춰 계획을 다시 만들어요. 끝낸 레슨은 완료 상태로 남아요."
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "Ol1JfV"
+msgid "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
+msgstr "저장했어요. 새 계획을 준비하고 있어요. 그동안에도 계속 공부할 수 있어요."
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "RZJ-9n"
+msgid "Content country: {country}"
+msgstr "학습 기준 국가: {country}"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "EWygiy"
+msgid "Saved. You can change it in Preferences."
+msgstr "저장했어요. 환경설정에서 바꿀 수 있어요."
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "Iecqzz"
+msgid "Where you live: {country}"
+msgstr "사는 나라: {country}"
+
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_b0lor"
 msgid "A ready course in the catalog"
@@ -2928,16 +2993,6 @@ msgid "Use my date anyway"
 msgstr "그래도 내가 정한 날짜 사용하기"
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/conversation/tutor-variety-offer.tsx
-#: src/mock/mock-result-plan.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-offer-suggestion.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "EWw_tK"
-msgid "Apply"
-msgstr "적용"
-
-#: src/conversation/tutor-plan-change.tsx
 msgctxt "eUZEWb"
 msgid "Change to your plan"
 msgstr "계획 변경"
@@ -3007,6 +3062,48 @@ msgstr "짝꿍과 대화 연습에는 {variety}을(를) 사용해요."
 msgctxt "n-Iy44"
 msgid "Saved. You can change it in your plan."
 msgstr "저장했어요. 계획에서 바꿀 수 있어요."
+
+#. Spoken only. {country} is a country's name.
+#: src/country/country-picker.tsx
+msgctxt "WOyCjS"
+msgid "{country}, where you live"
+msgstr "{country}, 현재 사는 나라"
+
+#: src/country/country-picker.tsx
+msgctxt "Gw94lo"
+msgid "No country found"
+msgstr "검색된 나라가 없어요"
+
+#: src/country/country-picker.tsx
+msgctxt "p57kAv"
+msgid "{count, plural, one {# country} other {# countries}}"
+msgstr "{count, plural, other {#개국}}"
+
+#: src/country/country-picker.tsx
+msgctxt "n6WiTf"
+msgid "All countries"
+msgstr "모든 나라"
+
+#: src/country/country-picker.tsx
+msgctxt "hKUYhf"
+msgid "Couldn't load the list."
+msgstr "목록을 불러오지 못했어요."
+
+#: src/country/country-picker.tsx
+msgctxt "a0lFbM"
+msgid "Suggested"
+msgstr "추천"
+
+#: src/country/country-picker.tsx
+msgctxt "4Ythsw"
+msgid "Search countries"
+msgstr "나라 검색"
+
+#. {variety} is a language with its country, such as “Portuguese (Brazil)”. It always follows the colon, so it never needs an article or a case.
+#: src/country/use-country-lines.ts
+msgctxt "J3aEI6"
+msgid "Lesson language: {variety}"
+msgstr "레슨 언어: {variety}"
 
 #: src/course/use-level-name.ts
 msgctxt "9uOFF3"
@@ -9950,6 +10047,36 @@ msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "배울수록 짝꿍도 자라요."
 
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/onboarding/steps/country-step.tsx
+msgctxt "IQvff3"
+msgid "If you skip: {country}"
+msgstr "건너뛰면: {country}"
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "neuUHE"
+msgid "What you learn here changes from country to country. You can change it later in your plan."
+msgstr "나라에 따라 배우는 내용이 달라요. 나중에 계획에서 바꿀 수 있어요."
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "jFT6CV"
+msgid "Which country should your lessons be about?"
+msgstr "어느 나라를 기준으로 배울까요?"
+
+#: src/onboarding/steps/country-step.tsx
+#: src/onboarding/understood/understood-country-picker.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+#: src/plan/plan-country.tsx
+#: src/plan/plan-language.tsx
+msgctxt "vONi-O"
+msgid "Country"
+msgstr "국가"
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "4D1yJQ"
+msgid "Another country"
+msgstr "다른 나라"
+
 #: src/onboarding/steps/date-step.tsx
 msgctxt "5ib3Bu"
 msgid "Your plan paces your lessons to end by then."
@@ -10815,6 +10942,7 @@ msgid "Subjects you know well"
 msgstr "잘 아는 과목"
 
 #: src/onboarding/understood/understood-aim-picker.tsx
+#: src/onboarding/understood/understood-country-picker.tsx
 #: src/onboarding/understood/understood-row.tsx
 msgctxt "C9D4Tz"
 msgid "Edit {field}"
@@ -10877,12 +11005,6 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "예년 일정을 바탕으로 예상했어요. 공식 일정이 나오면 알려 드릴게요."
 
-#: src/onboarding/understood/understood-row.tsx
-#: src/visuals/chart-visual.tsx
-msgctxt "_gUYR-"
-msgid "Source: {source}"
-msgstr "출처: {source}"
-
 #. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "Hs12te"
@@ -10926,6 +11048,12 @@ msgctxt "An59dM"
 msgid "Fix something"
 msgstr "수정하기"
 
+#: src/onboarding/understood/understood-source-link.tsx
+#: src/visuals/chart-visual.tsx
+msgctxt "_gUYR-"
+msgid "Source: {source}"
+msgstr "출처: {source}"
+
 #: src/onboarding/understood/understood-words.tsx
 msgctxt "YC2aql"
 msgid "What you wrote"
@@ -10941,11 +11069,29 @@ msgctxt "Q47TXB"
 msgid "Read it again"
 msgstr "다시 읽기"
 
+#: src/onboarding/understood/use-content-country-row.ts
+msgctxt "countryFromHomeBadge"
+msgid "where you live"
+msgstr "사는 나라"
+
+#: src/onboarding/understood/use-content-country-row.ts
 #: src/onboarding/understood/use-understood-rows.ts
-#: src/plan/plan-language.tsx
-msgctxt "vONi-O"
-msgid "Country"
-msgstr "국가"
+msgctxt "bSoy_7"
+msgid "you said"
+msgstr "직접 알려 준 내용"
+
+#: src/onboarding/understood/use-content-country-row.ts
+#: src/plan/plan-properties.tsx
+msgctxt "lbfh2z"
+msgid "Exam country"
+msgstr "시험 국가"
+
+#: src/onboarding/understood/use-content-country-row.ts
+#: src/plan/plan-country.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "2NB2XO"
+msgid "Content country"
+msgstr "콘텐츠 기준 국가"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
@@ -10981,11 +11127,6 @@ msgstr "기관"
 msgctxt "AkCxS_"
 msgid "Reason"
 msgstr "이유"
-
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "bSoy_7"
-msgid "you said"
-msgstr "직접 알려 준 내용"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "0l2vvH"
@@ -11376,6 +11517,22 @@ msgctxt "MYtZfb"
 msgid "Change how you study them."
 msgstr "사전 지식의 학습 방식을 바꿔 보세요."
 
+#: src/plan/plan-country.tsx
+msgctxt "BiNqQt"
+msgid "Change the content country?"
+msgstr "콘텐츠 기준 국가를 바꿀까요?"
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/plan/plan-country.tsx
+msgctxt "tkfoYf"
+msgid "New country: {country}. Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready."
+msgstr "변경할 국가: {country}. 이 국가에 맞춰 계획을 다시 만들어요. 레슨 완료 기록은 그대로 유지되고, 새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요."
+
+#: src/plan/plan-country.tsx
+msgctxt "xZIG58"
+msgid "Rebuild plan"
+msgstr "계획 다시 만들기"
+
 #: src/plan/plan-coverage-suggestion.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "TJo5E6"
@@ -11624,6 +11781,16 @@ msgid "<mono>{weekdays}</mono> · <mono>{weekend}</mono> weekends"
 msgstr "<mono>{weekdays}</mono> · 주말 <mono>{weekend}</mono>"
 
 #: src/plan/plan-properties.tsx
+msgctxt "7X2m8_"
+msgid "Lesson language"
+msgstr "레슨 언어"
+
+#: src/plan/plan-properties.tsx
+msgctxt "ONsenW"
+msgid "Lesson examples"
+msgstr "레슨 예시"
+
+#: src/plan/plan-properties.tsx
 msgctxt "burjuf"
 msgid "{weekday, select, sunday {Sundays} monday {Mondays} tuesday {Tuesdays} wednesday {Wednesdays} thursday {Thursdays} friday {Fridays} saturday {Saturdays} other {}}"
 msgstr "{weekday, select, sunday {일요일} monday {월요일} tuesday {화요일} wednesday {수요일} thursday {목요일} friday {금요일} saturday {토요일} other {}}"
@@ -11642,6 +11809,31 @@ msgstr "다음 <date></date>"
 msgctxt "mWKPwa"
 msgid "Everything"
 msgstr "모두"
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "a1BrGF"
+msgid "Preparing your new plan"
+msgstr "새 계획을 준비하고 있어요"
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "_K_Sir"
+msgid "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done."
+msgstr "새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요. 레슨 완료 기록도 그대로 유지돼요."
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "WIKiub"
+msgid "Your new plan couldn't be prepared"
+msgstr "새 계획을 준비하지 못했어요"
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "JQ6rKG"
+msgid "Your plan still has the lessons it had before."
+msgstr "기존 레슨은 계획에 그대로 남아 있어요."
+
+#: src/plan/plan-rebuild-notice.tsx
+msgctxt "jvdY5E"
+msgid "Your new plan is ready."
+msgstr "새 계획이 준비됐어요."
 
 #: src/plan/plan-schedule.tsx
 msgctxt "b9QpDx"

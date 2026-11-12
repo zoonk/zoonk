@@ -46,6 +46,8 @@ export type QuickExplanation = z.infer<typeof quickExplanationSchema>;
 export type QuickExplanationParams = {
   question: string;
   language: string;
+  /** The country the content the question comes from is set in; null is the language's own. */
+  country: string | null;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -54,6 +56,7 @@ export type QuickExplanationParams = {
 
 export async function generateQuickExplanation({
   analytics,
+  country,
   language,
   model = defaultModel,
   question,
@@ -62,7 +65,7 @@ export async function generateQuickExplanation({
 }: QuickExplanationParams) {
   const userPrompt = `
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatLocalContext(language)}
+${formatLocalContext({ country, language })}
 
 ${formatUntrustedInput({ QUESTION: question })}
   `;

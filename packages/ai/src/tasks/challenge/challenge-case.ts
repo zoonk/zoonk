@@ -92,6 +92,8 @@ type ChallengeSkillInput = { name: string; description?: string | null };
 
 export type ChallengeCaseParams = {
   language: string;
+  /** The country the challenge's course is set in; null is the language's own. */
+  country: string | null;
   level: CourseLevel;
   variant: ChallengeCaseVariant;
   courseTitle: string;
@@ -121,7 +123,7 @@ function formatSkill(skill: ChallengeSkillInput): string {
 function buildUserPrompt(params: ChallengeCaseParams): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatLocalContext(params.language)}
+${formatLocalContext({ country: params.country, language: params.language })}
     LEVEL: ${params.level}
     VARIANT: ${params.variant}
     FIELD: ${params.field ?? "none"}

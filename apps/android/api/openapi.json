@@ -3459,6 +3459,71 @@
         }
       }
     },
+    "/countries": {
+      "get": {
+        "description": "All supported content countries, named and sorted in the requested language. Shared and cacheable; opening a picker never starts generation.",
+        "operationId": "listCountries",
+        "security": [],
+        "summary": "List countries",
+        "tags": [
+          "Goals"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "language",
+            "schema": {
+              "default": "en",
+              "type": "string",
+              "enum": [
+                "en",
+                "es",
+                "pt",
+                "fr",
+                "de",
+                "it",
+                "ja",
+                "ko",
+                "tr",
+                "pl"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Country choices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryCatalog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/courses": {
       "get": {
         "description": "The courses the learner's goals are built on and the courses they started lessons in, most recent activity first. Lists published brand courses and the learner's own private courses (without an organization).",
@@ -7801,6 +7866,28 @@
         "tags": [
           "Account"
         ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "language",
+            "schema": {
+              "default": "en",
+              "type": "string",
+              "enum": [
+                "en",
+                "es",
+                "pt",
+                "fr",
+                "de",
+                "it",
+                "ja",
+                "ko",
+                "tr",
+                "pl"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Buddy, settings and active goal",
@@ -7848,6 +7935,28 @@
         "summary": "Update current user's learning profile",
         "tags": [
           "Account"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "language",
+            "schema": {
+              "default": "en",
+              "type": "string",
+              "enum": [
+                "en",
+                "es",
+                "pt",
+                "fr",
+                "de",
+                "it",
+                "ja",
+                "ko",
+                "tr",
+                "pl"
+              ]
+            }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -14732,7 +14841,7 @@
             }
           },
           "422": {
-            "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date. TARGET_REGION_NOT_OFFERED: the `targetRegion` isn't one of the goal's `regionChoices`, or the goal isn't a language goal. Nothing was saved.",
+            "description": "PLAN_CHANGE_INVALID: The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day. TARGET_DATE_OUT_OF_RANGE: a new goal's explicit target date is before tomorrow or after calendar day 3,650 from the learner's today; existing plan edits use this code for the upper bound only and keep their prior past-date refusal. Nothing was saved. details[].bound and details[].limit give the refused bound and nearest accepted date. TARGET_REGION_NOT_OFFERED: the `targetRegion` isn't one of the goal's `regionChoices`, or the goal isn't a language goal. Nothing was saved. CONTENT_COUNTRY_NOT_OFFERED: content countries cannot be changed on exam or language goals.",
             "content": {
               "application/json": {
                 "schema": {
@@ -14745,6 +14854,9 @@
                     },
                     {
                       "$ref": "#/components/schemas/TargetRegionNotOfferedError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ContentCountryNotOfferedError"
                     }
                   ]
                 }
@@ -26657,6 +26769,11 @@
               }
             ]
           },
+          "homeCountry": {
+            "description": "Where the learner says they live, or null to clear it. Used for new goals and personal examples; existing plans keep their content country.",
+            "nullable": true,
+            "type": "string"
+          },
           "shareUsageData": {
             "description": "Whether Zoonk may record how the learner uses it, for analytics",
             "type": "boolean"
@@ -28758,6 +28875,11 @@
       "GoalDraft": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "description": "The content country for a non-exam, non-language goal, or null for its language’s own country. Changing a country-dependent goal rebuilds the same goal, keeps finished lessons, and leaves its current plan usable until the new graph saves. Refused for exam and language goals.",
+            "nullable": true,
+            "type": "string"
+          },
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
@@ -28840,6 +28962,11 @@
       "GoalUpdateInput": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "description": "The content country for a non-exam, non-language goal, or null for its language’s own country. Changing a country-dependent goal rebuilds the same goal, keeps finished lessons, and leaves its current plan usable until the new graph saves. Refused for exam and language goals.",
+            "nullable": true,
+            "type": "string"
+          },
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
@@ -30423,6 +30550,33 @@
               "field": {
                 "type": "string",
                 "enum": [
+                  "contentCountry"
+                ]
+              },
+              "goal": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9,
+                "description": "Which goal of the card, in order: 0 is the main goal"
+              },
+              "value": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "goal",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "enum": [
                   "title",
                   "displayName"
                 ]
@@ -30566,6 +30720,26 @@
       },
       "OnboardingAnswerInput": {
         "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "country": {
+                "default": null,
+                "nullable": true,
+                "type": "string"
+              },
+              "question": {
+                "type": "string",
+                "enum": [
+                  "contentCountry"
+                ]
+              }
+            },
+            "required": [
+              "question"
+            ],
+            "additionalProperties": false
+          },
           {
             "type": "object",
             "properties": {
@@ -32922,6 +33096,14 @@
           "buddy": {
             "$ref": "#/components/schemas/Buddy"
           },
+          "homeCountry": {
+            "nullable": true,
+            "type": "string"
+          },
+          "homeCountryName": {
+            "nullable": true,
+            "type": "string"
+          },
           "shareUsageData": {
             "nullable": true,
             "description": "Whether Zoonk may record how the learner uses it, or null before they choose. Their events are recorded unless it's false",
@@ -32930,14 +33112,63 @@
           "soundsEnabled": {
             "type": "boolean",
             "description": "Sounds for a right answer and for finishing; on by default"
+          },
+          "suggested": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
+                "tag": {
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "home"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "name",
+                "lessonVariety",
+                "tag"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
           "activeGoalId",
           "availableGlasses",
           "buddy",
+          "homeCountry",
+          "homeCountryName",
           "shareUsageData",
-          "soundsEnabled"
+          "soundsEnabled",
+          "suggested"
         ],
         "additionalProperties": false
       },
@@ -33954,6 +34185,14 @@
             },
             "description": "Oldest first: the first is the course's subject, its pages' color"
           },
+          "contentCountry": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoalContentCountry"
+              }
+            ]
+          },
           "description": {
             "nullable": true,
             "type": "string"
@@ -34120,6 +34359,7 @@
         },
         "required": [
           "categories",
+          "contentCountry",
           "description",
           "editions",
           "exam",
@@ -34139,6 +34379,71 @@
           "targetLanguage",
           "title",
           "tryLesson"
+        ],
+        "additionalProperties": false
+      },
+      "GoalContentCountry": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "editable": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "content",
+              "exam"
+            ]
+          },
+          "lessonVariety": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "language": {
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "language",
+              "region"
+            ],
+            "additionalProperties": false
+          },
+          "rebuild": {
+            "type": "string",
+            "enum": [
+              "none",
+              "preparing",
+              "failed"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "said",
+              "home",
+              "picked",
+              "default"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "editable",
+          "kind",
+          "lessonVariety",
+          "rebuild",
+          "source"
         ],
         "additionalProperties": false
       },
@@ -38308,6 +38613,116 @@
       "Goal": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "nullable": true,
+            "description": "The content or exam country row; null for general goals, older unclassified goals, an unanswered country question, and own-country or international exams.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoalContentCountry"
+              }
+            ]
+          },
+          "countryDependent": {
+            "type": "boolean",
+            "description": "True for a learn goal read as country-dependent, including an older goal after an explicit country change. False for general, unclassified, exam, and language goals."
+          },
+          "examCountry": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "examplesCountry": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "languageCountry": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "suggested": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
+                "tag": {
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "home"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "name",
+                "lessonVariety",
+                "tag"
+              ],
+              "additionalProperties": false
+            }
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -38469,6 +38884,12 @@
           }
         },
         "required": [
+          "contentCountry",
+          "countryDependent",
+          "examCountry",
+          "examplesCountry",
+          "languageCountry",
+          "suggested",
           "createdAt",
           "dailyMinutes",
           "details",
@@ -38589,6 +39010,55 @@
         },
         "required": [
           "error"
+        ],
+        "additionalProperties": false
+      },
+      "CountryCatalog": {
+        "type": "object",
+        "properties": {
+          "countries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountryPickerChoice"
+            }
+          }
+        },
+        "required": [
+          "countries"
+        ],
+        "additionalProperties": false
+      },
+      "CountryPickerChoice": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "lessonVariety": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "language": {
+                "type": "string"
+              },
+              "region": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "language",
+              "region"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "lessonVariety"
         ],
         "additionalProperties": false
       },
@@ -45576,6 +46046,10 @@
             },
             "description": "Goals not archived, the active one first, then oldest first"
           },
+          "homeCountry": {
+            "nullable": true,
+            "type": "string"
+          },
           "identity": {
             "type": "object",
             "properties": {
@@ -45783,6 +46257,7 @@
           "buddy",
           "day",
           "goals",
+          "homeCountry",
           "identity",
           "level",
           "missions",
@@ -45863,6 +46338,116 @@
       "LearnerSummaryGoal": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "nullable": true,
+            "description": "The content or exam country row; null for general goals, older unclassified goals, an unanswered country question, and own-country or international exams.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoalContentCountry"
+              }
+            ]
+          },
+          "countryDependent": {
+            "type": "boolean",
+            "description": "True for a learn goal read as country-dependent, including an older goal after an explicit country change. False for general, unclassified, exam, and language goals."
+          },
+          "examCountry": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "examplesCountry": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "languageCountry": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "suggested": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
+                "tag": {
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "home"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "name",
+                "lessonVariety",
+                "tag"
+              ],
+              "additionalProperties": false
+            }
+          },
           "courseChapterId": {
             "nullable": true,
             "description": "The chapter of `courseId`'s course that holds the goal's next lesson, so that course's page marks where the learner is; null when `courseId` is null, the goal has no lesson left, or its next lesson isn't written into a chapter yet",
@@ -45918,6 +46503,10 @@
               "exam"
             ]
           },
+          "language": {
+            "type": "string",
+            "description": "The language the goal is studied in; its country pickers request `GET /countries` in it"
+          },
           "languageFlag": {
             "nullable": true,
             "description": "A language goal's flag, as flag-icons names it: its `targetRegion`'s when set, else its language's, as a language course's (a country's two-letter code, or a region's: `es-ct`, `gb-wls`, `arab`); null for other goals",
@@ -45959,6 +46548,12 @@
           }
         },
         "required": [
+          "contentCountry",
+          "countryDependent",
+          "examCountry",
+          "examplesCountry",
+          "languageCountry",
+          "suggested",
           "courseChapterId",
           "courseId",
           "courseLevel",
@@ -45968,6 +46563,7 @@
           "isActive",
           "isSettingUp",
           "kind",
+          "language",
           "languageFlag",
           "regionChoices",
           "status",
@@ -77501,6 +78097,58 @@
           {
             "type": "object",
             "properties": {
+              "country": {
+                "type": "string"
+              },
+              "countryName": {
+                "type": "string"
+              },
+              "goalId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "contentCountry",
+                  "homeCountry"
+                ]
+              },
+              "languageFlag": {
+                "type": "string"
+              },
+              "lessonVariety": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "language": {
+                    "type": "string"
+                  },
+                  "region": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "language",
+                  "region"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "country",
+              "countryName",
+              "goalId",
+              "kind",
+              "languageFlag",
+              "lessonVariety"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
               "kind": {
                 "type": "string",
                 "enum": [
@@ -81342,6 +81990,38 @@
                 "type": "string",
                 "enum": [
                   "TARGET_REGION_NOT_OFFERED"
+                ]
+              },
+              "details": {
+                "description": "Additional error details"
+              },
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "ContentCountryNotOfferedError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "CONTENT_COUNTRY_NOT_OFFERED"
                 ]
               },
               "details": {
@@ -90430,6 +91110,17 @@
       "UnderstoodGoal": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoalContentCountry"
+              }
+            ]
+          },
+          "countryDependent": {
+            "type": "boolean"
+          },
           "cutoff": {
             "default": null,
             "description": "The last published cut-off of the target the words named (a course at an institution, a position) with its source, when it's already known: where the bar was, never a promise. Null otherwise",
@@ -90472,6 +91163,53 @@
             "items": {
               "$ref": "#/components/schemas/RegionChoice"
             }
+          },
+          "suggested": {
+            "default": [],
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "lessonVariety": {
+                  "nullable": true,
+                  "type": "object",
+                  "properties": {
+                    "language": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "language",
+                    "region"
+                  ],
+                  "additionalProperties": false
+                },
+                "tag": {
+                  "nullable": true,
+                  "type": "string",
+                  "enum": [
+                    "home"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "name",
+                "lessonVariety",
+                "tag"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -90479,7 +91217,8 @@
           "draft",
           "examDates",
           "languageAim",
-          "regionChoices"
+          "regionChoices",
+          "suggested"
         ],
         "additionalProperties": false
       },
@@ -90764,6 +91503,79 @@
       "Onboarding": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "type": "object",
+            "properties": {
+              "defaultCountry": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code",
+                  "name"
+                ],
+                "additionalProperties": false
+              },
+              "suggested": {
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "lessonVariety": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "language": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "language",
+                        "region"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "tag": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "home"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "name",
+                    "lessonVariety",
+                    "tag"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "defaultCountry",
+              "suggested"
+            ],
+            "additionalProperties": false
+          },
           "dateProblem": {
             "nullable": true,
             "description": "Why the goal's date can't be planned as it stands, so the `targetDate` screen asks again: always for `passed` and `today`, which no plan can be made for (start the screen empty, saying the date passed or is today), and for `noSitting` until the learner answers (offer each of `closest` with one tap). Null when the date can be planned",
@@ -91178,6 +91990,7 @@
           }
         },
         "required": [
+          "contentCountry",
           "dateProblem",
           "examChoices",
           "examDays",
@@ -91244,6 +92057,7 @@
       "OnboardingStep": {
         "type": "string",
         "enum": [
+          "contentCountry",
           "purpose",
           "role",
           "reason",
@@ -97267,6 +98081,11 @@
       "GoalDraftOutput": {
         "type": "object",
         "properties": {
+          "contentCountry": {
+            "description": "The content country for a non-exam, non-language goal, or null for its language’s own country. Changing a country-dependent goal rebuilds the same goal, keeps finished lessons, and leaves its current plan usable until the new graph saves. Refused for exam and language goals.",
+            "nullable": true,
+            "type": "string"
+          },
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,

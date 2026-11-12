@@ -57,6 +57,7 @@ enum ResearchUploadReason {
 }
 
 model Goal {
+  contentCountry        String?                @map("content_country") @db.VarChar(2)
   id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId                String                 @map("user_id") @db.Uuid
   user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)

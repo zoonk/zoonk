@@ -51,7 +51,11 @@ export async function searchSameExam({
   searchTerms: string[];
 }): Promise<SameExamSearch> {
   const identityKey = buildExamIdentityKey(request);
-  const exact = await findExamBlueprintByKey({ identityKey, language: request.language });
+
+  const exact =
+    request.country === null
+      ? null
+      : await findExamBlueprintByKey({ identityKey, language: request.language });
 
   if (exact || request.ownerId) {
     return { blueprint: exact, status: "settled" };
@@ -63,17 +67,11 @@ export async function searchSameExam({
     terms: [request.name, ...searchTerms],
   });
 
-  const [best] = candidates;
-
-  if (!best) {
+  if (candidates.length === 0) {
     return { blueprint: null, status: "settled" };
   }
 
-  return {
-    candidates,
-    request: { ...request, country: request.country ?? best.country },
-    status: "undecided",
-  };
+  return { candidates, request, status: "undecided" };
 }
 
 export async function findSameExam(input: {

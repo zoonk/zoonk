@@ -64,22 +64,23 @@ fun varietyNote(
 @Composable
 internal fun VarietyRow(
     variety: Variety,
+    drafts: EditorDrafts,
     onPick: (String?, () -> Unit) -> Unit,
     pending: Boolean,
     failed: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    var open by rememberSaveable { mutableStateOf(false) }
     ListRow(
         headline = { Text(stringResource(R.string.onboarding_row_language)) },
         supporting = { Text(varietyName(variety.language, variety.region, currentLocale())) },
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,
-        onClick = { open = true },
+        onClick = { drafts.picking = PlanPicker.Variety },
         modifier = modifier,
     )
-    if (open) {
-        VarietySheet(variety, onDismiss = { open = false }, onPick = { onPick(it) { open = false } }, pending, failed)
+    if (drafts.picking == PlanPicker.Variety) {
+        val close = { drafts.picking = null }
+        VarietySheet(variety, onDismiss = close, onPick = { onPick(it, close) }, pending, failed)
     }
 }
 

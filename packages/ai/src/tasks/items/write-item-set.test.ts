@@ -42,6 +42,7 @@ describe(writeItemSet, () => {
 
   it("writes Cebraspe statements on a shared text with the item rules and no picture rules", async () => {
     const { userPrompt } = await writeItemSet({
+      country: null,
       examFormat: { name: "Cebraspe", style: "Certo ou errado" },
       format: "trueFalse",
       language: "pt",
@@ -65,6 +66,7 @@ describe(writeItemSet, () => {
 
   it("gives an exam's option count, and the titles and situations the skills already use with their rules", async () => {
     const { userPrompt } = await writeItemSet({
+      country: null,
       examFormat: { name: "ENEM", optionCount: 5, style: "ENEM style" },
       format: "multipleChoice",
       language: "pt",
@@ -90,6 +92,7 @@ describe(writeItemSet, () => {
 
   it("writes a language exam's set in its language and where it is spoken", async () => {
     const { userPrompt } = await writeItemSet({
+      country: null,
       examFormat: { name: "CELI 2", style: "Comprensione della lettura" },
       format: "multipleChoice",
       language: "pt",
@@ -137,6 +140,7 @@ describe(toSetItem, () => {
 
   it("shows the exam's real past questions to match in difficulty", async () => {
     const { userPrompt } = await writeItemSet({
+      country: null,
       examFormat: {
         name: "ENEM",
         optionCount: 5,

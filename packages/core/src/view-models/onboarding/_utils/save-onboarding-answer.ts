@@ -13,102 +13,17 @@ import { applyPlanOperations } from "../../../plans/planner/plan-operations";
 import { type PlanSettings, type PlanState } from "../../../plans/planner/plan-state";
 import { getScheduleOperations } from "../../../plans/planner/schedule-operations";
 import { assertTargetDates } from "../../../plans/target-date-range";
-import { type OnboardingAnswerInput } from "../onboarding-contract";
-import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "../onboarding-steps";
+import { getAnsweredQuestions } from "../onboarding-steps";
 import { getExamChoiceOperations } from "./exam-choice-answer";
+import {
+  type GoalAnswerInput,
+  getCountryAnswerData,
+  getDetailChanges,
+  isInvalidGoalAnswer,
+  withoutReplacedAnswer,
+} from "./onboarding-answer-details";
 import { findOnboardingGoalIds } from "./onboarding-goals";
-import { getReasonDetails } from "./reason-answer";
 import { saveAnswerGoal } from "./save-answer-goal";
-
-/** Profile answers are saved on the learner before an answer reaches the goal. */
-type GoalAnswerInput = Exclude<
-  OnboardingAnswerInput,
-  { answer: unknown } | { question: "skipProfile" }
->;
-
-type Details = Record<string, unknown>;
-
-const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
-const REASON_ANSWER_KEYS = new Set(["reason", "targetScore"]);
-
-function withoutReplacedAnswer({
-  details,
-  input,
-}: {
-  details: Details;
-  input: GoalAnswerInput;
-}): Details {
-  if (input.question === "reason") {
-    return Object.fromEntries(
-      Object.entries(details).filter(([key]) => !REASON_ANSWER_KEYS.has(key)),
-    );
-  }
-
-  return input.question === "level"
-    ? Object.fromEntries(Object.entries(details).filter(([key]) => !LEVEL_ANSWER_KEYS.has(key)))
-    : details;
-}
-
-function compactAnswers(answers: Record<string, string | null | undefined>): Details {
-  return Object.fromEntries(Object.entries(answers).filter(([, value]) => value));
-}
-
-function getTargetField(details: Details): "targetNote" | "targetPosition" | "targetScore" {
-  switch (readExamTarget(details)) {
-    case "position":
-      return "targetPosition";
-    case "score":
-      return "targetScore";
-    case "admission":
-    case null:
-      return "targetNote";
-    default:
-      return "targetNote";
-  }
-}
-
-function getDetailChanges({
-  details,
-  input,
-}: {
-  details: Details;
-  input: GoalAnswerInput;
-}): Details {
-  switch (input.question) {
-    case "purpose":
-      return { purpose: input.purpose };
-    case "role":
-      return compactAnswers({
-        role: input.role,
-        targetPosition: input.targetPosition,
-        tasks: input.tasks,
-      });
-    case "reason":
-      return getReasonDetails(input);
-    case "target":
-      return input.target ? { [getTargetField(details)]: input.target } : {};
-    case "followUps":
-      return {
-        followUps: getFollowUpQuestions(details).map((question, index) => ({
-          answer: input.answers[index] ?? null,
-          question,
-        })),
-      };
-    case "level":
-      return {
-        ...(input.level ? { level: input.level } : {}),
-        ...(input.knownSubjects?.length ? { knownSubjects: input.knownSubjects } : {}),
-      };
-    case "buddy":
-    case "examChoice":
-    case "placement":
-    case "schedule":
-    case "targetDate":
-      return {};
-    default:
-      return {};
-  }
-}
 
 /** Goals typed together share the day's time: the main one gets the bigger share. */
 function shareMinutes({ goalIds, minutes }: { goalIds: string[]; minutes: number }) {
@@ -213,6 +128,10 @@ export async function saveAnswerInputs({
   | { goalIds: string[]; status: "invalid" | "notFound" | "saved" }
   | { goals: number; minutes: number; status: "dayTooShort" }
 > {
+  if (isInvalidGoalAnswer({ current: goal, input })) {
+    return { goalIds: [goal.id], status: "invalid" };
+  }
+
   const goalIds = input.question === "schedule" ? await findOnboardingGoalIds(goal) : [goal.id];
   const least = getLeastDailyBudget(goalIds.length);
 
@@ -246,7 +165,7 @@ export async function saveAnswerInputs({
       }
 
       for (const current of currentGoals) {
-        if (input.question === "reason" && current.kind !== "language") {
+        if (isInvalidGoalAnswer({ current, input })) {
           return unchanged("invalid");
         }
 
@@ -317,6 +236,7 @@ export async function saveAnswerInputs({
         }
 
         const data = {
+          ...(own && getCountryAnswerData(input)),
           dailyMinutes: applied.state.goal.dailyMinutes,
           ...(own && { details: answeredDetails }),
           targetDate: applied.state.goal.targetDate

@@ -1,8 +1,12 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal, type TransactionClient } from "@zoonk/db";
+import { getLanguageCountry } from "@zoonk/utils/countries";
 import { isJsonObject } from "@zoonk/utils/json";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
 import { type GoalUpdateInput, onlyCoreDetails, withoutCoreDetails } from "../goal-contract";
+import { hasCountryReading, isCountryGoal } from "./goal-content-country";
 import { ActiveGoalLimitError, findActiveGoalLimit, moveActiveGoalAway } from "./goal-status";
 
 /** A learner's details replace theirs whole but keep what only core writes. */
@@ -22,8 +26,22 @@ function mergeDetails({
 }
 
 export function goalMetadata({ current, input }: { current: Goal; input: GoalUpdateInput }) {
+  const details = mergeDetails({ current, details: input.details });
+  const resolvedDetails = details ?? (isJsonObject(current.details) ? current.details : {});
+
+  const countryDetails =
+    input.contentCountry === undefined
+      ? details
+      : {
+          ...resolvedDetails,
+          answered: [...new Set([...getAnsweredQuestions(resolvedDetails), "contentCountry"])],
+          contentCountrySource: "picked",
+          ...(hasCountryReading(current) ? {} : { countryDependent: true }),
+        };
+
   return {
-    details: mergeDetails({ current, details: input.details }),
+    contentCountry: input.contentCountry,
+    details: countryDetails,
     displayName: input.displayName,
     status: input.status,
     studyTime: input.studyTime,
@@ -65,6 +83,22 @@ export async function saveMetadataInTransaction(
   const updated = changed
     ? await tx.goal.update({ data: goalMetadata({ current, input }), where: { id: current.id } })
     : current;
+
+  const ownCountry = getLanguageCountry(current.language);
+
+  const changedCountry =
+    input.contentCountry !== undefined &&
+    (input.contentCountry ?? ownCountry) !== (current.contentCountry ?? ownCountry);
+
+  const firstCountryChoice = input.contentCountry !== undefined && !hasCountryReading(current);
+
+  if ((changedCountry || firstCountryChoice) && isCountryGoal(updated)) {
+    await oweFollowUps({
+      db: tx,
+      followUps: [{ input: { goalId: current.id }, kind: "rebuildGoalCurriculum" }],
+      userId,
+    });
+  }
 
   const moved = input.status
     ? await moveActiveGoalAway({ goalId: goal.id, status: input.status, tx, userId })

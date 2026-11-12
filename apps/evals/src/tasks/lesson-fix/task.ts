@@ -1,4 +1,4 @@
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import { type FixLessonDraftParams, fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
 import { scoreLessonFix } from "./scorer";
 import { type LessonFixExpected, TEST_CASES } from "./test-cases";
@@ -6,13 +6,13 @@ import { type LessonFixExpected, TEST_CASES } from "./test-cases";
 type LessonFixOutput = Awaited<ReturnType<typeof fixLessonDraft>>["data"];
 
 export const lessonFixTask: Task<
-  Omit<FixLessonDraftParams, "analytics" | "model" | "reasoning" | "useFallback">,
+  OptionalCountry<Omit<FixLessonDraftParams, "analytics" | "model" | "reasoning" | "useFallback">>,
   LessonFixOutput,
   LessonFixExpected
 > = {
   description:
     "Fix only the lesson screens the quality gate flagged, so the lesson passes the code checks",
-  generate: fixLessonDraft,
+  generate: (input) => fixLessonDraft({ ...input, country: input.country ?? null }),
   id: "lesson-fix",
   name: "Lesson Fix",
   score: scoreLessonFix,

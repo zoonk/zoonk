@@ -39,6 +39,7 @@ describe(generateCourseDetails, () => {
   it("keeps the page's lists to their size, as phrases free of repeats, with at most two categories", async () => {
     const { data } = await generateCourseDetails({
       chapters,
+      country: null,
       courseTitle: "Immunology",
       language: "en",
     });
@@ -62,6 +63,7 @@ describe(generateCourseDetails, () => {
   it("never offers the model the categories language and exam courses get from what they are", async () => {
     const { systemPrompt, userPrompt } = await generateCourseDetails({
       chapters,
+      country: null,
       courseTitle: "Espanhol",
       language: "pt",
       targetLanguage: "es",
@@ -79,6 +81,7 @@ describe(generateCourseDetails, () => {
       ["en", "pt-BR", "de"].map(async (language) => {
         const { userPrompt } = await generateCourseDetails({
           chapters,
+          country: null,
           courseTitle: "Immunology",
           language,
         });
@@ -97,7 +100,7 @@ describe(generateCourseDetails, () => {
   it("records the deployed selection version across languages while varying per-call input", async () => {
     const results = await Promise.all(
       ["en", "pt", "es", "fr"].map((language) =>
-        generateCourseDetails({ chapters, courseTitle: "Immunology", language }),
+        generateCourseDetails({ chapters, country: null, courseTitle: "Immunology", language }),
       ),
     );
 

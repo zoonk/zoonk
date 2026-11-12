@@ -805,6 +805,7 @@ private struct PlanReveal: View {
       dailyMinutes: plan.schedule.dailyMinutes,
       id: view.goal.id,
       kind: LearnerGoal.Kind(rawValue: view.goal.kind.rawValue) ?? .learn,
+      language: view.goal.language,
       status: .active,
       targetDate: plan.schedule.targetDate,
       displayName: view.goal.displayName, title: view.goal.title)

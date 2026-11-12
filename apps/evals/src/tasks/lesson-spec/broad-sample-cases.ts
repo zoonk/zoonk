@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { type LessonSpecExpected } from "./visual-test-cases";
@@ -12,14 +12,14 @@ const BROAD_EXPECTATIONS = `
   - The output is a list of lesson specs; estimated minutes are computed by code; don't evaluate JSON formatting
 `;
 
-type BroadCase = TestCase<LessonSpecExpected, LessonSpecParams>;
+type BroadCase = TestCase<LessonSpecExpected, OptionalCountry<LessonSpecParams>>;
 
 function broadCase({
   expectations,
   id,
   pictures,
   ...input
-}: Omit<LessonSpecParams, "activityTemplates"> & {
+}: Omit<OptionalCountry<LessonSpecParams>, "activityTemplates"> & {
   expectations: string;
   id: string;
   pictures: LessonSpecExpected["pictures"];

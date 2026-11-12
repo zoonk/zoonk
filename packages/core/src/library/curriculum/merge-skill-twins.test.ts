@@ -24,7 +24,9 @@ function skill(overrides: Partial<GraphSkill> & { key: string; name: string }): 
 }
 
 const graph: GoalSkillGraph = {
-  courses: [{ key: "portugues", levels: ["intermediate"], title: "Português" }],
+  courses: [
+    { countrySpecific: false, key: "portugues", levels: ["intermediate"], title: "Português" },
+  ],
   estimatedHours: 1.2,
   phases: [{ estimatedHours: 1.2, milestone: "Ler e interpretar", title: "Base" }],
   skills: [

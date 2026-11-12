@@ -31,7 +31,7 @@ async function createExam() {
       timeZone: null,
       year: 2099,
     },
-    identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
+    identityKey: buildExamIdentityKey({ country: "BR", name: examName, ownerId: null, role: null }),
     name: examName,
   });
 

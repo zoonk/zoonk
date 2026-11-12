@@ -26,8 +26,15 @@ const provenance = {
   runId: "coverage-run",
 };
 
-async function writtenGraph() {
-  const [blueprint, course] = await Promise.all([choiceBlueprintFixture(), courseFixture()]);
+async function writtenGraph(country?: string) {
+  const [blueprint, course] = await Promise.all([
+    choiceBlueprintFixture(),
+    courseFixture({ country: country ?? null, language: "pt" }),
+  ]);
+
+  if (country) {
+    await prisma.examBlueprint.update({ data: { country }, where: { id: blueprint.id } });
+  }
 
   const [reading, math] = await Promise.all([
     skillFixture({ language: "pt", name: `Ler textos ${uniqueWord()}` }),
@@ -158,6 +165,39 @@ describe(addMissingExamGraphSkills, () => {
     const repaired = await loadGraph(blueprint.id);
 
     expect(repaired.skills.find((skill) => skill.area === SPANISH)?.skillId).toBe(spanish.id);
+  });
+
+  it("repairs a foreign exam with its country-specific course's skills", async () => {
+    const { blueprint, reading } = await writtenGraph("PT");
+    const word = uniqueWord();
+    mockMissingOptions({ readingId: reading.id, word });
+
+    const legacy = await skillFixture({
+      language: "pt",
+      name: `Ler textos em ${SPANISH} ${word}`,
+      visibility: "public",
+    });
+
+    await addMissingExamGraphSkills(blueprint.id);
+    const repaired = await loadGraph(blueprint.id);
+    const added = repaired.skills.find((skill) => skill.area === SPANISH);
+    const skill = await prisma.skill.findUniqueOrThrow({ where: { id: added?.skillId } });
+    expect(skill.country).toBe("PT");
+    expect(skill.id).not.toBe(legacy.id);
+  });
+
+  it("keeps a foreign exam's general supporting course unscoped when repairing", async () => {
+    const { blueprint, graph, reading } = await writtenGraph("PT");
+    const courseId = graph.skills[0]?.courseIds[0];
+    await prisma.course.update({ data: { country: null }, where: { id: courseId } });
+    mockMissingOptions({ readingId: reading.id, word: uniqueWord() });
+    await addMissingExamGraphSkills(blueprint.id);
+    const repaired = await loadGraph(blueprint.id);
+    const added = repaired.skills.find((skill) => skill.area === SPANISH);
+
+    await expect(
+      prisma.skill.findUniqueOrThrow({ where: { id: added?.skillId } }),
+    ).resolves.toMatchObject({ country: null });
   });
 
   it("asks no model when the graph already teaches every topic", async () => {

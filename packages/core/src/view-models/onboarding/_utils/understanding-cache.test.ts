@@ -8,7 +8,7 @@ import { findCachedUnderstanding } from "./understanding-cache";
 
 const RESULT = {
   followUps: [],
-  goals: [{ kind: "exam", subject: "ENEM", title: "Pass the ENEM" }],
+  goals: [{ countryDependent: false, kind: "exam", subject: "ENEM", title: "Pass the ENEM" }],
   route: "goals",
 } as const;
 
@@ -37,6 +37,7 @@ describe(findCachedUnderstanding, () => {
     const goal = `a high score on the gmat ${randomUUID()}`;
 
     const exam = {
+      countryDependent: false,
       displayName: "GMAT",
       examDay: "booked",
       examSubjects: ["Quantitative Reasoning"],
@@ -65,6 +66,7 @@ describe(findCachedUnderstanding, () => {
     const goal = `learn argentine spanish ${randomUUID()}`;
 
     const language = {
+      countryDependent: false,
       kind: "language",
       subject: "Spanish",
       targetLanguage: "es",

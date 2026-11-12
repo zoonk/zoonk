@@ -53,7 +53,7 @@ function today({ goalId, picks, userId }: { goalId: string; picks: object[]; use
   });
 }
 
-async function practiceBlock(sessionId: string) {
+async function practiceBlock(sessionId: string, position?: number) {
   const skill = await skillFixture();
   const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
 
@@ -61,6 +61,7 @@ async function practiceBlock(sessionId: string) {
     estimatedMinutes: 3,
     kind: "practice",
     payload: toBlockPayload({ itemIds: [item.id], skillIds: [skill.id] }),
+    position,
     sessionId,
   });
 }
@@ -110,7 +111,10 @@ describe("an earlier block's owed settlement that runs late", () => {
       userId: user.id,
     });
 
-    const [first, last] = await Promise.all([practiceBlock(session.id), practiceBlock(session.id)]);
+    const [first, last] = await Promise.all([
+      practiceBlock(session.id, 0),
+      practiceBlock(session.id, 1),
+    ]);
 
     await finishStudyBlock(await play({ blockId: first.id, sessionId: session.id }));
     const finishLast = await play({ blockId: last.id, sessionId: session.id });

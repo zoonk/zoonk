@@ -65,7 +65,14 @@ describe("skill graph retries and course resolution", () => {
     const written = skill("Arithmetic", "math");
 
     const graph = {
-      courses: [{ key: "math", levels: ["beginner" as const], title: "Mathematics" }],
+      courses: [
+        {
+          countrySpecific: false,
+          key: "math",
+          levels: ["beginner" as const],
+          title: "Mathematics",
+        },
+      ],
       estimatedHours: 0.4,
       phases: [{ estimatedHours: 0.4, milestone: "Solve problems", title: "Foundations" }],
       skills: [written],
@@ -111,7 +118,14 @@ describe("skill graph retries and course resolution", () => {
 
     // The model wrote the course key in capitals; normalization lowercases it in the graph.
     const { data: frame, ...frameResult } = taskResult({
-      courses: [{ key: "Math", levels: ["beginner" as const], title: `Mathematics ${word}` }],
+      courses: [
+        {
+          countrySpecific: false,
+          key: "Math",
+          levels: ["beginner" as const],
+          title: `Mathematics ${word}`,
+        },
+      ],
       phases: [{ milestone: "Solve problems", title: "Foundations" }],
       sections: SUBJECTS.map((area, index) => ({
         area,

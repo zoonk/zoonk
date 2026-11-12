@@ -86,8 +86,8 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
-import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
-import com.zoonk.api.models.OnboardingAnswerInputOneOf9
+import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
+import com.zoonk.api.models.OnboardingAnswerInputOneOf10
 import com.zoonk.api.models.OnboardingStep
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
@@ -422,6 +422,10 @@ private fun ColumnScope.QuestionStep(
             key(step) { ProfileStep(step, view, vm) }
         }
 
+        OnboardingStep.CONTENT_COUNTRY -> {
+            CountryStep(subject, view.contentCountry, view.goal.language, pending, vm::answer)
+        }
+
         OnboardingStep.PURPOSE -> {
             PurposeStep(subject, pending, vm::answer)
         }
@@ -502,7 +506,7 @@ private fun ColumnScope.QuestionStep(
 
         OnboardingStep.PLACEMENT -> {
             val placementAnswer =
-                OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT))
+                OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT))
             val placed: suspend () -> WriteOutcome<*> = {
                 vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
             }
@@ -657,7 +661,7 @@ private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.
 private fun Goal.levelChoice(): LevelChoice? {
     val level =
         details.text("level")?.let { saved ->
-            com.zoonk.api.models.OnboardingAnswerInputOneOf7.Level.entries.find {
+            com.zoonk.api.models.OnboardingAnswerInputOneOf8.Level.entries.find {
                 it.value ==
                     saved
             }

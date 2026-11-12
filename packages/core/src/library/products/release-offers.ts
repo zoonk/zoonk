@@ -17,6 +17,7 @@ const OFFER_PAGE_SIZE = 50;
 export async function loadWhatsNewOutline(courseId: string) {
   const course = await prisma.course.findUniqueOrThrow({
     select: {
+      country: true,
       courseChapters: { select: { chapter: { select: { title: true } } } },
       language: true,
       title: true,
@@ -26,6 +27,7 @@ export async function loadWhatsNewOutline(courseId: string) {
 
   return {
     chapterTitles: course.courseChapters.map((placement) => placement.chapter.title),
+    country: course.country,
     courseTitle: course.title,
     language: course.language,
   };

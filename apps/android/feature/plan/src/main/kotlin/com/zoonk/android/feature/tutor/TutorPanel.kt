@@ -76,6 +76,12 @@ fun rememberTutor(
             ?.goals
             ?.associate { it.id to it.targetRegion }
             .orEmpty()
+    val goalCountries =
+        summary.value
+            ?.goals
+            ?.associate { it.id to it.contentCountry?.code }
+            .orEmpty()
+    val homeCountry = summary.value?.homeCountry
     val vm =
         viewModel(key = "tutor:${scope.thread}:$account") {
             TutorViewModel(scope, app.tutor, createSavedStateHandle(), app.studyOpener::openMission)
@@ -84,6 +90,8 @@ fun rememberTutor(
         vm.scope = scope
         vm.activeGoalId = activeGoalId
         vm.goalRegions = goalRegions
+        vm.goalCountries = goalCountries
+        vm.homeCountry = homeCountry
     }
     return vm
 }

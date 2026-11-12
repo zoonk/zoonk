@@ -38,7 +38,23 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Aim, Region, Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
+enum class PlanPart {
+    Aim,
+    Region,
+    Country,
+    CountryRebuild,
+    Date,
+    Schedule,
+    ExamChoices,
+    Bases,
+    Activities,
+    Writing,
+    Steering,
+    Tools,
+    FullCourse,
+    Focus,
+    Suggestion,
+}
 
 /** [Started] stays: the new goal becomes the active one, which the Plan then shows. */
 enum class NextLevelStart { Idle, Starting, Started, Failed }
@@ -164,13 +180,30 @@ class PlanViewModel(
     fun setRegion(
         region: String?,
         saved: () -> Unit,
+    ) = saveGoal(PlanPart.Region, saved) { store.setRegion(goalId, region) }
+
+    /** A learn goal's content country: the plan stays until its rebuild saves the new one; [saved] runs once the server has the country. */
+    fun setContentCountry(
+        country: String,
+        saved: () -> Unit,
+    ) = saveGoal(PlanPart.Country, saved) { store.setContentCountry(goalId, country) }
+
+    /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
+    fun retryCountryRebuild() =
+        saveGoal(PlanPart.CountryRebuild, saved = {}) {
+            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) notices.send(PlanEvent.SaveFailed) }
+        }
+
+    private fun saveGoal(
+        part: PlanPart,
+        saved: () -> Unit,
+        write: suspend () -> MutationResult<Unit>,
     ) {
-        val part = PlanPart.Region
         if (part in savingParts.value) return
         savingParts.update { it + part }
         failedParts.update { it - part }
         viewModelScope.launch {
-            when (store.setRegion(goalId, region)) {
+            when (write()) {
                 is MutationResult.Done -> {
                     saved()
                 }

@@ -62,6 +62,7 @@ export function openPractice(
             {children}
           </a>
         ),
+        loadCountries: async () => [],
         routes: {
           buddy: "/buddy",
           journey: "/plan",

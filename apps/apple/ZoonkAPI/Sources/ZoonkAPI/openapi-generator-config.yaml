@@ -187,6 +187,7 @@ filter:
     - listCertificates
     - listChapterLessonMaps
     - listChapterLessons
+    - listCountries
     - listCourseCategoryCounts
     - listCourseChapters
     - listCourses

@@ -10,6 +10,7 @@ import { findMemoryForTask } from "../../memory/get-memory-for-task";
 import { getSession } from "../../users/get-session";
 import { toProvenanceData } from "../_utils/library-rows";
 import { canViewLibraryRow } from "../_utils/library-visibility";
+import { getLessonCountry } from "../content-country";
 import { safeParseStepContent } from "../steps/contract/step-contract";
 import { type ExampleLineContext, loadExampleLineContext } from "./_utils/example-line-context";
 
@@ -25,6 +26,7 @@ type LessonLines =
   | { canRequest: boolean; lines: StepExampleLine[]; status: "ready" };
 
 type LessonLinesInput = {
+  country: string | null;
   context: ExampleLineContext;
   language: string;
   lessonId: string;
@@ -48,7 +50,16 @@ function getSlot(content: unknown) {
 async function findExplanation(stepId: string) {
   const step = await prisma.step.findUnique({
     include: {
-      lesson: { select: { language: true, ownerId: true, title: true, visibility: true } },
+      lesson: {
+        select: {
+          homeChapter: { select: { homeCourse: { select: { country: true } } } },
+          language: true,
+          ownerId: true,
+          title: true,
+          visibility: true,
+        },
+      },
+      skill: { select: { country: true } },
     },
     where: { id: stepId },
   });
@@ -58,6 +69,7 @@ async function findExplanation(stepId: string) {
   }
 
   return {
+    country: getLessonCountry({ course: step.lesson.homeChapter?.homeCourse, skill: step.skill }),
     hasSlot: Boolean(getSlot(step.content)),
     language: step.lesson.language,
     lessonId: step.lessonId,
@@ -111,6 +123,7 @@ async function loadEarlierLines({
 }
 
 async function writeLessonLines({
+  country,
   context,
   language,
   lessonId,
@@ -143,6 +156,7 @@ async function writeLessonLines({
 
   const { data, provenance } = await generateExampleLines({
     analytics: { contentScope: "personal", distinctId: userId },
+    country,
     earlierLines: [
       ...current.flatMap((row) => row.text ?? []),
       ...(await loadEarlierLines({ lessonId, userId })),
@@ -150,6 +164,7 @@ async function writeLessonLines({
     facts: picked.map((fact) => fact.statement),
     goal: context.goal,
     language,
+    learnerHomeCountry: context.learnerHomeCountry,
     plainWords: context.plainWords,
     screens: missing.map(({ idea, text }) => ({ idea, text })),
   });
@@ -266,6 +281,7 @@ async function resolveStepExampleLine({
 
   const written = await writeLessonLinesOnce({
     context,
+    country: screen.country,
     language: screen.language,
     lessonId: screen.lessonId,
     lessonTitle: screen.lessonTitle,
