@@ -192,7 +192,14 @@ async function saveOpeningLesson({
     (await findOpeningLessonStep({ courseId: course.id, skillId: skill.id, userId })) ??
     (await writeOpeningChapter({ context, opening, scope, userId }));
 
-  return lessonId ? saveGoalOpeningStep({ goalId, lessonId, opening: opening.opening }) : null;
+  return lessonId
+    ? saveGoalOpeningStep({
+        country: scope.country ?? null,
+        goalId,
+        lessonId,
+        opening: opening.opening,
+      })
+    : null;
 }
 
 async function followLesson(lessonId: string): Promise<boolean> {
@@ -285,7 +292,7 @@ export function openGoal({
   scope: CurriculumScope;
 }): GoalOpening {
   const { goal } = inputs;
-  const known = readSavedGoalOpeningStep(goal.id);
+  const known = readSavedGoalOpeningStep(goal.id, scope.country ?? null);
 
   const failed = async () => {
     await trackGenerationFailedStep({

@@ -32,7 +32,7 @@ export type OpeningLesson = SavedGoalOpening["lesson"];
 
 export async function readSavedGoalOpeningStep(
   goalId: string,
-  country?: string | null,
+  country: string | null,
 ): Promise<SavedGoalOpening | null> {
   "use step";
 
@@ -116,6 +116,7 @@ export async function saveOpeningChapterStep({
 }
 
 export async function saveGoalOpeningStep(input: {
+  country: string | null;
   goalId: string;
   lessonId: string;
   opening: GoalOpeningSkill;

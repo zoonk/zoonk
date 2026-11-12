@@ -301,8 +301,6 @@ describe("country rebuild continuity", () => {
       userId: user.id,
     });
 
-    await expect(readSavedGoalOpening(goal.id)).resolves.not.toBeNull();
-
     await expect(readSavedGoalOpening(goal.id, "PT")).resolves.not.toBeNull();
   });
 

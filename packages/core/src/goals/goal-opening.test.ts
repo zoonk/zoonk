@@ -94,8 +94,18 @@ describe(saveGoalOpening, () => {
     const secondOpening = openingFor({ course: secondCourse, skill: secondSkill });
 
     const saved = await Promise.all([
-      saveGoalOpening({ goalId: goal.id, lessonId: first.id, opening: firstOpening }),
-      saveGoalOpening({ goalId: goal.id, lessonId: second.id, opening: secondOpening }),
+      saveGoalOpening({
+        country: null,
+        goalId: goal.id,
+        lessonId: first.id,
+        opening: firstOpening,
+      }),
+      saveGoalOpening({
+        country: null,
+        goalId: goal.id,
+        lessonId: second.id,
+        opening: secondOpening,
+      }),
     ]);
 
     const [kept] = saved;
@@ -104,10 +114,15 @@ describe(saveGoalOpening, () => {
     expect(saved).toStrictEqual([kept, kept]);
 
     await expect(
-      saveGoalOpening({ goalId: goal.id, lessonId: second.id, opening: secondOpening }),
+      saveGoalOpening({
+        country: null,
+        goalId: goal.id,
+        lessonId: second.id,
+        opening: secondOpening,
+      }),
     ).resolves.toStrictEqual(kept);
 
-    await expect(readSavedGoalOpening(goal.id)).resolves.toStrictEqual({
+    await expect(readSavedGoalOpening(goal.id, null)).resolves.toStrictEqual({
       lesson: kept,
       skill: kept?.id === first.id ? firstOpening : secondOpening,
     });
@@ -151,8 +166,8 @@ describe(readSavedGoalOpening, () => {
 
     expect(chosen).toBe(lesson.id);
     const opening = openingFor({ course, skill: openingSkill });
-    await saveGoalOpening({ goalId: goal.id, lessonId: lesson.id, opening });
-    const resumed = await readSavedGoalOpening(goal.id);
+    await saveGoalOpening({ country: null, goalId: goal.id, lessonId: lesson.id, opening });
+    const resumed = await readSavedGoalOpening(goal.id, null);
     expect(resumed?.skill).toStrictEqual(opening);
   });
 
@@ -188,8 +203,8 @@ describe(readSavedGoalOpening, () => {
 
     expect(chosen).toBe(lesson.id);
     const opening = openingFor({ course, skill });
-    await saveGoalOpening({ goalId: goal.id, lessonId: lesson.id, opening });
-    const resumed = await readSavedGoalOpening(goal.id);
+    await saveGoalOpening({ country: null, goalId: goal.id, lessonId: lesson.id, opening });
+    const resumed = await readSavedGoalOpening(goal.id, null);
     expect(resumed?.skill).toStrictEqual(opening);
   });
 
@@ -227,6 +242,7 @@ describe(readSavedGoalOpening, () => {
     ]);
 
     await saveGoalOpening({
+      country: null,
       goalId: goal.id,
       lessonId: first.id,
       opening: {
