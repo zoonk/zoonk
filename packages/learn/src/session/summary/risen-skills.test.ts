@@ -8,7 +8,7 @@ const move = (
 ) => ({ from, name: skillId, skillId, to });
 
 describe(getRisenSkills, () => {
-  it("names the skills that went up a state, the first two", () => {
+  it("names the skills that went up a state", () => {
     expect(
       getRisenSkills([
         move("ratios", "learning", "solid"),
@@ -16,7 +16,7 @@ describe(getRisenSkills, () => {
         move("discounts", "solid", "mastered"),
         move("fractions", "learning", "mastered"),
       ]).map((rise) => rise.skillId),
-    ).toStrictEqual(["ratios", "discounts"]);
+    ).toStrictEqual(["ratios", "discounts", "fractions"]);
   });
 
   it("names nothing when every skill slipped back or stayed", () => {

@@ -9,6 +9,7 @@ import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
+import { useReminderOfferActions } from "@/lib/reminders/use-reminder-offer-actions";
 import { type DayEntry, type TapStep } from "@/lib/session/day-entry";
 import {
   endDayEntry,
@@ -254,6 +255,7 @@ export function SessionSummaryClient({
   const navigation = useStudyNavigation(sessionId);
   const router = useRouter();
   const signUpHref = useSignUpHref();
+  const reminderActions = useReminderOfferActions();
 
   return (
     <SessionSummary
@@ -266,6 +268,7 @@ export function SessionSummaryClient({
       exitHref={EXIT_HREF}
       goalKind={goalKind}
       mistakesHref="/mistakes"
+      reminderActions={reminderActions}
       renderCeremony={(moments, onClose) => (
         <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}

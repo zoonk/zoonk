@@ -100,6 +100,7 @@ function renderSessionSummary() {
           preparation: NO_CHANGE,
           progress: NO_CHANGE,
           questions: 4,
+          reminderOffer: null,
           sessionId: "session",
           skillsMoved: [],
           status: "completed",

@@ -30,7 +30,7 @@ export function focusStepTitle(container: HTMLElement | null) {
     ?.focus({ preventScroll: true });
 }
 
-export function StepsBackButton({ onClick }: { onClick: () => void }) {
+function StepsBackButton({ onClick }: { onClick: () => void }) {
   const t = useExtracted();
 
   return (

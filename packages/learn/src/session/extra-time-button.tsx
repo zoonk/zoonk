@@ -36,7 +36,7 @@ export function ExtraTimeButton({
           type="submit"
           variant="ghost"
         >
-          {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
+          {label ?? t("Practice {minutes} more min", { minutes: String(minutes) })}
         </Button>
       </form>
 

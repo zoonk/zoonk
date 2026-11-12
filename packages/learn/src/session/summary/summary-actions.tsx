@@ -65,7 +65,7 @@ export function KeepGoingButton({
         type="submit"
         variant="outline"
       >
-        {t("Keep going")}
+        {t("Continue")}
       </Button>
     </form>
   );
@@ -85,11 +85,7 @@ export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof us
   );
 }
 
-/**
- * On a phone, only beside Finish (`lastStep`): two "Continue" buttons would leave the learner
- * guessing which one keeps them studying.
- */
-export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
+export function SummaryOptions() {
   const t = useExtracted();
   const stopped = useIsStopped();
   const { actions, signUpHref, summary } = useSessionSummary();
@@ -100,7 +96,7 @@ export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
       {!stopped && extraTime.available && (
         <ExtraTimeButton
           action={actions.addExtraTime}
-          className={cn("lg:w-auto lg:self-end", !lastStep && "without-aside:hidden")}
+          className="lg:w-auto lg:self-end"
           label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
           minutes={extraTime.minutes}
         />
