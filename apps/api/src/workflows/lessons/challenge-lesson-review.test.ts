@@ -1,14 +1,18 @@
+import { randomUUID } from "node:crypto";
 import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
+import { readStepVariantGenerationSummary } from "@zoonk/core/library/variants/generation";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { challengePlanFixture } from "../../../../../packages/ai/src/tasks/challenge/challenge-plan-fixture";
 import { taskResult } from "../_test-utils/recorded-outputs";
+import { prepareFieldChallenge } from "../sessions/prepare-field-challenge";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
 async function lesson(ownerId?: string) {
@@ -121,6 +125,69 @@ describe("challenge prepublication review", () => {
 
     const saved = await prisma.lesson.findUniqueOrThrow({ where: { id: target.id } });
     expect(saved.heldBackDrafts).toStrictEqual([]);
+  });
+
+  it("reviews a field draft, holds it for the next preparation, then publishes its replacement", async () => {
+    const { steps } = await playableLessonFixture({
+      lesson: {
+        spec: {
+          kind: "challenge",
+          skills: [{ description: null, name: "Chance" }],
+          variant: "work",
+        },
+      },
+      steps: ["challenge"],
+    });
+    const stepId = steps[0]?.id ?? "";
+    const target = { field: "nursing", ownerId: null, stepId };
+    vi.mocked(checkChallengeQuality).mockResolvedValueOnce(taskResult({ findings: [finding] }));
+    await expect(prepareFieldChallenge({ target, workflowRunId: randomUUID() })).resolves.toBe(
+      "heldBack",
+    );
+    expect(generateChallengePlan).toHaveBeenCalledOnce();
+    await expect(prepareFieldChallenge({ target, workflowRunId: randomUUID() })).resolves.toBe(
+      "ready",
+    );
+    expect(vi.mocked(generateChallengePlan).mock.calls[1]?.[0].problems).toStrictEqual([
+      expect.stringContaining(finding.error),
+    ]);
+    const summary = await readStepVariantGenerationSummary({
+      key: "nursing",
+      kind: "field",
+      stepId,
+    });
+    expect(summary?.claimedRunIds).toHaveLength(2);
+    expect(summary?.heldBackDrafts).toHaveLength(1);
+    expect(summary?.variant).not.toBeNull();
+  });
+
+  it("spends a field reservation but records no content rejection when the reviewer is unavailable", async () => {
+    const { steps } = await playableLessonFixture({
+      lesson: {
+        spec: {
+          kind: "challenge",
+          skills: [{ description: null, name: "Chance" }],
+          variant: "work",
+        },
+      },
+      steps: ["challenge"],
+    });
+    const stepId = steps[0]?.id ?? "";
+    vi.mocked(checkChallengeQuality).mockRejectedValue(new Error("Review unavailable"));
+    await expect(
+      prepareFieldChallenge({
+        target: { field: "nursing", ownerId: null, stepId },
+        workflowRunId: randomUUID(),
+      }),
+    ).rejects.toThrow("Review unavailable");
+    const summary = await readStepVariantGenerationSummary({
+      key: "nursing",
+      kind: "field",
+      stepId,
+    });
+    expect(summary?.claimedRunIds).toHaveLength(1);
+    expect(summary?.heldBackDrafts).toStrictEqual([]);
+    expect(summary?.variant).toBeNull();
   });
 
   it("uses the private scope model on both calls without a reviewer", async () => {

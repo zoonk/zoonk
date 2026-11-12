@@ -3,7 +3,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { buildProviderOptions } from "../../provider-options";
-import { type ChallengeCaseParams } from "../challenge/challenge-case";
+import { type ChallengeCaseParams } from "../challenge/challenge-schema";
 import systemPrompt from "./challenge-quality-check.prompt.md";
 import { getLessonCheckModels } from "./lesson-check-models";
 

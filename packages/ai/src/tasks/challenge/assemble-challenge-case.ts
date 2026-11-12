@@ -1,5 +1,5 @@
-import { type WrittenChallengeCase } from "./challenge-case";
 import { type ChallengePlan } from "./challenge-plan";
+import { type WrittenChallengeCase } from "./challenge-schema";
 import { type ChallengeScript } from "./challenge-script";
 
 type PlanDecision = ChallengePlan["decisions"][number];

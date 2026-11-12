@@ -7,9 +7,9 @@ import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import { type ChallengeCaseParams, challengeCaseSchema } from "./challenge-case";
 import { CHALLENGE_MODELS } from "./challenge-models";
 import promptTemplate from "./challenge-plan.prompt.md";
+import { type ChallengeCaseParams, challengeCaseSchema } from "./challenge-schema";
 
 const { meters, mission, panels, setting, skills, team, title } = challengeCaseSchema.shape;
 

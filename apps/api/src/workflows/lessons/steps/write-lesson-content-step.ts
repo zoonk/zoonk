@@ -5,6 +5,7 @@ import {
   type ServiceTier,
   chooseServiceTier,
 } from "@zoonk/ai/provider-options";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
 import { loadChallengeLessonDraft } from "@zoonk/core/library/challenges/lesson-draft";
 import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
 import {
@@ -50,9 +51,11 @@ export type LanguageDraftStage = {
   status: "languageDrafted";
 };
 
-export type ChallengeDraftStage = NonNullable<
-  Awaited<ReturnType<typeof loadChallengeLessonDraft>>
-> & { status: "challengeDraft" };
+export type ChallengeDraftStage = {
+  params: ChallengeCaseParams;
+  review: boolean;
+  status: "challengeDraft";
+};
 
 type WriteResult =
   | Exclude<LessonWriteOutcome, { status: "heldBack" }>

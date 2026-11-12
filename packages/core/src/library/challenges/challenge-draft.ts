@@ -1,8 +1,8 @@
 import "server-only";
 import { combineTaskProvenance } from "@zoonk/ai/combine-task-provenance";
 import { assembleChallengeCase } from "@zoonk/ai/tasks/challenge/assemble";
-import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/case";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { checkWrittenChallenge } from "./challenge-case-content";

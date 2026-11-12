@@ -1,5 +1,5 @@
 import { type Task } from "@/lib/types";
-import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/case";
+import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
 import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { renderChallengeMap } from "@zoonk/core/library/challenges/render";

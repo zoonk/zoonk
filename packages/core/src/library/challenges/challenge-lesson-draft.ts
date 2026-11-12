@@ -1,11 +1,11 @@
 import "server-only";
-import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/case";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
 import { prisma } from "@zoonk/db";
 import { getScopeModel } from "../curriculum/curriculum-scope";
 import { parseHeldBackDrafts } from "../generation/held-back-drafts";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
-import { toChallengeCaseInputs } from "./_utils/draft-challenge";
+import { toChallengeCaseInputs } from "./_utils/challenge-inputs";
 import { type ScriptedChallenge } from "./challenge-draft";
 import { parseChallengeLessonSpec } from "./challenge-lesson-spec";
 

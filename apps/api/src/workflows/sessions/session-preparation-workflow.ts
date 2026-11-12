@@ -23,10 +23,10 @@ import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lo
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { startChallengeQuestions } from "./challenge-question-starts";
+import { prepareFieldChallenge } from "./prepare-field-challenge";
 import { writeLanguageCalls } from "./steps/language-call-steps";
 import {
   listLearnerVersionTargetsStep,
-  prepareFieldChallengeStep,
   prepareToolVersionStep,
 } from "./steps/personal-versions-steps";
 import {
@@ -76,7 +76,7 @@ async function preparePersonalLayer({
   await Promise.allSettled([
     ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
     ...versions.tools.map((target) => prepareToolVersionStep({ ...context, target })),
-    ...versions.challenges.map((target) => prepareFieldChallengeStep({ ...context, target })),
+    ...versions.challenges.map((target) => prepareFieldChallenge({ ...context, target })),
   ]);
 }
 

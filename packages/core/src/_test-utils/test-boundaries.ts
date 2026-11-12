@@ -51,7 +51,6 @@ export const boundaries = {
   "@vercel/oidc": { getVercelOidcToken: vi.fn() },
   "@zoonk/ai/tasks/audio": { generateLanguageAudio: vi.fn() },
   "@zoonk/ai/tasks/audio/listening": { voiceListeningScript: vi.fn() },
-  "@zoonk/ai/tasks/challenge/case": { generateChallengeCase: vi.fn() },
   "@zoonk/ai/tasks/challenge/plan": { generateChallengePlan: vi.fn() },
   "@zoonk/ai/tasks/challenge/script": { generateChallengeScript: vi.fn() },
   "@zoonk/ai/tasks/courses/details": { generateCourseDetails: vi.fn() },

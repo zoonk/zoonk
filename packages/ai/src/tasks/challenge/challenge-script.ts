@@ -5,10 +5,10 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { buildProviderOptions } from "../../provider-options";
 import { formatLocalContext } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import { type ChallengeCaseParams, challengePanelSchema } from "./challenge-case";
 import { CHALLENGE_MODELS } from "./challenge-models";
 import { type ChallengePlan, getChallengeSystemPrompt } from "./challenge-plan";
 import { describePlanForScript } from "./challenge-plan-paths";
+import { type ChallengeCaseParams, challengePanelSchema } from "./challenge-schema";
 import promptTemplate from "./challenge-script.prompt.md";
 
 function idEnum(ids: readonly string[]) {

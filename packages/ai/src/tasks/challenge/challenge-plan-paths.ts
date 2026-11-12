@@ -72,7 +72,7 @@ export function getPlanFactProblems(plan: ChallengePlan): string[] {
 
       return plan.facts.some((fact) => fact.id === id && fact.known === "later") && !known.has(id)
         ? [
-            `Ending "${ending.id}" rests on "${id}", but not every path that reaches it goes through a choice that establishes that fact: give those paths another ending, have every path establish it, or, when the ending itself reveals the value to someone who skipped the check, give it a fact of its own for what is found`,
+            `Ending "${ending.id}" rests on "${id}", but not every path that reaches it goes through a choice that establishes that fact: give those paths another ending, have every path establish it`,
           ]
         : [];
     });

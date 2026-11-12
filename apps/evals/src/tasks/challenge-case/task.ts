@@ -2,11 +2,11 @@ import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-sc
 import { type Task } from "@/lib/types";
 import { sumLanguageModelUsage } from "@zoonk/ai/combine-task-provenance";
 import { assembleChallengeCase } from "@zoonk/ai/tasks/challenge/assemble";
+import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
 import {
   type ChallengeCaseParams,
   type WrittenChallengeCase,
-} from "@zoonk/ai/tasks/challenge/case";
-import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+} from "@zoonk/ai/tasks/challenge/schema";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-content";
 import { checkChallengePlan } from "@zoonk/core/library/challenges/plan-check";

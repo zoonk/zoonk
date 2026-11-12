@@ -283,7 +283,6 @@
     "./library/challenges/lesson-spec": "./src/library/challenges/challenge-lesson-spec.ts",
     "./library/challenges/run": "./src/library/challenges/challenge-run.ts",
     "./library/challenges/team": "./src/library/challenges/challenge-team.ts",
-    "./library/challenges/write": "./src/library/challenges/write-challenge-content.ts",
     "./library/claims/generation": "./src/library/claims/generation-claim.ts",
     "./library/courses/details": "./src/library/courses/course-details.ts",
     "./library/courses/get": "./src/library/courses/get-library-course.ts",
@@ -720,7 +719,8 @@
     "./library/challenges/plan-check": "./src/library/challenges/challenge-plan-check.ts",
     "./library/challenges/draft": "./src/library/challenges/challenge-draft.ts",
     "./library/challenges/lesson-draft": "./src/library/challenges/challenge-lesson-draft.ts",
-    "./library/challenges/render": "./src/library/challenges/render-challenge.ts"
+    "./library/challenges/render": "./src/library/challenges/render-challenge.ts",
+    "./library/challenges/field-token": "./src/library/challenges/field-challenge-token.ts"
   },
   "scripts": {
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",

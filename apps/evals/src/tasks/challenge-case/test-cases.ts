@@ -1,5 +1,5 @@
 import { type TestCase } from "@/lib/types";
-import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/case";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
 
 type ChallengeCaseInput = Omit<
   ChallengeCaseParams,
