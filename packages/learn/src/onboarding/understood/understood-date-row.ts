@@ -325,7 +325,7 @@ export function useDateRow() {
       id: "examDates",
       label: t("{count, plural, one {Exam date} other {Exam dates}}", { count: sitting.length }),
       note: estimated
-        ? t("Not official yet")
+        ? t("From its usual dates. We'll tell you when the official ones are out.")
         : t("{days, plural, one {# day left} other {# days left}}", {
             days: daysUntilIsoDate({ isoDate: day.date, today: new Date() }),
           }),

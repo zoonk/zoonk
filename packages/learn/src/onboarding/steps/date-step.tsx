@@ -41,7 +41,7 @@ function ExamDateStep({
 
   return (
     <StepForm
-      description={[passedNote, exam.estimated && t("We'll tell you if the date changes.")]
+      description={[passedNote, exam.estimated && t("This is the expected date until the notice confirms it.")]
         .filter(Boolean)
         .join(space)}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}

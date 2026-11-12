@@ -38,7 +38,7 @@ function FocusTestNotice({
   const [starting, setStarting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const busy = isPending || starting;
-  const result = state === "dismissed" ? t("You can take the test from your plan.") : null;
+  const result = state === "dismissed" ? t("Noted. You can take the test from your plan.") : null;
 
   const start = () => {
     setStarting(true);

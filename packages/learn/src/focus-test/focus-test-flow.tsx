@@ -55,7 +55,9 @@ function FocusTestQuestion({
       question={phase.question}
       stopHint={
         sitting.hint === "manyUnknown"
-          ? t("Haven't studied most of this yet? You can stop here.")
+          ? t(
+              "Haven't studied most of this yet? That's fine. You can stop here and start learning.",
+            )
           : undefined
       }
       subject={sitting.subject ? getSubjectName(sitting.subject) : subject}
