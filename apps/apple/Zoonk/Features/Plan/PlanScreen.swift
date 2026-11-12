@@ -299,7 +299,7 @@ private struct PlanContent: View {
     context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
   ) -> some View {
     let focusTest = context.plan.focusTest.map {
-      PlanFocusTestRow(goalId: goal.id, summary: $0, dated: goal.targetDate != nil)
+      PlanFocusTestRow(goalId: goal.id, summary: $0)
     }
 
     if let structure {

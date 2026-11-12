@@ -4,8 +4,6 @@ import SwiftUI
 struct PlanFocusTestRow: View {
   let goalId: String
   let summary: FocusTestSummary
-  /// The goal has a date, so the test can also suggest where to focus.
-  let dated: Bool
 
   @Environment(AppRouter.self) private var router
 
@@ -15,7 +13,7 @@ struct PlanFocusTestRow: View {
     } label: {
       ListRow(
         Text(FocusTestCopy.name),
-        description: Text(FocusTestCopy.planLine(summary, dated: dated))
+        description: Text(FocusTestCopy.planLine(summary))
       ) {
         Image(systemName: "scope")
       }

@@ -32,9 +32,14 @@ final class FocusTestPhaseTests: XCTestCase {
   func testNeverOpensOnAQuestionASittingWithAnswersWaitsOnItsResumeScreen() throws {
     let test = try focusTest(sitting: sitting(answered: 3))
 
-    guard case .resume = phase(.asking, test, next: question, opening: true) else {
+    guard
+      case .resume(_, let answered) = phase(
+        .asking, test, next: question, answered: 7, opening: true)
+    else {
       return XCTFail("Expected the resume screen")
     }
+
+    XCTAssertEqual(answered, 7, "Counts every test answer, not only this sitting's")
   }
 
   func testInvitesAgainWhenASittingWasLeftBeforeItsFirstAnswer() throws {
@@ -73,10 +78,11 @@ final class FocusTestPhaseTests: XCTestCase {
 
   private func phase(
     _ status: Components.Schemas.PlacementStatus, _ focusTest: FocusTest?,
-    next: PracticeQuestion? = nil, opening: Bool
+    next: PracticeQuestion? = nil, answered: Int = 0, opening: Bool
   ) -> FocusTestPhase {
     FocusTestPhase(
-      status: status, focusTest: focusTest, next: next, labels: .trueFalse, opening: opening)
+      status: status, focusTest: focusTest, next: next, labels: .trueFalse, answered: answered,
+      opening: opening)
   }
 
   private let offer = #"{"minutes":15}"#
@@ -90,8 +96,8 @@ final class FocusTestPhaseTests: XCTestCase {
     sitting: String = "null", offer: String = "null", checkpoint: String = "null"
   ) throws -> FocusTest {
     let json = #"""
-      {"checkpoint":\#(checkpoint),"dated":true,"offer":\#(offer),"sessionQuestions":"off",
-      "sitting":\#(sitting),"subjects":[]}
+      {"checkpoint":\#(checkpoint),"offer":\#(offer),"sessionQuestions":"off",
+      "sitting":\#(sitting),"subjects":[],"suggestsFocus":true}
       """#
 
     return try JSONDecoder().decode(FocusTest.self, from: Data(json.utf8))

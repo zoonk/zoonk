@@ -244,10 +244,9 @@ struct FocusTestCheckpoint: View {
   /// On a plan: what the learner can do with the result.
   private func choices(canChangeFocus: Bool) -> some View {
     let questions = savedQuestions ?? focusTest.sessionQuestions
-    let focusAnswered = decision != nil || ![.ifTimeShort, .proposed].contains(focus?.state)
 
     return Section {
-      if let changeFocus, canChangeFocus, focusAnswered {
+      if let changeFocus, canChangeFocus, focus?.state != .ifTimeShort {
         Button(action: changeFocus) {
           ListRow(
             Text(

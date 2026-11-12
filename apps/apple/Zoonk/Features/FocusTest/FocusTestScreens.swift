@@ -29,7 +29,7 @@ struct FocusTestInvitation: View {
   @State private var showsHowItWorks = false
 
   var body: some View {
-    let findsFocus = focusTest.dated && focusTest.subjects.count > 1
+    let findsFocus = focusTest.suggestsFocus
 
     ZoonkList {
       StepHeader(
@@ -76,7 +76,7 @@ struct FocusTestInvitation: View {
     .onboardingColumn()
     .environment(\.isSavingAnswer, pressed != nil)
     .sheet(isPresented: $showsHowItWorks) {
-      FocusTestHowItWorks()
+      FocusTestHowItWorks(suggestsFocus: focusTest.suggestsFocus)
         .zoonkStyles()
     }
   }
@@ -84,6 +84,8 @@ struct FocusTestInvitation: View {
 
 /// Main's `FocusTestHowItWorks`: the test's rules, for whoever wants them before starting.
 private struct FocusTestHowItWorks: View {
+  let suggestsFocus: Bool
+
   var body: some View {
     FocusTestSheet(
       title: Text(
@@ -113,14 +115,16 @@ private struct FocusTestHowItWorks: View {
           description: Text(
             "Each answer is saved.", tableName: "FocusTest",
             comment: "How it works: under \"Stop anytime\""))
-        ListRow(
-          Text(
-            "Focusing never removes a subject", tableName: "FocusTest",
-            comment: "A row of the Focus test's How it works sheet"),
-          description: Text(
-            "The ones you need most get more time when your time can't cover everything.",
-            tableName: "FocusTest",
-            comment: "How it works: under \"Focusing never removes a subject\""))
+        if suggestsFocus {
+          ListRow(
+            Text(
+              "Focusing never removes a subject", tableName: "FocusTest",
+              comment: "A row of the Focus test's How it works sheet"),
+            description: Text(
+              "The ones you need most get more time when your time can't cover everything.",
+              tableName: "FocusTest",
+              comment: "How it works: under \"Focusing never removes a subject\""))
+        }
         ListRow(
           Text(
             "A few more in your first week", tableName: "FocusTest",
@@ -137,6 +141,7 @@ private struct FocusTestHowItWorks: View {
 /// Main's `FocusTestResume`: an open sitting the learner left with answers in it.
 struct FocusTestResume: View {
   let sitting: FocusTest.Sitting
+  let answered: Int
   let pressed: FocusTestPress?
   let failed: Bool
   let onContinue: () -> Void
@@ -150,7 +155,7 @@ struct FocusTestResume: View {
           "Continue your test", tableName: "FocusTest",
           comment: "Title of an open Focus test sitting the learner came back to"),
         description: Text(
-          "Your \(sitting.answered) answers are saved.", tableName: "FocusTest",
+          "Your \(answered) answers are saved.", tableName: "FocusTest",
           comment: "Under \"Continue your test\": how many answers the open sitting saved"))
 
       FocusTestSaveFailure(failed: failed)
@@ -170,7 +175,6 @@ struct FocusTestResume: View {
 
 /// A sitting that's over and not closed yet: the learner came back to it, or closing it failed.
 struct FocusTestEnded: View {
-  let subject: String
   let isSaving: Bool
   let failed: Bool
   let onFinish: () -> Void
@@ -178,7 +182,7 @@ struct FocusTestEnded: View {
   var body: some View {
     ZoonkList {
       StepHeader(
-        subject: subject,
+        subject: String(localized: FocusTestCopy.name),
         title: Text(
           "Your answers are saved", tableName: "FocusTest",
           comment: "Title once a Focus test sitting has nothing more to ask"),

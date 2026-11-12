@@ -54,11 +54,11 @@ enum FocusTestCopy {
     table: "FocusTest", comment: "Under the Focus test's result: why these subjects")
 
   /// The test's one line on the plan: what tapping its row gives.
-  static func planLine(_ summary: FocusTestSummary, dated: Bool) -> String {
+  static func planLine(_ summary: FocusTestSummary) -> String {
     switch summary.state {
     case .notStarted:
       return
-        ([String(localized: title(findsFocus: dated))]
+        ([String(localized: title(findsFocus: summary.suggestsFocus))]
         + (summary.offer.map { [about(minutes: $0.minutes)] } ?? [])).joinedFacts()
     case .sitting where summary.offer != nil:
       return [

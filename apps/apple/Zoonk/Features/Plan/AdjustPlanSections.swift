@@ -202,7 +202,7 @@ private struct PlanFocusSection: View {
           } label: {
             ListRow(
               Text(FocusTestCopy.name),
-              description: Text(FocusTestCopy.planLine(focusTest, dated: goal.targetDate != nil))
+              description: Text(FocusTestCopy.planLine(focusTest))
             ) {
               Image(systemName: "scope")
             }

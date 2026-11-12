@@ -102,13 +102,13 @@ struct FocusTest: Decodable, Equatable, Sendable {
   }
 
   let checkpoint: Checkpoint?
-  /// The goal has a date, so the test can also suggest where to focus.
-  let dated: Bool
   let offer: Offer?
   let sessionQuestions: FocusTestSessionQuestions
   let sitting: Sitting?
   /// Every subject, in the notice's order.
   let subjects: [Subject]
+  /// The goal has a date and more than one subject, so the test can suggest where to focus.
+  let suggestsFocus: Bool
 
   /// Up to three subjects the plan should give more time, the most needed first.
   var focusRows: [Row] { checkpoint?.focus?.rows ?? [] }
@@ -138,6 +138,8 @@ struct FocusTestSummary: Decodable, Equatable, Sendable {
   let offer: Size?
   let sessionQuestions: FocusTestSessionQuestions
   let state: State
+  /// As the test's own: the row says "where to focus" or "where to start".
+  let suggestsFocus: Bool
 
   /// The first sitting, for a learner who hasn't started the test: what a plan whose time is short
   /// offers.

@@ -99,7 +99,7 @@ final class PlanStoreTests: XCTestCase {
     let saved = try JSONDecoder().decode(
       FocusTestSummary.self,
       from: Data(
-        #"{"offer":null,"sessionQuestions":"paused","state":"sitting"}"#
+        #"{"offer":null,"sessionQuestions":"paused","state":"sitting","suggestsFocus":false}"#
           .utf8))
     await api.setSavedFocusTest(saved)
 

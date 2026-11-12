@@ -17,7 +17,7 @@ enum FocusTestPress {
 /// what to ask, how many and when a sitting is over, and the screen says it. Main's `FocusTestFlow`.
 struct FocusTestFlow: View {
   let goalID: String
-  /// The goal's name, over a question with no subject of its own and a sitting that ended.
+  /// The goal's name, over a question with no subject of its own.
   let subject: String
   let host: FocusTestHost
   /// The goal being set up, for its wait's run and deck; nil on a plan that's already there.
@@ -112,8 +112,10 @@ struct FocusTestFlow: View {
           save(.other) { try await leave(closing: host == .onboarding) }
         }
       }
-    case .resume(let asked):
-      FocusTestResume(sitting: asked.sitting, pressed: pressed, failed: failed) {
+    case .resume(let asked, let answered):
+      FocusTestResume(
+        sitting: asked.sitting, answered: answered, pressed: pressed, failed: failed
+      ) {
         failed = false
         reached = .question(asked)
       } onSeeResult: {
@@ -122,7 +124,7 @@ struct FocusTestFlow: View {
     case .question(let asked):
       question(asked)
     case .ended:
-      FocusTestEnded(subject: subject, isSaving: pressed != nil, failed: failed) {
+      FocusTestEnded(isSaving: pressed != nil, failed: failed) {
         save(.main) { try await close() }
       }
     case .checkpoint(let focusTest):
