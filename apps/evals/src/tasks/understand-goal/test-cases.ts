@@ -18,6 +18,62 @@ function testCase(
 }
 
 export const TEST_CASES: UnderstandGoalCase[] = [
+  testCase("pt-personal-finance-depends-on-a-country-not-named", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "learn" }],
+      route: "goals",
+    },
+    goal: "Organizar as finanças pessoais",
+    language: "pt",
+  }),
+  testCase("pt-taxes-in-germany-names-the-country", {
+    expected: {
+      goals: [{ contentCountry: "DE", countryDependent: true, kind: "learn" }],
+      route: "goals",
+    },
+    goal: "Quero entender como funcionam os impostos na Alemanha",
+    language: "pt",
+  }),
+  testCase("pt-where-they-live-names-the-country", {
+    expected: {
+      goals: [{ contentCountry: "PT", countryDependent: true, kind: "learn" }],
+      route: "goals",
+    },
+    goal: "Moro em Lisboa e quero organizar as minhas finanças",
+    language: "pt",
+  }),
+  testCase("pt-statistics-is-the-same-everywhere", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: false, kind: "learn" }],
+      route: "goals",
+    },
+    goal: "Estatística",
+    language: "pt",
+  }),
+  testCase("pt-nationality-is-not-the-content-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "learn" }],
+      route: "goals",
+    },
+    goal: "Sou brasileiro e quero aprender a investir meu dinheiro",
+    language: "pt",
+  }),
+  testCase("en-nationality-on-a-general-subject", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: false, kind: "learn" }],
+      route: "goals",
+    },
+    goal: "I'm Nigerian and I want to learn Python for data analysis",
+    language: "en",
+  }),
+  testCase("en-exam-is-never-waiting-for-a-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: false, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the UK driving theory test",
+    language: "en",
+  }),
   testCase("pt-display-names-distinguish-public-exams", {
     expected: {
       goals: [

@@ -4,8 +4,6 @@ import SwiftUI
 struct ProfileScreenContext {
   /// Onboarding's "About you · 4 of 10".
   var eyebrow: String?
-  /// Conditions: the next screen asks what helps.
-  var supportIsNext = false
   /// What helps: rows were checked for the conditions just picked.
   var prechecked = false
   /// Work: the job came from the goal's current-role answer.
@@ -26,11 +24,14 @@ struct ProfileQuestionSections: View {
   /// A fourth chip was tapped.
   @State private var capped = false
   @State private var opensNote = false
+  /// Something else was just picked, so its words, now required, take focus as its field appears.
+  @State private var asksOther = false
+  @FocusState private var otherFocused: Bool
 
   var body: some View {
     StepHeader(
       subject: context.eyebrow, title: ProfileCopy.title(view.id),
-      description: ProfileCopy.description(view.id, supportIsNext: context.supportIsNext))
+      description: ProfileCopy.description(view.id))
 
     Group {
       switch view.id {
@@ -161,6 +162,9 @@ struct ProfileQuestionSections: View {
           isOn: draft.picks.contains(option.id)
         ) {
           draft.toggle(option.id)
+          asksOther =
+            option.id == ProfileDraft.otherOption && draft.picks.contains(option.id)
+            && draft.text.isEmpty
         }
 
         if option.id == ProfileDraft.otherOption, draft.picks.contains(option.id) {
@@ -168,24 +172,16 @@ struct ProfileQuestionSections: View {
             label: Text(
               "What should we know?", tableName: "AboutYou",
               comment: "Box for a condition the list doesn't name, in the learner's words"),
-            prompt: nil, text: limited($draft.text, to: 120))
+            prompt: nil, text: limited($draft.text, to: 120)
+          )
+          .focused($otherFocused)
+          .onAppear {
+            if asksOther {
+              otherFocused = true
+              asksOther = false
+            }
+          }
         }
-      }
-
-      declineRow(.noneOfThese)
-      declineRow(.ratherNotSay)
-    }
-
-    if !draft.picks.isEmpty {
-      Section {
-        SettingToggle(
-          isOn: $draft.consented,
-          title: Text(
-            "Save this to my profile", tableName: "AboutYou",
-            comment: "Consent to keep the conditions picked"),
-          description: Text(
-            "Zoonk uses it to adapt to you, now and over time. It's never shared or used in lesson examples. Remove it anytime in Settings.",
-            tableName: "AboutYou", comment: "What saving the conditions does"))
       }
     }
   }
@@ -417,7 +413,7 @@ enum ProfileCopy {
     }
   }
 
-  static func description(_ question: ProfileQuestion, supportIsNext: Bool) -> Text {
+  static func description(_ question: ProfileQuestion) -> Text {
     switch question {
     case .addressForm:
       Text(
@@ -440,14 +436,9 @@ enum ProfileCopy {
         "Pick up to 3. We'll use them for examples in your lessons.", tableName: "AboutYou",
         comment: "Under the questions about what the learner likes")
     case .conditions:
-      supportIsNext
-        ? Text(
-          "Optional. We'll suggest what often helps on the next screen. Nothing here is saved unless you choose to.",
-          tableName: "AboutYou",
-          comment: "Under the conditions question, before What helps you learn?")
-        : Text(
-          "Optional. Nothing here is saved unless you choose to.", tableName: "AboutYou",
-          comment: "Under the conditions question")
+      Text(
+        "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.",
+        tableName: "AboutYou", comment: "Under the conditions question")
     case .learningSupport:
       Text(
         "Pick anything that helps. No label or diagnosis needed.", tableName: "AboutYou",
@@ -526,7 +517,7 @@ struct ProfileStep: View {
   let onAnswer: ([String: Any]) -> Void
   /// Saves the answer, then opens lesson 1; nil starts it without saving.
   let onStartLesson: ([String: Any]?) -> Void
-  /// The conditions Continue leaves, consented or not, for the screen after to check what helps.
+  /// The conditions Continue leaves for the screen after to check what helps.
   let onPickConditions: ([String]) -> Void
 
   @State private var draft: ProfileDraft
@@ -558,38 +549,36 @@ struct ProfileStep: View {
   var body: some View {
     let hasAnswer = !draft.isEmpty && draft.isComplete
 
-    QuestionForm(isSaving: isSaving, failed: failed) {
+    QuestionForm {
       ProfileQuestionSections(view: question, context: context, draft: $draft)
-
+    } buttons: {
       if view.firstLesson?.status == .ready {
-        Section {
-          FlowLayout(spacing: 8, alignment: .firstTextBaseline) {
-            Text("Lesson 1 is ready.", tableName: "AboutYou", comment: "Over an About you question")
-              .foregroundStyle(.mutedForeground)
+        FlowLayout(spacing: 8, alignment: .firstTextBaseline) {
+          Text("Lesson 1 is ready.", tableName: "AboutYou", comment: "Over an About you question")
+            .foregroundStyle(.mutedForeground)
 
-            Button {
-              if hasAnswer {
-                keepConditions()
-              }
-
-              onStartLesson(hasAnswer ? draft.input : nil)
-            } label: {
-              (hasAnswer
-                ? Text(
-                  "Save and start lesson 1", tableName: "AboutYou",
-                  comment: "Saves the About you answer, then opens the goal's first lesson")
-                : Text(
-                  "Start lesson 1", tableName: "AboutYou",
-                  comment: "Opens the goal's first lesson from an About you question"))
-                .underline()
+          Button {
+            if hasAnswer {
+              keepConditions()
             }
-            .buttonStyle(.plain)
-            .foregroundStyle(Color(.foreground))
-            .disabled(isSaving)
+
+            onStartLesson(hasAnswer ? draft.input : nil)
+          } label: {
+            (hasAnswer
+              ? Text(
+                "Save and start lesson 1", tableName: "AboutYou",
+                comment: "Saves the About you answer, then opens the goal's first lesson")
+              : Text(
+                "Start lesson 1", tableName: "AboutYou",
+                comment: "Opens the goal's first lesson from an About you question"))
+              .underline()
           }
-          .typeStyle(.note)
-          .listRowBackground(Color.clear)
+          .buttonStyle(.plain)
+          .foregroundStyle(Color(.foreground))
+          .disabled(isSaving)
         }
+        .typeStyle(.note)
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
 
       StepButtons(
@@ -603,12 +592,9 @@ struct ProfileStep: View {
           onPickConditions([])
         }
 
-        if context.skipDeclines {
-          onAnswer(draft.declining(.ratherNotSay).input)
-        } else {
-          onAnswer(["answer": NSNull(), "question": question.id.rawValue])
-        }
+        onAnswer(draft.skipInput)
       }
     }
+    .sendsAnswer(isSaving: isSaving, failed: failed)
   }
 }

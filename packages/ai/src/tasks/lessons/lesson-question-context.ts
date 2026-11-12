@@ -166,8 +166,15 @@ export type PlanScopeContext = {
      * practice calls use, and the one lessons and their audio teach, named in English.
      */
     variety?: { chosen: string; lessons: string };
+    /**
+     * Only for a goal whose subject depends on a country: the country its course and lessons are
+     * set in, named in English.
+     */
+    contentCountry?: string;
   };
   language: string;
+  /** Where the learner told the app they live, named in English; absent when they haven't. */
+  learnerHomeCountry?: string;
   /** Newest first, open and fixed. */
   mistakes: {
     answer: string | null;

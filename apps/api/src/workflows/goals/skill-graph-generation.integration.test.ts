@@ -34,7 +34,9 @@ vi.mock("@zoonk/ai/tasks/identity/search-terms", () => ({ generateSearchTerms: v
 const SUBJECTS = ["Arithmetic", "Geometry", "Probability", "Statistics"];
 
 const FRAME = {
-  courses: [{ key: "math", levels: ["beginner" as const], title: "Mathematics" }],
+  courses: [
+    { countrySpecific: false, key: "math", levels: ["beginner" as const], title: "Mathematics" },
+  ],
   phases: [{ milestone: "Solve problems", title: "Foundations" }],
   sections: SUBJECTS.map((area, index) => ({
     area,

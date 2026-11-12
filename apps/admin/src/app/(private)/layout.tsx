@@ -5,19 +5,28 @@ import { Suspense } from "react";
 import { AdminCommandPalette } from "./admin-command-palette";
 import { AdminMobileBar } from "./admin-mobile-bar";
 import { AppSidebar } from "./app-sidebar";
+import { PendingContentFixCount } from "./content-fixes/pending-content-fix-count";
 
 async function PrivateLayoutContent({ children }: React.PropsWithChildren) {
   const { user } = await requireAdminRouteAccess();
   const account = { email: user.email, image: user.image ?? null, name: user.name };
 
+  const counts = {
+    "/content-fixes": (
+      <Suspense fallback={null}>
+        <PendingContentFixCount />
+      </Suspense>
+    ),
+  };
+
   return (
     <NuqsAdapter>
       <AdminCommandPalette />
       <div className="flex min-h-dvh flex-col lg:flex-row">
-        <AppSidebar account={account} />
+        <AppSidebar account={account} counts={counts} />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <AdminMobileBar account={account} />
+          <AdminMobileBar account={account} counts={counts} />
           {children}
         </div>
       </div>

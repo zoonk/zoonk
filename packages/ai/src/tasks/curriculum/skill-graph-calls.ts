@@ -28,6 +28,7 @@ export const skillGraphFallbackModels = [
 ] as const;
 
 export const courseSchema = z.object({
+  countrySpecific: z.boolean(),
   key: z.string(),
   levels: z.array(z.enum(COURSE_LEVELS)),
   title: z.string(),

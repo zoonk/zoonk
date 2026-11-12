@@ -10,6 +10,7 @@ enum PlanSheet: Identifiable, Hashable {
   case certificate(code: String)
   case suggestion(PlanSlotItem)
   case language
+  case country
 
   var id: Self { self }
 }
@@ -79,6 +80,22 @@ private struct PlanSheets: ViewModifier {
             if let variety = context.goal.variety {
               LanguageVarietySheet(variety: variety) { region in
                 await learner.setTargetRegion(region, goalID: context.goal.id)
+              }
+            }
+          case .country:
+            if let country = context.goal.contentCountry {
+              CountryPickerSheet(
+                title: Text(
+                  "Country", tableName: "Plan",
+                  comment:
+                    "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
+                ),
+                language: context.goal.language,
+                suggested: context.goal.suggestedCountries,
+                selected: country.code,
+                confirmsRebuild: true
+              ) { choice in
+                await learner.setContentCountry(choice?.code, goalID: context.goal.id)
               }
             }
           }

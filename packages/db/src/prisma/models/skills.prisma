@@ -21,6 +21,7 @@ enum CefrLevel {
 /// A duplicate that slips through identity search is merged (`mergedIntoId`), never deleted, so
 /// learners' mastery follows the surviving skill. A private course's skills are never reused.
 model Skill {
+  country        String?             @db.VarChar(2)
   id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language       String              @db.VarChar(10)
   targetLanguage String?             @map("target_language") @db.VarChar(10)

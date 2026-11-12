@@ -172,6 +172,7 @@ export async function writePlacementBatchStep({
 
   const { data, provenance } = await generatePlacementItems({
     analytics: toContentAnalytics({ analytics, scope: first, workflowRunId }),
+    country: first.country,
     examFormat: first.exam,
     language: first.language,
     quickCount: quickCount + confirmingCount,

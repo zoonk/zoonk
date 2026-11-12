@@ -69,7 +69,9 @@ function rawReuse({
 
 function toGraph(library: LibrarySkill[]) {
   return normalizeSkillGraph({
-    courses: [{ key: "subject", levels: ["intermediate"], title: "Subject" }],
+    courses: [
+      { countrySpecific: false, key: "subject", levels: ["intermediate"], title: "Subject" },
+    ],
     phases: [{ milestone: "Base", title: "Base" }],
     skills: applyLibraryReuse({
       library,
@@ -100,8 +102,18 @@ describe("reusing Library skills in an exam graph", () => {
     const graph = normalizeSkillGraph(
       {
         courses: [
-          { key: "administrative", levels: ["intermediate"], title: "Direito Administrativo" },
-          { key: "criminal", levels: ["intermediate"], title: "Direito Penal" },
+          {
+            countrySpecific: false,
+            key: "administrative",
+            levels: ["intermediate"],
+            title: "Direito Administrativo",
+          },
+          {
+            countrySpecific: false,
+            key: "criminal",
+            levels: ["intermediate"],
+            title: "Direito Penal",
+          },
         ],
         phases: [{ milestone: "Base", title: "Base" }],
         skills: [
@@ -223,7 +235,9 @@ describe("reusing Library skills in an exam graph", () => {
     };
 
     const graph = normalizeSkillGraph({
-      courses: [{ key: "subject", levels: ["intermediate"], title: "Matemática" }],
+      courses: [
+        { countrySpecific: false, key: "subject", levels: ["intermediate"], title: "Matemática" },
+      ],
       phases: [{ milestone: "Base", title: "Base" }],
       skills: applyLibraryReuse({
         library,

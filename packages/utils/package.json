@@ -22,6 +22,7 @@
     "./calendar-day": "./src/calendar-day.ts",
     "./date": "./src/date.ts",
     "./cookies": "./src/cookies.ts",
+    "./countries": "./src/countries.ts",
     "./currency": "./src/currency.ts",
     "./date-ranges": "./src/date-ranges.ts",
     "./distractors": "./src/distractors.ts",

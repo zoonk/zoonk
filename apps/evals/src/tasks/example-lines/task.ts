@@ -1,4 +1,4 @@
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type GenerateExampleLinesParams,
   generateExampleLines,
@@ -10,12 +10,22 @@ import { TEST_CASES } from "./test-cases";
 type ExampleLinesOutput = Awaited<ReturnType<typeof generateExampleLines>>["data"];
 
 export const exampleLinesTask: Task<
-  Omit<GenerateExampleLinesParams, "analytics" | "model" | "reasoning" | "useFallback">,
+  OptionalCountry<
+    Omit<
+      GenerateExampleLinesParams,
+      "analytics" | "learnerHomeCountry" | "model" | "reasoning" | "useFallback"
+    > & { learnerHomeCountry?: string | null }
+  >,
   ExampleLinesOutput
 > = {
   description:
     "Tie a lesson's explanations to one learner's life, a sentence per screen from the facts they shared, each a different moment, or nothing where nothing fits",
-  generate: generateExampleLines,
+  generate: (input) =>
+    generateExampleLines({
+      ...input,
+      country: input.country ?? null,
+      learnerHomeCountry: input.learnerHomeCountry ?? null,
+    }),
   id: "example-lines",
   name: "Example Lines",
   scoreCategories: EXAMPLE_LINES_SCORE_CATEGORIES,

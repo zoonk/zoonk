@@ -18,7 +18,7 @@ function pair(
 
 const exam = (
   name: string,
-  country: string,
+  country: string | null,
   board: string | null = null,
   role: string | null = null,
 ) => ({ board, country, name, role });
@@ -32,6 +32,14 @@ export const TEST_CASES: TestCase<ExamIdentityExpected, ExamIdentityInput>[] = [
     true,
   ),
   pair("enem-with-year", "pt", exam("ENEM 2027", "BR"), exam("ENEM", "BR", "INEP"), true),
+  pair("enem-unknown-country", "pt", exam("ENEM", null), exam("ENEM", "BR", "INEP"), true),
+  pair(
+    "bar-exam-unknown-country",
+    "en",
+    exam("Bar exam", null),
+    exam("Uniform Bar Examination", "US", "NCBE"),
+    false,
+  ),
   pair(
     "tcdf-same-role",
     "pt",

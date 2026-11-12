@@ -1,0 +1,220 @@
+import "server-only";
+import { STAFF_PROPOSE_SCOPE } from "@zoonk/auth/cli-login-contract";
+import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { unstable_rethrow } from "next/navigation";
+import { getStaffActor } from "../get-staff-actor";
+import { StaffInputError, parseStaffInput } from "../input";
+import { type ContentFixView, logContentFix, toContentFixView } from "./_utils/content-fix-view";
+import { prepareContentFix } from "./_utils/prepare-content-fix";
+import { getStaffSessionUser } from "./_utils/staff-session";
+import {
+  type ProposedChange,
+  type StoredChange,
+  contentFixChangesSchema,
+  contentFixProposalSchema,
+  contentFixRevertSchema,
+} from "./contract";
+
+type ProposeResult =
+  | { status: "error" | "forbidden" | "missingScope" | "unauthorized" }
+  | { message: string; status: "invalid" | "notFound" }
+  | { fix: ContentFixView; status: "proposed" };
+
+type Actor = { clientId: string; userId: string };
+
+type Proposal = {
+  changes: readonly ProposedChange[];
+  feedbackId?: string | null;
+  reason: string;
+  revertsId?: string;
+};
+
+async function saveProposal(actor: Actor, proposal: Proposal): Promise<ProposeResult> {
+  const prepared = await prepareContentFix(prisma, proposal.changes);
+
+  if (!prepared.ok) {
+    return { message: prepared.problem, status: "invalid" };
+  }
+
+  const feedback = proposal.feedbackId
+    ? await prisma.feedback.findUnique({ select: { id: true }, where: { id: proposal.feedbackId } })
+    : null;
+
+  if (proposal.feedbackId && !feedback) {
+    return { message: `No Feedback with id ${proposal.feedbackId}.`, status: "invalid" };
+  }
+
+  const fix = await prisma.contentFix.create({
+    data: {
+      changes: prepared.fix.changes,
+      effects: prepared.fix.effects,
+      feedbackId: feedback?.id,
+      proposerClientId: actor.clientId,
+      proposerId: actor.userId,
+      reason: proposal.reason,
+      revertsId: proposal.revertsId,
+      unit: prepared.fix.unit.kind,
+      unitId: prepared.fix.unit.id,
+    },
+  });
+
+  return { fix: toContentFixView(fix), status: "proposed" };
+}
+
+function toInverse(change: StoredChange): ProposedChange {
+  switch (change.op) {
+    case "retire":
+      return { id: change.id, model: "Item", unretire: true };
+    case "unretire":
+      return { id: change.id, model: "Item", retire: true };
+    case "detachPicture":
+      return { attachPicture: change.mediaAssetId, id: change.id, model: "Step" };
+    case "attachPicture":
+      return { detachPicture: true, id: change.id, model: "Step" };
+    case "set":
+      return {
+        id: change.id,
+        model: change.model,
+        set: Object.fromEntries(change.fields.map((field) => [field.field, field.before])),
+      };
+    default:
+      throw new Error("Unknown stored change");
+  }
+}
+
+async function buildRevert(input: { fixId: string; reason: string }) {
+  const original = await prisma.contentFix.findUnique({ where: { id: input.fixId } });
+
+  if (!original) {
+    return { message: `No ContentFix with id ${input.fixId}.`, status: "notFound" as const };
+  }
+
+  if (original.status !== "applied") {
+    return {
+      message: `Only an applied fix can be reverted; this one is ${original.status}.`,
+      status: "invalid" as const,
+    };
+  }
+
+  const changes = contentFixChangesSchema
+    .parse(original.changes)
+    .map((change) => toInverse(change));
+
+  return { proposal: { changes, reason: input.reason, revertsId: original.id } };
+}
+
+type BuiltProposal = { message: string; status: "invalid" | "notFound" } | { proposal: Proposal };
+
+type Proposer =
+  | { status: "forbidden" | "missingScope" | "unauthorized"; userId?: string }
+  | (Actor & { status: "ready" });
+
+function getCliProposer(): Promise<Proposer> {
+  return getStaffActor(STAFF_PROPOSE_SCOPE);
+}
+
+/** What `ContentFix.proposerClientId` holds for a revert a staff person started in Admin. */
+const ADMIN_PROPOSER = "admin";
+
+async function getAdminProposer(): Promise<Proposer> {
+  const staff = await getStaffSessionUser();
+  return staff.status === "ready" ? { ...staff, clientId: ADMIN_PROPOSER } : staff;
+}
+
+async function runProposal({
+  action,
+  getProposer = getCliProposer,
+  input,
+  toProposal,
+}: {
+  action: "propose" | "revert";
+  getProposer?: () => Promise<Proposer>;
+  input: unknown;
+  toProposal: (input: unknown) => Promise<BuiltProposal>;
+}): Promise<ProposeResult> {
+  const started = performance.now();
+  const { data: actor, error: actorError } = await safeAsync(getProposer);
+
+  if (actorError) {
+    unstable_rethrow(actorError);
+  }
+
+  if (!actor) {
+    logContentFix({ action, actorUserId: null, outcome: "error", started });
+    return { status: "error" };
+  }
+
+  if (actor.status !== "ready") {
+    logContentFix({ action, actorUserId: actor.userId ?? null, outcome: actor.status, started });
+
+    return { status: actor.status };
+  }
+
+  const log = (outcome: string, fixId?: string) =>
+    logContentFix({
+      action,
+      actorUserId: actor.userId,
+      clientId: actor.clientId,
+      fixId,
+      outcome,
+      started,
+    });
+
+  const { data: result, error } = await safeAsync(async (): Promise<ProposeResult> => {
+    const built = await toProposal(input);
+    return "proposal" in built ? saveProposal(actor, built.proposal) : built;
+  });
+
+  if (error instanceof StaffInputError) {
+    log("invalid");
+    return { message: error.message, status: "invalid" };
+  }
+
+  if (error || !result) {
+    log("error");
+    throw error;
+  }
+
+  log(result.status, result.status === "proposed" ? result.fix.id : undefined);
+  return result;
+}
+
+/**
+ * Stores a staff person's proposed fix for review, from a CLI login allowed to propose. Nothing
+ * changes until someone approves it in Admin with a passkey.
+ */
+export function proposeContentFix(input: unknown): Promise<ProposeResult> {
+  return runProposal({
+    action: "propose",
+    input,
+    toProposal: async (body) => ({
+      proposal: await parseStaffInput(contentFixProposalSchema, body),
+    }),
+  });
+}
+
+/** Proposes putting back what an applied fix replaced, reviewed like any other fix. */
+export function proposeContentFixRevert(input: unknown): Promise<ProposeResult> {
+  return runProposal({
+    action: "revert",
+    input,
+    toProposal: async (body) => buildRevert(await parseStaffInput(contentFixRevertSchema, body)),
+  });
+}
+
+/**
+ * Admin's Revert: the same reviewed proposal, from the signed-in staff person's session instead of
+ * a CLI login. It changes nothing until someone approves it with a passkey.
+ */
+export function proposeContentFixRevertInAdmin(input: {
+  fixId: string;
+  reason: string;
+}): Promise<ProposeResult> {
+  return runProposal({
+    action: "revert",
+    getProposer: getAdminProposer,
+    input,
+    toProposal: async (body) => buildRevert(await parseStaffInput(contentFixRevertSchema, body)),
+  });
+}

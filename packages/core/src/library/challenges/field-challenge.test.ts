@@ -1,10 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { assembleChallengeCase, draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { describe, expect, it } from "vitest";
 import { challengePlanFixture } from "../../../../ai/src/tasks/challenge/challenge-plan-fixture";
 import { readStepVariantGenerationSummary } from "../variants/variant-generation";
 import { checkWrittenChallenge } from "./challenge-case-content";
+import { loadChallengeLessonDraft } from "./challenge-lesson-draft";
 import { finishFieldChallengeDraft, prepareFieldChallengeDraft } from "./field-challenge";
 import { getFieldChallengeToken } from "./field-challenge-token";
 
@@ -41,6 +45,43 @@ function scripted() {
 }
 
 describe("field challenge admission", () => {
+  it.each(["PT", null])(
+    "loads the course country %s for chapter and field drafts",
+    async (country) => {
+      const course = await courseFixture({ country, language: "pt" });
+      const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+      const workflowRunId = randomUUID();
+
+      const { lesson, steps } = await playableLessonFixture({
+        lesson: {
+          contentRunId: workflowRunId,
+          contentStatus: "running",
+          homeChapterId: chapter.id,
+          language: "pt",
+          spec: {
+            kind: "challenge",
+            skills: [{ description: null, name: "Chance" }],
+            variant: "work",
+          },
+        },
+        steps: ["challenge"],
+      });
+
+      await expect(
+        loadChallengeLessonDraft({ lessonId: lesson.id, workflowRunId }),
+      ).resolves.toMatchObject({ params: { country, language: "pt" } });
+
+      await prisma.lesson.update({
+        data: { contentStatus: "completed" },
+        where: { id: lesson.id },
+      });
+
+      await expect(
+        prepareFieldChallengeDraft({ field: "nursing", stepId: steps[0]?.id ?? "", workflowRunId }),
+      ).resolves.toMatchObject({ params: { country, language: "pt" }, status: "challengeDraft" });
+    },
+  );
+
   it("normalizes tokens and reservation keys, then replays published content", async () => {
     const stepId = await step();
     const input = { field: "Nursing", stepId, workflowRunId: randomUUID() };

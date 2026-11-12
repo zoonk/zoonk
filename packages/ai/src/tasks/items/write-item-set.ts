@@ -45,6 +45,8 @@ export type WriteItemSetParams = {
   format: ItemSetFormat;
   questionCount: number;
   language: string;
+  /** The country the skills are set in; null is the language's own. */
+  country: string | null;
   /** A language exam's sets are written in it. */
   targetLanguage?: string | null;
   examFormat?: ItemExamFormat | null;
@@ -123,7 +125,7 @@ function buildUserPrompt(params: WriteItemSetParams): string {
     FORMAT: ${format}
     QUESTION_COUNT: ${questionCount}${optionCount}
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatItemSetting({ language, seed: skills.map((skill) => skill.name).join(":"), targetLanguage: params.targetLanguage })}
+${formatItemSetting({ country: params.country, language, seed: skills.map((skill) => skill.name).join(":"), targetLanguage: params.targetLanguage })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}${usedTitles}
     SKILLS:

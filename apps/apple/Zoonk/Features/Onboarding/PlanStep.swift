@@ -571,8 +571,11 @@ private struct PlanReveal: View {
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var sheet: PlanSheet?
   @State private var showsTopics = false
-  @State private var openingToday: Task<Void, Never>?
-  @State private var startFailed = false
+  /// Start's, or a row's while `openingRow` names it.
+  @State private var opening: Task<Void, Never>?
+  @State private var openingRow: Int?
+  @State private var failedRow: Int?
+  @State private var startFailure: StartFailure?
   @State private var isChangingDate = false
   @State private var dateChangeFailed = false
   @State private var slotAnswer: PlanSlotAnswer?
@@ -627,7 +630,7 @@ private struct PlanReveal: View {
         UserDefaults.standard.set(true, forKey: Self.momentKey(view))
       }
     }
-    .onDisappear { openingToday?.cancel() }
+    .onDisappear { opening?.cancel() }
     .planSheets($sheet, context: context, syllabus: syllabus.value, slotAnswer: $slotAnswer)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
@@ -658,7 +661,9 @@ private struct PlanReveal: View {
 
     switch day.state {
     case .loaded(let reveal):
-      RevealToday(day: reveal.today, minutes: reveal.minutes)
+      RevealToday(
+        day: reveal.today, minutes: reveal.minutes, busy: openingRow, failed: failedRow,
+        open: opening != nil && openingRow == nil ? nil : { open($0, on: reveal.today) })
       RevealWeek(days: reveal.nextDays, week: reveal.week)
     case .idle, .loading:
       // Today's rows hold their place, so the week doesn't move as they come.
@@ -671,11 +676,19 @@ private struct PlanReveal: View {
   /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
   private func actions(day: StudyDay?) -> some View {
     VStack(spacing: 10) {
-      if startFailed {
+      switch startFailure {
+      case .save:
         FailureLine(
           message: LocalizedStringResource(
             "That didn't save. Try again.", table: "Onboarding",
             comment: "A change couldn't be saved"))
+      case .open:
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't open this step. Try again.", table: "Today",
+            comment: "Under a step of the day, or a mission, that didn't open"))
+      case nil:
+        EmptyView()
       }
 
       HStack(spacing: 10) {
@@ -688,18 +701,21 @@ private struct PlanReveal: View {
         .buttonStyle(.outline)
         .fixedSize()
 
-        BusyButton(isBusy: openingToday != nil, icon: .play, action: openToday) {
+        BusyButton(isBusy: opening != nil && openingRow == nil, icon: .play) {
+          start(on: day)
+        } label: {
           if day?.blocks.contains(where: \.isFinished) == true {
             Text(
               "Continue", tableName: "Onboarding",
-              comment: "Opens Today once a lesson of the plan's first day is done")
+              comment: "Opens the plan's next step once a lesson of its first day is done")
           } else {
-            Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+            Text("Start", tableName: "Onboarding", comment: "Opens the plan's first step")
           }
         }
         .buttonStyle(.mainAction)
         .buttonSizing(.flexible)
         .keyboardShortcut(.defaultAction)
+        .disabled(openingRow != nil)
       }
 
       if learner.summary.value?.identity.isAnonymous == true {
@@ -773,21 +789,22 @@ private struct PlanReveal: View {
   /// Today waits for the reveal to be seen: until it's saved, Today brings the learner back here,
   /// so a failed save stays here to try again.
   private func openToday() {
-    guard openingToday == nil else {
+    guard opening == nil else {
       return
     }
 
-    startFailed = false
+    startFailure = nil
+    failedRow = nil
 
-    openingToday = Task {
-      defer { openingToday = nil }
+    opening = Task {
+      defer { opening = nil }
 
       do {
         try await onboarding.markPlanRevealed(goalID: view.goal.id)
       } catch is CancellationError {
         return
       } catch {
-        startFailed = true
+        startFailure = .save
         return
       }
 
@@ -799,12 +816,91 @@ private struct PlanReveal: View {
     }
   }
 
+  /// Start opens the step tagged where to start, as its row does; with none to open, Today.
+  private func start(on day: StudyDay?) {
+    if let day, let next = day.nextBlock, next.opensFromReveal {
+      open(next, on: day, fromStart: true)
+    } else {
+      openToday()
+    }
+  }
+
+  /// A row ends the reveal as Start does, then opens its step the way Today's row does, so the
+  /// learner comes back from it to Today.
+  private func open(_ block: StudyBlock, on day: StudyDay, fromStart: Bool = false) {
+    guard opening == nil else {
+      return
+    }
+
+    startFailure = nil
+    failedRow = nil
+    openingRow = fromStart ? nil : block.position
+    let shown = router.shown
+
+    func fail(_ failure: StartFailure) {
+      if fromStart {
+        startFailure = failure
+      } else {
+        failedRow = block.position
+      }
+    }
+
+    opening = Task {
+      defer {
+        opening = nil
+        openingRow = nil
+      }
+
+      do {
+        try await onboarding.markPlanRevealed(goalID: view.goal.id)
+      } catch is CancellationError {
+        return
+      } catch {
+        fail(.save)
+        return
+      }
+
+      // The step opens over Today, and the session screen reads the day from it.
+      await today.today.refresh()
+
+      // A learner who left the reveal while it saved isn't taken anywhere.
+      guard !Task.isCancelled, router.shown == shown else {
+        return
+      }
+
+      if day.waitsForStart(block) {
+        router.showRoot(of: .today)
+        router.showIntro(of: block)
+        return
+      }
+
+      switch await today.open(block, as: .block, on: day, goalID: view.goal.id) {
+      // The day changed under the row: the reveal reads it again, as Today would.
+      case .done(.changed):
+        break
+      case .done(let destination) where !Task.isCancelled && router.shown == shown:
+        router.showRoot(of: .today)
+        router.openStudy(destination)
+      case .failed:
+        fail(.open)
+      case .done, .obsolete:
+        break
+      }
+    }
+  }
+
+  private enum StartFailure {
+    case save
+    case open
+  }
+
   /// The goal as the plan's sections read it; the summary has it only once it refreshes.
   private var learnerGoal: LearnerGoal {
     LearnerGoal(
       dailyMinutes: plan.schedule.dailyMinutes,
       id: view.goal.id,
       kind: LearnerGoal.Kind(rawValue: view.goal.kind.rawValue) ?? .learn,
+      language: view.goal.language,
       status: .active,
       targetDate: plan.schedule.targetDate,
       displayName: view.goal.displayName, title: view.goal.title)

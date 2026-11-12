@@ -5,7 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { formatLocalContext } from "../_utils/language-context";
+import { formatLocalContext, formatMoneyForms, getCountryName } from "../_utils/language-context";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import promptTemplate from "./example-lines.prompt.md";
@@ -27,6 +27,10 @@ type ExampleLineScreen = { text: string; idea: string };
 
 export type GenerateExampleLinesParams = {
   language: string;
+  /** The country the lesson is set in; null is the language's own. */
+  country: string | null;
+  /** Where the learner said they live, only as they told us. */
+  learnerHomeCountry: string | null;
   plainWords?: boolean;
   /** In lesson order. */
   screens: readonly ExampleLineScreen[];
@@ -47,10 +51,21 @@ function formatScreens(screens: readonly ExampleLineScreen[]): string {
     .join("\n\n");
 }
 
+function formatHomeCountry({ language, learnerHomeCountry }: GenerateExampleLinesParams): string {
+  if (!learnerHomeCountry) {
+    return "none";
+  }
+
+  const money = formatMoneyForms({ country: learnerHomeCountry, language });
+  const name = getCountryName(learnerHomeCountry);
+  return money ? `${name}, money written ${money}` : name;
+}
+
 function buildUserPrompt(params: GenerateExampleLinesParams): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-${formatLocalContext(params.language)}
+${formatLocalContext({ country: params.country, language: params.language })}
+    HOME_COUNTRY: ${formatHomeCountry(params)}
 
 SCREENS:
 ${formatScreens(params.screens)}

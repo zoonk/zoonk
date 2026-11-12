@@ -7,6 +7,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.account
 import com.zoonk.android.data.summary
 import com.zoonk.android.navigation.LearnerAccess
+import com.zoonk.api.models.GoalExamCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -28,8 +29,15 @@ class LearnerAccessTest {
         isActive = true,
         isSettingUp = false,
         kind = kind,
+        language = "en",
         languageFlag = null,
         regionChoices = emptyList(),
+        contentCountry = null,
+        countryDependent = false,
+        examCountry = null,
+        examplesCountry = null,
+        languageCountry = GoalExamCountry("US", "United States"),
+        suggested = emptyList(),
         status = status,
         targetDate = null,
         targetLanguage = null,

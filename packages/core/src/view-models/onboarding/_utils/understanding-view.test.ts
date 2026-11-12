@@ -44,6 +44,7 @@ describe(toUnderstandingView, () => {
   it("says on the draft that each candidate books the test", async () => {
     const card = await cardOf({
       goal: {
+        countryDependent: false,
         examDay: "booked",
         examName: `Booked Test ${randomUUID()}`,
         examTarget: "score",
@@ -63,6 +64,7 @@ describe(toUnderstandingView, () => {
       cardOf({
         found: (lookup) => ({ lookup, searched: [], stored: { blueprintId, dates: [NOTICE_DAY] } }),
         goal: {
+          countryDependent: false,
           examMonth,
           examName: "Test Exam",
           examYear: 2099,
@@ -83,6 +85,7 @@ describe(toUnderstandingView, () => {
   it("keeps the position the reading recorded beside it, so an exam choice can tell it from a typed one", async () => {
     const card = await cardOf({
       goal: {
+        countryDependent: false,
         examDay: "official",
         examName: `Civil Service Exam ${randomUUID()}`,
         examTarget: "position",

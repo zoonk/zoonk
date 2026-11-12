@@ -1,3 +1,4 @@
+import { isCountryCode } from "@zoonk/utils/countries";
 import { splitTargetLanguage } from "@zoonk/utils/language-regions";
 import { LANGUAGE_CODE_PATTERN, toCanonicalLanguage } from "@zoonk/utils/languages";
 
@@ -24,6 +25,8 @@ type UnderstoodExamDay = "booked" | "official";
 
 /** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
+  contentCountry: string | null;
+  countryDependent: boolean;
   displayName?: string;
   examDay: UnderstoodExamDay | null;
   examMonth: number | null;
@@ -62,6 +65,13 @@ export type RawGoalUnderstanding = {
 
 /** Fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
+  /** A learn goal's country, only when the learner's words named it or a place in it. */
+  contentCountry?: string;
+  /**
+   * A learn goal whose subject changes by country. Exams take their country from the exam and
+   * languages from their variety, so theirs is always false.
+   */
+  countryDependent: boolean;
   displayName?: string;
   examDay?: UnderstoodExamDay;
   /** 1 to 12, for an exam named without its day ("in March"). */
@@ -164,6 +174,11 @@ function cleanNativeLanguage(code: string | null): string | undefined {
   return tag && toCanonicalLanguage(tag);
 }
 
+function cleanCountry(code: string | null): string | undefined {
+  const upper = code?.trim().toUpperCase();
+  return upper && isCountryCode(upper) ? upper : undefined;
+}
+
 function cleanTargetLanguage({
   code,
   kind,
@@ -213,7 +228,11 @@ function normalizeGoal({
     return null;
   }
 
+  const learn = goal.kind === "learn";
+
   return {
+    contentCountry: learn ? cleanCountry(goal.contentCountry) : undefined,
+    countryDependent: learn && goal.countryDependent,
     displayName: cleanText(goal.displayName ?? null),
     examDay: goal.kind === "exam" ? (goal.examDay ?? undefined) : undefined,
     examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,

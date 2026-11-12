@@ -8,10 +8,16 @@ import {
   AppearanceScreen,
   type AppearanceView,
 } from "@zoonk/learn/appearance";
-import { saveBuddyAction, setShareUsageDataAction, setSoundsEnabledAction } from "./actions";
+import {
+  saveBuddyAction,
+  setHomeCountryAction,
+  setShareUsageDataAction,
+  setSoundsEnabledAction,
+} from "./actions";
 
 const APPEARANCE_ACTIONS: AppearanceActions = {
   saveBuddy: saveBuddyAction,
+  setHomeCountry: setHomeCountryAction,
   setShareUsageData: async (share) => {
     const saved = await setShareUsageDataAction(share);
     notifyUsageDataChoice();

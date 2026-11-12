@@ -9,12 +9,9 @@
   "profile_questions_address_title": "e71d318fde0e986d61f15900981456887390aa0cf5494e8451e839884e062f88",
   "profile_questions_cap": "8a9fb1ca1e5b0404ad8b1c9a2afbe6603f8fb338197bcc8b208902c938e64b14",
   "profile_questions_condition_note": "e2afcfb8dc366b8d5242621ff58d9f10e105e50a2641c356ae45916ff1a11747",
-  "profile_questions_conditions_description": "bd826906621250cceee9fe38d57793e75dde8ad7cb2e73f386fc8a1cf2bbee28",
-  "profile_questions_conditions_next": "09e86055f242978f686bc324d04520e012933ffd8171b336c2cce72a596a7911",
+  "profile_questions_conditions_description": "5acac66642b7fc048952295bc54b737b80f7f710d064bfdb6e320d0b0d183c66",
   "profile_questions_conditions_saved": "d02301ea727807ab8ab8bcdebe5f53d7a4664a334020b076280acde3e3310489",
   "profile_questions_conditions_title": "cadb145425011809388e2f2954eeae01a2623c2f822159185a52edce89777602",
-  "profile_questions_consent": "72331efa61c9f7f507cb79429c1bf09464e4b7f76fb3ed06c4e3900b8881bd85",
-  "profile_questions_consent_help": "352de009b8bf261724372d0ce3870170de7d2126844171a770719ebf4eed180f",
   "profile_questions_description": "e4dd3264821529a6cf32dfbefe7576c1b99cbdde5c277f5127b5ba2738090cd4",
   "profile_questions_earlier_answer": "90b240362418afb2f966535b67754f0f46c9edcb53c90845a6308dc2481255d6",
   "profile_questions_for_fun": "269be49c952b69e4ab195380d92c2ba5f6822059022cd071344a98296f2772e9",
@@ -127,11 +124,8 @@
     <string name="profile_questions_activities_favorites">Başka nelere ilgi duyuyorsun? (isteğe bağlı)</string>
     <string name="profile_questions_activities_placeholder">Örn. ekmek yapmak, arabalar, astronomi</string>
     <string name="profile_questions_conditions_title">Bunlardan biri senin için geçerli mi?</string>
-    <string name="profile_questions_conditions_description">İsteğe bağlı. Sen onay vermedikçe buradaki hiçbir bilgi kaydedilmez.</string>
-    <string name="profile_questions_conditions_next">İsteğe bağlı. Bir sonraki ekranda genelde işe yarayan yöntemler önereceğiz. Sen onay vermedikçe buradaki hiçbir bilgi kaydedilmez.</string>
+    <string name="profile_questions_conditions_description">İsteğe bağlı. Seçtiklerin, ders arkadaşının sana uyum sağlayabilmesi için profiline kaydedilir. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin.</string>
     <string name="profile_questions_condition_note">Bilmemiz gereken neler var?</string>
-    <string name="profile_questions_consent">Bunu profilime kaydet</string>
-    <string name="profile_questions_consent_help">Zoonk bu bilgiyi hem şimdi hem de ileride sana uyum sağlamak için kullanır. Bu bilgi asla paylaşılmaz ve ders örneklerinde kullanılmaz. İstediğin zaman Ayarlar’dan silebilirsin.</string>
     <string name="profile_questions_support_title">Öğrenmeni neler kolaylaştırır?</string>
     <string name="profile_questions_support_description">Sana yardımcı olan her şeyi seç. Herhangi bir durum belirtmen ya da tanı almış olman gerekmez.</string>
     <string name="profile_questions_address_title">Sana nasıl hitap edelim?</string>

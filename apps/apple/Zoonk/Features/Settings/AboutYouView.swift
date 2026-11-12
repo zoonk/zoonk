@@ -120,13 +120,13 @@ struct AboutYouQuestionView: View {
         }
         let canEdit = profile.memoryEnabled || !question.isBiography
 
-        QuestionForm(isSaving: isSaving, failed: failed) {
+        QuestionForm {
           ProfileQuestionSections(
             view: view, context: ProfileScreenContext(memoryEnabled: profile.memoryEnabled),
             draft: draft)
-
+        } buttons: {
           StepButtons(
-            canContinue: canEdit && canSave(draft.wrappedValue),
+            canContinue: canEdit && draft.wrappedValue.isComplete,
             continueLabel: Text(
               "Save", tableName: "AboutYou", comment: "Saves an About you answer"),
             continueIcon: nil
@@ -134,6 +134,7 @@ struct AboutYouQuestionView: View {
             save(draft.wrappedValue)
           }
         }
+        .sendsAnswer(isSaving: isSaving, failed: failed)
       } else {
         SettingsLoadingState(state: state) {
           Task {
@@ -144,12 +145,6 @@ struct AboutYouQuestionView: View {
     }
     .navigationTitle(AboutYouCopy.rowName(question))
     .loads(settings.profileQuestions)
-  }
-
-  /// Conditions are saved only with the box ticked.
-  private func canSave(_ draft: ProfileDraft) -> Bool {
-    draft.isComplete
-      && (draft.question != .conditions || draft.picks.isEmpty || draft.consented)
   }
 
   private func save(_ draft: ProfileDraft) {

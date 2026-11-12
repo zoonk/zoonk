@@ -28,6 +28,7 @@ describe(generateItems, () => {
 
   it("writes an exam's essay with the essay rules alone, without options, field or language lines", async () => {
     const { userPrompt } = await generateItems({
+      country: null,
       examFormat: { name: "ENEM", optionCount: 5, style: "ENEM style" },
       format: "essay",
       language: "pt",
@@ -50,6 +51,7 @@ describe(generateItems, () => {
 
   it("writes a language exam's essay in its language, set where it is spoken", async () => {
     const { userPrompt } = await generateItems({
+      country: null,
       examFormat: { name: "CELI 3", style: "Produzione scritta" },
       format: "essay",
       language: "pt",
@@ -73,6 +75,7 @@ describe(generateItems, () => {
 
     const [withPast, without] = await Promise.all([
       generateItems({
+        country: null,
         examFormat: {
           ...exam,
           pastQuestions: ["A lei é válida.\nJulgue o item.", "O ato é nulo."],
@@ -83,6 +86,7 @@ describe(generateItems, () => {
         skill,
       }),
       generateItems({
+        country: null,
         examFormat: exam,
         format: "trueFalse",
         language: "pt",
@@ -100,6 +104,7 @@ describe(generateItems, () => {
 
   it("sets a field's multiple-choice questions in it, with the field rule and the option count", async () => {
     const { userPrompt } = await generateItems({
+      country: null,
       field: "nursing",
       format: "multipleChoice",
       language: "en",
@@ -124,6 +129,7 @@ describe(generateItems, () => {
     const jee = { name: "JEE Advanced", optionCount: 4, style: "JEE style" };
 
     const picks = await generateItems({
+      country: null,
       examFormat: { ...jee, select: "all" },
       format: "multipleChoice",
       language: "en",
@@ -144,6 +150,7 @@ describe(generateItems, () => {
     expect(picks.userPrompt).not.toContain("ENTRY");
 
     const integer = await generateItems({
+      country: null,
       examFormat: { ...jee, entry: { kind: "integer", places: null }, select: "all" },
       format: "numeric",
       language: "en",
@@ -164,6 +171,7 @@ describe(generateItems, () => {
     expect(integer.userPrompt).not.toMatch(/SELECT|OPTION_COUNT/u);
 
     const single = await generateItems({
+      country: null,
       examFormat: { ...jee, entry: { kind: "number", places: null }, select: 1 },
       format: "multipleChoice",
       language: "en",
@@ -176,6 +184,7 @@ describe(generateItems, () => {
 
   it("lists the skill's used situations with their rule, and draws another cast than a skill without them", async () => {
     const { userPrompt } = await generateItems({
+      country: null,
       format: "multipleChoice",
       language: "en",
       level: "intermediate",
@@ -193,7 +202,7 @@ describe(generateItems, () => {
     );
 
     expect(userPrompt).not.toContain(
-      formatCast({ language: "en", seed: `${skill.name}:multipleChoice` }),
+      formatCast({ country: null, language: "en", seed: `${skill.name}:multipleChoice` }),
     );
   });
 });

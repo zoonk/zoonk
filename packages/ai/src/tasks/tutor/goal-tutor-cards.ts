@@ -73,7 +73,7 @@ export type GoalTutorAppToolResult =
         cadence?: "biweekly" | "finalWeeks" | "weekly";
         callTimeUsed?: "day" | "month" | "total";
         chapter?: string;
-        /** For a variety: the country it offers, a two-letter code. */
+        /** For a variety, a content country or a home country: the country, a two-letter code. */
         country?: string;
         course?: string;
         lessonsLeft?: number;
@@ -99,6 +99,7 @@ export type GoalTutorAppToolResult =
         | "countryNotOffered"
         | "everythingFits"
         | "noMistakes"
+        | "notCountryGoal"
         | "noMock"
         | "notExam"
         | "notLanguage"
@@ -115,7 +116,7 @@ export type GoalTutorAppToolResult =
 export type GoalTutorAppToolRequest = {
   /** For a chapter's test: the plan area whose next chapter to test. */
   area: string | null;
-  /** For a variety: the country the learner wants it as, a two-letter code. */
+  /** For a variety, a content country or a home country: the country, a two-letter code. */
   country: string | null;
   /** For a new goal: what the learner wants, in their words, to fill in. */
   goal: string | null;
@@ -212,7 +213,7 @@ export function createCardTools({
           .string()
           .nullable()
           .describe(
-            'For variety: the country whose variety they want, as its ISO 3166-1 alpha-2 code ("AR", "GB"); null for another tool',
+            'For variety, contentCountry and homeCountry: the country, as its ISO 3166-1 alpha-2 code ("AR", "GB"); null for another tool',
           ),
         goal: z
           .string()

@@ -218,6 +218,15 @@ final class TodayStore {
   func open(_ block: StudyBlock, as tap: StudyTap, in view: TodayView) async -> MutationResult<
     StudyDestination
   > {
+    await open(block, as: tap, on: view.session, goalID: view.goal.id)
+  }
+
+  /// `goalID` stands in for a day that names no goal.
+  func open(_ block: StudyBlock, as tap: StudyTap, on day: StudyDay, goalID: String) async
+    -> MutationResult<StudyDestination>
+  {
+    let shown = OpenedSession.Day(day, goalID: goalID)
+
     if block.opensInPlayer, let lessonID = block.lessonId {
       struct Input: Encodable {
         let goalId: String
@@ -226,23 +235,22 @@ final class TodayStore {
       }
       do {
         let opening: LessonOpening
-        if view.session.status != .unstarted, view.session.id != nil, let id = block.id {
+        if day.status != .unstarted, day.id != nil, let id = block.id {
           opening = .block(id)
         } else {
           opening = try LessonOpening(
             Input(
-              goalId: view.session.goalId ?? view.goal.id,
-              shownDate: view.session.localDate, target: .ref(DayBlockRef(block))))
+              goalId: shown.goalID, shownDate: shown.localDate,
+              target: .ref(DayBlockRef(block))))
         }
-        return .done(
-          .instantLesson(lessonID: lessonID, sessionID: view.session.id, opening: opening))
+        return .done(.instantLesson(lessonID: lessonID, sessionID: day.id, opening: opening))
       } catch { return .failed(.unavailable) }
     }
-    return await openStep(for: OpenedSession.Day(view)) { token in
-      guard let sessionID = view.session.id, let blockID = block.id else {
+    return await openStep(for: shown) { token in
+      guard let sessionID = day.id, let blockID = block.id else {
         let ref = DayBlockRef(block)
         let opened = try await self.openDay(
-          view, target: tap == .next ? .next(ref) : .ref(ref), token: token)
+          shown, target: tap == .next ? .next(ref) : .ref(ref), token: token)
         return opened.opening ?? .changed(.init(kind: .changed))
       }
 
@@ -492,11 +500,11 @@ final class TodayStore {
     return try await openBlock(.block(.init(blockId: blockID, kind: .block)), token: token)
   }
 
-  private func openDay(_ view: TodayView, target: DayTarget?, token: String) async throws
+  private func openDay(_ day: OpenedSession.Day, target: DayTarget?, token: String) async throws
     -> OpenedStudyDay
   {
     try await api.openDay(
-      token: token, goalID: view.session.goalId ?? view.goal.id, shownDate: view.session.localDate,
+      token: token, goalID: day.goalID, shownDate: day.localDate,
       timeZone: TimeZone.current.identifier, target: target)
   }
 
@@ -505,7 +513,7 @@ final class TodayStore {
       return sessionID
     }
 
-    return try await openDay(view, target: nil, token: token).sessionId
+    return try await openDay(OpenedSession.Day(view), target: nil, token: token).sessionId
   }
 }
 
@@ -562,9 +570,13 @@ private struct OpenedSession {
     let goalID: String
     let localDate: String
 
+    init(_ day: StudyDay, goalID: String) {
+      self.goalID = day.goalId ?? goalID
+      localDate = day.localDate
+    }
+
     init(_ view: TodayView) {
-      goalID = view.session.goalId ?? view.goal.id
-      localDate = view.session.localDate
+      self.init(view.session, goalID: view.goal.id)
     }
   }
 

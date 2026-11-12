@@ -2,6 +2,7 @@ import "server-only";
 import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/identity/subject";
 import { prisma, sql } from "@zoonk/db";
 import { buildSkillIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { countryIdentityKey, getContentCountryScope } from "../../content-country";
 import { findSurvivingSkill } from "../../skills/_utils/find-surviving-skill";
 import { listChaptersCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
@@ -27,7 +28,11 @@ async function findExactSkill({
 
   const survivor = await findSurvivingSkill(skill.id);
 
-  if (!survivor || !isInRequestScope({ ownerId: request.ownerId, row: survivor.skill })) {
+  if (
+    !survivor ||
+    !isInRequestScope({ ownerId: request.ownerId, row: survivor.skill }) ||
+    survivor.skill.country !== getContentCountryScope(request)
+  ) {
     return null;
   }
 
@@ -44,6 +49,7 @@ async function findSkillCandidateIds({
   return findRankedIds({
     document: SKILL_DOCUMENT,
     filters: sql`s.language = ${request.language}
+      AND s.country IS NOT DISTINCT FROM ${getContentCountryScope(request)}
       AND s.target_language IS NOT DISTINCT FROM ${request.targetLanguage}
       AND s.merged_into_id IS NULL
       AND s.visibility = 'public'`,
@@ -87,7 +93,10 @@ export async function loadSkillCandidates(
 
 export function getSkillIdentitySearch(request: SkillIdentityRequest): IdentityKindSearch {
   const identityKey = scopeIdentityKey({
-    key: buildSkillIdentityKey(request),
+    key: countryIdentityKey({
+      country: getContentCountryScope(request),
+      key: buildSkillIdentityKey(request),
+    }),
     ownerId: request.ownerId,
   });
 

@@ -17,6 +17,7 @@ import com.zoonk.android.data.performWritten
 import com.zoonk.android.data.value
 import com.zoonk.api.models.ExamChoiceInput
 import com.zoonk.api.models.Goal
+import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -117,6 +118,16 @@ interface PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         region: String?,
+    ): Goal
+
+    /**
+     * A learn goal's content country, or null for its language's own. A country-dependent goal owes a
+     * rebuild for it, which keeps the plan until the new one saves. Answers the goal saved.
+     */
+    suspend fun setContentCountry(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        country: String?,
     ): Goal
 
     suspend fun change(
@@ -251,6 +262,12 @@ class LivePlanApi(
         goalId: UUID,
         region: String?,
     ) = perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("targetRegion", region) }) }.goal
+
+    override suspend fun setContentCountry(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        country: String?,
+    ) = perform { api.clients(session).goals.updateGoal(goalId, buildJsonObject { put("contentCountry", country) }) }.goal
 
     override suspend fun change(
         session: AuthenticatedSession,
@@ -401,6 +418,30 @@ class PlanStore(
             setOf(DataDomain.Goals, DataDomain.LearningProfile),
             { api.setRegion(it, goalId, region) },
         ) { copy(targetRegion = it.targetRegion, languageFlag = it.languageFlag) }
+
+    /** From the Plan's picker or the buddy's card; the plan shown stays until its rebuild saves the new one. */
+    suspend fun setContentCountry(
+        goalId: UUID,
+        country: String?,
+    ): MutationResult<Unit> =
+        saveGoal(
+            goalId,
+            setOf(DataDomain.Goals, DataDomain.LearningProfile),
+            { api.setContentCountry(it, goalId, country) },
+        ) {
+            copy(
+                contentCountry = it.contentCountry,
+                countryDependent = it.countryDependent,
+                examplesCountry = it.examplesCountry,
+                suggested = it.suggested,
+            )
+        }
+
+    /** Prepares the plan for the goal's country again after that failed: only from the learner's tap, since it runs models. */
+    suspend fun retryCountryRebuild(goalId: UUID): MutationResult<Unit> =
+        saveGoal(goalId, setOf(DataDomain.Goals), { api.rebuild(it, goalId) }) {
+            copy(contentCountry = contentCountry?.copy(rebuild = GoalContentCountry.Rebuild.PREPARING))
+        }
 
     /** The summary shows what the server saved even when reading it again fails, so a pick never looks undone. */
     private suspend fun <T> saveGoal(

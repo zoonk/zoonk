@@ -1,4 +1,5 @@
 import { type GoalView, regionChoiceSchema } from "@zoonk/core/goals/contract";
+import { goalCountryFieldsSchema } from "@zoonk/core/goals/country-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -9,6 +10,7 @@ const isoDateSchema = z.iso.date();
 
 export const goalSchema = z
   .object({
+    ...goalCountryFieldsSchema.shape,
     createdAt: z.iso.datetime(),
     dailyMinutes: z.int(),
     details: z.record(z.string(), z.unknown()).meta({ description: "What onboarding understood" }),

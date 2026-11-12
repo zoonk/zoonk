@@ -26,6 +26,7 @@ export type {
   Attempt,
   Certificate,
   Chapter,
+  ContentFix,
   ChapterLesson,
   ChapterMindMap,
   ChapterSkill,
@@ -99,6 +100,8 @@ export type {
 export {
   BuddyGlasses,
   BuddyKind,
+  ContentFixStatus,
+  ContentFixUnit,
   CourseFormat,
   CourseLevel,
   FeedbackContentKind,

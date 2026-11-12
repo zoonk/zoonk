@@ -6,7 +6,12 @@ import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-ar
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
-export type StartedCourse = { id: string; ownerId: string | null; title: string };
+export type StartedCourse = {
+  country: string | null;
+  id: string;
+  ownerId: string | null;
+  title: string;
+};
 
 export function pinGraphToCourse({
   course,
@@ -20,7 +25,7 @@ export function pinGraphToCourse({
 
   return {
     ...graph,
-    courses: [{ key, levels, title: course.title }],
+    courses: [{ countrySpecific: Boolean(course.country), key, levels, title: course.title }],
     skills: graph.skills.map((skill) => ({ ...skill, course: key })),
   };
 }
@@ -106,6 +111,7 @@ export function getStartedCourseScope({
   goal: { language: string; targetLanguage: string | null };
 }): CurriculumScope {
   return {
+    country: course.country,
     generalGoal: course.ownerId ? null : course.title,
     language: goal.language,
     ownerId: course.ownerId,

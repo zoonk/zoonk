@@ -4,6 +4,7 @@
   "futureFlags": { "globalConfiguration": true },
   "global": {
     "env": [
+      "ADMIN_APP_URL",
       "AI_GATEWAY_API_KEY",
       "ANDROID_DEBUG_CERT_FINGERPRINTS",
       "ANDROID_RELEASE_CERT_FINGERPRINTS",

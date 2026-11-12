@@ -135,6 +135,7 @@ export async function writeCourseDetails({
           level: placement.level,
           title: placement.chapter.title,
         })),
+        country: course.country,
         courseTitle: course.title,
         language: course.language,
         targetLanguage: course.targetLanguage,

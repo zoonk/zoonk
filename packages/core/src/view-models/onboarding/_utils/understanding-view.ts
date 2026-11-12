@@ -3,6 +3,7 @@ import { type GoalUnderstanding, type UnderstoodGoal } from "@zoonk/ai/tasks/goa
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
+import { toContentCountryView } from "../../../goals/_utils/content-country-view";
 import { defaultDisplayName } from "../../../goals/_utils/goal-display-name";
 import { getGoalRegionChoices } from "../../../goals/_utils/goal-region";
 import { type GoalDraft } from "../../../goals/goal-contract";
@@ -13,6 +14,7 @@ import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboardi
 import { type FoundExam, toExamFacts } from "./exam-facts";
 
 export type UnderstandingContext = {
+  homeCountry?: string | null;
   goal: string;
   language: string;
   onboardingId: string;
@@ -62,6 +64,30 @@ function getOfferedNoticeDay({
   return getKeptMonthStart({ details, noticeDay: day.date, today }) ? day.date : undefined;
 }
 
+function understoodCountrySource({
+  context,
+  goal,
+}: {
+  context: UnderstandingContext;
+  goal: UnderstoodGoal;
+}) {
+  if (goal.contentCountry) {
+    return "said" as const;
+  }
+
+  return context.homeCountry ? ("home" as const) : ("default" as const);
+}
+
+function understoodCountry({
+  context,
+  goal,
+}: {
+  context: UnderstandingContext;
+  goal: UnderstoodGoal;
+}) {
+  return goal.kind === "learn" ? (goal.contentCountry ?? context.homeCountry ?? null) : null;
+}
+
 async function toGoalView({
   answered,
   context,
@@ -79,6 +105,8 @@ async function toGoalView({
 }): Promise<UnderstoodGoalView> {
   const { language, onboardingId, today } = context;
   const exam = found ? toExamFacts(found) : null;
+  const contentCountry = understoodCountry({ context, goal });
+  const source = understoodCountrySource({ context, goal });
 
   const details = compactDetails({
     answered,
@@ -109,8 +137,19 @@ async function toGoalView({
   const cutoff = await loadTargetCutoff({ details, examBlueprintId: exam?.blueprintId });
 
   return {
+    contentCountry: goal.countryDependent
+      ? toContentCountryView({
+          code: contentCountry,
+          editable: true,
+          kind: "content",
+          language,
+          source,
+        })
+      : null,
+    countryDependent: goal.countryDependent,
     cutoff,
     draft: {
+      ...(contentCountry && { contentCountry }),
       details,
       displayName: goal.displayName ?? defaultDisplayName({ ...goal, details, language }),
       examBlueprintId: exam?.blueprintId ?? undefined,

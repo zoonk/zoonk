@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
 export type ExplainGoal = {
+  country: string | null;
   id: string;
   isGuest: boolean;
   language: string;
@@ -37,6 +38,7 @@ export async function loadExplainGoal(goalId: string): Promise<ExplainGoal | nul
 
   return {
     answered: (goal.plan?.items ?? []).some((item) => item.lesson?.contentStatus === "completed"),
+    country: goal.contentCountry,
     id: goal.id,
     isGuest: goal.user.isAnonymous,
     language: goal.language,

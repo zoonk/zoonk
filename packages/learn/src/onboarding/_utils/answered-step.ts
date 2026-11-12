@@ -43,6 +43,7 @@ export function applyAnswer({
 }
 
 const STEP_SCREENS = new Set<string>([
+  "contentCountry",
   "purpose",
   "role",
   "reason",

@@ -42,6 +42,11 @@
   "onboarding_change_date": "b071660b0d568f8a2693de8a969230b1cf06867c9ebf1e7092b700aa94af518b",
   "onboarding_choose_date": "c9e912c3ece8fcbc2ba03c9310d3863755d544a975aca563da7cab5df5f4aa12",
   "onboarding_continue": "9df52770977ac6b6565f3132a901b54600ad82674dae33f75cb2e55a7769d171",
+  "onboarding_country_description": "5efb2461e973eac172c3c847bf03091900e1dc943af0cf9f2c1bb3a8919ed08f",
+  "onboarding_country_from_home": "b151c40c804b9812b88ef7e8f474a89235e0af9887708d1d08df771808be973f",
+  "onboarding_country_other": "ab57bef6494e4ba6d6b3c48ac8f41877a92843fe210a5370964ac46158f5185f",
+  "onboarding_country_skip_default": "9ccd3223435184000be11f95d88626ad679027e9e809a11fbdce6ce7dc24a39d",
+  "onboarding_country_title": "4f418de36534abbfab024f0f9851bbe17b103b8aab585fac72d2e6a091922e84",
   "onboarding_course_build": "f7b03256c7c4602e8fe74fe6d4e3f9534066f319ae779d05862411b1250ccef2",
   "onboarding_course_chapter_description": "cd4460cd5446d9414d3ce127184497896505234dda02f5085736fbf1f1073ee6",
   "onboarding_course_chapters": "3006bcdb0bd65e90138b3fcddf249938dd571b0f3127298aff391f87684341cd",
@@ -1112,4 +1117,14 @@
     <string name="onboarding_variety_none">指定なし</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
     <string name="onboarding_variety_note">相棒とのやり取りや会話練習では%1$sを使います。レッスンとその音声では%2$sを使います。</string>
+    <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
+    <string name="onboarding_country_title">どの国に合わせたレッスンにしますか？</string>
+    <!-- Under that question's title. -->
+    <string name="onboarding_country_description">ここで学ぶ内容は国によって変わります。あとで学習計画から変更できます。</string>
+    <!-- The last choice of that question, which opens the full list of countries. -->
+    <string name="onboarding_country_other">ほかの国</string>
+    <!-- Above that question's buttons before a country is picked: %1$s is the country Skip uses, in the reader's language, after the colon so it needs no article or case. -->
+    <string name="onboarding_country_skip_default">スキップした場合：%1$s</string>
+    <!-- A badge beside the content country in "Here's what I understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->
+    <string name="onboarding_country_from_home">住んでいる国</string>
 </resources>

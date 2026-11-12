@@ -1,4 +1,4 @@
-import { type Task } from "@/lib/types";
+import { type OptionalCountry, type Task } from "@/lib/types";
 import {
   type CourseDetails,
   type CourseDetailsParams,
@@ -7,10 +7,14 @@ import {
 import { type CourseDetailsExpected, scoreCourseDetails } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
-export const courseDetailsTask: Task<CourseDetailsParams, CourseDetails, CourseDetailsExpected> = {
+export const courseDetailsTask: Task<
+  OptionalCountry<CourseDetailsParams>,
+  CourseDetails,
+  CourseDetailsExpected
+> = {
   description:
     "Write a shared course's public page from its outline: description, landing copy (the promise, audience and outcomes) and 1 or 2 catalog categories",
-  generate: generateCourseDetails,
+  generate: (input) => generateCourseDetails({ ...input, country: input.country ?? null }),
   id: "course-details",
   name: "Course Details",
   score: scoreCourseDetails,

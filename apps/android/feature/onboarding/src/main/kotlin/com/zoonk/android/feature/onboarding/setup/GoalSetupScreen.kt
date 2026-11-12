@@ -45,6 +45,7 @@ import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationFirstLesson
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.TrackDeckReceived
 import com.zoonk.android.data.TrackOnboardingQuestion
@@ -61,6 +62,8 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
+import com.zoonk.android.feature.session.DayStep
+import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.warmup.WaitQuizState
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.rememberWaitQuiz
@@ -86,13 +89,14 @@ import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
-import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
-import com.zoonk.api.models.OnboardingAnswerInputOneOf9
+import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
+import com.zoonk.api.models.OnboardingAnswerInputOneOf10
 import com.zoonk.api.models.OnboardingStep
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import java.util.UUID
 
 @Composable
 fun GoalSetupScreen(
@@ -121,6 +125,7 @@ fun GoalSetupScreen(
             navigator,
             warmUps = app.warmUps,
             prepareToday = { app.today.today.refresh() },
+            openRevealStep = { day, step, goalId -> app.studyOpener.openRow(day, step, goalId) },
             onReportPlacement = placementReport::open,
             onReportLevelTest = levelTestReport::open,
         )
@@ -137,6 +142,7 @@ fun GoalSetupScreen(
     navigator: AppNavigator,
     warmUps: WarmUpStore? = null,
     prepareToday: suspend () -> Unit = {},
+    openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)? = null,
     onReportPlacement: () -> Unit = {},
     onReportLevelTest: () -> Unit = {},
 ) {
@@ -286,6 +292,7 @@ fun GoalSetupScreen(
                                         navigator,
                                         route,
                                         prepareToday,
+                                        openRevealStep,
                                         announce,
                                         run,
                                         onReportPlacement,
@@ -327,6 +334,7 @@ private fun ColumnScope.SetupStep(
     navigator: AppNavigator,
     route: AppRoute.GoalSetup,
     prepareToday: suspend () -> Unit,
+    openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)?,
     announce: (String) -> Unit,
     run: GenerationRun,
     onReportPlacement: () -> Unit,
@@ -381,6 +389,7 @@ private fun ColumnScope.SetupStep(
             run,
             onRetryRun,
             prepareToday,
+            openRevealStep,
             onReportPlacement,
             onReportLevelTest,
         )
@@ -403,6 +412,7 @@ private fun ColumnScope.QuestionStep(
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     prepareToday: suspend () -> Unit,
+    openRevealStep: (suspend (DayView, DayStep, UUID) -> MutationResult<AppRoute?>)?,
     onReportPlacement: () -> Unit,
     onReportLevelTest: () -> Unit,
 ) {
@@ -420,6 +430,10 @@ private fun ColumnScope.QuestionStep(
         OnboardingStep.LEARNING_SUPPORT,
         -> {
             key(step) { ProfileStep(step, view, vm) }
+        }
+
+        OnboardingStep.CONTENT_COUNTRY -> {
+            CountryStep(subject, view.contentCountry, view.goal.language, pending, vm::answer)
         }
 
         OnboardingStep.PURPOSE -> {
@@ -502,7 +516,7 @@ private fun ColumnScope.QuestionStep(
 
         OnboardingStep.PLACEMENT -> {
             val placementAnswer =
-                OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT))
+                OnboardingAnswerInputOneOf10Value(OnboardingAnswerInputOneOf10(OnboardingAnswerInputOneOf10.Question.PLACEMENT))
             val placed: suspend () -> WriteOutcome<*> = {
                 vm.answer(placementAnswer, from = OnboardingStep.PLACEMENT, showFailure = false)?.await() ?: WriteOutcome.Obsolete
             }
@@ -550,6 +564,23 @@ private fun ColumnScope.QuestionStep(
                 route,
                 prepareToday,
                 onReveal = vm::reveal,
+                openingStep = vm.openingStep,
+                failedStep = vm.failedStep,
+                startStepFailed = vm.startStepFailed,
+                onOpenStep =
+                    openRevealStep?.let { open ->
+                        { day, step, fromStart ->
+                            vm.openRevealStep(
+                                day,
+                                step,
+                                open,
+                                fromStart = fromStart,
+                                isCurrent = { navigator.currentRoute == route },
+                            ) { destination ->
+                                openRevealedPlan(navigator, route, prepareToday, destination)
+                            }
+                        }
+                    },
                 saving = vm.isSaving,
                 saveFailed = vm.saveFailed,
                 playMoment = vm::takeRevealMoment,
@@ -657,7 +688,7 @@ private fun Onboarding.subject(): String = goal.details.text("subject") ?: goal.
 private fun Goal.levelChoice(): LevelChoice? {
     val level =
         details.text("level")?.let { saved ->
-            com.zoonk.api.models.OnboardingAnswerInputOneOf7.Level.entries.find {
+            com.zoonk.api.models.OnboardingAnswerInputOneOf8.Level.entries.find {
                 it.value ==
                     saved
             }

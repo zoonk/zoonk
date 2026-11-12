@@ -107,6 +107,7 @@ describe(generateLessonSpec, () => {
         { description: "Jump along a number line.", explore: true, id: "numberLine" },
       ],
       chapterTitle: "Describing data",
+      country: null,
       courseTitle: "Statistics",
       language: "en",
       lessonDescription: "Center and spread.",
@@ -173,6 +174,7 @@ describe(generateLessonSpec, () => {
     const { data } = await generateLessonSpec({
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       lessonDescription: "Temperatures below zero.",
@@ -205,6 +207,7 @@ describe(generateLessonSpec, () => {
     const params = {
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       lessonDescription: "Temperatures below zero.",
@@ -246,6 +249,7 @@ describe(generateLessonSpec, () => {
     const { data } = await generateLessonSpec({
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       lessonDescription: "Temperatures below zero.",
@@ -284,6 +288,7 @@ describe(generateLessonSpec, () => {
     const params = {
       activityTemplates: [],
       chapterTitle: "Biomoléculas",
+      country: null,
       courseTitle: "Biologia",
       language: "pt",
       lessonDescription: "As ideias centrais de proteínas e enzimas.",
@@ -326,6 +331,7 @@ describe(generateLessonSpec, () => {
     const params = {
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       lessonDescription: "Temperatures.",
@@ -386,6 +392,7 @@ describe(generateLessonSpec, () => {
     const params = {
       activityTemplates: [],
       chapterTitle: "Get started",
+      country: null,
       courseTitle: "Gizmo",
       language: "en",
       lessonDescription: "Pair the remote.",

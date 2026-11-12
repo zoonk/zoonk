@@ -3,9 +3,12 @@ import {
   type PlanTimeToCoverInput,
 } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
+import { holdScripts } from "@zoonk/e2e/hydration";
+import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { createStudyDay, openAs } from "./study-day";
 
 function inMinutes(minutes: number): Date {
   return new Date(Date.now() + minutes * 60_000);
@@ -52,6 +55,56 @@ test.describe("Placement and the plan", () => {
 
     expect(attempts).toBeGreaterThanOrEqual(2);
     expect(saved.details).toMatchObject({ answered: expect.arrayContaining(["placement"]) });
+    expect(saved.planRevealedAt).not.toBeNull();
+  });
+
+  test("a lesson tapped in the reveal's Today before the page hydrates opens, and Today counts the plan as seen", async ({
+    browser,
+  }) => {
+    const { goal, lesson, user } = await createStudyDay();
+    const details = isJsonObject(goal.details) ? goal.details : {};
+    const setup = Array.isArray(details.answered) ? details.answered : [];
+
+    await prisma.goal.update({
+      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
+      where: { id: goal.id },
+    });
+
+    const page = await openAs(browser, user);
+    const release = await holdScripts(page);
+    await page.goto(`/start/${goal.id}`, { waitUntil: "domcontentloaded" });
+
+    const today = page.getByRole("region", { name: "Today" });
+    await today.getByRole("button", { name: new RegExp(lesson.title, "u") }).click();
+    await release();
+
+    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(saved.planRevealedAt).not.toBeNull();
+  });
+
+  test("Start pressed before the page hydrates opens the step tagged to start, not Today", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createStudyDay();
+    const details = isJsonObject(goal.details) ? goal.details : {};
+    const setup = Array.isArray(details.answered) ? details.answered : [];
+
+    await prisma.goal.update({
+      data: { details: { ...details, answered: [...setup, ...ANSWERED] }, planRevealedAt: null },
+      where: { id: goal.id },
+    });
+
+    const page = await openAs(browser, user);
+    const release = await holdScripts(page);
+    await page.goto(`/start/${goal.id}`, { waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+    await release();
+
+    await expect(page).toHaveURL((url) => url.pathname === "/session");
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.planRevealedAt).not.toBeNull();
   });
 });

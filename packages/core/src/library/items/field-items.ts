@@ -8,6 +8,7 @@ export const FIELD_ITEMS_PER_SKILL = 4;
 const MAX_FIELD_SKILLS = 8;
 
 type FieldItemSkill = {
+  country: string | null;
   description: string;
   example: string | null;
   id: string;
@@ -31,6 +32,7 @@ async function findSkillsWithoutFieldItems({
   const [skills, fieldItemCounts] = await Promise.all([
     prisma.skill.findMany({
       select: {
+        country: true,
         description: true,
         example: true,
         id: true,

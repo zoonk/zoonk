@@ -94,6 +94,7 @@ const planScopeSnapshotSchema = z.object({
     })
     .nullable(),
   goal: z.object({
+    contentCountry: z.string().optional(),
     cutoff: z
       .object({
         edition: z.string().nullable(),
@@ -112,6 +113,7 @@ const planScopeSnapshotSchema = z.object({
     variety: z.object({ chosen: z.string(), lessons: z.string() }).optional(),
   }),
   language: z.string(),
+  learnerHomeCountry: z.string().optional(),
   mistakes: z.array(
     z.object({
       answer: z.string().nullable(),

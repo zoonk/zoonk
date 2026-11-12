@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "country_all": "3558d210dbd7b814a0f418ed7aff98e784767e18bb63b1cab27e07d6023ff92f",
+  "country_change_body": "5e7e9247d457c95407f991e3f2920dc20832a553a0b2fdb6f83e428f37160372",
+  "country_change_confirm": "a44d26aa1ab5875a4dd211a45b6f4271e34d2db76b413815d80dd263d4f2f96d",
+  "country_change_title": "2a95982216b4e465afca3a2d582d8d652a5b3fc4e2888322e3d2918ca7b032ae",
+  "country_content_label": "7038459c517fa268df3eabcb55ca3a70ee035adfc294543fa2d7eb528a9fb6bc",
+  "country_content_value": "1ca6d71baba4e9cf93f4d77e7b449e48a7a27ea40c3e296ec64a6519d72a6316",
+  "country_exam_label": "1f72955a576bf277305d284791d7c72abd42191f502002210904080cca40d6fd",
+  "country_home_label": "9407eca3bb21231fb8bee8fbee9d1d8fddc5bdb6de271c59fb185862f629069d",
+  "country_lesson_examples_label": "0c9435244b3341d302bcc8f307bad8b55dca93afa81354d141f331e73a2d449b",
+  "country_lesson_language_label": "38135c3fd840e4e63676e54474222cd32faa2f90903ddafdf7ca5961e0e3315f",
+  "country_lesson_language_value": "c75a7667179dae2121b939e0738f3270b4a08c55cdb34cdba2e8105303151d1b",
+  "country_load_failed": "ddc522370142e28c617a53a9e681ddb79f76910718e7593ede79fdf71517357c",
+  "country_no_match": "f0acce75d5e40408eda9722d30fb4dab9a3a2b2821961bb8b8f14befc7a85d67",
+  "country_rebuild_body": "c7dbb0521f02d8bff62e5e3b37ec76e9fe3133685e45861d9dea464ae9cc743b",
+  "country_rebuild_failed_body": "6ed1fca01caf4ad619f0274a1145deaa054df13a04225dfff9fa0bd58aa43682",
+  "country_rebuild_failed_title": "0a120387b3cecd65cd0ac96eb69a093cfaaa7c39ba1662455a26ae695494a05b",
+  "country_rebuild_ready": "7531c2d171ffb7fc14bb2bc5a6c3486fbb60240ad8913eaab178910c7dd16df4",
+  "country_rebuild_title": "cf1f6f3f999177fa92e5a6c74d99ee1322ec3aa16e183eed68f60f2b9a9196e7",
+  "country_result_count": "759cf9cee6e6af8877e500a6c8d0cde378d1c6480c2443ca371e14c8c1c293b8",
+  "country_search": "53a3f874f91c8768c117a080bb28fe23746377a9df414add9d46a2e55c2e8834",
+  "country_suggested": "20241da9889c86ec7796983fd22490f46c1cf4de7c6f3b43661a21e5f3474807"
+}
+-->
+<resources>
+    <!-- The search field at the top of the country picker. -->
+    <string name="country_search">国を検索</string>
+    <!-- A heading in the country picker over a few countries picked for the learner: earlier answers, where they live, the countries of their language. -->
+    <string name="country_suggested">おすすめ</string>
+    <!-- A heading in the country picker over every country, A to Z. -->
+    <string name="country_all">すべての国</string>
+    <!-- Shown in the country picker when the search matches no country. -->
+    <string name="country_no_match">国が見つかりません</string>
+    <!-- Read by TalkBack as the country picker's search changes: how many countries match. -->
+    <plurals name="country_result_count">
+        <item quantity="other">%1$dか国</item>
+    </plurals>
+    <!-- Shown in the country picker when the full list of countries didn't load; a Try again button follows. -->
+    <string name="country_load_failed">一覧を読み込めませんでした。</string>
+    <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
+    <string name="country_home_label">%1$s、住んでいる国</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
+    <string name="country_content_label">学習内容の対象国</string>
+    <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_content_value">学習内容の基準となる国：%1$s</string>
+    <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
+    <string name="country_exam_label">試験の対象国</string>
+    <!-- A label in the plan: the language lessons use, such as "Portuguese (Brazil)", shown when the content's country speaks the language another way. -->
+    <string name="country_lesson_language_label">レッスンの言語</string>
+    <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_lesson_language_value">レッスンの言語：%1$s</string>
+    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
+    <string name="country_lesson_examples_label">レッスン内の例</string>
+    <!-- The title of a dialog confirming a new content country for a started plan. -->
+    <string name="country_change_title">学習内容の対象国を変更しますか？</string>
+    <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="country_change_body">変更先の国：%1$s。その国に合わせて学習計画を作り直します。終えたレッスンは完了済みとして引き継がれます。新しい計画ができるまでは、今の計画で学習を続けられます。</string>
+    <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
+    <string name="country_change_confirm">学習計画を作り直す</string>
+    <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
+    <string name="country_rebuild_title">新しい学習計画を準備しています</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_body">新しい学習計画ができるまで、この計画で学習を続けられます。終えたレッスンは完了済みとして引き継がれます。</string>
+    <!-- Replaces that notice once the new plan is saved and shown. -->
+    <string name="country_rebuild_ready">新しい学習計画ができました。</string>
+    <!-- A notice at the top of the plan when the new plan for the new content country couldn't be prepared; a Try again button follows. -->
+    <string name="country_rebuild_failed_title">新しい学習計画を準備できませんでした</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_failed_body">学習計画のレッスンは変わっていません。</string>
+</resources>

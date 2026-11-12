@@ -54,18 +54,20 @@ internal fun ColumnScope.ProfileStep(
     val save = { vm.answer(draft.onboardingInput(id, memory), profileAnswer = draft) }
     val order = (vm.flow.history + step + view.steps).filter { it.profileQuestion != null }.distinct()
     val wait = LocalSetupWait.current
-    val supportNext = view.steps.dropWhile { it != step }.getOrNull(1) == OnboardingStep.LEARNING_SUPPORT
     var startingLesson by rememberSaveable(id) { mutableStateOf(false) }
     LaunchedEffect(vm.isSaving) { if (!vm.isSaving) startingLesson = false }
 
     StepForm(
         title = profileQuestionTitle(id),
-        description = profileQuestionDescription(id, supportNext),
+        description = profileQuestionDescription(id),
         subject = stringResource(R.string.profile_questions_progress, order.indexOf(step) + 1, order.size),
         pending = vm.isSaving,
         canContinue = valid,
         onContinue = { save() },
-        onSkip = { vm.answer(if (declinesOnSkip) ProfileDraft(declined = true).onboardingInput(id, memory) else profileSkip(id)) },
+        onSkip = {
+            val declines = declinesOnSkip || id == ProfileQuestion.CONDITIONS
+            vm.answer(if (declines) ProfileDraft(declined = true).onboardingInput(id, memory) else profileSkip(id))
+        },
         skipLabel = stringResource(R.string.profile_questions_prefer_not).takeIf { declinesOnSkip },
         notice = {
             if (view.goal.kind == Goal.Kind.LEARN && wait.firstLesson?.ready == true && wait.onStartLesson != null) {

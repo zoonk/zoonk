@@ -9,7 +9,8 @@ import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
-import { type GoalCreateInput, type GoalDraft } from "../goal-contract";
+import { type GoalCreateInput, type GoalDraft, withoutCoreDetails } from "../goal-contract";
+import { resolveNewGoalCountry } from "./goal-content-country";
 import { defaultDisplayName } from "./goal-display-name";
 import { saveMetadataInTransaction } from "./goal-metadata";
 
@@ -64,11 +65,25 @@ export async function insertGoalWithPlan(
 ): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
   const { examSubjects, ...details } = draft.details ?? {};
+  const country = await resolveNewGoalCountry({ draft, tx, userId });
+  const answered = Array.isArray(details.answered) ? details.answered : [];
+
+  const countryDetails =
+    country.countryDependent === null
+      ? {}
+      : {
+          contentCountrySource: country.source,
+          countryDependent: country.countryDependent,
+          ...(country.source !== "default" && {
+            answered: [...new Set([...answered, "contentCountry"])],
+          }),
+        };
 
   await tx.goal.create({
     data: {
+      contentCountry: country.contentCountry,
       dailyMinutes,
-      details,
+      details: { ...withoutCoreDetails(details), ...countryDetails },
       displayName: draft.displayName ?? defaultDisplayName(draft),
       examBlueprintId: draft.examBlueprintId ?? null,
       id,

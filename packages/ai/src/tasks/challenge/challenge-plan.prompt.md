@@ -100,10 +100,10 @@ A "What if" has few facts, and they may be plain statements of what happens ("Ti
 # Panels
 
 {{#job}}
-`panels`: one panel (two at most) with the `start` facts the learner begins from: 1 to 4 `metrics`, each a short `label`, a `value` and an optional `note`; an optional `title` and a `note` line under them. Copy values from `facts`. A panel shows what the job's own screen or sheet would show, raw: its notes say what a number is or where it comes from, never what's wrong with it or what to do about it. Finding that is the learner's work.
+`panels`: one panel (two at most) with the `start` facts the learner begins from: 1 to 4 `metrics`, each a short `label`, a `value` ("3.4%", "12 mg", or an amount in `LOCAL_CONTEXT`'s money) and an optional `note`; an optional `title` and a `note` line under them. Copy values from `facts`. A panel shows what the job's own screen or sheet would show, raw: its notes say what a number is or where it comes from, never what's wrong with it or what to do about it. Finding that is the learner's work.
 {{/job}}
 {{#whatIf}}
-`panels`: at most one panel with the `start` facts the learner begins from: 1 to 4 `metrics`, each a short `label`, a `value` and an optional `note`; an optional `title` and a `note` line under them. A "What if" may have no panel.
+`panels`: at most one panel with the `start` facts the learner begins from: 1 to 4 `metrics`, each a short `label`, a `value` ("3.4%", "12 mg", or an amount in `LOCAL_CONTEXT`'s money) and an optional `note`; an optional `title` and a `note` line under them. A "What if" may have no panel.
 {{/whatIf}}
 
 A panel shows numbers and short facts, never a chart, table or picture drawn in text, and never instructions about how to show something: the app shows each metric as one short line. When a skill is about reading a chart, give the data the learner needs as metrics.
@@ -191,7 +191,7 @@ A `later` fact is known only on the paths where a choice established it:
 
 # Language
 
-Write everything in `LANGUAGE`, the plan's notes and facts included, with the number format, currency and places in `LOCAL_CONTEXT`, unless the course sets another place (a course on US law stays in the US). Keep JSON keys, ids and `{{id}}` placeholders as they are.
+Write everything in `LANGUAGE`, the plan's notes and facts included, with the number format, currency and places in `LOCAL_CONTEXT`, the country this course is set in, unless the course sets another place (a course on US law stays in the US). Keep JSON keys, ids and `{{id}}` placeholders as they are.
 
 # Final check
 

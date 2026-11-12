@@ -42,6 +42,7 @@ fun UploadRequestNotice(
     visit: Int,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
+    onAnswering: () -> Unit = {},
 ) {
     val vm = viewModel(key = "upload-request-$goalId") { UploadRequestViewModel(store, goalId, createSavedStateHandle()) }
     val answer = vm.on(visit)
@@ -82,6 +83,7 @@ fun UploadRequestNotice(
                 SuggestionActions {
                     SuggestionAction(
                         onClick = {
+                            onAnswering()
                             vm.upload(visit)
                             focus()
                         },
@@ -91,7 +93,10 @@ fun UploadRequestNotice(
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(copy.action)
                     }
-                    SuggestionAction(stringResource(R.string.research_not_now), { vm.dismiss(visit) }, enabled = idle, secondary = true)
+                    SuggestionAction(stringResource(R.string.research_not_now), {
+                        onAnswering()
+                        vm.dismiss(visit)
+                    }, enabled = idle, secondary = true)
                 }
             }
         }

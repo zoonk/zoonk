@@ -6,7 +6,7 @@ const QUICK_ITEMS_PER_CALL = 2;
 
 /** The first pick is the first question placement asks, so it gets the shortest call, of its own. */
 export function toPlacementItemBatches<
-  TSkill extends Pick<PlacementItemPick, "needsTyped" | "ownerId">,
+  TSkill extends Pick<PlacementItemPick, "country" | "needsTyped" | "ownerId">,
 >({ quickCount, skills }: { quickCount: number; skills: readonly TSkill[] }): TSkill[][] {
   const [first, ...rest] = skills;
 
@@ -15,7 +15,10 @@ export function toPlacementItemBatches<
   }
 
   const size = Math.max(1, Math.floor(QUICK_ITEMS_PER_CALL / quickCount));
-  const groups = Map.groupBy(rest, (skill) => JSON.stringify([skill.ownerId, skill.needsTyped]));
+
+  const groups = Map.groupBy(rest, (skill) =>
+    JSON.stringify([skill.country, skill.ownerId, skill.needsTyped]),
+  );
 
   return [[first], ...[...groups.values()].flatMap((items) => splitEvenly({ items, size }))];
 }

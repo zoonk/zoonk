@@ -17,6 +17,8 @@ type LessonActivityTemplate = { id: string; description: string; schema: string 
 
 export type LessonWritingContext = {
   language: string;
+  /** The country the course is set in; null is the language's own. */
+  country: string | null;
   level: CourseLevel;
   courseTitle: string;
   chapterTitle: string;
@@ -151,9 +153,9 @@ export function formatLessonPlan(context: LessonWritingContext): string {
 
   return `
 LANGUAGE: ${getPromptLanguageName({ language: context.language })}
-${formatLocalContext(context.language)}
-${formatMoneyContext(context.language)}
-${formatCast({ language: context.language, seed: `${context.courseTitle}:${spec.title}` })}
+${formatLocalContext({ country: context.country, language: context.language })}
+${formatMoneyContext({ country: context.country, language: context.language })}
+${formatCast({ country: context.country, language: context.language, seed: `${context.courseTitle}:${spec.title}` })}
 LEVEL: ${context.level}${context.setup ? `\nTODAY: ${getToday()}` : ""}
 COURSE_TITLE: ${context.courseTitle}
 CHAPTER_TITLE: ${context.chapterTitle}

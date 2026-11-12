@@ -57,6 +57,38 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertEqual(kept.field, .targetRegion)
   }
 
+  func testOnlyAContentCountryOpensThePickerAndAForeignExamsStaysReadOnly() throws {
+    let finance = try understoodGoal(
+      draft: [
+        "kind": "learn", "language": "pt", "prompt": "finanças pessoais",
+        "title": "Finanças pessoais", "displayName": "Finanças",
+      ],
+      contentCountry: [
+        "code": "PT", "name": "Portugal", "kind": "content", "editable": true, "source": "home",
+        "lessonVariety": ["language": "pt", "region": "BR"], "rebuild": "none",
+      ])
+    let exam = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "pt", "prompt": "passar no CBC", "title": "CBC",
+        "displayName": "CBC",
+      ],
+      contentCountry: [
+        "code": "AR", "name": "Argentina", "kind": "exam", "editable": false, "source": "said",
+        "lessonVariety": NSNull(), "rebuild": "none",
+      ])
+
+    let content = try XCTUnwrap(
+      UnderstoodRows.rows(for: finance, today: today).first { $0.id == "contentCountry" })
+    let examCountry = try XCTUnwrap(
+      UnderstoodRows.rows(for: exam, today: today).first { $0.id == "contentCountry" })
+
+    XCTAssertEqual(content.field, .contentCountry)
+    XCTAssertNotNil(content.badge, "It came from where the learner lives")
+    XCTAssertNotNil(content.note, "Portugal's lessons are written in Brazilian Portuguese")
+    XCTAssertNil(examCountry.field)
+    XCTAssertNil(examCountry.badge)
+  }
+
   private func examDay(_ date: String) -> [String: Any] {
     [
       "date": date, "estimated": false, "label": "", "registrationClosed": false,
@@ -66,9 +98,13 @@ final class UnderstoodRowsTests: XCTestCase {
 
   private func understoodGoal(
     draft: [String: Any],
-    examDates: [[String: Any]] = []
+    examDates: [[String: Any]] = [],
+    contentCountry: [String: Any]? = nil
   ) throws -> Components.Schemas.UnderstoodGoal {
-    try decode(["cutoff": NSNull(), "draft": draft, "examDates": examDates, "regionChoices": []])
+    try decode([
+      "contentCountry": contentCountry ?? NSNull(), "cutoff": NSNull(), "draft": draft,
+      "examDates": examDates, "regionChoices": [], "suggested": [],
+    ])
   }
 
   private func decode<Value: Decodable>(_ json: [String: Any]) throws -> Value {

@@ -218,7 +218,7 @@ private fun LazyListScope.sessionQueue(
             model = model,
             step = step,
             isNext = isNext,
-            opens = replay != null || (next != null && !step.isFinished && step.waitReason == null),
+            opens = replay != null || (next != null && step.canOpen),
             busy = viewModel.pending == TodayTap.Step(step.position) || (isNext && viewModel.pending == TodayTap.Continue),
             openFailed = viewModel.failed == TodayTap.Step(step.position),
             onOpen = { if (replay != null) actions.navigate(AppRoute.Lesson(replay.toString())) else actions.open(step) },

@@ -6,6 +6,7 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.Written
 import com.zoonk.android.feature.onboarding.examGoal
+import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
@@ -140,6 +141,24 @@ class FakePlanApi : PlanApi {
         goalId: UUID,
         region: String?,
     ) = examGoal().copy(targetLanguage = "es", targetRegion = region, languageFlag = region?.lowercase() ?: "es")
+
+    override suspend fun setContentCountry(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        country: String?,
+    ) = examGoal().copy(
+        countryDependent = true,
+        contentCountry =
+            GoalContentCountry(
+                country ?: "US",
+                country ?: "United States",
+                editable = true,
+                kind = GoalContentCountry.Kind.CONTENT,
+                lessonVariety = null,
+                rebuild = GoalContentCountry.Rebuild.PREPARING,
+                source = GoalContentCountry.Source.PICKED,
+            ),
+    )
 
     override suspend fun change(
         session: AuthenticatedSession,

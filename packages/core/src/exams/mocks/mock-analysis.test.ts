@@ -143,6 +143,32 @@ describe(analyzeMock, () => {
     expect(getMockMeasure(result)).toBe(1);
   });
 
+  it("adds up each area's points, a wrong answer losing its penalty, with the test they count toward", () => {
+    const p2 = { part: "P2", points: 1, wrongPenalty: 1 };
+    const p3 = { part: "P3", points: 2, wrongPenalty: 1 };
+
+    const result = analyzeMock({
+      answers: [
+        answer({ marking: p2 }),
+        answer({ marking: p2 }),
+        answer({ marking: p2, outcome: "wrong" }),
+        answer({ marking: p2, outcome: "blank" }),
+        answer({ area: "Auditing", marking: p3 }),
+        answer({ area: "Auditing", marking: p3, outcome: "blank" }),
+        answer({ area: "Auditing", marking: p2, outcome: "wrong" }),
+      ],
+      conditions: conditions("net"),
+      minutesUsed: 10,
+      preparation: null,
+      previous: null,
+    });
+
+    expect(result.areas.map(({ name, part, points }) => ({ name, part, points }))).toStrictEqual([
+      { name: "Math", part: "P2", points: { asked: 4, earned: 1 } },
+      { name: "Auditing", part: null, points: { asked: 5, earned: 1 } },
+    ]);
+  });
+
   it("counts right answers as a share otherwise", () => {
     const result = analyzeMock({
       answers: [answer({}), answer({ outcome: "wrong" })],

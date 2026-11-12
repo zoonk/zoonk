@@ -56,13 +56,13 @@ export function getSupportedLocaleFromLanguage(language: string): SupportedLocal
 /** Native names, never translated. */
 export const LOCALE_LABELS: Record<SupportedLocale, string> = {
   de: "Deutsch",
-  en: "English",
-  es: "Español",
+  en: "English (US)",
+  es: "Español (México)",
   fr: "Français",
   it: "Italiano",
   ja: "日本語",
   ko: "한국어",
   pl: "Polski",
-  pt: "Português",
+  pt: "Português (Brasil)",
   tr: "Türkçe",
 } as const;

@@ -89,6 +89,14 @@ struct StudyDay: Decodable, Equatable, Sendable {
     blocks.first { $0.position == nextPosition }
   }
 
+  /// Main's `waitsForStart`: a question block that hasn't begun opens on the session and waits for
+  /// Start there, so the learner reads what it is before it starts. An unopened day's session shows
+  /// only its next step.
+  func waitsForStart(_ block: StudyBlock) -> Bool {
+    block.screen == .session && block.kind != .learn && block.status != .active
+      && (block.id != nil || block.position == nextPosition)
+  }
+
   /// Mirrors main's `ComingLessonsRow`: the time a day holds for lessons not written yet, which
   /// the learner asks for while nobody is outlining them.
   var comingLessons: ComingLessons? {
