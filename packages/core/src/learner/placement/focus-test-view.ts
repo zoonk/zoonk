@@ -63,10 +63,12 @@ function getMeanBelief({
  */
 export function listFocusRows({
   beliefs,
+  incumbentAreas = [],
   skillsOf,
   subjects,
 }: {
   beliefs: SkillBeliefs;
+  incumbentAreas?: readonly string[];
   skillsOf: (subject: SubjectProgress) => readonly string[];
   subjects: readonly SubjectProgress[];
 }): FocusRow[] {
@@ -80,6 +82,11 @@ export function listFocusRows({
       part: subject.part,
       share: subject.share,
     })),
+    {
+      incumbent: subjects
+        .filter((subject) => subject.areas.some((area) => incumbentAreas.includes(area)))
+        .map((subject) => subject.key),
+    },
   );
 
   return ranked.flatMap(({ key }) => {

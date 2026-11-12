@@ -68,6 +68,7 @@ export async function loadFocusOwnership({
 export async function loadFocusProposalFacts({
   asks,
   goal,
+  ownership,
   plan,
   record,
   suggested,
@@ -75,6 +76,7 @@ export async function loadFocusProposalFacts({
 }: {
   asks: boolean;
   goal: Pick<Goal, "details" | "planRevealedAt">;
+  ownership?: Awaited<ReturnType<typeof loadFocusOwnership>>;
   plan: TestSetup["plan"];
   record: FocusTestRecord | null;
   suggested: string[];
@@ -85,7 +87,8 @@ export async function loadFocusProposalFacts({
   const timeShort = coveredShare !== null && coveredShare < 1;
   const proposes = asks && timeSaved && timeShort;
 
-  const { handPicked } = await loadFocusOwnership({ focusAreas, planId: id, record, tx });
+  const { handPicked } =
+    ownership ?? (await loadFocusOwnership({ focusAreas, planId: id, record, tx }));
 
   const changes = proposes
     ? await tx.planChange.findMany({

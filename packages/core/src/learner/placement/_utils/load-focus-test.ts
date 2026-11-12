@@ -24,7 +24,7 @@ import {
 } from "../focus-test-view";
 import { type PlacementEvidence, getPlacementBeliefs } from "../placement-beliefs";
 import { getGoalDay } from "../placement-day";
-import { loadFocusProposalFacts } from "./focus-proposal-facts";
+import { loadFocusOwnership, loadFocusProposalFacts } from "./focus-proposal-facts";
 import { type TestTurn } from "./focus-test-setup";
 
 type FocusTestLoad = {
@@ -78,8 +78,16 @@ async function loadTurnFocusTest({
   const timeZone = getAnswerTimeZone({ goal, timeZone: requestedTimeZone });
   const day = today ?? getDateInTimeZone({ date: new Date(), timeZone });
 
+  const ownership = await loadFocusOwnership({
+    focusAreas: setup.plan.focusAreas,
+    planId: setup.plan.id,
+    record,
+    tx,
+  });
+
   const rows = listFocusRows({
     beliefs: getPlacementBeliefs({ answeredOnly, evidence, skills: plan.skills }),
+    incumbentAreas: ownership.handPicked ? [] : setup.plan.focusAreas,
     skillsOf: (subject) =>
       plan.skills.filter((skill) => subjectOf(skill.id) === subject.key).map((skill) => skill.id),
     subjects: progress.subjects,
@@ -88,6 +96,7 @@ async function loadTurnFocusTest({
   const facts = await loadFocusProposalFacts({
     asks: dated && progress.answers > 0 && rows.length > 0,
     goal,
+    ownership,
     plan: setup.plan,
     record,
     suggested: rows.flatMap((row) => row.areas),

@@ -71,6 +71,44 @@ async function chooseFocus(goalId: string, areas: string[]) {
 describe("the checkpoint's focus, read from the plan and the test's proposals", () => {
   afterEach(() => vi.useRealTimers());
 
+  it("keeps a returning learner's first answer suggested until the sitting closes", async () => {
+    const { goal } = await shortPlanExamGoalFixture({
+      goal: { ...SHOWN, details: { ...SHOWN.details, placementDeclined: true } },
+    });
+
+    const sitting = await startSitting(goal.id);
+
+    await expect(
+      answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer: { dontKnow: true }, durationMs: 20_000, itemId: sitting.next!.itemId },
+      }),
+    ).resolves.toMatchObject({
+      placement: { focusTest: { checkpoint: { focus: { proposal: null, state: "suggested" } } } },
+      status: "ready",
+    });
+
+    await expect(read(goal.id)).resolves.toStrictEqual({ changes: [], focus: "suggested" });
+    const open = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    expect(readFocusTestRecord(open)?.sitting).not.toBeNull();
+
+    await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+      completion: {
+        focusTest: {
+          checkpoint: {
+            focus: { proposal: { source: "focusTest", status: "proposed" }, state: "proposed" },
+          },
+        },
+      },
+      status: "ready",
+    });
+
+    await expect(read(goal.id)).resolves.toStrictEqual({
+      changes: ["proposed"],
+      focus: "proposed",
+    });
+  });
+
   it("makes no claim while the plan has time for the suggestion, and proposes once missed days take it", async () => {
     const { goal } = await shortPlanExamGoalFixture({ daysLeft: 10, goal: SHOWN, lessons: 1 });
 
