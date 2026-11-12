@@ -75,7 +75,6 @@ struct CountryPickerSheet: View {
             "Rebuild plan", tableName: "Plan",
             comment: "Confirms a new content country, which rebuilds the goal's plan")
         }
-        .keyboardShortcut(.defaultAction)
       } message: { choice in
         Text(
           "New country: \(choice.name). Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready.",
