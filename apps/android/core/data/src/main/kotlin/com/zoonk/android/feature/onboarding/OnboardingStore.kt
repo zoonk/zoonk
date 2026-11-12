@@ -473,7 +473,9 @@ class OnboardingStore(
     suspend fun finishPlacement(
         goalId: String,
         fromScratch: Boolean,
-    ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel)) { api.finishPlacement(it, goalId, fromScratch) }
+    ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) {
+        api.finishPlacement(it, goalId, fromScratch)
+    }
 
     /** A language goal's level test; each answer replies with its next step. */
     val levelTests =

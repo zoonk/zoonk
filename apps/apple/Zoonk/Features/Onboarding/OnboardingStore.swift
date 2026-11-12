@@ -388,7 +388,9 @@ final class OnboardingStore {
   /// An exam goal's answer is its Focus test as it stands after it.
   @discardableResult
   func finishPlacement(goalID: String, fromScratch: Bool = false) async throws -> FocusTest? {
-    try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
+    try await cache.onboardingWrite(
+      invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
+    ) {
       [api] identity in
       try await api.completePlacement(
         goalID: goalID, fromScratch: fromScratch, token: identity.bearerToken)
