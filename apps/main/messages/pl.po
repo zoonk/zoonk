@@ -199,6 +199,7 @@ msgstr "Wyznacz nowy cel"
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
+#: src/app/[lang]/session/page.tsx
 #: src/components/catalog/course-plan-window.tsx
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "zWgbGg"
@@ -793,10 +794,11 @@ msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
 msgstr "Poznaj wszystkie kursy Zoonka i ucz się, czego chcesz, z pomocą AI. Odkryj interaktywne lekcje z nauk przyrodniczych, matematyki, technologii i wielu innych dziedzin."
 
+#. Read aloud for a link. {belt} is a belt's name and {level} its number from 1 to 10, such as "White belt 4".
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "yAw6p8"
-msgid "{belt}, level {level}. Statistics"
-msgstr "{belt}, poziom {level}. Statystyki"
+msgctxt "-KM9XT"
+msgid "{belt} {level}. Statistics"
+msgstr "{belt} {level}. Statystyki"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
@@ -814,10 +816,12 @@ msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
 msgstr "Powiedz nam, czego chcesz się nauczyć, a zaplanujemy każdy dzień aż do osiągnięcia celu."
 
+#. A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt's name, such as "White belt".
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, poziom {level}"
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "mg0hRn"
+msgid "{belt} {level}"
+msgstr "{belt} {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -1695,8 +1699,6 @@ msgid "Overview"
 msgstr "Przegląd"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "y1Qr81"
 msgid "Level"
@@ -1718,7 +1720,6 @@ msgstr "Aktywność"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1835,34 +1836,19 @@ msgid "Energy by day"
 msgstr "Energia każdego dnia"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "OiTvvB"
-msgid "Since you started"
-msgstr "Od początku nauki"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "FnRTEV"
-msgid "Average"
-msgstr "Średnia"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "WUD69_"
-msgid "Days with full Energy"
-msgstr "Dni z pełną Energią"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "1bzMX0"
 msgid "At 100%"
 msgstr "100% Energii"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "y6wXa9"
-msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
-msgstr "Każda ukończona lekcja zwiększa twoją Energię. W dni odpoczynku trochę spada, a twój pas i postępy pozostają bez zmian."
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "Twoja Energia teraz i w ciągu ostatnich 12 miesięcy."
+
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+msgctxt "1lqd7i"
+msgid "Energy goes up with every lesson and drops a little on days off."
+msgstr "Energia rośnie z każdą lekcją i trochę spada w dni odpoczynku."
 
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
@@ -1875,77 +1861,51 @@ msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
 msgstr "{color, select, white {Biały} yellow {Żółty} orange {Pomarańczowy} green {Zielony} blue {Niebieski} purple {Fioletowy} brown {Brązowy} red {Czerwony} gray {Szary} black {Czarny} other {Pas}}"
 
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "GfOLmq"
+msgid "Belts"
+msgstr "Pasy"
+
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
 msgid "Every belt earned"
 msgstr "Wszystkie pasy zdobyte"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "e6TtsL"
-msgid "Next belt"
-msgstr "Następny pas"
+msgctxt "mixXPJ"
+msgid "<mono>{points}</mono> Brain Power to {belt}"
+msgstr "Jeszcze <mono>{points}</mono> pkt Mocy Umysłu. Następny pas: {belt}"
+
+#. The points still needed for the belt's next number. {belt} {level} is a belt and its number from 1 to 10, such as "White belt 4".
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "dIDLQF"
+msgid "<mono>{points}</mono> Brain Power to {belt} {level}"
+msgstr "Jeszcze <mono>{points}</mono> pkt Mocy Umysłu. Następny poziom: {belt} {level}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "0ZGPb-"
-msgid "{belt} at <mono>{points}</mono> Brain Power"
-msgstr "{belt} od <mono>{points}</mono> pkt Mocy Umysłu"
-
-#. The Brain Power the learner still needs to earn the next belt.
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "dzpvr6"
-msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
-msgstr "{points, plural, other {Jeszcze <mono>#</mono> pkt}}"
+msgctxt "2Zh-AP"
+msgid "{points} Brain Power"
+msgstr "{points} pkt Mocy Umysłu"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "3DtX17"
-msgid "Belt progression"
-msgstr "Postępy w zdobywaniu pasów"
+msgctxt "ZqevEW"
+msgid "Next: {belt} at <mono>{points}</mono> Brain Power"
+msgstr "Następny: {belt} przy <mono>{points}</mono> pkt Mocy Umysłu"
 
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "EX6xiz"
-msgid "Level <mono>{level}</mono> of {count}"
-msgstr "Poziom <mono>{level}</mono> z {count}"
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "h06pGR"
+msgid "Your belt and Brain Power."
+msgstr "Twój pas i Moc Umysłu."
 
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "pgt3eW"
-msgid "Max level reached"
-msgstr "Osiągnięto maksymalny poziom"
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Pas"
 
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "Cm04Yp"
-msgid "Next level"
-msgstr "Kolejny poziom"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "cmc2-s"
-msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
-msgstr "{color, select, yellow {Do żółtego pasa} orange {Do pomarańczowego pasa} green {Do zielonego pasa} blue {Do niebieskiego pasa} purple {Do fioletowego pasa} brown {Do brązowego pasa} red {Do czerwonego pasa} gray {Do szarego pasa} black {Do czarnego pasa} other {Do następnego pasa}}"
-
-#. Label above the points still needed to reach that level.
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "57EFxN"
-msgid "To level {level}"
-msgstr "Do poziomu {level}"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Moc Umysłu"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "pDD9dm"
-msgid "Never goes down"
-msgstr "Nigdy nie maleje"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "wbDtI_"
 msgid "Every lesson adds {points} Brain Power, and it never goes down."
 msgstr "Każda lekcja daje {points} pkt Mocy Umysłu, a ich liczba nigdy nie maleje."
-
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "Wzw2i9"
-msgid "Your belt, level and Brain Power."
-msgstr "Twój pas, poziom i Moc Umysłu."
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
@@ -2088,39 +2048,14 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# odpowiedź} other {# odpowiedzi}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "YbbjEZ"
+msgid "{correct} of {total} in the last {days} days"
+msgstr "{correct} z {total} w ostatnich {days} dniach"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "yQlMuI"
 msgid "Right answers"
 msgstr "Poprawne odpowiedzi"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "OLmtAV"
-msgid "Of all your answers"
-msgstr "Spośród wszystkich twoich odpowiedzi"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "gAnLDP"
-msgid "Right"
-msgstr "Poprawne"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "3YnSzO"
-msgid "{correct} of {total}"
-msgstr "{correct} z {total}"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "60UdOE"
-msgid "Back from today"
-msgstr "Licząc wstecz od dziś"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "jCNpEL"
-msgid "Period"
-msgstr "Okres"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "Ip-YhF"
-msgid "Every answer counts the same, so harder lessons can lower your score for a while."
-msgstr "Każda odpowiedź liczy się tak samo, więc trudniejsze lekcje mogą na jakiś czas obniżyć twój wynik."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2929,11 +2864,6 @@ msgstr "Polityka prywatności"
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "Powiedz to jeszcze raz"
-
-#: src/app/[lang]/session/page.tsx
-msgctxt "hnntJl"
-msgid "Today's session"
-msgstr "Dzisiejsza nauka"
 
 #: src/app/[lang]/study-reminders/unsubscribe/page.tsx
 msgctxt "QacXkK"

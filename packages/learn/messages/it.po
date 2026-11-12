@@ -110,7 +110,9 @@ msgstr "Studiato"
 #: src/journey/plan-roadmap.tsx
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/session-header.tsx
 #: src/session/session-queue.tsx
+#: src/session/summary/summary-parts.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
 #: src/today/today-lessons-card.tsx
@@ -176,7 +178,7 @@ msgstr "Tempo giornaliero"
 #: src/session/question-block/block-body.tsx
 #: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
-#: src/session/summary/summary-steps.tsx
+#: src/session/summary/summary-actions.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continua"
@@ -460,6 +462,11 @@ msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {<number>#</number> giuste su {answered}} one {<number>#</number> su {answered} giusta} other {<number>#</number> su {answered} giuste}}"
 
+#: src/_components/moment-readouts.tsx
+msgctxt "cYiR5r"
+msgid "Points for what you learn."
+msgstr "Punti per quello che impari."
+
 #: src/_components/opening-wait-line.tsx
 msgctxt "bSuhQp"
 msgid "Opening your next step…"
@@ -512,7 +519,6 @@ msgid "That didn't save. Try again."
 msgstr "Il salvataggio non è riuscito. Riprova."
 
 #: src/_components/skill-list.tsx
-#: src/session/summary/summary-parts.tsx
 msgctxt "IIe6nO"
 msgid "To review"
 msgstr "Da ripassare"
@@ -583,7 +589,6 @@ msgstr "Lo sai già?"
 
 #: src/_components/test-out-start-link.tsx
 #: src/conversation/tutor-tool-offer.tsx
-#: src/session/test-out-offer.tsx
 msgctxt "May4OJ"
 msgid "Take the test"
 msgstr "Fai il test"
@@ -901,6 +906,12 @@ msgstr "Cintura nera"
 msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "Cintura bianca"
+
+#. A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt's name, such as "White belt".
+#: src/_utils/use-belt-name.ts
+msgctxt "belts.mg0hRn"
+msgid "{belt} {level}"
+msgstr "{belt} {level}"
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. {count} and {total} are points of the exam's score.
 #: src/_utils/use-choice-left-out.ts
@@ -1467,9 +1478,9 @@ msgid "Not now"
 msgstr "Non ora"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "Lxi2Lv"
-msgid "For winning your first phase challenge."
-msgstr "Per aver vinto la tua prima sfida della fase."
+msgctxt "I8-K2k"
+msgid "For winning your first challenge."
+msgstr "Per aver vinto la tua prima sfida."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "XV5HMz"
@@ -1507,9 +1518,9 @@ msgid "Retro glasses!"
 msgstr "Occhiali retrò!"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "BaBoNG"
-msgid "For winning the final challenge."
-msgstr "Per aver vinto la sfida finale."
+msgctxt "OJcuuM"
+msgid "For winning your plan's last challenge."
+msgstr "Per aver vinto l’ultima sfida del tuo piano."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "9I_V3n"
@@ -1527,14 +1538,14 @@ msgid "New glasses!"
 msgstr "Nuovi occhiali!"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "qvLefN"
-msgid "{buddy} is an Adult now, fully grown with your Brain Power."
-msgstr "Ora {buddy} è nella fase Adulto e ha completato la crescita grazie alla tua Potenza Mentale."
+msgctxt "y5rTVZ"
+msgid "{buddy} is fully grown, thanks to your Brain Power."
+msgstr "{buddy} ha raggiunto l’età adulta grazie alla tua Potenza Mentale."
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "AJ-zuW"
-msgid "{buddy} is Young now, and keeps growing with your Brain Power."
-msgstr "Ora {buddy} è nella fase Giovane e continua a crescere con la tua Potenza Mentale."
+msgctxt "PHnc9p"
+msgid "Your Brain Power helped {buddy} grow."
+msgstr "La tua Potenza Mentale ha aiutato {buddy} a crescere."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "bCJ2Za"
@@ -2111,9 +2122,9 @@ msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}
 msgstr "{count, plural, one {Si apre domani} other {Si apre tra <mono>#</mono> giorni}}"
 
 #: src/challenge/challenge-footer.tsx
-msgctxt "upiB5E"
-msgid "Opens after this phase's lessons"
-msgstr "Si sblocca dopo le lezioni di questa fase"
+msgctxt "rnxGr1"
+msgid "Opens when you finish the lessons before it"
+msgstr "Si sblocca quando completi le lezioni precedenti"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "aAHI1T"
@@ -2121,15 +2132,17 @@ msgid "This challenge isn't ready yet."
 msgstr "Questa sfida non è ancora pronta."
 
 #: src/challenge/challenge-footer.tsx
-#: src/journey/journey-phase-events.tsx
-msgctxt "f0UFlY"
-msgid "In your next session"
-msgstr "Nella tua prossima sessione"
+msgctxt "a-rJRp"
+msgid "Next time you study"
+msgstr "La prossima volta che studi"
 
 #: src/challenge/challenge-footer.tsx
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
+#: src/session/next-stop.tsx
+#: src/session/question-block/pause-suggestion.tsx
+#: src/session/study-moment.tsx
 msgctxt "fEu6ab"
 msgid "That didn't go through. Try again in a moment."
 msgstr "Qualcosa non ha funzionato. Riprova tra un attimo."
@@ -2138,11 +2151,6 @@ msgstr "Qualcosa non ha funzionato. Riprova tra un attimo."
 msgctxt "Tfnp_R"
 msgid "Still starting. This is taking longer than usual."
 msgstr "Stiamo ancora avviando la sfida. Ci stiamo mettendo più tempo del solito."
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "-HglUD"
-msgid "Start the mock exam"
-msgstr "Inizia la simulazione"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "gCqLBd"
@@ -2158,17 +2166,14 @@ msgstr "Le simulazioni sono incluse in Plus: quando vuoi e ogni settimana nel tu
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "Vedi com’è andata"
+msgctxt "4tdaRm"
+msgid "See result"
+msgstr "Vedi il risultato"
 
 #: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-verdict.tsx
-msgctxt "a2N2Lk"
-msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
-msgstr "{lessons, plural, =0 {Potrai riprovare domani. Non hai perso nulla.} one {Potrai riprovare domani, dopo # breve lezione. Non hai perso nulla.} other {Potrai riprovare domani, dopo # brevi lezioni. Non hai perso nulla.}}"
+msgctxt "X_k-eo"
+msgid "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}"
+msgstr "{lessons, plural, =0 {Rivincita domani.} one {Rivincita domani, dopo # lezione breve.} other {Rivincita domani, dopo # lezioni brevi.}}"
 
 #: src/challenge/challenge-intro-parts.tsx
 #: src/exam/exam-format-section.tsx
@@ -2188,42 +2193,37 @@ msgctxt "moNgIg"
 msgid "+{points} Brain Power"
 msgstr "+{points} Potenza Mentale"
 
+#. The name of a study step: a second go at the Trickster's questions.
 #: src/challenge/challenge-intro-parts.tsx
-msgctxt "rpg2CM"
-msgid "New try · {name}"
-msgstr "Nuovo tentativo · {name}"
+#: src/session/use-block-copy.ts
+msgctxt "_3c7uy"
+msgid "Rematch"
+msgstr "Rivincita"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "Nu8F54"
-msgid "Questions on recordings from this phase, played as in the exam, with no hints."
-msgstr "Domande sulle registrazioni di questa fase, riprodotte come all’esame, senza suggerimenti."
+msgctxt "P6kyg-"
+msgid "{count, plural, one {# question on a recording, played as in the exam. Get {passMark} right to win.} other {# questions on recordings, played as in the exam. Get {passMark} right to win.}}"
+msgstr "{count, plural, one {# domanda su una registrazione riprodotta come all’esame. Rispondi bene a {passMark} per vincere.} other {# domande su registrazioni riprodotte come all’esame. Rispondi bene a {passMark} per vincere.}}"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "1UgcTo"
-msgid "{count, plural, one {Questions on a recording from this phase, played as in the exam, with no hints.} other {Questions on # recordings from this phase, each played as in the exam, with no hints.}}"
-msgstr "{count, plural, one {Domande su una registrazione di questa fase, riprodotta come all’esame, senza suggerimenti.} other {Domande su # registrazioni di questa fase, ciascuna riprodotta come all’esame, senza suggerimenti.}}"
+msgctxt "TUD24l"
+msgid "Questions on recordings, played as in the exam."
+msgstr "Domande su registrazioni riprodotte come all’esame."
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "oYZPXs"
-msgid "Mixed questions from this phase, with no hints."
-msgstr "Domande miste di questa fase, senza suggerimenti."
+msgctxt "DXIz48"
+msgid "{count, plural, one {# question on what you just learned. Get {passMark} right to win.} other {# questions on what you just learned. Get {passMark} right to win.}}"
+msgstr "{count, plural, one {# domanda su ciò che hai appena imparato. Rispondi bene a {passMark} per vincere.} other {# domande su ciò che hai appena imparato. Rispondi bene a {passMark} per vincere.}}"
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "2yz8Wb"
-msgid "The Trickster"
-msgstr "Il Briccone"
+msgctxt "aOzWzB"
+msgid "Questions on what you just learned."
+msgstr "Domande su ciò che hai appena imparato."
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "qqqXC2"
-msgid "{count, plural, one {# right to win} other {# right to win}}"
-msgstr "{count, plural, one {# risposta corretta per vincere} other {# risposte corrette per vincere}}"
-
-#: src/challenge/challenge-intro.tsx
-msgctxt "KSWWEF"
-msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day."
-msgstr "Dopo ogni risposta vedrai se è giusta o sbagliata. Alla fine scoprirai il perché e le trappole che ha preparato. Se vince lui, potrai sfidarlo di nuovo il giorno dopo."
+msgctxt "_N9GlC"
+msgid "Beat the Trickster"
+msgstr "Batti il Briccone"
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -2238,23 +2238,17 @@ msgid "{correct, plural, =0 {# of {total} right} one {# of {total} right} other 
 msgstr "{correct, plural, =0 {# risposte corrette su {total}} one {# risposta corretta su {total}} other {# risposte corrette su {total}}}"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "kU0Yw9"
-msgid "Questions from what you studied this week, with no hints."
-msgstr "Domande su quello che hai studiato questa settimana, senza suggerimenti."
+msgctxt "jQav7N"
+msgid "Questions on what you studied this week."
+msgstr "Domande su ciò che hai studiato questa settimana."
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/checkpoint-labels.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "7Y-wMz"
 msgid "Weekly challenge"
 msgstr "Sfida settimanale"
-
-#: src/challenge/challenge-intro.tsx
-msgctxt "YrQkK2"
-msgid "You'll see right or wrong after each answer, and why at the end."
-msgstr "Dopo ogni risposta vedrai se è giusta o sbagliata e alla fine scoprirai il perché."
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-answer-sheet.tsx
@@ -2309,6 +2303,14 @@ msgstr "Solo la parte a risposta chiusa"
 msgctxt "aIOv3i"
 msgid "Your result only shows at the end, like on exam day."
 msgstr "Vedrai il risultato solo alla fine, come il giorno dell’esame."
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/challenge/challenge-intro.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "Conversazione"
 
 #: src/challenge/challenge-labels.tsx
 #: src/session/summary/summary-parts.tsx
@@ -2387,9 +2389,9 @@ msgid "Getting your challenge ready"
 msgstr "Stiamo preparando la tua sfida"
 
 #: src/challenge/challenge-screen.tsx
-msgctxt "jsBtK5"
-msgid "We're writing its questions. It starts here when they're ready."
-msgstr "Stiamo preparando le domande. La sfida inizierà qui appena saranno pronte."
+msgctxt "V7vxze"
+msgid "It starts here when it's ready."
+msgstr "La sfida inizierà qui appena sarà pronta."
 
 #: src/challenge/challenge-topics.tsx
 msgctxt "uhq6kw"
@@ -2528,17 +2530,6 @@ msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Conferma"
 
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "v5U-vD"
-msgid "<reward>+{points}</reward> · phase {phase} done"
-msgstr "<reward>+{points}</reward> · fase {phase} completata"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "HiOz-P"
-msgid "+{points}"
-msgstr "+{points}"
-
 #. Heading of a reward row: the Brain Power that finishing this weekly challenge earns. Not something still to finish.
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "fX7dJB"
@@ -2552,15 +2543,16 @@ msgid "Winning"
 msgstr "Vittoria"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "HiOz-P"
+msgid "+{points}"
+msgstr "+{points}"
+
+#: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "ooL306"
 msgid "The Trickster's shield"
 msgstr "Lo scudo del Briccone"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "q3Cq0Z"
-msgid "{count, plural, =0 {# broken} one {# broken} other {# broken}}"
-msgstr "{count, plural, =0 {# piastre rotte} one {# piastra rotta} other {# piastre rotte}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/trickster-shield.tsx
@@ -2574,14 +2566,9 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {Non restano domande} one {Resta # domanda} other {Restano # domande}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "nJFH0r"
-msgid "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set."
-msgstr "Nessun suggerimento. Dopo ogni risposta vedrai se è giusta o sbagliata. Alla fine scoprirai il perché e le trappole che ha teso."
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "x3He4J"
-msgid "No hints. You'll see right or wrong after each answer, and why at the end."
-msgstr "Nessun suggerimento. Dopo ogni risposta vedrai se è giusta o sbagliata. Alla fine scoprirai il perché."
+msgctxt "qqqXC2"
+msgid "{count, plural, one {# right to win} other {# right to win}}"
+msgstr "{count, plural, one {# risposta corretta per vincere} other {# risposte corrette per vincere}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -2602,44 +2589,15 @@ msgid "You hadn't answered any yet, so this challenge isn't scored. Nothing is l
 msgstr "Non avevi ancora risposto a nessuna domanda, quindi non c’è un punteggio per questa sfida. Non hai perso nulla."
 
 #: src/checkpoints/checkpoint-labels.tsx
-msgctxt "0LvMLZ"
-msgid "Phase {number, number}"
-msgstr "Fase {number, number}"
-
-#: src/checkpoints/checkpoint-labels.tsx
 #: src/session/use-block-copy.ts
-msgctxt "g7r7Sf"
-msgid "Final challenge"
-msgstr "Sfida finale"
-
-#: src/checkpoints/checkpoint-labels.tsx
-msgctxt "eFq39b"
-msgid "Phase {phase} challenge"
-msgstr "Sfida della fase {phase}"
-
-#: src/checkpoints/checkpoint-labels.tsx
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/session/use-block-copy.ts
-msgctxt "H1a9B8"
-msgid "Phase challenge"
-msgstr "Sfida della fase"
+msgctxt "2yz8Wb"
+msgid "The Trickster"
+msgstr "Il Briccone"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-#: src/session/summary/summary-rewards.tsx
 msgctxt "y0EYpw"
 msgid "Rewards"
 msgstr "Ricompense"
-
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "tI8LbS"
-msgid "Phase {phase} complete"
-msgstr "Fase {phase} completata"
-
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "laEYjM"
-msgid "Phase complete"
-msgstr "Fase completata"
 
 #. A badge for catching the Trickster's traps.
 #: src/checkpoints/checkpoint-result-details.tsx
@@ -2648,19 +2606,14 @@ msgid "Trap hunter badge"
 msgstr "Distintivo Caccia alle trappole"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "n27vLl"
-msgid "Next phase"
-msgstr "Prossima fase"
-
-#: src/checkpoints/checkpoint-result-details.tsx
 msgctxt "U_fdgH"
 msgid "What's next"
 msgstr "Prossimi passi"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "WhT_G3"
-msgid "The next phase, {phase}, is already open."
-msgstr "La prossima fase, {phase}, è già disponibile."
+msgctxt "Y8UC-X"
+msgid "Your next lessons are already open."
+msgstr "Le prossime lezioni sono già disponibili."
 
 #: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "5oy0X2"
@@ -2718,14 +2671,9 @@ msgid "Held"
 msgstr "Ha retto"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "iKFV_O"
-msgid "This phase is complete."
-msgstr "Hai completato questa fase."
-
-#: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "dqk2PK"
-msgid "Passed on a later try"
-msgstr "Superato in un tentativo successivo"
+msgctxt "KLUSrr"
+msgid "You won the rematch"
+msgstr "Hai vinto la rivincita"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "3EE-ok"
@@ -2733,14 +2681,14 @@ msgid "{lessons, plural, =0 {Nothing is lost.} one {After # short lesson on what
 msgstr "{lessons, plural, =0 {Non hai perso nulla.} one {Dopo # breve lezione su quello che ti ha messo in difficoltà. Non hai perso nulla.} other {Dopo # brevi lezioni su quello che ti ha messo in difficoltà. Non hai perso nulla.}}"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "3tVzDw"
-msgid "New try tomorrow"
-msgstr "Nuovo tentativo domani"
+msgctxt "eqfxQN"
+msgid "Rematch tomorrow"
+msgstr "Rivincita domani"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
-msgctxt "ohcs3n"
-msgid "New try in your next session"
-msgstr "Nuovo tentativo nella prossima sessione"
+msgctxt "3ekog5"
+msgid "Rematch next time you study"
+msgstr "Rivincita la prossima volta che studi"
 
 #: src/completed-lessons/completed-lessons-row.tsx
 #: src/completed-lessons/completed-lessons-screen.tsx
@@ -5207,11 +5155,22 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "Non è nel tuo piano"
 
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+msgctxt "H1a9B8"
+msgid "Phase challenge"
+msgstr "Sfida della fase"
+
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
 msgid "Won"
 msgstr "Vinta"
+
+#: src/journey/journey-phase-events.tsx
+msgctxt "f0UFlY"
+msgid "In your next session"
+msgstr "Nella tua prossima sessione"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -6378,11 +6337,6 @@ msgid "Send"
 msgstr "Invia"
 
 #: src/language/conversation/conversation-live.tsx
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "Conversazione"
-
-#: src/language/conversation/conversation-live.tsx
 msgctxt "E6r0bc"
 msgid "Scroll to latest"
 msgstr "Vai ai messaggi più recenti"
@@ -7233,6 +7187,12 @@ msgstr "Oggi non ci sono parole da ripetere."
 msgctxt "c3Fawv"
 msgid "Word {current, number} of {total, number}"
 msgstr "Parola {current, number} di {total, number}"
+
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mock/mock-screen.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "Vedi com’è andata"
 
 #: src/language/pronunciation/pronunciation-word-card.tsx
 msgctxt "zhvWvI"
@@ -8245,11 +8205,6 @@ msgid "{complete} of {total}"
 msgstr "{complete} su {total}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "mMozLU"
-msgid "Ask your buddy something"
-msgstr "Chiedi qualcosa al tuo compagno"
-
-#: src/missions/mission-moment.tsx
 msgctxt "BQGCP4"
 msgid "Today's missions done!"
 msgstr "Missioni di oggi completate!"
@@ -8269,11 +8224,6 @@ msgstr "{count, plural, one {Ancora # missione per +{points} punti di Potenza Me
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "Hai guadagnato +{points} punti di Potenza Mentale."
-
-#: src/missions/mission-moment.tsx
-msgctxt "DeTHLe"
-msgid "Just done"
-msgstr "Appena completata"
 
 #: src/missions/missions-card.tsx
 msgctxt "3-ihlA"
@@ -9608,7 +9558,6 @@ msgid "Every task is done. After this, you can't do them again in this mock."
 msgstr "Hai completato tutti i compiti. Dopo la consegna non potrai più ripeterli in questa simulazione."
 
 #: src/mock/mock-speaking.tsx
-#: src/session/summary/summary-actions.tsx
 msgctxt "JiaScE"
 msgid "Keep going"
 msgstr "Continua"
@@ -10937,6 +10886,7 @@ msgid "Done. Your plan now covers your whole goal."
 msgstr "Fatto. Ora il tuo piano copre l’intero obiettivo."
 
 #: src/onboarding/steps/reveal-days.tsx
+#: src/session/use-review-title.ts
 msgctxt "R-J5ox"
 msgid "Review"
 msgstr "Ripassa"
@@ -12928,7 +12878,6 @@ msgid "Mock and practice"
 msgstr "Simulazione ed esercizi"
 
 #: src/plan/use-short-plan.ts
-#: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "ZBDAJ7"
 msgid "Full review"
@@ -13850,10 +13799,9 @@ msgid "vector {base}"
 msgstr "vettore {base}"
 
 #: src/session/extra-time-button.tsx
-#: src/today/today-extra-time.tsx
-msgctxt "a8JHBW"
-msgid "Study {minutes} more minutes"
-msgstr "Studia per altri {minutes} minuti"
+msgctxt "dWsizD"
+msgid "Practice {minutes} more min"
+msgstr "Esercitati per altri {minutes} min"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -13893,20 +13841,9 @@ msgid "{completed, plural, =0 {<number>#</number> of {total} done today} one {<n
 msgstr "{completed, plural, =0 {<number>#</number> su {total} completate oggi} one {<number>#</number> su {total} completata oggi} other {<number>#</number> su {total} completate oggi}}"
 
 #: src/session/moment-today.tsx
-#: src/session/session-header.tsx
-msgctxt "Qv3p-N"
-msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
-msgstr "{completed, plural, =0 {# completate su {total}} one {# su {total} completata} other {# su {total} completate}}"
-
-#: src/session/moment-today.tsx
 msgctxt "Q9kz2-"
 msgid "More as you go"
 msgstr "Altre man mano che prosegui"
-
-#: src/session/moment-today.tsx
-msgctxt "SJ1ksk"
-msgid "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today."
-msgstr "{count, plural, one {# lezione spostata} other {# lezioni spostate}} a un altro giorno per non superare {time} di studio oggi."
 
 #: src/session/moment-today.tsx
 msgctxt "OnqzIj"
@@ -13919,26 +13856,29 @@ msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught
 msgstr "{done, plural, one {<gain># recuperata oggi</gain>} other {<gain># recuperate oggi</gain>}} · {left, plural, other {# da recuperare}}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "Icwcge"
-msgid "This lesson is being written for you. It's usually ready in a few minutes."
-msgstr "Stiamo preparando questa lezione per te. Di solito è pronta in qualche minuto."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr "Ci vogliono pochi minuti."
 
 #: src/session/next-stop-wait.tsx
-msgctxt "J05b6v"
-msgid "Instead: {title}"
-msgstr "Prova invece: {title}"
+msgctxt "RBw4AC"
+msgid "Start {title}"
+msgstr "Inizia {title}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "ZqQr3A"
-msgid "While you wait: {title}"
-msgstr "Nell’attesa, prova: {title}"
+msgctxt "L22d5f"
+msgid "Review now"
+msgstr "Ripassa ora"
 
-#: src/session/next-stop.tsx
-#: src/session/question-block/pause-suggestion.tsx
-#: src/session/study-moment.tsx
-msgctxt "HLd8qn"
-msgid "We couldn't stop the session. Try again."
-msgstr "Non siamo riusciti a interrompere la sessione. Riprova."
+#: src/session/next-stop-wait.tsx
+msgctxt "UI79fv"
+msgid "Next lesson"
+msgstr "Vai alla prossima lezione"
+
+#: src/session/next-stop-wait.tsx
+msgctxt "kY8Exq"
+msgid "Practice now"
+msgstr "Esercitati ora"
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -14019,9 +13959,9 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "Qualche errore di fila. Una breve pausa spesso aiuta e tutto quello che hai fatto oggi conta."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "Stiamo mettendo a punto il tuo piano. Qui le risposte sbagliate non vengono mai salvate come errori."
+msgctxt "j4LBvs"
+msgid "Checking what you already know."
+msgstr "Stiamo verificando cosa sai già."
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14101,47 +14041,31 @@ msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Una risposta sbagliata ne annulla una giusta. Hai dubbi? Lascia in bianco."
 
+#. Under a belt and its number, such as "White belt 4": how many numbers are left before the next belt. {belt} is that belt's name, such as "Yellow belt".
 #: src/session/reached-moment.tsx
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, livello {level}"
-
-#: src/session/reached-moment.tsx
-msgctxt "ri96Ur"
-msgid "Level up!"
-msgstr "Nuovo livello!"
-
-#: src/session/reached-moment.tsx
-msgctxt "K1evK3"
-msgid "As high as Energy goes."
-msgstr "L’Energia è al massimo."
-
-#: src/session/reached-moment.tsx
-msgctxt "ejGTo0"
-msgid "{buddy} is glowing as bright as it gets."
-msgstr "{buddy} brilla al massimo."
-
-#: src/session/reached-moment.tsx
-msgctxt "n6B3nB"
-msgid "{buddy} is glowing now."
-msgstr "{buddy} ora brilla."
-
-#: src/session/reached-moment.tsx
-msgctxt "T5ld7Y"
-msgid "Right answers raise it. A day away lowers it a little."
-msgstr "Le risposte giuste la fanno salire. Un giorno di pausa la fa scendere un po’."
-
-#: src/session/reached-moment.tsx
-msgctxt "NnY-Hf"
-msgid "Max Energy: {energy}"
-msgstr "Energia massima: {energy}"
+msgctxt "YKiliC"
+msgid "{count, plural, one {# more to {belt}} other {# more to {belt}}}"
+msgstr "{count, plural, one {Ancora # livello per la {belt}} other {Ancora # livelli per la {belt}}}"
 
 #: src/session/reached-moment.tsx
 msgctxt "-wkcC0"
 msgid "Energy at {energy}"
 msgstr "Energia al {energy}"
+
+#: src/session/reached-moment.tsx
+msgctxt "cTmMW5"
+msgid "{buddy} is glowing"
+msgstr "{buddy} brilla"
+
+#: src/session/review-intro.tsx
+msgctxt "6UUFQv"
+msgid "A short test, so your plan skips what you know."
+msgstr "Un breve test, così il tuo piano salta ciò che sai già."
+
+#: src/session/review-intro.tsx
+msgctxt "iAdLZt"
+msgid "Questions on what you studied before, so it stays with you."
+msgstr "Domande su ciò che hai già studiato, per ricordarlo a lungo."
 
 #: src/session/review-intro.tsx
 msgctxt "ZbeKq5"
@@ -14162,11 +14086,6 @@ msgstr "Ogni concetto che studi torna poco prima che inizi a dimenticarlo."
 msgctxt "pdLdyk"
 msgid "Just before you forget"
 msgstr "Poco prima di dimenticare"
-
-#: src/session/review-intro.tsx
-msgctxt "39jG7T"
-msgid "A few quick questions to check what you already know."
-msgstr "Qualche domanda veloce per verificare cosa sai già."
 
 #: src/session/review-intro.tsx
 msgctxt "-syvZ6"
@@ -14199,24 +14118,9 @@ msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other 
 msgstr "{completed, plural, =0 {# completate su {total}} one {# su {total} completata} other {# su {total} completate}} · altre man mano che prosegui"
 
 #: src/session/session-header.tsx
-#: src/session/session-queue.tsx
-#: src/session/summary/summary-parts.tsx
-#: src/today/today-screen.tsx
-msgctxt "hnntJl"
-msgid "Today's session"
-msgstr "Sessione di oggi"
-
-#: src/session/study-moment.tsx
-msgctxt "s53FnF"
-msgid "Net score {net}"
-msgstr "Punteggio netto {net}"
-
-#: src/session/study-moment.tsx
-#: src/today/today-action.tsx
-#: src/today/today-day-status.tsx
-msgctxt "sCfpTF"
-msgid "See today's summary"
-msgstr "Vedi il riepilogo di oggi"
+msgctxt "Qv3p-N"
+msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}"
+msgstr "{completed, plural, =0 {# completate su {total}} one {# su {total} completata} other {# su {total} completate}}"
 
 #: src/session/summary/summary-actions.tsx
 msgctxt "0gmQJH"
@@ -14240,14 +14144,9 @@ msgid "Done in {time}"
 msgstr "Finito in {time}"
 
 #: src/session/summary/summary-parts.tsx
-msgctxt "LaOLXl"
-msgid "Skills that rose"
-msgstr "Abilità migliorate"
-
-#: src/session/summary/summary-parts.tsx
-msgctxt "SN04sb"
-msgid "{from} → <strong>{to}</strong>"
-msgstr "{from} → <strong>{to}</strong>"
+msgctxt "mMqedZ"
+msgid "You got better at {topics}."
+msgstr "Hai fatto progressi in {topics}."
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "YwxEGP"
@@ -14255,9 +14154,9 @@ msgid "Done for now"
 msgstr "Per ora è tutto"
 
 #: src/session/summary/summary-parts.tsx
-msgctxt "kMpuxF"
-msgid "{time} so far"
-msgstr "{time} finora"
+msgctxt "axcSXX"
+msgid "{time} today"
+msgstr "{time} oggi"
 
 #. Image description: the buddy is happy with what the learner studied today.
 #: src/session/summary/summary-rewards.tsx
@@ -14276,34 +14175,15 @@ msgid "+{bonus}"
 msgstr "+{bonus}"
 
 #: src/session/summary/summary-rewards.tsx
-msgctxt "DhH9Oq"
-msgid "{count, plural, one {+# level} other {+# levels}}"
-msgstr "{count, plural, one {+# livello} other {+# livelli}}"
-
-#: src/session/summary/summary-steps.tsx
-msgctxt "Hlc1zt"
-msgid "Getting it ready…"
-msgstr "Stiamo preparando tutto…"
-
 #: src/session/summary/summary-steps.tsx
 msgctxt "vrNWq4"
 msgid "Earned today"
 msgstr "Ricompense di oggi"
 
-#: src/session/test-out-offer.tsx
-msgctxt "aImXvD"
-msgid "Is this easy for you?"
-msgstr "Ti sembra facile?"
-
-#: src/session/test-out-offer.tsx
-msgctxt "aExtTy"
-msgid "{count, plural, one {Take this chapter's test and skip # lesson.} other {Take this chapter's test and skip up to # lessons.}}"
-msgstr "{count, plural, one {Fai il test di questo capitolo e salta # lezione.} other {Fai il test di questo capitolo e salta fino a # lezioni.}}"
-
-#: src/session/use-block-copy.ts
-msgctxt "_uh-IX"
-msgid "Challenge, second try"
-msgstr "Sfida, secondo tentativo"
+#: src/session/summary/summary-steps.tsx
+msgctxt "Hlc1zt"
+msgid "Getting it ready…"
+msgstr "Stiamo preparando tutto…"
 
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
@@ -14338,14 +14218,9 @@ msgid "Mixed practice"
 msgstr "Esercizi misti"
 
 #: src/session/use-block-copy.ts
-msgctxt "babT7b"
-msgid "No reviews due today · {count, plural, one {# question} other {# questions}} on your weakest topics"
-msgstr "Nessun ripasso previsto oggi · {count, plural, one {# domanda} other {# domande}} sugli argomenti in cui hai più difficoltà"
-
-#: src/session/use-block-copy.ts
-msgctxt "kNBGpx"
-msgid "{count, plural, one {# question} other {# questions}} · {titles}, plus what you already know"
-msgstr "{count, plural, one {# domanda} other {# domande}} · {titles}, oltre a quello che sai già"
+msgctxt "87izcS"
+msgid "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}"
+msgstr "{count, plural, one {# domanda su ciò che hai trovato più difficile} other {# domande su ciò che hai trovato più difficile}}"
 
 #: src/session/use-block-copy.ts
 msgctxt "JIVhM1"
@@ -14358,29 +14233,9 @@ msgid "Short lesson before the rematch"
 msgstr "Breve lezione prima della rivincita"
 
 #: src/session/use-block-copy.ts
-msgctxt "yl8kH0"
-msgid "{phase} · a live call"
-msgstr "{phase} · una conversazione dal vivo"
-
-#: src/session/use-block-copy.ts
-msgctxt "HS4tNy"
-msgid "A live call"
-msgstr "Una conversazione dal vivo"
-
-#: src/session/use-block-copy.ts
-msgctxt "NARnnE"
-msgid "{phase} · {count, plural, one {# question} other {# questions}}, no hints"
-msgstr "{phase} · {count, plural, one {# domanda} other {# domande}}, senza suggerimenti"
-
-#: src/session/use-block-copy.ts
-msgctxt "tMlMG9"
-msgid "{count, plural, one {# question} other {# questions}}, no hints"
-msgstr "{count, plural, one {# domanda} other {# domande}}, senza suggerimenti"
-
-#: src/session/use-block-copy.ts
-msgctxt "AUtFzE"
-msgid "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
-msgstr "{count, plural, one {# domanda} other {# domande}} su tutti gli argomenti, iniziando da quelli in cui hai più difficoltà"
+msgctxt "RosIKi"
+msgid "{count, plural, one {# question on every topic} other {# questions on every topic}}"
+msgstr "{count, plural, one {# domanda su tutti gli argomenti} other {# domande su tutti gli argomenti}}"
 
 #: src/session/use-moment-title.ts
 msgctxt "XHHt5U"
@@ -14396,16 +14251,6 @@ msgstr "Lezione completata"
 msgctxt "ql88uE"
 msgid "Review done"
 msgstr "Ripasso completato"
-
-#: src/session/use-review-title.ts
-msgctxt "dUxyza"
-msgid "Reviews"
-msgstr "Ripassi"
-
-#: src/session/use-review-title.ts
-msgctxt "fqtVVy"
-msgid "Quick review"
-msgstr "Ripasso veloce"
 
 #. Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”.
 #: src/shell/goal-mark.tsx
@@ -14941,6 +14786,12 @@ msgid "Start session"
 msgstr "Inizia la sessione"
 
 #: src/today/today-action.tsx
+#: src/today/today-day-status.tsx
+msgctxt "sCfpTF"
+msgid "See today's summary"
+msgstr "Vedi il riepilogo di oggi"
+
+#: src/today/today-action.tsx
 msgctxt "AFqHlU"
 msgid "Practice for {minutes} minutes"
 msgstr "Esercitati per {minutes} minuti"
@@ -15123,6 +14974,11 @@ msgctxt "9HjIgh"
 msgid "Your exam"
 msgstr "Il tuo esame"
 
+#: src/today/today-extra-time.tsx
+msgctxt "a8JHBW"
+msgid "Study {minutes} more minutes"
+msgstr "Studia per altri {minutes} minuti"
+
 #: src/today/today-falling-behind.tsx
 msgctxt "0NqGSq"
 msgid "At {time} a day, your plan now covers {after} of the exam, down from {before}."
@@ -15300,6 +15156,11 @@ msgstr ", contribuisce a una missione"
 msgctxt "32z8oG"
 msgid "Your week"
 msgstr "La tua settimana"
+
+#: src/today/today-screen.tsx
+msgctxt "hnntJl"
+msgid "Today's session"
+msgstr "Sessione di oggi"
 
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"

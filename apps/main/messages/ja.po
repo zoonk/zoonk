@@ -199,6 +199,7 @@ msgstr "新しい目標を始める"
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
+#: src/app/[lang]/session/page.tsx
 #: src/components/catalog/course-plan-window.tsx
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "zWgbGg"
@@ -793,10 +794,11 @@ msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
 msgstr "Zoonkの全コースから、AIで好きなことを学べるレッスンを探せます。科学や数学、テクノロジーなどを、やり取りしながら学べます。"
 
+#. Read aloud for a link. {belt} is a belt's name and {level} its number from 1 to 10, such as "White belt 4".
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "yAw6p8"
-msgid "{belt}, level {level}. Statistics"
-msgstr "{belt}、レベル{level}。統計"
+msgctxt "-KM9XT"
+msgid "{belt} {level}. Statistics"
+msgstr "{belt}{level}。統計"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
@@ -814,10 +816,12 @@ msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
 msgstr "学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。"
 
+#. A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt's name, such as "White belt".
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}、レベル{level}"
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "mg0hRn"
+msgid "{belt} {level}"
+msgstr "{belt}{level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -1695,8 +1699,6 @@ msgid "Overview"
 msgstr "概要"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "y1Qr81"
 msgid "Level"
@@ -1718,7 +1720,6 @@ msgstr "学習量"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "oLkLww"
 msgid "Score"
@@ -1835,34 +1836,19 @@ msgid "Energy by day"
 msgstr "日別のエネルギー"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "OiTvvB"
-msgid "Since you started"
-msgstr "学習を始めてから"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "FnRTEV"
-msgid "Average"
-msgstr "平均"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "WUD69_"
-msgid "Days with full Energy"
-msgstr "エネルギーが満タンの日"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "1bzMX0"
 msgid "At 100%"
 msgstr "100%の日数"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "y6wXa9"
-msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
-msgstr "レッスンを終えるたびにエネルギーが上がります。休みの日は少し下がりますが、帯や学習の進み具合は変わりません。"
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "現在と過去12か月のエネルギーを確認できます。"
+
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+msgctxt "1lqd7i"
+msgid "Energy goes up with every lesson and drops a little on days off."
+msgstr "エネルギーはレッスンを終えるたびに増え、休みの日は少し減ります。"
 
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
@@ -1875,77 +1861,51 @@ msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
 msgstr "{color, select, white {白帯} yellow {黄帯} orange {オレンジ帯} green {緑帯} blue {青帯} purple {紫帯} brown {茶帯} red {赤帯} gray {グレー帯} black {黒帯} other {帯}}"
 
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "GfOLmq"
+msgid "Belts"
+msgstr "帯一覧"
+
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
 msgid "Every belt earned"
 msgstr "すべての帯を獲得済み"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "e6TtsL"
-msgid "Next belt"
-msgstr "次の帯"
+msgctxt "mixXPJ"
+msgid "<mono>{points}</mono> Brain Power to {belt}"
+msgstr "あと<mono>{points}</mono>脳力で{belt}"
+
+#. The points still needed for the belt's next number. {belt} {level} is a belt and its number from 1 to 10, such as "White belt 4".
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "dIDLQF"
+msgid "<mono>{points}</mono> Brain Power to {belt} {level}"
+msgstr "あと<mono>{points}</mono>脳力で{belt}{level}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "0ZGPb-"
-msgid "{belt} at <mono>{points}</mono> Brain Power"
-msgstr "{belt}は脳力<mono>{points}</mono>で獲得"
-
-#. The Brain Power the learner still needs to earn the next belt.
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "dzpvr6"
-msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
-msgstr "{points, plural, other {あと<mono>#</mono>}}"
+msgctxt "2Zh-AP"
+msgid "{points} Brain Power"
+msgstr "脳力{points}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "3DtX17"
-msgid "Belt progression"
-msgstr "帯の昇級"
+msgctxt "ZqevEW"
+msgid "Next: {belt} at <mono>{points}</mono> Brain Power"
+msgstr "次は{belt}（<mono>{points}</mono>脳力で到達）"
 
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "EX6xiz"
-msgid "Level <mono>{level}</mono> of {count}"
-msgstr "レベル<mono>{level}</mono>（全{count}段階）"
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "h06pGR"
+msgid "Your belt and Brain Power."
+msgstr "帯と脳力。"
 
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "pgt3eW"
-msgid "Max level reached"
-msgstr "最高レベルに到達"
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "帯"
 
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "Cm04Yp"
-msgid "Next level"
-msgstr "次のレベル"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "cmc2-s"
-msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
-msgstr "{color, select, yellow {黄帯まで} orange {オレンジ帯まで} green {緑帯まで} blue {青帯まで} purple {紫帯まで} brown {茶帯まで} red {赤帯まで} gray {グレー帯まで} black {黒帯まで} other {次の帯まで}}"
-
-#. Label above the points still needed to reach that level.
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "57EFxN"
-msgid "To level {level}"
-msgstr "レベル{level}まで"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "脳力"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "pDD9dm"
-msgid "Never goes down"
-msgstr "減ることはありません"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "wbDtI_"
 msgid "Every lesson adds {points} Brain Power, and it never goes down."
 msgstr "レッスンを終えるたびに脳力が{points}増え、減ることはありません。"
-
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "Wzw2i9"
-msgid "Your belt, level and Brain Power."
-msgstr "帯・レベル・脳力を確認できます。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
@@ -2088,39 +2048,14 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {#問に回答}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "YbbjEZ"
+msgid "{correct} of {total} in the last {days} days"
+msgstr "正解{correct}問／全{total}問（過去{days}日間）"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "yQlMuI"
 msgid "Right answers"
 msgstr "正解率"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "OLmtAV"
-msgid "Of all your answers"
-msgstr "すべての回答のうち"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "gAnLDP"
-msgid "Right"
-msgstr "正解"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "3YnSzO"
-msgid "{correct} of {total}"
-msgstr "{correct} / {total}"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "60UdOE"
-msgid "Back from today"
-msgstr "今日からさかのぼって"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "jCNpEL"
-msgid "Period"
-msgstr "期間"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "Ip-YhF"
-msgid "Every answer counts the same, so harder lessons can lower your score for a while."
-msgstr "どの回答もスコアに同じように反映されるため、難しいレッスンでは一時的にスコアが下がることがあります。"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2929,11 +2864,6 @@ msgstr "プライバシーポリシー"
 msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "もう一度声に出して言う"
-
-#: src/app/[lang]/session/page.tsx
-msgctxt "hnntJl"
-msgid "Today's session"
-msgstr "今日の学習"
 
 #: src/app/[lang]/study-reminders/unsubscribe/page.tsx
 msgctxt "QacXkK"
