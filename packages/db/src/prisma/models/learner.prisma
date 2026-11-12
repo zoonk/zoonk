@@ -46,6 +46,8 @@ model LearnerSkill {
 /// `targetLanguage` is kept on the row so language stats never read content. A mock's answers keep
 /// their mock, so each question is recorded once however often it's finished. `isPlacement` marks a
 /// placement question's answer as a test's, never practice, even when a session asked it.
+/// `focusTestId` is the Focus test sitting it was answered in (kept on the goal, not a table), so
+/// only that sitting rewards it.
 model Attempt {
   id             String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String        @map("user_id") @db.Uuid
