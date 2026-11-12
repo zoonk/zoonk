@@ -1,6 +1,4 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { readFileSync } from "node:fs";
-import { runInNewContext } from "node:vm";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -9,9 +7,9 @@ import * as calendarDay from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import * as logger from "@zoonk/utils/logger";
 import { cacheTag } from "next/cache";
-import { loadBindings, transform } from "next/dist/build/swc";
 import * as navigation from "next/navigation";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { type CachedRead, compileCachedModule } from "../_test-utils/compiled-cache";
 import * as cacheTags from "../cache/tags";
 import {
   getCourseCacheTag,
@@ -24,7 +22,6 @@ import * as examDays from "./course-exam-days";
 import { type getCoursePlanExample } from "./course-plan-example";
 import * as planExample from "./course-plan-example-contract";
 
-type CachedRead = (...args: unknown[]) => Promise<unknown>;
 type CacheEntry = { revalidateAt: number; result: Promise<unknown>; tags: Set<string> };
 
 /** Next.js' default cache profile works a shared entry out again 15 minutes after it was made. */
@@ -34,10 +31,8 @@ type GetCoursePlanExample = typeof getCoursePlanExample;
 
 vi.mock("../plans/planner/build-plan", { spy: true });
 
-const SOURCE = new URL("course-plan-example.ts", import.meta.url).pathname;
-
-/** Vitest does not compile cache directives, so use Next's compiler with a cache stand-in. */
-function cachePlatform(code: string) {
+/** A cache stand-in that keeps shared entries for Next's default profile. */
+async function cachePlatform() {
   const sharedEntries = new Map<string, CacheEntry>();
   const requestEntries = new Map<string, CacheEntry>();
   const activeEntry = new AsyncLocalStorage<CacheEntry>();
@@ -66,34 +61,20 @@ function cachePlatform(code: string) {
     tags.forEach((tag) => activeEntry.getStore()?.tags.add(tag));
   });
 
-  const imports: Record<string, unknown> = {
-    "../cache/tags": cacheTags,
-    "./course-estimate": estimate,
-    "./course-exam-days": examDays,
-    "./course-plan-example-contract": planExample,
-    "@zoonk/utils/calendar-day": calendarDay,
-    "@zoonk/utils/logger": logger,
-    "next/cache": { cacheTag },
-    "next/navigation": navigation,
-    "private-next-rsc-cache-wrapper": { cache },
-    "private-next-rsc-server-reference": { registerServerReference: (read: unknown) => read },
-    react: { cache: (read: unknown) => read },
-    "server-only": {},
-  };
-
-  const compiled = {} as { getCoursePlanExample: GetCoursePlanExample };
-
-  runInNewContext(code, {
-    Date,
-    exports: compiled,
-    module: { exports: compiled },
-    require: (name: string) => {
-      if (!(name in imports)) {
-        throw new Error(`Unexpected course-plan-example dependency: ${name}`);
-      }
-
-      return imports[name];
+  const compiled = await compileCachedModule({
+    cache,
+    globals: { Date },
+    imports: {
+      "../cache/tags": cacheTags,
+      "./course-estimate": estimate,
+      "./course-exam-days": examDays,
+      "./course-plan-example-contract": planExample,
+      "@zoonk/utils/calendar-day": calendarDay,
+      "@zoonk/utils/logger": logger,
+      "next/cache": { cacheTag },
+      "next/navigation": navigation,
     },
+    source: new URL("course-plan-example.ts", import.meta.url),
   });
 
   return {
@@ -104,7 +85,7 @@ function cachePlatform(code: string) {
         }
       });
     },
-    getCoursePlanExample: compiled.getCoursePlanExample,
+    getCoursePlanExample: compiled.getCoursePlanExample as GetCoursePlanExample,
     nextRequest: () => requestEntries.clear(),
     tags: () => new Set([...sharedEntries.values()].flatMap((entry) => [...entry.tags])),
   };
@@ -172,31 +153,10 @@ async function examCourse(date: string) {
 }
 
 describe("the course page's example plan cache", () => {
-  const compiled = { code: "" };
-
-  beforeAll(async () => {
-    await loadBindings();
-
-    const result = await transform(readFileSync(SOURCE, "utf8"), {
-      filename: SOURCE,
-      jsc: { parser: { syntax: "typescript" }, target: "es2022" },
-      module: { type: "commonjs" },
-      serverActions: {
-        cacheKinds: ["default", "private", "remote"],
-        hashSalt: "course-plan-example-test",
-        isDevelopment: false,
-        isReactServerLayer: true,
-        useCacheEnabled: true,
-      },
-    });
-
-    compiled.code = result.code;
-  });
-
   afterEach(() => vi.useRealTimers());
 
   it("keeps the example for every visitor until a notice revised elsewhere expires its tag", async () => {
-    const platform = cachePlatform(compiled.code);
+    const platform = await cachePlatform();
     const { blueprint, course } = await examCourse(dayIn(40));
 
     const first = await platform.getCoursePlanExample(course);
@@ -226,7 +186,7 @@ describe("the course page's example plan cache", () => {
   });
 
   it("builds one default example on a miss and none for another visitor, then keys a new revision", async () => {
-    const platform = cachePlatform(compiled.code);
+    const platform = await cachePlatform();
     const course = await courseFixture({ isPublished: true, visibility: "public" });
 
     await courseBandsFixture({
@@ -254,7 +214,7 @@ describe("the course page's example plan cache", () => {
   });
 
   it("renews the selected estimate when the notice changes but its exam day stays the same", async () => {
-    const platform = cachePlatform(compiled.code);
+    const platform = await cachePlatform();
     const { blueprint, course } = await examCourse(dayIn(40));
     vi.mocked(buildPlan).mockClear();
     await platform.getCoursePlanExample(course);
@@ -294,7 +254,7 @@ describe("the course page's example plan cache", () => {
   it("renews the selected exam example by the hour and the exam's own day", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-09-30T12:15:00Z"));
-    const platform = cachePlatform(compiled.code);
+    const platform = await cachePlatform();
     const { blueprint, course } = await examCourse("2026-10-01");
 
     await prisma.examBlueprint.update({

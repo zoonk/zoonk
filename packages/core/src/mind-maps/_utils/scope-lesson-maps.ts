@@ -13,21 +13,18 @@ export async function loadScopeLessonMaps({
   chapters: readonly Pick<MindMapChapterFacts, "chapterId" | "plusLessonIds">[];
   userId: string;
 }): Promise<Map<string, ScopeLessonMap[]>> {
-  const loaded = await Promise.all(
-    chapters.map(async (chapter) => {
-      const maps = await getChapterLessonMaps(chapter.chapterId);
+  const maps = await getChapterLessonMaps(chapters.map((chapter) => chapter.chapterId));
 
-      const visible = maps
+  return new Map(
+    chapters.map((chapter) => [
+      chapter.chapterId,
+      (maps.get(chapter.chapterId) ?? [])
         .filter((map) => isVisibleTo({ row: map, viewerId: userId }))
         .map((map) => ({
           ...map,
           chapterId: chapter.chapterId,
           locked: chapter.plusLessonIds.includes(map.lessonId),
-        }));
-
-      return [chapter.chapterId, visible] as const;
-    }),
+        })),
+    ]),
   );
-
-  return new Map(loaded);
 }
