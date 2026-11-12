@@ -9,7 +9,6 @@ import {
   HandHeartIcon,
   LightbulbIcon,
   MessageCircleQuestionIcon,
-  MusicIcon,
   PlayIcon,
   UserPlusIcon,
 } from "lucide-react";
@@ -281,31 +280,16 @@ export function InstrumentGoal({
           {t({
             description:
               '{instrument} names what the learner wants to play, or singing, like "guitar".',
-            message: "Lessons for playing {instrument} are coming",
+            message: "We can't teach {instrument} yet",
             values: { instrument },
           })}
         </OnboardingTitle>
         <OnboardingDescription>
           {t(
-            "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.",
+            "You can start with the basics of music today: reading notes, rhythm and training your ear.",
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <div className="bg-card ring-border flex items-start gap-3 rounded-xl p-4 text-sm ring-1">
-        <span className="flex h-lh shrink-0 items-center">
-          <MusicIcon aria-hidden="true" className="size-5" />
-        </span>
-        <p>
-          {t({
-            description:
-              '{instrument} names what the learner wants to play, or singing, like "guitar".',
-            message:
-              "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed.",
-            values: { instrument },
-          })}
-        </p>
-      </div>
 
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
@@ -315,7 +299,7 @@ export function InstrumentGoal({
           icon={<PlayIcon aria-hidden="true" />}
           onClick={onStartMusicianship}
         >
-          {t("Start musicianship")}
+          {t("Start music basics")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           busy={isJoining}

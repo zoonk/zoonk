@@ -15,9 +15,9 @@ export function getSubjectName(subject: { name: string; shortName: string | null
 export function useSubjectStateText() {
   const t = useExtracted();
 
-  return (
+  function stateText(
     subject: Pick<FocusTestSubject, "asked" | "dontKnow" | "part" | "right" | "state">,
-  ): string => {
+  ): string | null {
     if (subject.state === "answered" && subject.asked === subject.dontKnow) {
       return t({
         description:
@@ -36,21 +36,21 @@ export function useSubjectStateText() {
       });
     }
 
+    // A subject with no answers has nothing to say.
     if (subject.state === "notAsked") {
-      return t({
-        description: "A subject the Focus test hasn't asked a question about yet.",
-        message: "Not asked yet",
-      });
+      return null;
     }
 
     return t({
       description:
-        "A part of the exam the Focus test's quick questions can't check, such as the essay.",
+        "A part of the exam the Focus test's questions can't ask about, such as the essay.",
       message:
-        "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}",
+        "{part, select, written {Writing: not in this test} listening {Listening: not in this test} speaking {Speaking: not in this test} other {Practical part: not in this test}}",
       values: { part: subject.part ?? "other" },
     });
-  };
+  }
+
+  return stateText;
 }
 
 /** The test's invitation: also its row's line on the Plan while it hasn't started. */
@@ -58,32 +58,21 @@ export function useFocusTestTitle() {
   const t = useExtracted();
 
   return (suggestsFocus: boolean): string =>
-    suggestsFocus
-      ? t({
-          description:
-            "Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.",
-          message: "Find out where to focus",
-        })
-      : t({
-          description:
-            "The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.",
-          message: "Find out where to start",
-        });
+    suggestsFocus ? t("Find what to study most") : t("Skip what you already know");
 }
 
-export function useSittingTime() {
+export function useTestTime() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
   return {
-    about: (minutes: number): string => t("About {time}", { time: formatDuration(minutes) }),
-    aboutLeft: (minutes: number): string =>
+    left: (minutes: number): string =>
       t({
-        description:
-          "{time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.",
-        message: "About {time} left",
+        description: "{time} is a duration with its unit, such as “9 min”.",
+        message: "{time} left",
         values: { time: formatDuration(minutes) },
       }),
+    whole: (minutes: number): string => formatDuration(minutes),
   };
 }
 
@@ -100,36 +89,17 @@ export function useSeeResultLabel(): string {
 export function useFocusTestRowFacts() {
   const t = useExtracted();
   const title = useFocusTestTitle();
-  const { about, aboutLeft } = useSittingTime();
+  const time = useTestTime();
 
-  return ({ offer, sessionQuestions, state, suggestsFocus }: FocusTestSummary): string[] => {
+  return ({ offer, state, suggestsFocus }: FocusTestSummary): string[] => {
     if (state === "notStarted") {
-      return [title(suggestsFocus), ...(offer ? [about(offer.minutes)] : [])];
+      return [title(suggestsFocus), ...(offer ? [time.whole(offer.minutes)] : [])];
     }
 
     if (state === "sitting") {
-      return [
-        t({
-          description:
-            "Under “Focus test” in a list: the learner started the test and has not finished it.",
-          message: "In progress",
-        }),
-        ...(offer ? [aboutLeft(offer.minutes)] : []),
-      ];
+      return [t("In progress"), ...(offer ? [time.left(offer.minutes)] : [])];
     }
 
-    return [
-      sessionQuestions === "paused"
-        ? t({
-            description:
-              "Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.",
-            message: "Paused in your sessions",
-          })
-        : t({
-            description:
-              "Under “Focus test” in a list, once the learner took the test: opens its result.",
-            message: "See your result",
-          }),
-    ];
+    return [t("See your result")];
   };
 }

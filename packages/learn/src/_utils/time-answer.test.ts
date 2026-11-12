@@ -8,13 +8,7 @@ import {
   focusAt,
   foundTime,
 } from "../_test-utils/time-answers";
-import {
-  getFullTimeNote,
-  getMarkedTimes,
-  getOffer,
-  getSuggestedMinutes,
-  getTimeLine,
-} from "./time-answer";
+import { getMarkedTimes, getOffer, getSuggestedMinutes, getTimeLine } from "./time-answer";
 
 describe(getSuggestedMinutes, () => {
   it("takes the plan's suggestion, or none while the plan hasn't answered", () => {
@@ -30,11 +24,10 @@ describe(getTimeLine, () => {
   });
 
   it("says why the suggested time without asking the plan again", () => {
-    expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything", suggested: true });
+    expect(getTimeLine(LINE)).toStrictEqual({ kind: "everything" });
 
     expect(getTimeLine({ ...LINE, found: foundTime(focusAt(805)), minutes: 240 })).toStrictEqual({
       coveredShare: 0.32,
-      everyTopic: false,
       kind: "focus",
     });
   });
@@ -49,7 +42,7 @@ describe(getTimeLine, () => {
 
     expect(
       getTimeLine({ ...LINE, advice: adviceAt({ coveredShare: 1 }), minutes: 60 }),
-    ).toStrictEqual({ kind: "everything", suggested: false });
+    ).toStrictEqual({ kind: "everything" });
   });
 
   it("says the time is being worked out, or that it couldn't be", () => {
@@ -85,39 +78,6 @@ describe(getTimeLine, () => {
   });
 });
 
-describe(getFullTimeNote, () => {
-  const SHORT = { kind: "share", share: 0.15 } as const;
-  const FOCUS = foundTime(focusAt(805));
-
-  it("says what everything takes only beside a focus suggestion", () => {
-    expect(getFullTimeNote({ found: foundTime(), line: SHORT, studiesEveryDay: true })).toBeNull();
-
-    expect(
-      getFullTimeNote({ found: foundTime(PAST_DATE), line: SHORT, studiesEveryDay: true }),
-    ).toBeNull();
-
-    expect(getFullTimeNote({ found: FOCUS, line: SHORT, studiesEveryDay: true })).toStrictEqual({
-      full: { coveredShare: 1, everything: true, minutes: 805 },
-      kind: "takes",
-      moreDays: false,
-    });
-  });
-
-  it("says more study days help while some days are left, even when no day covers it all", () => {
-    expect(
-      getFullTimeNote({ found: foundTime(focusAt(null)), line: SHORT, studiesEveryDay: false }),
-    ).toStrictEqual({ full: null, kind: "takes", moreDays: true });
-  });
-
-  it("says the time shown is more than most people keep up once it covers everything", () => {
-    const covers = { kind: "everything", suggested: false } as const;
-
-    expect(getFullTimeNote({ found: FOCUS, line: covers, studiesEveryDay: true })).toStrictEqual({
-      kind: "tooLong",
-    });
-  });
-});
-
 describe(getOffer, () => {
   const SHORT = { kind: "share", share: 0.48 } as const;
 
@@ -131,7 +91,7 @@ describe(getOffer, () => {
   });
 
   it("offers nothing to a time that already covers everything", () => {
-    const covers = { kind: "everything", suggested: false } as const;
+    const covers = { kind: "everything" } as const;
     const found = foundTime(everythingAt(240));
 
     expect(getOffer({ found, line: covers, minutes: 900 })).toBeNull();
@@ -139,21 +99,21 @@ describe(getOffer, () => {
 
   it("offers the time that covers everything beside a focus, and the focus beside any other", () => {
     const found = foundTime(focusAt(805));
-    const covers = { kind: "everything", suggested: false } as const;
+    const covers = { kind: "everything" } as const;
     const focus = getTimeLine({ ...LINE, found, minutes: 240 });
 
     expect(getOffer({ found, line: focus, minutes: 240 })).toStrictEqual({
-      kind: "full",
+      kind: "everything",
       minutes: 805,
     });
 
     expect(getOffer({ found, line: covers, minutes: 805 })).toStrictEqual({
-      kind: "focus",
+      kind: "suggested",
       minutes: 240,
     });
 
     expect(getOffer({ found, line: SHORT, minutes: 120 })).toStrictEqual({
-      kind: "focus",
+      kind: "suggested",
       minutes: 240,
     });
 
@@ -166,29 +126,12 @@ function plateauAt(minutes: number) {
 }
 
 describe("a goal part of which never fits, whatever the time", () => {
-  const SHORT = { kind: "share", share: 0.5 } as const;
+  it("offers the longest useful time as more, never as covering everything", () => {
+    const line = getTimeLine({ ...LINE, found: plateauAt(480), minutes: 240 });
 
-  it("says what the most any time covers takes, without more study days, past four hours", () => {
-    expect(
-      getFullTimeNote({ found: plateauAt(480), line: SHORT, studiesEveryDay: false }),
-    ).toStrictEqual({
-      full: { coveredShare: 0.99, everything: false, minutes: 480 },
-      kind: "takes",
-      moreDays: false,
-    });
-
-    expect(getOffer({ found: plateauAt(480), line: SHORT, minutes: 240 })).toStrictEqual({
-      kind: "full",
+    expect(getOffer({ found: plateauAt(480), line, minutes: 240 })).toStrictEqual({
+      kind: "more",
       minutes: 480,
-    });
-  });
-
-  it("covers everything only at a time that covers it, whatever share the most rounds to", () => {
-    const found = foundTime({ ...focusAt(null), most: { coveredShare: 1, minutes: 480 } });
-
-    expect(getFullTimeNote({ found, line: SHORT, studiesEveryDay: false })).toMatchObject({
-      full: { everything: false, minutes: 480 },
-      moreDays: false,
     });
   });
 
@@ -201,7 +144,6 @@ describe("a goal part of which never fits, whatever the time", () => {
 
     const line = getTimeLine({ ...LINE, found, minutes: 195 });
 
-    expect(getFullTimeNote({ found, line, studiesEveryDay: false })).toBeNull();
     expect(getOffer({ found, line, minutes: 195 })).toBeNull();
   });
 

@@ -14,12 +14,10 @@ import {
 } from "../../onboarding/onboarding-frame";
 
 export function LevelTestPreparing({
-  language,
   onSkip,
   run,
   skipping,
 }: {
-  language: string;
   onSkip: () => void;
   run: GenerationRun;
   skipping: boolean;
@@ -30,13 +28,8 @@ export function LevelTestPreparing({
     <OnboardingColumn>
       <GenerationWait kind="levelTestBank" run={run}>
         <OnboardingHeading>
-          <OnboardingTitle>{t("Preparing your level test")}</OnboardingTitle>
-          <OnboardingDescription>
-            {t(
-              "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.",
-              { language },
-            )}
-          </OnboardingDescription>
+          <OnboardingTitle>{t("Getting your level test ready")}</OnboardingTitle>
+          <OnboardingDescription>{t("This takes a minute or two.")}</OnboardingDescription>
         </OnboardingHeading>
       </GenerationWait>
 
@@ -46,11 +39,8 @@ export function LevelTestPreparing({
           icon={<SkipForwardIcon aria-hidden="true" />}
           onClick={onSkip}
         >
-          {t("Skip the test")}
+          {t("Skip")}
         </OnboardingSecondaryButton>
-        <p className="text-muted-foreground text-center text-sm text-pretty">
-          {t("Your plan starts from the level you gave, and your first sessions fine-tune it.")}
-        </p>
       </OnboardingFooter>
     </OnboardingColumn>
   );

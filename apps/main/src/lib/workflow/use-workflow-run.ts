@@ -180,7 +180,6 @@ export function useWorkflowRun({
     firstLesson: state.firstLesson ?? undefined,
     id: runId,
     retry: getRetry(),
-    skillName: state.skillName ?? undefined,
     status,
     stepTimes: state.stepTimes,
     steps: state.steps,

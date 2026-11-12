@@ -108,7 +108,7 @@ function LessonOffer({ answer, href }: { answer: (() => Promise<boolean>) | null
         }}
         ref={link}
       >
-        {answer ? t("Save and start lesson 1") : t("Start lesson 1")}
+        {t("Start lesson 1")}
         <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
       </LearnLink>
     </div>

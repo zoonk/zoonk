@@ -47,7 +47,7 @@ export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
 }
 
 function SubjectRow({ subject }: { subject: FocusTestSubject }) {
-  const stateText = useSubjectStateText();
+  const state = useSubjectStateText()(subject);
 
   return (
     <ListRow>
@@ -55,7 +55,7 @@ function SubjectRow({ subject }: { subject: FocusTestSubject }) {
         <ListRowContent>
           <ListRowTitle className="font-normal">{getSubjectName(subject)}</ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing>{stateText(subject)}</ListRowTrailing>
+        {state && <ListRowTrailing>{state}</ListRowTrailing>}
       </ListRowBody>
     </ListRow>
   );

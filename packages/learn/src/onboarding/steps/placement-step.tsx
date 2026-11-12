@@ -24,8 +24,7 @@ const POLL_MS = 3000;
 type ReadyOutcome = Extract<PlacementOutcome, { status: "ready" }>;
 
 type Phase =
-  | { answered: number; forToday: boolean; kind: "done" }
-  | { kind: "intro" | "loadFailed" | "loading" | "unavailable" | "waiting" }
+  | { kind: "done" | "intro" | "loadFailed" | "loading" | "unavailable" | "waiting" }
   | {
       answered: number;
       failures: number;
@@ -56,7 +55,7 @@ function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
         spent: Math.max(outcome.dayBudgetSpent, shown.spent),
         trueFalseLabels: outcome.trueFalseLabels,
       }
-    : { answered, forToday: outcome.dayBudgetUsed, kind: "done" };
+    : { kind: "done" };
 }
 
 /** Counts a save on the question it came from; a save from another screen leaves questions alone. */
@@ -295,14 +294,7 @@ export function PlacementStep({
         />
       );
     case "done":
-      return (
-        <PlacementDone
-          answered={phase.answered}
-          forToday={phase.forToday}
-          onContinue={() => finish(false)}
-          pending={isPending}
-        />
-      );
+      return <PlacementDone onContinue={() => finish(false)} pending={isPending} />;
     default:
       return null;
   }

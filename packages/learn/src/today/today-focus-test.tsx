@@ -38,7 +38,7 @@ function FocusTestNotice({
   const [starting, setStarting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const busy = isPending || starting;
-  const result = state === "dismissed" ? t("Noted. You can take the test from your plan.") : null;
+  const result = state === "dismissed" ? t("You can take the test from your plan.") : null;
 
   const start = () => {
     setStarting(true);
@@ -70,13 +70,7 @@ function FocusTestNotice({
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionSummary>
-              {t({
-                description:
-                  "One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.",
-                message: "The Focus test shows what to study most.",
-              })}
-            </SuggestionSummary>
+            <SuggestionSummary>{t("The Focus test shows what to study most.")}</SuggestionSummary>
             <SuggestionOpen />
           </>
         )}
@@ -91,17 +85,15 @@ function FocusTestNotice({
           <>
             <SuggestionDescription>
               {t({
-                description:
-                  "{time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.",
-                message:
-                  "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most.",
+                description: "{time} is a duration with its unit, such as “15 min”.",
+                message: "A {time} test on your exam's subjects.",
                 values: { time: formatDuration(offer.minutes) },
               })}
             </SuggestionDescription>
 
             <SuggestionActions>
               <SuggestionAction action={start} busy={starting} disabled={busy}>
-                {t("Start the test")}
+                {t("Start")}
               </SuggestionAction>
 
               <SuggestionAction action={dismiss} disabled={busy} variant="outline">

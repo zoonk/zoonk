@@ -37,16 +37,14 @@ export function useVarietyNote() {
 
     return t({
       description:
-        "{variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.",
-      message:
-        "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}.",
+        "{taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.",
+      message: "Lessons and their audio use {taughtVariety}.",
       values: {
         taughtVariety: getVarietyNameInSentence({
           language,
           region: taughtRegion,
           userLanguage: locale,
         }),
-        variety: getVarietyNameInSentence({ language, region, userLanguage: locale }),
       },
     });
   };

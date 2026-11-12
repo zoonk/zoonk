@@ -15,17 +15,15 @@ import { FocusTestEnded, FocusTestInvitation, FocusTestResume } from "./focus-te
 import { useFocusTest } from "./use-focus-test";
 import { getSubjectName, useSeeResultLabel } from "./use-focus-test-texts";
 
-function useWaitSkip({ answered, host }: { answered: boolean; host: FocusTestHost }) {
+function useWaitSkipLabel({ answered, host }: { answered: boolean; host: FocusTestHost }) {
   const t = useExtracted();
   const seeResult = useSeeResultLabel();
 
   if (answered) {
-    return { label: seeResult, note: null };
+    return seeResult;
   }
 
-  return host === "onboarding"
-    ? { label: t("Skip for now"), note: t("You can take the test later, from your plan.") }
-    : { label: t("Not now"), note: null };
+  return host === "onboarding" ? t("Skip for now") : t("Not now");
 }
 
 function FocusTestQuestion({
@@ -55,12 +53,9 @@ function FocusTestQuestion({
       question={phase.question}
       stopHint={
         sitting.hint === "manyUnknown"
-          ? t(
-              "Haven't studied most of this yet? That's fine. You can stop here and start learning.",
-            )
+          ? t("Haven't studied most of this yet? You can stop here.")
           : undefined
       }
-      stopLabel={t("Stop and use my answers")}
       subject={sitting.subject ? getSubjectName(sitting.subject) : subject}
       total={sitting.questions}
       trueFalseLabels={phase.trueFalseLabels}
@@ -85,15 +80,14 @@ export function FocusTestFlow({
   plan?: FocusTestPlanActions | null;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
-  /** The learner pressed "Start the test" on the screen that led here, so it isn't offered again. */
+  /** The learner pressed "Start" on the screen that led here, so it isn't offered again. */
   started?: boolean;
   /** The goal's name, over a question whose subject isn't known. */
   subject: string;
 }) {
-  const t = useExtracted();
   const test = useFocusTest({ actions, onDone, run, started });
   const { failed, phase, pressed } = test;
-  const waitSkip = useWaitSkip({ answered: phase.kind === "waiting" && phase.answered, host });
+  const waitSkipLabel = useWaitSkipLabel({ answered: phase.kind === "waiting" && phase.answered, host });
   // Only onboarding has a skip to save: a plan that's already there just goes back to itself.
   const skip = () => test.onLeave(host === "onboarding");
 
@@ -112,20 +106,13 @@ export function FocusTestFlow({
           questionsReady={test.questionsReady}
           readWarmUp={readWarmUp}
           run={run}
-          skip={waitSkip}
+          skipLabel={waitSkipLabel}
           skipFailed={failed}
           skipping={test.isPending}
         />
       );
     case "unavailable":
-      return (
-        <PlacementUnavailable
-          action={t("Continue")}
-          failed={failed}
-          onContinue={skip}
-          pending={test.isPending}
-        />
-      );
+      return <PlacementUnavailable failed={failed} onContinue={skip} pending={test.isPending} />;
     case "invitation":
       return (
         <FocusTestInvitation

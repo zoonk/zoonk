@@ -1,6 +1,5 @@
 "use client";
 
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Button } from "@zoonk/ui/components/button";
@@ -27,14 +26,13 @@ import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
 import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
-import { UsualStructureNote } from "./notice-reading";
-import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
+import { PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
 import { RevealDayOpener, RevealToday, RevealWeek, findRevealStart } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
 
-/** Zu cheers on the moment's last beat, after the check, the count and "Start here". */
+/** Zu cheers on the moment's last beat, after the check and "Start here". */
 function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
   const resolved = resolveLearnBuddy(buddy);
 
@@ -144,7 +142,6 @@ type RevealBodyProps = {
   onStart: () => Promise<boolean>;
   reveal: PlanRevealDays | null;
   signUpHref: string;
-  syllabus: SyllabusView | null;
 };
 
 function RevealColumn({
@@ -155,7 +152,6 @@ function RevealColumn({
   openStep,
   reveal,
   signUpHref,
-  syllabus,
 }: RevealBodyProps & {
   markRevealed: () => Promise<boolean>;
   openStep: ((step: DayStep) => Promise<boolean>) | null;
@@ -202,15 +198,9 @@ function RevealColumn({
     <OnboardingColumn
       className="gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-start lg:gap-x-10 lg:*:col-span-2"
       rail={
-        <>
-          <RevealRailBlock title={t("What fits")}>
-            <RevealCoverage syllabus={syllabus} />
-          </RevealRailBlock>
-
-          <RevealRailBlock title={t("Choices")}>
-            <PlanChoices />
-          </RevealRailBlock>
-        </>
+        <RevealRailBlock title={t("Choices")}>
+          <PlanChoices />
+        </RevealRailBlock>
       }
       wide
     >
@@ -224,6 +214,7 @@ function RevealColumn({
         </div>
 
         <RevealReadouts />
+        <RevealCoverage onAddTime={() => setEditor({ open: true, section: "time" })} />
 
         <PlanChoiceLines
           choices={plan.examChoices}
@@ -238,10 +229,7 @@ function RevealColumn({
       <div className="flex flex-col gap-2">
         <PlanPhasesBar />
         <PlanChapterList />
-        {plan.notice === "usual" && <UsualStructureNote />}
       </div>
-
-      <AreaWeights syllabus={syllabus} />
 
       <PlanEditor
         onOpenChange={(open) => setEditor({ ...editor, open })}

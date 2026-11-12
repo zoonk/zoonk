@@ -39,18 +39,9 @@ function ExamDateStep({
   const space = useSentenceSpace();
   const date = formatDate(first);
 
-  const ready =
-    second === undefined
-      ? t("Your plan paces your lessons to end by then.")
-      : t("Your plan paces your lessons to end by the first day.");
-
   return (
     <StepForm
-      description={[
-        passedNote,
-        ready,
-        exam.estimated && t("This is the expected date until the notice confirms it."),
-      ]
+      description={[passedNote, exam.estimated && t("We'll tell you if the date changes.")]
         .filter(Boolean)
         .join(space)}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}
@@ -134,7 +125,6 @@ function DateFieldStep({
   const inputId = useId();
   const noteId = useId();
   const [date, setDate] = useState(initialDate ?? "");
-  const space = useSentenceSpace();
 
   // The browser explains a day past the bounds on Continue.
   const bounds = getTargetDateBounds(today);
@@ -147,20 +137,14 @@ function DateFieldStep({
       ? noSitting
       : null;
 
-  const withoutDate = t(
-    "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
-  );
-
   const dated = date !== "";
 
   return (
     <StepForm
-      canContinue={!dated || date > today}
-      continueLabel={dated ? undefined : t("Continue without a date")}
-      description={[passedNote, withoutDate].filter(Boolean).join(space)}
-      // A half-typed date is invalid but leaves the value empty, so it would block going on without one.
-      formNoValidate={!dated}
-      onContinue={() => onAnswer({ question: "targetDate", targetDate: dated ? date : null })}
+      canContinue={dated && date > today}
+      description={passedNote ?? undefined}
+      onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
+      onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
       pending={pending}
       subject={subject}
       title={t("Is there a date you're aiming for?")}

@@ -14,7 +14,7 @@ import { getLongerTime } from "../_utils/time-answer";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, useCoveredText, usePlanCoverage } from "./plan-coverage";
 import { useFocusTestOfferHref, useTakeFocusTestLabel } from "./plan-focus-test";
-import { useFullCourse } from "./plan-full-course";
+import { useFullCourse, useKeepStudyingLabel } from "./plan-full-course";
 import {
   CheckingChange,
   type CoverageOffer,
@@ -138,6 +138,7 @@ function CoverageBody({
 }) {
   const t = useExtracted();
   const texts = useTimeToCoverTexts();
+  const keepStudying = useKeepStudyingLabel();
   const coverage = usePlanCoverage();
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
@@ -183,7 +184,7 @@ function CoverageBody({
       {/* Keyed as Find, so the button Find was pressed on becomes it and keeps the keyboard. */}
       {flags.studiesEverything && fullCourse && (
         <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
-          {t("Study everything, even after the exam")}
+          {keepStudying}
         </SuggestionAction>
       )}
 

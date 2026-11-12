@@ -1,6 +1,5 @@
 "use client";
 
-import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type NoSitting, type NoticeDay } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
@@ -11,7 +10,6 @@ import {
   NoticeCard,
   NoticeCardActions,
   NoticeCardContent,
-  NoticeCardDescription,
   NoticeCardLeading,
   NoticeCardTitle,
 } from "../_components/notice-card";
@@ -22,13 +20,10 @@ export function useNoticeDayText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
-  return ({ date, document, estimated }: NoticeDay & { document: ExamDocument }): string =>
+  return ({ date, estimated }: NoticeDay): string =>
     estimated
       ? t("The exam's likely date is now {date}.", { date: formatDate(date, "long") })
-      : t(
-          "{document, select, notice {The exam notice says {date}.} other {The exam's official calendar says {date}.}}",
-          { date: formatDate(date, "long"), document },
-        );
+      : t("The exam is on {date}.", { date: formatDate(date, "long") });
 }
 
 export function NoSittingWords({
@@ -104,15 +99,7 @@ function CalendarTile() {
   );
 }
 
-function NoticeDayCard({
-  day,
-  document,
-  onUse,
-}: {
-  day: NoticeDay;
-  document: ExamDocument;
-  onUse: () => Promise<boolean>;
-}) {
+function NoticeDayCard({ day, onUse }: { day: NoticeDay; onUse: () => Promise<boolean> }) {
   const text = useNoticeDayText();
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -129,7 +116,7 @@ function NoticeDayCard({
       <CalendarTile />
 
       <NoticeCardContent>
-        <NoticeCardTitle>{text({ ...day, document })}</NoticeCardTitle>
+        <NoticeCardTitle>{text(day)}</NoticeCardTitle>
         <NoticeCardActions>
           <UseDateButton busy={isPending} onUse={use} variant="secondary" />
         </NoticeCardActions>
@@ -168,13 +155,6 @@ function NoSittingCard({
         <NoticeCardTitle>
           {t("No exam date in {month}", { month: formatDate(noSitting.month, "month") })}
         </NoticeCardTitle>
-        <NoticeCardDescription>
-          {t(
-            "{count, plural, one {Your plan keeps your date unless you switch to the closest one.} other {Your plan keeps your date unless you switch to one of the closest.}}",
-            { count: noSitting.closest.length },
-          )}
-        </NoticeCardDescription>
-
         <form className="contents">
           <NoticeCardActions>
             {noSitting.closest.map((date) => (
@@ -200,21 +180,17 @@ function NoSittingCard({
 }
 
 export function NoticeDatesCard({
-  document,
   noSitting,
   noticeDay,
   onUse,
 }: {
-  document: ExamDocument;
   noSitting: NoSitting | null;
   noticeDay: NoticeDay | null;
   /** False when it couldn't be saved. */
   onUse: (date: string) => Promise<boolean>;
 }) {
   if (noticeDay) {
-    return (
-      <NoticeDayCard day={noticeDay} document={document} onUse={() => onUse(noticeDay.date)} />
-    );
+    return <NoticeDayCard day={noticeDay} onUse={() => onUse(noticeDay.date)} />;
   }
 
   return noSitting ? <NoSittingCard noSitting={noSitting} onUse={onUse} /> : null;

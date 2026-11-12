@@ -2,7 +2,7 @@
 
 import { type LanguageReason, type LanguageReasonView } from "@zoonk/core/language/aims";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useReasonCopy } from "../../language-aim/use-reason-copy";
 import { type Choice, ChoiceList } from "../choice-list";
@@ -16,31 +16,14 @@ function asksWords(reason: LanguageReason | null): boolean {
 
 function ReasonSize({ view }: { view: LanguageReasonView }) {
   const t = useExtracted();
-  const format = useFormatter();
 
   return (
-    <span className="flex shrink-0 flex-col items-end justify-center gap-0.5 self-center font-mono text-xs tabular-nums">
-      {view.aim ? (
-        <>
-          <span className="text-foreground font-medium">{view.aim}</span>
-          {view.hours !== null && (
-            <span className="text-muted-foreground">
-              {t({
-                description: 'Hours of study, as a short figure like "190 h".',
-                message: "{hours} h",
-                values: { hours: format.number(view.hours) },
-              })}
-            </span>
-          )}
-        </>
-      ) : (
-        <span className="text-foreground font-medium">
-          {t({
-            description: "Beside a language goal's reason: a certificate's plan follows its exam.",
-            message: "Exam",
-          })}
-        </span>
-      )}
+    <span className="text-foreground shrink-0 self-center font-mono text-xs font-medium tabular-nums">
+      {view.aim ??
+        t({
+          description: "Beside a language goal's reason: a certificate's plan follows its exam.",
+          message: "Exam",
+        })}
     </span>
   );
 }
@@ -61,17 +44,10 @@ function ReasonWords({
 }) {
   const t = useExtracted();
 
-  return reason === "certificate" ? (
-    <div className="flex flex-col gap-2 py-3 pl-8">
-      <TextField label={t("Which one?")} onChange={onChange} onKeyDown={keepKeys} value={value} />
-      <p className="text-muted-foreground text-sm">
-        {t("Your plan follows that exam's papers and score.")}
-      </p>
-    </div>
-  ) : (
+  return (
     <div className="py-3 pl-8">
       <TextField
-        label={t("In your own words")}
+        label={reason === "certificate" ? t("Which one?") : t("In your own words")}
         onChange={onChange}
         onKeyDown={keepKeys}
         value={value}
@@ -120,26 +96,19 @@ export function ReasonStep({
   return (
     <StepForm
       canContinue={reason !== null && (reason !== "certificate" || words.trim().length > 0)}
-      description={t("Your answer sets how far your course goes.")}
       onContinue={() => reason && submit(reason)}
       pending={pending}
       subject={subject}
       title={t("Why are you learning it?")}
     >
-      <div className="flex flex-col gap-3">
-        <ChoiceList
-          choices={choices}
-          label={t("Why you're learning it")}
-          onChange={setReason}
-          onPick={(picked) => (asksWords(picked) ? cancel() : pick(picked))}
-          readOnly={pending}
-          value={reason}
-        />
-
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("Hours of study from scratch, practice included. Less if you already know some.")}
-        </p>
-      </div>
+      <ChoiceList
+        choices={choices}
+        label={t("Why you're learning it")}
+        onChange={setReason}
+        onPick={(picked) => (asksWords(picked) ? cancel() : pick(picked))}
+        readOnly={pending}
+        value={reason}
+      />
     </StepForm>
   );
 }

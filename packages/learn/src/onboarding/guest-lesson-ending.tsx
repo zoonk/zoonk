@@ -4,7 +4,7 @@ import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fi
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { BookOpenIcon, CalendarClockIcon, UserPlusIcon } from "lucide-react";
+import { BookOpenIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { MeterPart, MeterParts } from "../_components/meter";
@@ -28,15 +28,12 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
           <span className="flex min-w-0 flex-col">
             <span className="font-semibold">{course.title}</span>
             <span className="text-muted-foreground text-sm">
-              {t(
-                "{chapters, plural, one {# chapter} other {# chapters}} · about {time} at your pace",
-                {
-                  chapters: course.chapterCount,
-                  time: formatDuration(
-                    Math.max(1, Math.round(course.minutes / MINUTES_PER_HOUR)) * MINUTES_PER_HOUR,
-                  ),
-                },
-              )}
+              {t("{chapters, plural, one {# chapter} other {# chapters}} · about {time}", {
+                chapters: course.chapterCount,
+                time: formatDuration(
+                  Math.max(1, Math.round(course.minutes / MINUTES_PER_HOUR)) * MINUTES_PER_HOUR,
+                ),
+              })}
             </span>
           </span>
         </div>
@@ -80,11 +77,6 @@ export function GuestLessonNext({
   return (
     <div className="flex flex-col gap-6" data-slot="guest-lesson-next">
       {fit && <WhereItFits fit={fit} />}
-
-      <p className="text-muted-foreground flex items-start gap-2 text-sm">
-        <CalendarClockIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-        {t("Save your progress and a quick review comes back to help it stick.")}
-      </p>
 
       <div className="flex flex-col gap-2">
         {plan}

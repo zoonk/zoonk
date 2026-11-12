@@ -45,21 +45,14 @@ export function useCoveredText() {
   const formatDuration = useFormatDuration();
   const texts = useTimeAnswerTexts();
   const { plan } = usePlanScreen();
-  const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
+  const { dailyMinutes } = plan.schedule;
 
-  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string => {
-    if (coveredShare < MIN_SHOWN_SHARE || !targetDate) {
-      return t("{time} a day isn't enough time to cover your goal.", {
-        time: formatDuration(dailyMinutes),
-      });
-    }
-
-    return texts.share({
-      date: { isoDate: targetDate, namedMonth: targetDateNamedMonth },
-      exam: measure === "exam",
-      value: coveredShare,
-    });
-  };
+  return ({ coveredShare, measure }: Pick<Coverage, "coveredShare" | "measure">): string =>
+    coveredShare < MIN_SHOWN_SHARE
+      ? t("{time} a day isn't enough time to cover your goal.", {
+          time: formatDuration(dailyMinutes),
+        })
+      : texts.timeCovers({ exam: measure === "exam", minutes: dailyMinutes, value: coveredShare });
 }
 
 export function useCanMoveDate(): boolean {
@@ -75,7 +68,7 @@ type MoveOutcome = "building" | "failed" | "noDate" | null;
  * Until the date is known, a tap finds it and the control names it; once named, one tap moves it.
  * Saved as any change (S1).
  */
-export function useMoveDate({
+function useMoveDate({
   onMoved,
   onMoving,
   planChange,
@@ -143,7 +136,7 @@ export function useMoveDate({
   };
 }
 
-export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
+function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
@@ -153,7 +146,7 @@ export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }
 }
 
 /** `live={false}` inside a block that's a live region already, so it's said once. */
-export function MoveDateFailure({
+function MoveDateFailure({
   live = true,
   move,
 }: {

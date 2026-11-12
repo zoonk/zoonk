@@ -78,7 +78,7 @@ export function TestIntro({
     <OnboardingColumn>
       <OnboardingHeading>
         <OnboardingTitle>
-          {t("Let's see your level in {language}", { language: target })}
+          {t("Find your level in {language}", { language: target })}
         </OnboardingTitle>
         <OnboardingDescription>
           {t(
@@ -90,9 +90,7 @@ export function TestIntro({
 
       {showAlphabetNote && (
         <p className="text-muted-foreground text-sm text-pretty">
-          {t(
-            "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
-          )}
+          {t("New to its alphabet? Skip the test. Your first lesson teaches you to read it.")}
         </p>
       )}
 
@@ -112,7 +110,7 @@ export function TestIntro({
           onClick={onScratch}
           variant="ghost"
         >
-          {t("Skip the test")}
+          {t("Skip")}
         </OnboardingSecondaryButton>
         <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
       </OnboardingFooter>
@@ -139,16 +137,13 @@ export function TestDone({
         <CircleCheckIcon />
       </StepIcon>
       <OnboardingHeading>
-        <OnboardingTitle>{t("Your level today")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t("Based on the test. It gets more accurate every week.")}
-        </OnboardingDescription>
+        <OnboardingTitle>{t("Your level")}</OnboardingTitle>
       </OnboardingHeading>
       <LevelBars levels={levels} />
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-          {t("Build my plan")}
+          {t("Continue")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>
     </OnboardingColumn>

@@ -153,7 +153,7 @@ function CourseStartForm({
       {!blocked && dailyMinutes && (
         <p className="text-muted-foreground -mt-2 text-sm text-pretty">
           {t(
-            "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps.",
+            "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later.",
             { minutes: dailyMinutes },
           )}
         </p>

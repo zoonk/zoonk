@@ -23,7 +23,6 @@ export function UnderstoodWords({
 }) {
   const t = useExtracted();
   const inputId = useId();
-  const hintId = useId();
   const [value, setValue] = useState(words);
   const trimmed = value.trim();
 
@@ -50,7 +49,6 @@ export function UnderstoodWords({
       </label>
 
       <textarea
-        aria-describedby={hintId}
         autoFocus
         className="field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-[17px] leading-snug outline-none"
         id={inputId}
@@ -72,10 +70,6 @@ export function UnderstoodWords({
         }}
         value={value}
       />
-
-      <p className="text-muted-foreground text-sm" id={hintId}>
-        {t("We'll read it again. To fix one detail, use its pencil below.")}
-      </p>
 
       <div className="flex flex-wrap gap-2">
         <Button disabled={!trimmed || disabled} focusableWhenDisabled size="sm" type="submit">

@@ -5,7 +5,6 @@ import {
   type LevelTestAnswerInput,
 } from "@zoonk/core/language/level-test/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { StepLoading } from "../../onboarding/steps/step-parts";
@@ -230,10 +229,6 @@ export function LanguageLevelTestStep({
     case "waiting":
       return (
         <LevelTestPreparing
-          language={getLanguageNameInSentence({
-            targetLanguage: goal.targetLanguage,
-            userLanguage: goal.language,
-          })}
           onSkip={finish}
           run={toBankRun({ poll: poll.status, recheck: poll.restart, retry: begin, wait: bank })}
           skipping={isPending}

@@ -188,7 +188,7 @@ function useNoticeSentence() {
     }
 
     if (day?.kind === "setNoticeDate") {
-      return noticeDayText({ date: day.targetDate, document, estimated: day.estimated });
+      return noticeDayText({ date: day.targetDate, estimated: day.estimated });
     }
 
     return followsNotice(document);

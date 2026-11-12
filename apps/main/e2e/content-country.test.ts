@@ -26,7 +26,6 @@ test.describe("Content country", () => {
 
     const continueButton = page.getByRole("button", { name: "Continue" });
     await expect(continueButton).toBeDisabled();
-    await expect(page.getByText("If you skip: United States")).toBeVisible();
 
     const another = page.getByRole("button", { name: "Another country" });
     await expectHydrated(another);

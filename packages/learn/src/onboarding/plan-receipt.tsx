@@ -5,8 +5,6 @@ import { toLanguageAimView } from "@zoonk/core/language/aims";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { Fragment } from "react";
-import { FactChip, FactChips } from "../_components/fact-chips";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { readSetupLevel } from "./_utils/setup-level";
@@ -48,7 +46,7 @@ function useDateFact() {
   const formatDate = useFormatIsoDate();
 
   return function dateFact(goal: GoalView): ReceiptFact | null {
-    const label = goal.kind === "exam" ? t("Exam date") : t("Date");
+    const label = goal.kind === "exam" ? t("Exam date") : t("End date");
 
     if (goal.targetDate) {
       return {
@@ -125,38 +123,5 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
         ))}
       </dl>
     </OnboardingRailSection>
-  );
-}
-
-const CHIP_FACTS = new Set([
-  "title",
-  "targetLanguage",
-  "targetCourse",
-  "institution",
-  "targetPosition",
-  "targetScore",
-  "date",
-]);
-
-export function PlanReceiptChips({ className, goal }: { className?: string; goal: GoalView }) {
-  const t = useExtracted();
-  // The time question shows a language goal's aim on its own row, with Change.
-  const facts = useReceiptFacts(goal).filter(
-    (fact) => CHIP_FACTS.has(fact.id) && !(goal.kind === "language" && fact.id === "targetScore"),
-  );
-
-  return (
-    <FactChips aria-label={t("Your plan so far")} className={className}>
-      {facts.map((fact) => (
-        <Fragment key={fact.id}>
-          <FactChip
-            className={cn(fact.id === "title" && "text-foreground", fact.count && "font-mono")}
-          >
-            {fact.count ?? fact.value}
-          </FactChip>
-          {fact.note && <FactChip>{fact.note}</FactChip>}
-        </Fragment>
-      ))}
-    </FactChips>
   );
 }

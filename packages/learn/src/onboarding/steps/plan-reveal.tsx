@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { safeAsync } from "@zoonk/utils/error";
 import { useEffect, useEffectEvent, useState } from "react";
@@ -61,7 +60,6 @@ export function PlanReveal({
   toToday: () => void;
 }) {
   const [plan, setPlan] = useState<PlanView | null>(initialPlan?.plan ?? null);
-  const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
   const [reveal, setReveal] = useState<PlanRevealDays | null>(initialPlan?.reveal ?? null);
   const [read, setRead] = useState(initialPlan !== null);
 
@@ -73,7 +71,6 @@ export function PlanReveal({
     }
 
     setPlan(outcome.plan);
-    setSyllabus(outcome.syllabus);
     setReveal(outcome.reveal);
     setRead(true);
   };
@@ -146,15 +143,7 @@ export function PlanReveal({
       lessonHref={lessonHref}
       library={library}
       next="plan"
-      notice={
-        plan
-          ? {
-              document: plan.examDocument,
-              lastNotice: plan.schedule.targetDateEstimated,
-              stopped: getNoticeStop({ poll, run }),
-            }
-          : undefined
-      }
+      notice={plan ? { stopped: getNoticeStop({ poll, run }) } : undefined}
       readWarmUp={actions.readWarmUp}
       run={waitRun}
       wait={wait}
@@ -179,7 +168,6 @@ export function PlanReveal({
               onStart={start}
               refresh={() => void safeAsync(refresh)}
               signUpHref={signUpHref}
-              syllabus={syllabus}
               reveal={reveal}
             />
           </PlanSheetHosts>

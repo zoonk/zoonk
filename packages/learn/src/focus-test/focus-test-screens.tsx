@@ -17,10 +17,9 @@ import {
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
-import { FocusTestHowItWorks } from "./focus-test-how-it-works";
 import { type FocusTestHost } from "./focus-test-result";
 import { type Pressed } from "./use-focus-test";
-import { useFocusTestTitle, useSeeResultLabel, useSittingTime } from "./use-focus-test-texts";
+import { useFocusTestTitle, useSeeResultLabel, useTestTime } from "./use-focus-test-texts";
 
 export function FocusTestInvitation({
   failed,
@@ -41,26 +40,17 @@ export function FocusTestInvitation({
 }) {
   const t = useExtracted();
   const title = useFocusTestTitle();
-  const { about } = useSittingTime();
+  const time = useTestTime();
 
   return (
     <OnboardingColumn>
       <OnboardingHeading>
-        <OnboardingSubject position={about(next.minutes)}>{t("Focus test")}</OnboardingSubject>
+        <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
         <OnboardingDescription>
-          {suggestsFocus
-            ? t({
-                description:
-                  "Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.",
-                message:
-                  "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most.",
-              })
-            : t("Quick questions on your exam's subjects. Your plan skips what you already know.")}
+          {t("A short test on your exam's subjects. Your plan skips what you already know.")}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <FocusTestHowItWorks suggestsFocus={suggestsFocus} />
 
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
@@ -70,7 +60,7 @@ export function FocusTestInvitation({
           icon={<PlayIcon aria-hidden="true" />}
           onClick={onStart}
         >
-          {t("Start the test")}
+          {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           busy={pressed === "other"}
@@ -100,13 +90,13 @@ export function FocusTestResume({
   sitting: FocusTestSitting;
 }) {
   const t = useExtracted();
-  const { aboutLeft } = useSittingTime();
+  const time = useTestTime();
   const seeResult = useSeeResultLabel();
 
   return (
     <OnboardingColumn>
       <OnboardingHeading>
-        <OnboardingSubject position={aboutLeft(sitting.minutes)}>
+        <OnboardingSubject position={time.left(sitting.minutes)}>
           {t("Focus test")}
         </OnboardingSubject>
         <OnboardingTitle>{t("Continue your test")}</OnboardingTitle>

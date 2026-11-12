@@ -221,11 +221,7 @@ export function UnderstoodScreen({
 
       <OnboardingHeading>
         <OnboardingTitle>{t("Here's what I understood")}</OnboardingTitle>
-        <OnboardingDescription>
-          {draft.goals.length > 1
-            ? t("These goals share your daily time. You can change all of this later.")
-            : t("You can change all of this later.")}
-        </OnboardingDescription>
+        <OnboardingDescription>{t("You can change all of this later.")}</OnboardingDescription>
       </OnboardingHeading>
 
       {draft.goals.map((understood, index) => (

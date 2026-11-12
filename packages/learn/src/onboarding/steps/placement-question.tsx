@@ -160,7 +160,6 @@ export function PlacementQuestionScreen({
   progress,
   question,
   stopHint,
-  stopLabel,
   subject,
   total,
   trueFalseLabels = "trueFalse",
@@ -177,7 +176,6 @@ export function PlacementQuestionScreen({
   progress: number;
   question: PlacementQuestion;
   stopHint?: string;
-  stopLabel?: string;
   subject?: string;
   total?: number;
   trueFalseLabels?: TrueFalseLabels;
@@ -297,7 +295,7 @@ export function PlacementQuestionScreen({
           type="button"
           variant="ghost"
         >
-          {stopLabel ?? t("Stop here and see my plan")}
+          {t("Stop")}
         </Button>
       </OnboardingColumn>
     </OnboardingTestQuestion>

@@ -153,13 +153,10 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         {unchanged && (
           <p className="bg-muted/60 rounded-xl p-4 text-sm text-pretty" role="status">
             {unchanged === "alreadyIn"
-              ? t("Nothing changed: {areas} already have every lesson in your plan.", {
+              ? t("Nothing changed. {areas} already have every lesson in your plan.", {
                   areas: names,
                 })
-              : t(
-                  "Nothing changed: {areas} already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in.",
-                  { areas: names },
-                )}
+              : t("Nothing changed. To fit more of {areas}, add time a day.", { areas: names })}
           </p>
         )}
         {plan.focusTest && testHref && <FocusTestLink focusTest={plan.focusTest} href={testHref} />}
@@ -207,7 +204,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           icon={<CheckIcon aria-hidden="true" />}
           type="submit"
         >
-          {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Focus on these")}
+          {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Save")}
         </Button>
 
         {failed && <ChangeSaveError />}
@@ -238,7 +235,7 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
             <div className="flex flex-col gap-1">
               <DrawerTitle className="text-xl font-semibold">{t("Where to focus")}</DrawerTitle>
               <DrawerDescription>
-                {t("The subjects you pick come first and get more depth.")}
+                {t("The subjects you pick get more of your time.")}
               </DrawerDescription>
             </div>
             <DrawerCloseButton />

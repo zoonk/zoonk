@@ -61,7 +61,7 @@ export function AboutYouQuestionScreen({
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>{title}</PageTitle>
-            <PageSubtitle>{description}</PageSubtitle>
+            {description && <PageSubtitle>{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>
 

@@ -6,58 +6,19 @@ import { type KindCopy } from "./generation-copy-types";
 export function useConversationCallCopy(): KindCopy<"conversationCall"> {
   const t = useExtracted();
 
-  return {
-    name: t("Writing your call"),
-    phases: {
-      write: {
-        label: t("Writing the call for your level"),
-        lines: [
-          t("Choosing who you'll talk to…"),
-          t("Writing what they say first…"),
-          t("Picking what to get across…"),
-          t("Adding phrases you can lean on…"),
-        ],
-      },
-    },
-  };
+  return { name: t("Writing your call"), phases: { write: t("Writing the call for your level") } };
 }
 
 export function useSpeakingMockCopy(): KindCopy<"speakingMock"> {
   const t = useExtracted();
 
-  return {
-    name: t("Writing your mock"),
-    phases: {
-      write: {
-        label: t("Writing the examiner's script"),
-        lines: [
-          t("Choosing your examiner…"),
-          t("Writing the examiner's questions…"),
-          t("Fitting the parts into about five minutes…"),
-          t("Adding phrases you can lean on…"),
-        ],
-      },
-    },
-  };
+  return { name: t("Writing your mock"), phases: { write: t("Writing the examiner's script") } };
 }
 
 export function useExamSpeakingCopy(): KindCopy<"examSpeaking"> {
   const t = useExtracted();
 
-  return {
-    name: t("Writing your task"),
-    phases: {
-      write: {
-        label: t("Writing a card like the exam's"),
-        lines: [
-          t("Picking a new topic…"),
-          t("Writing the card's instructions…"),
-          t("Preparing what the examiner says…"),
-          t("Adding phrases you can lean on…"),
-        ],
-      },
-    },
-  };
+  return { name: t("Writing your task"), phases: { write: t("Writing a card like the exam's") } };
 }
 
 export function useSpeakingPaperCopy(): KindCopy<"speakingPaper"> {
@@ -65,16 +26,6 @@ export function useSpeakingPaperCopy(): KindCopy<"speakingPaper"> {
 
   return {
     name: t("Writing your speaking paper"),
-    phases: {
-      write: {
-        label: t("Writing a card for each task"),
-        lines: [
-          t("Picking a topic for each task…"),
-          t("Writing each card's instructions…"),
-          t("Preparing what the examiner says…"),
-          t("Adding phrases you can lean on…"),
-        ],
-      },
-    },
+    phases: { write: t("Writing a card for each task") },
   };
 }

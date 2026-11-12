@@ -51,7 +51,7 @@ test("questions about the learner lead to the plan, and a skipped one comes back
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   const [answers, facts] = await Promise.all([

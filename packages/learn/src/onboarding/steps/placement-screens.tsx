@@ -3,7 +3,6 @@
 import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
-import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -34,11 +33,9 @@ export function PlacementIntro({
     <OnboardingColumn>
       <OnboardingHeading>
         <OnboardingSubject>{subject}</OnboardingSubject>
-        <OnboardingTitle>{t("Let's see what you already know")}</OnboardingTitle>
+        <OnboardingTitle>{t("Skip what you already know")}</OnboardingTitle>
         <OnboardingDescription>
-          {t(
-            "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
-          )}
+          {t("A short test finds the lessons you don't need.")}
         </OnboardingDescription>
       </OnboardingHeading>
 
@@ -58,7 +55,7 @@ export function PlacementIntro({
           onClick={onScratch}
           variant="ghost"
         >
-          {t("Skip and start from the basics")}
+          {t("Skip")}
         </OnboardingSecondaryButton>
       </OnboardingFooter>
     </OnboardingColumn>
@@ -66,33 +63,27 @@ export function PlacementIntro({
 }
 
 function PlacementOutcome({
-  action,
-  children,
-  done,
   failed = false,
   onContinue,
   pending,
+  title,
 }: {
-  /** Names the next screen when it isn't the plan. */
-  action?: string;
-  children: React.ReactNode;
-  done?: string;
   failed?: boolean;
   onContinue: () => void;
   pending: boolean;
+  title: string;
 }) {
   const t = useExtracted();
 
   return (
     <OnboardingColumn>
       <OnboardingHeading>
-        {done && <SuccessEyebrow>{done}</SuccessEyebrow>}
-        {children}
+        <OnboardingTitle>{title}</OnboardingTitle>
       </OnboardingHeading>
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-          {action ?? t("See my plan")}
+          {t("Continue")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>
     </OnboardingColumn>
@@ -100,13 +91,9 @@ function PlacementOutcome({
 }
 
 export function PlacementDone({
-  answered,
-  forToday,
   onContinue,
   pending,
 }: {
-  answered: number;
-  forToday: boolean;
   onContinue: () => void;
   pending: boolean;
 }) {
@@ -114,35 +101,18 @@ export function PlacementDone({
 
   return (
     <PlacementOutcome
-      done={t(
-        "{count, plural, =0 {# questions answered} one {# question answered} other {# questions answered}}",
-        { count: answered },
-      )}
       onContinue={onContinue}
       pending={pending}
-    >
-      <OnboardingTitle>
-        {forToday ? t("That's enough questions for today") : t("Your starting point is set")}
-      </OnboardingTitle>
-      <OnboardingDescription>
-        {forToday
-          ? t("Your first sessions ask a few more to fine-tune your plan.")
-          : t({
-              description: '"It" is the learner\'s starting point, named in the title.',
-              message: "It gets more accurate every day.",
-            })}
-      </OnboardingDescription>
-    </PlacementOutcome>
+      title={t("Your plan skips what you already know")}
+    />
   );
 }
 
 export function PlacementUnavailable({
-  action,
   failed,
   onContinue,
   pending,
 }: {
-  action?: string;
   failed?: boolean;
   onContinue: () => void;
   pending: boolean;
@@ -150,13 +120,11 @@ export function PlacementUnavailable({
   const t = useExtracted();
 
   return (
-    <PlacementOutcome action={action} failed={failed} onContinue={onContinue} pending={pending}>
-      <OnboardingTitle>{t("Let's skip the questions")}</OnboardingTitle>
-      <OnboardingDescription>
-        {t(
-          "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead.",
-        )}
-      </OnboardingDescription>
-    </PlacementOutcome>
+    <PlacementOutcome
+      failed={failed}
+      onContinue={onContinue}
+      pending={pending}
+      title={t("We couldn't make a test for this goal")}
+    />
   );
 }

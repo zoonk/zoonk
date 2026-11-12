@@ -1,6 +1,5 @@
 "use client";
 
-import { getExamDocument } from "@zoonk/core/exams/document";
 import {
   findLearnerSitting,
   findMeantExamDay,
@@ -90,13 +89,7 @@ function useKeptMonthRow() {
       editable: { key: "targetDate", kind: "date" },
       id: "targetDate",
       label: t("Exam date"),
-      note: noticeDay
-        ? noticeDayText({
-            date: noticeDay.date,
-            document: getExamDocument(draft),
-            estimated: false,
-          })
-        : undefined,
+      note: noticeDay ? noticeDayText({ date: noticeDay.date, estimated: false }) : undefined,
       source: noticeDay?.source ?? null,
       suggestedDate: noticeDay?.date,
       value: toLabelCase(formatDate(keptMonth, "month")),
@@ -185,9 +178,6 @@ function useSittingChoiceRow() {
       editable: { key: "targetDate", kind: "date" },
       id: "examDates",
       label: t("Exam date"),
-      note: t(
-        "This exam is held several times a year. Until you pick one, your plan uses the first.",
-      ),
       source: first.source,
       value: t("Pick your date"),
     };
@@ -253,13 +243,12 @@ function useOwnDateRow() {
       ? t("{days, plural, one {# day left} other {# days left}}", {
           days: daysUntilIsoDate({ isoDate: official.date, today: new Date() }),
         })
-      : suggested &&
-        noticeDayText({ date: suggested.date, document: getExamDocument(draft), estimated: false });
+      : suggested && noticeDayText({ date: suggested.date, estimated: false });
 
     return {
       editable: { key: "targetDate", kind: "date" },
       id: "targetDate",
-      label: draft.kind === "exam" ? t("Exam date") : t("Deadline"),
+      label: draft.kind === "exam" ? t("Exam date") : t("End date"),
       note: note ?? undefined,
       source: official?.source ?? suggested?.source ?? null,
       suggestedDate: suggested?.date,
@@ -298,13 +287,6 @@ export function useDateRow() {
         editable: { key: "targetDate", kind: "date" },
         id: "targetDate",
         label: t("Exam date"),
-        note:
-          draft.details?.examDay === "booked"
-            ? t("You pick this test's day when you book it. Booked already? Set it here.")
-            : t(
-                "{document, select, notice {The official date comes out in the exam's notice. Know it already? Set it here.} other {The official date comes out on the exam's official calendar. Know it already? Set it here.}}",
-                { document: getExamDocument(draft) },
-              ),
         value: toBeConfirmed({
           month: readExamMonth(draft),
           year: readExamYear({ dates: examDates, draft }),
@@ -332,7 +314,7 @@ export function useDateRow() {
       id: "examDates",
       label: t("{count, plural, one {Exam date} other {Exam dates}}", { count: sitting.length }),
       note: estimated
-        ? t("From its usual dates. We'll tell you when the official ones are out.")
+        ? t("Not official yet")
         : t("{days, plural, one {# day left} other {# days left}}", {
             days: daysUntilIsoDate({ isoDate: day.date, today: new Date() }),
           }),

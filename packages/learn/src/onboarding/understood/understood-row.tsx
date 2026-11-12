@@ -299,7 +299,7 @@ export function UnderstoodRowItem({
         <Button
           aria-label={t("Edit {field}", { field: row.label })}
           autoFocus={focusEdit}
-          className="text-muted-foreground -my-1.5 -mr-2 shrink-0 focus-visible:opacity-100 pointer-fine:opacity-0 pointer-fine:group-hover/fact:opacity-100"
+          className="text-muted-foreground -my-1.5 -mr-2 shrink-0"
           onClick={() => onEdit(true)}
           size="icon"
           variant="ghost"

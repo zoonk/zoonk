@@ -1,16 +1,13 @@
 "use client";
 
-import { CountUp } from "@zoonk/ui/components/count-up";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { BEAT_MS } from "@zoonk/ui/lib/motion";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { BigQuantity } from "../../_components/big-quantity";
 import { daysUntilIsoDate, isoDateToUtc, useFormatIsoDate } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
 import { useStudyDaysText } from "../../plan/use-study-days-text";
-import { useRevealPhases } from "./plan-shape";
 import { getAimAhead } from "./schedule-aim";
 
 const READOUT_CLASS = "text-readout text-2xl leading-tight";
@@ -49,34 +46,6 @@ function TimeReadout() {
   return (
     <Readout label={label}>
       <BigQuantity>{formatDuration(shape.weekdays)}</BigQuantity>
-    </Readout>
-  );
-}
-
-/** The count lands on the moment's second beat, after the check. */
-function LessonsReadout() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const phases = useRevealPhases();
-  const total = phases.reduce((sum, phase) => sum + phase.lessonsTotal, 0);
-  const done = phases.reduce((sum, phase) => sum + phase.lessonsDone, 0);
-
-  if (total === 0) {
-    return null;
-  }
-
-  return (
-    <Readout
-      label={
-        done > 0
-          ? t(
-              "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}",
-              { count: total, done },
-            )
-          : t("{count, plural, one {lesson} other {lessons}}", { count: total })
-      }
-    >
-      <CountUp delayMs={BEAT_MS} format={(value) => format.number(value)} value={total} />
     </Readout>
   );
 }
@@ -153,7 +122,6 @@ export function RevealReadouts() {
   return (
     <div className="grid auto-cols-fr grid-flow-col border-y [&>*+*]:border-s">
       <TimeReadout />
-      <LessonsReadout />
       <FinishReadout />
     </div>
   );

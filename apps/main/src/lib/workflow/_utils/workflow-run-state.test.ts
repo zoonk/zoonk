@@ -50,20 +50,6 @@ describe(workflowRunReducer, () => {
     expect(state.clockOffsetMs).toBe(1500);
   });
 
-  it("keeps the newest skill the run's graph wrote, until the run starts again", () => {
-    const named = run([
-      event({ status: "started", step: "buildSkillGraph" }),
-      event({ skillName: "Variables", status: "started", step: "buildSkillGraph" }),
-      event({ skillName: "Loops", status: "started", step: "buildSkillGraph" }),
-      event({ status: "completed", step: "buildSkillGraph" }),
-    ]);
-
-    expect(named.skillName).toBe("Loops");
-    expect(named.steps).toStrictEqual({ buildSkillGraph: "completed" });
-
-    expect(run([{ runIds: [], type: "restart" }], named).skillName).toBeNull();
-  });
-
   it("keeps the warm-up deck the run reported, through a start over, without ending the wait", () => {
     const dealt = run([event({ status: "completed", step: "warmUpReady", warmUpId: "deck" })]);
 

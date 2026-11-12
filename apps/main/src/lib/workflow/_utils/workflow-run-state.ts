@@ -36,7 +36,6 @@ export type WorkflowRunState = {
   ready: boolean;
   reconnectIn: number | null;
   replaced: string[];
-  skillName: string | null;
   steps: Partial<Record<string, GenerationStepState>>;
   stepTimes: Partial<Record<string, GenerationStepTimes>>;
   warmUpId: string | null;
@@ -65,7 +64,6 @@ export const INITIAL_WORKFLOW_RUN_STATE: WorkflowRunState = {
   ready: false,
   reconnectIn: null,
   replaced: [],
-  skillName: null,
   stepTimes: {},
   steps: {},
   warmUpId: null,
@@ -132,7 +130,6 @@ function recordStep(
   return {
     ...state,
     firstLesson: recordFirstLesson(state, message),
-    skillName: message.skillName ?? state.skillName,
     stepTimes: recordStepTime(state, message),
     steps: { ...state.steps, [message.step]: status },
     warmUpId: message.warmUpId ?? state.warmUpId,

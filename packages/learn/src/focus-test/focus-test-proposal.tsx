@@ -101,7 +101,7 @@ export function FocusTestProposal({
           disabled={pressed === "declined"}
           onClick={() => onDecide("applied")}
         >
-          {t("Update my plan")}
+          {t("Change my plan")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
           busy={pressed === "declined"}

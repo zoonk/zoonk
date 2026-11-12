@@ -284,7 +284,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   await page.goto(`/start/${goal.id}`);
 
   await expect(
-    page.getByRole("heading", { name: "Reading the exam's official documents" }),
+    page.getByRole("heading", { name: "Reading your exam's official documents" }),
   ).toBeVisible();
 
   await page.getByRole("button", { name: PLAY_QUIZ }).click();
@@ -299,7 +299,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   });
 
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
-  await page.getByRole("button", { name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 });
 
@@ -327,7 +327,6 @@ test("a learner whose first lesson is written before the plan starts it from the
     userId: noProgressUser.id,
   });
 
-  await expect(page.getByText("Your plan will be waiting when you finish.")).toBeVisible();
   await page.getByRole("link", { name: "Start lesson 1" }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}`, "u"));
 });
@@ -359,7 +358,7 @@ test("a failed first lesson stops writing even when the goal replays its start",
 
   const row = page.locator('[data-slot="first-lesson-row"]');
   await expect(row.getByText("Something went wrong on our side.")).toBeVisible();
-  await expect(row.getByText("Writing about 5 short screens")).toHaveCount(0);
+  await expect(row.getByText("Getting it ready")).toHaveCount(0);
   await expect(row.getByText("Ready to start")).toHaveCount(0);
   const clock = row.locator(".font-mono");
   const stoppedTime = await clock.textContent();
@@ -391,6 +390,6 @@ test("a failed first lesson stops writing even when the goal replays its start",
   );
 
   await page.getByRole("button", { exact: true, name: "Try again" }).click();
-  await expect(row.getByText("Writing about 5 short screens")).toBeVisible();
+  await expect(row.getByText("Getting it ready")).toBeVisible();
   await expect(row.getByText("Something went wrong on our side.")).toHaveCount(0);
 });

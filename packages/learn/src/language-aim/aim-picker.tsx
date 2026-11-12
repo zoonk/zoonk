@@ -4,7 +4,6 @@ import { type LanguageAim, isLanguageAim } from "@zoonk/core/language/aims";
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
@@ -13,7 +12,6 @@ import {
 import {
   Popover,
   PopoverContent,
-  PopoverDescription,
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
@@ -26,7 +24,7 @@ import { ChangeSaveError } from "../_components/save-error";
 import { ChoiceList } from "../onboarding/choice-list";
 import { useAimWords } from "./use-aim-words";
 
-export type AimOption = { aim: LanguageAim; detail: string };
+export type AimOption = { aim: LanguageAim; detail?: string };
 
 export function AimName({ aim }: { aim: string }) {
   const words = useAimWords();
@@ -87,7 +85,6 @@ export function AimChoices({
 /** A sheet on phones and a popover from its trigger on wider screens; picking applies and closes. */
 export function AimPicker({
   children,
-  description,
   onOpen,
   onPick,
   options,
@@ -96,7 +93,6 @@ export function AimPicker({
 }: {
   /** What the trigger shows; `trigger` is the element it's drawn as. */
   children: React.ReactNode;
-  description: string | null;
   onOpen?: () => void;
   /** False when it couldn't be saved, which keeps the choices open. */
   onPick: (aim: LanguageAim) => Promise<boolean>;
@@ -150,7 +146,6 @@ export function AimPicker({
         <DrawerPopup>
           <DrawerHeader>
             <DrawerTitle className="text-lg font-semibold">{title}</DrawerTitle>
-            {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
           <DrawerContent className="flex flex-col gap-3 pt-2">{choices}</DrawerContent>
         </DrawerPopup>
@@ -164,7 +159,6 @@ export function AimPicker({
       <PopoverContent align="end" className="w-96 gap-3">
         <PopoverHeader>
           <PopoverTitle>{title}</PopoverTitle>
-          {description && <PopoverDescription>{description}</PopoverDescription>}
         </PopoverHeader>
         {choices}
       </PopoverContent>

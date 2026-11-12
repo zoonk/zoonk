@@ -22,12 +22,6 @@ export function useWrittenCadenceWords() {
     weekly: t("Every week"),
   };
 
-  const effects: Record<WrittenCadence, string> = {
-    biweekly: t("The same practice in alternate weeks: less spread out, more at a time."),
-    finalWeeks: t("Less spaced practice, concentrated in the final weeks before the exam."),
-    weekly: t("Recommended: a little every week, which improves writing the most."),
-  };
-
   const changes: Record<WrittenCadence, string> = {
     biweekly: t("Writing practice every other week from now on."),
     finalWeeks: t("Writing practice only in the final weeks from now on."),
@@ -36,7 +30,6 @@ export function useWrittenCadenceWords() {
 
   return {
     changed: (cadence: WrittenCadence) => changes[cadence],
-    effect: (cadence: WrittenCadence) => effects[cadence],
     label: (cadence: WrittenCadence) => labels[cadence],
   };
 }
@@ -85,18 +78,10 @@ export function WrittenCadenceChoice({
         {cadences.map((cadence) => (
           <RadioGroupOption className={PLAN_OPTION_CLASS} key={cadence}>
             <RadioGroupItem value={cadence} />
-            {words.label(cadence)}
+            {cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence)}
           </RadioGroupOption>
         ))}
       </RadioGroup>
-
-      <p
-        aria-busy={pending}
-        aria-live="polite"
-        className="text-muted-foreground text-sm aria-busy:opacity-60"
-      >
-        {words.effect(choice.shown)}
-      </p>
 
       {failed && <ChangeSaveError />}
     </fieldset>
