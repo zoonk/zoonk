@@ -46,6 +46,7 @@ export async function prepareFieldChallenge({
       model: planned.provenance.model,
       problems: planned.problems,
     });
+
     return result.status;
   }
 

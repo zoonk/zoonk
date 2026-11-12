@@ -9022,7 +9022,9 @@
         "Uma dúvida segura ao médico traz peso, dose prescrita, dose calculada e um pedido objetivo; a IA serve como segunda conta, não como autorização."
       ]
     },
-    "errors": [],
+    "errors": [
+      "After start:independent-check calculated 18 kg × 50 mg/kg/day ÷ 3 = 300 mg, detail:delegate-calc wrongly says the learner transferred all verification and still needs to redo an independent calculation. The debrief contradicts the earlier completed check."
+    ],
     "writerModel": "moonshotai/kimi-k3.1-pro"
   },
   {

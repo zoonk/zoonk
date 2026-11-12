@@ -19,7 +19,7 @@ export const challengeReviewTask: Task<
   Awaited<ReturnType<typeof checkChallengeQuality>>["data"]
 > = {
   description:
-    "Errors-only review of saved challenges: 18 confirmed errors and 13 clean controls from the review lane, including five route errors missed by its original labels",
+    "Errors-only review of saved challenges: 19 confirmed errors and 12 clean controls from the review lane, including six route errors missed by its original labels",
   generate: async ({ written, language, level, field, writerModel, ...options }) => {
     const checked = checkWrittenChallenge({
       variant: written.deadline === null ? "whatIf" : "work",

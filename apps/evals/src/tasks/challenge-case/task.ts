@@ -13,7 +13,7 @@ import { checkChallengePlan } from "@zoonk/core/library/challenges/plan-check";
 import { CHALLENGE_CASE_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
-async function generateChallengeCase(params: ChallengeCaseParams) {
+async function generateFirstChallengeDraft(params: ChallengeCaseParams) {
   const plan = await generateChallengePlan(params);
 
   const problems = checkChallengePlan({
@@ -51,7 +51,7 @@ function checkOutput(output: string, variant: ChallengeCaseParams["variant"]): C
 export const challengeCaseTask: Task<ChallengeCaseParams, WrittenChallengeCase> = {
   description:
     "Write the challenge that closes a chapter: a work case with a team and decisions that change the state, or a light What if for overview courses. Code checks the decision graph, then a judge",
-  generate: generateChallengeCase,
+  generate: generateFirstChallengeDraft,
   id: "challenge-case",
   name: "Challenge Case",
   score: ({ output, testCase }) =>

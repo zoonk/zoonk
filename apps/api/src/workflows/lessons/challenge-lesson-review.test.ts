@@ -138,24 +138,31 @@ describe("challenge prepublication review", () => {
       },
       steps: ["challenge"],
     });
+
     const stepId = steps[0]?.id ?? "";
     const target = { field: "nursing", ownerId: null, stepId };
     vi.mocked(checkChallengeQuality).mockResolvedValueOnce(taskResult({ findings: [finding] }));
+
     await expect(prepareFieldChallenge({ target, workflowRunId: randomUUID() })).resolves.toBe(
       "heldBack",
     );
+
     expect(generateChallengePlan).toHaveBeenCalledOnce();
+
     await expect(prepareFieldChallenge({ target, workflowRunId: randomUUID() })).resolves.toBe(
       "ready",
     );
+
     expect(vi.mocked(generateChallengePlan).mock.calls[1]?.[0].problems).toStrictEqual([
       expect.stringContaining(finding.error),
     ]);
+
     const summary = await readStepVariantGenerationSummary({
       key: "nursing",
       kind: "field",
       stepId,
     });
+
     expect(summary?.claimedRunIds).toHaveLength(2);
     expect(summary?.heldBackDrafts).toHaveLength(1);
     expect(summary?.variant).not.toBeNull();
@@ -172,19 +179,23 @@ describe("challenge prepublication review", () => {
       },
       steps: ["challenge"],
     });
+
     const stepId = steps[0]?.id ?? "";
     vi.mocked(checkChallengeQuality).mockRejectedValue(new Error("Review unavailable"));
+
     await expect(
       prepareFieldChallenge({
         target: { field: "nursing", ownerId: null, stepId },
         workflowRunId: randomUUID(),
       }),
     ).rejects.toThrow("Review unavailable");
+
     const summary = await readStepVariantGenerationSummary({
       key: "nursing",
       kind: "field",
       stepId,
     });
+
     expect(summary?.claimedRunIds).toHaveLength(1);
     expect(summary?.heldBackDrafts).toStrictEqual([]);
     expect(summary?.variant).toBeNull();
