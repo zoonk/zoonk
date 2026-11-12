@@ -1297,65 +1297,6 @@
         }
       }
     },
-    "A security check blocked this request. Try again or contact hello@zoonk.com." : {
-      "comment" : "Recovery when the security check blocks a sign-in or a verification code; avoids the verb on the Verify and delete button",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es noch einmal oder schreib an hello@zoonk.com."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una comprobación de seguridad bloqueó esta solicitud. Inténtalo de nuevo o escribe a contacto@zoonk.com."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un contrôle de sécurité a bloqué cette demande. Réessaie ou contacte hello@zoonk.com."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un controllo di sicurezza ha bloccato questa richiesta. Riprova o contatta hello@zoonk.com."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セキュリティチェックでこの操作がブロックされました。もう一度試すか、hello@zoonk.comまでお問い合わせください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "보안 검사로 요청이 차단됐어요. 다시 시도해 보거나 hello@zoonk.com으로 문의해 주세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zabezpieczenia zablokowały tę próbę. Spróbuj ponownie lub napisz na hello@zoonk.com."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O sistema de segurança bloqueou essa solicitação. Tente de novo ou entre em contato pelo e-mail contato@zoonk.com."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir güvenlik kontrolü bu isteği engelledi. Tekrar dene veya hello@zoonk.com adresinden bize ulaş."
-          }
-        }
-      }
-    },
     "About you" : {
       "comment" : "Settings row for what the learner told Zoonk about themselves",
       "localizations" : {

@@ -49,7 +49,7 @@ async function lawGoal({
   });
 
   const goal = await goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId: user.id });
-  const skill = await skillFixture({ name: "Lei nº 8.112" });
+  const skill = await skillFixture({ name: "Lei 8.112/1990" });
   const other = await skillFixture({ name: "Reading comprehension" });
 
   await planFixture({

@@ -264,6 +264,65 @@ const SYLLABI: Exam[] = [
   },
 ];
 
+const BRAZILIAN_LAW_SITES = ["planalto.gov.br", "camara.leg.br", "senado.leg.br", "lexml.gov.br"];
+
+const LAWS: Exam[] = [
+  {
+    expected: {
+      minOfficialSites: 2,
+      noticeHints: ["12813", "12.813"],
+      officialDomains: BRAZILIAN_LAW_SITES,
+    },
+    id: "lei-12813-2013",
+    language: "pt",
+    plan: {
+      country: "BR",
+      name: "Lei nº 12.813/2013",
+      officialDomains: ["planalto.gov.br", "camara.leg.br"],
+      queries: [
+        "Lei nº 12.813/2013 texto compilado",
+        "Lei 12.813 de 2013 conflito de interesses texto atualizado",
+      ],
+    },
+  },
+  {
+    expected: {
+      minOfficialSites: 2,
+      noticeHints: ["9784", "9.784"],
+      officialDomains: BRAZILIAN_LAW_SITES,
+    },
+    id: "lei-9784-1999",
+    language: "pt",
+    plan: {
+      country: "BR",
+      name: "Lei nº 9.784/1999",
+      officialDomains: ["planalto.gov.br", "camara.leg.br"],
+      queries: [
+        "Lei nº 9.784/1999 texto compilado",
+        "Lei 9.784 de 1999 processo administrativo federal texto atualizado",
+      ],
+    },
+  },
+  {
+    expected: {
+      minOfficialSites: 2,
+      noticeHints: ["constituicao", "constituição"],
+      officialDomains: BRAZILIAN_LAW_SITES,
+    },
+    id: "constituicao-1988",
+    language: "pt",
+    plan: {
+      country: "BR",
+      name: "Constituição da República Federativa do Brasil de 1988",
+      officialDomains: ["planalto.gov.br", "senado.leg.br", "camara.leg.br"],
+      queries: [
+        "Constituição Federal de 1988 texto compilado",
+        "Constituição da República Federativa do Brasil texto atualizado emendas",
+      ],
+    },
+  },
+];
+
 const COPIES: (Exam & { unreadable: string[] })[] = [
   {
     expected: {
@@ -316,6 +375,12 @@ export const TEST_CASES: TestCase<FindOfficialSourcesExpected, FindOfficialSourc
     id: `${syllabus.id}:parallel`,
     language: syllabus.language,
     userInput: { plan: syllabus.plan, searchTool: "parallel" as const, topic: "syllabus" as const },
+  })),
+  ...LAWS.map((law) => ({
+    expected: law.expected,
+    id: `${law.id}:parallel`,
+    language: law.language,
+    userInput: { plan: law.plan, searchTool: "parallel" as const, topic: "regulation" as const },
   })),
   ...COPIES.map((exam) => ({
     expected: exam.expected,

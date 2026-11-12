@@ -4,7 +4,7 @@ import XCTest
 
 final class SessionStoreTests: XCTestCase {
   @MainActor
-  func testDeletionCodeUsesCurrentAccountAndOriginalBearerWhileLoginStaysAnonymous() async {
+  func testDeletionCodeGoesToCurrentAccountEmail() async {
     let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
     api.emailCodeResult = .success(())
     let store = SessionCredentialStoreSpy(token: "old-session")
@@ -12,11 +12,7 @@ final class SessionStoreTests: XCTestCase {
     await session.restore()
     let sent = await session.sendAccountDeletionEmailCode()
     XCTAssertTrue(sent)
-    XCTAssertEqual(api.emailCodeRequests.last?.email, "learner@zoonk.test")
-    XCTAssertEqual(api.emailCodeRequests.last?.token, "old-session")
-    let loginSent = await session.sendEmailCode(email: "another@zoonk.test")
-    XCTAssertTrue(loginSent)
-    XCTAssertNil(api.emailCodeRequests.last?.token)
+    XCTAssertEqual(api.emailCodeRequests.last, "learner@zoonk.test")
     XCTAssertEqual(store.savedTokens, [])
   }
 
@@ -27,8 +23,8 @@ final class SessionStoreTests: XCTestCase {
       api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
     await session.restore()
     for (error, failure) in [
-      (AccountAPIError.botDetected, AccountFailure.botDetected),
-      (.network, .network), (.rateLimited, .rateLimited), (.invalidEmail, .invalidEmail),
+      (AccountAPIError.network, AccountFailure.network), (.rateLimited, .rateLimited),
+      (.invalidEmail, .invalidEmail),
       (.invalidResponse, .emailCodeDelivery), (.unauthorized, .emailCodeDelivery),
     ] {
       api.emailCodeResult = .failure(error)
@@ -45,7 +41,7 @@ final class SessionStoreTests: XCTestCase {
       let account = makeAccount()
       let api = SessionStoreAPIStub(currentAccountResult: .success(account))
       let gate = CurrentAccountRequestGate()
-      api.emailCodeHandler = { _, _ in
+      api.emailCodeHandler = { _ in
         _ = await gate.load()
         if let error { throw error }
       }
@@ -69,7 +65,7 @@ final class SessionStoreTests: XCTestCase {
     let account = makeAccount()
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
     let gate = CurrentAccountRequestGate()
-    api.emailCodeHandler = { _, _ in _ = await gate.load() }
+    api.emailCodeHandler = { _ in _ = await gate.load() }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
     await session.restore()
@@ -92,7 +88,7 @@ final class SessionStoreTests: XCTestCase {
         currentAccountResult: .success(account),
         emailSignInResult: .success("replacement-session"))
       let gate = CurrentAccountRequestGate()
-      api.emailCodeHandler = { _, _ in
+      api.emailCodeHandler = { _ in
         _ = await gate.load()
         if let error { throw error }
       }
@@ -123,7 +119,7 @@ final class SessionStoreTests: XCTestCase {
       let api = SessionStoreAPIStub(
         currentAccountResult: .success(account), signOutResult: .success(()))
       let gate = CurrentAccountRequestGate()
-      api.emailCodeHandler = { _, _ in
+      api.emailCodeHandler = { _ in
         _ = await gate.load()
         if let error { throw error }
       }
@@ -156,7 +152,7 @@ final class SessionStoreTests: XCTestCase {
       api.appleSubscriptionResult = .success(
         AppleSubscriptionSynchronization(account: account, isActive: true))
       let gate = CurrentAccountRequestGate()
-      api.emailCodeHandler = { _, _ in
+      api.emailCodeHandler = { _ in
         _ = await gate.load()
         if let error { throw error }
       }
@@ -202,7 +198,7 @@ final class SessionStoreTests: XCTestCase {
       let account = makeAccount()
       let api = SessionStoreAPIStub(currentAccountResult: .success(account))
       let gate = CurrentAccountRequestGate()
-      api.emailCodeHandler = { _, _ in
+      api.emailCodeHandler = { _ in
         _ = await gate.load()
         if let error { throw error }
       }
@@ -242,7 +238,7 @@ final class SessionStoreTests: XCTestCase {
     let api = SessionStoreAPIStub(currentAccountResult: .success(account))
     let deliveryGate = CurrentAccountRequestGate()
     let profileGate = CurrentAccountRequestGate()
-    api.emailCodeHandler = { _, _ in _ = await deliveryGate.load() }
+    api.emailCodeHandler = { _ in _ = await deliveryGate.load() }
     api.updateProfileHandler = { _, _, _ in await profileGate.load() }
     let session = makeSession(
       api: api, credentialStore: SessionCredentialStoreSpy(token: "old-session"))
@@ -1224,9 +1220,9 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var guestSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
-  var emailCodeRequests = [(email: String, token: String?)]()
+  var emailCodeRequests = [String]()
   var emailSignInGuestTokens = [String?]()
-  var emailCodeHandler: (@MainActor (String, String?) async throws -> Void)?
+  var emailCodeHandler: (@MainActor (String) async throws -> Void)?
   var deletionHandler:
     (
       @MainActor (String, AppleSignInCredentials?, EmailReauthenticationCredentials?) async throws
@@ -1289,9 +1285,9 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     try guestSignInResult.get()
   }
 
-  func sendEmailCode(email: String, token: String?) async throws {
-    emailCodeRequests.append((email, token))
-    if let emailCodeHandler { return try await emailCodeHandler(email, token) }
+  func sendEmailCode(email: String) async throws {
+    emailCodeRequests.append(email)
+    if let emailCodeHandler { return try await emailCodeHandler(email) }
     try emailCodeResult.get()
   }
 
@@ -1390,7 +1386,7 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func sendEmailCode(email: String, token: String?) async throws {
+  func sendEmailCode(email: String) async throws {
     throw AccountAPIError.invalidResponse
   }
 

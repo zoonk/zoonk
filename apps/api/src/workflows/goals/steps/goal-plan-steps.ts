@@ -11,12 +11,10 @@ import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-sk
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { isNoticeLandingExpiredError } from "@zoonk/core/plans/notice-wait";
 import {
-  type PlanMemorySearch,
   type PlanSetupTask,
   fitPlanToRoutine,
   listPlanSetupTasks,
   runPlanSetupTask,
-  searchRoutineMemory,
   selectRoutineMemory,
 } from "@zoonk/core/plans/setup";
 import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
@@ -120,19 +118,10 @@ export async function runPlanSetupTaskStep(
   await runPlanSetupTask(input);
 }
 
-export async function searchRoutineMemoryStep(goalId: string): Promise<PlanMemorySearch | null> {
+export async function selectRoutineMemoryStep(goalId: string): Promise<string[] | null> {
   "use step";
 
-  return searchRoutineMemory(goalId);
-}
-
-export async function selectRoutineMemoryStep(input: {
-  goalId: string;
-  terms: string[];
-}): Promise<string[]> {
-  "use step";
-
-  return selectRoutineMemory(input);
+  return selectRoutineMemory(goalId);
 }
 
 export async function fitPlanToRoutineStep(input: {

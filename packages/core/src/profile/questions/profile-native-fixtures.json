@@ -980,6 +980,118 @@
       "answer": {
         "answer": {
           "declined": false,
+          "form": "feminine"
+        },
+        "question": "addressForm"
+      },
+      "view": {
+        "id": "addressForm",
+        "options": [
+          {
+            "description": null,
+            "id": "feminine",
+            "label": "Feminine forms"
+          },
+          {
+            "description": null,
+            "id": "masculine",
+            "label": "Masculine forms"
+          },
+          {
+            "description": null,
+            "id": "neutral",
+            "label": "Neutral wording"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "feminine"
+          ],
+          "studies": [],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
+          "form": "neutral"
+        },
+        "question": "addressForm"
+      },
+      "view": {
+        "id": "addressForm",
+        "options": [
+          {
+            "description": null,
+            "id": "feminine",
+            "label": "Feminine forms"
+          },
+          {
+            "description": null,
+            "id": "masculine",
+            "label": "Masculine forms"
+          },
+          {
+            "description": null,
+            "id": "neutral",
+            "label": "Neutral wording"
+          }
+        ],
+        "saved": {
+          "picks": [
+            "neutral"
+          ],
+          "studies": [],
+          "text": ""
+        },
+        "status": "answered",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": true,
+          "form": null
+        },
+        "question": "addressForm"
+      },
+      "view": {
+        "id": "addressForm",
+        "options": [
+          {
+            "description": null,
+            "id": "feminine",
+            "label": "Feminine forms"
+          },
+          {
+            "description": null,
+            "id": "masculine",
+            "label": "Masculine forms"
+          },
+          {
+            "description": null,
+            "id": "neutral",
+            "label": "Neutral wording"
+          }
+        ],
+        "saved": {
+          "picks": [],
+          "studies": [],
+          "text": ""
+        },
+        "status": "declined",
+        "version": 1
+      }
+    },
+    {
+      "answer": {
+        "answer": {
+          "declined": false,
           "needs": [],
           "note": "Use diagrams for me",
           "soundEffects": false

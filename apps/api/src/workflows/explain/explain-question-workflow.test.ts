@@ -483,7 +483,7 @@ describe(explainQuestionWorkflow, () => {
     mockGenerality(true);
 
     vi.mocked(generateQuickExplanation).mockResolvedValue(
-      taskResult({ ...broken, screens: broken.screens.slice(0, 2) }, "openai/gpt-6-luna"),
+      taskResult({ ...broken, description: "" }, "openai/gpt-6-luna"),
     );
 
     await expect(

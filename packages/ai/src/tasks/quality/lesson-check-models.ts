@@ -22,15 +22,27 @@ const ALPHABET_REVIEWERS = [
   "openai/gpt-6.1-sol",
 ] as const;
 
+/**
+ * On 9 slips learners met (#2506, #2414) and 4 clean lessons, 3 runs each (11 Nov 2026), Sonnet 5.5
+ * caught 26 of 27 slips on their screen and blocked no clean lesson, at $18 per 1k reviews; Gemini
+ * 3.8 Flash caught 24, blocked 2 and costs about the same, with a 76 s p95. Haiku 5.5 and Gemini
+ * 3.5 Flash-Lite missed a third of the slips. Luna, Terra and Sol blocked 9 to 12 of the 12 clean
+ * runs over respelling conventions, so no OpenAI model reviews these lessons.
+ */
+const LANGUAGE_REVIEWERS = ["anthropic/claude-sonnet-5.5", "google/gemini-3.8-flash"] as const;
+
+const REVIEWERS = {
+  alphabet: ALPHABET_REVIEWERS,
+  language: LANGUAGE_REVIEWERS,
+  written: WRITTEN_REVIEWERS,
+} as const;
+
 export function getLessonCheckModels({
-  alphabet = false,
+  kind = "written",
   writerModel,
 }: {
-  alphabet?: boolean;
+  kind?: keyof typeof REVIEWERS;
   writerModel: string;
 }): { fallbackModels: string[]; model: string } {
-  return pickReviewers({
-    reviewers: alphabet ? ALPHABET_REVIEWERS : WRITTEN_REVIEWERS,
-    writerModel,
-  });
+  return pickReviewers({ reviewers: REVIEWERS[kind], writerModel });
 }

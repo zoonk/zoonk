@@ -223,6 +223,53 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     },
   );
 
+  it("serves a shared answer to a learner with a saved address form", async () => {
+    const [shared, author, learner] = await Promise.all([
+      sharedLesson(),
+      userFixture(),
+      userFixture(),
+    ]);
+
+    await learningProfileFixture({ addressForm: "feminine", userId: learner.id });
+
+    const first = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: author.id,
+    });
+
+    await answerQuestion({ questionId: first.id, text: "A general explanation." });
+
+    const asked = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: learner.id,
+    });
+
+    await expect(claimLessonQuestionAnswer({ questionId: asked.id })).resolves.toMatchObject({
+      answer: "A general explanation.",
+      status: "shared",
+    });
+  });
+
+  it("writes a shared answer without the address form of the learner who asked first", async () => {
+    const [shared, learner] = await Promise.all([sharedLesson(), userFixture()]);
+    await learningProfileFixture({ addressForm: "feminine", userId: learner.id });
+
+    const asked = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: learner.id,
+    });
+
+    const claim = await claimReady(asked.id);
+    expect(claim.shareAnswer).toBe(true);
+    expect(claim.addressForm).toBeUndefined();
+  });
+
   it("writes a suggestion's answer once, without memory, for everyone who taps it on the screen", async () => {
     const [shared, first, second] = await Promise.all([
       sharedLesson(),

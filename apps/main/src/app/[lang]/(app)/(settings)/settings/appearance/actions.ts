@@ -1,5 +1,7 @@
 "use server";
 
+import { getLearnerSummary } from "@zoonk/core/learner/summary";
+import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { updateLearningProfile } from "@zoonk/core/profile/update";
 import { getSession } from "@zoonk/core/users/session";
@@ -33,6 +35,10 @@ export async function setSoundsEnabledAction(soundsEnabled: boolean): Promise<bo
 /** Null clears it. */
 export async function setHomeCountryAction(homeCountry: unknown): Promise<boolean> {
   return saveProfile({ homeCountry });
+}
+
+export async function applyHomeCountryAction(homeCountry: unknown): Promise<LearnerSummary | null> {
+  return (await saveProfile({ homeCountry })) ? getLearnerSummary() : null;
 }
 
 /** The browser keeps it for a visitor; a guest's or learner's account keeps it too. */

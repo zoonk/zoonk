@@ -20,6 +20,7 @@ export function StepForm({
   children,
   continueLabel,
   description,
+  formNoValidate,
   notice,
   onContinue,
   onSkip,
@@ -34,6 +35,7 @@ export function StepForm({
   children?: React.ReactNode;
   continueLabel?: string;
   description?: React.ReactNode;
+  formNoValidate?: boolean;
   /** A quiet line above the buttons, so it never moves the choices. */
   notice?: React.ReactNode;
   onContinue: () => void;
@@ -78,6 +80,7 @@ export function StepForm({
           <OnboardingPrimaryButton
             busy={sender === "continue"}
             disabled={!canContinue || pending}
+            formNoValidate={formNoValidate}
             type="submit"
             {...FORWARD_ICON}
           >

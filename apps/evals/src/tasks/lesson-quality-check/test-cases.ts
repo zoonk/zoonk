@@ -355,6 +355,51 @@ export const TEST_CASES: TestCase<
     }),
   },
   {
+    expected: { screen: 7, verdict: "fail" },
+    id: "pt-regra-minutes-per-hour-varies",
+    userInput: plant(regra, 7, {
+      ...(screenOf(regra, 7) as Extract<WrittenScreen, { kind: "mathCheck" }>),
+      context:
+        "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo. Uma hora tem {minutos} minutos.",
+      correctReason:
+        "Com {impressoras} impressoras fixas, o tempo cresce na mesma razão que a produção, e cada hora vale {minutos} minutos.",
+      math: {
+        answer: 300,
+        commonMistakes: [
+          {
+            expression: "horas*meta/etiquetas",
+            misconception: "Esqueceu de converter",
+            reason: "Você achou o prazo em horas, mas a pergunta pede minutos.",
+          },
+          {
+            expression: "horas*etiquetas/meta*minutos",
+            misconception: "Razão invertida",
+            reason: "Com as impressoras fixas, produzir mais etiquetas leva mais tempo, não menos.",
+          },
+        ],
+        solution: "horas*meta/etiquetas*minutos",
+        steps: [
+          {
+            expression: "horas*meta/etiquetas",
+            text: "Multiplique {horas} pela razão entre {meta} e {etiquetas}: {result} horas.",
+          },
+          { expression: "horas*meta/etiquetas*minutos", text: "Em minutos, são {result}." },
+        ],
+        tolerance: { kind: "absolute", value: 0 },
+        unit: "minutos",
+        variables: [
+          { max: 5, min: 2, name: "impressoras", step: 1, unit: null, value: 2 },
+          { max: 160, min: 40, name: "etiquetas", step: 40, unit: "etiquetas", value: 80 },
+          { max: 5, min: 1, name: "horas", step: 1, unit: "horas", value: 2 },
+          { max: 400, min: 200, name: "meta", step: 40, unit: "etiquetas", value: 200 },
+          { max: 90, min: 30, name: "minutos", step: 15, unit: "minutos", value: 60 },
+        ],
+      },
+      question:
+        "Mantendo as mesmas impressoras, quantos minutos elas levam para fazer {meta} etiquetas?",
+    }),
+  },
+  {
     expected: { screen: 5, verdict: "fail" },
     id: "pt-regra-case-before-shown",
     userInput: plant(regra, 5, {

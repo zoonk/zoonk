@@ -10,7 +10,7 @@ import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboardi
  */
 export type GoalError = { limit?: GoalLimitReason; message: string; needsAccount: boolean };
 
-const ACCOUNT_REASONS = new Set<GoalLimitReason>(["browserBlocked", "guest", "signUpRequired"]);
+const ACCOUNT_REASONS = new Set<GoalLimitReason>(["guest", "signUpRequired"]);
 
 export function needsAccountFor(reason: GoalLimitReason): boolean {
   return ACCOUNT_REASONS.has(reason);
@@ -25,12 +25,6 @@ export function useGoalLimitMessage() {
         "Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
       message:
         "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.",
-    }),
-    browserBlocked: t({
-      description:
-        "Shown when automated bot protection refuses to let this browser continue without an account.",
-      message:
-        "A security check blocked this browser. Try another browser, or create a free account.",
     }),
     dailyExplanations: t(
       "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
@@ -110,10 +104,6 @@ export function useStartError() {
 
     if (outcome.status === "signUpRequired") {
       return { message: goalLimitMessage("signUpRequired"), needsAccount: true };
-    }
-
-    if (outcome.status === "browserBlocked") {
-      return { message: goalLimitMessage("browserBlocked"), needsAccount: true };
     }
 
     return {

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { labelSchema } from "../../steps/contract/content-schemas";
-import { unitSchema } from "../activity-schemas";
+import { aimForItems, unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import {
   binomialHitProbability,
@@ -15,7 +15,7 @@ const MAX_SIDES = 20;
 const MAX_DAYS = 366;
 const MIN_RUNS = 10;
 const MAX_RUNS = 10_000;
-const MAX_SAMPLE_SIZES = 5;
+const SAMPLE_SIZES_TARGET = 5;
 const MAX_SAMPLE_SIZE = 100_000;
 
 const hitSchema = z
@@ -75,7 +75,7 @@ const randomSimulationFields = z.discriminatedUnion("mode", [
       sampleSizes: z
         .array(z.number().int().min(2).max(MAX_SAMPLE_SIZE))
         .min(2)
-        .max(MAX_SAMPLE_SIZES),
+        .describe(aimForItems(SAMPLE_SIZES_TARGET)),
       sizeLabel: labelSchema.optional(),
       unit: unitSchema.optional(),
     })

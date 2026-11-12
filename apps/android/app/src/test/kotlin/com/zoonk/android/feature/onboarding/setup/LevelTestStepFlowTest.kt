@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -119,7 +120,11 @@ class LevelTestStepFlowTest {
         }
     }
 
-    private fun tap(text: String) = rule.onNodeWithText(text).performScrollTo().performClick()
+    private fun tap(text: String) {
+        val node = rule.onNodeWithText(text)
+        if (!node.isDisplayed()) node.performScrollTo()
+        node.performClick()
+    }
 
     @Test
     fun openingItOnlyReads() {

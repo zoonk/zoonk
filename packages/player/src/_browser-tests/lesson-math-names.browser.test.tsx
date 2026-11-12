@@ -5,7 +5,7 @@ import { page } from "vitest/browser";
 import { MODULE_LOAD_TIMEOUT_MS } from "../_test-utils/module-load";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
-import { contentStep, explanationStep } from "../preview/preview-steps";
+import { activityStep, contentStep, explanationStep } from "../preview/preview-steps";
 
 const POWERS_OF_TEN_HOOK = {
   options: [
@@ -46,6 +46,31 @@ describe("lesson math in accessible names", () => {
 
     await expect.element(radio("10 to the power of −8 Your guess")).toBeChecked();
     await expect.element(radio("10 squared Correct")).toBeVisible();
+  });
+
+  it("reads an activity check's options by the lesson math rule", async () => {
+    const { areaModel } = activityContentFixtures;
+    const [first, second, third] = areaModel.check.options;
+
+    const content = {
+      ...areaModel,
+      check: {
+        ...areaModel.check,
+        options: [
+          { ...first, text: "$10^2$ m²" },
+          { ...second, text: "It costs $5 and $10" },
+          { ...third, text: String.raw`Pay \$5` },
+        ],
+      },
+    };
+
+    const lesson = buildLesson([activityStep({ content })]);
+    renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+    await expect.element(radio("10 squared m²")).toBeVisible();
+    await expect.element(radio("It costs $5 and $10")).toBeVisible();
+    await expect.element(radio("Pay $5")).toBeVisible();
+    expect(document.querySelectorAll("[data-slot='answer-option'] math")).toHaveLength(1);
   });
 
   it("names an explanation's title, table headers and explored model in words", async () => {

@@ -7,7 +7,7 @@ const auth = vi.hoisted(() => ({
 
 const api = vi.hoisted(() => ({ sendFromBrowser: vi.fn<() => Promise<Response | null>>() }));
 
-// Better Auth's anonymous sign-in needs BotID and a server; the test answers it by hand.
+// Better Auth's anonymous sign-in needs a server; the test answers it by hand.
 vi.mock("@zoonk/auth/client", () => ({
   authClient: { getSession: auth.getSession, signIn: { anonymous: auth.signInAnonymously } },
 }));
@@ -68,19 +68,6 @@ describe("ensureGuestSession", () => {
     const ensureGuestSession = await loadHelper();
 
     await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "failed" });
-  });
-
-  it("says when the bot check refused this browser, since trying again can't help", async () => {
-    auth.getSession.mockResolvedValue(NO_SESSION);
-
-    auth.signInAnonymously.mockResolvedValue({
-      data: null,
-      error: { code: "VERIFICATION_FAILED", message: "Captcha verification failed", status: 403 },
-    });
-
-    const ensureGuestSession = await loadHelper();
-
-    await expect(ensureGuestSession()).resolves.toStrictEqual({ status: "blocked" });
   });
 
   it.each([

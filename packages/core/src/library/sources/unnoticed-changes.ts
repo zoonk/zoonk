@@ -1,6 +1,6 @@
 import "server-only";
 import { type Source, type TransactionClient } from "@zoonk/db";
-import { type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
+import { SOURCE_READ_VERSION, type SourceTopic, hasOwnFreshnessChecks } from "./source-contract";
 import { appendTextChange, summarizeTextChange } from "./text-change";
 
 const NOTICE_FAILURES = 3;
@@ -34,11 +34,14 @@ export type OwedSourceChange = {
  * what was written from the version in between, and a new change gets its notice new attempts.
  */
 export async function oweSourceChangeNotice({
+  firstReadingHash,
   sourceId,
   text,
   topic,
   tx,
 }: {
+  /** `hashFirstReading` of the bytes `text` was read from, for a source stored by that reader. */
+  firstReadingHash: string | null;
   sourceId: string;
   text: string | null;
   topic: SourceTopic;
@@ -58,6 +61,7 @@ export async function oweSourceChangeNotice({
     select: {
       contentHash: true,
       extractedText: true,
+      readVersion: true,
       unnoticedChanges: true,
       unnoticedFromHash: true,
       unnoticedRevision: true,
@@ -67,7 +71,10 @@ export async function oweSourceChangeNotice({
 
   const change = summarizeTextChange({ current: text, previous: stored.extractedText });
 
-  if (!change) {
+  const isRereading =
+    stored.readVersion < SOURCE_READ_VERSION && firstReadingHash === stored.contentHash;
+
+  if (!change || isRereading) {
     return {};
   }
 

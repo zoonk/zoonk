@@ -14,6 +14,7 @@ type PictureRow = {
   generatedAt: Date;
   mediaAsset: MediaAsset | null;
   optionPictures?: (StepOptionPicture & { mediaAsset: MediaAsset })[];
+  pictureRemovedAt: Date | null;
 };
 
 export function getStepImage({
@@ -116,7 +117,9 @@ export function getScreenPictures<TContent extends object>({
   const pictureWaitStartedAt = row.generatedAt.getTime();
 
   const imagePending =
-    missing && isPicturePending({ now: Date.now(), startedAt: pictureWaitStartedAt });
+    missing &&
+    !row.pictureRemovedAt &&
+    isPicturePending({ now: Date.now(), startedAt: pictureWaitStartedAt });
 
   return {
     content: withoutLostNumberedPicture({ content, image, imagePending, kind }),

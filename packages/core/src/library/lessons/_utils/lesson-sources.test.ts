@@ -21,6 +21,15 @@ const STATUTE_PAGES = [
   "Article 41. Salary tables are published every year by the ministry.",
 ];
 
+const LAW_ARTICLES = [
+  "Article 1. This law governs federal agencies and their budgets.",
+  "Article 20. On taking office, the public servant starts a probationary period of 36 months, during which their aptitude is evaluated.",
+  "Article 21. A servant who passes the probationary period gains tenure.",
+  "Article 41. Salary tables are published every year by the ministry.",
+];
+
+const DAY_MS = 86_400_000;
+
 function statute(attrs: Parameters<typeof sourceFixture>[0] = {}) {
   return sourceFixture({
     extractedText: STATUTE_PAGES.join(PAGE_BREAK),
@@ -193,6 +202,95 @@ describe(loadLessonDocuments, () => {
     await expect(
       loadLessonDocuments({ chapterId: null, courseId: null, lessonId: lesson.id, query: QUERY }),
     ).resolves.toStrictEqual({ material: [], sources: [] });
+  });
+
+  it("reads a goal's law however many newer notices and syllabi its goal holds", async () => {
+    const lesson = await libraryLessonFixture();
+    const { goal, user } = await planningGoal({ lessonId: lesson.id });
+
+    const [law, ...notices] = await Promise.all([
+      statute({
+        fetchedAt: new Date(Date.now() - DAY_MS),
+        structure: { images: 0, pages: 3, topic: "regulation" },
+      }),
+      ...Array.from({ length: 6 }, (_, index) =>
+        statute({
+          structure: { images: 0, pages: 3, topic: index % 2 === 0 ? "exam" : "syllabus" },
+          title: `Exam notice ${index}`,
+        }),
+      ),
+    ]);
+
+    await Promise.all(
+      [law, ...notices].map((source) =>
+        learnerSourceFixture({
+          goalId: goal.id,
+          origin: "research",
+          sourceId: source.id,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const documents = await loadLessonDocuments({
+      chapterId: null,
+      courseId: null,
+      lessonId: lesson.id,
+      query: QUERY,
+    });
+
+    expect(documents.sources.map((page) => [page.sourceId, page.text])).toStrictEqual([
+      [law.id, STATUTE_PAGES[1]],
+    ]);
+  });
+
+  it("reads a lesson's law in the articles picked for it, ahead of six newer sources", async () => {
+    const lesson = await libraryLessonFixture();
+    const { goal, user } = await planningGoal({ lessonId: lesson.id });
+
+    const [law, ...newer] = await Promise.all([
+      sourceFixture({
+        extractedText: LAW_ARTICLES.join("\n"),
+        fetchedAt: new Date(Date.now() - DAY_MS),
+        structure: { images: 0, pages: null, topic: "regulation" },
+        title: "Law 8,112 of 1990",
+      }),
+      ...Array.from({ length: 6 }, () => statute()),
+    ]);
+
+    await Promise.all([
+      prisma.lessonSource.create({
+        data: { articles: ["Article 20"], lessonId: lesson.id, sourceId: law.id },
+      }),
+      ...[law, ...newer].map((source) =>
+        learnerSourceFixture({
+          goalId: goal.id,
+          origin: "research",
+          sourceId: source.id,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    const documents = await loadLessonDocuments({
+      chapterId: null,
+      courseId: null,
+      lessonId: lesson.id,
+      query: QUERY,
+    });
+
+    expect(documents.sources[0]).toStrictEqual({
+      page: null,
+      ref: "S1:2",
+      sourceHash: law.contentHash,
+      sourceId: law.id,
+      text: LAW_ARTICLES[1],
+      title: "Law 8,112 of 1990, Article 20",
+      unit: "section",
+    });
+
+    expect(documents.sources.filter((page) => page.sourceId === law.id)).toHaveLength(1);
+    expect(documents.sources.slice(1).map((page) => page.ref)).not.toContain("S1:2");
   });
 
   it("writes a private lesson from its owner's material alone", async () => {

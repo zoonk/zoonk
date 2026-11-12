@@ -59,11 +59,12 @@
   "onboarding_course_starting": "09caea78fbb686ec96c458060b31e914c899006de0cd2be9e4c7faec696a603c",
   "onboarding_create_account": "abdaa9890437a6c571cd0f1ef271e4b8f3a74a823ea928629b6d7dd4c5a462aa",
   "onboarding_create_account_short": "445216e47868e5ed42c9b94c1b77324271b03a94c1363b0e8fc48e17043b9292",
+  "onboarding_date_continue_without": "7a65775ce20ee070b15360e47ab2c2a7fe9d4f0e1502510054b9d27015f2d8d3",
   "onboarding_date_description": "8f49d9f6d16631eb5906d160d8e57774d5ec2969a353bf037fb4d551b2444cc6",
   "onboarding_date_is_today": "131a12bd2f8b18b91d81ae4ec3a1bb9aeb06563fab463cd9bd10bcef8862e3b1",
   "onboarding_date_label": "c01e58072b8801a4a5138cd0116d36c8a6fe882458503be4d61dcd2d3ac065bf",
-  "onboarding_date_none": "db196fae653088cdc7e5be5ddb8bfcc316fab42fc4d72a776b55e88f9ed2ca87",
   "onboarding_date_passed": "153724fbaffe41799cf1e75d6dccfdc8c921141371f125e4325f1022a4b32fad",
+  "onboarding_date_remove": "85fa6f88dfd1f43010bb9645fbc73e3e49ff134dbed877b76e0aa9689b7860ad",
   "onboarding_date_title": "8f093bdb182d7928f4850504f9f824cd22019acc23c065016d96bd2e3215828d",
   "onboarding_day_too_short": "2605917a8d7bf13beb542451443a5094c6779134d3ef54b0204c4b7513453ba4",
   "onboarding_days": "bf3d90b0afe406996b3a86599c43ef9bc89a5dd665ab27ba22a526cd68d50b98",
@@ -157,7 +158,6 @@
   "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
-  "onboarding_limit_guest_blocked": "fd33f4ba4430cd629a269b7be9e0d0ebe7ddbee397257cf702ed6cd860b08ca0",
   "onboarding_limit_monthly_explanations": "ddb33b219c6de18a63c48f1bbeb2d135c92ba917d16dc80a26effa933d63d9b7",
   "onboarding_limit_monthly_goals": "6d69741c7e9fe04eb0c022e8b91bf5251bda41fc804126d9b5519c0e03e55e50",
   "onboarding_limit_sign_up_required": "536e537ec53aeb02218c5fb948c96ea6db3fb5d9ea544aaf37db0b78ca13555e",
@@ -505,7 +505,6 @@
     <string name="onboarding_limit_daily_goals">今日始めた新しい目標の数が、ご利用のプランの上限に達しました。明日もう一度試してください。</string>
     <string name="onboarding_limit_guest">アカウントなしで取り組める目標は1つです。続けるには、無料アカウントを作成してください。</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">セキュリティチェックにより、アカウントなしでは始められません。無料アカウントを作成して続けてください。</string>
     <string name="onboarding_limit_monthly_explanations">今月の新しい質問の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <string name="onboarding_limit_monthly_goals">今月始めた新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
@@ -980,7 +979,8 @@
     <string name="onboarding_another_date">別の日付</string>
     <string name="onboarding_date_title">目標日はありますか？</string>
     <string name="onboarding_date_description">日付を決めなければ、自分のペースですべて学べます。それぞれの節目にいつ到達するかも表示します。</string>
-    <string name="onboarding_date_none">日付を決めずにすべて学ぶ</string>
+    <string name="onboarding_date_continue_without">日付を設定せずに続ける</string>
+    <string name="onboarding_date_remove">日付を削除する</string>
     <string name="onboarding_date_label">日付</string>
     <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
     <string name="onboarding_no_date">日付なし</string>

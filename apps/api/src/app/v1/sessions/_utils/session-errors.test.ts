@@ -4,15 +4,26 @@ import {
   getAppleSessionErrorResponse,
   getEmailSessionErrorResponse,
   getGoogleSessionErrorResponse,
+  getRestoreKeyErrorResponse,
 } from "./session-errors";
 
 const sessionErrorMappers = [
   getAppleSessionErrorResponse,
   getEmailSessionErrorResponse,
   getGoogleSessionErrorResponse,
+  getRestoreKeyErrorResponse,
 ];
 
 describe("native session errors", () => {
+  it("preserves the restore-key attestation refusal", async () => {
+    const response = getRestoreKeyErrorResponse(
+      new NativeAuthResponseError({ body: { code: "BOT_DETECTED" }, statusCode: 403 }),
+    );
+
+    expect(response?.status).toBe(403);
+    await expect(response?.json()).resolves.toMatchObject({ error: { code: "BOT_DETECTED" } });
+  });
+
   it.each(sessionErrorMappers)(
     "maps disposable signup errors to the product contract",
     async (mapError) => {
@@ -28,21 +39,6 @@ describe("native session errors", () => {
       await expect(response?.json()).resolves.toMatchObject({
         error: { code: "DISPOSABLE_EMAIL_NOT_ALLOWED" },
       });
-    },
-  );
-
-  it.each(sessionErrorMappers)(
-    "maps a request that didn't pass BotID to BOT_DETECTED",
-    async (mapError) => {
-      const response = mapError(
-        new NativeAuthResponseError({
-          body: { code: "VERIFICATION_FAILED", message: "Captcha verification failed" },
-          statusCode: 403,
-        }),
-      );
-
-      expect(response?.status).toBe(403);
-      await expect(response?.json()).resolves.toMatchObject({ error: { code: "BOT_DETECTED" } });
     },
   );
 

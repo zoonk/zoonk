@@ -5,6 +5,8 @@
   "profile_questions_activities_placeholder": "2c67021814bafbbb8340e4a443f52f923f8641dfddd15ff1d87095dd3162f160",
   "profile_questions_activities_title": "1507a54ad10080a8c924a8a7bb2f92ac3ad598d5b8fca17c90fdd61bfc8e0fa9",
   "profile_questions_add": "0fd998da3b65a469530a359efff2e62a65379c76926359b53cf3953868dd2ad2",
+  "profile_questions_address_description": "493abaf18c2d175c3a461c139f1d8a5729a1b191abc548bb6aa86a0290960817",
+  "profile_questions_address_title": "8f1bb2143c099398d3113af0fa933da2c6674f18a9509a0829597a355f0b6244",
   "profile_questions_cap": "b5c73dbd62eca612e60bbda65c13d9dddaee0e418058d73ce2538bd9d014e1c8",
   "profile_questions_condition_note": "625f2c3951e7ca14d6ae7d21ac4931686d36a8218e0ee75f2128c8132eeb1918",
   "profile_questions_conditions_description": "8f4b17a8b8ebbab2b334fcb4586990f176f44696b827a96a0cbb1bf21f517498",
@@ -41,6 +43,7 @@
   "profile_questions_read_placeholder": "3412b87512a7b6a67739e038ad2b60c9033c9aa44001d4ed27d019a4c784e7c5",
   "profile_questions_read_title": "dc621a26afbdee067cfdf1c0f8dfb3235ff9b3db492b24a603ca0f45ba2e1787",
   "profile_questions_row_activities": "abe1e99a96f2210a0f3618d65143cdf48bc1fd9133ca0a7bca11a3b2cc0d9be0",
+  "profile_questions_row_address": "b05f4f28ee0f93e4172f76a1ccdc3aebfdf035c7dde562af82cb466b2191b1e5",
   "profile_questions_row_conditions": "65d1e21fcf2618caad791521ec7df3f3604cbc25e4b298fa5ee6e9061748d3c3",
   "profile_questions_row_listen": "d9078de9d0b4ccad3a36f51bbb6e04bd74b534332127ff2dd83e1d81deb82344",
   "profile_questions_row_play": "adc01a3afa04f15237a9487ead3482e0e774364051e333b81f5eef8ddfb6dc17",
@@ -51,6 +54,7 @@
   "profile_questions_row_watch": "b8adb6b92b52f6c41c44838e9a7c637e9e67194fa440d74e97b3a452eb5007f3",
   "profile_questions_row_work": "587e7cecbeb0f9b49040609cbf5f341e8b94737a9118e4a89ba89847f0907457",
   "profile_questions_save_start_lesson": "87c74e72d788578dc5c810f07449c3f719795a433e05246ae06d93f04ecca5ce",
+  "profile_questions_saved": "e9e1691968c1711edaf6a6a4af46a2eb90fadcda1469c4859eccd5f508d7cf96",
   "profile_questions_skip_all": "b7f46740e5ff78336944b35e47649864128d586560b45b21453aa1bcd0fe11c7",
   "profile_questions_skip_all_label": "19d0c2f048a7762075e2bb3986281c54854296a7d20961ce6a7339b7d1680824",
   "profile_questions_something_else": "07cc7052371c309aa28d770116587f6e0e2fa13ce3f18f8ee0e8c48d2ac5fad9",
@@ -130,6 +134,8 @@
     <string name="profile_questions_consent_help">Zoonk le usa per adattarsi a te, ora e nel tempo. Non vengono mai condivise né usate negli esempi delle lezioni. Puoi eliminarle quando vuoi in Impostazioni.</string>
     <string name="profile_questions_support_title">Cosa ti aiuta a imparare?</string>
     <string name="profile_questions_support_description">Scegli tutto ciò che ti aiuta. Non servono etichette o diagnosi.</string>
+    <string name="profile_questions_address_title">Come preferisci che ci rivolgiamo a te?</string>
+    <string name="profile_questions_address_description">Il tuo compagno e i commenti che ricevi useranno queste forme. Le lezioni restano uguali.</string>
     <string name="profile_questions_suggested">Abbiamo verificato cosa aiuta di solito in base alle tue scelte. Cambia quello che vuoi.</string>
     <string name="profile_questions_nothing_particular">Niente in particolare</string>
     <string name="profile_questions_something_else">+ Qualcos’altro che mi aiuta</string>
@@ -157,8 +163,10 @@
     <string name="profile_questions_row_activities">Attività</string>
     <string name="profile_questions_row_conditions">Condizioni</string>
     <string name="profile_questions_row_support">Cosa ti aiuta a imparare</string>
+    <string name="profile_questions_row_address">Come ci rivolgiamo a te</string>
     <string name="profile_questions_not_answered">Nessuna risposta</string>
     <string name="profile_questions_not_shared">Nessun dato condiviso</string>
+    <string name="profile_questions_saved">Salvata</string>
     <string name="profile_questions_add">Aggiungi</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d salvata</item>

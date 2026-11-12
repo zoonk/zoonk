@@ -37,14 +37,6 @@ function getUntrustedOriginErrorResponse(error: unknown) {
 function getSharedSessionErrorResponse(error: unknown) {
   const authError = getAuthError(error);
 
-  if (authError?.code === accessErrorCodes.botDetected) {
-    return createErrorResponse({
-      code: accessErrorCodes.botDetected,
-      message: "This request looks automated",
-      status: httpStatus.forbidden,
-    });
-  }
-
   if (authError?.code === sessionErrorCodes.disposableEmail) {
     return createErrorResponse({
       code: sessionErrorCodes.disposableEmail,
@@ -153,6 +145,14 @@ function getRestoreKeyRefusal(error: unknown) {
 export function getRestoreKeyErrorResponse(error: unknown) {
   if (getAuthError(error)?.statusCode === httpStatus.unauthorized) {
     return errors.unauthorized();
+  }
+
+  if (getAuthError(error)?.code === accessErrorCodes.botDetected) {
+    return createErrorResponse({
+      code: accessErrorCodes.botDetected,
+      message: "This request looks automated",
+      status: httpStatus.forbidden,
+    });
   }
 
   return getSharedSessionErrorResponse(error) ?? getRestoreKeyRefusal(error);

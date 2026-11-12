@@ -110,6 +110,17 @@ describe(getNextLevelTestStep, () => {
     expect(step).toMatchObject({ kind: "question", question: { skill: "listening" } });
   });
 
+  it("asks the other skill when a checked bank has none left for this one", () => {
+    const listeningOnly = {
+      ...bank,
+      questions: bank.questions.filter((question) => question.skill === "listening"),
+    };
+
+    const step = getNextLevelTestStep({ bank: listeningOnly, progress: progress(), start: A2 });
+
+    expect(step).toMatchObject({ kind: "question", question: { skill: "listening" } });
+  });
+
   it("asks a harder question after a right answer", () => {
     const step = getNextLevelTestStep({
       bank,

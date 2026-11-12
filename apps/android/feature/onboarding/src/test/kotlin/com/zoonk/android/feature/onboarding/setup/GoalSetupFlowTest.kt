@@ -133,7 +133,7 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("Is there a date you're aiming for?").assertIsDisplayed()
         assertEquals(listOf(EXAM_GOAL_ID), api.generationReads.distinct())
         api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
-        rule.onNodeWithText("No date, study everything").performScrollTo().performClick()
+        rule.onNodeWithText("Continue without a date").performScrollTo().performClick()
         rule.waitForIdle()
 
         assertEquals(listOf(GOAL_ID, EXAM_GOAL_ID), api.answers.map { it.first })
@@ -141,15 +141,15 @@ class GoalSetupFlowTest {
 
     @Test
     fun skippingSpinsOnlySkipWhileContinueWaits() {
-        api.setup = { setupView(listOf("targetDate", "plan"), kind = "exam") }
+        api.setup = { setupView(listOf("target", "plan"), kind = "exam") }
         api.answerGate = CompletableDeferred()
         show()
 
-        rule.onNodeWithText("No date, study everything").performScrollTo().performClick()
+        rule.onNodeWithText("Skip").performScrollTo().performClick()
         rule.waitForIdle()
 
         rule.onAllNodes(spinning, useUnmergedTree = true).assertCountEquals(1)
-        rule.onNode(spinning and hasAnySibling(hasText("No date, study everything")), useUnmergedTree = true).assertExists()
+        rule.onNode(spinning and hasAnySibling(hasText("Skip")), useUnmergedTree = true).assertExists()
         rule.onNodeWithText("Continue").assertIsNotEnabled()
         api.answerGate?.complete(Unit)
     }

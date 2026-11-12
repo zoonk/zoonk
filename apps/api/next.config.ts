@@ -4,7 +4,6 @@ import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { tailwindRules } from "@zoonk/ui/turbopack";
 import { LOCALE_COOKIE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { AUTH_LOGIN_EXPIRED_ERROR } from "@zoonk/utils/origin";
-import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
@@ -142,7 +141,7 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withSentryConfig(withWorkflow(withBotId(withNextIntl(nextConfig))), {
+export default withSentryConfig(withWorkflow(withNextIntl(nextConfig)), {
   bundleSizeOptimizations: { excludeDebugStatements: true },
   org: "zoonk",
   project: "zoonk-api",

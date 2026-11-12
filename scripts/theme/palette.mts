@@ -46,6 +46,9 @@ export const PALETTE_TOKENS = [
   "viz-accent",
   "viz-secondary",
   "viz-highlight",
+  "viz-series-4",
+  "viz-series-5",
+  "viz-series-6",
   "viz-grid",
 ] as const;
 

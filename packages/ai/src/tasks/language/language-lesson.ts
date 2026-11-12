@@ -13,6 +13,8 @@ import {
 import { formatLocalContext } from "../_utils/language-context";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
+import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
+import fixPrompt from "./language-lesson-fix.prompt.md";
 import respellingForEnglish from "./language-lesson-respelling-en.prompt.md";
 import respellingForSpanish from "./language-lesson-respelling-es.prompt.md";
 import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
@@ -26,23 +28,6 @@ import basePrompt from "./language-lesson.prompt.md";
  */
 const defaultModel = "openai/gpt-6.1-terra";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
-
-const MIN_WORDS = 3;
-const MAX_WORDS = 5;
-const WORD_DISTRACTORS = 3;
-const MIN_SENTENCES = 3;
-const MAX_SENTENCES = 4;
-const MIN_SENTENCE_DISTRACTORS = 2;
-const MAX_SENTENCE_DISTRACTORS = 3;
-const MIN_TIP_EXAMPLES = 2;
-const MAX_TIP_EXAMPLES = 3;
-const MAX_PRACTICE = 2;
-const MIN_PRACTICE_DISTRACTORS = 2;
-const MAX_PRACTICE_DISTRACTORS = 3;
-const MAX_WRITING_ANSWERS = 4;
-const MAX_KEY_POINTS = 3;
-const MIN_SUMMARY_LINES = 2;
-const MAX_SUMMARY_LINES = 4;
 
 const RESPELLING_RULES: Partial<Record<string, string>> = {
   en: respellingForEnglish,
@@ -67,11 +52,6 @@ function getSystemPrompt({
   }).replace("{{READER_RESPELLING}}\n", () => respelling);
 }
 
-const sentenceDistractors = z
-  .array(z.string())
-  .min(MIN_SENTENCE_DISTRACTORS)
-  .max(MAX_SENTENCE_DISTRACTORS);
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: words come before the sentences that use them, and the tip before its practice. */
 const schema = z.object({
   words: z
@@ -83,11 +63,10 @@ const schema = z.object({
         romanization: z.string().nullable(),
         tip: z.string().nullable(),
         note: z.string().nullable(),
-        distractors: z.array(z.string()).length(WORD_DISTRACTORS),
+        distractors: z.array(z.string()).min(1),
       }),
     )
-    .min(MIN_WORDS)
-    .max(MAX_WORDS),
+    .min(1),
   sentences: z
     .array(
       z.object({
@@ -95,20 +74,16 @@ const schema = z.object({
         translation: z.string(),
         explanation: z.string(),
         romanization: z.string().nullable(),
-        distractors: sentenceDistractors,
-        translationDistractors: sentenceDistractors,
+        distractors: z.array(z.string()),
+        translationDistractors: z.array(z.string()),
         speakingPrompt: z.string().nullable(),
       }),
     )
-    .min(MIN_SENTENCES)
-    .max(MAX_SENTENCES),
+    .min(1),
   tip: z.object({
     title: z.string(),
     text: z.string(),
-    examples: z
-      .array(z.object({ sentence: z.string(), translation: z.string() }))
-      .min(MIN_TIP_EXAMPLES)
-      .max(MAX_TIP_EXAMPLES),
+    examples: z.array(z.object({ sentence: z.string(), translation: z.string() })),
   }),
   practice: z
     .array(
@@ -116,27 +91,23 @@ const schema = z.object({
         question: z.string().nullable(),
         template: z.string(),
         answer: z.string(),
-        distractors: z
-          .array(z.string())
-          .min(MIN_PRACTICE_DISTRACTORS)
-          .max(MAX_PRACTICE_DISTRACTORS),
+        distractors: z.array(z.string()).min(1),
         feedback: z.string(),
       }),
     )
-    .min(1)
-    .max(MAX_PRACTICE),
+    .min(1),
   writing: z.object({
     prompt: z.string(),
-    answers: z.array(z.string()).min(1).max(MAX_WRITING_ANSWERS),
-    keyPoints: z.array(z.string()).min(1).max(MAX_KEY_POINTS),
+    answers: z.array(z.string()).min(1),
+    keyPoints: z.array(z.string()).min(1),
   }),
-  summary: z.array(z.string()).min(MIN_SUMMARY_LINES).max(MAX_SUMMARY_LINES),
+  summary: z.array(z.string()).min(1),
 });
 /* oxlint-enable eslint/sort-keys */
 
 export type LanguageLessonContent = z.infer<typeof schema>;
 
-export type LanguageLessonParams = {
+export type LanguageLessonInputs = {
   learnerLanguage: string;
   targetLanguage: string;
   /** A CEFR level ("A2") or band ("A1–A2"). */
@@ -148,6 +119,9 @@ export type LanguageLessonParams = {
   lessonCanDo?: string | null;
   /** Words taught earlier in the course: reused in sentences, never taught again. */
   knownWords?: string[];
+};
+
+export type LanguageLessonParams = LanguageLessonInputs & {
   model?: string;
   serviceTier?: ServiceTier;
   speed?: ServedSpeed;
@@ -160,7 +134,7 @@ function formatList(values: readonly string[] | undefined): string {
   return values && values.length > 0 ? values.map((value) => `- ${value}`).join("\n") : "none";
 }
 
-function buildUserPrompt(params: LanguageLessonParams): string {
+export function formatLanguageLessonInputs(params: LanguageLessonInputs): string {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
     userLanguage: params.learnerLanguage,
@@ -183,11 +157,17 @@ ${formatList(params.knownWords)}
   `;
 }
 
-/**
- * Target-language words and sentences are stored once per target language and reused by every
- * pair; everything else belongs to the pair.
- */
-export async function generateLanguageLesson(params: LanguageLessonParams) {
+async function runLanguageLessonTask({
+  instructions,
+  params,
+  task,
+  userPrompt,
+}: {
+  instructions: string;
+  params: LanguageLessonParams;
+  task: string;
+  userPrompt: string;
+}) {
   const {
     analytics,
     model = defaultModel,
@@ -196,9 +176,6 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
     speed,
     useFallback = true,
   } = params;
-
-  const systemPrompt = getSystemPrompt(params);
-  const userPrompt = buildUserPrompt(params);
 
   const providerOptions = buildProviderOptions({
     fallbackModels,
@@ -212,7 +189,7 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
     analytics,
     generate: () =>
       generateText({
-        instructions: systemPrompt,
+        instructions,
         model,
         output: Output.object({ schema }),
         prompt: userPrompt,
@@ -220,9 +197,59 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
         reasoning,
       }),
     libraryInput: true,
-    systemPrompt,
-    task: "language-lesson",
+    systemPrompt: instructions,
+    task,
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data: result.output,
+    provenance,
+    systemPrompt: instructions,
+    usage: result.usage,
+    userPrompt,
+  };
+}
+
+/**
+ * Target-language words and sentences are stored once per target language and reused by every
+ * pair; everything else belongs to the pair.
+ */
+export async function generateLanguageLesson(params: LanguageLessonParams) {
+  return runLanguageLessonTask({
+    instructions: getSystemPrompt(params),
+    params,
+    task: "language-lesson",
+    userPrompt: formatLanguageLessonInputs(params),
+  });
+}
+
+export type FixLanguageLessonParams = LanguageLessonParams & {
+  lesson: LanguageLessonContent;
+  /** The screens the reviewer numbered, in the order learners see them. */
+  screens: readonly { kind: string; content: unknown }[];
+  /** `screen` indexes `screens`, or is null for the whole lesson. */
+  problems: readonly LessonProblem[];
+};
+
+/** Returns the whole lesson; the writer may leave it unchanged when it finds a problem isn't real. */
+export async function fixLanguageLesson(params: FixLanguageLessonParams) {
+  const screens = params.screens.map((screen, index) => ({ screen: index + 1, ...screen }));
+
+  const userPrompt = `${formatLanguageLessonInputs(params)}
+LESSON:
+${JSON.stringify(params.lesson, null, 1)}
+
+SCREENS:
+${JSON.stringify(screens, null, 1)}
+
+PROBLEMS:
+${formatLessonProblems(params.problems)}
+`;
+
+  return runLanguageLessonTask({
+    instructions: `${getSystemPrompt(params)}\n${fixPrompt}`,
+    params,
+    task: "language-lesson-fix",
+    userPrompt,
+  });
 }

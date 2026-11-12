@@ -34,6 +34,37 @@ describe(checkWrittenChallenge, () => {
     expect(firstQualities.every((quality) => quality === "strong")).toBe(false);
   });
 
+  it("keeps a case whose lists run past their targets", () => {
+    const written = writtenChallengeCaseFixture();
+    const [firstNode, ...otherNodes] = written.nodes;
+    const [firstChoice] = firstNode?.choices ?? [];
+
+    if (!firstNode || !firstChoice) {
+      throw new Error("The fixture needs a decision with a choice");
+    }
+
+    const colleagues = Array.from({ length: 5 }, (_, index) => ({
+      ai: false,
+      expertise: "Knows the numbers",
+      id: `colleague-${index}`,
+      role: "Analyst",
+    }));
+
+    const extraChoices = Array.from({ length: 3 }, (_, index) => ({
+      ...firstChoice,
+      id: `extra-${index}`,
+      quality: "weak" as const,
+    }));
+
+    const long: WrittenCase = {
+      ...written,
+      nodes: [{ ...firstNode, choices: [...firstNode.choices, ...extraChoices] }, ...otherNodes],
+      team: [...written.team, ...colleagues],
+    };
+
+    expect(checkWrittenChallenge({ variant: "work", written: long }).problems).toStrictEqual([]);
+  });
+
   it("keeps every choice and the same order on every check", () => {
     const written = writtenChallengeCaseFixture();
     const ids = choiceIdsByNode(written);

@@ -6,7 +6,12 @@ import {
   promptSchema,
 } from "../../steps/contract/content-schemas";
 import { type ActivityFormulaExample } from "../activity-expected-answer";
-import { expressionSchema, namedValueSchema, toleranceSchema } from "../activity-schemas";
+import {
+  aimForItems,
+  expressionSchema,
+  namedValueSchema,
+  toleranceSchema,
+} from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import {
   MAX_PATTERN_LENGTH,
@@ -16,24 +21,23 @@ import {
 } from "./_utils/pattern-checks";
 import { issue } from "./_utils/template-helpers";
 
-const MAX_SAMPLES = 6;
+const SAMPLE_COUNT_TARGET = 6;
 const SAMPLE_TARGET = 40;
-const MAX_HINTS = 4;
-const MAX_INPUTS = 6;
+const HINTS_TARGET = 4;
 
 const sampleSchema = aimForCharacters(z.string(), SAMPLE_TARGET);
 
 const hintsSchema = z
   .array(z.object({ hint: explanationSchema, mistake: optionTextSchema }).strict())
-  .max(MAX_HINTS);
+  .describe(aimForItems(HINTS_TARGET));
 
 const patternTesterFields = z.discriminatedUnion("mode", [
   z
     .object({
       hints: hintsSchema,
       mode: z.literal("regex"),
-      shouldMatch: z.array(sampleSchema).min(1).max(MAX_SAMPLES),
-      shouldNotMatch: z.array(sampleSchema).min(1).max(MAX_SAMPLES),
+      shouldMatch: z.array(sampleSchema).min(1).describe(aimForItems(SAMPLE_COUNT_TARGET)),
+      shouldNotMatch: z.array(sampleSchema).min(1).describe(aimForItems(SAMPLE_COUNT_TARGET)),
       solution: z.string().min(1).max(MAX_PATTERN_LENGTH),
       task: promptSchema,
     })
@@ -41,16 +45,9 @@ const patternTesterFields = z.discriminatedUnion("mode", [
   z
     .object({
       examples: z
-        .array(
-          z
-            .object({
-              inputs: z.array(namedValueSchema).min(1).max(MAX_INPUTS),
-              output: z.number(),
-            })
-            .strict(),
-        )
+        .array(z.object({ inputs: z.array(namedValueSchema).min(1), output: z.number() }).strict())
         .min(2)
-        .max(MAX_SAMPLES),
+        .describe(aimForItems(SAMPLE_COUNT_TARGET)),
       hints: hintsSchema,
       mode: z.literal("formula"),
       solution: expressionSchema,

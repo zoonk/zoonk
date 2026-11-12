@@ -7,9 +7,7 @@ import {
   PageTitle,
 } from "@zoonk/learn/page";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SectionBarFrame } from "./section-layout";
-
-type SectionHubLink = { href: string; title: string };
+import { SectionBarFrame, type SectionLink, SectionParentLink } from "./section-layout";
 
 export function SectionPage({
   children,
@@ -17,12 +15,15 @@ export function SectionPage({
   eyebrow,
   hub,
   nav,
+  parents,
 }: {
   children: React.ReactNode;
   end?: React.ReactNode;
   eyebrow?: React.ReactNode;
-  hub: SectionHubLink;
+  hub: SectionLink;
   nav: React.ReactNode;
+  /** Pages with pages of their own: those go back to them rather than to the hub. */
+  parents?: SectionLink[];
 }) {
   return (
     <div
@@ -37,6 +38,7 @@ export function SectionPage({
         className="-mx-4 -mt-4 sm:-mx-8 sm:-mt-6 md:hidden"
         end={end}
         hub={hub}
+        parents={parents}
       />
 
       <div className="-mx-2.5 hidden flex-col gap-3 border-b px-2.5 pb-3 md:flex">
@@ -49,7 +51,10 @@ export function SectionPage({
         {nav}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-6">{children}</div>
+      <div className="flex min-w-0 flex-1 flex-col gap-6">
+        <SectionParentLink hub={hub} parents={parents} />
+        {children}
+      </div>
     </div>
   );
 }

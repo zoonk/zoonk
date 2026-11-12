@@ -39,7 +39,6 @@
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:",
-    "botid": "catalog:",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-intl": "catalog:",

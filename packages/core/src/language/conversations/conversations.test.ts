@@ -8,6 +8,7 @@ import {
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -198,10 +199,14 @@ describe("language conversations", () => {
     expect(result.status === "ready" && "instructions" in result.conversation).toBe(false);
   });
 
-  it("speaks the goal's country as it was when the call started, through a reconnect, its checks and its feedback", async () => {
+  it("speaks the goal's country as it was when the call started, through a reconnect, its checks and its feedback, addressed as the learner chose", async () => {
     const { goal, renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    await prisma.goal.update({ data: { targetRegion: "GB" }, where: { id: goal.id } });
+
+    await Promise.all([
+      prisma.goal.update({ data: { targetRegion: "GB" }, where: { id: goal.id } }),
+      learningProfileFixture({ addressForm: "feminine", userId: user.id }),
+    ]);
 
     const { conversationId } = await connectPractice(renting.id);
     await prisma.goal.update({ data: { targetRegion: null }, where: { id: goal.id } });
@@ -232,7 +237,7 @@ describe("language conversations", () => {
     );
 
     expect(writeConversationFeedback).toHaveBeenCalledWith(
-      expect.objectContaining({ targetRegion: "GB" }),
+      expect.objectContaining({ addressForm: "feminine", targetRegion: "GB" }),
     );
   });
 

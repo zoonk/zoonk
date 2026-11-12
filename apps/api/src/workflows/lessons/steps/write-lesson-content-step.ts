@@ -1,5 +1,10 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
+import {
+  type CallWait,
+  type ServedSpeed,
+  type ServiceTier,
+  chooseServiceTier,
+} from "@zoonk/ai/provider-options";
 import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
 import { writeChallengeLessonContent } from "@zoonk/core/library/challenges/write";
 import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
@@ -8,7 +13,10 @@ import {
   getLessonGenerationState,
   isLessonSavedByRun,
 } from "@zoonk/core/library/generation/state";
-import { writeLanguageLessonContent } from "@zoonk/core/library/language/write-lesson-content";
+import {
+  type LanguageLessonDraft,
+  writeLanguageLessonDraft,
+} from "@zoonk/core/library/language/write-lesson-content";
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import {
   type LessonCheckPlan,
@@ -35,11 +43,22 @@ export type LessonWriteOutcome =
 
 export type ImageScope = "personal" | "shared" | null;
 
+export type LanguageDraftStage = {
+  analytics: ReturnType<typeof toContentAnalytics>;
+  draft: LanguageLessonDraft;
+  serviceTier: ServiceTier | undefined;
+  speed: ServedSpeed | undefined;
+  status: "languageDrafted";
+};
+
 type WriteResult =
   | Exclude<LessonWriteOutcome, { status: "heldBack" }>
   | { status: "heldBack" }
-  | { draft: LessonDraftState; imageScope: ImageScope; status: "drafted" };
-export type LessonWriteStage = LessonWriteOutcome | Extract<WriteResult, { status: "drafted" }>;
+  | { draft: LessonDraftState; imageScope: ImageScope; status: "drafted" }
+  | LanguageDraftStage;
+export type LessonWriteStage =
+  | LessonWriteOutcome
+  | Extract<WriteResult, { status: "drafted" | "languageDrafted" }>;
 
 export type WriteInput = {
   analytics?: ContentAnalytics;
@@ -90,7 +109,7 @@ async function write({
   });
 
   if (lesson.targetLanguage) {
-    const result = await writeLanguageLessonContent({
+    const result = await writeLanguageLessonDraft({
       analytics,
       lessonId: input.lessonId,
       serviceTier,
@@ -98,8 +117,8 @@ async function write({
       workflowRunId: input.workflowRunId,
     });
 
-    return result.status === "published"
-      ? { check: null, imageScope: null, owesSentenceOrders: true, status: "published" }
+    return result.status === "drafted"
+      ? { analytics, draft: result.draft, serviceTier, speed, status: "languageDrafted" }
       : toOutcome(result.status);
   }
 
@@ -161,7 +180,7 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
 
   const written = await write({ input, lesson });
 
-  if (written.status === "drafted") {
+  if (written.status === "drafted" || written.status === "languageDrafted") {
     return written;
   }
 

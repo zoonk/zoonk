@@ -2,6 +2,7 @@ import { generateSearchTerms } from "@zoonk/ai/tasks/identity/search-terms";
 import { type FoundSourceDocument } from "@zoonk/ai/tasks/research/find-official-sources";
 import { type SourceTopic } from "@zoonk/core/library/sources/contract";
 import { PermanentDocumentError } from "@zoonk/core/library/sources/fetch";
+import { isOfficialSite } from "@zoonk/core/library/sources/law-identity";
 import {
   findWebSourceCopy,
   getWebSourceSearchSubject,
@@ -22,6 +23,8 @@ type StoreSourceInput = {
   analytics?: ResearchAnalytics;
   document: FoundSourceDocument;
   language: string;
+  /** A page that ends anywhere else is never stored. */
+  officialDomains?: string[];
   topic: SourceTopic;
 };
 
@@ -56,8 +59,17 @@ async function findSourceCopyStep({
 async function storeDownloadedSourceStep(input: StoreSourceInput): Promise<string> {
   "use step";
 
+  const { officialDomains } = input;
+
   const { data, error } = await safeAsync(() =>
-    storeWebSource({ ...input.document, language: input.language, topic: input.topic }),
+    storeWebSource({
+      ...input.document,
+      ...(officialDomains && {
+        acceptUrl: (url) => isOfficialSite({ domains: officialDomains, url }),
+      }),
+      language: input.language,
+      topic: input.topic,
+    }),
   );
 
   if (error instanceof PermanentDocumentError) {
@@ -72,7 +84,8 @@ async function storeDownloadedSourceStep(input: StoreSourceInput): Promise<strin
 }
 
 export async function storeSource(input: StoreSourceInput): Promise<StoredSource> {
-  const subject = await sourceSearchSubjectStep(input);
+  // A copy the Library holds can sit on any site, and one that must be official is downloaded.
+  const subject = input.officialDomains ? null : await sourceSearchSubjectStep(input);
 
   const copyId = subject
     ? await findSourceCopyStep({

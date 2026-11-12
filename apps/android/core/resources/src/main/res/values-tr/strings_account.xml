@@ -14,7 +14,6 @@
   "account_did_not_get_it": "debcf2553481ea248078dfd2ea1b49daf825137fc99d3717337b775e7ec42033",
   "account_email": "b6e4c797b9be0df6cad6cbfd3b080ae240cb7ab71cacc25c9f2ee9238864eb0d",
   "account_email_placeholder": "6732b7cf0b432c0994b0503c73ecb1f54acff4f7b8ff26d4bee45eceb41a3660",
-  "account_failure_bot_detected": "963edb740732031e6b07950d6640b6c5677487cc041757ac3cfd78db5cf128f2",
   "account_failure_code_expired": "1fec3bcedebefdb7056b34ea946b5e43119aa87ac5ae58ec84e2b56702d7cc53",
   "account_failure_code_locked": "a5d0338977bfa043b4ed0162d3616e41e66981f42317a6abc1d2612aba48a3d6",
   "account_failure_disposable_email": "fb651a1f3d4b771f52e622ebe9d948aedddbba8f3c4fbb42724b8e729960e6dd",
@@ -89,7 +88,6 @@
     <string name="account_new_code_failed">Yeni bir kod gönderemedik. Tekrar dene.</string>
     <string name="account_failure_invalid_email">Geçerli bir e-posta adresi gir</string>
     <string name="account_failure_disposable_email">Geçici e-posta adresleri desteklenmiyor. Başka bir e-posta adresi veya asıl adresini gizleyen bir takma adres kullan.</string>
-    <string name="account_failure_bot_detected">Güvenlik kontrolü bu isteği engelledi. Google ile devam et seçeneğini dene veya hello@zoonk.com adresinden bize ulaş.</string>
     <string name="account_failure_network">Zoonk bağlantı kuramadı. Bağlantını kontrol edip tekrar dene.</string>
     <string name="account_failure_rate_limited">Çok fazla deneme yapıldı. Bir dakika bekle, sonra tekrar dene.</string>
     <string name="account_failure_wrong_code">Bu kod doğru değil. E-postayı kontrol edip tekrar dene.</string>

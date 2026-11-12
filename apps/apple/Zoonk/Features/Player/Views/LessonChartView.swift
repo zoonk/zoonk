@@ -3,7 +3,8 @@ import Charts
 import SwiftUI
 
 /// A chart in a lesson or a question, main's `ChartVisual`. A bar chart whose category names don't
-/// fit under its bars runs its bars sideways, each name in full above its bars.
+/// fit under its bars, or whose bars would thin to slivers, runs its bars sideways, each name in
+/// full above its bars.
 struct LessonChartView: View {
   let chart: LessonChart
 
@@ -44,7 +45,7 @@ struct LessonChartView: View {
 
     if chart.chart == .line {
       UprightChart(chart: chart, format: format, scale: nil, nameRoom: nil)
-    } else if let width, let nameRoom, !format.namesFit(nameRoom) {
+    } else if let width, let nameRoom, !format.barsFitUpright(nameRoom) {
       SidewaysBars(chart: chart, format: format, scale: LessonChartScale(chart), width: width)
     } else {
       UprightChart(
@@ -56,8 +57,7 @@ struct LessonChartView: View {
     FlowLayout(spacing: 12, rowSpacing: 4) {
       ForEach(Array(chart.series.enumerated()), id: \.offset) { index, series in
         HStack(spacing: 6) {
-          RoundedRectangle(cornerRadius: 2)
-            .fill(LessonChartFormat.tone(index))
+          LessonSeriesMark(index).swatch(chart.chart)
             .frame(width: 10, height: 10)
 
           Text(series.name)
@@ -65,6 +65,88 @@ struct LessonChartView: View {
             .foregroundStyle(.mutedForeground)
         }
       }
+    }
+  }
+}
+
+/// An open bar's outline as a ring to fill or clip with `FillStyle.outline`, since Swift Charts'
+/// bars take no stroke.
+private struct BarOutline: Shape {
+  let radius: Double
+  let lineWidth: Double
+
+  func path(in rect: CGRect) -> Path {
+    var path = Path(roundedRect: rect, cornerRadius: radius)
+    let inner = rect.insetBy(dx: lineWidth, dy: lineWidth)
+    guard !inner.isEmpty else { return path }
+    path.addRoundedRect(
+      in: inner,
+      cornerSize: CGSize(width: radius - lineWidth, height: radius - lineWidth))
+    return path
+  }
+}
+
+extension FillStyle {
+  fileprivate static let outline = FillStyle(eoFill: true)
+}
+
+/// How a chart draws one series so it stays apart from the others without relying on color, as
+/// main's `getSeriesMark`: a line's points take a shape, and once the six colors are used they come
+/// back drawn open (outlined bars, dashed lines with hollow points).
+private struct LessonSeriesMark {
+  static let openStroke = 1.5
+  static let openFill = 0.2
+  static let pointSize = 8.0
+  private static let tones: [Color] = [
+    .vizAccent, .vizSecondary, .vizHighlight, .vizSeries4, .vizSeries5, .vizSeries6,
+  ]
+  private static let shapes: [BasicChartSymbolShape] = [
+    .circle, .square, .diamond, .triangle, .cross,
+  ]
+
+  let tone: Color
+  let shape: BasicChartSymbolShape
+  let isOpen: Bool
+
+  init(_ index: Int) {
+    tone = Self.tones[index % Self.tones.count]
+    shape = Self.shapes[index % Self.shapes.count]
+    isOpen = (index / Self.tones.count) % 2 == 1
+  }
+
+  var lineStyle: StrokeStyle {
+    StrokeStyle(lineWidth: 2, lineJoin: .round, dash: isOpen ? [5, 4] : [])
+  }
+
+  func outline(radius: Double) -> BarOutline {
+    BarOutline(radius: radius, lineWidth: Self.openStroke)
+  }
+
+  @ViewBuilder
+  func bar(radius: Double) -> some View {
+    if isOpen {
+      RoundedRectangle(cornerRadius: radius)
+        .fill(tone.opacity(Self.openFill))
+        .overlay { outline(radius: radius).fill(tone, style: .outline) }
+    } else {
+      RoundedRectangle(cornerRadius: radius).fill(tone)
+    }
+  }
+
+  /// A solid point. Swift Charts draws a line's own symbols hollow, so only open series use them.
+  var point: some View {
+    shape.foregroundStyle(tone).frame(width: Self.pointSize, height: Self.pointSize)
+  }
+
+  /// A legend's sample of the series, drawn as the plot draws it.
+  @ViewBuilder
+  func swatch(_ chart: LessonChart.Style) -> some View {
+    if chart != .line {
+      bar(radius: 2)
+    } else if isOpen {
+      shape.strokeBorder(lineWidth: Self.openStroke).foregroundStyle(tone)
+    } else {
+      shape.foregroundStyle(tone)
     }
   }
 }
@@ -82,10 +164,6 @@ private struct LessonChartFormat {
 
   let chart: LessonChart
   let width: (TypeStyle, String) -> Double
-
-  static func tone(_ index: Int) -> Color {
-    [Color.vizAccent, .vizSecondary, .vizHighlight][index % 3]
-  }
 
   var valueCaption: String {
     chart.unit.map { "\(chart.valueLabel) (\($0))" } ?? chart.valueLabel
@@ -112,8 +190,9 @@ private struct LessonChartFormat {
     return plot / Double(max(chart.categories.count, 1)) - Self.nameGap
   }
 
-  func namesFit(_ room: Double) -> Bool {
-    LessonChartNames.fitUnderBars(chart.categories, band: room) { width(Self.label, $0) }
+  func barsFitUpright(_ nameRoom: Double) -> Bool {
+    LessonChartNames.fitUnderBars(chart.categories, band: nameRoom) { self.width(Self.label, $0) }
+      && LessonChartBars.fitSideBySide(band: nameRoom + Self.nameGap, series: chart.series.count)
   }
 
   /// What VoiceOver reads for a category: each series' value, named when there are several.
@@ -139,16 +218,24 @@ private struct UprightChart: View {
 
   private struct Point: Identifiable {
     let series: String
+    let mark: LessonSeriesMark
     let category: String
     let value: Double
     var id: String { "\(series)-\(category)" }
   }
 
   private var points: [Point] {
-    chart.series.flatMap { series in
+    chart.series.enumerated().flatMap { index, series in
       zip(chart.categories, series.values).map {
-        Point(series: series.name, category: $0, value: $1)
+        Point(series: series.name, mark: LessonSeriesMark(index), category: $0, value: $1)
       }
+    }
+  }
+
+  /// An open bar's fill is a wash of its color, under its outline.
+  private var tones: [Color] {
+    chart.series.indices.map(LessonSeriesMark.init).map {
+      scale != nil && $0.isOpen ? $0.tone.opacity(LessonSeriesMark.openFill) : $0.tone
     }
   }
 
@@ -157,9 +244,7 @@ private struct UprightChart: View {
       Caption(text: format.valueCaption)
 
       plot
-        .chartForegroundStyleScale(
-          domain: chart.series.map(\.name), range: chart.series.indices.map(LessonChartFormat.tone)
-        )
+        .chartForegroundStyleScale(domain: chart.series.map(\.name), range: tones)
         .chartLegend(.hidden)
         .chartXAxis {
           AxisMarks { value in
@@ -192,31 +277,51 @@ private struct UprightChart: View {
   @ViewBuilder private var plot: some View {
     if let scale {
       Chart(points) { point in
-        BarMark(
-          x: .value(chart.categoryLabel, point.category),
-          yStart: .value(chart.valueLabel, scale.origin),
-          yEnd: .value(chart.valueLabel, point.value)
-        )
-        .foregroundStyle(by: .value(verbatim: "Series", point.series))
-        .position(by: .value(verbatim: "Series", point.series))
-        .cornerRadius(LessonChartFormat.barRadius)
-        .accessibilityLabel(
-          chart.series.count > 1 ? "\(point.category), \(point.series)" : point.category
-        )
-        .accessibilityValue(format.spoken(point.value))
+        bar(point, scale: scale)
+          .foregroundStyle(by: .value(verbatim: "Series", point.series))
+          .accessibilityLabel(
+            chart.series.count > 1 ? "\(point.category), \(point.series)" : point.category
+          )
+          .accessibilityValue(format.spoken(point.value))
+
+        if point.mark.isOpen {
+          bar(point, scale: scale)
+            .foregroundStyle(point.mark.tone)
+            .clipShape(point.mark.outline(radius: LessonChartFormat.barRadius), style: .outline)
+            .accessibilityHidden(true)
+        }
       }
       .chartYScale(domain: scale.domain)
     } else {
       Chart(points) { point in
-        LineMark(
+        let line = LineMark(
           x: .value(chart.categoryLabel, point.category), y: .value(chart.valueLabel, point.value)
         )
         .foregroundStyle(by: .value(verbatim: "Series", point.series))
-        .symbol(by: .value(verbatim: "Series", point.series))
+        .lineStyle(point.mark.lineStyle)
+
+        if point.mark.isOpen {
+          line.symbol(point.mark.shape.strokeBorder(lineWidth: LessonSeriesMark.openStroke))
+        } else {
+          line.symbol { point.mark.point }
+        }
       }
       .chartYScale(
         domain: .automatic(includesZero: chart.axisStart == nil || chart.axisStart == 0))
     }
+  }
+
+  private func bar(_ point: Point, scale: LessonChartScale) -> some ChartContent {
+    BarMark(
+      x: .value(chart.categoryLabel, point.category),
+      yStart: .value(chart.valueLabel, scale.origin),
+      yEnd: .value(chart.valueLabel, point.value),
+      width: .inset(LessonChartBars.inset)
+    )
+    .position(
+      by: .value(verbatim: "Series", point.series), span: .ratio(LessonChartBars.groupShare)
+    )
+    .cornerRadius(LessonChartFormat.barRadius)
   }
 
   @AxisMarkBuilder private func valueMark(_ value: AxisValue) -> some AxisMark {
@@ -294,7 +399,7 @@ private struct SidewaysBars: View {
       VStack(alignment: .leading, spacing: 2) {
         ForEach(Array(chart.series.enumerated()), id: \.offset) { seriesIndex, series in
           if series.values.indices.contains(index) {
-            bar(series.values[index], tone: LessonChartFormat.tone(seriesIndex))
+            bar(series.values[index], mark: LessonSeriesMark(seriesIndex))
           }
         }
       }
@@ -304,14 +409,13 @@ private struct SidewaysBars: View {
     .accessibilityValue(format.spokenValues(at: index))
   }
 
-  private func bar(_ value: Double, tone: Color) -> some View {
+  private func bar(_ value: Double, mark: LessonSeriesMark) -> some View {
     let (start, end) = (x(scale.origin), x(value))
     let label = format.value(value)
     let labelWidth = format.width(LessonChartFormat.value, label)
 
     return ZStack(alignment: .leading) {
-      RoundedRectangle(cornerRadius: LessonChartFormat.barRadius)
-        .fill(tone)
+      mark.bar(radius: LessonChartFormat.barRadius)
         .frame(width: max(abs(end - start), 1), height: barHeight)
         .offset(x: min(start, end))
 

@@ -6,6 +6,11 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import {
+  type AddressForm,
+  addressFormTemplate,
+  getAddressFormPrompt,
+} from "../_utils/address-form";
 import { getLanguagePromptContext } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
@@ -16,7 +21,7 @@ import taskPrompt from "./conversation-feedback.prompt.md";
 
 export type { ConversationTurn } from "./_utils/conversation-transcript";
 
-const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
+const basePrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * Flash Lite over Luna, which costs less: the learner waits on this after a call, and Flash Lite
@@ -25,16 +30,11 @@ const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
 
-const MAX_WENT_WELL = 3;
-const MAX_PRONUNCIATION_WORDS = 2;
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what went well comes before the one fix, and the kind line last. */
 const schema = z.object({
-  wentWell: z.array(z.string()).max(MAX_WENT_WELL),
+  wentWell: z.array(z.string()),
   improve: z.object({ said: z.string(), better: z.string(), why: z.string() }).nullable(),
-  pronunciation: z
-    .array(z.object({ word: z.string(), respelling: z.string(), tip: z.string() }))
-    .max(MAX_PRONUNCIATION_WORDS),
+  pronunciation: z.array(z.object({ word: z.string(), respelling: z.string(), tip: z.string() })),
   encouragement: z.string(),
 });
 /* oxlint-enable eslint/sort-keys */
@@ -42,6 +42,7 @@ const schema = z.object({
 export type WriteConversationFeedbackSchema = z.infer<typeof schema>;
 
 export type WriteConversationFeedbackParams = {
+  addressForm?: AddressForm;
   scenario: { title: string; situation: string; characterName: string; objectives: string[] };
   level: CefrLevel;
   /** Learner turns are untrusted input. */
@@ -94,6 +95,7 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
  */
 export async function writeConversationFeedback(params: WriteConversationFeedbackParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`;
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
@@ -108,7 +110,7 @@ export async function writeConversationFeedback(params: WriteConversationFeedbac
         providerOptions,
         reasoning,
       }),
-    systemPrompt,
+    systemPrompt: `${basePrompt}\n${addressFormTemplate}`,
     task: "conversation-feedback",
   });
 

@@ -10,9 +10,10 @@ import {
 } from "./profile-question-contract";
 import { toProfileFacts } from "./profile-statements";
 
-const goal: Pick<Goal, "details" | "kind" | "planRevealedAt" | "replacesGoalId"> = {
+const goal: Pick<Goal, "details" | "kind" | "language" | "planRevealedAt" | "replacesGoalId"> = {
   details: {},
   kind: "learn",
+  language: "pt",
   planRevealedAt: null,
   replacesGoalId: null,
 };
@@ -24,6 +25,7 @@ describe("profile steps", () => {
     );
 
     expect(getProfileSteps({ answered: {}, goal, memoryEnabled: false })).toStrictEqual([
+      "addressForm",
       "conditions",
       "learningSupport",
     ]);
@@ -36,6 +38,24 @@ describe("profile steps", () => {
       }),
     ).toStrictEqual(PROFILE_QUESTIONS.filter((id) => id !== "work" && id !== "tools"));
   });
+
+  it.each(["de", "es", "fr", "it", "pl", "pt"])(
+    "asks how to address the learner first when the app speaks %s",
+    (language) => {
+      expect(
+        getProfileSteps({ answered: {}, goal: { ...goal, language }, memoryEnabled: true })[0],
+      ).toBe("addressForm");
+    },
+  );
+
+  it.each(["en", "ja", "ko", "tr"])(
+    "leaves the address question to Settings when the app speaks %s",
+    (language) => {
+      expect(
+        getProfileSteps({ answered: {}, goal: { ...goal, language }, memoryEnabled: true }),
+      ).toStrictEqual(PROFILE_QUESTIONS.filter((question) => question !== "addressForm"));
+    },
+  );
 
   it.each([
     { kind: "explain" as const },
@@ -165,5 +185,8 @@ describe("profile statements", () => {
     { answer: { conditions: [{ condition: "other" }], consented: true }, question: "conditions" },
     { answer: { declined: true, favorites: "Star Trek" }, question: "watch" },
     { answer: { picks: ["notAnOption"] }, question: "watch" },
+    { answer: {}, question: "addressForm" },
+    { answer: { declined: true, form: "feminine" }, question: "addressForm" },
+    { answer: { form: "elu" }, question: "addressForm" },
   ])("refuses invalid content: %j", (input) => expect(parseProfileAnswer(input)).toBeNull());
 });

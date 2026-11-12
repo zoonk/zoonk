@@ -30,11 +30,10 @@ export const tr: ExampleSet = {
       review: ["Problemler", "Üslü sayılar"],
       scores: [{ label: "TYT", range: "395–420" }],
     },
-    name: "YKS",
     sittings: ["2026-06-20"],
     timeZone: "Europe/Istanbul",
   },
-  exams: "YKS, LGS, KPSS veya ALES",
+  exams: "YKS, LGS, KPSS, ALES veya okul sınavı",
   move: "london",
   topic: {
     chapters: [

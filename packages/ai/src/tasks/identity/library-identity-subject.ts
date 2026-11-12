@@ -24,6 +24,8 @@ export type LibraryIdentityItem = {
   objectives?: string[];
   publisher?: string | null;
   url?: string | null;
+  /** A stored document's first lines, which say what it holds whatever its title claims. */
+  opening?: string | null;
 };
 
 export type LibraryIdentitySubject = {

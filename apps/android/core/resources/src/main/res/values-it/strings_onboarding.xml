@@ -59,11 +59,12 @@
   "onboarding_course_starting": "f244ac82bbe254d0f42736765f9c2024e82374264d155dc93fb7ced1e4054da2",
   "onboarding_create_account": "e78850413e636c4f82cc1c42ecaae14e893f2bbb2864494cd98d54eae9022fa8",
   "onboarding_create_account_short": "a5d9b2df0bce125231a636928ec5451e5b5587fd09a1bef1e538beae165ca43a",
+  "onboarding_date_continue_without": "fcf33747e3c75d55901d2fe0043b0ec6a7de41a8d232e06277ff19eb8d865d56",
   "onboarding_date_description": "e4b79dacf44d7ccd941a1507888cc72b9109bbd93c7599a305edfe5002b68b47",
   "onboarding_date_is_today": "4d33e0c70777a4b962ee483d57e91c2d08acd26605e21dc593a8e582ef749b59",
   "onboarding_date_label": "2310eb16c128515fa8f99752294ae87ec1f4aee04aa7d24b1fb7993ebdc169a5",
-  "onboarding_date_none": "bf7b3c41888d073a78c21630a4197e4af2a9f15c2a92ef3e49c6065aac975240",
   "onboarding_date_passed": "127ec03127d00181c1cf16202293690535140147139536e34abef7dc736c4966",
+  "onboarding_date_remove": "aa717792b4b8398eb92921c93a18db37cc67007c51ad508f3f59b1b1d5838be0",
   "onboarding_date_title": "2201fad5e322c745adc658488d769b41f6ad7f3410724d582acf7ed3b9e88ab3",
   "onboarding_day_too_short": "51aa184a9fc1312fd1fe67b0f800932f5d6c68415f7006669bbc86cbd93fc52b",
   "onboarding_days": "614e85c7b7367c89745cf0a3505dacf696fc9d77493215cbfda6a26002ddc3c9",
@@ -157,7 +158,6 @@
   "onboarding_limit_daily_explanations": "0d74b6967782fe80d07102d4f4841db8d2d3ecf783a77a5bba85dca514adf54e",
   "onboarding_limit_daily_goals": "9393f11b9c7dacc189cff9ab62ace1590aa6d871bd3cc8b5d8e973d0d136f128",
   "onboarding_limit_guest": "fb6d074dac1248ad841778ece9bef3f66b977643549479a384f906dd9eae169d",
-  "onboarding_limit_guest_blocked": "7f3f67d769f2c834e1ec94017d85266c8901476c86a87ff0b08bef31c59eb3ca",
   "onboarding_limit_monthly_explanations": "c134bbc71f06ca898a93aeed22cde24b737f9890d21a55ab386a4e222fa83ff0",
   "onboarding_limit_monthly_goals": "218eff9c4abc6607ab643914c34ca74a9c7d3fcfd29e3841771931b53a7a81e3",
   "onboarding_limit_sign_up_required": "be0df5e7346178026bffb1d87c76721b216019abae5935bda72487dd8990b2ea",
@@ -505,7 +505,6 @@
     <string name="onboarding_limit_daily_goals">Hai raggiunto il limite di nuovi obiettivi che puoi iniziare oggi con la tua formula. Riprova domani.</string>
     <string name="onboarding_limit_guest">Senza un account puoi seguire un solo obiettivo. Crea un account gratuito per continuare.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">Un controllo di sicurezza impedisce di iniziare senza un account. Crea un account gratuito per continuare.</string>
     <string name="onboarding_limit_monthly_explanations">Hai raggiunto il limite di nuove domande previsto per questo mese dalla formula Free. Riprova il mese prossimo o passa a Plus per continuare subito.</string>
     <string name="onboarding_limit_monthly_goals">Hai raggiunto il limite di nuovi obiettivi che puoi iniziare questo mese con la formula Free. Riprova il mese prossimo o passa a Plus per continuare subito.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
@@ -1018,7 +1017,8 @@
     <string name="onboarding_another_date">Un’altra data</string>
     <string name="onboarding_date_title">Hai una data in mente?</string>
     <string name="onboarding_date_description">Senza una data, studi tutto al tuo ritmo e ti mostriamo quando raggiungerai ogni traguardo.</string>
-    <string name="onboarding_date_none">Studia tutto senza una data</string>
+    <string name="onboarding_date_continue_without">Continua senza data</string>
+    <string name="onboarding_date_remove">Rimuovi la data</string>
     <string name="onboarding_date_label">Data</string>
     <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
     <string name="onboarding_no_date">Nessuna data</string>

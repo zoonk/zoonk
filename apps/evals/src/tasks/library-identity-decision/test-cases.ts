@@ -14,6 +14,22 @@ function pairCase({
   return { expected: { reuse }, id, userInput };
 }
 
+/** The first 1,500 characters of each page's text as core reads it (Nov 2026), Planalto's decoded as the windows-1252 it serves. */
+const LEI_12813_OPENING =
+  "Presidência da República Casa Civil Subchefia para Assuntos Jurídicos LEI Nº 12.813, DE 16 DE MAIO DE 2013. | Mensagem de veto | Dispõe sobre o conflito de interesses no exercício de cargo ou emprego do Poder Executivo federal e impedimentos posteriores ao exercício do cargo ou emprego; e revoga dispositivos da Lei nº 9.986, de 18 de julho de 2000, e das Medidas Provisórias nºs 2.216-37, de 31 de agosto de 2001, e 2.225-45, de 4 de setembro de 2001. | A PRESIDENTA DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: CAPÍTULO I DISPOSIÇÕES GERAIS Art. 1º As situações que configuram conflito de interesses envolvendo ocupantes de cargo ou emprego no âmbito do Poder Executivo federal, os requisitos e restrições a ocupantes de cargo ou emprego que tenham acesso a informações privilegiadas, os impedimentos posteriores ao exercício do cargo ou emprego e as competências para fiscalização, avaliação e prevenção de conflitos de interesses regulam-se pelo disposto nesta Lei. Art. 2º Submetem-se ao regime desta Lei os ocupantes dos seguintes cargos e empregos: I - de ministro de Estado; II - de natureza especial ou equivalentes; III - de presidente, vice-presidente e diretor, ou equivalentes, de autarquias, fundações públicas, empresas públicas ou sociedades de economia mista; e IV - do Grupo-Direção e Assessoramento Superiores - DAS, níveis 6 e 5 ou equivalentes. Parágrafo único. Além dos agentes públicos mencionados nos incisos I a IV, sujeitam-se a";
+
+const LEI_12846_OPENING =
+  "Presidência da República Casa Civil Subchefia para Assuntos Jurídicos LEI Nº 12.846, DE 1º DE AGOSTO DE 2013. | Mensagem de veto Vigência Regulamento Vide Decreto nº 11.129, de 2022 vigência | Dispõe sobre a responsabilização administrativa e civil de pessoas jurídicas pela prática de atos contra a administração pública, nacional ou estrangeira, e dá outras providências. | A PRESIDENTA DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei: CAPÍTULO I DISPOSIÇÕES GERAIS Art. 1º Esta Lei dispõe sobre a responsabilização objetiva administrativa e civil de pessoas jurídicas pela prática de atos contra a administração pública, nacional ou estrangeira. Parágrafo único. Aplica-se o disposto nesta Lei às sociedades empresárias e às sociedades simples, personificadas ou não, independentemente da forma de organização ou modelo societário adotado, bem como a quaisquer fundações, associações de entidades ou pessoas, ou sociedades estrangeiras, que tenham sede, filial ou representação no território brasileiro, constituídas de fato ou de direito, ainda que temporariamente. Art. 2º As pessoas jurídicas serão responsabilizadas objetivamente, nos âmbitos administrativo e civil, pelos atos lesivos previstos nesta Lei praticados em seu interesse ou benefício, exclusivo ou não. Art. 3º A responsabilização da pessoa jurídica não exclui a responsabilidade individual de seus dirigentes ou administradores ou de qualquer pessoa natural, autora, coautora ou partíc";
+
+const CONSTITUTION_OPENING =
+  "| [Image: Brastra.gif (4376 bytes)] | Presidência da República Casa Civil Subchefia para Assuntos Jurídicos | CONSTITUIÇÃO DA REPÚBLICA FEDERATIVA DO BRASIL DE 1988 | Vide Emenda Constitucional nº 91, de 2016 Vide Emenda Constitucional nº 106, de 2020 Vide Emenda Constitucional nº 107, de 2020 (Vide Emenda Constitucional nº 132, de 2023) Vigência (Vide Emenda Constitucional nº 132, de 2023) Vigência | Emendas Constitucionais | Emendas Constitucionais de Revisão | | Ato das Disposições Constitucionais Transitórias Atos decorrentes do disposto no § 3º do art. 5º ÍNDICE TEMÁTICO | Texto compilado PREÂMBULO Nós, representantes do povo brasileiro, reunidos em Assembléia Nacional Constituinte para instituir um Estado Democrático, destinado a assegurar o exercício dos direitos sociais e individuais, a liberdade, a segurança, o bem-estar, o desenvolvimento, a igualdade e a justiça como valores supremos de uma sociedade fraterna, pluralista e sem preconceitos, fundada na harmonia social e comprometida, na ordem interna e internacional, com a solução pacífica das controvérsias, promulgamos, sob a proteção de Deus, a seguinte CONSTITUIÇÃO DA REPÚBLICA FEDERATIVA DO BRASIL. TÍTULO I Dos Princípios Fundamentais Art. 1º A República Federativa do Brasil, formada pela união indissolúvel dos Estados e Municípios e do Distrito Federal, constitui-se em Estado D";
+
+const LEXML_12813_RECORD_OPENING =
+  "[Image: LexML Brasil] Página Anterior | Página Inicial | Pesquisa Avançada Localidade Brasil Autoridade Federal Título Lei nº 12.813, de 16 de Maio de 2013 Data 16/05/2013 Apelido Lei de Conflito de Interesses; Lei de Conflito de Interesses na Administração Pública Federal Apelido LEI-12813-2013-05-16 , Lei de Conflito de Interesses na Administração Pública Federal Ementa Dispõe sobre o conflito de interesses no exercício de cargo ou emprego do Poder Executivo federal e impedimentos posteriores ao exercício do cargo ou emprego; e revoga dispositivos da Lei nº 9.986, de 18 de julho de 2000, e das Medidas Provisórias nºs 2.216-37, de 31 de agosto de 2001, e 2.225-45, de 4 de setembro de 2001. Nome Uniforme urn:lex:br:federal:lei:2013-05-16;12813 Mais detalhes Senado Federal Mais detalhes Câmara dos Deputados Projeto de Origem [ Projeto de Lei (CD) nº 7528/2006 > Projeto de Lei da Câmara nº 26/2012 > Veto nº 14/2013 : Lei nº 12.813 de 16/05/2013 ] Publicação Oficial Publicação Original 2013-05-17 Diário Oficial da União. Seção 1. 17/05/2013. p. 1 Imprensa Nacional (application/pdf)Imprensa Nacional [ http://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp?jornal=1&pagina=1&data=17/05/2013 ] Retificação 2013-05-20 Diário Oficial da União. Seção 1. 20/05/2013. p. 1 Imprensa Nacional (application/pdf)Imprensa Nacional [ http://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp?jornal=1&pagina=1&data=20/05/2013 ] Outras Publicações Texto Atualizado Multivigente Presidência da R";
+
+const CONSTITUTION_ORIGINAL_OPENING =
+  "- Ir ao conteúdo - Ir à navegação principal Página inicial - [Image: Ativar VLibras] - Acessibilidade - Fale Conosco - Congresso - Senado PT - English EN - Español ES Página inicial - Assuntos - Agropecuária - Cidades e transportes - Ciência, tecnologia e comunicações - Consumidor - Direitos humanos - Economia - Educação, cultura e esportes - Meio ambiente e energia - Política e administração pública - Relações exteriores - Saúde - Segurança - Trabalho, previdência e assistência - Institucional - Agenda - Serviços - Presidência - Biblioteca e publicações - Escola da Câmara - Papel e estrutura - História e arquivo - Visite - Deputados - Quem são - Lideranças e bancadas - Frentes e grupos parlamentares - Atividade Legislativa - Propostas legislativas - Plenário - Comissões - Sessões e reuniões - Estudos legislativos - Orçamento da União - Legislação - Entenda o processo legislativo - Participe - Comunicação - Agência Câmara de Notícias - Rádio Câmara - TV Câmara - Banco de Imagens - Assessoria de Imprensa - Comprove uma notícia - Transparência e prestação de contas - Transparência - Prestação de contas - Dados abertos - Acessibilidade - Fale Conosco PT - English EN - Español ES Pesquise no Portal da Câmara 1. Início 2. Atividade Legislativa 3. Legislação 4. Esta página Legislação Legislação Informatizada - CONSTI";
+
 const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
   pairCase({
     candidate: {
@@ -485,6 +501,102 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
       item: {
         description: "The current official text of this law or regulation (country: BR).",
         title: "LGPD",
+      },
+      kind: "researchSource",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      opening: LEI_12813_OPENING,
+      publisher: "Presidência da República",
+      title: "L12813",
+      url: "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12813.htm",
+    },
+    id: "pt-source-topic-law-opening-text",
+    reuse: true,
+    subject: {
+      goal: "Lei nº 12.813/2013",
+      item: {
+        description: "The current official text of this law or regulation (country: BR).",
+        title: "Lei nº 12.813/2013",
+      },
+      kind: "researchSource",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      opening: LEXML_12813_RECORD_OPENING,
+      publisher: "LexML Brasil",
+      title:
+        "Lei nº 12.813, de 16 de Maio de 2013 - Lei de Conflito de Interesses; Lei de Conflito de Interesses na Administração Pública Federal - 12813/13 :: Legislação::Lei 12813/2013 (Federal - Brasil) ::",
+      url: "https://www.lexml.gov.br/urn/urn:lex:br:federal:lei:2013-05-16;12813",
+    },
+    id: "pt-source-topic-law-record-page",
+    reuse: false,
+    subject: {
+      goal: "Lei nº 12.813/2013",
+      item: {
+        description: "The current official text of this law or regulation (country: BR).",
+        title: "Lei nº 12.813/2013",
+      },
+      kind: "researchSource",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      opening: LEI_12846_OPENING,
+      publisher: "Presidência da República",
+      title: "L12813",
+      url: "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12813.htm",
+    },
+    id: "pt-source-topic-law-opening-other-law",
+    reuse: false,
+    subject: {
+      goal: "Lei nº 12.813/2013",
+      item: {
+        description: "The current official text of this law or regulation (country: BR).",
+        title: "Lei nº 12.813/2013",
+      },
+      kind: "researchSource",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      opening: CONSTITUTION_OPENING,
+      publisher: "Presidência da República",
+      title: "Constituição",
+      url: "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+    },
+    id: "pt-source-topic-constitution-compiled",
+    reuse: true,
+    subject: {
+      goal: "Constituição da República Federativa do Brasil de 1988",
+      item: {
+        description: "The current official text of this law or regulation (country: BR).",
+        title: "Constituição da República Federativa do Brasil de 1988",
+      },
+      kind: "researchSource",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      opening: CONSTITUTION_ORIGINAL_OPENING,
+      publisher: "Câmara dos Deputados",
+      title: "CONSTITUIÇÃO DE 1988 - Publicação Original - Portal Câmara dos Deputados",
+      url: "https://www2.camara.leg.br/legin/fed/consti/1988/constituicao-1988-5-outubro-1988-322142-publicacaooriginal-1-pl.html",
+    },
+    id: "pt-source-topic-constitution-original",
+    reuse: false,
+    subject: {
+      goal: "Constituição da República Federativa do Brasil de 1988",
+      item: {
+        description: "The current official text of this law or regulation (country: BR).",
+        title: "Constituição da República Federativa do Brasil de 1988",
       },
       kind: "researchSource",
       language: "pt",

@@ -1,5 +1,6 @@
 import { aimForCharacters } from "@zoonk/utils/character-target";
 import { z } from "zod";
+import { aimForItems } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import {
   CHORD_QUALITIES,
@@ -11,7 +12,7 @@ import {
 } from "./_utils/music";
 import { issue } from "./_utils/template-helpers";
 
-const MAX_NOTES = 6;
+const NOTES_TARGET = 6;
 const NOTATION_TARGET = 1000;
 const MIN_TEMPO = 40;
 const MAX_TEMPO = 220;
@@ -28,7 +29,12 @@ const keyboardTargetSchema = z.discriminatedUnion("kind", [
   z
     .object({ kind: z.literal("chord"), quality: z.enum(CHORD_QUALITIES), root: noteSchema })
     .strict(),
-  z.object({ kind: z.literal("notes"), notes: z.array(noteSchema).min(1).max(MAX_NOTES) }).strict(),
+  z
+    .object({
+      kind: z.literal("notes"),
+      notes: z.array(noteSchema).min(1).describe(aimForItems(NOTES_TARGET)),
+    })
+    .strict(),
 ]);
 
 type KeyboardTarget = z.output<typeof keyboardTargetSchema>;

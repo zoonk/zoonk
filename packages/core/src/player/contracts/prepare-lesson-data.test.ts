@@ -276,7 +276,7 @@ describe(serializeExerciseSteps, () => {
       translationOption({ id: "10", word: "boa noite" }),
       translationOption({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "boa tarde" }),
       translationOption({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "bom dia" }),
-      translationOption({ id: "distractor:ate logo", word: "até logo" }),
+      translationOption({ id: "distractor:até logo", word: "até logo" }),
     ]);
   });
 

@@ -7,14 +7,25 @@ type ExamDayRow = {
 
 type MockScore = { label: string; range: string };
 
-/** One country's exam, written in the page's language, since only that page shows it. */
-export type ExamExample = {
+/** The goal box's example, with the month of the exam's next sitting. */
+type DatedExamGoal = {
   /** Its researched exam days come first while the Library course is published. */
   course?: { brandSlug: string; courseSlug: string };
-  day: readonly [ExamDayRow, ExamDayRow, ExamDayRow, ExamDayRow];
   /** Gets the exam month's name; a language that inflects it ("w maju") writes the month itself. */
   goal: (month: string) => string;
-  /** How people there say they want it, such as "Passar no Enem": the headline's first goal and the example plan's name. */
+  /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
+  sittings: readonly [string, ...string[]];
+  /** An IANA zone; the example counts days from today there. */
+  timeZone: string;
+};
+
+/** The goal box's example, for exams with no shared date, like concursos. */
+type UndatedExamGoal = { goal: string };
+
+/** One country's exam, written in the page's language, since only that page shows it. */
+type ExamExample = (DatedExamGoal | UndatedExamGoal) & {
+  day: readonly [ExamDayRow, ExamDayRow, ExamDayRow, ExamDayRow];
+  /** How people there say they want it, such as "Passar no concurso": the headline's first goal and the example plan's name. */
   headline: string;
   mock: {
     firm: readonly string[];
@@ -24,12 +35,9 @@ export type ExamExample = {
     review: readonly string[];
     scores: readonly [MockScore, ...MockScore[]];
   };
-  name: string;
-  /** Published sittings in order; after the last one, later years keep its weekday until the list is updated. */
-  sittings: readonly [string, ...string[]];
-  /** An IANA zone; the example counts days from today there. */
-  timeZone: string;
 };
+
+export type DatedExamExample = Extract<ExamExample, { sittings: unknown }>;
 
 type CareerTopic = { lessons: number; title: string };
 
@@ -53,7 +61,7 @@ type TopicExample = {
 export type ExampleSet = {
   career: CareerExample;
   exam: ExamExample;
-  /** The exams people there study for, opening the exams section's lead: "Enem, vestibular, concurso ou OAB". */
+  /** The exams people there study for, ending with a school test, as examples of "any exam": "concurso, Enem, OAB, vestibular ou prova da escola". */
   exams: string;
   /** A page never suggests learning the language it's written in, so English pages move to Mexico City to speak Spanish. */
   move: "london" | "mexico-city";
