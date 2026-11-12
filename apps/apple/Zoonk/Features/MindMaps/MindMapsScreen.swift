@@ -233,6 +233,8 @@ private struct MindMapCreateSection: View {
                 comment: "Makes as many chapter maps as one tap can start now")
             }
             .buttonStyle(.outline)
+            .controlSize(.large)
+            .listRowButtonIcon()
           }
 
           if let line {
