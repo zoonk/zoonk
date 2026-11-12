@@ -81,6 +81,7 @@ import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.api.ApiJson
@@ -484,8 +485,9 @@ private fun SlideMessage(
 
 /**
  * A chapter's map: its picture, then its words, in one scroll on a phone; side by side where the
- * screen shows two pages (a book's fold, or a window 840dp and wider). Tapping the picture opens it
- * to zoom, over the deck, so back closes the zoom first.
+ * screen shows two pages (a book's fold, or a window 840dp and wider), the picture as large as its
+ * page holds it whole, from the top as the words start. Tapping the picture opens it to zoom, over
+ * the deck, so back closes the zoom first.
  */
 @Composable
 private fun ChapterSlide(
@@ -513,7 +515,10 @@ private fun ChapterSlide(
             }
 
             fold != null -> {
-                Box(Modifier.width(fold.start).fillMaxHeight().padding(16.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier.width(fold.start).fillMaxHeight().padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
                     ZoomablePicture(map, image.url, onZoom)
                 }
                 Column(
@@ -550,9 +555,9 @@ private fun ZoomablePicture(
     MapPicture(
         url = url,
         contentDescription = null,
+        // A square as wide as it can be, unless the page's height stops it first.
         modifier =
             Modifier
-                .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(shape)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
@@ -562,12 +567,15 @@ private fun ZoomablePicture(
     )
 }
 
-/** The player's map of a lesson's ideas, phone-wide, on the page before the split where the screen spreads, as the player's screen. */
+/**
+ * The player's map of a lesson's ideas, phone-wide and centered; on the page before an unfolded
+ * book's fold, as the player's screen. A window that's only wide keeps it centered, its cards wide.
+ */
 @Composable
 private fun LessonSlide(content: StepContent.Map) {
     var span by remember { mutableStateOf<PageSpan?>(null) }
     BoxWithConstraints(Modifier.fillMaxSize().onPageSpan { span = it }) {
-        val fold = spreadFold(maxWidth, span)
+        val fold = pageFold(maxWidth, span)
         Column(
             (fold?.let { Modifier.width(it.start) } ?: Modifier.fillMaxWidth()).fillMaxHeight().verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
