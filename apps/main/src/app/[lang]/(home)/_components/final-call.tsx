@@ -30,7 +30,7 @@ export async function FinalCall({ startPath }: { startPath: string }) {
             message: "What's your goal?",
           })}
         </h2>
-        <p className="text-lead mt-4.5 max-w-[28em]">
+        <p className="text-lead mt-4.5 max-w-[28em] text-balance">
           {t({
             description:
               "In Brazilian Portuguese: “Conte do seu jeito e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”",
@@ -40,7 +40,12 @@ export async function FinalCall({ startPath }: { startPath: string }) {
         </p>
 
         <div className="max-w-column mt-9 w-full text-left">
-          <LandingGoalBox action={startPath} example="language" id={FINAL_GOAL_ID} />
+          <LandingGoalBox
+            action={startPath}
+            example="language"
+            id={FINAL_GOAL_ID}
+            noteClassName="text-center"
+          />
         </div>
       </div>
     </section>

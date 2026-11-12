@@ -5,9 +5,9 @@ import { useRouter } from "@/i18n/navigation";
 import { getLessonWritingHref } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { withOrigin } from "@/lib/public/public-hrefs";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { LogInIcon, PlayIcon } from "lucide-react";
+import { LogInIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { START_FAILURE_SLOT, getStartControlClassName } from "./public-start";
@@ -111,8 +111,8 @@ export function StartLessonButton({
       <Button
         busy={pending}
         className={getStartControlClassName(className)}
-        icon={<PlayIcon aria-hidden="true" />}
         size="lg"
+        {...FORWARD_ICON}
         type="submit"
       >
         {children}

@@ -115,27 +115,24 @@ async function PlanLinkBody({ params }: Props) {
           )}
         </div>
 
-        <div className="lg:mt-3">
-          <CatalogAsideBlock
-            facts={t("~{time} of study", {
-              time: duration(Math.max(1, approximateMinutes(outline.hours))),
-            })}
-            id="plan-link-phases"
-            title={t({
-              description:
-                "Heading over the list of a shared study plan's parts. “it” is the plan.",
-              message: "What's in it",
-            })}
-          >
-            <NumberedRows
-              rows={outline.phases.map((phase, index) => ({
-                description: phase.milestone ?? undefined,
-                id: String(index),
-                title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
-              }))}
-            />
-          </CatalogAsideBlock>
-        </div>
+        <CatalogAsideBlock
+          facts={t("~{time} of study", {
+            time: duration(Math.max(1, approximateMinutes(outline.hours))),
+          })}
+          id="plan-link-phases"
+          title={t({
+            description: "Heading over the list of a shared study plan's parts. “it” is the plan.",
+            message: "What's in it",
+          })}
+        >
+          <NumberedRows
+            rows={outline.phases.map((phase, index) => ({
+              description: phase.milestone ?? undefined,
+              id: String(index),
+              title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
+            }))}
+          />
+        </CatalogAsideBlock>
       </section>
     </PublicPage>
   );

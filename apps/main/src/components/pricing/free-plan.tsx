@@ -9,6 +9,7 @@ import { getExtracted } from "next-intl/server";
 import { PlanNextStep } from "./for-viewer";
 import {
   PLAN_CARD_CLASS,
+  PLAN_CARD_ROWS_CLASS,
   PLAN_NAME_ROW_CLASS,
   PLAN_PRICE_CLASS,
   PlanIncludes,
@@ -46,7 +47,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
 
   if (viewerState.status === "free") {
     return (
-      <p className="text-muted-foreground flex min-h-10 items-center justify-center text-sm">
+      <p className="text-muted-foreground flex min-h-11 items-center text-sm">
         {t({
           description:
             "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.",
@@ -73,7 +74,10 @@ export async function FreePlan({
   const limits = getFreePlanLimits();
 
   return (
-    <section aria-labelledby={FREE_PLAN_ID} className={cn(SURFACE_CLASS, PLAN_CARD_CLASS)}>
+    <section
+      aria-labelledby={FREE_PLAN_ID}
+      className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, PLAN_CARD_ROWS_CLASS)}
+    >
       <div className={PLAN_NAME_ROW_CLASS}>
         <h2 className="text-base font-semibold tracking-[-0.015em]" id={FREE_PLAN_ID}>
           {t("Free")}

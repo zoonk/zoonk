@@ -1,6 +1,7 @@
 import {
   EYEBROW_CLASS,
   LEAD_CLASS,
+  PUBLIC_BAND_CLASS,
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
 import { getStartControlClassName } from "@/components/public/public-start";
@@ -65,7 +66,8 @@ export async function PricingHero() {
 
 const PRICING_BILLING_SWITCH = "pricing-billing";
 
-const PLANS_GRID_CLASS = "grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5";
+/** Side by side once each card fits its name and the billing switch on one row (`@3xl` in `plan-includes`). */
+const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
 
 export function PricingPlans({
   monthlyPrice,
@@ -77,8 +79,8 @@ export function PricingPlans({
   const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
 
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12 pb-14 sm:pb-20 lg:pb-24")}>
-      <div className={PLANS_GRID_CLASS}>
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "@container pt-12 pb-14 sm:pb-20 lg:pb-24")}>
+      <div className={cn(PLAN_CARDS_CLASS, "lg:gap-5")}>
         <FreePlan currency={currency} />
 
         <PlusPlan
@@ -92,9 +94,6 @@ export function PricingPlans({
 }
 
 const PLUS_PRICING_CLASS = "@container flex max-w-5xl flex-col gap-7";
-
-/** Side by side once each card fits its name and the billing switch on one row. */
-const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
 
 function PlanCardSkeleton() {
   return (
@@ -114,8 +113,8 @@ function PlanCardSkeleton() {
 
 export function PricingQuestions() {
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
-      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12" />
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-14 sm:pt-20 lg:pt-24")}>
+      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-baseline lg:gap-12" />
     </div>
   );
 }
@@ -128,7 +127,8 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
       aria-labelledby="pricing-close"
       className={cn(
         PUBLIC_CONTAINER_CLASS,
-        "flex flex-col items-center pt-28 pb-24 text-center lg:pt-40 lg:pb-36",
+        PUBLIC_BAND_CLASS,
+        "flex flex-col items-center text-center",
       )}
     >
       <h2
@@ -189,7 +189,10 @@ export function PlusPricing({
         <FreePlan currency={currency} usedToday={usedToday} viewerState={viewerState} />
       </div>
 
-      <PlusQuestions className="@3xl:grid @3xl:grid-cols-2 @3xl:gap-4" viewerState={viewerState} />
+      <PlusQuestions
+        className="@3xl:grid @3xl:grid-cols-2 @3xl:items-baseline @3xl:gap-4"
+        viewerState={viewerState}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 export const DISCLOSURE_ANSWER_CLASS =
-  "text-muted-foreground text-[15px] leading-relaxed text-pretty sm:text-base";
+  "text-muted-foreground max-w-column text-[15px] leading-relaxed text-pretty sm:text-base";
 
 export const DISCLOSURE_LINK_CLASS =
   "text-foreground hit-area relative font-medium underline underline-offset-4";

@@ -28,7 +28,7 @@ export function GoalSection({
         <div className="pt-7 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start lg:gap-20 lg:pt-10">
           <div className="flex flex-col items-start">
             <SubjectLabel subject={subject}>{label}</SubjectLabel>
-            <h2 className="text-headline mt-4 sm:text-[2.75rem] sm:leading-12" id={titleId}>
+            <h2 className="text-headline mt-4" id={titleId}>
               {title}
             </h2>
             <p className="text-lead mt-4 max-w-[30em]">{lead}</p>

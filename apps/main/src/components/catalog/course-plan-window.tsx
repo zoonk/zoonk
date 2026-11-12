@@ -3,7 +3,7 @@ import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
-import { RouteTitle } from "@zoonk/learn/route-line";
+import { RouteMark, RouteTitle } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -112,7 +112,8 @@ export async function CoursePlanWindow({
           {title}
         </RouteTitle>
       ) : (
-        <h2 className="text-section" id={titleId}>
+        <h2 className="text-section relative" id={titleId}>
+          <RouteMark className="xl:hidden" down up />
           {title}
         </h2>
       )}

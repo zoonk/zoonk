@@ -116,14 +116,11 @@ export async function HomeFaq() {
       <div
         className={cn(
           PUBLIC_CONTAINER_CLASS,
-          "grid grid-cols-1 gap-8 py-26 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-20 lg:py-36",
+          "grid grid-cols-1 gap-8 py-26 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20 lg:py-36",
         )}
       >
         <div>
-          <h2
-            className="text-[clamp(2rem,4.2vw,3.125rem)] leading-[1.04] font-[670] tracking-[-0.045em] text-balance"
-            id={TITLE_ID}
-          >
+          <h2 className="text-headline" id={TITLE_ID}>
             {t("Frequently asked questions")}
           </h2>
           <p className="text-muted-foreground mt-3.5">

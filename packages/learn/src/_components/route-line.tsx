@@ -31,7 +31,7 @@ export function RouteStop({ className, ...props }: React.ComponentProps<"section
 }
 
 const STATIONS = {
-  end: "size-4 rounded-[4px] border-[3px] border-foreground",
+  end: "size-4 rounded-[4px] border-[3px] border-foreground sm:size-[1.125rem]",
   page: "size-4 rounded-full border-[3px] border-foreground sm:size-[1.125rem]",
   stop: "size-3.5 rounded-full border-[2.5px] border-subject",
 } as const;
@@ -97,10 +97,10 @@ export function RouteTitle({
   );
 }
 
+/* The band hangs past the column as far as a highlighted row does, so what it holds stays on the column's edges. */
 const ZONE_CLASS = cn(
-  "group/zone bg-ground relative [--route-fill:var(--ground)]",
-  "-mr-4 ml-[calc(-1*var(--route-inset)-1rem)] pr-4 pl-[calc(var(--route-inset)+1rem)]",
-  "sm:mr-0 sm:ml-[calc(-1*var(--route-inset)-0.75rem)] sm:rounded-xl sm:pr-5 sm:pl-[calc(var(--route-inset)+0.75rem)]",
+  "group/zone bg-ground relative rounded-xl [--route-fill:var(--ground)]",
+  "-mr-2.5 ml-[calc(-1*var(--route-inset)-0.625rem)] pr-2.5 pl-[calc(var(--route-inset)+0.625rem)]",
 );
 
 const ZONE_ROW_CLASS =

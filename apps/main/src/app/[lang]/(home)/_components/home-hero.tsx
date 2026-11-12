@@ -26,12 +26,12 @@ async function ExamPlan() {
   const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <ProductWindow className="mt-18 lg:mt-0 lg:shadow-[0_24px_60px_-28px_oklch(0_0_0/22%)] dark:lg:shadow-[0_24px_60px_-28px_oklch(0_0_0/70%)]">
-      <div className="px-5 pt-5 pb-4">
+    <ProductWindow className="mt-18 lg:mt-0">
+      <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
         <ExampleCardHead detail={await getExampleDailyTime(minutes)} title={exam.headline} />
       </div>
 
-      <div className="border-t px-5 pt-4 pb-1.5">
+      <div className="border-t px-5 pt-4 pb-1.5 sm:px-6">
         <ExampleDay steps={steps} />
       </div>
     </ProductWindow>
@@ -47,12 +47,13 @@ export async function HomeHero({ startPath }: { startPath: string }) {
       aria-labelledby={TITLE_ID}
       className={cn(
         PUBLIC_CONTAINER_CLASS,
-        "pt-3 pb-26 sm:pt-8 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-16 lg:pt-14 lg:pb-38 xl:grid-cols-[minmax(0,1fr)_26rem]",
+        "pt-3 pb-28 sm:pt-8 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-16 lg:pt-14 lg:pb-37 xl:grid-cols-[minmax(0,1fr)_26rem]",
       )}
     >
       <div className="@container min-w-0">
         <h1
-          className="text-[min(10.6cqi,5.25rem)] leading-none font-[680] tracking-[-0.045em] lg:leading-[0.98]"
+          // Display letters sit inside their own box: the pull puts their ink on the column's edge.
+          className="ml-[-0.05em] text-[min(10.6cqi,5.25rem)] leading-none font-[680] tracking-[-0.045em]"
           id={TITLE_ID}
         >
           {await getHomeHeadline({ line: renderLine, locale, more: renderMore })}

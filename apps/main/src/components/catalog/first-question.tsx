@@ -18,7 +18,7 @@ export type FirstChoiceScreen = Extract<
   { kind: "choice" }
 >;
 
-export function StartNote({ children, className }: { children: ReactNode; className?: string }) {
+function StartNote({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
       className={cn(

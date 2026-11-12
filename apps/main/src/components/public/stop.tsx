@@ -60,22 +60,6 @@ export function StopEyebrow({ className, ...props }: React.ComponentProps<"p">) 
   );
 }
 
-/** Decorative: the eyebrow says it. */
-export function StopMark({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "text-foreground flex size-4 shrink-0 items-center justify-center",
-        "min-[88rem]:group-data-rail/stop:absolute min-[88rem]:group-data-rail/stop:-left-13 min-[88rem]:group-data-rail/stop:rounded-full min-[88rem]:group-data-rail/stop:bg-(--stop-surface) min-[88rem]:group-data-rail/stop:ring-6 min-[88rem]:group-data-rail/stop:ring-(--stop-surface)",
-        className,
-      )}
-      data-slot="stop-mark"
-      {...props}
-    />
-  );
-}
-
 export function StopTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2 className={cn(STOP_TITLE_CLASS, className)} data-slot="stop-title" {...props}>

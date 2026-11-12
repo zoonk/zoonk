@@ -83,9 +83,9 @@ async function ChapterObjectives({
         {t("What you'll learn")}
       </h2>
 
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col">
         {objectives.map((objective) => (
-          <li className="flex gap-3 text-[0.9375rem] leading-snug" key={objective}>
+          <li className="flex gap-3 py-3 text-[0.9375rem] leading-5" key={objective}>
             <LineMarker>
               <CheckMark size="sm" />
             </LineMarker>
@@ -112,7 +112,7 @@ async function ChapterClosing({
   const titleId = `chapter-closing-${chapterId}`;
 
   return (
-    <PageSection aria-labelledby={titleId} className="gap-1.5 border-t pt-12 sm:pt-16">
+    <PageSection aria-labelledby={titleId} className="gap-1.5">
       <h2 className="text-section" id={titleId}>
         {startChapterId
           ? t("Start from this chapter")
@@ -217,7 +217,7 @@ export async function LibraryChapterPage({
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm sm:text-[15px]">
               <SubjectGlyph subject={subject} />
               <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-              {area && <span>{`· ${area}`}</span>}
+              {area && <span className="before:mr-2 before:content-['·']">{area}</span>}
             </p>
 
             <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>

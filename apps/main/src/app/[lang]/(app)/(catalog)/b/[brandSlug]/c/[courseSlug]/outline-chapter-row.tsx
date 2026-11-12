@@ -12,7 +12,7 @@ export type OutlineBand = LibraryOutline["levels"][number];
 export type OutlineChapter = OutlineBand["chapters"][number];
 
 /** A no-break space keeps each dot at the end of a line, never at the start of the next. */
-const OUTLINE_SEPARATOR = " · ";
+const OUTLINE_SEPARATOR = "\u00A0· ";
 
 const CHAPTERS_NAMED = 3;
 
@@ -60,7 +60,7 @@ function ChapterLessonLinks({
   const hasLoneLesson = chapter.lessons.length === 1;
 
   return (
-    <p className="text-muted-foreground max-w-column mt-1.5 text-sm leading-relaxed">
+    <p className="text-muted-foreground max-w-column mt-1.5 text-sm leading-relaxed text-pretty">
       {chapter.lessons.map((lesson, index) => (
         <Fragment key={lesson.id}>
           {index > 0 && OUTLINE_SEPARATOR}

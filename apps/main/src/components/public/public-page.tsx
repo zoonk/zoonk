@@ -6,7 +6,7 @@ import { HERO_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PublicFooter } from "./public-footer";
 import { PublicHeader } from "./public-header";
 
-export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-5 sm:px-8";
+export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-4 sm:px-6";
 
 export function PublicPage({
   children,

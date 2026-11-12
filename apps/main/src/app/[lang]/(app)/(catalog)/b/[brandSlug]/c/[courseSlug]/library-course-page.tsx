@@ -141,7 +141,14 @@ function CourseFirstScreen({
 
   return (
     <RouteStop className={STOP_CLASS}>
-      <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
+      <div
+        className={cn(
+          COURSE_HERO_CLASS,
+          side && COURSE_HERO_PAIR_CLASS,
+          // Stacked, the plan is the route's next stop: it takes a stop's gap and its mark.
+          !tryCard && plan && "gap-16 sm:gap-24",
+        )}
+      >
         {hero}
         {side}
       </div>

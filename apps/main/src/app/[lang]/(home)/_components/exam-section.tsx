@@ -1,4 +1,3 @@
-import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { DoneMark } from "@zoonk/learn/status-mark";
@@ -39,11 +38,7 @@ async function MockResult() {
             <span className="sr-only">{t("Available with Plus")}</span>
           </span>
         }
-        detail={
-          mock.details && (
-            <span className={NUMERIC_CLASS}>{keepNumbersWithUnits(mock.details)}</span>
-          )
-        }
+        detail={mock.details && keepNumbersWithUnits(mock.details)}
         title={t("Mock exam {number, number} · {name}", { name: mock.name, number: 2 })}
       />
 

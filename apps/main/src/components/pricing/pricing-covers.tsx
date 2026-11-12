@@ -1,17 +1,9 @@
 import { PlanRoad, type RoadBand } from "@/components/public/plan-road";
 import { ProductWindow } from "@/components/public/product-window";
-import {
-  Stop,
-  StopBody,
-  StopEyebrow,
-  StopHeader,
-  StopMark,
-  StopTitle,
-} from "@/components/public/stop";
+import { Stop, StopBody, StopEyebrow, StopHeader, StopTitle } from "@/components/public/stop";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { KindDot } from "@zoonk/learn/kind-tile";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
 const COVERS_TITLE_ID = "pricing-covers";
@@ -140,9 +132,6 @@ export async function PricingCovers() {
     <Stop aria-labelledby={COVERS_TITLE_ID} band>
       <StopHeader>
         <StopEyebrow>
-          <StopMark>
-            <FlagIcon className="size-3.5" />
-          </StopMark>
           {t({
             description:
               "Small label over a section that shows what a learner gets without paying.",

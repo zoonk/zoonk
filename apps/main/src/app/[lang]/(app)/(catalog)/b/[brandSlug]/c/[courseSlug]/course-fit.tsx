@@ -1,17 +1,21 @@
+import { COURSE_HERO_PAIR_CLASS } from "@/components/catalog/catalog-hero";
 import { CheckMark } from "@/components/public/check-mark";
 import { type CourseLandingPageContent } from "@zoonk/core/courses/landing-page";
-import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
+import { RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
+
+const STOP_CLASS = "flex flex-col gap-5";
+const LIST_CLASS = "divided-rows max-w-column flex flex-col";
+const ROW_CLASS = "py-3 text-[0.9375rem] leading-relaxed first:pt-0";
 
 /** The details step writes only a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show. */
 function OutcomeList({ outcomes }: { outcomes: string[] }) {
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className={LIST_CLASS}>
       {outcomes.map((item) => (
-        <li className="flex gap-3 text-[0.9375rem] leading-relaxed" key={item}>
+        <li className={cn(ROW_CLASS, "flex gap-3")} key={item}>
           <LineMarker>
             <CheckMark size="sm" />
           </LineMarker>
@@ -44,57 +48,43 @@ export async function CourseFit({
 
   if (audience.length === 0) {
     return (
-      <RouteStop aria-labelledby={outcomesId} className={cn("flex flex-col gap-5", className)}>
+      <RouteStop aria-labelledby={outcomesId} className={cn(STOP_CLASS, className)}>
         <RouteTitle down id={outcomesId}>
           {t("What you'll be able to do")}
         </RouteTitle>
-        <div className="max-w-column">
-          <OutcomeList outcomes={outcomes} />
-        </div>
+        <OutcomeList outcomes={outcomes} />
       </RouteStop>
     );
   }
 
   return (
-    <RouteStop
-      aria-labelledby={audienceId}
-      className={cn(
-        "grid grid-cols-1 gap-x-16 gap-y-5",
-        outcomes.length > 0 && "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]",
-        className,
-      )}
+    <div
+      className={cn("grid grid-cols-1 xl:gap-x-12", outcomes.length > 0 && COURSE_HERO_PAIR_CLASS)}
     >
-      <RouteTitle down id={audienceId}>
-        {t("Who it's for")}
-      </RouteTitle>
+      <RouteStop aria-labelledby={audienceId} className={cn(STOP_CLASS, className)}>
+        <RouteTitle down id={audienceId}>
+          {t("Who it's for")}
+        </RouteTitle>
 
-      <ul className="max-w-column flex flex-col lg:row-start-2">
-        {audience.map((item) => (
-          <li
-            className="border-border py-3 text-[0.9375rem] leading-relaxed text-pretty not-first:border-t first:pt-0"
-            key={item}
-          >
-            {item}
-          </li>
-        ))}
-      </ul>
+        <ul className={LIST_CLASS}>
+          {audience.map((item) => (
+            <li className={cn(ROW_CLASS, "text-pretty")} key={item}>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </RouteStop>
 
       {outcomes.length > 0 && (
-        <section
-          aria-labelledby={outcomesId}
-          className="max-w-column mt-6 flex flex-col gap-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0"
-        >
-          <h2
-            className="flex items-center gap-2 text-[0.9375rem] leading-relaxed font-semibold lg:min-h-6.5"
-            id={outcomesId}
-          >
-            <ArrowRightIcon aria-hidden="true" className="text-muted-foreground size-4" />
+        <RouteStop aria-labelledby={outcomesId} className={cn(STOP_CLASS, "xl:pl-0", className)}>
+          <h2 className="text-section relative" id={outcomesId}>
+            <RouteMark className="xl:hidden" down up />
             {t("What you'll be able to do")}
           </h2>
 
           <OutcomeList outcomes={outcomes} />
-        </section>
+        </RouteStop>
       )}
-    </RouteStop>
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { CheckIcon } from "lucide-react";
 const SIZES = {
   lg: { box: "size-7", icon: "size-4" },
   md: { box: "size-6", icon: "size-4" },
-  sm: { box: "size-5", icon: "size-3.5" },
+  sm: { box: "size-4", icon: "size-4" },
 } as const;
 
 /** Not blue: blue means a right answer in the app. */

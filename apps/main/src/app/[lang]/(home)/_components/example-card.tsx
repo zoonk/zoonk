@@ -8,7 +8,7 @@ import { type ReactNode } from "react";
 
 /** Rows a little larger than the app's, so a phone reads them at a glance. */
 export const EXAMPLE_ROWS_CLASS =
-  "**:data-[slot=list-row-description]:text-[0.8125rem] **:data-[slot=list-row-title]:text-[0.9375rem] **:data-[slot=list-row-trailing]:text-[0.8125rem]";
+  "**:data-[slot=list-row-description]:text-[0.8125rem] **:data-[slot=list-row-description]:leading-4.5 **:data-[slot=list-row-title]:text-[0.9375rem] **:data-[slot=list-row-title]:leading-5 **:data-[slot=list-row-trailing]:text-[0.8125rem]";
 
 export function ExampleCard({ className, ...props }: React.ComponentProps<"div">) {
   return <ProductWindow className={cn("p-5 sm:p-6", className)} {...props} />;

@@ -27,11 +27,13 @@ export function GoalForm({
   example,
   id,
   note,
+  noteClassName,
 }: {
   action: string;
   example: ReactNode;
   id: string;
   note?: ReactNode;
+  noteClassName?: string;
 }) {
   const t = useExtracted();
   const router = useRouter();
@@ -115,6 +117,7 @@ export function GoalForm({
           "text-muted-foreground -mt-1 text-[13px]",
           hinted && "text-foreground",
           !line && "sr-only",
+          noteClassName,
         )}
       >
         {line}

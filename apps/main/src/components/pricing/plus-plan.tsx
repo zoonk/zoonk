@@ -16,7 +16,13 @@ import { type PriceInfo } from "@zoonk/utils/currency";
 import { getExtracted } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
 import { PlanNextStep } from "./for-viewer";
-import { PLAN_CARD_CLASS, PLAN_NAME_ROW_CLASS, PLAN_PRICE_CLASS, PlanPrice } from "./plan-includes";
+import {
+  PLAN_CARD_CLASS,
+  PLAN_CARD_ROWS_CLASS,
+  PLAN_NAME_ROW_CLASS,
+  PLAN_PRICE_CLASS,
+  PlanPrice,
+} from "./plan-includes";
 import { formatPlanPrice } from "./plan-price";
 import { PlusBenefits } from "./plus-benefits";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
@@ -187,7 +193,7 @@ export async function PlusPlan({
   return (
     <section
       aria-labelledby={PLUS_PLAN_ID}
-      className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, "ring-foreground/25")}
+      className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, PLAN_CARD_ROWS_CLASS, "ring-foreground/25")}
     >
       <div className={PLAN_NAME_ROW_CLASS}>
         <h2 className="text-base font-semibold tracking-[-0.015em]" id={PLUS_PLAN_ID}>
