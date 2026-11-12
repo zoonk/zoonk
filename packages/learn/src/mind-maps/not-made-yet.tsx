@@ -129,13 +129,15 @@ export function NotMadeYet({
   const t = useExtracted();
   const titleId = useId();
   const { bulk, page } = library;
-  const { needLessons, startable } = page.createOffer;
+  const { startable } = page.createOffer;
   const plus = tier === "plus";
 
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{t("Other chapters")}</PageSectionTitle>
+        <PageSectionTitle className={startable > 0 ? undefined : "sr-only"} id={titleId}>
+          {t("Other chapters")}
+        </PageSectionTitle>
       </PageSectionHeader>
 
       {startable > 0 && (
@@ -156,7 +158,7 @@ export function NotMadeYet({
       </StatusRegion>
 
       <ListGroup>
-        <Disclosure aside={chapters.length} icon={null} title={t("Show chapters")}>
+        <Disclosure aside={chapters.length} icon={null} title={t("Other chapters")}>
           <ul className={LIST_GROUP_CLASS}>
             {chapters.map((chapter) => (
               <li key={chapter.chapterId}>

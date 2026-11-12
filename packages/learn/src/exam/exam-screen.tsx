@@ -13,7 +13,6 @@ import {
   PopoverContent,
   PopoverDescription,
   PopoverHeader,
-  PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { useExtracted, useFormatter } from "next-intl";
@@ -138,7 +137,6 @@ function DateTag() {
       </PopoverTrigger>
       <PopoverContent align="start" className="w-64">
         <PopoverHeader>
-          <PopoverTitle>{tag.label}</PopoverTitle>
           <PopoverDescription>{tag.text}</PopoverDescription>
         </PopoverHeader>
       </PopoverContent>

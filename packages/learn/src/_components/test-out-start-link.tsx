@@ -87,7 +87,7 @@ export function TestOutStartLink({
         {t("Already know this?")}
         {space}
         <Button busy={opening} type="submit" variant="link">
-          {t("Take the test")}
+          {t("Take the test and skip the chapter")}
         </Button>
       </form>
 

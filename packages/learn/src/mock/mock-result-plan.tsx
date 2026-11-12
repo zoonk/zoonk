@@ -3,7 +3,7 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { type MockAdaptView } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { CheckIcon, CircleCheckIcon } from "lucide-react";
+import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { Meter, MeterFill } from "../_components/meter";
@@ -145,7 +145,7 @@ function useOfferCopy(adapt: MockAdaptView | null) {
 
     return {
       accept: t("Change my plan"),
-      decline: t("Not now"),
+      decline: t("Keep my plan"),
       line: t(
         "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there.",
         {
@@ -191,13 +191,7 @@ export function MockPlanChange({
 
           <div className="flex flex-wrap gap-2">
             <form action={() => change.accept()} className="contents">
-              <Button
-                busy={change.isPending}
-                icon={<CheckIcon aria-hidden="true" />}
-                size="sm"
-                type="submit"
-                variant="outline"
-              >
+              <Button busy={change.isPending} size="sm" type="submit" variant="outline">
                 {copy.accept}
               </Button>
             </form>

@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   // Not the bare "Test out": that message is also the plan's compact action in @zoonk/learn, and
   // this catalog's wording would replace it there.
-  return { robots: { follow: false, index: false }, title: t("Test out of a chapter") };
+  return { robots: { follow: false, index: false }, title: t("Chapter test") };
 }
 
 async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalId: string }) {

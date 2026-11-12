@@ -193,7 +193,7 @@ function TestOutQuestions({
       header={{
         closeHref,
         screen: "test-out",
-        title: t("Test out: {chapter}", { chapter: chapterTitle }),
+        title: t("Test: {chapter}", { chapter: chapterTitle }),
       }}
       hint={() => rule}
       onFinish={onFinish}

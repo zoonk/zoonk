@@ -32,30 +32,19 @@ const CAUSE_ICON: Readonly<Record<NonNullable<MistakeEntry["cause"]> | "unsorted
   unsorted: CircleDashedIcon,
 };
 
-function MistakeCauseLabel({
-  cause,
-  fixed = false,
-}: {
-  cause: MistakeEntry["cause"];
-  fixed?: boolean;
-}) {
-  const t = useExtracted();
+function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
   const causeLabel = useCauseLabel();
   const CauseIcon = CAUSE_ICON[cause ?? "unsorted"];
 
   // A mistake nobody sorted yet has no tag: "not sorted" is the sorter's state, not the learner's.
   if (!cause) {
-    return fixed ? (
-      <p className="text-muted-foreground text-xs font-medium">{t("Fixed")}</p>
-    ) : (
-      <span />
-    );
+    return <span />;
   }
 
   return (
     <p className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs font-medium">
       <CauseIcon aria-hidden="true" className="size-3.5 shrink-0" />
-      {fixed ? t("{cause} · Fixed", { cause: causeLabel(cause) }) : causeLabel(cause)}
+      {causeLabel(cause)}
     </p>
   );
 }
@@ -193,7 +182,7 @@ export function MistakeEntryCard({
       data-status={mistake.status}
     >
       <div className={cn(TITLE_ROW_CLASS, "text-muted-foreground text-xs")}>
-        <MistakeCauseLabel cause={mistake.cause} fixed={mistake.status === "fixed"} />
+        <MistakeCauseLabel cause={mistake.cause} />
         {/* Formatted in the viewer's time zone, which the server can't know. */}
         <time
           className="font-mono tabular-nums"

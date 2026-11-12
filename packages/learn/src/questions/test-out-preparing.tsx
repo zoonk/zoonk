@@ -107,7 +107,7 @@ export function TestOutPreparing({
           />
         )
       }
-      headerTitle={<TaskHeaderTitle title={t("Test out: {chapter}", { chapter: chapterTitle })} />}
+      headerTitle={<TaskHeaderTitle title={t("Test: {chapter}", { chapter: chapterTitle })} />}
     >
       {run ? (
         <GenerationWait kind="testOutQuestions" run={run}>

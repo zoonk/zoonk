@@ -13,7 +13,7 @@ export function useCauseLabel() {
         return t({
           description:
             "Why the learner got a question wrong: they didn't know the content yet. Not missing course content.",
-          message: "Didn't know it yet",
+          message: "Didn't know it",
         });
       case "misread":
         return t({

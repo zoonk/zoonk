@@ -122,7 +122,6 @@ export function PatternIntro({ pattern }: { pattern: MistakePatternView }) {
   return (
     <>
       <header className="flex flex-col gap-2">
-        <PageEyebrow>{t("We noticed a pattern")}</PageEyebrow>
         <PageTitle className="text-balance">{pattern.title}</PageTitle>
         <p className="text-muted-foreground text-pretty">
           {t(

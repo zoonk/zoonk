@@ -2984,9 +2984,9 @@ msgid "Terms of Use"
 msgstr "Kullanım koşulları"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Testi geçerek üniteyi atla"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr ""
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
