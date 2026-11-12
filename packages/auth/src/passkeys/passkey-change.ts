@@ -17,12 +17,15 @@ function toStep(change: PasskeyChange): ConfirmedStep {
   return change.action === "add" ? "add" : `delete:${change.passkeyId}`;
 }
 
-function challengeKey(userId: string, step: ConfirmedStep): string {
-  return `passkey-change-challenge:${userId}:${step}`;
+/** Only the session that confirmed can spend it, so another signed-in session can't race it. */
+type Owner = { sessionId: string; userId: string };
+
+function challengeKey({ sessionId, userId }: Owner, step: ConfirmedStep): string {
+  return `passkey-change-challenge:${userId}:${sessionId}:${step}`;
 }
 
-function confirmationKey(userId: string, step: ConfirmedStep): string {
-  return `passkey-change:${userId}:${step}`;
+function confirmationKey({ sessionId, userId }: Owner, step: ConfirmedStep): string {
+  return `passkey-change:${userId}:${sessionId}:${step}`;
 }
 
 function store({ identifier, value }: { identifier: string; value: string }) {
@@ -56,15 +59,12 @@ async function take(identifier: string): Promise<string | null> {
  */
 export async function createPasskeyChangeOptions({
   change,
-  userId,
-}: {
-  change: PasskeyChange;
-  userId: string;
-}): Promise<PasskeyApprovalOptions | null> {
-  const options = await createPasskeyApprovalOptions(userId);
+  ...owner
+}: Owner & { change: PasskeyChange }): Promise<PasskeyApprovalOptions | null> {
+  const options = await createPasskeyApprovalOptions(owner.userId);
 
   if (options) {
-    await store({ identifier: challengeKey(userId, toStep(change)), value: options.challenge });
+    await store({ identifier: challengeKey(owner, toStep(change)), value: options.challenge });
   }
 
   return options;
@@ -77,14 +77,10 @@ export async function createPasskeyChangeOptions({
 export async function confirmPasskeyChange({
   assertion,
   change,
-  userId,
-}: {
-  assertion: PasskeyAssertion;
-  change: PasskeyChange;
-  userId: string;
-}): Promise<boolean> {
+  ...owner
+}: Owner & { assertion: PasskeyAssertion; change: PasskeyChange }): Promise<boolean> {
   const step = toStep(change);
-  const expectedChallenge = await take(challengeKey(userId, step));
+  const expectedChallenge = await take(challengeKey(owner, step));
 
   if (!expectedChallenge) {
     return false;
@@ -94,11 +90,11 @@ export async function confirmPasskeyChange({
     assertion,
     expectedChallenge,
     origin: PASSKEY_REGISTRATION_ORIGIN,
-    userId,
+    userId: owner.userId,
   });
 
   if (verified) {
-    await store({ identifier: confirmationKey(userId, step), value: step });
+    await store({ identifier: confirmationKey(owner, step), value: step });
   }
 
   return verified;
@@ -112,21 +108,18 @@ export async function confirmPasskeyChange({
  */
 export async function spendPasskeyConfirmation({
   step,
-  userId,
-}: {
-  step: ConfirmedStep;
-  userId: string;
-}): Promise<boolean> {
-  const passkeys = await prisma.passkey.count({ where: { userId } });
+  ...owner
+}: Owner & { step: ConfirmedStep }): Promise<boolean> {
+  const passkeys = await prisma.passkey.count({ where: { userId: owner.userId } });
 
   if (passkeys === 0) {
     return true;
   }
 
-  const confirmed = await take(confirmationKey(userId, step));
+  const confirmed = await take(confirmationKey(owner, step));
 
   if (confirmed && step === "add") {
-    await store({ identifier: confirmationKey(userId, "register"), value: "register" });
+    await store({ identifier: confirmationKey(owner, "register"), value: "register" });
   }
 
   return confirmed !== null;

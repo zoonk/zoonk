@@ -33,7 +33,7 @@ const auth = betterAuth({
 type Change = { action: "add" } | { action: "delete"; passkeyId: string };
 
 /** A signed-in browser: every request carries the cookies the earlier ones set, as a page's do. */
-async function signUp() {
+async function signUp(existingEmail?: string) {
   const cookies = new Map<string, string>();
 
   async function request(path: string, body?: unknown) {
@@ -58,11 +58,12 @@ async function signUp() {
     return { body: json, status: response.status };
   }
 
-  const { body } = await request("/sign-up/email", {
-    email: `passkey-change-${randomUUID()}@example.test`,
-    name: "Staff",
-    password: "passkey-change-password",
-  });
+  const email = existingEmail ?? `passkey-change-${randomUUID()}@example.test`;
+  const password = "passkey-change-password";
+
+  const { body } = existingEmail
+    ? await request("/sign-in/email", { email, password })
+    : await request("/sign-up/email", { email, name: "Staff", password });
 
   const { user } = body as { user: { id: string } };
 
@@ -94,7 +95,7 @@ async function signUp() {
     return prisma.passkey.findMany({ orderBy: { createdAt: "asc" }, where: { userId: user.id } });
   }
 
-  return { confirm, passkeys, register, request, userId: user.id };
+  return { confirm, email, passkeys, register, request, userId: user.id };
 }
 
 describe("passkey changes", () => {
@@ -123,6 +124,23 @@ describe("passkey changes", () => {
     await expect(browser.confirm({ action: "add" }, first)).resolves.toMatchObject({ status: 200 });
     await expect(browser.register(makeRestoreKey())).resolves.toMatchObject({ status: 200 });
     await expect(browser.register(makeRestoreKey())).resolves.toMatchObject({ status: 403 });
+    await expect(browser.passkeys()).resolves.toHaveLength(2);
+  });
+
+  it("lets only the session that confirmed spend the confirmation", async () => {
+    const browser = await signUp();
+    const first = makeRestoreKey();
+    await browser.register(first);
+    const other = await signUp(browser.email);
+
+    await expect(browser.confirm({ action: "add" }, first)).resolves.toMatchObject({ status: 200 });
+
+    await expect(other.register(makeRestoreKey())).resolves.toMatchObject({
+      body: { code: "PASSKEY_CONFIRMATION_REQUIRED" },
+      status: 403,
+    });
+
+    await expect(browser.register(makeRestoreKey())).resolves.toMatchObject({ status: 200 });
     await expect(browser.passkeys()).resolves.toHaveLength(2);
   });
 

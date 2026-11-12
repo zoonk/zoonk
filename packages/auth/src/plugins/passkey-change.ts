@@ -45,7 +45,13 @@ const requireConfirmation = createAuthMiddleware(async (context) => {
     return;
   }
 
-  if (!(await spendPasskeyConfirmation({ step, userId: session.user.id }))) {
+  if (
+    !(await spendPasskeyConfirmation({
+      sessionId: session.session.id,
+      step,
+      userId: session.user.id,
+    }))
+  ) {
     throw new APIError("FORBIDDEN", {
       code: PASSKEY_CHANGE_ERROR_CODES.confirmationRequired,
       message: "Confirm with a passkey you already have before adding or deleting one.",
@@ -66,6 +72,7 @@ export function passkeyChangePlugin() {
         async (context) => {
           const confirmed = await confirmPasskeyChange({
             ...context.body,
+            sessionId: context.context.session.session.id,
             userId: context.context.session.user.id,
           });
 
@@ -86,6 +93,7 @@ export function passkeyChangePlugin() {
           context.json({
             options: await createPasskeyChangeOptions({
               change: context.body,
+              sessionId: context.context.session.session.id,
               userId: context.context.session.user.id,
             }),
           }),
