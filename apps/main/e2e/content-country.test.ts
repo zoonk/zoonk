@@ -96,7 +96,7 @@ test.describe("Content country", () => {
       const row = properties.getByRole("button", { name: /^Content country/u });
       await expectHydrated(row);
       await expect(row).toHaveText(/Portugal$/u);
-      await expect(properties.getByText("Portuguese (Brazil)")).toBeVisible();
+      await expect(properties.getByText("Português (Brasil)")).toBeVisible();
 
       await row.click();
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
@@ -121,7 +121,7 @@ test.describe("Content country", () => {
 
       await page.keyboard.press("Escape");
       await expect(row).toHaveText(/Alemanha$/u);
-      await expect(properties.getByText("Portuguese (Brazil)")).toHaveCount(0);
+      await expect(properties.getByText("Português (Brasil)")).toHaveCount(0);
 
       await expect(page.getByText("Preparing your new plan")).toBeVisible();
       await expect(page.locator('[data-slot="journey"]')).toBeVisible();
