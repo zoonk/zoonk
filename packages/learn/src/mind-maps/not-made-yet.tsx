@@ -135,7 +135,7 @@ export function NotMadeYet({
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
       <PageSectionHeader>
-        <PageSectionTitle className={startable > 0 ? undefined : "sr-only"} id={titleId}>
+        <PageSectionTitle className="sr-only" id={titleId}>
           {t("Other chapters")}
         </PageSectionTitle>
       </PageSectionHeader>
@@ -149,7 +149,7 @@ export function NotMadeYet({
           size="lg"
           variant="outline"
         >
-          {t("Create all")}
+          {t("{count, plural, one {Create # map} other {Create # maps}}", { count: startable })}
         </Button>
       )}
 

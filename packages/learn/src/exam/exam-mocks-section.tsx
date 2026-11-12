@@ -1,8 +1,11 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { LearnLink } from "../learn-link";
 import { MockSummaryRow } from "../mock/mock-summary-row";
 import { useExamScreen } from "./exam-context";
 import { ExamNextMock } from "./exam-next-mock";
@@ -20,13 +23,13 @@ function ExamMockRows() {
   ));
 }
 
-export function ExamMocks({ offered }: { offered: boolean }) {
+export function ExamMocks({ entry = false, offered }: { entry?: boolean; offered: boolean }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
   const locked = exam.mocksRequirePlus && (exam.nextMock !== null || offered);
   const running = exam.runningMocks.length > 0;
 
-  if (!running && !exam.nextMock && exam.mocks.length === 0 && !locked) {
+  if (!running && !exam.nextMock && exam.mocks.length === 0 && !locked && !entry) {
     return null;
   }
 
@@ -50,6 +53,15 @@ export function ExamMocks({ offered }: { offered: boolean }) {
           )}
           <ExamMockRows />
         </ol>
+      )}
+
+      {entry && (
+        <LearnLink
+          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "self-start")}
+          href="/mock/new"
+        >
+          {t("Take a mock exam")}
+        </LearnLink>
       )}
 
     </PageSection>

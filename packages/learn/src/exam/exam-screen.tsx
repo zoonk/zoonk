@@ -174,6 +174,11 @@ function ExamFacts() {
   );
 }
 
+/** The day before, on the day and after it, the exam leads the page and a mock exam is one row. */
+function isLastDays(stage: ExamView["stage"]): boolean {
+  return stage === "dayBefore" || stage === "examDay" || stage === "afterExam";
+}
+
 function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -188,7 +193,7 @@ function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
         </DetailHeroText>
 
         <DetailActions>
-          {mockAction}
+          {isLastDays(exam.stage) ? null : mockAction}
           <ReportProblemMenu label={t("Exam options")} screen="exam" />
         </DetailActions>
       </DetailHero>
@@ -285,7 +290,7 @@ export function ExamScreen({
         <DetailContent>
           <ExamMoment />
           <ExamResultSection />
-          <ExamMocks offered={mockAction !== null} />
+          <ExamMocks entry={isLastDays(exam.stage) && mockAction !== null} offered={mockAction !== null} />
           <ExamMockProgress />
           {exam.format.length === 0 && <ExamMapSection />}
           <ExamSpeaking />
