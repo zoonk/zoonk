@@ -62,24 +62,54 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testAChallengeKeepsWritingWhileItsScriptIsReviewed() {
+    var wait = GenerationWait(kind: .challenge).started
+
+    for (status, step) in [
+      ("started", "planChallenge"), ("completed", "planChallenge"), ("started", "writeChallenge"),
+      ("completed", "writeChallenge"), ("started", "reviewChallenge"),
+    ] {
+      wait.apply(GenerationEvent(status: status, step: step))
+    }
+
+    let run = FollowedRun(
+      wait: wait, failure: nil, warmUpID: nil, isRestarting: false, retry: nil)
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .working])
+    XCTAssertLessThan(wait.progress.share, 1)
+    XCTAssertEqual(run.workingLabel, "Writing the challenge")
+
+    wait.apply(GenerationEvent(status: "completed", step: "reviewChallenge"))
+
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done])
+    XCTAssertFalse(wait.isDone, "the challenge opens on lessonReady")
+  }
+
   func testAHeldBackChallengeKeepsWorkingOnItsRedraftUntilItIsReady() {
     var wait = GenerationWait(kind: .challenge)
 
     XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write"])
 
-    for (status, step) in [
-      ("started", "writeLesson"), ("completed", "planChallenge"), ("completed", "writeChallenge"),
-      ("completed", "reviewChallenge"), ("started", "redraftChallenge"),
-      ("started", "writeLesson"), ("started", "planChallenge"), ("completed", "planChallenge"),
-      ("started", "writeChallenge"),
+    let start = Date(timeIntervalSince1970: 1_000)
+
+    for (second, status, step) in [
+      (0, "started", "writeLesson"), (75, "completed", "planChallenge"),
+      (115, "completed", "writeChallenge"), (125, "completed", "reviewChallenge"),
+      (125, "started", "redraftChallenge"), (125, "started", "writeLesson"),
+      (125, "started", "planChallenge"), (200, "completed", "planChallenge"),
+      (200, "started", "writeChallenge"),
     ] {
-      wait.apply(GenerationEvent(status: status, step: step))
+      wait.apply(
+        GenerationEvent(
+          at: start.addingTimeInterval(TimeInterval(second)), status: status, step: step))
     }
 
     XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write", "redraft"])
     XCTAssertEqual(
       wait.visiblePhases.map(\.state), [.done, .done, .working],
       "the redraft's own steps never send the wait back")
+    XCTAssertEqual(
+      wait.visiblePhases[0].endedAt, start.addingTimeInterval(75),
+      "planning keeps the time the first plan finished")
     XCTAssertFalse(wait.isDone)
 
     wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))

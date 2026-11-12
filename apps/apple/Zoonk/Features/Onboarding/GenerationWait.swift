@@ -81,6 +81,7 @@ struct GenerationWait: Equatable, Sendable {
   private(set) var firstLesson: FirstLesson?
   /// This device's clock minus the server's, as the stream's connection said.
   private(set) var clockOffset: TimeInterval?
+  private var completedSteps: Set<String> = []
   private var drift: Drift
 
   init(kind: Kind, since: Date = .now) {
@@ -218,7 +219,7 @@ struct GenerationWait: Equatable, Sendable {
 
     recordFirstLesson(event)
 
-    guard let place = Self.place(of: event.step, kind: kind) else {
+    guard let place = Self.places(for: kind)[event.step] else {
       return
     }
 
@@ -276,14 +277,14 @@ struct GenerationWait: Equatable, Sendable {
       phases[index].isReported = true
       phases[index].skillName = event.skillName ?? phases[index].skillName
 
-      if event.status == "completed" {
+      // A redraft reports its steps again: the step's first completion keeps its time.
+      if event.status == "completed", completedSteps.insert(event.step).inserted,
+        Self.steps(of: id, kind: kind).isSubset(of: completedSteps)
+      {
         // A step that finishes after the wait moved on still ends its phase then.
         phases[index].endedAt = [phases[index].endedAt, at].compactMap(\.self).max()
         end(index, at: at)
         startNextStage(after: stage, at: at)
-      } else if phases[index].state != .done {
-        // A redraft reports its steps again: a phase that finished stays finished.
-        phases[index].state = .working
       }
 
       // Today builds the first day once the plan is saved, while the outlines go on.
@@ -343,48 +344,53 @@ struct GenerationWait: Equatable, Sendable {
     return start..<end
   }
 
-  private enum Place {
+  private enum Place: Equatable {
     case phase(String)
     case done
   }
 
-  private static func place(of step: String, kind: Kind) -> Place? {
-    switch (kind, step) {
-    case (.understanding, "readGoal"): .phase("read")
-    case (.understanding, "findExamDates"): .phase("dates")
-    case (.understanding, "understandingReady"): .done
-    case (.curriculum, "understandGoal"): .phase("goal")
-    case (.curriculum, "readExamNotice"): .phase("notice")
-    case (.curriculum, "buildSkillGraph"): .phase("skills")
-    case (.curriculum, "saveSkills"), (.curriculum, "createPlan"),
-      (.curriculum, "preparePlacement"):
-      .phase("plan")
-    case (.curriculum, "goalReady"), (.curriculum, "outlineCourses"),
-      (.curriculum, "prepareFirstLessons"):
-      .done
-    case (.placement, "understandGoal"): .phase("goal")
-    case (.placement, "readExamNotice"): .phase("notice")
-    case (.placement, "buildSkillGraph"): .phase("skills")
-    case (.placement, "saveSkills"), (.placement, "createPlan"), (.placement, "preparePlacement"),
-      (.placement, "outlineCourses"), (.placement, "prepareFirstLessons"):
-      .phase("questions")
-    case (.placement, "goalReady"): .done
-    case (.explanation, "classifyQuestion"): .phase("read")
-    case (.explanation, "findExplanation"): .phase("find")
-    case (.explanation, "writeExplanation"): .phase("write")
-    case (.explanation, "explanationReady"): .done
-    case (.levelTestBank, "writeLevelTestBank"): .phase("bank")
-    case (.levelTestBank, "levelTestBankReady"): .done
-    case (.lesson, "planLesson"): .phase("plan")
-    case (.lesson, "writeLesson"): .phase("write")
-    case (.lesson, "markLesson"): .phase("mark")
-    case (.lesson, "drawPictures"): .phase("draw")
-    case (.lesson, "lessonReady"): .done
-    case (.challenge, "planChallenge"): .phase("plan")
-    case (.challenge, "writeChallenge"), (.challenge, "reviewChallenge"): .phase("write")
-    case (.challenge, "redraftChallenge"): .phase("redraft")
-    case (.challenge, "lessonReady"): .done
-    default: nil
+  /// A phase is finished once every step mapped to it completed, as main's wait counts it.
+  private static func steps(of phase: String, kind: Kind) -> Set<String> {
+    Set(places(for: kind).filter { $0.value == .phase(phase) }.keys)
+  }
+
+  private static func places(for kind: Kind) -> [String: Place] {
+    switch kind {
+    case .understanding:
+      ["readGoal": .phase("read"), "findExamDates": .phase("dates"), "understandingReady": .done]
+    case .curriculum:
+      [
+        "understandGoal": .phase("goal"), "readExamNotice": .phase("notice"),
+        "buildSkillGraph": .phase("skills"), "saveSkills": .phase("plan"),
+        "createPlan": .phase("plan"), "preparePlacement": .phase("plan"), "goalReady": .done,
+        "outlineCourses": .done, "prepareFirstLessons": .done,
+      ]
+    case .placement:
+      [
+        "understandGoal": .phase("goal"), "readExamNotice": .phase("notice"),
+        "buildSkillGraph": .phase("skills"), "saveSkills": .phase("questions"),
+        "createPlan": .phase("questions"), "preparePlacement": .phase("questions"),
+        "outlineCourses": .phase("questions"), "prepareFirstLessons": .phase("questions"),
+        "goalReady": .done,
+      ]
+    case .explanation:
+      [
+        "classifyQuestion": .phase("read"), "findExplanation": .phase("find"),
+        "writeExplanation": .phase("write"), "explanationReady": .done,
+      ]
+    case .levelTestBank:
+      ["writeLevelTestBank": .phase("bank"), "levelTestBankReady": .done]
+    case .lesson:
+      [
+        "planLesson": .phase("plan"), "writeLesson": .phase("write"), "markLesson": .phase("mark"),
+        "drawPictures": .phase("draw"), "lessonReady": .done,
+      ]
+    case .challenge:
+      [
+        "planChallenge": .phase("plan"), "writeChallenge": .phase("write"),
+        "reviewChallenge": .phase("write"), "redraftChallenge": .phase("redraft"),
+        "lessonReady": .done,
+      ]
     }
   }
 
