@@ -163,6 +163,36 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertFalse(store.requesting.contains("chapter"))
   }
 
+  func testAListReadOnItsWayWhenAMapStartsCantUndoIt() async throws {
+    let api = MindMapsAPIStub(
+      server: .available, statuses: [.success(.ready)], startsAs: .drawing)
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.holdNextList()
+    let earlier = Task { await list.refresh() }
+    while await !api.isHoldingList {
+      await Task.yield()
+    }
+
+    let created = expectation(description: "The tap reads the list without the read before it")
+    let creating = Task {
+      await store.create(goalId: "goal", chapterId: "chapter")
+      created.fulfill()
+    }
+    await fulfillment(of: [created], timeout: 5)
+    await api.releaseList()
+    await creating.value
+    await earlier.value
+    XCTAssertEqual(list.value?.chapters.first?.status, .drawing)
+
+    // The map is drawn meanwhile, and the list's follower reads it.
+    _ = try await api.status(token: "", goalId: "goal", chapterId: "chapter")
+    await store.followList(goalId: "goal")
+
+    XCTAssertEqual(list.value?.chapters.first?.status, .ready)
+  }
+
   func testLessonMapsReadBeforeCreateReadAgainOnceTheListShowsTheLessonsItWrote() async {
     let api = MindMapsAPIStub(
       server: .available, statuses: [.success(.drawing), .success(.ready)],
@@ -383,6 +413,31 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertFalse(store.creatingAll.contains("goal"))
   }
 
+  func testAListReadOnItsWayWhenCreatingAllCantUndoIt() async {
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    await list.load()
+    await api.holdNextList()
+    let earlier = Task { await list.refresh() }
+    while await !api.isHoldingList {
+      await Task.yield()
+    }
+
+    let created = expectation(description: "Create all reads the list without the read before it")
+    let creating = Task {
+      await store.createAll(goalId: "goal")
+      created.fulfill()
+    }
+    await fulfillment(of: [created], timeout: 5)
+    await api.releaseList()
+    await creating.value
+    await earlier.value
+
+    XCTAssertEqual(list.value?.chapters.first?.status, .drawing)
+    XCTAssertNil(store.createAllFailures["goal"])
+  }
+
   func testAMapReadBeforeCreatingAllReadsAgainOnceTheListSaysItStarted() async {
     let api = MindMapsAPIStub(server: .available, statuses: [])
     let store = makeStore(api: api)
@@ -531,6 +586,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private let startsAs: ChapterMindMap.Status?
   private var holdsFirstStatus: Bool
   private var held: CheckedContinuation<Void, Never>?
+  /// The next list read answers with what the server had when it was asked, once released.
   private var holdsNextList = false
   private var heldList: CheckedContinuation<Void, Never>?
   private var listFailures = 0
@@ -622,18 +678,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
 
   func list(token: String, goalId: String) async throws -> GoalMindMaps {
     calls.list += 1
-
-    if holdsNextList {
-      holdsNextList = false
-      await withCheckedContinuation { heldList = $0 }
-    }
-
-    if listFailures > 0 {
-      listFailures -= 1
-      throw APIError.network
-    }
-
-    return GoalMindMaps(
+    let read = GoalMindMaps(
       chapters: answered?.chapters ?? [chapter],
       createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
       firstTab: .chapters,
@@ -650,6 +695,18 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
               available: true, chapterId: "chapter", kind: .chapter, targetId: "chapter",
               title: "Chapter")
           ] : []))
+
+    if holdsNextList {
+      holdsNextList = false
+      await withCheckedContinuation { heldList = $0 }
+    }
+
+    if listFailures > 0 {
+      listFailures -= 1
+      throw APIError.network
+    }
+
+    return read
   }
 
   func lessonMaps(token: String, goalId: String, chapterId: String) async throws
