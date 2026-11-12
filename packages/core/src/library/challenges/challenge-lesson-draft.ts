@@ -56,10 +56,6 @@ export async function publishChallengeLessonDraft({
   workflowRunId: string;
   language: string;
 }) {
-  if (!scripted.content || scripted.problems.length > 0) {
-    return null;
-  }
-
   return saveLessonContent({
     language,
     lessonId,

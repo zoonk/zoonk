@@ -1,5 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import {
+  type ChallengeDraft,
   type PlannedChallenge,
   type ScriptedChallenge,
   planChallenge,
@@ -92,17 +93,13 @@ export async function reviewChallengeStep({
 }
 
 export async function finishChallengeDraftStep({
+  draft,
   input,
   stage,
-  scripted,
-  problems,
-  model,
 }: {
+  draft: ChallengeDraft;
   input: WriteInput;
   stage: ChallengeDraftStage;
-  scripted?: ScriptedChallenge;
-  problems: string[];
-  model: string;
 }): Promise<LessonWriteOutcome> {
   "use step";
 
@@ -119,8 +116,8 @@ export async function finishChallengeDraftStep({
 
   await using stream = createStepStream<LessonStreamStep>();
 
-  if (problems.length > 0) {
-    await holdBackChallengeLessonDraft({ ...input, model, problems });
+  if ("problems" in draft) {
+    await holdBackChallengeLessonDraft({ ...input, model: draft.model, problems: draft.problems });
     const redraft = canRedraftLesson(await getLessonGenerationState(input.lessonId));
 
     if (redraft) {
@@ -134,14 +131,10 @@ export async function finishChallengeDraftStep({
     return { redraft, status: "heldBack" };
   }
 
-  if (!scripted) {
-    throw new Error("A challenge needs a checked script before publishing");
-  }
-
   const saved = await publishChallengeLessonDraft({
     ...input,
     language: stage.params.language,
-    scripted,
+    scripted: draft,
   });
 
   if (!saved) {

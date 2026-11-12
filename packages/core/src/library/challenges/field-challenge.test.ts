@@ -7,6 +7,7 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { describe, expect, it } from "vitest";
 import { checkWrittenChallenge } from "./challenge-case-content";
+import { type ScriptedChallenge } from "./challenge-draft";
 import { loadChallengeLessonDraft } from "./challenge-lesson-draft";
 import { finishFieldChallengeDraft, prepareFieldChallengeDraft } from "./field-challenge";
 import { getFieldChallengeToken } from "./field-challenge-token";
@@ -22,12 +23,17 @@ async function step() {
   return steps[0]?.id ?? "";
 }
 
-function scripted() {
+function scripted(): ScriptedChallenge {
   const plan = challengePlanFixture();
   const { written } = assembleChallengeCase({ plan, script: draftEmptyScript(plan) });
+  const { content } = checkWrittenChallenge({ variant: "work", written });
+
+  if (!content) {
+    throw new Error("The plan fixture's empty script should pass the content check");
+  }
 
   return {
-    ...checkWrittenChallenge({ variant: "work", written }),
+    content,
     provenance: {
       generatedAt: new Date().toISOString(),
       latencyMs: 0,
@@ -94,14 +100,9 @@ describe("field challenge admission", () => {
       status: "challengeDraft",
     });
 
-    await expect(
-      finishFieldChallengeDraft({
-        ...input,
-        model: "openai/gpt-6.1-sol",
-        problems: [],
-        scripted: scripted(),
-      }),
-    ).resolves.toMatchObject({ created: true, status: "ready" });
+    await expect(finishFieldChallengeDraft({ ...input, draft: scripted() })).resolves.toMatchObject(
+      { created: true, status: "ready" },
+    );
 
     await expect(prepareFieldChallengeDraft(input)).resolves.toMatchObject({ status: "ready" });
   });
@@ -113,8 +114,7 @@ describe("field challenge admission", () => {
 
     await finishFieldChallengeDraft({
       ...input,
-      model: "openai/gpt-6.1-sol",
-      problems: ["Wrong result"],
+      draft: { model: "openai/gpt-6.1-sol", problems: ["Wrong result"] },
     });
 
     await expect(prepareFieldChallengeDraft(input)).resolves.toMatchObject({ status: "heldBack" });
@@ -130,8 +130,7 @@ describe("field challenge admission", () => {
 
         await finishFieldChallengeDraft({
           ...next,
-          model: "openai/gpt-6.1-sol",
-          problems: ["Wrong result"],
+          draft: { model: "openai/gpt-6.1-sol", problems: ["Wrong result"] },
         });
       }),
     );

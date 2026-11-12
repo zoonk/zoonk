@@ -2,11 +2,7 @@ import { getFieldChallengeToken } from "@zoonk/core/library/challenges/field-tok
 import { type FieldChallengeTarget } from "@zoonk/core/library/variants/version-targets";
 import { type ContentAnalytics, toContentAnalytics } from "../_shared/content-analytics";
 import { claimRunToken } from "../_shared/run-token";
-import {
-  planChallengeStep,
-  reviewChallengeStep,
-  scriptChallengeStep,
-} from "../lessons/steps/challenge-draft-steps";
+import { draftChallenge } from "../lessons/write-challenge-draft";
 import {
   finishFieldChallengeDraftStep,
   prepareFieldChallengeDraftStep,
@@ -38,31 +34,8 @@ export async function prepareFieldChallenge({
     return stage.status;
   }
 
-  const planned = await planChallengeStep({ stage });
-
-  if (planned.problems.length > 0) {
-    const result = await finishFieldChallengeDraftStep({
-      ...input,
-      model: planned.provenance.model,
-      problems: planned.problems,
-    });
-
-    return result.status;
-  }
-
-  const scripted = await scriptChallengeStep({ planned, stage });
-
-  const problems =
-    scripted.problems.length > 0
-      ? scripted.problems
-      : await reviewChallengeStep({ scripted, stage });
-
-  const result = await finishFieldChallengeDraftStep({
-    ...input,
-    model: scripted.provenance.model,
-    problems,
-    scripted,
-  });
+  const draft = await draftChallenge({ stage });
+  const result = await finishFieldChallengeDraftStep({ ...input, draft });
 
   return result.status;
 }

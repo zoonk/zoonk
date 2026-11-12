@@ -10,7 +10,7 @@ import {
 } from "../variants/variant-generation";
 import { toVariantKey } from "../variants/variant-keys";
 import { toChallengeCaseInputs } from "./_utils/challenge-inputs";
-import { type ScriptedChallenge } from "./challenge-draft";
+import { type ChallengeDraft } from "./challenge-draft";
 import { parseChallengeLessonSpec } from "./challenge-lesson-spec";
 
 function findFieldChallenge({ key, stepId }: { key: string; stepId: string }) {
@@ -85,28 +85,24 @@ export async function prepareFieldChallengeDraft({
 }
 
 export async function finishFieldChallengeDraft({
+  draft,
   field,
   stepId,
   workflowRunId,
-  model,
-  problems,
-  scripted,
 }: {
+  draft: ChallengeDraft;
   field: string;
   stepId: string;
   workflowRunId: string;
-  model: string;
-  problems: string[];
-  scripted?: ScriptedChallenge;
 }) {
   const key = toVariantKey(field);
 
-  if (problems.length > 0) {
+  if ("problems" in draft) {
     await holdBackStepVariantDraft({
       key,
       kind: "field",
-      model,
-      problems: problems.map((problem) => ({ problem, screen: null })),
+      model: draft.model,
+      problems: draft.problems.map((problem) => ({ problem, screen: null })),
       stepId,
       workflowRunId,
     });
@@ -114,11 +110,7 @@ export async function finishFieldChallengeDraft({
     return { status: "heldBack" as const };
   }
 
-  if (!scripted?.content || scripted.problems.length > 0) {
-    throw new Error("A field challenge needs a checked script");
-  }
-
-  const { content, provenance } = scripted;
+  const { content, provenance } = draft;
 
   const { created, row } = await createOrFindByIdentity({
     create: () =>

@@ -1,3 +1,4 @@
+import { type ChallengeDraft } from "@zoonk/core/library/challenges/draft";
 import {
   finishChallengeDraftStep,
   planChallengeStep,
@@ -10,6 +11,30 @@ import {
   type WriteInput,
 } from "./steps/write-lesson-content-step";
 
+export async function draftChallenge({
+  lessonId,
+  stage,
+}: {
+  lessonId?: string;
+  stage: ChallengeDraftStage;
+}): Promise<ChallengeDraft> {
+  const planned = await planChallengeStep({ lessonId, stage });
+
+  if (planned.problems.length > 0) {
+    return { model: planned.provenance.model, problems: planned.problems };
+  }
+
+  const scripted = await scriptChallengeStep({ lessonId, planned, stage });
+
+  if ("problems" in scripted || !stage.review) {
+    return scripted;
+  }
+
+  const problems = await reviewChallengeStep({ lessonId, scripted, stage });
+
+  return problems.length > 0 ? { model: scripted.provenance.model, problems } : scripted;
+}
+
 export async function writeChallengeDraft({
   input,
   stage,
@@ -17,30 +42,6 @@ export async function writeChallengeDraft({
   input: WriteInput;
   stage: ChallengeDraftStage;
 }): Promise<LessonWriteOutcome> {
-  const { lessonId } = input;
-  const planned = await planChallengeStep({ lessonId, stage });
-
-  if (planned.problems.length > 0) {
-    return finishChallengeDraftStep({
-      input,
-      model: planned.provenance.model,
-      problems: planned.problems,
-      stage,
-    });
-  }
-
-  const scripted = await scriptChallengeStep({ lessonId, planned, stage });
-
-  const problems =
-    scripted.problems.length > 0 || !stage.review
-      ? scripted.problems
-      : await reviewChallengeStep({ lessonId, scripted, stage });
-
-  return finishChallengeDraftStep({
-    input,
-    model: scripted.provenance.model,
-    problems,
-    scripted,
-    stage,
-  });
+  const draft = await draftChallenge({ lessonId: input.lessonId, stage });
+  return finishChallengeDraftStep({ draft, input, stage });
 }
