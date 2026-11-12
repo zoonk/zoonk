@@ -219,17 +219,6 @@ export function CourseHere({
   );
 }
 
-/** The example plan's numbers help someone deciding; a learner whose plan follows the course has their own. */
-export function CourseExampleNumbers({
-  children,
-  courseId,
-}: {
-  children: ReactNode;
-  courseId: string;
-}) {
-  return <CourseGoalSwitch continueLink={null} courseId={courseId} startLinks={children} />;
-}
-
 /** Opens on its own when it hides the chapter the learner's plan is at. */
 export function CourseChapterFold({
   chapterIds,

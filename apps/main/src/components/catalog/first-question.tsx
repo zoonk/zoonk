@@ -42,13 +42,15 @@ type FirstQuestionProps = {
   screen: FirstChoiceScreen;
 };
 
+/** Inside "Try a lesson" the card's title already says how long the lesson is. */
 async function QuestionScreen({
   lessonId,
   minutes,
   origin,
   playerPath,
   screen,
-}: FirstQuestionProps) {
+  timed,
+}: FirstQuestionProps & { timed: boolean }) {
   const t = await getExtracted();
   const space = getSentenceSpace(await getAppLocale());
 
@@ -86,11 +88,9 @@ async function QuestionScreen({
       />
 
       <StartNote>
-        {screen.guess
+        {timed
           ? t("Your answer starts the {minutes}-minute lesson.", { minutes: String(minutes) })
-          : t("Your choice opens the {minutes}-minute lesson. Check your answer there.", {
-              minutes: String(minutes),
-            })}
+          : t("Your answer starts the lesson.")}
         {space}
         <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
       </StartNote>
@@ -134,7 +134,7 @@ export function FirstQuestion({
       continueLesson={
         <ContinueLesson href={withOrigin(props.playerPath, props.origin)} secondary={secondary} />
       }
-      question={<QuestionScreen {...props} />}
+      question={<QuestionScreen {...props} timed={!secondary} />}
     />
   );
 }

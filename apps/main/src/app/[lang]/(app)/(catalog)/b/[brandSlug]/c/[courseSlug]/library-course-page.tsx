@@ -20,10 +20,13 @@ import { Link } from "@/i18n/navigation";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import { getCourseUrl } from "@/lib/public/public-canonical";
-import { getIsoDayFormatter, getLevelLabels } from "@/lib/public/public-labels";
+import { getLevelLabels } from "@/lib/public/public-labels";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { getCoursePlanExample } from "@zoonk/core/catalog/course-plan-example";
-import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
+import {
+  type CoursePlanExample,
+  isDatedEstimate,
+} from "@zoonk/core/catalog/course-plan-example-contract";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
@@ -118,7 +121,7 @@ function CourseHero({
 
       <ContentCountryLine country={contentCountry} />
 
-      <PlanLine />
+      <PlanLine start={exam ? "exam" : "known"} />
 
       <CourseStart courseId={course.id} pace={pace} tryId={tryId} />
     </section>
@@ -204,7 +207,6 @@ export async function LibraryCoursePage({
 
   const t = await getExtracted();
   const levelLabels = await getLevelLabels();
-  const formatDay = await getIsoDayFormatter();
 
   const [tryLesson, plan] = await Promise.all([
     pickTryLesson(outline.levels.flatMap((band) => band.chapters)),
@@ -213,20 +215,21 @@ export async function LibraryCoursePage({
 
   const subject = getSubject(course.categories);
   const tryId = getTryLessonId(course.id);
-  const examDay = plan.exam?.days[0];
-  const examDate = examDay ? formatDay(examDay) : null;
   const pace = plan.pace?.minutes ?? null;
+  const estimate = plan.pace?.estimate;
+  const weeks = estimate && !isDatedEstimate(estimate) ? estimate : null;
+  const areas = estimate && isDatedEstimate(estimate) ? estimate : null;
 
   const planTitleId = `course-plan-${course.id}`;
 
   const planWindow = (onRoute: boolean) =>
-    plan.pace && (
+    weeks &&
+    pace && (
       <CoursePlanWindow
         chapterTitles={getChapterTitles(outline)}
-        examDate={examDate}
-        isExam={course.format === "exam"}
+        estimate={weeks}
+        minutes={pace}
         onRoute={onRoute}
-        plan={plan}
         titleId={planTitleId}
       />
     );
@@ -293,7 +296,7 @@ export async function LibraryCoursePage({
               tryCard={tryCard}
             />
 
-            {tryCard && plan.pace && (
+            {tryCard && weeks && (
               <RouteStop aria-labelledby={planTitleId} className={STOP_CLASS}>
                 {planWindow(true)}
               </RouteStop>
@@ -308,7 +311,7 @@ export async function LibraryCoursePage({
               lead={outlineLead}
               outline={outline}
               params={params}
-              plan={{ examDate, pace: plan.pace }}
+              areas={areas}
             />
 
             <CourseClosing courseId={course.id} pace={pace} />

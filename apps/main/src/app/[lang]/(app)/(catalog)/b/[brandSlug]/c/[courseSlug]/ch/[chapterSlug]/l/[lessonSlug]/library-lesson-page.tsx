@@ -16,10 +16,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { LessonChapterAside } from "./lesson-chapter-aside";
+import { LessonCourseStart } from "./lesson-course-start";
 import { LessonFirstScreen } from "./lesson-first-screen";
 import { LessonJsonLd } from "./lesson-json-ld";
 import { LessonMore } from "./lesson-more";
-import { LessonPlanDay } from "./lesson-plan-day";
 
 type Params = { brandSlug: string; courseSlug: string };
 
@@ -122,7 +122,7 @@ export async function LibraryLessonPage({
             <LessonMore ideas={ideas} params={params} route={route} />
           </article>
 
-          <LessonPlanDay route={route} />
+          <LessonCourseStart route={route} />
         </Page>
       </div>
     </PageWithAside>

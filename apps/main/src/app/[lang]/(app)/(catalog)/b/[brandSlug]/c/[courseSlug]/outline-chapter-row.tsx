@@ -1,9 +1,4 @@
-import {
-  CourseChapterFold,
-  CourseExampleNumbers,
-  CourseHere,
-} from "@/components/catalog/course-progress";
-import { NUMERIC_CLASS } from "@/components/public/landing-styles";
+import { CourseChapterFold, CourseHere } from "@/components/catalog/course-progress";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
@@ -40,8 +35,6 @@ const LESSON_LINK_CLASS =
 
 const LONE_LESSON_LINK_CLASS =
   "relative inline-block before:absolute before:inset-x-0 before:top-0 before:-bottom-5.5 before:min-w-11";
-
-const MARK_CLASS = cn(NUMERIC_CLASS, "text-muted-foreground flex-none text-xs leading-5.5");
 
 function ChapterLessonLinks({
   chapter,
@@ -109,13 +102,11 @@ export async function OutlineChapterList({
 export function OutlineChapterRow({
   chapter,
   courseId,
-  mark,
   number,
   params,
 }: {
   chapter: OutlineChapter;
   courseId: string;
-  mark?: ReactNode;
   number: number;
   params: OutlineParams;
 }) {
@@ -139,14 +130,7 @@ export function OutlineChapterRow({
             </Link>
           </h3>
 
-          <div className="flex items-baseline gap-3">
-            <CourseHere chapterId={chapter.id} courseId={courseId} />
-            {mark && (
-              <CourseExampleNumbers courseId={courseId}>
-                <p className={MARK_CLASS}>{mark}</p>
-              </CourseExampleNumbers>
-            )}
-          </div>
+          <CourseHere chapterId={chapter.id} courseId={courseId} />
         </div>
 
         {chapter.lessons.length > 0 && <ChapterLessonLinks chapter={chapter} params={params} />}

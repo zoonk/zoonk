@@ -56,12 +56,20 @@ async function getLibraryCourseMetadata({
 
   return {
     alternates: { canonical: getCourseUrl({ ...params, language: course.language }), languages },
-    description: t(
-      "Learn {course} in short lessons, with a plan that starts at your level and fits your schedule. Start free. {description}",
-      { course: course.title, description: course.description ?? "" },
-    ),
+    description: course.description
+      ? t(
+          "{description} Learn it in short lessons, with a plan for each day that starts from what you already know. Start free.",
+          { description: course.description },
+        )
+      : t(
+          "Learn {course} in short lessons, with a plan for each day that starts from what you already know. Start free.",
+          { course: course.title },
+        ),
     robots: { follow: true, index: route.isListed && contentLocale === locale },
-    title: t("Learn {course}", { course: course.title }),
+    title:
+      course.format === "exam"
+        ? t("Prepare for {course}", { course: course.title })
+        : t("Learn {course}", { course: course.title }),
   };
 }
 

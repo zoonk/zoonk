@@ -37,7 +37,7 @@ function CourseMap({
   label: string;
 }) {
   return (
-    <div aria-label={label} className="flex flex-col gap-2.5" role="img">
+    <div aria-label={label} role="img">
       <div className="flex gap-1 sm:gap-1.5">
         {groups.map((group, index) => (
           <div
@@ -80,8 +80,6 @@ function CourseMap({
           </div>
         ))}
       </div>
-
-      <p className="text-muted-foreground text-xs leading-4 sm:hidden">{label}</p>
     </div>
   );
 }
@@ -89,11 +87,13 @@ function CourseMap({
 export async function ChapterStrip({
   areas = null,
   chapterId,
+  course,
   outline,
   params,
 }: {
   areas?: Map<string, string> | null;
   chapterId: string;
+  course: string;
   outline: LibraryOutline;
   params: { brandSlug: string; courseSlug: string };
 }) {
@@ -126,20 +126,19 @@ export async function ChapterStrip({
     total: String(counted.length),
   });
 
+  const label = here ? `${position} · ${here.label}` : position;
   const stretch = [chapter, ...next];
 
   return (
     <section aria-labelledby={stripId} className={cn(ROUTE_CLASS, "flex min-w-0 flex-col gap-6")}>
-      <h2 className="text-section" id={stripId}>
-        {t("Where this chapter sits in the course")}
-      </h2>
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="text-section" id={stripId}>
+          {t("Part of {course}", { course })}
+        </h2>
+        <span className="text-muted-foreground font-mono text-xs tabular-nums">{label}</span>
+      </div>
 
-      <CourseMap
-        chapterId={chapterId}
-        groups={groups}
-        here={here}
-        label={here ? `${position} · ${here.label}` : position}
-      />
+      <CourseMap chapterId={chapterId} groups={groups} here={here} label={label} />
 
       <nav aria-label={t("After this chapter")}>
         <ol className="grid grid-cols-1 sm:grid-cols-4">

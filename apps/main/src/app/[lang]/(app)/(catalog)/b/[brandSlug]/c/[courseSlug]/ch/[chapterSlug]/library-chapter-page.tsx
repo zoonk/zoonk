@@ -55,7 +55,7 @@ async function ChapterStart({
         hasLesson ? (
           <NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>
         ) : (
-          t("Start here and Zoonk writes its lessons for your level.")
+          t("Its lessons get ready when you start.")
         )
       }
     >
@@ -117,7 +117,7 @@ async function ChapterClosing({
     <PageSection aria-labelledby={titleId} className="gap-1.5 border-t pt-12 sm:pt-16">
       <h2 className="text-section" id={titleId}>
         {startChapterId
-          ? t("Your plan from this chapter")
+          ? t("Start from this chapter")
           : t({
               description:
                 "Heading over the ways to start a plan. “your level” is what the learner already knows.",
@@ -127,7 +127,7 @@ async function ChapterClosing({
 
       <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
         {startChapterId
-          ? t("It follows the course from here, at your pace, with reviews before you forget.")
+          ? t("Your plan follows the course from here, in the time you have each day.")
           : t("A few quick questions, then your plan and your first lesson.")}
       </p>
 
@@ -227,7 +227,7 @@ export async function LibraryChapterPage({
 
             <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
 
-            <PlanLine startsHere={Boolean(startChapterId)} />
+            <PlanLine start={startChapterId ? "chapter" : "known"} />
 
             <ChapterStart
               courseId={course.id}
@@ -248,8 +248,6 @@ export async function LibraryChapterPage({
           )}
         </div>
 
-        <ChapterStrip areas={areas} chapterId={chapter.id} outline={outline} params={params} />
-
         {(hasLesson || hasObjectives) && (
           <div
             className={cn(
@@ -263,6 +261,14 @@ export async function LibraryChapterPage({
             <ChapterObjectives chapterId={chapter.id} objectives={chapter.objectives} />
           </div>
         )}
+
+        <ChapterStrip
+          areas={areas}
+          chapterId={chapter.id}
+          course={course.title}
+          outline={outline}
+          params={params}
+        />
 
         <ChapterClosing
           chapterId={chapter.id}
