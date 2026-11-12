@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -25,6 +26,7 @@ import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.country.lessonLanguageLine
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
+import com.zoonk.android.feature.onboarding.LocalOnboardingAnnounce
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.bleed
@@ -54,6 +56,8 @@ internal fun ColumnScope.CountryStep(
     // A country from the full list comes back as the list's first row, picked.
     val shown = listOfNotNull(picked?.takeIf { pick -> listed.none { it.code == pick.code } }) + listed
     val home = stringResource(R.string.settings_home_country)
+    val announce = LocalOnboardingAnnounce.current
+    val resources = LocalResources.current
     val title = stringResource(R.string.onboarding_variety_title)
     val answer = { code: String? ->
         onAnswer(
@@ -114,6 +118,8 @@ internal fun ColumnScope.CountryStep(
             onPick = { choice ->
                 picked = choice
                 choosing = false
+                // TalkBack's focus goes back to "Another country", and the notice may not change, so say what was picked.
+                choice?.let { announce(resources.getString(R.string.onboarding_you_picked, it.name)) }
             },
             onDismiss = { choosing = false },
         )
