@@ -340,7 +340,7 @@ describe("placement in the first week's sessions", () => {
     ).resolves.not.toBeNull();
   });
 
-  it("brings back the lessons one right answer skipped when the week's question on them is missed", async () => {
+  it("keeps lessons after one right answer until first-week questions confirm them", async () => {
     const { goal, placementItemId, plan, skillId } = await plannedSetup();
 
     const statuses = () =>
@@ -349,7 +349,7 @@ describe("placement in the first week's sessions", () => {
         .then((items) => [...new Set(items.map((item) => item.status))]);
 
     await finishGoalPlacement({ goalId: goal.id, input: {} });
-    await expect(statuses()).resolves.toStrictEqual(["testedOut"]);
+    await expect(statuses()).resolves.toStrictEqual(["todo"]);
 
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
 

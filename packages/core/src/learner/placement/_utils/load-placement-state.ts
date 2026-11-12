@@ -204,7 +204,7 @@ export async function loadPlacementWithSummary({
     testSkills,
   } = await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
 
-  const { answeredOnly, focusAreas, focusedSkillIds, knownAreas, quickFormat } = exam;
+  const { answeredOnly, focusAreas, knownAreas, quickFormat } = exam;
 
   const turn = exam.test
     ? startTestTurn({ setup: exam.test, sittingOutcomes, skills, testSkills })
@@ -220,7 +220,6 @@ export async function loadPlacementWithSummary({
     answeredOnly,
     answers: placementAnswers,
     evidence,
-    focusedSkillIds,
     knownAreas,
     measuredKnown,
     ownLevel,
@@ -281,7 +280,7 @@ export async function loadPlacementWithSummary({
       focusTest: focusTest?.view ?? null,
       knownSkillIds: [
         ...new Set([
-          ...listKnownSkillIds({ answers: placementAnswers, evidence, focusedSkillIds, skillIds }),
+          ...listKnownSkillIds({ answers: placementAnswers, evidence, skillIds }),
           ...measuredKnown,
         ]),
       ],

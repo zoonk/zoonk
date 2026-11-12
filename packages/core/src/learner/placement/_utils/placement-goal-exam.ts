@@ -7,7 +7,6 @@ import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getTrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { getAreaShares } from "../../../plans/_utils/exam-subject-shares";
-import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import {
   type PlanGraph,
   type PlanSettings,
@@ -55,7 +54,6 @@ export async function loadGoalExam(goalId: string, tx: TransactionClient) {
     areaShares: getChosenAreaShares({ graph, settings, structure }),
     examBlueprintId: blueprint?.id ?? null,
     focusAreas: settings.focusAreas,
-    focusedSkillIds: listFocusedSkillIds({ graph, settings }),
     goalCreatedAt: goal?.createdAt ?? null,
     goalLevel: goal ? getOwnLevel({ goal }) : null,
     knownAreas: goal ? getKnownSubjects(goal) : [],

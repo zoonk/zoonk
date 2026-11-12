@@ -1,33 +1,30 @@
-/** One test answer can skip lessons but still needs practice confirmation; a later miss reopens the gap. */
+import { type ItemFormat } from "@zoonk/db";
+import { PRIOR_BELIEF, getOwnBeliefs } from "../placement/placement-beliefs";
+import { getSkillPlacementStatus } from "../placement/placement-status";
+
+/** Test answers can skip lessons but still need practice confirmation; a later miss reopens the gap. */
 export type SkillClaim = "confirmed" | "gap" | "toConfirm";
 
 /** undone invalidates earlier evidence of knowing the skill; session placement answers remain tests. */
 export type ClaimEvent = { at: Date; skillId: string } & (
   | { kind: "claim" | "studied" | "undone" }
-  | { isCorrect: boolean; kind: "practice" | "test"; trueFalse?: boolean }
+  | { isCorrect: boolean; kind: "practice" | "test"; format?: ItemFormat }
 );
 
-export type OwnAnswer = { isCorrect: boolean; trueFalse: boolean };
+export type OwnAnswer = { isCorrect: boolean; format: ItemFormat };
 
-const FOCUSED_RIGHT_ANSWERS = 2;
+export function meetsKnownBar({ answers }: { answers: readonly OwnAnswer[] }): boolean {
+  const evidence = answers.map((answer) => ({
+    format: answer.format,
+    outcome: answer.isCorrect ? ("correct" as const) : ("wrong" as const),
+    skillId: "skill",
+  }));
 
-/** One true-or-false answer can be right by chance. */
-const TRUE_FALSE_RIGHT_ANSWERS = 3;
-
-export function meetsKnownBar({
-  answers,
-  focused,
-}: {
-  answers: readonly OwnAnswer[];
-  focused: boolean;
-}): boolean {
-  const right = answers.filter((answer) => answer.isCorrect);
-  const rightTrueFalse = right.filter((answer) => answer.trueFalse).length;
-  const needed = focused ? FOCUSED_RIGHT_ANSWERS : 1;
+  const beliefs = getOwnBeliefs({ evidence, priors: new Map([["skill", PRIOR_BELIEF]]) });
 
   return (
     answers.every((answer) => answer.isCorrect) &&
-    (right.length - rightTrueFalse >= needed || rightTrueFalse >= TRUE_FALSE_RIGHT_ANSWERS)
+    getSkillPlacementStatus(beliefs.get("skill")) === "known"
   );
 }
 
@@ -56,7 +53,7 @@ function nextClaim({ current, event }: { current: ClaimState; event: ClaimEvent 
   if (event.kind === "practice" || event.kind === "test") {
     const answers = [
       ...current.answers,
-      { isCorrect: event.isCorrect, trueFalse: event.trueFalse === true },
+      { format: event.format ?? "multipleChoice", isCorrect: event.isCorrect },
     ];
 
     return { ...current, answers, claim: getAnswerClaim({ claim, event, studied }) };
@@ -149,40 +146,27 @@ export function listClaimed({
   return new Set([...claims].filter(([, value]) => value === claim).map(([skillId]) => skillId));
 }
 
-function isKnownClaim({
-  focused,
-  passedOver,
-  state,
-}: {
-  focused: boolean;
-  passedOver: boolean;
-  state: ClaimState;
-}): boolean {
+function isKnownClaim({ passedOver, state }: { passedOver: boolean; state: ClaimState }): boolean {
   const { claim } = state;
 
   return (
     claim !== undefined &&
     claim !== "gap" &&
     !(claim === "toConfirm" && passedOver) &&
-    (state.studied || state.claimed || meetsKnownBar({ answers: state.answers, focused }))
+    (state.studied || state.claimed || meetsKnownBar({ answers: state.answers }))
   );
 }
 
-/** focused requires two right answers of the skill's own; passedOver is false by default. */
 export function listKnownSkills({
   events,
-  focused = () => false,
   passedOver = () => false,
 }: {
   events: readonly ClaimEvent[];
-  focused?: (skillId: string) => boolean;
   passedOver?: (skillId: string) => boolean;
 }): Set<string> {
   return new Set(
     [...readClaimStates(events)].flatMap(([skillId, state]) =>
-      isKnownClaim({ focused: focused(skillId), passedOver: passedOver(skillId), state })
-        ? [skillId]
-        : [],
+      isKnownClaim({ passedOver: passedOver(skillId), state }) ? [skillId] : [],
     ),
   );
 }

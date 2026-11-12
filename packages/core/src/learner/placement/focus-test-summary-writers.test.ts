@@ -560,9 +560,9 @@ describe("the saved Focus test summary", () => {
     expect(summary).toStrictEqual(await computeSummary(goal));
   });
 
-  it("counts the topics of the focused part the plan asks twice", async () => {
+  it("keeps a numeric answer settled when the focused part changes", async () => {
     const { focusPart, goal } = await focusedPartGoal();
-    await expect(readSummary(goal.id)).resolves.toMatchObject({ complete: false });
+    await expect(readSummary(goal.id)).resolves.toMatchObject({ complete: true });
 
     await expect(focusPart(1, 7)).resolves.toMatchObject({ status: "applied" });
 

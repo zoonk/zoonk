@@ -206,13 +206,19 @@ async function placedLearner({
       const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
       const right = readingRight[index] ?? false;
 
-      return attemptFixture({
-        answer: { selectedIndex: right ? 0 : 1 },
-        isCorrect: right,
-        itemId: item.id,
-        skillId: skill.id,
-        userId: user.id,
-      });
+      const confirmation = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
+
+      return Promise.all(
+        [item, confirmation].map((question) =>
+          attemptFixture({
+            answer: { selectedIndex: right ? 0 : 1 },
+            isCorrect: right,
+            itemId: question.id,
+            skillId: skill.id,
+            userId: user.id,
+          }),
+        ),
+      );
     }),
   );
 

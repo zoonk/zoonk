@@ -141,6 +141,20 @@ async function setup(
     placementAnswer({ isCorrect: false, skill: missed }),
     placementAnswer({ isCorrect: true, skill: frequent }),
     placementAnswer({ isCorrect: true, skill: ordinary }),
+    attemptFixture({
+      answeredAt: day(-1),
+      isCorrect: true,
+      itemId: itemsOf(ordinary)[1]?.id ?? null,
+      skillId: ordinary.id,
+      userId: user.id,
+    }),
+    attemptFixture({
+      answeredAt: day(-1),
+      isCorrect: true,
+      itemId: itemsOf(frequent)[1]?.id ?? null,
+      skillId: frequent.id,
+      userId: user.id,
+    }),
     learnerSkillFixture({
       difficulty: 5,
       due: day(-1),
