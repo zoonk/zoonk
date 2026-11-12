@@ -129,6 +129,7 @@ internal fun ColumnScope.FocusTestFlow(
         shown is FocusTestPhase.Resume -> {
             FocusTestResume(
                 sitting = shown.question.sitting,
+                answered = shown.answered.toInt(),
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onContinue = vm::resume,
@@ -151,7 +152,7 @@ internal fun ColumnScope.FocusTestFlow(
                     plan?.let {
                         PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, it.onChangeFocus, it.questions)
                     },
-                canContinue = nextSittingMinutes(shown.test) != null,
+                canContinue = shown.test.offer != null,
                 pressed = vm.pressed,
                 failed = vm.failed,
                 onDone = { vm.done(onDone) },

@@ -29,8 +29,10 @@ internal sealed interface FocusTestPhase {
         val minutes: Int,
     ) : FocusTestPhase
 
+    /** [answered]: every answer the learner saved, earlier sittings included. */
     data class Resume(
         val question: Question,
+        val answered: Long,
     ) : FocusTestPhase
 
     data class Question(
@@ -47,17 +49,10 @@ internal sealed interface FocusTestPhase {
     ) : FocusTestPhase
 }
 
-/** About how long the next sitting takes; a sitting opened and left before its first answer is offered again. Null when there's none. */
-internal fun nextSittingMinutes(test: FocusTest): Int? {
-    test.offer?.let { return it.minutes.toInt() }
-    val sitting = test.sitting ?: return null
-    return sitting.minutes.toInt().takeIf { sitting.answered == 0L && sitting.questions > 0 }
-}
-
 /** The test's result, or else what it offers; null when there's neither. */
 private fun resting(test: FocusTest): FocusTestPhase? {
     if (test.checkpoint != null) return FocusTestPhase.Checkpoint(test)
-    return nextSittingMinutes(test)?.let { FocusTestPhase.Offer(test, it) }
+    return test.offer?.let { FocusTestPhase.Offer(test, it.minutes.toInt()) }
 }
 
 /**
@@ -91,7 +86,7 @@ internal fun focusTestPhase(
 
     return when {
         entered -> question
-        sitting.answered > 0 -> FocusTestPhase.Resume(question)
+        sitting.answered > 0 -> FocusTestPhase.Resume(question, read.answered)
         else -> resting(test) ?: question
     }
 }

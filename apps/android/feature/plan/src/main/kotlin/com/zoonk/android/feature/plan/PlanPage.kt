@@ -233,7 +233,7 @@ internal fun PlanPage(
         page = page,
         standing = standing,
         alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
-        focusTest = focusTest?.let { { PlanFocusTestRow(it, page.plan, links::focusTest) } },
+        focusTest = focusTest?.let { { PlanFocusTestRow(it, links::focusTest) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =

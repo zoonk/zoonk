@@ -747,9 +747,9 @@ private const val INSTRUMENT = """{"status":"instrument","instrument":"guitar"}"
 private const val UNSAFE = """{"status":"unsafe"}"""
 
 private const val FOCUS_NOT_STARTED =
-    """{"state":"notStarted","offer":{"questions":15,"minutes":15},"subjects":null,"sessionQuestions":"off","setsFocus":false}"""
+    """{"state":"notStarted","offer":{"minutes":15},"sessionQuestions":"off","suggestsFocus":true}"""
 private const val FOCUS_CHECKED =
-    """{"state":"checked","offer":{"questions":10,"minutes":10},"subjects":{"asked":6,"total":19},"sessionQuestions":"on","setsFocus":true}"""
+    """{"state":"checked","offer":{"minutes":10},"sessionQuestions":"on","suggestsFocus":true}"""
 
 /** A short exam plan whose first three subjects get more time when [focused]. */
 private fun focusedPlan(

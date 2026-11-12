@@ -10,7 +10,6 @@ import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.trueFalseQuestion
 import com.zoonk.api.models.Placement
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -27,14 +26,14 @@ class FocusTestPhaseTest {
 
     @Test
     fun offersTheTestToALearnerWhoHasNotStartedWithTheTimeItTakes() {
-        val shown = phase(ready(focusTestOf(offer = focusOfferOf(questions = 15))))
+        val shown = phase(ready(focusTestOf(offer = focusOfferOf(minutes = 15))))
 
         assertEquals(15, (shown as FocusTestPhase.Offer).minutes)
     }
 
     @Test
     fun showsTheResultOnceThereAreAnswersAndNoSittingIsOpen() {
-        val shown = phase(ready(focusTestOf(asked = 6, offer = focusOfferOf(kind = "continuation"), checkpoint = focusCheckpointOf())))
+        val shown = phase(ready(focusTestOf(asked = 6, offer = focusOfferOf(), checkpoint = focusCheckpointOf())))
 
         assertTrue(shown is FocusTestPhase.Checkpoint)
     }
@@ -47,23 +46,25 @@ class FocusTestPhaseTest {
     }
 
     @Test
-    fun neverOpensOnAQuestionASittingWithAnswersWaitsOnItsResumeScreen() {
-        val test = focusTestOf(asked = 6, sitting = focusSittingOf(answered = 6), offer = null, checkpoint = focusCheckpointOf())
+    fun neverOpensOnAQuestionASittingWithAnswersWaitsOnItsResumeScreenCountingEverySavedAnswer() {
+        val test = focusTestOf(asked = 6, sitting = focusSittingOf(answered = 1), offer = null, checkpoint = focusCheckpointOf())
+        val shown = phase(placementOf(next = QUESTION, answered = 7, focusTest = test))
 
-        assertTrue(phase(ready(test, next = QUESTION)) is FocusTestPhase.Resume)
+        assertEquals(7L, (shown as FocusTestPhase.Resume).answered)
     }
 
     @Test
     fun offersASittingLeftBeforeItsFirstAnswerAgainWithItsOwnTime() {
-        val shown = phase(ready(focusTestOf(sitting = focusSittingOf(questions = 12), offer = null), next = QUESTION))
+        val shown = phase(ready(focusTestOf(sitting = focusSittingOf(questions = 12), offer = focusOfferOf(minutes = 12)), next = QUESTION))
 
         assertEquals(12, (shown as FocusTestPhase.Offer).minutes)
     }
 
     @Test
     fun endsASittingThatHasNothingMoreToAsk() {
-        val sitting = focusSittingOf(answered = 6, subject = null, end = "noQuestionsReady")
-        val shown = phase(ready(focusTestOf(asked = 6, sitting = sitting, offer = null, checkpoint = focusCheckpointOf())))
+        val sitting = focusSittingOf(answered = 6, subject = null)
+        val test = focusTestOf(asked = 6, sitting = sitting, offer = null, checkpoint = focusCheckpointOf())
+        val shown = phase(placementOf(status = "done", next = null, focusTest = test))
 
         assertEquals(FocusTestPhase.Ended, shown)
     }
@@ -109,14 +110,6 @@ class FocusTestPhaseTest {
             }
         assertEquals(FocusTestPhase.Checkpoint(test), focusTestPhase(LoadState.Loading, entered = false, closed = test))
     }
-
-    @Test
-    fun nothingIsNextWhileASittingWithAnswersIsOpenOrOnceNothingIsLeftToAsk() {
-        assertNull(nextSittingMinutes(testOf(focusTestOf(asked = 1, sitting = focusSittingOf(answered = 1), offer = null))))
-        assertNull(nextSittingMinutes(testOf(focusTestOf(offer = null, checkpoint = focusCheckpointOf()))))
-    }
-
-    private fun testOf(json: String) = checkNotNull(ready(json).focusTest)
 
     private companion object {
         val QUESTION = trueFalseQuestion()

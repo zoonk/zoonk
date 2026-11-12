@@ -13,28 +13,25 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.api.models.FocusTestOffer
 import com.zoonk.api.models.FocusTestSessionQuestions
 import com.zoonk.api.models.FocusTestSummary
-import com.zoonk.api.models.FocusTestSummaryOffer
 import com.zoonk.api.models.Plan
 
 /** The test's first sitting, for a learner who hasn't started it and whose time doesn't cover everything: where a focus would help most. */
-fun focusTestOffer(plan: Plan): FocusTestSummaryOffer? =
+fun focusTestOffer(plan: Plan): FocusTestOffer? =
     plan.focusTest
         ?.takeIf { it.state == FocusTestSummary.State.NOT_STARTED && planCoverage(plan) != null }
         ?.offer
 
 /** The test's one line on the plan: what it's for and what it costs, what's left, or where its result is. */
 @Composable
-internal fun focusTestLine(
-    summary: FocusTestSummary,
-    plan: Plan,
-): String {
+internal fun focusTestLine(summary: FocusTestSummary): String {
     val minutes = summary.offer?.minutes?.let { formatMinutes(it.toInt(), currentLocale()) }
     return when (summary.state) {
         FocusTestSummary.State.NOT_STARTED -> {
             factsLine(
-                stringResource(if (plan.schedule.targetDate != null) R.string.focustest_find_focus else R.string.focustest_find_start),
+                stringResource(if (summary.suggestsFocus) R.string.focustest_find_focus else R.string.focustest_find_start),
                 minutes?.let { stringResource(R.string.focustest_about, it) },
             )
         }
@@ -59,7 +56,6 @@ internal fun focusTestLine(
 @Composable
 internal fun PlanFocusTestRow(
     summary: FocusTestSummary,
-    plan: Plan,
     onOpen: () -> Unit,
 ) {
     ListRow(
@@ -67,6 +63,6 @@ internal fun PlanFocusTestRow(
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onOpen,
         leading = { Icon(painterResource(R.drawable.ic_my_location), contentDescription = null) },
-        supporting = { Text(focusTestLine(summary, plan)) },
+        supporting = { Text(focusTestLine(summary)) },
     )
 }

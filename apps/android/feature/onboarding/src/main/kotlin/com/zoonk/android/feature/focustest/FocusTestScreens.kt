@@ -64,9 +64,6 @@ internal fun Note(
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** Only a dated exam with several subjects has a focus to find; any other has a starting point. */
-private fun FocusTest.findsFocus() = dated && subjects.size > 1
-
 /** [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. */
 @Composable
 internal fun ColumnScope.FocusTestOffer(
@@ -78,14 +75,14 @@ internal fun ColumnScope.FocusTestOffer(
     onStart: () -> Unit,
     onSkip: () -> Unit,
 ) {
-    val focus = test.findsFocus()
+    val focus = test.suggestsFocus
     SetupContent {
         TestHeader(
             title = stringResource(if (focus) R.string.focustest_find_focus else R.string.focustest_find_start),
             description = stringResource(if (focus) R.string.focustest_offer_description_focus else R.string.focustest_offer_description),
             eyebrow = { TestEyebrow(aboutMinutes(minutes)) },
         )
-        HowItWorks()
+        HowItWorks(focus)
         OnboardingActions {
             FinishFailed(failed)
             Button(
@@ -112,12 +109,12 @@ internal fun ColumnScope.FocusTestOffer(
 @Composable
 internal fun ColumnScope.FocusTestResume(
     sitting: FocusTestSitting,
+    answered: Int,
     pressed: Pressed?,
     failed: Boolean,
     onContinue: () -> Unit,
     onSeeResult: () -> Unit,
 ) {
-    val answered = sitting.answered.toInt()
     SetupContent {
         TestHeader(
             title = stringResource(R.string.focustest_resume_title),

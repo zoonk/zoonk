@@ -437,7 +437,6 @@ class TodayScreenshots {
                                 "focusTest" to
                                     buildJsonObject {
                                         put("minutes", 15)
-                                        put("questions", 15)
                                     },
                             ),
                     ),

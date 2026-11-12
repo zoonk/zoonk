@@ -91,6 +91,17 @@ class FocusTestScreenshots(
     @Test
     fun offer() = shoot("offer", FakeOnboardingApi().apply { placement = NOT_STARTED })
 
+    /** An exam whose answers only set where each subject starts: no date, or one subject. */
+    @Test
+    fun offerStart() =
+        shoot(
+            "offer-start",
+            FakeOnboardingApi().apply {
+                placement =
+                    placementOf(next = null, focusTest = focusTestOf(suggestsFocus = false))
+            },
+        )
+
     @Test
     fun question() = shoot("question", startable(focusSittingOf(answered = 3))) { tap("Start the test") }
 
@@ -108,7 +119,13 @@ class FocusTestScreenshots(
         shoot(
             "ended",
             FakeOnboardingApi().apply {
-                placement = placementOf(next = null, focusTest = answered(focusSittingOf(answered = 15, subject = null, end = "settled")))
+                placement =
+                    placementOf(
+                        status = "done",
+                        next = null,
+                        answered = 15,
+                        focusTest = answered(focusSittingOf(answered = 15, subject = null)),
+                    )
             },
         )
 
@@ -198,7 +215,14 @@ class FocusTestScreenshots(
     fun offerHowItWorks() =
         sheet("offer-how-it-works") {
             Text(stringResource(R.string.focustest_how_it_works), style = MaterialTheme.typography.titleLarge)
-            HowItWorksRows()
+            HowItWorksRows(suggestsFocus = true)
+        }
+
+    @Test
+    fun offerStartHowItWorks() =
+        sheet("offer-start-how-it-works") {
+            Text(stringResource(R.string.focustest_how_it_works), style = MaterialTheme.typography.titleLarge)
+            HowItWorksRows(suggestsFocus = false)
         }
 
     /** Over an exam's test question inside a session; the second one after "Not today" didn't save. */
@@ -317,7 +341,7 @@ class FocusTestScreenshots(
 
         private fun answered(sitting: String) = focusTestOf(asked = 6, sitting = sitting, offer = null, checkpoint = focusCheckpointOf())
 
-        private val RESUMING = placementOf(next = QUESTION.trimIndent(), focusTest = answered(focusSittingOf(answered = 6)))
+        private val RESUMING = placementOf(next = QUESTION.trimIndent(), answered = 6, focusTest = answered(focusSittingOf(answered = 6)))
 
         /** Start opens [sitting] on its next question. */
         private fun startable(sitting: String) =
@@ -338,7 +362,7 @@ class FocusTestScreenshots(
                 completionOf(
                     focusTestOf(
                         asked = 6,
-                        offer = focusOfferOf(kind = "continuation", questions = 10),
+                        offer = focusOfferOf(minutes = 10),
                         checkpoint = focusCheckpointOf(lessonsSkipped, focus),
                         sessionQuestions = sessionQuestions,
                     ),

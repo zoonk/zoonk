@@ -101,7 +101,7 @@ internal fun ColumnScope.FocusTestCheckpoint(
             FocusRows(focus.rows)
             if (lessons > 0) Note(pluralStringResource(R.plurals.focustest_also_skips, lessons, lessons))
         }
-        if (plan != null) PlanRows(test, plan, changesFocus = focus != null)
+        if (plan != null) PlanRows(test, plan, changesFocus = focus != null && focus.state != FocusTestFocus.State.IF_TIME_SHORT)
         OnboardingActions {
             FinishFailed(failed || plan?.failed == true)
             Button(
@@ -241,7 +241,7 @@ private fun PlanRows(
             }
             ListRow(headline = { Text(stringResource(R.string.focustest_see_all_subjects)) }, onClick = { subjects = true })
             if (questions != FocusTestSessionQuestions.OFF) {
-                val on = questions == FocusTestSessionQuestions.ON
+                val on = questions != FocusTestSessionQuestions.PAUSED
                 HorizontalDivider()
                 ListRow(
                     headline = { Text(stringResource(R.string.focustest_session_questions)) },
@@ -267,21 +267,21 @@ private fun PlanRows(
 
 /** "How it works": what a learner may want to know before starting, for whoever asks. */
 @Composable
-internal fun HowItWorks() {
+internal fun HowItWorks(suggestsFocus: Boolean) {
     var open by rememberSaveable { mutableStateOf(false) }
     val title = stringResource(R.string.focustest_how_it_works)
     TextButton(onClick = { open = true }, modifier = Modifier.bleed(LocalButtonSize.current.textInset)) { Text(title) }
-    if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows() }
+    if (open) FocusTestSheet(title, onDismiss = { open = false }) { HowItWorksRows(suggestsFocus) }
 }
 
 @Composable
-internal fun HowItWorksRows() {
+internal fun HowItWorksRows(suggestsFocus: Boolean) {
     val rows =
-        listOf(
+        listOfNotNull(
             R.string.focustest_how_weight_title to R.string.focustest_how_weight,
             R.string.focustest_how_grade_title to R.string.focustest_how_grade,
             R.string.focustest_how_stop_title to R.string.focustest_how_stop,
-            R.string.focustest_how_subjects_title to R.string.focustest_how_subjects,
+            (R.string.focustest_how_subjects_title to R.string.focustest_how_subjects).takeIf { suggestsFocus },
             R.string.focustest_how_sessions_title to R.string.focustest_how_sessions,
         )
     Column(Modifier.bleed(LIST_ITEM_INSET)) {

@@ -118,7 +118,7 @@ internal fun ColumnScope.ChooseFocusBody(
         description = description,
         body = {
             if (unchanged) FocusUnchanged(answer.reason, joinList(chosen))
-            focusTest?.let { FocusTestLink(it, page.plan, onFocusTest) }
+            focusTest?.let { FocusTestLink(it, onFocusTest) }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (focusTest != null) {
                     Text(
@@ -177,7 +177,6 @@ private fun FocusUnchanged(
 @Composable
 private fun FocusTestLink(
     summary: FocusTestSummary,
-    plan: Plan,
     onOpen: () -> Unit,
 ) {
     OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
@@ -194,7 +193,7 @@ private fun FocusTestLink(
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    focusTestLine(summary, plan),
+                    focusTestLine(summary),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

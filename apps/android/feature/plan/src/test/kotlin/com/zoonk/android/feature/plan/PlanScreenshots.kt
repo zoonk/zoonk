@@ -516,10 +516,10 @@ class PlanScreenshots {
                 "plan-preview-result" to {
                     PlanPreviewResult(fasterTime, onApply = {}, onRetry = {}, onDismiss = {})
                 },
-                "plan-focus-test-row-not-started" to { PlanFocusTestRow(focusTest(NOT_STARTED), examFocusPage.plan, onOpen = {}) },
-                "plan-focus-test-row-continue" to { PlanFocusTestRow(focusTest(SITTING), examFocusPage.plan, onOpen = {}) },
-                "plan-focus-test-row-result" to { PlanFocusTestRow(focusTest(CHECKED), examFocusPage.plan, onOpen = {}) },
-                "plan-focus-test-row-paused" to { PlanFocusTestRow(focusTest(PAUSED), examFocusPage.plan, onOpen = {}) },
+                "plan-focus-test-row-not-started" to { PlanFocusTestRow(focusTest(NOT_STARTED), onOpen = {}) },
+                "plan-focus-test-row-continue" to { PlanFocusTestRow(focusTest(SITTING), onOpen = {}) },
+                "plan-focus-test-row-result" to { PlanFocusTestRow(focusTest(CHECKED), onOpen = {}) },
+                "plan-focus-test-row-paused" to { PlanFocusTestRow(focusTest(PAUSED), onOpen = {}) },
                 "plan-sheet-focus-test" to { ChooseFocusBody(examFocusPage, PlanEdits(), onFocusTest = {}, onDone = {}) },
             )
         var shown by mutableStateOf(parts.keys.first())
@@ -770,11 +770,11 @@ class PlanScreenshots {
 }
 
 private const val NOT_STARTED =
-    """{"state":"notStarted","offer":{"questions":15,"minutes":15},"subjects":null,"sessionQuestions":"off","setsFocus":false}"""
+    """{"state":"notStarted","offer":{"minutes":15},"sessionQuestions":"off","suggestsFocus":true}"""
 private const val SITTING =
-    """{"state":"sitting","offer":{"questions":9,"minutes":9},"subjects":{"asked":6,"total":19},"sessionQuestions":"off","setsFocus":false}"""
+    """{"state":"sitting","offer":{"minutes":9},"sessionQuestions":"off","suggestsFocus":true}"""
 private const val CHECKED =
-    """{"state":"checked","offer":{"questions":10,"minutes":10},"subjects":{"asked":6,"total":19},"sessionQuestions":"on","setsFocus":true}"""
+    """{"state":"checked","offer":{"minutes":10},"sessionQuestions":"on","suggestsFocus":true}"""
 
 private val PAUSED = CHECKED.replace(""""sessionQuestions":"on"""", """"sessionQuestions":"paused"""")
 

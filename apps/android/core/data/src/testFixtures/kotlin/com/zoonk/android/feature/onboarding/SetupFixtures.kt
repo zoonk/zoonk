@@ -100,32 +100,23 @@ fun focusSittingOf(
     answered: Int = 0,
     questions: Int = 15,
     subject: String? = "Administrative law",
-    kind: String = "first",
     hint: String? = null,
-    end: String? = null,
 ) = """
-    {"kind":"$kind","questions":$questions,"answered":$answered,"left":${questions - answered},"minutes":${maxOf(1, questions - answered)},
-     "subject":${subject?.let(
-    ::subjectRef,
-) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"},"end":${end?.let { "\"$it\"" } ?: "null"}}
+    {"questions":$questions,"answered":$answered,"minutes":${maxOf(1, questions - answered)},
+     "subject":${subject?.let(::subjectRef) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"}}
     """.trimIndent()
 
-fun focusOfferOf(
-    kind: String = "first",
-    questions: Int = 15,
-    pastCeiling: Int = 3,
-) = """{"kind":"$kind","questions":$questions,"minutes":$questions,"pastCeiling":$pastCeiling}"""
+fun focusOfferOf(minutes: Int = 15) = """{"minutes":$minutes}"""
 
-/** Suggested focus rows, one for each reason a subject can rank. */
+/** Suggested focus rows, the most needed first. */
 fun focusOf(
     state: String = "ifTimeShort",
-    basis: String = "answers",
     proposal: String? = null,
 ) = """
-    {"basis":"$basis","state":"$state","proposal":${proposal ?: "null"},"rows":[
-     {"subject":${subjectRef("Administrative law")},"areas":["Administrative law"],"reason":"answers","part":null},
-     {"subject":${subjectRef("Portuguese")},"areas":["Portuguese"],"reason":"notAsked","part":null},
-     {"subject":{"key":"essay","name":"Essay","shortName":null},"areas":["Essay"],"reason":"notChecked","part":"written"}]}
+    {"state":"$state","proposal":${proposal ?: "null"},"rows":[
+     {"subject":${subjectRef("Administrative law")},"areas":["Administrative law"]},
+     {"subject":${subjectRef("Portuguese")},"areas":["Portuguese"]},
+     {"subject":{"key":"essay","name":"Essay","shortName":null},"areas":["Essay"]}]}
     """.trimIndent()
 
 fun focusCheckpointOf(
@@ -139,10 +130,9 @@ fun focusTestOf(
     offer: String? = focusOfferOf(),
     checkpoint: String? = null,
     sessionQuestions: String = "off",
-    dated: Boolean = true,
+    suggestsFocus: Boolean = true,
 ) = """
-    {"dated":$dated,"subjects":[${focusSubjects(asked).joinToString(",")}],
-     "counts":{"asked":$asked,"quick":${EXAM_SUBJECTS.size},"total":${EXAM_SUBJECTS.size + 1}},
+    {"suggestsFocus":$suggestsFocus,"subjects":[${focusSubjects(asked).joinToString(",")}],
      "sitting":${sitting ?: "null"},"offer":${offer ?: "null"},"checkpoint":${checkpoint ?: "null"},"sessionQuestions":"$sessionQuestions"}
     """.trimIndent()
 
