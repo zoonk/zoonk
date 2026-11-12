@@ -3,9 +3,9 @@
 import { type PlanPhaseCheckpointView } from "@zoonk/core/plans/view-contract";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
+import { ListRowChevron } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
 import { MarkedText, TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -39,7 +39,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   return (
     <LearnLink className={EVENT_ROW_CLASS} href={href}>
       {children}
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

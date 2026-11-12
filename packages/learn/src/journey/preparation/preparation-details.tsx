@@ -2,9 +2,9 @@
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindDot, KindMark } from "../../_components/kind-tile";
+import { ListRowChevron } from "../../_components/list-group";
 import { PlusMark } from "../../_components/plus-lock";
 import { ProgressRing } from "../../_components/progress-ring";
 import { SectionLabel } from "../../_components/section-label";
@@ -158,7 +158,7 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
         href={examHref}
       >
         {content}
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+        <ListRowChevron />
       </LearnLink>
     );
   }

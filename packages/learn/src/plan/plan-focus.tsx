@@ -12,10 +12,11 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, ChevronRightIcon, CrosshairIcon } from "lucide-react";
+import { CheckIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { ListRowChevron } from "../_components/list-group";
 import { ChangeSaveError } from "../_components/save-error";
 import { FactSegments } from "../_components/task-meta";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
@@ -71,7 +72,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
           <FactSegments facts={rowFacts(focusTest)} />
         </span>
       </span>
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

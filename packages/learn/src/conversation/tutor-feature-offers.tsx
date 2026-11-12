@@ -4,7 +4,6 @@ import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-con
 import {
   BrainIcon,
   ChartColumnIcon,
-  ChevronRightIcon,
   MicIcon,
   NotebookTextIcon,
   PlusIcon,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
+import { ListRowChevron } from "../_components/list-group";
 import { PlusNotice } from "../_components/plus-lock";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -45,7 +45,7 @@ function CatalogCourseRow({
             </span>
           )}
         </span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+        <ListRowChevron />
       </LearnLink>
     </div>
   );

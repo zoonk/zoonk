@@ -43,13 +43,12 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-function ListRowChevron({ className }: { className?: string }) {
-  return (
-    <ChevronRightIcon
-      aria-hidden="true"
-      className={cn("text-muted-foreground/60 size-4 shrink-0 self-center", className)}
-    />
-  );
+/** A row's trailing chevron, its ink on the row's end edge. */
+export const ROW_CHEVRON_CLASS =
+  "text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center";
+
+export function ListRowChevron() {
+  return <ChevronRightIcon aria-hidden="true" className={ROW_CHEVRON_CLASS} />;
 }
 
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {

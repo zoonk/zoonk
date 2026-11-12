@@ -12,13 +12,14 @@ import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
+import { ListRowChevron } from "@zoonk/learn/list";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/wait";
 import { useReadyHold } from "@zoonk/learn/wait/hold";
 import { LessonWaitStatus } from "@zoonk/learn/wait/lesson-status";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { ChevronRightIcon, PlayIcon } from "lucide-react";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { LessonRouteFrame } from "./lesson-route-frame";
@@ -60,7 +61,7 @@ function Alternative({
         <Link className={rowClass} href={`/learn/${alternative.lessonId}`}>
           <KindMark kind="lesson" />
           <span className="min-w-0 flex-1 text-balance">{alternative.title}</span>
-          <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+          <ListRowChevron />
         </Link>
       ) : (
         <Link className={rowClass} href="/today">
@@ -70,7 +71,7 @@ function Alternative({
               count: alternative.dueSkills,
             })}
           </span>
-          <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+          <ListRowChevron />
         </Link>
       )}
     </section>
