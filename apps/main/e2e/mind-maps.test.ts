@@ -243,6 +243,41 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("the sidebar's Mind maps link keeps a map the learner just started on its way", async ({
+    browser,
+  }) => {
+    const { second, user } = await createLearner();
+    const page = await openAs(browser, user);
+    const sidebar = page.getByRole("complementary", { name: "Sidebar" });
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("button", { name: /^Show chapters/u }).click();
+
+      await page
+        .getByRole("listitem")
+        .filter({ hasText: second.chapter.title })
+        .getByRole("button", { name: "Create" })
+        .click();
+
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      // The list read the Create started has come back, so no reply in flight can mend an older copy.
+      await expect(page.getByRole("button", { name: "Create 1 chapter map" })).toBeVisible();
+
+      await sidebar.getByRole("link", { exact: true, name: "Mind maps" }).click();
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      await drawMap(second.chapter.id);
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }),
+      ).toBeVisible({ timeout: 15_000 });
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a free learner out of maps for the day sees why, and no chapter offers to create one", async ({
     browser,
   }) => {
