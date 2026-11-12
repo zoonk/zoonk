@@ -24,14 +24,19 @@ final class QueuedSaves<Value: Equatable & Sendable> {
     self.cache = cache
   }
 
-  /// `confirm` gives what the server took from its reply. Nothing is sent while nothing is shown,
-  /// nor once the learner who made the change is gone.
+  /// `confirm` gives what the server took from its reply. A change made before any screen read the
+  /// resource reads it first. Nothing is sent when it can't be read (nil), nor once the learner who
+  /// made the change is gone.
   func save<Reply: Sendable>(
     _ apply: @escaping (Value) -> Value,
     invalidating domains: Set<DataDomain>,
     _ write: @escaping (AuthenticatedSession) async throws -> Reply,
     confirm: @escaping (Value, Reply) -> Value
   ) async -> MutationResult<Reply>? {
+    if resource.value == nil {
+      await resource.load()
+    }
+
     guard let shown = resource.value else {
       return nil
     }

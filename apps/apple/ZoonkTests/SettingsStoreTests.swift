@@ -28,6 +28,32 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertTrue(store.saveFailed)
   }
 
+  /// The buddy offers a country before any screen read the preferences.
+  func testAPreferenceSavedBeforeItLoadedReachesTheServer() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    let portugal = CountryChoice(code: "PT", name: "Portugal")
+
+    let saved = await store.updatePreferences(.homeCountry(portugal))
+
+    XCTAssertTrue(saved)
+    let updates = await api.updates
+    XCTAssertEqual(updates, [.homeCountry(portugal)])
+    XCTAssertEqual(store.preferences.value?.homeCountry?.code, "PT")
+  }
+
+  func testAPreferenceThatCouldNotLoadSaysItDidNotSave() async {
+    let api = SettingsAPIStub(preferencesError: APIError.unavailable)
+    let store = makeStore(api: api)
+
+    let saved = await store.updatePreferences(
+      .homeCountry(CountryChoice(code: "PT", name: "Portugal")))
+
+    XCTAssertFalse(saved)
+    let updates = await api.updates
+    XCTAssertEqual(updates, [])
+  }
+
   func testAFailedSaveLeavesALaterChangeOfTheSameSetting() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
@@ -353,6 +379,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private var holdsEdits = false
   private var heldEdit: CheckedContinuation<Void, Error>?
 
+  private let preferencesError: Error?
   private let updateError: Error?
   private let deleteError: Error?
   private let restoreError: Error?
@@ -364,6 +391,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   }
 
   init(
+    preferencesError: Error? = nil,
     updateError: Error? = nil,
     deleteError: Error? = nil,
     restoreError: Error? = nil,
@@ -374,6 +402,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
   ) {
     self.webPlus = webPlus
     self.webPlusChangeError = webPlusChangeError
+    self.preferencesError = preferencesError
     self.updateError = updateError
     self.deleteError = deleteError
     self.restoreError = restoreError
@@ -381,8 +410,12 @@ private actor SettingsAPIStub: SettingsAPIClient {
     self.exportError = exportError
   }
 
-  nonisolated func getPreferences(token: String) async throws -> LearningPreferences {
-    .settingsTestFixture
+  func getPreferences(token: String) async throws -> LearningPreferences {
+    if let preferencesError {
+      throw preferencesError
+    }
+
+    return .settingsTestFixture
   }
 
   func updatePreferences(token: String, _ update: PreferencesUpdate) async throws

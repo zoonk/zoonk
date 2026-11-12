@@ -115,11 +115,12 @@ final class SettingsStore {
       update.copied(from: $1, to: $0)
     }
 
-    if case .failed = result {
+    switch result {
+    case .done, .obsolete:
+      return true
+    case .failed, nil:
       return false
     }
-
-    return true
   }
 
   func setMemoryEnabled(_ enabled: Bool) async {
