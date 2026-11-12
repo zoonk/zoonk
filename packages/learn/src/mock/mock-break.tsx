@@ -69,7 +69,7 @@ export function MockBreak({ until }: { until: string }) {
               icon={<PlayIcon aria-hidden="true" />}
               onClick={() => void runner.endBreak()}
             >
-              {t("Start the next section")}
+              {t("Start now")}
             </TaskMainButton>
           </TaskActions>
         </>

@@ -8,6 +8,14 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@zoonk/ui/components/popover";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { PageEyebrow } from "../_components/page";
@@ -76,24 +84,11 @@ function ExamEyebrow() {
     return <PageEyebrow>{t("Exam")}</PageEyebrow>;
   }
 
-  if (!exam.daysEstimated) {
-    return (
-      <PageEyebrow>
-        {t("Exam · {days, plural, =0 {The day is here} one {# day left} other {# days left}}", {
-          days,
-        })}
-      </PageEyebrow>
-    );
-  }
-
   return (
     <PageEyebrow>
-      <span aria-hidden="true">
-        {t("Exam · {days, plural, one {~# day left} other {~# days left}}", { days })}
-      </span>
-      <span className="sr-only">
-        {t("Exam · {days, plural, one {About # day left} other {About # days left}}", { days })}
-      </span>
+      {t("Exam · {days, plural, =0 {The day is here} one {# day left} other {# days left}}", {
+        days,
+      })}
     </PageEyebrow>
   );
 }
@@ -103,7 +98,8 @@ function ExamBar() {
   return <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName} />;
 }
 
-function DateNote() {
+/** Why the dates may change, behind a tap: the page says once that they're estimated. */
+function useDateTag(): { label: string; text: string } | null {
   const t = useExtracted();
   const { exam } = useExamScreen();
 
@@ -112,24 +108,42 @@ function DateNote() {
   }
 
   if (exam.namedMonth) {
-    return exam.noticeDay || exam.noSitting ? null : (
-      <p className="text-muted-foreground text-xs text-pretty">
-        {t(
-          "{document, select, notice {The month you told us. We'll tell you the day once the notice sets it.} other {The month you told us. We'll tell you the day once the official calendar sets it.}}",
-          { document: exam.examDocument },
-        )}
-      </p>
-    );
+    return exam.noticeDay || exam.noSitting
+      ? null
+      : { label: t("Day not set yet"), text: t("We'll tell you the day once it's set.") };
   }
 
-  return exam.daysEstimated ? (
-    <p className="text-muted-foreground text-xs text-pretty">
-      {t(
-        "{document, select, notice {Estimated from past editions. We'll tell you when the official notice is out.} other {Estimated from past editions. We'll tell you when the official dates are out.}}",
-        { document: exam.examDocument },
-      )}
-    </p>
-  ) : null;
+  return exam.daysEstimated
+    ? {
+        label: t("Estimated dates"),
+        text: t("From past editions. We'll tell you when the official dates are out."),
+      }
+    : null;
+}
+
+function DateTag() {
+  const tag = useDateTag();
+
+  if (!tag) {
+    return null;
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger
+        className="hit-area text-muted-foreground decoration-faint focus-visible:ring-ring/50 relative self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"
+        data-slot="exam-date-tag"
+      >
+        {tag.label}
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-64">
+        <PopoverHeader>
+          <PopoverTitle>{tag.label}</PopoverTitle>
+          <PopoverDescription>{tag.text}</PopoverDescription>
+        </PopoverHeader>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 function ExamNoticeDay() {
@@ -146,23 +160,19 @@ function ExamNoticeDay() {
 }
 
 function ExamFacts() {
-  const t = useExtracted();
-  const { exam } = useExamScreen();
   const days = useExamDays();
-  const fromPastEditions = exam.daysEstimated && !exam.namedMonth;
 
-  const facts = [...days, fromPastEditions && t("estimated from past editions")].filter(
-    (fact): fact is string => Boolean(fact),
-  );
-
-  if (facts.length === 0) {
+  if (days.length === 0) {
     return null;
   }
 
   return (
-    <DetailFacts>
-      <FactSegments facts={facts} />
-    </DetailFacts>
+    <>
+      <DetailFacts>
+        <FactSegments facts={days} />
+      </DetailFacts>
+      <DateTag />
+    </>
   );
 }
 
@@ -203,7 +213,6 @@ function ExamMoment() {
       moment={{
         checklist: exam.stage === "dayBefore" || exam.stage === "examDay" ? exam.checklist : [],
         day: exam.days[0] ?? null,
-        dayBefore: exam.dayBefore,
         examName: exam.examName,
         mocksTaken: exam.mocks.length,
         prepared: exam.prepared,
@@ -265,7 +274,6 @@ export function ExamScreen({
           <>
             {exam.format.length > 0 && <ExamFormatSection />}
             <ExamScoringSection />
-            <DateNote />
           </>
         }
         asideLabel={t("About the exam")}

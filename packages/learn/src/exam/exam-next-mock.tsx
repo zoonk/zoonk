@@ -15,14 +15,12 @@ import {
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
 import { MarkedText } from "../_components/title-row";
-import { useMockDaySizeLabel } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
 
 export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
   const dayDate = useExamDayDate();
-  const daySize = useMockDaySizeLabel();
   const { exam, hrefs } = useExamScreen();
   const next = exam.nextMock;
 
@@ -42,7 +40,7 @@ export function ExamNextMock({ current }: { current: boolean }) {
         <ListRowContent>
           <ListRowTitle>
             <MarkedText mark={exam.mocksRequirePlus && <PlusMark />}>
-              {daySize({ fullLength: next.fullLength })}
+              {t("Next mock exam")}
             </MarkedText>
           </ListRowTitle>
           <ListRowDescription>

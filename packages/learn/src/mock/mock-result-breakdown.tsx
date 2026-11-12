@@ -134,7 +134,7 @@ export function MockResultBreakdown({ result }: { result: MockResult }) {
   }
 
   return (
-    <ResultSection title={t("By area")}>
+    <ResultSection title={t("By subject")}>
       <StepRows>
         {result.areas.map((area) => (
           <AreaRow

@@ -6,7 +6,9 @@ import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionLabel } from "../_components/page";
+import { ChooserLastMock } from "./mock-chooser-last-mock";
 import {
+  ChooserBottomBar,
   ChooserHeader,
   ChooserLayout,
   ChooserPlusLink,
@@ -50,7 +52,7 @@ function MockOptionLists({
   view,
 }: {
   onPick: (key: string) => void;
-  picked: string;
+  picked: string | null;
   severalDays: boolean;
   view: MockOptionsView;
 }) {
@@ -59,15 +61,21 @@ function MockOptionLists({
   const subjects = view.options.filter((option) => option.kind === "area");
   const examChoices = useMockChoices({ options: exam, severalDays });
   const subjectChoices = useMockChoices({ options: subjects, severalDays });
+  const examTitle = t("The exam");
 
   return (
     <div className="flex flex-col gap-6">
-      <ChoiceRows
-        choices={examChoices}
-        label={t("The exam")}
-        onChange={onPick}
-        value={examChoices.some((choice) => choice.value === picked) ? picked : null}
-      />
+      <section aria-labelledby="mock-exam-title" className="flex flex-col gap-1">
+        {subjectChoices.length > 0 && (
+          <PageSectionLabel id="mock-exam-title">{examTitle}</PageSectionLabel>
+        )}
+        <ChoiceRows
+          choices={examChoices}
+          label={examTitle}
+          onChange={onPick}
+          value={examChoices.some((choice) => choice.value === picked) ? picked : null}
+        />
+      </section>
 
       {subjectChoices.length > 0 && (
         <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-1">
@@ -101,8 +109,8 @@ function PracticeChooser({
   view: MockOptionsView;
 }) {
   const t = useExtracted();
-  const [first] = view.options;
-  const [picked, setPicked] = useState(first ? getMockOptionKey(first) : "");
+  // Nothing is picked as the page opens, so a first tap on Start can't begin an hours-long exam.
+  const [picked, setPicked] = useState<string | null>(null);
   const option = view.options.find((candidate) => getMockOptionKey(candidate) === picked) ?? null;
   const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
   const open = view.access === "open";
@@ -111,36 +119,36 @@ function PracticeChooser({
   const shown: MockChooserStatus =
     status.kind === "short" && !short ? { kind: "choosing" } : status;
 
+  const start = (enter: boolean) => (
+    <ChooserStartButton
+      busy={busy}
+      disabled={!option}
+      enter={enter}
+      onClick={() => option && onStart(option)}
+    >
+      {t("Start")}
+    </ChooserStartButton>
+  );
+
   return (
     <ChooserLayout
       aside={
-        option && <PickedMock hrefs={hrefs} option={option} severalDays={severalDays} view={view} />
+        <>
+          {option && <PickedMock option={option} severalDays={severalDays} />}
+          <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />
+        </>
       }
       bar={bar}
     >
       <ChooserHeader
         action={
           open ? (
-            <ChooserStartButton
-              busy={busy}
-              disabled={!option}
-              onClick={() => option && onStart(option)}
-            >
-              {short
-                ? t("Start with {count, plural, one {# question} other {# questions}}", {
-                    count: short.questions,
-                  })
-                : t("Start")}
-            </ChooserStartButton>
+            <div className="contents max-md:hidden">{start(true)}</div>
           ) : (
             <ChooserPlusLink href={hrefs.plus} />
           )
         }
-        detail={
-          open
-            ? t("Your result only shows at the end, like on exam day.")
-            : t("Pick how much of the exam to take now.")
-        }
+        detail={t("Timed like the real exam. You see your result at the end.")}
         eyebrow={view.examName}
         status={shown}
         title={t("Take a mock exam")}
@@ -150,6 +158,7 @@ function PracticeChooser({
         <ChooserRefusal busy={busy} status={shown} />
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
         {!open && <MockPlusNotice />}
+        {open && <ChooserBottomBar>{start(false)}</ChooserBottomBar>}
       </DetailContent>
     </ChooserLayout>
   );

@@ -2,12 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import {
-  PageSection,
-  PageSectionDetail,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusNotice } from "../_components/plus-lock";
 import { MockSummaryRow } from "../mock/mock-summary-row";
 import { useExamScreen } from "./exam-context";
@@ -40,11 +35,6 @@ export function ExamMocks({ offered }: { offered: boolean }) {
     <PageSection aria-labelledby={MOCKS_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={MOCKS_TITLE_ID}>{t("Mock exams")}</PageSectionTitle>
-        {exam.mocks.length > 0 && (
-          <PageSectionDetail>
-            {t("{count, plural, one {# taken} other {# taken}}", { count: exam.mocks.length })}
-          </PageSectionDetail>
-        )}
       </PageSectionHeader>
 
       {(running || exam.nextMock || exam.mocks.length > 0) && (
@@ -63,13 +53,7 @@ export function ExamMocks({ offered }: { offered: boolean }) {
         </ol>
       )}
 
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
-          )}
-        </PlusNotice>
-      )}
+      {locked && <PlusNotice title={t("Mock exams are part of Plus")} />}
     </PageSection>
   );
 }

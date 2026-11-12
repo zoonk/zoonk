@@ -136,7 +136,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   useKeyboardCallback("ArrowRight", () => !waiting && runner.go(runner.position + 1), screenKey);
   useKeyboardCallback("ArrowLeft", () => runner.go(runner.position - 1), screenKey);
 
-  const nextLabel = isLastSection ? t("Hand in the mock exam") : t("Hand in this section");
+  const nextLabel = isLastSection ? t("Hand in") : t("Hand in section");
   const handingIn = runner.busy === "submit";
 
   return (
@@ -168,6 +168,15 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   );
 }
 
+/** What the flag is for, said once: where the learner first meets the button. */
+function FlagHint() {
+  const t = useExtracted();
+  const { runner } = useMockScreen();
+  const isFirstQuestion = runner.position === 0 && runner.view.current?.section === 0;
+
+  return isFirstQuestion ? <p>{t("Flag a question you're not sure about.")}</p> : null;
+}
+
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
@@ -187,6 +196,7 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
         <MockQuestionMap className="with-aside:hidden" />
         <div className="text-muted-foreground flex flex-col gap-1 text-xs">
           <SheetLegend className="with-aside:hidden" />
+          <FlagHint />
           <MovesNote />
         </div>
       </div>

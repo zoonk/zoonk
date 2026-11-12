@@ -157,12 +157,7 @@ export function MockReviewDrawer() {
   }
 
   return (
-    <DetailsDrawer
-      label={t("{count, plural, one {See the question} other {See the # questions}}", {
-        count: review.length,
-      })}
-      title={t("Questions to review")}
-    >
+    <DetailsDrawer label={t("See answers")} title={t("Questions to review")} trigger="link">
       <MockReviewList />
     </DetailsDrawer>
   );

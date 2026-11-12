@@ -12,7 +12,7 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HistoryIcon, PenLineIcon, PencilRulerIcon } from "lucide-react";
+import { PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
@@ -20,7 +20,6 @@ import { type TaskFrameAside } from "../shell/task-frame";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MovesNote } from "./mock-moves";
-import { useMockShortLine } from "./mock-notes";
 import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
 import { isDraftAnswered } from "./use-mock-drafts";
@@ -140,41 +139,24 @@ export function SheetLegend({ className }: { className?: string }) {
         aria-hidden="true"
         className="ring-warning mt-1 size-2 shrink-0 rounded-[2px] ring-[1.5px] ring-inset"
       />
-      {t("flagged · no feedback until the end, like on exam day")}
+      {t("Flagged")}
     </p>
   );
 }
 
 function SheetNotes() {
-  const t = useExtracted();
   const { runner } = useMockScreen();
-  const reused = runner.view.reusedQuestions;
-  const short = useMockShortLine(runner.view);
   const tools = runner.view.sections.find((section) => section.status === "current")?.tools;
 
-  if (!tools && !short && reused === 0) {
+  if (!tools) {
     return null;
   }
 
   return (
-    <div className="text-muted-foreground flex flex-col gap-1.5 text-xs [&_svg]:mt-0.5 [&_svg]:size-3.5 [&_svg]:shrink-0">
-      {tools && (
-        <p className="flex items-start gap-1.5">
-          <PencilRulerIcon aria-hidden="true" />
-          {tools}
-        </p>
-      )}
-      {short && <p>{short}</p>}
-      {reused > 0 && (
-        <p className="flex items-start gap-1.5">
-          <HistoryIcon aria-hidden="true" />
-          {t(
-            "{count, plural, one {# question repeats.} other {# questions repeat, missed ones first.}}",
-            { count: reused },
-          )}
-        </p>
-      )}
-    </div>
+    <p className="text-muted-foreground flex items-start gap-1.5 text-xs [&_svg]:mt-0.5 [&_svg]:size-3.5 [&_svg]:shrink-0">
+      <PencilRulerIcon aria-hidden="true" />
+      {tools}
+    </p>
   );
 }
 

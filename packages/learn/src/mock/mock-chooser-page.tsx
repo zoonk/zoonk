@@ -22,12 +22,12 @@ import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
-import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
 import { PageWithAside } from "../shell/learn-shell";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 
@@ -65,34 +65,17 @@ function useFailureText() {
 
   return (reason: Extract<MockChooserStatus, { kind: "failed" }>["reason"]): string =>
     reason === "notEnoughQuestions"
-      ? t("There aren't enough questions for this mock yet. Try the full exam or another subject.")
-      : t("We couldn't start the mock. Try again.");
+      ? t("Not enough questions for this one yet. Pick another.")
+      : t("We couldn't start the mock exam. Try again.");
 }
 
 function ShortText({ status }: { status: MockShortStatus }) {
   const t = useExtracted();
-  const space = useSentenceSpace();
   const duration = useFormatDuration();
 
-  const size = {
-    questions: status.questions,
-    time: duration(status.minutes),
-    total: status.examQuestions,
-  };
-
-  return (
-    <>
-      {t(
-        "{questions, plural, one {# of the {total, number} questions is ready now} other {# of the {total, number} questions are ready now}}, so this mock takes about {time}.",
-        size,
-      )}
-      {space}
-      {status.limit === "day" && t("More can be written for your mocks tomorrow.")}
-      {status.limit === "month" && t("More can be written for your mocks next month.")}
-      {status.limit !== "day" &&
-        status.limit !== "month" &&
-        t("The question bank doesn't have more new ones for it yet.")}
-    </>
+  return t(
+    "This one is shorter today: {count, plural, one {# question} other {# questions}}, about {time}.",
+    { count: status.questions, time: duration(status.minutes) },
   );
 }
 
@@ -140,24 +123,42 @@ export function ChooserHeader({
   );
 }
 
+/** Phones and tablets keep Start in reach after the list: the choice comes before the action. */
+export function ChooserBottomBar({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={cn(
+        "bg-background sticky z-20 -mx-4 flex border-t px-4 py-3 md:hidden",
+        ABOVE_BOTTOM_TABS_CLASS,
+      )}
+      data-slot="mock-chooser-bar"
+    >
+      {children}
+    </div>
+  );
+}
+
+/** Drawn twice (beside the title on wide screens, in the bottom bar otherwise); one takes Enter. */
 export function ChooserStartButton({
   busy,
   children,
   disabled = false,
+  enter = true,
   onClick,
 }: {
   busy: boolean;
   children: ReactNode;
   disabled?: boolean;
+  enter?: boolean;
   onClick: () => void;
 }) {
   const mounted = useIsMounted();
   const isDisabled = disabled || !mounted;
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !isDisabled && !busy });
+  const ref = useEnterClick<HTMLButtonElement>({ enabled: enter && !isDisabled && !busy });
 
   return (
     <Button
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={enter ? "Enter" : undefined}
       busy={busy}
       className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       disabled={isDisabled}
@@ -168,7 +169,7 @@ export function ChooserStartButton({
       size="lg"
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      {enter && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
     </Button>
   );
 }
@@ -210,12 +211,10 @@ export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }
       <GenerationWait kind="mockQuestions" run={run}>
         {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
         <GenerationTimelineTitle render={<h1 />}>
-          {t("Preparing your mock exam")}
+          {t("Getting your mock exam ready…")}
         </GenerationTimelineTitle>
         <GenerationTimelineDescription>
-          {t(
-            "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
-          )}
+          {t("It starts here when it's ready.")}
         </GenerationTimelineDescription>
       </GenerationWait>
     </ChooserLayout>

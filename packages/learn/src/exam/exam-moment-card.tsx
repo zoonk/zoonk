@@ -1,11 +1,10 @@
 "use client";
 
-import { type DayBeforePlan, type ExamMomentView } from "@zoonk/core/exams/view/contract";
+import { type ExamMomentView } from "@zoonk/core/exams/view/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useSentenceSpace } from "../_utils/locale";
 import { LearnLink } from "../learn-link";
 import { ExamChecklist } from "./exam-checklist";
 import { useExamDayText } from "./exam-labels";
@@ -14,7 +13,6 @@ type Moment = Pick<
   ExamMomentView,
   | "checklist"
   | "day"
-  | "dayBefore"
   | "examName"
   | "mocksTaken"
   | "prepared"
@@ -31,72 +29,43 @@ const ICONS = {
   finalStretch: FlagIcon,
 } as const;
 
-function useDayBeforeBody({ dayBefore, work }: { dayBefore: DayBeforePlan; work: string }) {
-  const t = useExtracted();
-
-  switch (dayBefore) {
-    case "mock":
-      return t("Today is your short mock, then a look at what it finds. Then rest. {work}", {
-        work,
-      });
-    case "learnAndMock":
-      return t("Today goes to the topics that come up most, then a short mock. Then rest.");
-    case "learn":
-      return t("Today goes to the topics that come up most. Then rest.");
-    case "review":
-      return t(
-        "Today is a full review of every topic, in your test's format, your weakest first. Then rest. {work}",
-        { work },
-      );
-    case "light":
-      return t("Today is a short, light review. Then rest. {work}", { work });
-    default:
-      return t("Today is a short, light review. Then rest. {work}", { work });
-  }
-}
-
 function useWorkLine(moment: Moment): string {
   const t = useExtracted();
-  const space = useSentenceSpace();
 
-  const done =
-    moment.mocksTaken > 0
-      ? t(
-          "You did {sessions, plural, =0 {# sessions} one {# session} other {# sessions}} and {mocks, plural, one {# mock exam} other {# mock exams}}.",
-          { mocks: moment.mocksTaken, sessions: moment.sessionsDone },
-        )
-      : t("You did {sessions, plural, =0 {# sessions} one {# session} other {# sessions}}.", {
-          sessions: moment.sessionsDone,
-        });
-
-  return moment.prepared ? `${done}${space}${t("You've prepared for this.")}` : done;
+  return moment.mocksTaken > 0
+    ? t(
+        "{days, plural, =0 {# days} one {# day} other {# days}} of study and {mocks, plural, one {# mock exam} other {# mock exams}} done.",
+        { days: moment.sessionsDone, mocks: moment.mocksTaken },
+      )
+    : t("{days, plural, =0 {# days} one {# day} other {# days}} of study done.", {
+        days: moment.sessionsDone,
+      });
 }
 
-function useMomentCopy(moment: Moment): { body: string; title: string } | null {
+type MomentCopy = { body: string; lead: string | null; title: string };
+
+function useMomentCopy(moment: Moment): MomentCopy | null {
   const t = useExtracted();
   const work = useWorkLine(moment);
-
-  const dayBeforeBody = useDayBeforeBody({ dayBefore: moment.dayBefore, work });
+  const lead = moment.prepared ? t("You've prepared for this.") : null;
 
   switch (moment.stage) {
     case "finalStretch":
       return {
-        body: t(
-          "The last days before the exam go to mixed review and mock exams. New topics wait, unless they weigh a lot and are quick.",
-        ),
+        body: t("From now on, review and mock exams."),
+        lead: null,
         title: t("The final stretch"),
       };
     case "dayBefore":
-      return { body: dayBeforeBody, title: t("{exam} is tomorrow", { exam: moment.examName }) };
+      return { body: work, lead, title: t("{exam} is tomorrow", { exam: moment.examName }) };
     case "examDay":
-      return { body: work, title: t("{exam} is today", { exam: moment.examName }) };
+      return { body: work, lead, title: t("{exam} is today", { exam: moment.examName }) };
     case "afterExam":
       return moment.resultReported
         ? null
         : {
-            body: t(
-              "When your official result comes out, add it here. It helps make estimates more accurate for everyone.",
-            ),
+            body: t("Add your official result when it comes out."),
+            lead: null,
             title: t("How did it go?"),
           };
     default:
@@ -129,6 +98,7 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
               {dayText(moment.day)}
             </p>
           )}
+          {copy.lead && <p className="pt-1 text-[0.9375rem] font-medium">{copy.lead}</p>}
           <p className="text-muted-foreground text-[0.8125rem] leading-snug">{copy.body}</p>
         </div>
       </div>

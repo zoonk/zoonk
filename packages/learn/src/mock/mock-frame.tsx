@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 import { StepEyebrow } from "../_components/step-card";
 import { TaskFrame } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
-import { useMockShapeLabel } from "./mock-labels";
+import { getMockSubject } from "./mock-labels";
 
 export function MockFrame(
   props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref">,
@@ -16,11 +16,10 @@ export function MockFrame(
 
 export function MockEyebrow() {
   const t = useExtracted();
-  const shapeLabel = useMockShapeLabel();
   const { runner } = useMockScreen();
-  const shape = shapeLabel(runner.view);
+  const subject = getMockSubject(runner.view);
 
-  return <StepEyebrow>{shape ? `${t("Mock exam")} · ${shape}` : t("Mock exam")}</StepEyebrow>;
+  return <StepEyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</StepEyebrow>;
 }
 
 function SaveStatusLine() {

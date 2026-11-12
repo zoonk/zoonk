@@ -14,47 +14,42 @@ import {
 import { Steps, type StepsItem } from "../_components/steps";
 import { TaskAsideSection } from "../_components/task-layout";
 import { hasShareMoved } from "../_utils/share-moved";
-import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { DayMoment } from "../session/day-moment";
 import { getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockNumber, useMockTitle } from "./mock-labels";
-import { MockLeftOutNote, MockScoreNote, useMockShortLine } from "./mock-notes";
-import {
-  MockNextRow,
-  MockNextStep,
-  MockResultActions,
-  MockResultOptions,
-  useMistakeCount,
-} from "./mock-result-actions";
-import { MockResultAnswers } from "./mock-result-answers";
+import { MockResultActions, MockResultOptions } from "./mock-result-actions";
 import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-breakdown";
+import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
-import { MockResultInsights, useHasInsights } from "./mock-result-insights";
 import {
   MockPlanChange,
   MockPlanStep,
   type PlanChange,
   PreparationMeter,
-  PreparationNumbers,
+  PreparationReadout,
   hasPlanChange,
   usePlanChange,
 } from "./mock-result-plan";
-import { MockResultPoints, hasTestRows } from "./mock-result-points";
+import { reachedEveryMinimum, useMissedMinimum } from "./mock-result-points";
 import { useSpeakingItems } from "./mock-result-speaking";
 import { type MockResultPart, getResultAsideParts, getResultSteps } from "./mock-result-steps";
 import { MockReviewDrawer, MockReviewSection } from "./mock-review";
-import { MockSizeNote } from "./mock-size-note";
 
-function useScore(result: MockResult): { label: string; value: string } {
+type Area = MockResult["areas"][number];
+
+/** The number the result leads with, and the one line that names it. */
+function useScore(result: MockResult): { caption: string; value: string } {
   const t = useExtracted();
   const number = useMockNumber();
   const range = useMockRange();
+  const { runner } = useMockScreen();
+  const { examName } = runner.view;
 
   if (result.points) {
     return {
-      label: t("Points"),
+      caption: t("Points"),
       value: t("{correct} of {total}", {
         correct: number(result.points.earned),
         total: number(result.points.asked),
@@ -63,23 +58,48 @@ function useScore(result: MockResult): { label: string; value: string } {
   }
 
   if (result.irt) {
-    return { label: t("Estimated score"), value: range(result.irt) };
+    return {
+      caption: examName ? t("Estimated {exam} score", { exam: examName }) : t("Estimated score"),
+      value: range(result.irt),
+    };
   }
 
   if (result.net) {
     return {
-      label: t("Net score out of {max}", { max: String(result.net.max) }),
+      caption: t("Score out of {max}", { max: String(result.net.max) }),
       value: number(result.net.net),
     };
   }
 
   return {
-    label: t("Right answers"),
+    caption: t("Right answers"),
     value: t("{correct} of {total}", {
       correct: number(result.correct),
       total: String(result.total),
     }),
   };
+}
+
+function getAreaMeasure(area: Area): number {
+  return area.score?.score ?? (area.total > 0 ? area.correct / area.total : 0);
+}
+
+/** One sentence on what the number means for the learner's next days, or nothing. */
+function useVerdict(result: MockResult): string | null {
+  const t = useExtracted();
+  const ranked = result.areas.toSorted((a, b) => getAreaMeasure(b) - getAreaMeasure(a));
+  const best = ranked[0];
+  const worst = ranked.at(-1);
+
+  if (reachedEveryMinimum(result.points)) {
+    return t("You reached every minimum in this mock exam.");
+  }
+
+  if (!best || !worst || getAreaMeasure(best) === getAreaMeasure(worst)) {
+    return null;
+  }
+
+  return t("Strongest: {best}. Work on: {worst}.", { best: best.name, worst: worst.name });
 }
 
 function DeltaLine({ result }: { result: MockResult }) {
@@ -108,34 +128,6 @@ function DeltaLine({ result }: { result: MockResult }) {
   );
 }
 
-function PassMarks() {
-  const t = useExtracted();
-  const { runner } = useMockScreen();
-  const { passMarks } = runner.view;
-  const note = usePassMarksNote(passMarks);
-
-  if (!passMarks) {
-    return null;
-  }
-
-  return (
-    <div className="border-border flex w-full flex-col gap-1 border-t pt-3 text-left text-sm">
-      <p className="font-medium">
-        {t(
-          "{document, select, notice {To pass, the notice says} other {To pass, the official guide says}}",
-          { document: runner.view.examDocument },
-        )}
-      </p>
-      {passMarks.texts.map((text) => (
-        <p className="text-muted-foreground" key={text} lang={passMarks.language}>
-          {text}
-        </p>
-      ))}
-      {note && <p className="text-muted-foreground">{note}</p>}
-    </div>
-  );
-}
-
 function MockDayMoment() {
   const { buddy, runner } = useMockScreen();
   const { ceremony, missionMoment, reached } = runner.view;
@@ -145,56 +137,49 @@ function MockDayMoment() {
   );
 }
 
-const MAX_NAMED_AREAS = 3;
-
 function ScoreStep({ result }: { result: MockResult }) {
-  const t = useExtracted();
   const title = useMockTitle();
   const { runner } = useMockScreen();
   const score = useScore(result);
-  const short = useMockShortLine(runner.view);
-  const hasInsights = useHasInsights();
-
-  const areas =
-    result.areas.length > MAX_NAMED_AREAS
-      ? t("{count, plural, one {# subject} other {# subjects}}", { count: result.areas.length })
-      : result.areas.map((area) => area.name).join(", ");
-
-  const detail = [score.label, runner.view.examName, areas].filter(Boolean).join(" · ");
+  const missed = useMissedMinimum(result.points);
+  const verdict = useVerdict(result);
 
   return (
     <StepCard className="gap-8">
       <div className="flex w-full flex-col items-start gap-6">
         <StepHeader>
           <StepTitle className="flex flex-col items-start gap-1.5">
-            <StepTitleLabel>{t("{mock} done", { mock: title(runner.view) })}</StepTitleLabel>
-            <StepTitleNumber>{score.value}</StepTitleNumber>
+            <StepTitleLabel>{title(runner.view)}</StepTitleLabel>
+            {missed ? (
+              <span className="text-destructive-text text-balance">{missed.title}</span>
+            ) : (
+              <StepTitleNumber>{score.value}</StepTitleNumber>
+            )}
           </StepTitle>
-          <StepDetail className="text-sm">{detail}</StepDetail>
-          <DeltaLine result={result} />
+          <StepDetail className="text-sm">{missed ? missed.line : score.caption}</StepDetail>
+          {!missed && <DeltaLine result={result} />}
         </StepHeader>
 
-        <MockResultAnswers result={result} />
-        {hasTestRows(result.points) && <MockResultPoints points={result.points} />}
-        <PassMarks />
-        <MockScoreNote notes={runner.view.scoreNotes} />
+        {!missed && verdict && (
+          <p className="text-[0.9375rem] font-medium text-pretty" data-slot="mock-verdict">
+            {verdict}
+          </p>
+        )}
+
         <MockDayMoment />
       </div>
 
       {hasBreakdown(result) && <MockResultBreakdown result={result} />}
-      {hasInsights && <MockResultInsights />}
-      <div className="contents max-lg:hidden">
-        <MockReviewSection />
+
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 empty:hidden">
+        <MockResultDetails result={result} />
+        <div className="contents lg:hidden">
+          <MockReviewDrawer />
+        </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <MockSizeNote
-          document={runner.view.examDocument}
-          size={{ minutes: runner.view.minutes, questions: runner.view.questions }}
-          source={runner.view.sizeSource}
-        />
-        {short && <p className="text-muted-foreground text-xs">{short}</p>}
-        <MockLeftOutNote leftOut={runner.view.leftOut} />
+      <div className="contents max-lg:hidden">
+        <MockReviewSection />
       </div>
     </StepCard>
   );
@@ -203,12 +188,10 @@ function ScoreStep({ result }: { result: MockResult }) {
 function useResultAside({
   change,
   has,
-  mistakes,
   preparation,
 }: {
   change: PlanChange;
   has: Record<MockResultPart, boolean>;
-  mistakes: number;
   preparation: MockResult["preparation"];
 }): TaskFrameAside | null {
   const t = useExtracted();
@@ -222,8 +205,8 @@ function useResultAside({
       <>
         {preparation && (
           <TaskAsideSection title={t("Your preparation")}>
-            <p className="text-readout text-3xl">
-              <PreparationNumbers change={preparation} />
+            <p className="flex flex-col items-start gap-1.5 [&>span:first-child]:text-3xl">
+              <PreparationReadout change={preparation} />
             </p>
             <PreparationMeter change={preparation} />
           </TaskAsideSection>
@@ -232,12 +215,6 @@ function useResultAside({
         {hasPlanChange(change) && (
           <TaskAsideSection title={t("Your plan")}>
             <MockPlanChange change={change} />
-          </TaskAsideSection>
-        )}
-
-        {has.next && (
-          <TaskAsideSection title={t("Now")}>
-            <MockNextRow count={mistakes} />
           </TaskAsideSection>
         )}
       </>
@@ -253,7 +230,6 @@ function useResultAside({
  */
 function useResultSteps(result: MockResult) {
   const { renderCeremony, runner } = useMockScreen();
-  const mistakes = useMistakeCount();
   const essays = useEssayItems();
   const speaking = useSpeakingItems();
   const change = usePlanChange(runner.view.adapt);
@@ -263,29 +239,17 @@ function useResultSteps(result: MockResult) {
 
   const has: Record<MockResultPart, boolean> = {
     essays: essays.length > 0,
-    next: runner.view.purpose !== "placement" && mistakes > 0,
     plan: preparation !== null || hasPlanChange(change),
     score: result.total > 0 || (essays.length === 0 && speaking.length === 0),
     speaking: speaking.length > 0,
   };
 
-  const aside = useResultAside({ change, has, mistakes, preparation });
+  const aside = useResultAside({ change, has, preparation });
 
   const parts: Record<MockResultPart, StepsItem[]> = {
     essays,
-    next: [{ content: <MockNextStep count={mistakes} />, id: "next" }],
     plan: [{ content: <MockPlanStep change={change} preparation={preparation} />, id: "plan" }],
-    score: [
-      {
-        content: <ScoreStep result={result} />,
-        id: "score",
-        option: (
-          <div className="contents lg:hidden">
-            <MockReviewDrawer />
-          </div>
-        ),
-      },
-    ],
+    score: [{ content: <ScoreStep result={result} />, id: "score" }],
     speaking,
   };
 

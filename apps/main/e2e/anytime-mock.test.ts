@@ -46,12 +46,14 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.goto("/mock/new");
 
-    await expect(page.getByRole("radio", { name: /^A full exam day/u })).toBeChecked();
+    const exam = page.getByRole("radiogroup", { name: "The exam" });
+    await exam.getByText("The full exam", { exact: true }).click();
+    await expect(exam.getByRole("radio", { name: /^The full exam/u })).toBeChecked();
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
     await answerMockQuestions({ answers, knows: () => true, page });
-    await page.getByRole("button", { name: "Hand in this section" }).click();
+    await page.getByRole("button", { name: "Hand in section" }).click();
     await confirmMockHandIn(page);
 
     await expect(page.getByText(/^Written part · Mathematics$/u)).toBeVisible();
@@ -66,11 +68,11 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText(/^\d+ words$/u)).toBeVisible();
 
     const resumeGrading = await failEssayGrading(page);
-    await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+    await page.getByRole("button", { exact: true, name: "Hand in" }).click();
     await confirmMockHandIn(page);
 
     await expect(
-      page.getByRole("heading", { level: 1, name: /^Mock exam 1 done\s*8 of 8$/u }),
+      page.getByRole("heading", { level: 1, name: /^Mock exam 1\s*8 of 8$/u }),
     ).toBeVisible();
 
     const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
@@ -127,7 +129,7 @@ test.describe("Mocks whenever the learner wants", () => {
     });
 
     await page.reload();
-    await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1/u })).toBeVisible();
     await continueToStep(page, /^Your answer/u);
 
     await expect(

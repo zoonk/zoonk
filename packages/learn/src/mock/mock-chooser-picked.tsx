@@ -1,6 +1,6 @@
 "use client";
 
-import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
+import { type MockOptionView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
 import {
@@ -12,10 +12,7 @@ import {
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
-import { ChooserLastMock } from "./mock-chooser-last-mock";
-import { MockLeftOutNote } from "./mock-notes";
 import { useMockOptionName } from "./mock-option-labels";
-import { MockSizeNote } from "./mock-size-note";
 
 export type MockChooserHrefs = { mock: (id: string) => string; plus: string };
 
@@ -76,46 +73,29 @@ function ChooserPicked({
 }
 
 export function PickedMock({
-  hrefs,
   option,
   severalDays,
-  view,
 }: {
-  hrefs: MockChooserHrefs;
   option: MockOptionView;
   severalDays: boolean;
-  view: MockOptionsView;
 }) {
   const t = useExtracted();
   const name = useMockOptionName();
 
   return (
-    <>
-      <DetailAsideSection
-        className="max-[72rem]:hidden"
-        title={name({ option, severalDays })}
-        titleId="mock-chooser-picked-title"
-      >
-        <ChooserPicked
-          asks={{
-            names: option.covers ?? option.areas,
-            title: option.covers ? t("Parts") : t("Subjects"),
-          }}
-          size={option}
-          written={option.written}
-        />
-      </DetailAsideSection>
-
-      <div className="flex flex-col gap-1 empty:hidden">
-        <MockSizeNote
-          document={view.examDocument}
-          size={{ minutes: option.minutes, questions: option.questions }}
-          source={view.sizeSource}
-        />
-        <MockLeftOutNote leftOut={option.leftOut.filter((part) => part.part !== "writtenInFull")} />
-      </div>
-
-      <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />
-    </>
+    <DetailAsideSection
+      className="max-[72rem]:hidden"
+      title={name({ option, severalDays })}
+      titleId="mock-chooser-picked-title"
+    >
+      <ChooserPicked
+        asks={{
+          names: option.covers ?? option.areas,
+          title: option.covers ? t("Parts") : t("Subjects"),
+        }}
+        size={option}
+        written={option.written}
+      />
+    </DetailAsideSection>
   );
 }

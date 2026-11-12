@@ -84,11 +84,11 @@ function ConsistencyInsight({ result }: { result: MockResult }) {
   }
 
   return (
-    <Insight icon={ScaleIcon} title={t("Consistency")}>
+    <Insight icon={ScaleIcon} title={t("Easy questions")}>
       <p>
         {t(
-          "{easy, plural, one {# easy one} other {# easy ones}} wrong, {hard, plural, one {# hard one} other {# hard ones}} right. The score counts that against you: review the easy ones first.",
-          { easy: coherence.easyWrong, hard: coherence.hardRight },
+          "You missed {count, plural, one {# easy question} other {# easy questions}}. Review those first.",
+          { count: coherence.easyWrong },
         )}
       </p>
     </Insight>
@@ -104,10 +104,10 @@ function CalibrationInsight({ result }: { result: MockResult }) {
   }
 
   return (
-    <Insight icon={ScaleIcon} title={t("When to leave it blank")}>
+    <Insight icon={ScaleIcon} title={t("Flagged answers")}>
       <p>
         {t(
-          "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged as unsure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
+          "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
           {
             sureAnswered: String(calibration.sure.answered),
             sureRight: calibration.sure.right,
@@ -119,13 +119,13 @@ function CalibrationInsight({ result }: { result: MockResult }) {
       {calibration.advice === "blankUnsure" && (
         <p>
           {t(
-            "Leaving the unsure ones blank would have added {points, plural, one {# point} other {# points}}.",
+            "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}.",
             { points: calibration.blankingGain },
           )}
         </p>
       )}
       {calibration.advice === "keepAnswering" && (
-        <p>{t("Your unsure answers still earned points, so keep answering them.")}</p>
+        <p>{t("Your flagged answers still earned points, so keep answering them.")}</p>
       )}
     </Insight>
   );
@@ -157,7 +157,7 @@ export function MockResultInsights() {
   }
 
   return (
-    <ResultSection title={t("What the mock exam showed")}>
+    <ResultSection title={t("What stood out")}>
       <StepRows>
         <TimingInsight result={result} />
         <ConsistencyInsight result={result} />
