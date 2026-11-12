@@ -524,9 +524,7 @@ private struct NextStopView: View {
 
     return AnyView(
       Label {
-        Text(
-          "This lesson is being written for you. It's usually ready in a few minutes.",
-          tableName: "Session", comment: "A lesson being written")
+        Text(lessonKind.writingNote)
       } icon: {
         ProgressView()
       }
@@ -745,10 +743,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
     WaitHeading(
       title: title,
       description: isWritten
-        ? Text(LessonWaitingView.lessonReady)
-        : Text(
-          "This lesson is being written for you. It's usually ready in a few minutes.",
-          tableName: "Session", comment: "A lesson being written"))
+        ? Text(LessonWaitingView.lessonReady) : Text(kind.writingNote))
 
     upNext()
   }
@@ -824,6 +819,22 @@ private struct MomentSummary: View {
         CatchUpLine(catchUp: catchUp)
           .padding(.top, 8)
       }
+    }
+  }
+}
+
+extension GenerationWait.Kind {
+  /// The next stop's line while its lesson is written: nothing else on it names a challenge.
+  fileprivate var writingNote: LocalizedStringResource {
+    switch self {
+    case .challenge:
+      LocalizedStringResource(
+        "This challenge is being written for you. It's usually ready in a few minutes.",
+        table: "Session", comment: "A challenge being written")
+    default:
+      LocalizedStringResource(
+        "This lesson is being written for you. It's usually ready in a few minutes.",
+        table: "Session", comment: "A lesson being written")
     }
   }
 }
