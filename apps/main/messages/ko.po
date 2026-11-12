@@ -387,6 +387,7 @@ msgstr "페이지로 이동하거나 기능을 실행하거나 질문해 보세�
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "취소"
@@ -1200,6 +1201,7 @@ msgid "For your safety, sign in again, then delete your account."
 msgstr "보안을 위해 다시 로그인한 뒤 계정을 삭제하세요."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "scfgdM"
 msgid "Sign in again"
 msgstr "다시 로그인"
@@ -1313,6 +1315,125 @@ msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "이름, 사용자 이름, 계정 정보예요."
 
+#. The name of a passkey the person hasn't named yet, in their list of passkeys.
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "unnamedPasskey"
+msgid "Passkey"
+msgstr "패스키"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "닫기"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "2Hinlp"
+msgid "Rename passkey"
+msgstr "패스키 이름 바꾸기"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "IKuKBl"
+msgid "Passkey name"
+msgstr "패스키 이름"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "0gDM9C"
+msgid "Such as “MacBook” or “Phone”"
+msgstr "예: “MacBook”, “휴대폰”"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "저장"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "YhaU4B"
+msgid "Delete “{name}”?"
+msgstr "“{name}” 삭제할까요?"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "JrYshd"
+msgid "It won't approve content fixes anymore. You'll confirm with one of your passkeys first."
+msgstr "삭제하면 이 패스키로는 더 이상 콘텐츠 수정을 승인할 수 없어요. 먼저 등록된 패스키 중 하나로 인증해야 해요."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "-G_yv9"
+msgid "Delete passkey"
+msgstr "패스키 삭제하기"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "xEwuru"
+msgid "For your safety, sign in again, then add your passkey."
+msgstr "안전을 위해 다시 로그인한 다음 패스키를 추가해 주세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "AadXSK"
+msgid "This device already has a passkey for your account."
+msgstr "이 계정의 패스키가 이 기기에 이미 있어요."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Cuv8_X"
+msgid "That wasn't confirmed with one of your passkeys. Try again."
+msgstr "등록된 패스키로 인증되지 않았어요. 다시 시도해 보세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "jUqYir"
+msgid "Added {date}"
+msgstr "{date} 추가"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "_IFxIZ"
+msgid "Options for “{name}”"
+msgstr "“{name}” 옵션"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "iXNbPf"
+msgid "Rename"
+msgstr "이름 바꾸기"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "K3r6DQ"
+msgid "Delete"
+msgstr "삭제"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "QCATv6"
+msgid "You'll confirm with a passkey you already have first."
+msgstr "먼저 기존 패스키로 인증해야 해요."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "guwku_"
+msgid "Your fingerprint, face or screen lock on this device"
+msgstr "이 기기의 지문 인식, 얼굴 인식 또는 화면 잠금"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Ck5euH"
+msgid "Add a passkey"
+msgstr "패스키 추가하기"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "추가"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "ASrBq8"
+msgid "Passkeys"
+msgstr "패스키"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "G9nqiW"
+msgid "You approve content fixes in Admin with a passkey."
+msgstr "Admin에서 패스키로 콘텐츠 수정을 승인해요."
+
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
@@ -1332,11 +1453,6 @@ msgstr "{username}은(는) 사용할 수 있어요"
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username}은(는) 이미 사용 중이에요"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "저장"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
@@ -2555,9 +2671,14 @@ msgid "The CLI reads production data as {email}, such as accounts, plans and ans
 msgstr "CLI는 {email} 계정으로 계정, 계획, 답안 등 실제 서비스 데이터를 조회해요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "d6AYf2"
-msgid "It can't change anything."
-msgstr "아무것도 변경할 수 없어요."
+msgctxt "IpYj6L"
+msgid "It can propose fixes to course content. Each one waits until a person approves it in Admin with a passkey."
+msgstr "코스 콘텐츠 수정안을 제안할 수 있어요. 각 수정안은 사람이 Admin에서 패스키로 승인할 때까지 보류돼요."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "ngUvxA"
+msgid "It can't change anything by itself."
+msgstr "스스로는 아무것도 바꿀 수 없어요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
@@ -2578,12 +2699,6 @@ msgstr "거부"
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
 msgstr "이 코드는 만료됐어요. 새 코드를 받으려면 {command} 명령을 다시 실행해 보세요."
-
-#: src/app/[lang]/device/cli-login-form.tsx
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "rl-7PV"

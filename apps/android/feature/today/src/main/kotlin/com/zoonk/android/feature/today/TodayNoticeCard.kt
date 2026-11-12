@@ -50,6 +50,8 @@ import kotlinx.datetime.toJavaLocalDate
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
 internal class TodayNoticeState(
     val read: TodayRead.Day,
+    /** The read isn't one shown while a newer one loads, such as the stored day on a return from a lesson. */
+    val settled: Boolean,
     val viewModel: TodayViewModel,
     val navigate: (AppRoute) -> Unit,
     val plans: PlanStore? = null,
@@ -70,7 +72,10 @@ internal fun TodayNotice(
     val read = state.read
     val viewModel = state.viewModel
     val picked = read.today.notice
-    LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id) { viewModel.holdNotice(read, picked) }
+    val opens = state.settled || viewModel.isAnsweringNotice
+    LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id, opens) {
+        viewModel.holdNotice(read, picked, opens)
+    }
     val hold = viewModel.heldNotice(read)
 
     when (hold?.kind ?: picked) {
@@ -117,6 +122,7 @@ internal fun TodayNotice(
                     viewModel.visit,
                     layout,
                     modifier,
+                    onAnswering = { viewModel.holdNotice(read, Today.Notice.UPLOAD_REQUEST, opens = true) },
                 )
             }
         }

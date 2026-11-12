@@ -11,19 +11,24 @@ import { TodayExamMoment } from "./today-exam-moment";
 import { TodayInsight } from "./today-insight";
 import { TodayPlanChange } from "./today-plan-change";
 import { TodaySuggestedGoal } from "./today-suggested-goal";
+import { useTodayVisit } from "./use-today-visit";
 
 /**
- * The notice picked when Today opened stays while the learner is here, so answering it shows what
- * the answer did; the next waits for the next visit.
+ * Today's notice follows its latest read until the learner touches it, so a notice due now replaces
+ * an older one; from then on it stays for the visit, so answering it shows what the answer did.
  */
-function useShownNotice(picked: TodayNoticeKind | null): TodayNoticeKind | null {
-  const [shown, setShown] = useState(picked);
+function useShownNotice(picked: TodayNoticeKind | null) {
+  const visit = useTodayVisit();
+  const [held, setHeld] = useState<{ kind: TodayNoticeKind; visit: number } | null>(null);
+  const kind = held?.visit === visit ? held.kind : picked;
 
-  if (shown === null && picked !== null) {
-    setShown(picked);
-  }
+  const hold = () => {
+    if (kind !== null && held?.visit !== visit) {
+      setHeld({ kind, visit });
+    }
+  };
 
-  return shown ?? picked;
+  return { hold, kind, visit };
 }
 
 function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
@@ -69,7 +74,7 @@ export function TodayNotice({
   fallbackFocus: React.RefObject<HTMLElement | null>;
 }) {
   const { today } = useTodayScreen();
-  const kind = useShownNotice(today.notice);
+  const { hold, kind, visit } = useShownNotice(today.notice);
   const slot = useRef<HTMLDivElement>(null);
 
   useFocusOnRemovedControl(slot, () => fallbackFocus.current);
@@ -78,9 +83,10 @@ export function TodayNotice({
     <div
       className={cn("flex flex-col gap-3 empty:hidden", className)}
       data-slot="today-notice"
+      onClickCapture={hold}
       ref={slot}
     >
-      <NoticeOfKind kind={kind} />
+      <NoticeOfKind key={visit} kind={kind} />
       {children}
     </div>
   );

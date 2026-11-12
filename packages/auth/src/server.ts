@@ -1,3 +1,4 @@
+import { passkey } from "@better-auth/passkey";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
@@ -31,11 +32,13 @@ import {
 import { createEmailOTPPlugin } from "./email-otp-plugin";
 import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
+import { PASSKEY_REGISTRATION_ORIGIN, PASSKEY_RP_ID } from "./passkeys/relying-party";
 import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
 import { appChallengePlugin } from "./plugins/app-challenge";
 import { cliLoginPlugins } from "./plugins/cli-login";
 import { guestPlugin } from "./plugins/guest";
+import { passkeyChangePlugin } from "./plugins/passkey-change";
 import { restoreKeyPlugin } from "./plugins/restore-key";
 import { sessionHintPlugin } from "./plugins/session-hint";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
@@ -105,8 +108,13 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
       },
     },
   },
-  // Device authorization's own token endpoint would turn a CLI login into a full session.
-  disabledPaths: ["/device/token"],
+  disabledPaths: [
+    // Device authorization's own token endpoint would turn a CLI login into a full session.
+    "/device/token",
+    // Passkeys approve staff changes; signing in with one isn't something Zoonk offers yet.
+    "/passkey/generate-authenticate-options",
+    "/passkey/verify-authentication",
+  ],
   hooks: { before: validateEmailBeforeOTP },
   secret:
     process.env.BETTER_AUTH_SECRET || (isLocalhostSupported() ? LOCAL_AUTH_SECRET : undefined),
@@ -166,6 +174,13 @@ export const fullPlugins = [
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
+  passkey({
+    authenticatorSelection: { residentKey: "preferred", userVerification: "required" },
+    origin: PASSKEY_REGISTRATION_ORIGIN,
+    rpID: PASSKEY_RP_ID,
+    rpName: "Zoonk",
+  }),
+  passkeyChangePlugin(),
   ...cliLoginPlugins,
   stripePlugin(),
   trustedOriginPlugin(),

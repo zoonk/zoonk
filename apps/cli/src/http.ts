@@ -28,7 +28,7 @@ export function unexpectedResponse(result: HttpResult): CliError {
   return new CliError(`The server answered with an unexpected response (HTTP ${result.status}).`);
 }
 
-function parseJson(text: string): unknown {
+export function parseJson(text: string): unknown {
   try {
     return JSON.parse(text);
   } catch {

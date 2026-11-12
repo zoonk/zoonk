@@ -83,7 +83,12 @@ export async function explainAnswer({
     language,
     provenance,
     target,
+    targetContent: context.storedContent,
   });
+
+  if (!saved) {
+    return { status: "notFound" };
+  }
 
   return {
     explanation: saved.explanation,

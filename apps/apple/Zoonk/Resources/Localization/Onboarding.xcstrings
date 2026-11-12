@@ -21095,7 +21095,7 @@
       }
     },
     "Start" : {
-      "comment" : "Opens Today with the plan's first day\nStarts placement's questions\nStarts the level test",
+      "comment" : "Opens the plan's first step\nStarts placement's questions\nStarts the level test",
       "localizations" : {
         "de" : {
           "stringUnit" : {

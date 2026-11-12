@@ -15,24 +15,31 @@ class TodayNoticeTest {
 
     @Test
     fun theFirstPickHoldsForTheVisitWhileTodayMovesOn() {
-        val hold = null.next(goal, day, Today.Notice.INSIGHT, insight = null)
+        val hold = null.next(goal, day, Today.Notice.INSIGHT, insight = null, opens = true)
 
-        assertEquals(Today.Notice.INSIGHT, hold.next(goal, day, Today.Notice.SUGGESTED_GOAL, insight = null).kind)
+        assertEquals(Today.Notice.INSIGHT, hold.next(goal, day, Today.Notice.SUGGESTED_GOAL, insight = null, opens = true)?.kind)
     }
 
     @Test
     fun anotherGoalOrANewDayIsANewVisit() {
-        val hold = null.next(goal, day, Today.Notice.SUGGESTED_GOAL, insight = null)
+        val hold = null.next(goal, day, Today.Notice.SUGGESTED_GOAL, insight = null, opens = true)
 
-        assertEquals(Today.Notice.EXAM, hold.next(UUID.randomUUID(), day, Today.Notice.EXAM, insight = null).kind)
-        assertNull(hold.next(goal, LocalDate(2026, 10, 30), picked = null, insight = null).kind)
+        assertEquals(Today.Notice.EXAM, hold.next(UUID.randomUUID(), day, Today.Notice.EXAM, insight = null, opens = true)?.kind)
+        assertNull(hold.next(goal, LocalDate(2026, 10, 30), picked = null, insight = null, opens = true)?.kind)
     }
 
     @Test
     fun theAnsweredInsightStaysAfterTodayStopsCarryingIt() {
         val insight = decodeFixture<MemoryInsight>("memory-insight")
-        val hold = null.next(goal, day, Today.Notice.INSIGHT, insight)
+        val hold = null.next(goal, day, Today.Notice.INSIGHT, insight, opens = true)
 
-        assertEquals(insight, hold.next(goal, day, picked = null, insight = null).insight)
+        assertEquals(insight, hold.next(goal, day, picked = null, insight = null, opens = true)?.insight)
+    }
+
+    @Test
+    fun theStoredDayShownWhileANewerReadLoadsDoesNotOpenTheVisit() {
+        val stored = null.next(goal, day, Today.Notice.SUGGESTED_GOAL, insight = null, opens = false)
+
+        assertEquals(Today.Notice.PLAN_CHANGE, stored.next(goal, day, Today.Notice.PLAN_CHANGE, insight = null, opens = true)?.kind)
     }
 }

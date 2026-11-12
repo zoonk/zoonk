@@ -3,5 +3,7 @@ export const CLI_CLIENT_ID = "zoonk-cli";
 
 export const STAFF_READ_SCOPE = "staff:read";
 
+export const STAFF_PROPOSE_SCOPE = "staff:propose";
+
 /** The browser page where a signed-in person approves a CLI login, relative to Main. */
 export const CLI_LOGIN_APPROVAL_PATH = "/device";

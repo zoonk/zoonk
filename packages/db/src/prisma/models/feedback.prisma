@@ -20,15 +20,16 @@ enum FeedbackStatus {
 
 /// Also emailed to the team. The user link is cleared when the account is deleted.
 model Feedback {
-  id        String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId    String?        @map("user_id") @db.Uuid
-  user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
-  email     String?
-  message   String
-  context   Json           @default("{}")
-  status    FeedbackStatus @default(new)
-  createdAt DateTime       @default(now()) @map("created_at")
-  updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
+  id           String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId       String?        @map("user_id") @db.Uuid
+  user         User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email        String?
+  message      String
+  context      Json           @default("{}")
+  status       FeedbackStatus @default(new)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at")
+  contentFixes ContentFix[]
 
   @@index([status, createdAt])
   @@index([userId])

@@ -3,7 +3,7 @@ import { type StoredLogin, isPlainToken } from "./credentials.ts";
 import { type HttpResult, RequestError, isRecord, postForm, unexpectedResponse } from "./http.ts";
 
 const CLIENT_ID = "zoonk-cli";
-const SCOPE = "staff:read offline_access";
+const SCOPE = "staff:read staff:propose offline_access";
 const DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 /** RFC 8628 section 3.2: clients poll every 5 seconds when the server names no interval. */
 const DEFAULT_POLL_SECONDS = 5;

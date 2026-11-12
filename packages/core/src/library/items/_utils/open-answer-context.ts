@@ -13,6 +13,8 @@ export type OpenAnswerContext = {
   language: string;
   question: string;
   sampleAnswer: string;
+  /** The row's content as stored, which a new explanation is saved against. */
+  storedContent: unknown;
 };
 
 async function getItemContext(itemId: string): Promise<OpenAnswerContext | null> {
@@ -31,7 +33,12 @@ async function getItemContext(itemId: string): Promise<OpenAnswerContext | null>
     return null;
   }
 
-  return { ...parsed.content, country: item.skill.country, language: item.language };
+  return {
+    ...parsed.content,
+    country: item.skill.country,
+    language: item.language,
+    storedContent: item.content,
+  };
 }
 
 async function getStepContext({
@@ -68,6 +75,7 @@ async function getStepContext({
     language: step.lesson.language,
     question: content.question,
     sampleAnswer: content.sampleAnswer,
+    storedContent: step.content,
   };
 }
 

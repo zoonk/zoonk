@@ -1,6 +1,6 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
-import { STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
+import { type STAFF_PROPOSE_SCOPE, STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
 import { headers } from "next/headers";
 import { isStaffAccount } from "./staff-account";
@@ -15,14 +15,20 @@ function readBearerToken(requestHeaders: Headers): string | null {
   return token;
 }
 
+type StaffScope = typeof STAFF_PROPOSE_SCOPE | typeof STAFF_READ_SCOPE;
+
 /**
  * The staff member acting in this request, from a CLI access token alone: a Better Auth session
  * never passes, and the platform role and ban are read on every call so losing them applies at once.
- * `forbidden` names the valid login that tried, for the audit log; `unauthorized` names no one,
- * since nothing vouches for an id.
+ * `forbidden` and `missingScope` name the valid login that tried, for the audit log; `unauthorized`
+ * names no one, since nothing vouches for an id. `missingScope` is a staff account whose login was
+ * approved before it could ask for `scope`, so logging in again fixes it.
  */
-export async function getStaffActor(): Promise<
-  { status: "ready" | "forbidden"; userId: string; clientId: string } | { status: "unauthorized" }
+export async function getStaffActor(
+  scope: StaffScope = STAFF_READ_SCOPE,
+): Promise<
+  | { status: "ready" | "forbidden" | "missingScope"; userId: string; clientId: string }
+  | { status: "unauthorized" }
 > {
   const token = readBearerToken(await headers());
 
@@ -42,8 +48,12 @@ export async function getStaffActor(): Promise<
     return { status: "unauthorized" };
   }
 
-  if (!access.scopes.includes(STAFF_READ_SCOPE) || !isStaffAccount(user)) {
+  if (!isStaffAccount(user)) {
     return { clientId: access.clientId, status: "forbidden", userId: user.id };
+  }
+
+  if (!access.scopes.includes(scope)) {
+    return { clientId: access.clientId, status: "missingScope", userId: user.id };
   }
 
   return { clientId: access.clientId, status: "ready", userId: user.id };

@@ -5,8 +5,9 @@ Account
   logout                                  End this machine's login
   whoami                                  Show who is logged in
 
-Staff (read-only production data)
-  staff models [model...]                 Readable model names, or the named models' fields and relations
+Staff (production data)
+  staff models [model...]                 Readable model names, or the named models' fields, relations
+                                          and, for content, what a fix may change
   staff users find <email|username|id>    One account by exact email, username or id
   staff users search <text> [--limit n]   Accounts whose name, email or username contain the text
   staff get <model> <id> [--fields ...]   One record by id
@@ -18,6 +19,12 @@ Staff (read-only production data)
       --offset <n>
       --fields <field>,<field>...         Print only these fields of each record
   staff count <model> [--where ...]       Number of records matching every --where
+
+Content fixes (proposed here, approved by a staff person in Admin with a passkey)
+  staff fixes propose <file.json>         Propose { reason, feedbackId?, changes: [...] } and print
+                                          the fix: its review link, each field's before and after,
+                                          and its effects. Nothing changes until it's approved.
+  staff fixes revert <fixId> --reason "…" Propose putting back what an applied fix replaced
 
 Data commands print JSON on stdout; messages and errors go to stderr.
 

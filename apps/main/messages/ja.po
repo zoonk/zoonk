@@ -387,6 +387,7 @@ msgstr "ページを開いたり、操作を実行したり、質問したりで
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "キャンセル"
@@ -1200,6 +1201,7 @@ msgid "For your safety, sign in again, then delete your account."
 msgstr "安全のため、もう一度ログインしてからアカウントを削除してください。"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "scfgdM"
 msgid "Sign in again"
 msgstr "もう一度ログインする"
@@ -1313,6 +1315,125 @@ msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "名前、ユーザー名、アカウントの設定です。"
 
+#. The name of a passkey the person hasn't named yet, in their list of passkeys.
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "unnamedPasskey"
+msgid "Passkey"
+msgstr "パスキー"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "閉じる"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "2Hinlp"
+msgid "Rename passkey"
+msgstr "パスキー名の変更"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "IKuKBl"
+msgid "Passkey name"
+msgstr "パスキー名"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "0gDM9C"
+msgid "Such as “MacBook” or “Phone”"
+msgstr "「MacBook」や「スマートフォン」など"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "保存する"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "YhaU4B"
+msgid "Delete “{name}”?"
+msgstr "「{name}」を削除しますか？"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "JrYshd"
+msgid "It won't approve content fixes anymore. You'll confirm with one of your passkeys first."
+msgstr "このパスキーではコンテンツの修正を承認できなくなります。削除する前に、登録済みのパスキーで本人確認を行います。"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "-G_yv9"
+msgid "Delete passkey"
+msgstr "パスキーを削除する"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "xEwuru"
+msgid "For your safety, sign in again, then add your passkey."
+msgstr "安全のため、もう一度ログインしてからパスキーを追加してください。"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "AadXSK"
+msgid "This device already has a passkey for your account."
+msgstr "この端末には、すでにアカウントのパスキーが登録されています。"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Cuv8_X"
+msgid "That wasn't confirmed with one of your passkeys. Try again."
+msgstr "登録済みのパスキーで本人確認ができませんでした。もう一度お試しください。"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "jUqYir"
+msgid "Added {date}"
+msgstr "{date}に追加"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "_IFxIZ"
+msgid "Options for “{name}”"
+msgstr "「{name}」の操作"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "iXNbPf"
+msgid "Rename"
+msgstr "名前を変更する"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "K3r6DQ"
+msgid "Delete"
+msgstr "削除"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "QCATv6"
+msgid "You'll confirm with a passkey you already have first."
+msgstr "まず、登録済みのパスキーで本人確認を行います。"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "guwku_"
+msgid "Your fingerprint, face or screen lock on this device"
+msgstr "この端末の指紋認証、顔認証、画面ロック"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Ck5euH"
+msgid "Add a passkey"
+msgstr "パスキーを追加する"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "追加"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "ASrBq8"
+msgid "Passkeys"
+msgstr "パスキー"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "G9nqiW"
+msgid "You approve content fixes in Admin with a passkey."
+msgstr "Adminでは、パスキーを使ってコンテンツの修正を承認します。"
+
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
@@ -1332,11 +1453,6 @@ msgstr "{username}は使えます"
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username}はすでに使われています"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "保存する"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
@@ -2555,9 +2671,14 @@ msgid "The CLI reads production data as {email}, such as accounts, plans and ans
 msgstr "CLIは{email}のアカウントで、アカウントや学習計画、回答などの本番環境のデータを読み取ります。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "d6AYf2"
-msgid "It can't change anything."
-msgstr "何も変更できません。"
+msgctxt "IpYj6L"
+msgid "It can propose fixes to course content. Each one waits until a person approves it in Admin with a passkey."
+msgstr "コース内容の修正を提案できます。修正案は、Adminで人がパスキーを使って承認するまで反映されません。"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "ngUvxA"
+msgid "It can't change anything by itself."
+msgstr "単独では何も変更できません。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
@@ -2578,12 +2699,6 @@ msgstr "拒否する"
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
 msgstr "このコードの有効期限が切れています。{command}をもう一度実行して、新しいコードを取得してください。"
-
-#: src/app/[lang]/device/cli-login-form.tsx
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "rl-7PV"

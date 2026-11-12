@@ -70,12 +70,19 @@ function toOutcome(picture: LibraryPicture): StepImageOutcome {
 export async function listLessonImageSteps({ lessonId }: { lessonId: string }): Promise<string[]> {
   const steps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { content: true, id: true, kind: true, mediaAssetId: true, staged: true },
+    select: {
+      content: true,
+      id: true,
+      kind: true,
+      mediaAssetId: true,
+      pictureRemovedAt: true,
+      staged: true,
+    },
     where: { lessonId, retiredAt: null },
   });
 
   const pending = toPreparedSteps(steps).filter(
-    (step) => !step.mediaAssetId && getStepImageRequest(step),
+    (step) => !step.mediaAssetId && !step.pictureRemovedAt && getStepImageRequest(step),
   );
 
   return pending
@@ -85,7 +92,8 @@ export async function listLessonImageSteps({ lessonId }: { lessonId: string }): 
 
 /**
  * Links the picture to every screen of the step's own version that asks for it, so a job queued
- * before a regeneration finishes the version it was for and never fills the new one.
+ * before a regeneration finishes the version it was for and never fills the new one. A screen whose
+ * picture was taken out stays without one.
  */
 async function linkStepImage({
   mediaAssetId,
@@ -96,7 +104,12 @@ async function linkStepImage({
 }): Promise<void> {
   const peers = await prisma.step.findMany({
     select: { content: true, id: true, kind: true },
-    where: { lessonId: step.lessonId, mediaAssetId: null, version: step.version },
+    where: {
+      lessonId: step.lessonId,
+      mediaAssetId: null,
+      pictureRemovedAt: null,
+      version: step.version,
+    },
   });
 
   await prisma.step.updateMany({
@@ -104,6 +117,7 @@ async function linkStepImage({
     where: {
       id: { in: findStepsSharingPicture({ step, steps: peers }).map((peer) => peer.id) },
       mediaAssetId: null,
+      pictureRemovedAt: null,
     },
   });
 
@@ -119,7 +133,9 @@ export async function createStepImage({
   stepId: string;
 }): Promise<StepImageOutcome> {
   const step = await findStepForImage(stepId);
-  const request = step && !step.mediaAssetId ? getStepImageRequest(step) : null;
+
+  const request =
+    step && !step.mediaAssetId && !step.pictureRemovedAt ? getStepImageRequest(step) : null;
 
   if (!step || !request) {
     return { status: "none" };
