@@ -126,12 +126,8 @@ function WritingProgress({
         since={since}
       />
 
-      {run.status !== "failed" && (
-        <p className="text-muted-foreground text-sm text-pretty">
-          {holding
-            ? t("Your lesson is ready. Start it whenever you like.")
-            : t("It usually takes a few minutes. The lesson opens here as soon as it's ready.")}
-        </p>
+      {run.status !== "failed" && !holding && (
+        <p className="text-muted-foreground text-sm text-pretty">{t("It takes a few minutes.")}</p>
       )}
     </>
   );
@@ -230,10 +226,8 @@ function UnwrittenLessonNote() {
 
   return (
     <p className="flex flex-col gap-1 text-sm text-pretty">
-      <span className="font-medium">{t("This lesson isn't written yet")}</span>
-      <span className="text-muted-foreground">
-        {t("Zoonk writes it when you start. It takes a few minutes.")}
-      </span>
+      <span className="font-medium">{t("This lesson isn't ready yet")}</span>
+      <span className="text-muted-foreground">{t("Getting it ready takes a few minutes.")}</span>
     </p>
   );
 }

@@ -19,7 +19,6 @@ import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
 import { BuddyEnergy, useGrowthLine } from "./buddy-day-parts";
-import { BuddyStageName } from "./buddy-labels";
 import { type BuddyStatusView } from "./buddy-status-view";
 import { MissionsRing } from "./missions-ring";
 import { type LearnBuddy } from "./use-buddy-name";
@@ -75,11 +74,7 @@ function BuddyTodaySheet({
             <DrawerTitle className="text-xl font-semibold">
               {t("{buddy} today", { buddy: name })}
             </DrawerTitle>
-            <DrawerDescription>
-              <BuddyStageName stage={status.stage} />
-              {" · "}
-              {growth}
-            </DrawerDescription>
+            <DrawerDescription>{growth}</DrawerDescription>
           </div>
           <DrawerCloseButton />
         </DrawerHeader>
@@ -180,8 +175,8 @@ export function BuddyToday({
       >
         <span className="flex items-center gap-1">
           <ZapIcon aria-hidden="true" className="text-energy size-3.5" />
-          <span className="sr-only">{`${t("Energy")} `}</span>
           {current === null ? <NotYet /> : formatShare(current / PERCENT)}
+          <span>{t("Energy")}</span>
         </span>
 
         <span className={cn("flex items-center gap-1.5", today?.missions.length === 0 && "hidden")}>
@@ -195,8 +190,8 @@ export function BuddyToday({
           ) : (
             <CheckIcon aria-hidden="true" className="size-3.5" />
           )}
-          <span aria-hidden="true">{today ? `${done}/${today.missions.length}` : DASH}</span>
-          <span className="sr-only">{missionsLabel}</span>
+          {!today && <NotYet />}
+          <span>{missionsLabel}</span>
         </span>
       </button>
 

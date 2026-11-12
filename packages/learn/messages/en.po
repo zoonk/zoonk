@@ -184,6 +184,7 @@ msgstr "Continue"
 #: src/_components/detail-page.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
 #: src/language/level-test/level-test-screens.tsx
@@ -422,9 +423,10 @@ msgid "This lesson isn't available"
 msgstr "This lesson isn't available"
 
 #: src/_components/lesson-not-written-notice.tsx
-msgctxt "mrewuQ"
-msgid "It didn't pass our quality checks, so your plan goes on without it."
-msgstr "It didn't pass our quality checks, so your plan goes on without it."
+#: src/challenge/challenge-plus-lock.tsx
+msgctxt "-rTwFN"
+msgid "Your plan goes on without it."
+msgstr "Your plan goes on without it."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -1115,41 +1117,29 @@ msgid "Fully grown"
 msgstr "Fully grown"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "AkmQot"
-msgid "Grows to Adult at {belt}"
-msgstr "Grows to Adult at {belt}"
+msgctxt "yD_fJo"
+msgid "Grows at {belt}"
+msgstr "Grows at {belt}"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "e80zET"
-msgid "Grows to Young at {belt}"
-msgstr "Grows to Young at {belt}"
+msgctxt "gaCo5g"
+msgid "{buddy} is napping. Study to wake it up."
+msgstr "{buddy} is napping. Study to wake it up."
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "j9234g"
-msgid "{buddy} took a nap. Anything you learn wakes it up."
-msgstr "{buddy} took a nap. Anything you learn wakes it up."
+msgctxt "TTZGoJ"
+msgid "Study today to keep it up."
+msgstr "Study today to keep it up."
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "KRzhMQ"
-msgid "You studied today, so Energy won't drop."
-msgstr "You studied today, so Energy won't drop."
+msgctxt "RquZa1"
+msgid "{buddy}'s Energy"
+msgstr "{buddy}'s Energy"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "ok24EC"
-msgid "Studying today keeps Energy up."
-msgstr "Studying today keeps Energy up."
-
-#: src/buddies/buddy-day-parts.tsx
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energy"
-
-#: src/buddies/buddy-day-parts.tsx
-msgctxt "eiGdZK"
-msgid "Energy starts with your first lesson and grows as you learn."
-msgstr "Energy starts with your first lesson and grows as you learn."
+msgctxt "Q88QPu"
+msgid "It starts with your first lesson."
+msgstr "It starts with your first lesson."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1167,6 +1157,12 @@ msgstr "What {buddy} remembers"
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "Weekly summary"
+
+#: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-today.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energy"
 
 #: src/buddies/buddy-day.tsx
 #: src/missions/missions-card.tsx
@@ -1211,9 +1207,9 @@ msgid "Examples"
 msgstr "Examples"
 
 #: src/buddies/buddy-goal-start.tsx
-msgctxt "CDE6Me"
-msgid "Hi! I'm {name}, your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then."
-msgstr "Hi! I'm {name}, your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then."
+msgctxt "Py3YsI"
+msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
+msgstr "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1340,9 +1336,9 @@ msgid "Round glasses"
 msgstr "Round glasses"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "bg3OJE"
-msgid "Win your first phase challenge"
-msgstr "Win your first phase challenge"
+msgctxt "0Ys5Rm"
+msgid "Win your first challenge"
+msgstr "Win your first challenge"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "gltJSr"
@@ -1360,9 +1356,9 @@ msgid "Finish 50 reviews"
 msgstr "Finish 50 reviews"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "JNjStC"
-msgid "Win the final challenge"
-msgstr "Win the final challenge"
+msgctxt "erG0QJ"
+msgid "Win your plan's last challenge"
+msgstr "Win your plan's last challenge"
 
 #. How the learner gets the round glasses: every buddy has them.
 #: src/buddies/buddy-labels.tsx
@@ -2370,11 +2366,6 @@ msgctxt "L6h9aE"
 msgid "This call comes with Plus"
 msgstr "This call comes with Plus"
 
-#: src/challenge/challenge-plus-lock.tsx
-msgctxt "-rTwFN"
-msgid "Your plan goes on without it."
-msgstr "Your plan goes on without it."
-
 #: src/challenge/challenge-screen.tsx
 msgctxt "FxoA1t"
 msgid "Getting your challenge ready"
@@ -2767,9 +2758,9 @@ msgstr "Show more"
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
-msgctxt "hxbNj_"
-msgid "Ask a question or request a change"
-msgstr "Ask a question or request a change"
+msgctxt "zf_3aa"
+msgid "Ask anything"
+msgstr "Ask anything"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
@@ -2799,9 +2790,9 @@ msgid "I want to study less this week"
 msgstr "I want to study less this week"
 
 #: src/conversation/tutor-conversation-content.tsx
-msgctxt "V2JAKF"
-msgid "Hi! I'm {name}, your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan."
-msgstr "Hi! I'm {name}, your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan."
+msgctxt "IihZBt"
+msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
+msgstr "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2825,9 +2816,9 @@ msgid "Applying it rebuilds your plan for this country. The lessons you've finis
 msgstr "Applying it rebuilds your plan for this country. The lessons you've finished stay done."
 
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "Ol1JfV"
-msgid "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
-msgstr "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
+msgctxt "zAGi7T"
+msgid "Saved. Your new plan is getting ready."
+msgstr "Saved. Your new plan is getting ready."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
@@ -3973,29 +3964,19 @@ msgid "1 quick question at the end"
 msgstr "1 quick question at the end"
 
 #: src/explain/explain-waiting.tsx
-msgctxt "mtY9st"
-msgid "I want to learn this in depth"
-msgstr "I want to learn this in depth"
+msgctxt "zfh8W-"
+msgid "Learn more about this"
+msgstr "Learn more about this"
 
 #: src/explain/explain-waiting.tsx
-msgctxt "10s3bk"
-msgid "Still writing your explanation. It shows up here as soon as it's ready."
-msgstr "Still writing your explanation. It shows up here as soon as it's ready."
+msgctxt "EQ-8cJ"
+msgid "Still getting your explanation ready."
+msgstr "Still getting your explanation ready."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "This is taking longer than usual."
-
-#: src/explain/explain-waiting.tsx
-msgctxt "aSCeTx"
-msgid "No plan to set up."
-msgstr "No plan to set up."
-
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "See explanation"
 
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"

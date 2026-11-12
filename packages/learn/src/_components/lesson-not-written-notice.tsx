@@ -66,9 +66,7 @@ export function LessonNotWrittenNotice({
       {reason.status === "setAside" && (
         <p className="flex flex-col gap-1 text-sm text-pretty">
           <span className="font-medium">{t("This lesson isn't available")}</span>
-          <span className="text-muted-foreground">
-            {t("It didn't pass our quality checks, so your plan goes on without it.")}
-          </span>
+          <span className="text-muted-foreground">{t("Your plan goes on without it.")}</span>
         </p>
       )}
     </div>

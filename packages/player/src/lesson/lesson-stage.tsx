@@ -63,7 +63,7 @@ function WriteAgainButton() {
       size="sm"
       variant="ghost"
     >
-      {t("Write again")}
+      {t("Turn back on")}
     </Button>
   );
 }
@@ -110,7 +110,7 @@ function LessonNotice() {
           action={<WriteAgainButton />}
           icon={<PenOffIcon aria-hidden="true" className="size-4" />}
         >
-          {t("No more writing today.")}
+          {t("Writing is off for today.")}
         </NoticeLine>
       );
     case null:

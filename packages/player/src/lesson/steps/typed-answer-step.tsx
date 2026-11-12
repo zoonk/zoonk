@@ -31,7 +31,7 @@ function SkipWritingButton() {
       variant="ghost"
     >
       <PenOffIcon aria-hidden="true" />
-      {t("Can't write now")}
+      {t("Skip writing today")}
     </Button>
   );
 }

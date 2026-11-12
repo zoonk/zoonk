@@ -102,9 +102,7 @@ function SampleAnswerLine({ result }: { result: LessonStepResult }) {
 
   return (
     <FeedbackExplanation className="flex flex-col gap-1">
-      <p className="text-muted-foreground">
-        {t("Each question is checked a few times a day. Compare your answer with this one:")}
-      </p>
+      <p className="text-muted-foreground">{t("Compare your answer with this one:")}</p>
       <p className="font-medium">
         <LessonRichText text={result.correctAnswer} />
       </p>

@@ -81,7 +81,7 @@ export function ExplainDeeperLink({ description, href }: { description: string; 
           </ListRowIcon>
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle>{t("I want to learn this in depth")}</ListRowTitle>
+          <ListRowTitle>{t("Learn more about this")}</ListRowTitle>
           <ListRowDescription>{description}</ListRowDescription>
         </ListRowContent>
       </ListRowLink>
@@ -135,7 +135,7 @@ function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
         tabIndex={-1}
       >
         {joined || isRetrying
-          ? t("Still writing your explanation. It shows up here as soon as it's ready.")
+          ? t("Still getting your explanation ready.")
           : t("This is taking longer than usual.")}
       </p>
 
@@ -194,7 +194,6 @@ export function ExplainWaiting({
         <OnboardingHeading>
           <OnboardingSubject>{quickExplanation}</OnboardingSubject>
           <OnboardingTitle>{explanation.title}</OnboardingTitle>
-          <p className="text-muted-foreground text-sm">{t("No plan to set up.")}</p>
         </OnboardingHeading>
 
         {!ready && <GenerationWait kind="explanation" run={progress ?? UNFOLLOWED_RUN} />}
@@ -211,7 +210,7 @@ export function ExplainWaiting({
         {ready && (
           <OnboardingFooter>
             <OnboardingPrimaryButton autoFocus onClick={onStart}>
-              {t("See explanation")}
+              {t("Start")}
             </OnboardingPrimaryButton>
           </OnboardingFooter>
         )}

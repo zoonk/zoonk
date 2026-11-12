@@ -2515,19 +2515,14 @@ msgid "We couldn't match enough taps to the clicks. Try again, tapping with each
 msgstr "We couldn't match enough taps to the clicks. Try again, tapping with each one."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JUoCnO"
-msgid "Sound on this device arrives on time."
-msgstr "Sound on this device arrives on time."
+msgctxt "NNlvmb"
+msgid "All set."
+msgstr "All set."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "hIMvUw"
-msgid "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
-msgstr "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
-
-#: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "ukg6sv"
-msgid "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
-msgstr "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
+msgctxt "Jk0E1p"
+msgid "Tap along with {count} clicks, so your taps are timed right."
+msgstr "Tap along with {count} clicks, so your taps are timed right."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2535,9 +2530,11 @@ msgid "Set up your sound"
 msgstr "Set up your sound"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JrS_qa"
-msgid "Start the sound check"
-msgstr "Start the sound check"
+#: src/lesson/lesson-action-bar.tsx
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Start"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
@@ -3332,9 +3329,9 @@ msgid "Also correct:"
 msgstr "Also correct:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "57Nd7h"
-msgid "Each question is checked a few times a day. Compare your answer with this one:"
-msgstr "Each question is checked a few times a day. Compare your answer with this one:"
+msgctxt "eP1Qpv"
+msgid "Compare your answer with this one:"
+msgstr "Compare your answer with this one:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"
@@ -3384,12 +3381,6 @@ msgstr "See the answer"
 msgctxt "zDR51u"
 msgid "See how it went"
 msgstr "See how it went"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Start"
 
 #: src/lesson/lesson-action-bar.tsx
 msgctxt "QriCsD"
@@ -3495,9 +3486,9 @@ msgid "I already know this"
 msgstr "I already know this"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "qzpeai"
-msgid "Write again"
-msgstr "Write again"
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "Turn back on"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3520,9 +3511,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "This question was waiting for its picture. Answer it to finish the lesson."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "I67vt5"
-msgid "No more writing today."
-msgstr "No more writing today."
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "Writing is off for today."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "N9yMCQ"
@@ -3565,9 +3556,9 @@ msgid "Challenge complete"
 msgstr "Challenge complete"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "ttLWcq"
-msgid "Skills practiced"
-msgstr "Skills practiced"
+msgctxt "3SY66E"
+msgid "What you practiced"
+msgstr "What you practiced"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3593,16 +3584,6 @@ msgstr "Challenge · {setting}"
 msgctxt "KV-6ml"
 msgid "Your mission"
 msgstr "Your mission"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "r5v2r8"
-msgid "You can ask the team or the AI for help. Your decisions change the outcome."
-msgstr "You can ask the team or the AI for help. Your decisions change the outcome."
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "cjl8Gf"
-msgid "You can ask the team for help. Your decisions change the outcome."
-msgstr "You can ask the team for help. Your decisions change the outcome."
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "eppyrx"
@@ -3707,9 +3688,9 @@ msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to t
 msgstr "{count, plural, one {# idea to take from this lesson} other {# ideas to take from this lesson}}"
 
 #: src/lesson/steps/typed-answer-step.tsx
-msgctxt "DPTzG-"
-msgid "Can't write now"
-msgstr "Can't write now"
+msgctxt "SZ0_A4"
+msgid "Skip writing today"
+msgstr "Skip writing today"
 
 #: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"

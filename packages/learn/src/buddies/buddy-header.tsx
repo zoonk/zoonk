@@ -5,25 +5,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { BuddyArt } from "./buddy-art";
-import { BuddyStageName } from "./buddy-labels";
-import { type BuddyStatusView } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
 
 /** `-mb-12` takes back the page's bottom padding, since the composer has its own. */
 export const BUDDY_COLUMN_CLASS =
   "-mb-12 mx-auto flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
-
-function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] }) {
-  const t = useExtracted();
-
-  return (
-    <span>
-      {t("Your study buddy")}
-      {" · "}
-      <BuddyStageName stage={stage} />
-    </span>
-  );
-}
 
 /** `children` is the day's line, kept beside the name while it fits; `menu` stays at the end. */
 export function BuddyHeader({
@@ -32,15 +18,15 @@ export function BuddyHeader({
   faceRef,
   menu,
   name,
-  stage,
 }: {
   buddy: LearnBuddy;
   children?: React.ReactNode;
   faceRef?: React.Ref<ActorHandle<BuddyActName>>;
   menu?: React.ReactNode;
   name: string;
-  stage: BuddyStatusView["stage"];
 }) {
+  const t = useExtracted();
+
   return (
     <header className="flex items-center gap-2.5">
       <BuddyArt buddy={buddy} className="size-8" ref={faceRef} />
@@ -50,7 +36,7 @@ export function BuddyHeader({
             {name}
           </h1>
           <p className={cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-snug")}>
-            <BuddyLine stage={stage} />
+            {t("Your study buddy")}
           </p>
         </div>
         {children}

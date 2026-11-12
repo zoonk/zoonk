@@ -69,13 +69,13 @@ export function BuddyGoalStart({
   // The hello says the buddy is an AI, since it opens the conversation (EU AI Act art. 50;
   // Decreto 12.880/2026 art. 11 for minors).
   const greeting = t(
-    "Hi! I'm {name}, your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then.",
+    "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan.",
     { name: identity.name },
   );
 
   return (
     <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-goal-start">
-      <BuddyHeader buddy={buddy} name={identity.name} stage={status.stage} />
+      <BuddyHeader buddy={buddy} name={identity.name} />
 
       <TutorMessage identity={identity} page>
         <p>{greeting}</p>

@@ -24,35 +24,28 @@ export function useGrowthLine(status: BuddyStatusView): string {
 
   const belt = beltName(nextBelt);
 
-  const stages: Record<typeof next.stage, string> = {
-    adult: t("Grows to Adult at {belt}", { belt }),
-    baby: t("Grows to Young at {belt}", { belt }),
-    young: t("Grows to Young at {belt}", { belt }),
-  };
-
-  return stages[next.stage];
+  return t("Grows at {belt}", { belt });
 }
 
+/** Nothing to say once today's study kept it up. */
 function useEnergyLine({ name, status }: { name: string; status: BuddyStatusView }) {
   const t = useExtracted();
 
   if (status.energy.state === "napping") {
-    return t("{buddy} took a nap. Anything you learn wakes it up.", { buddy: name });
+    return t("{buddy} is napping. Study to wake it up.", { buddy: name });
   }
 
-  return status.energy.studiedToday
-    ? t("You studied today, so Energy won't drop.")
-    : t("Studying today keeps Energy up.");
+  return status.energy.studiedToday ? null : t("Study today to keep it up.");
 }
 
-function EnergyStarts() {
+function EnergyStarts({ name }: { name: string }) {
   const t = useExtracted();
 
   return (
     <section className="flex flex-col gap-1">
-      <PageSectionTitle>{t("Energy")}</PageSectionTitle>
+      <PageSectionTitle>{t("{buddy}'s Energy", { buddy: name })}</PageSectionTitle>
       <p className="text-muted-foreground text-[0.8125rem] leading-snug">
-        {t("Energy starts with your first lesson and grows as you learn.")}
+        {t("It starts with your first lesson.")}
       </p>
     </section>
   );
@@ -74,7 +67,7 @@ export function BuddyEnergy({
   const line = useEnergyLine({ name, status });
 
   if (status.energy.current === null) {
-    return <EnergyStarts />;
+    return <EnergyStarts name={name} />;
   }
 
   const share = status.energy.current / PERCENT;
@@ -88,7 +81,7 @@ export function BuddyEnergy({
       href={href}
     >
       <span className="flex items-center justify-between gap-3">
-        <span className={PAGE_SECTION_TITLE_CLASS}>{t("Energy")}</span>
+        <span className={PAGE_SECTION_TITLE_CLASS}>{t("{buddy}'s Energy", { buddy: name })}</span>
         <span className="flex items-center gap-0.5 font-mono text-[0.8125rem] font-medium tabular-nums">
           {formatShare(share)}
           <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-3.5" />
@@ -99,7 +92,7 @@ export function BuddyEnergy({
         <MeterFill className="bg-energy" share={share} />
       </Meter>
 
-      <span className="text-muted-foreground text-[0.8125rem] leading-snug">{line}</span>
+      {line && <span className="text-muted-foreground text-[0.8125rem] leading-snug">{line}</span>}
     </LearnLink>
   );
 }

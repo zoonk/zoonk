@@ -56,7 +56,6 @@ export function ChallengeIntro({
 }) {
   const t = useExtracted();
   const { fill } = names;
-  const hasAi = content.team.some((slot) => slot.ai);
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
@@ -96,12 +95,6 @@ export function ChallengeIntro({
       })}
 
       <ChallengeTeamList content={content} names={names} />
-
-      <p className="text-muted-foreground text-sm">
-        {hasAi
-          ? t("You can ask the team or the AI for help. Your decisions change the outcome.")
-          : t("You can ask the team for help. Your decisions change the outcome.")}
-      </p>
     </PlayerReadScene>
   );
 }

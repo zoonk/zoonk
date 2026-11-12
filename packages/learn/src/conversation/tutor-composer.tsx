@@ -14,7 +14,7 @@ export function TutorComposerSkeleton() {
       className={cn(TUTOR_COMPOSER_FRAME_CLASS, "flex min-h-12 items-center gap-2 pr-2.25 pl-3.5")}
     >
       <span className="text-muted-foreground min-w-0 flex-1 truncate text-[0.9375rem]">
-        {t("Ask a question or request a change")}
+        {t("Ask anything")}
       </span>
       <Skeleton className="size-7.5 shrink-0 rounded-lg" />
     </div>
