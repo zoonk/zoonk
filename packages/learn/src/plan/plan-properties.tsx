@@ -194,7 +194,7 @@ function GoalDateValue() {
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (!targetDate) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("No date");
+    return goal.kind === "exam" ? t("To be confirmed") : t("No end date");
   }
 
   return (
@@ -231,7 +231,7 @@ export function PlanProperties({
 
       <ul className="flex flex-col">
         <PropertyRow
-          label={goal.kind === "exam" ? t("Exam date") : t("Goal date")}
+          label={goal.kind === "exam" ? t("Exam date") : t("End date")}
           onOpen={() => onOpen("date")}
         >
           <GoalDateValue />
