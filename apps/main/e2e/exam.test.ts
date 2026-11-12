@@ -75,7 +75,7 @@ test.describe("Exam goal", () => {
       await page.goto(`/mock/${mock.blockId}`);
       await expect(page).toHaveURL(new RegExp(`/challenge/${mock.planItemId}$`, "u"));
 
-      const start = page.getByRole("button", { name: "Start the mock exam" });
+      const start = page.getByRole("button", { exact: true, name: "Start" });
       await start.click();
       await expect(start).toHaveAttribute("aria-busy", "true");
       await expect(start).toBeDisabled();

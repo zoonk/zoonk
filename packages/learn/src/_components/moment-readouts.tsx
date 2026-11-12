@@ -17,7 +17,7 @@ const HERO_SIZE = "text-[2.5rem]";
 const INTRO_KEY = "zoonk:brain-power-intro";
 
 /** Brain Power says what it is the first few times a learner earns it on this device. */
-const INTRO_TIMES = 3;
+const INTRO_TIMES = 1;
 
 function readIntroCount(): number {
   return Number(deviceStorage.get(INTRO_KEY)) || 0;

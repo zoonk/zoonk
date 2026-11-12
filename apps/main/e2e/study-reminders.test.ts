@@ -4,7 +4,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
-import { createStudyDay, openAs } from "./study-day";
+import { createStudyDay, openAs, pressUntil } from "./study-day";
 
 /** Core signs links with this key wherever no secret is set, these servers included. */
 const LOCAL_UNSUBSCRIBE_SECRET = "zoonk-local-study-reminder-unsubscribe";
@@ -47,9 +47,7 @@ function readReminder(userId: string) {
 }
 
 test.describe("Study reminders", () => {
-  test("turns email reminders on from the offer under a finished plan lesson", async ({
-    browser,
-  }) => {
+  test("turns email reminders on from the offer on the day's summary", async ({ browser }) => {
     const { lesson, user } = await createStudyDay({ reviewDone: true });
     const page = await openAs(browser, user);
     await page.goto("/today");
@@ -64,6 +62,12 @@ test.describe("Study reminders", () => {
     await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { level: 2, name: "Lesson complete" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Want a study reminder?" })).toHaveCount(0);
+
+    await pressUntil(
+      () => page.getByRole("button", { name: "Stop for today" }).click({ timeout: 1000 }),
+      page.getByRole("heading", { level: 1, name: "Done for now" }),
+    );
 
     const offer = page.getByRole("region", { name: "Want a study reminder?" });
 
