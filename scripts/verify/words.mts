@@ -12,7 +12,6 @@ export const WORD_BUDGET = {
   stringWords: 20,
 };
 
-/** What `readWords` (`probe.mts`) reads off a loaded page. */
 export type PageText = {
   aboveAction: number | null;
   action: string | null;

@@ -29,7 +29,7 @@ const SAMPLE_LENGTH = 100;
 const RULES = {
   button: {
     name: "Long button label",
-    question: `Over ${WORD_BUDGET.buttonWords} words. A button is a verb the learner already knows ("Start", "Continue", "Save"), never the next screen's name, a duration or a consequence (zoonk-design's Words).`,
+    question: `Over ${WORD_BUDGET.buttonWords} words. A button is a verb the learner already knows ("Start", "Continue", "Save"), never the next screen's name, a duration or a consequence (zoonk-design's Words). Strings that only marketing pages use skip this.`,
     role: "design",
   },
   hedge: {
@@ -40,7 +40,7 @@ const RULES = {
   },
   long: {
     name: "Long string",
-    question: `Over ${WORD_BUDGET.stringWords} words. Which part would a learner miss? Cut it, make it a step, or put it behind a tap (zoonk-design's Words).`,
+    question: `Over ${WORD_BUDGET.stringWords} words. Which part would a learner miss? Cut it, make it a step, or put it behind a tap (zoonk-design's Words). Strings that only marketing pages use skip this.`,
     role: "design",
   },
   note: {
@@ -70,7 +70,6 @@ function lastIndexOf(text: string, pattern: RegExp): number {
   return Math.max(-1, ...[...text.matchAll(pattern)].map((match) => match.index));
 }
 
-/** Whether the source shows the string inside a `<…Button>` element: cheap, so web only. */
 export function insideButton(source: string, text: string): boolean {
   const literal = JSON.stringify(text);
   const lines = source.split("\n");
@@ -125,7 +124,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/** Every `stringUnit` value under a localization, plural and device variations included. */
 function unitValues(node: unknown): string[] {
   if (!isRecord(node)) {
     return [];
@@ -238,13 +236,14 @@ export function judgeString(
   const term = termIn(string.text, terms);
   const words = countWords(string.text);
 
-  // A string that every source shows on a marketing page; one shared with the app stays judged.
-  const app =
+  const usedInApp =
     string.sources.length === 0 || !string.sources.every((source) => MARKETING_SOURCE.test(source));
 
   return [
-    ...(app && words > WORD_BUDGET.stringWords ? [{ rule: RULES.long, sample: string.text }] : []),
-    ...(app &&
+    ...(usedInApp && words > WORD_BUDGET.stringWords
+      ? [{ rule: RULES.long, sample: string.text }]
+      : []),
+    ...(usedInApp &&
     words > WORD_BUDGET.buttonWords &&
     string.sources.some((source) => insideButton(read(source), string.text))
       ? [{ rule: RULES.button, sample: string.text }]
@@ -259,10 +258,6 @@ function stringKey(string: CatalogString): string {
   return `${string.text}\n${string.note}`;
 }
 
-/**
- * Each English string the change adds or rewords, or whose translator note it changes, in the
- * web's catalogs, Apple's String Catalogs and Android's `values/strings*.xml`.
- */
 export function auditStrings(
   files: ChangedFile[],
   { read, readBase }: { read: (path: string) => string; readBase: (path: string) => string },
