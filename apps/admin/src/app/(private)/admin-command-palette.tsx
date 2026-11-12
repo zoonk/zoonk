@@ -24,14 +24,12 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { searchAdminAction } from "./_actions/search-admin";
-import { adminNavigation } from "./admin-navigation";
+import { adminPages } from "./admin-navigation";
 
 type PaletteItem = { detail?: string; href: Route; icon?: LucideIcon; label: string };
 type PaletteGroup = { items: PaletteItem[]; label: string };
 
-const PAGES = adminNavigation.flatMap((group) =>
-  group.items.map(({ icon, label, url }) => ({ href: url, icon, label })),
-);
+const PAGES = adminPages.map(({ icon, label, url }) => ({ href: url, icon, label }));
 
 const EMPTY_RESULTS: { error: boolean; groups: PaletteGroup[]; query: string } = {
   error: false,
@@ -85,7 +83,7 @@ function Palette({ currentUrl }: { currentUrl: string }) {
     >
       <CommandDialogTitle>Search admin</CommandDialogTitle>
       <CommandDialogDescription>
-        Go to a page or find a user, course, lesson or skill.
+        Go to a page, or find a user, course, lesson or skill by name.
       </CommandDialogDescription>
       <Command
         autoHighlight="always"
