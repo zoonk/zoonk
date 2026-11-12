@@ -17,11 +17,12 @@ import {
   lockFixRows,
   lockRetiredItemPlans,
 } from "./_utils/apply-content-fix";
+import { changedSince } from "./_utils/changed-since";
 import { logContentFix } from "./_utils/content-fix-view";
 import { prepareContentFix, toProposedChanges } from "./_utils/prepare-content-fix";
 import { type FixUnit } from "./_utils/resolved-change";
 import { type StaffSessionRefusal, getStaffSessionUser } from "./_utils/staff-session";
-import { contentFixChangesSchema } from "./contract";
+import { type StoredChange, contentFixChangesSchema } from "./contract";
 
 type Refused = StaffSessionRefusal | { status: "notFound" };
 
@@ -132,29 +133,12 @@ async function staleReasonFor(
   tx: TransactionClient,
   {
     fixId,
-    proposedAt,
-    revertsId,
+    reverts,
     stored,
-  }: {
-    fixId: string;
-    proposedAt: Date;
-    revertsId: string | null;
-    stored: ReturnType<typeof contentFixChangesSchema.parse>;
-  },
+  }: { fixId: string; reverts: { decidedAt: Date | null } | null; stored: StoredChange[] },
 ): Promise<string | null> {
-  if (revertsId) {
-    const newer = await tx.contentFix.findFirst({
-      where: {
-        OR: stored.map(({ id, model }) => ({ changes: { array_contains: [{ id, model }] } })),
-        decidedAt: { gt: proposedAt },
-        id: { not: fixId },
-        status: "applied",
-      },
-    });
-
-    if (newer) {
-      return STALE_CONTENT;
-    }
+  if (reverts?.decidedAt && (await changedSince(tx, { fixId, since: reverts.decidedAt, stored }))) {
+    return STALE_CONTENT;
   }
 
   const fresh = await prepareContentFix(tx, toProposedChanges(stored));
@@ -204,7 +188,7 @@ function applyApproval({
     }
 
     const fix = await tx.contentFix.findUniqueOrThrow({
-      select: { changes: true, createdAt: true, revertsId: true, unit: true, unitId: true },
+      select: { changes: true, reverts: { select: { decidedAt: true } }, unit: true, unitId: true },
       where: { id: fixId },
     });
 
@@ -214,12 +198,10 @@ function applyApproval({
     await lockRetiredItemPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
 
-    const staleReason = await staleReasonFor(tx, {
-      fixId,
-      proposedAt: fix.createdAt,
-      revertsId: fix.revertsId,
-      stored: changes,
-    });
+    // Fixes that waited on these locks are ordered by when they applied, not when they were claimed.
+    await tx.contentFix.update({ data: { decidedAt: new Date() }, where: { id: fixId } });
+
+    const staleReason = await staleReasonFor(tx, { fixId, reverts: fix.reverts, stored: changes });
 
     if (staleReason) {
       await tx.contentFix.update({ data: { staleReason, status: "stale" }, where: { id: fixId } });

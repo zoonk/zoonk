@@ -979,4 +979,47 @@ describe("stale removal reverts", () => {
       { mediaAssetId: asset.id },
     ]);
   });
+
+  it("refuses a revert once a later fix rewrote what it would put back", async () => {
+    const skill = await skillFixture();
+    const item = await itemFixture({ format: "typed", skillId: skill.id });
+    const changes = [{ id: item.id, model: "Item", retire: true }];
+
+    await signInProposer();
+    const removal = await proposeFix({ changes, reason: "Wrong question" });
+    const approver = await signInApprover();
+    await approve({ fixId: removal.id, key: approver.key });
+
+    const restore = await proposeContentFixRevertInAdmin({ fixId: removal.id, reason: "Undo" });
+
+    if (restore.status !== "proposed") {
+      throw new Error("Expected restore");
+    }
+
+    await approve({ fixId: restore.fix.id, key: approver.key });
+
+    await signInProposer();
+    const newerRemoval = await proposeFix({ changes, reason: "Still wrong" });
+    mockSession(approver.user.id);
+    await approve({ fixId: newerRemoval.id, key: approver.key });
+
+    const late = await proposeContentFixRevertInAdmin({ fixId: removal.id, reason: "Old undo" });
+
+    if (late.status !== "proposed") {
+      throw new Error("Expected late revert");
+    }
+
+    const before = await prisma.item.findUniqueOrThrow({
+      select: { retiredAt: true },
+      where: { id: item.id },
+    });
+
+    await expect(approve({ fixId: late.fix.id, key: approver.key })).resolves.toMatchObject({
+      fix: { status: "stale" },
+    });
+
+    await expect(
+      prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: item.id } }),
+    ).resolves.toStrictEqual(before);
+  });
 });
