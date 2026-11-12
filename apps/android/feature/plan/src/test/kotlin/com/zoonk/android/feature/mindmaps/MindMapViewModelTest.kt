@@ -349,6 +349,41 @@ class MindMapViewModelTest {
         }
 
     @Test
+    fun lessonMapsReadBeforeCreatingTheMapReadAgainOnceTheListShowsTheLessonsItWrote() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            var status = "available"
+            var lessons = listOf(1, 2)
+            api.mindMaps = {
+                goalMindMaps(
+                    listOf(mapJson(3, "Waves and sound", status, lessonsToWrite = 3 - lessons.size)),
+                    listOf(lessonGroupJson(3, lessons)),
+                )
+            }
+            api.lessonMaps = { chapterLessonMaps(lessons = lessons.map { lessonMindMapJson(it, "Lesson $it") }) }
+            api.create = { generation("writingLessons") }
+            store.list[goalId].load()
+            store.lessonMaps[key].load()
+
+            status = "writingLessons"
+            maps.create(chapterId)
+            advanceUntilIdle()
+            status = "ready"
+            lessons = listOf(1, 2, 3)
+            api.statuses.add(ChapterMindMapStatus.Status.READY)
+            maps.follow(chapterId, MindMapShown.WritingLessons)
+            store.lessonMaps[key].load()
+
+            assertEquals(
+                listOf(1, 2, 3).map(::mapLesson),
+                store.lessonMaps[key]
+                    .state.value.value
+                    ?.lessons
+                    ?.map { it.lessonId.toString() },
+            )
+        }
+
+    @Test
     fun threeMissesInARowSayTheServerIsOutOfReachAndTryAgainAsksAgain() =
         runTest(dispatcher) {
             val (maps) = setUp()

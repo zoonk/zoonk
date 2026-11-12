@@ -405,7 +405,9 @@ final class MindMapsStore {
   }
 
   /// A map read on its own before the list said it moved on (Create all started it, or the list's
-  /// follower saw it drawn) reads again when it next shows: only a single map's tap reads both.
+  /// follower saw it drawn) reads again when it next shows: only a single map's tap reads both. So do
+  /// a chapter's lesson maps read before the list showed more of them (a map's run wrote the rest),
+  /// since the reader's deck takes its lessons from the list.
   private func listed(_ read: GoalMindMaps, goalId: String) {
     for chapter in read.chapters {
       guard let map = maps["\(goalId):\(chapter.chapterId)"], let value = map.value,
@@ -415,6 +417,19 @@ final class MindMapsStore {
       }
 
       map.invalidate()
+    }
+
+    for group in read.lessonGroups {
+      guard let resource = lessons["\(goalId):\(group.chapterId)"], let value = resource.value
+      else {
+        continue
+      }
+
+      let opens = Set(value.lessons.filter { !$0.locked }.map(\.lessonId))
+
+      if !group.lessonIds.allSatisfy(opens.contains) {
+        resource.invalidate()
+      }
     }
   }
 
