@@ -11,16 +11,19 @@ struct QuestionStep: View {
   let onAnswer: ([String: Any]) -> Void
 
   var body: some View {
-    QuestionForm(isSaving: isSaving, failed: failed) {
-      content
+    if step == .contentCountry {
+      CountryQuestion(
+        view: view, subject: subject, isSaving: isSaving, failed: failed, onAnswer: onAnswer)
+    } else {
+      QuestionForm(isSaving: isSaving, failed: failed) {
+        content
+      }
     }
   }
 
   @ViewBuilder
   private var content: some View {
     switch step {
-    case .contentCountry:
-      CountryQuestion(view: view, subject: subject, onAnswer: onAnswer)
     case .purpose:
       PurposeQuestion(subject: subject, onAnswer: onAnswer)
     case .role:
@@ -53,7 +56,7 @@ struct QuestionStep: View {
     case .work, .tools, .studies, .watch, .listen, .play, .read, .activities, .conditions,
       .learningSupport:
       EmptyView()
-    case .schedule, .placement, .plan:
+    case .contentCountry, .schedule, .placement, .plan:
       EmptyView()
     }
   }
@@ -86,16 +89,18 @@ struct QuestionForm<Content: View>: View {
 
       if failed {
         Section {
-          FailureLine(
-            message: failure
-              ?? String(
-                localized: "That didn't save. Try again.", table: "Onboarding",
-                comment: "A change couldn't be saved"))
+          FailureLine(message: failure ?? saveFailedMessage)
         }
       }
     }
     .environment(\.isSavingAnswer, isSaving)
   }
+}
+
+private var saveFailedMessage: String {
+  String(
+    localized: "That didn't save. Try again.", table: "Onboarding",
+    comment: "A change couldn't be saved")
 }
 
 extension EnvironmentValues {
@@ -154,9 +159,7 @@ struct StepHeader: View {
   }
 }
 
-/// A step's Continue, with an optional Skip under it. A label passed in takes its own icon, or none
-/// where no idea fits it; the defaults are Continue's forward arrow and Skip's. Either one's request
-/// is `isSavingAnswer`; the one pressed spins.
+/// A step's Continue, with an optional Skip under it, at the end of its list.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
@@ -168,40 +171,13 @@ struct StepButtons: View {
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
-  @Environment(\.isSavingAnswer) private var isSaving
-  @State private var sender = StepSender()
-
   var body: some View {
-    let proceeds = sender.sent(.proceed, isSaving: isSaving)
-    let skips = sender.sent(.skip, isSaving: isSaving)
-
     Section {
-      VStack(spacing: 12) {
-        BusyButton(isBusy: proceeds, icon: continueIcon) {
-          sender.press(.proceed)
-          onContinue()
-        } label: {
-          continueLabel
-            ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
-        }
-        .buttonStyle(.mainAction)
-        .disabled((!canContinue || isSaving) && !proceeds)
-
-        if let onSkip {
-          BusyButton(isBusy: skips, icon: skipIcon) {
-            sender.press(.skip)
-            onSkip()
-          } label: {
-            skipLabel
-              ?? Text(
-                "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
-          }
-          .buttonStyle(.outline)
-          .disabled((!canSkip || isSaving) && !skips)
-        }
-      }
-      .buttonSizing(.flexible)
-      .controlSize(.large)
+      StepButtonStack(
+        canContinue: canContinue, canSkip: canSkip, continueLabel: continueLabel,
+        continueIcon: continueIcon, skipLabel: skipLabel, skipIcon: skipIcon,
+        onContinue: onContinue, onSkip: onSkip
+      )
       .keepsOffFold()
       .listRowInsets(.vertical, 0)
       .listRowBackground(Color.clear)
@@ -214,6 +190,54 @@ struct StepButtons: View {
         }
       }
     }
+  }
+}
+
+/// A label passed in takes its own icon, or none where no idea fits it; the defaults are Continue's
+/// forward arrow and Skip's. Either one's request is `isSavingAnswer`; the one pressed spins.
+struct StepButtonStack: View {
+  var canContinue = true
+  var canSkip = true
+  var continueLabel: Text?
+  var continueIcon: ActionIcon? = .forward
+  var skipLabel: Text?
+  var skipIcon: ActionIcon? = .skip
+  let onContinue: () -> Void
+  var onSkip: (() -> Void)?
+
+  @Environment(\.isSavingAnswer) private var isSaving
+  @State private var sender = StepSender()
+
+  var body: some View {
+    let proceeds = sender.sent(.proceed, isSaving: isSaving)
+    let skips = sender.sent(.skip, isSaving: isSaving)
+
+    VStack(spacing: 12) {
+      BusyButton(isBusy: proceeds, icon: continueIcon) {
+        sender.press(.proceed)
+        onContinue()
+      } label: {
+        continueLabel
+          ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+      }
+      .buttonStyle(.mainAction)
+      .disabled((!canContinue || isSaving) && !proceeds)
+
+      if let onSkip {
+        BusyButton(isBusy: skips, icon: skipIcon) {
+          sender.press(.skip)
+          onSkip()
+        } label: {
+          skipLabel
+            ?? Text(
+              "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
+        }
+        .buttonStyle(.outline)
+        .disabled((!canSkip || isSaving) && !skips)
+      }
+    }
+    .buttonSizing(.flexible)
+    .controlSize(.large)
     .onChange(of: isSaving) {
       if !isSaving {
         sender.saveEnded()
@@ -289,84 +313,110 @@ struct ChoiceRows<Value: Hashable>: View {
 private struct CountryQuestion: View {
   let view: GoalOnboarding
   let subject: String
+  let isSaving: Bool
+  let failed: Bool
   let onAnswer: ([String: Any]) -> Void
 
   @State private var picked: CountryChoice?
   @State private var isPickingAnother = false
+  /// Where the rows' text starts and where the bar starts, on screen: the bar lines its notice and
+  /// buttons up with the rows, whose margin the list picks for the device.
+  @State private var rowEdge: CGFloat?
+  @State private var barEdge: CGFloat = 0
 
   var body: some View {
-    StepHeader(
-      subject: subject,
-      title: Text(
-        "Which country should your lessons be about?", tableName: "Onboarding",
-        comment: "Onboarding question for a goal whose content changes from country to country"),
-      description: Text(
-        "What you learn here changes from country to country. You can change it later in your plan.",
-        tableName: "Onboarding", comment: "Under the content country question"))
+    ZoonkList {
+      StepHeader(
+        subject: subject,
+        title: Text(
+          "Which country should your lessons be about?", tableName: "Onboarding",
+          comment: "Onboarding question for a goal whose content changes from country to country"),
+        description: Text(
+          "What you learn here changes from country to country. You can change it later in your plan.",
+          tableName: "Onboarding", comment: "Under the content country question"))
 
-    Section {
-      ForEach(choices) { choice in
+      Section {
+        ForEach(choices) { choice in
+          Button {
+            picked = choice
+          } label: {
+            Text(choice.name)
+              .typeStyle(.rowTitle)
+              .foregroundStyle(Color(.foreground))
+              .frame(maxWidth: .infinity, alignment: .leading)
+              .contentShape(.rect)
+          }
+          .pickedRow(picked?.code == choice.code)
+          .accessibilityAddTraits(picked?.code == choice.code ? .isSelected : [])
+        }
+
         Button {
-          picked = choice
+          isPickingAnother = true
         } label: {
-          Text(choice.name)
-            .typeStyle(.rowTitle)
-            .foregroundStyle(Color(.foreground))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+          Text(
+            "Another country", tableName: "Onboarding",
+            comment: "Opens every country, after the ones the content country question suggests"
+          )
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
+          .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minX } action: {
+            rowEdge = $0
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .disclosureChevron()
+          .contentShape(.rect)
         }
-        .pickedRow(picked?.code == choice.code)
-        .accessibilityAddTraits(picked?.code == choice.code ? .isSelected : [])
+        // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
+        .sheet(isPresented: $isPickingAnother) {
+          CountryPickerSheet(
+            title: Text(
+              "Country", tableName: "Plan",
+              comment:
+                "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
+            ),
+            language: view.goal.language,
+            suggested: suggested,
+            selected: picked?.code
+          ) { choice in
+            picked = choice
+            return true
+          }
+          .zoonkStyles()
+        }
       }
+      .locksWhileSaving()
+    }
+    // Unlike the other steps, a pick here doesn't move on, so Continue, Skip and the line saying
+    // what they keep stay on screen however many countries the list holds.
+    .safeAreaBar(edge: .bottom) {
+      VStack(alignment: .leading, spacing: 12) {
+        if failed {
+          FailureLine(message: saveFailedMessage)
+        }
 
-      Button {
-        isPickingAnother = true
-      } label: {
-        Text(
-          "Another country", tableName: "Onboarding",
-          comment: "Opens every country, after the ones the content country question suggests"
-        )
-        .typeStyle(.rowTitle)
-        .foregroundStyle(Color(.foreground))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .disclosureChevron()
-        .contentShape(.rect)
-      }
-      // On the row itself: a modifier on the Section reaches each of its rows, one sheet each.
-      .sheet(isPresented: $isPickingAnother) {
-        CountryPickerSheet(
-          title: Text(
-            "Country", tableName: "Plan",
-            comment:
-              "Title of the sheet that picks a language goal's country, such as Argentina; the row that opens it says Language"
-          ),
-          language: view.goal.language,
-          suggested: suggested,
-          selected: picked?.code
-        ) { choice in
-          picked = choice
-          return true
-        }
-        .zoonkStyles()
-      }
-    } footer: {
-      // Above the buttons, so the list never moves when it changes.
-      SectionFooter {
         if let notice {
           Text(notice)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
+        StepButtonStack(canContinue: picked != nil) {
+          if let picked {
+            onAnswer(["country": picked.code, "question": "contentCountry"])
+          }
+        } onSkip: {
+          onAnswer(["question": "contentCountry"])
         }
       }
       .announcesStatus(notice)
-    }
-    .locksWhileSaving()
-
-    StepButtons(canContinue: picked != nil) {
-      if let picked {
-        onAnswer(["country": picked.code, "question": "contentCountry"])
+      .padding(.horizontal, rowEdge.map { max(0, $0 - barEdge) } ?? 16)
+      .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minX } action: {
+        barEdge = $0
       }
-    } onSkip: {
-      onAnswer(["question": "contentCountry"])
+      .keepsOffFold()
+      .scenePadding(.vertical)
     }
+    .environment(\.isSavingAnswer, isSaving)
   }
 
   private var suggested: [CountryChoice] {
