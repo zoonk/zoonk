@@ -13,6 +13,8 @@ import {
 } from "./browser.mts";
 import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from "./checks.mts";
 import { measureFrames } from "./content-frames.mts";
+import { readCraft } from "./craft-probe.mts";
+import { type CraftCounts, countCraft, craftFindings } from "./craft.mts";
 import {
   findOverflow,
   findTruncated,
@@ -46,10 +48,12 @@ export type Target = {
   serverPid: number | null;
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
+  typeScale: number[];
 };
 
 export type LoadReport = LoadMeasurement & {
   bytes: { html: number; scripts: number; total: number };
+  craft: CraftCounts;
   mainThreadMs: number;
   database: { count: number; ms: number } | null;
   findings: Finding[];
@@ -108,6 +112,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     blankSeenMs: probe?.blankFrames[0] ?? null,
     blockingMs: probe ? totalBlockingTime(probe.longTasks, fcpMs) : null,
     bytes: await page.evaluate(transferredBytes),
+    craft: await page.evaluate(readCraft),
     fcpMs,
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
@@ -171,7 +176,7 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, timeOrigin: _, words: text, ...measured } = loaded;
+    const { bytes, craft, timeOrigin: _, words: text, ...measured } = loaded;
     const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
@@ -193,11 +198,16 @@ export async function measureLoad(
     return {
       ...measurement,
       bytes,
+      craft: countCraft(craft),
       database: statements && {
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
       },
-      findings: [...judgeLoad(measurement), ...wordFindings(words)],
+      findings: [
+        ...judgeLoad(measurement),
+        ...wordFindings(words),
+        ...craftFindings(craft, target.typeScale),
+      ],
       frames: paints,
       framesDirectory: `${name}-frames`,
       mainThreadMs,
