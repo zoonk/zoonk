@@ -28,7 +28,7 @@ In a column, every block starts on the column's start edge or on the one inner e
 
 ### E2. A bare glyph sits on the edge by its ink
 
-An icon button with no bezel that is the first or last thing in a bar, a header or a row lines up by its glyph's ink with the edge its neighbors use (the page title's start, the column's end). A control with a bezel lines up by its bezel. Pull a bare one out by half the difference between the button and its icon, plus the glyph's blank side, in the shared piece (as `TASK_HEADER_ICON_CLASS` does for the player's header), never with a margin on one screen. Its hit area stays 44px.
+An icon button with no bezel that is the first or last thing in a bar, a header or a row lines up by its glyph's ink with the edge its neighbors use (the page title's start, the column's end). A control with a bezel lines up by its bezel. A bare one takes `Button`'s `edge` (`start` or `end`; `buttonVariants({ edge })` on a link), which pulls it out by its padding and its glyph's blank side, never a margin of its own. Its hit area stays 44px.
 
 - **Check.** Is the back arrow's leftmost ink over the title's first letter, and the "…" or chevron's rightmost ink over the content's right edge? Glyph ink to that edge: 2px or less.
 - **Usual break.** A 44px ghost icon button dropped at the start of a bar: its padding moves a 20px chevron 12px in and the chevron's blank side adds 7.

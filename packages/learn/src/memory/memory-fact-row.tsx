@@ -144,7 +144,8 @@ export function MemoryFactRow({
           render={
             <Button
               aria-label={t("Options for “{fact}”", { fact: fact.statement })}
-              className="text-muted-foreground -my-2.75 -mr-2 size-11 shrink-0"
+              className="text-muted-foreground -my-2 shrink-0"
+              edge="end"
               size="icon"
               variant="ghost"
             />

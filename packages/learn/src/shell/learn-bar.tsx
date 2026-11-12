@@ -61,13 +61,13 @@ function useTitleScrolledAway(bar: React.RefObject<HTMLElement | null>) {
   return away;
 }
 
-const BAR_ICON_LINK_CLASS = cn(
-  buttonVariants({ size: "icon-bar", variant: "ghost" }),
-  "[&_svg:not([class*='size-'])]:size-5",
-);
+const BAR_ICON_LINK_CLASS = buttonVariants({ edge: "start", size: "icon-bar", variant: "ghost" });
 
-export const CRUMB_LINK_CLASS =
-  "text-foreground hover:bg-muted lg:text-muted-foreground lg:hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex size-11 shrink-0 items-center justify-center rounded-lg outline-none transition-colors focus-visible:ring-[3px] [&_svg]:size-5 lg:-ml-1.5 lg:h-8 lg:w-auto lg:gap-0.5 lg:pr-1 lg:text-[0.8125rem] lg:hover:bg-transparent lg:[&_svg]:size-4";
+/** The bar's icon link on a phone; from `lg` the chevron and the parent page's name, as a crumb. */
+export const CRUMB_LINK_CLASS = cn(
+  BAR_ICON_LINK_CLASS,
+  "lg:text-muted-foreground lg:h-8 lg:w-auto lg:gap-0.5 lg:border-0 lg:pr-1 lg:text-[0.8125rem] lg:font-normal lg:[--control-size:initial] lg:[--icon-size:--spacing(4)] lg:hover:bg-transparent",
+);
 
 function BackLinkName({ label }: { label?: string }) {
   const t = useExtracted();

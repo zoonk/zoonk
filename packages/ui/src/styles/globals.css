@@ -670,6 +670,39 @@
   }
 }
 
+/*
+ * A bare icon button at a column's edge, or a bare icon there, lines up by the glyph's ink, not
+ * its box (craft E2). `--edge-pull` is the button's padding plus the glyph's blank side, which
+ * Lucide draws in 24ths of the icon: about 2 for most glyphs, more for the narrow ones below.
+ */
+@utility edge {
+  --glyph-blank: 2;
+  --edge-pull: calc(
+    (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
+      var(--icon-size, 1rem) * var(--glyph-blank) / 24
+  );
+
+  &:is(
+    .lucide-chevron-left,
+    .lucide-chevron-right,
+    :has(.lucide-chevron-left, .lucide-chevron-right)
+  ) {
+    --glyph-blank: 8;
+  }
+
+  &:is(
+    .lucide-chevron-down,
+    .lucide-chevron-up,
+    :has(.lucide-x, .lucide-chevron-down, .lucide-chevron-up)
+  ) {
+    --glyph-blank: 5;
+  }
+
+  &:has(.lucide-ellipsis, .lucide-menu, .lucide-plus) {
+    --glyph-blank: 3;
+  }
+}
+
 ::selection {
   @apply bg-primary text-primary-foreground;
 }

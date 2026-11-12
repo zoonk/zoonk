@@ -5,25 +5,28 @@ import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
-  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-(--icon-size,1rem)",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
+      edge: { end: "edge -me-(--edge-pull)", start: "edge -ms-(--edge-pull)" },
       size: {
         adaptive:
           "size-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 sm:h-9 sm:w-auto",
         bar: "h-11 gap-1.5 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 lg:h-10",
         default:
           "h-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-        icon: "size-9",
-        "icon-bar": "size-11 lg:size-10",
-        "icon-lg": "size-10",
-        "icon-sm": "size-8 rounded-md",
-        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        icon: "size-(--control-size) [--control-size:--spacing(9)]",
+        "icon-bar":
+          "size-(--control-size) [--control-size:--spacing(11)] [--icon-size:--spacing(5)] lg:[--control-size:--spacing(10)]",
+        "icon-lg": "size-(--control-size) [--control-size:--spacing(10)]",
+        "icon-sm": "size-(--control-size) rounded-md [--control-size:--spacing(8)]",
+        "icon-xs":
+          "size-(--control-size) rounded-md [--control-size:--spacing(6)] [--icon-size:--spacing(3)]",
         lg: "h-11 gap-2 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
         sm: "h-7.5 gap-1 rounded-md px-2.5 text-[0.8125rem] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         xl: "h-11 gap-2 px-5 text-[0.9375rem] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
-        xs: "h-6 gap-1 rounded-md px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
+        xs: "h-6 gap-1 rounded-md px-2.5 text-xs [--icon-size:--spacing(3)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
       },
       variant: {
         default:
@@ -133,12 +136,16 @@ function BusyContent({
 /**
  * `busy` while its own action runs: from the press it ignores presses and keeps focus and its look,
  * and a spinner takes its `icon`'s place, or covers its content when it has none.
+ *
+ * `edge` is for a bare (ghost) icon button that is the first or last thing in a bar, a header or a
+ * row: it puts the glyph's ink, not the button's box, on that edge.
  */
 function Button({
   busy,
   children,
   className,
   disabled,
+  edge,
   focusableWhenDisabled,
   icon,
   iconPosition,
@@ -151,7 +158,7 @@ function Button({
   return (
     <ButtonPrimitive
       aria-busy={busy || undefined}
-      className={cn(buttonVariants({ className, size, variant }), canBeBusy && "group/busy")}
+      className={cn(buttonVariants({ className, edge, size, variant }), canBeBusy && "group/busy")}
       data-slot="button"
       disabled={busy || disabled}
       focusableWhenDisabled={busy || focusableWhenDisabled}
@@ -170,10 +177,10 @@ function Button({
 
 type ButtonSkeletonProps = Pick<
   React.ComponentProps<typeof Button>,
-  "children" | "className" | "size" | "variant"
+  "children" | "className" | "edge" | "size" | "variant"
 >;
 
-function ButtonSkeleton({ children, className, size, variant }: ButtonSkeletonProps) {
+function ButtonSkeleton({ children, className, edge, size, variant }: ButtonSkeletonProps) {
   return (
     <Button
       aria-hidden="true"
@@ -182,6 +189,7 @@ function ButtonSkeleton({ children, className, size, variant }: ButtonSkeletonPr
         className,
       )}
       disabled
+      edge={edge}
       size={size}
       tabIndex={-1}
       type="button"

@@ -108,7 +108,7 @@ export function SlotPager({ className }: { className?: string }) {
       <span className="text-muted-foreground font-mono text-[0.6875rem] tabular-nums">
         {t("{number, number} of {total, number}", { number: index + 1, total: count })}
       </span>
-      <Button onClick={() => move(1)} size="icon-sm" variant="ghost">
+      <Button edge="end" onClick={() => move(1)} size="icon-sm" variant="ghost">
         <ChevronRightIcon aria-hidden="true" />
         <span className="sr-only">{t("Next")}</span>
       </Button>

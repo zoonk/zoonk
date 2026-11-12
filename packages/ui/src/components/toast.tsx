@@ -121,7 +121,7 @@ function ToastClose({
     <ToastPrimitive.Close
       aria-label="Close toast"
       className={cn(
-        "text-muted-foreground hover:text-foreground -mr-1 size-5 shrink-0 after:absolute after:-inset-2 after:content-['']",
+        "text-muted-foreground hover:text-foreground edge -me-(--edge-pull) shrink-0 [--control-size:--spacing(5)] after:absolute after:-inset-2 after:content-['']",
         className,
       )}
       data-slot="toast-close"

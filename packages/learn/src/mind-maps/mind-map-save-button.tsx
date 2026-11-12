@@ -33,7 +33,7 @@ export function MindMapSaveButton({
   variant = "outline",
   ...props
 }: MindMapSave &
-  Pick<React.ComponentProps<typeof Button>, "aria-keyshortcuts" | "size" | "variant"> & {
+  Pick<React.ComponentProps<typeof Button>, "aria-keyshortcuts" | "edge" | "size" | "variant"> & {
     /** A keycap, after the label. */
     children?: React.ReactNode;
     className?: string;
