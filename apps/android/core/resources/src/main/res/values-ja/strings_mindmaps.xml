@@ -14,6 +14,7 @@
   "mindmaps_create": "4fb9ee6373de0a1f6ccdde1782c0504b7fb6b76b3533d1b2d98791829cca7ea1",
   "mindmaps_create_count": "1c30873ba1abf1fc2e1ed0f6784759d1147300d289c3265bc715c506446635d1",
   "mindmaps_create_spoken": "6cbd0db6b49dcad6585900388dc25abe7665ce5bc126b9d794119ee6a3578522",
+  "mindmaps_didnt_finish": "606fee10207152d648ded0e5fbc51b8e96e6f485e7babacdd4ac6d408fa3439d",
   "mindmaps_done": "4c081960a1fc331bbd99380d0d9cde6df4281470e0457435b4992906b2f2d038",
   "mindmaps_download": "e8e0d7f6649667b998778a6a9ac3710bcf1c26f5820c45fc69e2e2fbb960423c",
   "mindmaps_drawing": "8c76ae4616373409152d728053ff497d8d0bca6ccd812a880f311f05859beffc",
@@ -182,6 +183,10 @@
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
         <item quantity="other">%1$s章分のマップを作成しています。作成中はこの画面を離れても大丈夫です。</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="other">マップ%1$s件の作成が完了しませんでした。もう一度お試しください。</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

@@ -14,6 +14,7 @@
   "mindmaps_create": "dd166465d5cb830d6e7c9bcb68b974d4692bfa55056f200e55b5c7329038170b",
   "mindmaps_create_count": "5bbc0a2a1ec9671e6b4d22d6163c69854ff4df651035b6442a6e6fdc87b1dd94",
   "mindmaps_create_spoken": "22b7ed74ddc718faea97dd46e066a08fe854912cd046379e5119c144f1865418",
+  "mindmaps_didnt_finish": "a5ab6c32228adb4640b8c26705fe0d93599d429598bb6186f105c361219cf069",
   "mindmaps_done": "f4c41821d03664ad6698b2360275b7eb125ff0d7188bc9f8a43b870cffda765d",
   "mindmaps_download": "8003a638b0f9cb44385860d5e2055aeb317dc7a73e065b2aa3d27442966344df",
   "mindmaps_drawing": "7a5616033bfb58b5e5f02ee1310af3324a6f4252af7113db3c2781e18e18d413",
@@ -200,6 +201,12 @@
         <item quantity="one">%1$s a caminho. Você pode sair enquanto ele é criado.</item>
         <item quantity="many">%1$s a caminho. Você pode sair enquanto eles são criados.</item>
         <item quantity="other">%1$s a caminho. Você pode sair enquanto eles são criados.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="one">%1$s mapa não foi concluído. Tente de novo.</item>
+        <item quantity="many">%1$s mapas não foram concluídos. Tente de novo.</item>
+        <item quantity="other">%1$s mapas não foram concluídos. Tente de novo.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

@@ -14,6 +14,7 @@
   "mindmaps_create": "03191730764d64d8b6a55a0688d1329343d34b7435d02efb7e37a15f5919c385",
   "mindmaps_create_count": "6dd70b9f5c26b786a781277645407f55ac5e640c95e87412458f81c958b3af59",
   "mindmaps_create_spoken": "ca96a4020ef46f6f29ff2eca9e73ba5ceb0c797b662d80225a9454127ee5ef91",
+  "mindmaps_didnt_finish": "e55a50da1ac3344a394b83090816ecbed0d7f2e381178340aa9c868061911a58",
   "mindmaps_done": "96e6fd7c9a675d813a82ea29a68c84b67cb29264270a2e7d5b0967ef789c0dda",
   "mindmaps_download": "b333b45450d635eedd4efa549fd4caa8e85650846a62884b7d00f505a9097d64",
   "mindmaps_drawing": "80ed264a9a7f6d48626aa45683a9a21b23c5666b703d125baf29cb1a7ae3d5a6",
@@ -191,6 +192,11 @@
     <plurals name="mindmaps_being_made">
         <item quantity="one">%1$s harita hazırlıyoruz. Bu sırada buradan ayrılabilirsin.</item>
         <item quantity="other">%1$s harita hazırlıyoruz. Bu sırada buradan ayrılabilirsin.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="one">%1$s harita tamamlanamadı. Tekrar dene.</item>
+        <item quantity="other">%1$s harita tamamlanamadı. Tekrar dene.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

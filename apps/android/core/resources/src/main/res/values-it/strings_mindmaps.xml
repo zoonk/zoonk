@@ -14,6 +14,7 @@
   "mindmaps_create": "02356afb9241419c59c24ccde5a83aeaa74555a1888d0ab5dca1fb6dc9d844fb",
   "mindmaps_create_count": "4de76ad5be51ea2e46206f42640dce997df77e5d8c00f6104a99e95594a5502f",
   "mindmaps_create_spoken": "a688858d13b80dfd5374873132dbf190563e831a1f634cbaa543e3c5d07c61b4",
+  "mindmaps_didnt_finish": "fc72ce67132cb13e3757e8d3ceb23e7be2f7a9b321dbea7c314f041daf0eb99e",
   "mindmaps_done": "5422014ca2fed8e518f3892370c4ae62d8d180ca127906502ab06812402e5b78",
   "mindmaps_download": "44effd12bf91c1e81c935513a42ccb5a8a891f5d183d2ceb403c6963cc9b33f4",
   "mindmaps_drawing": "b9f985aa5ccf9adfd345d3bc74f59a91a694ed428fb003f0ffe153b26d5f5e9c",
@@ -200,6 +201,12 @@
         <item quantity="one">%1$s in arrivo. Puoi uscire mentre la prepariamo.</item>
         <item quantity="many">%1$s in arrivo. Puoi uscire mentre le prepariamo.</item>
         <item quantity="other">%1$s in arrivo. Puoi uscire mentre le prepariamo.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="one">%1$s mappa non è stata completata. Riprova.</item>
+        <item quantity="many">%1$s mappe non sono state completate. Riprova.</item>
+        <item quantity="other">%1$s mappe non sono state completate. Riprova.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

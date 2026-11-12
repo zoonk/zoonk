@@ -54,7 +54,6 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -116,14 +115,13 @@ internal fun MindMapsContent(
             val requests by maps.requests.collectAsStateWithLifecycle()
             val saves by maps.saves.collectAsStateWithLifecycle()
             val createAll by maps.createAll.collectAsStateWithLifecycle()
-            val makeable = shown.value.chapters.any { it.status == GoalMindMap.Status.AVAILABLE }
 
             FollowListWhileOnItsWay(resource, shown.value.chapters, requests)
 
             CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
                 MindMapsPage(
                     mindMaps = shown.value,
-                    state = MindMapsState(requests, saves, createAll, if (makeable) host.cap() else null, host.plus(), host.tier()),
+                    state = MindMapsState(requests, saves, createAll, host.plus(), host.tier()),
                     actions =
                         MindMapsActions(
                             back = back,
@@ -192,12 +190,11 @@ internal fun listCadence(
         else -> null
     }
 
-/** What the page shows besides the list: taps on their way, the plan's cap on new maps, and the learner's plan. */
+/** What the page shows besides the list: taps on their way and the learner's plan. */
 internal data class MindMapsState(
     val requests: Map<UUID, MindMapLocal> = emptyMap(),
     val saves: Map<MindMapTarget, Boolean> = emptyMap(),
     val createAll: CreateAll? = null,
-    val cap: Limit? = null,
     val plus: Boolean = false,
     val tier: LimitTier = LimitTier.Free,
 )

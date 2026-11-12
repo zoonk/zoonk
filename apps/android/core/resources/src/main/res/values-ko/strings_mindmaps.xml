@@ -14,6 +14,7 @@
   "mindmaps_create": "6baf318ab485765ffcc73d97ae957b469f353903a0b83e3b544631c789cf82d8",
   "mindmaps_create_count": "235ef76e21d17482e6a214f876adb2cd99e40a7078e59267a37e2aaf0a9af19c",
   "mindmaps_create_spoken": "c642b459c7b94fcc16a1c8ff69bb388cc5a6cb9874db97e0d0a342aaafd5695d",
+  "mindmaps_didnt_finish": "a353361179a8808e1233d82e63ac356269e7108dd7ffa4b6df2d499738d716cf",
   "mindmaps_done": "a4eeb47e648a48de419cbe370ac0d6d147aded8c1b2cee394dad9c263039cbbb",
   "mindmaps_download": "c6c4ef3c31ed4cc05847e161eda22e7421162f0bdc5d635e75cfbbd76dd90b75",
   "mindmaps_drawing": "d88412a6dfbe0faad1e97d6fd5f7665082b93f1c92cc980baad34bcb4a2014c9",
@@ -182,6 +183,10 @@
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
         <item quantity="other">%1$s개를 만들고 있어요. 만드는 동안 나가도 괜찮아요.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="other">마인드맵 %1$s개를 완성하지 못했어요. 다시 시도해 보세요.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

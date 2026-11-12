@@ -115,6 +115,11 @@
         <item quantity="one">%1$s on the way. You can leave while it\'s made.</item>
         <item quantity="other">%1$s on the way. You can leave while they\'re made.</item>
     </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="one">%1$s map didn\'t finish. Try again.</item>
+        <item quantity="other">%1$s maps didn\'t finish. Try again.</item>
+    </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">
         <item quantity="one">You can make %1$s more right now.</item>
