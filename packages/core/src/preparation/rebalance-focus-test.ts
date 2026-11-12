@@ -30,7 +30,7 @@ export async function rebalanceFocusTest({
 
   const record = readFocusTestRecord(goal);
 
-  if (!record?.summary?.asked) {
+  if (record?.summary?.asked === 0) {
     return;
   }
 

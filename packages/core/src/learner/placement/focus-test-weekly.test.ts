@@ -16,11 +16,15 @@ import { proposePlanChange } from "../../plans/propose-plan-change";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../_test-utils/exam-test-goal";
 import * as testSitting from "./_utils/test-sitting";
+import { readFocusTestRecord } from "./focus-test-state";
 import { getGoalPlacement } from "./get-goal-placement";
 
 async function setup(
-  source: "focusTest" | "learner" | "mock" = "focusTest",
-  { testAnswers = true }: { testAnswers?: boolean } = {},
+  source: "focusTest" | "learner" | "mock" | "preparation" = "focusTest",
+  {
+    summary = "saved",
+    testAnswers = true,
+  }: { summary?: "none" | "saved"; testAnswers?: boolean } = {},
 ) {
   const fixture = await shortPlanExamGoalFixture({
     daysLeft: 60,
@@ -32,7 +36,7 @@ async function setup(
   const areas = ["Direito"];
 
   const changed =
-    source === "focusTest"
+    source === "focusTest" || source === "preparation"
       ? await proposePlanChange({
           approval: "always",
           goalId: goal.id,
@@ -162,7 +166,9 @@ async function setup(
     ),
   );
 
-  if (testAnswers) {
+  if (summary === "none") {
+    await prisma.goal.update({ data: { details: PLAN_SHOWN.details }, where: { id: goal.id } });
+  } else if (testAnswers) {
     await testSitting.saveTestSummary({ goalId: goal.id, userId: user.id });
   }
 
@@ -176,6 +182,43 @@ async function proposals(planId: string) {
 }
 
 describe("weekly reviews of a system-owned focus", () => {
+  it.each(["preparation", "mock"] as const)(
+    "rechecks an older learner's %s focus without a saved test record",
+    async (source) => {
+      const { goal, plan, user } = await setup(source, { summary: "none" });
+      const before = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      expect(readFocusTestRecord(before)).toBeNull();
+
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      await expect(proposals(plan.id)).resolves.toHaveLength(1);
+
+      const after = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      expect(readFocusTestRecord(after)).toMatchObject({ summary: { asked: 1 } });
+    },
+  );
+
+  it("recounts an older goal once before recording that it has no test answers", async () => {
+    const { goal, plan, user } = await setup("preparation", {
+      summary: "none",
+      testAnswers: false,
+    });
+
+    const summary = vi.spyOn(testSitting, "saveTestSummary");
+
+    try {
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      expect(summary).toHaveBeenCalledOnce();
+      await expect(proposals(plan.id)).resolves.toHaveLength(0);
+
+      const after = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+      expect(readFocusTestRecord(after)).toMatchObject({ summary: { asked: 0 } });
+    } finally {
+      summary.mockRestore();
+    }
+  });
+
   it("does not recount a test with no answered subject on repeated settlements", async () => {
     const { goal, plan, user } = await setup("mock", { testAnswers: false });
     const summary = vi.spyOn(testSitting, "saveTestSummary");
