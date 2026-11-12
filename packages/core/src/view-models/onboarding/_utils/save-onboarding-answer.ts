@@ -6,6 +6,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLeastDailyBudget, splitDailyBudget } from "../../../goals/daily-budget";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { keepPlanTestSummary } from "../../../learner/placement/_utils/test-sitting";
 import { getPlanState } from "../../../plans/_utils/plan-context";
 import { type PlanOperation } from "../../../plans/plan-contract";
 import { fromIsoDate, toIsoDate } from "../../../plans/planner/plan-calendar";
@@ -145,17 +146,17 @@ function getAnswerSchedule({
 async function saveAnswerSettings(
   tx: TransactionClient,
   {
+    before,
     input,
     plan,
-    previous,
     settings,
-  }: { input: GoalAnswerInput; plan: Plan | null; previous: PlanSettings; settings: PlanSettings },
+  }: { before: PlanState; input: GoalAnswerInput; plan: Plan | null; settings: PlanSettings },
 ): Promise<boolean> {
   if (!plan) {
     return false;
   }
 
-  const settingsChanged = !isDeepStrictEqual(settings, previous);
+  const settingsChanged = !isDeepStrictEqual(settings, before.settings);
   const endsRoutine = input.question === "schedule" && plan.setupTasks.includes("routine");
 
   if (!settingsChanged && !endsRoutine) {
@@ -170,6 +171,7 @@ async function saveAnswerSettings(
     where: { id: plan.id },
   });
 
+  await keepPlanTestSummary({ after: { ...before, settings }, before, goalId: plan.goalId, tx });
   return true;
 }
 
@@ -331,9 +333,9 @@ export async function saveAnswerInputs({
 
         // oxlint-disable-next-line no-await-in-loop -- Shared answers commit on one transaction client.
         const settingsChanged = await saveAnswerSettings(tx, {
+          before: state,
           input,
           plan: current.plan,
-          previous: state.settings,
           settings: applied.state.settings,
         });
 

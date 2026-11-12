@@ -7,15 +7,17 @@ import {
   holdPlanLock,
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
-import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import {
   linkGoalToExamBlueprint,
   unlinkGoalFromSharedExam,
 } from "../../library/exams/exam-learners";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { openStudyDay } from "../../sessions/open-study-day";
 import { saveAnswerInputs } from "../../view-models/onboarding/_utils/save-onboarding-answer";
+import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { PLAN_SHOWN, shortPlanExamGoalFixture, startSitting } from "../_test-utils/exam-test-goal";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { loadPlacementWithSummary } from "./_utils/load-placement-state";
@@ -55,6 +57,56 @@ async function optionalBlueprint(blueprintId: string, options: string[]) {
       ),
     },
   };
+}
+
+/**
+ * A personal plan with a Focus test summary, whose notice research finds later. The notice makes
+ * Português, which the plan studies, and Espanhol, which it doesn't, options of one group.
+ */
+async function laterOptionNotice({
+  details = {},
+  goal,
+  mock,
+}: {
+  details?: Record<string, unknown>;
+  goal: { examBlueprintId: string | null; id: string };
+  mock?: ExamStructure["mock"];
+}) {
+  const blueprintId = goal.examBlueprintId ?? "";
+  const optional = await optionalBlueprint(blueprintId, ["Português"]);
+  const [first] = optional.structure.subjects;
+
+  await prisma.goal.update({
+    data: { details: { ...PLAN_SHOWN.details, ...details }, examBlueprintId: null },
+    where: { id: goal.id },
+  });
+
+  await startFocusTestSummary(goal.id);
+
+  await prisma.examBlueprint.update({
+    data: {
+      structure: {
+        ...optional.structure,
+        ...(mock && { mock }),
+        subjects: [
+          ...optional.structure.subjects,
+          ...(first ? [{ ...first, choiceGroup: "Option", name: "Espanhol" }] : []),
+        ],
+      },
+    },
+    where: { id: blueprintId },
+  });
+
+  return blueprintId;
+}
+
+async function answerDontKnow(goalId: string) {
+  const sitting = await startSitting(goalId);
+
+  return answerPlacementQuestion({
+    goalId,
+    input: { answer: { dontKnow: true }, durationMs: 30_000, itemId: sitting.next?.itemId ?? "" },
+  });
 }
 
 describe("the saved Focus test summary", () => {
@@ -188,41 +240,19 @@ describe("the saved Focus test summary", () => {
 
   it("follows the notice research links or unlinks, with the option it names", async () => {
     const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
-    const blueprintId = goal.examBlueprintId ?? "";
-    const optional = await optionalBlueprint(blueprintId, ["Português"]);
-    const [first] = optional.structure.subjects;
 
-    // A personal plan whose notice research finds later, with a position that names an option.
-    await prisma.goal.update({
-      data: {
-        details: { ...PLAN_SHOWN.details, targetPosition: "Português" },
-        examBlueprintId: null,
+    const blueprintId = await laterOptionNotice({
+      details: { targetPosition: "Português" },
+      goal,
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: [{ day: 1, kind: "written", minutes: 30, name: "Português", questions: 1 }],
+        timeLimitMinutes: 30,
+        totalQuestions: 1,
       },
-      where: { id: goal.id },
-    });
-
-    await startFocusTestSummary(goal.id);
-
-    await prisma.examBlueprint.update({
-      data: {
-        structure: {
-          ...optional.structure,
-          mock: {
-            adaptive: false,
-            citations: [],
-            order: null,
-            scoring: { description: "", method: "raw" },
-            sections: [{ day: 1, kind: "written", minutes: 30, name: "Português", questions: 1 }],
-            timeLimitMinutes: 30,
-            totalQuestions: 1,
-          },
-          subjects: [
-            ...optional.structure.subjects,
-            ...(first ? [{ ...first, choiceGroup: "Option", name: "Espanhol" }] : []),
-          ],
-        },
-      },
-      where: { id: blueprintId },
     });
 
     await expect(
@@ -238,5 +268,31 @@ describe("the saved Focus test summary", () => {
     const unlinked = await readSummary(goal.id);
     expect(unlinked).toMatchObject({ quick: 6, total: 6, unasked: 6 });
     expect(unlinked).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("counts the option an onboarding answer picks when the plan already studies it", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    const blueprintId = await laterOptionNotice({ goal });
+
+    await expect(
+      linkGoalToExamBlueprint({ examBlueprintId: blueprintId, goalId: goal.id }),
+    ).resolves.toBe(true);
+
+    await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { choices: [{ group: "Option", subjects: ["Português"] }], question: "examChoice" },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { focusTest: { subjects: { asked: 1, total: 6 } } },
+      status: "ready",
+    });
+
+    const summary = await readSummary(goal.id);
+    expect(summary).toStrictEqual(await computeSummary(goal));
   });
 });
