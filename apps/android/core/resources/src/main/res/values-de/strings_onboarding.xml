@@ -197,7 +197,7 @@
   "onboarding_placement_title": "d34c7e4b612daf13e51675f8490238e3236c9eee04c2ccff0e139575197ee1d3",
   "onboarding_placement_true": "9dcd551141fa2825938903e1b3d91caf0a1cb7f7c40882c7f542b9fa70d55e0b",
   "onboarding_placement_unavailable_description": "43855d9f46e230e82cf7c04c0f8a692c352d14d01ddd17b6bfe5c213c8745835",
-  "onboarding_placement_unavailable_title": "d6c0e563b268f63cf1b1aed10cd6b4fd10783ba86db3a51cf9060bc3d381de67",
+  "onboarding_placement_unavailable_title": "5613b276106450aa7ad624329530799949585ed3dc01b6c84cbbcd36c565770b",
   "onboarding_placement_waiting_material": "beac84b6fc3153d15e51c95c1b74f91e8e19a54ada52e188829b7f52c3cb32a7",
   "onboarding_placement_waiting_time": "83e6cc9bb970dc961e9bca2f18d192ec673441481a0712f03b64f10f6b7240ac",
   "onboarding_placement_waiting_title": "ac03d6610e03d5706137a6323c7623e921031c91b9e0ac574798276c5524a5ce",
@@ -705,7 +705,7 @@
     <string name="onboarding_placement_set_title">Dein Ausgangspunkt steht fest</string>
     <!-- Under "Your starting point is set". "It" is that estimate of where the learner starts. -->
     <string name="onboarding_placement_set_description">Die Einschätzung wird jeden Tag genauer.</string>
-    <string name="onboarding_placement_unavailable_title">Überspringen wir die Fragen</string>
+    <string name="onboarding_placement_unavailable_title">Lass uns die Fragen überspringen</string>
     <string name="onboarding_placement_unavailable_description">Wir konnten keine Fragen für dieses Ziel vorbereiten. Stattdessen bestimmen deine ersten Lerneinheiten deinen Ausgangspunkt.</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
