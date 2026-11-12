@@ -132,6 +132,11 @@ export function MockQuestionMap({ className }: { className?: string }) {
 
 export function SheetLegend({ className }: { className?: string }) {
   const t = useExtracted();
+  const { flagged } = useSectionCounts();
+
+  if (flagged === 0) {
+    return null;
+  }
 
   return (
     <p className={cn("text-muted-foreground flex items-start gap-1.5 text-xs", className)}>

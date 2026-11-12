@@ -1,8 +1,6 @@
 "use client";
 
-import { useExtracted } from "next-intl";
 import { type HelpLimit } from "../_components/help-limit-notice";
-import { PlusNotice } from "../_components/plus-lock";
 import { type GenerationRun } from "../generation/generation-run";
 
 type MockShortStatus = {
@@ -21,8 +19,3 @@ export type MockChooserStatus =
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
   | { kind: "refused"; limit: HelpLimit };
 
-export function MockPlusNotice() {
-  const t = useExtracted();
-
-  return <PlusNotice cta={false} title={t("Mock exams are part of Plus")} />;
-}

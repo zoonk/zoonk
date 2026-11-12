@@ -16,7 +16,7 @@ import {
   ChooserStartButton,
   MockWriting,
 } from "./mock-chooser-page";
-import { type MockChooserStatus, MockPlusNotice } from "./mock-chooser-parts";
+import { type MockChooserStatus } from "./mock-chooser-parts";
 import { type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
 import { useMockOptionDetail, useMockOptionName, useMockOptionSize } from "./mock-option-labels";
 
@@ -148,7 +148,11 @@ function PracticeChooser({
             <ChooserPlusLink href={hrefs.plus} />
           )
         }
-        detail={t("Timed like the real exam. You see your result at the end.")}
+        detail={
+          open
+            ? t("Timed like the real exam. You see your result at the end.")
+            : t("Mock exams are part of Plus.")
+        }
         eyebrow={view.examName}
         status={shown}
         title={t("Take a mock exam")}
@@ -157,7 +161,6 @@ function PracticeChooser({
       <DetailContent>
         <ChooserRefusal busy={busy} status={shown} />
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
-        {!open && <MockPlusNotice />}
         {open && <ChooserBottomBar>{start(false)}</ChooserBottomBar>}
       </DetailContent>
     </ChooserLayout>
