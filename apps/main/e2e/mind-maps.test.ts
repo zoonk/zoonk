@@ -185,15 +185,49 @@ test.describe("Mind maps", () => {
     }
   });
 
-  test("creating every chapter map starts them and the page shows each as it turns ready", async ({
+  test("maps the learner starts stay on their way across tabs, and the page shows each as it turns ready", async ({
     browser,
   }) => {
-    const { first, user } = await createLearner();
+    const { first, second, user } = await createLearner();
     const page = await openAs(browser, user);
+    const tabs = page.getByRole("navigation", { name: "Mind maps" });
+    const tab = (name: string) => tabs.getByRole("link", { name: new RegExp(`^${name}`, "u") });
+    const tabReads: string[] = [];
+
+    // A copy of a tab from the server can predate the learner's taps, so tabs switch on the page.
+    page.on("request", (request) => {
+      const url = new URL(request.url());
+
+      if (url.pathname === "/mind-maps" && url.searchParams.has("tab")) {
+        tabReads.push(request.url());
+      }
+    });
 
     try {
       await page.goto("/mind-maps");
-      await page.getByRole("button", { name: "Create 2 chapter maps" }).click();
+      await page.getByRole("button", { name: /^Show chapters/u }).click();
+
+      await page
+        .getByRole("listitem")
+        .filter({ hasText: second.chapter.title })
+        .getByRole("button", { name: "Create" })
+        .click();
+
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      await tab("Lessons").click();
+      await expect(tab("Lessons")).toHaveAttribute("aria-current", "page");
+      await page.goBack();
+      await expect(tab("Chapters")).toHaveAttribute("aria-current", "page");
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      await page.getByRole("button", { name: "Create 1 chapter map" }).click();
+      await expect(page.getByText(/2 on the way/u)).toBeVisible();
+
+      await tab("Lessons").click();
+      await expect(tab("Lessons")).toHaveAttribute("aria-current", "page");
+      await tab("Chapters").click();
+      await expect(tab("Chapters")).toHaveAttribute("aria-current", "page");
       await expect(page.getByText(/2 on the way/u)).toBeVisible();
 
       await drawMap(first.chapter.id);
@@ -203,6 +237,7 @@ test.describe("Mind maps", () => {
       ).toBeVisible({ timeout: 15_000 });
 
       await expect(page.getByText(/1 on the way/u)).toBeVisible();
+      expect(tabReads).toEqual([]);
     } finally {
       await page.context().close();
     }

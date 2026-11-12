@@ -4,7 +4,6 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { toMindMapsPage } from "@zoonk/learn/mind-maps/page";
-import { readMindMapTab } from "@zoonk/learn/mind-maps/urls";
 import { PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
 import { DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -16,19 +15,13 @@ import { LearnNoGoal } from "../_components/learn-no-goal";
 import { LearnNotFound } from "../_components/learn-not-found";
 import { MindMapsClient } from "./mind-maps-client";
 
-type Props = PageProps<"/[lang]/mind-maps">;
-
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { title: t("Mind maps") };
 }
 
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
-async function MindMapsBody({ searchParams }: Pick<Props, "searchParams">) {
-  const [goal, query] = await Promise.all([getCurrentGoal(), searchParams]);
+async function MindMapsBody() {
+  const goal = await getCurrentGoal();
 
   if (!goal) {
     const t = await getExtracted();
@@ -57,12 +50,7 @@ async function MindMapsBody({ searchParams }: Pick<Props, "searchParams">) {
   }
 
   return (
-    <MindMapsClient
-      mindMaps={toMindMapsPage(result.mindMaps)}
-      subject={first(query.subject) ?? null}
-      tab={readMindMapTab(first(query.tab))}
-      tier={allowance?.tier ?? "free"}
-    />
+    <MindMapsClient mindMaps={toMindMapsPage(result.mindMaps)} tier={allowance?.tier ?? "free"} />
   );
 }
 
@@ -109,10 +97,10 @@ async function MindMapsSkeleton() {
   );
 }
 
-export default function MindMapsPage({ searchParams }: Props) {
+export default function MindMapsPage() {
   return (
     <Suspense fallback={<MindMapsSkeleton />}>
-      <MindMapsBody searchParams={searchParams} />
+      <MindMapsBody />
     </Suspense>
   );
 }

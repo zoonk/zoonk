@@ -23,15 +23,33 @@ export function PageTab({
   count,
   current,
   href,
+  onSelect,
 }: {
   children: React.ReactNode;
   count: number;
   current: boolean;
   href: string;
+  /** Shows the tab on the page itself, which already holds every tab, instead of loading `href`. */
+  onSelect?: () => void;
 }) {
   return (
     <li>
-      <LearnLink aria-current={current ? "page" : undefined} className={TAB_CLASS} href={href}>
+      <LearnLink
+        aria-current={current ? "page" : undefined}
+        className={TAB_CLASS}
+        href={href}
+        onNavigate={
+          onSelect &&
+          ((event) => {
+            event.preventDefault();
+
+            if (!current) {
+              onSelect();
+            }
+          })
+        }
+        prefetch={!onSelect}
+      >
         {children}
         <span className="font-mono text-xs tabular-nums">{count}</span>
       </LearnLink>
