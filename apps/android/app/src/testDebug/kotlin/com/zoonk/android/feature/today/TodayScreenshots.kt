@@ -27,6 +27,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
@@ -124,6 +125,15 @@ class TodayScreenshots {
         capture("book-font200", fold = true)
     }
 
+    /** Beside the day, as a phone's sheet shows it. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun focusTestProposal() = captureFocusTestNotice("today-proposal-sheet-light", day = "notice-plan-change-focus-test")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun focusTestProposalDark() = captureFocusTestNotice("today-proposal-sheet-dark", dark = true, day = "notice-plan-change-focus-test")
+
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun focusTestNotice() = captureFocusTestNotice("today-light")
@@ -141,12 +151,13 @@ class TodayScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
     fun focusTestNoticePanelDark() = captureFocusTestNotice("today-sheet-dark", dark = true)
 
-    /** The Focus test's suggestion on Today. */
+    /** The Focus test's suggestion on Today, or its proposal on [day]. */
     private fun captureFocusTestNotice(
         name: String,
         dark: Boolean = false,
+        day: String = "notice-focus-test",
     ) {
-        val read = DAYS.first { it.first == "notice-focus-test" }.second
+        val read = DAYS.first { it.first == day }.second
         compose.setContent { ZoonkTheme(darkTheme = dark) { Screen(read) } }
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
@@ -332,6 +343,35 @@ class TodayScreenshots {
                             mapOf(
                                 "examChoice" to
                                     examChoice("Módulos disciplinares", listOf("Biología", "Química", "Derecho", "Premedicina"), take = 2),
+                            ),
+                    ),
+                "notice-plan-change-focus-test" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "notice" to "planChange",
+                                "planChange" to
+                                    fixture(
+                                        "plan-change",
+                                        "status" to "proposed",
+                                        "canApply" to true,
+                                        "source" to "focusTest",
+                                        "kind" to "edited",
+                                        "operations" to
+                                            ApiJson.parseToJsonElement(
+                                                """[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}]""",
+                                            ),
+                                        "effect" to
+                                            ApiJson.parseToJsonElement(
+                                                """
+                                                {"endDateAfter":"2026-12-10","endDateBefore":"2026-12-10","lessonsAdded":0,"lessonsRemoved":2,
+                                                 "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
+                                                  {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}]}
+                                                """.trimIndent(),
+                                            ),
+                                    ),
                             ),
                     ),
                 "notice-plan-change" to

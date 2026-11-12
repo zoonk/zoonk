@@ -77,7 +77,13 @@ private fun ChangeNotice(
     val title = if (change.source == NOTICE_SOURCE) null else stringResource(R.string.today_plan_suggestion)
     val result = answer?.let { answeredText(it) }
     val byDate = change.status == PlanChange.Status.PROPOSED || countsByDate(change.effect, dateAhead)
-    val effect = planChangeProposalEffect(change.effect, planEnd(state), besideDiff = true, byDate = byDate, focused = change.focusedAreas)
+    // The Focus test's proposal lets its diff say what it changes, as the test's own screen does.
+    val effect =
+        if (change.source == FOCUS_TEST_SOURCE) {
+            null
+        } else {
+            planChangeProposalEffect(change.effect, planEnd(state), besideDiff = true, byDate = byDate, focused = change.focusedAreas)
+        }
     val officialDate = planChangeOfficialDateLine(change)
     val saving = viewModel.isSavingPlanChange
     val next = today.planChange?.takeIf { answer != null && it.status == PlanChange.Status.PROPOSED && it.id != change.id }
