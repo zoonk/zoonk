@@ -92,7 +92,7 @@ function CountryRows({ onOpen }: { onOpen: () => void }) {
   const { contentCountry, examplesCountry } = usePlanScreen().goal;
 
   if (examplesCountry) {
-    return <ReadOnlyRow label={t("Lesson examples")}>{examplesCountry.name}</ReadOnlyRow>;
+    return <ReadOnlyRow label={t("Country")}>{examplesCountry.name}</ReadOnlyRow>;
   }
 
   if (!contentCountry) {
@@ -102,13 +102,11 @@ function CountryRows({ onOpen }: { onOpen: () => void }) {
   return (
     <>
       {contentCountry.editable ? (
-        <PropertyRow label={t("Content country")} onOpen={onOpen}>
+        <PropertyRow label={t("Country")} onOpen={onOpen}>
           {contentCountry.name}
         </PropertyRow>
       ) : (
-        <ReadOnlyRow
-          label={contentCountry.kind === "exam" ? t("Exam country") : t("Content country")}
-        >
+        <ReadOnlyRow label={contentCountry.kind === "exam" ? t("Exam country") : t("Country")}>
           {contentCountry.name}
         </ReadOnlyRow>
       )}

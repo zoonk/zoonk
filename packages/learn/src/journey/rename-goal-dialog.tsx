@@ -5,7 +5,6 @@ import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -63,9 +62,6 @@ export function RenameGoalDialog({
         >
           <DialogHeader>
             <DialogTitle>{t("Rename goal")}</DialogTitle>
-            <DialogDescription>
-              {t("Choose a name you recognize. Your study plan stays the same.")}
-            </DialogDescription>
           </DialogHeader>
           <div className="my-6 grid gap-2">
             <Label htmlFor={id}>

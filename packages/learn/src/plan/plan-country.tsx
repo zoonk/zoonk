@@ -44,13 +44,13 @@ function ChangeCountryDialog({
     >
       <AlertDialogContent overNested>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Change the content country?")}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Change your country?")}</AlertDialogTitle>
           <AlertDialogDescription className="max-h-[50dvh] overflow-y-auto">
             {t({
               description:
                 "{country} is a country's name. It always follows the colon, so it never needs an article or a case.",
               message:
-                "New country: {country}. Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready.",
+                "New country: {country}. We'll make a new plan for it. Finished lessons stay done.",
               values: { country: country?.name ?? "" },
             })}
           </AlertDialogDescription>
@@ -60,7 +60,7 @@ function ChangeCountryDialog({
           <AlertDialogCancel disabled={saving}>{t("Cancel")}</AlertDialogCancel>
           <form action={onConfirm} className="contents">
             <Button busy={saving} type="submit">
-              {t("Rebuild plan")}
+              {t("Change country")}
             </Button>
           </form>
         </AlertDialogFooter>
@@ -113,7 +113,7 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
 
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">{t("Content country")}</h3>
+      <h3 className="text-sm font-medium">{t("Country")}</h3>
 
       <Button
         aria-haspopup="dialog"

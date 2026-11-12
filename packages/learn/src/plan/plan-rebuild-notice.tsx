@@ -27,12 +27,8 @@ function PreparingNotice() {
         <Spinner className="size-4" />
       </NoticeCardLeading>
       <NoticeCardContent>
-        <NoticeCardTitle>{t("Preparing your new plan")}</NoticeCardTitle>
-        <NoticeCardDescription>
-          {t(
-            "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done.",
-          )}
-        </NoticeCardDescription>
+        <NoticeCardTitle>{t("Getting your new plan ready")}</NoticeCardTitle>
+        <NoticeCardDescription>{t("Keep studying this one until then.")}</NoticeCardDescription>
       </NoticeCardContent>
     </NoticeCard>
   );
@@ -71,10 +67,8 @@ function FailedNotice({
         <TriangleAlertIcon />
       </NoticeCardLeading>
       <NoticeCardContent>
-        <NoticeCardTitle>{t("Your new plan couldn't be prepared")}</NoticeCardTitle>
-        <NoticeCardDescription>
-          {t("Your plan still has the lessons it had before.")}
-        </NoticeCardDescription>
+        <NoticeCardTitle>{t("Your new plan couldn't be made")}</NoticeCardTitle>
+        <NoticeCardDescription>{t("Your plan is as it was.")}</NoticeCardDescription>
         <NoticeCardActions>
           <form action={retry} className="contents">
             <Button

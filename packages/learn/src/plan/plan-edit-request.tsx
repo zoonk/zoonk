@@ -36,12 +36,8 @@ function TutorRow({ tutor }: { tutor: PlanTutor }) {
           </ListRowTitle>
           <ListRowDescription>
             {hasModules
-              ? t(
-                  "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies.",
-                )
-              : t(
-                  "In your own words, like “less on weekends”. You'll see the change before it applies.",
-                )}
+              ? t("In your own words, like “skip a module” or “less on weekends”.")
+              : t("In your own words, like “less on weekends”.")}
           </ListRowDescription>
         </ListRowContent>
       </ListRowLink>
