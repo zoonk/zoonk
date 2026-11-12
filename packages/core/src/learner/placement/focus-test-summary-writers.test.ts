@@ -592,6 +592,61 @@ describe("the saved Focus test summary", () => {
     expect(summary).toStrictEqual(await computeSummary(goal));
   });
 
+  it("keeps the summary when a notice lists the same question formats in another order", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+
+    const identity = {
+      board: null,
+      country: "BR",
+      language: "en",
+      name: `Concurso ${randomUUID()}`,
+      ownerId: null,
+      role: null,
+    };
+
+    const [blueprint, source] = await Promise.all([
+      prisma.examBlueprint.update({
+        data: { identityKey: buildExamIdentityKey(identity), name: identity.name },
+        where: { id: goal.examBlueprintId ?? "" },
+      }),
+      sourceFixture(),
+    ]);
+
+    const content = readBlueprintContent(blueprint);
+    const citation = { passage: "p", sourceId: source.id };
+
+    const formats = [4, 5].map((options) => ({
+      citation,
+      description: "Choice",
+      kind: "multipleChoice" as const,
+      options,
+    }));
+
+    const saveFormats = async (listed: typeof formats) => {
+      await saveExamBlueprint({
+        content: {
+          ...content,
+          edition: { ...content.edition, sourceHash: source.contentHash },
+          structure: { ...content.structure, formats: listed },
+        },
+        identity,
+        provenance: {
+          generatedAt: new Date(),
+          model: "test/fixture",
+          promptVersion: "test",
+          runId: randomUUID(),
+        },
+        sourceId: source.id,
+      });
+
+      await refreshFollowerSummaries(blueprint.id);
+      return readSummary(goal.id);
+    };
+
+    const summary = await saveFormats(formats);
+    await expect(saveFormats(formats.toReversed())).resolves.toStrictEqual(summary);
+  });
+
   it("keeps the summary when the learner names the subjects they know in another order", async () => {
     const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
 

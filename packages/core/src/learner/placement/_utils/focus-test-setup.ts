@@ -56,7 +56,13 @@ export function summaryInputsKey({ goal, graph, settings }: SummaryInputs): stri
 
   const inputs = {
     areas: [...mapSkillAreas(graph)].toSorted(([first], [second]) => first.localeCompare(second)),
-    choices: getExamChoiceFormats(structure).map(({ kind, options }) => ({ kind, options })),
+    choices: [
+      ...new Set(
+        getExamChoiceFormats(structure).map(({ kind, options }) =>
+          JSON.stringify({ kind, options }),
+        ),
+      ),
+    ].toSorted(),
     dated: goal.targetDate !== null,
     examBlueprintId: goal.examBlueprintId,
     focusAreas: settings.focusAreas,
