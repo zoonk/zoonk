@@ -7,7 +7,9 @@ const COLUMNS = [
   { align: "right" as const, label: "Brain Power" },
 ];
 
-export default async function LeaderboardMockPage({ searchParams }: PageProps<"/leaderboard/mock">) {
+export default async function LeaderboardMockPage({
+  searchParams,
+}: PageProps<"/leaderboard/mock">) {
   const today = readView((await searchParams).period) === "today";
   const rows = today ? [] : ((dump as Dump).tables[0]?.rows ?? []).slice(0, 14);
 
@@ -28,7 +30,11 @@ export default async function LeaderboardMockPage({ searchParams }: PageProps<"/
       toolbar={
         <MockViews
           label="Period"
-          views={[{ active: today, label: "Today" }, { active: !today, label: "7 days" }, { label: "30 days" }]}
+          views={[
+            { active: today, label: "Today" },
+            { active: !today, label: "7 days" },
+            { label: "30 days" },
+          ]}
         />
       }
     />

@@ -3,9 +3,10 @@ import {
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { listCliLoginsByPerson } from "@/data/cli-logins/list-cli-logins-by-person";
 import { formatCount, formatDate } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import { RevokeCliLoginsForm } from "./revoke-cli-logins-form";
 
@@ -26,7 +27,7 @@ export async function CliLoginList() {
       isEmpty={people.length === 0}
     >
       {people.map((person) => (
-        <TableRow key={person.user.id}>
+        <AdminTableRow key={person.user.id}>
           <TableCell>
             <Link
               className="font-medium underline-offset-3 hover:underline"
@@ -42,7 +43,7 @@ export async function CliLoginList() {
           <TableCell className="text-right">
             <RevokeCliLoginsForm name={person.user.name} userId={person.user.id} />
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

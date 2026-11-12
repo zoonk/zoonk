@@ -1,7 +1,13 @@
 // Review-pack mocks only: static pictures of proposed pages, built from the shared components and
 // from the records today's pages show (`data/*.json`). Remove with the rest of `_mock`.
 import { AdminFilterNav } from "@/components/admin-filter-nav";
-import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
+import {
+  ADMIN_TOOLBAR_SEARCH_CLASS,
+  AdminPage,
+  AdminPageBody,
+  AdminPageHeader,
+  AdminToolbar,
+} from "@/components/admin-page";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { DetailField, DetailFields } from "@/components/detail-field";
@@ -27,11 +33,7 @@ export function day(value: string | undefined): string {
   return match ? `${MONTHS[Number(match[1]) - 1]} ${Number(match[2])}, ${match[3]}` : (value ?? "");
 }
 
-const LANGUAGES: Record<string, string> = {
-  en: "English",
-  es: "Spanish",
-  pt: "Portuguese",
-};
+const LANGUAGES: Record<string, string> = { en: "English", es: "Spanish", pt: "Portuguese" };
 
 export function language(code: string | undefined): string {
   return LANGUAGES[(code ?? "").toLowerCase()] ?? code ?? "";
@@ -56,7 +58,9 @@ export function Lead({ second, title }: { second?: React.ReactNode; title: React
   return (
     <a className="block" data-slot="table-row-link" href="#">
       <span className="line-clamp-2 max-w-xl font-medium">{title}</span>
-      {second ? <span className="text-muted-foreground block truncate text-xs">{second}</span> : null}
+      {second ? (
+        <span className="text-muted-foreground block truncate text-xs">{second}</span>
+      ) : null}
     </a>
   );
 }
@@ -70,9 +74,14 @@ export function MockSearch({ placeholder, value }: { placeholder: string; value?
     <div className="relative w-full sm:max-w-md">
       <Search
         aria-hidden="true"
-        className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
+        className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 md:left-2.5 md:size-3.5"
       />
-      <Input className="pl-9" defaultValue={value} placeholder={placeholder} type="search" />
+      <Input
+        className={ADMIN_TOOLBAR_SEARCH_CLASS}
+        defaultValue={value}
+        placeholder={placeholder}
+        type="search"
+      />
     </div>
   );
 }
@@ -122,7 +131,7 @@ export function MockRows({
             <TableCell
               className={cn(
                 "whitespace-normal",
-                columns[index]?.align === "right" && "text-right tabular-nums whitespace-nowrap",
+                columns[index]?.align === "right" && "text-right whitespace-nowrap tabular-nums",
                 index > 0 && "text-muted-foreground",
               )}
               // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
@@ -223,14 +232,20 @@ export function TableFrom({
   section: string;
 }) {
   const table = dump.tables.find((item) => item.section.startsWith(section));
-  const keep = (table?.head ?? []).map((label, index) => ({ index, label })).filter(({ label }) => !omit.includes(label));
+  const keep = (table?.head ?? [])
+    .map((label, index) => ({ index, label }))
+    .filter(({ label }) => !omit.includes(label));
 
   return (
     <MockRows
       columns={keep.map(({ label }) => ({ label: rename[label] ?? label }))}
       rows={(table?.rows ?? []).map((row) =>
         keep.map(({ index }, position) =>
-          position === 0 ? <Lead key="lead" title={row[index]?.text} /> : language(row[index]?.text),
+          position === 0 ? (
+            <Lead key="lead" title={row[index]?.text} />
+          ) : (
+            language(row[index]?.text)
+          ),
         ),
       )}
     />

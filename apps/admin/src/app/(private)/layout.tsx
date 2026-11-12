@@ -1,8 +1,8 @@
 import { type InboxQueueName } from "@/data/inbox/get-inbox";
 import { requireAdminRouteAccess } from "@/lib/admin-guard";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { cookies } from "next/headers";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 import { AdminCommandPalette } from "./admin-command-palette";
 import { AdminMobileBar } from "./admin-mobile-bar";

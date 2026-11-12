@@ -3,9 +3,10 @@ import {
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { listPendingAccountDeletions } from "@/data/account-deletions/list-pending-account-deletions";
 import { formatDateTime } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { MarkAnalyticsRemovedForm } from "./mark-analytics-removed-form";
 
 const COLUMNS: AdminTableColumn[] = [
@@ -24,7 +25,7 @@ export async function AccountDeletionList() {
       isEmpty={deletions.length === 0}
     >
       {deletions.map((deletion) => (
-        <TableRow key={deletion.id}>
+        <AdminTableRow key={deletion.id}>
           <TableCell className="font-mono text-xs break-all select-all">
             {deletion.userId}
           </TableCell>
@@ -34,7 +35,7 @@ export async function AccountDeletionList() {
           <TableCell className="text-right">
             <MarkAnalyticsRemovedForm deletionId={deletion.id} distinctId={deletion.userId} />
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

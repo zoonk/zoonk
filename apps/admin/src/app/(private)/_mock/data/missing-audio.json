@@ -1,168 +1,100 @@
 {
- "fields": [],
- "headings": [
-  "H1: Missing audio",
-  "H2: Words (5)",
-  "H2: Sentences (4)"
- ],
- "tables": [
-  {
-   "head": [
-    "Text",
-    "Language",
-    "Used in",
-    "Audio"
-   ],
-   "rows": [
-    [
-     {
-      "text": "bathroom"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
-      "text": "There is, there are"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "bedroom"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
-      "text": "There is, there are"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "landlord"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
-      "text": "Quanto é o aluguel?"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "lease"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
-      "text": "Quanto é o aluguel?"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "utilities"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
-      "text": "Quanto é o aluguel?"
-     },
-     {
-      "text": "Upload"
-     }
-    ]
-   ],
-   "section": "Words (5)"
-  },
-  {
-   "head": [
-    "Text",
-    "Language",
-    "Used in",
-    "Audio"
-   ],
-   "rows": [
-    [
-     {
-      "text": "Are utilities included?"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
-      "text": "Quanto é o aluguel?"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "Is the apartment still available?"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
-      "text": "Quanto é o aluguel?"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "There are two bedrooms."
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
-      "text": "There is, there are"
-     },
-     {
-      "text": "Upload"
-     }
-    ],
-    [
-     {
-      "text": "There is a small balcony."
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
-      "text": "There is, there are"
-     },
-     {
-      "text": "Upload"
-     }
-    ]
-   ],
-   "section": "Sentences (4)"
-  }
- ],
- "text": "Media\nMissing audio\nMissing audio\n\nWords and sentences in Library lessons without audio. Audio is shared per language, so one upload fixes every lesson that uses it.\n\nWords (5)\nText\tLanguage\tUsed in\tAudio\nbathroom\tEN\t\nThere is, there are\n\t\nUpload\n\nbedroom\tEN\t\nThere is, there are\n\t\nUpload\n\nlandlord\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nlease\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nutilities\tEN\t\nQuanto é o aluguel?\n\t\nUpload\nSentences (4)\nText\tLanguage\tUsed in\tAudio\nAre utilities included?\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nIs the apartment still available?\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nThere are two bedrooms.\tEN\t\nThere is, there are\n\t\nUpload\n\nThere is a small balcony.\tEN\t\nThere is, there are\n\t\nUpload"
+  "fields": [],
+  "headings": ["H1: Missing audio", "H2: Words (5)", "H2: Sentences (4)"],
+  "tables": [
+    {
+      "head": ["Text", "Language", "Used in", "Audio"],
+      "rows": [
+        [
+          { "text": "bathroom" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
+            "text": "There is, there are"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "bedroom" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
+            "text": "There is, there are"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "landlord" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
+            "text": "Quanto é o aluguel?"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "lease" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
+            "text": "Quanto é o aluguel?"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "utilities" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
+            "text": "Quanto é o aluguel?"
+          },
+          { "text": "Upload" }
+        ]
+      ],
+      "section": "Words (5)"
+    },
+    {
+      "head": ["Text", "Language", "Used in", "Audio"],
+      "rows": [
+        [
+          { "text": "Are utilities included?" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
+            "text": "Quanto é o aluguel?"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "Is the apartment still available?" },
+          { "text": "EN" },
+          {
+            "href": "/lessons/f6c45792-6ee9-8be6-88fb-cfa2d43eec93",
+            "text": "Quanto é o aluguel?"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "There are two bedrooms." },
+          { "text": "EN" },
+          {
+            "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
+            "text": "There is, there are"
+          },
+          { "text": "Upload" }
+        ],
+        [
+          { "text": "There is a small balcony." },
+          { "text": "EN" },
+          {
+            "href": "/lessons/e0b9ade4-d2da-8155-8ae8-dd2370f3f525",
+            "text": "There is, there are"
+          },
+          { "text": "Upload" }
+        ]
+      ],
+      "section": "Sentences (4)"
+    }
+  ],
+  "text": "Media\nMissing audio\nMissing audio\n\nWords and sentences in Library lessons without audio. Audio is shared per language, so one upload fixes every lesson that uses it.\n\nWords (5)\nText\tLanguage\tUsed in\tAudio\nbathroom\tEN\t\nThere is, there are\n\t\nUpload\n\nbedroom\tEN\t\nThere is, there are\n\t\nUpload\n\nlandlord\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nlease\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nutilities\tEN\t\nQuanto é o aluguel?\n\t\nUpload\nSentences (4)\nText\tLanguage\tUsed in\tAudio\nAre utilities included?\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nIs the apartment still available?\tEN\t\nQuanto é o aluguel?\n\t\nUpload\n\nThere are two bedrooms.\tEN\t\nThere is, there are\n\t\nUpload\n\nThere is a small balcony.\tEN\t\nThere is, there are\n\t\nUpload"
 }

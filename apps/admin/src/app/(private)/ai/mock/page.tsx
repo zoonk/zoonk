@@ -28,12 +28,27 @@ function strong(text: string | undefined) {
 
 const BY = {
   goal: {
-    columns: [{ label: "Goal" }, { label: "Learner" }, { align: RIGHT, label: "Calls" }, { align: RIGHT, label: "Cost" }],
+    columns: [
+      { label: "Goal" },
+      { label: "Learner" },
+      { align: RIGHT, label: "Calls" },
+      { align: RIGHT, label: "Cost" },
+    ],
     more: "goals",
-    rows: () => table("Top goals").map((row) => [strong(row[0]?.text), row[1]?.text, row[2]?.text, row[3]?.text]),
+    rows: () =>
+      table("Top goals").map((row) => [
+        strong(row[0]?.text),
+        row[1]?.text,
+        row[2]?.text,
+        row[3]?.text,
+      ]),
   },
   learner: {
-    columns: [{ label: "Learner" }, { align: RIGHT, label: "Calls" }, { align: RIGHT, label: "Cost" }],
+    columns: [
+      { label: "Learner" },
+      { align: RIGHT, label: "Calls" },
+      { align: RIGHT, label: "Cost" },
+    ],
     more: "learners",
     rows: () =>
       table("Top learners").map((row) => [
@@ -171,7 +186,12 @@ function Failed() {
       </AdminToolbar>
 
       <MockRows
-        columns={[{ label: "What was being written" }, { label: "Kind" }, { label: "State" }, { label: "Updated" }]}
+        columns={[
+          { label: "What was being written" },
+          { label: "Kind" },
+          { label: "State" },
+          { label: "Updated" },
+        ]}
         rows={runs.slice(0, 10).map((row) => [
           <span className="text-foreground" key="what">
             <MockLink>{row[1]?.text}</MockLink>
@@ -193,7 +213,11 @@ function Plus() {
         <Stats description="1 paying" title="Plus learners" value="83" />
         <Stats description="$0.0095 a learner on average" title="Cost this month" value="$0.785" />
         <Stats description="of 1 paying" title="Above their plan" value="0" />
-        <Stats description="persona-maya-2acb17@zoonk.test" title="Most expensive" value="$0.2568" />
+        <Stats
+          description="persona-maya-2acb17@zoonk.test"
+          title="Most expensive"
+          value="$0.2568"
+        />
       </div>
 
       <AdminSection title="Plus learners this month">
@@ -208,7 +232,9 @@ function Plus() {
             { align: RIGHT, label: "Above plan" },
           ]}
           rows={table("Plus learners this month").map((row) =>
-            row.map((cell, index) => (index === 0 ? strong(cell.text.replace("Granted", "Given by Zoonk")) : cell.text)),
+            row.map((cell, index) =>
+              index === 0 ? strong(cell.text.replace("Granted", "Given by Zoonk")) : cell.text,
+            ),
           )}
         />
       </AdminSection>
@@ -248,8 +274,15 @@ function WrittenBy() {
   return (
     <AdminSection title="What each model wrote">
       <MockRows
-        columns={[{ label: "What" }, { label: "Model" }, { label: "Prompt version" }, { align: RIGHT, label: "How many" }]}
-        rows={rows.slice(0, SHOWN).map((row) => [strong(row[0]?.text), row[1]?.text, row[2]?.text, row[3]?.text])}
+        columns={[
+          { label: "What" },
+          { label: "Model" },
+          { label: "Prompt version" },
+          { align: RIGHT, label: "How many" },
+        ]}
+        rows={rows
+          .slice(0, SHOWN)
+          .map((row) => [strong(row[0]?.text), row[1]?.text, row[2]?.text, row[3]?.text])}
       />
       <MockMore>Show all {rows.length}</MockMore>
     </AdminSection>

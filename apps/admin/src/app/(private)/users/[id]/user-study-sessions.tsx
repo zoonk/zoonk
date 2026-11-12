@@ -1,11 +1,12 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import {
   type UserStudySession,
   listUserStudySessions,
 } from "@/data/users/list-user-study-sessions";
 import { formatDate, toWords } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 
 /** What learners call each part of a day. */
 const BLOCK_LABELS: Record<UserStudySession["blocks"][number]["kind"], string> = {
@@ -31,7 +32,7 @@ function SessionRow({ session, showGoal }: { session: UserStudySession; showGoal
   const done = session.blocks.filter((block) => block.status === "completed").length;
 
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>{formatDate(session.localDate)}</TableCell>
       {showGoal ? <TableCell className="min-w-40">{session.goal?.title ?? "—"}</TableCell> : null}
       <TableCell>
@@ -47,7 +48,7 @@ function SessionRow({ session, showGoal }: { session: UserStudySession; showGoal
       <TableCell className="text-muted-foreground min-w-48 whitespace-normal">
         {describeBlocks(session.blocks) || "—"}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

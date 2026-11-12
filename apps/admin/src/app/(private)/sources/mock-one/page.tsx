@@ -23,7 +23,9 @@ const TABS = [
 
 const NONE = <span className="text-faint">None</span>;
 const marker = "Extracted text (1,237 characters)";
-const text = source.text.slice(source.text.indexOf(marker) + marker.length, source.text.indexOf("Change notices")).trim();
+const text = source.text
+  .slice(source.text.indexOf(marker) + marker.length, source.text.indexOf("Change notices"))
+  .trim();
 
 const ACTIONS = [
   {
@@ -57,7 +59,12 @@ export default async function SourceMockPage({ searchParams }: PageProps<"/sourc
       />
 
       <AdminDetailBody>
-        <AdminTabs current={tab as "overview"} label="Source" path="/sources/mock-one" tabs={TABS} />
+        <AdminTabs
+          current={tab as "overview"}
+          label="Source"
+          path="/sources/mock-one"
+          tabs={TABS}
+        />
 
         {tab === "text" ? (
           <AdminSection title="What Zoonk read from it (1,237 characters)">

@@ -1,8 +1,9 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { getUserAiSpend } from "@/data/ai/get-user-ai-spend";
 import { formatUsd } from "@/lib/ai-format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { sumOf } from "@zoonk/utils/number";
 
 const columns: AdminTableColumn[] = [
@@ -20,13 +21,13 @@ export async function UserAiSpend({ userId }: { userId: string }) {
     <AdminSection title={`AI spend, last ${days} days`}>
       <AdminTableColumns columns={columns} emptyLabel="No AI calls." isEmpty={tasks.length === 0}>
         {tasks.map((row) => (
-          <TableRow key={row.task}>
+          <AdminTableRow key={row.task}>
             <TableCell className="font-mono text-xs">{row.task}</TableCell>
             <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
             <TableCell className="text-right tabular-nums">{formatUsd(row.costUsd)}</TableCell>
-          </TableRow>
+          </AdminTableRow>
         ))}
-        <TableRow className="font-medium">
+        <AdminTableRow className="font-medium">
           <TableCell>All tasks</TableCell>
           <TableCell className="text-right tabular-nums">
             {sumOf(tasks.map((row) => row.calls)).toLocaleString()}
@@ -34,7 +35,7 @@ export async function UserAiSpend({ userId }: { userId: string }) {
           <TableCell className="text-right tabular-nums">
             {formatUsd(sumOf(tasks.map((row) => row.costUsd)))}
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       </AdminTableColumns>
     </AdminSection>
   );

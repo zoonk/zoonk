@@ -8,7 +8,7 @@ import {
 } from "@/data/ai/get-generation-failures";
 import { formatDateTime } from "@/lib/format";
 import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 import { generationWorkflowLabels, getGenerationFailureHref } from "./_utils/ai-labels";
 
@@ -29,7 +29,7 @@ const latestColumns: AdminTableColumn[] = [
 
 function FailureCountRow({ count }: { count: FailureCount }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>{generationWorkflowLabels[count.workflow]}</TableCell>
       <TableCell
         className={cn("text-right tabular-nums", count.failed > 0 && "text-destructive-text")}
@@ -41,7 +41,7 @@ function FailureCountRow({ count }: { count: FailureCount }) {
       >
         {count.stuck.toLocaleString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

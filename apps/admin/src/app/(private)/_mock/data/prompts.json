@@ -1,396 +1,251 @@
 {
- "fields": [],
- "headings": [
-  "H1: Prompts"
- ],
- "tables": [
-  {
-   "head": [
-    "Prompt",
-    "Outcome",
-    "Read as",
-    "Learner",
-    "Language",
-    "Date"
-   ],
-   "rows": [
-    [
-     {
-      "href": "/prompts/b169411a-f17b-49a9-9813-6f82f1161e57",
-      "text": "brush up on SQL before my job interview tomorrow"
-     },
-     {
-      "text": "Not confirmed"
-     },
-     {
-      "text": "Brush up on SQL for a job interview\nLearn"
-     },
-     {
-      "href": "/users/8346d45c-aa98-4b15-9acd-d50fcbfdec60",
-      "text": "Card Today\ncard-today-before@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "11/4/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/938c7290-cfa7-495c-bc33-5ad755aac120",
-      "text": "brush up on SQL before my job interview tomorrow"
-     },
-     {
-      "text": "Not confirmed"
-     },
-     {
-      "text": "Brush up on SQL for a job interview\nLearn"
-     },
-     {
-      "href": "/users/8346d45c-aa98-4b15-9acd-d50fcbfdec60",
-      "text": "Card Today\ncard-today-before@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "11/4/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a179f1-2c94-7633-9eba-1ad49255def3",
-      "text": "Quero entender como as células funcionam, só por curiosidade"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Entender o funcionamento das células\nLearn"
-     },
-     {
-      "href": "/users/01a179f0-2627-7adf-b716-b3d44fb10438",
-      "text": "Celina Duarte\nonboarded-celina@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a174ae-fbf3-76dd-be99-72bd6c1b4740",
-      "text": "quero aprender tudo sobre neurociência, entender completamente como funciona o cérebro humano desde do básico até o avançado. um curso completo"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Aprender neurociência\nLearn"
-     },
-     {
-      "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
-      "text": "Will\nneuro@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/25/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a17462-4edc-7797-964d-405673d10be5",
-      "text": "passar no concurso da câmara dos deputados para o cargo de registro e redação"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Passar no concurso da Câmara dos Deputados\nExam"
-     },
-     {
-      "href": "/users/01a17462-4edc-7f8b-ac1f-a517f7662499",
-      "text": "Will\npersona-wceolin-5c692a@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/24/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a16fe5-8576-7000-ae7e-03c7f0a186a7",
-      "text": "passar no concurso da câmara dos deputados para o cargo de registro e redação"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Passar no concurso da Câmara dos Deputados\nExam"
-     },
-     {
-      "href": "/users/01a17028-926e-7903-bc8e-e8a1a77c821a",
-      "text": "Will\nwceolin@gmail.com"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/24/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a14c52-6693-747b-801d-ef5dfe73b79e",
-      "text": "read sheet music for piano"
-     },
-     {
-      "text": "Not confirmed"
-     },
-     {
-      "text": "Read sheet music for piano\nLearn"
-     },
-     {
-      "href": "/users/01a14c50-fd6a-7add-9bd4-464611e94b3c",
-      "text": "Jordan Blake\nwalkerb-guest-1017@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "10/17/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a13a17-dac2-75cc-8006-c120df03afb7",
-      "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Tirar o DELE B2\nExam"
-     },
-     {
-      "href": "/users/01a13a17-dac2-786d-80c6-e98de13c281d",
-      "text": "Adele Souza\npersona-dele-p11-282595@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/14/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a13a17-ad3b-77ca-92e9-a395544e3c38",
-      "text": "get band 7 in IELTS Academic for my master's in the UK"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Pass IELTS Academic\nExam"
-     },
-     {
-      "href": "/users/01a13a17-ad3b-7a08-ab57-676faa3b8747",
-      "text": "Priya\npersona-ielts-p11-57dc29@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "10/14/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a13564-9518-7def-b47c-e8561a89dd47",
-      "text": "why does ice float on water?"
-     },
-     {
-      "text": "Not confirmed"
-     },
-     {
-      "text": "Why ice floats\nQuestion"
-     },
-     {
-      "href": "/users/01a13556-afa4-711a-8414-277634fba2e2",
-      "text": "Beatriz Lopes\nopus-nofacts-1@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "10/13/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a137b3-b005-7971-9a89-272616aa792d",
-      "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Tirar o DELE B2\nExam"
-     },
-     {
-      "href": "/users/01a137b3-b005-7c14-99a7-6b3145abcd5f",
-      "text": "Adele Souza\npersona-dele-p11-022512@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/12/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a13a44-f8d3-7d77-a3b9-f007ad5e8ea8",
-      "text": "get band 7 in IELTS Academic for my master's in the UK"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Pass IELTS Academic\nExam"
-     },
-     {
-      "href": "/users/01a13a44-f8d3-7fb5-8c48-3527d8d2f928",
-      "text": "Priya\npersona-ielts-p11-21c16c@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "10/11/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a13a17-2bd6-762d-aa3e-d103af9e18ea",
-      "text": "quero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Passar no concurso de escrevente do TJ-SP\nExam"
-     },
-     {
-      "href": "/users/01a13a17-2bd6-7bcb-ae22-293f3bce181e",
-      "text": "Juliana\npersona-juliana-a58dfd@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/10/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a128c1-0a82-7f76-b77a-5df7dcf7fe67",
-      "text": "quero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Passar no concurso de escrevente do TJ-SP\nExam"
-     },
-     {
-      "href": "/users/01a128cc-417a-779b-ba16-5fb17f611569",
-      "text": "Juliana Castro\nonboarded-juliana@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/10/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a12780-8aa9-783d-843f-48a66d08a00a",
-      "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Tirar o DELE B2\nExam"
-     },
-     {
-      "href": "/users/01a12787-1a29-7dc5-8ef6-664852abf683",
-      "text": "Adele Souza\nonboarded-dele-p11@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/10/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a1277c-bf9c-782d-886d-8e22dd4e692a",
-      "text": "get band 7 in IELTS Academic for my master's in the UK"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Pass IELTS Academic\nExam"
-     },
-     {
-      "href": "/users/01a12788-792a-7c86-ac40-9661fda692cd",
-      "text": "Priya Nair\nonboarded-ielts-p11@zoonk.test"
-     },
-     {
-      "text": "en"
-     },
-     {
-      "text": "10/10/2026"
-     }
-    ],
-    [
-     {
-      "href": "/prompts/01a13a44-b14e-7148-9d61-72b1de5259d1",
-      "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
-     },
-     {
-      "text": "Goal created"
-     },
-     {
-      "text": "Tirar o DELE B2\nExam"
-     },
-     {
-      "href": "/users/01a13a44-b14e-73b8-a722-140679b10114",
-      "text": "Adele Souza\npersona-dele-p11-f8a262@zoonk.test"
-     },
-     {
-      "text": "pt"
-     },
-     {
-      "text": "10/7/2026"
-     }
-    ]
-   ],
-   "section": ""
-  }
- ],
- "text": "Prompts\n\nWhat learners and guests type to start a goal, what Zoonk read in it, and whether it became a goal.\n\nAll\nGoal created\nNot confirmed\nToo vague\nDeclined\nFailed\nIn progress\nPrompt\tOutcome\tRead as\tLearner\tLanguage\tDate\n\nbrush up on SQL before my job interview tomorrow\n\t\nNot confirmed\n\t\nBrush up on SQL for a job interview\nLearn\n\t\nCard Today\ncard-today-before@zoonk.test\n\ten\t11/4/2026\n\nbrush up on SQL before my job interview tomorrow\n\t\nNot confirmed\n\t\nBrush up on SQL for a job interview\nLearn\n\t\nCard Today\ncard-today-before@zoonk.test\n\ten\t11/4/2026\n\nQuero entender como as células funcionam, só por curiosidade\n\t\nGoal created\n\t\nEntender o funcionamento das células\nLearn\n\t\nCelina Duarte\nonboarded-celina@zoonk.test\n\tpt\t10/26/2026\n\nquero aprender tudo sobre neurociência, entender completamente como funciona o cérebro humano desde do básico até o avançado. um curso completo\n\t\nGoal created\n\t\nAprender neurociência\nLearn\n\t\nWill\nneuro@zoonk.test\n\tpt\t10/25/2026\n\npassar no concurso da câmara dos deputados para o cargo de registro e redação\n\t\nGoal created\n\t\nPassar no concurso da Câmara dos Deputados\nExam\n\t\nWill\npersona-wceolin-5c692a@zoonk.test\n\tpt\t10/24/2026\n\npassar no concurso da câmara dos deputados para o cargo de registro e redação\n\t\nGoal created\n\t\nPassar no concurso da Câmara dos Deputados\nExam\n\t\nWill\nwceolin@gmail.com\n\tpt\t10/24/2026\n\nread sheet music for piano\n\t\nNot confirmed\n\t\nRead sheet music for piano\nLearn\n\t\nJordan Blake\nwalkerb-guest-1017@zoonk.test\n\ten\t10/17/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\npersona-dele-p11-282595@zoonk.test\n\tpt\t10/14/2026\n\nget band 7 in IELTS Academic for my master's in the UK\n\t\nGoal created\n\t\nPass IELTS Academic\nExam\n\t\nPriya\npersona-ielts-p11-57dc29@zoonk.test\n\ten\t10/14/2026\n\nwhy does ice float on water?\n\t\nNot confirmed\n\t\nWhy ice floats\nQuestion\n\t\nBeatriz Lopes\nopus-nofacts-1@zoonk.test\n\ten\t10/13/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\npersona-dele-p11-022512@zoonk.test\n\tpt\t10/12/2026\n\nget band 7 in IELTS Academic for my master's in the UK\n\t\nGoal created\n\t\nPass IELTS Academic\nExam\n\t\nPriya\npersona-ielts-p11-21c16c@zoonk.test\n\ten\t10/11/2026\n\nquero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp\n\t\nGoal created\n\t\nPassar no concurso de escrevente do TJ-SP\nExam\n\t\nJuliana\npersona-juliana-a58dfd@zoonk.test\n\tpt\t10/10/2026\n\nquero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp\n\t\nGoal created\n\t\nPassar no concurso de escrevente do TJ-SP\nExam\n\t\nJuliana Castro\nonboarded-juliana@zoonk.test\n\tpt\t10/10/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\nonboarded-dele-p11@zoonk.test\n\tpt\t10/10/2026\n\nget band 7 in IELTS Academic for my master's in the UK\n\t\nGoal created\n\t\nPass IELTS Academic\nExam\n\t\nPriya Nair\nonboarded-ielts-p11@zoonk.test\n\ten\t10/10/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\npersona-dele-p11-f8a262@zoonk.test\n\tpt\t10/7/2026"
+  "fields": [],
+  "headings": ["H1: Prompts"],
+  "tables": [
+    {
+      "head": ["Prompt", "Outcome", "Read as", "Learner", "Language", "Date"],
+      "rows": [
+        [
+          {
+            "href": "/prompts/b169411a-f17b-49a9-9813-6f82f1161e57",
+            "text": "brush up on SQL before my job interview tomorrow"
+          },
+          { "text": "Not confirmed" },
+          { "text": "Brush up on SQL for a job interview\nLearn" },
+          {
+            "href": "/users/8346d45c-aa98-4b15-9acd-d50fcbfdec60",
+            "text": "Card Today\ncard-today-before@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "11/4/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/938c7290-cfa7-495c-bc33-5ad755aac120",
+            "text": "brush up on SQL before my job interview tomorrow"
+          },
+          { "text": "Not confirmed" },
+          { "text": "Brush up on SQL for a job interview\nLearn" },
+          {
+            "href": "/users/8346d45c-aa98-4b15-9acd-d50fcbfdec60",
+            "text": "Card Today\ncard-today-before@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "11/4/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a179f1-2c94-7633-9eba-1ad49255def3",
+            "text": "Quero entender como as células funcionam, só por curiosidade"
+          },
+          { "text": "Goal created" },
+          { "text": "Entender o funcionamento das células\nLearn" },
+          {
+            "href": "/users/01a179f0-2627-7adf-b716-b3d44fb10438",
+            "text": "Celina Duarte\nonboarded-celina@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a174ae-fbf3-76dd-be99-72bd6c1b4740",
+            "text": "quero aprender tudo sobre neurociência, entender completamente como funciona o cérebro humano desde do básico até o avançado. um curso completo"
+          },
+          { "text": "Goal created" },
+          { "text": "Aprender neurociência\nLearn" },
+          {
+            "href": "/users/01a174be-707c-7fe9-b060-222da76cc6ac",
+            "text": "Will\nneuro@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/25/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a17462-4edc-7797-964d-405673d10be5",
+            "text": "passar no concurso da câmara dos deputados para o cargo de registro e redação"
+          },
+          { "text": "Goal created" },
+          { "text": "Passar no concurso da Câmara dos Deputados\nExam" },
+          {
+            "href": "/users/01a17462-4edc-7f8b-ac1f-a517f7662499",
+            "text": "Will\npersona-wceolin-5c692a@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/24/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a16fe5-8576-7000-ae7e-03c7f0a186a7",
+            "text": "passar no concurso da câmara dos deputados para o cargo de registro e redação"
+          },
+          { "text": "Goal created" },
+          { "text": "Passar no concurso da Câmara dos Deputados\nExam" },
+          {
+            "href": "/users/01a17028-926e-7903-bc8e-e8a1a77c821a",
+            "text": "Will\nwceolin@gmail.com"
+          },
+          { "text": "pt" },
+          { "text": "10/24/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a14c52-6693-747b-801d-ef5dfe73b79e",
+            "text": "read sheet music for piano"
+          },
+          { "text": "Not confirmed" },
+          { "text": "Read sheet music for piano\nLearn" },
+          {
+            "href": "/users/01a14c50-fd6a-7add-9bd4-464611e94b3c",
+            "text": "Jordan Blake\nwalkerb-guest-1017@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "10/17/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a13a17-dac2-75cc-8006-c120df03afb7",
+            "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
+          },
+          { "text": "Goal created" },
+          { "text": "Tirar o DELE B2\nExam" },
+          {
+            "href": "/users/01a13a17-dac2-786d-80c6-e98de13c281d",
+            "text": "Adele Souza\npersona-dele-p11-282595@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/14/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a13a17-ad3b-77ca-92e9-a395544e3c38",
+            "text": "get band 7 in IELTS Academic for my master's in the UK"
+          },
+          { "text": "Goal created" },
+          { "text": "Pass IELTS Academic\nExam" },
+          {
+            "href": "/users/01a13a17-ad3b-7a08-ab57-676faa3b8747",
+            "text": "Priya\npersona-ielts-p11-57dc29@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "10/14/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a13564-9518-7def-b47c-e8561a89dd47",
+            "text": "why does ice float on water?"
+          },
+          { "text": "Not confirmed" },
+          { "text": "Why ice floats\nQuestion" },
+          {
+            "href": "/users/01a13556-afa4-711a-8414-277634fba2e2",
+            "text": "Beatriz Lopes\nopus-nofacts-1@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "10/13/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a137b3-b005-7971-9a89-272616aa792d",
+            "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
+          },
+          { "text": "Goal created" },
+          { "text": "Tirar o DELE B2\nExam" },
+          {
+            "href": "/users/01a137b3-b005-7c14-99a7-6b3145abcd5f",
+            "text": "Adele Souza\npersona-dele-p11-022512@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/12/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a13a44-f8d3-7d77-a3b9-f007ad5e8ea8",
+            "text": "get band 7 in IELTS Academic for my master's in the UK"
+          },
+          { "text": "Goal created" },
+          { "text": "Pass IELTS Academic\nExam" },
+          {
+            "href": "/users/01a13a44-f8d3-7fb5-8c48-3527d8d2f928",
+            "text": "Priya\npersona-ielts-p11-21c16c@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "10/11/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a13a17-2bd6-762d-aa3e-d103af9e18ea",
+            "text": "quero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp"
+          },
+          { "text": "Goal created" },
+          { "text": "Passar no concurso de escrevente do TJ-SP\nExam" },
+          {
+            "href": "/users/01a13a17-2bd6-7bcb-ae22-293f3bce181e",
+            "text": "Juliana\npersona-juliana-a58dfd@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/10/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a128c1-0a82-7f76-b77a-5df7dcf7fe67",
+            "text": "quero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp"
+          },
+          { "text": "Goal created" },
+          { "text": "Passar no concurso de escrevente do TJ-SP\nExam" },
+          {
+            "href": "/users/01a128cc-417a-779b-ba16-5fb17f611569",
+            "text": "Juliana Castro\nonboarded-juliana@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/10/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a12780-8aa9-783d-843f-48a66d08a00a",
+            "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
+          },
+          { "text": "Goal created" },
+          { "text": "Tirar o DELE B2\nExam" },
+          {
+            "href": "/users/01a12787-1a29-7dc5-8ef6-664852abf683",
+            "text": "Adele Souza\nonboarded-dele-p11@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/10/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a1277c-bf9c-782d-886d-8e22dd4e692a",
+            "text": "get band 7 in IELTS Academic for my master's in the UK"
+          },
+          { "text": "Goal created" },
+          { "text": "Pass IELTS Academic\nExam" },
+          {
+            "href": "/users/01a12788-792a-7c86-ac40-9661fda692cd",
+            "text": "Priya Nair\nonboarded-ielts-p11@zoonk.test"
+          },
+          { "text": "en" },
+          { "text": "10/10/2026" }
+        ],
+        [
+          {
+            "href": "/prompts/01a13a44-b14e-7148-9d61-72b1de5259d1",
+            "text": "tirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri"
+          },
+          { "text": "Goal created" },
+          { "text": "Tirar o DELE B2\nExam" },
+          {
+            "href": "/users/01a13a44-b14e-73b8-a722-140679b10114",
+            "text": "Adele Souza\npersona-dele-p11-f8a262@zoonk.test"
+          },
+          { "text": "pt" },
+          { "text": "10/7/2026" }
+        ]
+      ],
+      "section": ""
+    }
+  ],
+  "text": "Prompts\n\nWhat learners and guests type to start a goal, what Zoonk read in it, and whether it became a goal.\n\nAll\nGoal created\nNot confirmed\nToo vague\nDeclined\nFailed\nIn progress\nPrompt\tOutcome\tRead as\tLearner\tLanguage\tDate\n\nbrush up on SQL before my job interview tomorrow\n\t\nNot confirmed\n\t\nBrush up on SQL for a job interview\nLearn\n\t\nCard Today\ncard-today-before@zoonk.test\n\ten\t11/4/2026\n\nbrush up on SQL before my job interview tomorrow\n\t\nNot confirmed\n\t\nBrush up on SQL for a job interview\nLearn\n\t\nCard Today\ncard-today-before@zoonk.test\n\ten\t11/4/2026\n\nQuero entender como as células funcionam, só por curiosidade\n\t\nGoal created\n\t\nEntender o funcionamento das células\nLearn\n\t\nCelina Duarte\nonboarded-celina@zoonk.test\n\tpt\t10/26/2026\n\nquero aprender tudo sobre neurociência, entender completamente como funciona o cérebro humano desde do básico até o avançado. um curso completo\n\t\nGoal created\n\t\nAprender neurociência\nLearn\n\t\nWill\nneuro@zoonk.test\n\tpt\t10/25/2026\n\npassar no concurso da câmara dos deputados para o cargo de registro e redação\n\t\nGoal created\n\t\nPassar no concurso da Câmara dos Deputados\nExam\n\t\nWill\npersona-wceolin-5c692a@zoonk.test\n\tpt\t10/24/2026\n\npassar no concurso da câmara dos deputados para o cargo de registro e redação\n\t\nGoal created\n\t\nPassar no concurso da Câmara dos Deputados\nExam\n\t\nWill\nwceolin@gmail.com\n\tpt\t10/24/2026\n\nread sheet music for piano\n\t\nNot confirmed\n\t\nRead sheet music for piano\nLearn\n\t\nJordan Blake\nwalkerb-guest-1017@zoonk.test\n\ten\t10/17/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\npersona-dele-p11-282595@zoonk.test\n\tpt\t10/14/2026\n\nget band 7 in IELTS Academic for my master's in the UK\n\t\nGoal created\n\t\nPass IELTS Academic\nExam\n\t\nPriya\npersona-ielts-p11-57dc29@zoonk.test\n\ten\t10/14/2026\n\nwhy does ice float on water?\n\t\nNot confirmed\n\t\nWhy ice floats\nQuestion\n\t\nBeatriz Lopes\nopus-nofacts-1@zoonk.test\n\ten\t10/13/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\npersona-dele-p11-022512@zoonk.test\n\tpt\t10/12/2026\n\nget band 7 in IELTS Academic for my master's in the UK\n\t\nGoal created\n\t\nPass IELTS Academic\nExam\n\t\nPriya\npersona-ielts-p11-21c16c@zoonk.test\n\ten\t10/11/2026\n\nquero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp\n\t\nGoal created\n\t\nPassar no concurso de escrevente do TJ-SP\nExam\n\t\nJuliana\npersona-juliana-a58dfd@zoonk.test\n\tpt\t10/10/2026\n\nquero passar no concurso de escrevente do TJ-SP, a prova é da Vunesp\n\t\nGoal created\n\t\nPassar no concurso de escrevente do TJ-SP\nExam\n\t\nJuliana Castro\nonboarded-juliana@zoonk.test\n\tpt\t10/10/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\nonboarded-dele-p11@zoonk.test\n\tpt\t10/10/2026\n\nget band 7 in IELTS Academic for my master's in the UK\n\t\nGoal created\n\t\nPass IELTS Academic\nExam\n\t\nPriya Nair\nonboarded-ielts-p11@zoonk.test\n\ten\t10/10/2026\n\ntirar o DELE B2 de espanhol em quatro meses, preciso dele para um emprego em Madri\n\t\nGoal created\n\t\nTirar o DELE B2\nExam\n\t\nAdele Souza\npersona-dele-p11-f8a262@zoonk.test\n\tpt\t10/7/2026"
 }

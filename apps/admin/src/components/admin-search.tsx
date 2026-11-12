@@ -1,5 +1,6 @@
 "use client";
 
+import { ADMIN_TOOLBAR_SEARCH_CLASS } from "@/components/admin-page";
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { SEARCH_QUERY_THROTTLE_MS } from "@zoonk/utils/search";
@@ -16,10 +17,10 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
     <div className="relative w-full sm:max-w-md">
       <Search
         aria-hidden="true"
-        className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
+        className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 md:left-2.5 md:size-3.5"
       />
       <Input
-        className="pl-9"
+        className={ADMIN_TOOLBAR_SEARCH_CLASS}
         onChange={(event) => setQuery({ page: null, search: event.target.value })}
         placeholder={placeholder}
         type="search"
@@ -30,5 +31,5 @@ export function AdminSearch({ placeholder }: { placeholder: string }) {
 }
 
 export function AdminSearchSkeleton() {
-  return <Skeleton className="h-11 w-full rounded-lg sm:max-w-md" />;
+  return <Skeleton className="h-11 w-full rounded-lg sm:max-w-md md:h-7.5 md:rounded-md" />;
 }

@@ -1,13 +1,7 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 type VersionRow = {
   contractVersion: number;
@@ -56,17 +50,17 @@ export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
+            <AdminTableRow>
               <TableHead>Written</TableHead>
               <TableHead>Model</TableHead>
               <TableHead>Prompt version</TableHead>
               <TableHead className="text-right">Step contract</TableHead>
               <TableHead className="text-right">Rows</TableHead>
-            </TableRow>
+            </AdminTableRow>
           </TableHeader>
           <TableBody>
             {versions.map((version) => (
-              <TableRow key={versionKey(version)}>
+              <AdminTableRow key={versionKey(version)}>
                 <TableCell>
                   {version.kind === "screen" ? "Screens" : "Versions of screens"}
                 </TableCell>
@@ -76,7 +70,7 @@ export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
                   v{version.contractVersion}
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{version.rows}</TableCell>
-              </TableRow>
+              </AdminTableRow>
             ))}
           </TableBody>
         </Table>

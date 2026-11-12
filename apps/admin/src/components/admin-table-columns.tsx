@@ -41,8 +41,14 @@ function AdminTableColumnHead({ column }: { column: AdminTableColumn }) {
         href={sort.href}
         prefetch
       >
+        {/* Before an end-aligned label, so the label still ends on its numbers' edge. */}
+        {sort.isActive && align === "right" ? (
+          <ArrowDownIcon aria-hidden="true" className="size-3.5" />
+        ) : null}
         {label}
-        {sort.isActive ? <ArrowDownIcon aria-hidden="true" className="size-3.5" /> : null}
+        {sort.isActive && align !== "right" ? (
+          <ArrowDownIcon aria-hidden="true" className="size-3.5" />
+        ) : null}
       </Link>
     </TableHead>
   );

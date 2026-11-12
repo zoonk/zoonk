@@ -1,111 +1,55 @@
 {
- "fields": [
-  {
-   "href": "https://mvrkldmanjesbxos.public.blob.vercel-storage.com/library/images/step-j4QLUIA674KVCMdezz4g0SXo7exjcz.webp",
-   "label": "URL",
-   "section": "Details",
-   "value": "https://mvrkldmanjesbxos.public.blob.vercel-storage.com/library/images/step-j4QLUIA674KVCMdezz4g0SXo7exjcz.webp"
-  },
-  {
-   "label": "Language",
-   "section": "Details",
-   "value": "PT"
-  },
-  {
-   "label": "Style version",
-   "section": "Details",
-   "value": "2"
-  },
-  {
-   "label": "Palette",
-   "section": "Details",
-   "value": "general"
-  },
-  {
-   "label": "Size",
-   "section": "Details",
-   "value": "1024 × 1280"
-  },
-  {
-   "label": "Visibility",
-   "section": "Details",
-   "value": "Public"
-  },
-  {
-   "label": "Owner",
-   "section": "Details",
-   "value": "—"
-  },
-  {
-   "label": "Created",
-   "section": "Details",
-   "value": "Oct 9, 2026, 4:24 PM"
-  },
-  {
-   "label": "Model",
-   "section": "Provenance",
-   "value": "openai/gpt-image-2.5-flare"
-  },
-  {
-   "label": "Prompt version",
-   "section": "Provenance",
-   "value": "style-v2-66d55fce15f9"
-  },
-  {
-   "label": "Run",
-   "section": "Provenance",
-   "value": "7938d047-94b8-4598-816c-0a475326dda9"
-  },
-  {
-   "label": "Generated",
-   "section": "Provenance",
-   "value": "Oct 9, 2026, 4:24 PM"
-  }
- ],
- "headings": [
-  "H1: image:v2:pt:a9136367e873c225b7ba9583bc8de4e0a2d1f479",
-  "H2: Preview",
-  "H2: Details",
-  "H2: Prompt",
-  "SUMMARY: Scene",
-  "H2: Provenance",
-  "H2: Steps (2)"
- ],
- "tables": [
-  {
-   "head": [
-    "Lesson",
-    "Position",
-    "Kind"
-   ],
-   "rows": [
-    [
-     {
-      "href": "/lessons/01a126ec-bbec-70a1-84b6-c7274c6c13eb",
-      "text": "Distância real a partir da escala"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "check"
-     }
-    ],
-    [
-     {
-      "href": "/lessons/01a126ec-bbec-70a1-84b6-c7274c6c13eb",
-      "text": "Distância real a partir da escala"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "check"
-     }
-    ]
-   ],
-   "section": "Steps (2)"
-  }
- ],
- "text": "Media\nimage:v2:pt:a9136367e873c225b7ba9583bc8de4e0a2d1f479\nimage:v2:pt:a9136367e873c225b7ba9583bc8de4e0a2d1f479\n\nimage/webp\n\nPreview\nDetails\nURL\nhttps://mvrkldmanjesbxos.public.blob.vercel-storage.com/library/images/step-j4QLUIA674KVCMdezz4g0SXo7exjcz.webp\nLanguage\nPT\nStyle version\n2\nPalette\ngeneral\nSize\n1024 × 1280\nVisibility\nPublic\nOwner\n—\nCreated\nOct 9, 2026, 4:24 PM\nPrompt\n\nLayout: single. Focal object: a simple flat map outline showing two distinct dot markers connected by a straight line segment with dimension ticks at both ends. Labels: \"A\" above the left marker dot; \"B\" above the right marker dot; \"3 cm\" along the line segment between points A and B; \"1:200.000\" in the bottom corner of the map.\n\nScene\n{\n  \"labels\": [\n    {\n      \"text\": \"A\",\n      \"target\": \"above the left marker dot\"\n    },\n    {\n      \"text\": \"B\",\n      \"target\": \"above the right marker dot\"\n    },\n    {\n      \"text\": \"3 cm\",\n      \"target\": \"along the line segment between points A and B\"\n    },\n    {\n      \"text\": \"1:200.000\",\n      \"target\": \"in the bottom corner of the map\"\n    }\n  ],\n  \"layout\": \"single\",\n  \"motion\": null,\n  \"relation\": null,\n  \"focalObject\": \"a simple flat map outline showing two distinct dot markers connected by a straight line segment with dimension ticks at both ends\",\n  \"supportingObjects\": []\n}\nProvenance\nModel\nopenai/gpt-image-2.5-flare\nPrompt version\nstyle-v2-66d55fce15f9\nRun\n7938d047-94b8-4598-816c-0a475326dda9\nGenerated\nOct 9, 2026, 4:24 PM\nSteps (2)\nLesson\tPosition\tKind\nDistância real a partir da escala\t1\tcheck\nDistância real a partir da escala\t1\tcheck"
+  "fields": [
+    {
+      "href": "https://mvrkldmanjesbxos.public.blob.vercel-storage.com/library/images/step-j4QLUIA674KVCMdezz4g0SXo7exjcz.webp",
+      "label": "URL",
+      "section": "Details",
+      "value": "https://mvrkldmanjesbxos.public.blob.vercel-storage.com/library/images/step-j4QLUIA674KVCMdezz4g0SXo7exjcz.webp"
+    },
+    { "label": "Language", "section": "Details", "value": "PT" },
+    { "label": "Style version", "section": "Details", "value": "2" },
+    { "label": "Palette", "section": "Details", "value": "general" },
+    { "label": "Size", "section": "Details", "value": "1024 × 1280" },
+    { "label": "Visibility", "section": "Details", "value": "Public" },
+    { "label": "Owner", "section": "Details", "value": "—" },
+    { "label": "Created", "section": "Details", "value": "Oct 9, 2026, 4:24 PM" },
+    { "label": "Model", "section": "Provenance", "value": "openai/gpt-image-2.5-flare" },
+    { "label": "Prompt version", "section": "Provenance", "value": "style-v2-66d55fce15f9" },
+    { "label": "Run", "section": "Provenance", "value": "7938d047-94b8-4598-816c-0a475326dda9" },
+    { "label": "Generated", "section": "Provenance", "value": "Oct 9, 2026, 4:24 PM" }
+  ],
+  "headings": [
+    "H1: image:v2:pt:a9136367e873c225b7ba9583bc8de4e0a2d1f479",
+    "H2: Preview",
+    "H2: Details",
+    "H2: Prompt",
+    "SUMMARY: Scene",
+    "H2: Provenance",
+    "H2: Steps (2)"
+  ],
+  "tables": [
+    {
+      "head": ["Lesson", "Position", "Kind"],
+      "rows": [
+        [
+          {
+            "href": "/lessons/01a126ec-bbec-70a1-84b6-c7274c6c13eb",
+            "text": "Distância real a partir da escala"
+          },
+          { "text": "1" },
+          { "text": "check" }
+        ],
+        [
+          {
+            "href": "/lessons/01a126ec-bbec-70a1-84b6-c7274c6c13eb",
+            "text": "Distância real a partir da escala"
+          },
+          { "text": "1" },
+          { "text": "check" }
+        ]
+      ],
+      "section": "Steps (2)"
+    }
+  ],
+  "text": "Media\nimage:v2:pt:a9136367e873c225b7ba9583bc8de4e0a2d1f479\nimage:v2:pt:a9136367e873c225b7ba9583bc8de4e0a2d1f479\n\nimage/webp\n\nPreview\nDetails\nURL\nhttps://mvrkldmanjesbxos.public.blob.vercel-storage.com/library/images/step-j4QLUIA674KVCMdezz4g0SXo7exjcz.webp\nLanguage\nPT\nStyle version\n2\nPalette\ngeneral\nSize\n1024 × 1280\nVisibility\nPublic\nOwner\n—\nCreated\nOct 9, 2026, 4:24 PM\nPrompt\n\nLayout: single. Focal object: a simple flat map outline showing two distinct dot markers connected by a straight line segment with dimension ticks at both ends. Labels: \"A\" above the left marker dot; \"B\" above the right marker dot; \"3 cm\" along the line segment between points A and B; \"1:200.000\" in the bottom corner of the map.\n\nScene\n{\n  \"labels\": [\n    {\n      \"text\": \"A\",\n      \"target\": \"above the left marker dot\"\n    },\n    {\n      \"text\": \"B\",\n      \"target\": \"above the right marker dot\"\n    },\n    {\n      \"text\": \"3 cm\",\n      \"target\": \"along the line segment between points A and B\"\n    },\n    {\n      \"text\": \"1:200.000\",\n      \"target\": \"in the bottom corner of the map\"\n    }\n  ],\n  \"layout\": \"single\",\n  \"motion\": null,\n  \"relation\": null,\n  \"focalObject\": \"a simple flat map outline showing two distinct dot markers connected by a straight line segment with dimension ticks at both ends\",\n  \"supportingObjects\": []\n}\nProvenance\nModel\nopenai/gpt-image-2.5-flare\nPrompt version\nstyle-v2-66d55fce15f9\nRun\n7938d047-94b8-4598-816c-0a475326dda9\nGenerated\nOct 9, 2026, 4:24 PM\nSteps (2)\nLesson\tPosition\tKind\nDistância real a partir da escala\t1\tcheck\nDistância real a partir da escala\t1\tcheck"
 }

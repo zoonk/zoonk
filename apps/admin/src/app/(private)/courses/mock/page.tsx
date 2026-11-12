@@ -1,5 +1,13 @@
 import dump from "@/app/(private)/_mock/data/courses.json";
-import { type Dump, Lead, MockList, MockSearch, language, parts, readView } from "@/app/(private)/_mock/kit";
+import {
+  type Dump,
+  Lead,
+  MockList,
+  MockSearch,
+  language,
+  parts,
+  readView,
+} from "@/app/(private)/_mock/kit";
 
 const COLUMNS = [
   { label: "Course" },

@@ -47,7 +47,10 @@ export default function CourseMockPage() {
           >
             <ol className="divide-y">
               {band.chapters.map((chapter, index) => (
-                <li className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 py-4" key={chapter.title}>
+                <li
+                  className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 py-4"
+                  key={chapter.title}
+                >
                   <span className="text-muted-foreground font-mono text-xs leading-6 tabular-nums">
                     {index + 1}
                   </span>
@@ -61,7 +64,10 @@ export default function CourseMockPage() {
                     </div>
                     <ul className="flex flex-col gap-1">
                       {chapter.lessons.map((lesson) => (
-                        <li className="flex items-baseline justify-between gap-4 text-sm" key={lesson.title}>
+                        <li
+                          className="flex items-baseline justify-between gap-4 text-sm"
+                          key={lesson.title}
+                        >
                           <span className="flex items-baseline gap-2">
                             <a href="#">{lesson.title}</a>
                             {lesson.shared ? (

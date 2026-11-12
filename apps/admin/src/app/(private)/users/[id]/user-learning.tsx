@@ -1,11 +1,12 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { getUser } from "@/data/users/get-user";
 import { getUserLearningStats } from "@/data/users/get-user-learning-stats";
 import { formatDuration } from "@/lib/format-duration";
 import { getAdminLessonKindLabel } from "@/lib/lesson-label";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 
 /** Energy is stored as a float, so it's rounded to hide artifacts like 10.0000000002. */
 const ENERGY_FORMATTER = new Intl.NumberFormat("en", {
@@ -51,7 +52,7 @@ export async function UserLearning({ userId }: { userId: string }) {
         <AdminSection title="Lessons by kind">
           <AdminTableColumns columns={KIND_COLUMNS} emptyLabel="" isEmpty={false}>
             {stats.lessonKinds.map((row) => (
-              <TableRow key={row.kind}>
+              <AdminTableRow key={row.kind}>
                 <TableCell>{getAdminLessonKindLabel(row.kind)}</TableCell>
                 <TableCell className="text-right tabular-nums">
                   {row.completedLessons.toLocaleString("en")}
@@ -62,7 +63,7 @@ export async function UserLearning({ userId }: { userId: string }) {
                 <TableCell className="text-right tabular-nums">
                   {formatDuration(row.totalDurationSeconds)}
                 </TableCell>
-              </TableRow>
+              </AdminTableRow>
             ))}
           </AdminTableColumns>
         </AdminSection>

@@ -29,7 +29,9 @@ export function StatsExplorerLayout({
     <Container className="min-h-full gap-2">
       <ContainerHeader className="items-start" variant="sidebar">
         <ContainerHeaderGroup className="min-w-0 flex-1 gap-3">
-          <StatsBreadcrumb items={[{ label: section.charAt(0).toUpperCase() + section.slice(1) }]} />
+          <StatsBreadcrumb
+            items={[{ label: section.charAt(0).toUpperCase() + section.slice(1) }]}
+          />
           <StatsExplorerControls
             periodQuery={periodQuery}
             selectedView={selectedView}

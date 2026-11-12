@@ -1,1676 +1,774 @@
 {
- "fields": [],
- "headings": [
-  "H1: Skills"
- ],
- "tables": [
-  {
-   "head": [
-    "Skill",
-    "Language",
-    "Level",
-    "Visibility",
-    "Lessons",
-    "Items",
-    "Learners",
-    "Prerequisites",
-    "Provenance",
-    "Created"
-   ],
-   "rows": [
-    [
-     {
-      "href": "/skills/01a1b86f-d358-7dfa-b051-8e4fc59cf697",
-      "text": "Test skill d7299637-5c82-404d-9a50-c5c83a1b7be5"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1b86f-d357-73f7-90d3-96bcb7a5606b",
-      "text": "Test skill dfc9135a-493e-4fb9-9c11-156565f9d0ef"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1b86f-d353-7ba0-b94d-97fb2601ebd3",
-      "text": "Test skill 9248ff4a-0e9c-4220-9ee8-e5af0268e594"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1b86f-d347-783c-97b6-e7625701bf2a",
-      "text": "Test skill 96807f29-15e9-494e-b59a-bd9cb0eb15eb"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1b86f-d33b-72ca-bd26-c62960d12524",
-      "text": "Test skill c2ad8374-1ff2-459d-a119-e7d876cdc13c"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1b86f-d32d-7d28-9056-2ea58b358f9d",
-      "text": "Test skill 0e49fc96-6ede-4cde-8068-fdd82c458fe6"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1b86f-d326-7ccb-aaa9-aa6538c7ab66",
-      "text": "Test skill 979b8791-9ad9-4703-864b-d6b91a18270f"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/7/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-25c4-7ae6-b2e1-137fb9920da5",
-      "text": "Test skill c47b6e17-1822-446d-9d21-8b9701f2ed4c"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-1279-7f63-847c-28a73dc1a188",
-      "text": "Test skill 393854b1-cd9b-4ac8-9b4b-e821346978de"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-1251-7854-9607-8b4a1ec22cd4",
-      "text": "Test skill 5306332a-95eb-4000-a2ac-2cb40693e526"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-11e8-7de6-b2a6-7615c346c205",
-      "text": "Test skill da35162e-8bee-4088-b434-0e6d9adacedf"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-1070-7abc-9e12-f33b19bcbeef",
-      "text": "Test skill 07e020b3-a9d8-4fe5-a404-f18ba3dd1e86"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d7f-786a-8344-19d764e3ff0c",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d73-7a6b-a157-60d2f5548785",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d6d-76ef-916b-19b3e1eaf991",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d5e-74b5-8704-4993fab7d36a",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d4f-7368-8cf7-0a6e3cdb1cb0",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d43-7640-a956-e4fb644ed79f",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0d16-70ed-bfff-06451b44a78c",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a397-0774-70c4-9d40-35df130a5a05",
-      "text": "Test skill 98f1bcf6-785e-4e15-9f9c-483501b3c05b"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-b4bb-745a-bb22-ca098f3f35c5",
-      "text": "Test skill cfeee43c-fc66-4b77-9dbe-07b61266bad3"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-b25d-75f8-8006-8c1822d5b7a5",
-      "text": "Test skill 6169f2ab-d9cb-481a-9e4d-f1a4be814066"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-b0f7-7dd9-b962-d9a6fa2d895d",
-      "text": "Test skill 6f6b796b-3c8c-4572-8775-08b7fa5ed450"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ae8c-7396-b348-a12659547c51",
-      "text": "Test skill 1e68fc4c-ebf6-47f5-9d3c-266be930537c"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ab9c-7a83-8a2a-259901d74158",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ab73-7c9a-aabc-aa28ac873b37",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ab6f-7c4a-83e3-ad65a95629a2",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ab66-780c-8619-2de2853d369a",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ab56-79b5-b150-ab4f19e6d2c0",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-ab42-7937-bda1-43227c4f1f3a",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-a9ae-7de2-9ee9-4a8972ab903f",
-      "text": "Add a rise to a temperature below zero"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a1a396-1f27-70f5-88d3-46ebcc668be6",
-      "text": "Test skill 3b387720-14ae-456e-9f7d-eb0c2a9e15d5"
-     },
-     {
-      "text": "EN"
-     },
-     {
-      "text": "—"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "test/fixture-model\ntest-v1 · test-run"
-     },
-     {
-      "text": "11/3/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f3-211f-7b65-a38b-7ae7ced0049d",
-      "text": "Relacionar energia às atividades celulares"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f3-211f-780f-aff1-9f6dede5514a",
-      "text": "Explicar o uso da energia dos nutrientes"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f3-211f-7761-a5d7-d5cfe66692f5",
-      "text": "Relacionar nutrientes à construção celular"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f3-1d08-73a0-b2d8-f7085066c547",
-      "text": "Explicar a cópia do DNA antes da divisão"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f3-10ab-7b13-8639-f67b66715a03",
-      "text": "Relacionar genes à produção de proteínas"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f3-0f59-74f5-ad62-94c62e6715ad",
-      "text": "Reconhecer sinais por contato celular"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-c04e-7ddb-abc5-222bf734f5e6",
-      "text": "Descrever a cooperação entre células"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-c04e-7d18-9b64-595360e8fcab",
-      "text": "Descrever o papel do citoplasma"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-5791-722f-ae1a-71da886bd171",
-      "text": "Relacionar falhas na divisão celular a doenças"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-5790-7bb6-bebf-5a080fade3e4",
-      "text": "Explicar como células ajustam suas atividades"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-5790-7a55-9e0a-6eeafd406733",
-      "text": "Relacionar divisão celular a crescimento e reparo"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-5790-79de-a400-e71c21a80965",
-      "text": "Descrever como células recebem sinais"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-5790-7836-bfc2-d27badeaa571",
-      "text": "Explicar como células se dividem"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-53f4-7e7f-8669-a66c4ef570bc",
-      "text": "Explicar como células produzem proteínas"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-53ea-7971-a716-ff40bb0b2a49",
-      "text": "Relacionar proteínas às atividades celulares"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-53e9-7c7b-b6eb-de28c76deaba",
-      "text": "Explicar como o DNA guarda informações"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-53e9-7c12-8778-451cd56ab4ce",
-      "text": "Descrever como células aproveitam a luz"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ],
-    [
-     {
-      "href": "/skills/01a179f2-53e9-79f1-9902-82e0932cbb9b",
-      "text": "Explicar como células usam energia dos nutrientes"
-     },
-     {
-      "text": "PT"
-     },
-     {
-      "text": "Overview"
-     },
-     {
-      "text": "Public"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "2"
-     },
-     {
-      "text": "0"
-     },
-     {
-      "text": "1"
-     },
-     {
-      "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6"
-     },
-     {
-      "text": "10/26/2026"
-     }
-    ]
-   ],
-   "section": ""
-  }
- ],
- "text": "Skills\n\nBrowse Library skills, where they are taught and how many learners practice them.\n\nAll languages\nEnglish\nSpanish\nPortuguese\nFrench\nGerman\nItalian\nJapanese\nKorean\nTurkish\nPolish\nAll\nPublic\nPrivate\nHide merged\nShow merged\nSkill\tLanguage\tLevel\tVisibility\tLessons\tItems\tLearners\tPrerequisites\tProvenance\tCreated\nTest skill d7299637-5c82-404d-9a50-c5c83a1b7be5\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill dfc9135a-493e-4fb9-9c11-156565f9d0ef\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 9248ff4a-0e9c-4220-9ee8-e5af0268e594\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 96807f29-15e9-494e-b59a-bd9cb0eb15eb\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill c2ad8374-1ff2-459d-a119-e7d876cdc13c\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 0e49fc96-6ede-4cde-8068-fdd82c458fe6\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 979b8791-9ad9-4703-864b-d6b91a18270f\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill c47b6e17-1822-446d-9d21-8b9701f2ed4c\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 393854b1-cd9b-4ac8-9b4b-e821346978de\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 5306332a-95eb-4000-a2ac-2cb40693e526\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill da35162e-8bee-4088-b434-0e6d9adacedf\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 07e020b3-a9d8-4fe5-a404-f18ba3dd1e86\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 98f1bcf6-785e-4e15-9f9c-483501b3c05b\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill cfeee43c-fc66-4b77-9dbe-07b61266bad3\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 6169f2ab-d9cb-481a-9e4d-f1a4be814066\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 6f6b796b-3c8c-4572-8775-08b7fa5ed450\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 1e68fc4c-ebf6-47f5-9d3c-266be930537c\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 3b387720-14ae-456e-9f7d-eb0c2a9e15d5\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nRelacionar energia às atividades celulares\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nExplicar o uso da energia dos nutrientes\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nRelacionar nutrientes à construção celular\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nExplicar a cópia do DNA antes da divisão\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nRelacionar genes à produção de proteínas\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nReconhecer sinais por contato celular\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nDescrever a cooperação entre células\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nDescrever o papel do citoplasma\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nRelacionar falhas na divisão celular a doenças\tPT\tOverview\tPublic\t1\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células ajustam suas atividades\tPT\tOverview\tPublic\t2\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nRelacionar divisão celular a crescimento e reparo\tPT\tOverview\tPublic\t1\t0\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nDescrever como células recebem sinais\tPT\tOverview\tPublic\t1\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células se dividem\tPT\tOverview\tPublic\t1\t0\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células produzem proteínas\tPT\tOverview\tPublic\t1\t2\t0\t2\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nRelacionar proteínas às atividades celulares\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como o DNA guarda informações\tPT\tOverview\tPublic\t1\t2\t1\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nDescrever como células aproveitam a luz\tPT\tOverview\tPublic\t1\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células usam energia dos nutrientes\tPT\tOverview\tPublic\t0\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nPrevious\n1\n2\nMore pages\n226\nNext"
+  "fields": [],
+  "headings": ["H1: Skills"],
+  "tables": [
+    {
+      "head": [
+        "Skill",
+        "Language",
+        "Level",
+        "Visibility",
+        "Lessons",
+        "Items",
+        "Learners",
+        "Prerequisites",
+        "Provenance",
+        "Created"
+      ],
+      "rows": [
+        [
+          {
+            "href": "/skills/01a1b86f-d358-7dfa-b051-8e4fc59cf697",
+            "text": "Test skill d7299637-5c82-404d-9a50-c5c83a1b7be5"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1b86f-d357-73f7-90d3-96bcb7a5606b",
+            "text": "Test skill dfc9135a-493e-4fb9-9c11-156565f9d0ef"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1b86f-d353-7ba0-b94d-97fb2601ebd3",
+            "text": "Test skill 9248ff4a-0e9c-4220-9ee8-e5af0268e594"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1b86f-d347-783c-97b6-e7625701bf2a",
+            "text": "Test skill 96807f29-15e9-494e-b59a-bd9cb0eb15eb"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1b86f-d33b-72ca-bd26-c62960d12524",
+            "text": "Test skill c2ad8374-1ff2-459d-a119-e7d876cdc13c"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1b86f-d32d-7d28-9056-2ea58b358f9d",
+            "text": "Test skill 0e49fc96-6ede-4cde-8068-fdd82c458fe6"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1b86f-d326-7ccb-aaa9-aa6538c7ab66",
+            "text": "Test skill 979b8791-9ad9-4703-864b-d6b91a18270f"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/7/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-25c4-7ae6-b2e1-137fb9920da5",
+            "text": "Test skill c47b6e17-1822-446d-9d21-8b9701f2ed4c"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-1279-7f63-847c-28a73dc1a188",
+            "text": "Test skill 393854b1-cd9b-4ac8-9b4b-e821346978de"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-1251-7854-9607-8b4a1ec22cd4",
+            "text": "Test skill 5306332a-95eb-4000-a2ac-2cb40693e526"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-11e8-7de6-b2a6-7615c346c205",
+            "text": "Test skill da35162e-8bee-4088-b434-0e6d9adacedf"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-1070-7abc-9e12-f33b19bcbeef",
+            "text": "Test skill 07e020b3-a9d8-4fe5-a404-f18ba3dd1e86"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d7f-786a-8344-19d764e3ff0c",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d73-7a6b-a157-60d2f5548785",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d6d-76ef-916b-19b3e1eaf991",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d5e-74b5-8704-4993fab7d36a",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d4f-7368-8cf7-0a6e3cdb1cb0",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d43-7640-a956-e4fb644ed79f",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0d16-70ed-bfff-06451b44a78c",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a397-0774-70c4-9d40-35df130a5a05",
+            "text": "Test skill 98f1bcf6-785e-4e15-9f9c-483501b3c05b"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-b4bb-745a-bb22-ca098f3f35c5",
+            "text": "Test skill cfeee43c-fc66-4b77-9dbe-07b61266bad3"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-b25d-75f8-8006-8c1822d5b7a5",
+            "text": "Test skill 6169f2ab-d9cb-481a-9e4d-f1a4be814066"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-b0f7-7dd9-b962-d9a6fa2d895d",
+            "text": "Test skill 6f6b796b-3c8c-4572-8775-08b7fa5ed450"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ae8c-7396-b348-a12659547c51",
+            "text": "Test skill 1e68fc4c-ebf6-47f5-9d3c-266be930537c"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ab9c-7a83-8a2a-259901d74158",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ab73-7c9a-aabc-aa28ac873b37",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ab6f-7c4a-83e3-ad65a95629a2",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ab66-780c-8619-2de2853d369a",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ab56-79b5-b150-ab4f19e6d2c0",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-ab42-7937-bda1-43227c4f1f3a",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-a9ae-7de2-9ee9-4a8972ab903f",
+            "text": "Add a rise to a temperature below zero"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a1a396-1f27-70f5-88d3-46ebcc668be6",
+            "text": "Test skill 3b387720-14ae-456e-9f7d-eb0c2a9e15d5"
+          },
+          { "text": "EN" },
+          { "text": "—" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "test/fixture-model\ntest-v1 · test-run" },
+          { "text": "11/3/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f3-211f-7b65-a38b-7ae7ced0049d",
+            "text": "Relacionar energia às atividades celulares"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f3-211f-780f-aff1-9f6dede5514a",
+            "text": "Explicar o uso da energia dos nutrientes"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f3-211f-7761-a5d7-d5cfe66692f5",
+            "text": "Relacionar nutrientes à construção celular"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f3-1d08-73a0-b2d8-f7085066c547",
+            "text": "Explicar a cópia do DNA antes da divisão"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f3-10ab-7b13-8639-f67b66715a03",
+            "text": "Relacionar genes à produção de proteínas"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f3-0f59-74f5-ad62-94c62e6715ad",
+            "text": "Reconhecer sinais por contato celular"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-c04e-7ddb-abc5-222bf734f5e6",
+            "text": "Descrever a cooperação entre células"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-c04e-7d18-9b64-595360e8fcab",
+            "text": "Descrever o papel do citoplasma"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n4167969dc522 · 2ed4e72e" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-5791-722f-ae1a-71da886bd171",
+            "text": "Relacionar falhas na divisão celular a doenças"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "2" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-5790-7bb6-bebf-5a080fade3e4",
+            "text": "Explicar como células ajustam suas atividades"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "2" },
+          { "text": "2" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-5790-7a55-9e0a-6eeafd406733",
+            "text": "Relacionar divisão celular a crescimento e reparo"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-5790-79de-a400-e71c21a80965",
+            "text": "Descrever como células recebem sinais"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "2" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-5790-7836-bfc2-d27badeaa571",
+            "text": "Explicar como células se dividem"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-53f4-7e7f-8669-a66c4ef570bc",
+            "text": "Explicar como células produzem proteínas"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "2" },
+          { "text": "0" },
+          { "text": "2" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-53ea-7971-a716-ff40bb0b2a49",
+            "text": "Relacionar proteínas às atividades celulares"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "0" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-53e9-7c7b-b6eb-de28c76deaba",
+            "text": "Explicar como o DNA guarda informações"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "2" },
+          { "text": "1" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-53e9-7c12-8778-451cd56ab4ce",
+            "text": "Descrever como células aproveitam a luz"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "1" },
+          { "text": "2" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ],
+        [
+          {
+            "href": "/skills/01a179f2-53e9-79f1-9902-82e0932cbb9b",
+            "text": "Explicar como células usam energia dos nutrientes"
+          },
+          { "text": "PT" },
+          { "text": "Overview" },
+          { "text": "Public" },
+          { "text": "0" },
+          { "text": "2" },
+          { "text": "0" },
+          { "text": "1" },
+          { "text": "openai/gpt-6-sol\n36e535e1713d · 3138c9d6" },
+          { "text": "10/26/2026" }
+        ]
+      ],
+      "section": ""
+    }
+  ],
+  "text": "Skills\n\nBrowse Library skills, where they are taught and how many learners practice them.\n\nAll languages\nEnglish\nSpanish\nPortuguese\nFrench\nGerman\nItalian\nJapanese\nKorean\nTurkish\nPolish\nAll\nPublic\nPrivate\nHide merged\nShow merged\nSkill\tLanguage\tLevel\tVisibility\tLessons\tItems\tLearners\tPrerequisites\tProvenance\tCreated\nTest skill d7299637-5c82-404d-9a50-c5c83a1b7be5\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill dfc9135a-493e-4fb9-9c11-156565f9d0ef\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 9248ff4a-0e9c-4220-9ee8-e5af0268e594\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 96807f29-15e9-494e-b59a-bd9cb0eb15eb\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill c2ad8374-1ff2-459d-a119-e7d876cdc13c\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 0e49fc96-6ede-4cde-8068-fdd82c458fe6\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill 979b8791-9ad9-4703-864b-d6b91a18270f\tEN\t—\tPublic\t0\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/7/2026\nTest skill c47b6e17-1822-446d-9d21-8b9701f2ed4c\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 393854b1-cd9b-4ac8-9b4b-e821346978de\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 5306332a-95eb-4000-a2ac-2cb40693e526\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill da35162e-8bee-4088-b434-0e6d9adacedf\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 07e020b3-a9d8-4fe5-a404-f18ba3dd1e86\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 98f1bcf6-785e-4e15-9f9c-483501b3c05b\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill cfeee43c-fc66-4b77-9dbe-07b61266bad3\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 6169f2ab-d9cb-481a-9e4d-f1a4be814066\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 6f6b796b-3c8c-4572-8775-08b7fa5ed450\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 1e68fc4c-ebf6-47f5-9d3c-266be930537c\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nAdd a rise to a temperature below zero\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nTest skill 3b387720-14ae-456e-9f7d-eb0c2a9e15d5\tEN\t—\tPublic\t1\t0\t0\t0\t\ntest/fixture-model\ntest-v1 · test-run\n\t11/3/2026\nRelacionar energia às atividades celulares\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nExplicar o uso da energia dos nutrientes\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nRelacionar nutrientes à construção celular\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nExplicar a cópia do DNA antes da divisão\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nRelacionar genes à produção de proteínas\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nReconhecer sinais por contato celular\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nDescrever a cooperação entre células\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nDescrever o papel do citoplasma\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n4167969dc522 · 2ed4e72e\n\t10/26/2026\nRelacionar falhas na divisão celular a doenças\tPT\tOverview\tPublic\t1\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células ajustam suas atividades\tPT\tOverview\tPublic\t2\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nRelacionar divisão celular a crescimento e reparo\tPT\tOverview\tPublic\t1\t0\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nDescrever como células recebem sinais\tPT\tOverview\tPublic\t1\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células se dividem\tPT\tOverview\tPublic\t1\t0\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células produzem proteínas\tPT\tOverview\tPublic\t1\t2\t0\t2\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nRelacionar proteínas às atividades celulares\tPT\tOverview\tPublic\t1\t0\t0\t0\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como o DNA guarda informações\tPT\tOverview\tPublic\t1\t2\t1\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nDescrever como células aproveitam a luz\tPT\tOverview\tPublic\t1\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nExplicar como células usam energia dos nutrientes\tPT\tOverview\tPublic\t0\t2\t0\t1\t\nopenai/gpt-6-sol\n36e535e1713d · 3138c9d6\n\t10/26/2026\nPrevious\n1\n2\nMore pages\n226\nNext"
 }

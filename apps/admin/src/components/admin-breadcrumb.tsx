@@ -12,14 +12,16 @@ import { Fragment } from "react";
 export type AdminBreadcrumbParent = { href: string; label: string };
 
 export function AdminBreadcrumb({
+  className,
   current,
   parents,
 }: {
+  className?: string;
   current: React.ReactNode;
   parents: AdminBreadcrumbParent[];
 }) {
   return (
-    <Breadcrumb>
+    <Breadcrumb className={className}>
       <BreadcrumbList>
         {parents.map((parent) => (
           <Fragment key={parent.href}>

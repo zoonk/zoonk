@@ -19,7 +19,10 @@ export function ShortNavTabs({ counts }: { counts: AdminNavCounts }) {
   }
 
   return (
-    <nav aria-label={group.label} className="flex gap-5 overflow-x-auto border-b px-4 pt-3 md:px-8">
+    <nav
+      aria-label={group.label}
+      className="flex gap-5 overflow-x-auto border-b px-4 pt-3 sm:px-8 lg:px-10"
+    >
       {group.items.map((item) => (
         <Link
           aria-current={pathname.startsWith(item.url) ? "page" : undefined}

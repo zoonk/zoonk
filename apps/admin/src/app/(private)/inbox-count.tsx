@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
 import { type InboxQueueName, getInbox } from "@/data/inbox/get-inbox";
 import { SIDEBAR_COUNT_CLASS } from "@zoonk/ui/components/sidebar";
+import { cookies } from "next/headers";
 
 async function isClear() {
   // Review pack only: Home with nothing waiting.

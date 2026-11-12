@@ -14,7 +14,7 @@ export function AdminSection({
 }) {
   return (
     <section className="flex min-w-0 flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+      <div className="flex min-h-7.5 flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex min-w-0 flex-col gap-0.5">
           <h2 className="text-sm leading-5 font-semibold">{title}</h2>
           {description ? (

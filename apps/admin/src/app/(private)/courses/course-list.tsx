@@ -1,16 +1,10 @@
+import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
 import { listCourses } from "@/data/courses/list-courses";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { CourseRow } from "./course-row";
 
 export async function CourseList({
@@ -78,7 +72,7 @@ export function CourseListSkeleton() {
 function CourseTableHeader() {
   return (
     <TableHeader>
-      <TableRow>
+      <AdminTableRow>
         <TableHead>Title</TableHead>
         <TableHead>Organization</TableHead>
         <TableHead>Language</TableHead>
@@ -86,14 +80,14 @@ function CourseTableHeader() {
         <TableHead className="text-right">Written lessons</TableHead>
         <TableHead>Published</TableHead>
         <TableHead>Created</TableHead>
-      </TableRow>
+      </AdminTableRow>
     </TableHeader>
   );
 }
 
 function CourseSkeletonRow() {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
         <Skeleton className="h-4 w-48" />
       </TableCell>
@@ -115,6 +109,6 @@ function CourseSkeletonRow() {
       <TableCell>
         <Skeleton className="h-4 w-24" />
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

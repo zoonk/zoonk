@@ -1,3 +1,4 @@
+import { AdminTableRow } from "@/components/admin-table-row";
 import {
   type CheckpointOutcomeRow,
   getCheckpointOutcomeTrend,
@@ -5,14 +6,7 @@ import {
 import { getExamResults } from "@/data/stats/get-exam-results";
 import { countGoalsByStatus, getGoalsReachedTrend } from "@/data/stats/get-goals-reached-trend";
 import { formatPercent } from "@/lib/format";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { AdminAnalysisTable } from "../_components/admin-analysis-table";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
 import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
@@ -168,18 +162,18 @@ async function ExamResultsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }
       ) : (
         <Table>
           <TableHeader>
-            <TableRow>
+            <AdminTableRow>
               <TableHead>Exam</TableHead>
               <TableHead className="text-right">Reports</TableHead>
               <TableHead className="text-right">Passed</TableHead>
               <TableHead className="text-right">Inside estimate</TableHead>
               <TableHead className="text-right">Avg. error</TableHead>
               <TableHead className="text-right">Avg. mocks</TableHead>
-            </TableRow>
+            </AdminTableRow>
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.examName}>
+              <AdminTableRow key={row.examName}>
                 <TableCell className="font-medium">{row.examName}</TableCell>
                 <TableCell className="text-right tabular-nums">
                   {row.reports.toLocaleString()}
@@ -200,7 +194,7 @@ async function ExamResultsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }
                 <TableCell className="text-right tabular-nums">
                   {row.avgMocks.toFixed(DECIMALS)}
                 </TableCell>
-              </TableRow>
+              </AdminTableRow>
             ))}
           </TableBody>
         </Table>

@@ -1,38 +1,32 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 export function SubscribersTable({ data }: { data: { plan: string; count: number }[] }) {
   return (
     <Table>
       <TableHeader>
-        <TableRow>
+        <AdminTableRow>
           <TableHead>Plan</TableHead>
           <TableHead className="text-right">Subscribers</TableHead>
-        </TableRow>
+        </AdminTableRow>
       </TableHeader>
 
       <TableBody>
         {data.length > 0 ? (
           data.map((sub) => (
-            <TableRow key={sub.plan}>
+            <AdminTableRow key={sub.plan}>
               <TableCell className="font-medium capitalize">{sub.plan}</TableCell>
               <TableCell className="text-right tabular-nums">
                 {sub.count.toLocaleString()}
               </TableCell>
-            </TableRow>
+            </AdminTableRow>
           ))
         ) : (
-          <TableRow>
+          <AdminTableRow>
             <TableCell className="text-muted-foreground" colSpan={2}>
               No active subscribers yet.
             </TableCell>
-          </TableRow>
+          </AdminTableRow>
         )}
       </TableBody>
     </Table>

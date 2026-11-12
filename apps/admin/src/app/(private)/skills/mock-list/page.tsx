@@ -1,5 +1,13 @@
 import dump from "@/app/(private)/_mock/data/skills.json";
-import { type Dump, Lead, MockList, MockSearch, MockSelect, MockViews, language } from "@/app/(private)/_mock/kit";
+import {
+  type Dump,
+  Lead,
+  MockList,
+  MockSearch,
+  MockSelect,
+  MockViews,
+  language,
+} from "@/app/(private)/_mock/kit";
 
 const COLUMNS = [
   { label: "Skill" },
@@ -31,7 +39,10 @@ export default function SkillsMockPage() {
             label="Who can see it"
             views={[{ active: true, label: "All" }, { label: "Public" }, { label: "Private" }]}
           />
-          <MockViews label="Merged" views={[{ active: true, label: "Hide merged" }, { label: "Show merged" }]} />
+          <MockViews
+            label="Merged"
+            views={[{ active: true, label: "Hide merged" }, { label: "Show merged" }]}
+          />
         </>
       }
     />

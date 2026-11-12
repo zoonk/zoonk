@@ -1,7 +1,8 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { listProvenanceCounts } from "@/data/ai/list-provenance-counts";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { provenanceTableLabels } from "./_utils/ai-labels";
 
 const columns: AdminTableColumn[] = [
@@ -23,12 +24,12 @@ async function ProvenanceTable({ days }: { days: number }) {
       isEmpty={rows.length === 0}
     >
       {rows.map((row) => (
-        <TableRow key={`${row.table}|${row.model}|${row.promptVersion}`}>
+        <AdminTableRow key={`${row.table}|${row.model}|${row.promptVersion}`}>
           <TableCell>{provenanceTableLabels[row.table]}</TableCell>
           <TableCell className="font-mono text-xs">{row.model}</TableCell>
           <TableCell className="font-mono text-xs">{row.promptVersion ?? "—"}</TableCell>
           <TableCell className="text-right tabular-nums">{row.rows.toLocaleString()}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

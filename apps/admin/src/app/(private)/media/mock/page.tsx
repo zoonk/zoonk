@@ -1,10 +1,15 @@
-import dump from "@/app/(private)/_mock/data/media.json";
 import lessons from "@/app/(private)/_mock/data/media-lessons.json";
+import dump from "@/app/(private)/_mock/data/media.json";
 import { type Dump, MockList, MockViews, day, language } from "@/app/(private)/_mock/kit";
 import { Button } from "@zoonk/ui/components/button";
 import { AudioLinesIcon } from "lucide-react";
 
-const COLUMNS = [{ label: "Picture or clip" }, { label: "Kind" }, { label: "Used in" }, { label: "Made" }];
+const COLUMNS = [
+  { label: "Picture or clip" },
+  { label: "Kind" },
+  { label: "Used in" },
+  { label: "Made" },
+];
 
 type Use = { course: string | null; lesson: string; screen: number };
 
@@ -28,7 +33,11 @@ export default function MediaMockPage() {
         return [
           <a className="flex items-center gap-4" data-slot="table-row-link" href="#" key="lead">
             {/* oxlint-disable-next-line next/no-img-element -- A static mock. */}
-            <img alt="" className="bg-muted h-20 w-16 shrink-0 rounded-md border object-cover" src={row[0]?.img} />
+            <img
+              alt=""
+              className="bg-muted h-20 w-16 shrink-0 rounded-md border object-cover"
+              src={row[0]?.img}
+            />
             <span className="flex min-w-0 flex-col">
               <span className="font-medium">{use ? use.lesson : "Not used in a lesson"}</span>
               <span className="text-muted-foreground text-xs">
@@ -36,7 +45,9 @@ export default function MediaMockPage() {
               </span>
             </span>
           </a>,
-          [row[2]?.text, row[3]?.text === "—" ? "Any language" : language(row[3]?.text)].join(" · "),
+          [row[2]?.text, row[3]?.text === "—" ? "Any language" : language(row[3]?.text)].join(
+            " · ",
+          ),
           row[7]?.text.replace("step", "screen"),
           day(row[9]?.text),
         ];

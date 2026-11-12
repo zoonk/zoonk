@@ -1,1 +1,1947 @@
-{"structure": {"mock": {"order": "1º dia: Linguagens, Ciências Humanas e redação. 2º dia: Ciências da Natureza e Matemática.", "scoring": {"method": "itemResponseTheory", "description": "Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente."}, "adaptive": false, "sections": [{"day": 1, "kind": "objective", "name": "Linguagens, Ciências Humanas e redação", "minutes": 330, "questions": 90}, {"day": 2, "kind": "objective", "name": "Ciências da Natureza e Matemática", "minutes": 300, "questions": 90}], "citations": [{"passage": "O primeiro dia de provas, em 8 de novembro de 2026, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, {"passage": "O segundo dia, em 15 de novembro de 2026, terá Ciências da Natureza e suas Tecnologias e Matemática e suas Tecnologias, com 5 horas de duração.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, {"passage": "As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}], "totalQuestions": 180, "timeLimitMinutes": null}, "rules": [{"text": "Cada questão tem uma única alternativa correta.", "citation": {"passage": "Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}}, {"text": "As notas das provas objetivas usam a Teoria de Resposta ao Item (TRI).", "citation": {"passage": "As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}}, {"text": "Dois avaliadores dão de 0 a 200 pontos em cada uma das cinco competências da redação.", "citation": {"passage": "A redação é corrigida por dois avaliadores, que atribuem de 0 a 200 pontos a cada uma das cinco competências.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}}, {"text": "Os portões fecham às 13h e as provas começam às 13h30, horário de Brasília.", "citation": {"passage": "Nos dois dias, os portões fecham às 13h e as provas começam às 13h30, no horário de Brasília.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}}], "formats": [{"kind": "multipleChoice", "options": 5, "citation": {"passage": "Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "description": "Múltipla escolha com cinco alternativas, de A a E"}, {"kind": "essay", "options": null, "citation": {"passage": "A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "description": "Redação dissertativo-argumentativa de até 30 linhas"}], "subjects": [{"name": "Linguagens, Códigos e suas Tecnologias", "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação", "Estudo das práticas corporais: a linguagem corporal como integradora social e formadora de identidade", "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania", "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos", "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos", "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa", "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística", "Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social"], "weight": null, "citation": {"passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": 45}, {"name": "Língua Inglesa", "partOf": "Linguagens, Códigos e suas Tecnologias", "topics": ["Vocábulos e expressões de textos em inglês e seu tema", "O inglês como meio de acesso a informações, tecnologias e culturas", "Textos em inglês: estruturas linguísticas, sua função e seu uso social", "Produção cultural em inglês como representação da diversidade cultural e linguística"], "weight": null, "citation": {"passage": "O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": null, "shortName": "Inglês", "choiceGroup": "Língua Estrangeira"}, {"name": "Língua Espanhola", "partOf": "Linguagens, Códigos e suas Tecnologias", "topics": ["Vocábulos e expressões de textos em espanhol e seu tema", "O espanhol como meio de acesso a informações, tecnologias e culturas", "Textos em espanhol: estruturas linguísticas, sua função e seu uso social", "Produção cultural em espanhol como representação da diversidade cultural e linguística"], "weight": null, "citation": {"passage": "O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": null, "shortName": "Espanhol", "choiceGroup": "Língua Estrangeira"}, {"name": "Ciências Humanas e suas Tecnologias", "topics": ["Diversidade cultural, conflitos e vida em sociedade", "Formas de organização social, movimentos sociais, pensamento político e ação do Estado", "Características e transformações das estruturas produtivas", "Os domínios naturais e a relação do ser humano com o ambiente", "Representação espacial"], "weight": null, "citation": {"passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": 45}, {"name": "Ciências da Natureza e suas Tecnologias", "topics": ["Conhecimentos básicos e fundamentais", "O movimento, o equilíbrio e a descoberta de leis físicas", "Energia, trabalho e potência", "A Mecânica e o funcionamento do Universo", "Fenômenos Elétricos e Magnéticos", "Oscilações, ondas, óptica e radiação", "O calor e os fenômenos térmicos", "Transformações Químicas", "Representação das transformações químicas", "Materiais, suas propriedades e usos", "Água", "Transformações Químicas e Energia", "Dinâmica das Transformações Químicas", "Transformação Química e Equilíbrio", "Compostos de Carbono", "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente", "Energias Químicas no Cotidiano", "Moléculas, células e tecidos", "Hereditariedade e diversidade da vida", "Identidade dos seres vivos", "Ecologia e ciências ambientais", "Origem e evolução da vida", "Qualidade de vida das populações humanas"], "weight": null, "citation": {"passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": 45, "topicGroups": [{"name": "Física", "topics": ["Conhecimentos básicos e fundamentais", "O movimento, o equilíbrio e a descoberta de leis físicas", "Energia, trabalho e potência", "A Mecânica e o funcionamento do Universo", "Fenômenos Elétricos e Magnéticos", "Oscilações, ondas, óptica e radiação", "O calor e os fenômenos térmicos"]}, {"name": "Química", "topics": ["Transformações Químicas", "Representação das transformações químicas", "Materiais, suas propriedades e usos", "Água", "Transformações Químicas e Energia", "Dinâmica das Transformações Químicas", "Transformação Química e Equilíbrio", "Compostos de Carbono", "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente", "Energias Químicas no Cotidiano"]}, {"name": "Biologia", "topics": ["Moléculas, células e tecidos", "Hereditariedade e diversidade da vida", "Identidade dos seres vivos", "Ecologia e ciências ambientais", "Origem e evolução da vida", "Qualidade de vida das populações humanas"]}]}, {"name": "Matemática e suas Tecnologias", "topics": ["Conhecimentos numéricos", "Conhecimentos geométricos", "Conhecimentos de estatística e probabilidade", "Conhecimentos algébricos", "Conhecimentos algébricos/geométricos"], "weight": null, "citation": {"passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": 45}, {"name": "Redação", "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": null, "citation": {"passage": "A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "questions": null}], "pastQuestions": {"source": {"url": "https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf", "title": "Gabarito do Enem 2025, 1º dia, Caderno 1 Azul (Inep)"}, "edition": "Enem 2025", "subjects": [{"name": "Língua Inglesa", "questions": 5}, {"name": "Língua Espanhola", "questions": 5}], "checkedAt": "2026-11-12T16:11:26.058Z"}}, "edition": {"year": 2026, "check": {"problems": [], "checkedAt": "2026-11-12T16:11:26.058Z"}, "dates": [{"date": "2026-05-25", "kind": "registrationStart", "label": "Início das inscrições", "citation": {"passage": "As inscrições vão de 25 de maio de 2026 a 12 de junho de 2026, na Página do Participante.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "startTime": null}, {"date": "2026-06-12", "kind": "registrationEnd", "label": "Fim das inscrições", "citation": {"passage": "As inscrições vão de 25 de maio de 2026 a 12 de junho de 2026, na Página do Participante.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "startTime": null}, {"date": "2026-11-08", "kind": "exam", "label": "1º dia de provas", "citation": {"passage": "O primeiro dia de provas, em 8 de novembro de 2026, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "startTime": "13:30"}, {"date": "2026-11-15", "kind": "exam", "label": "2º dia de provas", "citation": {"passage": "O segundo dia, em 15 de novembro de 2026, terá Ciências da Natureza e suas Tecnologias e Matemática e suas Tecnologias, com 5 horas de duração.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, "startTime": "13:30"}], "timeZone": "America/Sao_Paulo", "citations": [{"passage": "Edital do Exame Nacional do Ensino Médio (Enem) 2026.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}, {"passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.", "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"}], "noticeUrl": "https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem", "sourceHash": "124a9ba110fecfbd529630cb8015f84f2bd9e9d3c93d649399dd0f032573dda3", "questionCount": 180}, "topicFrequency": [{"basis": "Porcentagem cai em quase toda edição, em geral em compras, juros e variação de preços.", "level": "high", "topic": "Conhecimentos numéricos", "subject": "Matemática", "citation": {"passage": "Porcentagem aparece em praticamente todas as provas de Matemática, quase sempre em situações de compra, juros e variação de preços.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}, {"basis": "Ler gráficos e tabelas é um dos temas mais frequentes de Matemática.", "level": "high", "topic": "Conhecimentos de estatística e probabilidade", "subject": "Matemática", "citation": {"passage": "Leitura e interpretação de gráficos e tabelas é um dos temas mais frequentes de Matemática.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}, {"basis": "Funções aparecem com regularidade, ligadas a situações do dia a dia.", "level": "medium", "topic": "Conhecimentos algébricos", "subject": "Matemática", "citation": {"passage": "Funções aparecem com frequência média, em geral ligadas a situações do dia a dia.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}, {"basis": "O tema de Biologia mais cobrado em Ciências da Natureza.", "level": "high", "topic": "Ecologia e ciências ambientais", "subject": "Ciências da Natureza", "citation": {"passage": "Ecologia é o tema de Biologia mais cobrado em Ciências da Natureza.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}, {"basis": "Presença constante em Física, principalmente circuitos simples.", "level": "high", "topic": "Fenômenos Elétricos e Magnéticos", "subject": "Ciências da Natureza", "citation": {"passage": "Eletricidade, especialmente circuitos simples, é presença constante nas questões de Física.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}, {"basis": "A Primeira República e a Era Vargas estão entre os temas mais cobrados de História do Brasil.", "level": "high", "topic": "Formas de organização social, movimentos sociais, pensamento político e ação do Estado", "subject": "Ciências Humanas", "citation": {"passage": "A Primeira República e a Era Vargas estão entre os temas de História do Brasil mais cobrados.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}, {"basis": "A maior parte das questões de Linguagens parte da leitura de um texto.", "level": "high", "topic": "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação", "subject": "Linguagens", "citation": {"passage": "Interpretação de texto é a base da maior parte das questões de Linguagens.", "sourceId": "4256cede-9799-8019-810c-45900f383278"}, "appearances": null}], "graph": {"phases": [{"name": "ENEM", "milestone": null}], "skills": [{"area": "Ciências da Natureza", "name": "Interpretar medidas e unidades físicas", "phase": 0, "topics": ["Conhecimentos básicos e fundamentais"], "weight": 3, "lessons": 24, "skillId": "8a152fdd-df5b-8808-8f4e-9e8bd907de01", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Interpretar gráficos de movimento", "phase": 0, "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"], "weight": 4, "lessons": 32, "skillId": "3b0576df-aba9-88dd-8ee4-20b84df2be03", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar forças e equilíbrio", "phase": 0, "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"], "weight": 4, "lessons": 33, "skillId": "01a122ed-b690-7ef9-b599-5c52700cd967", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar cargas e campos elétricos", "phase": 0, "topics": ["Fenômenos Elétricos e Magnéticos"], "weight": 4, "lessons": 28, "skillId": "01a122ed-b690-7e9a-b478-ef9a30961a4a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar a propagação de ondas", "phase": 0, "topics": ["Oscilações, ondas, óptica e radiação"], "weight": 5, "lessons": 30, "skillId": "01a122ed-b690-7ea1-9fb6-54fea3ff6c5d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar trocas de calor", "phase": 0, "topics": ["O calor e os fenômenos térmicos"], "weight": 4, "lessons": 29, "skillId": "01a1221f-3757-7fbf-841e-19e4f15ab515", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Comparar propriedades dos materiais", "phase": 0, "topics": ["Materiais, suas propriedades e usos"], "weight": 3, "lessons": 23, "skillId": "01a122ed-b691-7057-b043-2cc0249473d6", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Interpretar modelos atômicos", "phase": 0, "topics": ["Transformações Químicas", "Representação das transformações químicas"], "weight": 3, "lessons": 29, "skillId": "01a122ed-b690-7fcc-ac2b-e84e1fa28d64", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Comparar propriedades periódicas", "phase": 0, "topics": ["Representação das transformações químicas"], "weight": 3, "lessons": 21, "skillId": "01a122ed-b691-70ed-bd88-151e261d77fa", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Relacionar ligações e propriedades", "phase": 0, "topics": ["Materiais, suas propriedades e usos"], "weight": 4, "lessons": 30, "skillId": "01a12220-bb3f-70cc-be04-8e001d907327", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Representar reações químicas", "phase": 0, "topics": ["Representação das transformações químicas"], "weight": 4, "lessons": 24, "skillId": "5aead42b-f3da-87f7-8773-0c56a05beef3", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Relacionar biomoléculas às funções celulares", "phase": 0, "topics": ["Moléculas, células e tecidos"], "weight": 5, "lessons": 27, "skillId": "01a122ed-b691-76b3-813f-f7f0a88802b1", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar o funcionamento celular", "phase": 0, "topics": ["Moléculas, células e tecidos"], "weight": 5, "lessons": 33, "skillId": "01a122ed-c0a4-7641-9281-4f383bfc8731", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Distinguir grupos de seres vivos", "phase": 0, "topics": ["Identidade dos seres vivos"], "weight": 5, "lessons": 25, "skillId": "0ea2ca58-688a-8223-8367-06da8d114069", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar por que a energia diminui a cada nível trófico", "phase": 0, "topics": ["Ecologia e ciências ambientais"], "weight": 5, "lessons": 15, "skillId": "36048e9e-fe2f-8b28-8cd4-79687e299886", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Estimar a energia que chega a cada nível", "phase": 0, "topics": ["Ecologia e ciências ambientais"], "weight": 5, "lessons": 15, "skillId": "3087cd2e-8cda-8c27-8460-27c536d22217", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Comparar e estimar grandezas numéricas", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 4, "lessons": 25, "skillId": "01a122ed-c0a4-766c-9235-217c1a0f713f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Resolver proporções com regra de três", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 35, "skillId": "0109beef-69b3-84a9-8ee2-794b284861cd", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Comparar potências e ordens de grandeza", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 3, "lessons": 34, "skillId": "dab570f8-0a21-8e64-8e96-46e075e7c7cb", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Transformar porcentagem em decimal", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 5, "skillId": "1e1d79bf-673c-81db-8a3f-55092f1b4728", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Calcular o preço com desconto", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 5, "skillId": "94ed0c37-faae-895a-8b89-0a05692f6187", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Achar o desconto real do “leve X, pague Y”", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 5, "skillId": "bc78c283-28c3-8bc0-8aac-999d41b789b1", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Transformar variação percentual em fator", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 5, "skillId": "79297227-99f5-85fd-8496-236c811afe5e", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Combinar variações percentuais seguidas", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 5, "skillId": "5fffc322-f2a5-8147-8b4e-058e8d712825", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Ler gráficos e tabelas", "phase": 0, "topics": ["Conhecimentos de estatística e probabilidade"], "weight": 5, "lessons": 30, "skillId": "588e45be-560f-86b2-824c-bb3c0479f598", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Calcular probabilidades simples", "phase": 0, "topics": ["Conhecimentos de estatística e probabilidade"], "weight": 5, "lessons": 28, "skillId": "f910d28c-835d-8890-8fd9-02d213a02c1d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Determinar perímetros e áreas", "phase": 0, "topics": ["Conhecimentos geométricos"], "weight": 4, "lessons": 30, "skillId": "cbfc72c4-8567-8a04-8f17-efc5d6dd5de0", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Representar relações e resolver equações", "phase": 0, "topics": ["Conhecimentos algébricos"], "weight": 4, "lessons": 35, "skillId": "01a122ed-c0a4-7f7b-af0d-db99e80c6af9", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Interpretar representações de funções", "phase": 0, "topics": ["Conhecimentos algébricos"], "weight": 4, "lessons": 33, "skillId": "01a122ed-c0a5-782b-a8ab-9132b16d70b3", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Inferir o que o texto sugere", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"], "weight": 5, "lessons": 36, "skillId": "7308c671-6098-8304-81d9-387f134f3c91", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Identificar a ideia central de um texto", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"], "weight": 5, "lessons": 26, "skillId": "72cfac8f-41bc-8c25-8d57-719a79340ae1", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Distinguir sequências discursivas", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"], "weight": 4, "lessons": 22, "skillId": "01a122ed-ade0-7a50-9112-5be68afc0f91", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Relacionar textos e contextos de circulação", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"], "weight": 4, "lessons": 27, "skillId": "01a122ed-ade1-72f1-9db2-f6102ffd9bec", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Interpretar textos multimodais", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação", "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"], "weight": 5, "lessons": 28, "skillId": "01a1221f-40fc-77ad-a11d-d8a466e14767", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Reconhecer variação linguística", "phase": 0, "topics": ["Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"], "weight": 5, "lessons": 28, "skillId": "01a122ed-ade1-7368-91ad-a81e1c90aff0", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Interpretar efeitos de escolhas lexicais", "phase": 0, "topics": ["Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"], "weight": 5, "lessons": 23, "skillId": "01a12220-9238-728b-85bd-dc1234aa287f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar a formação de identidades culturais", "phase": 0, "topics": ["Diversidade cultural, conflitos e vida em sociedade"], "weight": 3, "lessons": 26, "skillId": "01a122ed-ade1-73b4-a3ab-d158ba1de158", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Explicar conflitos e relações coloniais", "phase": 0, "topics": ["Diversidade cultural, conflitos e vida em sociedade"], "weight": 3, "lessons": 30, "skillId": "01a122ed-ade1-7e9d-9e0b-72640df157a4", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Explicar a política do café com leite", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 4, "lessons": 26, "skillId": "c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Comparar sistemas produtivos e relações de trabalho", "phase": 0, "topics": ["Características e transformações das estruturas produtivas"], "weight": 4, "lessons": 27, "skillId": "01a122ed-ade3-73bd-bf80-6754435d94ab", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Relacionar elementos dos domínios naturais", "phase": 0, "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"], "weight": 3, "lessons": 29, "skillId": "01a122ed-ade3-739e-9c29-8883784a81e4", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Interpretar escala, orientação e coordenadas", "phase": 0, "topics": ["Representação espacial"], "weight": 2, "lessons": 17, "skillId": "01a122ed-d055-7980-b358-73a242dff8c1", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Resolver problemas de movimento", "phase": 0, "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"], "weight": 4, "lessons": 30, "skillId": "01a122ed-d055-79cd-b28a-bb598aa51ee7", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Aplicar as leis de Newton", "phase": 0, "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"], "weight": 4, "lessons": 35, "skillId": "c39b3a18-567c-8d42-8c98-3047c278a9fe", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Relacionar trabalho, energia e potência", "phase": 0, "topics": ["Energia, trabalho e potência"], "weight": 4, "lessons": 34, "skillId": "01a122ed-d055-79ea-a0a8-376cd4b23492", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Aplicar a conservação da energia", "phase": 0, "topics": ["Energia, trabalho e potência"], "weight": 4, "lessons": 27, "skillId": "18a3150b-7aa4-89b3-8ee8-69125cc65533", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar fluidos e sistemas hidráulicos", "phase": 0, "topics": ["A Mecânica e o funcionamento do Universo"], "weight": 3, "lessons": 24, "skillId": "01a122ed-d055-7af8-bde2-f82302a42705", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Aplicar a lei de Ohm", "phase": 0, "topics": ["Fenômenos Elétricos e Magnéticos"], "weight": 5, "lessons": 17, "skillId": "6fdcc621-3a24-8aca-845b-7a7b6fc1a70c", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Resolver circuitos em série", "phase": 0, "topics": ["Fenômenos Elétricos e Magnéticos"], "weight": 5, "lessons": 17, "skillId": "24ee7f50-96cc-8f1b-86aa-78d31ee3ca9c", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Estimar o consumo elétrico", "phase": 0, "topics": ["Fenômenos Elétricos e Magnéticos"], "weight": 5, "lessons": 25, "skillId": "01a122ed-d055-7a74-82e1-fb2d9e34bf03", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar fenômenos ópticos", "phase": 0, "topics": ["Oscilações, ondas, óptica e radiação"], "weight": 4, "lessons": 27, "skillId": "01a122ed-d055-7bcc-9b7b-bbc28b2bd13f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar gases e máquinas térmicas", "phase": 0, "topics": ["O calor e os fenômenos térmicos"], "weight": 3, "lessons": 29, "skillId": "01a122ed-d055-7a92-b0b3-be41a373d63b", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Resolver proporções estequiométricas", "phase": 0, "topics": ["Representação das transformações químicas"], "weight": 4, "lessons": 38, "skillId": "11fec11d-f653-80c8-8fd0-f1a0a83cc59a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Distinguir transformações químicas", "phase": 0, "topics": ["Transformações Químicas"], "weight": 3, "lessons": 22, "skillId": "84c216b5-19f6-8b45-808a-d166ffed253e", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar soluções aquosas", "phase": 0, "topics": ["Materiais, suas propriedades e usos", "Água"], "weight": 4, "lessons": 28, "skillId": "01a122ed-ad8d-7627-904c-af9bb3543c9a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar energia nas reações", "phase": 0, "topics": ["Transformações Químicas e Energia"], "weight": 3, "lessons": 24, "skillId": "883b649b-6e4c-84bd-871c-b841bd7d65f7", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar a velocidade das reações", "phase": 0, "topics": ["Dinâmica das Transformações Químicas"], "weight": 3, "lessons": 24, "skillId": "01a1221f-3edb-7015-a5b9-35f8ffec09d7", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Reconhecer funções orgânicas", "phase": 0, "topics": ["Compostos de Carbono"], "weight": 5, "lessons": 31, "skillId": "119d27b2-56e2-8f37-8fd4-7a6cf5aeb36f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Interpretar pH e neutralização", "phase": 0, "topics": ["Água", "Transformação Química e Equilíbrio"], "weight": 4, "lessons": 24, "skillId": "01a122ed-ad8d-77ad-a0ba-6456080f6788", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Comparar processos energéticos celulares", "phase": 0, "topics": ["Moléculas, células e tecidos"], "weight": 5, "lessons": 32, "skillId": "01a122ed-ad8d-78a3-a0f5-d7e861991dfe", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Relacionar tecidos, órgãos e funções", "phase": 0, "topics": ["Moléculas, células e tecidos"], "weight": 4, "lessons": 26, "skillId": "1170aaec-f2c7-8542-8726-e688f79afceb", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar a expressão da informação genética", "phase": 0, "topics": ["Hereditariedade e diversidade da vida"], "weight": 4, "lessons": 29, "skillId": "01a122ed-ad8d-7ae1-9a8b-3f72dc9e870f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Resolver problemas de hereditariedade", "phase": 0, "topics": ["Hereditariedade e diversidade da vida"], "weight": 4, "lessons": 36, "skillId": "01a122ed-ad8e-7351-bf77-69933a1e1966", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Comparar reprodução e ciclos de vida", "phase": 0, "topics": ["Identidade dos seres vivos"], "weight": 4, "lessons": 27, "skillId": "01a122ed-ad8e-73b3-8df3-d667e36c00b9", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar a dinâmica das populações", "phase": 0, "topics": ["Ecologia e ciências ambientais"], "weight": 5, "lessons": 26, "skillId": "01a1221f-3f10-705a-b60b-62408caa6663", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Avaliar juros simples e compostos", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 5, "lessons": 33, "skillId": "1564b54b-9543-8539-8f35-71d1eb289ed2", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Analisar progressões numéricas", "phase": 0, "topics": ["Conhecimentos numéricos"], "weight": 3, "lessons": 27, "skillId": "01a1221f-3d46-7779-a9dd-e07cc2d7e988", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Contar possibilidades em problemas", "phase": 0, "topics": ["Conhecimentos de estatística e probabilidade"], "weight": 4, "lessons": 32, "skillId": "08e646b3-e04a-8c79-8a76-4adf99484a76", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Avaliar probabilidades condicionais", "phase": 0, "topics": ["Conhecimentos de estatística e probabilidade"], "weight": 4, "lessons": 27, "skillId": "01a1221f-410b-721a-b92e-9c42d82ad921", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Calcular média, mediana e moda", "phase": 0, "topics": ["Conhecimentos de estatística e probabilidade"], "weight": 5, "lessons": 29, "skillId": "cd7df8fe-2e93-8aba-8a68-cc1b5e269925", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Aplicar semelhança de figuras", "phase": 0, "topics": ["Conhecimentos geométricos"], "weight": 4, "lessons": 31, "skillId": "01a1221f-3f10-73fb-88e4-2e657abee28d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Resolver triângulos em situações geométricas", "phase": 0, "topics": ["Conhecimentos geométricos"], "weight": 3, "lessons": 31, "skillId": "01a122ed-b280-7560-be41-0658905e7c5f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Determinar áreas e volumes de sólidos", "phase": 0, "topics": ["Conhecimentos geométricos"], "weight": 4, "lessons": 34, "skillId": "fb75739d-c7be-81b7-8f0e-2fc688e7250e", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Modelar com função do 1º grau", "phase": 0, "topics": ["Conhecimentos algébricos"], "weight": 4, "lessons": 33, "skillId": "9ff1b74a-16d9-841e-8a51-04a26ac66a34", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Achar o vértice de uma parábola", "phase": 0, "topics": ["Conhecimentos algébricos"], "weight": 4, "lessons": 35, "skillId": "c8744aa1-5c68-89b8-811e-bd41c3a240b9", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Resolver sistemas e inequações", "phase": 0, "topics": ["Conhecimentos algébricos"], "weight": 3, "lessons": 27, "skillId": "01a122ed-b280-765a-a1ef-805d471909a7", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Interpretar mecanismos de coesão textual", "phase": 0, "topics": ["Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"], "weight": 5, "lessons": 28, "skillId": "d72f9507-4b45-8c6a-85c7-9050a7414837", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Avaliar efeitos da pontuação e sintaxe", "phase": 0, "topics": ["Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos", "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"], "weight": 5, "lessons": 28, "skillId": "fa968df1-fb07-8144-8129-7bb5cdfec37b", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Julgar a adequação da norma-padrão", "phase": 0, "topics": ["Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"], "weight": 5, "lessons": 29, "skillId": "602a75dc-a1c6-8d21-8890-48d0fffec49e", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Analisar preconceito linguístico e identidade", "phase": 0, "topics": ["Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"], "weight": 4, "lessons": 25, "skillId": "01a122ed-bc01-7d67-a9bb-ba9e90a083d7", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Identificar tese e argumentos", "phase": 0, "topics": ["Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"], "weight": 4, "lessons": 29, "skillId": "01a122ed-bc01-7d92-ba77-34bacdcee285", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Avaliar estratégias persuasivas", "phase": 0, "topics": ["Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"], "weight": 4, "lessons": 31, "skillId": "9d7746bc-2826-8e5c-888a-f6888be72a00", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Comparar posições argumentativas", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação", "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"], "weight": 4, "lessons": 28, "skillId": "01a122ed-bc02-723a-9835-728a5adeee1f", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Interpretar gêneros jornalísticos e publicitários", "phase": 0, "topics": ["Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação", "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"], "weight": 4, "lessons": 28, "skillId": "01a122ed-bc02-7b1a-94d4-b8dc859fad16", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Língua Inglesa", "name": "Ler textos em inglês no ENEM", "phase": 0, "topics": ["Vocábulos e expressões de textos em inglês e seu tema", "O inglês como meio de acesso a informações, tecnologias e culturas", "Textos em inglês: estruturas linguísticas, sua função e seu uso social", "Produção cultural em inglês como representação da diversidade cultural e linguística"], "weight": 2, "lessons": 12, "skillId": "1806f54c-3469-85c3-84d9-033eed7c17ce", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Língua Espanhola", "name": "Ler textos em espanhol no ENEM", "phase": 0, "topics": ["Vocábulos e expressões de textos em espanhol e seu tema", "O espanhol como meio de acesso a informações, tecnologias e culturas", "Textos em espanhol: estruturas linguísticas, sua função e seu uso social", "Produção cultural em espanhol como representação da diversidade cultural e linguística"], "weight": 2, "lessons": 12, "skillId": "8edf2834-28d3-84d2-831d-7a97d9abd517", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Analisar efeitos de figuras de linguagem", "phase": 0, "topics": ["Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania", "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"], "weight": 4, "lessons": 25, "skillId": "01a122ed-bc03-749b-bde0-6f71cd6b8278", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar o protagonismo indígena e afro-brasileiro", "phase": 0, "topics": ["Diversidade cultural, conflitos e vida em sociedade"], "weight": 3, "lessons": 30, "skillId": "01a122ed-bc03-7908-945f-a2827ef9db9b", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Comparar ideias políticas e seus contextos", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 4, "lessons": 28, "skillId": "01a122ed-bc03-7c01-9aaa-3b5eee25826a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar instituições democráticas e direitos", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 5, "lessons": 34, "skillId": "4d8029e4-f952-8f87-80f7-c5e5505473a9", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar movimentos sociais e reivindicações", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 4, "lessons": 30, "skillId": "01a122ed-bc03-72f4-9cac-018ee1a53823", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Explicar transformações da produção industrial", "phase": 0, "topics": ["Características e transformações das estruturas produtivas"], "weight": 4, "lessons": 35, "skillId": "01a12220-f93b-7128-8e92-9a0ea2d1965a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Descrever a Era Vargas", "phase": 0, "topics": ["Características e transformações das estruturas produtivas"], "weight": 4, "lessons": 33, "skillId": "f43cdd8f-fc41-8de5-8774-db17ab6ede67", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar urbanização e desigualdades socioespaciais", "phase": 0, "topics": ["Características e transformações das estruturas produtivas"], "weight": 4, "lessons": 26, "skillId": "4960b7eb-6056-8d28-832c-5d245aa07421", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Relacionar água e solos à ocupação", "phase": 0, "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"], "weight": 3, "lessons": 29, "skillId": "01a122ed-b3b5-773c-886d-1692124b9b07", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Interpretar mapas temáticos e projeções", "phase": 0, "topics": ["Representação espacial"], "weight": 2, "lessons": 19, "skillId": "01a122ed-b3b5-77d6-a341-773bd1dd3c89", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Conhecer as cinco competências da redação", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 24, "outcome": true, "skillId": "5dbcc48f-5cf6-8de9-88af-5ff186e54f50", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Selecionar repertório pertinente à argumentação", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 26, "outcome": true, "skillId": "32043737-6378-8921-8f3b-e02d3ea34ec0", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Planejar a progressão dos argumentos", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 27, "outcome": true, "skillId": "0fd72941-99a3-859a-85ab-eaf68640aca6", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar fenômenos gravitacionais", "phase": 0, "topics": ["A Mecânica e o funcionamento do Universo"], "weight": 3, "lessons": 22, "skillId": "01a1221f-3d73-7d4c-8eae-d769795ce278", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar magnetismo e indução", "phase": 0, "topics": ["Fenômenos Elétricos e Magnéticos"], "weight": 4, "lessons": 27, "skillId": "4b9e20ab-5cd1-8367-81c6-5d7e087db7c5", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Avaliar radiações eletromagnéticas", "phase": 0, "topics": ["Oscilações, ondas, óptica e radiação"], "weight": 4, "lessons": 23, "skillId": "01a122ed-b3b5-76c3-8e6f-12513fe44e9e", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Avaliar tratamento e qualidade da água", "phase": 0, "topics": ["Água", "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"], "weight": 4, "lessons": 24, "skillId": "01a122ed-b3b5-7da6-87b2-dffb80334391", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar oxidação, pilhas e eletrólise", "phase": 0, "topics": ["Transformações Químicas e Energia", "Energias Químicas no Cotidiano"], "weight": 4, "lessons": 32, "skillId": "01a122ed-b3b7-71b6-beab-d492ad7563cd", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Prever deslocamentos do equilíbrio químico", "phase": 0, "topics": ["Transformação Química e Equilíbrio"], "weight": 4, "lessons": 32, "skillId": "5f2af595-d3bc-8b89-8f4d-41fa009a1514", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Analisar reações orgânicas e polímeros", "phase": 0, "topics": ["Compostos de Carbono", "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"], "weight": 4, "lessons": 26, "skillId": "01a122ed-bc06-7206-b403-467b80ab5dec", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Avaliar impactos de processos químicos", "phase": 0, "topics": ["Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"], "weight": 4, "lessons": 25, "skillId": "01a1221f-410a-7b51-922c-5ecc3d7d7002", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Comparar combustíveis e emissões", "phase": 0, "topics": ["Energias Químicas no Cotidiano"], "weight": 4, "lessons": 25, "skillId": "01a122ed-bc06-774a-851c-5771006a3e40", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar a evolução biológica", "phase": 0, "topics": ["Origem e evolução da vida"], "weight": 4, "lessons": 29, "skillId": "ae1856b2-19e5-83af-849e-f86eed7b4407", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Explicar a fisiologia humana", "phase": 0, "topics": ["Qualidade de vida das populações humanas"], "weight": 4, "lessons": 33, "skillId": "01a122ed-bc06-7989-8c87-81723a72d04a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Avaliar ciclos e impactos ambientais", "phase": 0, "topics": ["Ecologia e ciências ambientais"], "weight": 5, "lessons": 30, "skillId": "01a122ed-bc06-7d7f-a046-3f7081367bdd", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Avaliar a prevenção de doenças", "phase": 0, "topics": ["Qualidade de vida das populações humanas"], "weight": 4, "lessons": 29, "skillId": "e802ed2b-1b79-87e9-8a38-8dfe65e097d6", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências da Natureza", "name": "Avaliar aplicações da biotecnologia", "phase": 0, "topics": ["Hereditariedade e diversidade da vida", "Qualidade de vida das populações humanas"], "weight": 3, "lessons": 24, "skillId": "01a122ed-bc06-7d98-9481-3f9bbd3bb496", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Analisar transformações no plano", "phase": 0, "topics": ["Conhecimentos geométricos"], "weight": 2, "lessons": 24, "skillId": "01a122ed-bc06-7fe5-9e00-9fddc8e9d968", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Analisar funções exponenciais e logarítmicas", "phase": 0, "topics": ["Conhecimentos algébricos"], "weight": 3, "lessons": 34, "skillId": "01a122ed-bc07-7952-8b9b-9fbdf6dbd768", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Analisar pontos e retas cartesianas", "phase": 0, "topics": ["Conhecimentos algébricos/geométricos"], "weight": 3, "lessons": 34, "skillId": "01a122ed-bc07-7a86-936e-e7caf0e0c557", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Analisar circunferências no plano cartesiano", "phase": 0, "topics": ["Conhecimentos algébricos/geométricos"], "weight": 2, "lessons": 24, "skillId": "01a122ed-b3d7-792b-b290-5a1f6424f40d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Matemática", "name": "Modelar problemas algébrico-geométricos", "phase": 0, "topics": ["Conhecimentos algébricos/geométricos"], "weight": 4, "lessons": 30, "skillId": "01a122ed-b3d7-7995-85b2-d7631e667e35", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Relacionar literatura e contexto social", "phase": 0, "topics": ["Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos"], "weight": 2, "lessons": 25, "skillId": "01a1221f-3d72-7e07-9bdd-c41a2f008aca", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Analisar construção narrativa e poética", "phase": 0, "topics": ["Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos"], "weight": 2, "lessons": 26, "skillId": "2dabbe45-cde0-879d-8b1e-9ff0410aaee1", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Interpretar representações artísticas", "phase": 0, "topics": ["Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania"], "weight": 4, "lessons": 30, "skillId": "30715e8b-6ff4-8c4a-82ef-39e2c108469a", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Relacionar práticas corporais e identidades", "phase": 0, "topics": ["Estudo das práticas corporais: a linguagem corporal como integradora social e formadora de identidade"], "weight": 3, "lessons": 28, "skillId": "79eb23c5-dc8a-8217-8316-909e6dd516ec", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Analisar usos sociais das tecnologias digitais", "phase": 0, "topics": ["Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social"], "weight": 2, "lessons": 24, "skillId": "7323ceed-d803-8d2e-86b8-427fd9808cc3", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Interpretar gêneros digitais", "phase": 0, "topics": ["Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social"], "weight": 2, "lessons": 22, "skillId": "01a1221f-3d72-7f09-8042-235782cf3d91", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Comparar representações entre mídias", "phase": 0, "topics": ["Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania"], "weight": 3, "lessons": 25, "skillId": "01a122ed-b3d7-793f-a1da-ac8072848afa", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Linguagens", "name": "Explicar efeitos da intertextualidade", "phase": 0, "topics": ["Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania", "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos", "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"], "weight": 3, "lessons": 29, "skillId": "01a122ed-b3d7-7aa5-b55a-cd9bce80e286", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar racismo e desigualdades históricas", "phase": 0, "topics": ["Diversidade cultural, conflitos e vida em sociedade"], "weight": 3, "lessons": 29, "skillId": "8eb47082-22a1-8d45-8a0f-07cc6b5cb7ba", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Explicar migrações e conflitos sociais", "phase": 0, "topics": ["Diversidade cultural, conflitos e vida em sociedade"], "weight": 3, "lessons": 26, "skillId": "01a122ed-b3d7-7a27-a873-e4e9c5dd89ba", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Distinguir democracia e autoritarismo", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 4, "lessons": 30, "skillId": "01a122ed-c0a5-7914-9970-4ce7012121ea", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Avaliar políticas públicas e seus efeitos", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 4, "lessons": 29, "skillId": "ca65a5f4-cbd8-84bd-8e9f-359367dfbb6d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar disputas geopolíticas", "phase": 0, "topics": ["Formas de organização social, movimentos sociais, pensamento político e ação do Estado"], "weight": 4, "lessons": 28, "skillId": "b708973c-d3ad-8b39-83f4-cdc2f7f7311d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Analisar a produção globalizada", "phase": 0, "topics": ["Características e transformações das estruturas produtivas"], "weight": 4, "lessons": 33, "skillId": "01a122ed-c0a5-79c1-ab88-7936cd6b6aa9", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Explicar processos de degradação ambiental", "phase": 0, "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"], "weight": 3, "lessons": 28, "skillId": "01a122ed-c0a6-7207-8504-06b71edfaac2", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Comparar usos de recursos e energia", "phase": 0, "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"], "weight": 3, "lessons": 27, "skillId": "01a122ed-c0a6-7843-a640-a31f7935be2d", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Ciências Humanas", "name": "Avaliar respostas à crise ambiental", "phase": 0, "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"], "weight": 3, "lessons": 31, "skillId": "01a122ed-c0a6-7b0a-adba-55b10e385391", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Redigir uma introdução com tese", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 23, "outcome": true, "skillId": "34503598-c7bd-8ad6-89e9-4317df0c10aa", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Desenvolver argumentos sustentados por evidências", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 32, "outcome": true, "skillId": "3a8a916b-55eb-8f5b-8432-2324fb2668ee", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Escrever a conclusão da redação", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 26, "outcome": true, "skillId": "b0430a63-e2ad-8483-8168-3bf49f59f390", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Escrever uma proposta de intervenção completa", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 28, "outcome": true, "skillId": "cb17a9f0-0d0f-8302-82af-d357c7531d2b", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Revisar a norma-padrão da redação", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 28, "outcome": true, "skillId": "01a122ed-c0a6-7cde-87f3-d435f7ce2c5c", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Redação", "name": "Produzir uma redação completa sob tempo", "phase": 0, "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"], "weight": 5, "lessons": 31, "outcome": true, "skillId": "d567d78d-01cf-804c-87d6-0d7869463fbb", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Estratégia de prova", "name": "Gerenciar o tempo nas provas do ENEM", "phase": 0, "topics": [], "weight": 3, "lessons": 15, "skillId": "01a122ed-b3b7-7551-a2f6-8362949df590", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}, {"area": "Estratégia de prova", "name": "Decidir entre alternativas nas questões do ENEM", "phase": 0, "topics": [], "weight": 3, "lessons": 15, "skillId": "28d51af1-72a9-8aec-83ec-14e5e32f2fbf", "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]}]}}
+{
+  "structure": {
+    "mock": {
+      "order": "1º dia: Linguagens, Ciências Humanas e redação. 2º dia: Ciências da Natureza e Matemática.",
+      "scoring": {
+        "method": "itemResponseTheory",
+        "description": "Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente."
+      },
+      "adaptive": false,
+      "sections": [
+        {
+          "day": 1,
+          "kind": "objective",
+          "name": "Linguagens, Ciências Humanas e redação",
+          "minutes": 330,
+          "questions": 90
+        },
+        {
+          "day": 2,
+          "kind": "objective",
+          "name": "Ciências da Natureza e Matemática",
+          "minutes": 300,
+          "questions": 90
+        }
+      ],
+      "citations": [
+        {
+          "passage": "O primeiro dia de provas, em 8 de novembro de 2026, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        {
+          "passage": "O segundo dia, em 15 de novembro de 2026, terá Ciências da Natureza e suas Tecnologias e Matemática e suas Tecnologias, com 5 horas de duração.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        {
+          "passage": "As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        }
+      ],
+      "totalQuestions": 180,
+      "timeLimitMinutes": null
+    },
+    "rules": [
+      {
+        "text": "Cada questão tem uma única alternativa correta.",
+        "citation": {
+          "passage": "Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        }
+      },
+      {
+        "text": "As notas das provas objetivas usam a Teoria de Resposta ao Item (TRI).",
+        "citation": {
+          "passage": "As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        }
+      },
+      {
+        "text": "Dois avaliadores dão de 0 a 200 pontos em cada uma das cinco competências da redação.",
+        "citation": {
+          "passage": "A redação é corrigida por dois avaliadores, que atribuem de 0 a 200 pontos a cada uma das cinco competências.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        }
+      },
+      {
+        "text": "Os portões fecham às 13h e as provas começam às 13h30, horário de Brasília.",
+        "citation": {
+          "passage": "Nos dois dias, os portões fecham às 13h e as provas começam às 13h30, no horário de Brasília.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        }
+      }
+    ],
+    "formats": [
+      {
+        "kind": "multipleChoice",
+        "options": 5,
+        "citation": {
+          "passage": "Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "description": "Múltipla escolha com cinco alternativas, de A a E"
+      },
+      {
+        "kind": "essay",
+        "options": null,
+        "citation": {
+          "passage": "A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "description": "Redação dissertativo-argumentativa de até 30 linhas"
+      }
+    ],
+    "subjects": [
+      {
+        "name": "Linguagens, Códigos e suas Tecnologias",
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
+          "Estudo das práticas corporais: a linguagem corporal como integradora social e formadora de identidade",
+          "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania",
+          "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos",
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos",
+          "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa",
+          "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística",
+          "Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social"
+        ],
+        "weight": null,
+        "citation": {
+          "passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": 45
+      },
+      {
+        "name": "Língua Inglesa",
+        "partOf": "Linguagens, Códigos e suas Tecnologias",
+        "topics": [
+          "Vocábulos e expressões de textos em inglês e seu tema",
+          "O inglês como meio de acesso a informações, tecnologias e culturas",
+          "Textos em inglês: estruturas linguísticas, sua função e seu uso social",
+          "Produção cultural em inglês como representação da diversidade cultural e linguística"
+        ],
+        "weight": null,
+        "citation": {
+          "passage": "O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": null,
+        "shortName": "Inglês",
+        "choiceGroup": "Língua Estrangeira"
+      },
+      {
+        "name": "Língua Espanhola",
+        "partOf": "Linguagens, Códigos e suas Tecnologias",
+        "topics": [
+          "Vocábulos e expressões de textos em espanhol e seu tema",
+          "O espanhol como meio de acesso a informações, tecnologias e culturas",
+          "Textos em espanhol: estruturas linguísticas, sua função e seu uso social",
+          "Produção cultural em espanhol como representação da diversidade cultural e linguística"
+        ],
+        "weight": null,
+        "citation": {
+          "passage": "O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": null,
+        "shortName": "Espanhol",
+        "choiceGroup": "Língua Estrangeira"
+      },
+      {
+        "name": "Ciências Humanas e suas Tecnologias",
+        "topics": [
+          "Diversidade cultural, conflitos e vida em sociedade",
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado",
+          "Características e transformações das estruturas produtivas",
+          "Os domínios naturais e a relação do ser humano com o ambiente",
+          "Representação espacial"
+        ],
+        "weight": null,
+        "citation": {
+          "passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": 45
+      },
+      {
+        "name": "Ciências da Natureza e suas Tecnologias",
+        "topics": [
+          "Conhecimentos básicos e fundamentais",
+          "O movimento, o equilíbrio e a descoberta de leis físicas",
+          "Energia, trabalho e potência",
+          "A Mecânica e o funcionamento do Universo",
+          "Fenômenos Elétricos e Magnéticos",
+          "Oscilações, ondas, óptica e radiação",
+          "O calor e os fenômenos térmicos",
+          "Transformações Químicas",
+          "Representação das transformações químicas",
+          "Materiais, suas propriedades e usos",
+          "Água",
+          "Transformações Químicas e Energia",
+          "Dinâmica das Transformações Químicas",
+          "Transformação Química e Equilíbrio",
+          "Compostos de Carbono",
+          "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+          "Energias Químicas no Cotidiano",
+          "Moléculas, células e tecidos",
+          "Hereditariedade e diversidade da vida",
+          "Identidade dos seres vivos",
+          "Ecologia e ciências ambientais",
+          "Origem e evolução da vida",
+          "Qualidade de vida das populações humanas"
+        ],
+        "weight": null,
+        "citation": {
+          "passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": 45,
+        "topicGroups": [
+          {
+            "name": "Física",
+            "topics": [
+              "Conhecimentos básicos e fundamentais",
+              "O movimento, o equilíbrio e a descoberta de leis físicas",
+              "Energia, trabalho e potência",
+              "A Mecânica e o funcionamento do Universo",
+              "Fenômenos Elétricos e Magnéticos",
+              "Oscilações, ondas, óptica e radiação",
+              "O calor e os fenômenos térmicos"
+            ]
+          },
+          {
+            "name": "Química",
+            "topics": [
+              "Transformações Químicas",
+              "Representação das transformações químicas",
+              "Materiais, suas propriedades e usos",
+              "Água",
+              "Transformações Químicas e Energia",
+              "Dinâmica das Transformações Químicas",
+              "Transformação Química e Equilíbrio",
+              "Compostos de Carbono",
+              "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+              "Energias Químicas no Cotidiano"
+            ]
+          },
+          {
+            "name": "Biologia",
+            "topics": [
+              "Moléculas, células e tecidos",
+              "Hereditariedade e diversidade da vida",
+              "Identidade dos seres vivos",
+              "Ecologia e ciências ambientais",
+              "Origem e evolução da vida",
+              "Qualidade de vida das populações humanas"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Matemática e suas Tecnologias",
+        "topics": [
+          "Conhecimentos numéricos",
+          "Conhecimentos geométricos",
+          "Conhecimentos de estatística e probabilidade",
+          "Conhecimentos algébricos",
+          "Conhecimentos algébricos/geométricos"
+        ],
+        "weight": null,
+        "citation": {
+          "passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": 45
+      },
+      {
+        "name": "Redação",
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": null,
+        "citation": {
+          "passage": "A redação é um texto dissertativo-argumentativo sobre um tema de ordem social, científica, cultural ou política, com até 30 linhas.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "questions": null
+      }
+    ],
+    "pastQuestions": {
+      "source": {
+        "url": "https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf",
+        "title": "Gabarito do Enem 2025, 1º dia, Caderno 1 Azul (Inep)"
+      },
+      "edition": "Enem 2025",
+      "subjects": [
+        { "name": "Língua Inglesa", "questions": 5 },
+        { "name": "Língua Espanhola", "questions": 5 }
+      ],
+      "checkedAt": "2026-11-12T16:11:26.058Z"
+    }
+  },
+  "edition": {
+    "year": 2026,
+    "check": { "problems": [], "checkedAt": "2026-11-12T16:11:26.058Z" },
+    "dates": [
+      {
+        "date": "2026-05-25",
+        "kind": "registrationStart",
+        "label": "Início das inscrições",
+        "citation": {
+          "passage": "As inscrições vão de 25 de maio de 2026 a 12 de junho de 2026, na Página do Participante.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "startTime": null
+      },
+      {
+        "date": "2026-06-12",
+        "kind": "registrationEnd",
+        "label": "Fim das inscrições",
+        "citation": {
+          "passage": "As inscrições vão de 25 de maio de 2026 a 12 de junho de 2026, na Página do Participante.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "startTime": null
+      },
+      {
+        "date": "2026-11-08",
+        "kind": "exam",
+        "label": "1º dia de provas",
+        "citation": {
+          "passage": "O primeiro dia de provas, em 8 de novembro de 2026, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "startTime": "13:30"
+      },
+      {
+        "date": "2026-11-15",
+        "kind": "exam",
+        "label": "2º dia de provas",
+        "citation": {
+          "passage": "O segundo dia, em 15 de novembro de 2026, terá Ciências da Natureza e suas Tecnologias e Matemática e suas Tecnologias, com 5 horas de duração.",
+          "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+        },
+        "startTime": "13:30"
+      }
+    ],
+    "timeZone": "America/Sao_Paulo",
+    "citations": [
+      {
+        "passage": "Edital do Exame Nacional do Ensino Médio (Enem) 2026.",
+        "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+      },
+      {
+        "passage": "O exame é composto por quatro provas objetivas, cada uma com 45 questões de múltipla escolha, e por uma redação em língua portuguesa.",
+        "sourceId": "4b91f405-f3c8-83f3-8be4-9fcb435ed06b"
+      }
+    ],
+    "noticeUrl": "https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem",
+    "sourceHash": "124a9ba110fecfbd529630cb8015f84f2bd9e9d3c93d649399dd0f032573dda3",
+    "questionCount": 180
+  },
+  "topicFrequency": [
+    {
+      "basis": "Porcentagem cai em quase toda edição, em geral em compras, juros e variação de preços.",
+      "level": "high",
+      "topic": "Conhecimentos numéricos",
+      "subject": "Matemática",
+      "citation": {
+        "passage": "Porcentagem aparece em praticamente todas as provas de Matemática, quase sempre em situações de compra, juros e variação de preços.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    },
+    {
+      "basis": "Ler gráficos e tabelas é um dos temas mais frequentes de Matemática.",
+      "level": "high",
+      "topic": "Conhecimentos de estatística e probabilidade",
+      "subject": "Matemática",
+      "citation": {
+        "passage": "Leitura e interpretação de gráficos e tabelas é um dos temas mais frequentes de Matemática.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    },
+    {
+      "basis": "Funções aparecem com regularidade, ligadas a situações do dia a dia.",
+      "level": "medium",
+      "topic": "Conhecimentos algébricos",
+      "subject": "Matemática",
+      "citation": {
+        "passage": "Funções aparecem com frequência média, em geral ligadas a situações do dia a dia.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    },
+    {
+      "basis": "O tema de Biologia mais cobrado em Ciências da Natureza.",
+      "level": "high",
+      "topic": "Ecologia e ciências ambientais",
+      "subject": "Ciências da Natureza",
+      "citation": {
+        "passage": "Ecologia é o tema de Biologia mais cobrado em Ciências da Natureza.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    },
+    {
+      "basis": "Presença constante em Física, principalmente circuitos simples.",
+      "level": "high",
+      "topic": "Fenômenos Elétricos e Magnéticos",
+      "subject": "Ciências da Natureza",
+      "citation": {
+        "passage": "Eletricidade, especialmente circuitos simples, é presença constante nas questões de Física.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    },
+    {
+      "basis": "A Primeira República e a Era Vargas estão entre os temas mais cobrados de História do Brasil.",
+      "level": "high",
+      "topic": "Formas de organização social, movimentos sociais, pensamento político e ação do Estado",
+      "subject": "Ciências Humanas",
+      "citation": {
+        "passage": "A Primeira República e a Era Vargas estão entre os temas de História do Brasil mais cobrados.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    },
+    {
+      "basis": "A maior parte das questões de Linguagens parte da leitura de um texto.",
+      "level": "high",
+      "topic": "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
+      "subject": "Linguagens",
+      "citation": {
+        "passage": "Interpretação de texto é a base da maior parte das questões de Linguagens.",
+        "sourceId": "4256cede-9799-8019-810c-45900f383278"
+      },
+      "appearances": null
+    }
+  ],
+  "graph": {
+    "phases": [{ "name": "ENEM", "milestone": null }],
+    "skills": [
+      {
+        "area": "Ciências da Natureza",
+        "name": "Interpretar medidas e unidades físicas",
+        "phase": 0,
+        "topics": ["Conhecimentos básicos e fundamentais"],
+        "weight": 3,
+        "lessons": 24,
+        "skillId": "8a152fdd-df5b-8808-8f4e-9e8bd907de01",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Interpretar gráficos de movimento",
+        "phase": 0,
+        "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"],
+        "weight": 4,
+        "lessons": 32,
+        "skillId": "3b0576df-aba9-88dd-8ee4-20b84df2be03",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar forças e equilíbrio",
+        "phase": 0,
+        "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"],
+        "weight": 4,
+        "lessons": 33,
+        "skillId": "01a122ed-b690-7ef9-b599-5c52700cd967",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar cargas e campos elétricos",
+        "phase": 0,
+        "topics": ["Fenômenos Elétricos e Magnéticos"],
+        "weight": 4,
+        "lessons": 28,
+        "skillId": "01a122ed-b690-7e9a-b478-ef9a30961a4a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar a propagação de ondas",
+        "phase": 0,
+        "topics": ["Oscilações, ondas, óptica e radiação"],
+        "weight": 5,
+        "lessons": 30,
+        "skillId": "01a122ed-b690-7ea1-9fb6-54fea3ff6c5d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar trocas de calor",
+        "phase": 0,
+        "topics": ["O calor e os fenômenos térmicos"],
+        "weight": 4,
+        "lessons": 29,
+        "skillId": "01a1221f-3757-7fbf-841e-19e4f15ab515",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Comparar propriedades dos materiais",
+        "phase": 0,
+        "topics": ["Materiais, suas propriedades e usos"],
+        "weight": 3,
+        "lessons": 23,
+        "skillId": "01a122ed-b691-7057-b043-2cc0249473d6",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Interpretar modelos atômicos",
+        "phase": 0,
+        "topics": ["Transformações Químicas", "Representação das transformações químicas"],
+        "weight": 3,
+        "lessons": 29,
+        "skillId": "01a122ed-b690-7fcc-ac2b-e84e1fa28d64",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Comparar propriedades periódicas",
+        "phase": 0,
+        "topics": ["Representação das transformações químicas"],
+        "weight": 3,
+        "lessons": 21,
+        "skillId": "01a122ed-b691-70ed-bd88-151e261d77fa",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Relacionar ligações e propriedades",
+        "phase": 0,
+        "topics": ["Materiais, suas propriedades e usos"],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "01a12220-bb3f-70cc-be04-8e001d907327",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Representar reações químicas",
+        "phase": 0,
+        "topics": ["Representação das transformações químicas"],
+        "weight": 4,
+        "lessons": 24,
+        "skillId": "5aead42b-f3da-87f7-8773-0c56a05beef3",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Relacionar biomoléculas às funções celulares",
+        "phase": 0,
+        "topics": ["Moléculas, células e tecidos"],
+        "weight": 5,
+        "lessons": 27,
+        "skillId": "01a122ed-b691-76b3-813f-f7f0a88802b1",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar o funcionamento celular",
+        "phase": 0,
+        "topics": ["Moléculas, células e tecidos"],
+        "weight": 5,
+        "lessons": 33,
+        "skillId": "01a122ed-c0a4-7641-9281-4f383bfc8731",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Distinguir grupos de seres vivos",
+        "phase": 0,
+        "topics": ["Identidade dos seres vivos"],
+        "weight": 5,
+        "lessons": 25,
+        "skillId": "0ea2ca58-688a-8223-8367-06da8d114069",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar por que a energia diminui a cada nível trófico",
+        "phase": 0,
+        "topics": ["Ecologia e ciências ambientais"],
+        "weight": 5,
+        "lessons": 15,
+        "skillId": "36048e9e-fe2f-8b28-8cd4-79687e299886",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Estimar a energia que chega a cada nível",
+        "phase": 0,
+        "topics": ["Ecologia e ciências ambientais"],
+        "weight": 5,
+        "lessons": 15,
+        "skillId": "3087cd2e-8cda-8c27-8460-27c536d22217",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Comparar e estimar grandezas numéricas",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 4,
+        "lessons": 25,
+        "skillId": "01a122ed-c0a4-766c-9235-217c1a0f713f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Resolver proporções com regra de três",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 35,
+        "skillId": "0109beef-69b3-84a9-8ee2-794b284861cd",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Comparar potências e ordens de grandeza",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 3,
+        "lessons": 34,
+        "skillId": "dab570f8-0a21-8e64-8e96-46e075e7c7cb",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Transformar porcentagem em decimal",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 5,
+        "skillId": "1e1d79bf-673c-81db-8a3f-55092f1b4728",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Calcular o preço com desconto",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 5,
+        "skillId": "94ed0c37-faae-895a-8b89-0a05692f6187",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Achar o desconto real do “leve X, pague Y”",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 5,
+        "skillId": "bc78c283-28c3-8bc0-8aac-999d41b789b1",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Transformar variação percentual em fator",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 5,
+        "skillId": "79297227-99f5-85fd-8496-236c811afe5e",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Combinar variações percentuais seguidas",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 5,
+        "skillId": "5fffc322-f2a5-8147-8b4e-058e8d712825",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Ler gráficos e tabelas",
+        "phase": 0,
+        "topics": ["Conhecimentos de estatística e probabilidade"],
+        "weight": 5,
+        "lessons": 30,
+        "skillId": "588e45be-560f-86b2-824c-bb3c0479f598",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Calcular probabilidades simples",
+        "phase": 0,
+        "topics": ["Conhecimentos de estatística e probabilidade"],
+        "weight": 5,
+        "lessons": 28,
+        "skillId": "f910d28c-835d-8890-8fd9-02d213a02c1d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Determinar perímetros e áreas",
+        "phase": 0,
+        "topics": ["Conhecimentos geométricos"],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "cbfc72c4-8567-8a04-8f17-efc5d6dd5de0",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Representar relações e resolver equações",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos"],
+        "weight": 4,
+        "lessons": 35,
+        "skillId": "01a122ed-c0a4-7f7b-af0d-db99e80c6af9",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Interpretar representações de funções",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos"],
+        "weight": 4,
+        "lessons": 33,
+        "skillId": "01a122ed-c0a5-782b-a8ab-9132b16d70b3",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Inferir o que o texto sugere",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"
+        ],
+        "weight": 5,
+        "lessons": 36,
+        "skillId": "7308c671-6098-8304-81d9-387f134f3c91",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Identificar a ideia central de um texto",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"
+        ],
+        "weight": 5,
+        "lessons": 26,
+        "skillId": "72cfac8f-41bc-8c25-8d57-719a79340ae1",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Distinguir sequências discursivas",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"
+        ],
+        "weight": 4,
+        "lessons": 22,
+        "skillId": "01a122ed-ade0-7a50-9112-5be68afc0f91",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Relacionar textos e contextos de circulação",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação"
+        ],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "01a122ed-ade1-72f1-9db2-f6102ffd9bec",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Interpretar textos multimodais",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 5,
+        "lessons": 28,
+        "skillId": "01a1221f-40fc-77ad-a11d-d8a466e14767",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Reconhecer variação linguística",
+        "phase": 0,
+        "topics": [
+          "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"
+        ],
+        "weight": 5,
+        "lessons": 28,
+        "skillId": "01a122ed-ade1-7368-91ad-a81e1c90aff0",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Interpretar efeitos de escolhas lexicais",
+        "phase": 0,
+        "topics": [
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 5,
+        "lessons": 23,
+        "skillId": "01a12220-9238-728b-85bd-dc1234aa287f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar a formação de identidades culturais",
+        "phase": 0,
+        "topics": ["Diversidade cultural, conflitos e vida em sociedade"],
+        "weight": 3,
+        "lessons": 26,
+        "skillId": "01a122ed-ade1-73b4-a3ab-d158ba1de158",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Explicar conflitos e relações coloniais",
+        "phase": 0,
+        "topics": ["Diversidade cultural, conflitos e vida em sociedade"],
+        "weight": 3,
+        "lessons": 30,
+        "skillId": "01a122ed-ade1-7e9d-9e0b-72640df157a4",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Explicar a política do café com leite",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 4,
+        "lessons": 26,
+        "skillId": "c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Comparar sistemas produtivos e relações de trabalho",
+        "phase": 0,
+        "topics": ["Características e transformações das estruturas produtivas"],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "01a122ed-ade3-73bd-bf80-6754435d94ab",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Relacionar elementos dos domínios naturais",
+        "phase": 0,
+        "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"],
+        "weight": 3,
+        "lessons": 29,
+        "skillId": "01a122ed-ade3-739e-9c29-8883784a81e4",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Interpretar escala, orientação e coordenadas",
+        "phase": 0,
+        "topics": ["Representação espacial"],
+        "weight": 2,
+        "lessons": 17,
+        "skillId": "01a122ed-d055-7980-b358-73a242dff8c1",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Resolver problemas de movimento",
+        "phase": 0,
+        "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "01a122ed-d055-79cd-b28a-bb598aa51ee7",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Aplicar as leis de Newton",
+        "phase": 0,
+        "topics": ["O movimento, o equilíbrio e a descoberta de leis físicas"],
+        "weight": 4,
+        "lessons": 35,
+        "skillId": "c39b3a18-567c-8d42-8c98-3047c278a9fe",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Relacionar trabalho, energia e potência",
+        "phase": 0,
+        "topics": ["Energia, trabalho e potência"],
+        "weight": 4,
+        "lessons": 34,
+        "skillId": "01a122ed-d055-79ea-a0a8-376cd4b23492",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Aplicar a conservação da energia",
+        "phase": 0,
+        "topics": ["Energia, trabalho e potência"],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "18a3150b-7aa4-89b3-8ee8-69125cc65533",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar fluidos e sistemas hidráulicos",
+        "phase": 0,
+        "topics": ["A Mecânica e o funcionamento do Universo"],
+        "weight": 3,
+        "lessons": 24,
+        "skillId": "01a122ed-d055-7af8-bde2-f82302a42705",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Aplicar a lei de Ohm",
+        "phase": 0,
+        "topics": ["Fenômenos Elétricos e Magnéticos"],
+        "weight": 5,
+        "lessons": 17,
+        "skillId": "6fdcc621-3a24-8aca-845b-7a7b6fc1a70c",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Resolver circuitos em série",
+        "phase": 0,
+        "topics": ["Fenômenos Elétricos e Magnéticos"],
+        "weight": 5,
+        "lessons": 17,
+        "skillId": "24ee7f50-96cc-8f1b-86aa-78d31ee3ca9c",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Estimar o consumo elétrico",
+        "phase": 0,
+        "topics": ["Fenômenos Elétricos e Magnéticos"],
+        "weight": 5,
+        "lessons": 25,
+        "skillId": "01a122ed-d055-7a74-82e1-fb2d9e34bf03",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar fenômenos ópticos",
+        "phase": 0,
+        "topics": ["Oscilações, ondas, óptica e radiação"],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "01a122ed-d055-7bcc-9b7b-bbc28b2bd13f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar gases e máquinas térmicas",
+        "phase": 0,
+        "topics": ["O calor e os fenômenos térmicos"],
+        "weight": 3,
+        "lessons": 29,
+        "skillId": "01a122ed-d055-7a92-b0b3-be41a373d63b",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Resolver proporções estequiométricas",
+        "phase": 0,
+        "topics": ["Representação das transformações químicas"],
+        "weight": 4,
+        "lessons": 38,
+        "skillId": "11fec11d-f653-80c8-8fd0-f1a0a83cc59a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Distinguir transformações químicas",
+        "phase": 0,
+        "topics": ["Transformações Químicas"],
+        "weight": 3,
+        "lessons": 22,
+        "skillId": "84c216b5-19f6-8b45-808a-d166ffed253e",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar soluções aquosas",
+        "phase": 0,
+        "topics": ["Materiais, suas propriedades e usos", "Água"],
+        "weight": 4,
+        "lessons": 28,
+        "skillId": "01a122ed-ad8d-7627-904c-af9bb3543c9a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar energia nas reações",
+        "phase": 0,
+        "topics": ["Transformações Químicas e Energia"],
+        "weight": 3,
+        "lessons": 24,
+        "skillId": "883b649b-6e4c-84bd-871c-b841bd7d65f7",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar a velocidade das reações",
+        "phase": 0,
+        "topics": ["Dinâmica das Transformações Químicas"],
+        "weight": 3,
+        "lessons": 24,
+        "skillId": "01a1221f-3edb-7015-a5b9-35f8ffec09d7",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Reconhecer funções orgânicas",
+        "phase": 0,
+        "topics": ["Compostos de Carbono"],
+        "weight": 5,
+        "lessons": 31,
+        "skillId": "119d27b2-56e2-8f37-8fd4-7a6cf5aeb36f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Interpretar pH e neutralização",
+        "phase": 0,
+        "topics": ["Água", "Transformação Química e Equilíbrio"],
+        "weight": 4,
+        "lessons": 24,
+        "skillId": "01a122ed-ad8d-77ad-a0ba-6456080f6788",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Comparar processos energéticos celulares",
+        "phase": 0,
+        "topics": ["Moléculas, células e tecidos"],
+        "weight": 5,
+        "lessons": 32,
+        "skillId": "01a122ed-ad8d-78a3-a0f5-d7e861991dfe",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Relacionar tecidos, órgãos e funções",
+        "phase": 0,
+        "topics": ["Moléculas, células e tecidos"],
+        "weight": 4,
+        "lessons": 26,
+        "skillId": "1170aaec-f2c7-8542-8726-e688f79afceb",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar a expressão da informação genética",
+        "phase": 0,
+        "topics": ["Hereditariedade e diversidade da vida"],
+        "weight": 4,
+        "lessons": 29,
+        "skillId": "01a122ed-ad8d-7ae1-9a8b-3f72dc9e870f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Resolver problemas de hereditariedade",
+        "phase": 0,
+        "topics": ["Hereditariedade e diversidade da vida"],
+        "weight": 4,
+        "lessons": 36,
+        "skillId": "01a122ed-ad8e-7351-bf77-69933a1e1966",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Comparar reprodução e ciclos de vida",
+        "phase": 0,
+        "topics": ["Identidade dos seres vivos"],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "01a122ed-ad8e-73b3-8df3-d667e36c00b9",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar a dinâmica das populações",
+        "phase": 0,
+        "topics": ["Ecologia e ciências ambientais"],
+        "weight": 5,
+        "lessons": 26,
+        "skillId": "01a1221f-3f10-705a-b60b-62408caa6663",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Avaliar juros simples e compostos",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 5,
+        "lessons": 33,
+        "skillId": "1564b54b-9543-8539-8f35-71d1eb289ed2",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Analisar progressões numéricas",
+        "phase": 0,
+        "topics": ["Conhecimentos numéricos"],
+        "weight": 3,
+        "lessons": 27,
+        "skillId": "01a1221f-3d46-7779-a9dd-e07cc2d7e988",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Contar possibilidades em problemas",
+        "phase": 0,
+        "topics": ["Conhecimentos de estatística e probabilidade"],
+        "weight": 4,
+        "lessons": 32,
+        "skillId": "08e646b3-e04a-8c79-8a76-4adf99484a76",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Avaliar probabilidades condicionais",
+        "phase": 0,
+        "topics": ["Conhecimentos de estatística e probabilidade"],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "01a1221f-410b-721a-b92e-9c42d82ad921",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Calcular média, mediana e moda",
+        "phase": 0,
+        "topics": ["Conhecimentos de estatística e probabilidade"],
+        "weight": 5,
+        "lessons": 29,
+        "skillId": "cd7df8fe-2e93-8aba-8a68-cc1b5e269925",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Aplicar semelhança de figuras",
+        "phase": 0,
+        "topics": ["Conhecimentos geométricos"],
+        "weight": 4,
+        "lessons": 31,
+        "skillId": "01a1221f-3f10-73fb-88e4-2e657abee28d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Resolver triângulos em situações geométricas",
+        "phase": 0,
+        "topics": ["Conhecimentos geométricos"],
+        "weight": 3,
+        "lessons": 31,
+        "skillId": "01a122ed-b280-7560-be41-0658905e7c5f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Determinar áreas e volumes de sólidos",
+        "phase": 0,
+        "topics": ["Conhecimentos geométricos"],
+        "weight": 4,
+        "lessons": 34,
+        "skillId": "fb75739d-c7be-81b7-8f0e-2fc688e7250e",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Modelar com função do 1º grau",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos"],
+        "weight": 4,
+        "lessons": 33,
+        "skillId": "9ff1b74a-16d9-841e-8a51-04a26ac66a34",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Achar o vértice de uma parábola",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos"],
+        "weight": 4,
+        "lessons": 35,
+        "skillId": "c8744aa1-5c68-89b8-811e-bd41c3a240b9",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Resolver sistemas e inequações",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos"],
+        "weight": 3,
+        "lessons": 27,
+        "skillId": "01a122ed-b280-765a-a1ef-805d471909a7",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Interpretar mecanismos de coesão textual",
+        "phase": 0,
+        "topics": [
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 5,
+        "lessons": 28,
+        "skillId": "d72f9507-4b45-8c6a-85c7-9050a7414837",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Avaliar efeitos da pontuação e sintaxe",
+        "phase": 0,
+        "topics": [
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos",
+          "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"
+        ],
+        "weight": 5,
+        "lessons": 28,
+        "skillId": "fa968df1-fb07-8144-8129-7bb5cdfec37b",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Julgar a adequação da norma-padrão",
+        "phase": 0,
+        "topics": [
+          "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"
+        ],
+        "weight": 5,
+        "lessons": 29,
+        "skillId": "602a75dc-a1c6-8d21-8890-48d0fffec49e",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Analisar preconceito linguístico e identidade",
+        "phase": 0,
+        "topics": [
+          "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística"
+        ],
+        "weight": 4,
+        "lessons": 25,
+        "skillId": "01a122ed-bc01-7d67-a9bb-ba9e90a083d7",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Identificar tese e argumentos",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"
+        ],
+        "weight": 4,
+        "lessons": 29,
+        "skillId": "01a122ed-bc01-7d92-ba77-34bacdcee285",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Avaliar estratégias persuasivas",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"
+        ],
+        "weight": 4,
+        "lessons": 31,
+        "skillId": "9d7746bc-2826-8e5c-888a-f6888be72a00",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Comparar posições argumentativas",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
+          "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"
+        ],
+        "weight": 4,
+        "lessons": 28,
+        "skillId": "01a122ed-bc02-723a-9835-728a5adeee1f",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Interpretar gêneros jornalísticos e publicitários",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
+          "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa"
+        ],
+        "weight": 4,
+        "lessons": 28,
+        "skillId": "01a122ed-bc02-7b1a-94d4-b8dc859fad16",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Língua Inglesa",
+        "name": "Ler textos em inglês no ENEM",
+        "phase": 0,
+        "topics": [
+          "Vocábulos e expressões de textos em inglês e seu tema",
+          "O inglês como meio de acesso a informações, tecnologias e culturas",
+          "Textos em inglês: estruturas linguísticas, sua função e seu uso social",
+          "Produção cultural em inglês como representação da diversidade cultural e linguística"
+        ],
+        "weight": 2,
+        "lessons": 12,
+        "skillId": "1806f54c-3469-85c3-84d9-033eed7c17ce",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Língua Espanhola",
+        "name": "Ler textos em espanhol no ENEM",
+        "phase": 0,
+        "topics": [
+          "Vocábulos e expressões de textos em espanhol e seu tema",
+          "O espanhol como meio de acesso a informações, tecnologias e culturas",
+          "Textos em espanhol: estruturas linguísticas, sua função e seu uso social",
+          "Produção cultural em espanhol como representação da diversidade cultural e linguística"
+        ],
+        "weight": 2,
+        "lessons": 12,
+        "skillId": "8edf2834-28d3-84d2-831d-7a97d9abd517",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Analisar efeitos de figuras de linguagem",
+        "phase": 0,
+        "topics": [
+          "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania",
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 4,
+        "lessons": 25,
+        "skillId": "01a122ed-bc03-749b-bde0-6f71cd6b8278",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar o protagonismo indígena e afro-brasileiro",
+        "phase": 0,
+        "topics": ["Diversidade cultural, conflitos e vida em sociedade"],
+        "weight": 3,
+        "lessons": 30,
+        "skillId": "01a122ed-bc03-7908-945f-a2827ef9db9b",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Comparar ideias políticas e seus contextos",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 4,
+        "lessons": 28,
+        "skillId": "01a122ed-bc03-7c01-9aaa-3b5eee25826a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar instituições democráticas e direitos",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 5,
+        "lessons": 34,
+        "skillId": "4d8029e4-f952-8f87-80f7-c5e5505473a9",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar movimentos sociais e reivindicações",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "01a122ed-bc03-72f4-9cac-018ee1a53823",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Explicar transformações da produção industrial",
+        "phase": 0,
+        "topics": ["Características e transformações das estruturas produtivas"],
+        "weight": 4,
+        "lessons": 35,
+        "skillId": "01a12220-f93b-7128-8e92-9a0ea2d1965a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Descrever a Era Vargas",
+        "phase": 0,
+        "topics": ["Características e transformações das estruturas produtivas"],
+        "weight": 4,
+        "lessons": 33,
+        "skillId": "f43cdd8f-fc41-8de5-8774-db17ab6ede67",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar urbanização e desigualdades socioespaciais",
+        "phase": 0,
+        "topics": ["Características e transformações das estruturas produtivas"],
+        "weight": 4,
+        "lessons": 26,
+        "skillId": "4960b7eb-6056-8d28-832c-5d245aa07421",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Relacionar água e solos à ocupação",
+        "phase": 0,
+        "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"],
+        "weight": 3,
+        "lessons": 29,
+        "skillId": "01a122ed-b3b5-773c-886d-1692124b9b07",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Interpretar mapas temáticos e projeções",
+        "phase": 0,
+        "topics": ["Representação espacial"],
+        "weight": 2,
+        "lessons": 19,
+        "skillId": "01a122ed-b3b5-77d6-a341-773bd1dd3c89",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Conhecer as cinco competências da redação",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 24,
+        "outcome": true,
+        "skillId": "5dbcc48f-5cf6-8de9-88af-5ff186e54f50",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Selecionar repertório pertinente à argumentação",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 26,
+        "outcome": true,
+        "skillId": "32043737-6378-8921-8f3b-e02d3ea34ec0",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Planejar a progressão dos argumentos",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 27,
+        "outcome": true,
+        "skillId": "0fd72941-99a3-859a-85ab-eaf68640aca6",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar fenômenos gravitacionais",
+        "phase": 0,
+        "topics": ["A Mecânica e o funcionamento do Universo"],
+        "weight": 3,
+        "lessons": 22,
+        "skillId": "01a1221f-3d73-7d4c-8eae-d769795ce278",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar magnetismo e indução",
+        "phase": 0,
+        "topics": ["Fenômenos Elétricos e Magnéticos"],
+        "weight": 4,
+        "lessons": 27,
+        "skillId": "4b9e20ab-5cd1-8367-81c6-5d7e087db7c5",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Avaliar radiações eletromagnéticas",
+        "phase": 0,
+        "topics": ["Oscilações, ondas, óptica e radiação"],
+        "weight": 4,
+        "lessons": 23,
+        "skillId": "01a122ed-b3b5-76c3-8e6f-12513fe44e9e",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Avaliar tratamento e qualidade da água",
+        "phase": 0,
+        "topics": ["Água", "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"],
+        "weight": 4,
+        "lessons": 24,
+        "skillId": "01a122ed-b3b5-7da6-87b2-dffb80334391",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar oxidação, pilhas e eletrólise",
+        "phase": 0,
+        "topics": ["Transformações Químicas e Energia", "Energias Químicas no Cotidiano"],
+        "weight": 4,
+        "lessons": 32,
+        "skillId": "01a122ed-b3b7-71b6-beab-d492ad7563cd",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Prever deslocamentos do equilíbrio químico",
+        "phase": 0,
+        "topics": ["Transformação Química e Equilíbrio"],
+        "weight": 4,
+        "lessons": 32,
+        "skillId": "5f2af595-d3bc-8b89-8f4d-41fa009a1514",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Analisar reações orgânicas e polímeros",
+        "phase": 0,
+        "topics": [
+          "Compostos de Carbono",
+          "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"
+        ],
+        "weight": 4,
+        "lessons": 26,
+        "skillId": "01a122ed-bc06-7206-b403-467b80ab5dec",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Avaliar impactos de processos químicos",
+        "phase": 0,
+        "topics": ["Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente"],
+        "weight": 4,
+        "lessons": 25,
+        "skillId": "01a1221f-410a-7b51-922c-5ecc3d7d7002",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Comparar combustíveis e emissões",
+        "phase": 0,
+        "topics": ["Energias Químicas no Cotidiano"],
+        "weight": 4,
+        "lessons": 25,
+        "skillId": "01a122ed-bc06-774a-851c-5771006a3e40",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar a evolução biológica",
+        "phase": 0,
+        "topics": ["Origem e evolução da vida"],
+        "weight": 4,
+        "lessons": 29,
+        "skillId": "ae1856b2-19e5-83af-849e-f86eed7b4407",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Explicar a fisiologia humana",
+        "phase": 0,
+        "topics": ["Qualidade de vida das populações humanas"],
+        "weight": 4,
+        "lessons": 33,
+        "skillId": "01a122ed-bc06-7989-8c87-81723a72d04a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Avaliar ciclos e impactos ambientais",
+        "phase": 0,
+        "topics": ["Ecologia e ciências ambientais"],
+        "weight": 5,
+        "lessons": 30,
+        "skillId": "01a122ed-bc06-7d7f-a046-3f7081367bdd",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Avaliar a prevenção de doenças",
+        "phase": 0,
+        "topics": ["Qualidade de vida das populações humanas"],
+        "weight": 4,
+        "lessons": 29,
+        "skillId": "e802ed2b-1b79-87e9-8a38-8dfe65e097d6",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências da Natureza",
+        "name": "Avaliar aplicações da biotecnologia",
+        "phase": 0,
+        "topics": [
+          "Hereditariedade e diversidade da vida",
+          "Qualidade de vida das populações humanas"
+        ],
+        "weight": 3,
+        "lessons": 24,
+        "skillId": "01a122ed-bc06-7d98-9481-3f9bbd3bb496",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Analisar transformações no plano",
+        "phase": 0,
+        "topics": ["Conhecimentos geométricos"],
+        "weight": 2,
+        "lessons": 24,
+        "skillId": "01a122ed-bc06-7fe5-9e00-9fddc8e9d968",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Analisar funções exponenciais e logarítmicas",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos"],
+        "weight": 3,
+        "lessons": 34,
+        "skillId": "01a122ed-bc07-7952-8b9b-9fbdf6dbd768",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Analisar pontos e retas cartesianas",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos/geométricos"],
+        "weight": 3,
+        "lessons": 34,
+        "skillId": "01a122ed-bc07-7a86-936e-e7caf0e0c557",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Analisar circunferências no plano cartesiano",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos/geométricos"],
+        "weight": 2,
+        "lessons": 24,
+        "skillId": "01a122ed-b3d7-792b-b290-5a1f6424f40d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Matemática",
+        "name": "Modelar problemas algébrico-geométricos",
+        "phase": 0,
+        "topics": ["Conhecimentos algébricos/geométricos"],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "01a122ed-b3d7-7995-85b2-d7631e667e35",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Relacionar literatura e contexto social",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 2,
+        "lessons": 25,
+        "skillId": "01a1221f-3d72-7e07-9bdd-c41a2f008aca",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Analisar construção narrativa e poética",
+        "phase": 0,
+        "topics": [
+          "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 2,
+        "lessons": 26,
+        "skillId": "2dabbe45-cde0-879d-8b1e-9ff0410aaee1",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Interpretar representações artísticas",
+        "phase": 0,
+        "topics": [
+          "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania"
+        ],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "30715e8b-6ff4-8c4a-82ef-39e2c108469a",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Relacionar práticas corporais e identidades",
+        "phase": 0,
+        "topics": [
+          "Estudo das práticas corporais: a linguagem corporal como integradora social e formadora de identidade"
+        ],
+        "weight": 3,
+        "lessons": 28,
+        "skillId": "79eb23c5-dc8a-8217-8316-909e6dd516ec",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Analisar usos sociais das tecnologias digitais",
+        "phase": 0,
+        "topics": [
+          "Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social"
+        ],
+        "weight": 2,
+        "lessons": 24,
+        "skillId": "7323ceed-d803-8d2e-86b8-427fd9808cc3",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Interpretar gêneros digitais",
+        "phase": 0,
+        "topics": [
+          "Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social"
+        ],
+        "weight": 2,
+        "lessons": 22,
+        "skillId": "01a1221f-3d72-7f09-8042-235782cf3d91",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Comparar representações entre mídias",
+        "phase": 0,
+        "topics": [
+          "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania"
+        ],
+        "weight": 3,
+        "lessons": 25,
+        "skillId": "01a122ed-b3d7-793f-a1da-ac8072848afa",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Linguagens",
+        "name": "Explicar efeitos da intertextualidade",
+        "phase": 0,
+        "topics": [
+          "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania",
+          "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos",
+          "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos"
+        ],
+        "weight": 3,
+        "lessons": 29,
+        "skillId": "01a122ed-b3d7-7aa5-b55a-cd9bce80e286",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar racismo e desigualdades históricas",
+        "phase": 0,
+        "topics": ["Diversidade cultural, conflitos e vida em sociedade"],
+        "weight": 3,
+        "lessons": 29,
+        "skillId": "8eb47082-22a1-8d45-8a0f-07cc6b5cb7ba",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Explicar migrações e conflitos sociais",
+        "phase": 0,
+        "topics": ["Diversidade cultural, conflitos e vida em sociedade"],
+        "weight": 3,
+        "lessons": 26,
+        "skillId": "01a122ed-b3d7-7a27-a873-e4e9c5dd89ba",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Distinguir democracia e autoritarismo",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 4,
+        "lessons": 30,
+        "skillId": "01a122ed-c0a5-7914-9970-4ce7012121ea",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Avaliar políticas públicas e seus efeitos",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 4,
+        "lessons": 29,
+        "skillId": "ca65a5f4-cbd8-84bd-8e9f-359367dfbb6d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar disputas geopolíticas",
+        "phase": 0,
+        "topics": [
+          "Formas de organização social, movimentos sociais, pensamento político e ação do Estado"
+        ],
+        "weight": 4,
+        "lessons": 28,
+        "skillId": "b708973c-d3ad-8b39-83f4-cdc2f7f7311d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Analisar a produção globalizada",
+        "phase": 0,
+        "topics": ["Características e transformações das estruturas produtivas"],
+        "weight": 4,
+        "lessons": 33,
+        "skillId": "01a122ed-c0a5-79c1-ab88-7936cd6b6aa9",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Explicar processos de degradação ambiental",
+        "phase": 0,
+        "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"],
+        "weight": 3,
+        "lessons": 28,
+        "skillId": "01a122ed-c0a6-7207-8504-06b71edfaac2",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Comparar usos de recursos e energia",
+        "phase": 0,
+        "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"],
+        "weight": 3,
+        "lessons": 27,
+        "skillId": "01a122ed-c0a6-7843-a640-a31f7935be2d",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Ciências Humanas",
+        "name": "Avaliar respostas à crise ambiental",
+        "phase": 0,
+        "topics": ["Os domínios naturais e a relação do ser humano com o ambiente"],
+        "weight": 3,
+        "lessons": 31,
+        "skillId": "01a122ed-c0a6-7b0a-adba-55b10e385391",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Redigir uma introdução com tese",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 23,
+        "outcome": true,
+        "skillId": "34503598-c7bd-8ad6-89e9-4317df0c10aa",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Desenvolver argumentos sustentados por evidências",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 32,
+        "outcome": true,
+        "skillId": "3a8a916b-55eb-8f5b-8432-2324fb2668ee",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Escrever a conclusão da redação",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 26,
+        "outcome": true,
+        "skillId": "b0430a63-e2ad-8483-8168-3bf49f59f390",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Escrever uma proposta de intervenção completa",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 28,
+        "outcome": true,
+        "skillId": "cb17a9f0-0d0f-8302-82af-d357c7531d2b",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Revisar a norma-padrão da redação",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 28,
+        "outcome": true,
+        "skillId": "01a122ed-c0a6-7cde-87f3-d435f7ce2c5c",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Redação",
+        "name": "Produzir uma redação completa sob tempo",
+        "phase": 0,
+        "topics": ["Texto dissertativo-argumentativo a partir de uma situação-problema"],
+        "weight": 5,
+        "lessons": 31,
+        "outcome": true,
+        "skillId": "d567d78d-01cf-804c-87d6-0d7869463fbb",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Estratégia de prova",
+        "name": "Gerenciar o tempo nas provas do ENEM",
+        "phase": 0,
+        "topics": [],
+        "weight": 3,
+        "lessons": 15,
+        "skillId": "01a122ed-b3b7-7551-a2f6-8362949df590",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      },
+      {
+        "area": "Estratégia de prova",
+        "name": "Decidir entre alternativas nas questões do ENEM",
+        "phase": 0,
+        "topics": [],
+        "weight": 3,
+        "lessons": 15,
+        "skillId": "28d51af1-72a9-8aec-83ec-14e5e32f2fbf",
+        "courseIds": ["39277627-f106-84aa-8af6-1335a27e1e98"]
+      }
+    ]
+  }
+}

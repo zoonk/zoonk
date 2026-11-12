@@ -9,7 +9,6 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
 } from "@zoonk/ui/components/table";
 
 export function LearnerMilestoneUsersTable({
@@ -52,21 +51,21 @@ export function LearnerMilestoneUsersTableSkeleton() {
 function LearnerMilestoneUsersTableHeader() {
   return (
     <TableHeader>
-      <TableRow>
+      <AdminTableRow>
         <TableHead>User</TableHead>
         <TableHead className="text-right">Lessons</TableHead>
         <TableHead className="text-right">Days</TableHead>
         <TableHead className="text-right">Brain Power</TableHead>
         <TableHead>Last completed</TableHead>
         <TableHead>Joined</TableHead>
-      </TableRow>
+      </AdminTableRow>
     </TableHeader>
   );
 }
 
 function LearnerMilestoneSkeletonRow() {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
         <div className="flex flex-col gap-2">
           <Skeleton className="h-4 w-32" />
@@ -88,7 +87,7 @@ function LearnerMilestoneSkeletonRow() {
       <TableCell>
         <Skeleton className="h-4 w-20" />
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

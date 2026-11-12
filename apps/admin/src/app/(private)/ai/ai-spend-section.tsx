@@ -1,12 +1,13 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { Stats } from "@/components/stats";
 import { getAiSpendSummary } from "@/data/ai/get-ai-spend-summary";
 import { listAiSpendByModel } from "@/data/ai/list-ai-spend-by-model";
 import { listAiSpendByTask } from "@/data/ai/list-ai-spend-by-task";
 import { listDailyAiSpend } from "@/data/ai/list-daily-ai-spend";
 import { formatLatency, formatShare, formatTokens, formatUsd } from "@/lib/ai-format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { AiDailySpendChart } from "./ai-daily-spend-chart";
 
 const taskColumns: AdminTableColumn[] = [
@@ -79,7 +80,7 @@ async function SpendByTask({ days }: { days: number }) {
   return (
     <AdminTableColumns columns={taskColumns} emptyLabel="No AI calls." isEmpty={rows.length === 0}>
       {rows.map((row) => (
-        <TableRow key={row.task}>
+        <AdminTableRow key={row.task}>
           <TableCell className="font-mono text-xs">{row.task}</TableCell>
           <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
           <TableCell className="text-right font-medium tabular-nums">
@@ -100,7 +101,7 @@ async function SpendByTask({ days }: { days: number }) {
           <TableCell className="text-right tabular-nums">
             {formatLatency(row.p50LatencyMs === null ? null : row.p50LatencyMs / MS_PER_SECOND)}
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );
@@ -112,7 +113,7 @@ async function SpendByModel({ days }: { days: number }) {
   return (
     <AdminTableColumns columns={modelColumns} emptyLabel="No AI calls." isEmpty={rows.length === 0}>
       {rows.map((row) => (
-        <TableRow key={`${row.model}|${row.serviceTier ?? "standard"}`}>
+        <AdminTableRow key={`${row.model}|${row.serviceTier ?? "standard"}`}>
           <TableCell className="font-mono text-xs">{row.model}</TableCell>
           <TableCell className="text-xs">{row.serviceTier ?? "standard"}</TableCell>
           <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
@@ -129,7 +130,7 @@ async function SpendByModel({ days }: { days: number }) {
           <TableCell className="text-right tabular-nums">
             {row.gatewayCostUsd === null ? "—" : formatUsd(row.gatewayCostUsd)}
           </TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );

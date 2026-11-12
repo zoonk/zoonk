@@ -15,7 +15,6 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
 } from "@zoonk/ui/components/table";
 import {
   type LeaderboardPeriod,
@@ -123,23 +122,23 @@ export function BrainPowerLeaderboardSkeleton() {
 function BrainPowerLeaderboardHeader() {
   return (
     <TableHeader>
-      <TableRow>
+      <AdminTableRow>
         <TableHead className="w-16 text-right">Rank</TableHead>
         <TableHead>User</TableHead>
         <TableHead>Username</TableHead>
         <TableHead className="text-right">Brain Power</TableHead>
-      </TableRow>
+      </AdminTableRow>
     </TableHeader>
   );
 }
 
 function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescription: string }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="text-muted-foreground" colSpan={TABLE_COLUMN_COUNT}>
         No Brain Power earned {periodDescription}.
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 
@@ -165,7 +164,7 @@ function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
 
 function BrainPowerLeaderboardSkeletonRow() {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>
         <Skeleton className="ml-auto h-4 w-6" />
       </TableCell>
@@ -181,6 +180,6 @@ function BrainPowerLeaderboardSkeletonRow() {
       <TableCell>
         <Skeleton className="ml-auto h-4 w-16" />
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }

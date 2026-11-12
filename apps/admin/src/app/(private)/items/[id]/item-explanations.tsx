@@ -1,9 +1,10 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { ProvenanceLine } from "@/components/provenance";
 import { getItem } from "@/data/items/get-item";
 import { formatDate } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 
 const EXPLANATION_COLUMNS: AdminTableColumn[] = [
   { label: "Answer" },
@@ -27,7 +28,7 @@ export async function ItemExplanations({ itemId }: { itemId: string }) {
         isEmpty={explanations.length === 0}
       >
         {explanations.map((explanation) => (
-          <TableRow key={explanation.id}>
+          <AdminTableRow key={explanation.id}>
             <TableCell className="max-w-56 min-w-40 font-mono text-xs whitespace-normal">
               {explanation.normalizedAnswer}
             </TableCell>
@@ -41,7 +42,7 @@ export async function ItemExplanations({ itemId }: { itemId: string }) {
             <TableCell className="text-muted-foreground">
               {formatDate(explanation.createdAt)}
             </TableCell>
-          </TableRow>
+          </AdminTableRow>
         ))}
       </AdminTableColumns>
     </AdminSection>

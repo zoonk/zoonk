@@ -1,7 +1,7 @@
-import { cookies } from "next/headers";
 import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import { AdminSection } from "@/components/admin-section";
 import { type Metadata } from "next";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { HomeAttention, HomeAttentionSkeleton } from "./home-attention";
 import { HomeWeek, HomeWeekSkeleton } from "./home-week";

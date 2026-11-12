@@ -1,3 +1,4 @@
+import { Facts, readView } from "@/app/(private)/_mock/kit";
 import {
   AdminDetailBody,
   AdminDetailColumns,
@@ -6,7 +7,6 @@ import {
 } from "@/components/admin-detail";
 import { AdminSection } from "@/components/admin-section";
 import { Button } from "@zoonk/ui/components/button";
-import { Facts, readView } from "@/app/(private)/_mock/kit";
 import { MockLink } from "../../_mock/parts";
 
 const BEFORE =
@@ -83,7 +83,9 @@ export default async function ContentFixMockPage({
                 <span className="text-muted-foreground text-xs font-medium">Before</span>
                 <p className="bg-muted rounded-lg p-3 text-sm leading-6">
                   {BEFORE.split("just ")[0]}
-                  <span className="bg-destructive/15 text-destructive-text rounded px-0.5">just</span>{" "}
+                  <span className="bg-destructive/15 text-destructive-text rounded px-0.5">
+                    just
+                  </span>{" "}
                   {BEFORE.split("just ")[1]}
                 </p>
               </div>

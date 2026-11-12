@@ -3,7 +3,7 @@ import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-tab
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
 import { formatDate, toWords } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 
 const GOAL_COLUMNS: AdminTableColumn[] = [
   { label: "Goal" },
@@ -133,7 +133,7 @@ export async function UserPlans({ userId }: { userId: string }) {
           isEmpty={goals.length === 0}
         >
           {goals.map((goal) => (
-            <TableRow key={goal.id}>
+            <AdminTableRow key={goal.id}>
               <TableCell className="min-w-56 whitespace-normal">
                 <GoalName goal={goal} />
               </TableCell>
@@ -144,7 +144,7 @@ export async function UserPlans({ userId }: { userId: string }) {
                 {goal.plan?.estimateHours ? `${Math.round(goal.plan.estimateHours)} h` : "—"}
               </TableCell>
               <TableCell className="text-muted-foreground">{formatDate(goal.createdAt)}</TableCell>
-            </TableRow>
+            </AdminTableRow>
           ))}
         </AdminTableColumns>
       </AdminSection>

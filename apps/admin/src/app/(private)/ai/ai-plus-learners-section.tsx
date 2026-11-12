@@ -4,7 +4,7 @@ import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { Stats } from "@/components/stats";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
 import { formatUsd } from "@/lib/ai-format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 
 type PlusLearners = Awaited<ReturnType<typeof listPlusLearnerCosts>>;
@@ -112,7 +112,7 @@ function PlanRow({
   const [first] = learners;
 
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell>{PLAN_LABELS[billing]}</TableCell>
       <TableCell className="text-right tabular-nums">{learners.length.toLocaleString()}</TableCell>
       <TableCell className="text-right tabular-nums">{formatPays(paysUsd, billing)}</TableCell>
@@ -126,7 +126,7 @@ function PlanRow({
           ? "—"
           : learners.filter((learner) => isAbovePlan(learner)).length.toLocaleString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

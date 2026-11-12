@@ -1,6 +1,14 @@
-import { type Dump, Facts, FactsFrom, MockRows, day, field, readView } from "@/app/(private)/_mock/kit";
 import blueprint from "@/app/(private)/_mock/data/exam-enem-blueprint.json";
 import dump from "@/app/(private)/_mock/data/exam-enem.json";
+import {
+  type Dump,
+  Facts,
+  FactsFrom,
+  MockRows,
+  day,
+  field,
+  readView,
+} from "@/app/(private)/_mock/kit";
 import { MockMenu } from "@/app/(private)/_mock/menu";
 import {
   AdminDetailBody,
@@ -128,7 +136,11 @@ function Blueprint() {
 
       <AdminSection title={`Subjects (${structure.subjects.length})`}>
         <MockRows
-          columns={[{ label: "Subject" }, { align: "right", label: "Questions" }, { label: "Topics" }]}
+          columns={[
+            { label: "Subject" },
+            { align: "right", label: "Questions" },
+            { label: "Topics" },
+          ]}
           rows={structure.subjects.map((subject) => [
             subject.name,
             subject.questions ?? "—",
@@ -139,7 +151,12 @@ function Blueprint() {
 
       <AdminSection title="What comes up most">
         <MockRows
-          columns={[{ label: "Topic" }, { label: "Subject" }, { label: "How often" }, { label: "Why" }]}
+          columns={[
+            { label: "Topic" },
+            { label: "Subject" },
+            { label: "How often" },
+            { label: "Why" },
+          ]}
           rows={topicFrequency.map((topic) => [
             topic.topic,
             topic.subject,

@@ -1,2 +1,8 @@
 @import "@zoonk/ui/globals.css";
 @import "@zoonk/player/questions/styles.css";
+
+/* Admin's tables end-align numbers and nothing else, so an end-aligned cell is data: set in mono, digit under digit. */
+[data-slot="table-cell"].text-right {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}

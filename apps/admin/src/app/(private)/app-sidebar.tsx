@@ -24,6 +24,9 @@ function isActive(pathname: string, url: string) {
   return pathname.startsWith(url);
 }
 
+/** The search's label starts where the items' labels start: a 16 px mark, then 10 px. */
+const LABEL_EDGE_AFTER_ICON = "gap-2.5";
+
 /** How many wait in each Inbox queue, drawn after its label. */
 export type AdminNavCounts = Record<InboxQueueName, React.ReactNode>;
 
@@ -133,14 +136,23 @@ function AdminSidebarContent({
 
 export function AppSidebar({ account, counts, inboxTotal, short }: AdminSidebarProps) {
   return (
-    <Sidebar aria-label="Sidebar" className="gap-3">
+    <Sidebar aria-label="Sidebar" className="gap-4">
       {/* One row, so the whole navigation fits a laptop's height; collapsed, the toggle sits over the search. */}
       <SidebarHeader className="sidebar-collapsed:flex-col-reverse sidebar-collapsed:gap-4 flex-row items-center gap-1">
-        <SidebarSearch label="Search…" onClick={openCommandPalette} />
+        <SidebarSearch
+          className={LABEL_EDGE_AFTER_ICON}
+          label="Search…"
+          onClick={openCommandPalette}
+        />
         <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
       </SidebarHeader>
 
-      <AdminSidebarContent account={account} counts={counts} inboxTotal={inboxTotal} short={short} />
+      <AdminSidebarContent
+        account={account}
+        counts={counts}
+        inboxTotal={inboxTotal}
+        short={short}
+      />
     </Sidebar>
   );
 }

@@ -1,7 +1,7 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
 const FIELD_ROW_CLASS =
-  "grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 py-2 text-sm @lg:grid-cols-[11rem_minmax(0,1fr)]";
+  "grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 py-3 text-sm @lg:grid-cols-[11rem_minmax(0,1fr)]";
 
 export function DetailFields({ children }: { children: React.ReactNode }) {
   return <dl className="@container divide-y">{children}</dl>;

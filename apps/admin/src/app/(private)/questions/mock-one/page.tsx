@@ -1,7 +1,7 @@
 import saved from "@/app/(private)/_mock/data/question-answer.json";
-import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import dump from "@/app/(private)/_mock/data/question.json";
 import { type Dump, Facts, field, readView } from "@/app/(private)/_mock/kit";
+import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import {
   AdminDetailBody,
   AdminDetailColumns,
@@ -37,14 +37,25 @@ export default async function BuddyQuestionMockPage({
       />
 
       <AdminDetailBody>
-        <AdminTabs current={tab as "answer"} label="Buddy question" path="/questions/mock-one" tabs={TABS} />
+        <AdminTabs
+          current={tab as "answer"}
+          label="Buddy question"
+          path="/questions/mock-one"
+          tabs={TABS}
+        />
 
         {tab === "written" ? (
           <AdminSection title="Written by">
             <Facts
-              rows={["Model", "Provider", "Input tokens", "Output tokens", "Cost", "Finish reason", "Updated"].map(
-                (label) => [label, field(question, label)],
-              )}
+              rows={[
+                "Model",
+                "Provider",
+                "Input tokens",
+                "Output tokens",
+                "Cost",
+                "Finish reason",
+                "Updated",
+              ].map((label) => [label, field(question, label)])}
             />
           </AdminSection>
         ) : (

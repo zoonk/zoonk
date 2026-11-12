@@ -1,5 +1,14 @@
 import dump from "@/app/(private)/_mock/data/prompts.json";
-import { type Dump, Lead, MockList, MockSearch, MockViews, day, language, parts } from "@/app/(private)/_mock/kit";
+import {
+  type Dump,
+  Lead,
+  MockList,
+  MockSearch,
+  MockViews,
+  day,
+  language,
+  parts,
+} from "@/app/(private)/_mock/kit";
 
 const COLUMNS = [
   { label: "They typed" },
@@ -9,7 +18,15 @@ const COLUMNS = [
   { label: "Date" },
 ];
 
-const OUTCOMES = ["All", "Goal created", "Not confirmed", "Too vague", "Declined", "Failed", "In progress"];
+const OUTCOMES = [
+  "All",
+  "Goal created",
+  "Not confirmed",
+  "Too vague",
+  "Declined",
+  "Failed",
+  "In progress",
+];
 
 export default function GoalRequestsMockPage() {
   const rows = ((dump as Dump).tables[0]?.rows ?? []).slice(0, 12);

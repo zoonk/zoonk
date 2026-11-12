@@ -1,3 +1,6 @@
+import dump from "@/app/(private)/_mock/data/skill.json";
+import { type Dump, FactsFrom, TableFrom, readView } from "@/app/(private)/_mock/kit";
+import { MockMenu } from "@/app/(private)/_mock/menu";
 import {
   AdminDetailBody,
   AdminDetailColumns,
@@ -7,9 +10,6 @@ import {
 import { AdminSection } from "@/components/admin-section";
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
-import dump from "@/app/(private)/_mock/data/skill.json";
-import { type Dump, FactsFrom, TableFrom, readView } from "@/app/(private)/_mock/kit";
-import { MockMenu } from "@/app/(private)/_mock/menu";
 import { MockLink } from "../../_mock/parts";
 
 const skill = dump as Dump;
@@ -75,8 +75,8 @@ function Overview() {
     >
       <AdminSection title="What the learner sees">
         <p className="max-w-2xl text-sm leading-6">
-          Quando duas grandezas crescem juntas, a razão se mantém: se 3 kg custam R$ 12, 5 kg
-          custam R$ 20.
+          Quando duas grandezas crescem juntas, a razão se mantém: se 3 kg custam R$ 12, 5 kg custam
+          R$ 20.
         </p>
       </AdminSection>
 

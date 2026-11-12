@@ -1,13 +1,7 @@
+import { AdminTableRow } from "@/components/admin-table-row";
 import { formatDuration } from "@/lib/format-duration";
 import { getAdminLessonKindLabel } from "@/lib/lesson-label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 
 type LessonBreakdownData = {
   kind: string;
@@ -20,22 +14,22 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) 
   return (
     <Table>
       <TableHeader>
-        <TableRow>
+        <AdminTableRow>
           <TableHead>Lesson type</TableHead>
           <TableHead>Avg duration</TableHead>
           <TableHead>Completion rate</TableHead>
           <TableHead className="text-right">Completions</TableHead>
-        </TableRow>
+        </AdminTableRow>
       </TableHeader>
       <TableBody>
         {data.length > 0 ? (
           data.map((row) => <LessonBreakdownRow key={row.kind} row={row} />)
         ) : (
-          <TableRow>
+          <AdminTableRow>
             <TableCell className="text-muted-foreground" colSpan={4}>
               No completed lessons in this period.
             </TableCell>
-          </TableRow>
+          </AdminTableRow>
         )}
       </TableBody>
     </Table>
@@ -44,7 +38,7 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) 
 
 function LessonBreakdownRow({ row }: { row: LessonBreakdownData }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       <TableCell className="font-medium">{getAdminLessonKindLabel(row.kind)}</TableCell>
       <TableCell className="tabular-nums">{formatDuration(row.avgDuration)}</TableCell>
       <TableCell>
@@ -53,7 +47,7 @@ function LessonBreakdownRow({ row }: { row: LessonBreakdownData }) {
       <TableCell className="text-right tabular-nums">
         {row.completionCount.toLocaleString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

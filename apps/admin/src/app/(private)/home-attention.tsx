@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { AdminSectionEmpty } from "@/components/admin-section";
 import { STUCK_RUNNING_MINUTES, countGenerationFailures } from "@/data/ai/get-generation-failures";
 import { type InboxQueue, getInbox } from "@/data/inbox/get-inbox";
@@ -8,6 +7,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { sumOf } from "@zoonk/utils/number";
 import { ChevronRightIcon } from "lucide-react";
 import { type Route } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
 
 type AttentionRow = { count: number; detail: string; href: Route; title: string };

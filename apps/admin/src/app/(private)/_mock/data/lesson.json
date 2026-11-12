@@ -1,121 +1,73 @@
 {
- "fields": [
-  {
-   "label": "Description",
-   "section": "Details",
-   "value": "Nobody sets a stock's price. It's the last deal between a buyer and a seller."
-  },
-  {
-   "label": "Held back",
-   "section": "Details",
-   "value": "None"
-  },
-  {
-   "label": "Spec",
-   "section": "Details",
-   "value": "Written"
-  },
-  {
-   "label": "Visibility",
-   "section": "Details",
-   "value": "Public"
-  },
-  {
-   "label": "Can do",
-   "section": "Details",
-   "value": "You'll read an order book and explain why a price moves when nothing at the company changed."
-  },
-  {
-   "label": "Chapters",
-   "section": "Details",
-   "value": "How trading works · How the stock market works · home"
-  },
-  {
-   "href": "/skills/a8c8b2bc-37a5-8162-8def-db0f77f2e244",
-   "label": "Skills",
-   "section": "Details",
-   "value": "Read an order book\nExplain where a stock's price comes from"
-  },
-  {
-   "label": "In plans",
-   "section": "Details",
-   "value": "3 plan items · 5 session blocks · 0 question threads"
-  },
-  {
-   "label": "Updated",
-   "section": "Details",
-   "value": "Nov 12, 2026, 1:11 PM"
-  },
-  {
-   "label": "Model",
-   "section": "Outline",
-   "value": "zoonk/hand-written"
-  },
-  {
-   "label": "Prompt version",
-   "section": "Outline",
-   "value": "seed-v2"
-  },
-  {
-   "label": "Run",
-   "section": "Outline",
-   "value": "seed-v2"
-  },
-  {
-   "label": "Generated",
-   "section": "Outline",
-   "value": "Oct 9, 2026, 4:15 PM"
-  }
- ],
- "headings": [
-  "H1: Where a price comes from",
-  "H2: Details",
-  "H2: Outline",
-  "SUMMARY: Spec",
-  "SUMMARY: Summary card",
-  "H2: Versions",
-  "H2: Screens (10)",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content",
-  "SUMMARY: Content"
- ],
- "tables": [
-  {
-   "head": [
-    "Written",
-    "Model",
-    "Prompt version",
-    "Step contract",
-    "Rows"
-   ],
-   "rows": [
-    [
-     {
-      "text": "Screens"
-     },
-     {
-      "text": "zoonk/hand-written"
-     },
-     {
-      "text": "seed-v2"
-     },
-     {
-      "text": "v1"
-     },
-     {
-      "text": "10"
-     }
-    ]
-   ],
-   "section": "Versions"
-  }
- ],
- "text": "Lessons\nWhere a price comes from\nWhere a price comes from\n\nWritten · EN · Overview · 6 min\n\nDetails\nDescription\nNobody sets a stock's price. It's the last deal between a buyer and a seller.\nHeld back\nNone\nSpec\nWritten\nVisibility\nPublic\nCan do\nYou'll read an order book and explain why a price moves when nothing at the company changed.\nChapters\nHow trading works · How the stock market works · home\nSkills\nRead an order book\nExplain where a stock's price comes from\nIn plans\n3 plan items · 5 session blocks · 0 question threads\nUpdated\nNov 12, 2026, 1:11 PM\nOutline\nModel\nzoonk/hand-written\nPrompt version\nseed-v2\nRun\nseed-v2\nGenerated\nOct 9, 2026, 4:15 PM\nSpec\n{\n  \"canDo\": \"You'll read an order book and explain why a price moves when nothing at the company changed.\",\n  \"title\": \"Where a price comes from\",\n  \"skills\": [\n    {\n      \"hard\": false,\n      \"name\": \"Read an order book\",\n      \"topic\": \"Read an order book\",\n      \"example\": \"Best bid $20.10, best ask $20.12: whoever buys right now pays $20.12.\",\n      \"useCase\": \"Knowing what price you'll really pay before you click buy.\",\n      \"description\": \"Buyers post the most they'll pay (bids) and sellers the least they'll accept (asks); a trade happens only when one side accepts the other's price.\"\n    },\n    {\n      \"hard\": false,\n      \"name\": \"Explain where a stock's price comes from\",\n      \"topic\": \"Explain where a stock's price comes from\",\n      \"example\": \"Record profits can sink a stock if investors expected even more.\",\n      \"useCase\": \"Reading market news without panicking at every move.\",\n      \"description\": \"The price on the screen is the last trade: it moves whenever buyers or sellers change what they're willing to accept.\"\n    }\n  ],\n  \"screens\": [\n    {\n      \"kind\": \"hook\",\n      \"brief\": \"Lia opens her broker app: a share of the bakery chain shows $20.10. A second later it shows $20.12. Nobody at the company did anything. So who just changed the \",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"explanation\",\n      \"brief\": \"Two lines of people\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"hook\",\n      \"brief\": \"Lia buys 300 shares at the market price, but only 200 are for sale at $20.12. What does she pay for the other 100?\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"workedExample\",\n      \"brief\": \"Buying more than the first seller has\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"check\",\n      \"brief\": \"The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do you pay per share?\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"explanation\",\n      \"brief\": \"Why the price moves\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"activity\",\n      \"brief\": \"The bakery chain published better results than expected at 2 pm. Measure how the price moved before and after.\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": \"chartReader\"\n    },\n    {\n      \"kind\": \"application\",\n      \"brief\": \"A company reports record profits, and its share price falls. How is that possible?\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"application\",\n      \"brief\": \"What most likely moved the price?\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    }\n  ],\n  \"description\": \"Nobody sets a stock's price. It's the last deal between a buyer and a seller.\",\n  \"estimatedMinutes\": 6\n}\nSummary card\n{\n  \"ideas\": [\n    {\n      \"text\": \"Bids are what buyers offer; asks are what sellers accept.\"\n    },\n    {\n      \"text\": \"A trade happens when one side accepts the other's price.\"\n    },\n    {\n      \"text\": \"The price on the screen is just the last trade.\"\n    },\n    {\n      \"text\": \"Prices move with expectations, so good news can still sink a stock.\"\n    }\n  ]\n}\nVersions\nWritten\tModel\tPrompt version\tStep contract\tRows\nScreens\tzoonk/hand-written\tseed-v2\tv1\t10\nScreens (10)\n\nEach screen with its field and tool versions.\n\n1.\nhook\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"text\": \"Lia opens her broker app: a share of the bakery chain shows $20.10. A second later it shows $20.12. Nobody at the company did anything. So who just changed the price?\",\n  \"variant\": \"text\"\n}\n2.\nexplanation\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"text\": \"At every moment, buyers post the most they'll pay, called **bids**, and sellers post the least they'll accept, called **asks**. Together they form the **order book**.\\n\\nWhile the best bid is below the best ask, nothing happens. A trade happens only when someone accepts the other side's price.\",\n  \"title\": \"Two lines of people\"\n}\n3.\nhook\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"reveal\": \"The next ask, $20.15. The next screen works out what she pays in total.\",\n  \"options\": [\n    {\n      \"id\": \"same\",\n      \"text\": \"$20.12 too\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"next\",\n      \"text\": \"The next ask, $20.15\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"wait\",\n      \"text\": \"Nothing until a new seller shows up\",\n      \"isCorrect\": false\n    }\n  ],\n  \"variant\": \"guess\",\n  \"question\": \"Lia buys 300 shares at the market price, but only 200 are for sale at $20.12. What does she pay for the other 100?\"\n}\n4.\nworkedExample\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"steps\": [\n    {\n      \"math\": \"200 \\\\times 20.12 = 4{,}024\",\n      \"text\": \"The first 200 come from the cheapest seller:\"\n    },\n    {\n      \"math\": \"100 \\\\times 20.15 = 2{,}015\",\n      \"text\": \"The other 100 come from the next one:\"\n    },\n    {\n      \"math\": \"4{,}024 + 2{,}015 = 6{,}039\",\n      \"text\": \"Add them up:\"\n    },\n    {\n      \"math\": \"6{,}039 \\\\div 300 = 20.13\",\n      \"text\": \"The average price per share:\"\n    }\n  ],\n  \"title\": \"Buying more than the first seller has\",\n  \"result\": \"$6,039 in total, an average of $20.13 per share. And your own order moved the last price up to $20.15.\",\n  \"problem\": \"The order book has 200 shares for sale at **$20.12** and 500 at **$20.15**. You buy 300 shares at the market price. How much do you pay?\"\n}\n5.\ncheck\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"basis\": null,\n  \"options\": [\n    {\n      \"id\": \"ask\",\n      \"text\": \"$20.12\",\n      \"reason\": \"To trade now, you accept the best ask: the lowest price a seller will take.\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"bid\",\n      \"text\": \"$20.10\",\n      \"reason\": \"That's what buyers are offering. No seller has agreed to it yet.\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"middle\",\n      \"text\": \"$20.11\",\n      \"reason\": \"Trades happen at a price someone posted. Nobody meets you halfway unless they post that price.\",\n      \"isCorrect\": false\n    }\n  ],\n  \"question\": \"The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do you pay per share?\"\n}\n6.\nexplanation\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"text\": \"The price changes whenever the balance changes. If more people want to buy than sell at today's price, buyers raise their bids and trades happen higher. If sellers rush out, they accept lower bids and the price falls.\\n\\nNothing inside the company has to change. What changed is what people **expect** from it.\",\n  \"title\": \"Why the price moves\"\n}\n7.\nactivity\nchartReader\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"data\": {\n    \"isExample\": true\n  },\n  \"check\": {\n    \"kind\": \"numeric\",\n    \"unit\": \"%\",\n    \"answer\": 11.88,\n    \"output\": \"news\",\n    \"question\": \"By what percent did the price move in the hour after the results?\",\n    \"tolerance\": {\n      \"kind\": \"absolute\",\n      \"value\": 0.1\n    },\n    \"explanation\": \"From $20.20 to $22.60 is a rise of $2.40, or 2.40 ÷ 20.20 ≈ 11.9%, in one hour. The stores didn't change in that hour; the expectations did.\"\n  },\n  \"fields\": {\n    \"spans\": [\n      {\n        \"id\": \"before\",\n        \"to\": 14,\n        \"from\": 10,\n        \"label\": \"Before the results\"\n      },\n      {\n        \"id\": \"news\",\n        \"to\": 15,\n        \"from\": 14,\n        \"label\": \"Hour after the results\"\n      }\n    ],\n    \"yUnit\": \"$\",\n    \"points\": [\n      {\n        \"x\": 10,\n        \"y\": 20.1\n      },\n      {\n        \"x\": 11,\n        \"y\": 20.05\n      },\n      {\n        \"x\": 12,\n        \"y\": 20.15\n      },\n      {\n        \"x\": 13,\n        \"y\": 20.12\n      },\n      {\n        \"x\": 14,\n        \"y\": 20.2\n      },\n      {\n        \"x\": 15,\n        \"y\": 22.6\n      },\n      {\n        \"x\": 16,\n        \"y\": 22.4\n      },\n      {\n        \"x\": 17,\n        \"y\": 22.55\n      }\n    ],\n    \"xLabel\": \"Hour of the day\",\n    \"yLabel\": \"Share price\",\n    \"statistic\": \"percentChange\"\n  },\n  \"prompt\": \"The bakery chain published better results than expected at 2 pm. Measure how the price moved before and after.\",\n  \"template\": \"chartReader\"\n}\n8.\ncheck\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"basis\": null,\n  \"options\": [\n    {\n      \"id\": \"expected\",\n      \"text\": \"Investors expected even better results\",\n      \"reason\": \"Prices already include what people expect. A record that's below expectations is a disappointment.\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"exchange\",\n      \"text\": \"The exchange lowers the price of very profitable companies\",\n      \"reason\": \"The exchange doesn't set prices. Buyers and sellers do.\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"always\",\n      \"text\": \"Record profits always make prices fall\",\n      \"reason\": \"Not always. It depends on what was expected before the news.\",\n      \"isCorrect\": false\n    }\n  ],\n  \"question\": \"A company reports record profits, and its share price falls. How is that possible?\"\n}\n9.\ncheck\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"basis\": null,\n  \"context\": \"A company's share price dropped this morning, but nothing at the company changed: same sales, same plans, no news from it.\",\n  \"options\": [\n    {\n      \"id\": \"expectations\",\n      \"text\": \"Buyers now expect less from it, so trades close at lower prices\",\n      \"reason\": \"The price is just the last trade between a buyer and a seller. When expectations about the future drop, buyers offer less, and new trades happen at lower prices, even with the company unchanged.\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"company\",\n      \"text\": \"The company lowered the price of its shares\",\n      \"reason\": \"The company doesn't set the price on the exchange: buyers and sellers do, trade by trade.\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"exchange\",\n      \"text\": \"The stock exchange recalculated the company's value\",\n      \"reason\": \"The exchange only matches buy and sell orders; it doesn't value companies. The price is the last deal a buyer and a seller agreed on.\",\n      \"isCorrect\": false\n    }\n  ],\n  \"question\": \"What most likely moved the price?\"\n}\n10.\nsummary\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"ideas\": [\n    {\n      \"text\": \"Bids are what buyers offer; asks are what sellers accept.\"\n    },\n    {\n      \"text\": \"A trade happens when one side accepts the other's price.\"\n    },\n    {\n      \"text\": \"The price on the screen is just the last trade.\"\n    },\n    {\n      \"text\": \"Prices move with expectations, so good news can still sink a stock.\"\n    }\n  ]\n}"
+  "fields": [
+    {
+      "label": "Description",
+      "section": "Details",
+      "value": "Nobody sets a stock's price. It's the last deal between a buyer and a seller."
+    },
+    { "label": "Held back", "section": "Details", "value": "None" },
+    { "label": "Spec", "section": "Details", "value": "Written" },
+    { "label": "Visibility", "section": "Details", "value": "Public" },
+    {
+      "label": "Can do",
+      "section": "Details",
+      "value": "You'll read an order book and explain why a price moves when nothing at the company changed."
+    },
+    {
+      "label": "Chapters",
+      "section": "Details",
+      "value": "How trading works · How the stock market works · home"
+    },
+    {
+      "href": "/skills/a8c8b2bc-37a5-8162-8def-db0f77f2e244",
+      "label": "Skills",
+      "section": "Details",
+      "value": "Read an order book\nExplain where a stock's price comes from"
+    },
+    {
+      "label": "In plans",
+      "section": "Details",
+      "value": "3 plan items · 5 session blocks · 0 question threads"
+    },
+    { "label": "Updated", "section": "Details", "value": "Nov 12, 2026, 1:11 PM" },
+    { "label": "Model", "section": "Outline", "value": "zoonk/hand-written" },
+    { "label": "Prompt version", "section": "Outline", "value": "seed-v2" },
+    { "label": "Run", "section": "Outline", "value": "seed-v2" },
+    { "label": "Generated", "section": "Outline", "value": "Oct 9, 2026, 4:15 PM" }
+  ],
+  "headings": [
+    "H1: Where a price comes from",
+    "H2: Details",
+    "H2: Outline",
+    "SUMMARY: Spec",
+    "SUMMARY: Summary card",
+    "H2: Versions",
+    "H2: Screens (10)",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content",
+    "SUMMARY: Content"
+  ],
+  "tables": [
+    {
+      "head": ["Written", "Model", "Prompt version", "Step contract", "Rows"],
+      "rows": [
+        [
+          { "text": "Screens" },
+          { "text": "zoonk/hand-written" },
+          { "text": "seed-v2" },
+          { "text": "v1" },
+          { "text": "10" }
+        ]
+      ],
+      "section": "Versions"
+    }
+  ],
+  "text": "Lessons\nWhere a price comes from\nWhere a price comes from\n\nWritten · EN · Overview · 6 min\n\nDetails\nDescription\nNobody sets a stock's price. It's the last deal between a buyer and a seller.\nHeld back\nNone\nSpec\nWritten\nVisibility\nPublic\nCan do\nYou'll read an order book and explain why a price moves when nothing at the company changed.\nChapters\nHow trading works · How the stock market works · home\nSkills\nRead an order book\nExplain where a stock's price comes from\nIn plans\n3 plan items · 5 session blocks · 0 question threads\nUpdated\nNov 12, 2026, 1:11 PM\nOutline\nModel\nzoonk/hand-written\nPrompt version\nseed-v2\nRun\nseed-v2\nGenerated\nOct 9, 2026, 4:15 PM\nSpec\n{\n  \"canDo\": \"You'll read an order book and explain why a price moves when nothing at the company changed.\",\n  \"title\": \"Where a price comes from\",\n  \"skills\": [\n    {\n      \"hard\": false,\n      \"name\": \"Read an order book\",\n      \"topic\": \"Read an order book\",\n      \"example\": \"Best bid $20.10, best ask $20.12: whoever buys right now pays $20.12.\",\n      \"useCase\": \"Knowing what price you'll really pay before you click buy.\",\n      \"description\": \"Buyers post the most they'll pay (bids) and sellers the least they'll accept (asks); a trade happens only when one side accepts the other's price.\"\n    },\n    {\n      \"hard\": false,\n      \"name\": \"Explain where a stock's price comes from\",\n      \"topic\": \"Explain where a stock's price comes from\",\n      \"example\": \"Record profits can sink a stock if investors expected even more.\",\n      \"useCase\": \"Reading market news without panicking at every move.\",\n      \"description\": \"The price on the screen is the last trade: it moves whenever buyers or sellers change what they're willing to accept.\"\n    }\n  ],\n  \"screens\": [\n    {\n      \"kind\": \"hook\",\n      \"brief\": \"Lia opens her broker app: a share of the bakery chain shows $20.10. A second later it shows $20.12. Nobody at the company did anything. So who just changed the \",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"explanation\",\n      \"brief\": \"Two lines of people\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"hook\",\n      \"brief\": \"Lia buys 300 shares at the market price, but only 200 are for sale at $20.12. What does she pay for the other 100?\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"workedExample\",\n      \"brief\": \"Buying more than the first seller has\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"check\",\n      \"brief\": \"The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do you pay per share?\",\n      \"skills\": [\n        0\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"explanation\",\n      \"brief\": \"Why the price moves\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"activity\",\n      \"brief\": \"The bakery chain published better results than expected at 2 pm. Measure how the price moved before and after.\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": \"chartReader\"\n    },\n    {\n      \"kind\": \"application\",\n      \"brief\": \"A company reports record profits, and its share price falls. How is that possible?\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    },\n    {\n      \"kind\": \"application\",\n      \"brief\": \"What most likely moved the price?\",\n      \"skills\": [\n        1\n      ],\n      \"visual\": null,\n      \"activityTemplate\": null\n    }\n  ],\n  \"description\": \"Nobody sets a stock's price. It's the last deal between a buyer and a seller.\",\n  \"estimatedMinutes\": 6\n}\nSummary card\n{\n  \"ideas\": [\n    {\n      \"text\": \"Bids are what buyers offer; asks are what sellers accept.\"\n    },\n    {\n      \"text\": \"A trade happens when one side accepts the other's price.\"\n    },\n    {\n      \"text\": \"The price on the screen is just the last trade.\"\n    },\n    {\n      \"text\": \"Prices move with expectations, so good news can still sink a stock.\"\n    }\n  ]\n}\nVersions\nWritten\tModel\tPrompt version\tStep contract\tRows\nScreens\tzoonk/hand-written\tseed-v2\tv1\t10\nScreens (10)\n\nEach screen with its field and tool versions.\n\n1.\nhook\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"text\": \"Lia opens her broker app: a share of the bakery chain shows $20.10. A second later it shows $20.12. Nobody at the company did anything. So who just changed the price?\",\n  \"variant\": \"text\"\n}\n2.\nexplanation\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"text\": \"At every moment, buyers post the most they'll pay, called **bids**, and sellers post the least they'll accept, called **asks**. Together they form the **order book**.\\n\\nWhile the best bid is below the best ask, nothing happens. A trade happens only when someone accepts the other side's price.\",\n  \"title\": \"Two lines of people\"\n}\n3.\nhook\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"reveal\": \"The next ask, $20.15. The next screen works out what she pays in total.\",\n  \"options\": [\n    {\n      \"id\": \"same\",\n      \"text\": \"$20.12 too\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"next\",\n      \"text\": \"The next ask, $20.15\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"wait\",\n      \"text\": \"Nothing until a new seller shows up\",\n      \"isCorrect\": false\n    }\n  ],\n  \"variant\": \"guess\",\n  \"question\": \"Lia buys 300 shares at the market price, but only 200 are for sale at $20.12. What does she pay for the other 100?\"\n}\n4.\nworkedExample\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"steps\": [\n    {\n      \"math\": \"200 \\\\times 20.12 = 4{,}024\",\n      \"text\": \"The first 200 come from the cheapest seller:\"\n    },\n    {\n      \"math\": \"100 \\\\times 20.15 = 2{,}015\",\n      \"text\": \"The other 100 come from the next one:\"\n    },\n    {\n      \"math\": \"4{,}024 + 2{,}015 = 6{,}039\",\n      \"text\": \"Add them up:\"\n    },\n    {\n      \"math\": \"6{,}039 \\\\div 300 = 20.13\",\n      \"text\": \"The average price per share:\"\n    }\n  ],\n  \"title\": \"Buying more than the first seller has\",\n  \"result\": \"$6,039 in total, an average of $20.13 per share. And your own order moved the last price up to $20.15.\",\n  \"problem\": \"The order book has 200 shares for sale at **$20.12** and 500 at **$20.15**. You buy 300 shares at the market price. How much do you pay?\"\n}\n5.\ncheck\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"basis\": null,\n  \"options\": [\n    {\n      \"id\": \"ask\",\n      \"text\": \"$20.12\",\n      \"reason\": \"To trade now, you accept the best ask: the lowest price a seller will take.\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"bid\",\n      \"text\": \"$20.10\",\n      \"reason\": \"That's what buyers are offering. No seller has agreed to it yet.\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"middle\",\n      \"text\": \"$20.11\",\n      \"reason\": \"Trades happen at a price someone posted. Nobody meets you halfway unless they post that price.\",\n      \"isCorrect\": false\n    }\n  ],\n  \"question\": \"The best bid is $20.10 and the best ask is $20.12. You want to buy right now. What do you pay per share?\"\n}\n6.\nexplanation\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"text\": \"The price changes whenever the balance changes. If more people want to buy than sell at today's price, buyers raise their bids and trades happen higher. If sellers rush out, they accept lower bids and the price falls.\\n\\nNothing inside the company has to change. What changed is what people **expect** from it.\",\n  \"title\": \"Why the price moves\"\n}\n7.\nactivity\nchartReader\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"data\": {\n    \"isExample\": true\n  },\n  \"check\": {\n    \"kind\": \"numeric\",\n    \"unit\": \"%\",\n    \"answer\": 11.88,\n    \"output\": \"news\",\n    \"question\": \"By what percent did the price move in the hour after the results?\",\n    \"tolerance\": {\n      \"kind\": \"absolute\",\n      \"value\": 0.1\n    },\n    \"explanation\": \"From $20.20 to $22.60 is a rise of $2.40, or 2.40 ÷ 20.20 ≈ 11.9%, in one hour. The stores didn't change in that hour; the expectations did.\"\n  },\n  \"fields\": {\n    \"spans\": [\n      {\n        \"id\": \"before\",\n        \"to\": 14,\n        \"from\": 10,\n        \"label\": \"Before the results\"\n      },\n      {\n        \"id\": \"news\",\n        \"to\": 15,\n        \"from\": 14,\n        \"label\": \"Hour after the results\"\n      }\n    ],\n    \"yUnit\": \"$\",\n    \"points\": [\n      {\n        \"x\": 10,\n        \"y\": 20.1\n      },\n      {\n        \"x\": 11,\n        \"y\": 20.05\n      },\n      {\n        \"x\": 12,\n        \"y\": 20.15\n      },\n      {\n        \"x\": 13,\n        \"y\": 20.12\n      },\n      {\n        \"x\": 14,\n        \"y\": 20.2\n      },\n      {\n        \"x\": 15,\n        \"y\": 22.6\n      },\n      {\n        \"x\": 16,\n        \"y\": 22.4\n      },\n      {\n        \"x\": 17,\n        \"y\": 22.55\n      }\n    ],\n    \"xLabel\": \"Hour of the day\",\n    \"yLabel\": \"Share price\",\n    \"statistic\": \"percentChange\"\n  },\n  \"prompt\": \"The bakery chain published better results than expected at 2 pm. Measure how the price moved before and after.\",\n  \"template\": \"chartReader\"\n}\n8.\ncheck\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"basis\": null,\n  \"options\": [\n    {\n      \"id\": \"expected\",\n      \"text\": \"Investors expected even better results\",\n      \"reason\": \"Prices already include what people expect. A record that's below expectations is a disappointment.\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"exchange\",\n      \"text\": \"The exchange lowers the price of very profitable companies\",\n      \"reason\": \"The exchange doesn't set prices. Buyers and sellers do.\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"always\",\n      \"text\": \"Record profits always make prices fall\",\n      \"reason\": \"Not always. It depends on what was expected before the news.\",\n      \"isCorrect\": false\n    }\n  ],\n  \"question\": \"A company reports record profits, and its share price falls. How is that possible?\"\n}\n9.\ncheck\nv1\nSkill: Explain where a stock's price comes from\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"basis\": null,\n  \"context\": \"A company's share price dropped this morning, but nothing at the company changed: same sales, same plans, no news from it.\",\n  \"options\": [\n    {\n      \"id\": \"expectations\",\n      \"text\": \"Buyers now expect less from it, so trades close at lower prices\",\n      \"reason\": \"The price is just the last trade between a buyer and a seller. When expectations about the future drop, buyers offer less, and new trades happen at lower prices, even with the company unchanged.\",\n      \"isCorrect\": true\n    },\n    {\n      \"id\": \"company\",\n      \"text\": \"The company lowered the price of its shares\",\n      \"reason\": \"The company doesn't set the price on the exchange: buyers and sellers do, trade by trade.\",\n      \"isCorrect\": false\n    },\n    {\n      \"id\": \"exchange\",\n      \"text\": \"The stock exchange recalculated the company's value\",\n      \"reason\": \"The exchange only matches buy and sell orders; it doesn't value companies. The price is the last deal a buyer and a seller agreed on.\",\n      \"isCorrect\": false\n    }\n  ],\n  \"question\": \"What most likely moved the price?\"\n}\n10.\nsummary\nv1\nSkill: Read an order book\nNo answers\nzoonk/hand-written\nseed-v2 · seed-v2\nContent\n{\n  \"ideas\": [\n    {\n      \"text\": \"Bids are what buyers offer; asks are what sellers accept.\"\n    },\n    {\n      \"text\": \"A trade happens when one side accepts the other's price.\"\n    },\n    {\n      \"text\": \"The price on the screen is just the last trade.\"\n    },\n    {\n      \"text\": \"Prices move with expectations, so good news can still sink a stock.\"\n    }\n  ]\n}"
 }

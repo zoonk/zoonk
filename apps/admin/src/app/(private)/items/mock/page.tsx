@@ -1,3 +1,5 @@
+import dump from "@/app/(private)/_mock/data/item.json";
+import { type Dump, FactsFrom, readView } from "@/app/(private)/_mock/kit";
 import {
   AdminDetailBody,
   AdminDetailColumns,
@@ -8,8 +10,6 @@ import { AdminNotice } from "@/components/admin-notice";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
-import dump from "@/app/(private)/_mock/data/item.json";
-import { type Dump, FactsFrom, readView } from "@/app/(private)/_mock/kit";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
 
 const item = dump as Dump;
@@ -71,10 +71,7 @@ function Question() {
             O que explica essa mudança e por que ela pode ser prejudicial?
           </p>
           <MockOptions options={OPTIONS} />
-          <a
-            className="text-muted-foreground hover:text-foreground text-xs font-medium"
-            href="#"
-          >
+          <a className="text-muted-foreground hover:text-foreground text-xs font-medium" href="#">
             Show JSON
           </a>
         </div>
@@ -118,7 +115,12 @@ export default async function ItemMockPage({ searchParams }: PageProps<"/items/m
           <MockLink>Review it in Source changes</MockLink>
         </AdminNotice>
 
-        <AdminTabs current={tab as "question"} label="Practice question" path="/items/mock" tabs={TABS} />
+        <AdminTabs
+          current={tab as "question"}
+          label="Practice question"
+          path="/items/mock"
+          tabs={TABS}
+        />
 
         <Body />
       </AdminDetailBody>

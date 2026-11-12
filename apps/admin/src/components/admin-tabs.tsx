@@ -37,8 +37,8 @@ export function AdminTabs<Value extends string>({
         <Link
           aria-current={tab.value === current ? "page" : undefined}
           className={cn(
-            "text-muted-foreground hover:text-foreground hit-area relative -mb-px flex h-10 shrink-0 items-center border-b-2 border-transparent text-sm font-medium transition-colors",
-            "aria-[current=page]:border-foreground aria-[current=page]:text-foreground",
+            "text-muted-foreground hover:text-foreground hit-area relative flex h-10 shrink-0 items-center text-sm font-medium transition-colors",
+            "aria-[current=page]:text-foreground aria-[current=page]:after:bg-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5",
             "focus-visible:ring-ring/50 rounded-sm outline-none focus-visible:ring-[3px]",
           )}
           href={index === 0 ? path : `${path}?tab=${tab.value}`}

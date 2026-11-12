@@ -4,7 +4,7 @@ import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { getSkill } from "@/data/skills/get-skill";
 import { MAX_SKILL_USAGE_ROWS, getSkillUsage } from "@/data/skills/get-skill-usage";
 import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 
 type SkillUsageRows = Awaited<ReturnType<typeof getSkillUsage>>;
 
@@ -95,11 +95,11 @@ function SkillChaptersTable({ chapters }: { chapters: SkillUsageRows["chapters"]
       isEmpty={chapters.length === 0}
     >
       {chapters.map((chapter) => (
-        <TableRow key={chapter.id}>
+        <AdminTableRow key={chapter.id}>
           <TableCell className="max-w-96 min-w-56 whitespace-normal">{chapter.title}</TableCell>
           <TableCell className="capitalize">{chapter.level}</TableCell>
           <TableCell className="capitalize">{chapter.visibility}</TableCell>
-        </TableRow>
+        </AdminTableRow>
       ))}
     </AdminTableColumns>
   );
