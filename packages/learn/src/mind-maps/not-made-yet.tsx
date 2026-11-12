@@ -155,7 +155,7 @@ export function NotMadeYet({
 
       <ListGroup>
         <Disclosure aside={chapters.length} icon={null} title={t("Show chapters")}>
-          {!plus && needLessons > 0 && !startsNoMap(page.createOffer) && (
+          {!plus && needLessons > 0 && page.createOffer.stop === null && (
             <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
           )}
 

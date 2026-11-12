@@ -355,7 +355,7 @@ describe("making all of a goal's chapter maps", () => {
     };
 
     await expect(readyList(goal.id)).resolves.toMatchObject({
-      createOffer: { eligible: 3, needLessons: 0, startable: 1, stop },
+      createOffer: { eligible: 3, needLessons: 0, startable: 1, stop: null },
     });
 
     await expect(requestGoalMindMaps({ goalId: goal.id })).resolves.toStrictEqual({
@@ -399,7 +399,7 @@ describe("making all of a goal's chapter maps", () => {
 
     await expect(readyList(goal.id)).resolves.toMatchObject({
       chapters: [{ status: "drawing" }, { status: "available" }, { status: "available" }],
-      createOffer: { eligible: 2, startable: 0 },
+      createOffer: { eligible: 2, startable: 0, stop },
     });
   });
 
@@ -473,6 +473,46 @@ describe("making all of a goal's chapter maps", () => {
         },
       },
     });
+  });
+
+  it("says no new map can start at the limit, while a failed map's free retry still can", async () => {
+    const { beginner, extra, first, goal, lessons, user } = await writtenCourseGoal();
+    const unwritten = [...lessons.slice(2), extra].map((lesson) => lesson.id);
+
+    await Promise.all([
+      prisma.lesson.updateMany({
+        data: { contentStatus: "pending" },
+        where: { id: { in: unwritten } },
+      }),
+      usageRecordsFixture({ count: 2, createdAt: new Date(), kind: "mindMap", userId: user.id }),
+    ]);
+
+    await requestGoalMindMaps({ goalId: goal.id });
+
+    // Its run started, then failed.
+    await prisma.followUp.deleteMany({ where: { userId: user.id } });
+    await prisma.chapterMindMap.update({ data: { status: "failed" }, where: { chapterId: first } });
+
+    await expect(readyList(goal.id)).resolves.toMatchObject({
+      chapters: [{ status: "failed" }, { status: "available" }, { chapterId: beginner.id }],
+      createOffer: {
+        eligible: 1,
+        needLessons: 2,
+        startable: 1,
+        stop: {
+          period: "day",
+          reason: "limitReached",
+          resetsAt: getUsageResets(new Date()).day.toISOString(),
+          resource: "mindMap",
+        },
+      },
+    });
+
+    await expect(requestGoalMindMaps({ goalId: goal.id })).resolves.toMatchObject({
+      generations: { accepted: [first] },
+    });
+
+    await expect(countMapClaims(user.id)).resolves.toBe(3);
   });
 
   it("joins a map another learner is making and charges nothing on a second click", async () => {
