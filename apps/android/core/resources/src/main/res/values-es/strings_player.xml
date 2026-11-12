@@ -39,12 +39,11 @@
   "player_challenge_much_higher": "d3a8d776ed0bccd63467e24f08708fa01bd1007a10da4c7baa99f3e651e31d04",
   "player_challenge_much_lower": "73aa9b223be87d8f23e353d69fb939e6c7251eb3455b56e483d36f1f162cec38",
   "player_challenge_no_change": "2597e30f94ede2337195263aa6c22f7d7b196610954db1a816f68aa63756bd1f",
+  "player_challenge_phase_fix": "7cee8058a607ff655e6e56981db861f2d9006269624f90ae80876cdfa8baaab5",
+  "player_challenge_phase_fix_line_1": "9f8dadf89505ef39f233d148541a930c97d233a0e49266d9820a175cc6c7808f",
   "player_challenge_phase_plan": "f2129db6f4fc2deedf1df48f75fed88654cf817ea49b1c7ddab43ab7a4b2fe19",
   "player_challenge_phase_plan_line_1": "8da8fddcf061f4c0a20545167fc20a7ad847eee92d05f25803900f4208e3ffaf",
   "player_challenge_phase_plan_line_2": "f976f142c9c6d538dcb2767e430b3d48b5ee1e8815853d6d2abfdaee88812e88",
-  "player_challenge_phase_redraft": "a395bae2b4e65db9da21778dc38425cd71baa00942a316f208c1eb0a9ad4bf65",
-  "player_challenge_phase_redraft_line_1": "360d94bbbfab0c107c1e84f0b25e56f93c731f128baa8bf4186688b160dfff1f",
-  "player_challenge_phase_redraft_line_2": "669baf1374d6675cf397e6c636083ccbb27c685378bc5a73077a0c523a2c0145",
   "player_challenge_phase_write": "e31bfdf0e91e935cd8f2761602f5bceda47145cf31d76be9240046df3ee74aaf",
   "player_challenge_phase_write_line_1": "8d390a8b8bf7bf70c0d44cf7d097e2cacc46a55c11c60e238ae3e5662b916681",
   "player_challenge_phase_write_line_2": "c5c3580c74e1d286e44df87a3ef55b8354d53142ad35d026ef0a66fdff3ff7f6",
@@ -322,10 +321,9 @@
     <string name="player_challenge_phase_write">Preparando el desafío</string>
     <string name="player_challenge_phase_write_line_1">Preparando lo que pasará con cada decisión…</string>
     <string name="player_challenge_phase_write_line_2">Revisando cada camino…</string>
-    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
-    <string name="player_challenge_phase_redraft">Corrigiendo los problemas encontrados</string>
-    <string name="player_challenge_phase_redraft_line_1">Planeando de nuevo el desafío…</string>
-    <string name="player_challenge_phase_redraft_line_2">Preparando de nuevo las partes que no encajaban…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
+    <string name="player_challenge_phase_fix">Corrigiendo los problemas encontrados</string>
+    <string name="player_challenge_phase_fix_line_1">Preparando de nuevo las partes que no encajaban…</string>
     <string name="player_writing_note">Suele tardar unos minutos. La lección se abrirá aquí en cuanto esté lista.</string>
     <string name="player_ready_while_waiting">Para hacer mientras esperas</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

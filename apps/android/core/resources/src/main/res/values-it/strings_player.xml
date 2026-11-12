@@ -39,12 +39,11 @@
   "player_challenge_much_higher": "e654869e1da1699f2438156d8d8c1eb98734d204b4e00bbf72a2e819c0340f19",
   "player_challenge_much_lower": "b51acec1fbde9ef5210b9fe3a5c13b11e216b5fbfc1ad1a9546f2aac5727aff1",
   "player_challenge_no_change": "63cf8bd9cd8b2b594bf6ae6ef4c69f2e2601880387d1b46d743f87b517ceb48c",
+  "player_challenge_phase_fix": "552d62c59ba6bacf029332cd039c482a05b77861b7cc96e58179bee80d2a5199",
+  "player_challenge_phase_fix_line_1": "5eab0027faef085078a8426e989401661a1a2a4169cf5096fec742418b886e3e",
   "player_challenge_phase_plan": "292f5a7eafc90d49168f5734cd8adbcfb9d5b9ffae2f237d987f5b44afea86cb",
   "player_challenge_phase_plan_line_1": "ae7fee175d6099822aa5170edd3d7e9b3ac09cf9784e38e522c4c09776ec5a94",
   "player_challenge_phase_plan_line_2": "b0b9355869fb5dd96fe5912416e9ca54a72c2e8b156159264e0f7b583ed6be89",
-  "player_challenge_phase_redraft": "38a9cc4eb4319646a1dff3e6ec463a009a0ce21a052c819782f8e2c6ca5af64b",
-  "player_challenge_phase_redraft_line_1": "60d6263e00e107f34fd8c06389d69e9b75829ff49b5c51d99cf98fe6f0d03b79",
-  "player_challenge_phase_redraft_line_2": "4ae6a47734f6e82e7eec675ecb5f9ac5535fe8e4791309407f63dfe9af98ace2",
   "player_challenge_phase_write": "d1cc42e22fee27980cb79e8ac553358e09e7bd762e40112ef26352838b101b24",
   "player_challenge_phase_write_line_1": "0fb8505d023824ad77f1ca8e0608791785ec3ff69c523f40f7e59f7a9746514c",
   "player_challenge_phase_write_line_2": "380e76b440c6a3f4d59ff82a58ce9a394f23f6842be1f079f46594610d2a3f4b",
@@ -322,10 +321,9 @@
     <string name="player_challenge_phase_write">Stiamo preparando la sfida</string>
     <string name="player_challenge_phase_write_line_1">Stiamo preparando l’esito di ogni scelta…</string>
     <string name="player_challenge_phase_write_line_2">Stiamo controllando ogni percorso…</string>
-    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
-    <string name="player_challenge_phase_redraft">Stiamo correggendo i problemi emersi dal controllo</string>
-    <string name="player_challenge_phase_redraft_line_1">Stiamo riprogettando la sfida…</string>
-    <string name="player_challenge_phase_redraft_line_2">Stiamo rifacendo le parti che non tornavano…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
+    <string name="player_challenge_phase_fix">Stiamo correggendo i problemi emersi dal controllo</string>
+    <string name="player_challenge_phase_fix_line_1">Stiamo rifacendo le parti che non tornavano…</string>
     <string name="player_writing_note">Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta.</string>
     <string name="player_ready_while_waiting">Da fare nell’attesa</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

@@ -129,10 +129,9 @@
     <string name="player_challenge_phase_write">Writing the challenge</string>
     <string name="player_challenge_phase_write_line_1">Writing what each choice leads to…</string>
     <string name="player_challenge_phase_write_line_2">Checking every path…</string>
-    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
-    <string name="player_challenge_phase_redraft">Fixing what the check found</string>
-    <string name="player_challenge_phase_redraft_line_1">Planning the challenge again…</string>
-    <string name="player_challenge_phase_redraft_line_2">Rewriting the parts that didn\'t add up…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
+    <string name="player_challenge_phase_fix">Fixing what the check found</string>
+    <string name="player_challenge_phase_fix_line_1">Rewriting the parts that didn\'t add up…</string>
     <string name="player_writing_note">It usually takes a few minutes. The lesson opens here as soon as it\'s ready.</string>
     <string name="player_ready_while_waiting">Ready while you wait</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
