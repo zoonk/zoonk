@@ -163,6 +163,25 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertFalse(store.requesting.contains("chapter"))
   }
 
+  func testLessonMapsReadBeforeCreateReadAgainOnceTheListShowsTheLessonsItWrote() async {
+    let api = MindMapsAPIStub(
+      server: .available, statuses: [.success(.drawing), .success(.ready)],
+      startsAs: .writingLessons, lessonIds: ["first"])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    let lessons = store.lessonMaps(goalId: "goal", chapterId: "chapter")
+    await list.load()
+    await lessons.load()
+
+    await store.create(goalId: "goal", chapterId: "chapter")
+    await api.writeLessons(["first", "second"])
+    await store.follow(goalId: "goal", chapterId: "chapter")
+    await lessons.load()
+
+    XCTAssertEqual(list.value?.lessonGroups.first?.lessonIds, ["first", "second"])
+    XCTAssertEqual(lessons.value?.lessons.map(\.lessonId), ["first", "second"])
+  }
+
   func testStartedMapWhoseReadFailsSaysTheServerWasntReached() async {
     let api = MindMapsAPIStub(server: .available, statuses: [], startsAs: .drawing)
     let store = makeStore(api: api)
@@ -451,17 +470,20 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   private var heldSave: CheckedContinuation<Void, Never>?
   private var createAllFailures = 0
   private var answered: (chapters: [ChapterMindMap], saved: [SavedMindMap])?
+  /// The chapter's written lessons, every one open.
+  private var lessonIds: [String]
 
   init(
     server: ChapterMindMap.Status, statuses: [Result<ChapterMindMap.Status, APIError>],
     request: MindMapRequest = .read, startsAs: ChapterMindMap.Status? = nil,
-    holdsFirstStatus: Bool = false
+    holdsFirstStatus: Bool = false, lessonIds: [String] = []
   ) {
     self.server = server
     self.statuses = statuses
     self.request = request
     self.startsAs = startsAs
     self.holdsFirstStatus = holdsFirstStatus
+    self.lessonIds = lessonIds
   }
 
   var isHolding: Bool { held != nil }
@@ -498,6 +520,10 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     createAllFailures = count
   }
 
+  func writeLessons(_ ids: [String]) {
+    lessonIds = ids
+  }
+
   var isHoldingSave: Bool { heldSave != nil }
 
   func holdNextSave() {
@@ -525,7 +551,13 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     return GoalMindMaps(
       chapters: answered?.chapters ?? [chapter],
       createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
-      firstTab: .chapters, lessonGroups: [],
+      firstTab: .chapters,
+      lessonGroups: lessonIds.isEmpty
+        ? []
+        : [
+          LessonMapGroup(
+            chapterId: "chapter", count: lessonIds.count, locked: 0, lessonIds: lessonIds)
+        ],
       saved: answered?.saved
         ?? (saved
           ? [
@@ -538,7 +570,11 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   func lessonMaps(token: String, goalId: String, chapterId: String) async throws
     -> ChapterLessonMaps
   {
-    ChapterLessonMaps(chapter: .init(id: chapterId, position: 1, title: "Chapter"), lessons: [])
+    ChapterLessonMaps(
+      chapter: .init(id: chapterId, position: 1, title: "Chapter"),
+      lessons: lessonIds.enumerated().map { index, id in
+        .init(lessonId: id, locked: false, map: nil, position: index + 1, saved: false, title: id)
+      })
   }
 
   func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool {
