@@ -132,19 +132,21 @@ async function staleReasonFor(
   tx: TransactionClient,
   {
     fixId,
-    reverts,
+    proposedAt,
+    revertsId,
     stored,
   }: {
     fixId: string;
-    reverts: { decidedAt: Date | null } | null;
+    proposedAt: Date;
+    revertsId: string | null;
     stored: ReturnType<typeof contentFixChangesSchema.parse>;
   },
 ): Promise<string | null> {
-  if (reverts?.decidedAt) {
+  if (revertsId) {
     const newer = await tx.contentFix.findFirst({
       where: {
         OR: stored.map(({ id, model }) => ({ changes: { array_contains: [{ id, model }] } })),
-        decidedAt: { gt: reverts.decidedAt },
+        decidedAt: { gt: proposedAt },
         id: { not: fixId },
         status: "applied",
       },
@@ -202,7 +204,7 @@ function applyApproval({
     }
 
     const fix = await tx.contentFix.findUniqueOrThrow({
-      select: { changes: true, reverts: { select: { decidedAt: true } }, unit: true, unitId: true },
+      select: { changes: true, createdAt: true, revertsId: true, unit: true, unitId: true },
       where: { id: fixId },
     });
 
@@ -212,7 +214,12 @@ function applyApproval({
     await lockRetiredItemPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
 
-    const staleReason = await staleReasonFor(tx, { fixId, reverts: fix.reverts, stored: changes });
+    const staleReason = await staleReasonFor(tx, {
+      fixId,
+      proposedAt: fix.createdAt,
+      revertsId: fix.revertsId,
+      stored: changes,
+    });
 
     if (staleReason) {
       await tx.contentFix.update({ data: { staleReason, status: "stale" }, where: { id: fixId } });

@@ -915,4 +915,68 @@ describe("stale removal reverts", () => {
       expect(after).toStrictEqual(before);
     },
   );
+
+  it("reverts a fix after a later fix changed other parts of the same rows", async () => {
+    const lesson = await libraryLessonFixture({ contentStatus: "completed" });
+    const asset = await mediaAssetFixture();
+
+    const step = await libraryStepFixture({
+      content: intro,
+      lessonId: lesson.id,
+      mediaAssetId: asset.id,
+    });
+
+    await signInProposer();
+    const title = await proposeFix({ changes: [rename(lesson.id, "New title")], reason: "Title" });
+
+    const detach = await proposeFix({
+      changes: [{ detachPicture: true, id: step.id, model: "Step" }],
+      reason: "Wrong picture",
+    });
+
+    const approver = await signInApprover();
+    await approve({ fixId: title.id, key: approver.key });
+    await approve({ fixId: detach.id, key: approver.key });
+
+    await signInProposer();
+
+    const later = await proposeFix({
+      changes: [
+        { id: lesson.id, model: "Lesson", set: { description: "New description" } },
+        { id: step.id, model: "Step", set: { content: { ...intro, title: "Addition" } } },
+      ],
+      reason: "Description and typo",
+    });
+
+    mockSession(approver.user.id);
+    await approve({ fixId: later.id, key: approver.key });
+
+    const undoTitle = await proposeContentFixRevertInAdmin({ fixId: title.id, reason: "Undo" });
+    const undoDetach = await proposeContentFixRevertInAdmin({ fixId: detach.id, reason: "Undo" });
+
+    if (undoTitle.status !== "proposed" || undoDetach.status !== "proposed") {
+      throw new Error("Expected both reverts to be proposed");
+    }
+
+    await expect(approve({ fixId: undoTitle.fix.id, key: approver.key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(approve({ fixId: undoDetach.fix.id, key: approver.key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      Promise.all([
+        prisma.lesson.findUniqueOrThrow({
+          select: { description: true, title: true },
+          where: { id: lesson.id },
+        }),
+        prisma.step.findUniqueOrThrow({ select: { mediaAssetId: true }, where: { id: step.id } }),
+      ]),
+    ).resolves.toStrictEqual([
+      { description: "New description", title: lesson.title },
+      { mediaAssetId: asset.id },
+    ]);
+  });
 });
