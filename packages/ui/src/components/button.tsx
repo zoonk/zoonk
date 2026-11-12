@@ -5,7 +5,7 @@ import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
-  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -35,7 +35,7 @@ const buttonVariants = cva(
         inverse:
           "bg-primary-foreground text-primary hover:bg-primary-foreground/90 focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30 border-transparent",
         "inverse-outline":
-          "border-primary-foreground/30 bg-primary-foreground/5 text-primary-foreground hover:border-primary-foreground hover:bg-primary-foreground hover:text-primary focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:border-primary/30 dark:bg-primary/5 dark:text-primary dark:hover:border-primary dark:hover:bg-primary dark:hover:text-primary-foreground dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30",
+          "border-primary-foreground/30 bg-primary-foreground/5 text-primary-foreground hover:border-primary-foreground hover:bg-primary-foreground hover:text-primary focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:border-primary/30 dark:bg-primary/5 dark:text-primary dark:hover:border-primary dark:hover:bg-primary dark:hover:text-primary-foreground dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30 bg-clip-padding",
         // Underlined at rest: a touch screen has no hover to show it's a link.
         link: "text-foreground decoration-foreground/30 hover:decoration-foreground inline h-auto rounded-sm border-0 p-0 text-start whitespace-normal underline underline-offset-4 in-[p]:text-[length:inherit] has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
         outline:
