@@ -13,12 +13,12 @@ function formatPrice(price: number): string {
 }
 
 export function ModelList({
+  hasResults,
   models,
-  open,
   taskId,
 }: {
+  hasResults: boolean;
   models: { model: ModelConfig; pricing?: ModelPricing; status: ModelStatus }[];
-  open: boolean;
   taskId: string;
 }) {
   if (models.length === 0) {
@@ -26,13 +26,13 @@ export function ModelList({
   }
 
   return (
-    <details className="group border-t pt-2" open={open}>
+    <details className="group border-t pt-2" open={!hasResults}>
       <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-semibold [&::-webkit-details-marker]:hidden">
         <ChevronRightIcon
           aria-hidden="true"
           className="text-muted-foreground size-4 transition-transform group-open:rotate-90"
         />
-        Run another model
+        {hasResults ? "Run another model" : "Run a model"}
       </summary>
 
       <p className="text-muted-foreground text-xs">Price per million tokens: input / output.</p>
