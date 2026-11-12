@@ -17,7 +17,10 @@ import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../_test-utils/exam-test-goal";
 import { getGoalPlacement } from "./get-goal-placement";
 
-async function setup(source: "focusTest" | "learner" | "mock" = "focusTest") {
+async function setup(
+  source: "focusTest" | "learner" | "mock" = "focusTest",
+  { testAnswers = true }: { testAnswers?: boolean } = {},
+) {
   const fixture = await shortPlanExamGoalFixture({
     daysLeft: 60,
     goal: { ...PLAN_SHOWN, createdAt: new Date(Date.now() - 15 * MS_PER_DAY), timezone: "UTC" },
@@ -136,6 +139,16 @@ async function setup(source: "focusTest" | "learner" | "mock" = "focusTest") {
 
   const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
+  if (testAnswers) {
+    await attemptFixture({
+      isCorrect: true,
+      isPlacement: true,
+      itemId: right.id,
+      skillId: right.skillId,
+      userId: user.id,
+    });
+  }
+
   await Promise.all(
     Array.from({ length: 12 }, () =>
       attemptFixture({
@@ -158,6 +171,12 @@ async function proposals(planId: string) {
 }
 
 describe("weekly reviews of a system-owned focus", () => {
+  it("requires a Focus test answer before attributing a proposal to the test", async () => {
+    const { goal, plan, user } = await setup("mock", { testAnswers: false });
+    await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+    await expect(proposals(plan.id)).resolves.toHaveLength(0);
+  });
+
   it.each(["focusTest", "mock"] as const)(
     "proposes from ordinary practice after accepting a %s focus",
     async (source) => {

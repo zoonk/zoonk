@@ -6,7 +6,6 @@ import { loadFocusOwnership } from "../learner/placement/_utils/focus-proposal-f
 import { saveTestSummary } from "../learner/placement/_utils/test-sitting";
 import { FOCUS_TEST_SOURCE } from "../learner/placement/focus-test-contract";
 import { readFocusTestRecord } from "../learner/placement/focus-test-state";
-import { isSameFocus } from "../learner/placement/focus-test-summary";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import { proposePlanChange } from "../plans/propose-plan-change";
 import { isRebalanceDue } from "./rebalance-rule";
@@ -63,25 +62,14 @@ export async function rebalanceFocusTest({
     userId: goal.userId,
   });
 
-  if (!focusTest || focusTest.sittingId || focusTest.rows.length === 0) {
-    return;
-  }
-
-  const areas = focusTest.rows.flatMap((row) => row.areas);
-
-  if (
-    focusTest.plan.handPicked ||
-    focusTest.plan.proposal ||
-    focusTest.plan.declined ||
-    isSameFocus(areas, focusTest.plan.focusAreas)
-  ) {
+  if (!focusTest?.dueFocus || focusTest.sittingId) {
     return;
   }
 
   await proposePlanChange({
     approval: "always",
     goalId: goal.id,
-    operations: [{ areas, kind: "focusAreas" }],
+    operations: [{ areas: focusTest.dueFocus, kind: "focusAreas" }],
     reason: "",
     source: FOCUS_TEST_SOURCE,
     timeZone,
