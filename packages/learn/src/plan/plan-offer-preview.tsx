@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   SuggestionAction,
@@ -19,8 +19,8 @@ import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { getLongerTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
-import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { type GoalDateMove } from "../plan-diff/change-names";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useFullCourseText } from "./plan-full-course";
@@ -29,7 +29,6 @@ import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { usePlanChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { readTimeToCover } from "./use-time-to-cover";
-
 
 export function getGoalDateMove({
   operations,
@@ -143,7 +142,7 @@ export function OfferPreview({
       <SuggestionActions>
         {/* Never applied before its effect is worked out, as Today's proposals. */}
         {!unchanged && effect !== null && (
-          <SuggestionAction action={onApply} busy={pending} icon={<CheckIcon aria-hidden="true" />}>
+          <SuggestionAction action={onApply} busy={pending}>
             {t("Change my plan")}
           </SuggestionAction>
         )}

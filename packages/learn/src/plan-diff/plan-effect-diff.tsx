@@ -45,21 +45,27 @@ export function PlanEffectDiff({
   className,
   effect,
   goalDate,
+  said,
   summary = true,
 }: {
   byDate?: boolean;
   className?: string;
   effect: PlanEffect | null;
   goalDate?: GoalDateMove;
+  /** What the screen's title already states, so the same count isn't said twice under it. */
+  said?: "lessonsAdded";
   /** False where the screen's own sentence already says what matters most. */
   summary?: boolean;
 }) {
   const t = useExtracted();
   const found = usePlanChangeConsequence()(effect, { byDate, goalDate });
-  const consequence = summary ? found : null;
+  const namesAdded = (effect?.topicsAdded?.length ?? 0) + (effect?.outcomesAdded?.length ?? 0) > 0;
+  const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded;
+  const consequence = summary && !repeatsTitle ? found : null;
   const rows = usePlanChangeRows()(effect, { byDate, goalDate });
-  const onlyRow = rows.length === 1 && rows[0]?.key === consequence?.key;
-  const hasMore = rows.length > 0 && !(onlyRow && consequence?.whole);
+  const stated = summary ? found : null;
+  const onlyRow = rows.length === 1 && rows[0]?.key === stated?.key;
+  const hasMore = rows.length > 0 && !(onlyRow && stated?.whole);
 
   if (!consequence && !hasMore) {
     return null;

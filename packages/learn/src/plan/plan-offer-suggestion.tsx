@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanOffer } from "@zoonk/core/plans/view-contract";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { SuggestionAction, SuggestionActions } from "../_components/suggestion";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
@@ -19,6 +18,7 @@ export function PlanOfferSuggestion({
   canApply = true,
   item,
   offer,
+  said,
   title,
 }: {
   /** The offer's own verb, such as "Add them". */
@@ -27,6 +27,8 @@ export function PlanOfferSuggestion({
   canApply?: boolean;
   item: SlotItem;
   offer: PlanOffer | null;
+  /** What the title already states. */
+  said?: "lessonsAdded";
   title: string;
 }) {
   const t = useExtracted();
@@ -52,11 +54,11 @@ export function PlanOfferSuggestion({
 
   return (
     <PlanChangeSuggestion failed={failed} item={item} title={title}>
-      {offer && <PlanEffectDiff effect={offer.effect} />}
+      {offer && <PlanEffectDiff effect={offer.effect} said={said} />}
 
       <SuggestionActions>
         {offer && canApply && (
-          <SuggestionAction action={apply} busy={isPending} icon={<CheckIcon aria-hidden="true" />}>
+          <SuggestionAction action={apply} busy={isPending}>
             {accept}
           </SuggestionAction>
         )}

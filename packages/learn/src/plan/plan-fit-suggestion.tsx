@@ -23,6 +23,7 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
       canApply={offer?.canApply ?? false}
       item={item}
       offer={offer}
+      said="lessonsAdded"
       title={t(
         "{count, plural, one {# more lesson fits your time} other {# more lessons fit your time}}",
         { count: offer?.effect.lessonsAdded ?? 0 },
