@@ -45,17 +45,6 @@ export function canHoldMock({
   return !clock || asksAnything({ clock, fullLength: identity.fullLength });
 }
 
-/** An exam with nothing to shorten, such as an essay-only one, sits its whole mock every time. */
-export function getMockLength({
-  clocks,
-  fullLength,
-}: {
-  clocks: readonly MockClock[];
-  fullLength: boolean;
-}): boolean {
-  return fullLength || (clocks.length > 0 && clocks.every((clock) => clock.minutes <= 0));
-}
-
 /** Skips days with nothing to ask at this length, such as a written-only day for a weekly mock. */
 export function getNextMockDay({
   after,

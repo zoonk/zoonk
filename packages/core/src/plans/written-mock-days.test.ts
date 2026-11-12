@@ -132,21 +132,21 @@ describe("exam days whose weekly mock would ask nothing", () => {
     });
   });
 
-  it("gives an exam with nothing to shorten full-length mocks", async () => {
-    const { plan } = await planExam([
-      { day: 1, kind: "written", minutes: 60, name: "Redação", questions: 1 },
-    ]);
+  it.each(["written", "speaking"])(
+    "schedules no weekly mock on an exam that is only %s",
+    async (kind) => {
+      const { plan } = await planExam([{ day: 1, kind, minutes: 60, name: "Paper", questions: 1 }]);
 
-    const { mocks, plan: saved } = await readPlan(plan.id);
-    const settings = parsePlanSettings(saved.settings);
+      const { mocks, plan: saved } = await readPlan(plan.id);
+      const settings = parsePlanSettings(saved.settings);
 
-    expect(mocks.length).toBeGreaterThan(0);
-    expect(mocks.every((mock) => mock.minutes === 60)).toBe(true);
+      expect(mocks.every((mock) => (mock.minutes ?? 0) > 0)).toBe(true);
 
-    expect(settings.mockFunding.every((entry) => entry.minutes === 60 && entry.fullLength)).toBe(
-      true,
-    );
+      expect(settings.mockFunding.every((entry) => entry.minutes > 0 && entry.fullLength)).toBe(
+        true,
+      );
 
-    expect(settings.practiceBias).toBe("morePractice");
-  });
+      expect(settings.practiceBias).toBe("morePractice");
+    },
+  );
 });

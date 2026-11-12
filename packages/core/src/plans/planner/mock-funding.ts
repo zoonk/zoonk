@@ -8,7 +8,6 @@ import {
   canHoldMock,
   getClockMinutes,
   getMockCursor,
-  getMockLength,
   getNextMockDay,
   matchSavedMocks,
 } from "./mock-identity";
@@ -116,21 +115,20 @@ export function resolveIdentity({
   resolution: MockResolution | null;
   source: MockFunding | undefined;
 }): MockIdentity {
-  const length = getMockLength({ clocks, fullLength });
   const resolved = resolution?.identities.get(date);
 
   if (resolved) {
-    return { day: resolved.day, fullLength: length };
+    return { day: resolved.day, fullLength };
   }
 
   const saved = source?.day;
 
   const day =
-    saved !== undefined && canHoldMock({ clocks, identity: { day: saved, fullLength: length } })
+    saved !== undefined && canHoldMock({ clocks, identity: { day: saved, fullLength } })
       ? saved
-      : getNextMockDay({ after, clocks, fullLength: length });
+      : getNextMockDay({ after, clocks, fullLength });
 
-  return { day, fullLength: length };
+  return { day, fullLength };
 }
 
 function fundMockOn({
@@ -265,11 +263,6 @@ export function fundMocks({
     const date = labels[index] ?? "";
     const ownDay = { ...day.shape, events: day.shape.events.filter((event) => event !== found) };
 
-    if (released.has(date)) {
-      shapes[index] = ownDay;
-      return;
-    }
-
     const source = matches.get(date);
 
     const identity =
@@ -290,6 +283,11 @@ export function fundMocks({
           mock: identity,
         }
       : found;
+
+    if (released.has(date) || mock.minutes <= PLAN_EPSILON) {
+      shapes[index] = ownDay;
+      return;
+    }
 
     const past = [...carried, ...listPast({ saved: source, start: fundFrom })];
 
