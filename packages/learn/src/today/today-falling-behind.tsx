@@ -2,14 +2,14 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { safeAsync } from "@zoonk/utils/error";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { CalendarClockIcon, CheckIcon, ChevronDownIcon } from "lucide-react";
+import { safeAsync } from "@zoonk/utils/error";
+import { CalendarClockIcon, ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -57,7 +57,13 @@ function useBehindSentence() {
 }
 
 /** On a return after a break, nothing that asks for more hours leads. */
-function getLeadingOption({ behind, returnDay }: { behind: Behind; returnDay: boolean }): Option | null {
+function getLeadingOption({
+  behind,
+  returnDay,
+}: {
+  behind: Behind;
+  returnDay: boolean;
+}): Option | null {
   if (!returnDay) {
     return "adjustTime";
   }
@@ -115,14 +121,10 @@ function BehindChoices({
         action={keep}
         busy={isPending}
         disabled={superseded}
-        icon={<CheckIcon aria-hidden="true" />}
         key="keep"
         variant="outline"
       >
-        {t({
-          description: "Keeps the learner's time a day as it is.",
-          message: "Keep my time",
-        })}
+        {t({ description: "Keeps the learner's time a day as it is.", message: "Keep my time" })}
       </SuggestionAction>
 
       <DropdownMenu>

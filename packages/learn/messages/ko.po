@@ -905,29 +905,11 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "흰띠"
 
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. {count} and {total} are points of the exam's score.
+#. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
-msgctxt "8GYum4"
-msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, number}점, 시험 총점 {total, number}점)은 제외돼요."
-
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
-#: src/_utils/use-choice-left-out.ts
-msgctxt "Rpl5Yb"
-msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} questions."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, number}문제, 시험 전체 {total, number}문제)은 제외돼요."
-
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
-#: src/_utils/use-choice-left-out.ts
-msgctxt "T-mUNO"
-msgid "Until you pick, your plan and mocks leave out {name}: {count, plural, one {# question} other {# questions}}."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, plural, other {#문제}})은 제외돼요."
-
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
-#: src/_utils/use-choice-left-out.ts
-msgctxt "8-nW5Q"
-msgid "Until you pick, your plan and mocks leave out {name}."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분은 제외돼요."
+msgctxt "vYD7Jb"
+msgid "Pick one so your plan includes it."
+msgstr ""
 
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
@@ -11203,9 +11185,10 @@ msgctxt "v5V1P2"
 msgid "{names} and {count, plural, one {# more topic} other {# more topics}}"
 msgstr "{names} 외 {count, plural, other {주제 #개}}"
 
+#. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
 #: src/plan-diff/change-names.ts
-msgctxt "L-0LA-"
-msgid "{names} and {count, plural, one {# more lesson} other {# more lessons}}"
+msgctxt "lwkzML"
+msgid "{names} and more"
 msgstr ""
 
 #: src/plan-diff/plan-effect-diff.tsx
@@ -11719,8 +11702,8 @@ msgid "Keep studying after the exam?"
 msgstr ""
 
 #: src/plan/plan-past-date-suggestion.tsx
-msgctxt "ITqenC"
-msgid "{count, plural, one {You have # lesson left. Keep studying it after the exam?} other {You have # lessons left. Keep studying them after the exam?}}"
+msgctxt "chLjlx"
+msgid "{count, plural, one {You have # lesson left. Keep studying it?} other {You have # lessons left. Keep studying them?}}"
 msgstr ""
 
 #: src/plan/plan-past-date-suggestion.tsx

@@ -53,9 +53,11 @@ export function useNames() {
           count,
           names: named.join(", "),
         })
-      : t("{names} and {count, plural, one {# more lesson} other {# more lessons}}", {
-          count,
-          names: named.join(", "),
+      : t({
+          description:
+            "{names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.",
+          message: "{names} and more",
+          values: { names: named.join(", ") },
         });
   };
 }

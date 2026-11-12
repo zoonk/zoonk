@@ -12,6 +12,7 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
+  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -19,6 +20,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
@@ -126,6 +128,7 @@ export function PlanExamChoices() {
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
+  const leftOutLine = useChoiceLeftOutLine();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const { choice } = item;
@@ -167,6 +170,8 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
           </>
         ) : (
           <>
+            <SuggestionDescription>{leftOutLine}</SuggestionDescription>
+
             {choice.take > 1 ? (
               <ExamChoicePicks
                 choice={choice}

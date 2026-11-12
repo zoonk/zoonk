@@ -10,6 +10,7 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
+  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -17,6 +18,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { ExamChoicePicks } from "../plan/exam-choice-picks";
 import { useTodayChangeWords } from "./today-change-sentence";
@@ -60,6 +62,7 @@ function ChoiceQuestion({
   onPick: (input: { group: string; subjects: string[] }) => void;
 }) {
   const t = useExtracted();
+  const leftOutLine = useChoiceLeftOutLine();
 
   const question =
     choice.take > 1
@@ -75,6 +78,7 @@ function ChoiceQuestion({
 
       <SuggestionContent>
         <SuggestionHeader>{question}</SuggestionHeader>
+        <SuggestionDescription>{leftOutLine}</SuggestionDescription>
 
         {choice.take > 1 ? (
           <ExamChoicePicks

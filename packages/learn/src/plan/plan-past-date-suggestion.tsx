@@ -164,7 +164,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
 
     const offerText = isExam
       ? t(
-          "{count, plural, one {You have # lesson left. Keep studying it after the exam?} other {You have # lessons left. Keep studying them after the exam?}}",
+          "{count, plural, one {You have # lesson left. Keep studying it?} other {You have # lessons left. Keep studying them?}}",
           { count: item.lessons },
         )
       : t(
