@@ -32,6 +32,8 @@ type ConfirmFormProps = {
   confirmLabel: string;
   /** For what destroys, locks someone out or can't be undone. */
   destructive?: boolean;
+  /** Runs once the action succeeded, as the dialog closes: where the page says what it started. */
+  onConfirmed?: () => void;
 };
 
 /**
@@ -66,7 +68,13 @@ export function AdminConfirmDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
 
-        <ConfirmForm {...form} onConfirmed={() => setOpen(false)} />
+        <ConfirmForm
+          {...form}
+          onConfirmed={() => {
+            form.onConfirmed?.();
+            setOpen(false);
+          }}
+        />
       </AlertDialogContent>
     </AlertDialog>
   );

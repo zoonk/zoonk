@@ -11,7 +11,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { FreshnessCommandForm } from "../freshness-command-form";
+import { FreshnessActions } from "../freshness-actions";
 import { SourceChangeNotices } from "./source-change-notices";
 import { SourceCitations } from "./source-citations";
 import { SourcePrivateDetails } from "./source-private-details";
@@ -68,7 +68,13 @@ async function SourceDetailContent({ params }: Pick<PageProps<"/sources/[id]">, 
       ) : (
         <AdminDetailHeader
           actions={
-            source.url ? <FreshnessCommandForm targetId={source.id} targetKind="source" /> : null
+            source.url ? (
+              <FreshnessActions
+                targetId={source.id}
+                targetKind="source"
+                targetName={source.title ?? "this source"}
+              />
+            ) : null
           }
           facts={[source.publisher, ...facts]}
           parents={SOURCE_PARENTS}

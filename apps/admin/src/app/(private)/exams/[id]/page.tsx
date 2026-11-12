@@ -10,7 +10,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { FreshnessCommandForm } from "../../sources/freshness-command-form";
+import { FreshnessActions } from "../../sources/freshness-actions";
 import { ExamEditionHistory } from "./exam-edition-history";
 import { ExamOverview } from "./exam-overview";
 
@@ -58,7 +58,7 @@ async function ExamDetailContent({ params }: Pick<PageProps<"/exams/[id]">, "par
   return (
     <>
       <AdminDetailHeader
-        actions={<FreshnessCommandForm targetId={exam.id} targetKind="exam" />}
+        actions={<FreshnessActions targetId={exam.id} targetKind="exam" targetName={exam.name} />}
         facts={[exam.board, exam.role, exam.country, exam.language.toUpperCase()]}
         parents={EXAM_PARENTS}
         title={exam.name}

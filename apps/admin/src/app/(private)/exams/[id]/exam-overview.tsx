@@ -6,8 +6,8 @@ import { type AdminExam } from "@/data/exams/get-exam";
 import { formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { formatExamDate } from "../_utils/format-exam-date";
-import { ReadNoticeAgainForm } from "./read-notice-again-form";
-import { ResetExamSkillGraphForm } from "./reset-exam-skill-graph-form";
+import { ReadNoticeAgainButton } from "./read-notice-again-button";
+import { ResetExamSkillGraphButton } from "./reset-exam-skill-graph-button";
 
 function countGraphSkills(graph: unknown): number {
   const skills =
@@ -47,7 +47,9 @@ export function ExamOverview({ exam }: { exam: AdminExam }) {
       </AdminSection>
 
       <AdminSection
-        action={exam.source && <ReadNoticeAgainForm examBlueprintId={exam.id} />}
+        action={
+          exam.source && <ReadNoticeAgainButton examBlueprintId={exam.id} examName={exam.name} />
+        }
         description="Read from its notice once and reused whatever prompt version read it. Read again to redo it with today's instructions."
         title="Blueprint"
       >
@@ -59,7 +61,11 @@ export function ExamOverview({ exam }: { exam: AdminExam }) {
       </AdminSection>
 
       <AdminSection
-        action={exam.skillGraph && <ResetExamSkillGraphForm examBlueprintId={exam.id} />}
+        action={
+          exam.skillGraph && (
+            <ResetExamSkillGraphButton examBlueprintId={exam.id} examName={exam.name} />
+          )
+        }
         description="Every new learner of the exam plans from it, whatever prompt version wrote it. Reading the notice again also adds skills for topics none of its skills teaches (an option a new reading names); reset to have the next learner write a new one."
         title="Skill graph"
       >
