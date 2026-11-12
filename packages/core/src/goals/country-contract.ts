@@ -25,7 +25,7 @@ export type GoalContentCountry = z.infer<typeof goalContentCountrySchema>;
 
 export const MAX_SUGGESTED_COUNTRIES = 8;
 
-export const suggestedCountrySchema = countryPickerChoiceSchema.extend({
+const suggestedCountrySchema = countryPickerChoiceSchema.extend({
   tag: z.literal("home").nullable(),
 });
 export const suggestedCountriesSchema = z

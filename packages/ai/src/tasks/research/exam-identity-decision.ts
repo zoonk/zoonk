@@ -2,6 +2,7 @@ import "server-only";
 import { decideBoolean } from "../../evaluate/decisions";
 import { evaluateQuestions } from "../../evaluate/evaluate-questions";
 import decisionPrompt from "./exam-identity-decision.prompt.md";
+import { formatExamIdentityInput } from "./exam-identity-input";
 
 /** The Library identity decisions' cutoff; the exam eval can move it. */
 const MIN_PROBABILITY = 0.6;
@@ -35,25 +36,6 @@ const SAME_EXAM_QUESTION = {
     type: "boolean",
   },
 } as const;
-
-/** Only the identifying fields, in one order, so both sides read alike. */
-function describeExam(exam: ExamDescription): ExamDescription {
-  return { board: exam.board, country: exam.country, name: exam.name, role: exam.role };
-}
-
-/** Each side as its own data, so an unknown country stays unknown rather than the other side's. */
-export function formatExamIdentityInput({
-  candidate,
-  request,
-}: {
-  candidate: ExamDescription;
-  request: ExamDescription;
-}): { CANDIDATE: string; REQUEST: string } {
-  return {
-    CANDIDATE: JSON.stringify(describeExam(candidate)),
-    REQUEST: JSON.stringify(describeExam(request)),
-  };
-}
 
 /** Both sides are delimited data, so a name claiming "same exam" can't move the verdict. */
 export async function evaluateExamIdentityPair({

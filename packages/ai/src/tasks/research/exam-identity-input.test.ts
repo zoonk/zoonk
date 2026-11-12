@@ -1,8 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { formatExamIdentityInput } from "./exam-identity-decision";
-
-vi.mock("server-only", () => ({}));
-vi.mock("./exam-identity-decision.prompt.md", () => ({ default: "" }));
+import { describe, expect, it } from "vitest";
+import { formatExamIdentityInput } from "./exam-identity-input";
 
 describe(formatExamIdentityInput, () => {
   it("keeps a request's unknown country unknown beside a candidate's known one", () => {
