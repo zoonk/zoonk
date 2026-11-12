@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { QuestionDontKnow, QuestionMainAction } from "../../_components/question-actions";
+import { QuestionTitle } from "../../_components/question-title";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { type ListeningQuestions } from "../../listening/listening-stimulus";
 import { DrillAnswerNotes } from "../../mistakes/drill/drill-answer-notes";
@@ -25,7 +26,6 @@ import {
 } from "../session-types";
 import { PlacementNote } from "./placement-note";
 import { type QuestionBlockPhase } from "./question-block-state";
-import { QuestionTitle } from "./question-title";
 import { QuestionView } from "./question-view";
 import { QuotedSource } from "./quoted-source";
 import { type useQuestionBlock } from "./use-question-block";

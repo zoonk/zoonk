@@ -16,12 +16,7 @@ import { type AnswerSender } from "../mistakes/drill/drill-types";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { TaskFrame, type TaskFrameAside } from "../shell/task-frame";
 import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
-import {
-  CHOICE_QUESTION_TITLE_SLOT,
-  type ChoiceAnswer,
-  ChoiceQuestion,
-  type ChoiceQuestionView,
-} from "./choice-question";
+import { type ChoiceAnswer, ChoiceQuestion, type ChoiceQuestionView } from "./choice-question";
 
 const PERCENT = 100;
 
@@ -103,7 +98,7 @@ function useFocusNewQuestion({
     shownId.current = itemId;
 
     container.current
-      ?.querySelector<HTMLElement>(`[data-slot="${CHOICE_QUESTION_TITLE_SLOT}"]`)
+      ?.querySelector<HTMLElement>("[data-slot=question-title]")
       ?.focus({ preventScroll: true });
   }, [container, itemId]);
 }

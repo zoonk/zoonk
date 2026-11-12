@@ -1,6 +1,6 @@
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
-import { QUESTION_TEXT_CLASS } from "../../components/question-text";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 
@@ -10,11 +10,7 @@ export function LessonQuestion({ children, id }: { children: string; id?: string
   return (
     <>
       {data && <LessonContext>{data}</LessonContext>}
-      {question && (
-        <div id={id}>
-          <RichTextBlocks className={QUESTION_TEXT_CLASS} paragraphTag="h2" text={question} />
-        </div>
-      )}
+      {question && <QuestionTitle id={id} text={question} />}
     </>
   );
 }

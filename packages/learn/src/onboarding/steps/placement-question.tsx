@@ -11,9 +11,10 @@ import {
   QuestionDontKnow,
   QuestionMainAction,
 } from "../../_components/question-actions";
+import { QuestionTitle } from "../../_components/question-title";
 import { AnswersSaveError } from "../../_components/save-error";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
-import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
+import { ItemLine, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
 import { type Choice } from "../choice-list";
@@ -256,13 +257,7 @@ export function PlacementQuestionScreen({
 
           <ItemSupport context={question.context} image={question.image} visual={question.visual} />
 
-          <div
-            className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty outline-none"
-            ref={title}
-            tabIndex={-1}
-          >
-            <ItemStem text={question.question} heading="h1" />
-          </div>
+          <QuestionTitle heading="h1" ref={title} tabIndex={-1} text={question.question} />
         </OnboardingHeading>
 
         {isTyped ? (

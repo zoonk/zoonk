@@ -4,11 +4,12 @@ import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
+import { QuestionTitle } from "../_components/question-title";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TaskMeta } from "../_components/task-meta";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { TypedAnswerField } from "../questions/typed-answer-field";
 import { type TaskFrameAside } from "../shell/task-frame";
@@ -118,9 +119,7 @@ function QuestionCard({ question }: { question: CheckpointQuestion }) {
   return (
     <div className="flex flex-col gap-4" data-slot="checkpoint-question">
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={question.question} heading="h2" />
-      </div>
+      <QuestionTitle text={question.question} />
 
       <DuelAnswer question={question} verdict={verdict} />
       {verdict && <Verdict decision={decision} isCorrect={verdict.isCorrect} />}
