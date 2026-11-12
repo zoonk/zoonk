@@ -53,6 +53,9 @@ internal class FocusTestViewModel(
 
     private var closed by mutableStateOf<FocusTest?>(null)
 
+    /** Sittings entered in this visit: a proposal's answer belongs to the result before the next one. */
+    private var sittings = 0
+
     var pressed by mutableStateOf<Pressed?>(null)
         private set
 
@@ -165,10 +168,13 @@ internal class FocusTestViewModel(
         status: PlanChangeDecisionInput.Status,
     ) {
         if (deciding != null) return
+        val on = sittings
         deciding = status
         decisionFailed = false
         viewModelScope.launch {
-            when (val result = plans.decideChange(UUID.fromString(goalId), change.id, status)) {
+            val result = plans.decideChange(UUID.fromString(goalId), change.id, status)
+            if (on != sittings) return@launch
+            when (result) {
                 is MutationResult.Done -> {
                     proposalAnswer = ProposalAnswer(status, result.value)
                 }
@@ -188,7 +194,9 @@ internal class FocusTestViewModel(
         entered = true
         savedEntered = true
         closed = null
+        sittings++
         proposalAnswer = null
+        deciding = null
         decisionFailed = false
     }
 

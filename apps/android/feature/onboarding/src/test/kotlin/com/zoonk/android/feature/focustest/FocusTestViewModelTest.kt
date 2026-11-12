@@ -18,6 +18,7 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.api.models.FocusTestFocus
@@ -56,11 +57,22 @@ class FocusTestViewModelTest {
     private fun TestScope.viewModel(
         api: OnboardingApi,
         handle: SavedStateHandle,
+        plans: PlanApi = FakePlanApi(),
     ): FocusTestViewModel {
         val session = FakeSession(ana)
         val cache = AppCache(session, backgroundScope)
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        return FocusTestViewModel(GOAL_ID, store, PlanStore(FakePlanApi(), cache), null, handle).also { models.put("$it", it) }
+        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), null, handle).also { models.put("$it", it) }
+    }
+
+    /** The proposal the result of [vm] would ask about when the test's latest answers propose [next]. */
+    private fun TestScope.waitingAfter(
+        vm: FocusTestViewModel,
+        next: PlanChange,
+    ): PlanChange? {
+        val focus = FocusTestFocus(proposal = next, rows = emptyList(), state = FocusTestFocus.State.PROPOSED)
+        val questions = SessionQuestionsModel(unusedFocusTests(AppCache(FakeSession(ana), backgroundScope)), UUID.fromString(GOAL_ID))
+        return focus.waitingProposal(PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, {}, questions))
     }
 
     /** What the screen does after the app comes back from process death with what [handle] saved. */
@@ -140,9 +152,37 @@ class FocusTestViewModelTest {
             runCurrent()
 
             val next = proposal.copy(id = UUID.randomUUID())
-            val focus = FocusTestFocus(proposal = next, rows = emptyList(), state = FocusTestFocus.State.PROPOSED)
-            val questions = SessionQuestionsModel(unusedFocusTests(AppCache(FakeSession(ana), backgroundScope)), UUID.fromString(GOAL_ID))
-            val plan = PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, {}, questions)
-            assertEquals(next.id, focus.waitingProposal(plan)?.id)
+            assertEquals(next.id, waitingAfter(vm, next)?.id)
+        }
+
+    @Test
+    fun anUndoThatAnswersAfterMoreQuestionsStartedLeavesTheNextProposalToAsk() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api = FakeOnboardingApi().apply { placement = placementOf(next = null, focusTest = focusTestOf()) }
+            val proposal = decodeFixture<PlanChange>("plan-change").copy(source = "focusTest", canApply = true, canUndo = true)
+            val undone = CompletableDeferred<PlanChange>()
+            val plans =
+                object : PlanApi by FakePlanApi() {
+                    override suspend fun decide(
+                        session: AuthenticatedSession,
+                        goalId: UUID,
+                        changeId: UUID,
+                        status: PlanChangeDecisionInput.Status,
+                    ): PlanChange = if (status == PlanChangeDecisionInput.Status.UNDONE) undone.await() else proposal
+                }
+            val vm = viewModel(api, SavedStateHandle(), plans)
+            vm.decide(proposal, PlanChangeDecisionInput.Status.APPLIED)
+            runCurrent()
+            vm.decide(proposal, PlanChangeDecisionInput.Status.UNDONE)
+            runCurrent()
+
+            vm.continueTest()
+            runCurrent()
+            undone.complete(proposal)
+            runCurrent()
+
+            val next = proposal.copy(id = UUID.randomUUID())
+            assertEquals(next.id, waitingAfter(vm, next)?.id)
         }
 }
