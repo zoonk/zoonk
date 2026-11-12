@@ -38,7 +38,7 @@ const WRITING_REFRESH_MS = 5000;
 const WRITING_WAIT_MS = OUTLINE_STALE_AFTER_MS + WRITING_REFRESH_MS;
 const NO_MISTAKES: MistakeAvailability = { ready: 0, tomorrow: 0 };
 
-const NOTICE_CLASS = "max-[72rem]:-mt-7 sm:col-span-2";
+const NOTICE_CLASS = "max-[72rem]:-mt-4 sm:col-span-2";
 
 const ASIDE_LEAD_CLASS = "min-[72rem]:order-first";
 

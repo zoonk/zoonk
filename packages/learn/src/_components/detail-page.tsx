@@ -23,7 +23,7 @@ export function DetailLayout({
   bar?: React.ReactNode;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-col gap-8" {...props}>
+    <article className="flex min-w-0 flex-col gap-2 sm:gap-8" {...props}>
       {bar}
       <div
         className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}

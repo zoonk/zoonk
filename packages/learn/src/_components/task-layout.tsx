@@ -114,7 +114,7 @@ export function TaskAsideHeader({
   return (
     <div
       className={cn(
-        "flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15",
+        "flex h-13 shrink-0 items-center justify-between gap-3 px-6 xl:h-15",
         className,
       )}
       data-slot="task-aside-header"
@@ -164,7 +164,7 @@ export function TaskAside({
       <div
         aria-labelledby={scrollsByKeyboard ? titleId : undefined}
         className={cn(
-          "flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-5 pb-6",
+          "flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-6 pb-6",
           scrollsByKeyboard &&
             "focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px] focus-visible:ring-inset",
         )}
@@ -179,7 +179,7 @@ export function TaskAside({
       {footer && (
         <div
           className={cn(
-            "bg-background flex flex-col gap-2 px-5 lg:bottom-0",
+            "bg-background flex flex-col gap-2 px-6 lg:bottom-0",
             TASK_ASIDE_PLACE_CLASS,
             BAR_PADDING_CLASS,
           )}
@@ -197,7 +197,7 @@ export function TaskAsideContent({ className, ...props }: React.ComponentProps<"
   return (
     <div
       className={cn(
-        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-5 with-aside:group-data-aside/task:pb-6",
+        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-6 with-aside:group-data-aside/task:pb-6",
         className,
       )}
       data-slot="task-aside-content"
@@ -277,7 +277,7 @@ export function TaskSkeleton({
       </div>
 
       {aside && (
-        <div className={cn("with-aside:flex hidden flex-col gap-4 px-5", TASK_ASIDE_RAIL_CLASS)}>
+        <div className={cn("with-aside:flex hidden flex-col gap-4 px-6", TASK_ASIDE_RAIL_CLASS)}>
           {aside !== true && (
             <>
               <div className="flex h-13 shrink-0 items-center xl:h-15">

@@ -20,10 +20,14 @@ export function DetailHero({ className, ...props }: React.ComponentProps<"header
   );
 }
 
+/** Keeps the eyebrow's line when a page has none, so every page's title starts at one height. */
 export function DetailHeroText({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-w-0 flex-col gap-1", className)}
+      className={cn(
+        "flex min-w-0 flex-col gap-1 not-has-[>[data-slot=page-eyebrow]]:pt-5",
+        className,
+      )}
       data-slot="detail-hero-text"
       {...props}
     />
