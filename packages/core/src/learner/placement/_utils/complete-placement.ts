@@ -76,12 +76,7 @@ export async function completePlacement({
   const tested = goal.kind === "exam";
 
   if (tested) {
-    const skillIds = plan.skills.map((skill) => skill.id);
-
-    trackSittingFinished({
-      closed: await closeTestSitting({ goal, sittingId, skillIds, timeZone }),
-      goal,
-    });
+    trackSittingFinished({ closed: await closeTestSitting({ goal, sittingId, timeZone }), goal });
   }
 
   const applied = await applyPlacement({ goalId, now, plan, timeZone, userId });

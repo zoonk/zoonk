@@ -94,12 +94,10 @@ export type ClosedSitting = {
 export async function closeTestSitting({
   goal,
   sittingId,
-  skillIds,
   timeZone,
 }: {
   goal: Pick<Goal, "id" | "planRevealedAt" | "userId">;
   sittingId: string | null;
-  skillIds: string[];
   timeZone: string;
 }): Promise<ClosedSitting | null> {
   const { id: goalId, userId } = goal;
@@ -118,12 +116,7 @@ export async function closeTestSitting({
 
     const answers = await tx.attempt.findMany({
       select: { answer: true, durationMs: true, isCorrect: true },
-      where: {
-        focusTestId: before.sitting.id,
-        ...SITTING_ANSWER_FILTER,
-        skillId: { in: skillIds },
-        userId,
-      },
+      where: { focusTestId: before.sitting.id, ...SITTING_ANSWER_FILTER, userId },
     });
 
     if (goal.planRevealedAt && answers.length > 0) {
