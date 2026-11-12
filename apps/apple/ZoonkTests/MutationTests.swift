@@ -57,7 +57,8 @@ final class MutationTests: XCTestCase {
 
     XCTAssertTrue(result.isObsolete)
   }
-  func testACancelledTaskWhoseWriteStillReturnsIsObsoleteAndInvalidatesNothing() async {
+
+  func testACancelledTaskWhoseWriteStillReturnsIsObsoleteAndReadsWhatItChangedAgain() async {
     let cache = AppCache(session: .preview(account: .mutationTestAccount))
     let requests = Counter()
     let memory: Resource<Int> = cache.resource(audience: .signedIn, domains: [.memory]) { _ in
@@ -81,7 +82,63 @@ final class MutationTests: XCTestCase {
 
     XCTAssertTrue(result.isObsolete)
     XCTAssertEqual(
-      memory.state, .loaded(1), "A cancelled write changes nothing it would invalidate")
+      memory.state, .loaded(2), "The server may have made the change, so the domain reads again")
+  }
+
+  func testACancelledTaskWhoseWriteFailsReadsWhatItChangedAgain() async {
+    let cache = AppCache(session: .preview(account: .mutationTestAccount))
+    let requests = Counter()
+    let memory: Resource<Int> = cache.resource(audience: .signedIn, domains: [.memory]) { _ in
+      requests.count += 1
+      return requests.count
+    }
+    await memory.load()
+    let gate = WriteGate()
+
+    let task = Task {
+      await cache.mutate(invalidating: [.memory]) { _ -> Int in
+        await gate.wait()
+        throw CancellationError()
+      }
+    }
+    await gate.waitUntilStarted()
+    task.cancel()
+    gate.open()
+    let result = await task.value
+    await memory.load()
+
+    XCTAssertTrue(result.isObsolete)
+    XCTAssertEqual(memory.state, .loaded(2), "A request cut off once sent may still have landed")
+  }
+
+  func testACancelledWriteOfASessionThatEndedInvalidatesNothing() async {
+    let session = SessionStore.preview(account: .mutationTestAccount)
+    let cache = AppCache(session: session)
+    let requests = Counter()
+    let shared: Resource<Int> = cache.resource(audience: .everyone, domains: [.memory]) { _ in
+      requests.count += 1
+      return requests.count
+    }
+    await shared.load()
+    let gate = WriteGate()
+
+    let task = Task {
+      await cache.mutate(invalidating: [.memory]) { _ in
+        await gate.wait()
+        return 1
+      }
+    }
+    await gate.waitUntilStarted()
+    if let identity = session.authenticatedSession {
+      await session.expire(identity)
+    }
+    task.cancel()
+    gate.open()
+    let result = await task.value
+    await shared.load()
+
+    XCTAssertTrue(result.isObsolete)
+    XCTAssertEqual(shared.state, .loaded(1), "An old session never changes what another reads")
   }
 
   func testACancelledTaskWhoseWriteFailsIsObsoleteNotAFailure() async {
