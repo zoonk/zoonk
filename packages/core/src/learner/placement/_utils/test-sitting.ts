@@ -54,7 +54,6 @@ export async function openTestSitting({
                 id: randomUUID(),
                 kind: offer.kind,
                 questions: offer.questions,
-                startedAt: at,
               },
               startedAt: record.startedAt ?? at,
             },

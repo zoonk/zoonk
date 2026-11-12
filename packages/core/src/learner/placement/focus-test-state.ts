@@ -11,7 +11,6 @@ const sittingSchema = z.object({
   id: z.string(),
   kind: z.enum(["continuation", "first"]),
   questions: z.int().min(1),
-  startedAt: z.iso.datetime(),
 });
 
 const suggestedSubjectSchema = z.object({
