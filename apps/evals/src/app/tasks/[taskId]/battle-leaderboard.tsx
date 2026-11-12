@@ -147,7 +147,7 @@ export function BattleLeaderboard({
               <TableCell className="text-muted-foreground">{index + 1}</TableCell>
               <TableCell>
                 <Link
-                  className="font-medium underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center font-medium underline-offset-4 hover:underline"
                   href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
                 >
                   {entry.modelName}

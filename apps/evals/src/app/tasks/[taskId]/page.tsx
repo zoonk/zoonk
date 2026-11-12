@@ -24,6 +24,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
+import { type Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "./_utils/task-route";
@@ -32,6 +33,12 @@ import { LeaderboardTabs, LeaderboardTabsSkeleton } from "./leaderboard-tabs";
 import { ModelList, ModelListSkeleton } from "./model-list";
 
 type TaskRouteProps = { params: TaskRouteParams };
+
+export async function generateMetadata({ params }: TaskRouteProps): Promise<Metadata> {
+  const { task } = await getTaskRouteFromParams(params);
+
+  return { title: task.name };
+}
 
 async function TaskBreadcrumb({ params }: TaskRouteProps) {
   const { task } = await getTaskRouteFromParams(params);

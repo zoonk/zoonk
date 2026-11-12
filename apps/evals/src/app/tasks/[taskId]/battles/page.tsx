@@ -13,11 +13,18 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { type Metadata } from "next";
 import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "../_utils/task-route";
 import { BattleMatchupList, BattleMatchupListSkeleton } from "./battle-matchup-list";
 
 type BattlesRouteProps = { params: TaskRouteParams };
+
+export async function generateMetadata({ params }: BattlesRouteProps): Promise<Metadata> {
+  const { task } = await getTaskRouteFromParams(params);
+
+  return { title: `Judge comments on ${task.name}` };
+}
 
 async function BattlesTaskBreadcrumb({ params }: BattlesRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);

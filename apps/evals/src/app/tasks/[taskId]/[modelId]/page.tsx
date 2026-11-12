@@ -24,6 +24,7 @@ import {
   ContainerHeaderSkeleton,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { type Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense, cache } from "react";
 import { getTaskRoute } from "../_utils/task-route";
@@ -49,6 +50,12 @@ async function getTaskModelRouteFromParams(params: TaskModelRouteParams) {
   const { modelId, taskId } = await params;
 
   return getTaskModelRoute(taskId, modelId);
+}
+
+export async function generateMetadata({ params }: TaskModelRouteProps): Promise<Metadata> {
+  const { model, task } = await getTaskModelRouteFromParams(params);
+
+  return { title: `${getModelDisplayName(model)} on ${task.name}` };
 }
 
 function TaskModelBreadcrumbSkeleton() {

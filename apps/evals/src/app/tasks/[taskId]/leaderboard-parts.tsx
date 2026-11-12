@@ -14,7 +14,7 @@ export function SortHead({
 
   return (
     <TableHead aria-sort={isActive ? `${direction}ending` : undefined}>
-      <button className="cursor-pointer" onClick={onSort} type="button">
+      <button className="min-h-11 min-w-11 cursor-pointer text-left" onClick={onSort} type="button">
         {children} {isActive && arrow}
       </button>
     </TableHead>

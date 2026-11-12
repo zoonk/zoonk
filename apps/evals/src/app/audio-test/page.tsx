@@ -10,7 +10,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { type Metadata } from "next";
 import { AudioTestForm } from "./form";
+
+export const metadata: Metadata = { title: "Audio test" };
 
 export default function AudioTestPage() {
   return (
