@@ -5,6 +5,7 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { useRouter } from "@/i18n/navigation";
+import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
@@ -20,9 +21,15 @@ import { sendStudyAnswer } from "@/lib/session/study-answer-request";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
-import { useGoToStudyDestination, useStudyNavigation } from "@/lib/session/use-study-navigation";
+import {
+  getCurrentLocation,
+  getSessionHref,
+  useGoToStudyDestination,
+  useStudyNavigation,
+} from "@/lib/session/use-study-navigation";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
+import { type SessionPageView } from "@zoonk/core/sessions/page";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { QuestionBlock } from "@zoonk/learn/session/block";
 import { NextStop, type NextStopLesson, type NextStopTap } from "@zoonk/learn/session/next-stop";
@@ -43,10 +50,12 @@ const EXIT_HREF = "/today";
 
 export function SessionBlockClient({
   detail,
+  goal,
   session,
   tutor,
 }: {
   detail: StudyBlockDetail;
+  goal: SessionPageView["goal"];
   session: StudySession;
   tutor: TutorViewer;
 }) {
@@ -61,6 +70,24 @@ export function SessionBlockClient({
     endDayEntry();
   }, []);
 
+  /** The day is read by its goal, not by this block: a block left with no questions is gone from it. */
+  const skipTestQuestions = async () => {
+    const saved = await updateFocusTestAction(goal.id, {
+      sessionQuestions: "skippedToday",
+      timeZone: getLocalTimeZone(),
+    });
+
+    const href = getSessionHref({ goalId: goal.id, limit: null });
+
+    if (saved && href === getCurrentLocation()) {
+      router.refresh();
+    } else if (saved) {
+      router.replace(href);
+    }
+
+    return saved !== null;
+  };
+
   return (
     <QuestionBlock
       actions={{
@@ -70,6 +97,7 @@ export function SessionBlockClient({
         finish: () =>
           noteAppWrite(finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() })),
         refresh: () => router.refresh(),
+        skipTestQuestions: goal.kind === "exam" ? skipTestQuestions : undefined,
         stop: navigation.stop,
       }}
       buddy={tutor.buddy}

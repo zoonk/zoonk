@@ -56,7 +56,7 @@
   "tutor_offer_chapter_test_lessons": "5dc47e4d8c6d691c3850c973cd11c638b0e47797e238c958b564b2072a76a18c",
   "tutor_offer_choose": "e0343028906b679c75a17d9a7f6b3ee4e5971bd401cc6744da1da7471d58ca0f",
   "tutor_offer_choose_focus": "3b4fc2067458cf98b2ec30972e082023a274712b21dd252a18386d698ab72d36",
-  "tutor_offer_choose_focus_description": "081ede2cddc866c894fb6dbefd324258e00eecdb929a92a80641076e6ef8b022",
+  "tutor_offer_choose_focus_description": "321c1c67cebed752a4ad542db87e1126c40bbbbac49f9294b47537d75ea93cd9",
   "tutor_offer_country_applied": "3524a020f9039991430aa1d69392cb7bf8283e02749fa27041486b95a033a5a4",
   "tutor_offer_country_description": "93024cd1e262f7cfd242c1402408e3d9fd9cd5531af985303cad670bdd4ac647",
   "tutor_offer_essay_biweekly": "b8d056a90d00114cc9d9563f64120128147d12e0f0c5a1c8602f23323741735e",
@@ -230,7 +230,7 @@
     </plurals>
     <string name="tutor_offer_take_test">Fazer o teste</string>
     <string name="tutor_offer_choose_focus">Escolher onde focar</string>
-    <string name="tutor_offer_choose_focus_description">Escolha as matérias para estudar mais a fundo ou faça um teste rápido que escolhe por você.</string>
+    <string name="tutor_offer_choose_focus_description">Descubra quais matérias precisam de mais tempo de estudo.</string>
     <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
     <string name="tutor_offer_call_with">Uma conversa curta em voz alta com %1$s, %2$s.</string>
     <string name="tutor_offer_call">Uma conversa curta em voz alta, no seu nível.</string>

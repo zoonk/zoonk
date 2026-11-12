@@ -32,6 +32,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NoObjectGeneratedError } from "ai";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
 import { getStartMock } from "../_test-utils/start-mock";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { findAndStoreSources } from "../research/research-sources";
@@ -293,6 +294,8 @@ function readReleaseTwo() {
   });
 }
 
+const RECOUNTED = { focusTest: { summary: { inputsKey: expect.any(String), quick: 1, total: 1 } } };
+
 describe(freshnessWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateSearchTerms).mockImplementation(
@@ -502,6 +505,42 @@ describe(freshnessWorkflow, () => {
 
     expect(changes).toBe(0);
     expect(kept.targetDate).toStrictEqual(new Date("2026-11-29T00:00:00.000Z"));
+  });
+
+  it("counts again the Focus test summary of a learner following a notice that a reading changed", async () => {
+    const { blueprint, extraction, notice } = await examWithLearner();
+    serveNotice(`${notice}\n${NEW_DATE_LINE}`);
+    const goal = await followWithOutdatedSummary(blueprint.id);
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...TASK,
+      data: withExamDate({ extraction, line: NEW_DATE_LINE }),
+    });
+
+    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
+      ...TASK,
+      data: { message: "O edital mudou: a prova agora é em 29 de novembro de 2026." },
+    });
+
+    await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+    await expect(readFollowerDetails(goal.id)).resolves.toMatchObject(RECOUNTED);
+  });
+
+  it("counts again a follower's Focus test summary when a reading finds its notice already saved, as a retried save does", async () => {
+    const { blueprint, extraction } = await examWithLearner();
+    const goal = await followWithOutdatedSummary(blueprint.id);
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...TASK,
+      data: withExamDate({ extraction, line: OLD_DATE_LINE }),
+    });
+
+    await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
+      { status: "read" },
+    );
+
+    expect(generateSourceChangeNotice).not.toHaveBeenCalled();
+    await expect(readFollowerDetails(goal.id)).resolves.toMatchObject(RECOUNTED);
   });
 
   it("searches for the next notice once the stored edition passed, and proposes its exam day to the learners preparing for it", async () => {

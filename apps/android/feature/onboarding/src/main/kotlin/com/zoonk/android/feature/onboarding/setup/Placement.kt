@@ -3,8 +3,6 @@ package com.zoonk.android.feature.onboarding.setup
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
 import com.zoonk.api.models.LessonVisual
-import com.zoonk.api.models.MockOptions
-import com.zoonk.api.models.MockOptionsPlacementMock
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementQuestion
 import com.zoonk.api.models.PlacementStatus
@@ -30,18 +28,12 @@ internal data class PlacementItem(
     val format: PlacementFormat,
 )
 
-internal data class MockOffer(
-    val shortestMinutes: Long,
-    val longestMinutes: Long,
-    val plusRequired: Boolean,
-)
-
 internal sealed interface PlacementPhase {
     data object Loading : PlacementPhase
 
-    data class Intro(
-        val mock: MockOffer?,
-    ) : PlacementPhase
+    data object LoadFailed : PlacementPhase
+
+    data object Intro : PlacementPhase
 
     data object Waiting : PlacementPhase
 
@@ -55,14 +47,9 @@ internal sealed interface PlacementPhase {
         val labels: TrueFalseLabels,
     ) : PlacementPhase
 
-    data class MockRunning(
-        val mockId: String,
-    ) : PlacementPhase
-
     data class Done(
         val answered: Int,
         val forToday: Boolean,
-        val fromMock: Boolean,
     ) : PlacementPhase
 }
 
@@ -72,38 +59,25 @@ internal data class Shown(
     val spent: Double = 0.0,
 )
 
-/**
- * A mock exam taken instead of the questions wins, then questions already started, then the intro
- * until the learner taps Start ([started]).
- */
+/** Questions already started, then the intro until the learner taps Start ([started]). */
 internal fun placementPhase(
     placement: LoadState<Placement>,
-    mocks: LoadState<MockOptions>,
     started: Boolean,
     shown: Shown,
 ): PlacementPhase {
-    if (placement.isPending || mocks.isPending) return PlacementPhase.Loading
+    if (placement.isPending) return PlacementPhase.Loading
+    if (placement is LoadState.Failed) return PlacementPhase.LoadFailed
 
-    val options = mocks.value
-    val mock = options?.placement?.mock
     val read = placement.value
     val ready = read?.takeIf { it.status == PlacementStatus.ASKING || it.status == PlacementStatus.DONE }
 
     return when {
-        mock?.status == MockOptionsPlacementMock.Status.RUNNING -> {
-            PlacementPhase.MockRunning(mock.id.toString())
-        }
-
-        mock?.status == MockOptionsPlacementMock.Status.FINISHED -> {
-            PlacementPhase.Done(answered = ready?.answered?.toInt() ?: 0, forToday = false, fromMock = true)
-        }
-
         ready != null && (started || ready.started) -> {
             ready.phase(shown)
         }
 
         !started -> {
-            PlacementPhase.Intro(options?.mockOffer())
+            PlacementPhase.Intro
         }
 
         read?.status == PlacementStatus.UNAVAILABLE -> {
@@ -116,7 +90,7 @@ internal fun placementPhase(
     }
 }
 
-private val LoadState<*>.isPending get() = this == LoadState.Idle || this == LoadState.Loading
+internal val LoadState<*>.isPending get() = this == LoadState.Idle || this == LoadState.Loading
 
 private fun Placement.phase(shown: Shown): PlacementPhase {
     val answered = maxOf(answered.toInt(), shown.answered)
@@ -125,18 +99,11 @@ private fun Placement.phase(shown: Shown): PlacementPhase {
     return if (next != null && !complete) {
         PlacementPhase.Question(next.item(), number = answered + 1, spent = maxOf(dayBudgetSpent, shown.spent), labels = trueFalseLabels)
     } else {
-        PlacementPhase.Done(answered, forToday = dayBudgetUsed, fromMock = false)
+        PlacementPhase.Done(answered, forToday = dayBudgetUsed)
     }
 }
 
-private fun MockOptions.mockOffer(): MockOffer? {
-    val lengths = placement?.options.orEmpty()
-    val shortest = lengths.firstOrNull() ?: return null
-    val longest = lengths.last()
-    return MockOffer(shortest.estimatedMinutes, longest.estimatedMinutes, plusRequired = access == MockOptions.Access.PLUS_REQUIRED)
-}
-
-private fun PlacementQuestion.item(): PlacementItem =
+internal fun PlacementQuestion.item(): PlacementItem =
     when (this) {
         is PlacementQuestion.BankQuestionOneOfValue -> {
             PlacementItem(

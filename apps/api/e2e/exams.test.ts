@@ -55,8 +55,12 @@ test.describe("Exams API", () => {
       api.post(`/v1/mocks/${id}/break-ends`),
       api.post(`/v1/mocks/${id}/plan-changes`, { data: { offer: "skip", timeZone: "UTC" } }),
       api.get(`/v1/goals/${id}/mocks`),
-      api.post(`/v1/goals/${id}/mocks`, { data: {} }),
-      api.post(`/v1/goals/${id}/mocks/generations`, { data: {} }),
+      api.post(`/v1/goals/${id}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "full" } },
+      }),
+      api.post(`/v1/goals/${id}/mocks/generations`, {
+        data: { shape: { area: null, day: null, kind: "full" } },
+      }),
       api.get(`/v1/essays/${id}`),
     ]);
 
@@ -495,7 +499,7 @@ test.describe("Exams API", () => {
     await api.dispose();
   });
 
-  test("every mock exam comes with Plus, the diagnostic one in onboarding included", async () => {
+  test("every mock exam comes with Plus, and placement mocks can no longer start", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "anytime-mock-free" });
     const { goal } = await createExamGoal(userId);
 
@@ -514,18 +518,14 @@ test.describe("Exams API", () => {
       api.post(`/v1/goals/${goal.id}/mocks`, { data: placement }),
     ]);
 
-    expect(options).toMatchObject({
-      access: "plusRequired",
-      placement: { mock: null, options: [{ length: "short" }, { length: "long" }] },
-    });
+    expect(options).toMatchObject({ access: "plusRequired" });
+    expect(options).not.toHaveProperty("placement");
 
     expect([start.status(), writing.status(), placementStart.status()]).toStrictEqual([
-      402, 402, 402,
+      402, 402, 400,
     ]);
 
-    await expect(placementStart.json()).resolves.toMatchObject({
-      error: { code: "PLUS_REQUIRED" },
-    });
+    await expect(start.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
 
     await api.dispose();
   });

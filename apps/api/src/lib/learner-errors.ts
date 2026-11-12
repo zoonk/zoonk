@@ -14,3 +14,11 @@ export function learnerAccessError(
 
   return accessError(status);
 }
+
+export function noFocusTestError() {
+  return errors.notFound("This goal has no Focus test");
+}
+
+export function noFromScratchError() {
+  return errors.unprocessableEntity("An exam goal's Focus test can't start from scratch");
+}

@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -104,7 +107,9 @@ fun TimeAnswer(
             )
             when {
                 failed -> {
-                    TextButton(onClick = onRetry) { Text(stringResource(R.string.plan_try_again)) }
+                    TextButton(onClick = onRetry, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset)) {
+                        Text(stringResource(R.string.plan_try_again))
+                    }
                 }
 
                 offered != null && offerAsButton -> {
@@ -112,7 +117,12 @@ fun TimeAnswer(
                 }
 
                 offered != null -> {
-                    TextButton(onClick = { onUseOffer(offered.minutes) }) { Text(offerLabel(offered)) }
+                    TextButton(
+                        onClick = { onUseOffer(offered.minutes) },
+                        modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset),
+                    ) {
+                        Text(offerLabel(offered))
+                    }
                 }
             }
         }

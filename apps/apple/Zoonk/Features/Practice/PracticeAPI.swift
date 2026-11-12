@@ -44,14 +44,6 @@ enum TestOutLoad: Equatable {
   case test(TestOutTest)
 }
 
-struct FocusTestQuestions: Equatable {
-  var areas: [String]
-  var needsItems: [String]
-  var questions: [PracticeQuestion]
-  var questionsPerArea: Int
-  var trueFalseLabels: PracticeTrueFalseLabels
-}
-
 struct MistakeLessonReplay: Equatable, Decodable {
   let lessonId: String
   let language: String
@@ -427,63 +419,6 @@ struct PracticeAPI: Sendable {
       case .ok: return
       case .unauthorized: throw APIError.unauthorized
       case .conflict: throw PracticeAPIError.conflict(code: nil)
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  func focusTest(token: String, goalId: String) async throws -> FocusTestQuestions {
-    try await perform(token) { client in
-      switch try await client.getFocusTest(path: .init(goalId: goalId)) {
-      case .ok(let response):
-        let test = try response.body.json
-
-        return FocusTestQuestions(
-          areas: test.areas, needsItems: test.needsItems,
-          questions: try test.questions.map { try PracticeJSON.recode($0) },
-          questionsPerArea: test.questionsPerArea,
-          trueFalseLabels: .init(test.trueFalseLabels))
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  func writeFocusTest(token: String, goalId: String) async throws -> PracticeGenerationStart {
-    try await perform(token) { client in
-      switch try await client.createFocusTestGeneration(path: .init(goalId: goalId)) {
-      case .ok(let response):
-        let generation = try response.body.json
-        return generation.status == .ready
-          ? .ready : .generating(generationId: generation.generationId)
-      case .accepted(let response):
-        return .generating(generationId: try response.body.json.generationId)
-      case .code402(let response):
-        throw PracticeAPIError(
-          writingRefused: voiceRefusal(status: 402, error: try? response.body.json))
-      case .forbidden(let response):
-        throw PracticeAPIError(
-          writingRefused: voiceRefusal(status: 403, error: try? response.body.json))
-      case .tooManyRequests(let response):
-        throw PracticeAPIError(
-          writingRefused: voiceRefusal(status: 429, error: try? response.body.json))
-      case .unauthorized: throw APIError.unauthorized
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  func submitFocusTest(
-    token: String, goalId: String, answers: [PracticeChoiceAnswer], requestId: String
-  ) async throws -> Components.Schemas.FocusTestResult {
-    let body = Components.Schemas.FocusTestInput(
-      answers: try answers.map { try $0.input }, requestId: requestId, timeZone: timeZone)
-
-    return try await perform(token) { client in
-      switch try await client.submitFocusTest(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response): return try response.body.json
-      case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
     }

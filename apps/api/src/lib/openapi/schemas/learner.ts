@@ -1,16 +1,15 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
 import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
+import { focusTestViewSchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
-import { finishedChapterSchema } from "@zoonk/core/sessions/completion-contract";
-import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { MasteryState } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { questionImageSchema, questionSelectSchema, questionVisualSchema } from "./common";
 
-const skillIdSchema = uuidSchema().meta({ description: "Skill ID" });
+export const skillIdSchema = uuidSchema().meta({ description: "Skill ID" });
 
-const probabilitySchema = z.number().min(0).max(1);
+export const probabilitySchema = z.number().min(0).max(1);
 
 const masteryStateSchema = z
   .enum(MasteryState)
@@ -186,6 +185,12 @@ export const placementResponseSchema = z
         description:
           "Today's few minutes of placement are used: no next question today; the first week's sessions ask the rest",
       }),
+    focusTest: focusTestViewSchema
+      .nullable()
+      .meta({
+        description:
+          "An exam goal's placement is its Focus test: sittings of a promised number of questions instead of a few minutes a day. Then `next` is set only while a sitting is open with questions left, `dayBudgetSpent` is the sitting's share answered, `dayBudgetUsed` says it has none left, and `started` that it has answers. Null for other goals",
+      }),
     knownSkillIds: z.array(skillIdSchema),
     needsItems: z
       .array(skillIdSchema)
@@ -216,103 +221,14 @@ export const placementCompletionResponseSchema = z
         description:
           "Every area of every phase had a confident start when placement finished. False when the plan had no skills yet: nothing was placed",
       }),
+    focusTest: focusTestViewSchema
+      .nullable()
+      .meta({
+        description:
+          "An exam goal's Focus test after this finish, with its result (`checkpoint`); null for other goals",
+      }),
     knownSkillIds: z.array(skillIdSchema),
     phases: z.array(phaseStartSchema),
     testedOutPlanItemIds: z.array(uuidSchema()),
   })
   .meta({ id: "PlacementCompletion" });
-
-export const nothingToSkipSchema = z
-  .object({ status: z.literal("nothingToSkip") })
-  .meta({
-    description: "No lessons remain for a test-out to skip. Open the chapter instead.",
-    id: "NothingToSkip",
-  });
-
-export const chapterTestOutResponseSchema = z
-  .object({
-    chapterId: uuidSchema(),
-    needsItems: z
-      .array(skillIdSchema)
-      .meta({
-        description:
-          "Sampled skills without their share of questions yet: POST .../test-out/generations writes them when the learner asks",
-      }),
-    passMark: probabilitySchema,
-    questions: z
-      .array(bankQuestionSchema)
-      .meta({
-        description:
-          "Four to eight, more the more lessons a pass skips, spread over the sampled skills (a chapter of few skills asks each several times); empty while `needsItems` lists any, so a test-out never runs on part of the chapter",
-      }),
-    questionsPerSkill: z
-      .int()
-      .min(0)
-      .meta({ description: "How many questions each sampled skill gets" }),
-    trueFalseLabels: trueFalseLabelsSchema,
-  })
-  .meta({ id: "ChapterTestOut" });
-
-export const testOutGenerationSchema = z
-  .object({
-    generationId: z
-      .string()
-      .nullable()
-      .meta({
-        description: "The run writing the questions: stream GET /generations/{generationId}/events",
-      }),
-    status: z
-      .enum(["ready", "generating"])
-      .meta({
-        description:
-          "`ready`: GET the test-out now. `generating`: follow the run's stream until `testOutQuestionsReady`",
-      }),
-  })
-  .meta({ id: "TestOutGeneration" });
-
-export const chapterTestOutRecordSchema = z
-  .object({
-    canUndo: z
-      .boolean()
-      .meta({
-        description:
-          "Whether its plan change can still be undone through the goal's plan changes: the plan is exactly as the skip left it",
-      }),
-    changeId: uuidSchema()
-      .nullable()
-      .meta({ description: "The plan change that skipped its lessons; null when it skipped none" }),
-    correct: z.int().min(0),
-    lessonsSkipped: z
-      .int()
-      .min(0)
-      .meta({ description: "The lessons its result said were off the plan" }),
-    passed: z.boolean(),
-    total: z.int().min(0),
-    undone: z
-      .boolean()
-      .meta({ description: "The learner undid the skip: its lessons are back in the plan" }),
-  })
-  .meta({ id: "ChapterTestOutRecord" });
-
-export const chapterTestOutResultSchema = z
-  .object({
-    ...progressCelebrationShape,
-    changeId: uuidSchema()
-      .nullable()
-      .meta({
-        description:
-          "The plan change that skipped the lessons; undo it through the goal's plan changes. Null when nothing was skipped or the plan isn't built yet.",
-      }),
-    correct: z.number().int().min(0),
-    finishedChapter: finishedChapterSchema,
-    lessonsSkipped: z
-      .int()
-      .min(0)
-      .meta({
-        description:
-          "The lessons it skipped, the count its plan change says: a topic still being written counts the lessons the plan teaches in its place",
-      }),
-    passed: z.boolean(),
-    total: z.number().int().min(0),
-  })
-  .meta({ id: "ChapterTestOutResult" });

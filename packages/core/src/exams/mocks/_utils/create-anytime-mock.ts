@@ -10,16 +10,14 @@ import { type MockConditions } from "../mock-contract";
 import { getMockFormatMix } from "../mock-format-mix";
 import { markPlannedItems } from "../mock-marking";
 import { planOptionMock } from "../mock-option-plan";
+import { type MockOption } from "../mock-options";
 import { type MockCandidate, type MockPlan, countPlannedQuestions } from "../mock-plan";
 import { isMockShort, listShortFormats } from "../mock-shortfall";
-import { planPlacementMock } from "../placement-mock";
 import {
-  type AnytimeMockPick,
   type AnytimeMockSetup,
   findRunningAnytimeMock,
   listMissingRecordings,
   loadMockSkillIds,
-  loadPlacementSkills,
 } from "./anytime-mock-setup";
 import { loadMockCandidates } from "./mock-candidates";
 import { getExamStartTime } from "./mock-conditions";
@@ -38,67 +36,49 @@ export type CreateAnytimeMockResult =
 
 function isShortOfNew({
   candidates,
-  pick,
+  option,
   plan,
   setup,
 }: {
   candidates: readonly MockCandidate[];
-  pick: AnytimeMockPick;
+  option: MockOption;
   plan: MockPlan;
   setup: AnytimeMockSetup;
 }) {
-  if (pick.purpose === "placement") {
-    return isMockShort({ option: pick.option, planned: countPlannedQuestions(plan) - plan.reused });
-  }
-
   const mix = getMockFormatMix(setup.structure);
 
   return (
-    listMissingRecordings({ pick, setup }).length > 0 ||
-    listShortFormats({ candidates, mix, option: pick.option, plan }).length > 0
+    listMissingRecordings({ option, setup }).length > 0 ||
+    listShortFormats({ candidates, mix, option, plan }).length > 0
   );
 }
 
 export async function planFromBank({
   goal,
-  pick,
+  option,
   setup,
   userId,
 }: {
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
-}): Promise<{ candidates: MockCandidate[]; missingSkillIds: string[]; plan: MockPlan }> {
-  const [candidates, skills] = await Promise.all([
-    loadMockSkillIds(goal.id).then((skillIds) =>
-      loadMockCandidates({ goal, itemIds: null, skillIds, structure: setup.structure, userId }),
-    ),
-    pick.purpose === "placement" ? loadPlacementSkills(goal.id) : [],
-  ]);
-
-  if (pick.purpose === "placement") {
-    const fresh = candidates.filter((candidate) => !candidate.answered && !candidate.set);
-
-    return {
-      candidates: fresh,
-      ...planPlacementMock({
-        candidates: fresh,
-        option: pick.option,
-        skills,
-        structure: setup.structure,
-      }),
-    };
-  }
+}): Promise<{ candidates: MockCandidate[]; plan: MockPlan }> {
+  const candidates = await loadMockCandidates({
+    goal,
+    itemIds: null,
+    skillIds: await loadMockSkillIds(goal.id),
+    structure: setup.structure,
+    userId,
+  });
 
   return {
     candidates,
-    missingSkillIds: [],
     plan: planOptionMock({
       candidates,
       essays: setup.essays,
       listening: setup.listening,
-      option: pick.option,
+      option,
       speaking: setup.speaking,
       structure: setup.structure,
     }),
@@ -108,43 +88,40 @@ export async function planFromBank({
 function toConditions({
   candidates,
   goal,
-  pick,
+  option,
   plan,
   setup,
 }: {
   candidates: readonly MockCandidate[];
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   plan: MockPlan;
   setup: AnytimeMockSetup;
 }): MockConditions {
   const edition = setup.blueprint ? readBlueprintContent(setup.blueprint).edition : null;
-  const { option, purpose } = pick;
   const asked = countPlannedQuestions(plan);
 
   return {
     day: plan.day,
-    examQuestions: purpose === "practice" && asked < option.questions ? option.questions : null,
-    fullLength: purpose === "practice" && option.kind === "full",
+    examQuestions: asked < option.questions ? option.questions : null,
+    fullLength: option.kind === "full",
     ...markPlannedItems({
       candidates: [...candidates, ...[...setup.listening.values()].flat()],
       plan,
       structure: setup.structure,
     }),
     partialCredit: getPartialCredit(setup.structure),
-    purpose,
+    purpose: "practice",
     reused: plan.reused,
     scoring: getMockScoring({ blueprint: setup.blueprint, goal, structure: setup.structure }),
     sections: plan.sections,
-    shape:
-      purpose === "practice" ? { area: option.area, day: option.day, kind: option.kind } : null,
+    shape: { area: option.area, day: option.day, kind: option.kind },
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
-    unpicked:
-      "leftOut" in option
-        ? option.leftOut.flatMap((part) => (part.part === "choice" && part.name ? [part.name] : []))
-        : [],
+    unpicked: option.leftOut.flatMap((part) =>
+      part.part === "choice" && part.name ? [part.name] : [],
+    ),
     wrongPenalty: getWrongPenalty(setup.structure),
   };
 }
@@ -153,30 +130,29 @@ function toConditions({
 export async function createAnytimeMock({
   acceptFewer,
   goal,
-  pick,
+  option,
   setup,
   userId,
   writesCap,
 }: {
   acceptFewer: boolean;
   goal: Goal;
-  pick: AnytimeMockPick;
+  option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
   writesCap: UsagePeriod | null;
 }): Promise<CreateAnytimeMockResult> {
-  const { candidates, plan } = await planFromBank({ goal, pick, setup, userId });
+  const { candidates, plan } = await planFromBank({ goal, option, setup, userId });
   const planned = countPlannedQuestions(plan);
   const asksEssays = plan.sections.some((section) => section.essays.length > 0);
-  const shortOfNew = !acceptFewer && isShortOfNew({ candidates, pick, plan, setup });
+  const shortOfNew = !acceptFewer && isShortOfNew({ candidates, option, plan, setup });
   const asksForNew = writesCap === null && shortOfNew;
 
   const short =
     !acceptFewer &&
     !asksForNew &&
-    pick.purpose === "practice" &&
     planned >= MIN_CHECKPOINT_QUESTIONS &&
-    isMockShort({ option: pick.option, planned });
+    isMockShort({ option, planned });
 
   return writeLearnerChange<CreateAnytimeMockResult>({ userId }, async (tx) => {
     const running = await findRunningAnytimeMock({ client: tx, goalId: goal.id, userId });
@@ -191,7 +167,7 @@ export async function createAnytimeMock({
 
     if (short) {
       return unchanged({
-        examQuestions: pick.option.questions,
+        examQuestions: option.questions,
         limit: shortOfNew ? writesCap : null,
         minutes: plan.minutes,
         questions: planned,
@@ -205,7 +181,7 @@ export async function createAnytimeMock({
 
     const now = new Date();
 
-    const conditions = toConditions({ candidates, goal, pick, plan, setup });
+    const conditions = toConditions({ candidates, goal, option, plan, setup });
 
     const created = await tx.mockExam.create({
       data: {

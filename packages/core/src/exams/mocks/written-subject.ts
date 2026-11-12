@@ -30,20 +30,36 @@ export function isWrittenSubject({
   );
 }
 
-const PAPER_KINDS = new Set<StructureSection["kind"]>(["listening", "practical", "speaking"]);
+const PAPER_KINDS = ["listening", "practical", "speaking"] as const;
+
+type PaperKind = (typeof PAPER_KINDS)[number];
+
+type NamedSubject = Pick<ExamStructure["subjects"][number], "group" | "name" | "questions">;
+
+/** The kind of paper a subject is sat as when it isn't questions on a page; null for those. */
+export function getPaperKind({
+  structure,
+  subject,
+}: {
+  structure: ExamStructure;
+  subject: NamedSubject;
+}): PaperKind | null {
+  const names = new Set([subject.name, subject.group ?? ""].map((name) => normalizeString(name)));
+
+  const paper = (structure.mock?.sections ?? []).find(
+    (section) =>
+      PAPER_KINDS.some((kind) => kind === section.kind) && names.has(normalizeString(section.name)),
+  );
+
+  return PAPER_KINDS.find((kind) => kind === paper?.kind) ?? null;
+}
 
 export function isQuestionSubject({
   structure,
   subject,
 }: {
   structure: ExamStructure;
-  subject: Pick<ExamStructure["subjects"][number], "group" | "name" | "questions">;
+  subject: NamedSubject;
 }): boolean {
-  const names = new Set([subject.name, subject.group ?? ""].map((name) => normalizeString(name)));
-
-  const isPaper = (structure.mock?.sections ?? []).some(
-    (section) => PAPER_KINDS.has(section.kind) && names.has(normalizeString(section.name)),
-  );
-
-  return !isPaper && !isWrittenSubject({ structure, subject });
+  return getPaperKind({ structure, subject }) === null && !isWrittenSubject({ structure, subject });
 }

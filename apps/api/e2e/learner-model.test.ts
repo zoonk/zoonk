@@ -13,14 +13,16 @@ import {
 } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
-  chapterTestOutRecordSchema,
-  chapterTestOutResponseSchema,
-  chapterTestOutResultSchema,
   placementAnswerResponseSchema,
   placementCompletionResponseSchema,
   placementResponseSchema,
-  testOutGenerationSchema,
 } from "../src/lib/openapi/schemas/learner";
+import {
+  chapterTestOutRecordSchema,
+  chapterTestOutResponseSchema,
+  chapterTestOutResultSchema,
+  testOutGenerationSchema,
+} from "../src/lib/openapi/schemas/test-out";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
@@ -90,6 +92,8 @@ test.describe("Learner model API", () => {
       }),
       apiContext.get(`/v1/goals/${goalId}/preparation`),
       apiContext.get(`/v1/goals/${goalId}/placement`),
+      apiContext.post(`/v1/goals/${goalId}/placement/sittings`, { data: {} }),
+      apiContext.patch(`/v1/goals/${goalId}/placement`, { data: { sessionQuestions: "paused" } }),
       apiContext.post(`/v1/goals/${goalId}/placement/completion`, { data: {} }),
       apiContext.get(`/v1/goals/${goalId}/chapters/${randomUUID()}/test-out`),
       apiContext.post(`/v1/goals/${goalId}/chapters/${randomUUID()}/test-out/generations`),

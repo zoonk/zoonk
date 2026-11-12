@@ -5,8 +5,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -32,8 +34,6 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.EXAM_GOAL_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
@@ -82,7 +82,11 @@ class GoalSetupFlowTest {
     val folder = TemporaryFolder()
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private val session = FakeSession(ana)
+    private val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+    private val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var screen by mutableIntStateOf(0)
+    private var drafts by mutableStateOf<SetupDrafts?>(null)
 
     private val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
 
@@ -96,22 +100,24 @@ class GoalSetupFlowTest {
         rule.mainClock.advanceTimeBy(1_000)
     }
 
-    private fun show(
-        drafts: SetupDrafts? = null,
-        restoration: StateRestorationTester? = null,
-    ) {
-        val session = FakeSession(ana)
-        val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+    private fun draftStore() =
+        DraftStore(folder.newFolder(), background, debounce = Duration.ZERO).also {
+            runBlocking { it.follow { DraftsChange(next = ana.accountId) } }
+        }
+
+    // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
+    private fun SetupDrafts.reason() = words(GOAL_ID, "reason").value.stateIn(background, SharingStarted.Eagerly, null)
+
+    private fun show(restoration: StateRestorationTester? = null) {
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         val plans = PlanStore(planApi, cache)
-        val mocks = MockStore(FakeMockApi(options = null), cache)
         val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
         setContent {
             ZoonkTheme {
                 CompositionLocalProvider(LocalSetupDrafts provides drafts) {
                     key(
                         screen,
-                    ) { GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, plans, mocks, isGuest = false, rememberAppNavigator()) }
+                    ) { GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, plans, isGuest = false, rememberAppNavigator()) }
                 }
             }
         }
@@ -373,14 +379,9 @@ class GoalSetupFlowTest {
 
     @Test
     fun unsentWordsComeBackWhenTheScreenIsRebuiltAndGoOnceTheAnswerSaves() {
-        val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val draftStore = DraftStore(folder.newFolder(), background, debounce = Duration.ZERO)
-        runBlocking { draftStore.follow { DraftsChange(next = ana.accountId) } }
-        val drafts = SetupDrafts(draftStore, ana)
-        // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
-        val saved = drafts.words(GOAL_ID, "reason").value.stateIn(background, SharingStarted.Eagerly, null)
+        val saved = SetupDrafts(draftStore(), ana, session).also { drafts = it }.reason()
         api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
-        show(drafts = drafts)
+        show()
 
         rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
         rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
@@ -394,5 +395,41 @@ class GoalSetupFlowTest {
         rule.waitForIdle()
         assertEquals(listOf(GOAL_ID), api.answers.map { it.first })
         rule.waitUntil(5_000) { saved.value == null }
+    }
+
+    @Test
+    fun aGuestsWordsSentAsTheySignInGoFromTheAccountTheyMovedInto() {
+        val store = draftStore()
+        val typed = SetupDrafts(store, ana, session).also { drafts = it }.reason()
+        api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
+        show()
+        rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
+        rule.waitUntil(5_000) { typed.value == listOf("certificate", "To pass the DELE") }
+        val next =
+            checkNotNull(
+                rule
+                    .onNodeWithText("Continue")
+                    .fetchSemanticsNode()
+                    .config[SemanticsActions.OnClick]
+                    .action,
+            )
+
+        val account = AuthenticatedSession("registered", "token-b", "local-b")
+        runBlocking { store.follow { DraftsChange(next = account.accountId, moveFrom = ana.accountId) } }
+        val accountDrafts = SetupDrafts(store, account, session)
+        val moved = accountDrafts.reason()
+        rule.waitUntil(5_000) { moved.value == listOf("certificate", "To pass the DELE") }
+
+        api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
+        // Sent in the turn the session changes, before the screen recomposes with the account's drafts.
+        rule.runOnIdle {
+            session.session = account
+            cache.followSession()
+            drafts = accountDrafts
+            next()
+        }
+        rule.waitUntil(5_000) { api.answers.size == 1 }
+        rule.waitUntil(5_000) { moved.value == null }
     }
 }

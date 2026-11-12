@@ -2,6 +2,9 @@ import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
+import { findOldTestFocus, keepTestFocus } from "../../learner/placement/_utils/focus-test-record";
+import { FOCUS_TEST_SOURCE } from "../../learner/placement/focus-test-contract";
+import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
 import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
@@ -41,7 +44,7 @@ async function isAskedAgain({
 async function toUndone({ change, tx }: { change: PlanChange; tx: TransactionClient }) {
   const payload = parsePlanChangePayload(change.payload);
 
-  if (!payload.fromProposal) {
+  if (!payload.fromProposal || payload.source === FOCUS_TEST_SOURCE) {
     return { status: "undone" as const };
   }
 
@@ -107,6 +110,19 @@ export async function undoChange({
     await restorePlan({ context: writeContext, items, snapshot, tx });
     await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
     await tx.planChange.update({ data: await toUndone({ change, tx }), where: { id: change.id } });
+
+    if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
+      await keepTestFocus({
+        areas:
+          snapshot.testFocus === undefined
+            ? await findOldTestFocus({ goalId: context.goal.id, tx })
+            : snapshot.testFocus,
+        goalId: context.goal.id,
+        tx,
+        userId: context.goal.userId,
+      });
+    }
+
     await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
 
     return session && snapshot.todaySession

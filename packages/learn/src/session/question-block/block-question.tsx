@@ -165,15 +165,17 @@ function QuestionMaterial({
 function QuestionText({
   continued,
   graded,
+  onSkipTestQuestions,
   question,
 }: {
   continued: boolean;
   graded: boolean;
+  onSkipTestQuestions?: () => Promise<boolean>;
   question: StudyQuestion;
 }) {
   return (
     <>
-      <PlacementNote question={question} />
+      <PlacementNote onSkipToday={graded ? undefined : onSkipTestQuestions} question={question} />
       <QuotedSource question={question} />
       <QuestionMaterial continued={continued} question={question} />
       {question.format !== "trueFalse" && <QuestionTitle muted={graded} text={question.question} />}
@@ -246,6 +248,7 @@ export function BlockQuestion({
         <QuestionText
           continued={isSetContinued({ detail, index: run.state.index })}
           graded={phase.kind === "feedback"}
+          onSkipTestQuestions={run.skipTestQuestions}
           question={question}
         />
         <QuestionView

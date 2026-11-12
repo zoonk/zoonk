@@ -3627,6 +3627,65 @@
         }
       }
     },
+    "Find which subjects should get more of your study time." : {
+      "comment" : "What choosing the plan's focus does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau, welchen Fächern du mehr Lernzeit widmen solltest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubre a qué materias conviene dedicar más tiempo de estudio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Découvre à quelles matières consacrer plus de temps d’étude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scopri a quali materie dedicare più tempo di studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの科目に学習時間を多くかけるとよいかがわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 시간을 더 쓸 과목을 찾아보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź, którym przedmiotom warto poświęcić więcej czasu nauki."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubra quais matérias precisam de mais tempo de estudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hangi branşlara daha çok zaman ayırman gerektiğini bul."
+          }
+        }
+      }
+    },
     "Get answer" : {
       "comment" : "Asks the buddy for an answer that wasn't written yet",
       "localizations" : {
@@ -4799,65 +4858,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "Pick the subjects that get more depth, or take a short test that picks them." : {
-      "comment" : "What choosing the plan's focus does",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähle die Themen, die du vertiefen möchtest, oder lass sie mit einem kurzen Test auswählen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige qué materias estudiar más a fondo o haz una prueba corta que las elija por ti."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choisis les matières à approfondir, ou passe un court test qui les choisira pour toi."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli le materie da approfondire o fai un breve test che le sceglie per te."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重点的に学ぶ科目は、自分で選ぶか、短いテストで決められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 깊이 공부할 과목을 고르거나, 짧은 테스트로 정해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz przedmioty, które chcesz poznać dokładniej, lub rozwiąż krótki test, który wybierze je za ciebie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha as matérias para estudar mais a fundo ou faça um teste rápido que escolhe por você."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daha ayrıntılı çalışacağın konuları seç ya da bunları belirleyen kısa bir teste gir."
           }
         }
       }

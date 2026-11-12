@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftHandle
 import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.SessionSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.builtins.ListSerializer
@@ -22,15 +23,28 @@ import kotlinx.serialization.builtins.serializer
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-/** The setup's unsent words, in the drafts of the learner the screen shows. */
+/** The setup's unsent words: the screen shows [session]'s, and an answer removes those of the learner it saves for. */
 class SetupDrafts(
     private val store: DraftStore,
     private val session: AuthenticatedSession,
+    private val sessions: SessionSource,
 ) {
     internal fun words(
         goalId: String,
         step: String,
-    ): DraftHandle<List<String>> = store.open(session, "setup.unsent.$goalId.$step", ListSerializer(String.serializer()))
+    ) = open(session, goalId, step)
+
+    /** The current learner's words: open them as the answer is sent, so they belong to the session its write takes. */
+    internal fun sending(
+        goalId: String,
+        step: String,
+    ) = sessions.current?.let { open(it, goalId, step) }
+
+    private fun open(
+        learner: AuthenticatedSession,
+        goalId: String,
+        step: String,
+    ): DraftHandle<List<String>> = store.open(learner, "setup.unsent.$goalId.$step", ListSerializer(String.serializer()))
 }
 
 internal val LocalSetupDrafts = staticCompositionLocalOf<SetupDrafts?> { null }

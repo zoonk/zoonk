@@ -49,13 +49,7 @@ async function MockChooserContent() {
     redirect({ href: "/exam", locale });
   }
 
-  return (
-    <MockChooserClient
-      bar={CHOOSER_BAR}
-      page={{ goalId: view.goalId, placement: false }}
-      view={view}
-    />
-  );
+  return <MockChooserClient bar={CHOOSER_BAR} goalId={view.goalId} view={view} />;
 }
 
 async function MockChooserSkeleton() {

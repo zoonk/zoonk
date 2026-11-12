@@ -79,9 +79,7 @@ export async function listMockPrepWrites({
   const fulls = setup.options.filter((option) => option.kind === "full");
 
   const writes = await Promise.all(
-    fulls.map((option) =>
-      planMockWrites({ goal, pick: { option, purpose: "practice" }, setup, userId: goal.userId }),
-    ),
+    fulls.map((option) => planMockWrites({ goal, option, setup, userId: goal.userId })),
   );
 
   return {

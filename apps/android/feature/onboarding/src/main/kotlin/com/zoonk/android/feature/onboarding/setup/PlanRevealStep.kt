@@ -3,10 +3,12 @@ package com.zoonk.android.feature.onboarding.setup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -48,6 +50,8 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.canChooseFocus
+import com.zoonk.android.feature.plan.focusTestOffer
 import com.zoonk.android.feature.plan.studyDaysWords
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
@@ -60,6 +64,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
@@ -69,14 +74,17 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.labelInset
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDocument
+import com.zoonk.api.models.FocusTestSummary
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingLibraryCourse
 import com.zoonk.api.models.Plan
@@ -220,6 +228,14 @@ internal fun ColumnScope.PlanRevealStep(
                         navigator.closeSection()
                         navigator.open(AppRoute.Plan(focus = ADJUST_CHOICES))
                     },
+                    focus =
+                        RevealFocus(
+                            onTest = { navigator.open(AppRoute.FocusTest(goal.id.toString())) },
+                            onChange = {
+                                navigator.closeSection()
+                                navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
+                            },
+                        ),
                     onCreateAccount = { navigator.open(AppRoute.Login) },
                     onSeePlus = { navigator.open(AppRoute.Subscription) },
                 )
@@ -260,7 +276,7 @@ internal fun ColumnScope.PlanBuilding(
         AnalyticsEvent.WarmUpSurface.PlanWait,
         stringResource(if (held.holding) R.string.warm_up_plan_ready else R.string.onboarding_reveal_building_title),
         held,
-        stringResource(if (next == PlanNext.Plan) R.string.focustest_see_plan else R.string.onboarding_continue),
+        stringResource(if (next == PlanNext.Plan) R.string.onboarding_see_plan else R.string.onboarding_continue),
         onRetry,
         next,
     ) { share ->
@@ -344,7 +360,7 @@ internal fun ColumnScope.NoticeReading(
         AnalyticsEvent.WarmUpSurface.PlanWait,
         title,
         hold,
-        stringResource(if (next == PlanNext.Plan) R.string.focustest_see_plan else R.string.onboarding_continue),
+        stringResource(if (next == PlanNext.Plan) R.string.onboarding_see_plan else R.string.onboarding_continue),
         onRetry,
         next,
         waitSurface = "examNotice",
@@ -387,6 +403,7 @@ private fun ColumnScope.RevealBody(
     onChangeChoice: () -> Unit,
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
+    focus: RevealFocus,
 ) {
     SetupContent {
         val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
@@ -452,7 +469,7 @@ private fun ColumnScope.RevealBody(
 
         // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
         // topics) and choices (bases, study everything) go with this.
-        coverage?.let { CoverageWords(it, plan, onSeePlus) }
+        coverage?.let { CoverageWords(it, plan, onSeePlus, focus) }
     }
 }
 
@@ -763,11 +780,18 @@ private fun AreaWeightList(weights: AreaWeights) {
     }
 }
 
+/** Where the reveal's focus links lead: the Focus test, and the plan's focus sheet. */
+internal class RevealFocus(
+    val onTest: () -> Unit,
+    val onChange: () -> Unit,
+)
+
 @Composable
 private fun CoverageWords(
     coverage: RevealCoverage,
     plan: Plan,
     onSeePlus: () -> Unit,
+    focus: RevealFocus,
 ) {
     val locale = currentLocale()
     val time = formatMinutes(plan.schedule.dailyMinutes.toInt(), locale)
@@ -778,6 +802,7 @@ private fun CoverageWords(
             }
 
             is RevealCoverage.Covered -> {
+                focusTradeOff(plan, time)?.let { return FocusTradeOff(it, plan, focus) }
                 coveredText(coverage, time)
             }
 
@@ -803,7 +828,50 @@ private fun CoverageWords(
                 listOfNotNull(summaryTitle(coverage.title), coverage.detail?.let { summaryDetail(it, time) }).factsLine()
             }
         }
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        // A learner who skipped the test, short on time, gets no focus: the test is what would suggest one.
+        if (focusTestOffer(plan) != null) RevealLink(stringResource(R.string.focustest_take_test), focus.onTest)
+    }
+}
+
+/** What a short plan trades: null unless the plan has a date and a focus. */
+@Composable
+private fun focusTradeOff(
+    plan: Plan,
+    time: String,
+): String? {
+    val date = plan.schedule.targetDate?.toJavaLocalDate() ?: return null
+    val focused = plan.areas.filter { it.focused && it.partOf == null }.map { it.name }
+    if (focused.isEmpty()) return null
+    val locale = currentLocale()
+    val day = formatDate(date, locale, if (plan.schedule.targetDateNamedMonth) DateStyle.Month else DateStyle.Long)
+    return stringResource(R.string.focustest_reveal_trade_off, time, day, formatList(focused, locale))
+}
+
+/** The focus the plan follows, how to change it, and what the test did. Never how much more time it gets. */
+@Composable
+private fun FocusTradeOff(
+    text: String,
+    plan: Plan,
+    focus: RevealFocus,
+) {
+    val tested = plan.focusTest?.let { it.state != FocusTestSummary.State.NOT_STARTED } == true
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        FlowRow {
+            if (canChooseFocus(plan)) RevealLink(stringResource(R.string.focustest_change_focus), focus.onChange)
+            if (tested) RevealLink(stringResource(R.string.focustest_what_test_changed), focus.onTest)
+        }
+    }
+}
+
+@Composable
+private fun RevealLink(
+    text: String,
+    onClick: () -> Unit,
+) {
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -LocalButtonSize.current.labelInset)) { Text(text) }
 }
 
 @Composable
@@ -930,3 +998,6 @@ private const val METER_WEIGHT = 0.5f
 private const val MIN_SHOWN_SHARE = 0.005
 
 private val TODAY_PROGRESS_DELAY = 400.milliseconds
+
+/** The plan's `?focus=choose`: its focus sheet open. */
+private const val CHOOSE_FOCUS = "choose"

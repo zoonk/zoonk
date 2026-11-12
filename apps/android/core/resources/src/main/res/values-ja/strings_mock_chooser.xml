@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "mock_chooser_about": "a5901da3b7afe2a3fabe63973eaeaf80a35b7df3709d60a33638955125cfde38",
-  "mock_chooser_about_recommended": "a160416bcca456adf1ac6d42e304b33f1747fafccd89a0bc40e62d4f8ee660a6",
   "mock_chooser_failed": "0905cd2e4801cc445ef91a956c38d3f7e7001c16d4eb0334f3e7e903e1612793",
   "mock_chooser_full_day_number_without": "53b609655213d5f32e41a96f4affb91fcf14e4b0d1ffd757da84aef08bc18a7c",
   "mock_chooser_full_day_without": "ac879e638f16784b07221ef6798824c19a09be4f8a77ffb77950b2cbc8f647ff",
@@ -24,18 +23,6 @@
   "mock_chooser_parts": "fead1da7833b29ef9fb87bef4a6ba22e763ccdb15d7955a981046354ee74f7ec",
   "mock_chooser_pick_free": "5808ad66c675aacd754116d7b21539d1605f8b2a339db0181632043ba731dc9d",
   "mock_chooser_picked": "fa0a54c4f2659d1a5319b86ccb5101730e0e8309a426c40509cfe55df404a443",
-  "mock_chooser_placement_detail": "ed9c11e2581d2c627b07daa644d37483d4f449c3b682262eb7db81f9b72acb6e",
-  "mock_chooser_placement_long": "3f488415a77e1ded33a5170e18a906bcf9f7d39424c22db5296727e55b26e403",
-  "mock_chooser_placement_medium": "63a3310f2441cb22ed7325d5f3a4ac89f41ce9fc30c52a9851ce118fb868bc8d",
-  "mock_chooser_placement_note": "030ea0309f45ba0b6bc723f575df1e64aa05f708fe3092930cc4f6e1f8f1572e",
-  "mock_chooser_placement_plus": "e0b43161c94c7cd7e9d1884c3fdbdb9a90f9f9616c45bcc54b8654dba8a6f2f2",
-  "mock_chooser_placement_short": "46b59a36a0fff98131a5ffd8ead2d428798b36ad49dc6ded6ea82b5f820d7c68",
-  "mock_chooser_placement_size": "ed7c98cceadfea91fd11f26a1843de6de2eb59ed08203f489a56fe6f94037587",
-  "mock_chooser_placement_size_spoken": "3c72f81dcd995ff8972a24001c8f5dfb7759b3cdc2048a9af1e22c9b872dbe9e",
-  "mock_chooser_placement_start": "50d6df27a3ff3427784ae1c8a097301d51a0c3527a1197862122416cb0107f99",
-  "mock_chooser_placement_title": "47b92ef0e914c47abf02c678a2b941fd323cf9ce1b39407c453c1e89673b2f28",
-  "mock_chooser_placement_top_subject": "4c4a4d9eab2641f5dd5228b407284e1dc25f5ed69b5680433708c2e8a6548b55",
-  "mock_chooser_placement_top_subjects": "b41f77978b21d670212ffffa5a3b562d57e8ced7dd719ac458fdfe72f58e0698",
   "mock_chooser_plus": "2e0d0d8b0a4f1e358d5095227b3852cbd9707c38b6c70edcffcdaf0cf99335b4",
   "mock_chooser_preparing": "1fbd8eeceaad876ae5fbd46657ea907898e8c21cfc44155c1a445c4be2717e31",
   "mock_chooser_preparing_detail": "797d22ff795817ff9e41a8c52fc961246a96e52f49f092f94a912f50407615fe",
@@ -99,11 +86,6 @@
     <plurals name="mock_chooser_option_size_spoken">
         <item quantity="other">%1$d問、約%2$s</item>
     </plurals>
-    <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d問</string>
-    <plurals name="mock_chooser_placement_size_spoken">
-        <item quantity="other">%d問</item>
-    </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
         <item quantity="other">現在用意できている問題は%1$d問で、本番の%2$s問より少ないため、この模試の所要時間は約%3$sです。</item>
@@ -125,27 +107,12 @@
     <string name="mock_chooser_usually_takes">通常の所要時間</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">約%1$s</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="mock_chooser_about_recommended">約%1$s（おすすめ）</string>
     <string name="mock_chooser_subjects">科目</string>
     <!-- The exam's sections a mock sits, such as Listening and Reading. -->
     <string name="mock_chooser_parts">パート</string>
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">記述式</string>
     <string name="mock_chooser_last_mock">前回の模試</string>
-    <string name="mock_chooser_placement_title">レベルを知るための模試</string>
-    <string name="mock_chooser_placement_detail">本番と同じ形式です。回答をもとに学習計画を立てます。</string>
-    <string name="mock_chooser_placement_start">模試を始める</string>
-    <string name="mock_chooser_placement_note">いつでも終了できます。回答した問題をもとに学習計画を立てます。結果は終了時に表示されます。</string>
-    <string name="mock_chooser_placement_plus">Plusでは模試を受けられます。Plusに登録していない場合は、短時間で答えられる問題で学習のスタート地点を見つけます。</string>
-    <string name="mock_chooser_placement_top_subject">配点が最も高い科目です。ほかの科目は、最初の数日間の学習で出題します。</string>
-    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
-    <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="other">配点の高い上位%d科目です。ほかの科目は、最初の数日間の学習で出題します。</item>
-    </plurals>
-    <string name="mock_chooser_placement_short">短時間で実力を確認します。最初の数日間で、さらに詳しく把握します。</string>
-    <string name="mock_chooser_placement_medium">全科目を確認します。学習を始めるレベルの目安がわかります。</string>
-    <string name="mock_chooser_placement_long">学習を始めるレベルを最も正確に決められます。</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">%1$sの科目別の問題数です。%2$sの集計に基づいています。</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

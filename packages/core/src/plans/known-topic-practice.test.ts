@@ -18,6 +18,7 @@ import { startStudyBlock } from "../sessions/start-study-block";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { finishChallengesFixture } from "./_test-utils/finish-challenges";
+import { keepPaceOwn } from "./_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
@@ -88,6 +89,8 @@ async function setup(
   shape: Shape,
   { dailyMinutes = 30, testOut = true }: { dailyMinutes?: number; testOut?: boolean } = {},
 ) {
+  await keepPaceOwn();
+
   const user = await userFixture();
 
   const [blueprint, library] = await Promise.all([
@@ -141,6 +144,20 @@ async function setup(
     placementAnswer({ isCorrect: false, skill: missed }),
     placementAnswer({ isCorrect: true, skill: frequent }),
     placementAnswer({ isCorrect: true, skill: ordinary }),
+    attemptFixture({
+      answeredAt: day(-1),
+      isCorrect: true,
+      itemId: itemsOf(ordinary)[1]?.id ?? null,
+      skillId: ordinary.id,
+      userId: user.id,
+    }),
+    attemptFixture({
+      answeredAt: day(-1),
+      isCorrect: true,
+      itemId: itemsOf(frequent)[1]?.id ?? null,
+      skillId: frequent.id,
+      userId: user.id,
+    }),
     learnerSkillFixture({
       difficulty: 5,
       due: day(-1),
@@ -421,6 +438,8 @@ describe("a known topic Pedro's time left without lessons", () => {
 
     const { blockId, payload, sessionId } = await startPractice(goal.id);
     const question = payload.itemIds.find((id) => itemsOf(ordinary).some((item) => item.id === id));
+
+    expect(question).toBeDefined();
 
     await answerStudyQuestion({
       blockId,

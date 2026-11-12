@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "mock_chooser_about": "cc939d2309a6f20c0ea776ab93e523814c893c552dba5eb7a8c76cf3ed567909",
-  "mock_chooser_about_recommended": "c342c6318a0e8c41b17dd1f22c99ae5b0d13b9739d3087c985f50dda6c62741b",
   "mock_chooser_failed": "a884cc9279ea16956b98411a67d253d8e920d43b9123e6acf5b379d3a4c25de5",
   "mock_chooser_full_day_number_without": "f639b9d758b99a75225640db4b3045ca487042678960e77b6764448961cf4468",
   "mock_chooser_full_day_without": "a6418d28857556447e24fac466393fbcd14b37b3ad3027deb995f8d80c29ddbb",
@@ -24,18 +23,6 @@
   "mock_chooser_parts": "a7e3a047916e7e8688f1e057bac0c484dc140db5d981b6d23a837c1bcdfcb410",
   "mock_chooser_pick_free": "c7904f410e8015070307044b007b8be1739e926e9b706f6d0d055da5288be8c8",
   "mock_chooser_picked": "29a96967af8a95932a76905061225b30ada65babb323fbf0ff60c628f6b2775c",
-  "mock_chooser_placement_detail": "7b45d03d27b0ed7586267a6153a14d4019b81a0ed8d9f4407a433a7eaecff1ef",
-  "mock_chooser_placement_long": "b28f02393a199ef843a2dbee53eb4b664d55783789092955244c569bbcd6575a",
-  "mock_chooser_placement_medium": "e3126f28977d742527b2b8d067a6cfa2f9315063fc6772b6229d40bc556ba740",
-  "mock_chooser_placement_note": "92c391c16d0c1a9bc2f44b5b44f6a6439a4f523ae0a1261f7db9101b0742f81a",
-  "mock_chooser_placement_plus": "7f166239a7cd18d09c254b187483a0fa39d1405e2bd44d2557cef290da511138",
-  "mock_chooser_placement_short": "c87e24b8ed2d99a8dd26fae1083fe5d24471182202b08bb5ece945b4f9de2774",
-  "mock_chooser_placement_size": "5e530fb437e385f08b02f3bbd545ef04e87fed3d8721a91986f7b95dc0cb05e6",
-  "mock_chooser_placement_size_spoken": "bce16e359b8288c8ffbbdfb1501d0b7b50f6445959fafcdb674f7dae5dc57715",
-  "mock_chooser_placement_start": "a1dbf146bd2a930082fd16234896b740523c912c8869c7faeb29ce7459b0ef55",
-  "mock_chooser_placement_title": "dbcf03531ad917a97d8795f6a59b0c2eb9d5fbf107aa41cc4740d2d84b8ab4f5",
-  "mock_chooser_placement_top_subject": "55eedaf82288ee32af579e3e94a8ed02ad38c2ec0cb8873718075deb882766c0",
-  "mock_chooser_placement_top_subjects": "3819dca3f3b0df3c38600d627a60a5d4a130415642af94769c2e8f0c92e06bee",
   "mock_chooser_plus": "852a1cce4189c573b591745e676d5d54974ec82c6dea5a9c4307a76ac23b5cde",
   "mock_chooser_preparing": "954c3e4ec80a8a67596f4222f9e05933f74d09652cf682fdc2702cfc3f40c32e",
   "mock_chooser_preparing_detail": "c0b638db76ebb51afe9e50227c647d8f8c5d0a98f8a1e5ad2160032025c14aa8",
@@ -103,13 +90,6 @@
         <item quantity="many">%1$d questions, environ %2$s</item>
         <item quantity="other">%1$d questions, environ %2$s</item>
     </plurals>
-    <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d q</string>
-    <plurals name="mock_chooser_placement_size_spoken">
-        <item quantity="one">%d question</item>
-        <item quantity="many">%d questions</item>
-        <item quantity="other">%d questions</item>
-    </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
         <item quantity="one">%1$d question sur %2$s est prête pour le moment. Cet examen blanc dure donc environ %3$s.</item>
@@ -133,29 +113,12 @@
     <string name="mock_chooser_usually_takes">Durée habituelle</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">Environ %1$s</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="mock_chooser_about_recommended">Environ %1$s (recommandé)</string>
     <string name="mock_chooser_subjects">Matières</string>
     <!-- The exam's sections a mock sits, such as Listening and Reading. -->
     <string name="mock_chooser_parts">Parties</string>
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">Épreuve écrite</string>
     <string name="mock_chooser_last_mock">Ton dernier examen blanc</string>
-    <string name="mock_chooser_placement_title">Un examen blanc pour connaître ton niveau</string>
-    <string name="mock_chooser_placement_detail">Au format de l’examen. Ton plan part de tes réponses.</string>
-    <string name="mock_chooser_placement_start">Commencer l’examen blanc</string>
-    <string name="mock_chooser_placement_note">Arrête-toi quand tu veux : ton plan utilise les réponses que tu as données. Ton résultat s’affiche à la fin.</string>
-    <string name="mock_chooser_placement_plus">Les examens blancs sont inclus dans Plus. Sans Plus, quelques questions rapides permettent de trouver ton point de départ.</string>
-    <string name="mock_chooser_placement_top_subject">La matière qui compte le plus. Tes premiers jours couvrent les autres.</string>
-    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
-    <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">Les %d matières qui comptent le plus dans le score. Les premiers jours, tu répondras à des questions sur les autres.</item>
-        <item quantity="many">Les %d matières qui comptent le plus dans le score. Les premiers jours, tu répondras à des questions sur les autres.</item>
-        <item quantity="other">Les %d matières qui comptent le plus dans le score. Les premiers jours, tu répondras à des questions sur les autres.</item>
-    </plurals>
-    <string name="mock_chooser_placement_short">Une vérification rapide. Tes premiers jours affinent le résultat.</string>
-    <string name="mock_chooser_placement_medium">Toutes les matières. Un bon point de départ.</string>
-    <string name="mock_chooser_placement_long">Le point de départ le plus précis.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">Nombre de questions par matière dans %1$s, selon le décompte de %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

@@ -13,6 +13,7 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.PlanEffectAreaLessonsInner
 import com.zoonk.api.models.PlanEffectWeeklyEvents
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
@@ -50,6 +51,9 @@ fun planChangeSentence(
     if (change.source == REBALANCE_SOURCE && first is PlanOp.FocusAreas) {
         return stringResource(R.string.plan_change_rebalance, joinList(first.areas))
     }
+    if (change.source == FOCUS_TEST_SOURCE && first is PlanOp.FocusAreas && first.areas.isNotEmpty()) {
+        return stringResource(R.string.plan_change_focus_test, joinList(first.areas))
+    }
 
     systemChangeSentence(change, effect, targetDate)?.let { return it }
     if (ops.isEmpty()) return coverageSentence(effect)
@@ -82,17 +86,25 @@ fun planChangeAppliedEffect(
     fullCourse: Boolean,
 ): String? = effectSentences(change.effect, appliedEndText(change, targetDate, fullCourse))
 
-/** Main's `useProposalEffectText`, for a change offered before it's applied. [current] is the plan's end shown now, for a plan without a date. */
+/**
+ * Main's `useProposalEffectText`, for a change offered before it's applied. [current] is the plan's end shown now, for a plan
+ * without a date. A focus change says what its [focused] subjects gain before when they start, since a start moved later
+ * reads like a loss when it leads; what another subject loses keeps its place.
+ */
 @Composable
 fun planChangeProposalEffect(
     effect: PlanEffect?,
     current: PlanEnd? = null,
     besideDiff: Boolean = false,
     byDate: Boolean = true,
+    focused: List<String> = emptyList(),
 ): String? {
     val end = if (current != null) planEndEffect(effect, current) else changeEffectText(effect)
-    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate)
+    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate, focused = focused)
 }
+
+/** The subjects a focus change gives more time. */
+val PlanChange.focusedAreas: List<String> get() = operations.mapNotNull { it.op as? PlanOp.FocusAreas }.flatMap { it.areas }
 
 /** The plan's date and estimated end, as shown before a change. */
 data class PlanEnd(
@@ -102,16 +114,23 @@ data class PlanEnd(
 
 /**
  * Main's tutor footnote: what a change moves beyond its diff (an area's end that stays, starts,
- * reviews, the lessons it names, topics in and out).
+ * reviews, the lessons it names, topics in and out). A focus says what each subject gains before
+ * when it starts.
  */
 @Composable
-fun planChangeFootnote(effect: PlanEffect?): String? {
-    effect ?: return null
+fun planChangeFootnote(change: PlanChange): String? {
+    val effect = change.effect ?: return null
     val ends = effect.areaEnds.orEmpty()
+    val focused = change.focusedAreas
+    val estimated = effect.lessonsAddedEstimated == true
+    val gains = ends.filter { it.area in focused && (it.lessonsGained ?: 0) > 0 && it.after > it.before }
     val sentences =
         listOfNotNull(
+            // An end that moves is in the diff, but a focus still says what its subjects gain first.
+            *areaEndTexts(gains, estimated).toTypedArray(),
             *areaStartTexts(effect).toTypedArray(),
-            *areaEndTexts(ends.filter { it.after == it.before }, effect.lessonsAddedEstimated == true).toTypedArray(),
+            // An end that stays says why.
+            *areaEndTexts(ends.filter { it.after == it.before }, estimated).toTypedArray(),
             reviewFirstText(effect),
             lessonsText(effect, named = true),
             addedTopicsStartText(effect),
@@ -163,6 +182,9 @@ private const val NOTICE_SOURCE = "notice"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val OWN_LEVEL_SOURCE = "ownLevel"
 private const val REBALANCE_SOURCE = "preparation"
+
+/** A focus the learner's Focus test answers suggest, which they apply as "Update my plan". */
+const val FOCUS_TEST_SOURCE = "focusTest"
 
 @Composable
 internal fun longDate(date: LocalDate): String = formatDate(date, currentLocale(), DateStyle.Long)
@@ -442,7 +464,13 @@ private fun operationSentence(
 
         is PlanOp.FocusAreas -> {
             val names = op.areas.map { area -> op.parts.firstOrNull { it.area == area }?.name ?: area }
-            stringResource(R.string.plan_change_more_time_for, joinList(names))
+            if (names.isEmpty()) {
+                stringResource(
+                    R.string.plan_change_no_focus,
+                )
+            } else {
+                stringResource(R.string.plan_change_more_time_for, joinList(names))
+            }
         }
 
         is PlanOp.ReduceAreas -> {
@@ -786,12 +814,18 @@ private fun effectSentences(
     endText: String?,
     besideDiff: Boolean = false,
     byDate: Boolean = true,
+    focused: List<String> = emptyList(),
 ): String? {
+    val (focusedEnds, otherEnds) = effect?.areaEnds.orEmpty().partition { it.area in focused }
+    val (focusedLessons, otherLessons) = effect?.areaLessons.orEmpty().partition { it.area in focused }
+    val estimated = effect?.lessonsAddedEstimated == true
     val sentences =
         listOfNotNull(
+            *areaEndTexts(focusedEnds, estimated).toTypedArray(),
+            *areaLessonTexts(focusedLessons).toTypedArray(),
             *areaStartTexts(effect).toTypedArray(),
-            *areaEndTexts(effect?.areaEnds.orEmpty(), effect?.lessonsAddedEstimated == true).toTypedArray(),
-            *areaLessonTexts(effect).toTypedArray(),
+            *areaEndTexts(otherEnds, estimated).toTypedArray(),
+            *areaLessonTexts(otherLessons).toTypedArray(),
             reviewFirstText(effect),
             weeklyEventsText(effect),
             nextMockText(effect),
@@ -858,8 +892,8 @@ private fun areaEndTexts(
     }
 
 @Composable
-private fun areaLessonTexts(effect: PlanEffect?): List<String> =
-    effect?.areaLessons.orEmpty().map {
+private fun areaLessonTexts(lessons: List<PlanEffectAreaLessonsInner>): List<String> =
+    lessons.map {
         pluralStringResource(R.plurals.plan_change_area_lessons_to_go, it.after.toInt(), it.area, it.after.toInt(), it.before.toInt())
     }
 

@@ -10,6 +10,10 @@ import {
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import {
+  refreshGoalTestSummary,
+  refreshTestSummary,
+} from "../../learner/placement/_utils/test-sitting";
 import { getPlanState } from "../../plans/_utils/plan-context";
 import { applyPlanOperations } from "../../plans/planner/plan-operations";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
@@ -169,7 +173,13 @@ export async function linkGoalToExamBlueprint({
       }
 
       const picked = await saveNamedChoices(tx, { goal: current, structure });
-      return linked || picked ? true : unchanged(true);
+
+      if (!linked && !picked) {
+        return unchanged(true);
+      }
+
+      await refreshTestSummary({ goalId, tx });
+      return true;
     },
   );
 }
@@ -192,8 +202,23 @@ export async function unlinkGoalFromSharedExam(goalId: string): Promise<void> {
       if (updated.count === 0) {
         return unchanged(null);
       }
+
+      await refreshTestSummary({ goalId, tx });
     },
   );
+}
+
+/** After a write to a notice, counts again the Focus test summaries it changed for its learners. */
+export async function refreshFollowerSummaries(examBlueprintId: string): Promise<void> {
+  const goals = await prisma.goal.findMany({
+    select: { details: true, id: true, userId: true },
+    where: { examBlueprintId },
+  });
+
+  for (const goal of goals) {
+    // oxlint-disable-next-line no-await-in-loop -- Each learner's lock is its own transaction; a popular notice must not exhaust the pool.
+    await refreshGoalTestSummary(goal);
+  }
 }
 
 export async function linkGoalToResearchSources({

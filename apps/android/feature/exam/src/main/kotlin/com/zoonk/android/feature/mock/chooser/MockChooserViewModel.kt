@@ -10,6 +10,7 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,7 +53,7 @@ class MockChooserViewModel(
     private val mutableBusy = MutableStateFlow(false)
     private val mutableOpened = MutableStateFlow<String?>(null)
     private var owner: AuthenticatedSession? = null
-    private var writing: MockChoice? = null
+    private var writing: MockShape? = null
     private var generationId: String? = null
     private val shown = MutableStateFlow(true)
 
@@ -80,7 +81,7 @@ class MockChooserViewModel(
     val run: StateFlow<GenerationRun> = follower.run
 
     fun start(
-        choice: MockChoice,
+        shape: MockShape,
         key: String,
     ) {
         if (mutableBusy.value || mutableStatus.value == ChooserStatus.Writing) return
@@ -94,12 +95,12 @@ class MockChooserViewModel(
                 mutableBusy.value = false
                 return@launch
             }
-            when (val result = starter.start(goalId, choice, acceptFewer)) {
+            when (val result = starter.start(goalId, shape, acceptFewer)) {
                 is MutationResult.Done -> {
                     if (result.value ==
                         MockStartOutcome.NeedsQuestions
                     ) {
-                        write(choice, key)
+                        write(shape, key)
                     } else {
                         show(result.value, key)
                     }
@@ -140,11 +141,11 @@ class MockChooserViewModel(
     }
 
     private suspend fun write(
-        choice: MockChoice,
+        shape: MockShape,
         key: String,
     ) {
         if (!isOwnersSession) return abandon()
-        val result = starter.writeQuestions(goalId, choice)
+        val result = starter.writeQuestions(goalId, shape)
         if (result is MutationResult.Failed) {
             mutableStatus.value = ChooserStatus.Failed(notEnoughQuestions = false)
             return
@@ -152,7 +153,7 @@ class MockChooserViewModel(
 
         when (val written = (result as? MutationResult.Done)?.value) {
             is QuestionWriting.Writing -> {
-                writing = choice
+                writing = shape
                 generationId = written.generationId
                 mutableStatus.value = ChooserStatus.Writing
                 mutableBusy.value = false
@@ -161,11 +162,11 @@ class MockChooserViewModel(
                 shown.first { it }
                 if (!isOwnersSession) return abandon()
                 mutableBusy.value = true
-                startWithWhatThereIs(choice, key)
+                startWithWhatThereIs(shape, key)
             }
 
             QuestionWriting.Ready -> {
-                startWithWhatThereIs(choice, key)
+                startWithWhatThereIs(shape, key)
             }
 
             is QuestionWriting.Refused -> {
@@ -180,10 +181,10 @@ class MockChooserViewModel(
     }
 
     private suspend fun startWithWhatThereIs(
-        choice: MockChoice,
+        shape: MockShape,
         key: String,
     ) {
-        when (val result = starter.start(goalId, choice, acceptFewer = true)) {
+        when (val result = starter.start(goalId, shape, acceptFewer = true)) {
             is MutationResult.Done -> show(result.value, key)
             is MutationResult.Failed -> mutableStatus.value = ChooserStatus.Failed(notEnoughQuestions = false)
             MutationResult.Obsolete -> mutableStatus.value = ChooserStatus.Choosing
@@ -212,8 +213,7 @@ class MockChooserViewModel(
     /** The run's Try again: null once nothing is left to write, which starts the mock. */
     private suspend fun writeAgain(): String? {
         check(isOwnersSession) { "Another session can't write this mock's questions" }
-        val choice = checkNotNull(writing)
-        val result = starter.writeQuestions(goalId, choice)
+        val result = starter.writeQuestions(goalId, checkNotNull(writing))
         val written = (result as? MutationResult.Done)?.value ?: error("The mock's questions couldn't be asked for again")
         return (written as? QuestionWriting.Writing)?.generationId.also { generationId = it }
     }

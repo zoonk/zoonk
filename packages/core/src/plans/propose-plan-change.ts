@@ -1,12 +1,15 @@
 import "server-only";
-import { type AppliedChange, proposeChange } from "./_utils/apply-plan-change";
+import { type AppliedChange, type UnchangedPlan, proposeChange } from "./_utils/apply-plan-change";
 import { type PlanChangePayload } from "./_utils/plan-change-payload";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { type PlanChangeRecord } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 import { type PlanOperation } from "./plan-contract";
 
-export type PlanProposalResult = AppliedChange | { status: "notFound" | "saved" | "unchanged" };
+export type PlanProposalResult =
+  | AppliedChange
+  | UnchangedPlan
+  | { status: "notDue" | "notFound" | "saved" };
 
 /**
  * Callers pass a goal id they already resolved for the learner; `reason` is the sentence the
@@ -21,6 +24,7 @@ export async function proposePlanChange({
   reason,
   retryOnConflict = true,
   source,
+  timeZone,
 }: {
   /** "always" asks the learner even for a change small enough to apply at once. */
   approval?: "always" | "whenLarge";
@@ -31,9 +35,10 @@ export async function proposePlanChange({
   reason: string;
   retryOnConflict?: boolean;
   source: string;
+  timeZone?: string;
 }): Promise<PlanProposalResult> {
   const propose = async (): Promise<PlanProposalResult> => {
-    const context = await loadPlanAtToken(goalId);
+    const context = await loadPlanAtToken(goalId, { timeZone });
 
     if (!context) {
       return { status: "notFound" };

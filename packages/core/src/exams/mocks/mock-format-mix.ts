@@ -39,7 +39,7 @@ export type MockFormat = {
 const CHOICE_KEY = "choice";
 const TYPED_KEY = "typed";
 
-export const ONE_PICK_MIX: readonly MockFormat[] = [
+const ONE_PICK_MIX: readonly MockFormat[] = [
   { key: CHOICE_KEY, sections: [], share: 1, style: null, writer: { choice: null, kind: "quick" } },
 ];
 

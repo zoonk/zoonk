@@ -99,7 +99,7 @@ export const planChangeSchema = z
       .enum(PLAN_CHANGE_STATUSES)
       .meta({
         description:
-          "proposed waits for the learner's answer, and waits again after they apply it and undo it; undone: the learner undid a change that applied without waiting for their answer (their own, a test-out); replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, or waits in its place when they undo it, so it can't be applied",
+          "proposed waits for the learner's answer, and waits again after they apply it and undo it, except a Focus test proposal; undone: the learner undid a Focus test proposal or a change that applied without waiting for their answer (their own, a test-out); replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, or waits in its place when they undo it, so it can't be applied",
       }),
     todaySession: z
       .enum(["changed", "unchanged"])

@@ -4,11 +4,10 @@ import { useRouter } from "@/i18n/navigation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
-import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
+import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import {
   MockChooserScreen,
   type MockChooserStatus,
-  type MockStart,
   getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
 import { safeAsync } from "@zoonk/utils/error";
@@ -19,15 +18,8 @@ const PREPARING_RETRY_MS = 3000;
 
 const PREPARING_TRIES = 60;
 
-type ChooserPage = { goalId: string; placement: boolean };
-
-function toChoice(start: MockStart) {
-  if (start.purpose === "placement") {
-    return { length: start.length, purpose: "placement" as const };
-  }
-
-  const { area, day, kind } = start.option;
-  return { purpose: "practice" as const, shape: { area, day, kind } };
+function toChoice({ area, day, kind }: MockOptionView) {
+  return { shape: { area, day, kind } };
 }
 
 function wait(ms: number): Promise<void> {
@@ -37,16 +29,16 @@ function wait(ms: number): Promise<void> {
 }
 
 async function requestMockWriting({
-  page,
-  start,
+  goalId,
+  option,
 }: {
-  page: ChooserPage;
-  start: MockStart;
+  goalId: string;
+  option: MockOptionView;
 }): Promise<QuestionWriting> {
-  const path: `/${string}` = `/goals/${encodeURIComponent(page.goalId)}/mocks/generations`;
+  const path: `/${string}` = `/goals/${encodeURIComponent(goalId)}/mocks/generations`;
 
   const ask = async (tries: number): Promise<QuestionWriting> => {
-    const { data: writing } = await safeAsync(() => requestQuestionWriting(path, toChoice(start)));
+    const { data: writing } = await safeAsync(() => requestQuestionWriting(path, toChoice(option)));
 
     if (!writing) {
       return { status: "failed" };
@@ -63,15 +55,10 @@ async function requestMockWriting({
   return ask(PREPARING_TRIES);
 }
 
-function getStartKey(start: MockStart): string | null {
-  return start.purpose === "practice" ? getMockOptionKey(start.option) : null;
-}
-
-function toStatus({ outcome, start }: { outcome: MockStartOutcome; start: MockStart }) {
-  const optionKey = getStartKey(start);
-
-  if (outcome.status === "short" && optionKey) {
+function toStatus({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) {
+  if (outcome.status === "short") {
     const { examQuestions, limit, minutes, questions } = outcome;
+    const optionKey = getMockOptionKey(option);
     return { examQuestions, kind: "short", limit, minutes, optionKey, questions } as const;
   }
 
@@ -96,15 +83,15 @@ function WritingMock({
   return <MockChooserScreen {...screen} status={{ kind: "writing", run }} />;
 }
 
-type Writing = { generationId: string; start: MockStart };
+type Writing = { generationId: string; option: MockOptionView };
 
 export function MockChooserClient({
   bar,
-  page,
+  goalId,
   view,
 }: {
   bar: React.ReactNode;
-  page: ChooserPage;
+  goalId: string;
   view: MockOptionsView;
 }) {
   const router = useRouter();
@@ -115,36 +102,36 @@ export function MockChooserClient({
   /** A start the server couldn't answer is a failed start, never an error page. */
   const startMock = async ({
     acceptFewer,
-    start,
+    option,
   }: {
     acceptFewer: boolean;
-    start: MockStart;
+    option: MockOptionView;
   }): Promise<MockStartOutcome> => {
     const { data: outcome } = await safeAsync(() =>
-      startAnytimeMockAction(page.goalId, { ...toChoice(start), acceptFewer }),
+      startAnytimeMockAction(goalId, { ...toChoice(option), acceptFewer }),
     );
 
     return outcome ?? { status: "failed" };
   };
 
-  const open = ({ outcome, start }: { outcome: MockStartOutcome; start: MockStart }) => {
+  const open = ({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) => {
     if ("id" in outcome) {
       router.push(`/mock/${outcome.id}`);
       return;
     }
 
     setWriting(null);
-    setStatus(toStatus({ outcome, start }));
+    setStatus(toStatus({ option, outcome }));
   };
 
-  const startWithWhatThereIs = async (start: MockStart) =>
-    open({ outcome: await startMock({ acceptFewer: true, start }), start });
+  const startWithWhatThereIs = async (option: MockOptionView) =>
+    open({ option, outcome: await startMock({ acceptFewer: true, option }) });
 
-  const write = async (start: MockStart) => {
-    const result = await requestMockWriting({ page, start });
+  const write = async (option: MockOptionView) => {
+    const result = await requestMockWriting({ goalId, option });
 
     if (result.status === "writing") {
-      setWriting({ generationId: result.generationId, start });
+      setWriting({ generationId: result.generationId, option });
       return;
     }
 
@@ -158,21 +145,21 @@ export function MockChooserClient({
       return;
     }
 
-    await startWithWhatThereIs(start);
+    await startWithWhatThereIs(option);
   };
 
-  const begin = (start: MockStart) =>
+  const begin = (option: MockOptionView) =>
     startTransition(async () => {
-      const acceptFewer = status.kind === "short" && status.optionKey === getStartKey(start);
+      const acceptFewer = status.kind === "short" && status.optionKey === getMockOptionKey(option);
       setStatus({ kind: "choosing" });
-      const outcome = await startMock({ acceptFewer, start });
+      const outcome = await startMock({ acceptFewer, option });
 
       if (outcome.status === "needsQuestions") {
-        await write(start);
+        await write(option);
         return;
       }
 
-      open({ outcome, start });
+      open({ option, outcome });
     });
 
   const screen = {
@@ -180,7 +167,6 @@ export function MockChooserClient({
     busy,
     hrefs: { mock: MOCK_ENTRY_HREFS.mock, plus: "/subscription" },
     onStart: begin,
-    placement: page.placement,
     view,
   };
 
@@ -191,9 +177,9 @@ export function MockChooserClient({
   return (
     <WritingMock
       generationId={writing.generationId}
-      onReady={() => startTransition(() => startWithWhatThereIs(writing.start))}
+      onReady={() => startTransition(() => startWithWhatThereIs(writing.option))}
       restart={async () => {
-        const again = await requestMockWriting({ page, start: writing.start });
+        const again = await requestMockWriting({ goalId, option: writing.option });
         return again.status === "writing" ? again.generationId : null;
       }}
       screen={screen}

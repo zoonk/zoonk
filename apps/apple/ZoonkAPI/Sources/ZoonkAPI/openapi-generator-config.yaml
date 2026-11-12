@@ -42,7 +42,6 @@ filter:
     - createEmailCodeSession
     - createEmailSignInCode
     - createFeedback
-    - createFocusTestGeneration
     - createGenerationWait
     - createGoalFromPlanLink
     - createGoalGeneration
@@ -66,6 +65,7 @@ filter:
     - createMockQuestion
     - createMockQuestionsGeneration
     - createPlacementAnswer
+    - createPlacementSitting
     - createPlanBasesAdvice
     - createPlanChange
     - createPlanExamChoice
@@ -132,7 +132,6 @@ filter:
     - getExam
     - getExamBlueprint
     - getExplanation
-    - getFocusTest
     - getFreePlan
     - getGeneration
     - getGoalChapter
@@ -228,7 +227,6 @@ filter:
     - streamGenerationEvents
     - submitChapterTestOut
     - submitEssay
-    - submitFocusTest
     - submitMockSection
     - undoChallengeMove
     - undoWeeklyChallengeMove
@@ -237,6 +235,7 @@ filter:
     - updateCurrentUserMemorySettings
     - updateCurrentUserStudyReminder
     - updateGoal
+    - updateGoalFocusTest
     - updateLibraryLessonClock
     - updateMemoryFact
     - updateOwnLevel

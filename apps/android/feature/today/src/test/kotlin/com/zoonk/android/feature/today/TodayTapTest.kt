@@ -5,6 +5,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.FakeStudyApi
@@ -53,7 +54,14 @@ class TodayTapTest {
     private fun today(): TodayViewModel {
         val cache = AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), CoroutineScope(SupervisorJob() + dispatcher))
         val store = TodayStore(FakeTodayApi(emptyList()), cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" })
-        return TodayViewModel(StudyOpener(api, api::writeLesson, cache, timeZone = { "UTC" }), store, PlanStore(FakePlanApi(), cache))
+        return TodayViewModel(
+            StudyOpener(api, api::writeLesson, cache, timeZone = {
+                "UTC"
+            }),
+            store,
+            PlanStore(FakePlanApi(), cache),
+            unusedFocusTests(cache),
+        )
     }
 
     private val read = TodayRead.Day(decodeFixture<Today>("today"), day())

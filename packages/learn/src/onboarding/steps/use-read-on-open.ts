@@ -11,12 +11,16 @@ export function useReadOnOpen<T>({
   onRead: (data: T | null) => void;
   read: () => Promise<T>;
 }) {
-  const readOnce = useEffectEvent(async () => {
+  const readNow = async () => {
     const { data } = await safeAsync(read);
     onRead(data);
-  });
+  };
+
+  const readOnce = useEffectEvent(readNow);
 
   useEffect(() => {
     void readOnce();
   }, []);
+
+  return readNow;
 }

@@ -7,6 +7,19 @@ const REBALANCE_EVERY_DAYS = 7;
 
 const SOLID_SHARE = 0.5;
 
+export function isRebalanceDue({
+  lastRebalanceAt,
+  now,
+}: {
+  lastRebalanceAt: Date | null;
+  now: Date;
+}): boolean {
+  return (
+    lastRebalanceAt === null ||
+    now.getTime() - lastRebalanceAt.getTime() >= REBALANCE_EVERY_DAYS * MS_PER_DAY
+  );
+}
+
 export type RebalanceArea = Pick<
   AreaPreparation,
   "areaId" | "needsPractice" | "skills" | "weekGain"
@@ -21,22 +34,16 @@ function isGoingWell(area: RebalanceArea): boolean {
 
 export function pickRebalance({
   areas,
-  focusAreas,
   lastRebalanceAt,
   now,
   weakestAreaId,
 }: {
   areas: readonly RebalanceArea[];
-  focusAreas: readonly string[];
   lastRebalanceAt: Date | null;
   now: Date;
   weakestAreaId: string | null;
 }): string[] | null {
-  const recent =
-    lastRebalanceAt !== null &&
-    now.getTime() - lastRebalanceAt.getTime() < REBALANCE_EVERY_DAYS * MS_PER_DAY;
-
-  if (recent || focusAreas.length > 0) {
+  if (!isRebalanceDue({ lastRebalanceAt, now })) {
     return null;
   }
 

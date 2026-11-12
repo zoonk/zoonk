@@ -306,7 +306,6 @@ object AppLink {
                     first == "settings" && second == "about-you" -> AppRoute.ProfileQuestionEdit(third)
                     first == "content" && second == "chapters" -> AppRoute.Chapter(chapterId = third)
                     first == "content" && second == "units" -> AppRoute.LanguageUnit(chapterId = third)
-                    first == "mock" && second == "placement" -> AppRoute.PlacementMock(goalId = third)
                     first == "start" && second == "course" -> courseStart(third, query)
                     else -> null
                 }

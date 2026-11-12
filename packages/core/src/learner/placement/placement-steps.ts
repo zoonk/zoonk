@@ -208,6 +208,8 @@ function countAnswersByArea({
 }
 
 export type AreaPriority = {
+  /** An exam's Focus test asks only these areas, the first with something to ask next. */
+  areaOrder?: readonly string[];
   /** Each area's share of the exam (`getAreaShares`): the heaviest is asked first. */
   areaShares?: ReadonlyMap<string, number> | null;
   /** The plan's areas the learner said are weak (`PlanSettings.focusAreas`). */
@@ -284,9 +286,10 @@ function getDirectionalPool({
   return onSide.length > 0 ? onSide : candidates;
 }
 
-/** Only selects askableSkillIds; null means nothing can be asked now. answeredOnly walks every topic in plan order before confirming. */
+/** Only selects askableSkillIds; null means nothing can be asked now. answeredOnly walks every topic, in areaOrder then plan order, before confirming. */
 export function chooseNextPlacementSkill({
   answeredOnly = false,
+  areaOrder,
   areaShares,
   askableSkillIds,
   evidence,
@@ -304,26 +307,38 @@ export function chooseNextPlacementSkill({
 }): string | null {
   const graph = buildSkillGraph(skills);
 
-  const candidates = getUndecidedSkills({ answeredOnly, skills, statuses }).filter((skill) =>
-    askableSkillIds.has(skill.id),
+  const candidates = getUndecidedSkills({ answeredOnly, skills, statuses }).filter(
+    (skill) =>
+      askableSkillIds.has(skill.id) &&
+      (!areaOrder || (skill.sectionTitle !== null && areaOrder.includes(skill.sectionTitle))),
   );
 
   if (candidates.length === 0) {
     return null;
   }
 
+  const orderedArea = areaOrder?.find((name) =>
+    candidates.some((skill) => skill.sectionTitle === name),
+  );
+
   if (answeredOnly) {
-    const unanswered = candidates.filter(
+    const pool = orderedArea
+      ? candidates.filter((skill) => skill.sectionTitle === orderedArea)
+      : candidates;
+
+    const unanswered = pool.filter(
       (skill) => !evidence.some((answer) => answer.skillId === skill.id),
     );
 
     return (
-      (unanswered.length > 0 ? unanswered : candidates).toSorted((a, b) => a.order - b.order)[0]
-        ?.id ?? null
+      (unanswered.length > 0 ? unanswered : pool).toSorted((a, b) => a.order - b.order)[0]?.id ??
+      null
     );
   }
 
-  const area = pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
+  const area =
+    orderedArea ?? pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
+
   const inArea = candidates.filter((skill) => skill.sectionTitle === area);
   const last = evidence.findLast((answer) => graph.byId.get(answer.skillId)?.sectionTitle === area);
 

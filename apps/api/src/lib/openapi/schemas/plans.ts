@@ -3,6 +3,7 @@ import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { languageAimViewSchema } from "@zoonk/core/language/aims/schemas";
 import { ownLevelSchema } from "@zoonk/core/learner/placement/contract";
+import { focusTestSummarySchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planCourseSchema } from "@zoonk/core/plans/course-contract";
 import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
@@ -136,6 +137,12 @@ export const planResponseSchema = z
     examDocument: examDocumentSchema,
     feasibility: planFeasibilitySchema.nullable(),
     fitOffer: planFitOfferSchema,
+    focusTest: focusTestSummarySchema
+      .nullable()
+      .meta({
+        description:
+          "An exam goal's Focus test, for the plan's row and the reveal: open it with GET /v1/goals/{goalId}/placement. Null for other goals",
+      }),
     fundedMocks: z
       .array(planItemSchema.extend({ id: uuidSchema() }))
       .describe(

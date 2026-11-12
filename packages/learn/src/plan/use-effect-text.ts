@@ -8,6 +8,7 @@ import { useSentenceSpace } from "../_utils/locale";
 import { getShownEndMove } from "../plan-diff/end-move";
 import { useFormatPlanDate } from "./plan-date-text";
 import {
+  getFocusedAreas,
   useAddedTopicsStartText,
   useAreaEndTexts,
   useAreaLessonTexts,
@@ -132,13 +133,16 @@ function useAppliedEndText() {
   };
 }
 
+/** A memory insight's change has no operations: it only adds skills, so it is never a focus. */
+type EffectChange = Pick<PlanChangeView, "effect"> & Partial<Pick<PlanChangeView, "operations">>;
+
 export function useProposalEffectText() {
   const effectText = useChangeEffectText();
   const planEndEffect = usePlanEndEffectText();
   const sentences = useEffectSentences();
 
   return function proposalEffectText(
-    change: Pick<PlanChangeView, "effect">,
+    change: EffectChange,
     current?: CurrentEnd,
     { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
@@ -176,7 +180,7 @@ function useEffectSentences() {
   const space = useSentenceSpace();
 
   return function effectSentences(
-    change: Pick<PlanChangeView, "effect">,
+    change: EffectChange,
     endText: string | null,
     { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
@@ -188,10 +192,22 @@ function useEffectSentences() {
         (!change.effect?.reviewFirst && !ends.some((end) => end.area === start.area)),
     );
 
+    const lessons = change.effect?.areaLessons ?? [];
+    const focused = getFocusedAreas(change.operations);
+    const estimated = { estimated: change.effect?.lessonsAddedEstimated };
+
     const sentences = [
+      ...areaEndTexts(
+        ends.filter(({ area }) => focused.includes(area)),
+        estimated,
+      ),
+      ...areaLessonTexts(lessons.filter(({ area }) => focused.includes(area))),
       ...areaStartTexts(starts),
-      ...areaEndTexts(ends, { estimated: change.effect?.lessonsAddedEstimated }),
-      ...areaLessonTexts(change.effect?.areaLessons ?? []),
+      ...areaEndTexts(
+        ends.filter(({ area }) => !focused.includes(area)),
+        estimated,
+      ),
+      ...areaLessonTexts(lessons.filter(({ area }) => !focused.includes(area))),
       reviewFirstText(change.effect),
       weeklyEventsText(change.effect),
       nextMockText(change.effect),

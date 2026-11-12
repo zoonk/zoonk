@@ -5,8 +5,8 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { askPlacement } from "../_test-utils/exam-test-goal";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
-import { getGoalPlacement } from "./get-goal-placement";
 
 async function examGoalFixture() {
   const [user, skill, blueprint] = await Promise.all([
@@ -40,9 +40,8 @@ function graphSkill(area: string, skill: { id: string; name: string }) {
   return { area, lessons: 1, name: skill.name, phase: 0, skillId: skill.id, weight: null };
 }
 
-async function readPlacement(goalId: string) {
-  const result = await getGoalPlacement({ goalId });
-  return result.status === "ready" ? result.placement : null;
+function readPlacement(goalId: string) {
+  return askPlacement(goalId);
 }
 
 function examItemFixture({ blueprintId, skillId }: { blueprintId: string; skillId: string }) {

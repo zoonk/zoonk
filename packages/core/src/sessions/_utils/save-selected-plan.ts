@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
 import { preparePhaseDatesProposal } from "../../plans/_utils/phase-dates-proposal";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
@@ -126,6 +127,10 @@ export async function prepareSelectedPlanSave({
   };
 }
 
+/**
+ * Callers check `isSelectedPlanCurrent` first, so `context` is the stored goal and plan. Opening the
+ * day is when a Focus test summary that a write left out of date catches up.
+ */
 export async function saveSelectedPlan({
   context,
   prepared,
@@ -136,6 +141,7 @@ export async function saveSelectedPlan({
   tx: TransactionClient;
 }): Promise<number> {
   if (prepared.kind === "skip") {
+    await keepSummaryCurrent({ goal: context.goal, plan: context.state, tx });
     return context.plan.version;
   }
 
@@ -143,6 +149,12 @@ export async function saveSelectedPlan({
     if (prepared.data) {
       await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
     }
+
+    await keepSummaryCurrent({
+      goal: context.goal,
+      plan: { ...context.state, graph: prepared.data?.graph ?? context.state.graph },
+      tx,
+    });
 
     await saveProposalPreviews({ previews: prepared.previews, tx });
 

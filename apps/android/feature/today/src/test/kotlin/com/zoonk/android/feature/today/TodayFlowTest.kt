@@ -34,6 +34,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.goalcontent.examSyllabus
 import com.zoonk.android.feature.goalcontent.modulesSyllabus
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
@@ -158,6 +159,7 @@ class TodayFlowTest {
                 StudyOpener(opening, { _, _ -> error("Not used") }, cache, timeZone = { "UTC" }),
                 store,
                 PlanStore(plans, cache),
+                unusedFocusTests(cache),
             )
         val read = TodayRead.Day(today, today.session.toDayView())
         val onboarding = OnboardingStore(FakeOnboardingApi(), cache, FakeSession(ana)) { SignInResult.SignedIn }

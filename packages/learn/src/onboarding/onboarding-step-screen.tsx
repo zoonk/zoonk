@@ -8,15 +8,10 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type GenerationRun } from "../generation/generation-run";
-import { LanguageLevelTestStep } from "../language/level-test/level-test-step";
 import { type PlanActions } from "../plan/plan-context";
 import { ClaimedDeckProvider, usePreloadedDeck } from "../wait/wait-deck";
-import {
-  getExamTarget,
-  getNativeLanguage,
-  getSubject,
-  readKnownSubjects,
-} from "./_utils/onboarding-view-reads";
+import { getExamTarget, readKnownSubjects } from "./_utils/onboarding-view-reads";
+import { getGoalSubject } from "./goal-subject";
 import {
   type OnboardingActions,
   type OnboardingRoutes,
@@ -28,7 +23,7 @@ import { CountryStep } from "./steps/country-step";
 import { DateStep } from "./steps/date-step";
 import { ExamChoiceStep } from "./steps/exam-choice-step";
 import { readLevelChoice } from "./steps/level-choices";
-import { PlacementStep } from "./steps/placement-step";
+import { PlacementStepScreen } from "./steps/placement-step-screen";
 import { PlanReveal } from "./steps/plan-reveal";
 import { ProfileStepScreen, type ProfileStepState } from "./steps/profile-step";
 import { FollowUpsStep, LevelStep, PurposeStep, TextStep } from "./steps/question-steps";
@@ -184,7 +179,7 @@ function StepScreen({
   toToday: () => void;
   view: OnboardingView;
 }) {
-  const subject = getSubject(view);
+  const subject = getGoalSubject(view.goal);
   const props = { onAnswer, pending };
 
   usePreloadedDeck({ readDeck: actions.readWarmUp, warmUpId: run?.warmUpId });
@@ -261,28 +256,14 @@ function StepScreen({
     case "buddy":
       return <BuddyStep {...props} />;
     case "placement":
-      if (view.goal.kind === "language" && view.goal.targetLanguage) {
-        return (
-          <LanguageLevelTestStep
-            actions={actions.languageLevelTest(view.goal.id)}
-            goal={{ language: getNativeLanguage(view), targetLanguage: view.goal.targetLanguage }}
-            goalId={view.goal.id}
-            onDone={onPlacementDone}
-            onFinishFailed={onPlacementFinishFailed}
-          />
-        );
-      }
-
       return (
-        <PlacementStep
+        <PlacementStepScreen
           actions={actions}
-          areaCount={view.examSubjects.length}
-          goalId={view.goal.id}
-          mockHrefs={{ mock: routes.mock, start: routes.placementMock(view.goal.id) }}
           onDone={onPlacementDone}
           onFinishFailed={onPlacementFinishFailed}
           run={run}
           subject={subject}
+          view={view}
         />
       );
     case "plan":

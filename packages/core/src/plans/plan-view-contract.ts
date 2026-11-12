@@ -4,6 +4,7 @@ import { type ExamChoiceView } from "../exams/choices/exam-choice-contract";
 import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";
 import { type LanguageAimView } from "../language/aims/language-aims";
+import { type FocusTestSummary } from "../learner/placement/focus-test-contract";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
 import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
@@ -201,6 +202,8 @@ export type PlanView = {
     timeCovers: boolean;
   } | null;
   end: PlanEndView | null;
+  /** An exam goal's Focus test, for the plan's row and the reveal; null for other goals. */
+  focusTest: FocusTestSummary | null;
   goalId: string;
   /** Language goals only: the level the course goes up to and the aims to change it to. */
   languageAim: LanguageAimView | null;

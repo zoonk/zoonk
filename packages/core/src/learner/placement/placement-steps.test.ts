@@ -89,12 +89,7 @@ function answer(
 function place(evidence: PlacementEvidence[], skills = CHAIN) {
   const beliefs = getPlacementBeliefs({ evidence, skills });
 
-  const statuses = readSkillStatuses({
-    answers: evidence,
-    evidence,
-    focusedSkillIds: new Set(),
-    skills,
-  });
+  const statuses = readSkillStatuses({ answers: evidence, evidence, skills });
 
   return { beliefs, phases: getPhaseStarts({ skills, statuses }), statuses };
 }
@@ -296,6 +291,8 @@ describe(getPhaseStarts, () => {
   it("stops when every phase has a confident start, not after a set count", () => {
     const { phases } = place([
       answer("a", "correct"),
+      answer("a", "correct"),
+      answer("b", "correct"),
       answer("b", "correct"),
       answer("c", "correct", "typed"),
       answer("e", "wrong"),
@@ -437,6 +434,17 @@ function nextForHeavyHistory({
   });
 }
 
+function nextForOwnMaterial(evidence: PlacementEvidence[]) {
+  return chooseNextPlacementSkill({
+    answeredOnly: true,
+    areaOrder: ["History", "Math"],
+    askableSkillIds: EXAM_ASKABLE,
+    evidence,
+    skills: EXAM,
+    statuses: place(evidence, EXAM).statuses,
+  });
+}
+
 function targetFor(evidence: PlacementEvidence[], skillId = "m2") {
   return getTargetDifficulty({ evidence, ownLevel: "basic", skillId, skills: EXAM });
 }
@@ -464,6 +472,12 @@ describe("placement across an exam's areas", () => {
 
     expect(nextFor(evidence)).toBe("h1");
     expect(nextFor([...evidence, answer("h1", "dontKnow")])).toBe("m1");
+  });
+
+  it("asks a Focus test from the learner's own material in its subject order", () => {
+    expect(nextForOwnMaterial([])).toBe("h1");
+    expect(nextForOwnMaterial([answer("m1", "correct")])).toBe("h1");
+    expect(nextForOwnMaterial([answer("h1", "correct")])).toBe("h2");
   });
 
   it("starts each area where the learner's own level points", () => {

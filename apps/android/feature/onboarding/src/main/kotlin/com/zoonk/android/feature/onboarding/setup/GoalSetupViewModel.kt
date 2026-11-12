@@ -309,11 +309,12 @@ internal class GoalSetupViewModel(
         isSaving = true
         clearFailure()
         val answeredGoal = goalId
+        val draft = drafts?.sending(answeredGoal, step.value)
         return viewModelScope.async {
             val outcome = store.answer(answeredGoal, input)
             when (outcome) {
                 is WriteOutcome.Done -> {
-                    drafts?.words(answeredGoal, step.value)?.remove()
+                    draft?.remove()
                     step.profileQuestion?.takeIf { profileAnswer == null }?.let {
                         // Skipping conditions takes back the supports their picks prechecked.
                         val unchecks = it == ProfileQuestion.CONDITIONS && supportsSuggested

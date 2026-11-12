@@ -553,6 +553,10 @@ private struct StepScreen: View {
           LevelTestStep(
             goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
             testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
+        } else if view.goal.kind == .exam {
+          FocusTestFlow(
+            goalID: view.goal.id, subject: subject, host: .onboarding, onboarding: view,
+            onDone: onPlacementDone)
         } else {
           PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
         }

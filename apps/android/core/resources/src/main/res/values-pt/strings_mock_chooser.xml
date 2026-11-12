@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "mock_chooser_about": "9d4af7d126aa38cab377e5de89addd90374b05bb9ea2a15a740bf0904f28034a",
-  "mock_chooser_about_recommended": "4aaf13dce9e5b3615f848a604a0f3396721da6ee2caf41373cc107d1f2708c75",
   "mock_chooser_failed": "7a235326df2f552f0549a1c5f680077176771084ccb67d8fe1dc6abf93510168",
   "mock_chooser_full_day_number_without": "b2689174b1daa2c078f0dd6b89b24fbfbe28fa342cadcdd5cc242e8e615cd06c",
   "mock_chooser_full_day_without": "0870c537cfcaf0bcd1b55a7f9683b1ce2860da2fcf0fc710b1c53afd34ad370d",
@@ -24,18 +23,6 @@
   "mock_chooser_parts": "4769782af5ddc2d2d1b3440c0799a45f9178b56474126752269b94912cf92bd5",
   "mock_chooser_pick_free": "e24908c0633cc38edd87fcbfb47377464791883568153e4d5055be662c933d87",
   "mock_chooser_picked": "57887c6d35ce42c72da95502ad1777a5af31048566512b36a1b10ae17404b100",
-  "mock_chooser_placement_detail": "adfd226eaf760158326d876584b5aa19fbf839d21abf218e30396db6b696a2f9",
-  "mock_chooser_placement_long": "4414948a115933f50f934c211147566f42be9e7fde0a3d62dc03df6036f6dbf4",
-  "mock_chooser_placement_medium": "abdfa2931d4839c0deeaabc85f96901345f29d8863312425d70c38135a4334a1",
-  "mock_chooser_placement_note": "cdfcdf48db97e6cbffab76bf7425fc5307c17481a142efc09905523b8b29dd2f",
-  "mock_chooser_placement_plus": "665de1e383f0ba5680a986cef187224d47d8d470716c31546aeb7c58be9a1b90",
-  "mock_chooser_placement_short": "bd2fbd8776bf87e830d9901a655d0104660438d6425146426d906c3385b89456",
-  "mock_chooser_placement_size": "17f5fd10d3abb424b684fe747621c390d27a028570c70bbc8ccd2279dd9c9da3",
-  "mock_chooser_placement_size_spoken": "325560aa30e34f0e71d8ed6f2773fa4283eafe37f2cd42fda24f07061cb9986e",
-  "mock_chooser_placement_start": "d0c55a3641329cc039057117f1c71c17d466c8236739c93d641e8e0e4eb91e65",
-  "mock_chooser_placement_title": "7762c25ffe96690685d632123f289fdffef56eed38a8ee4ea34d6527e3617d3d",
-  "mock_chooser_placement_top_subject": "afd2f4e8508c188fc254fc1476cead6e34775998076f8a137c5cab838722ba9f",
-  "mock_chooser_placement_top_subjects": "203bc32a73b7bcdc4c416b3098fe75d924000f8ada46edf4785494694f5df30c",
   "mock_chooser_plus": "65eb34183549f690195dd3c167912f4dfd016067fa7ca90a79a864491e2c60a4",
   "mock_chooser_preparing": "620fa6942e848ae36445c4a41754b5d7c726ba9f7ff2d40ff95471c57b20c96e",
   "mock_chooser_preparing_detail": "7d92d53136c494f11b73e67984747d69335ac65f713b39475b469fde43d495dc",
@@ -103,13 +90,6 @@
         <item quantity="many">%1$d perguntas, cerca de %2$s</item>
         <item quantity="other">%1$d perguntas, cerca de %2$s</item>
     </plurals>
-    <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d perg.</string>
-    <plurals name="mock_chooser_placement_size_spoken">
-        <item quantity="one">%d pergunta</item>
-        <item quantity="many">%d perguntas</item>
-        <item quantity="other">%d perguntas</item>
-    </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
         <item quantity="one">%1$d das %2$s perguntas está pronta agora, então este simulado leva cerca de %3$s.</item>
@@ -133,29 +113,12 @@
     <string name="mock_chooser_usually_takes">Tempo estimado</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">Cerca de %1$s</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="mock_chooser_about_recommended">Cerca de %1$s (recomendado)</string>
     <string name="mock_chooser_subjects">Matérias</string>
     <!-- The exam's sections a mock sits, such as Listening and Reading. -->
     <string name="mock_chooser_parts">Partes</string>
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">Parte escrita</string>
     <string name="mock_chooser_last_mock">Seu último simulado</string>
-    <string name="mock_chooser_placement_title">Um simulado para descobrir seu nível</string>
-    <string name="mock_chooser_placement_detail">No formato da prova. Seu plano começa a partir das suas respostas.</string>
-    <string name="mock_chooser_placement_start">Começar o simulado</string>
-    <string name="mock_chooser_placement_note">Pare quando quiser: seu plano usa as perguntas que você respondeu. Seu resultado aparece no final.</string>
-    <string name="mock_chooser_placement_plus">Simulados fazem parte do Plus. Sem ele, as perguntas rápidas ajudam a encontrar seu ponto de partida.</string>
-    <string name="mock_chooser_placement_top_subject">A matéria com maior peso. Nos primeiros dias, você responde perguntas sobre as outras.</string>
-    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
-    <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">A %d matéria com maior peso. Nos primeiros dias, você responde perguntas sobre as outras.</item>
-        <item quantity="many">As %d matérias com maior peso. Nos primeiros dias, você responde perguntas sobre as outras.</item>
-        <item quantity="other">As %d matérias com maior peso. Nos primeiros dias, você responde perguntas sobre as outras.</item>
-    </plurals>
-    <string name="mock_chooser_placement_short">Uma avaliação rápida. Seus primeiros dias ajudam a ajustar o resultado.</string>
-    <string name="mock_chooser_placement_medium">Todas as matérias. Um bom ponto de partida.</string>
-    <string name="mock_chooser_placement_long">O ponto de partida mais preciso.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">Perguntas por matéria em %1$s, conforme a contagem de %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

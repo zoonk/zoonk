@@ -109,7 +109,7 @@ struct PlanTimeSection: View {
       let line = ScheduleTime.line(
         advice: TimeAdvice(
           coveredShare: feasibility.fits ? 1 : feasibility.coveredShare, endDate: nil,
-          fullCourseEndDate: nil, readingNotice: false, ready: true),
+          focusSubjects: nil, fullCourseEndDate: nil, readingNotice: false, ready: true),
         askFailed: false, dated: true, findFailed: false, found: found, hasDays: true,
         minutes: minutes)
 

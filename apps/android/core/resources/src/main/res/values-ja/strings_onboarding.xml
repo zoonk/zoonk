@@ -181,23 +181,12 @@
   "onboarding_placement_answer_failed": "2610c70abc59c425f63405d074992e497a80f2f23988f8186bcd00230cd6087c",
   "onboarding_placement_answered": "178d645c9129c772f81403603de2d0f4bf056f601ff15fa274c27ba22e7dfaba",
   "onboarding_placement_confirm": "4358b2bb592ae544460bef70bbcf0cad3e58143691093a7b0316bb87a4c01e48",
-  "onboarding_placement_continue_mock": "d01258cd362a365add36f7f80445ea65b215dc9ae1f2e46e816c24ad187253d5",
   "onboarding_placement_description": "5c27ee6f640eee4da1d9c0300eecbea2b77628fa5a6cca4d6fd8687ac5cabb4f",
   "onboarding_placement_description_areas": "9f93884fe10fdc353d40e8d096214c75ce20f0cd9e6cc9c2f9c54d30792e54b8",
   "onboarding_placement_dont_know": "c12a57eaabe66a48fa20792d0692bff7ac791b25532fcdb16b0f8ec92c3d7ee0",
   "onboarding_placement_enough_description": "7fc1c9799891dc14baedcd8272ba1b90a73772adf476e027340eedc4c9b5be33",
   "onboarding_placement_enough_title": "985e637d36d22e4978f9e91dc686f89cbf692eaf76082033d65eb43d9bdd0b00",
   "onboarding_placement_false": "ad9aba3becb14c5b51a352b946eee0f0db57b743f2d824f872241ae3592c772e",
-  "onboarding_placement_mock_about": "e7fe67396d64ac57f5e65943d5a6c9683a577646cd213a8a965d46beb9c05fb4",
-  "onboarding_placement_mock_done": "388c9f482cc139c8b681486bc613081c3d1538d3c932d80e24412e86ca67d555",
-  "onboarding_placement_mock_range": "fe614a0d788cabad693e723994f2560c8f51a7ce958d0f23efdf587dbe23a87f",
-  "onboarding_placement_mock_set_description": "aab8bfa5ca48df1bdd675ce9a643466f55dfacb15ee4660d64232a4b4905b8e2",
-  "onboarding_placement_mock_set_title": "b05cbdd142c411aa8662496107b16ee46a0329c3b9340830d28220a4611d4451",
-  "onboarding_placement_mock_title": "0f083480df1fe1f809d08ace59cdc99825b5e737c0bb10f19925344b83a44303",
-  "onboarding_placement_mock_waiting_description": "5da789686e6d6c9185d38db0e28bd60ae98939e0980dcc64f68adb1475d01ab8",
-  "onboarding_placement_mock_waiting_title": "aacc5f7aa09e0a2233ea637b6aa15fe0921d8669fbbff89fa78e82f75a9dea43",
-  "onboarding_placement_plus": "db16b96de918f4a0d0aaa8c701805592aefcee3b5bab83c99ce5f9e53c9939b3",
-  "onboarding_placement_plus_description": "26b5998611df05eb62180ba41aa108a22dff090b9cd69915c5b2de0283ad8664",
   "onboarding_placement_progress": "dec6421572e5a92a42b74628801f8f0ab7c999a4383ef240c18eda9d03505a45",
   "onboarding_placement_question_number": "63cc87dd49d3727c7a520bb597f8eb917b6621d6997d33e27099f5b142b71682",
   "onboarding_placement_right": "794ec45fa119e4fd61a3f8de722e2d0ca52a6868d4edbe2cc97c3b50d5ee4683",
@@ -209,13 +198,12 @@
   "onboarding_placement_skip_note": "0b1ed6c4f30982c1917387dd4f0a13170857d21843a2a541844bbb0d2d51a8d9",
   "onboarding_placement_start": "3a24b4dc9fe444c14d0b7df38149fedb2605efe24c108a32f761b82ad8d497a0",
   "onboarding_placement_stop": "44d5f5aeeb3b90b370dc451098f297c1c80f22723083a7211d49ebcb8ccc3d98",
-  "onboarding_placement_stop_mock": "65d74f19e73c0107ddf61bc5c8e5aba928c554d29767a3e86af42aada8d04ea0",
   "onboarding_placement_title": "1ea7c6822a80aa5a1d551efe289e8b2bfe06a57fd4e994d4be25d8d8facd4dac",
   "onboarding_placement_true": "e3e29bb9f64665ee96ab1dd95664e876795c3c6f8204415bdca3cc5163ce026c",
   "onboarding_placement_unavailable_description": "793b12bd0a743fd88aa9a8345a71a5742329fb3bd24c7a72f2d18c389691195a",
   "onboarding_placement_unavailable_title": "527740a15d443aa212bfdfa62815a561ace78a39532db9b682929fff1459c484",
   "onboarding_placement_waiting_material": "4ebd954d7477dff6d59c6c0ab986d3e9ad96cae84421672c2f195fce38e724c8",
-  "onboarding_placement_waiting_skills": "eea1e18d1aab46bce5dda35c98f087ec6f14bec486e83e3dcb7799ccda901b34",
+  "onboarding_placement_waiting_time": "e910b3a11fcff45f6e5d444080f2277a1731ba649d961ceb57799260c9c66c90",
   "onboarding_placement_waiting_title": "b9d3df6e709b5f4c494bbbed3b215e65ff264fec3456496b291930eb6a7eb88f",
   "onboarding_placement_wrong": "bad919077ee246f3495ea7ea0322d5ef3d1cbd2b976d60491e26887ec383c899",
   "onboarding_placement_your_answer": "c3a4799cff17b93ab5974d186dde00ef9c37196ebc78a4c375ff7d3c8175eef1",
@@ -684,19 +672,11 @@
         <item quantity="other">%d分野について、短時間で答えられる問題をいくつか出します。すでに知っている内容は学習計画でスキップできます。スコアはつきません。「まだわかりません」と答えても大丈夫です。</item>
     </plurals>
     <string name="onboarding_placement_description">すでに知っている内容を学習計画でスキップするため、短い問題をいくつか出します。スコアはつきません。「まだわからない」でも大丈夫です。</string>
-    <string name="onboarding_placement_mock_title">または模試を受ける</string>
-    <!-- %1$s is a duration, such as "45 min". -->
-    <string name="onboarding_placement_mock_about">試験と同じ形式で、所要時間は約%1$sです。</string>
-    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
-    <string name="onboarding_placement_mock_range">試験と同じ形式で、%1$sから%2$sの間で時間を選べます。</string>
-    <!-- The name of Zoonk's paid plan, on a chip beside what needs it. -->
-    <string name="onboarding_placement_plus">Plus</string>
-    <string name="onboarding_placement_plus_description">Plusで利用できます</string>
     <string name="onboarding_placement_start">始める</string>
     <string name="onboarding_placement_skip_basics">スキップして基礎から始める</string>
     <string name="onboarding_placement_waiting_title">問題を準備しています</string>
     <string name="onboarding_placement_waiting_material">追加した資料をもとに問題を作成しています。資料の読み取りには数分かかります。</string>
-    <string name="onboarding_placement_waiting_skills">目標に必要なスキルをもとに作成しています。通常1〜2分かかります。</string>
+    <string name="onboarding_placement_waiting_time">通常は1〜2分ほどかかります。</string>
     <string name="onboarding_placement_skip_for_now">今はスキップする</string>
     <string name="onboarding_placement_skip_note">代わりに、最初の数回の学習でこの中から数問出題します。</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
@@ -718,12 +698,6 @@
     <plurals name="onboarding_placement_answered">
         <item quantity="other">%d問に回答済み</item>
     </plurals>
-    <string name="onboarding_placement_mock_done">模試が完了しました</string>
-    <string name="onboarding_placement_mock_set_title">模試の結果から学習のスタート地点が決まりました</string>
-    <!-- %d is how many questions the learner answered in the mock exam. "It" is the estimate of where the learner starts. -->
-    <plurals name="onboarding_placement_mock_set_description">
-        <item quantity="other">%d問の回答をもとに推定しました。日々、より正確になります。</item>
-    </plurals>
     <!-- Zoonk has enough answers to place the learner for now. A friendly wrap-up, not impatience. -->
     <string name="onboarding_placement_enough_title">今日の問題はここまでです</string>
     <string name="onboarding_placement_enough_description">最初の数回の学習では、もう少し問題を出して学習計画を調整します。</string>
@@ -732,10 +706,6 @@
     <string name="onboarding_placement_set_description">日々、より正確になります。</string>
     <string name="onboarding_placement_unavailable_title">問題はスキップしましょう</string>
     <string name="onboarding_placement_unavailable_description">この目標に合う問題を用意できませんでした。代わりに、最初の数回の学習でスタート地点を見つけます。</string>
-    <string name="onboarding_placement_mock_waiting_title">模試は続きから再開できます</string>
-    <string name="onboarding_placement_mock_waiting_description">続きから再開しても、ここで終えても大丈夫です。回答した問題をもとに学習計画を作成します。</string>
-    <string name="onboarding_placement_continue_mock">模試を続ける</string>
-    <string name="onboarding_placement_stop_mock">終了して学習計画を見る</string>
     <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
     <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
     <string name="onboarding_language_test_title">%1$sのレベルを確かめましょう</string>

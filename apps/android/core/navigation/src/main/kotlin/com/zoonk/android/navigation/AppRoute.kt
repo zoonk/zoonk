@@ -177,11 +177,6 @@ sealed interface AppRoute : NavKey {
         val dailyMinutes: Int? = null,
     ) : AppRoute
 
-    @Serializable
-    data class PlacementMock(
-        val goalId: String,
-    ) : AppRoute
-
     /**
      * `blockId` opens one of today's blocks; `goalId` shows that goal's day before it has a saved
      * block; `sessionId` shows that session's day. `stopped` follows Stop for today, whose summary
@@ -235,10 +230,11 @@ sealed interface AppRoute : NavKey {
         val sessionId: String? = null,
     ) : AppRoute
 
-    /** Without `goalId`, the goal in the switcher. */
+    /** Without `goalId`, the goal in the switcher. [start]: Today's "Start the test" already offered it, so it starts on open; no link sets it. */
     @Serializable
     data class FocusTest(
         val goalId: String? = null,
+        val start: Boolean = false,
     ) : AppRoute
 
     @Serializable
@@ -387,7 +383,6 @@ val AppRoute.presentation: Presentation
             -> Presentation.Section(AppSection.Catalog)
 
             is AppRoute.StartGoal, is AppRoute.GoalSetup, is AppRoute.CourseStart,
-            is AppRoute.PlacementMock,
             -> Presentation.Section(AppSection.Onboarding)
 
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook, is AppRoute.Lesson,
@@ -411,7 +406,7 @@ val AppRoute.requirement: Requirement
             is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Reminders, AppRoute.Profile,
             AppRoute.AboutYou, is AppRoute.ProfileQuestionEdit, AppRoute.Statistics,
             AppRoute.StatsLevel, AppRoute.StatsEnergy, AppRoute.StatsActivity, AppRoute.StatsScore,
-            AppRoute.StatsPatterns, is AppRoute.GoalSetup, is AppRoute.PlacementMock,
+            AppRoute.StatsPatterns, is AppRoute.GoalSetup,
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,
             is AppRoute.MistakePractice, is AppRoute.Pattern, is AppRoute.Challenge,
             is AppRoute.Checkpoint, is AppRoute.Essay, is AppRoute.Mock, is AppRoute.Pronunciation,

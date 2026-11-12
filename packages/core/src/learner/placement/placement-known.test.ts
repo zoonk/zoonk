@@ -112,7 +112,6 @@ function statusesOf({
     ...claims,
     answers: evidence,
     evidence,
-    focusedSkillIds: new Set(),
     skills: [...CHAIN, ...CLAIMED],
   });
 }
@@ -145,9 +144,9 @@ describe(readSkillStatuses, () => {
     expect([...subject.values(), ...level.values()]).not.toContain("known");
   });
 
-  it("takes a claimed skill as known once an answer of its own confirms it, and as a gap after a miss", () => {
+  it("takes a claimed skill as known once its own answers confirm it, and as a gap after a miss", () => {
     const confirmed = statusesOf({
-      evidence: [answer("adm-atos", "correct")],
+      evidence: [answer("adm-atos", "correct"), answer("adm-atos", "correct")],
       knownAreas: ["Administrative law"],
     });
 
@@ -168,12 +167,7 @@ describe(readSkillStatuses, () => {
       answer("oversight", "wrong"),
     ];
 
-    const statuses = readSkillStatuses({
-      answers: evidence,
-      evidence,
-      focusedSkillIds: new Set(),
-      skills: CONTRADICTED,
-    });
+    const statuses = readSkillStatuses({ answers: evidence, evidence, skills: CONTRADICTED });
 
     expect([statuses.get("principles"), statuses.get("oversight")]).toStrictEqual([
       "known",
@@ -196,14 +190,7 @@ function walk(
 ): readonly PlacementEvidence[] {
   const { format, knownAreas, knows, ownLevel, skills } = learner;
 
-  const statuses = readSkillStatuses({
-    answers: evidence,
-    evidence,
-    focusedSkillIds: new Set(),
-    knownAreas,
-    ownLevel,
-    skills,
-  });
+  const statuses = readSkillStatuses({ answers: evidence, evidence, knownAreas, ownLevel, skills });
 
   const next = isPlacementSettled({ skills, statuses })
     ? null
@@ -282,7 +269,6 @@ describe("placement with a learner who answers consistently", () => {
         const statuses = readSkillStatuses({
           answers: evidence,
           evidence,
-          focusedSkillIds: new Set(),
           knownAreas: learner.knownAreas,
           ownLevel: learner.ownLevel,
           skills: learner.skills,
@@ -300,15 +286,23 @@ describe("placement with a learner who answers consistently", () => {
 });
 
 function known(evidence: PlacementEvidence[]) {
-  return listKnownSkillIds({
-    answers: evidence,
-    evidence,
-    focusedSkillIds: new Set(),
-    skillIds: ["funcoes"],
-  });
+  return listKnownSkillIds({ answers: evidence, evidence, skillIds: ["funcoes"] });
 }
 
 describe(listKnownSkillIds, () => {
+  it("needs two multiple-choice answers, including for a claimed subject", () => {
+    const right = answer("funcoes", "correct");
+    expect(known([right])).toStrictEqual([]);
+    expect(known([right, right])).toStrictEqual(["funcoes"]);
+
+    expect(
+      statusesOf({
+        evidence: [answer("adm-atos", "correct")],
+        knownAreas: ["Administrative law"],
+      }).get("adm-atos"),
+    ).toBe("claimed");
+  });
+
   it("takes a true-or-false topic as known after three right answers of its own, never fewer", () => {
     const right = answer("funcoes", "correct", "trueFalse");
 

@@ -56,7 +56,7 @@
   "tutor_offer_chapter_test_lessons": "30a628fadc0684f673698aea75e5943b5995ae235196663a75ff2631973ada98",
   "tutor_offer_choose": "ed91e7580dfc17d7e673a2af082a98ffc7bfc9d429a22149f55e991ef91d53ae",
   "tutor_offer_choose_focus": "f83306c5374a5e590c38a86a4e72aa694462b7338a1a1470889dfc678e5f1821",
-  "tutor_offer_choose_focus_description": "890ae842d5b8768b2fae3a1eca34764f7ef5ea274c40459a532c052030683461",
+  "tutor_offer_choose_focus_description": "e40d6b630489501fe6dd8f5249ddb135b72a40292873811efaac006b954ededd",
   "tutor_offer_country_applied": "0d94ab6b78955b043b80bbfb2b2eeddb4d3070dad6c2baba2d1d7a3945e3cdae",
   "tutor_offer_country_description": "e7525dff32628e0b73a601886b023f696859ce5622a5d6ffaabc7d50c558f3a6",
   "tutor_offer_essay_biweekly": "fe6451741876b12a0d92fbe72398181e00a217665080546614e684dea9b51338",
@@ -228,7 +228,7 @@
     </plurals>
     <string name="tutor_offer_take_test">테스트 보기</string>
     <string name="tutor_offer_choose_focus">집중할 과목 선택하기</string>
-    <string name="tutor_offer_choose_focus_description">더 깊이 배울 과목을 직접 고르거나, 짧은 테스트로 정해 보세요.</string>
+    <string name="tutor_offer_choose_focus_description">어떤 과목에 학습 시간을 더 쓰면 좋을지 알아보세요.</string>
     <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
     <string name="tutor_offer_call_with">%1$s(%2$s)하고 짧게 소리 내어 대화해요.</string>
     <string name="tutor_offer_call">학습 수준에 맞춰 소리 내어 짧게 대화해요.</string>

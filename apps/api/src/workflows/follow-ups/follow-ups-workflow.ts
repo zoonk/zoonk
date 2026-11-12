@@ -24,6 +24,7 @@ import {
   requestOwedMindMapStep,
 } from "./steps/follow-up-steps";
 import { refreshStudyDayStep } from "./steps/refresh-study-day-step";
+import { settleSessionPlanStep } from "./steps/settle-session-plan-step";
 
 const MAX_PASSES = 20;
 
@@ -41,6 +42,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
   switch (followUp.kind) {
     case "refreshStudyDay":
       await retryPlanConflicts(refreshStudyDayStep, { ...followUp.input, userId });
+      return;
+    case "settleSessionPlan":
+      await settleSessionPlanStep({ ...followUp.input, userId });
       return;
     case "prepareSession":
       await start(sessionPreparationWorkflow, [{ sessionId: followUp.input.sessionId, userId }]);

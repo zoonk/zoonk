@@ -251,6 +251,10 @@ class PlanScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun coverageDark() = captureCoverage("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
     fun coverageDarkMoreContrast() = captureCoverage("phone-dark-more-contrast", dark = true, moreContrast = true)
 
     @Test
@@ -263,6 +267,10 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
     fun slot() = captureSlot("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun slotDark() = captureSlot("phone-dark", dark = true)
 
     @Test
     @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
@@ -352,6 +360,7 @@ class PlanScreenshots {
         val shots =
             mapOf(
                 "plan-slot-coverage-ask" to Shot(goalPlan),
+                "plan-slot-coverage-focus-test" to Shot(goalPlan.withFocusTest(NOT_STARTED), summary = exam),
                 "plan-slot-coverage-found" to Shot(goalPlan, edits = PlanEdits(timeToCover = found)),
                 "plan-slot-coverage-preview" to
                     Shot(
@@ -444,6 +453,8 @@ class PlanScreenshots {
         val goal = PlanPageState(learn.goals.first(), goalPlan, learn)
         val examPlan = coveragePlan(kind = "exam", fullCourse = true)
         val examPage = PlanPageState(exam.goals.first(), examPlan, exam)
+        val examAreas = "[${area("Administrative law")},${area("Constitutional law")},${area("Portuguese")},${area("Logical reasoning")}]"
+        val examFocusPage = PlanPageState(exam.goals.first(), coveragePlan(kind = "exam", areas = examAreas).withFocusTest(CHECKED), exam)
         val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
 
         fun preview(
@@ -505,6 +516,11 @@ class PlanScreenshots {
                 "plan-preview-result" to {
                     PlanPreviewResult(fasterTime, onApply = {}, onRetry = {}, onDismiss = {})
                 },
+                "plan-focus-test-row-not-started" to { PlanFocusTestRow(focusTest(NOT_STARTED), onOpen = {}) },
+                "plan-focus-test-row-continue" to { PlanFocusTestRow(focusTest(SITTING), onOpen = {}) },
+                "plan-focus-test-row-result" to { PlanFocusTestRow(focusTest(CHECKED), onOpen = {}) },
+                "plan-focus-test-row-paused" to { PlanFocusTestRow(focusTest(PAUSED), onOpen = {}) },
+                "plan-sheet-focus-test" to { ChooseFocusBody(examFocusPage, PlanEdits(), onFocusTest = {}, onDone = {}) },
             )
         var shown by mutableStateOf(parts.keys.first())
         compose.setContent {
@@ -752,3 +768,16 @@ class PlanScreenshots {
             """.trimIndent()
     }
 }
+
+private const val NOT_STARTED =
+    """{"state":"notStarted","offer":{"minutes":15},"sessionQuestions":"off","suggestsFocus":true}"""
+private const val SITTING =
+    """{"state":"sitting","offer":{"minutes":9},"sessionQuestions":"off","suggestsFocus":true}"""
+private const val CHECKED =
+    """{"state":"checked","offer":{"minutes":10},"sessionQuestions":"on","suggestsFocus":true}"""
+
+private val PAUSED = CHECKED.replace(""""sessionQuestions":"on"""", """"sessionQuestions":"paused"""")
+
+private fun focusTest(json: String) = ApiJson.decodeFromString<com.zoonk.api.models.FocusTestSummary>(json)
+
+private fun com.zoonk.api.models.Plan.withFocusTest(json: String) = copy(focusTest = focusTest(json))

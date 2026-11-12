@@ -1,170 +1,114 @@
-import { randomUUID } from "node:crypto";
-import { request } from "@playwright/test";
+import { focusTestSummarySchema } from "@zoonk/core/learner/placement/focus-test-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
-  focusTestGenerationSchema,
-  focusTestResponseSchema,
-  focusTestResultSchema,
-} from "../src/lib/openapi/schemas/focus-test";
-import { createAuthenticatedApiContext } from "./helpers/auth";
+  placementAnswerResponseSchema,
+  placementCompletionResponseSchema,
+  placementResponseSchema,
+} from "../src/lib/openapi/schemas/learner";
+import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
-const AREAS = ["Algebra", "Geometry"] as const;
-const SKILLS_PER_AREA = 4;
+test("Focus test API saves a guest's answers, resumes, and continues without a usage claim", async () => {
+  const { guestApi: api, userId } = await createGuest(process.env.E2E_BASE_URL ?? "");
+  const goal = await goalFixture({ kind: "exam", planRevealedAt: null, userId });
+  const skills = await Promise.all([skillFixture(), skillFixture()]);
 
-async function createGoal(userId: string) {
-  const suffix = randomUUID().slice(0, 6);
-  const goal = await goalFixture({ userId });
-
-  const skills = await Promise.all(
-    AREAS.flatMap((area) =>
-      Array.from({ length: SKILLS_PER_AREA }, async (_, index) => ({
-        area,
-        skill: await skillFixture({ name: `${area} skill ${index + 1} ${suffix}` }),
+  await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Exam" }],
+      skills: skills.map((skill, index) => ({
+        area: `Subject ${index + 1}`,
+        lessons: 1,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
       })),
-    ),
+    },
+    items: skills.map((skill) => ({ skillId: skill.id })),
+    placementPreparedAt: new Date(),
+  });
+
+  await Promise.all(
+    skills.map((skill) => itemFixture({ content: choiceItemContent(), skillId: skill.id })),
   );
 
-  await Promise.all([
-    planFixture({
-      goalId: goal.id,
-      graph: {
-        phases: [{ milestone: null, name: "Basics" }],
-        skills: skills.map(({ area, skill }) => ({
-          area,
-          lessons: 2,
-          name: skill.name,
-          phase: 0,
-          skillId: skill.id,
-          weight: null,
-        })),
-      },
-    }),
-    ...skills.map(({ skill }) => itemFixture({ content: choiceItemContent(), skillId: skill.id })),
+  const path = `/v1/goals/${goal.id}/placement`;
+
+  const initial = await readBody({
+    response: await api.get(path),
+    schema: placementResponseSchema,
+  });
+
+  expect(initial).toMatchObject({
+    focusTest: { sitting: null, subjects: [{ asked: 0 }, { asked: 0 }] },
+    next: null,
+  });
+
+  const opened = await readBody({
+    response: await api.post(`${path}/sittings`, { data: {} }),
+    schema: placementResponseSchema,
+  });
+
+  expect(opened.focusTest?.sitting).toMatchObject({ answered: 0, questions: 8 });
+
+  const input = { answer: { dontKnow: true }, durationMs: 10_000, itemId: opened.next?.itemId };
+
+  const responses = await Promise.all([
+    api.post(`${path}/answers`, { data: input }),
+    api.post(`${path}/answers`, { data: input }),
   ]);
 
-  return { goal, skills };
-}
+  const saved = await Promise.all(
+    responses.map((response) => readBody({ response, schema: placementAnswerResponseSchema })),
+  );
 
-test.describe("Focus test API", () => {
-  let baseURL: string;
+  expect(saved.map((answer) => answer.placement.focusTest?.sitting?.answered)).toStrictEqual([
+    1, 1,
+  ]);
 
-  test.beforeAll(() => {
-    baseURL = process.env.E2E_BASE_URL ?? "";
+  await expect(prisma.attempt.count({ where: { userId } })).resolves.toBe(1);
+
+  const resumed = await readBody({
+    response: await api.get(path),
+    schema: placementResponseSchema,
   });
 
-  test.afterAll(async () => {
-    await prisma.$disconnect();
+  expect(resumed.focusTest?.sitting).toMatchObject({ answered: 1, minutes: 7, questions: 8 });
+
+  const completion = await readBody({
+    response: await api.post(`${path}/completion`, { data: {} }),
+    schema: placementCompletionResponseSchema,
   });
 
-  test("requires authentication", async () => {
-    const apiContext = await request.newContext({ baseURL });
-    const path = `/v1/goals/${randomUUID()}/plan/focus-test`;
+  expect(completion.focusTest).toMatchObject({ checkpoint: { lessonsSkipped: 0 }, sitting: null });
+  expect(completion).not.toHaveProperty("celebration");
 
-    const responses = await Promise.all([
-      apiContext.get(path),
-      apiContext.post(path, {
-        data: {
-          answers: [{ answer: { selectedIndex: 0 }, durationMs: 1000, itemId: randomUUID() }],
-          requestId: randomUUID(),
-        },
-      }),
-      apiContext.post(`${path}/generations`),
-    ]);
-
-    expect(responses.map((response) => response.status())).toStrictEqual([401, 401, 401]);
-    await apiContext.dispose();
+  const continued = await readBody({
+    response: await api.post(`${path}/sittings`, { data: {} }),
+    schema: placementResponseSchema,
   });
 
-  test("asks about each area and focuses the plan where the answers show it's needed", async () => {
-    const [{ apiContext, user }, other] = await Promise.all([
-      createAuthenticatedApiContext({ baseURL, prefix: "focus-test" }),
-      createAuthenticatedApiContext({ baseURL, prefix: "focus-test-other" }),
-    ]);
+  expect(continued.focusTest?.sitting).toMatchObject({ answered: 0 });
 
-    const { goal } = await createGoal(user.id);
-    const path = `/v1/goals/${goal.id}/plan/focus-test`;
-
-    const focusTest = await readBody({
-      response: await apiContext.get(path),
-      schema: focusTestResponseSchema,
-    });
-
-    expect(focusTest).toMatchObject({ areas: [...AREAS], needsItems: [], questionsPerArea: 4 });
-
-    const hidden = await other.apiContext.get(path);
-    expect(hidden.status()).toBe(404);
-
-    const result = await readBody({
-      response: await apiContext.post(path, {
-        data: {
-          answers: focusTest.questions.map((question) => ({
-            answer: question.area === "Algebra" ? { selectedIndex: 0 } : { dontKnow: true },
-            durationMs: 7000,
-            itemId: question.itemId,
-          })),
-          requestId: randomUUID(),
-        },
-      }),
-      schema: focusTestResultSchema,
-    });
-
-    expect(result).toMatchObject({
-      areas: [
-        { chosen: false, correct: 4, name: "Algebra", total: 4 },
-        { chosen: true, correct: 0, name: "Geometry", total: 4 },
-      ],
-      focusAreas: ["Geometry"],
-    });
-
-    await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
+  const paused = await readBody({
+    response: await api.patch(path, { data: { sessionQuestions: "paused" } }),
+    schema: focusTestSummarySchema,
   });
 
-  test("writes the missing questions when the learner starts the test, and only then", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "focus-test-write",
-    });
+  expect(paused.sessionQuestions).toBe("paused");
 
-    const { goal, skills } = await createGoal(user.id);
-    const path = `/v1/goals/${goal.id}/plan/focus-test/generations`;
+  const [empty, basics] = await Promise.all([
+    api.patch(path, { data: {} }),
+    api.post(`${path}/completion`, { data: { fromScratch: true } }),
+  ]);
 
-    await expect(
-      readBody({ response: await apiContext.post(path), schema: focusTestGenerationSchema }),
-    ).resolves.toStrictEqual({ generationId: null, status: "ready" });
-
-    const geometry = skills.filter(({ area }) => area === "Geometry").map(({ skill }) => skill.id);
-    await prisma.item.deleteMany({ where: { skillId: { in: geometry } } });
-
-    const partial = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/plan/focus-test`),
-      schema: focusTestResponseSchema,
-    });
-
-    expect(partial.needsItems.toSorted()).toStrictEqual(geometry.toSorted());
-
-    expect(partial.questions.map((question) => question.area)).toStrictEqual(
-      Array.from({ length: SKILLS_PER_AREA }, () => "Algebra"),
-    );
-
-    const writing = await apiContext.post(path);
-
-    const started = await readBody({
-      response: writing,
-      schema: focusTestGenerationSchema,
-      status: 202,
-    });
-
-    expect(started).toStrictEqual({ generationId: expect.any(String), status: "generating" });
-    expect(writing.headers().location).toBe(`/v1/generations/${started.generationId}`);
-
-    await expect(
-      prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
-    ).resolves.toBe(1);
-
-    await apiContext.dispose();
-  });
+  expect(empty.status()).toBe(400);
+  expect(basics.status()).toBe(422);
+  await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+  await api.dispose();
 });

@@ -16,6 +16,7 @@ import {
 } from "../plan/plan-context";
 import { PlanEditor } from "../plan/plan-editor";
 import { type PlanEditorSection } from "../plan/plan-editor-sections";
+import { PlanFocusTest } from "../plan/plan-focus-test";
 import { PlanProperties } from "../plan/plan-properties";
 import { PlanRebuildNotice } from "../plan/plan-rebuild-notice";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
@@ -106,6 +107,7 @@ function JourneyBody({
   const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
   const paused = goalStatus?.status === "paused";
+  const focusTest = <PlanFocusTest />;
 
   const numbers = (variant: "stats" | "tiles", className: string) =>
     standing && (
@@ -164,6 +166,7 @@ function JourneyBody({
 
           {structure ? (
             <SyllabusSection subjectHref={links.subject} syllabus={structure}>
+              {focusTest}
               <PlanPlaceRows links={links} />
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines
@@ -173,7 +176,9 @@ function JourneyBody({
               />
             </SyllabusSection>
           ) : (
-            <PathSection alphabet={alphabet} courseHref={courseHref} links={links} />
+            <PathSection alphabet={alphabet} courseHref={courseHref} links={links}>
+              {focusTest}
+            </PathSection>
           )}
         </Page>
 

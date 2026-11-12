@@ -2,7 +2,6 @@ import {
   type CallWritingStepName,
   type ChallengeQuestionsStepName,
   type ExplanationStepName,
-  type FocusTestQuestionsStepName,
   type GoalContentStepName,
   type GoalUnderstandingStepName,
   type LessonContentStepName,
@@ -151,15 +150,6 @@ const testOutQuestions = {
   },
 } as const satisfies GenerationKindDefinition<TestOutQuestionsStepName, "questions">;
 
-const focusTestQuestions = {
-  phases: [{ id: "questions", seconds: 25 }],
-  steps: {
-    focusTestQuestionsReady: "done",
-    joinFocusTestQuestions: "join",
-    writeFocusTestQuestions: "questions",
-  },
-} as const satisfies GenerationKindDefinition<FocusTestQuestionsStepName, "questions">;
-
 const mockQuestions = {
   phases: [{ id: "questions", seconds: 100 }],
   steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
@@ -245,7 +235,6 @@ const GENERATION_KINDS = {
   examSpeaking,
   explanation,
   firstLesson,
-  focusTestQuestions,
   lesson,
   levelTestBank,
   mockQuestions,

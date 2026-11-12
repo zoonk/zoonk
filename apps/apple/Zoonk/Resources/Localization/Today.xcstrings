@@ -11713,6 +11713,65 @@
         }
       }
     },
+    "Noted. You can take the test from your plan." : {
+      "comment" : "After the learner dismissed Today's suggestion of the Focus test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles klar. Du kannst den Test über deinen Plan machen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendido. Puedes hacer la prueba desde tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est noté. Tu peux faire le test depuis ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Va bene. Puoi fare il test dal tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "わかりました。テストは学習計画から受けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알겠어요. 계획에서 테스트를 볼 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jasne. Możesz rozwiązać test w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo bem. Você pode fazer o teste pelo seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam. Testi planından çözebilirsin."
+          }
+        }
+      }
+    },
     "Noted. You keep your time, with less depth where it counts least." : {
       "comment" : "The learner kept their daily time after falling behind",
       "localizations" : {
@@ -15916,6 +15975,65 @@
         }
       }
     },
+    "The Focus test shows what to study most." : {
+      "comment" : "Today's suggestion of the Focus test, in one line",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Fokustest zeigt, welche Fächer die meiste Lernzeit brauchen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Prueba de enfoque te muestra qué estudiar más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Test de priorités t’indique quoi étudier en priorité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il Test delle priorità ti mostra cosa studiare di più."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重点診断で、重点的に学ぶ科目がわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test priorytetów pokazuje, którym przedmiotom poświęcić najwięcej czasu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Teste de foco mostra o que você mais precisa estudar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak testi en çok neye çalışman gerektiğini gösterir."
+          }
+        }
+      }
+    },
     "The last %lld lessons are in today's plan" : {
       "comment" : "Mission to finish a chapter whose remaining lessons are all in today's plan",
       "localizations" : {
@@ -19376,6 +19494,65 @@
         }
       }
     },
+    "Your Focus test suggests more time for %@." : {
+      "comment" : "A focus the learner's Focus test answers propose; then subjects",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Fokustest empfiehlt mehr Zeit für %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Prueba de enfoque sugiere dedicar más tiempo a %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton Test de priorités suggère de consacrer plus de temps à %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo Test delle priorità suggerisce di dedicare più tempo a %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重点診断の結果から、%@に多めに時間を充てるのがおすすめです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "집중 진단 결과, %@에 시간을 더 쓰는 걸 추천해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój Test priorytetów podpowiada, na co poświęcić więcej czasu: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu Teste de foco sugere mais tempo para %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odak testine göre %@ için daha fazla zaman ayırman iyi olur."
+          }
+        }
+      }
+    },
     "your goal's date" : {
       "comment" : "A day's status",
       "localizations" : {
@@ -20039,6 +20216,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Öğretmeninin sınavı hiçbir yerde yayımlanmış değil. Planının sınıfta işlediklerinle uyumlu olması için slaytları, notları veya konu listesini yükle."
+          }
+        }
+      }
+    },
+    "Your time can't cover everything before your exam. In about %@, the Focus test shows what to study most." : {
+      "comment" : "Why Today suggests the Focus test; then about how long it takes, such as \"15 min\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Lernzeit bis zur Prüfung reicht nicht für alles. In etwa %@ zeigt der Fokustest, welche Fächer die meiste Lernzeit brauchen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te alcanza el tiempo para estudiar todo antes de tu examen. En aproximadamente %@, la Prueba de enfoque te muestra qué estudiar más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’as pas le temps de tout étudier avant ton examen. En %@ environ, le Test de priorités t’indique quoi étudier en priorité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tempo che hai prima dell’esame non basta per tutto. In circa %@, il Test delle priorità ti mostra cosa studiare di più."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験までにすべてを学ぶには、時間が足りません。約%@の重点診断で、重点的に学ぶ科目がわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험 전까지 모든 내용을 공부할 시간이 부족해요. 집중 진단으로 약 %@ 만에 공부가 가장 필요한 과목을 알 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie wystarczy ci czasu na naukę całego materiału przed egzaminem. Test priorytetów w około %@ pokaże, którym przedmiotom poświęcić najwięcej czasu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá tempo de estudar tudo antes da sua prova. Em cerca de %@, o Teste de foco mostra o que você mais precisa estudar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık %@ içinde en çok neye çalışman gerektiğini gösterir."
           }
         }
       }

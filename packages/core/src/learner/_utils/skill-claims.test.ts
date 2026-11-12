@@ -32,10 +32,10 @@ const claim = (minute: number, skillId = "organelles"): ClaimEvent => ({
 
 const trueFalse = (minute: number, skillId = "organelles"): ClaimEvent => ({
   at: at(minute),
+  format: "trueFalse",
   isCorrect: true,
   kind: "test",
   skillId,
-  trueFalse: true,
 });
 
 const undone = (minute: number, skillId = "organelles"): ClaimEvent => ({
@@ -133,28 +133,28 @@ describe(listAnsweredWrong, () => {
 });
 
 describe(meetsKnownBar, () => {
-  const right = { isCorrect: true, trueFalse: false };
-  const rightTrueFalse = { isCorrect: true, trueFalse: true };
-  const wrong = { isCorrect: false, trueFalse: false };
+  const right = { format: "multipleChoice" as const, isCorrect: true };
+  const rightTrueFalse = { format: "trueFalse" as const, isCorrect: true };
+  const wrong = { format: "multipleChoice" as const, isCorrect: false };
 
-  it("takes one right answer as known, two when the learner focused on it", () => {
-    expect(meetsKnownBar({ answers: [right], focused: false })).toBe(true);
-    expect(meetsKnownBar({ answers: [right], focused: true })).toBe(false);
-    expect(meetsKnownBar({ answers: [right, right], focused: true })).toBe(true);
+  it("requires two right multiple-choice answers even outside a focus", () => {
+    expect(meetsKnownBar({ answers: [right] })).toBe(false);
+    expect(meetsKnownBar({ answers: [right, right] })).toBe(true);
   });
 
   it("takes true-or-false answers as known only three right at a time", () => {
-    expect(meetsKnownBar({ answers: [rightTrueFalse, rightTrueFalse], focused: false })).toBe(
-      false,
-    );
+    expect(meetsKnownBar({ answers: [rightTrueFalse, rightTrueFalse] })).toBe(false);
 
-    expect(
-      meetsKnownBar({ answers: [rightTrueFalse, rightTrueFalse, rightTrueFalse], focused: true }),
-    ).toBe(true);
+    expect(meetsKnownBar({ answers: [rightTrueFalse, rightTrueFalse, rightTrueFalse] })).toBe(true);
+  });
+
+  it("accepts one typed answer and combines evidence from different formats", () => {
+    expect(meetsKnownBar({ answers: [{ format: "typed", isCorrect: true }] })).toBe(true);
+    expect(meetsKnownBar({ answers: [right, rightTrueFalse] })).toBe(true);
   });
 
   it("never takes a skill with a miss as known", () => {
-    expect(meetsKnownBar({ answers: [wrong, right, right], focused: false })).toBe(false);
+    expect(meetsKnownBar({ answers: [wrong, right, right] })).toBe(false);
   });
 });
 
@@ -172,16 +172,12 @@ describe(listKnownSkills, () => {
     );
   });
 
-  it("knows a skill from one right answer that isn't true or false, two when focused", () => {
-    expect(listKnownSkills({ events: [test(1, true)] })).toStrictEqual(new Set(["organelles"]));
+  it("requires confirmation of a multiple-choice answer even outside a focus", () => {
+    expect(listKnownSkills({ events: [test(1, true)] })).toStrictEqual(new Set());
 
-    expect(listKnownSkills({ events: [test(1, true)], focused: () => true })).toStrictEqual(
-      new Set(),
+    expect(listKnownSkills({ events: [test(1, true), practice(2, true)] })).toStrictEqual(
+      new Set(["organelles"]),
     );
-
-    expect(
-      listKnownSkills({ events: [test(1, true), practice(2, true)], focused: () => true }),
-    ).toStrictEqual(new Set(["organelles"]));
   });
 
   it("knows a skill a test-out skipped or the learner studied, never a gap or one missed", () => {
@@ -202,7 +198,9 @@ describe(listKnownSkills, () => {
     );
 
     expect(
-      listKnownSkills({ events: [test(1, true), claim(2), undone(2), test(3, true)] }),
+      listKnownSkills({
+        events: [test(1, true), claim(2), undone(2), test(3, true), test(4, true)],
+      }),
     ).toStrictEqual(new Set(["organelles"]));
   });
 
