@@ -4,7 +4,6 @@
   "mindmaps_alt": "084e40e16ec2d1ecb04751769b8acddcb09b9992c4892fb89c9aedbfea61a26a",
   "mindmaps_alt_chapter": "95999db912e6908c704879b775fdfb53c03dbed0f782fda948b52fc3a65c6678",
   "mindmaps_alt_sentence": "fbeed92c8a0cc83e3184cf9e7be23c1d26383698d01121512449bcd22eb586d8",
-  "mindmaps_as_picture": "d603220732ef98d76a248ff3d5d9ec36efb93912996c85353d92a1ba14ff61d6",
   "mindmaps_as_text": "2489ca2e6710497acbfb80d9e358d5856ba0190d25ce45ff2ed41cde4a9d27a6",
   "mindmaps_as_text_note": "9608cdb9faa6bb5a166a483548fd262cc99104cfb0c8214307de776582de90b7",
   "mindmaps_being_made": "d856b461d54da7036f395958aee0683f87f702c9e709287aa3e0c9960510b916",
@@ -94,10 +93,8 @@
     <string name="mindmaps_alt">Mappa mentale: %1$s. %2$s</string>
     <!-- The same, for a title that already ends a sentence. -->
     <string name="mindmaps_alt_sentence">Mappa mentale: %1$s %2$s</string>
-    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also the viewer's button that shows the map in words. -->
+    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also what screen readers say for the viewer's switch that shows the map in words. -->
     <string name="mindmaps_as_text">In formato testo</string>
-    <!-- The viewer's button that shows the map's picture again after it was shown as text. -->
-    <string name="mindmaps_as_picture">Mostra l’immagine</string>
     <!-- The title of a chapter's mind map row on the chapter's page. -->
     <string name="mindmaps_row_title">Mappa mentale</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->

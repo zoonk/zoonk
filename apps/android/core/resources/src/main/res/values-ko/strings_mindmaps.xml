@@ -4,7 +4,6 @@
   "mindmaps_alt": "3600de1f1280d3e9fb172b32e70f58a1027276783906a90c7f850e883546c16e",
   "mindmaps_alt_chapter": "73ed29db0209177a40fe7af37cf0111cd93220f3ee22390c912b3d8ca055d98f",
   "mindmaps_alt_sentence": "b3c0115c00ba8e9f7c6e2f687dd38e34292418ec4c9ba936ec06da4408f6325c",
-  "mindmaps_as_picture": "bb6574dcbc4e99a45f95ac2776272a42cd223746f9e261129624b570f4e5e056",
   "mindmaps_as_text": "fc1e15be5324450aa1950fca7c46b44d191e7d9e4c4908f4f943a8d17211a73f",
   "mindmaps_as_text_note": "08cbf4a2e2967d9ce339ae3a00e05e2892c81137cc432f034b5c12c42a3ab476",
   "mindmaps_being_made": "a35ebfceeaa88b4c2b0d3f3fa4a3d0c8a40205cedfeafc35b9312a272ac2b55c",
@@ -92,10 +91,8 @@
     <string name="mindmaps_alt">마인드맵: %1$s. %2$s</string>
     <!-- The same, for a title that already ends a sentence. -->
     <string name="mindmaps_alt_sentence">마인드맵: %1$s %2$s</string>
-    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also the viewer's button that shows the map in words. -->
+    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also what screen readers say for the viewer's switch that shows the map in words. -->
     <string name="mindmaps_as_text">글로 보기</string>
-    <!-- The viewer's button that shows the map's picture again after it was shown as text. -->
-    <string name="mindmaps_as_picture">그림으로 보기</string>
     <!-- The title of a chapter's mind map row on the chapter's page. -->
     <string name="mindmaps_row_title">마인드맵</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
