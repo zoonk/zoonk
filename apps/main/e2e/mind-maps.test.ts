@@ -241,6 +241,65 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("a read of the list that comes back late doesn't undo a map started after it", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+    const page = await openAs(browser, user);
+    const row = (title: string) => page.getByRole("listitem").filter({ hasText: title });
+    const mapLink = (title: string) => page.getByRole("link", { name: new RegExp(title, "u") });
+    const drawn = Promise.withResolvers<null>();
+    const answered = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+    const delivered = Promise.withResolvers<null>();
+    const reads = { count: 0 };
+
+    try {
+      await page.goto("/mind-maps");
+      await page.getByRole("button", { name: /^Show chapters/u }).click();
+
+      // The page's first read of the list is answered before the second map starts, and arrives
+      // only after the page has read the list again.
+      await page.route("**/v1/goals/*/mind-maps", async (route) => {
+        reads.count += 1;
+
+        if (reads.count !== 1) {
+          await route.continue();
+          return;
+        }
+
+        await drawn.promise;
+        const response = await route.fetch();
+        answered.resolve(null);
+        await release.promise;
+
+        try {
+          await route.fulfill({ response });
+        } finally {
+          delivered.resolve(null);
+        }
+      });
+
+      await row(first.chapter.title).getByRole("button", { name: "Create" }).click();
+      await drawMap(first.chapter.id);
+      drawn.resolve(null);
+      await answered.promise;
+
+      await row(second.chapter.title).getByRole("button", { name: "Create" }).click();
+      await expect(mapLink(first.chapter.title)).toBeVisible();
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+
+      release.resolve(null);
+      await delivered.promise;
+      await drawMap(second.chapter.id);
+
+      // Only a page still following the second map sees it turn ready.
+      await expect(mapLink(second.chapter.title)).toBeVisible({ timeout: 15_000 });
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("a request that didn't reach the server says so until the page's next read comes through", async ({
     browser,
   }) => {
