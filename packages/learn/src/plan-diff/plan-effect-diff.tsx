@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { type GoalDateMove, type PlanEffect } from "./change-names";
 import { usePlanChangeConsequence } from "./use-change-consequence";
 import { type ChangeRow, usePlanChangeRows } from "./use-change-rows";
@@ -32,7 +27,9 @@ function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
               {row.after}
             </dd>
           </div>
-          {row.detail && <dd className="text-muted-foreground text-xs text-pretty">{row.detail}</dd>}
+          {row.detail && (
+            <dd className="text-muted-foreground text-xs text-pretty">{row.detail}</dd>
+          )}
         </div>
       ))}
     </dl>
@@ -77,18 +74,9 @@ export function PlanEffectDiff({
       )}
 
       {hasMore && (
-        <Collapsible>
-          <CollapsibleTrigger className="group/changes text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 hit-area -mx-1 inline-flex items-center gap-1 rounded-md px-1 text-[0.8125rem] leading-snug underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]">
-            {t("See all changes")}
-            <ChevronDownIcon
-              aria-hidden="true"
-              className="size-3.5 transition-transform group-data-panel-open/changes:rotate-180 motion-reduce:transition-none"
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-            <ChangeRows rows={rows} />
-          </CollapsibleContent>
-        </Collapsible>
+        <QuietDisclosure label={t("See all changes")}>
+          <ChangeRows rows={rows} />
+        </QuietDisclosure>
       )}
     </div>
   );

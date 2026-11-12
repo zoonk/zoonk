@@ -24,9 +24,9 @@ import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
-import { ScheduleDetails, useScheduleNumber } from "./schedule-details";
 import { NumberButton, type PlanNumber, type PlanNumberVariant } from "./plan-number-button";
 import { PreparationDetails } from "./preparation/preparation-details";
+import { ScheduleDetails, useScheduleNumber } from "./schedule-details";
 
 const PERCENT = 100;
 
@@ -114,9 +114,11 @@ function useStandingTitle(standing: JourneyStanding): string {
 
 function StandingBody({
   examHref,
+  number,
   standing,
 }: {
   examHref: string | null;
+  number: PlanNumber;
   standing: JourneyStanding;
 }) {
   if (standing.kind === "preparation") {
@@ -126,7 +128,9 @@ function StandingBody({
         forExam={standing.forExam}
         lessons={standing.lessons}
         preparation={standing.preparation}
+        share={number.share ?? 0}
         stillNeeded={standing.stillNeeded}
+        value={number.value}
       />
     );
   }
@@ -234,7 +238,7 @@ export function PlanNumbers({
       </ul>
 
       <NumberSheet onOpenChange={sheetChange("standing")} open={open === "standing"} title={title}>
-        <StandingBody examHref={examHref} standing={standing} />
+        <StandingBody examHref={examHref} number={standingNumber} standing={standing} />
       </NumberSheet>
 
       {status && (

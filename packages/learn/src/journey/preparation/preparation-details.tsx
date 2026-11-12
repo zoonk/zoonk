@@ -1,14 +1,14 @@
 "use client";
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { BigQuantity } from "../../_components/big-quantity";
 import { KindDot, KindMark } from "../../_components/kind-tile";
+import { Meter, MeterFill } from "../../_components/meter";
 import { PlusMark } from "../../_components/plus-lock";
-import { ProgressRing } from "../../_components/progress-ring";
+import { QuietDisclosure } from "../../_components/quiet-disclosure";
 import { SectionLabel } from "../../_components/section-label";
-import { useFormatShare } from "../../_utils/percent";
 import { useScoreRange } from "../../_utils/use-score-range";
 import { LearnLink } from "../../learn-link";
 import { type Lessons, type Preparation, usePreparationParts } from "./use-preparation-parts";
@@ -28,7 +28,7 @@ function EstimateWaits({ preparation }: { preparation: Preparation }) {
       data-slot="estimate-waits"
     >
       <KindDot className="-translate-y-px" kind="mock" />
-      {t("Take more mock exams of the whole exam or half of it to see your estimated score.")}
+      {t("Take a full or half mock exam to see your estimated score.")}
     </p>
   );
 }
@@ -59,28 +59,29 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   );
 }
 
-function MeasureNote({
-  forExam,
-  testKind,
-}: {
-  forExam: boolean;
-  testKind: Preparation["components"]["mocks"]["kind"];
-}) {
+function useMeasureNote(forExam: boolean): string {
   const t = useExtracted();
 
-  if (!forExam) {
-    return t(
-      "Your progress is the share of your plan's lessons you've studied or already knew. Mastery, memory and weekly challenges show how well you know them.",
-    );
-  }
-
-  return testKind === "fullReviews"
+  return forExam
     ? t(
-        "Your preparation adds up your subjects, each counting as much as it's worth on the exam. A subject's preparation is how much you've studied times how well you know it: right answers, memory and full reviews. Harder and more frequent topics count more, and a subject stays under 75% until you've answered them and done a full review in your test's format.",
+        "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam.",
       )
     : t(
-        "Your preparation adds up your subjects, each counting as much as it's worth on the exam. A subject's preparation is how much you've studied times how well you know it: right answers, memory and mock exams. Harder and more frequent topics count more, and a subject stays under 75% until you've answered them and taken a mock exam.",
+        "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them.",
       );
+}
+
+function Readout({ share, value }: { share: number; value: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-2" data-slot="preparation-readout">
+      <span className="text-readout text-4xl leading-none">
+        {typeof value === "string" ? <BigQuantity>{value}</BigQuantity> : value}
+      </span>
+      <Meter>
+        <MeterFill className="bg-success" share={share} />
+      </Meter>
+    </div>
+  );
 }
 
 function PreparationParts({
@@ -92,50 +93,21 @@ function PreparationParts({
   lessons: Lessons | null;
   preparation: Preparation;
 }) {
-  const t = useExtracted();
   const parts = usePreparationParts({ lessons: forExam ? null : lessons, preparation });
-  const formatShare = useFormatShare();
 
   return (
-    <section aria-labelledby="preparation-parts-title" className="flex flex-col gap-4">
-      <SectionLabel className="sr-only" id="preparation-parts-title">
-        {forExam ? t("How it's measured") : t("How your progress is measured")}
-      </SectionLabel>
-
-      <ul className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4">
-        {parts.map((part) => (
-          <li
-            className="flex items-center gap-3 sm:flex-col sm:items-start"
-            data-part={part.key}
-            key={part.key}
-          >
-            <ProgressRing className="size-14" share={part.value ?? 0}>
-              <span
-                className={cn(
-                  "text-sm font-semibold tabular-nums",
-                  part.value === null && "text-muted-foreground",
-                )}
-              >
-                {part.value === null ? "–" : formatShare(part.value)}
-              </span>
-            </ProgressRing>
-            <span className="flex min-w-0 flex-col">
-              <span className="text-sm leading-snug font-medium">
-                {part.label}
-                {part.value !== null && (
-                  <span className="sr-only">{`: ${formatShare(part.value)}`}</span>
-                )}
-              </span>
-              <span className="text-muted-foreground text-xs">{part.caption}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <p className="text-muted-foreground text-xs">
-        <MeasureNote forExam={forExam} testKind={preparation.components.mocks.kind} />
-      </p>
-    </section>
+    <dl className="flex flex-col text-sm [&>div+div]:border-t" data-slot="preparation-parts">
+      {parts.map((part) => (
+        <div
+          className="flex items-baseline justify-between gap-4 py-2.5"
+          data-part={part.key}
+          key={part.key}
+        >
+          <dt className="text-muted-foreground">{part.label}</dt>
+          <dd className="font-medium tabular-nums">{part.value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -168,15 +140,17 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
 
 function StillNeeded({
   examHref,
+  forExam,
   preparation,
   stillNeeded,
 }: {
   examHref: string | null;
+  forExam: boolean;
   preparation: Preparation;
   stillNeeded: ProgressView["stillNeeded"];
 }) {
   const t = useExtracted();
-  const items = useStillNeeded({ preparation, stillNeeded });
+  const items = useStillNeeded({ forExam, preparation, stillNeeded });
 
   if (items.length === 0) {
     return null;
@@ -184,7 +158,7 @@ function StillNeeded({
 
   return (
     <section aria-labelledby="still-needed-title" className="flex flex-col gap-2">
-      <SectionLabel id="still-needed-title">{t("Still to do")}</SectionLabel>
+      <SectionLabel id="still-needed-title">{t("Next")}</SectionLabel>
       <ul className="flex flex-col [&>li+li]:border-t">
         {items.map((item) => (
           <li key={item.key}>
@@ -201,19 +175,37 @@ export function PreparationDetails({
   forExam,
   lessons,
   preparation,
+  share,
   stillNeeded,
+  value,
 }: {
   examHref: string | null;
   forExam: boolean;
   lessons: Lessons | null;
   preparation: Preparation;
+  share: number;
   stillNeeded: ProgressView["stillNeeded"];
+  value: React.ReactNode;
 }) {
+  const t = useExtracted();
+  const note = useMeasureNote(forExam);
+
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-6">
+      <Readout share={share} value={value} />
       <EstimatedScore preparation={preparation} />
       <PreparationParts forExam={forExam} lessons={lessons} preparation={preparation} />
-      <StillNeeded examHref={examHref} preparation={preparation} stillNeeded={stillNeeded} />
+      <StillNeeded
+        examHref={examHref}
+        forExam={forExam}
+        preparation={preparation}
+        stillNeeded={stillNeeded}
+      />
+      <QuietDisclosure label={t("How it's calculated")}>
+        <p className="text-muted-foreground pt-2 text-[0.8125rem] leading-snug text-pretty">
+          {note}
+        </p>
+      </QuietDisclosure>
     </div>
   );
 }
