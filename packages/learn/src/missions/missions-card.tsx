@@ -21,15 +21,13 @@ export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly Mi
 
 function MissionsStatus({ missions }: { missions: readonly MissionView[] }) {
   const t = useExtracted();
-  const left = missions.filter((mission) => mission.status !== "done").length;
+  const done = countDoneMissions(missions);
 
-  if (left === 0) {
+  if (done === missions.length) {
     return null;
   }
 
-  return left === missions.length
-    ? t("{count, plural, one {Do # mission} other {Do all #}}", { count: left })
-    : t("{count, plural, one {# left} other {# left}}", { count: left });
+  return t("{done} of {total} done", { done: String(done), total: String(missions.length) });
 }
 
 function MissionRow({
@@ -111,9 +109,11 @@ function MissionsHeading({
       <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums empty:hidden">
         <MissionsStatus missions={missions} />
       </p>
-      <span className="sr-only">
-        <ProgressCount done={countDoneMissions(missions)} total={missions.length} />
-      </span>
+      {isFullMeal(missions) && (
+        <span className="sr-only">
+          <ProgressCount done={missions.length} total={missions.length} />
+        </span>
+      )}
     </div>
   );
 }

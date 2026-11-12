@@ -8169,14 +8169,9 @@ msgid "Just done"
 msgstr "À l’instant"
 
 #: src/missions/missions-card.tsx
-msgctxt "pvmqbF"
-msgid "{count, plural, one {Do # mission} other {Do all #}}"
-msgstr "{count, plural, one {Terminer # mission} other {Terminer les # missions}}"
-
-#: src/missions/missions-card.tsx
-msgctxt "4JBtJN"
-msgid "{count, plural, one {# left} other {# left}}"
-msgstr "{count, plural, one {# restante} other {# restantes}}"
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr ""
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
