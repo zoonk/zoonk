@@ -33,7 +33,7 @@ async function getStoreDateLine(subscription: Subscription): Promise<React.React
     subscription.cancelAt ?? (subscription.cancelAtPeriodEnd ? subscription.periodEnd : null);
 
   if (endingAt) {
-    return t.rich("Your subscription will end on <mono>{date}</mono>.", {
+    return t.rich("Plus ends on <mono>{date}</mono>.", {
       date: toDate(endingAt),
       mono: renderDate,
     });
@@ -43,7 +43,7 @@ async function getStoreDateLine(subscription: Subscription): Promise<React.React
     return null;
   }
 
-  return t.rich("Current billing period ends on <mono>{date}</mono>.", {
+  return t.rich("Paid until <mono>{date}</mono>.", {
     date: toDate(subscription.periodEnd),
     mono: renderDate,
   });
@@ -79,7 +79,7 @@ async function getWebDateLine(web: WebSubscription) {
   const date = format.dateTime(web.periodEnd, { day: "numeric", month: "short", year: "numeric" });
 
   return web.state === "ending"
-    ? t.rich("Your subscription will end on <mono>{date}</mono>.", { date, mono: renderDate })
+    ? t.rich("Plus ends on <mono>{date}</mono>.", { date, mono: renderDate })
     : t.rich("Renews on <mono>{date}</mono>.", { date, mono: renderDate });
 }
 
@@ -89,9 +89,9 @@ async function WebsiteSubscription({ web }: { web: WebSubscription }) {
   const dateLine = await getWebDateLine(web);
 
   return (
-    <PageSection aria-label={t("Website subscription")}>
+    <PageSection aria-label={t("Bought on the website")}>
       <PageSectionHeader>
-        <PageSectionTitle>{t("Website subscription")}</PageSectionTitle>
+        <PageSectionTitle>{t("Bought on the website")}</PageSectionTitle>
       </PageSectionHeader>
       {dateLine && <p className="text-muted-foreground text-sm">{dateLine}</p>}
       <WebPlanAction state={web.state} />
@@ -125,7 +125,7 @@ export async function CurrentPlan({
           <div className="flex flex-wrap items-center gap-2">
             <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
             {/* A status, not a result: quiet, as the Plus mark is, never blue. */}
-            <span className={CHIP_CLASS}>{isEnding ? t("Subscription ending") : t("Active")}</span>
+            <span className={CHIP_CLASS}>{isEnding ? t("Ending") : t("Active")}</span>
           </div>
 
           {/* One phrase: the subtitle lays its children out as separate facts. */}

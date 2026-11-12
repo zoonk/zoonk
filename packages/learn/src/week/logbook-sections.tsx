@@ -61,12 +61,17 @@ function WeekRings() {
   );
 }
 
-/** Only good news is compared; a quieter week starts over. */
-function useGainLine(): string | null {
+/** Only good news is said: a finished phase first, then a gain; a quieter week starts over. */
+function useGoodNews(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { recap } = useLogbook();
   const { minutes, questions } = recap.comparison;
+  const finished = recap.phasesFinished[0];
+
+  if (finished) {
+    return t("You finished {name}.", { name: finished.name });
+  }
 
   if (minutes > 0) {
     return t("{time} more than the week before!", { time: formatDuration(minutes) });
@@ -86,25 +91,17 @@ export function WeekStep({ range }: { range: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { learnerName, recap } = useLogbook();
-  const gain = useGainLine();
-  const finished = recap.phasesFinished[0];
+  const goodNews = useGoodNews();
 
   return (
     <StepCard>
       <WeekRings />
       <StepHeader>
-        <StepEyebrow>
-          {finished
-            ? t("Phase {phase} · {name} done", {
-                name: finished.name,
-                phase: String(finished.phase + 1),
-              })
-            : t("Weekly summary · {range}", { range })}
-        </StepEyebrow>
+        <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
         <StepTitle className="wrap-anywhere">
           {learnerName ? t("What a week, {name}!", { name: learnerName }) : t("What a week!")}
         </StepTitle>
-        {gain && <StepDetail>{gain}</StepDetail>}
+        {goodNews && <StepDetail>{goodNews}</StepDetail>}
       </StepHeader>
 
       <StatTiles>
@@ -133,9 +130,7 @@ export function QuietWeekStep({ range }: { range: string }) {
           {recap.ready ? t("A quiet week") : t("Your first summary comes on Sunday")}
         </StepTitle>
         <StepDetail>
-          {recap.ready
-            ? t("Every week starts fresh.")
-            : t("It shows your week in numbers and the skill that grew the most.")}
+          {recap.ready ? t("Every week starts fresh.") : t("It shows your week in numbers.")}
         </StepDetail>
       </StepHeader>
     </StepCard>
@@ -149,15 +144,13 @@ function useReason(): string | null {
 
   if (turnaround?.reason === "gold") {
     return t(
-      "{skill} is Mastered now: you remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}.",
-      { count: turnaround.rememberedOn.length, skill: turnaround.name },
+      "You remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}.",
+      { count: turnaround.rememberedOn.length },
     );
   }
 
   if (turnaround?.reason === "solid") {
-    return t("{skill} is Solid now: you kept getting it right on later days.", {
-      skill: turnaround.name,
-    });
+    return t("You kept getting it right on later days.");
   }
 
   return null;
@@ -177,7 +170,7 @@ export function TurnaroundStep() {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("The biggest turnaround")}</StepEyebrow>
+        <StepEyebrow>{t("Most improved")}</StepEyebrow>
         <StepTitle>{turnaround.name}</StepTitle>
         <StepDetail className="tabular-nums">
           {t({
@@ -240,21 +233,21 @@ export function LearnedStep() {
 
   return (
     <StepCard>
-      <StepTitle>{t("What you learned")}</StepTitle>
+      <StepTitle>{t("This week")}</StepTitle>
       <StepRows>
         <LearnedRow
           icon={<LearnedKindMark kind="lesson" />}
-          label={t("{count, plural, one {new idea} other {new ideas}}", { count: newIdeas })}
+          label={t("New topics")}
           value={newIdeas}
         />
         <LearnedRow
           icon={<LearnedKindMark kind="review" />}
-          label={t("{count, plural, one {review} other {reviews}}", { count: reviews })}
+          label={t("Review questions")}
           value={reviews}
         />
         <LearnedRow
           icon={<LearnedKindMark kind="mistakes" />}
-          label={t("{count, plural, one {mistake fixed} other {mistakes fixed}}", { count: fixes })}
+          label={t("Mistakes fixed")}
           value={fixes}
         />
         <LearnedRow
@@ -277,7 +270,7 @@ export function NextWeekStep({ title }: { title: string }) {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("Next week")}</StepEyebrow>
+        <StepEyebrow>{t("Up next")}</StepEyebrow>
         <StepTitle>{title}</StepTitle>
       </StepHeader>
     </StepCard>

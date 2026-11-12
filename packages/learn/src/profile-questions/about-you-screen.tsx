@@ -120,18 +120,12 @@ function labelsOf(question: ProfileQuestionView, ids: readonly string[]): string
  * What's saved, short: conditions only count and the address form only says it's saved, so the
  * list is safe on a shared screen.
  */
-function useSavedSummary(question: ProfileQuestionView): string {
+function useSavedSummary(question: ProfileQuestionView): string | null {
   const t = useExtracted();
   const { picks, studies, text } = question.saved;
 
   if (picks.length === 0 && studies.length === 0 && text === "") {
-    if (question.status === "declined") {
-      return t("Not shared");
-    }
-
-    return question.status === "answered"
-      ? t({ description: "Invites the learner to fill in an empty answer.", message: "Add" })
-      : t("Not answered");
+    return question.status === "declined" ? t("Not shared") : null;
   }
 
   switch (question.id) {
@@ -172,7 +166,9 @@ function QuestionRow({ editable, question }: { editable: boolean; question: Prof
           <QuestionName question={question.id} />
         </ListRowTitle>
       </ListRowContent>
-      <ListRowTrailing className="max-w-[55%] truncate font-sans">{summary}</ListRowTrailing>
+      {summary && (
+        <ListRowTrailing className="max-w-[55%] truncate font-sans">{summary}</ListRowTrailing>
+      )}
     </ListRowBody>
   );
 
@@ -190,9 +186,7 @@ function MemoryOffNotice() {
     <NoticeCard>
       <NoticeCardContent>
         <NoticeCardDescription>
-          {t(
-            "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them.",
-          )}
+          {t("Turn on Memory to use and change every answer.")}
         </NoticeCardDescription>
         <NoticeCardActions>
           <LearnLink className="text-sm font-medium underline" href="/settings/memory">

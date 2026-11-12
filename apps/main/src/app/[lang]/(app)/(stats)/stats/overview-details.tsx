@@ -21,7 +21,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { formatMetricPercent } from "@zoonk/utils/number";
 import { ChevronRightIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
-import { PatternsNote, getBestDayName, getBestTimeName } from "../patterns/pattern-summary";
+import { getBestDayName, getBestTimeName } from "../patterns/pattern-summary";
 import { ScoreChart } from "../score/score-chart";
 import { OVERVIEW_CHART_MEDIA } from "./overview-chart-media";
 
@@ -38,7 +38,7 @@ export async function ScoreTrend({
   return (
     <PageSection aria-labelledby="overview-score">
       <PageSectionHeader>
-        <PageSectionTitle id="overview-score">{t("Score · 90 days")}</PageSectionTitle>
+        <PageSectionTitle id="overview-score">{t("Right answers · 90 days")}</PageSectionTitle>
         {history && (
           <PageSectionDetail>
             {formatMetricPercent({ format, value: history.score })}
@@ -53,27 +53,10 @@ export async function ScoreTrend({
           performance={history}
         />
       ) : (
-        <p className="text-muted-foreground text-sm">
-          {t("Your score shows after your first answers.")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("Shows after your first answers.")}</p>
       )}
     </PageSection>
   );
-}
-
-async function getWeekSpread(patterns: ScorePatternsData): Promise<string | null> {
-  const t = await getExtracted();
-  const format = await getFormatter();
-  const spread = patterns.weekSpread;
-
-  if (!spread) {
-    return null;
-  }
-
-  const percent = (value: number) =>
-    format.number(value / PERCENT, { maximumFractionDigits: 0, style: "percent" });
-
-  return t("{low}–{high}", { high: percent(spread.high), low: percent(spread.low) });
 }
 
 function PatternsRow({
@@ -113,7 +96,6 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
 
   const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
   const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
-  const spread = patterns ? await getWeekSpread(patterns) : null;
   const dayScore = patterns ? await getBestScore(patterns.dayVerdict) : null;
   const timeScore = patterns ? await getBestScore(patterns.timeVerdict) : null;
 
@@ -134,10 +116,7 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
       <ListGroup>
         <PatternsRow label={t("Best day")} score={dayScore} value={day ?? t("Not yet")} />
         <PatternsRow label={t("Best time")} score={timeScore} value={time ?? t("Not yet")} />
-        {spread && <PatternsRow label={t("Spread across the week")} value={spread} />}
       </ListGroup>
-
-      {patterns && <PatternsNote patterns={patterns} />}
     </PageSection>
   );
 }

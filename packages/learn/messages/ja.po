@@ -42,6 +42,7 @@ msgstr "正解"
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "次の学習"
@@ -73,6 +74,7 @@ msgstr "スキップ"
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
+#: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "完了"
@@ -1102,20 +1104,14 @@ msgid "Where you live"
 msgstr "住んでいる国"
 
 #: src/appearance/home-country-setting.tsx
-#: src/conversation/tutor-country-offer.tsx
-msgctxt "i8Cibb"
-msgid "For new goals and your examples. It doesn't change the plans you already have."
-msgstr "新しい目標や学習で使う例に反映されます。今ある学習計画は変わりません。"
+msgctxt "7AJG2y"
+msgid "For your examples and new goals."
+msgstr "例や新しい目標に反映されます。"
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
 msgid "Not set"
 msgstr "未設定"
-
-#: src/appearance/language-setting.tsx
-msgctxt "V1yMTL"
-msgid "On this device"
-msgstr "この端末で使用する言語"
 
 #: src/appearance/language-setting.tsx
 msgctxt "y0ef9b"
@@ -1638,9 +1634,9 @@ msgid "Details"
 msgstr "詳細"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "QshKyk"
-msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
-msgstr "リンクを知っている人なら誰でもこの証明書を見られます。このページは検索結果に表示されません。"
+msgctxt "5zN5Wd"
+msgid "Anyone with the link can see this certificate."
+msgstr "リンクを知っていれば、誰でもこの証明書を見られます。"
 
 #. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
 #: src/certificates/certificate-labels.ts
@@ -1752,9 +1748,9 @@ msgid "Get your certificate with Plus"
 msgstr "Plusで証明書を受け取る"
 
 #: src/certificates/certificate-lock.tsx
-msgctxt "QIyGxo"
-msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
-msgstr "Plusでは、レベルを終えるたびに、印刷や共有ができる証明書を受け取れます。受け取った証明書は、Plusの利用が終了してもそのまま残ります。"
+msgctxt "0a9W1m"
+msgid "A certificate for every level you finish, to print and share."
+msgstr "レベルを終えるたびに、印刷や共有ができる証明書がもらえます。"
 
 #: src/certificates/certificate-lock.tsx
 msgctxt "Oe9wC5"
@@ -1762,9 +1758,9 @@ msgid "Certificates come with Plus"
 msgstr "Plusなら証明書を受け取れます"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "l4zQLP"
-msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
-msgstr "名前は学習者がZoonkアカウントに登録したもので、Zoonkでは身分証明書による確認はしていません。"
+msgctxt "7tn6mk"
+msgid "Names aren't checked against an ID."
+msgstr "氏名は身分証明書と照合していません。"
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "s94wjH"
@@ -1772,24 +1768,24 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "レベルは、ヨーロッパ言語共通参照枠（CEFR）に沿っています。公式試験の結果ではありません。"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "iO6aKW"
-msgid "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons."
-msgstr "Zoonkは、レッスンの半分以上を学習してレベルを修了した方に、この証明書を発行します。"
+msgctxt "LVfsiZ"
+msgid "For finishing this level, studying at least half of its lessons."
+msgstr "このレベルのレッスンを半分以上学習し、レベルを終えたことを示します。"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "j5jrUM"
-msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
-msgstr "Zoonkは、コースの各レベルで、各レッスンを学習するかテストに合格してすべての章を終え、すべてのチャレンジをクリアした学習者に、この証明書を発行します。"
+msgctxt "Fudciu"
+msgid "For finishing every lesson and challenge of this level."
+msgstr "このレベルのすべてのレッスンとチャレンジを終えたことを示します。"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "9Bnhaw"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
-msgstr "Zoonkでは、コースの学習計画にあるすべてのレッスンを、学習またはテストへの合格で終え、計画内のすべてのチャレンジに勝つと、この証明書が発行されます。"
+msgctxt "R--mlV"
+msgid "For finishing every lesson and challenge of this plan."
+msgstr "この学習計画のすべてのレッスンとチャレンジを終えたことを示します。"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "wB_Ebz"
-msgid "It's a record of completion on Zoonk, not academic credit."
-msgstr "Zoonkでの修了記録で、学校の単位にはなりません。"
+msgctxt "371LJf"
+msgid "A record of completion on Zoonk, not academic credit."
+msgstr "Zoonkで学習を終えた記録で、学校などの単位にはなりません。"
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "I9vOlY"
@@ -1888,11 +1884,6 @@ msgid "Your certificates and your buddy use this name."
 msgstr "証明書にこの名前が載ります。相棒もこの名前で呼びます。"
 
 #: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "証明書にこの名前が載ります。相棒もこの名前で呼びます。いつでも変更できます。"
-
-#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "証明書に記載する名前"
@@ -1906,11 +1897,6 @@ msgstr "証明書に記載する名前"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "フルネーム"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Qcr1L3"
-msgid "It shows on every certificate and its link. Your buddy calls you by it too."
-msgstr "すべての証明書とそのリンク先に表示されます。相棒もこの名前で呼びかけます。"
 
 #: src/certificates/certificate-page.tsx
 msgctxt "5lbext"
@@ -2026,24 +2012,9 @@ msgid "Certificates"
 msgstr "証明書"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "OqErrx"
-msgid "Comes when you finish a level, studying at least half of it"
-msgstr "レベルのレッスンを半分以上学習し、そのレベルを終えると取得できます"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "ojltlj"
-msgid "Your certificate comes when you finish the plan"
-msgstr "学習計画を終えると証明書がもらえます"
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
 msgid "No certificates yet"
 msgstr "まだ証明書はありません"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "_eLagx"
-msgid "Your certificates show up here when you finish a level or a plan."
-msgstr "レベルや学習計画を完了すると、ここに証明書が表示されます。"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2839,6 +2810,11 @@ msgstr "保存しました。新しい学習計画を準備しています。そ
 msgctxt "RZJ-9n"
 msgid "Content country: {country}"
 msgstr "学習内容の基準となる国：{country}"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "i8Cibb"
+msgid "For new goals and your examples. It doesn't change the plans you already have."
+msgstr "新しい目標や学習で使う例に反映されます。今ある学習計画は変わりません。"
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
@@ -5320,6 +5296,7 @@ msgstr "{done} / {planned}"
 
 #: src/journey/pace-details.tsx
 #: src/today/today-week.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "PtxhIN"
 msgid "This week"
 msgstr "今週"
@@ -7557,14 +7534,9 @@ msgid "From a chat"
 msgstr "チャットから"
 
 #: src/memory/memory-labels.tsx
-msgctxt "TVfPfM"
-msgid "From onboarding"
-msgstr "初期設定から"
-
-#: src/memory/memory-labels.tsx
-msgctxt "dppJZz"
-msgid "From a study session"
-msgstr "学習から"
+msgctxt "5yxABH"
+msgid "From your lessons"
+msgstr "レッスンから"
 
 #. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
 #: src/memory/memory-labels.tsx
@@ -7573,24 +7545,14 @@ msgid "From a call"
 msgstr "会話から"
 
 #: src/memory/memory-screen.tsx
-msgctxt "PRUyMZ"
-msgid "Personal examples, plans that fit your week and calls that remember your news"
-msgstr "身近な例、1週間の予定に合った学習計画、近況を踏まえた会話"
-
-#: src/memory/memory-screen.tsx
-msgctxt "yp_BUN"
-msgid "Memory is off. Nothing new is learned, and these facts aren't used."
-msgstr "メモリはオフです。新しい情報は保存されず、ここにある情報も使われません。"
+msgctxt "v-N7NN"
+msgid "Nothing is remembered or used while this is off."
+msgstr "オフの間は、情報を覚えたり使ったりしません。"
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
 msgid "Use memory"
 msgstr "メモリを使う"
-
-#: src/memory/memory-screen.tsx
-msgctxt "jUyOoM"
-msgid "Everything in your memory, as one file"
-msgstr "メモリのすべての内容を1つのファイルに"
 
 #: src/memory/memory-screen.tsx
 msgctxt "etMoG6"
@@ -7603,14 +7565,9 @@ msgid "We couldn't prepare the download. Try again."
 msgstr "ダウンロードの準備ができませんでした。もう一度お試しください。"
 
 #: src/memory/memory-screen.tsx
-msgctxt "kxonMZ"
-msgid "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here."
-msgstr "まだ何もありません。学習やチャットを進めると、Zoonkが学習をサポートするための短いメモがここに表示されます。"
-
-#: src/memory/memory-screen.tsx
-msgctxt "FL1DwQ"
-msgid "Nothing here. Zoonk keeps no notes about you while memory is off."
-msgstr "メモはありません。メモリがオフの間、Zoonkはメモを保存しません。"
+msgctxt "9fUBB_"
+msgid "Nothing yet. Notes show up here as you study and chat."
+msgstr "まだメモはありません。学習やチャットをすると、ここにメモが表示されます。"
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -9692,6 +9649,7 @@ msgstr "無料アカウントを作成すると、PDFやノートの写真、テ
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminder-offer.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
@@ -13197,17 +13155,6 @@ msgctxt "LveDpT"
 msgid "Not shared"
 msgstr "回答を控えました"
 
-#. Invites the learner to fill in an empty answer.
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "2_2yg-"
-msgid "Add"
-msgstr "回答を追加する"
-
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "v3Sw1m"
-msgid "Not answered"
-msgstr "未回答"
-
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
@@ -13220,9 +13167,9 @@ msgid "Saved"
 msgstr "保存済み"
 
 #: src/profile-questions/about-you-screen.tsx
-msgctxt "AYPOzn"
-msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
-msgstr "メモリがオフなので、Zoonkは日常生活や趣味の情報を使っていません。回答を変更するには「メモリ」でオンにしてください。"
+msgctxt "IaHYxv"
+msgid "Turn on Memory to use and change every answer."
+msgstr "メモリをオンにすると、すべての回答を使ったり変更したりできます。"
 
 #. An option that declines a question: none of the listed options apply.
 #: src/profile-questions/profile-body-parts.ts
@@ -13628,20 +13575,14 @@ msgid "False"
 msgstr "間違っている"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "8mg7o6"
-msgid "At {time} on your study days, when you still have learning left."
-msgstr "学習する日の{time}に、まだ学習が残っていればお知らせします。"
+msgctxt "zpIWGc"
+msgid "An email at {time} on your study days."
+msgstr "学習する日の{time}にメールが届きます。"
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "SwCKSr"
 msgid "Want a study reminder?"
 msgstr "学習リマインダーを受け取りますか？"
-
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "ZZS4vO"
-msgid "Create an account to get email reminders"
-msgstr "アカウントを作成してメールでリマインダーを受け取る"
 
 #: src/reminders/reminder-offer.tsx
 #: src/today/today-insight.tsx
@@ -13650,9 +13591,14 @@ msgid "No thanks"
 msgstr "見送る"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "viijDX"
-msgid "We'll email {address} at {time} on your study days, when you still have learning left."
-msgstr "学習する日にまだ学習が残っていれば、{address}へ{time}にメールでお知らせします。"
+msgctxt "P7nVxL"
+msgid "An email to {address} on your study days."
+msgstr "学習する日に{address}へメールが届きます。"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "okVjfB"
+msgid "At {time} on your study days."
+msgstr "学習する日の{time}に届きます。"
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "1mG4ae"
@@ -13676,6 +13622,11 @@ msgid "Time"
 msgstr "時刻"
 
 #: src/reminders/reminders-screen.tsx
+msgctxt "ZZS4vO"
+msgid "Create an account to get email reminders"
+msgstr "アカウントを作成してメールでリマインダーを受け取る"
+
+#: src/reminders/reminders-screen.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "メールアドレス"
@@ -13690,11 +13641,6 @@ msgstr "プッシュ通知"
 msgctxt "1uzrpo"
 msgid "To get push notifications, turn them on in the Zoonk app."
 msgstr "プッシュ通知を受け取るには、Zoonkアプリでオンにしてください。"
-
-#: src/reminders/reminders-screen.tsx
-msgctxt "1cVf3e"
-msgid "On your study days, from your <link>plans</link>"
-msgstr "リマインダーは<link>学習計画</link>の学習日に届きます"
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -15585,15 +15531,15 @@ msgctxt "FZtFoB"
 msgid "Writing your first lesson: <lesson>{title}</lesson>"
 msgstr "最初のレッスンを作成しています：<lesson>{title}</lesson>"
 
-#: src/week/logbook-screen.tsx
-msgctxt "wVu1FL"
-msgid "Let's go"
-msgstr "始める"
-
 #: src/week/logbook-sections.tsx
 msgctxt "H2q9r9"
 msgid "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}"
 msgstr "{count, plural, =0 {#日間学習しました} other {#日間学習しました}}"
+
+#: src/week/logbook-sections.tsx
+msgctxt "uJ3xDF"
+msgid "You finished {name}."
+msgstr "{name}を終えました。"
 
 #: src/week/logbook-sections.tsx
 msgctxt "koboTV"
@@ -15604,11 +15550,6 @@ msgstr "前の週より{time}長く学習しました！"
 msgctxt "mY3vs_"
 msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
 msgstr "{questions, plural, other {前の週より#問多く解きました！}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "v3GVFU"
-msgid "Phase {phase} · {name} done"
-msgstr "フェーズ{phase} · {name}を完了"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"
@@ -15646,24 +15587,24 @@ msgid "Every week starts fresh."
 msgstr "毎週が新しいスタートです。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "d1woXi"
-msgid "It shows your week in numbers and the skill that grew the most."
-msgstr "1週間の学習を数字で振り返り、いちばん伸びたスキルも確認できます。"
+msgctxt "cr3hnH"
+msgid "It shows your week in numbers."
+msgstr "1週間の学習を数字で見られます。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "zrmLbt"
-msgid "{skill} is Mastered now: you remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
-msgstr "{skill}は「習得済み」になりました。{count, plural, =0 {思い出せた日が#日ありました} other {思い出せた日が#日ありました}}。"
+msgctxt "k0_uGW"
+msgid "You remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
+msgstr "思い出せた日は{count, plural, =0 {#日でした} other {#日ありました}}。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "iQqSg9"
-msgid "{skill} is Solid now: you kept getting it right on later days."
-msgstr "{skill}が定着しました。別の日にも繰り返し正解できました。"
+msgctxt "xuBvJB"
+msgid "You kept getting it right on later days."
+msgstr "日がたっても、続けて正解できました。"
 
 #: src/week/logbook-sections.tsx
-msgctxt "HhTzc6"
-msgid "The biggest turnaround"
-msgstr "いちばん伸びたスキル"
+msgctxt "YZYqtB"
+msgid "Most improved"
+msgstr "いちばん伸びたトピック"
 
 #. {from} and {to} are shares of right answers, like "40%".
 #: src/week/logbook-sections.tsx
@@ -15672,24 +15613,19 @@ msgid "{from} → {to} right answers"
 msgstr "正解率 {from} → {to}"
 
 #: src/week/logbook-sections.tsx
-msgctxt "z0xsAO"
-msgid "What you learned"
-msgstr "学んだこと"
+msgctxt "t1zI4h"
+msgid "New topics"
+msgstr "新しく学んだトピック"
 
 #: src/week/logbook-sections.tsx
-msgctxt "p28DcJ"
-msgid "{count, plural, one {new idea} other {new ideas}}"
-msgstr "{count, plural, other {新しく学んだこと}}"
+msgctxt "ifO8sT"
+msgid "Review questions"
+msgstr "復習問題"
 
 #: src/week/logbook-sections.tsx
-msgctxt "Ml35-W"
-msgid "{count, plural, one {review} other {reviews}}"
-msgstr "{count, plural, other {復習}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "hCSegn"
-msgid "{count, plural, one {mistake fixed} other {mistakes fixed}}"
-msgstr "{count, plural, other {直した間違い}}"
+msgctxt "mioNGq"
+msgid "Mistakes fixed"
+msgstr "克服した間違い"
 
 #. A badge for catching the Trickster's traps.
 #: src/week/logbook-sections.tsx
@@ -15697,12 +15633,7 @@ msgctxt "_-ONf9"
 msgid "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}"
 msgstr "{count, plural, other {ひっかけハンターバッジ}}"
 
-#: src/week/logbook-sections.tsx
-msgctxt "iMjjOH"
-msgid "Next week"
-msgstr "来週"
-
 #: src/week/turnaround-chart.tsx
-msgctxt "tnsNdR"
-msgid "Right answers on this skill each day of the week"
-msgstr "このスキルの曜日ごとの正解状況"
+msgctxt "zLXlcN"
+msgid "Right answers on this topic each day of the week"
+msgstr "このトピックの曜日ごとの正解数"

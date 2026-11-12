@@ -8,9 +8,9 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ProtectedSection } from "../_components/protected-section";
-import { DeleteAccountSection } from "./delete-account-section";
+import { DeleteAccountRow } from "./delete-account-section";
 import { DeletionPlusNotice } from "./deletion-plus-notice";
-import { ExportDataButton } from "./export-data-button";
+import { ExportDataRow } from "./export-data-button";
 import { PasskeysSection } from "./passkeys-section";
 import { ProfileForm } from "./profile-form";
 
@@ -45,17 +45,18 @@ async function ProfileContent() {
         <PageSectionHeader>
           <PageSectionTitle id={YOUR_DATA_ID}>{t("Your data")}</PageSectionTitle>
         </PageSectionHeader>
-        <ExportDataButton />
+        <ListGroup>
+          <ExportDataRow />
+          <DeleteAccountRow
+            plusNotice={
+              <Suspense>
+                <DeletionPlusNotice />
+              </Suspense>
+            }
+            userId={session?.user.id ?? ""}
+          />
+        </ListGroup>
       </PageSection>
-
-      <DeleteAccountSection
-        plusNotice={
-          <Suspense>
-            <DeletionPlusNotice />
-          </Suspense>
-        }
-        userId={session?.user.id ?? ""}
-      />
     </ProtectedSection>
   );
 }
@@ -80,19 +81,13 @@ async function ProfileSkeleton() {
         <div className="flex flex-col">
           <ListGroup>
             <SettingRow
-              description={t(
-                "How Zoonk and your buddy call you, and the name on your certificates.",
-              )}
+              description={t("Your certificates and your buddy use this name.")}
               label={t("Name")}
               wide
             >
               <Skeleton className="h-11 w-full rounded-lg" />
             </SettingRow>
-            <SettingRow
-              description={t("3-30 characters. Letters a–z, numbers, and underscores only.")}
-              label={t("Username")}
-              wide
-            >
+            <SettingRow label={t("Username")} wide>
               <Skeleton className="h-11 w-full rounded-lg" />
             </SettingRow>
           </ListGroup>
@@ -104,23 +99,10 @@ async function ProfileSkeleton() {
 
       <SectionSkeleton label={t("Your data")}>
         <ListGroup>
-          <SettingRow
-            description={t("Everything Zoonk keeps about you, as one file")}
-            label={t("Download my data")}
-          >
+          <SettingRow label={t("Download my data")}>
             <Skeleton className="h-7.5 w-25.5 rounded-md" />
           </SettingRow>
-        </ListGroup>
-      </SectionSkeleton>
-
-      <SectionSkeleton label={t("Delete account")}>
-        <ListGroup>
-          <SettingRow
-            description={t(
-              "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there.",
-            )}
-            label={t("Delete my account")}
-          >
+          <SettingRow label={t("Delete my account")}>
             <Skeleton className="h-7.5 w-17 rounded-md" />
           </SettingRow>
         </ListGroup>
@@ -134,7 +116,7 @@ export default async function ProfilePage() {
 
   return (
     <Page className="max-w-form">
-      <SectionPageHeader description={t("Your name, username and account.")} title={t("Profile")} />
+      <SectionPageHeader title={t("Profile")} />
 
       <Suspense fallback={<ProfileSkeleton />}>
         <ProfileContent />

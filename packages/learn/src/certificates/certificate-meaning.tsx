@@ -9,33 +9,24 @@ import { useLanguageNameInSentence } from "./certificate-labels";
 
 function useMeaning(facts: CertificateFacts): string[] {
   const t = useExtracted();
-
-  const nameNote = t(
-    "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs.",
-  );
-
-  const cefr = t(
-    "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
-  );
+  const nameNote = t("Names aren't checked against an ID.");
 
   if (facts.kind === "languageLevel") {
+    const cefr = t(
+      "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
+    );
+
     return [
-      t(
-        "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons.",
-      ),
+      t("For finishing this level, studying at least half of its lessons."),
       `${cefr} ${nameNote}`,
     ];
   }
 
   return [
     facts.courseLevel
-      ? t(
-          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
-        )
-      : t(
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
-        ),
-    `${t("It's a record of completion on Zoonk, not academic credit.")} ${nameNote}`,
+      ? t("For finishing every lesson and challenge of this level.")
+      : t("For finishing every lesson and challenge of this plan."),
+    `${t("A record of completion on Zoonk, not academic credit.")} ${nameNote}`,
   ];
 }
 

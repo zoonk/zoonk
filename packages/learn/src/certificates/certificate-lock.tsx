@@ -51,9 +51,7 @@ export function CertificatePlusNotice({ className }: { className?: string }) {
 
   return (
     <PlusNotice className={className} title={t("Get your certificate with Plus")}>
-      {t(
-        "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
-      )}
+      {t("A certificate for every level you finish, to print and share.")}
     </PlusNotice>
   );
 }
@@ -64,9 +62,7 @@ export function CertificatesPlusNotice() {
 
   return (
     <PlusNotice className="max-w-xl" title={t("Certificates come with Plus")}>
-      {t(
-        "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
-      )}
+      {t("A certificate for every level you finish, to print and share.")}
     </PlusNotice>
   );
 }

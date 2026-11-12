@@ -42,7 +42,7 @@ export function UsageDataNotice({ className }: { className: string }) {
       >
         <p className="text-muted-foreground text-sm text-pretty">
           {t.rich(
-            "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>",
+            "Can we see how you use Zoonk, with cookies and screen recordings, so we can improve it? <link>Privacy</link>",
             { link: PrivacyLink },
           )}
         </p>

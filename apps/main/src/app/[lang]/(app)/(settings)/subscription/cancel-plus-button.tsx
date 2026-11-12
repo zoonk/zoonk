@@ -48,7 +48,7 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
           <AlertDialogTitle>{t("Cancel Plus?")}</AlertDialogTitle>
           <AlertDialogDescription>
             {endsNow
-              ? t("Plus ends right away, and we stop retrying your renewal payment.")
+              ? t("Plus ends right away, and you won't be charged again.")
               : t("You keep Plus until the end of the period you already paid for.")}
           </AlertDialogDescription>
         </AlertDialogHeader>

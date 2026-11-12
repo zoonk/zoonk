@@ -263,7 +263,6 @@ msgid "Mind maps"
 msgstr "Zihin haritaları"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"
 msgid "Logbook"
 msgstr "Çalışma günlüğü"
@@ -453,6 +452,7 @@ msgstr "Dersler"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(home)/_components/career-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "n7xPkB"
@@ -1199,14 +1199,14 @@ msgid "Off"
 msgstr "Kapalı"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "Bq4K5C"
-msgid "For your safety, sign in again, then delete your account."
+msgctxt "huX1mW"
+msgid "For your safety, log in again, then delete your account."
 msgstr "Güvenliğin için tekrar giriş yap, ardından hesabını sil."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "scfgdM"
-msgid "Sign in again"
+msgctxt "IPuXf7"
+msgid "Log in again"
 msgstr "Tekrar giriş yap"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
@@ -1216,21 +1216,14 @@ msgstr "Hesabını silemedik. Tekrar dene veya hello@zoonk.com adresine e-posta 
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "wyxJrL"
-msgid "Delete account"
-msgstr "Hesabı sil"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "YRbz6b"
-msgid "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there."
-msgstr "Hesabını ve içindeki her şeyi kalıcı olarak siler. Plus’ı App Store veya Google Play’den aldıysan oradan iptal etmelisin."
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "Sk9SL5"
 msgid "Delete my account"
 msgstr "Hesabımı sil"
+
+#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+msgctxt "wyxJrL"
+msgid "Delete account"
+msgstr "Hesabı sil"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "lNbJX1"
@@ -1252,11 +1245,15 @@ msgctxt "B62Z1j"
 msgid "Deleting your account ends Plus right away."
 msgstr "Hesabını sildiğinde Plus hemen sona erer."
 
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "_nHp1D"
-msgid "Everything Zoonk keeps about you, as one file"
-msgstr "Zoonk’un seninle ilgili sakladığı her şey tek dosyada"
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "eDC5E7"
+msgid "Plus from the App Store keeps charging until you cancel it there."
+msgstr "App Store’dan aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
+
+#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
+msgctxt "_eCS12"
+msgid "Plus from Google Play keeps charging until you cancel it there."
+msgstr "Google Play’den aldığın Plus için oradan iptal edene kadar ücret alınmaya devam eder."
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1291,9 +1288,9 @@ msgstr "Verilerin"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "1aCPlI"
-msgid "How Zoonk and your buddy call you, and the name on your certificates."
-msgstr "Zoonk ve ders arkadaşın sana bu adla seslenir. Sertifikalarında da bu ad görünür."
+msgctxt "Vrz1pI"
+msgid "Your certificates and your buddy use this name."
+msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1303,20 +1300,9 @@ msgstr "Ad"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "wubfpa"
-msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Kullanıcı adı"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "1VpnDN"
-msgid "Your name, username and account."
-msgstr "Adın, kullanıcı adın ve hesabın."
 
 #. The name of a passkey the person hasn't named yet, in their list of passkeys.
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
@@ -1366,9 +1352,9 @@ msgid "Delete passkey"
 msgstr "Geçiş anahtarını sil"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "xEwuru"
-msgid "For your safety, sign in again, then add your passkey."
-msgstr "Güvenliğin için tekrar giriş yap, sonra geçiş anahtarını ekle."
+msgctxt "p_4dgc"
+msgid "For your safety, log in again, then add your passkey."
+msgstr "Güvenliğin için tekrar giriş yap, ardından geçiş anahtarını ekle."
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "AadXSK"
@@ -1458,14 +1444,19 @@ msgid "{username} is already taken"
 msgstr "{username} zaten kullanılıyor"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Kaydedildi."
 
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
-msgctxt "JXl2gz"
-msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
-msgstr "Burada anlattıkların sana sunulan örnekleri ve ders arkadaşını şekillendirir. Her şey isteğe bağlı."
+msgctxt "40quiV"
+msgid "Your answers shape your examples and your buddy. Everything is optional."
+msgstr "Cevapların, sana sunulan örnekleri ve arkadaşını şekillendirir. Her şey isteğe bağlı."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
@@ -1477,11 +1468,6 @@ msgstr "Dil ve bölge"
 msgctxt "cXBJ7U"
 msgid "Privacy"
 msgstr "Gizlilik"
-
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-msgctxt "BbrYZc"
-msgid "Your buddy, lessons and language, the way you like them."
-msgstr "Arkadaşın, derslerin ve uygulama dilin tam istediğin gibi."
 
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -1514,9 +1500,9 @@ msgid "Cancel Plus?"
 msgstr "Plus iptal edilsin mi?"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "OHwgQT"
-msgid "Plus ends right away, and we stop retrying your renewal payment."
-msgstr "Plus hemen sona erer ve yenileme ödemeni almayı tekrar denemeyiz."
+msgctxt "nPxPkN"
+msgid "Plus ends right away, and you won't be charged again."
+msgstr "Plus hemen sona erer ve senden bir daha ücret alınmaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "ZwO-lB"
@@ -1542,14 +1528,14 @@ msgid "Go back"
 msgstr "Geri dön"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "qO091u"
-msgid "Your subscription will end on <mono>{date}</mono>."
-msgstr "Aboneliğin <mono>{date}</mono> tarihinde sona erecek."
+msgctxt "YrbiTE"
+msgid "Plus ends on <mono>{date}</mono>."
+msgstr "Plus <mono>{date}</mono> tarihinde sona erer."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "xWINkR"
-msgid "Current billing period ends on <mono>{date}</mono>."
-msgstr "Mevcut fatura dönemi <mono>{date}</mono> tarihinde sona erecek."
+msgctxt "Nhk7N-"
+msgid "Paid until <mono>{date}</mono>."
+msgstr "<mono>{date}</mono> tarihine kadar ödendi."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1563,14 +1549,14 @@ msgid "Renews on <mono>{date}</mono>."
 msgstr "<mono>{date}</mono> tarihinde yenilenecek."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "iwAsxo"
-msgid "Website subscription"
-msgstr "Web sitesi aboneliği"
+msgctxt "nQezuF"
+msgid "Bought on the website"
+msgstr "Web sitesinden satın alındı"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "CrGYez"
-msgid "Subscription ending"
-msgstr "Abonelik sona eriyor"
+msgctxt "1y_a8B"
+msgid "Ending"
+msgstr "Yenilenmeyecek"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "3a5wL8"
@@ -1582,15 +1568,10 @@ msgctxt "oESc06"
 msgid "What's included"
 msgstr "Pakete dahil olanlar"
 
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
-msgctxt "kkHvAa"
-msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "Bugün <mono>{used, number} / {limit, number}</mono> ders arkadaşı mesajı kullanıldı"
-
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "lRRr8l"
-msgid "Changed your mind? Keep Plus, and it renews as before."
-msgstr "Fikrini mi değiştirdin? Plus’ı koru, aboneliğin eskisi gibi yenilensin."
+msgctxt "aSfGh6"
+msgid "Keep Plus, and it renews as before."
+msgstr "Plus’ı koru, eskisi gibi yenilensin."
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
 msgctxt "KLKQ8N"
@@ -1613,59 +1594,49 @@ msgid "Manage in Google Play"
 msgstr "Google Play’de yönet"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "Tp4wJB"
-msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
-msgstr "Bu abonelik App Store üzerinden yönetiliyor. Değiştirmek veya iptal etmek için Apple’ın abonelik ayarlarını kullan."
+msgctxt "L-MTMb"
+msgid "You subscribed in the App Store."
+msgstr "App Store üzerinden abone oldun."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "unNUPf"
-msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
-msgstr "Bu abonelik Google Play üzerinden yönetiliyor. Değiştirmek veya iptal etmek için Google Play’i kullan."
+msgctxt "9SMM0b"
+msgid "You subscribed in Google Play."
+msgstr "Google Play üzerinden abone oldun."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "P0ZHma"
-msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
-msgstr "Bu abonelik Zoonk tarafından yönetiliyor. Değiştirmek veya iptal etmek için yardıma ihtiyacın olursa destek ekibine ulaş."
+msgctxt "YXWAG8"
+msgid "To change or cancel Plus, write to us."
+msgstr "Plus’ı değiştirmek veya iptal etmek için bize yaz."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "5CI3KH"
-msgid "Contact support"
-msgstr "Destek ekibiyle iletişime geç"
+msgctxt "9OuUCL"
+msgid "Get help"
+msgstr "Yardım al"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "bF03Os"
-msgid "Confirming your subscription"
-msgstr "Aboneliğini onaylıyoruz"
+msgctxt "kRo_Bd"
+msgid "Turning on Plus"
+msgstr "Plus’ı etkinleştiriyoruz"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "weaUjp"
-msgid "Still confirming your subscription"
-msgstr "Aboneliğini onaylamaya devam ediyoruz"
+msgctxt "IKKpDh"
+msgid "Still working on it"
+msgstr "Hâlâ üzerinde çalışıyoruz"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "7lERBM"
-msgid "Stripe is confirming your payment. It usually takes a few seconds."
-msgstr "Stripe ödemeni onaylıyor. Bu genellikle birkaç saniye sürer."
+msgctxt "keMwvL"
+msgid "This takes a few seconds."
+msgstr "Bu işlem birkaç saniye sürer."
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "gDgnVG"
-msgid "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
-msgstr "Bu işlem normalden uzun sürüyor. Ödemen tamamlandıysa Stripe onaylar onaylamaz Plus burada görünür."
-
-#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "QI17io"
-msgid "Checking with Stripe…"
-msgstr "Stripe üzerinden kontrol ediyoruz…"
+msgctxt "_aglmH"
+msgid "If you paid, Plus will show up here soon."
+msgstr "Ödeme yaptıysan Plus yakında burada görünecek."
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"
 msgstr "Tekrar kontrol et"
-
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-msgctxt "uPJSSB"
-msgid "Subscribe to Zoonk Plus"
-msgstr "Zoonk Plus’a abone ol"
 
 #: src/app/[lang]/(app)/(settings)/support/page.tsx
 #: src/app/[lang]/(app)/(settings)/support/support-content.tsx
@@ -1679,9 +1650,14 @@ msgid "Follow us"
 msgstr "Bizi takip et"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-msgctxt "FVh2Tr"
-msgid "Start learning to track your progress"
-msgstr "İlerlemeni takip etmek için öğrenmeye başla"
+msgctxt "40z5xB"
+msgid "No statistics yet"
+msgstr "Henüz istatistik yok"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "EpdL-z"
+msgid "They show up after your first lesson."
+msgstr "İlk dersinden sonra görünür."
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "4IVFWL"
@@ -1695,12 +1671,9 @@ msgid "Overview"
 msgstr "Genel bakış"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Seviye"
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Kuşak"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
@@ -1717,12 +1690,11 @@ msgid "Activity"
 msgstr "Etkinlik"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Puan"
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Doğru cevaplar"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
@@ -1754,11 +1726,15 @@ msgctxt "activityLegend.I5NMJ8"
 msgid "More"
 msgstr "Daha fazla"
 
-#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "FjcEak"
-msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{count, plural, =0 {Çalışılmadı} other {# etkinlik}}"
+msgctxt "cMaydB"
+msgid "Studied"
+msgstr "Çalışıldı"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "eos-eP"
+msgid "No study"
+msgstr "Çalışılmadı"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1772,25 +1748,10 @@ msgid "Activity by day"
 msgstr "Günlere göre etkinlik"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-msgctxt "RZVnqi"
-msgid "Any day you studied"
-msgstr "Çalıştığın her gün"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "CjJYVQ"
 msgid "Days studied"
 msgstr "Çalışılan gün sayısı"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-msgctxt "-ZYXXk"
-msgid "{count, plural, =0 {Finished} one {Finished} other {Finished}}"
-msgstr "{count, plural, =0 {Tamamlanan yok} other {Tamamlandı}}"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-msgctxt "jfPES_"
-msgid "Studying in total"
-msgstr "Toplam çalışma süresi"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 msgctxt "ug01Mk"
@@ -1933,6 +1894,12 @@ msgid "Brain Power"
 msgstr "Beyin Gücü"
 
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Seviye"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "pDD9dm"
 msgid "Never goes down"
 msgstr "Asla azalmaz"
@@ -2067,6 +2034,12 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "Son 90 gündeki doğru cevap oranını ve haftalık değişimini gör."
 
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Puan"
+
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
@@ -2086,11 +2059,6 @@ msgstr "{label}: {score} ({count, plural, other {# cevap üzerinden}})"
 msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {# cevap}}"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Doğru cevaplar"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "OLmtAV"
@@ -2124,19 +2092,14 @@ msgstr "Her cevap aynı ağırlıkta sayılır, bu yüzden daha zor dersler puan
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "emqpoS"
-msgid "Score · 90 days"
-msgstr "Puan · 90 gün"
+msgctxt "OkGBmK"
+msgid "Right answers · 90 days"
+msgstr "Doğru cevaplar · 90 gün"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "eIGEJG"
-msgid "Your score shows after your first answers."
-msgstr "İlk cevaplarını verdikten sonra puanın görünür."
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "kV-RMr"
-msgid "{low}–{high}"
-msgstr "{low}–{high}"
+msgctxt "h8AhL5"
+msgid "Shows after your first answers."
+msgstr "İlk cevaplarını verdikten sonra görünür."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2150,40 +2113,14 @@ msgid "See all"
 msgstr "Tümünü gör"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Henüz yok"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "McGBe4"
-msgid "Spread across the week"
-msgstr "Haftalık dağılım"
 
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"
 msgid "Your belt, Energy, study days, right answers and when you do best."
 msgstr "Kuşağın, Enerjin, çalışma günlerin, doğru cevapların ve en iyi sonuç aldığın zamanlar."
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "AezvZG"
-msgid "Average {value}"
-msgstr "Ortalama {value}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "I5Pid5"
-msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
-msgstr "{lessons, plural, =0 {# ders} other {# ders}} · {time}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "_qHKLY"
-msgid "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}"
-msgstr "{correct, plural, =0 {<mono>#/{total}</mono> doğru} other {<mono>#/{total}</mono> doğru}}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "Y_aK5B"
-msgid "Right answers in the last 90 days"
-msgstr "Son 90 gündeki doğru cevaplar"
 
 #. Ends a plan row for a topic the plan skips because the learner already knows it. In Brazilian Portuguese: “Você já sabe”.
 #: src/app/[lang]/(home)/_components/career-section.tsx
@@ -2633,9 +2570,9 @@ msgid "We couldn't find this certificate"
 msgstr "Bu sertifikayı bulamadık"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
-msgctxt "pFjRPG"
-msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
-msgstr "Bağlantıyı kontrol et. Sertifika bağlantısı, {example} örneğindeki gibi sertifikanın 12 karakterlik koduyla biter. Kısa çizgiler olmadan da çalışır."
+msgctxt "_knGOK"
+msgid "Check the link. It ends in a code like {example}."
+msgstr "Bağlantıyı kontrol et. {example} gibi bir kodla biter."
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 msgctxt "15PZTm"
@@ -2853,6 +2790,11 @@ msgctxt "BdqTEJ"
 msgid "Zoonk writes it when you start. It takes a few minutes."
 msgstr "Başladığında Zoonk dersi hazırlar. Birkaç dakika sürer."
 
+#: src/app/[lang]/logbook/page.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "Haftalık özet"
+
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
@@ -2956,11 +2898,6 @@ msgid "This link is no longer active"
 msgstr "Bu bağlantı artık geçerli değil"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "OqrvHM"
-msgid "Your other reminder settings haven't changed. You'll still get sign-in codes."
-msgstr "Diğer hatırlatma ayarların değişmedi. Giriş kodlarını almaya devam edeceksin."
-
-#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "c5ajtI"
 msgid "Turn off email reminders?"
 msgstr "E-posta hatırlatmaları kapatılsın mı?"
@@ -3002,9 +2939,9 @@ msgid "Usage data"
 msgstr "Kullanım verileri"
 
 #: src/app/[lang]/usage-data-notice.tsx
-msgctxt "pu2Edv"
-msgid "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
-msgstr "Zoonk’u nasıl kullandığını anlamak ve daha iyi hale getirmek için çerezleri ve oturum kayıtlarını kullanabilir miyiz? <link>Gizlilik</link>"
+msgctxt "LNn_TG"
+msgid "Can we see how you use Zoonk, with cookies and screen recordings, so we can improve it? <link>Privacy</link>"
+msgstr "Zoonk’u geliştirmek için çerezler ve ekran kayıtlarıyla uygulamayı nasıl kullandığını görebilir miyiz? <link>Gizlilik</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"
@@ -3044,14 +2981,14 @@ msgid "Create an account to use this page"
 msgstr "Bu sayfayı kullanmak için hesap oluştur"
 
 #: src/components/auth-gate.tsx
-msgctxt "DrBO6u"
-msgid "Your plan and progress move to your account, safe on any device."
-msgstr "Planın ve ilerlemen hesabına taşınır, her cihazda güvende kalır."
+msgctxt "df7Wr-"
+msgid "Your plan and progress come with you."
+msgstr "Planın ve ilerlemen seninle kalır."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Oturumun sona erdi"
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "Oturumun kapandı"
 
 #: src/components/auth-gate.tsx
 msgctxt "acWSVG"
@@ -3059,14 +2996,9 @@ msgid "Log in to continue"
 msgstr "Devam etmek için giriş yap"
 
 #: src/components/auth-gate.tsx
-msgctxt "pb0Q20"
-msgid "Log in to pick up your plan."
-msgstr "Planına devam etmek için giriş yap."
-
-#: src/components/auth-gate.tsx
-msgctxt "eSXQ3z"
-msgid "Log in to pick up where you left off, or start free."
-msgstr "Kaldığın yerden devam etmek için giriş yap veya ücretsiz başla."
+msgctxt "e3Tyso"
+msgid "Log in to get back to your plan."
+msgstr "Planına dönmek için giriş yap."
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"
@@ -3280,9 +3212,9 @@ msgid "{chapter} · lesson {number, number}"
 msgstr "{chapter} · {number, number}. ders"
 
 #: src/components/errors/page-error-message.tsx
-msgctxt "R6Dkep"
-msgid "It might be your connection or a problem on our side. Trying again usually fixes it."
-msgstr "Sorun bağlantından ya da bizden kaynaklanıyor olabilir. Tekrar denemek genellikle sorunu çözer."
+msgctxt "xUnZ3u"
+msgid "Check your connection and try again."
+msgstr "Bağlantını kontrol edip tekrar dene."
 
 #: src/components/errors/page-error-message.tsx
 msgctxt "9nolIL"

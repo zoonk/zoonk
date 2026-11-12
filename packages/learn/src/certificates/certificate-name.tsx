@@ -62,16 +62,14 @@ function useNameSave({
   return { canSave, failed, isTooLong, name, pending, setName, submit };
 }
 
-function NameHint({ current, isTooLong }: { current: string | null; isTooLong: boolean }) {
+function NameHint({ isTooLong }: { isTooLong: boolean }) {
   const t = useExtracted();
 
   if (isTooLong) {
     return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
   }
 
-  return current
-    ? t("Your certificates and your buddy use this name.")
-    : t("Your certificates and your buddy use this name. You can change it anytime.");
+  return t("Your certificates and your buddy use this name.");
 }
 
 /** In place on the award moment and on the page, while there's no name to print or a change to make. */
@@ -144,7 +142,7 @@ export function CertificateNameField({
       </div>
 
       <p className="text-muted-foreground text-xs leading-snug" id={`${id}-hint`}>
-        <NameHint current={current} isTooLong={isTooLong} />
+        <NameHint isTooLong={isTooLong} />
       </p>
 
       {failed && <ChangeSaveError />}
@@ -239,7 +237,7 @@ export function CertificateNameDialog({
         <DialogHeader>
           <DialogTitle>{t("Name on your certificates")}</DialogTitle>
           <DialogDescription>
-            {t("It shows on every certificate and its link. Your buddy calls you by it too.")}
+            {t("Your certificates and your buddy use this name.")}
           </DialogDescription>
         </DialogHeader>
 

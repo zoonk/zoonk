@@ -22,9 +22,7 @@ export function PageErrorMessage({
   return (
     <Root className={cn("flex w-full flex-col", inFrame ? "flex-1" : "min-h-dvh")}>
       <StatusMessage
-        description={t(
-          "It might be your connection or a problem on our side. Trying again usually fixes it.",
-        )}
+        description={t("Check your connection and try again.")}
         icon={<TriangleAlertIcon aria-hidden="true" />}
         title={t("This page didn't load")}
       >

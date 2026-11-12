@@ -104,7 +104,6 @@ export default async function AppearancePage() {
   return (
     <Page className="max-w-form">
       <SectionPageHeader
-        description={t("Your buddy, lessons and language, the way you like them.")}
         title={t({
           description:
             "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",

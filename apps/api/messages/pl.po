@@ -7,21 +7,21 @@ msgstr ""
 "X-Message-Key: msgctxt\n"
 
 #: src/app/auth/[locale]/layout.tsx
-msgctxt "dVItHD"
-msgid "Sign in to Zoonk"
-msgstr "Zaloguj się do Zoonka"
+msgctxt "dqGyqS"
+msgid "Log in to Zoonk"
+msgstr ""
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "vO6NBp"
-msgid "Temporary email addresses aren't supported. Use another email or a privacy alias."
-msgstr "Nie obsługujemy tymczasowych adresów e-mail. Użyj innego adresu lub aliasu chroniącego prywatność."
+msgctxt "l6T4xJ"
+msgid "Temporary email addresses don't work here. Use another email."
+msgstr ""
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/login/social-login.tsx
-msgctxt "pN2p0t"
-msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Nie udało się zalogować. Spróbuj ponownie lub napisz na hello@zoonk.com"
+msgctxt "1VqSb1"
+msgid "We couldn't log you in. Try again or email hello@zoonk.com."
+msgstr ""
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "YRe93Y"
@@ -53,14 +53,14 @@ msgid "Continue"
 msgstr "Kontynuuj"
 
 #: src/app/auth/[locale]/login/login-screen.tsx
-msgctxt "eN8MTJ"
-msgid "Sign in or create an account"
-msgstr "Zaloguj się lub utwórz konto"
+msgctxt "tUBpHv"
+msgid "Log in or create an account"
+msgstr ""
 
 #: src/app/auth/[locale]/login/login-screen.tsx
-msgctxt "o_pwJP"
-msgid "That sign-in expired. Try again."
-msgstr "Sesja logowania wygasła. Spróbuj ponownie."
+msgctxt "kTEtnT"
+msgid "That link expired. Log in again."
+msgstr ""
 
 #: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "4wpUNc"
@@ -68,9 +68,9 @@ msgid "Or"
 msgstr "Lub"
 
 #: src/app/auth/[locale]/login/login-screen.tsx
-msgctxt "Ju9oB-"
-msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-msgstr "Klikając „Kontynuuj”, akceptujesz nasz <terms>Regulamin</terms> i <privacy>Politykę prywatności</privacy>."
+msgctxt "V3Izs2"
+msgid "By continuing, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+msgstr ""
 
 #: src/app/auth/[locale]/login/social-login.tsx
 msgctxt "FJ6r9E"
@@ -162,12 +162,6 @@ msgctxt "SmuYUd"
 msgid "What should we call you?"
 msgstr "Jak mamy cię nazywać?"
 
-#. “it” is the name and username the learner picks on this screen.
-#: src/app/auth/[locale]/setup/page.tsx
-msgctxt "y9wzAs"
-msgid "You can change it later in your profile."
-msgstr "Możesz to później zmienić w swoim profilu."
-
 #: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
@@ -224,18 +218,13 @@ msgid "We couldn't save your profile. Try again."
 msgstr "Nie udało się zapisać profilu. Spróbuj ponownie."
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "1vqX2W"
-msgid "Unable to redirect"
-msgstr "Nie udało się przekierować"
+msgctxt "cUktz7"
+msgid "That link didn't work"
+msgstr ""
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "83K2kN"
-msgid "The destination URL is not recognized as a trusted Zoonk application."
-msgstr "Nie rozpoznajemy adresu docelowego jako adresu zaufanej aplikacji Zoonka."
-
-#: src/app/auth/[locale]/untrusted-origin/page.tsx
-msgctxt "-e4BVR"
-msgid "Continue to Zoonk"
+msgctxt "15PZTm"
+msgid "Go to Zoonk"
 msgstr "Przejdź do Zoonka"
 
 #. The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.
@@ -270,9 +259,9 @@ msgid "Today's plan has {minutes, plural, one {# minute} other {# minutes}} for 
 msgstr "Na ten cel masz dziś w planie {minutes, plural, one {# minutę} many {# minut} other {# minuty}} nauki."
 
 #: src/lib/reminders/reminder-copy.ts
-msgctxt "hHrR1d"
-msgid "{minutes, plural, one {# minute} other {# minutes}} today keeps your plan on track."
-msgstr "Dziś {minutes, plural, one {# minuta nauki pozwoli} few {# minuty nauki pozwolą} many {# minut nauki pozwoli} other {# minuty nauki pozwoli}} ci trzymać się planu."
+msgctxt "T3CRm8"
+msgid "{minutes, plural, one {# minute} other {# minutes}} to study today."
+msgstr ""
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "jfc4ic"
@@ -306,9 +295,9 @@ msgid "{minutes, plural, one {# minute} other {# minutes}} for this one, and {ot
 msgstr "Na ten cel: {minutes, plural, one {# minuta} many {# minut} other {# minuty}} nauki, a potem jeszcze {others, plural, one {# cel} few {# cele} many {# celów} other {# celu}}."
 
 #: src/lib/reminders/reminder-copy.ts
-msgctxt "4u16G2"
-msgid "Open today's plan"
-msgstr "Otwórz plan na dziś"
+msgctxt "l22EVR"
+msgid "Open Zoonk"
+msgstr ""
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "wdqkFx"

@@ -6,7 +6,6 @@ import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
-  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -46,11 +45,6 @@ function UnsubscribeResult({ result }: { result: Result }) {
         <EmptyTitle>
           <h1>{off ? t("Email reminders are off") : t("This link is no longer active")}</h1>
         </EmptyTitle>
-        {off && (
-          <EmptyDescription>
-            {t("Your other reminder settings haven't changed. You'll still get sign-in codes.")}
-          </EmptyDescription>
-        )}
       </EmptyHeader>
       <EmptyContent>
         <ManageRemindersLink />

@@ -18,7 +18,7 @@ import { LockIcon, LogInIcon, UserPlusIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 
-/** A browser whose session ended is told so on every page, since its plan is still there. */
+/** A browser that was logged out is told so on every page, since its plan is still there. */
 export async function AuthGate({
   className,
   ended: knownEnded,
@@ -46,9 +46,7 @@ export async function AuthGate({
           <EmptyTitle>
             <Heading>{t("Create an account to use this page")}</Heading>
           </EmptyTitle>
-          <EmptyDescription>
-            {t("Your plan and progress move to your account, safe on any device.")}
-          </EmptyDescription>
+          <EmptyDescription>{t("Your plan and progress come with you.")}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <PendingLink
@@ -70,13 +68,9 @@ export async function AuthGate({
           <LockIcon aria-hidden="true" />
         </EmptyMedia>
         <EmptyTitle>
-          <Heading>{ended ? t("Your session ended") : t("Log in to continue")}</Heading>
+          <Heading>{ended ? t("You've been logged out") : t("Log in to continue")}</Heading>
         </EmptyTitle>
-        <EmptyDescription>
-          {ended
-            ? t("Log in to pick up your plan.")
-            : t("Log in to pick up where you left off, or start free.")}
-        </EmptyDescription>
+        {ended && <EmptyDescription>{t("Log in to get back to your plan.")}</EmptyDescription>}
       </EmptyHeader>
       <EmptyContent>
         <div className="flex flex-wrap gap-2">

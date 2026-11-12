@@ -42,6 +42,7 @@ msgstr "Doğru"
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "Sıradaki"
@@ -73,6 +74,7 @@ msgstr "Atlandı"
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
+#: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Tamamlandı"
@@ -1102,20 +1104,14 @@ msgid "Where you live"
 msgstr "Yaşadığın ülke"
 
 #: src/appearance/home-country-setting.tsx
-#: src/conversation/tutor-country-offer.tsx
-msgctxt "i8Cibb"
-msgid "For new goals and your examples. It doesn't change the plans you already have."
-msgstr "Yeni hedeflerinde ve sana verilen örneklerde kullanılır. Mevcut planlarını değiştirmez."
+msgctxt "7AJG2y"
+msgid "For your examples and new goals."
+msgstr "Örneklerin ve yeni hedeflerin için."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
 msgid "Not set"
 msgstr "Belirtilmedi"
-
-#: src/appearance/language-setting.tsx
-msgctxt "V1yMTL"
-msgid "On this device"
-msgstr "Bu cihazda"
 
 #: src/appearance/language-setting.tsx
 msgctxt "y0ef9b"
@@ -1638,9 +1634,9 @@ msgid "Details"
 msgstr "Ayrıntılar"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "QshKyk"
-msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
-msgstr "Bağlantıya sahip herkes bu sertifikayı görebilir. Sertifika sayfası arama sonuçlarında görünmez."
+msgctxt "5zN5Wd"
+msgid "Anyone with the link can see this certificate."
+msgstr "Bağlantıya sahip herkes bu sertifikayı görebilir."
 
 #. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
 #: src/certificates/certificate-labels.ts
@@ -1752,9 +1748,9 @@ msgid "Get your certificate with Plus"
 msgstr "Plus ile sertifikanı al"
 
 #: src/certificates/certificate-lock.tsx
-msgctxt "QIyGxo"
-msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
-msgstr "Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır."
+msgctxt "0a9W1m"
+msgid "A certificate for every level you finish, to print and share."
+msgstr "Tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika."
 
 #: src/certificates/certificate-lock.tsx
 msgctxt "Oe9wC5"
@@ -1762,9 +1758,9 @@ msgid "Certificates come with Plus"
 msgstr "Sertifikalar Plus’a dahil"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "l4zQLP"
-msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
-msgstr "Sertifikada öğrencinin Zoonk hesabında belirttiği ad yer alır; Zoonk kimlik kontrolü yapmaz."
+msgctxt "7tn6mk"
+msgid "Names aren't checked against an ID."
+msgstr "İsimler kimlik belgesiyle doğrulanmaz."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "s94wjH"
@@ -1772,24 +1768,24 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "Seviyeler, CEFR (Common European Framework of Reference for Languages) ile uyumludur. Bu, resmî bir sınav sonucu değildir."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "iO6aKW"
-msgid "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons."
-msgstr "Zoonk, bir seviyedeki derslerin en az yarısını çalışıp seviyeyi tamamlayanlara bu sertifikayı verir."
+msgctxt "LVfsiZ"
+msgid "For finishing this level, studying at least half of its lessons."
+msgstr "Derslerinin en az yarısını çalışarak bu seviyeyi tamamladığın için."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "j5jrUM"
-msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
-msgstr "Zoonk bu sertifikayı, bir kurs seviyesindeki her dersi çalışarak veya testini geçerek tüm üniteleri tamamlayan ve o seviyedeki tüm meydan okumaları kazanan öğrencilere verir."
+msgctxt "Fudciu"
+msgid "For finishing every lesson and challenge of this level."
+msgstr "Bu seviyedeki tüm dersleri ve meydan okumaları tamamladığın için."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "9Bnhaw"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
-msgstr "Zoonk bu sertifikayı, öğrenci bir kursun planındaki tüm dersleri çalışarak veya testlerini geçerek tamamladığında ve plandaki tüm meydan okumaları kazandığında verir."
+msgctxt "R--mlV"
+msgid "For finishing every lesson and challenge of this plan."
+msgstr "Bu plandaki tüm dersleri ve meydan okumaları tamamladığın için."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "wB_Ebz"
-msgid "It's a record of completion on Zoonk, not academic credit."
-msgstr "Zoonk’ta kursun tamamlandığını gösterir; akademik kredi yerine geçmez."
+msgctxt "371LJf"
+msgid "A record of completion on Zoonk, not academic credit."
+msgstr "Zoonk’ta tamamladığın eğitimi belgeler, akademik kredi sağlamaz."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "I9vOlY"
@@ -1888,11 +1884,6 @@ msgid "Your certificates and your buddy use this name."
 msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
 
 #: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "Sertifikalarında bu ad görünür. Ders arkadaşın da sana bu adla seslenir. İstediğin zaman değiştirebilirsin."
-
-#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "Sertifikalarındaki ad"
@@ -1906,11 +1897,6 @@ msgstr "Sertifikanda görünecek adın"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "Adın ve soyadın"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Qcr1L3"
-msgid "It shows on every certificate and its link. Your buddy calls you by it too."
-msgstr "Her sertifikada ve bağlantısında bu ad görünür. Ders arkadaşın da sana bu adla seslenir."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "5lbext"
@@ -2026,24 +2012,9 @@ msgid "Certificates"
 msgstr "Sertifikalar"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "OqErrx"
-msgid "Comes when you finish a level, studying at least half of it"
-msgstr "Bir seviyeyi derslerinin en az yarısını çalışarak tamamladığında verilir"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "ojltlj"
-msgid "Your certificate comes when you finish the plan"
-msgstr "Planı tamamladığında sertifikanı alırsın"
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
 msgid "No certificates yet"
 msgstr "Henüz sertifikan yok"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "_eLagx"
-msgid "Your certificates show up here when you finish a level or a plan."
-msgstr "Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2839,6 +2810,11 @@ msgstr "Kaydedildi. Yeni planını hazırlıyoruz. Bu sırada çalışmaya devam
 msgctxt "RZJ-9n"
 msgid "Content country: {country}"
 msgstr "İçerik ülkesi: {country}"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "i8Cibb"
+msgid "For new goals and your examples. It doesn't change the plans you already have."
+msgstr "Yeni hedeflerinde ve sana verilen örneklerde kullanılır. Mevcut planlarını değiştirmez."
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
@@ -5320,6 +5296,7 @@ msgstr "{done} / {planned}"
 
 #: src/journey/pace-details.tsx
 #: src/today/today-week.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "PtxhIN"
 msgid "This week"
 msgstr "Bu hafta"
@@ -7557,14 +7534,9 @@ msgid "From a chat"
 msgstr "Bir sohbetten"
 
 #: src/memory/memory-labels.tsx
-msgctxt "TVfPfM"
-msgid "From onboarding"
-msgstr "Başlangıç adımlarından"
-
-#: src/memory/memory-labels.tsx
-msgctxt "dppJZz"
-msgid "From a study session"
-msgstr "Bir çalışmadan"
+msgctxt "5yxABH"
+msgid "From your lessons"
+msgstr "Derslerinden"
 
 #. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
 #: src/memory/memory-labels.tsx
@@ -7573,24 +7545,14 @@ msgid "From a call"
 msgstr "Sesli sohbetten"
 
 #: src/memory/memory-screen.tsx
-msgctxt "PRUyMZ"
-msgid "Personal examples, plans that fit your week and calls that remember your news"
-msgstr "Sana özel örnekler, haftana uygun planlar ve hayatındaki gelişmeleri hatırlayan sohbetler"
-
-#: src/memory/memory-screen.tsx
-msgctxt "yp_BUN"
-msgid "Memory is off. Nothing new is learned, and these facts aren't used."
-msgstr "Bellek kapalı. Seninle ilgili yeni bir şey öğrenmiyoruz ve bu bilgileri kullanmıyoruz."
+msgctxt "v-N7NN"
+msgid "Nothing is remembered or used while this is off."
+msgstr "Bu ayar kapalıyken hiçbir bilgi hatırlanmaz veya kullanılmaz."
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
 msgid "Use memory"
 msgstr "Belleği kullan"
-
-#: src/memory/memory-screen.tsx
-msgctxt "jUyOoM"
-msgid "Everything in your memory, as one file"
-msgstr "Belleğindeki her şey tek dosyada"
 
 #: src/memory/memory-screen.tsx
 msgctxt "etMoG6"
@@ -7603,14 +7565,9 @@ msgid "We couldn't prepare the download. Try again."
 msgstr "İndirilecek dosyayı hazırlayamadık. Tekrar dene."
 
 #: src/memory/memory-screen.tsx
-msgctxt "kxonMZ"
-msgid "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here."
-msgstr "Henüz bir şey yok. Çalışıp sohbet ettikçe Zoonk’un sana daha iyi öğretmesini sağlayan kısa notlar burada görünür."
-
-#: src/memory/memory-screen.tsx
-msgctxt "FL1DwQ"
-msgid "Nothing here. Zoonk keeps no notes about you while memory is off."
-msgstr "Burada bir şey yok. Bellek kapalıyken Zoonk seninle ilgili not tutmaz."
+msgctxt "9fUBB_"
+msgid "Nothing yet. Notes show up here as you study and chat."
+msgstr "Henüz bir şey yok. Ders çalışıp yazıştıkça notlar burada görünür."
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -9692,6 +9649,7 @@ msgstr "Hedefine bir PDF, notlarının fotoğrafını veya istediğin bir metni 
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminder-offer.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
@@ -13197,17 +13155,6 @@ msgctxt "LveDpT"
 msgid "Not shared"
 msgstr "Anlatılmadı"
 
-#. Invites the learner to fill in an empty answer.
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "2_2yg-"
-msgid "Add"
-msgstr "Ekle"
-
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "v3Sw1m"
-msgid "Not answered"
-msgstr "Cevaplanmadı"
-
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
@@ -13220,9 +13167,9 @@ msgid "Saved"
 msgstr "Kaydedildi"
 
 #: src/profile-questions/about-you-screen.tsx
-msgctxt "AYPOzn"
-msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
-msgstr "Bellek kapalı olduğu için Zoonk günlük yaşamın ve keyif aldığın şeylerle ilgili bilgileri kullanmıyor. Bu bilgileri değiştirmek için Bellek bölümünden belleği aç."
+msgctxt "IaHYxv"
+msgid "Turn on Memory to use and change every answer."
+msgstr "Tüm cevaplarını kullanmak ve değiştirmek için Bellek özelliğini aç."
 
 #. An option that declines a question: none of the listed options apply.
 #: src/profile-questions/profile-body-parts.ts
@@ -13628,20 +13575,14 @@ msgid "False"
 msgstr "Yanlış"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "8mg7o6"
-msgid "At {time} on your study days, when you still have learning left."
-msgstr "Çalışma günlerinde, tamamlaman gerekenler kaldıysa {time} saatinde."
+msgctxt "zpIWGc"
+msgid "An email at {time} on your study days."
+msgstr "Çalışma günlerinde {time} saatinde bir e-posta."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "SwCKSr"
 msgid "Want a study reminder?"
 msgstr "Çalışma hatırlatması ister misin?"
-
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "ZZS4vO"
-msgid "Create an account to get email reminders"
-msgstr "E-posta hatırlatmaları almak için hesap oluştur"
 
 #: src/reminders/reminder-offer.tsx
 #: src/today/today-insight.tsx
@@ -13650,9 +13591,14 @@ msgid "No thanks"
 msgstr "Hayır, teşekkürler"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "viijDX"
-msgid "We'll email {address} at {time} on your study days, when you still have learning left."
-msgstr "Çalışma günlerinde, tamamlaman gerekenler kaldıysa {address} adresine {time} saatinde e-posta göndereceğiz."
+msgctxt "P7nVxL"
+msgid "An email to {address} on your study days."
+msgstr "Çalışma günlerinde {address} adresine bir e-posta."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "okVjfB"
+msgid "At {time} on your study days."
+msgstr "Çalışma günlerinde {time} saatinde."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "1mG4ae"
@@ -13676,6 +13622,11 @@ msgid "Time"
 msgstr "Saat"
 
 #: src/reminders/reminders-screen.tsx
+msgctxt "ZZS4vO"
+msgid "Create an account to get email reminders"
+msgstr "E-posta hatırlatmaları almak için hesap oluştur"
+
+#: src/reminders/reminders-screen.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "E-posta"
@@ -13690,11 +13641,6 @@ msgstr "Anlık bildirimler"
 msgctxt "1uzrpo"
 msgid "To get push notifications, turn them on in the Zoonk app."
 msgstr "Anlık bildirim almak için Zoonk uygulamasında bildirimleri aç."
-
-#: src/reminders/reminders-screen.tsx
-msgctxt "1cVf3e"
-msgid "On your study days, from your <link>plans</link>"
-msgstr "<link>Planlarındaki</link> çalışma günlerinde"
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -15585,15 +15531,15 @@ msgctxt "FZtFoB"
 msgid "Writing your first lesson: <lesson>{title}</lesson>"
 msgstr "İlk dersini hazırlıyoruz: <lesson>{title}</lesson>"
 
-#: src/week/logbook-screen.tsx
-msgctxt "wVu1FL"
-msgid "Let's go"
-msgstr "Başla"
-
 #: src/week/logbook-sections.tsx
 msgctxt "H2q9r9"
 msgid "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}"
 msgstr "{count, plural, =0 {# gün çalıştın} other {# gün çalıştın}}"
+
+#: src/week/logbook-sections.tsx
+msgctxt "uJ3xDF"
+msgid "You finished {name}."
+msgstr "{name} tamamlandı."
 
 #: src/week/logbook-sections.tsx
 msgctxt "koboTV"
@@ -15604,11 +15550,6 @@ msgstr "Önceki haftaya göre {time} daha fazla!"
 msgctxt "mY3vs_"
 msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
 msgstr "{questions, plural, other {Önceki haftaya göre # soru daha fazla!}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "v3GVFU"
-msgid "Phase {phase} · {name} done"
-msgstr "Aşama {phase} · {name} tamamlandı"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"
@@ -15646,24 +15587,24 @@ msgid "Every week starts fresh."
 msgstr "Her hafta yeni bir başlangıç."
 
 #: src/week/logbook-sections.tsx
-msgctxt "d1woXi"
-msgid "It shows your week in numbers and the skill that grew the most."
-msgstr "Haftanı sayılarla özetler ve en çok gelişen becerini gösterir."
+msgctxt "cr3hnH"
+msgid "It shows your week in numbers."
+msgstr "Haftanı sayılarla özetler."
 
 #: src/week/logbook-sections.tsx
-msgctxt "zrmLbt"
-msgid "{skill} is Mastered now: you remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
-msgstr "{skill} artık Tam öğrenildi düzeyinde: {count, plural, =0 {# farklı günde hatırladın} other {# farklı günde hatırladın}}."
+msgctxt "k0_uGW"
+msgid "You remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
+msgstr "Bunu {count, plural, =0 {# farklı günde} other {# farklı günde}} hatırladın."
 
 #: src/week/logbook-sections.tsx
-msgctxt "iQqSg9"
-msgid "{skill} is Solid now: you kept getting it right on later days."
-msgstr "{skill} artık Sağlam: sonraki günlerde de doğru cevap vermeye devam ettin."
+msgctxt "xuBvJB"
+msgid "You kept getting it right on later days."
+msgstr "Sonraki günlerde de doğru cevaplamaya devam ettin."
 
 #: src/week/logbook-sections.tsx
-msgctxt "HhTzc6"
-msgid "The biggest turnaround"
-msgstr "En büyük ilerleme"
+msgctxt "YZYqtB"
+msgid "Most improved"
+msgstr "En çok ilerlediğin konu"
 
 #. {from} and {to} are shares of right answers, like "40%".
 #: src/week/logbook-sections.tsx
@@ -15672,24 +15613,19 @@ msgid "{from} → {to} right answers"
 msgstr "Doğru cevap oranı: {from} → {to}"
 
 #: src/week/logbook-sections.tsx
-msgctxt "z0xsAO"
-msgid "What you learned"
-msgstr "Öğrendiklerin"
+msgctxt "t1zI4h"
+msgid "New topics"
+msgstr "Yeni konular"
 
 #: src/week/logbook-sections.tsx
-msgctxt "p28DcJ"
-msgid "{count, plural, one {new idea} other {new ideas}}"
-msgstr "{count, plural, other {yeni fikir}}"
+msgctxt "ifO8sT"
+msgid "Review questions"
+msgstr "Tekrar soruları"
 
 #: src/week/logbook-sections.tsx
-msgctxt "Ml35-W"
-msgid "{count, plural, one {review} other {reviews}}"
-msgstr "{count, plural, other {tekrar}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "hCSegn"
-msgid "{count, plural, one {mistake fixed} other {mistakes fixed}}"
-msgstr "{count, plural, other {hata düzeltildi}}"
+msgctxt "mioNGq"
+msgid "Mistakes fixed"
+msgstr "Düzeltilen yanlışlar"
 
 #. A badge for catching the Trickster's traps.
 #: src/week/logbook-sections.tsx
@@ -15697,12 +15633,7 @@ msgctxt "_-ONf9"
 msgid "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}"
 msgstr "{count, plural, other {Tuzak avcısı rozeti}}"
 
-#: src/week/logbook-sections.tsx
-msgctxt "iMjjOH"
-msgid "Next week"
-msgstr "Gelecek hafta"
-
 #: src/week/turnaround-chart.tsx
-msgctxt "tnsNdR"
-msgid "Right answers on this skill each day of the week"
-msgstr "Haftanın günlerine göre bu beceride verilen doğru cevaplar"
+msgctxt "zLXlcN"
+msgid "Right answers on this topic each day of the week"
+msgstr "Haftanın günlerine göre bu konudaki doğru cevaplar"

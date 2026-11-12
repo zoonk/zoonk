@@ -39,10 +39,8 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   const hasError = state.status !== "idle";
 
   const errorMessage = {
-    disposableEmail: t(
-      "Temporary email addresses aren't supported. Use another email or a privacy alias.",
-    ),
-    error: t("There was an error signing you in. Please try again or contact hello@zoonk.com"),
+    disposableEmail: t("Temporary email addresses don't work here. Use another email."),
+    error: t("We couldn't log you in. Try again or email hello@zoonk.com."),
     idle: "",
     invalidEmail: t("Enter a valid email address"),
     rateLimited: t("Too many tries. Wait a minute, then try again."),

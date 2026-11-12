@@ -1,6 +1,5 @@
 "use client";
 
-import { ListGroup } from "@zoonk/learn/list";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import { Button } from "@zoonk/ui/components/button";
 import { downloadFile } from "@zoonk/utils/download";
@@ -10,7 +9,8 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { exportAccountDataAction } from "./export-data-action";
 
-export function ExportDataButton() {
+/** A row of the profile's "Your data" list. */
+export function ExportDataRow() {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
@@ -27,29 +27,24 @@ export function ExportDataButton() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <ListGroup>
-        <SettingRow
-          description={t("Everything Zoonk keeps about you, as one file")}
-          label={t("Download my data")}
-        >
-          <form action={() => download()} className="contents">
-            <Button
-              aria-label={t("Download my data")}
-              busy={isPending}
-              icon={<DownloadIcon aria-hidden="true" />}
-              size="sm"
-              type="submit"
-              variant="outline"
-            >
-              {t("Download")}
-            </Button>
-          </form>
-        </SettingRow>
-      </ListGroup>
+    <div className="flex flex-col">
+      <SettingRow label={t("Download my data")}>
+        <form action={() => download()} className="contents">
+          <Button
+            aria-label={t("Download my data")}
+            busy={isPending}
+            icon={<DownloadIcon aria-hidden="true" />}
+            size="sm"
+            type="submit"
+            variant="outline"
+          >
+            {t("Download")}
+          </Button>
+        </form>
+      </SettingRow>
 
       {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
+        <p className="text-destructive-text pb-3 text-sm" role="alert">
           {t("We couldn't prepare the download. Try again.")}
         </p>
       )}

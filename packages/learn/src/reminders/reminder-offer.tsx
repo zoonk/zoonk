@@ -8,10 +8,10 @@ import { BellIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
-import { useTimeZoneName } from "../_utils/locale";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 import { type StudyMomentView } from "../session/session-types";
 import { ReminderTimeSelect } from "./reminder-time";
+import { useOtherZoneName } from "./reminder-zone";
 
 export type ReminderOfferActions = {
   /** True only for the call that marked the offer shown. */
@@ -139,9 +139,7 @@ function GuestOffer({
   return (
     <OfferFrame
       claimed={claimed}
-      description={t("At {time} on your study days, when you still have learning left.", {
-        time: formatTime(time),
-      })}
+      description={t("An email at {time} on your study days.", { time: formatTime(time) })}
       onSeen={onSeen}
       title={t("Want a study reminder?")}
     >
@@ -151,7 +149,7 @@ function GuestOffer({
           href={signUpHref}
           icon={<UserPlusIcon aria-hidden="true" />}
         >
-          {t("Create an account to get email reminders")}
+          {t("Create an account")}
         </PendingLink>
         <Button onClick={onClose} size="sm" variant="ghost">
           {t("No thanks")}
@@ -180,7 +178,7 @@ function EmailOffer({
 }) {
   const t = useExtracted();
   const formatTime = useFormatTimeOfDay();
-  const zone = useTimeZoneName(timeZone);
+  const zone = useOtherZoneName(timeZone);
   const selectId = useId();
   const [time, setTime] = useState(suggestedTime);
   const [result, setResult] = useState<"failed" | "saved" | null>(null);
@@ -192,16 +190,13 @@ function EmailOffer({
       setResult(saved ? "saved" : "failed");
     });
 
-  const description = t(
-    "We'll email {address} at {time} on your study days, when you still have learning left.",
-    { address, time: formatTime(time) },
-  );
+  const description = t("An email to {address} on your study days.", { address });
 
   if (result === "saved") {
     return (
       <OfferFrame
         claimed
-        description={description}
+        description={t("At {time} on your study days.", { time: formatTime(time) })}
         onSeen={onSeen}
         title={t("Email reminders are on.")}
       />
@@ -220,7 +215,7 @@ function EmailOffer({
           {t("Reminder time")}
         </label>
         <ReminderTimeSelect disabled={isSaving} id={selectId} onChange={setTime} time={time} />
-        <span className="text-muted-foreground text-xs">{zone}</span>
+        {zone && <span className="text-muted-foreground text-xs">{zone}</span>}
       </div>
 
       {result === "failed" && <ChangeSaveError />}

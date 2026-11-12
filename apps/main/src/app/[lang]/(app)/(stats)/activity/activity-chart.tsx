@@ -146,15 +146,16 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
     getActivityCalendarDay({ day, index, maximumActivitiesCompleted }),
   );
 
-  const details = days.map((day): ChartPointDetail => [
-    formatDay(day.date),
-    t({
-      description:
-        "A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.",
-      message: "{count, plural, =0 {No study} one {# activity} other {# activities}}",
-      values: { count: day.activitiesCompleted },
-    }),
-  ]);
+  const details = days.map((day): ChartPointDetail => {
+    if (day.lessonCompletions > 0) {
+      return [
+        formatDay(day.date),
+        t("{count, plural, one {# lesson} other {# lessons}}", { count: day.lessonCompletions }),
+      ];
+    }
+
+    return [formatDay(day.date), day.activitiesCompleted > 0 ? t("Studied") : t("No study")];
+  });
 
   const startIndex = days.findIndex((day) => day.date.getTime() === keyboardStartDate?.getTime());
 

@@ -16,7 +16,7 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return { title: t("Sign in to Zoonk") };
+  return { title: t("Log in to Zoonk") };
 }
 
 export default async function AuthLayout({ children }: LayoutProps<"/auth/[locale]">) {

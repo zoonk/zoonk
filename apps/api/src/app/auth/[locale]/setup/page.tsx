@@ -1,11 +1,5 @@
 import { AuthFrame } from "@/components/auth-frame";
-import {
-  Setup,
-  SetupDescription,
-  SetupFormSkeleton,
-  SetupHeader,
-  SetupTitle,
-} from "@/components/setup";
+import { Setup, SetupFormSkeleton, SetupHeader, SetupTitle } from "@/components/setup";
 import { getAuthPageLocale } from "@/i18n/page-locale";
 import { suggestCurrentUsername } from "@zoonk/core/users/current";
 import { getSession } from "@zoonk/core/users/session";
@@ -63,12 +57,6 @@ export default async function SetupPage({ searchParams }: PageProps<"/auth/[loca
       <Setup>
         <SetupHeader>
           <SetupTitle>{t("What should we call you?")}</SetupTitle>
-          <SetupDescription>
-            {t({
-              description: "“it” is the name and username the learner picks on this screen.",
-              message: "You can change it later in your profile.",
-            })}
-          </SetupDescription>
         </SetupHeader>
 
         <Suspense fallback={<SetupFormSkeleton />}>

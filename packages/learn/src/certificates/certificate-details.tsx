@@ -147,7 +147,7 @@ export function CertificateDetails({
       </dl>
       {shared && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
-          {t("Anyone with the link can see this certificate. Its page doesn't show up in search.")}
+          {t("Anyone with the link can see this certificate.")}
         </p>
       )}
     </section>

@@ -14,7 +14,7 @@ import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
-  return { robots: { follow: false, index: false }, title: t("Logbook") };
+  return { robots: { follow: false, index: false }, title: t("Weekly summary") };
 }
 
 function LogbookSkeleton() {

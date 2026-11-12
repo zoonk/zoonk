@@ -16,7 +16,6 @@ import {
 } from "@zoonk/core/auth/hooks/username-availability";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { unstable_rethrow } from "next/navigation";
 import { useActionState, useId, useState } from "react";
@@ -58,17 +57,15 @@ function UsernameDescription({
     );
   }
 
-  return (
-    <p
-      className={cn(
-        "text-sm",
-        status === "invalid" ? "text-destructive-text" : "text-muted-foreground",
-      )}
-      id={id}
-    >
-      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
-    </p>
-  );
+  if (status === "invalid") {
+    return (
+      <p className="text-destructive-text text-sm" id={id}>
+        {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
+      </p>
+    );
+  }
+
+  return null;
 }
 
 function UsernameLine({ onChange, username }: { onChange: () => void; username: string }) {
@@ -148,7 +145,7 @@ export function SetupProfileForm({
           <InputGroup>
             <InputGroupAddon>@</InputGroupAddon>
             <InputGroupInput
-              aria-describedby={descriptionId}
+              aria-describedby={status === "idle" ? undefined : descriptionId}
               aria-invalid={status === "invalid" || status === "taken"}
               autoCapitalize="none"
               autoComplete="username"

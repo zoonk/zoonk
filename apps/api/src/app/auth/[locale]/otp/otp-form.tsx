@@ -104,9 +104,7 @@ function OTPErrorMessage({ status }: { status: OTPStatus }) {
   const t = useExtracted();
 
   const messages: Partial<Record<OTPStatus, string>> = {
-    disposableEmail: t(
-      "Temporary email addresses aren't supported. Use another email or a privacy alias.",
-    ),
+    disposableEmail: t("Temporary email addresses don't work here. Use another email."),
     error: t("Something went wrong. Try again in a moment."),
     expired: t("This code expired. Get a new one."),
     rateLimited: t("Too many tries. Wait a minute, then try again."),

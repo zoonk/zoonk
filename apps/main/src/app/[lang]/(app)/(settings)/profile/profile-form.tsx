@@ -19,7 +19,6 @@ import {
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useId, useState } from "react";
@@ -33,7 +32,7 @@ function NameHint({ isTooLong }: { isTooLong: boolean }) {
     return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
   }
 
-  return t("How Zoonk and your buddy call you, and the name on your certificates.");
+  return t("Your certificates and your buddy use this name.");
 }
 
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {
@@ -60,11 +59,15 @@ function UsernameHint({ status, username }: { status: UsernameStatusType; userna
     );
   }
 
-  return (
-    <span className={cn(status === "invalid" && "text-destructive-text")}>
-      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
-    </span>
-  );
+  if (status === "invalid") {
+    return (
+      <span className="text-destructive-text">
+        {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
+      </span>
+    );
+  }
+
+  return null;
 }
 
 function SaveButton({ disabled }: { disabled: boolean }) {
@@ -166,7 +169,7 @@ export function ProfileForm({
         </SettingRow>
 
         <SettingRow
-          description={<UsernameHint status={status} username={username} />}
+          description={status !== "idle" && <UsernameHint status={status} username={username} />}
           descriptionId={usernameHintId}
           label={<label htmlFor="username">{t("Username")}</label>}
           wide
@@ -176,7 +179,7 @@ export function ProfileForm({
               <InputGroupText>@</InputGroupText>
             </InputGroupAddon>
             <InputGroupInput
-              aria-describedby={usernameHintId}
+              aria-describedby={status === "idle" ? undefined : usernameHintId}
               aria-invalid={status === "invalid" || status === "taken"}
               autoCapitalize="none"
               autoComplete="username"

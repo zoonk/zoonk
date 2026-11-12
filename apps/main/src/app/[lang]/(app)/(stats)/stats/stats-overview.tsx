@@ -1,4 +1,3 @@
-import { getProgressLearningTimeLabel } from "@/components/progress/progress-learning-time-label";
 import { loadOptionalData } from "@/data/_utils/load-optional-data";
 import { getAppLocale } from "@/i18n/locale";
 import { type AppRoute, Link } from "@/i18n/navigation";
@@ -40,10 +39,6 @@ const TILE_CLASS = "hover:bg-muted/40 relative transition-colors";
 const DETAILS_CLASS =
   "hidden gap-8 md:grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-10";
 
-function renderCount(chunks: React.ReactNode) {
-  return <span className="font-mono tabular-nums">{chunks}</span>;
-}
-
 function TileLink<Href extends string>({
   href,
   label,
@@ -60,27 +55,23 @@ function TileLink<Href extends string>({
   );
 }
 
-async function LevelTile({ level }: { level: BeltLevelDetails }) {
-  const t = await getExtracted();
+async function BeltTile({ level }: { level: BeltLevelDetails }) {
   const belt = await getBeltLabel({ color: level.color });
-  const label = t("Level");
 
   return (
     <StatTile
       className={TILE_CLASS}
-      detail={belt}
       icon={<BeltIndicator aria-hidden color={level.color} label={belt} size="sm" />}
-      label={label}
-      value={<TileLink href={getMenu("level").url} label={label} value={String(level.level)} />}
+      label={belt}
+      value={<TileLink href={getMenu("level").url} label={belt} value={String(level.level)} />}
     />
   );
 }
 
-async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy" | "insights"> }) {
+async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy"> }) {
   const t = await getExtracted();
   const format = await getFormatter();
   const label = t("Energy");
-  const { insights } = energy;
 
   const value = format.number(energy.currentEnergy / PERCENT, {
     maximumFractionDigits: 0,
@@ -90,12 +81,6 @@ async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy"
   return (
     <StatTile
       className={TILE_CLASS}
-      detail={
-        insights &&
-        t("Average {value}", {
-          value: formatMetricPercent({ format, value: insights.averageEnergy }),
-        })
-      }
       icon={<ZapIcon />}
       label={label}
       tone="energy"
@@ -113,17 +98,9 @@ async function StudyDaysTile({
   const format = await getFormatter();
   const label = t("Days studied");
 
-  const time = await getProgressLearningTimeLabel({
-    totalSeconds: activity?.totalLearningSeconds ?? 0,
-  });
-
   return (
     <StatTile
       className={TILE_CLASS}
-      detail={t("{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}", {
-        lessons: activity?.totalLessonCompletions ?? 0,
-        time,
-      })}
       icon={<ChartNoAxesColumnIncreasingIcon />}
       label={label}
       tone="success"
@@ -141,26 +118,13 @@ async function StudyDaysTile({
 async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
   const t = await getExtracted();
   const format = await getFormatter();
-  const label = t("Score");
+  const label = t("Right answers");
   const { score } = progress;
-
-  const value = score ? formatMetricPercent({ format, value: score.score }) : t("Not yet");
+  const value = score ? formatMetricPercent({ format, value: score.score }) : "–";
 
   return (
     <StatTile
       className={TILE_CLASS}
-      detail={
-        score
-          ? t.rich(
-              "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}",
-              {
-                correct: score.correctAnswers,
-                mono: renderCount,
-                total: formatWholeNumber({ format, value: score.totalAnswers }),
-              },
-            )
-          : t("Right answers in the last 90 days")
-      }
       icon={<TargetIcon />}
       label={label}
       tone="success"
@@ -190,7 +154,7 @@ export async function StatsOverview() {
   return (
     <div className="flex flex-col gap-8">
       <StatTiles className={TILES_CLASS}>
-        {progress.level && <LevelTile level={progress.level} />}
+        {progress.level && <BeltTile level={progress.level} />}
         {energy && <EnergyTile energy={energy} />}
         <StudyDaysTile activity={activity} />
         <ScoreTile progress={progress} />
@@ -218,7 +182,7 @@ export async function StatsOverviewSkeleton() {
       <div className={DETAILS_CLASS}>
         <PageSection>
           <PageSectionHeader>
-            <PageSectionTitle>{t("Score · 90 days")}</PageSectionTitle>
+            <PageSectionTitle>{t("Right answers · 90 days")}</PageSectionTitle>
           </PageSectionHeader>
           <ScoreChartSkeleton />
         </PageSection>

@@ -8,11 +8,12 @@ import {
   type MemoryView,
 } from "@zoonk/core/memory/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { Switch } from "@zoonk/ui/components/switch";
 import { downloadFile } from "@zoonk/utils/download";
 import { safeAsync } from "@zoonk/utils/error";
 import { DownloadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useOptimistic, useState, useTransition } from "react";
+import { useId, useOptimistic, useState, useTransition } from "react";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import {
   PageSection,
@@ -21,7 +22,7 @@ import {
   PageSectionTitle,
 } from "../_components/page";
 import { ChangeSaveError } from "../_components/save-error";
-import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
+import { SettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
@@ -62,14 +63,6 @@ function groupByCategory(facts: MemoryFactView[]) {
   })).filter((group) => group.facts.length > 0);
 }
 
-function MemorySwitchDescription({ enabled }: { enabled: boolean }) {
-  const t = useExtracted();
-
-  return enabled
-    ? t("Personal examples, plans that fit your week and calls that remember your news")
-    : t("Memory is off. Nothing new is learned, and these facts aren't used.");
-}
-
 function MemorySwitch({
   enabled,
   onChange,
@@ -78,15 +71,23 @@ function MemorySwitch({
   onChange: (enabled: boolean) => void;
 }) {
   const t = useExtracted();
+  const labelId = useId();
+  const descriptionId = useId();
 
   return (
     <ListGroup>
-      <SwitchSettingRow
-        checked={enabled}
-        description={<MemorySwitchDescription enabled={enabled} />}
-        label={t("Use memory")}
-        onCheckedChange={onChange}
-      />
+      <SettingRow
+        description={!enabled && t("Nothing is remembered or used while this is off.")}
+        descriptionId={descriptionId}
+        label={<span id={labelId}>{t("Use memory")}</span>}
+      >
+        <Switch
+          aria-describedby={enabled ? undefined : descriptionId}
+          aria-labelledby={labelId}
+          checked={enabled}
+          onCheckedChange={onChange}
+        />
+      </SettingRow>
     </ListGroup>
   );
 }
@@ -110,10 +111,7 @@ function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) 
   return (
     <div className="flex flex-col gap-2">
       <ListGroup>
-        <SettingRow
-          description={t("Everything in your memory, as one file")}
-          label={t("Download my memory")}
-        >
+        <SettingRow label={t("Download my memory")}>
           <form action={() => download()} className="contents">
             <Button
               aria-label={t("Download my memory")}
@@ -189,37 +187,33 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
 
       {screen.failed && <ChangeSaveError />}
 
-      {groups.length === 0 ? (
+      {groups.length === 0 && screen.enabled && (
         <p className="text-muted-foreground text-sm">
-          {screen.enabled
-            ? t(
-                "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here.",
-              )
-            : t("Nothing here. Zoonk keeps no notes about you while memory is off.")}
+          {t("Nothing yet. Notes show up here as you study and chat.")}
         </p>
-      ) : (
-        groups.map((group) => (
-          <PageSection aria-labelledby={`memory-${group.category}`} key={group.category}>
-            <PageSectionHeader>
-              <PageSectionTitle id={`memory-${group.category}`}>
-                <MemoryCategoryName category={group.category} />
-              </PageSectionTitle>
-            </PageSectionHeader>
-
-            <ul className={LIST_GROUP_CLASS}>
-              {group.facts.map((fact) => (
-                <MemoryFactRow
-                  fact={fact}
-                  memoryEnabled={screen.enabled}
-                  key={fact.id}
-                  onDelete={() => screen.removeFact(fact.id)}
-                  onEdit={(statement) => screen.updateFact(fact.id, statement)}
-                />
-              ))}
-            </ul>
-          </PageSection>
-        ))
       )}
+
+      {groups.map((group) => (
+        <PageSection aria-labelledby={`memory-${group.category}`} key={group.category}>
+          <PageSectionHeader>
+            <PageSectionTitle id={`memory-${group.category}`}>
+              <MemoryCategoryName category={group.category} />
+            </PageSectionTitle>
+          </PageSectionHeader>
+
+          <ul className={LIST_GROUP_CLASS}>
+            {group.facts.map((fact) => (
+              <MemoryFactRow
+                fact={fact}
+                memoryEnabled={screen.enabled}
+                key={fact.id}
+                onDelete={() => screen.removeFact(fact.id)}
+                onEdit={(statement) => screen.updateFact(fact.id, statement)}
+              />
+            ))}
+          </ul>
+        </PageSection>
+      ))}
 
       <footer className="flex flex-col gap-4">
         <MemoryExportRow exportMemory={actions.exportMemory} />

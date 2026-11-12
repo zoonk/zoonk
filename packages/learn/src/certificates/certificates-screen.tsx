@@ -13,7 +13,6 @@ import {
   ListRow,
   ListRowBody,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
@@ -148,7 +147,6 @@ function GhostCertificate() {
 }
 
 function UpNextRow({ item }: { item: CertificateUpNext }) {
-  const t = useExtracted();
   const formatShare = useFormatShare();
 
   return (
@@ -162,11 +160,6 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
             {item.goal.displayName}
             <GoalCountryName goal={item.goal} />
           </ListRowTitle>
-          <ListRowDescription>
-            {item.progress === null
-              ? t("Comes when you finish a level, studying at least half of it")
-              : t("Your certificate comes when you finish the plan")}
-          </ListRowDescription>
         </ListRowContent>
         {item.progress !== null && (
           <ListRowTrailing>
@@ -197,9 +190,6 @@ function EmptyCertificates({
         <h2 className="mt-6 text-base font-semibold tracking-[-0.01em]">
           {t("No certificates yet")}
         </h2>
-        <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
-          {t("Your certificates show up here when you finish a level or a plan.")}
-        </p>
         <LearnLink
           className={buttonVariants({ className: "mt-5", size: "lg" })}
           href={continueHref}

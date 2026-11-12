@@ -40,12 +40,12 @@ function ChangeFailure({ failure }: { failure: PasskeyChangeFailure | null }) {
   if (failure === "signInAgain") {
     return (
       <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-sm">{t("For your safety, sign in again, then add your passkey.")}</p>
+        <p className="text-sm">{t("For your safety, log in again, then add your passkey.")}</p>
         <CurrentPageLoginLink
           className={buttonVariants({ size: "sm", variant: "outline" })}
           icon={<LogInIcon aria-hidden="true" />}
         >
-          {t("Sign in again")}
+          {t("Log in again")}
         </CurrentPageLoginLink>
       </div>
     );

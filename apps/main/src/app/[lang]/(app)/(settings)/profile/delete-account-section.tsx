@@ -3,8 +3,6 @@
 import { rememberAccountDeleted } from "@/app/[lang]/account-deleted-toast";
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { forgetDeletedSession } from "@/lib/forget-deleted-session";
-import { ListGroup } from "@zoonk/learn/list";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import {
   AlertDialog,
@@ -25,8 +23,6 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type DeleteAccountResult, deleteAccountAction } from "./delete-account-action";
 
-const DELETE_ACCOUNT_ID = "delete-account";
-
 const DELETE_BUTTON_CLASS = cn(
   buttonVariants({ size: "sm", variant: "outline" }),
   "text-destructive-text border-destructive/40 hover:bg-destructive/10 hover:text-destructive-text",
@@ -43,13 +39,13 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
 
   if (result === "signInAgain") {
     return (
-      <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-sm">{t("For your safety, sign in again, then delete your account.")}</p>
+      <div className="flex flex-col items-start gap-2 pb-3" role="alert">
+        <p className="text-sm">{t("For your safety, log in again, then delete your account.")}</p>
         <CurrentPageLoginLink
           className={buttonVariants({ size: "sm", variant: "outline" })}
           icon={<LogInIcon aria-hidden="true" />}
         >
-          {t("Sign in again")}
+          {t("Log in again")}
         </CurrentPageLoginLink>
       </div>
     );
@@ -57,7 +53,7 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
 
   if (result === "failed") {
     return (
-      <p className="text-destructive-text text-sm" role="alert">
+      <p className="text-destructive-text pb-3 text-sm" role="alert">
         {t("We couldn't delete your account. Try again or email hello@zoonk.com.")}
       </p>
     );
@@ -66,8 +62,11 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
   return null;
 }
 
-/** `plusNotice` says what happens to Plus bought on the website, which the server reads. */
-export function DeleteAccountSection({
+/**
+ * A row of the profile's "Your data" list. `plusNotice` says what happens to the learner's Plus,
+ * which the server reads.
+ */
+export function DeleteAccountRow({
   plusNotice,
   userId,
 }: {
@@ -98,24 +97,13 @@ export function DeleteAccountSection({
   };
 
   return (
-    <PageSection aria-labelledby={DELETE_ACCOUNT_ID}>
-      <PageSectionHeader>
-        <PageSectionTitle id={DELETE_ACCOUNT_ID}>{t("Delete account")}</PageSectionTitle>
-      </PageSectionHeader>
-
+    <div className="flex flex-col">
       <AlertDialog>
-        <ListGroup>
-          <SettingRow
-            description={t(
-              "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there.",
-            )}
-            label={t("Delete my account")}
-          >
-            <AlertDialogTrigger aria-label={t("Delete account")} className={DELETE_BUTTON_CLASS}>
-              {t("Delete…")}
-            </AlertDialogTrigger>
-          </SettingRow>
-        </ListGroup>
+        <SettingRow label={t("Delete my account")}>
+          <AlertDialogTrigger aria-label={t("Delete account")} className={DELETE_BUTTON_CLASS}>
+            {t("Delete…")}
+          </AlertDialogTrigger>
+        </SettingRow>
 
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -140,6 +128,6 @@ export function DeleteAccountSection({
       </AlertDialog>
 
       <DeleteAccountOutcome result={result} />
-    </PageSection>
+    </div>
   );
 }

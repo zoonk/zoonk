@@ -64,7 +64,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
           </span>
         ))}
       </figcaption>
-      <span className="sr-only">{t("Right answers on this skill each day of the week")}</span>
+      <span className="sr-only">{t("Right answers on this topic each day of the week")}</span>
     </figure>
   );
 }

@@ -46,11 +46,11 @@ export async function LoginScreen({
 
       <Login>
         <LoginHeader>
-          <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
+          <LoginTitle>{t("Log in or create an account")}</LoginTitle>
 
           {expired && (
             <LoginDescription role="status">
-              {t("That sign-in expired. Try again.")}
+              {t("That link expired. Log in again.")}
             </LoginDescription>
           )}
         </LoginHeader>
@@ -63,7 +63,7 @@ export async function LoginScreen({
 
         <LoginFooter>
           {t.rich(
-            "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+            "By continuing, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
             {
               privacy: linkTo(getMainPageUrl({ locale, path: "/privacy" })),
               terms: linkTo(getMainPageUrl({ locale, path: "/terms" })),

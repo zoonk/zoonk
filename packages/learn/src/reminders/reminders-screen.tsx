@@ -14,11 +14,9 @@ import { NoticeCard } from "../_components/notice-card";
 import { PageSectionFooter } from "../_components/page";
 import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
-import { useTimeZoneName } from "../_utils/locale";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
-import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { ReminderTimeSelect } from "./reminder-time";
+import { useOtherZoneName } from "./reminder-zone";
 
 export type ReminderChange = Pick<StudyReminderUpdateInput, "emailOn" | "pushOn" | "time">;
 
@@ -31,14 +29,6 @@ function applyChange(reminder: StudyReminderView, change: ReminderChange): Study
   };
 }
 
-function PlansLink({ children }: { children: React.ReactNode }) {
-  return <LearnLink href={useLearnRoutes().journey}>{children}</LearnLink>;
-}
-
-function renderPlansLink(chunks: React.ReactNode) {
-  return <PlansLink>{chunks}</PlansLink>;
-}
-
 function TimeSetting({
   onChange,
   time,
@@ -49,7 +39,7 @@ function TimeSetting({
   timeZone: string;
 }) {
   const t = useExtracted();
-  const zone = useTimeZoneName(timeZone);
+  const zone = useOtherZoneName(timeZone);
   const selectId = useId();
   const zoneId = useId();
 
@@ -67,7 +57,12 @@ function TimeSetting({
         </label>
       }
     >
-      <ReminderTimeSelect aria-describedby={zoneId} id={selectId} onChange={onChange} time={time} />
+      <ReminderTimeSelect
+        aria-describedby={zone ? zoneId : undefined}
+        id={selectId}
+        onChange={onChange}
+        time={time}
+      />
     </SettingRow>
   );
 }
@@ -148,10 +143,6 @@ export function RemindersScreen({
             })}
           </PageSectionFooter>
         )}
-
-        <PageSectionFooter>
-          {t.rich("On your study days, from your <link>plans</link>", { link: renderPlansLink })}
-        </PageSectionFooter>
       </div>
 
       {view.quiet && (

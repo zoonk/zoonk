@@ -21,16 +21,10 @@ export async function ManagedSubscription({
   });
 
   const description = getManagedSubscriptionDescription({
-    appleDescription: t(
-      "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
-    ),
-    googleDescription: t(
-      "This subscription is managed through Google Play. To change or cancel it, use Google Play.",
-    ),
+    appleDescription: t("You subscribed in the App Store."),
+    googleDescription: t("You subscribed in Google Play."),
     provider,
-    zoonkDescription: t(
-      "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-    ),
+    zoonkDescription: t("To change or cancel Plus, write to us."),
   });
 
   return (
@@ -53,7 +47,7 @@ export async function ManagedSubscription({
           className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
           href="/support"
         >
-          {t("Contact support")}
+          {t("Get help")}
         </Link>
       </div>
     </div>

@@ -43,7 +43,7 @@ export function SocialLogin() {
       </LoginWithApple>
 
       <LoginError hasError={state === "error"}>
-        {t("There was an error signing you in. Please try again or contact hello@zoonk.com")}
+        {t("We couldn't log you in. Try again or email hello@zoonk.com.")}
       </LoginError>
     </LoginSocial>
   );

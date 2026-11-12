@@ -5,6 +5,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
+  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -37,7 +38,8 @@ export async function ProgressEmptyState({
           <EmptyMedia variant="icon">
             <Icon aria-hidden="true" />
           </EmptyMedia>
-          <EmptyTitle>{t("Start learning to track your progress")}</EmptyTitle>
+          <EmptyTitle>{t("No statistics yet")}</EmptyTitle>
+          <EmptyDescription>{t("They show up after your first lesson.")}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <Link className={buttonVariants({ size: "sm" })} href={getMenu("today").url}>

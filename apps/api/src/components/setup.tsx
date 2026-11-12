@@ -30,10 +30,6 @@ export function SetupTitle({ children, className }: React.ComponentProps<"h1">) 
   );
 }
 
-export function SetupDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-muted-foreground text-sm text-pretty", className)}>{children}</p>;
-}
-
 export function SetupForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
     <form className={cn("flex flex-col gap-4", className)} {...props}>

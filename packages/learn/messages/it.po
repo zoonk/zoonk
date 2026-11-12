@@ -42,6 +42,7 @@ msgstr "Corretta"
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "A seguire"
@@ -73,6 +74,7 @@ msgstr "Saltato"
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
+#: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Fatto"
@@ -1102,20 +1104,14 @@ msgid "Where you live"
 msgstr "Dove vivi"
 
 #: src/appearance/home-country-setting.tsx
-#: src/conversation/tutor-country-offer.tsx
-msgctxt "i8Cibb"
-msgid "For new goals and your examples. It doesn't change the plans you already have."
-msgstr "Per i nuovi obiettivi e gli esempi pensati per te. Non cambia i piani che hai già."
+msgctxt "7AJG2y"
+msgid "For your examples and new goals."
+msgstr "Per gli esempi e i tuoi nuovi obiettivi."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
 msgid "Not set"
 msgstr "Non impostato"
-
-#: src/appearance/language-setting.tsx
-msgctxt "V1yMTL"
-msgid "On this device"
-msgstr "Su questo dispositivo"
 
 #: src/appearance/language-setting.tsx
 msgctxt "y0ef9b"
@@ -1638,9 +1634,9 @@ msgid "Details"
 msgstr "Dettagli"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "QshKyk"
-msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
-msgstr "Chiunque abbia il link può vedere questo certificato. La sua pagina non compare nei risultati di ricerca."
+msgctxt "5zN5Wd"
+msgid "Anyone with the link can see this certificate."
+msgstr "Chiunque abbia il link può vedere questo certificato."
 
 #. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
 #: src/certificates/certificate-labels.ts
@@ -1752,9 +1748,9 @@ msgid "Get your certificate with Plus"
 msgstr "Ottieni il tuo certificato con Plus"
 
 #: src/certificates/certificate-lock.tsx
-msgctxt "QIyGxo"
-msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
-msgstr "Con Plus ricevi un certificato per ogni livello che completi, da stampare e condividere. I certificati che ottieni restano tuoi anche se non hai più Plus."
+msgctxt "0a9W1m"
+msgid "A certificate for every level you finish, to print and share."
+msgstr "Un certificato per ogni livello che completi, da stampare e condividere."
 
 #: src/certificates/certificate-lock.tsx
 msgctxt "Oe9wC5"
@@ -1762,9 +1758,9 @@ msgid "Certificates come with Plus"
 msgstr "I certificati sono inclusi in Plus"
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "l4zQLP"
-msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
-msgstr "Il nome è quello indicato per l’account Zoonk; Zoonk non controlla i documenti d’identità."
+msgctxt "7tn6mk"
+msgid "Names aren't checked against an ID."
+msgstr "I nomi non vengono verificati con un documento d’identità."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "s94wjH"
@@ -1772,23 +1768,23 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "I livelli sono in linea con il CEFR, il Quadro comune europeo di riferimento per le lingue. Non è il risultato di un esame ufficiale."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "iO6aKW"
-msgid "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons."
-msgstr "Zoonk rilascia questo certificato a chi completa un livello studiando almeno la metà delle lezioni."
+msgctxt "LVfsiZ"
+msgid "For finishing this level, studying at least half of its lessons."
+msgstr "Per aver completato questo livello studiando almeno metà delle lezioni."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "j5jrUM"
-msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
-msgstr "Zoonk rilascia questo certificato a chi completa tutti i capitoli di un livello del corso, studiando ogni lezione o superando il relativo test, e vince tutte le sfide del livello."
+msgctxt "Fudciu"
+msgid "For finishing every lesson and challenge of this level."
+msgstr "Per aver completato tutte le lezioni e le sfide di questo livello."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "9Bnhaw"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
-msgstr "Zoonk rilascia questo certificato a chi completa ogni lezione del piano di un corso, studiandola o superandone il test, e vince tutte le sfide del piano."
+msgctxt "R--mlV"
+msgid "For finishing every lesson and challenge of this plan."
+msgstr "Per aver completato tutte le lezioni e le sfide di questo piano."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "wB_Ebz"
-msgid "It's a record of completion on Zoonk, not academic credit."
+msgctxt "371LJf"
+msgid "A record of completion on Zoonk, not academic credit."
 msgstr "Attesta il completamento su Zoonk, ma non dà crediti formativi."
 
 #: src/certificates/certificate-meaning.tsx
@@ -1888,11 +1884,6 @@ msgid "Your certificates and your buddy use this name."
 msgstr "È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno."
 
 #: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "È il nome che appare sui tuoi certificati e con cui ti chiama il tuo compagno. Puoi cambiarlo quando vuoi."
-
-#: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
 msgid "Name on your certificates"
 msgstr "Nome sui tuoi certificati"
@@ -1906,11 +1897,6 @@ msgstr "Il tuo nome, come vuoi che appaia"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "Nome e cognome"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Qcr1L3"
-msgid "It shows on every certificate and its link. Your buddy calls you by it too."
-msgstr "Compare su ogni certificato e nel relativo link. Anche il tuo compagno ti chiama così."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "5lbext"
@@ -2026,24 +2012,9 @@ msgid "Certificates"
 msgstr "Certificati"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "OqErrx"
-msgid "Comes when you finish a level, studying at least half of it"
-msgstr "Lo ottieni quando completi un livello, dopo averne studiato almeno metà"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "ojltlj"
-msgid "Your certificate comes when you finish the plan"
-msgstr "Ricevi il certificato quando completi il piano"
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
 msgid "No certificates yet"
 msgstr "Ancora nessun certificato"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "_eLagx"
-msgid "Your certificates show up here when you finish a level or a plan."
-msgstr "I tuoi certificati compaiono qui quando completi un livello o un piano."
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "0X-xfW"
@@ -2839,6 +2810,11 @@ msgstr "Salvato. Stiamo preparando il tuo nuovo piano e nel frattempo puoi conti
 msgctxt "RZJ-9n"
 msgid "Content country: {country}"
 msgstr "Paese di riferimento: {country}"
+
+#: src/conversation/tutor-country-offer.tsx
+msgctxt "i8Cibb"
+msgid "For new goals and your examples. It doesn't change the plans you already have."
+msgstr "Per i nuovi obiettivi e gli esempi pensati per te. Non cambia i piani che hai già."
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
@@ -5320,6 +5296,7 @@ msgstr "{done} su {planned}"
 
 #: src/journey/pace-details.tsx
 #: src/today/today-week.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "PtxhIN"
 msgid "This week"
 msgstr "Questa settimana"
@@ -7557,14 +7534,9 @@ msgid "From a chat"
 msgstr "Da una chat"
 
 #: src/memory/memory-labels.tsx
-msgctxt "TVfPfM"
-msgid "From onboarding"
-msgstr "Dalla configurazione iniziale"
-
-#: src/memory/memory-labels.tsx
-msgctxt "dppJZz"
-msgid "From a study session"
-msgstr "Da una sessione di studio"
+msgctxt "5yxABH"
+msgid "From your lessons"
+msgstr "Dalle tue lezioni"
 
 #. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
 #: src/memory/memory-labels.tsx
@@ -7573,24 +7545,14 @@ msgid "From a call"
 msgstr "Da una conversazione"
 
 #: src/memory/memory-screen.tsx
-msgctxt "PRUyMZ"
-msgid "Personal examples, plans that fit your week and calls that remember your news"
-msgstr "Esempi su misura per te, piani adatti alla tua settimana e conversazioni che tengono conto delle tue novità"
-
-#: src/memory/memory-screen.tsx
-msgctxt "yp_BUN"
-msgid "Memory is off. Nothing new is learned, and these facts aren't used."
-msgstr "La memoria è disattivata. Non memorizziamo nuove informazioni né usiamo quelle presenti."
+msgctxt "v-N7NN"
+msgid "Nothing is remembered or used while this is off."
+msgstr "Finché è disattivata, non memorizziamo né usiamo nulla."
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
 msgid "Use memory"
 msgstr "Usa la memoria"
-
-#: src/memory/memory-screen.tsx
-msgctxt "jUyOoM"
-msgid "Everything in your memory, as one file"
-msgstr "Tutto il contenuto della tua memoria, in un unico file"
 
 #: src/memory/memory-screen.tsx
 msgctxt "etMoG6"
@@ -7603,14 +7565,9 @@ msgid "We couldn't prepare the download. Try again."
 msgstr "Non siamo riusciti a preparare il file da scaricare. Riprova."
 
 #: src/memory/memory-screen.tsx
-msgctxt "kxonMZ"
-msgid "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here."
-msgstr "Ancora nulla. Mentre studi e chatti, qui compaiono brevi note che aiutano Zoonk a insegnarti meglio."
-
-#: src/memory/memory-screen.tsx
-msgctxt "FL1DwQ"
-msgid "Nothing here. Zoonk keeps no notes about you while memory is off."
-msgstr "Qui non c’è nulla. Zoonk non conserva note su di te quando la memoria è disattivata."
+msgctxt "9fUBB_"
+msgid "Nothing yet. Notes show up here as you study and chat."
+msgstr "Ancora nessun appunto. Compariranno qui mentre studi e chatti."
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -9692,6 +9649,7 @@ msgstr "Crea un account gratuito per aggiungere un PDF, una foto dei tuoi appunt
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminder-offer.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
@@ -13197,17 +13155,6 @@ msgctxt "LveDpT"
 msgid "Not shared"
 msgstr "Non condiviso"
 
-#. Invites the learner to fill in an empty answer.
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "2_2yg-"
-msgid "Add"
-msgstr "Aggiungi"
-
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "v3Sw1m"
-msgid "Not answered"
-msgstr "Senza risposta"
-
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
@@ -13220,9 +13167,9 @@ msgid "Saved"
 msgstr "Salvata"
 
 #: src/profile-questions/about-you-screen.tsx
-msgctxt "AYPOzn"
-msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
-msgstr "La memoria è disattivata, quindi Zoonk non usa le informazioni sulla tua giornata o su ciò che fai nel tempo libero. Attivala in Memoria per modificarle."
+msgctxt "IaHYxv"
+msgid "Turn on Memory to use and change every answer."
+msgstr "Attiva Memoria per usare e modificare tutte le risposte."
 
 #. An option that declines a question: none of the listed options apply.
 #: src/profile-questions/profile-body-parts.ts
@@ -13628,20 +13575,14 @@ msgid "False"
 msgstr "Falso"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "8mg7o6"
-msgid "At {time} on your study days, when you still have learning left."
-msgstr "Alle {time} nei tuoi giorni di studio, se hai ancora qualcosa da studiare."
+msgctxt "zpIWGc"
+msgid "An email at {time} on your study days."
+msgstr "Un’email alle {time} nei tuoi giorni di studio."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "SwCKSr"
 msgid "Want a study reminder?"
 msgstr "Vuoi un promemoria per studiare?"
-
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "ZZS4vO"
-msgid "Create an account to get email reminders"
-msgstr "Crea un account per ricevere promemoria via email"
 
 #: src/reminders/reminder-offer.tsx
 #: src/today/today-insight.tsx
@@ -13650,9 +13591,14 @@ msgid "No thanks"
 msgstr "No, grazie"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "viijDX"
-msgid "We'll email {address} at {time} on your study days, when you still have learning left."
-msgstr "Ti invieremo un’email a {address} alle {time} nei tuoi giorni di studio, se hai ancora qualcosa da studiare."
+msgctxt "P7nVxL"
+msgid "An email to {address} on your study days."
+msgstr "Un’email a {address} nei tuoi giorni di studio."
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "okVjfB"
+msgid "At {time} on your study days."
+msgstr "Alle {time} nei tuoi giorni di studio."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "1mG4ae"
@@ -13676,6 +13622,11 @@ msgid "Time"
 msgstr "Orario"
 
 #: src/reminders/reminders-screen.tsx
+msgctxt "ZZS4vO"
+msgid "Create an account to get email reminders"
+msgstr "Crea un account per ricevere promemoria via email"
+
+#: src/reminders/reminders-screen.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "Email"
@@ -13690,11 +13641,6 @@ msgstr "Notifiche push"
 msgctxt "1uzrpo"
 msgid "To get push notifications, turn them on in the Zoonk app."
 msgstr "Per ricevere le notifiche push, attivale nell’app Zoonk."
-
-#: src/reminders/reminders-screen.tsx
-msgctxt "1cVf3e"
-msgid "On your study days, from your <link>plans</link>"
-msgstr "Nei giorni di studio previsti dai tuoi <link>piani</link>"
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -15585,15 +15531,15 @@ msgctxt "FZtFoB"
 msgid "Writing your first lesson: <lesson>{title}</lesson>"
 msgstr "Stiamo preparando la tua prima lezione: <lesson>{title}</lesson>"
 
-#: src/week/logbook-screen.tsx
-msgctxt "wVu1FL"
-msgid "Let's go"
-msgstr "Inizia"
-
 #: src/week/logbook-sections.tsx
 msgctxt "H2q9r9"
 msgid "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}"
 msgstr "{count, plural, =0 {# giorni di studio} one {# giorno di studio} other {# giorni di studio}}"
+
+#: src/week/logbook-sections.tsx
+msgctxt "uJ3xDF"
+msgid "You finished {name}."
+msgstr "Hai completato {name}."
 
 #: src/week/logbook-sections.tsx
 msgctxt "koboTV"
@@ -15604,11 +15550,6 @@ msgstr "{time} in più rispetto alla settimana prima!"
 msgctxt "mY3vs_"
 msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
 msgstr "{questions, plural, one {# domanda in più rispetto alla settimana prima!} other {# domande in più rispetto alla settimana prima!}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "v3GVFU"
-msgid "Phase {phase} · {name} done"
-msgstr "Fase {phase} · {name}: completata"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"
@@ -15646,24 +15587,24 @@ msgid "Every week starts fresh."
 msgstr "Ogni settimana è un nuovo inizio."
 
 #: src/week/logbook-sections.tsx
-msgctxt "d1woXi"
-msgid "It shows your week in numbers and the skill that grew the most."
-msgstr "Ti mostra i numeri della tua settimana e l’abilità in cui hai fatto più progressi."
+msgctxt "cr3hnH"
+msgid "It shows your week in numbers."
+msgstr "Mostra la tua settimana in numeri."
 
 #: src/week/logbook-sections.tsx
-msgctxt "zrmLbt"
-msgid "{skill} is Mastered now: you remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
-msgstr "{skill} ora è al livello Padroneggiato: hai ricordato la risposta in {count, plural, =0 {# giorni diversi} one {# giorno diverso} other {# giorni diversi}}."
+msgctxt "k0_uGW"
+msgid "You remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
+msgstr "L’hai ricordato in {count, plural, =0 {# giorni diversi} one {# giorno diverso} other {# giorni diversi}}."
 
 #: src/week/logbook-sections.tsx
-msgctxt "iQqSg9"
-msgid "{skill} is Solid now: you kept getting it right on later days."
-msgstr "{skill} ora è al livello Solido: hai continuato a rispondere correttamente nei giorni successivi."
+msgctxt "xuBvJB"
+msgid "You kept getting it right on later days."
+msgstr "Hai continuato a rispondere bene nei giorni successivi."
 
 #: src/week/logbook-sections.tsx
-msgctxt "HhTzc6"
-msgid "The biggest turnaround"
-msgstr "Il miglior recupero"
+msgctxt "YZYqtB"
+msgid "Most improved"
+msgstr "Dove hai fatto più progressi"
 
 #. {from} and {to} are shares of right answers, like "40%".
 #: src/week/logbook-sections.tsx
@@ -15672,24 +15613,19 @@ msgid "{from} → {to} right answers"
 msgstr "{from} → {to} di risposte corrette"
 
 #: src/week/logbook-sections.tsx
-msgctxt "z0xsAO"
-msgid "What you learned"
-msgstr "Cosa hai imparato"
+msgctxt "t1zI4h"
+msgid "New topics"
+msgstr "Nuovi argomenti"
 
 #: src/week/logbook-sections.tsx
-msgctxt "p28DcJ"
-msgid "{count, plural, one {new idea} other {new ideas}}"
-msgstr "{count, plural, one {nuova idea} other {nuove idee}}"
+msgctxt "ifO8sT"
+msgid "Review questions"
+msgstr "Domande di ripasso"
 
 #: src/week/logbook-sections.tsx
-msgctxt "Ml35-W"
-msgid "{count, plural, one {review} other {reviews}}"
-msgstr "{count, plural, one {ripasso} other {ripassi}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "hCSegn"
-msgid "{count, plural, one {mistake fixed} other {mistakes fixed}}"
-msgstr "{count, plural, one {errore corretto} other {errori corretti}}"
+msgctxt "mioNGq"
+msgid "Mistakes fixed"
+msgstr "Errori corretti"
 
 #. A badge for catching the Trickster's traps.
 #: src/week/logbook-sections.tsx
@@ -15697,12 +15633,7 @@ msgctxt "_-ONf9"
 msgid "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}"
 msgstr "{count, plural, one {Distintivo Caccia alle trappole} other {Distintivi Caccia alle trappole}}"
 
-#: src/week/logbook-sections.tsx
-msgctxt "iMjjOH"
-msgid "Next week"
-msgstr "Prossima settimana"
-
 #: src/week/turnaround-chart.tsx
-msgctxt "tnsNdR"
-msgid "Right answers on this skill each day of the week"
-msgstr "Risposte corrette su questa abilità per ogni giorno della settimana"
+msgctxt "zLXlcN"
+msgid "Right answers on this topic each day of the week"
+msgstr "Risposte corrette su questo argomento per ogni giorno della settimana"
