@@ -91,6 +91,12 @@ function textData(fields: readonly { after: unknown; field: string }[]) {
   };
 }
 
+function clearedDescription(fields: readonly { after: unknown; field: string }[]) {
+  return fields.some(({ after, field }) => field === "description" && after === null)
+    ? { description: null }
+    : {};
+}
+
 function contentOf(fields: readonly { after: unknown; field: string }[]) {
   const content = fields.find((field) => field.field === "content")?.after;
 
@@ -149,7 +155,11 @@ async function applyChange({
 
   switch (change.model) {
     case "Course":
-      await tx.course.update({ data: textData(fields), where });
+      await tx.course.update({
+        data: { ...textData(fields), ...clearedDescription(fields) },
+        where,
+      });
+
       return;
     case "Chapter":
       await tx.chapter.update({ data: textData(fields), where });

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { STAFF_PROPOSE_SCOPE, STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { type Step, prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
@@ -1056,5 +1057,35 @@ describe("stale removal reverts", () => {
     await expect(
       prisma.item.findUniqueOrThrow({ select: { retiredAt: true }, where: { id: item.id } }),
     ).resolves.toStrictEqual(before);
+  });
+});
+
+describe("course descriptions", () => {
+  it("reverts a description added to a course that had none", async () => {
+    const course = await courseFixture({ description: null });
+
+    await signInProposer();
+
+    const added = await proposeFix({
+      changes: [{ id: course.id, model: "Course", set: { description: "Learn the basics." } }],
+      reason: "The course had no description",
+    });
+
+    const approver = await signInApprover();
+    await approve({ fixId: added.id, key: approver.key });
+
+    const undo = await proposeContentFixRevertInAdmin({ fixId: added.id, reason: "Undo" });
+
+    if (undo.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${JSON.stringify(undo)}`);
+    }
+
+    await expect(approve({ fixId: undo.fix.id, key: approver.key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ select: { description: true }, where: { id: course.id } }),
+    ).resolves.toStrictEqual({ description: null });
   });
 });

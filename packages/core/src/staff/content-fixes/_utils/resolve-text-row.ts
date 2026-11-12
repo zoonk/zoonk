@@ -46,24 +46,35 @@ function summaryProblem({ after, before }: { after: unknown; before: unknown }):
     : `summary.ideas.${String(moved)} may change only its label and text; its icon, its "about" line and the rest stay.`;
 }
 
+/** A course may have no description, so reverting one added to it writes null again. */
+function isClearable({ field, model }: { field: string; model: TextModel }): boolean {
+  return model === "Course" && field === "description";
+}
+
 function fieldProblem({
   after,
   before,
   field,
+  model,
 }: {
   after: unknown;
   before: unknown;
   field: string;
+  model: TextModel;
 }): string | null {
   if (field === "summary") {
     return summaryProblem({ after, before });
+  }
+
+  if (after === null && isClearable({ field, model })) {
+    return null;
   }
 
   return nonEmptyText(after) === null ? `${field} must be text that isn't blank.` : null;
 }
 
 function toValue({ after, field }: { after: Json; field: string }): Json {
-  return field === "summary" ? after : nonEmptyText(after);
+  return field === "summary" || after === null ? after : nonEmptyText(after);
 }
 
 async function loadTextRow(db: TransactionClient, { id, model }: { id: string; model: TextModel }) {
@@ -149,7 +160,7 @@ export async function resolveTextRow(
   const row: Record<string, Json> = loaded.row;
 
   const problem = Object.entries(set)
-    .map(([field, after]) => fieldProblem({ after, before: row[field], field }))
+    .map(([field, after]) => fieldProblem({ after, before: row[field], field, model }))
     .find((found) => found !== null);
 
   if (problem) {
