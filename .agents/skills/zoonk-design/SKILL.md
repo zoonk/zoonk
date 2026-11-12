@@ -1,10 +1,10 @@
 ---
 name: zoonk-design
-description: Design, implement, or review Zoonk interfaces on the web, iOS and Android, in one visual language across all three. Hold every screen to a principal designer's bar on typography, hierarchy, spacing and density, color and contrast, iconography, consistency and polish, and clarity; rethink it from first principles with alternative concepts when it falls short; and finish by using it as a regular person.
+description: Design, implement, or review Zoonk interfaces on the web, iOS and Android, in one visual language across all three. Hold every screen to a principal designer's bar on clarity, typography, hierarchy, spacing and density, color and contrast, iconography, and consistency and polish; write it in the learner's words, to a word budget; rethink it from first principles with alternative concepts when it falls short; and finish with a first-glance test by an agent that sees only the screenshot.
 license: MIT
 metadata:
   author: zoonk
-  version: "5.1.0"
+  version: "6.0.0"
 ---
 
 # Zoonk design
@@ -23,22 +23,45 @@ Look up the design system first: what every token, type role, shape, pattern and
 - **Give attention a clear order.** Decide what matters now, what supports it, and what can wait. Make the next action obvious; keep alternatives available without giving every option equal emphasis. Reconsider competing elements before fitting them into a tidier layout.
 - **Make each element earn its place.** Remove labels that restate the obvious and repeated representations of the same information. Before adding a separate widget, consider whether an existing element can communicate it naturally. Look for simpler combinations of information and action while keeping their meaning clear.
 - **Organize complexity around the task.** Sequence decisions when one answer determines what comes next. Keep related information together when people need to compare it. Reveal infrequent detail on demand through discoverable controls. Judge total effort: extra steps and hidden information can create more work.
-- **Make behavior predictable.** Use familiar concepts, specific labels, and consistent interactions. Keep needed context visible. If routine use needs lengthy explanation, improve the interaction; place necessary guidance where uncertainty occurs.
+- **Make behavior predictable.** Use familiar concepts, short labels in words the person already knows, and consistent interactions. Keep needed context visible. If using it needs an explanation, improve the interaction; what guidance is left goes where the uncertainty occurs, when it occurs.
 - **Build confidence.** Show state and feedback promptly. Prevent likely mistakes, preserve work, and make correction easy. Keep meaningful choices accessible.
 - **Design the whole journey.** Preserve context and consistent placement across transitions. Each addition should fit the surrounding experience. Reusing components alone does not make a coherent interface.
 - **Express care.** Make people feel capable and comfortable through thoughtful language, balanced proportions, responsive feedback, and smooth continuity. Delight should remain pleasant through repeated use.
 
 For the reasoning behind these principles, see [Design foundations](references/design-foundations.md).
 
+## Words
+
+A learner gives a screen about two seconds and knows only what earlier screens showed them. Write for that person, never for someone who knows how Zoonk works.
+
+- **One message.** Before writing, finish this sentence: "This screen tells the learner ___ so they can ___." The title says it. Everything else supports it or leaves.
+- **A budget.** Between the title and the main action: one supporting sentence (20 words at most) and one line of facts (three at most). A list row is a title and at most one short line. A result leads with one number or one sentence. Need more? Make it a step, or put it behind one "Details" link. Never a second paragraph.
+- **The learner's words.** Use a product term (plan, focus, phase, time a day, Brain Power…) only on or after the screen that shows the learner what it is. Before that, say the plain thing ("how long you study each day"). The [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md#plain-words-first) lists each term, where it's taught and the words learners never see. If a string needs a translator note to explain a word, the learner doesn't know the word either: rewrite the string.
+- **What they get, not how it works.** Say what the learner gets and what to do. How Zoonk picks, counts, saves, schedules or estimates goes behind a tap (a number's sheet, "How this works"), for the few who ask.
+- **Say it when it happens.** A caveat, limit or exception appears where and when it applies (the day a lesson moves, the question a test can't ask), not on the screen where the learner decides to start. Being true doesn't earn a line its place. Being needed now, to decide or to act, does.
+- **Buttons are verbs they already know.** "Start", "Continue", "Skip", "Save", "Try again": one to three words. A label never names the next screen, a term from a later screen, a duration or a consequence ("Continue to daily time", "Stop and use my answers"). If the consequence matters, the screen says it once, above the button.
+- **Once.** Each fact appears once per screen. A line that would repeat on every row goes to the list's header, or goes.
+- **No bookkeeping.** Counts and system states ("Questions on 2 of 18 subjects", "lessons aren't written yet") appear only when they change what the learner does next.
+
+When a review or a walk finds that a learner wouldn't understand something, fix it in this order and stop at the first that works:
+
+1. Remove the thing that needs explaining.
+2. Rename it in the learner's words.
+3. Show it (a mark, a number, an example) instead of describing it.
+4. Move the explanation to the moment it matters.
+5. Add a sentence, and take another one out.
+
+Fewer words is not less structure: a page still has its title, its sections and one main action.
+
 ## Zoonk's learning experience
 
 - **One calm experience.** Every learner gets the same interface. Playful mechanics (the buddy, the Trickster, missions, Hyperdrive, belts) live inside it, in the same visual language, and never change what someone learns, earns, or sees as progress.
-- **One next step at a time.** Lead with the next action and let everything else wait where people go looking for it. On a wide screen the page's work fills the main area beside the sidebar; supporting status and properties (Today's week and preparation, the Plan's numbers and settings, a subject's coverage) sit in the aside, never a second main column.
+- **One next step at a time.** Lead with the next action and let everything else wait where people go looking for it. On a wide screen the page's work fills the main area beside the sidebar; supporting status and properties (Today's week and preparation, the Plan's numbers and settings, a subject's progress) sit in the aside, never a second main column.
 - **One main action per screen; structure stays visible.** A screen answers one question and has one main action, in the same place on every page of its kind. Around it, the structure stays in sight: the page's name as its title, each block of content under its own header, lists as one kind of list. Clean comes from that order, not from removing titles and headers. When a result or summary has several things to say, lead with the numbers that matter on its first screen, put the rest in steps after it, and skip the steps with nothing to say.
-- **Visible structure.** Show what someone is learning in their own terms (an exam notice's subjects and topics, a course's modules, a language's levels and units), with honest progress, so they can trust the plan covers everything. A long list of items without its structure reads as random.
+- **Visible structure.** Show what someone is learning in their own terms (an exam's subjects and topics, a course's chapters, a language's levels and units), with honest progress, so they can trust the plan covers everything. A long list of items without its structure reads as random.
 - **Honest progress.** Show progress as it is, from the person's own work, and never promise a result. Follow the [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md) for progress wording.
-- **Kind motivation.** Rewards come from learning and say upfront how to earn them. Nothing is random or sold, mistakes cost nothing, and nothing creates guilt or streak anxiety.
-- **Finished moments.** Short lessons end with a brief completion moment; the full summary waits for the end of the session.
+- **Kind motivation.** Rewards come from learning, and what earns one shows where it's earned (a mission's row, a challenge's "7 of 10 to win"). Nothing is random or sold, mistakes cost nothing, and nothing creates guilt or streak anxiety.
+- **Finished moments.** Short lessons end with a brief completion moment; the full summary waits for the end of the day's study.
 - **Interaction is learning.** An interactive activity is the learning action: the person moves, predicts, or builds something, and a question checks what they saw. Never add one that only decorates.
 - **Readable everywhere.** Neutral text (titles, body, muted lines) meets WCAG AA on every surface it sits on, in light and dark. Colored marks, icons, tints and colored words stay soft in the regular theme and turn strict only under `prefers-contrast: more`; color is never the only cue (a word, an icon or a shape says the same). Theme, contrast and reduced motion follow the device, and every animation has a calm reduced-motion version.
 
@@ -60,20 +83,20 @@ The look is **Instrument**: a calm study instrument in the spirit of Linear and 
 - Keep company logos out of app interfaces; use that space for the person's task. Logos belong only on marketing pages and the login page.
 - Use shared alignment anchors across adjacent sections and columns. Group through spacing, labels and hairlines before adding a container.
 - Reuse `@zoonk/ui`, the learn kit (`packages/learn/src/_components`: `Page`, `PageHeader`, `PageSection`, `DetailLayout`, `ListGroup`, `KindMark`, `StatusMark`, `BigQuantity`, `MeterParts`, `SubjectLabel`, `Route`, `StatTile`, `NoticeCard`, `Suggestion`, `DiffLines`) and the shell (`packages/learn/src/shell`: `PageWithAside`, `LearnPageBar`, `TaskFrame`). Check existing primitives and the shadcn registry before building a missing web primitive. Use Tailwind utilities and semantic tokens.
-- Write concise, concrete copy with enough context to remove uncertainty.
+- Write to the [Words](#words) budget.
 - Build every page from the [page templates](references/app-patterns.md#page-templates) (tab root, detail, catalog, section, browse, task, conversation) and their shared pieces. Keep the same placement for the same things on every page: navigation, search, the main action, page widths and alignment.
 
 ## The taste bar
 
-Hold every screen you design, build or review to one bar: a principal designer like Jony Ive, or one at Linear, Vercel or Apple, would love it, not merely accept it. It is clean, quiet and exact, so the person sees their task and not the interface. Judge it on the running product against all seven aspects below, every time. Where one falls short, don't decorate it or nudge pixels: find what makes the screen harder than it needs to be, and change the UI, the UX or both until it's simpler and better. Matching the mockup or what's already there doesn't clear the bar.
+Hold every screen you design, build or review to one bar: a principal designer like Jony Ive, or one at Linear, Vercel or Apple, would love it, not merely accept it. It is clean, quiet and exact, so the person sees their task and not the interface. Judge it on the running product against all seven aspects below, every time, clarity first. Where one falls short, don't decorate it or nudge pixels: find what makes the screen harder than it needs to be, and change the UI, the UX or both until it's simpler and better. Matching the mockup or what's already there doesn't clear the bar.
 
+- **Clarity.** Someone who has never seen Zoonk can say what this screen is and what to do, from the title and the main action alone. Count it: text elements between the title and the main action (four at most), words on a screen that asks for a decision (60 at most), terms no earlier screen taught (none), places the same fact appears (one). Then subtract: remove a box, a label, a divider or a sentence; if the screen still works, leave it out.
 - **Typography.** One role per job from the type scale, three levels in a block at most. The right face for every number: a readout in Geist with tabular figures, data in mono, a number inside a sentence in the sentence's face. Reading text keeps a comfortable measure; no uppercase sentences, no orphaned word in a title, en dashes for ranges and an ellipsis character instead of three dots. Balance the lines of short titles, captions and centered text (`text-balance`, Android's `LineBreak.Heading`); left-aligned sentences, such as a question, a description or an error, fill their lines and only avoid a lone last word (`text-pretty`, `LineBreak.Paragraph`), since even lines there leave a ragged gap on the right.
 - **Hierarchy.** Squint: what you see first is what matters first, and there is one strongest thing (the main action, or a moment's hero). The eye moves in the task's order, from what this is to what to do next. Anything competing with the strongest thing goes quieter or goes away; order comes from size, weight, tone and position, not from boxes or decoration.
 - **Spacing and density.** Everything snaps to shared edges (the column's left edge, readouts' baselines, a row's text start) and spacing comes from the 4px scale. Related things sit closer than unrelated ones, and the same gap separates the same kinds of things on every screen. Density fits the job: a list to scan stays compact, a decision gets room, nothing is cramped at 390px or stranded in empty space at 2560px.
 - **Color and contrast.** Count the colors on the screen: each one means something from the [color rules](references/color.md), no two meanings share a hue, and nothing is colored to decorate. Neutral text meets WCAG AA on every surface it sits on, colored marks stay soft until a device asks for more contrast, color is never the only cue, and dark mode looks designed, not inverted.
 - **Iconography.** One family at the design system's sizes (`ICON_RULES` in `apps/playground/src/design-system/shape.ts`; SF Symbols and Material Symbols in the native apps), optically centered with its text, bare beside its words rather than in a tile. Each icon says something its words or place don't, or speeds up recognizing something seen often; otherwise it goes. The same icon means the same thing everywhere, and one thing has one icon.
 - **Consistency and polish.** The same thing looks and behaves the same everywhere: compare the screen with its siblings (other task ends, other lists, other asides) and reuse their pieces before drawing a new one. Then the details: tabular figures in columns, every control's hover, pressed, focus and disabled look, nothing truncated that the person needs, no layout shift when data arrives.
-- **Clarity.** Without being told, someone knows what this screen is, what to do next and what happens when they do it. Subtract: remove a box, a label, a divider or a word; if the screen still works, leave it out. One way to say each thing, once per view, in plain and specific words, with nothing to remember from an earlier screen.
 
 Judge every aspect in every state: 390 and 1440, light and dark, more contrast, long Portuguese and German words, empty, loading, error and keyboard focus, each looked at, not assumed. The bar is the same on iOS and Android, which draw this design inside their native components (see the end of this skill).
 
@@ -87,19 +110,17 @@ Walk through the task: can someone recognize what matters, predict what happens 
 
 Inspect implemented changes in the production build `pnpm start` serves on a phone (390px), a tablet in portrait (820px) and in landscape (1180px), a laptop (1440px), and large desktops (1920px and 2560px), with touch, mouse and keyboard. `pnpm verify:pages` ([verify](../verify/SKILL.md)) screenshots a page on all six in light and dark and flags overflow, shifts and small targets; look at every screenshot. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, dark mode and more contrast (Playwright's `colorScheme` and `contrast`, or the browser's rendering emulation). Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned. Recheck observed friction. For proposals, show representative screens and transitions. State what remains unverified.
 
-For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, jargon, unnecessary choices, hidden progress, and effort that grows with repeated use.
+For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, words no earlier screen taught, lines nobody would miss, unnecessary choices, hidden progress, and effort that grows with repeated use.
 
-### Use it as a regular person
+### The first-glance test
 
-Finish every design implementation and review by using the change as someone who has never seen how it was built: a regular learner with a real goal, on their own device, from start to finish. Then answer honestly:
+You can't judge your own screen: you know what it means. For every new or changed screen, give an agent that has seen neither the code, the spec nor this conversation one phone-size screenshot and nothing else, and ask:
 
-- How does it feel to use?
-- Is it easy to use? Is it simple?
-- Is it pleasant, even delightful?
-- Is anything confusing, even for a moment?
-- Would a grandma who has never seen Zoonk get through it without help or a wrong turn?
+- What is this screen for?
+- What would you tap, and what do you expect to happen?
+- Which words or lines don't you understand, or wouldn't miss?
 
-An answer you have to hedge is a finding: fix it, or [rethink the screen](#rethink-when-stuck), before calling it done.
+A wrong guess, an unknown word or a "not sure" is a finding. Don't explain the screen and ask again: change the screen, by the fix order in [Words](#words), or [rethink it](#rethink-when-stuck). Then use the flow yourself, start to finish, as a learner with a real goal.
 
 ## Related guidance
 
