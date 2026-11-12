@@ -1,5 +1,7 @@
 Wrap every admin data query in `cacheAdminData` (`src/data/_utils/admin-data-cache.ts`); the layout's guard doesn't cover streamed route segments.
 
+Admin pages are designed too: each answers one question for a staff person and leads with what they came for, as zoonk-design's [Words](../../.agents/skills/zoonk-design/SKILL.md#words) says for internal tools.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
