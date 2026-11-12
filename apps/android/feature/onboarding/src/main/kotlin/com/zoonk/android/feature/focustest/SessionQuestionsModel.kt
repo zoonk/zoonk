@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestControlsInput
 import com.zoonk.api.models.FocusTestSessionQuestions
 import kotlinx.coroutines.launch
@@ -16,32 +17,40 @@ internal class SessionQuestionsModel(
     private val store: FocusTestStore,
     private val goalId: UUID,
 ) : ViewModel() {
-    /** What the learner set in this visit, shown over the result they opened, which was read before. */
-    var shown by mutableStateOf<FocusTestSessionQuestions?>(null)
-        private set
+    /** The result the learner last switched on; a newer result from the server says its own. */
+    private var over by mutableStateOf<FocusTest?>(null)
+
+    private var chosen by mutableStateOf<FocusTestSessionQuestions?>(null)
+
+    private var saveFailed by mutableStateOf(false)
 
     var saving by mutableStateOf(false)
         private set
 
-    var failed by mutableStateOf(false)
-        private set
+    fun shown(result: FocusTest): FocusTestSessionQuestions = chosen.takeIf { over == result } ?: result.sessionQuestions
 
-    fun set(on: Boolean) {
+    fun failed(result: FocusTest): Boolean = saveFailed && over == result
+
+    fun set(
+        result: FocusTest,
+        on: Boolean,
+    ) {
         if (saving) return
-        val before = shown
-        shown = if (on) FocusTestSessionQuestions.ON else FocusTestSessionQuestions.PAUSED
+        val before = chosen.takeIf { over == result }
+        over = result
+        chosen = if (on) FocusTestSessionQuestions.ON else FocusTestSessionQuestions.PAUSED
         saving = true
-        failed = false
+        saveFailed = false
         viewModelScope.launch {
             val questions = if (on) FocusTestControlsInput.SessionQuestions.ON else FocusTestControlsInput.SessionQuestions.PAUSED
-            when (val result = store.setSessionQuestions(goalId, questions)) {
+            when (val saved = store.setSessionQuestions(goalId, questions)) {
                 is MutationResult.Done -> {
-                    shown = result.value.sessionQuestions
+                    chosen = saved.value.sessionQuestions
                 }
 
                 is MutationResult.Failed -> {
-                    shown = before
-                    failed = true
+                    chosen = before
+                    saveFailed = true
                 }
 
                 MutationResult.Obsolete -> {}

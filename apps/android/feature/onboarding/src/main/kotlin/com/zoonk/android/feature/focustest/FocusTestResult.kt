@@ -231,7 +231,7 @@ private fun PlanRows(
     changesFocus: Boolean,
 ) {
     var subjects by rememberSaveable { mutableStateOf(false) }
-    val questions = plan.questions.shown ?: test.sessionQuestions
+    val questions = plan.questions.shown(test)
 
     Column {
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
@@ -250,14 +250,14 @@ private fun PlanRows(
                             value = on,
                             enabled = !plan.questions.saving,
                             role = Role.Switch,
-                            onValueChange = plan.questions::set,
+                            onValueChange = { plan.questions.set(test, it) },
                         ),
                     supporting = { Text(stringResource(R.string.focustest_session_questions_when)) },
                     trailing = { Switch(checked = on, onCheckedChange = null, enabled = !plan.questions.saving) },
                 )
             }
         }
-        FinishFailed(plan.questions.failed)
+        FinishFailed(plan.questions.failed(test))
     }
 
     if (subjects) {
