@@ -27,6 +27,7 @@ export function SortHead({
   onSort: () => void;
 }>) {
   const Arrow = direction === "asc" ? ArrowUpIcon : ArrowDownIcon;
+  const arrow = isActive && <Arrow aria-hidden="true" className="size-3.5" />;
 
   return (
     <TableHead
@@ -35,14 +36,15 @@ export function SortHead({
     >
       <button
         className={cn(
-          "hit-area relative inline-flex cursor-pointer items-center gap-1",
-          isNumber && "flex-row-reverse",
+          "hit-area relative flex w-full cursor-pointer items-center gap-1",
+          isNumber && "justify-end",
         )}
         onClick={onSort}
         type="button"
       >
+        {isNumber && arrow}
         {children}
-        {isActive && <Arrow aria-hidden="true" className="size-3.5" />}
+        {!isNumber && arrow}
       </button>
     </TableHead>
   );

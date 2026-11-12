@@ -26,15 +26,15 @@ export function RankingItem({
         <span className="text-sm font-semibold tabular-nums">{score.toFixed(1)}</span>
       </div>
       {categoryScores && categoryScores.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-1.5">
+        <ul className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs tabular-nums">
           {categoryScores.map((category) => (
-            <Badge key={category.categoryId} variant="secondary">
+            <li key={category.categoryId}>
               {category.label}: {category.score.toFixed(1)}
-            </Badge>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-      <p className="text-muted-foreground text-sm whitespace-pre-wrap">{reasoning}</p>
+      <p className="text-muted-foreground max-w-column text-sm whitespace-pre-wrap">{reasoning}</p>
     </div>
   );
 }

@@ -8,11 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 
 /** Both tables share these widths, so their columns start and end on the same lines. */
 const LABEL_COLUMN = "w-64";
-const NUMBER_COLUMN = "w-32 text-right";
+const NUMBER_COLUMN = "w-32 px-0 text-right";
 
 function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
   return (
@@ -29,10 +30,10 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
         {summary.perLabel.map((item) => (
           <TableRow key={item.label}>
             <TableCell className="font-medium">{item.label}</TableCell>
-            <TableCell className="text-right">
+            <TableCell className={NUMBER_COLUMN}>
               {item.correct}/{item.total}
             </TableCell>
-            <TableCell className="text-right">{formatPercent(item.accuracy)}</TableCell>
+            <TableCell className={NUMBER_COLUMN}>{formatPercent(item.accuracy)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -68,7 +69,7 @@ function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
             <TableCell className="font-medium">{expected}</TableCell>
             {summary.labels.map((predicted) => (
               <TableCell
-                className={predicted === expected ? "text-right font-semibold" : "text-right"}
+                className={cn(NUMBER_COLUMN, predicted === expected && "font-semibold")}
                 key={predicted}
               >
                 {summary.counts[expected]?.[predicted] ?? 0}
