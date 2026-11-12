@@ -97,9 +97,7 @@ export async function readExamBlueprint({
     sourceId: noticeId,
   });
 
-  if (saved.changed) {
-    await refreshFollowerSummariesStep(saved.examBlueprintId);
-  }
+  await refreshFollowerSummariesStep(saved.examBlueprintId);
 
   if (saved.movesExamDays) {
     await proposeNoticeDates({

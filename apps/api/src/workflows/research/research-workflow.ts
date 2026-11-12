@@ -35,12 +35,6 @@ export type ResearchInput = {
   sourceIds?: string[];
 };
 
-async function weighSubjects(lookup: { analytics: ResearchAnalytics; examBlueprintId: string }) {
-  if (await lookUpSubjectQuestionsStep(lookup)) {
-    await refreshFollowerSummariesStep(lookup.examBlueprintId);
-  }
-}
-
 async function finishExam({
   analytics,
   examBlueprintId,
@@ -59,13 +53,15 @@ async function finishExam({
     await Promise.all([
       Promise.allSettled([
         lookUpChoiceOptionsStep({ analytics, examBlueprintId }),
-        weighSubjects({ analytics, examBlueprintId }),
+        lookUpSubjectQuestionsStep({ analytics, examBlueprintId }),
         lookUpTopicFrequencyStep({ analytics, examBlueprintId }),
         lookUpCourseWeightsStep({ analytics, goalId: goal.id }),
         lookUpTargetCutoffStep({ analytics, goalId: goal.id }),
       ]),
       scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]),
     ]);
+
+    await refreshFollowerSummariesStep(examBlueprintId);
   }
 
   return { examBlueprintId, sourceIds: [], status: "ready" };

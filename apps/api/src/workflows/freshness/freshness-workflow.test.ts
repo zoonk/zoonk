@@ -32,6 +32,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { NoObjectGeneratedError } from "ai";
 import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
 import { getStartMock } from "../_test-utils/start-mock";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { findAndStoreSources } from "../research/research-sources";
@@ -293,6 +294,8 @@ function readReleaseTwo() {
   });
 }
 
+const RECOUNTED = { focusTest: { summary: { inputsKey: expect.any(String), quick: 1, total: 1 } } };
+
 describe(freshnessWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateSearchTerms).mockImplementation(
@@ -507,35 +510,7 @@ describe(freshnessWorkflow, () => {
   it("counts again the Focus test summary of a learner following a notice that a reading changed", async () => {
     const { blueprint, extraction, notice } = await examWithLearner();
     serveNotice(`${notice}\n${NEW_DATE_LINE}`);
-
-    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
-
-    const outdated = {
-      asked: 0,
-      complete: false,
-      offerQuestions: 9,
-      paceMs: 30_000,
-      quick: 9,
-      suggested: [],
-      total: 9,
-      unasked: 9,
-    };
-
-    const goal = await goalFixture({
-      details: { focusTest: { summary: outdated } },
-      examBlueprintId: blueprint.id,
-      kind: "exam",
-      userId: user.id,
-    });
-
-    await planFixture({
-      goalId: goal.id,
-      graph: {
-        phases: [{ milestone: null, name: "Basics" }],
-        skills: [{ lessons: 2, name: skill.name, phase: 0, skillId: skill.id }],
-      },
-      phases: [],
-    });
+    const goal = await followWithOutdatedSummary(blueprint.id);
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       ...TASK,
@@ -548,12 +523,24 @@ describe(freshnessWorkflow, () => {
     });
 
     await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+    await expect(readFollowerDetails(goal.id)).resolves.toMatchObject(RECOUNTED);
+  });
 
-    const { details } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+  it("counts again a follower's Focus test summary when a reading finds its notice already saved, as a retried save does", async () => {
+    const { blueprint, extraction } = await examWithLearner();
+    const goal = await followWithOutdatedSummary(blueprint.id);
 
-    expect(details).toMatchObject({
-      focusTest: { summary: { inputsKey: expect.any(String), quick: 1, total: 1 } },
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...TASK,
+      data: withExamDate({ extraction, line: OLD_DATE_LINE }),
     });
+
+    await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
+      { status: "read" },
+    );
+
+    expect(generateSourceChangeNotice).not.toHaveBeenCalled();
+    await expect(readFollowerDetails(goal.id)).resolves.toMatchObject(RECOUNTED);
   });
 
   it("searches for the next notice once the stored edition passed, and proposes its exam day to the learners preparing for it", async () => {
