@@ -476,7 +476,6 @@ msgid "Start the lesson"
 msgstr "Start the lesson"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Start this lesson"
@@ -870,9 +869,9 @@ msgid "No answer was saved."
 msgstr "No answer was saved."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "Questions you asked in lessons that have since changed."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2834,24 +2833,19 @@ msgid "Your lesson is ready"
 msgstr "Your lesson is ready"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Your lesson is ready. Start it whenever you like."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr "It takes a few minutes."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "It usually takes a few minutes. The lesson opens here as soon as it's ready."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "This lesson isn't ready yet"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "This lesson isn't written yet"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk writes it when you start. It takes a few minutes."
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "Get it ready"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

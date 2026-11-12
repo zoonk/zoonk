@@ -1117,9 +1117,9 @@ msgid "Fully grown"
 msgstr "Fully grown"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "yD_fJo"
-msgid "Grows at {belt}"
-msgstr "Grows at {belt}"
+msgctxt "EcDZVd"
+msgid "Grows when you reach {belt}"
+msgstr "Grows when you reach {belt}"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
@@ -1184,9 +1184,9 @@ msgstr "{current} of {target} reviews"
 
 #. The learner's buddy wears the glasses.
 #: src/buddies/buddy-glasses-sheet.tsx
-msgctxt "O7-3Od"
-msgid "Pick a pair you've earned to wear it."
-msgstr "Pick a pair you've earned to wear it."
+msgctxt "lw-2jH"
+msgid "Pick a pair you've earned."
+msgstr "Pick a pair you've earned."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -9675,9 +9675,9 @@ msgid "That's all the goals you can study at once"
 msgstr "That's all the goals you can study at once"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "OdJG_N"
-msgid "Pause one from your Plan's menu to start another."
-msgstr "Pause one from your Plan's menu to start another."
+msgctxt "VYYOSB"
+msgid "Pause one from your Plan's menu to start another. Quick questions still work."
+msgstr "Pause one from your Plan's menu to start another. Quick questions still work."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"

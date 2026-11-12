@@ -476,7 +476,6 @@ msgid "Start the lesson"
 msgstr "레슨 시작하기"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "이 레슨 시작하기"
@@ -870,9 +869,9 @@ msgid "No answer was saved."
 msgstr "저장된 답변이 없어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "코스를 새로 만들기 전에 했던 질문이에요. 레슨 내용이 바뀌어서 다시 읽을 수 있도록 여기에 남겨 뒀어요."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2834,24 +2833,19 @@ msgid "Your lesson is ready"
 msgstr "레슨이 준비됐어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "레슨이 준비됐어요. 편할 때 시작하세요."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "아직 만들지 않은 레슨이에요"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요."
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr ""
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

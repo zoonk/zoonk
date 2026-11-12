@@ -3688,8 +3688,8 @@ msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to t
 msgstr "{count, plural, one {# idée à retenir de cette leçon} other {# idées à retenir de cette leçon}}"
 
 #: src/lesson/steps/typed-answer-step.tsx
-msgctxt "SZ0_A4"
-msgid "Skip writing today"
+msgctxt "GscVFm"
+msgid "Skip writing questions today"
 msgstr ""
 
 #: src/lesson/steps/typed-answer-step.tsx

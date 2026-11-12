@@ -40,7 +40,7 @@ export function BuddyGlassesSheet({
           <DrawerDescription>
             {t({
               description: "The learner's buddy wears the glasses.",
-              message: "Pick a pair you've earned to wear it.",
+              message: "Pick a pair you've earned.",
             })}
           </DrawerDescription>
         </DrawerHeader>

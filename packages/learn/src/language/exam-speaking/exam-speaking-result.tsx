@@ -60,9 +60,11 @@ function CriterionName({
   return (
     <span className="flex min-w-0 flex-col">
       <span className="font-medium">{gloss(criterion)}</span>
-      <span className="text-muted-foreground text-xs" lang={language}>
-        {criterion.name}
-      </span>
+      {criterion.name.toLowerCase() !== gloss(criterion).toLowerCase() && (
+        <span className="text-muted-foreground text-xs" lang={language}>
+          {criterion.name}
+        </span>
+      )}
     </span>
   );
 }

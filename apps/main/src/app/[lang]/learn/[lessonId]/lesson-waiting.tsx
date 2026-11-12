@@ -225,10 +225,14 @@ function UnwrittenLessonNote() {
   const t = useExtracted();
 
   return (
-    <p className="flex flex-col gap-1 text-sm text-pretty">
-      <span className="font-medium">{t("This lesson isn't ready yet")}</span>
-      <span className="text-muted-foreground">{t("Getting it ready takes a few minutes.")}</span>
-    </p>
+    <div className="flex flex-col gap-2">
+      <h1 className="text-2xl font-semibold tracking-tight text-balance">
+        {t("This lesson isn't ready yet")}
+      </h1>
+      <p className="text-muted-foreground text-pretty">
+        {t("It takes a few minutes.")}
+      </p>
+    </div>
   );
 }
 
@@ -239,7 +243,7 @@ function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void 
     <TaskActionBar>
       <TaskActions>
         <TaskMainButton busy={busy} icon={<PlayIcon aria-hidden="true" />} onClick={onStart}>
-          {t("Start this lesson")}
+          {t("Get it ready")}
         </TaskMainButton>
       </TaskActions>
     </TaskActionBar>
@@ -302,8 +306,7 @@ export function LessonWaiting({
   }
 
   return (
-    <LessonRouteFrame {...frame} footer={footer}>
-      {showsStart && <UnwrittenLessonNote />}
+    <LessonRouteFrame {...frame} footer={footer} lead={showsStart && <UnwrittenLessonNote />}>
 
       {(request.status === "refused" ||
         request.status === "plusRequired" ||

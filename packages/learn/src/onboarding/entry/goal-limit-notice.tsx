@@ -41,7 +41,7 @@ export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
       }
       title={t("That's all the goals you can study at once")}
     >
-      {t("Pause one from your Plan's menu to start another.")}
+      {t("Pause one from your Plan's menu to start another. Quick questions still work.")}
     </PlusNotice>
   );
 }

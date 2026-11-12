@@ -476,7 +476,6 @@ msgid "Start the lesson"
 msgstr "Empezar la lección"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Empezar esta lección"
@@ -870,9 +869,9 @@ msgid "No answer was saved."
 msgstr "No se guardó ninguna respuesta."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Lo que preguntaste en tus cursos antes de que los reescribiéramos. Las lecciones cambiaron, así que tus preguntas quedan aquí para que puedas volver a leerlas."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2834,24 +2833,19 @@ msgid "Your lesson is ready"
 msgstr "Tu lección está lista"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Tu lección está lista. Empiézala cuando quieras."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Suele tardar unos minutos. La lección se abrirá aquí en cuanto esté lista."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Esta lección aún no está preparada"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk la prepara cuando empiezas. Tarda unos minutos."
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr ""
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

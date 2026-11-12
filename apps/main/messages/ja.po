@@ -476,7 +476,6 @@ msgid "Start the lesson"
 msgstr "レッスンを始める"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "このレッスンを始める"
@@ -870,9 +869,9 @@ msgid "No answer was saved."
 msgstr "回答は保存されていません。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "コースの改訂前にした質問です。レッスンの内容が変わったため、ここで読み返せるように残しています。"
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2834,24 +2833,19 @@ msgid "Your lesson is ready"
 msgstr "レッスンの準備ができました"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "レッスンの準備ができました。好きなときに始められます。"
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "このレッスンはまだ作成されていません"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr ""
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

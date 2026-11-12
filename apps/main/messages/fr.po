@@ -476,7 +476,6 @@ msgid "Start the lesson"
 msgstr "Commencer la leçon"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Commencer cette leçon"
@@ -870,9 +869,9 @@ msgid "No answer was saved."
 msgstr "Aucune réponse n’a été enregistrée."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Les questions que tu as posées dans tes cours avant leur réécriture. Les leçons ont changé, alors tes questions restent ici pour que tu puisses les relire."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2834,24 +2833,19 @@ msgid "Your lesson is ready"
 msgstr "Ta leçon est prête"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Ta leçon est prête. Commence-la quand tu veux."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Cela prend généralement quelques minutes. La leçon s’ouvrira ici dès qu’elle sera prête."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Cette leçon n’est pas encore prête"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk la prépare quand tu commences. Cela prend quelques minutes."
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr ""
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

@@ -1117,8 +1117,8 @@ msgid "Fully grown"
 msgstr "Ausgewachsen"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "yD_fJo"
-msgid "Grows at {belt}"
+msgctxt "EcDZVd"
+msgid "Grows when you reach {belt}"
 msgstr ""
 
 #: src/buddies/buddy-day-parts.tsx
@@ -1184,9 +1184,9 @@ msgstr "{current} von {target} Wiederholungen"
 
 #. The learner's buddy wears the glasses.
 #: src/buddies/buddy-glasses-sheet.tsx
-msgctxt "O7-3Od"
-msgid "Pick a pair you've earned to wear it."
-msgstr "Wähl eine freigeschaltete Brille für deinen Kumpel aus."
+msgctxt "lw-2jH"
+msgid "Pick a pair you've earned."
+msgstr ""
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -9675,8 +9675,8 @@ msgid "That's all the goals you can study at once"
 msgstr ""
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "OdJG_N"
-msgid "Pause one from your Plan's menu to start another."
+msgctxt "VYYOSB"
+msgid "Pause one from your Plan's menu to start another. Quick questions still work."
 msgstr ""
 
 #: src/onboarding/entry/goal-outcomes.tsx

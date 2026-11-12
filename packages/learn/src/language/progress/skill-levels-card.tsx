@@ -5,7 +5,6 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { ArrowDownIcon, ArrowUpIcon, TrendingUpIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { SectionLabel } from "../../_components/section-label";
 import { useFormatIsoDate } from "../../_utils/iso-date";
 import { getLevelShare, listRises } from "../_utils/level-scale";
 import { useSkillName } from "../_utils/use-skill-name";
@@ -164,8 +163,10 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
 
   return (
     <section aria-labelledby="language-levels-title" className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <SectionLabel id="language-levels-title">{t("Your level")}</SectionLabel>
+      <div className="flex flex-wrap items-baseline justify-end gap-x-3 gap-y-1">
+        <span className="sr-only" id="language-levels-title">
+          {t("Your level")}
+        </span>
         <TargetLabel target={target} targetDate={progress.goal.targetDate} />
       </div>
 

@@ -476,7 +476,6 @@ msgid "Start the lesson"
 msgstr "Zacznij lekcję"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Zacznij tę lekcję"
@@ -870,9 +869,9 @@ msgid "No answer was saved."
 msgstr "Nie zapisano odpowiedzi."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Twoje pytania z wcześniejszych wersji kursów. Przygotowaliśmy lekcje na nowo, więc pytania zostają tutaj, by można było do nich wrócić."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2834,24 +2833,19 @@ msgid "Your lesson is ready"
 msgstr "Twoja lekcja jest gotowa"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Twoja lekcja jest gotowa. Zacznij, kiedy chcesz."
+msgctxt "v8WYcE"
+msgid "It takes a few minutes."
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Zwykle trwa to kilka minut. Lekcja otworzy się tutaj, gdy tylko będzie gotowa."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Ta lekcja nie jest jeszcze przygotowana"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk przygotuje ją, gdy zaczniesz. Zajmuje to kilka minut."
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr ""
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"

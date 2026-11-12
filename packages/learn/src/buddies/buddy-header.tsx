@@ -35,9 +35,11 @@ export function BuddyHeader({
           <h1 className={cn(TRUNCATED_TITLE_CLASS, "text-sm leading-snug font-semibold")}>
             {name}
           </h1>
-          <p className={cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-snug")}>
-            {t("Your study buddy")}
-          </p>
+          {!children && (
+            <p className={cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs leading-snug")}>
+              {t("Your study buddy")}
+            </p>
+          )}
         </div>
         {children}
       </div>

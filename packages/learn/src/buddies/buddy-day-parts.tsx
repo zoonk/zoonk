@@ -24,7 +24,7 @@ export function useGrowthLine(status: BuddyStatusView): string {
 
   const belt = beltName(nextBelt);
 
-  return t("Grows at {belt}", { belt });
+  return t("Grows when you reach {belt}", { belt });
 }
 
 /** Nothing to say once today's study kept it up. */
