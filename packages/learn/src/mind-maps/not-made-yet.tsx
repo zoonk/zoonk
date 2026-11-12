@@ -26,8 +26,8 @@ const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
 
 /**
  * Only the first line that applies shows, so the block never stacks paragraphs. Maps on their way
- * come before the limit: the learner just started them, and the limit read first looks like a
- * refusal.
+ * and maps that didn't finish come before the limit: the learner just started them, and the limit
+ * read first looks like a refusal.
  */
 function NotMadeLine({
   chapters,
@@ -44,7 +44,7 @@ function NotMadeLine({
   const { bulk, follower, page } = library;
   const { eligible, needLessons, startable, stop } = page.createOffer;
   const shownStop = bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null);
-  const { onTheWay } = countChapterMaps(chapters);
+  const { failed, onTheWay } = countChapterMaps(chapters);
 
   if (follower.isStuck) {
     return (
@@ -69,6 +69,17 @@ function NotMadeLine({
         {t(
           "{count, plural, one {# on the way. You can leave while it's made.} other {# on the way. You can leave while they're made.}}",
           { count: onTheWay },
+        )}
+      </p>
+    );
+  }
+
+  if (failed > 0) {
+    return (
+      <p className={LINE_CLASS}>
+        {t(
+          "{count, plural, one {# map didn't finish. Try again.} other {# maps didn't finish. Try again.}}",
+          { count: failed },
         )}
       </p>
     );

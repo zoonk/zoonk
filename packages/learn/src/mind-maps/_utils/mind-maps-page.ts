@@ -52,6 +52,7 @@ export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
   const open = chapters.filter((chapter) => chapter.status !== "plusRequired");
 
   return {
+    failed: open.filter((chapter) => chapter.status === "failed").length,
     onTheWay: open.filter(
       (chapter) => chapter.status === "drawing" || chapter.status === "writingLessons",
     ).length,
