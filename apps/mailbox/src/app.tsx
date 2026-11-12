@@ -27,10 +27,10 @@ const copy = {
   copied: "Copied",
   copyCode: "Copy",
   emailMessages: "Emails",
-  emptyDescription: "Sign in on Main to get a code.",
+  emptyDescription: "Sign in to the app and your code shows up here.",
   emptyTitle: "No emails yet",
   noBody: "This email has no body.",
-  offlineDescription: "Start it with pnpm dev.",
+  offlineDescription: "Run pnpm dev in the repository. This page reconnects on its own.",
   offlineTitle: "Can't reach the mailbox server",
   replyTo: "Reply to",
   signInCode: "Sign-in code",
@@ -59,9 +59,9 @@ export function App() {
           </MailboxStatus>
         </MailboxIdentity>
 
-        <MailboxButton disabled={emails.length === 0} onClick={handleClear}>
-          {copy.clearInbox}
-        </MailboxButton>
+        {emails.length > 0 && (
+          <MailboxButton onClick={handleClear}>{copy.clearInbox}</MailboxButton>
+        )}
       </MailboxHeader>
 
       {selectedEmail ? (
