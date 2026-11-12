@@ -63,7 +63,7 @@ function SuggestedGoalCard({
 
         <SuggestionActions>
           <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
-            {t("Build my plan")}
+            {t("Start")}
           </SuggestionAction>
 
           <SuggestionAction
@@ -112,7 +112,7 @@ export function SuggestedGoalOffer({
           size="lg"
           type="submit"
         >
-          {t("Build my plan")}
+          {t("Start")}
         </Button>
         <Button
           disabled={isPending}

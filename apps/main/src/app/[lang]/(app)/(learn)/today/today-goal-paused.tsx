@@ -29,13 +29,11 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
         banner={banner}
         actions={
           <Link className={buttonVariants({ size: "lg" })} href="/start">
-            {t("Start a new goal")}
+            {t("New goal")}
           </Link>
         }
-        clause={t("Start a new goal, or pick another one above.")}
         icon={<FlagIcon />}
         sentence={t("You finished your {goal} goal.", { goal: goal.displayName })}
-        state={t("Finished")}
         title={t("Today")}
       />
     );
@@ -46,7 +44,7 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
       banner={banner}
       actions={
         <>
-          {goal && <ResumeGoalButton goalId={goal.id} goalTitle={goal.displayName} key={goal.id} />}
+          {goal && <ResumeGoalButton goalId={goal.id} key={goal.id} />}
           <Link
             className={buttonVariants({ size: "lg", variant: goal ? "outline" : "default" })}
             href="/start"
@@ -63,7 +61,6 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
           ? t("Your {goal} goal is paused.", { goal: goal.displayName })
           : t("This goal is paused.")
       }
-      state={t("Paused")}
       title={t("Today")}
     />
   );

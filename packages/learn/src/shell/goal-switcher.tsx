@@ -307,7 +307,7 @@ export function GoalSwitcher({
             render={<LearnLink href={newGoalHref} />}
           >
             <PlusIcon aria-hidden="true" className="text-muted-foreground" />
-            {t("Start a new goal")}
+            {t("New goal")}
           </DropdownMenuItem>
 
           <DropdownMenuItem

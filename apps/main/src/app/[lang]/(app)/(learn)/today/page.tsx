@@ -65,7 +65,7 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
         href={`/explain/${explanation.id}`}
         prefetch
       >
-        {t("Continue explanation")}
+        {t("Continue")}
       </Link>
     </section>
   );
