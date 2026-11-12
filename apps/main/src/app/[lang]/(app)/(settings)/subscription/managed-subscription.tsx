@@ -29,7 +29,7 @@ export async function ManagedSubscription({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm">{description}</p>
+      <p className="text-muted-foreground text-sm text-pretty">{description}</p>
 
       <div className="flex flex-wrap gap-2">
         {action && (

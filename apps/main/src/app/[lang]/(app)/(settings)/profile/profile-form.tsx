@@ -169,7 +169,12 @@ export function ProfileForm({
         </SettingRow>
 
         <SettingRow
-          description={status !== "idle" && <UsernameHint status={status} username={username} />}
+          description={
+            // The hint's line is always there, so the field doesn't move when a hint shows.
+            <span className="block min-h-lh">
+              {status !== "idle" && <UsernameHint status={status} username={username} />}
+            </span>
+          }
           descriptionId={usernameHintId}
           label={<label htmlFor="username">{t("Username")}</label>}
           wide

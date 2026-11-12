@@ -9,8 +9,11 @@ const WIDTH = 300;
 const HEIGHT = 120;
 const PAD = 14;
 
+/** A point sits over the middle of its day's letter in the caption's grid. */
+const DAY_CENTER = 0.5;
+
 function toPoint({ accuracy, index, count }: { accuracy: number; count: number; index: number }) {
-  const x = PAD + (index / Math.max(1, count - 1)) * (WIDTH - PAD * 2);
+  const x = ((index + DAY_CENTER) / count) * WIDTH;
   const y = HEIGHT - PAD - accuracy * (HEIGHT - PAD * 2);
 
   return { x, y };
@@ -38,13 +41,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
         className="h-auto w-full overflow-visible"
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       >
-        <line
-          className="stroke-viz-grid"
-          x1={PAD}
-          x2={WIDTH - PAD}
-          y1={HEIGHT - PAD}
-          y2={HEIGHT - PAD}
-        />
+        <line className="stroke-viz-grid" x1={0} x2={WIDTH} y1={HEIGHT - PAD} y2={HEIGHT - PAD} />
         <path
           className="stroke-success"
           d={path}

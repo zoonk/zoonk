@@ -162,7 +162,7 @@ function QuestionRow({ editable, question }: { editable: boolean; question: Prof
   const body = (
     <ListRowBody>
       <ListRowContent>
-        <ListRowTitle>
+        <ListRowTitle className={editable ? undefined : "text-muted-foreground"}>
           <QuestionName question={question.id} />
         </ListRowTitle>
       </ListRowContent>
@@ -175,7 +175,7 @@ function QuestionRow({ editable, question }: { editable: boolean; question: Prof
   return editable ? (
     <ListRowLink href={aboutYouQuestionHref(question.id)}>{body}</ListRowLink>
   ) : (
-    <ListRow className="py-3">{body}</ListRow>
+    <ListRow>{body}</ListRow>
   );
 }
 

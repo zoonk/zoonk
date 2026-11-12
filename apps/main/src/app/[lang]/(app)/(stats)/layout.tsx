@@ -13,11 +13,7 @@ export default async function StatsLayout({ children }: LayoutProps<"/[lang]">) 
 
   return (
     <>
-      <SectionPage
-        eyebrow={t("All goals")}
-        hub={{ href: getMenu("stats").url, title: t("Statistics") }}
-        nav={<StatsNav />}
-      >
+      <SectionPage hub={{ href: getMenu("stats").url, title: t("Statistics") }} nav={<StatsNav />}>
         {children}
       </SectionPage>
       <LearnerSummarySeed />

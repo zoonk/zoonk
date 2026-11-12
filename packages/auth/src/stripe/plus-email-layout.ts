@@ -3,6 +3,7 @@ import { formatPrice } from "@zoonk/utils/currency";
 import { escapeHtml } from "@zoonk/utils/escape-html";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { getMainPageUrl } from "@zoonk/utils/url";
+import { EMAIL_TEXT_STYLE } from "../email-style";
 import { type getTranslation } from "../translations/get-translations";
 
 export type Money = { amount: number; currency: string };
@@ -28,7 +29,7 @@ export function html(
 }
 
 export function link(url: string, label = url): string {
-  return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`;
+  return `<a href="${escapeHtml(url)}" style="color:inherit;text-decoration:underline">${escapeHtml(label)}</a>`;
 }
 
 export function paragraph(content: string): string {
@@ -47,7 +48,7 @@ export function details(rows: [label: string, value: string][]): string {
 }
 
 export function renderEmail(blocks: string[]): string {
-  return `<div style="font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;color:#18181b;max-width:560px">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${escapeHtml(SELLER)}</p></div>`;
+  return `<div style="${EMAIL_TEXT_STYLE}">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${escapeHtml(SELLER)}</p></div>`;
 }
 
 /**

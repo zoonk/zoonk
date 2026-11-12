@@ -40,7 +40,7 @@ function renderHtml({
     link(links.unsubscribe, words.unsubscribe, "color:#71717a"),
   ].join("<br>");
 
-  return `<div style="font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;color:#18181b;max-width:560px"><h1 style="font-size:20px;margin:0 0 8px">${escapeHtml(text.title)}</h1><p style="margin:0 0 20px">${escapeHtml(text.body)}</p><p style="margin:0 0 28px">${link(links.today, words.open, button)}</p><p style="margin:0;font-size:12px;color:#71717a">${footer}</p></div>`;
+  return `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#18181b;max-width:560px"><h1 style="font-size:20px;font-weight:600;margin:0 0 8px">${escapeHtml(text.title)}</h1><p style="margin:0 0 20px">${escapeHtml(text.body)}</p><p style="margin:0 0 28px">${link(links.today, words.open, button)}</p><p style="margin:0;font-size:12px;color:#71717a">${footer}</p></div>`;
 }
 
 /**

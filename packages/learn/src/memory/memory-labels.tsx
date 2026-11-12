@@ -70,10 +70,7 @@ export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
     <>
       {source}
       {" · "}
-      <time
-        className="font-mono text-xs tabular-nums"
-        dateTime={new Date(fact.createdAt).toISOString()}
-      >
+      <time className="tabular-nums" dateTime={new Date(fact.createdAt).toISOString()}>
         {format.dateTime(fact.createdAt, { day: "numeric", month: "short" })}
       </time>
     </>

@@ -3,7 +3,6 @@
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -216,18 +215,14 @@ function EmptyCertificates({
   );
 }
 
-/** The eyebrow keeps its line while loading and when empty, so the title never moves. */
-export function CertificatesHeader({ count }: { count: number | null }) {
+/** The empty eyebrow keeps its line, so the title sits where every detail page's does. */
+export function CertificatesHeader() {
   const t = useExtracted();
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow className="flex min-h-4 items-center normal-case">
-          {count === null && <Skeleton className="h-3 w-28 rounded-sm" />}
-          {Boolean(count) &&
-            t("{count, plural, one {# certificate} other {# certificates}}", { count: count ?? 0 })}
-        </PageEyebrow>
+        <PageEyebrow aria-hidden="true" className="min-h-4" />
         <DetailTitle>{t("Certificates")}</DetailTitle>
         <PageSubtitle>{t("A certificate for every level and plan you finish.")}</PageSubtitle>
       </DetailHeroText>
@@ -256,7 +251,7 @@ export function CertificatesScreen({
 }) {
   return (
     <DetailLayout bar={<CertificatesBar back={back} />} data-slot="certificates">
-      <CertificatesHeader count={certificates.length} />
+      <CertificatesHeader />
 
       <DetailContent>
         {!plus && <CertificatesPlusNotice />}

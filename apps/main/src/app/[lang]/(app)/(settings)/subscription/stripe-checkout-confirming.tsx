@@ -62,7 +62,7 @@ function ConfirmationAttempt({ restart }: { restart: () => void }) {
           <Spinner aria-hidden="true" className="size-5" role="presentation" />
         </span>
       ) : (
-        <Button className="self-start" onClick={restart} variant="outline">
+        <Button className="self-start" onClick={restart} size="sm" variant="outline">
           {t("Check again")}
         </Button>
       )}
