@@ -1,6 +1,6 @@
 "use client";
 
-import { sawAppWrites, takeSettledAppWrites } from "@/lib/http/app-write-ledger";
+import { hasUntakenAppWrites, takeSettledAppWrites } from "@/lib/http/app-write-ledger";
 import { useMindMapActions } from "@/lib/mind-maps/use-mind-map-actions";
 import { type SavedMapTarget } from "@zoonk/learn/mind-maps/saves";
 import { type MindMapTab, buildMindMapsHref } from "@zoonk/learn/mind-maps/urls";
@@ -20,24 +20,26 @@ type StudyProps = {
   saved: SavedMapTarget[];
   start: number;
   view: MindMapTab;
-  /** Which of the learner's writes the server read behind this copy saw (`sawAppWrites`). */
-  writeVersion: number;
 };
 
-function StudyVisit({ deck, goalId, lessons, saved, start, view, writeVersion }: StudyProps) {
+function StudyVisit({ deck, goalId, lessons, saved, start, view }: StudyProps) {
   const actions = useMindMapActions(goalId);
   const router = useRouter();
   const pathname = usePathname();
 
-  // The deck stays as it opens, so it opens only from a copy that saw the learner's writes.
-  const [opened, setOpened] = useState(() => sawAppWrites(writeVersion));
+  // The deck stays as it opens, so a copy older than the learner's writes waits for the next read.
+  const [olderDeck, setOlderDeck] = useState(() =>
+    hasUntakenAppWrites({ to: pathname }) ? deck : null,
+  );
 
-  if (!opened && sawAppWrites(writeVersion)) {
-    setOpened(true);
+  if (olderDeck && olderDeck !== deck) {
+    setOlderDeck(null);
   }
 
+  const waiting = olderDeck !== null;
+
   const readAgainIfWritten = useEffectEvent(async () => {
-    if (await takeSettledAppWrites({ to: pathname })) {
+    if ((await takeSettledAppWrites({ to: pathname })) || waiting) {
       router.refresh();
     }
   });
@@ -50,15 +52,15 @@ function StudyVisit({ deck, goalId, lessons, saved, start, view, writeVersion }:
   }, []);
 
   useEffect(() => {
-    if (opened) {
+    if (!waiting) {
       return;
     }
 
-    const timer = setTimeout(() => setOpened(true), READ_AGAIN_PATIENCE_MS);
+    const timer = setTimeout(() => setOlderDeck(null), READ_AGAIN_PATIENCE_MS);
     return () => clearTimeout(timer);
-  }, [opened]);
+  }, [waiting]);
 
-  if (!opened) {
+  if (waiting) {
     return <StudySkeleton />;
   }
 

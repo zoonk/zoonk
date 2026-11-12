@@ -69,12 +69,13 @@ export async function takeSettledAppWrites({
   return true;
 }
 
-/** Each server read of a page carries it, so the page can say which of this tab's writes it saw. */
-export const APP_WRITE_VERSION_HEADER = "zoonk-write-version";
-
-/** Whether a server read sent at `version` saw every write: none sent since, none still on its way. */
-export function sawAppWrites(version: number): boolean {
-  return version === changed && [...writes].every((write) => write.settled);
+/**
+ * Whether a take for `to` would refresh, known before taking: a page whose copy predates the
+ * writes can wait for that refresh instead of showing the copy.
+ */
+export function hasUntakenAppWrites({ to }: { to: string }): boolean {
+  const sending = [...writes].some((write) => !write.settled);
+  return sending || (changed !== refreshed && reads.get(to)?.version !== changed);
 }
 
 export function onOtherTabWrite(onWrite: () => void): () => void {
@@ -109,22 +110,17 @@ export function noteAppWritesSent(): void {
 
   globalThis.fetch = (input, init) => {
     const readVersion = changed;
+    const response = send(input, init);
 
     const headers = new Headers(
       init?.headers ?? (input instanceof Request ? input.headers : undefined),
     );
 
     const url = new URL(input instanceof Request ? input.url : input, location.href);
-    const isPageRead = url.origin === location.origin && headers.get("RSC") === "1";
-
-    if (isPageRead) {
-      headers.set(APP_WRITE_VERSION_HEADER, String(readVersion));
-    }
-
-    const response = send(input, isPageRead ? { ...init, headers } : init);
 
     if (
-      isPageRead &&
+      url.origin === location.origin &&
+      headers.get("RSC") === "1" &&
       !headers.has("Next-Router-Prefetch") &&
       !headers.get("Next-Router-State-Tree")?.includes("metadata-only")
     ) {

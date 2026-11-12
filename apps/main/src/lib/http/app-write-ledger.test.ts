@@ -1,10 +1,9 @@
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  APP_WRITE_VERSION_HEADER,
+  hasUntakenAppWrites,
   noteAppWrite,
   noteAppWritesSent,
-  sawAppWrites,
   takeSettledAppWrites,
 } from "./app-write-ledger";
 
@@ -146,31 +145,23 @@ describe("app write ledger", () => {
       await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(true);
     });
 
-    it("tells a page whether the read that drew it saw every write, before taking any", async () => {
-      const send = vi.fn((_input: RequestInfo | URL, _init?: RequestInit) =>
-        Promise.resolve(new Response(null)),
-      );
-
-      vi.stubGlobal("fetch", send);
-      noteAppWritesSent();
-
-      const sentVersion = () =>
-        Number(new Headers(send.mock.lastCall?.[1]?.headers).get(APP_WRITE_VERSION_HEADER));
-
-      await fetch("/en/mind-maps/study", { headers: { RSC: "1" } });
-      const before = sentVersion();
-      expect(sawAppWrites(before)).toBe(true);
+    it("tells a page before the take whether its copy predates the writes", async () => {
+      expect(hasUntakenAppWrites({ to: "/en/today" })).toBe(false);
 
       const write = heldWrite();
-      await fetch("/en/mind-maps/study", { headers: { RSC: "1" } });
-      const during = sentVersion();
-      expect([sawAppWrites(before), sawAppWrites(during)]).toStrictEqual([false, false]);
+      await fetch("/en/today", { headers: { RSC: "1" } });
+
+      expect(hasUntakenAppWrites({ to: "/en/today" })).toBe(true);
 
       write.save();
       await Promise.resolve();
-      await fetch("/en/mind-maps/study", { headers: { RSC: "1" } });
-      const after = sentVersion();
-      expect([sawAppWrites(during), sawAppWrites(after)]).toStrictEqual([false, true]);
+      await fetch("/en/today", { headers: { RSC: "1" } });
+
+      expect(hasUntakenAppWrites({ to: "/en/today" })).toBe(false);
+      expect(hasUntakenAppWrites({ to: "/en/plan" })).toBe(true);
+
+      await expect(takeSettledAppWrites({ to: "/en/plan" })).resolves.toBe(true);
+      expect(hasUntakenAppWrites({ to: "/en/plan" })).toBe(false);
     });
 
     it("does not count Next's metadata-only request as reading the page's data", async () => {

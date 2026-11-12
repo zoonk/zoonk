@@ -3,7 +3,6 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
-import { APP_WRITE_VERSION_HEADER } from "@/lib/http/app-write-ledger";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { listChapterLessonMaps } from "@zoonk/core/mind-maps/lesson-maps";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
@@ -13,7 +12,6 @@ import { buildMindMapDeck, findDeckStart } from "@zoonk/player/mind-maps/deck";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { headers } from "next/headers";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { MindMapStudyClient } from "./study-client";
@@ -47,12 +45,11 @@ async function readLessons({ chapterId, goalId }: { chapterId: string; goalId: s
 }
 
 async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
-  const [language, session, goal, query, requestHeaders] = await Promise.all([
+  const [language, session, goal, query] = await Promise.all([
     lang(),
     getSession(),
     getCurrentGoal(),
     searchParams,
-    headers(),
   ]);
 
   const view = readMindMapTab(first(query.view)) ?? "chapters";
@@ -95,7 +92,6 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
       saved={result.mindMaps.saved.map(({ kind, targetId }) => ({ kind, targetId }))}
       start={start}
       view={view}
-      writeVersion={Number(requestHeaders.get(APP_WRITE_VERSION_HEADER) ?? 0)}
     />
   );
 }
