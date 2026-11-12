@@ -69,6 +69,14 @@ export async function takeSettledAppWrites({
   return true;
 }
 
+/** Each server read of a page carries it, so the page can say which of this tab's writes it saw. */
+export const APP_WRITE_VERSION_HEADER = "zoonk-write-version";
+
+/** Whether a server read sent at `version` saw every write: none sent since, none still on its way. */
+export function sawAppWrites(version: number): boolean {
+  return version === changed && [...writes].every((write) => write.settled);
+}
+
 export function onOtherTabWrite(onWrite: () => void): () => void {
   const listening = getChannel();
   listening?.addEventListener("message", onWrite);
@@ -101,17 +109,22 @@ export function noteAppWritesSent(): void {
 
   globalThis.fetch = (input, init) => {
     const readVersion = changed;
-    const response = send(input, init);
 
     const headers = new Headers(
       init?.headers ?? (input instanceof Request ? input.headers : undefined),
     );
 
     const url = new URL(input instanceof Request ? input.url : input, location.href);
+    const isPageRead = url.origin === location.origin && headers.get("RSC") === "1";
+
+    if (isPageRead) {
+      headers.set(APP_WRITE_VERSION_HEADER, String(readVersion));
+    }
+
+    const response = send(input, isPageRead ? { ...init, headers } : init);
 
     if (
-      url.origin === location.origin &&
-      headers.get("RSC") === "1" &&
+      isPageRead &&
       !headers.has("Next-Router-Prefetch") &&
       !headers.get("Next-Router-State-Tree")?.includes("metadata-only")
     ) {

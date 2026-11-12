@@ -238,13 +238,70 @@ test.describe("Mind maps", () => {
       await expect.poll(savedCount).toBe(0);
 
       await tab("Chapters").click();
+
+      // Checked on every frame: an older copy shows "Saved" only until the next read, which a
+      // retrying assertion would miss.
+      const firstMark = page.waitForFunction(
+        (title) => {
+          const [shownTitle, button] = ["h1", '[data-slot="mind-map-save"]'].map((selector) =>
+            [...document.querySelectorAll(selector)].find((element) => element.checkVisibility()),
+          );
+
+          return shownTitle?.textContent === title && button?.textContent;
+        },
+        second.chapter.title,
+        { polling: "raf" },
+      );
+
       await studyLink.click();
-      await expect(heading).toBeVisible();
+      const mark = await firstMark;
+      expect(await mark.jsonValue()).toBe("Save");
 
       const save = page.getByRole("button", { exact: true, name: "Save" });
-      await expect(save).toBeVisible();
       await save.click();
       await expect.poll(savedCount).toBe(1);
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("Study opened again after another map turns ready studies both maps", async ({
+    browser,
+  }) => {
+    const { first, second, user } = await createLearner();
+
+    await drawMap(first.chapter.id);
+
+    const page = await openAs(browser, user);
+    const study = page.getByRole("link", { exact: true, name: "Study" });
+    const heading = (title: string) => page.getByRole("heading", { level: 1, name: title });
+
+    try {
+      await page.goto("/mind-maps");
+      await study.click();
+      await expect(heading(first.chapter.title)).toBeVisible();
+      await expect(page.getByRole("link", { name: "Done" })).toBeVisible();
+      await page.getByRole("link", { name: "Leave" }).click();
+
+      await page.getByRole("button", { name: /^Show chapters/u }).click();
+
+      await page
+        .getByRole("listitem")
+        .filter({ hasText: second.chapter.title })
+        .getByRole("button", { name: "Create" })
+        .click();
+
+      await expect(page.getByText(/1 on the way/u)).toBeVisible();
+      await drawMap(second.chapter.id);
+
+      await expect(
+        page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }),
+      ).toBeVisible({ timeout: 15_000 });
+
+      await study.click();
+      await expect(heading(first.chapter.title)).toBeVisible();
+      await page.getByRole("button", { name: "Next" }).click();
+      await expect(heading(second.chapter.title)).toBeVisible();
     } finally {
       await page.context().close();
     }

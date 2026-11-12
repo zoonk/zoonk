@@ -3,20 +3,21 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
+import { APP_WRITE_VERSION_HEADER } from "@/lib/http/app-write-ledger";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { listChapterLessonMaps } from "@zoonk/core/mind-maps/lesson-maps";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { getSession } from "@zoonk/core/users/session";
 import { type MindMapPlace, buildStudyHref, readMindMapTab } from "@zoonk/learn/mind-maps/urls";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { buildMindMapDeck, findDeckStart } from "@zoonk/player/mind-maps/deck";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import { headers } from "next/headers";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { MindMapStudyClient } from "./study-client";
+import { StudySkeleton } from "./study-skeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -46,11 +47,12 @@ async function readLessons({ chapterId, goalId }: { chapterId: string; goalId: s
 }
 
 async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
-  const [language, session, goal, query] = await Promise.all([
+  const [language, session, goal, query, requestHeaders] = await Promise.all([
     lang(),
     getSession(),
     getCurrentGoal(),
     searchParams,
+    headers(),
   ]);
 
   const view = readMindMapTab(first(query.view)) ?? "chapters";
@@ -93,18 +95,8 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
       saved={result.mindMaps.saved.map(({ kind, targetId }) => ({ kind, targetId }))}
       start={start}
       view={view}
+      writeVersion={Number(requestHeaders.get(APP_WRITE_VERSION_HEADER) ?? 0)}
     />
-  );
-}
-
-/** No Previous: Study opens a deck on its first map, which has none. */
-function StudySkeleton() {
-  return (
-    <TaskSkeleton menu title={<Skeleton className="h-4 w-40" />}>
-      <Skeleton className="aspect-square w-full rounded-xl" />
-      <Skeleton className="h-5 w-2/3" />
-      <Skeleton className="h-4 w-full" />
-    </TaskSkeleton>
   );
 }
 

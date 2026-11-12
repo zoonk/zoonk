@@ -1,6 +1,12 @@
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { noteAppWrite, noteAppWritesSent, takeSettledAppWrites } from "./app-write-ledger";
+import {
+  APP_WRITE_VERSION_HEADER,
+  noteAppWrite,
+  noteAppWritesSent,
+  sawAppWrites,
+  takeSettledAppWrites,
+} from "./app-write-ledger";
 
 const PAGE = "https://zoonk.test/en/learn/lesson-1";
 
@@ -138,6 +144,33 @@ describe("app write ledger", () => {
       write.save();
 
       await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(true);
+    });
+
+    it("tells a page whether the read that drew it saw every write, before taking any", async () => {
+      const send = vi.fn((_input: RequestInfo | URL, _init?: RequestInit) =>
+        Promise.resolve(new Response(null)),
+      );
+
+      vi.stubGlobal("fetch", send);
+      noteAppWritesSent();
+
+      const sentVersion = () =>
+        Number(new Headers(send.mock.lastCall?.[1]?.headers).get(APP_WRITE_VERSION_HEADER));
+
+      await fetch("/en/mind-maps/study", { headers: { RSC: "1" } });
+      const before = sentVersion();
+      expect(sawAppWrites(before)).toBe(true);
+
+      const write = heldWrite();
+      await fetch("/en/mind-maps/study", { headers: { RSC: "1" } });
+      const during = sentVersion();
+      expect([sawAppWrites(before), sawAppWrites(during)]).toStrictEqual([false, false]);
+
+      write.save();
+      await Promise.resolve();
+      await fetch("/en/mind-maps/study", { headers: { RSC: "1" } });
+      const after = sentVersion();
+      expect([sawAppWrites(during), sawAppWrites(after)]).toStrictEqual([false, true]);
     });
 
     it("does not count Next's metadata-only request as reading the page's data", async () => {
