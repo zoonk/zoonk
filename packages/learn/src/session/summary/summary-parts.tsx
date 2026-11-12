@@ -17,7 +17,6 @@ import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
@@ -29,6 +28,7 @@ import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
 import { ReminderOffer } from "../../reminders/reminder-offer";
 import { type StudySessionSummary } from "../session-types";
+import { SummaryExtraTime } from "./summary-actions";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 import { EarnedToday } from "./summary-rewards";
 
@@ -114,7 +114,10 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <BeltIndicator color={color} label={beltName(color)} size="sm" />
+      {/* The label's icon box, so the belt's name starts under the label. */}
+      <span className="flex size-3.5 shrink-0 items-center justify-center">
+        <BeltIndicator color={color} label={beltName(color)} size="sm" />
+      </span>
       {beltStep(belt.after)}
     </span>
   );
@@ -216,7 +219,6 @@ export function DoneStep() {
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepEyebrow>{t("Today")}</StepEyebrow>
         <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
         {stopped && summary.minutes >= 1 && (
           <StepDetail className="font-mono text-[0.8125rem] tabular-nums">
@@ -233,6 +235,7 @@ export function DoneStep() {
         </section>
       )}
       <TomorrowRow />
+      <SummaryExtraTime />
       <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>
   );

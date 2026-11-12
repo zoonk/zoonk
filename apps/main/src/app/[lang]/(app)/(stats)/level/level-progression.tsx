@@ -2,6 +2,7 @@ import { type BeltColorOption, getBeltColors, getBeltLabel } from "@/lib/belt-co
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
+import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BELT_COLORS_ORDER, type BeltColor, LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
@@ -216,9 +217,11 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
       <BeltRack beltColors={beltColors} currentIndex={currentIndex} />
 
       {currentBelt.nextBelt && nextBelt && namesNextBelt && (
-        <p className="text-muted-foreground flex items-center gap-2 text-sm">
-          <BeltIndicator aria-hidden color={nextBelt.key} label={nextBelt.label} size="sm" />
-          <span>
+        <p className="text-muted-foreground flex items-start gap-2 text-sm">
+          <LineMarker>
+            <BeltIndicator aria-hidden color={nextBelt.key} label={nextBelt.label} size="sm" />
+          </LineMarker>
+          <span className="text-pretty">
             {t.rich({
               description:
                 '{next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt\'s last number, 10.',

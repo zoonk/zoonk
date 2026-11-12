@@ -10,7 +10,7 @@ export function StatTilesSkeleton({ className, count }: { className?: string; co
       aria-hidden="true"
       className={cn(
         "grid grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2",
-        count === 3 && "sm:grid-cols-3 sm:[&>*:last-child:nth-child(odd)]:col-span-1",
+        count % 2 === 1 && "sm:grid-cols-3 sm:[&>*:last-child:nth-child(odd)]:col-span-1",
         className,
       )}
     >

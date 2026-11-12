@@ -10,7 +10,6 @@ import { TaskAsideContent } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
-import { useChallengeName } from "../checkpoints/checkpoint-labels";
 import { TricksterArt } from "../checkpoints/trickster-art";
 import { useMockDaySizeLabel } from "../mock/mock-labels";
 import { MockLeftOutNote } from "../mock/mock-notes";
@@ -266,12 +265,13 @@ function MockIntro() {
   );
 }
 
-/** Every intro has one, so the route's skeleton draws it before knowing which challenge it is. */
-export function useChallengeIntroAside(): TaskFrameAside {
+/**
+ * The route's skeleton draws one before knowing which challenge it is; an intro with nothing to
+ * list drops it rather than keep an empty rail on screen.
+ */
+export function useChallengeIntroAside(): TaskFrameAside | null {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
-  const duelName = useChallengeName(challenge);
-  const name = challenge.call ? t("Call") : duelName;
   const callGoals = challenge.call?.goals && challenge.status !== "done";
 
   const title =
@@ -279,7 +279,7 @@ export function useChallengeIntroAside(): TaskFrameAside {
     (challenge.mock ? challenge.examName : null) ??
     (callGoals ? t("What to get across") : null);
 
-  return { label: title ?? name, title };
+  return title ? { label: title, title } : null;
 }
 
 export function ChallengeIntro() {

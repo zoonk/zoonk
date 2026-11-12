@@ -85,24 +85,28 @@ export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof us
   );
 }
 
-export function SummaryOptions() {
+/** More study after a full day sits in the column under Tomorrow, so the bar keeps two actions. */
+export function SummaryExtraTime() {
   const t = useExtracted();
   const stopped = useIsStopped();
-  const { actions, signUpHref, summary } = useSessionSummary();
+  const { actions, summary } = useSessionSummary();
   const { extraTime } = summary;
 
-  return (
-    <>
-      {!stopped && extraTime.available && (
-        <ExtraTimeButton
-          action={actions.addExtraTime}
-          className="lg:w-auto lg:self-end"
-          label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
-          minutes={extraTime.minutes}
-        />
-      )}
+  if (stopped || !extraTime.available) {
+    return null;
+  }
 
-      {signUpHref && <SavePlanNote signUpHref={signUpHref} />}
-    </>
+  return (
+    <ExtraTimeButton
+      action={actions.addExtraTime}
+      label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
+      minutes={extraTime.minutes}
+    />
   );
+}
+
+export function SummaryOptions() {
+  const { signUpHref } = useSessionSummary();
+
+  return signUpHref ? <SavePlanNote signUpHref={signUpHref} /> : null;
 }

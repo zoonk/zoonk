@@ -3,6 +3,7 @@ import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { TargetIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
+import { STAT_PAGE_TILES_CLASS } from "../_components/stats-tiles";
 
 const SCORE_WINDOW_DAYS = 90;
 
@@ -11,7 +12,7 @@ export async function ScoreTile({ performance }: { performance: ScorePerformance
   const format = await getFormatter();
 
   return (
-    <StatTiles>
+    <StatTiles className={STAT_PAGE_TILES_CLASS}>
       <StatTile
         detail={t("{correct} of {total}", {
           correct: formatWholeNumber({ format, value: performance.correctAnswers }),

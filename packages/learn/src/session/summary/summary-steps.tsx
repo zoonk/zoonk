@@ -4,6 +4,7 @@ import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { focusStepTitle } from "../../_components/steps";
+import { TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
 import { TaskFrame } from "../../shell/task-frame";
@@ -90,6 +91,7 @@ export function SummarySteps() {
             <SummaryOptions />
           </>
         }
+        headerTitle={<TaskHeaderTitle title={t("Today")} />}
       >
         <CelebrationScope play={firstVisit}>
           <div className="flex flex-col gap-4" data-slot="steps-step" ref={stepRef}>

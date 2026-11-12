@@ -30,11 +30,11 @@ export function ExtraTimeButton({
       <form action={() => void run()} className="contents">
         <Button
           busy={isPending}
-          className={cn("w-full", className)}
+          className={cn("self-start", className)}
           icon={<PlayIcon aria-hidden="true" />}
-          size="xl"
+          size="sm"
           type="submit"
-          variant="ghost"
+          variant="outline"
         >
           {label ?? t("Practice {minutes} more min", { minutes: String(minutes) })}
         </Button>

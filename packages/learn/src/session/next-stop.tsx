@@ -188,11 +188,7 @@ function NextStopActionBar({
       {/* Empty, it takes back the bar's gap but stays in the page, so it's heard when it speaks. */}
       <OpeningWaitLine className="text-sm empty:-mt-2" wait={start.wait} />
 
-      <TaskActions
-        className={
-          !isReady && (alternative || quizSlot) ? "max-lg:flex-col max-lg:items-stretch" : undefined
-        }
-      >
+      <TaskActions className={isReady ? undefined : "max-lg:flex-col max-lg:items-stretch"}>
         {canStop && (
           <form action={() => void stop.run()} className="contents">
             <Button

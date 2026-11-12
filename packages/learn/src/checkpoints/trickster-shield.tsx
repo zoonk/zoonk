@@ -68,6 +68,8 @@ export function TricksterShield({
   const t = useExtracted();
   const locale = useAppLocale();
   const toGo = segments - Math.min(broken, segments);
+  const won = toGo === 0;
+  const lost = !won && held;
 
   return (
     <div
@@ -80,7 +82,7 @@ export function TricksterShield({
         locale={getFormattingLocale(locale)}
         value={Math.min(100, Math.max(0, value))}
       />
-      <Trickster className="size-4 shrink-0" />
+      <Trickster className="size-5 shrink-0" />
 
       <ShieldMeter
         broken={broken}
@@ -89,19 +91,20 @@ export function TricksterShield({
         segments={segments}
       />
 
+      {/* Every label takes the same cell, so the track never changes width as the words do. */}
       <span
         aria-hidden="true"
-        className="text-muted-foreground shrink-0 font-mono text-xs whitespace-nowrap tabular-nums"
+        className="text-muted-foreground grid shrink-0 justify-items-end font-mono text-xs whitespace-nowrap tabular-nums *:col-start-1 *:row-start-1"
       >
-        {toGo === 0 && t("You won")}
-        {toGo > 0 && held && t("He won")}
-        {toGo > 0 &&
-          !held &&
-          t({
+        <span className={cn(!won && "invisible")}>{t("You won")}</span>
+        <span className={cn(!lost && "invisible")}>{t("He won")}</span>
+        <span className={cn((won || lost) && "invisible")}>
+          {t({
             description: "Right answers the learner still needs to beat the Trickster.",
             message: "{count, plural, one {# more to win} other {# more to win}}",
-            values: { count: toGo },
+            values: { count: won ? segments : toGo },
           })}
+        </span>
       </span>
     </div>
   );
