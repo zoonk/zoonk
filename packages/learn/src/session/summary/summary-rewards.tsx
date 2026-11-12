@@ -10,7 +10,6 @@ import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { BeltTicks } from "../../_components/belt-ticks";
 import { BrainPowerReadout } from "../../_components/moment-readouts";
-import { PageSectionTitle } from "../../_components/page";
 import { StepRow, StepRows } from "../../_components/step-card";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
 import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
@@ -143,30 +142,6 @@ function RewardRows() {
       {hasStripe && <BeltRow belt={belt} />}
       {hasStreak && <StreakRow count={bestStreak} />}
     </StepRows>
-  );
-}
-
-/**
- * Without an aside the day's rewards follow its numbers as one section; with one, the aside holds
- * them beside the buddy.
- */
-export function EarnedTodayRows() {
-  const t = useExtracted();
-  const { summary } = useSessionSummary();
-  const { belt, bestStreak } = summary;
-
-  const hasRows =
-    hasMissionsDone(summary) || (belt?.stripesGained ?? 0) > 0 || bestStreak >= SHOWN_STREAK;
-
-  if (!hasRows) {
-    return null;
-  }
-
-  return (
-    <section className="with-aside:hidden flex w-full flex-col gap-1" data-slot="earned-today-rows">
-      <PageSectionTitle>{t("Earned today")}</PageSectionTitle>
-      <RewardRows />
-    </section>
   );
 }
 

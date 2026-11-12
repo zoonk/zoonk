@@ -81,7 +81,7 @@ function BeltBadge({
   );
 }
 
-/** How many numbers are left before the next belt, which starts after this belt's last one. */
+/** Where the learner is on the way to the next belt, which starts after this belt's last number. */
 function useNextBeltLine() {
   const t = useExtracted();
   const beltName = useBeltName();
@@ -95,9 +95,9 @@ function useNextBeltLine() {
 
     return t({
       description:
-        'Under a belt and its number, such as "White belt 4": how many numbers are left before the next belt. {belt} is that belt\'s name, such as "Yellow belt".',
-      message: "{count, plural, one {# more to {belt}} other {# more to {belt}}}",
-      values: { belt: beltName(next), count: LEVELS_PER_COLOR - level + 1 },
+        'Under a belt and its number, such as "White belt 4": how far along the belt\'s ten numbers the learner is, on the way to the next belt. {belt} is that belt\'s name, such as "Yellow belt".',
+      message: "{level} of {count} to {belt}",
+      values: { belt: beltName(next), count: String(LEVELS_PER_COLOR), level: String(level) },
     });
   }
 

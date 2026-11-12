@@ -26,12 +26,9 @@ import {
 import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
-import { useShortList } from "../../plan/use-short-list";
 import { ReminderOffer } from "../../reminders/reminder-offer";
 import { type StudySessionSummary } from "../session-types";
-import { getRisenSkills } from "./risen-skills";
 import { useIsStopped, useSessionSummary } from "./summary-context";
-import { EarnedTodayRows } from "./summary-rewards";
 
 /** In the title's one face: the mono face's wide space read "Done in 13  min". */
 function DoneTitle() {
@@ -179,29 +176,6 @@ function SessionNumbers() {
   );
 }
 
-/** One line, in topics' names: how a topic's memory is tracked stays out of the learner's way. */
-function BetterAt() {
-  const t = useExtracted();
-  const shortList = useShortList();
-  const { summary } = useSessionSummary();
-  const rises = getRisenSkills(summary.skillsMoved);
-
-  if (rises.length === 0) {
-    return null;
-  }
-
-  return (
-    <p className="text-sm text-pretty" data-slot="summary-better-at">
-      {t("You got better at {topics}.", {
-        topics: shortList(
-          rises.map((move) => move.name),
-          "topics",
-        ),
-      })}
-    </p>
-  );
-}
-
 function TomorrowRow() {
   const t = useExtracted();
   const stopped = useIsStopped();
@@ -247,8 +221,6 @@ export function DoneStep() {
       </StepHeader>
 
       <SessionNumbers />
-      <BetterAt />
-      <EarnedTodayRows />
       <TomorrowRow />
       <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>
