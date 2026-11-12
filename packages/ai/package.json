@@ -186,7 +186,12 @@
     "./tasks/research/source-change-notice": "./src/tasks/research/source-change-notice.ts",
     "./tasks/research/source-plan": "./src/tasks/research/source-research-plan.ts",
     "./tasks/research/translate-pass-marks": "./src/tasks/research/translate-pass-marks.ts",
-    "./tasks/research/upload-visibility": "./src/tasks/research/upload-visibility.ts"
+    "./tasks/research/upload-visibility": "./src/tasks/research/upload-visibility.ts",
+    "./tasks/challenge/assemble": "./src/tasks/challenge/assemble-challenge-case.ts",
+    "./tasks/challenge/plan": "./src/tasks/challenge/challenge-plan.ts",
+    "./tasks/challenge/plan-paths": "./src/tasks/challenge/challenge-plan-paths.ts",
+    "./tasks/challenge/script": "./src/tasks/challenge/challenge-script.ts",
+    "./tasks/quality/challenge-quality-check": "./src/tasks/quality/challenge-quality-check.ts"
   },
   "scripts": {
     "prices:refresh": "tsx scripts/refresh-gateway-prices.ts",

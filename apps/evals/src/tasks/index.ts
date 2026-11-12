@@ -4,6 +4,7 @@ import { alphabetLessonTask } from "./alphabet-lesson/task";
 import { answerFromMaterialTask } from "./answer-from-material/task";
 import { assessPronunciationTask } from "./assess-pronunciation/task";
 import { challengeCaseTask } from "./challenge-case/task";
+import { challengeReviewTask } from "./challenge-review/task";
 import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
@@ -150,6 +151,7 @@ export const TASKS: readonly RegisteredTask[] = [
   explainWrongAnswerTask,
   quickExplanationTask,
   challengeCaseTask,
+  challengeReviewTask,
   questionGeneralityTask,
   skillGraphTask,
   goalOpeningTask,

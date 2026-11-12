@@ -715,7 +715,11 @@
     "./staff/users": "./src/staff/users.ts",
     "./staff/input": "./src/staff/input.ts",
     "./staff/read": "./src/staff/read.ts",
-    "./users/user-search": "./src/users/user-search.ts"
+    "./users/user-search": "./src/users/user-search.ts",
+    "./library/challenges/plan-check": "./src/library/challenges/challenge-plan-check.ts",
+    "./library/challenges/draft": "./src/library/challenges/challenge-draft.ts",
+    "./library/challenges/lesson-draft": "./src/library/challenges/challenge-lesson-draft.ts",
+    "./library/challenges/render": "./src/library/challenges/render-challenge.ts"
   },
   "scripts": {
     "seed": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",

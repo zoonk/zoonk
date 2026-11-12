@@ -33,7 +33,7 @@ type ChallengeCaseVariant = "whatIf" | "work";
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the case and its people come before the decisions that use them. */
 const messageSchema = z.object({ from: z.string(), text: z.string() });
 
-const panelSchema = z.object({
+export const challengePanelSchema = z.object({
   title: z.string().nullable(),
   metrics: z.array(z.object({ label: z.string(), value: z.string(), note: z.string().nullable() })),
   note: z.string().nullable(),
@@ -45,7 +45,7 @@ const choiceSchema = z.object({
   quality: z.enum(["strong", "fair", "weak"]),
   replies: z.array(messageSchema),
   effects: z.array(z.object({ meter: z.string(), change: z.number().int() })),
-  timeJump: z.object({ label: z.string(), panel: panelSchema.nullable() }).nullable(),
+  timeJump: z.object({ label: z.string(), panel: challengePanelSchema.nullable() }).nullable(),
   notes: z.array(
     z.object({
       skill: z.string(),
@@ -57,12 +57,12 @@ const choiceSchema = z.object({
   next: z.string(),
 });
 
-const schema = z.object({
+export const challengeCaseSchema = z.object({
   title: z.string(),
   setting: z.string(),
   mission: z.string(),
   deadline: z.string().nullable(),
-  panels: z.array(panelSchema),
+  panels: z.array(challengePanelSchema),
   team: z.array(
     z.object({ id: z.string(), role: z.string(), expertise: z.string(), ai: z.boolean() }),
   ),
@@ -89,7 +89,7 @@ const schema = z.object({
 });
 /* oxlint-enable eslint/sort-keys */
 
-export type WrittenChallengeCase = z.infer<typeof schema>;
+export type WrittenChallengeCase = z.infer<typeof challengeCaseSchema>;
 
 type ChallengeSkillInput = { name: string; description?: string | null };
 
@@ -163,7 +163,7 @@ export async function generateChallengeCase(params: ChallengeCaseParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: challengeCaseSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
