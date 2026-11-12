@@ -9,7 +9,13 @@ import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
 import { profileUpdateSchema } from "../profile-update";
 
-/** Staff authority is provisioned outside browser sessions; the apps never use these endpoints. */
+const IMPERSONATION_PATHS = new Set(["/admin/impersonate-user", "/admin/stop-impersonating"]);
+
+/**
+ * Staff authority (admin role, not banned) is provisioned outside browser sessions: the apps call
+ * none of the admin plugin's other endpoints, and several (role, ban, unban, user updates) can grant
+ * or restore it.
+ */
 const guardStaffAuthority = createAuthMiddleware(async () => {
   throw new APIError("FORBIDDEN", {
     code: "STAFF_AUTHORITY_LOCKED",
@@ -123,10 +129,7 @@ export function accessGuardsPlugin() {
         {
           handler: guardStaffAuthority,
           matcher: (context) =>
-            context.path === "/admin/set-role" ||
-            context.path === "/admin/create-user" ||
-            context.path === "/admin/update-user" ||
-            context.path === "/admin/unban-user",
+            context.path?.startsWith("/admin/") === true && !IMPERSONATION_PATHS.has(context.path),
         },
         {
           handler: guardPlusPurchase,

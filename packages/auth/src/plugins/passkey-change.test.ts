@@ -200,33 +200,36 @@ describe("passkey changes", () => {
 });
 
 describe("staff authority", () => {
-  it.each(["/admin/set-role", "/admin/update-user", "/admin/create-user"] as const)(
-    "blocks the unused authority-changing endpoint %s",
-    async (path) => {
-      const admin = await signUp();
-      await prisma.user.update({ data: { role: "admin" }, where: { id: admin.userId } });
-      await admin.register(makeRestoreKey());
-      const agent = await signUp();
-      await agent.register(makeRestoreKey());
-      const email = `blocked-staff-${randomUUID()}@example.test`;
+  it.each([
+    "/admin/set-role",
+    "/admin/update-user",
+    "/admin/create-user",
+    "/admin/ban-user",
+  ] as const)("blocks the unused authority-changing endpoint %s", async (path) => {
+    const admin = await signUp();
+    await prisma.user.update({ data: { role: "admin" }, where: { id: admin.userId } });
+    await admin.register(makeRestoreKey());
+    const agent = await signUp();
+    await agent.register(makeRestoreKey());
+    const email = `blocked-staff-${randomUUID()}@example.test`;
 
-      const bodies = {
-        "/admin/create-user": { email, name: "Agent", role: "admin" },
-        "/admin/set-role": { role: "admin", userId: agent.userId },
-        "/admin/update-user": { data: { role: "admin" }, userId: agent.userId },
-      };
+    const bodies = {
+      "/admin/ban-user": { banExpiresIn: -1, userId: agent.userId },
+      "/admin/create-user": { email, name: "Agent", role: "admin" },
+      "/admin/set-role": { role: "admin", userId: agent.userId },
+      "/admin/update-user": { data: { role: "admin" }, userId: agent.userId },
+    };
 
-      const body = bodies[path];
+    const body = bodies[path];
 
-      await expect(admin.request(path, body)).resolves.toMatchObject({ status: 403 });
+    await expect(admin.request(path, body)).resolves.toMatchObject({ status: 403 });
 
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: agent.userId } }),
-      ).resolves.toMatchObject({ role: "user" });
+    await expect(
+      prisma.user.findUniqueOrThrow({ where: { id: agent.userId } }),
+    ).resolves.toMatchObject({ role: "user" });
 
-      await expect(prisma.user.findUnique({ where: { email } })).resolves.toBeNull();
-    },
-  );
+    await expect(prisma.user.findUnique({ where: { email } })).resolves.toBeNull();
+  });
 
   it("refuses impersonation of an admin but allows impersonation of a learner", async () => {
     const admin = await signUp();
