@@ -11,7 +11,7 @@ export function PlanIncludes({
 }) {
   return (
     <div className="flex flex-col gap-3.5">
-      <p className="text-lg leading-snug font-semibold tracking-[-0.02em] text-balance">
+      <p className="text-base leading-snug font-semibold tracking-[-0.015em] text-balance">
         {summary}
       </p>
 
@@ -32,7 +32,7 @@ export function PlanIncludes({
 export function PlanPrice({ amount, per }: { amount: string; per?: string }) {
   return (
     <p className="flex items-baseline gap-2">
-      <BigQuantity className="text-[2.75rem]">{amount}</BigQuantity>
+      <BigQuantity className="text-[2.5rem]">{amount}</BigQuantity>
       {per && <span className="text-muted-foreground text-sm">{per}</span>}
     </p>
   );
