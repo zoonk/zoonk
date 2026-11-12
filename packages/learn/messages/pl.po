@@ -7602,6 +7602,11 @@ msgid "Create"
 msgstr "Utwórz"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "ZyyHnb"
+msgid "A mind map of its main ideas"
+msgstr ""
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "FE72mn"
 msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 msgstr "{count, plural, one {Najpierw przygotujemy # lekcję i wliczymy ją do twojej puli bezpłatnych lekcji.} few {Najpierw przygotujemy # lekcje i wliczymy je do twojej puli bezpłatnych lekcji.} other {Najpierw przygotujemy # lekcji i wliczymy je do twojej puli bezpłatnych lekcji.}}"
@@ -7796,8 +7801,8 @@ msgid "Other chapters"
 msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "KSrqvC"
-msgid "{count, plural, one {Create # map} other {Create # maps}}"
+msgctxt "Q3GPLT"
+msgid "Create all"
 msgstr ""
 
 #: src/mind-maps/use-mind-map-saves.ts
@@ -8562,8 +8567,8 @@ msgid "We couldn't start the mock exam. Try again."
 msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
-msgctxt "KCIoe0"
-msgid "This one is shorter today: {count, plural, one {# question} other {# questions}}, about {time}."
+msgctxt "ULqnCA"
+msgid "Today it has {count, number} of its {total, number} questions, about {time}."
 msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
@@ -9128,6 +9133,11 @@ msgstr "{unit, select, percent {Osiągnięto wymagane minimum: {minimum}} other 
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
 msgstr "Wymagane minimum: {unit, select, percent {{minimum} możliwych punktów} other {{value, plural, one {# punkt} few {# punkty} many {# punktów} other {# punktu}}}}"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "_5ctpj"
+msgid "About {correct} of {total}"
+msgstr ""
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
@@ -13364,14 +13374,14 @@ msgstr "Lekcje wróciły do twojego planu."
 
 #. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
-msgctxt "nPTmVb"
-msgid "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}"
-msgstr "{lessons, plural, =0 {Twój plan już pomija ten rozdział.} one {W twoim planie pominięto # lekcję.} few {W twoim planie pominięto # lekcje.} other {W twoim planie pominięto # lekcji.}}"
+msgctxt "ttohgu"
+msgid "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr ""
 
 #: src/questions/test-out-run.tsx
-msgctxt "WLt-8P"
-msgid "You already know this"
-msgstr "Już to znasz"
+msgctxt "zwHQ3W"
+msgid "You passed the test"
+msgstr ""
 
 #: src/questions/test-out-run.tsx
 msgctxt "ABnCBH"

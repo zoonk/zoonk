@@ -86,10 +86,15 @@ function TestRowScore({ row }: { row: TestRow }) {
 
   return (
     <span className="shrink-0 font-mono text-xs tabular-nums">
-      {t("{correct} of {total}", {
-        correct: points(row.projected ?? row.earned),
-        total: points(row.max ?? row.asked),
-      })}
+      {row.projected === null
+        ? t("{correct} of {total}", {
+            correct: points(row.earned),
+            total: points(row.max ?? row.asked),
+          })
+        : t("About {correct} of {total}", {
+            correct: points(Math.round(row.projected)),
+            total: points(row.max ?? row.asked),
+          })}
     </span>
   );
 }
@@ -184,7 +189,7 @@ function ProjectedLine({ points }: { points: MockPoints }) {
     <p className="text-muted-foreground text-xs">
       {t("About {projected} of {max} points on the whole exam.", {
         max: number(points.max),
-        projected: number(points.projected),
+        projected: number(Math.round(points.projected)),
       })}
     </p>
   );

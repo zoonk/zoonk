@@ -60,7 +60,7 @@ function useResultDetail({ outcome, undone }: { outcome: GradedTestOut; undone: 
   return t({
     description: 'The learner passed this chapter\'s test. "It" is the chapter.',
     message:
-      "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}",
+      "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}",
     values: { lessons: outcome.skippedLessons },
   });
 }
@@ -94,7 +94,7 @@ function ResultStep({
       <StepCard aria-live="polite" role="status">
         <StepHeader>
           <StepTitle>
-            {outcome.passed ? t("You already know this") : t("Not yet, and that's fine")}
+            {outcome.passed ? t("You passed the test") : t("Not yet, and that's fine")}
           </StepTitle>
           <StepDetail>{detail}</StepDetail>
         </StepHeader>
@@ -195,7 +195,7 @@ function TestOutQuestions({
         screen: "test-out",
         title: t("Test: {chapter}", { chapter: chapterTitle }),
       }}
-      hint={() => rule}
+      hint={(question) => (question === test.questions[0] ? rule : "")}
       onFinish={onFinish}
       pending={pending}
       questions={test.questions}

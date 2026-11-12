@@ -18,20 +18,23 @@ function useAvailableLine({ place, plus, shown, view }: MindMapCopyInput): strin
 
   const count = view.lessonsToWrite;
 
+  const offerLine =
+    place === "finish" ? t("A mind map of its main ideas") : t("Its main ideas in one picture");
+
   if (writesLessons && place === "library") {
     return null;
   }
 
   if (writesLessons) {
     return plus
-      ? t("Its main ideas in one picture")
+      ? offerLine
       : t(
           "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
           { count },
         );
   }
 
-  return place === "library" ? null : t("Its main ideas in one picture");
+  return place === "library" ? null : offerLine;
 }
 
 export type MindMapCopyInput = {

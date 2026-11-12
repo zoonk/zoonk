@@ -50,7 +50,12 @@ function MockGrading() {
         </>
       }
     >
-      <StepTitle>{t("Mock exam handed in")}</StepTitle>
+      <StepCard>
+        <StepHeader>
+          <StepTitle>{t("Mock exam handed in")}</StepTitle>
+          <StepDetail>{t("Your answers are saved.")}</StepDetail>
+        </StepHeader>
+      </StepCard>
     </MockFrame>
   );
 }

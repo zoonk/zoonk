@@ -73,10 +73,11 @@ function ShortText({ status }: { status: MockShortStatus }) {
   const t = useExtracted();
   const duration = useFormatDuration();
 
-  return t(
-    "This one is shorter today: {count, plural, one {# question} other {# questions}}, about {time}.",
-    { count: status.questions, time: duration(status.minutes) },
-  );
+  return t("Today it has {count, number} of its {total, number} questions, about {time}.", {
+    count: status.questions,
+    time: duration(status.minutes),
+    total: status.examQuestions,
+  });
 }
 
 function ChooserLine({ detail, status }: { detail: string; status: MockChooserStatus }) {

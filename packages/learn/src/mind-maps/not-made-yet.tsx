@@ -113,6 +113,14 @@ function NotMadeLine({
   return null;
 }
 
+/** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
+function canMakeNow(chapter: MindMapsPageChapter): boolean {
+  return (
+    chapter.lessonsToWrite === 0 &&
+    (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
+  );
+}
+
 /**
  * The chapters without a map, after the ones that have one: one button that makes every map it
  * can, one line on what's happening, and each chapter's own row on demand.
@@ -131,6 +139,8 @@ export function NotMadeYet({
   const { bulk, page } = library;
   const { startable } = page.createOffer;
   const plus = tier === "plus";
+  const now = chapters.filter((chapter) => canMakeNow(chapter));
+  const later = chapters.filter((chapter) => !canMakeNow(chapter));
 
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
@@ -140,7 +150,22 @@ export function NotMadeYet({
         </PageSectionTitle>
       </PageSectionHeader>
 
-      {startable > 0 && (
+      {now.length > 0 && (
+        <ul className={LIST_GROUP_CLASS}>
+          {now.map((chapter) => (
+            <li key={chapter.chapterId}>
+              <MindMapRowView
+                place="library"
+                plus={plus}
+                request={library.row(chapter)}
+                view={{ ...chapter, image: null, outline: null }}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {startable > 1 && (
         <Button
           busy={bulk.status === "sending"}
           className="self-start"
@@ -149,7 +174,7 @@ export function NotMadeYet({
           size="lg"
           variant="outline"
         >
-          {t("{count, plural, one {Create # map} other {Create # maps}}", { count: startable })}
+          {t("Create all")}
         </Button>
       )}
 
@@ -158,9 +183,9 @@ export function NotMadeYet({
       </StatusRegion>
 
       <ListGroup>
-        <Disclosure aside={chapters.length} icon={null} title={t("Other chapters")}>
+        <Disclosure aside={later.length} icon={null} title={t("Other chapters")}>
           <ul className={LIST_GROUP_CLASS}>
-            {chapters.map((chapter) => (
+            {later.map((chapter) => (
               <li key={chapter.chapterId}>
                 <MindMapRowView
                   place="library"

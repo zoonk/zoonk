@@ -7602,6 +7602,11 @@ msgid "Create"
 msgstr "Create"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "ZyyHnb"
+msgid "A mind map of its main ideas"
+msgstr "A mind map of its main ideas"
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "FE72mn"
 msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 msgstr "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
@@ -7796,9 +7801,9 @@ msgid "Other chapters"
 msgstr "Other chapters"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "KSrqvC"
-msgid "{count, plural, one {Create # map} other {Create # maps}}"
-msgstr "{count, plural, one {Create # map} other {Create # maps}}"
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr "Create all"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -8562,9 +8567,9 @@ msgid "We couldn't start the mock exam. Try again."
 msgstr "We couldn't start the mock exam. Try again."
 
 #: src/mock/mock-chooser-page.tsx
-msgctxt "KCIoe0"
-msgid "This one is shorter today: {count, plural, one {# question} other {# questions}}, about {time}."
-msgstr "This one is shorter today: {count, plural, one {# question} other {# questions}}, about {time}."
+msgctxt "ULqnCA"
+msgid "Today it has {count, number} of its {total, number} questions, about {time}."
+msgstr "Today it has {count, number} of its {total, number} questions, about {time}."
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
@@ -9128,6 +9133,11 @@ msgstr "{unit, select, percent {Reached the {minimum} it needs} other {Reached t
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
 msgstr "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "_5ctpj"
+msgid "About {correct} of {total}"
+msgstr "About {correct} of {total}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
@@ -13364,14 +13374,14 @@ msgstr "The lessons are back in your plan."
 
 #. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
-msgctxt "nPTmVb"
-msgid "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}"
-msgstr "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}"
+msgctxt "ttohgu"
+msgid "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
 
 #: src/questions/test-out-run.tsx
-msgctxt "WLt-8P"
-msgid "You already know this"
-msgstr "You already know this"
+msgctxt "zwHQ3W"
+msgid "You passed the test"
+msgstr "You passed the test"
 
 #: src/questions/test-out-run.tsx
 msgctxt "ABnCBH"

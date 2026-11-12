@@ -7602,6 +7602,11 @@ msgid "Create"
 msgstr "만들기"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "ZyyHnb"
+msgid "A mind map of its main ideas"
+msgstr ""
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "FE72mn"
 msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 msgstr "{count, plural, other {레슨 #개를 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요.}}"
@@ -7796,8 +7801,8 @@ msgid "Other chapters"
 msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "KSrqvC"
-msgid "{count, plural, one {Create # map} other {Create # maps}}"
+msgctxt "Q3GPLT"
+msgid "Create all"
 msgstr ""
 
 #: src/mind-maps/use-mind-map-saves.ts
@@ -8562,8 +8567,8 @@ msgid "We couldn't start the mock exam. Try again."
 msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
-msgctxt "KCIoe0"
-msgid "This one is shorter today: {count, plural, one {# question} other {# questions}}, about {time}."
+msgctxt "ULqnCA"
+msgid "Today it has {count, number} of its {total, number} questions, about {time}."
 msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
@@ -9128,6 +9133,11 @@ msgstr "{unit, select, percent {최소 기준 {minimum} 충족} other {최소 �
 msgctxt "G7GP7-"
 msgid "Needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}}"
 msgstr "{unit, select, percent {배점의 {minimum}} other {{value, plural, other {#점}}}} 필요"
+
+#: src/mock/mock-result-points.tsx
+msgctxt "_5ctpj"
+msgid "About {correct} of {total}"
+msgstr ""
 
 #: src/mock/mock-result-points.tsx
 msgctxt "8Qf9bm"
@@ -13364,14 +13374,14 @@ msgstr "레슨을 계획에 다시 넣었어요."
 
 #. The learner passed this chapter's test. "It" is the chapter.
 #: src/questions/test-out-run.tsx
-msgctxt "nPTmVb"
-msgid "{lessons, plural, =0 {Your plan already skips it.} one {# lesson is off your plan.} other {# lessons are off your plan.}}"
-msgstr "{lessons, plural, =0 {이미 계획에서 건너뛴 챕터예요.} other {계획에서 레슨 #개를 건너뛰었어요.}}"
+msgctxt "ttohgu"
+msgid "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr ""
 
 #: src/questions/test-out-run.tsx
-msgctxt "WLt-8P"
-msgid "You already know this"
-msgstr "이미 아는 내용이에요"
+msgctxt "zwHQ3W"
+msgid "You passed the test"
+msgstr ""
 
 #: src/questions/test-out-run.tsx
 msgctxt "ABnCBH"
