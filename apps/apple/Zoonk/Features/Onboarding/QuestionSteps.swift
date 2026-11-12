@@ -343,6 +343,11 @@ private struct CountryQuestion: View {
             Text(choice.name)
               .typeStyle(.rowTitle)
               .foregroundStyle(Color(.foreground))
+              .onGeometryChange(for: CGFloat.self) {
+                $0.frame(in: .global).minX
+              } action: {
+                rowEdge = $0
+              }
               .frame(maxWidth: .infinity, alignment: .leading)
               .contentShape(.rect)
           }
@@ -359,9 +364,6 @@ private struct CountryQuestion: View {
           )
           .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
-          .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minX } action: {
-            rowEdge = $0
-          }
           .frame(maxWidth: .infinity, alignment: .leading)
           .disclosureChevron()
           .contentShape(.rect)
@@ -410,12 +412,16 @@ private struct CountryQuestion: View {
       }
       .announcesStatus(notice)
       .padding(.horizontal, rowEdge.map { max(0, $0 - barEdge) } ?? 16)
-      .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minX } action: {
+      .onGeometryChange(for: CGFloat.self) {
+        $0.frame(in: .global).minX
+      } action: {
         barEdge = $0
       }
       .keepsOffFold()
       .scenePadding(.vertical)
     }
+    // Skip is see-through, so the countries scrolling under the bar stop at its edge.
+    .scrollEdgeEffectStyle(.hard, for: .bottom)
     .environment(\.isSavingAnswer, isSaving)
   }
 
