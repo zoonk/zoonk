@@ -1,8 +1,8 @@
+import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
 import {
   Mailbox,
-  MailboxActions,
   MailboxBody,
   MailboxButton,
   MailboxEmpty,
@@ -17,27 +17,23 @@ import {
   MailboxTitle,
 } from "./components/mailbox";
 import { type CapturedEmail } from "./email";
-import { clearEmailInbox, useEmailInbox } from "./email-store";
+import { type EmailInboxStatus, clearEmailInbox, useEmailInbox } from "./email-store";
+import { findSignInCode } from "./sign-in-code";
 
 const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" });
 
-const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-  timeStyle: "medium",
-});
-
 const copy = {
   clearInbox: "Clear inbox",
-  emailMessages: "Email messages",
-  emptyMark: "@",
-  inboxEmptyDescription: "Trigger an email in Main or API.",
-  inboxEmptyTitle: "No messages yet",
-  message: "Message",
+  copied: "Copied",
+  copyCode: "Copy",
+  emailMessages: "Emails",
+  emptyDescription: "Sign in on Main to get a code.",
+  emptyTitle: "No emails yet",
   noBody: "This email has no body.",
-  previewEmptyDescription: "Messages live in memory and disappear when this app stops.",
-  previewEmptyTitle: "Your development emails will appear here.",
-  received: "Received",
+  offlineDescription: "Start it with pnpm dev.",
+  offlineTitle: "Can't reach the mailbox server",
   replyTo: "Reply to",
+  signInCode: "Sign-in code",
   title: "Local mailbox",
   to: "To",
 };
@@ -63,73 +59,49 @@ export function App() {
           </MailboxStatus>
         </MailboxIdentity>
 
-        <MailboxActions>
-          <span className="text-muted-foreground font-mono text-[11px]">
-            {getMessageCountLabel(emails.length)}
-          </span>
-          <MailboxButton disabled={emails.length === 0} onClick={handleClear}>
-            {copy.clearInbox}
-          </MailboxButton>
-        </MailboxActions>
+        <MailboxButton disabled={emails.length === 0} onClick={handleClear}>
+          {copy.clearInbox}
+        </MailboxButton>
       </MailboxHeader>
 
-      <MailboxBody>
-        <MailboxInbox aria-label={copy.emailMessages}>
-          <EmailList
-            emails={emails}
-            onSelect={setSelectedEmailId}
-            selectedEmailId={selectedEmail?.id}
-          />
-        </MailboxInbox>
+      {selectedEmail ? (
+        <MailboxBody>
+          <MailboxInbox aria-label={copy.emailMessages}>
+            <MailboxList>
+              {emails.map((email) => (
+                <EmailListMessage
+                  email={email}
+                  isSelected={email.id === selectedEmail.id}
+                  key={email.id}
+                  onSelect={setSelectedEmailId}
+                />
+              ))}
+            </MailboxList>
+          </MailboxInbox>
 
-        {selectedEmail ? (
-          <EmailPreview email={selectedEmail} />
-        ) : (
-          <MailboxEmpty className="grid min-h-full place-content-center px-10 py-16 text-center">
-            <span
-              className="border-border text-foreground mx-auto mb-5 grid size-12 place-items-center rounded-full border font-mono text-xl"
-              aria-hidden="true"
-            >
-              {copy.emptyMark}
-            </span>
-            <p className="text-foreground mb-1.5 text-sm font-semibold">{copy.previewEmptyTitle}</p>
-            <span className="text-[13px]">{copy.previewEmptyDescription}</span>
-          </MailboxEmpty>
-        )}
-      </MailboxBody>
+          <EmailPreview email={selectedEmail} key={selectedEmail.id} />
+        </MailboxBody>
+      ) : (
+        <EmptyInbox status={status} />
+      )}
     </Mailbox>
   );
 }
 
-function EmailList({
-  emails,
-  onSelect,
-  selectedEmailId,
-}: {
-  emails: CapturedEmail[];
-  onSelect: (emailId: string) => void;
-  selectedEmailId?: string;
-}) {
-  if (emails.length === 0) {
-    return (
-      <MailboxEmpty className="px-5.5 py-7">
-        <p className="text-foreground mb-1.5 text-sm font-semibold">{copy.inboxEmptyTitle}</p>
-        <span className="text-[13px]">{copy.inboxEmptyDescription}</span>
-      </MailboxEmpty>
-    );
+function EmptyInbox({ status }: { status: EmailInboxStatus }) {
+  if (status === "loading") {
+    return null;
   }
 
+  const isOffline = status === "unavailable";
+
   return (
-    <MailboxList>
-      {emails.map((email) => (
-        <EmailListMessage
-          email={email}
-          isSelected={email.id === selectedEmailId}
-          key={email.id}
-          onSelect={onSelect}
-        />
-      ))}
-    </MailboxList>
+    <MailboxEmpty>
+      <p className="text-foreground text-sm font-semibold">
+        {isOffline ? copy.offlineTitle : copy.emptyTitle}
+      </p>
+      <p className="text-[13px]">{isOffline ? copy.offlineDescription : copy.emptyDescription}</p>
+    </MailboxEmpty>
   );
 }
 
@@ -142,61 +114,64 @@ function EmailListMessage({
   isSelected: boolean;
   onSelect: (emailId: string) => void;
 }) {
+  const code = findSignInCode(email);
+
   return (
     <MailboxListItem>
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
-        <span className="overflow-hidden text-sm font-semibold tracking-[-0.01em] text-ellipsis whitespace-nowrap">
-          {email.subject}
-        </span>
-        <span className="text-muted-foreground overflow-hidden font-mono text-[10px] text-ellipsis whitespace-nowrap">
-          {`${copy.to} ${email.to}`}
-        </span>
-        <time
-          className="text-muted-foreground col-start-2 row-start-1 font-mono text-[10px]"
-          dateTime={email.receivedAt}
-        >
+        <span className="truncate text-sm font-semibold tracking-[-0.01em]">{email.subject}</span>
+        <time className="text-muted-foreground font-mono text-[11px]" dateTime={email.receivedAt}>
           {timeFormatter.format(new Date(email.receivedAt))}
         </time>
+        <span className="text-muted-foreground truncate font-mono text-[11px]">
+          {`${copy.to} ${email.to}`}
+        </span>
+        {code && <span className="font-mono text-sm font-semibold tabular-nums">{code}</span>}
       </MailboxMessageButton>
     </MailboxListItem>
   );
 }
 
+function SignInCode({ code }: { code: string }) {
+  const { copy: copyText, isCopied } = useClipboard();
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+      <p className="flex flex-col gap-1">
+        <span className="text-muted-foreground text-xs">{copy.signInCode}</span>
+        <span className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">
+          {code}
+        </span>
+      </p>
+      <MailboxButton onClick={() => void copyText(code).catch(() => null)}>
+        {isCopied ? copy.copied : copy.copyCode}
+      </MailboxButton>
+    </div>
+  );
+}
+
 function EmailPreview({ email }: { email: CapturedEmail }) {
+  const code = findSignInCode(email);
+
   return (
     <MailboxPreview>
-      <header className="border-border border-b px-5 pt-7 pb-6 md:px-[clamp(1.5rem,5vw,4.5rem)] md:pt-10.5 md:pb-7">
-        <p className="text-muted-foreground mb-3 font-mono text-[10px] tracking-widest uppercase">
-          {copy.message}
-        </p>
-        <h2 className="max-w-225 text-3xl leading-[1.04] font-semibold tracking-[-0.045em] md:text-[clamp(1.75rem,4vw,3.125rem)]">
-          {email.subject}
-        </h2>
-        <dl className="text-muted-foreground mt-6 grid gap-3.5 font-mono text-[11px] md:mt-8 md:flex md:flex-wrap md:gap-x-8 md:gap-y-4">
-          <div className="grid gap-1">
-            <dt className="text-muted-foreground/70 tracking-[0.08em] uppercase">{copy.to}</dt>
-            <dd className="text-foreground m-0">{email.to}</dd>
-          </div>
-          {email.replyTo ? (
-            <div className="grid gap-1">
-              <dt className="text-muted-foreground/70 tracking-[0.08em] uppercase">
-                {copy.replyTo}
-              </dt>
-              <dd className="text-foreground m-0">{email.replyTo}</dd>
-            </div>
-          ) : null}
-          <div className="grid gap-1">
-            <dt className="text-muted-foreground/70 tracking-[0.08em] uppercase">
-              {copy.received}
-            </dt>
-            <dd className="text-foreground m-0">
-              {dateTimeFormatter.format(new Date(email.receivedAt))}
-            </dd>
-          </div>
-        </dl>
+      <header className="border-border flex flex-col gap-4 border-b px-5 py-5 md:px-8">
+        {code && <SignInCode code={code} />}
+
+        <div className="flex flex-col gap-1">
+          <h2 className="text-base font-semibold">{email.subject}</h2>
+          <p className="text-muted-foreground font-mono text-[11px]">
+            {`${copy.to} ${email.to}`}
+            {email.replyTo ? ` · ${copy.replyTo} ${email.replyTo}` : ""}
+            {" · "}
+            <time dateTime={email.receivedAt}>
+              {timeFormatter.format(new Date(email.receivedAt))}
+            </time>
+          </p>
+        </div>
       </header>
 
-      <div className="p-5 md:p-[clamp(1.5rem,5vw,4.5rem)]">
+      <div className="p-5 md:p-8">
         {email.htmlBody ? (
           <iframe
             className="border-border block min-h-95 w-full rounded-[3px] border bg-white md:min-h-105"
@@ -225,7 +200,7 @@ function getSelectedEmail({
   return emails.find((email) => email.id === selectedEmailId) ?? emails[0];
 }
 
-function getStatusLabel(status: "loading" | "ready" | "unavailable"): string {
+function getStatusLabel(status: EmailInboxStatus): string {
   if (status === "unavailable") {
     return "Offline";
   }
@@ -237,15 +212,11 @@ function getStatusLabel(status: "loading" | "ready" | "unavailable"): string {
   return "Live";
 }
 
-function getStatusDotClassName(status: "loading" | "ready" | "unavailable"): string {
+function getStatusDotClassName(status: EmailInboxStatus): string {
   return cn(
     "size-1.75 rounded-full",
     status === "ready" && "bg-success ring-success/15 ring-3",
     status === "loading" && "bg-warning",
     status === "unavailable" && "bg-destructive",
   );
-}
-
-function getMessageCountLabel(count: number): string {
-  return `${count} ${count === 1 ? "message" : "messages"}`;
 }

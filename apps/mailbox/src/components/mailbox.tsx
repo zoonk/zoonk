@@ -50,10 +50,6 @@ export function MailboxStatus({ className, ...props }: ComponentProps<"span">) {
   );
 }
 
-export function MailboxActions({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("flex items-center gap-2.5 sm:gap-4", className)} {...props} />;
-}
-
 export function MailboxButton({
   className,
   variant = "outline",
@@ -116,5 +112,13 @@ export function MailboxPreview({ className, ...props }: ComponentProps<"article"
 }
 
 export function MailboxEmpty({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("text-muted-foreground", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "text-muted-foreground bg-background flex flex-col items-center justify-center gap-1.5 px-6 py-16 text-center",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
