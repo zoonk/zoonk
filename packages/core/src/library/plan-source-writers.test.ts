@@ -1681,7 +1681,7 @@ function writeFix({
 async function textFixCase(
   kind: "chapter" | "lesson",
   field: "title" | "description" | "summary",
-): Promise<WriterCase> {
+): Promise<WriterCase & { planIds: string[] }> {
   const iconId = randomUUID();
 
   const [lesson, chapter, skill, unrelated] = await Promise.all([
@@ -1746,6 +1746,7 @@ async function textFixCase(
       });
     },
     plan,
+    planIds: [plan.id, direct.id, unrelated.id],
     root: lessonRoot(lesson.id),
     write: () => writeFix({ changes, unit }),
   };
@@ -1828,10 +1829,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
   "staff/content-fixes/_utils/apply-content-fix.ts": {
-    "chapter description": () => textFixCase("chapter", "description"),
     "chapter title": () => textFixCase("chapter", "title"),
-    "lesson description": () => textFixCase("lesson", "description"),
-    "lesson summary": () => textFixCase("lesson", "summary"),
     "lesson title": () => textFixCase("lesson", "title"),
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),
@@ -1841,6 +1839,28 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
 const CASES = Object.entries(WRITER_CASES).flatMap(([file, cases]) =>
   Object.entries(cases).map(([name, build]) => ({ build, file, name })),
 );
+
+describe("content fixes to what plans don't read", () => {
+  it.each([
+    ["chapter", "description"],
+    ["lesson", "description"],
+    ["lesson", "summary"],
+  ] as const)("leave plans alone when they change a %s %s", async (kind, field) => {
+    const { planIds, write } = await textFixCase(kind, field);
+
+    const versions = () =>
+      prisma.plan.findMany({
+        orderBy: { id: "asc" },
+        select: { inputVersion: true, sourceVersion: true },
+        where: { id: { in: planIds } },
+      });
+
+    const before = await versions();
+    await write();
+
+    await expect(versions()).resolves.toStrictEqual(before);
+  });
+});
 
 describe("plan source writers lock what plans read and mark them", () => {
   it("has a case for every writer the registry says marks", () => {

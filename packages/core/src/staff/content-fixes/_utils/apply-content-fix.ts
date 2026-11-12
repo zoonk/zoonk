@@ -50,13 +50,24 @@ export async function lockFixRows(
   }
 }
 
+/** Plans read a chapter's or lesson's title, never its description or summary. */
+function retitledIds(changes: readonly StoredChange[], model: "Chapter" | "Lesson"): string[] {
+  return changes.flatMap((change) =>
+    change.op === "set" &&
+    change.model === model &&
+    change.fields.some(({ field }) => field === "title")
+      ? [change.id]
+      : [],
+  );
+}
+
 export async function lockFixPlans(
   tx: TransactionClient,
   changes: readonly StoredChange[],
 ): Promise<void> {
   const ids = idsOf(changes, "Item");
-  const chapterIds = idsOf(changes, "Chapter");
-  const lessonIds = idsOf(changes, "Lesson");
+  const chapterIds = retitledIds(changes, "Chapter");
+  const lessonIds = retitledIds(changes, "Lesson");
 
   if (ids.length === 0 && chapterIds.length === 0 && lessonIds.length === 0) {
     return;
