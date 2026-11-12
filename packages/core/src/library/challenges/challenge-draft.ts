@@ -12,8 +12,8 @@ import {
   type ChallengeFinding,
   checkChallengeQuality,
 } from "@zoonk/ai/tasks/quality/challenge-quality-check";
-import { applyChallengeEdits } from "./_utils/challenge-edits";
 import { checkWrittenChallenge } from "./challenge-case-content";
+import { applyChallengeEdits } from "./challenge-edits";
 import { checkChallengePlan } from "./challenge-plan-check";
 import { renderChallengeMap } from "./render-challenge";
 
