@@ -136,7 +136,7 @@ export function renderSentenceNumber(chunks: React.ReactNode) {
 }
 
 /** Only a challenge waits, for the lessons before it in the day. */
-export function useWaitLine() {
+function useWaitLine() {
   const t = useExtracted();
   return (): string => t("After today's lessons");
 }

@@ -74,7 +74,7 @@ export function DayProgress({ className }: { className?: string }) {
 }
 
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
-export function useStudiedToday(): number {
+function useStudiedToday(): number {
   const { today } = useTodayScreen();
   return today.session.week.days.find((day) => day.isToday)?.minutes ?? 0;
 }
