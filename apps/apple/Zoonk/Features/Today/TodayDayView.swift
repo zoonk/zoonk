@@ -13,9 +13,8 @@ struct TodayDayView: View {
   @State private var tapTask: Task<Void, Never>?
   @State private var disclosures = TodayDisclosures()
   @State private var writingStalled = false
-  /// Main's `useShownNotice`: the notice Today opened with stays while the learner is here, so
-  /// answering it shows what the answer did; the next waits for the next visit.
-  @State private var shownNotice: TodayView.Notice?
+  /// The learner said Not now to the Focus test on this visit.
+  @State private var focusTestNoted = false
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
   @State private var examChoiceDraft: [String] = []
@@ -89,10 +88,7 @@ struct TodayDayView: View {
       }
     }
     .onChange(of: view.notice) {
-      if shownNotice == nil {
-        shownNotice = view.notice
-        countNotice()
-      }
+      countNotice()
     }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
@@ -220,9 +216,25 @@ struct TodayDayView: View {
     view.goal.kind == .language ? store.languageToday(goalID: view.goal.id).value : nil
   }
 
+  /// Main's `useShownNotice`: a notice the learner answered on this visit stays to say what the
+  /// answer did, even once Today has moved on; otherwise it's the one Today holds now.
+  private var shownNotice: TodayView.Notice? {
+    if store.hasAnsweredPlanChange(in: view) {
+      .planChange
+    } else if examChoice != nil {
+      .examChoice
+    } else if answeredUpload != nil {
+      .uploadRequest
+    } else if focusTestNoted {
+      .focusTest
+    } else {
+      view.notice
+    }
+  }
+
   @ViewBuilder
   private var notice: some View {
-    switch shownNotice ?? view.notice {
+    switch shownNotice {
     case .planChange:
       planChange
     case .insight:
@@ -262,7 +274,8 @@ struct TodayDayView: View {
         goalID: view.goal.id, choice: view.examChoice, editor: $examChoice,
         draft: $examChoiceDraft)
     case .focusTest:
-      TodayFocusTestSection(goalID: view.goal.id, offer: view.focusTest)
+      TodayFocusTestSection(
+        goalID: view.goal.id, offer: view.focusTest, dismissed: $focusTestNoted)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
         SuggestedGoalSection(suggestion: suggestion)
@@ -451,12 +464,12 @@ struct TodayDayView: View {
   /// Main reads Today afresh on each visit (back from a lesson or another tab): what the learner
   /// answered stays only while they're here.
   private func startVisit() {
-    shownNotice = view.notice
     disclosures.showsDone = false
     disclosures.showsMore = false
     examChoice = nil
     examChoiceDraft = []
     answeredUpload = nil
+    focusTestNoted = false
     store.dropAnsweredPlanChange()
     UsageAnalytics.track(.todayViewed)
     countNotice()

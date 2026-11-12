@@ -340,6 +340,10 @@ final class TodayStore {
     return next
   }
 
+  func hasAnsweredPlanChange(in view: TodayView) -> Bool {
+    answeredPlanChange(in: view) != nil
+  }
+
   /// For the next suggestion, and for a new visit, which reads Today as it stands.
   func dropAnsweredPlanChange() {
     answered = nil

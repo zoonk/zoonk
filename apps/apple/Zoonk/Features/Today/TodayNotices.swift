@@ -417,17 +417,20 @@ struct TodayUploadRequestSection: View {
 struct TodayFocusTestSection: View {
   let goalID: String
   let offer: FocusTestSummary.Size?
+  /// Kept by Today for the visit, since Today stops holding the suggestion once it's dismissed.
+  @Binding var dismissed: Bool
 
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
   @State private var kept: FocusTestSummary.Size?
   @State private var isOpen = false
   @State private var isDismissing = false
-  @State private var dismissed = false
   @State private var failed = false
 
   var body: some View {
-    if let shown = offer ?? (isDismissing || dismissed ? kept : nil) {
+    let shown = offer ?? (isDismissing ? kept : nil)
+
+    if dismissed || shown != nil {
       Section {
         if dismissed {
           SuggestionLine {
@@ -440,7 +443,7 @@ struct TodayFocusTestSection: View {
             EmptyView()
           }
           .listRowSeparator(.hidden)
-        } else {
+        } else if let shown {
           SuggestionLine {
             SuggestionMark(kind: .symbol("scope"))
           } summary: {
