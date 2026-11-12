@@ -55,7 +55,7 @@ export async function PricingHero() {
           description:
             "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals a learner without Plus can study at once, not how many new goals they start per day or month.",
           message:
-            "Free: {goals, plural, one {one goal} other {up to # goals}} at a time. Plus: every goal and every lesson, all the way to the big day.",
+            "Free: {goals, plural, one {one goal} other {# goals}} at a time. Plus: every goal and every lesson, all the way to the big day.",
           values: { goals: getFreePlanLimits().activeGoals ?? 0 },
         })}
       </p>

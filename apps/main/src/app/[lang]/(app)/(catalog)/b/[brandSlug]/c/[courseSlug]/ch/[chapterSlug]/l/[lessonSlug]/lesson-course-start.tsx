@@ -1,6 +1,6 @@
 import { PlanLine } from "@/components/catalog/catalog-hero";
-import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { StartBlock } from "@/components/public/public-start";
+import { StartFreeNote } from "@/components/public/start-free-note";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -27,9 +27,7 @@ export async function LessonCourseStart({
 
       <PlanLine start={startChapterId ? "chapter" : "known"} />
 
-      <StartBlock
-        note={<NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>}
-      >
+      <StartBlock note={<StartFreeNote pricing />}>
         <StartPlanLink chapterId={startChapterId} courseId={course.id} secondary />
       </StartBlock>
     </section>

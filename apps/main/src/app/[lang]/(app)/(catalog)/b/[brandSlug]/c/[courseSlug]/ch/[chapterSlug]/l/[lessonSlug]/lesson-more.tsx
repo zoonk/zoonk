@@ -21,7 +21,7 @@ export async function LessonMore({
   params: Params;
   route: LibraryLessonRoute;
 }) {
-  const { chapter, lesson, number } = route;
+  const { chapter, lesson } = route;
   const chapterMinutes = chapter.lessons.reduce((sum, item) => sum + item.estimatedMinutes, 0);
 
   const t = await getExtracted();
@@ -30,10 +30,7 @@ export async function LessonMore({
   return (
     <div className={cn("mt-16 border-y sm:mt-20", ideas.length === 0 && "min-[72rem]:hidden")}>
       {ideas.length > 0 && (
-        <PublicDisclosure
-          aside={t("{count, plural, one {# idea} other {# ideas}}", { count: ideas.length })}
-          summary={t("What you'll learn")}
-        >
+        <PublicDisclosure summary={t("What you'll learn")}>
           <ul className="flex flex-col gap-3">
             {ideas.map((idea) => (
               <li className="flex gap-3 text-[15px] leading-relaxed sm:text-base" key={idea}>
@@ -55,10 +52,7 @@ export async function LessonMore({
           duration: durationLabel,
         })}
         className="min-[72rem]:hidden"
-        summary={t("Chapter {number}: {chapter}", {
-          chapter: chapter.title,
-          number: String(number),
-        })}
+        summary={t("Lessons in {chapter}", { chapter: chapter.title })}
       >
         <ChapterLessonRows chapter={chapter} currentLessonId={lesson.id} params={params} />
 

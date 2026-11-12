@@ -11,10 +11,10 @@ import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
-import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { StartBlock } from "@/components/public/public-start";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
+import { StartFreeNote } from "@/components/public/start-free-note";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { type LibraryChapterRoute } from "@/data/catalog/resolve-catalog-route";
 import { getCourseHref } from "@/data/courses/course-href";
@@ -39,11 +39,13 @@ async function ChapterStart({
   className,
   courseId,
   hasLesson,
+  pricing = false,
   startChapterId,
 }: {
   className?: string;
   courseId: string;
   hasLesson: boolean;
+  pricing?: boolean;
   startChapterId: string | null;
 }) {
   const t = await getExtracted();
@@ -52,11 +54,7 @@ async function ChapterStart({
     <StartBlock
       className={className}
       note={
-        hasLesson ? (
-          <NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>
-        ) : (
-          t("Its lessons get ready when you start.")
-        )
+        hasLesson ? <StartFreeNote pricing={pricing} /> : t("Its lessons get ready when you start.")
       }
     >
       <StartPlanLink chapterId={startChapterId} courseId={courseId} />
@@ -127,7 +125,7 @@ async function ChapterClosing({
 
       <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
         {startChapterId
-          ? t("Your plan follows the course from here, in the time you have each day.")
+          ? t("You get a plan for each day, from this chapter to the end of the course.")
           : t("A few quick questions, then your plan and your first lesson.")}
       </p>
 
@@ -135,6 +133,7 @@ async function ChapterClosing({
         className="mt-5 sm:mt-6"
         courseId={courseId}
         hasLesson={hasLesson}
+        pricing
         startChapterId={startChapterId}
       />
     </PageSection>

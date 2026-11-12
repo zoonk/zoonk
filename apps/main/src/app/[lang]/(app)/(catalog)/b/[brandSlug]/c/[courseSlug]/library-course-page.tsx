@@ -183,7 +183,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
         }
       />
 
-      <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} />
+      <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} pricing />
     </RouteStop>
   );
 }

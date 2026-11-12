@@ -125,8 +125,8 @@ async function FreeMonth() {
 
       <p className="text-muted-foreground text-[0.8125rem]">
         {t(
-          "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}",
-          { count: perWeekday },
+          "{month, plural, one {# lesson} other {# lessons}} a month: {count, plural, one {about one short lesson each weekday.} other {about # short lessons each weekday.}}",
+          { count: perWeekday, month: perMonth },
         )}
       </p>
     </div>
