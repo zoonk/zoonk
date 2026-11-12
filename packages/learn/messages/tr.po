@@ -63,7 +63,7 @@ msgstr "Atlandı"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/explain/explain-ending.tsx
-#: src/focus-test/focus-test-screens.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -153,8 +153,9 @@ msgstr "Günlük çalışma süresi"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/focus-test/use-focus-test-texts.ts
 #: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
@@ -2317,7 +2318,7 @@ msgstr "Bugün’e dön"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2909,7 +2910,7 @@ msgid "Not applied. Your plan stays as it was."
 msgstr "Uygulanmadı. Planın değişmedi."
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/use-result-line.ts
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/today/today-plan-change.tsx
@@ -3972,86 +3973,6 @@ msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "Mesajını gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "md_tC7"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}} so far"
-msgstr "Şimdiye kadar {asked, number} / {total, plural, other {# branştan}} soru soruldu"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dBBQr6"
-msgid "Your starting points are set."
-msgstr "Nereden başlayacağın belirlendi."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aQrSbp"
-msgid "That's all the questions ready for now. Your next sessions ask the rest."
-msgstr "Şimdilik hazır olan sorular bu kadar. Kalanları sonraki çalışmalarında soracağız."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "q5QB29"
-msgid "Where you'll start"
-msgstr "Nereden başlayacağın"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "vKUJpo"
-msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
-msgstr "{count, plural, other {Planın zaten bildiğin # dersi atlıyor.}}"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "r0RTjS"
-msgid "Your subjects start from the basics for now."
-msgstr "Şimdilik her branşta temelden başlayacaksın."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "60_Cs5"
-msgid "If your time can't cover everything, your plan gives these more time."
-msgstr "Zamanın tüm konulara yetmezse planın bu branşlara daha fazla süre ayırır."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "HkifIb"
-msgid "Your time can't cover everything. Your plan can give these more time."
-msgstr "Zamanın tüm konulara yetmiyor. Planın bu branşlara daha fazla süre ayırabilir."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "ITVIDG"
-msgid "Your plan gives these more time."
-msgstr "Planın bu branşlara daha fazla süre ayırıyor."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "YiaEQx"
-msgid "You chose your own focus, and your plan keeps it. This is what the test suggests."
-msgstr "Odaklanacağın branşları kendin seçtin ve planın bu seçimi koruyor. Testin önerisi bu."
-
-#. Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged.
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jSJkc5"
-msgid "You kept your plan as it is."
-msgstr "Planını olduğu gibi bıraktın."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "nvNCUr"
-msgid "For now, this follows mainly what counts most in your exam."
-msgstr "Şimdilik bu öneri daha çok sınavında ağırlığı yüksek branşlara dayanıyor."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "N09SQx"
-msgid "Suggested focus"
-msgstr "Odak önerisi"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/onboarding/steps/reveal-coverage.tsx
-msgctxt "s2lEZy"
-msgid "Change focus"
-msgstr "Odağını değiştir"
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "JmND9E"
-msgid "Use my answers"
-msgstr "Cevaplarımı kullan"
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/onboarding/steps/placement-waiting.tsx
@@ -4074,17 +3995,92 @@ msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Durdur ve cevaplarımı kullan"
 
-#: src/focus-test/focus-test-proposal.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "Planın olduğu gibi kalıyor."
+#. Under “Focusing never removes a subject”. “The ones” are exam subjects. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ebBs5s"
+msgid "The ones you need most get more time when your time can't cover everything."
+msgstr "Zamanın hepsine yetmezse en çok çalışman gereken branşlara daha fazla zaman ayrılır."
+
+#. Title of a short fact about the Focus test. Say only this: giving some exam subjects more study time (focusing) is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "auxYjk"
+msgid "Focusing never removes a subject"
+msgstr "Odaklanmak hiçbir branşı plandan çıkarmaz"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3eMENr"
+msgid "The test starts with the subjects that weigh most in your exam."
+msgstr "Test, sınavında ağırlığı en yüksek branşlarla başlar."
+
+#. Title of a short fact about the Focus test: its first questions are on the exam subjects that weigh most in the score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ia0ABg"
+msgid "What counts most comes first"
+msgstr "Ağırlığı en yüksek branşlar önce gelir"
+
+#. “I don't know yet” is the button on every Focus test question; use the same words as that button.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "r7JaA6"
+msgid "“I don't know yet” is a fine answer."
+msgstr "“Henüz bilmiyorum” da geçerli bir cevap."
+
+#. Title of a short fact about the Focus test: it gives no grade or score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "rIfFed"
+msgid "There's no grade"
+msgstr "Not verilmiyor"
+
+#. Under “Stop anytime”: every Focus test answer is saved as soon as it is given.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3YgnmP"
+msgid "Each answer is saved."
+msgstr "Her cevabın kaydedilir."
+
+#. Title of a short fact about the Focus test: the learner can stop it whenever they want.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "g1Knsp"
+msgid "Stop anytime"
+msgstr "İstediğin zaman dur"
+
+#. Under “A few more in your first week”. “These questions” are the Focus test's questions; “that” is the study sessions asking them.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "m3Cw5S"
+msgid "Your study sessions ask a few more of these questions. You can pause that."
+msgstr "Çalışmalarında bu sorulardan birkaç tane daha sorulur. Buna ara verebilirsin."
+
+#. Title of a short fact about the Focus test: during the learner's first week, their study sessions ask a few more of its questions. “A few more” means questions.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "Y6o_Rw"
+msgid "A few more in your first week"
+msgstr "İlk haftanda birkaç soru daha"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "HK3ph8"
+msgid "How it works"
+msgstr "Nasıl işler"
 
 #: src/focus-test/focus-test-proposal.tsx
-msgctxt "Q-qRTX"
-msgid "Done. Your plan now gives these more time."
-msgstr "Tamamlandı. Planın artık bu branşlara daha fazla süre ayırıyor."
+#: src/focus-test/focus-test-result.tsx
+#: src/focus-test/focus-test-screens.tsx
+#: src/plan/plan-focus-test.tsx
+#: src/plan/plan-focus.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "Odak testi"
+
+#. Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "nWvvzY"
+msgid "Give these subjects more time?"
+msgstr "Bu branşlara daha fazla zaman ayıralım mı?"
+
+#. Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "ZQfsV7"
+msgid "Your time can't cover everything before your exam."
+msgstr "Sınava kadar her şeye zamanın yetmiyor."
 
 #: src/focus-test/focus-test-proposal.tsx
 #: src/today/today-plan-change.tsx
@@ -4092,57 +4088,67 @@ msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "Planımı güncelle"
 
-#. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "s2lEZy"
+msgid "Change focus"
+msgstr "Odağını değiştir"
+
+#. Under the switch “Ask a few more in my sessions”: sessions ask those questions only during the learner's first week.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "fkY35_"
+msgid "During your first week"
+msgstr "İlk haftan boyunca"
+
+#. Label of an on/off switch on the Focus test's result: whether the learner's study sessions ask a few more Focus test questions. “A few more” means questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "ksG62i"
+msgid "Ask a few more in my sessions"
+msgstr "Çalışmalarımda birkaç soru daha sor"
+
+#. Shown with a check mark above the Focus test's result: the learner's answers were saved.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "g2pcsk"
+msgid "Answers saved"
+msgstr "Cevaplar kaydedildi"
+
+#. Headline of the Focus test's result, above a short numbered list of the exam subjects that need most of the learner's study time. It answers the invitation “Find out where to focus”. Keep it short. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "K9pcMz"
+msgid "Here's where to focus"
+msgstr "İşte odaklanman gereken branşlar"
+
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "ZrB8AL"
+msgid "Your starting point is set"
+msgstr "Başlangıç noktan belirlendi"
+
+#: src/focus-test/focus-test-result.tsx
+msgctxt "qI81MQ"
+msgid "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
+msgstr "{count, plural, other {Planın ayrıca zaten bildiğin # dersi atlar.}}"
+
+#. Button on the Focus test's result: continues the test with more questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "X1M8Kl"
+msgid "Answer more questions"
+msgstr "Daha fazla soru cevapla"
+
+#. Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "J1HRdz"
-msgid "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked."
-msgstr "Planın {subjects, plural, other {toplam # branşı}} dikkate alıyor. Bu testte {questions, plural, other {en fazla # soru}} var, bu yüzden bazı branşlar değerlendirilmeyebilir."
+msgctxt "67jQK8"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most."
+msgstr "Sınavındaki branşlardan kısa sorular. Planın zaten bildiklerini atlar, böylece zamanını en çok çalışman gereken konulara ayırırsın."
 
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "QyMX3n"
-msgid "Let's find where your study time should go"
-msgstr "Çalışma süreni hangi branşlara ayıracağını bulalım"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "o-6o1J"
-msgid "Find where to start"
-msgstr "Nereden başlayacağını bul"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "lArp48"
-msgid "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus."
-msgstr "Ağırlığı en yüksek branşlardan başlayarak kısa sorular soracağız. Cevaplarına göre planın zaten bildiklerini atlar ve odaklanabileceğin branşları önerir."
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "hBZ8RL"
-msgid "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know."
-msgstr "Ağırlığı en yüksek branşlardan başlayarak kısa sorular soracağız. Cevaplarına göre planın zaten bildiklerini atlar."
-
-#: src/focus-test/focus-test-screens.tsx
-#: src/plan/plan-tools.tsx
-msgctxt "InWqys"
-msgid "Optional"
-msgstr "İsteğe bağlı"
-
-#: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-view.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {# branş}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "kO1w73"
-msgid "There's no grade. “I don't know yet” is a useful answer."
-msgstr "Not verilmiyor. “Henüz bilmiyorum” da faydalı bir cevap."
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "rnG7Zf"
-msgid "Stop whenever you need to. We save each answer."
-msgstr "Gerektiğinde durabilirsin. Her cevabını kaydediyoruz."
+msgctxt "JFKisp"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know."
+msgstr "Sınavındaki branşlardan kısa sorular. Planın zaten bildiklerini atlar."
 
 #: src/focus-test/focus-test-screens.tsx
 #: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
 msgctxt "SKxNcp"
 msgid "Start the test"
 msgstr "Testi başlat"
@@ -4152,50 +4158,22 @@ msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "Testine devam et"
 
+#. Shown when the learner comes back to a Focus test they left halfway: the answers they already gave are kept.
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "Gwo70s"
-msgid "{count, plural, one {# answer saved} other {# answers saved}}"
-msgstr "{count, plural, other {# cevap kaydedildi}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "c9Xh-2"
-msgid "{count, plural, one {Up to # question left} other {Up to # questions left}}"
-msgstr "{count, plural, other {En fazla # soru kaldı}}"
+msgctxt "BwHZIs"
+msgid "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}"
+msgstr "{count, plural, other {# cevabın kaydedildi.}}"
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "Cevapların kaydedildi"
 
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "_lke7y"
-msgid "See your starting plan"
-msgstr "Başlangıç planını gör"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aKjgQE"
-msgid "Your starting plan"
-msgstr "Başlangıç planın"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "m2K9LP"
-msgid "Continue to daily time"
-msgstr "Günlük çalışma süresine geç"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dCgSSr"
-msgid "Continue the test · About {time}"
-msgstr "Teste devam et · Yaklaşık {time}"
-
+#. Opens the list of every exam subject with how its Focus test questions went.
 #: src/focus-test/focus-test-subjects.tsx
-msgctxt "WSzPNf"
-msgid "View all subjects"
+msgctxt "a9uRoF"
+msgid "See all subjects"
 msgstr "Tüm branşları gör"
-
-#: src/focus-test/focus-test-subjects.tsx
-msgctxt "lto9A4"
-msgid "View subjects"
-msgstr "Branşları gör"
 
 #: src/focus-test/focus-test-subjects.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -4229,38 +4207,17 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {Yazma: burada değerlendirilmiyor} listening {Dinleme: burada değerlendirilmiyor} speaking {Konuşma: burada değerlendirilmiyor} other {Uygulama bölümü: burada değerlendirilmiyor}}"
 
-#. A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.
+#. Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kCg3aW"
-msgid "Your answers suggest focusing here."
-msgstr "Cevaplarına göre bu branşa odaklanman iyi olur."
+msgctxt "sdUdiu"
+msgid "Find out where to focus"
+msgstr "Neye odaklanman gerektiğini öğren"
 
+#. The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "51W9Dr"
-msgid "This part has a minimum score."
-msgstr "Bu bölümde minimum puan şartı var."
-
-#. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "0_2y4Q"
-msgid "This part counts heavily; it isn't checked here."
-msgstr "Bu bölümün puana etkisi büyük; burada değerlendirilmiyor."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "TEkiKm"
-msgid "This subject counts heavily. Its starting point hasn't been checked yet."
-msgstr "Bu branşın puana etkisi büyük. Başlangıç düzeyin henüz değerlendirilmedi."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "8nVO91"
-msgid "This subject counts heavily."
-msgstr "Bu branşın puana etkisi büyük."
-
-#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "sd5daO"
-msgid "Your next sessions ask a few more test questions."
-msgstr "Sonraki çalışmalarında birkaç test sorusu daha soracağız."
+msgctxt "Hz7C8k"
+msgid "Find out where to start"
+msgstr "Nereden başlayacağını öğren"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -4268,35 +4225,83 @@ msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "Yaklaşık {time}"
 
+#. {time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "1nBn4K"
-msgid "{count, plural, one {Up to # question} other {Up to # questions}}"
-msgstr "{count, plural, other {En fazla # soru}}"
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "Yaklaşık {time} kaldı"
 
+#. Button that ends the Focus test with the answers given so far and shows its result.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTTP0x"
-msgid "Not started"
-msgstr "Başlanmadı"
+msgctxt "AcDjzM"
+msgid "See my result"
+msgstr "Sonucumu gör"
 
+#. Under “Focus test” in a list: the learner started the test and has not finished it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "8hg4ei"
-msgid "{count, plural, one {# question left} other {# questions left}}"
-msgstr "{count, plural, other {# soru kaldı}}"
+msgctxt "q1WWIr"
+msgid "In progress"
+msgstr "Devam ediliyor"
 
+#. Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTto4O"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}"
-msgstr "{asked, number} / {total, plural, other {# branşta soru soruldu}}"
+msgctxt "KAccXF"
+msgid "Paused in your sessions"
+msgstr "Çalışmalarındaki sorulara ara verildi"
 
+#. Under “Focus test” in a list, once the learner took the test: opens its result.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "6JsTrv"
-msgid "Your answers are in your plan"
-msgstr "Cevapların planına yansıtıldı"
+msgctxt "TZTNNl"
+msgid "See your result"
+msgstr "Sonucunu gör"
 
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "BgXaSJ"
-msgid "{count, plural, one {Up to # more question} other {Up to # more questions}}"
-msgstr "{count, plural, other {En fazla # soru daha}}"
+#: src/focus-test/use-result-line.ts
+msgctxt "vKUJpo"
+msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr "{count, plural, other {Planın zaten bildiğin # dersi atlıyor.}}"
+
+#. The Focus test's result when no answer showed something the learner already knows: every exam subject starts at its first lessons.
+#: src/focus-test/use-result-line.ts
+msgctxt "PLJ-7h"
+msgid "Your plan starts each subject from the basics."
+msgstr "Planında her branş temelden başlar."
+
+#. After the learner agreed to give the listed exam subjects more time: the study plan changed.
+#: src/focus-test/use-result-line.ts
+msgctxt "G-NFHn"
+msgid "Your plan now gives these subjects more time."
+msgstr "Planın artık bu branşlara daha fazla zaman ayırıyor."
+
+#: src/focus-test/use-result-line.ts
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "Planın olduğu gibi kalıyor."
+
+#. Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.
+#: src/focus-test/use-result-line.ts
+msgctxt "60Ever"
+msgid "Your plan gives these subjects more time."
+msgstr "Planın bu branşlara daha fazla zaman ayırıyor."
+
+#. Above the exam subjects the Focus test suggests: the learner picked other subjects to focus on, and the study plan keeps their pick. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "Q9-GXF"
+msgid "Your plan keeps the focus you chose. This is what the test suggests."
+msgstr "Planın seçtiğin branşlara odaklanmaya devam ediyor. Testin önerdiği branşlar bunlar."
+
+#. Above the exam subjects the Focus test suggests: the learner answered “Not now” to giving them more time, so the study plan was left unchanged.
+#: src/focus-test/use-result-line.ts
+msgctxt "wMXRsU"
+msgid "You kept your plan as it is. This is what the test suggests."
+msgstr "Planını olduğu gibi bıraktın. Testin önerdiği branşlar bunlar."
+
+#. Under “Here's where to focus”, above a list of exam subjects: why the Focus test suggests these subjects, then the fact that focusing on them is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "98jjZc"
+msgid "Based on your answers and what counts most in your exam. Focusing never removes a subject."
+msgstr "Cevaplarına ve branşların sınavındaki ağırlığına göre belirlendi. Odaklanmak hiçbir branşı plandan çıkarmaz."
 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
@@ -4435,6 +4440,7 @@ msgid "Connection lost"
 msgstr "Bağlantı kesildi"
 
 #: src/generation/generation-wait.tsx
+#: src/onboarding/steps/step-parts.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
@@ -9228,6 +9234,12 @@ msgid "{document, select, notice {To pass, the notice says} other {To pass, the 
 msgstr "{document, select, notice {İlana göre geçmek için gerekenler} other {Resmî kılavuza göre geçmek için gerekenler}}"
 
 #: src/mock/mock-result-view.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ZH37vY"
+msgid "{count, plural, one {# subject} other {# subjects}}"
+msgstr "{count, plural, other {# branş}}"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "zyAru3"
 msgid "{mock} done"
 msgstr "{mock} tamamlandı"
@@ -9970,11 +9982,6 @@ msgctxt "bL7-Qo"
 msgid "Get a plan with dates, and your first lesson"
 msgstr "Tarihleri belli bir plan ve ilk dersini al"
 
-#: src/onboarding/how-it-works.tsx
-msgctxt "HK3ph8"
-msgid "How it works"
-msgstr "Nasıl işler"
-
 #: src/onboarding/library-course-offer.tsx
 msgctxt "u1Zt5F"
 msgid "A Library course fits your goal. Start it now"
@@ -10342,11 +10349,6 @@ msgid "That's enough questions for today"
 msgstr "Bugünlük bu kadar soru yeter"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "ZrB8AL"
-msgid "Your starting point is set"
-msgstr "Başlangıç noktan belirlendi"
-
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "_8ObLn"
 msgid "Your first sessions ask a few more to fine-tune your plan."
 msgstr "İlk çalışmalarında planını daha iyi ayarlamak için birkaç soru daha soracağız."
@@ -10372,10 +10374,11 @@ msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "Soruları eklediğin materyale göre hazırlıyoruz. Materyali okumamız birkaç dakika sürüyor."
 
+#. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "1bV_YK"
-msgid "They come from the skills your goal needs. It usually takes a minute or two."
-msgstr "Soruları hedefine ulaşman için gereken becerilere göre hazırlıyoruz. Bu genelde bir iki dakika sürüyor."
+msgctxt "WFtloO"
+msgid "This usually takes a minute or two."
+msgstr "Bu genelde bir iki dakika sürer."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "QRwbAL"
@@ -10876,6 +10879,12 @@ msgstr "Her gün ne kadar süre ders çalışabilirsin?"
 msgctxt "_4tOwT"
 msgid "Skip"
 msgstr "Atla"
+
+#. Headline when a screen failed to load. Next to it is a “Try again” button.
+#: src/onboarding/steps/step-parts.tsx
+msgctxt "jNPr7M"
+msgid "This didn't open"
+msgstr "Ekran açılamadı"
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
@@ -11492,32 +11501,11 @@ msgctxt "JzlCcg"
 msgid "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}"
 msgstr "{count, plural, other {Çalışma sürene # ders daha sığıyor}}"
 
+#. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
-msgctxt "Ig9e24"
-msgid "Check where to focus · About {time}"
-msgstr "Neye odaklanacağını gör · Yaklaşık {time}"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "pUYvFh"
-msgid "Test questions in your sessions are paused."
-msgstr "Çalışmalarındaki test sorularına ara verildi."
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "dchZ4e"
-msgid "Ask them again"
-msgstr "Test sorularına devam et"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "5QbEi_"
-msgid "Pause test questions"
-msgstr "Test sorularına ara ver"
-
-#: src/plan/plan-focus-test.tsx
-#: src/plan/plan-focus.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "Odak testi"
+msgctxt "rSLsxO"
+msgid "Take the Focus test"
+msgstr "Odak testini çöz"
 
 #: src/plan/plan-focus.tsx
 msgctxt "pt8kOU"
@@ -11886,6 +11874,11 @@ msgstr "Yalnızca örnekler"
 msgctxt "1F736y"
 msgid "Needed to practice"
 msgstr "Pratik yapmak için gerekli"
+
+#: src/plan/plan-tools.tsx
+msgctxt "InWqys"
+msgid "Optional"
+msgstr "İsteğe bağlı"
 
 #: src/plan/plan-tools.tsx
 msgctxt "-fGv0z"
@@ -14856,20 +14849,17 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "Tamam. Testi planından çözebilirsin."
 
+#. One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.
 #: src/today/today-focus-test.tsx
-msgctxt "5RKoZf"
-msgid "A quick test can suggest where your study time should go."
-msgstr "Kısa bir test, çalışma süreni nelere ayırman gerektiği konusunda fikir verebilir."
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "Odak testi en çok neye çalışman gerektiğini gösterir."
 
+#. {time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.
 #: src/today/today-focus-test.tsx
-msgctxt "oolB1Q"
-msgid "Find where your study time should go"
-msgstr "Çalışma süreni nelere ayıracağını öğren"
-
-#: src/today/today-focus-test.tsx
-msgctxt "bt5yte"
-msgid "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus."
-msgstr "Sınava kadar kalan çalışma süren her konuya yetmiyor. Branşlarınla ilgili kısa sorular, nelere odaklanman gerektiği konusunda fikir verir."
+msgctxt "o-vRxa"
+msgid "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most."
+msgstr "Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık {time} içinde en çok neye çalışman gerektiğini gösterir."
 
 #: src/today/today-heading.tsx
 msgctxt "FR3uzc"

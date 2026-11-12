@@ -47,33 +47,20 @@ const focusTestSubjectSchema = z
 
 export type FocusTestSubject = z.infer<typeof focusTestSubjectSchema>;
 
-const SITTING_KINDS = ["first", "continuation"] as const;
-
-const SITTING_ENDS = ["ceiling", "settled", "noQuestionsReady"] as const;
-
 const focusTestSittingSchema = z
   .object({
-    answered: countSchema,
-    end: z
-      .enum(SITTING_ENDS)
-      .nullable()
-      .meta({
-        description:
-          "Why this sitting asks nothing more; null while it goes on. `ceiling`: its promised count was reached. `settled`: every starting point is set. `noQuestionsReady`: no question is ready for what's left, which the next sessions ask. Finish the sitting with POST .../placement/completion",
-      }),
+    answered: countSchema.meta({ description: "Answers given in this sitting" }),
     hint: z
       .enum(["manyUnknown"])
       .nullable()
       .meta({
-        description:
-          '`manyUnknown` after five "I don\'t know yet" in a row: say that stopping here and starting to learn is fine',
+        description: '`manyUnknown`: the last five answers in a row were "I don\'t know yet"',
       }),
-    kind: z.enum(SITTING_KINDS),
-    left: countSchema.meta({ description: "`questions` minus `answered`" }),
-    minutes: countSchema.meta({ description: "About how long `left` takes at the learner's pace" }),
+    minutes: countSchema.meta({
+      description: "About how long the questions it has left take at the learner's pace",
+    }),
     questions: countSchema.meta({
-      description:
-        "The most questions this sitting asks, fixed when it started; number the one asked as `answered` + 1 of it",
+      description: "The most questions this sitting asks, fixed when it started",
     }),
     subject: z
       .object(subjectNameShape)
@@ -84,46 +71,19 @@ const focusTestSittingSchema = z
 
 export type FocusTestSitting = z.infer<typeof focusTestSittingSchema>;
 
-const sittingOfferShape = {
+const offerShape = {
   minutes: countSchema.meta({
-    description: "About how long `questions` take, from the same count",
+    description: "About how long its questions take at the learner's pace",
   }),
-  questions: countSchema.meta({ description: "The most questions the sitting would ask" }),
 };
 
-const focusTestOfferSchema = z
-  .object({
-    ...sittingOfferShape,
-    kind: z.enum(SITTING_KINDS),
-    pastCeiling: countSchema.meta({
-      description:
-        "Subjects the test can ask about, still without an answer, that this sitting can't reach; above 0, say some subjects may not be checked",
-    }),
-  })
-  .meta({ id: "FocusTestOffer" });
+const focusTestOfferSchema = z.object(offerShape).meta({ id: "FocusTestOffer" });
 
 export type FocusTestOffer = z.infer<typeof focusTestOfferSchema>;
 
-export const FOCUS_REASONS = [
-  "answers",
-  "minimumScore",
-  "notChecked",
-  "notAsked",
-  "weight",
-] as const;
-
 const focusRowSchema = z
   .object({
-    areas: z
-      .array(z.string())
-      .meta({ description: "The plan areas a focus on it names, as `focusAreas` takes them" }),
-    part: uncheckedPartSchema.nullable().meta({ description: "Set only for `notChecked`" }),
-    reason: z
-      .enum(FOCUS_REASONS)
-      .meta({
-        description:
-          "`answers`: one of its answers was a miss or \"I don't know yet\". `minimumScore`: the part has a minimum score. `notChecked`: it counts heavily and this test can't check it (`part`). `notAsked`: it counts heavily and wasn't asked yet. `weight`: answered right, and still among the heaviest",
-      }),
+    areas: z.array(z.string()).meta({ description: "The plan areas that study the subject" }),
     subject: z.object(subjectNameShape),
   })
   .meta({ id: "FocusTestFocusRow" });
@@ -132,16 +92,15 @@ export type FocusRow = z.infer<typeof focusRowSchema>;
 
 const focusTestFocusSchema = z
   .object({
-    basis: z
-      .enum(["answers", "importance"])
-      .meta({
-        description:
-          "`importance`: no row comes from an answer, so say the suggestion follows mainly what the exam weighs",
-      }),
     proposal: planChangeSchema
       .nullable()
       .meta({ description: "For `proposed`: the change to apply or decline, with its effect" }),
-    rows: z.array(focusRowSchema).meta({ description: "Up to three, the most needed first" }),
+    rows: z
+      .array(focusRowSchema)
+      .meta({
+        description:
+          "The subjects to give more time, up to three, the most needed first. For `proposed`, the subjects the waiting `proposal` gives more time, which may differ from what the test would suggest now",
+      }),
     state: z
       .enum(["ifTimeShort", "proposed", "current", "handPicked", "declined", "suggested"])
       .meta({
@@ -168,6 +127,13 @@ const focusTestCheckpointSchema = z
   })
   .meta({ id: "FocusTestCheckpoint" });
 
+const suggestsFocusSchema = z
+  .boolean()
+  .meta({
+    description:
+      "The goal has a date and more than one subject, so the test's answers also say where to focus. Without it they only set where each subject starts",
+  });
+
 const SESSION_QUESTIONS = ["off", "on", "paused", "skippedToday"] as const;
 
 const sessionQuestionsSchema = z
@@ -185,27 +151,23 @@ export const focusTestViewSchema = z
     checkpoint: focusTestCheckpointSchema
       .nullable()
       .meta({ description: "The result so far; null until the learner has a test answer" }),
-    counts: z.object({
-      asked: countSchema.meta({ description: "Subjects with at least one test answer" }),
-      quick: countSchema.meta({ description: "Subjects this test can ask about" }),
-      total: countSchema.meta({
-        description: "Every subject, written and listening parts included",
-      }),
-    }),
-    dated: z
-      .boolean()
-      .meta({ description: "The goal has a date, so the test can also suggest where to focus" }),
     offer: focusTestOfferSchema
       .nullable()
       .meta({
         description:
-          "The sitting POST .../placement/sittings would open; null while one is open and when nothing is left to ask",
+          "The sitting POST .../placement/sittings would open, or the open one before its first answer; null once the open sitting has an answer and when nothing is left to ask",
       }),
     sessionQuestions: sessionQuestionsSchema,
-    sitting: focusTestSittingSchema.nullable().meta({ description: "The open sitting" }),
+    sitting: focusTestSittingSchema
+      .nullable()
+      .meta({
+        description:
+          "The open sitting. Once the placement's `status` is `done` it asks nothing more, whatever is left of its `questions`, and POST .../placement/completion closes it",
+      }),
     subjects: z
       .array(focusTestSubjectSchema)
       .meta({ description: "Every subject, in the notice's order" }),
+    suggestsFocus: suggestsFocusSchema,
   })
   .meta({ id: "FocusTest" });
 
@@ -213,30 +175,20 @@ export type FocusTestView = z.infer<typeof focusTestViewSchema>;
 
 export const focusTestSummarySchema = z
   .object({
-    offer: z
-      .object(sittingOfferShape)
+    offer: focusTestOfferSchema
       .nullable()
       .meta({
         description:
           "`notStarted`: the first sitting. `sitting`: what's left of the open one. `checked`: a further sitting. Null when nothing is left to ask",
       }),
     sessionQuestions: sessionQuestionsSchema,
-    setsFocus: z
-      .boolean()
-      .meta({ description: "The plan's focus came from the test, not from the learner's pick" }),
     state: z
       .enum(["notStarted", "sitting", "checked"])
       .meta({
         description:
           "`sitting`: a sitting is open with questions left. `checked`: the learner has test answers and no sitting open",
       }),
-    subjects: z
-      .object({ asked: countSchema, total: countSchema })
-      .nullable()
-      .meta({
-        description:
-          "Subjects with a test answer, of all of them. Null before the first answer, and for a goal placed before the Focus test until its next test answer",
-      }),
+    suggestsFocus: suggestsFocusSchema,
   })
   .meta({ id: "FocusTestSummary" });
 
@@ -272,6 +224,6 @@ export const focusTestControlsInputSchema = z
 
 export type FocusTestControlsInput = z.infer<typeof focusTestControlsInputSchema>;
 
-export const todayFocusTestSchema = z.object(sittingOfferShape).meta({ id: "TodayFocusTest" });
+export const todayFocusTestSchema = z.object(offerShape).meta({ id: "TodayFocusTest" });
 
 export type TodayFocusTest = z.infer<typeof todayFocusTestSchema>;

@@ -145,15 +145,10 @@ export async function pickSessionPlacementItems({
 
   const answeredOnly = isOwnMaterialTest(blueprint);
 
-  const focus = new Set(focusAreas);
-
   const statuses = readSkillStatuses({
     answeredOnly,
     answers: placementAnswers,
     evidence,
-    focusedSkillIds: new Set(
-      skills.flatMap((skill) => (focus.has(skill.sectionTitle ?? "") ? [skill.id] : [])),
-    ),
     knownAreas: getKnownSubjects(goal),
     ownLevel: getOwnLevel({ goal }),
     skills,

@@ -1,10 +1,7 @@
 "use client";
 
-import { type FocusTestSummary } from "@zoonk/core/learner/placement/focus-test-contract";
-import { Button } from "@zoonk/ui/components/button";
 import { CrosshairIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
 import {
   ListRowContent,
   ListRowDescription,
@@ -13,114 +10,55 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { ChangeSaveError } from "../_components/save-error";
 import { FactSegments } from "../_components/task-meta";
-import { useSentenceSpace } from "../_utils/locale";
-import { useFormatDuration } from "../_utils/time-format";
-import {
-  useFocusTestStateFacts,
-  useSessionQuestionsNote,
-} from "../focus-test/use-focus-test-texts";
+import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
 import { usePlanScreen } from "./plan-context";
 import { usePlanCoverage } from "./plan-coverage";
 
-/** The test as it stands after the switch; null when it wasn't saved. */
-export type SetTestQuestions = (
-  sessionQuestions: "on" | "paused",
-) => Promise<FocusTestSummary | null>;
-
 /**
- * The test's first sitting, for a learner who hasn't started it and whose time doesn't cover
+ * Where the test opens, for a learner who hasn't started it and whose time doesn't cover
  * everything: where a focus would help most.
  */
-export function useFocusTestOffer(): { href: string; minutes: number } | null {
+export function useFocusTestOfferHref(): string | null {
   const { focusTestHref, plan } = usePlanScreen();
   const coverage = usePlanCoverage();
-  const { focusTest } = plan;
+  const offered = coverage && plan.focusTest?.state === "notStarted" && plan.focusTest.offer;
 
-  return focusTestHref && coverage && focusTest?.state === "notStarted" && focusTest.offer
-    ? { href: focusTestHref, minutes: focusTest.offer.minutes }
-    : null;
+  return (offered && focusTestHref) || null;
 }
 
-export function useCheckFocusLabel() {
+export function useTakeFocusTestLabel(): string {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
 
-  return (minutes: number): string =>
-    t("Check where to focus · About {time}", { time: formatDuration(minutes) });
+  return t({
+    description: "Link that opens the Focus test, for a learner who has not taken it.",
+    message: "Take the Focus test",
+  });
 }
 
-/** Said only while sessions ask the test's questions, or the learner paused them. */
-function TestQuestionsSwitch({
-  onChange,
-  sessionQuestions,
-}: {
-  onChange: (sessionQuestions: "on" | "paused") => void;
-  sessionQuestions: FocusTestSummary["sessionQuestions"];
-}) {
+export function PlanFocusTest() {
   const t = useExtracted();
-  const space = useSentenceSpace();
-  const sessionQuestionsNote = useSessionQuestionsNote();
-  const paused = sessionQuestions === "paused";
-
-  if (sessionQuestions === "off") {
-    return null;
-  }
-
-  return (
-    <form className="text-muted-foreground ps-7 text-xs text-pretty">
-      {paused ? t("Test questions in your sessions are paused.") : sessionQuestionsNote}
-      {space}
-      <Button formAction={() => onChange(paused ? "on" : "paused")} type="submit" variant="link">
-        {paused ? t("Ask them again") : t("Pause test questions")}
-      </Button>
-    </form>
-  );
-}
-
-export function PlanFocusTest({ onSetTestQuestions }: { onSetTestQuestions?: SetTestQuestions }) {
-  const t = useExtracted();
-  const stateFacts = useFocusTestStateFacts();
+  const rowFacts = useFocusTestRowFacts();
   const { focusTestHref, plan } = usePlanScreen();
-  const [failed, setFailed] = useState(false);
-  const [, startTransition] = useTransition();
   const { focusTest } = plan;
 
   if (!focusTest || !focusTestHref) {
     return null;
   }
 
-  const setTestQuestions = (sessionQuestions: "on" | "paused") =>
-    startTransition(async () => {
-      const saved = await onSetTestQuestions?.(sessionQuestions).catch(() => null);
-      setFailed(!saved);
-    });
-
   return (
-    <div className="flex flex-col gap-1" data-slot="plan-focus-test">
-      <ListRowLink href={focusTestHref}>
-        <ListRowLeading>
-          <ListRowIcon>
-            <CrosshairIcon />
-          </ListRowIcon>
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{t("Focus test")}</ListRowTitle>
-          <ListRowDescription>
-            <FactSegments facts={stateFacts(focusTest)} />
-          </ListRowDescription>
-        </ListRowContent>
-      </ListRowLink>
-
-      {onSetTestQuestions && (
-        <TestQuestionsSwitch
-          onChange={setTestQuestions}
-          sessionQuestions={focusTest.sessionQuestions}
-        />
-      )}
-
-      {failed && <ChangeSaveError className="ps-7" />}
-    </div>
+    <ListRowLink href={focusTestHref}>
+      <ListRowLeading>
+        <ListRowIcon>
+          <CrosshairIcon />
+        </ListRowIcon>
+      </ListRowLeading>
+      <ListRowContent>
+        <ListRowTitle>{t("Focus test")}</ListRowTitle>
+        <ListRowDescription>
+          <FactSegments facts={rowFacts(focusTest)} />
+        </ListRowDescription>
+      </ListRowContent>
+    </ListRowLink>
   );
 }

@@ -4,9 +4,11 @@ import {
   changePlanAction,
   chooseExamOptionAction,
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { getFocusTestActions } from "@/app/[lang]/(app)/(onboarding)/start/focus-test-client-actions";
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
 import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
+import { STARTED_FOCUS_TEST_HREF } from "@/lib/focus-test/focus-test-href";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -113,13 +115,30 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
   });
 }
 
-async function dismissTodayFocusTest(goalId: string): Promise<boolean> {
-  const saved = await updateFocusTestAction(goalId, {
-    suggestion: "dismissed",
-    timeZone: getLocalTimeZone(),
-  });
+function useFocusTestSuggestionActions(goalId: string) {
+  const router = useRouter();
 
-  return saved !== null;
+  return {
+    dismissFocusTest: async (): Promise<boolean> => {
+      const saved = await updateFocusTestAction(goalId, {
+        suggestion: "dismissed",
+        timeZone: getLocalTimeZone(),
+      });
+
+      return saved !== null;
+    },
+    /** The start is the learner's press here, so the test's page opens on its first question. */
+    startFocusTest: async (): Promise<boolean> => {
+      const outcome = await getFocusTestActions(goalId).start();
+
+      if (outcome.status === "failed") {
+        return false;
+      }
+
+      router.push(STARTED_FOCUS_TEST_HREF);
+      return true;
+    },
+  };
 }
 
 /** The page keys it by goal and day, so a new day (midnight, a goal switch) draws fresh. */
@@ -141,6 +160,7 @@ export function TodayClient({
   const goalId = today.session.goalId ?? today.goal.id;
   const refresh = useCallback(() => router.refresh(), [router]);
   const steps = useMemo(() => toTapSteps(data), [data]);
+  const focusTestActions = useFocusTestSuggestionActions(today.goal.id);
 
   const taps = useDayTaps({
     day: {
@@ -207,6 +227,7 @@ export function TodayClient({
       level={data.language?.level ?? null}
       readAt={readAt}
       actions={{
+        ...focusTestActions,
         addExtraTime: taps.addExtraTime,
         adjustTimeHref: "/plan?focus=time",
         answerInsight: answerMemoryInsightAction,
@@ -240,9 +261,7 @@ export function TodayClient({
           return next ? taps.next(next) : Promise.resolve(false);
         },
         decidePlanChange,
-        dismissFocusTest: () => dismissTodayFocusTest(today.goal.id),
         examHref: "/exam",
-        focusTestHref: "/focus-test",
         lessonAgainHref: (lessonId) => getLessonAgainHref({ lessonId, origin: "/today" }),
         lessonHref: (block) =>
           getStudyLessonHref({ block, goalId: today.goal.id, session: today.session }),

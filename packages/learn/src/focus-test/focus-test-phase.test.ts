@@ -17,15 +17,12 @@ const QUESTION: PlacementQuestion = {
   visual: null,
 };
 
-const OFFER = { kind: "first", minutes: 15, pastCeiling: 9, questions: 15 } as const;
+const OFFER = { minutes: 15 };
 
 function sittingWith(sitting: Partial<FocusTestSitting> = {}): FocusTestSitting {
   return {
     answered: 0,
-    end: null,
     hint: null,
-    kind: "first",
-    left: 15,
     minutes: 15,
     questions: 15,
     subject: { key: "law", name: "Administrative Law", shortName: null },
@@ -36,12 +33,11 @@ function sittingWith(sitting: Partial<FocusTestSitting> = {}): FocusTestSitting 
 function testWith(focusTest: Partial<FocusTestView> = {}): FocusTestView {
   return {
     checkpoint: null,
-    counts: { asked: 0, quick: 22, total: 24 },
-    dated: true,
     offer: null,
     sessionQuestions: "off",
     sitting: null,
     subjects: [],
+    suggestsFocus: true,
     ...focusTest,
   };
 }
@@ -49,9 +45,10 @@ function testWith(focusTest: Partial<FocusTestView> = {}): FocusTestView {
 function ready(
   focusTest: FocusTestView | null,
   next: PlacementQuestion | null = null,
+  answered = 0,
 ): PlacementOutcome {
   return {
-    answered: 0,
+    answered,
     complete: false,
     dayBudgetSpent: 0,
     dayBudgetUsed: false,
@@ -77,20 +74,16 @@ describe(toFocusTestPhase, () => {
   });
 
   it("shows the result once the learner has answers and no sitting is open", () => {
-    const focusTest = testWith({
-      checkpoint: CHECKPOINT,
-      offer: { ...OFFER, kind: "continuation" },
-    });
+    const focusTest = testWith({ checkpoint: CHECKPOINT, offer: OFFER });
 
     expect(toFocusTestPhase({ opening: true, outcome: ready(focusTest) })).toStrictEqual({
-      end: null,
       focusTest,
       kind: "checkpoint",
     });
   });
 
   it("asks the next question right after a start or an answer", () => {
-    const sitting = sittingWith({ answered: 6, left: 9 });
+    const sitting = sittingWith({ answered: 6, minutes: 9 });
     const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }), QUESTION);
 
     expect(toFocusTestPhase({ opening: false, outcome })).toStrictEqual({
@@ -103,12 +96,22 @@ describe(toFocusTestPhase, () => {
   });
 
   it("never opens a page on a question: a sitting with answers waits on its resume screen", () => {
-    const sitting = sittingWith({ answered: 6, left: 9 });
+    const sitting = sittingWith({ answered: 6, minutes: 9 });
     const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }), QUESTION);
 
     expect(toFocusTestPhase({ opening: true, outcome })).toMatchObject({
       kind: "resume",
       question: { kind: "question", question: QUESTION, sitting },
+    });
+  });
+
+  it("counts every saved answer on the resume screen, earlier sittings included", () => {
+    const sitting = sittingWith({ answered: 1, minutes: 9 });
+    const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }), QUESTION, 7);
+
+    expect(toFocusTestPhase({ opening: true, outcome })).toMatchObject({
+      answered: 7,
+      kind: "resume",
     });
   });
 
@@ -122,14 +125,27 @@ describe(toFocusTestPhase, () => {
     });
   });
 
-  it("ends a sitting that has nothing more to ask, with its reason", () => {
-    const sitting = sittingWith({ answered: 6, end: "noQuestionsReady", left: 9, subject: null });
+  it("opens on the first question when the learner started the test on the screen before", () => {
+    const sitting = sittingWith();
+    const outcome = ready(testWith({ offer: OFFER, sitting }), QUESTION);
+
+    expect(toFocusTestPhase({ opening: true, outcome, started: true })).toMatchObject({
+      kind: "question",
+      question: QUESTION,
+    });
+
+    const left = ready(testWith({ sitting: sittingWith({ answered: 2 }) }), QUESTION);
+
+    expect(toFocusTestPhase({ opening: true, outcome: left, started: true })).toMatchObject({
+      kind: "resume",
+    });
+  });
+
+  it("ends a sitting that has nothing more to ask", () => {
+    const sitting = sittingWith({ answered: 6, minutes: 9, subject: null });
     const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }));
 
-    expect(toFocusTestPhase({ opening: false, outcome })).toStrictEqual({
-      end: "noQuestionsReady",
-      kind: "ended",
-    });
+    expect(toFocusTestPhase({ opening: false, outcome })).toStrictEqual({ kind: "ended" });
   });
 
   it("waits while questions are being written, and says whether there are answers to use", () => {

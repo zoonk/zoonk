@@ -33,7 +33,21 @@ export function readSessionQuestions({ goal, localDate, timeZone }: TestDay): Se
 }
 
 function toOffer({ paceMs, questions }: { paceMs: number; questions: number | null }) {
-  return questions ? { minutes: getSittingMinutes({ paceMs, questions }), questions } : null;
+  return questions ? { minutes: getSittingMinutes({ paceMs, questions }) } : null;
+}
+
+/**
+ * A focus is a choice between subjects, and only a date makes the time too short for all of them.
+ * `subjects` is null for a goal placed before the test kept a summary, which a dated exam passes.
+ */
+export function suggestsFocus({
+  dated,
+  subjects,
+}: {
+  dated: boolean;
+  subjects: number | null;
+}): boolean {
+  return dated && (subjects === null || subjects > 1);
 }
 
 export function isSameFocus(a: readonly string[], b: readonly string[]): boolean {
@@ -45,14 +59,9 @@ export function isSameFocus(a: readonly string[], b: readonly string[]): boolean
  * A goal placed before the test kept a summary has no numbers until its next test answer.
  */
 export function readFocusTestSummary({
-  focusAreas,
+  goal,
   ...day
-}: TestDay & {
-  /** The plan's focus, which is the test's while it's the one the test last put there. */
-  focusAreas: readonly string[];
-}): FocusTestSummary | null {
-  const { goal } = day;
-
+}: Omit<TestDay, "goal"> & { goal: TestGoal & Pick<Goal, "targetDate"> }): FocusTestSummary | null {
   if (goal.kind !== "exam") {
     return null;
   }
@@ -67,10 +76,12 @@ export function readFocusTestSummary({
 
   return {
     offer: toOffer({ paceMs, questions: left > 0 ? left : (summary?.offerQuestions ?? null) }),
-    sessionQuestions: readSessionQuestions(day),
-    setsFocus: focusAreas.length > 0 && isSameFocus(focusAreas, record?.focus ?? []),
+    sessionQuestions: readSessionQuestions({ goal, ...day }),
     state: left > 0 ? "sitting" : rested,
-    subjects: summary && summary.asked > 0 ? { asked: summary.asked, total: summary.total } : null,
+    suggestsFocus: suggestsFocus({
+      dated: goal.targetDate !== null,
+      subjects: summary?.total ?? null,
+    }),
   };
 }
 

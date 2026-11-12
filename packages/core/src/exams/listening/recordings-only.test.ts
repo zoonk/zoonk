@@ -588,7 +588,9 @@ describe("an exam's listening skills in text tests", () => {
     );
 
     expect(result).toMatchObject({
-      placement: { focusTest: { counts: { quick: 2, total: 3 } } },
+      placement: {
+        focusTest: { subjects: [{ part: "listening" }, { part: null }, { part: null }] },
+      },
       status: "ready",
     });
 

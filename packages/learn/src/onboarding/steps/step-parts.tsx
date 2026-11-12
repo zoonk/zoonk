@@ -5,8 +5,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
-import { StepOpenFailed } from "../../_components/step-open-failed";
-import { OnboardingColumn, OnboardingFooter, OnboardingPrimaryButton } from "../onboarding-frame";
+import {
+  OnboardingColumn,
+  OnboardingDescription,
+  OnboardingFooter,
+  OnboardingHeading,
+  OnboardingPrimaryButton,
+  OnboardingTitle,
+} from "../onboarding-frame";
 
 export function StepIcon({
   children,
@@ -44,7 +50,18 @@ export function StepLoadFailed({ onRetry }: { onRetry: () => Promise<void> }) {
 
   return (
     <OnboardingColumn>
-      {!retrying && <StepOpenFailed className="text-sm" />}
+      <OnboardingHeading>
+        <OnboardingTitle>
+          {t({
+            description:
+              "Headline when a screen failed to load. Next to it is a “Try again” button.",
+            message: "This didn't open",
+          })}
+        </OnboardingTitle>
+        <OnboardingDescription role="alert">
+          {t("Something went wrong on our side.")}
+        </OnboardingDescription>
+      </OnboardingHeading>
 
       <OnboardingFooter>
         <OnboardingPrimaryButton

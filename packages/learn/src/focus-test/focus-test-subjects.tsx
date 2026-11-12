@@ -1,7 +1,9 @@
 "use client";
 
-import { type FocusTestSubject } from "@zoonk/core/learner/placement/focus-test-contract";
-import { Button } from "@zoonk/ui/components/button";
+import {
+  type FocusRow,
+  type FocusTestSubject,
+} from "@zoonk/core/learner/placement/focus-test-contract";
 import {
   Drawer,
   DrawerContent,
@@ -16,17 +18,35 @@ import {
   ListGroup,
   ListRow,
   ListRowBody,
+  ListRowButton,
   ListRowContent,
+  ListRowNumberedTitle,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { getSubjectName, useSubjectStateText } from "./use-focus-test-texts";
 
-/**
- * Before the first answer every quick subject would read "Not asked yet", so only what the test
- * can't check is said.
- */
-function SubjectRow({ answered, subject }: { answered: boolean; subject: FocusTestSubject }) {
+export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
+  return (
+    <ListGroup data-slot="focus-subjects">
+      <ol>
+        {rows.map((row, index) => (
+          <li key={row.subject.key}>
+            <ListRow>
+              <ListRowContent>
+                <ListRowNumberedTitle number={index + 1}>
+                  {getSubjectName(row.subject)}
+                </ListRowNumberedTitle>
+              </ListRowContent>
+            </ListRow>
+          </li>
+        ))}
+      </ol>
+    </ListGroup>
+  );
+}
+
+function SubjectRow({ subject }: { subject: FocusTestSubject }) {
   const stateText = useSubjectStateText();
 
   return (
@@ -35,27 +55,19 @@ function SubjectRow({ answered, subject }: { answered: boolean; subject: FocusTe
         <ListRowContent>
           <ListRowTitle className="font-normal">{getSubjectName(subject)}</ListRowTitle>
         </ListRowContent>
-        {(answered || subject.state === "notChecked") && (
-          <ListRowTrailing>{stateText(subject)}</ListRowTrailing>
-        )}
+        <ListRowTrailing>{stateText(subject)}</ListRowTrailing>
       </ListRowBody>
     </ListRow>
   );
 }
 
-function SubjectRows({
-  answered,
-  subjects,
-}: {
-  answered: boolean;
-  subjects: readonly FocusTestSubject[];
-}) {
+function SubjectRows({ subjects }: { subjects: readonly FocusTestSubject[] }) {
   return (
     <ListGroup>
       <ul>
         {subjects.map((subject) => (
           <li key={subject.key}>
-            <SubjectRow answered={answered} subject={subject} />
+            <SubjectRow subject={subject} />
           </li>
         ))}
       </ul>
@@ -63,20 +75,21 @@ function SubjectRows({
   );
 }
 
-export function FocusTestSubjectsSheet({
-  answered,
-  subjects,
-}: {
-  /** The learner has test answers, so each subject says how it went. */
-  answered: boolean;
-  subjects: readonly FocusTestSubject[];
-}) {
+export function FocusTestSubjectsSheet({ subjects }: { subjects: readonly FocusTestSubject[] }) {
   const t = useExtracted();
 
   return (
     <Drawer>
-      <DrawerTrigger render={<Button variant="link" />}>
-        {answered ? t("View all subjects") : t("View subjects")}
+      <DrawerTrigger render={<ListRowButton />}>
+        <ListRowContent>
+          <ListRowTitle className="font-normal">
+            {t({
+              description:
+                "Opens the list of every exam subject with how its Focus test questions went.",
+              message: "See all subjects",
+            })}
+          </ListRowTitle>
+        </ListRowContent>
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -86,7 +99,7 @@ export function FocusTestSubjectsSheet({
         </DrawerHeader>
 
         <DrawerContent className="pt-1">
-          <SubjectRows answered={answered} subjects={subjects} />
+          <SubjectRows subjects={subjects} />
         </DrawerContent>
       </DrawerPopup>
     </Drawer>

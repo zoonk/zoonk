@@ -1,142 +1,116 @@
 "use client";
 
-import { type FocusTestFocus } from "@zoonk/core/learner/placement/focus-test-contract";
-import { Button } from "@zoonk/ui/components/button";
-import { Undo2Icon } from "lucide-react";
+import {
+  type FocusRow,
+  type FocusTestFocus,
+  type FocusTestSummary,
+} from "@zoonk/core/learner/placement/focus-test-contract";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import {
+  OnboardingColumn,
+  OnboardingDescription,
+  OnboardingFooter,
+  OnboardingHeading,
+  OnboardingPrimaryButton,
+  OnboardingSecondaryButton,
+  OnboardingSubject,
+  OnboardingTitle,
+} from "../onboarding/onboarding-frame";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
-import { useProposalEffectText } from "../plan/use-effect-text";
+import { FocusSubjects } from "./focus-test-subjects";
 
-type Proposal = NonNullable<FocusTestFocus["proposal"]>;
-type Decision = "applied" | "declined" | "undone";
+export type Proposal = NonNullable<FocusTestFocus["proposal"]>;
+export type Decision = "applied" | "declined" | "undone";
+export type ProposalAnswer = { change: Proposal; decision: Decision };
 
+/** What the test's own page can change on the plan; a goal still being set up has none. */
 export type FocusTestPlanActions = {
   changeFocusHref: string;
   /** The change as it stands after the answer; null when it wasn't saved. */
   decide: (input: { changeId: string; status: Decision }) => Promise<Proposal | null>;
+  /** The test as it stands after the switch; null when it wasn't saved. */
+  setSessionQuestions: (sessionQuestions: "on" | "paused") => Promise<FocusTestSummary | null>;
 };
 
-const TEXT_CLASS = "text-sm text-pretty";
-
-function ProposalAnswer({
-  canUndo,
-  decision,
-  isPending,
-  onUndo,
-}: {
-  canUndo: boolean;
-  decision: Decision;
-  isPending: boolean;
-  onUndo: () => void;
-}) {
-  const t = useExtracted();
-
-  if (decision !== "applied") {
-    return (
-      <p className={TEXT_CLASS} role="status">
-        {decision === "undone"
-          ? t("Undone. Your plan is back as it was.")
-          : t("Your plan stays as it was.")}
-      </p>
-    );
-  }
-
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-      <p className={TEXT_CLASS} role="status">
-        {t("Done. Your plan now gives these more time.")}
-      </p>
-      {canUndo && (
-        <Button
-          busy={isPending}
-          icon={<Undo2Icon aria-hidden="true" />}
-          onClick={onUndo}
-          size="sm"
-          variant="outline"
-        >
-          {t("Undo")}
-        </Button>
-      )}
-    </div>
-  );
-}
-
-export function FocusProposal({
-  onAnswered,
-  plan,
-  proposal,
-}: {
-  onAnswered: () => void;
-  plan: FocusTestPlanActions;
-  proposal: Proposal;
-}) {
-  const t = useExtracted();
-  const effectText = useProposalEffectText();
-  const [answered, setAnswered] = useState<{ change: Proposal; decision: Decision } | null>(null);
+export function useProposalAnswer(plan: FocusTestPlanActions | null) {
+  const [answer, setAnswer] = useState<ProposalAnswer | null>(null);
   const [failed, setFailed] = useState(false);
-  const [isPending, startTransition] = useTransition();
   const [pressed, setPressed] = useState<Decision | null>(null);
-  const effect = effectText(proposal, undefined, { besideDiff: true });
+  const [isPending, startTransition] = useTransition();
 
-  const decide = (status: Decision) => {
+  const decide = (changeId: string, status: Decision) => {
     setPressed(status);
 
     startTransition(async () => {
-      const change = await plan.decide({ changeId: proposal.id, status }).catch(() => null);
+      const change = (await plan?.decide({ changeId, status }).catch(() => null)) ?? null;
       setFailed(!change);
 
       if (change) {
-        setAnswered({ change, decision: status });
-        onAnswered();
+        setAnswer({ change, decision: status });
       }
     });
   };
 
+  return { answer, decide, failed, pressed: isPending ? pressed : null };
+}
+
+export function FocusTestProposal({
+  failed,
+  onDecide,
+  pressed,
+  proposal,
+  rows,
+}: {
+  failed: boolean;
+  onDecide: (status: Decision) => void;
+  pressed: Decision | null;
+  proposal: Proposal;
+  rows: readonly FocusRow[];
+}) {
+  const t = useExtracted();
+
   return (
-    <div className="flex flex-col gap-3">
-      {!answered && (
-        <>
-          {effect && <p className="text-muted-foreground text-sm text-pretty">{effect}</p>}
-          <PlanEffectDiff effect={proposal.effect} />
-        </>
-      )}
+    <OnboardingColumn>
+      <OnboardingHeading>
+        <OnboardingSubject>{t("Focus test")}</OnboardingSubject>
+        <OnboardingTitle>
+          {t({
+            description:
+              "Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time.",
+            message: "Give these subjects more time?",
+          })}
+        </OnboardingTitle>
+        <OnboardingDescription>
+          {t({
+            description:
+              "Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.",
+            message: "Your time can't cover everything before your exam.",
+          })}
+        </OnboardingDescription>
+      </OnboardingHeading>
 
-      {answered ? (
-        <ProposalAnswer
-          canUndo={answered.change.canUndo}
-          decision={answered.decision}
-          isPending={isPending}
-          onUndo={() => decide("undone")}
-        />
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {proposal.canApply && (
-            <Button
-              busy={isPending && pressed === "applied"}
-              disabled={isPending}
-              focusableWhenDisabled
-              onClick={() => decide("applied")}
-              size="sm"
-            >
-              {t("Update my plan")}
-            </Button>
-          )}
-          <Button
-            busy={isPending && pressed === "declined"}
-            disabled={isPending}
-            focusableWhenDisabled
-            onClick={() => decide("declined")}
-            size="sm"
-            variant="outline"
-          >
-            {t("Not now")}
-          </Button>
-        </div>
-      )}
+      <FocusSubjects rows={rows} />
+      <PlanEffectDiff effect={proposal.effect} />
 
-      {failed && <ChangeSaveError />}
-    </div>
+      <OnboardingFooter>
+        {failed && <ChangeSaveError />}
+        <OnboardingPrimaryButton
+          busy={pressed === "applied"}
+          disabled={pressed === "declined"}
+          onClick={() => onDecide("applied")}
+        >
+          {t("Update my plan")}
+        </OnboardingPrimaryButton>
+        <OnboardingSecondaryButton
+          busy={pressed === "declined"}
+          disabled={pressed === "applied"}
+          onClick={() => onDecide("declined")}
+        >
+          {t("Not now")}
+        </OnboardingSecondaryButton>
+      </OnboardingFooter>
+    </OnboardingColumn>
   );
 }

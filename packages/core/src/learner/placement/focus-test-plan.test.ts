@@ -70,10 +70,7 @@ describe("the Focus test on a plan whose time is short", () => {
     const completion = await sit(goal.id, MISS_FOURTH);
 
     expect(completion.focusTest?.checkpoint?.focus).toMatchObject({
-      rows: [
-        { areas: ["Raciocínio"], reason: "answers" },
-        { areas: ["Atualidades"], reason: "notAsked" },
-      ],
+      rows: [{ areas: ["Raciocínio"] }, { areas: ["Atualidades"] }],
       state: "ifTimeShort",
     });
 
@@ -103,7 +100,7 @@ describe("the Focus test on a plan whose time is short", () => {
     const revealed = await getGoalPlan(goal.id);
 
     expect(revealed).toMatchObject({
-      plan: { focusTest: { setsFocus: true, state: "checked", subjects: { asked: 4, total: 6 } } },
+      plan: { focusTest: { state: "checked", suggestsFocus: true } },
     });
 
     expect(
@@ -126,11 +123,10 @@ describe("the Focus test on a plan whose time is short", () => {
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: {
         focusTest: {
-          offer: { minutes: 15, questions: 15 },
+          offer: { minutes: 15 },
           sessionQuestions: "off",
-          setsFocus: false,
           state: "notStarted",
-          subjects: null,
+          suggestsFocus: true,
         },
       },
     });

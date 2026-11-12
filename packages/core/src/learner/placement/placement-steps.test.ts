@@ -89,12 +89,7 @@ function answer(
 function place(evidence: PlacementEvidence[], skills = CHAIN) {
   const beliefs = getPlacementBeliefs({ evidence, skills });
 
-  const statuses = readSkillStatuses({
-    answers: evidence,
-    evidence,
-    focusedSkillIds: new Set(),
-    skills,
-  });
+  const statuses = readSkillStatuses({ answers: evidence, evidence, skills });
 
   return { beliefs, phases: getPhaseStarts({ skills, statuses }), statuses };
 }
@@ -296,6 +291,8 @@ describe(getPhaseStarts, () => {
   it("stops when every phase has a confident start, not after a set count", () => {
     const { phases } = place([
       answer("a", "correct"),
+      answer("a", "correct"),
+      answer("b", "correct"),
       answer("b", "correct"),
       answer("c", "correct", "typed"),
       answer("e", "wrong"),

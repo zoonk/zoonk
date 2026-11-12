@@ -63,7 +63,7 @@ msgstr "건너뜀"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/explain/explain-ending.tsx
-#: src/focus-test/focus-test-screens.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -153,8 +153,9 @@ msgstr "하루 학습 시간"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/focus-test/use-focus-test-texts.ts
 #: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
@@ -2317,7 +2318,7 @@ msgstr "오늘로 돌아가기"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2909,7 +2910,7 @@ msgid "Not applied. Your plan stays as it was."
 msgstr "적용하지 않았어요. 계획은 그대로 유지돼요."
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/use-result-line.ts
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/today/today-plan-change.tsx
@@ -3972,86 +3973,6 @@ msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "md_tC7"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}} so far"
-msgstr "지금까지 {asked, number}개 과목의 문제를 풀었어요(전체 {total, plural, other {#개 과목}})"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dBBQr6"
-msgid "Your starting points are set."
-msgstr "과목별 학습 시작점이 정해졌어요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aQrSbp"
-msgid "That's all the questions ready for now. Your next sessions ask the rest."
-msgstr "지금 준비된 문제는 여기까지예요. 나머지는 다음 학습에서 풀어요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "q5QB29"
-msgid "Where you'll start"
-msgstr "학습 시작점"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "vKUJpo"
-msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
-msgstr "{count, plural, other {이미 아는 레슨 #개는 계획에서 건너뛰어요.}}"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "r0RTjS"
-msgid "Your subjects start from the basics for now."
-msgstr "지금은 모든 과목을 기초부터 시작해요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "60_Cs5"
-msgid "If your time can't cover everything, your plan gives these more time."
-msgstr "모든 내용을 공부하기에 시간이 부족하면 이 과목들에 학습 시간을 더 배정해요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "HkifIb"
-msgid "Your time can't cover everything. Your plan can give these more time."
-msgstr "모든 내용을 공부하기에는 시간이 부족해요. 이 과목들에 시간을 더 배정하도록 계획을 바꿀 수 있어요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "ITVIDG"
-msgid "Your plan gives these more time."
-msgstr "이 과목들에 학습 시간을 더 배정해요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "YiaEQx"
-msgid "You chose your own focus, and your plan keeps it. This is what the test suggests."
-msgstr "계획에는 직접 고른 집중 과목을 그대로 반영해요. 아래는 테스트에서 추천하는 과목이에요."
-
-#. Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged.
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jSJkc5"
-msgid "You kept your plan as it is."
-msgstr "계획을 그대로 유지했어요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "nvNCUr"
-msgid "For now, this follows mainly what counts most in your exam."
-msgstr "지금은 주로 시험에서 비중이 큰 과목을 기준으로 추천해요."
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "N09SQx"
-msgid "Suggested focus"
-msgstr "집중하면 좋은 과목"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/onboarding/steps/reveal-coverage.tsx
-msgctxt "s2lEZy"
-msgid "Change focus"
-msgstr "집중 과목 바꾸기"
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "JmND9E"
-msgid "Use my answers"
-msgstr "내 답변 반영하기"
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/onboarding/steps/placement-waiting.tsx
@@ -4074,17 +3995,92 @@ msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "그만 풀고 내 답변 반영하기"
 
-#: src/focus-test/focus-test-proposal.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "계획은 그대로예요."
+#. Under “Focusing never removes a subject”. “The ones” are exam subjects. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ebBs5s"
+msgid "The ones you need most get more time when your time can't cover everything."
+msgstr "시험 전까지 모든 내용을 공부할 시간이 부족하면 가장 필요한 과목에 시간을 더 써요."
+
+#. Title of a short fact about the Focus test. Say only this: giving some exam subjects more study time (focusing) is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "auxYjk"
+msgid "Focusing never removes a subject"
+msgstr "집중을 이유로 과목을 제외하지 않아요"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3eMENr"
+msgid "The test starts with the subjects that weigh most in your exam."
+msgstr "시험에서 비중이 가장 큰 과목부터 시작해요."
+
+#. Title of a short fact about the Focus test: its first questions are on the exam subjects that weigh most in the score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ia0ABg"
+msgid "What counts most comes first"
+msgstr "비중이 큰 과목부터"
+
+#. “I don't know yet” is the button on every Focus test question; use the same words as that button.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "r7JaA6"
+msgid "“I don't know yet” is a fine answer."
+msgstr "“아직 모르겠어요”라고 답해도 괜찮아요."
+
+#. Title of a short fact about the Focus test: it gives no grade or score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "rIfFed"
+msgid "There's no grade"
+msgstr "점수를 매기지 않아요"
+
+#. Under “Stop anytime”: every Focus test answer is saved as soon as it is given.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3YgnmP"
+msgid "Each answer is saved."
+msgstr "답할 때마다 바로 저장돼요."
+
+#. Title of a short fact about the Focus test: the learner can stop it whenever they want.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "g1Knsp"
+msgid "Stop anytime"
+msgstr "언제든 멈출 수 있어요"
+
+#. Under “A few more in your first week”. “These questions” are the Focus test's questions; “that” is the study sessions asking them.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "m3Cw5S"
+msgid "Your study sessions ask a few more of these questions. You can pause that."
+msgstr "학습 중에 이런 문제가 몇 개 더 나와요. 원하면 잠시 나오지 않게 할 수 있어요."
+
+#. Title of a short fact about the Focus test: during the learner's first week, their study sessions ask a few more of its questions. “A few more” means questions.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "Y6o_Rw"
+msgid "A few more in your first week"
+msgstr "첫 주에는 몇 문제 더 풀어요"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "HK3ph8"
+msgid "How it works"
+msgstr "이용 방법"
 
 #: src/focus-test/focus-test-proposal.tsx
-msgctxt "Q-qRTX"
-msgid "Done. Your plan now gives these more time."
-msgstr "반영했어요. 이제 이 과목들에 학습 시간을 더 배정해요."
+#: src/focus-test/focus-test-result.tsx
+#: src/focus-test/focus-test-screens.tsx
+#: src/plan/plan-focus-test.tsx
+#: src/plan/plan-focus.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "집중 진단"
+
+#. Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "nWvvzY"
+msgid "Give these subjects more time?"
+msgstr "이 과목들에 시간을 더 쓸까요?"
+
+#. Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "ZQfsV7"
+msgid "Your time can't cover everything before your exam."
+msgstr "시험 전까지 모든 내용을 공부할 시간이 부족해요."
 
 #: src/focus-test/focus-test-proposal.tsx
 #: src/today/today-plan-change.tsx
@@ -4092,57 +4088,67 @@ msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "내 계획 바꾸기"
 
-#. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "s2lEZy"
+msgid "Change focus"
+msgstr "집중 과목 바꾸기"
+
+#. Under the switch “Ask a few more in my sessions”: sessions ask those questions only during the learner's first week.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "fkY35_"
+msgid "During your first week"
+msgstr "첫 주 동안만"
+
+#. Label of an on/off switch on the Focus test's result: whether the learner's study sessions ask a few more Focus test questions. “A few more” means questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "ksG62i"
+msgid "Ask a few more in my sessions"
+msgstr "학습 중에 문제 몇 개 더 풀기"
+
+#. Shown with a check mark above the Focus test's result: the learner's answers were saved.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "g2pcsk"
+msgid "Answers saved"
+msgstr "답변 저장됨"
+
+#. Headline of the Focus test's result, above a short numbered list of the exam subjects that need most of the learner's study time. It answers the invitation “Find out where to focus”. Keep it short. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "K9pcMz"
+msgid "Here's where to focus"
+msgstr "이 과목에 집중해 보세요"
+
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "ZrB8AL"
+msgid "Your starting point is set"
+msgstr "학습 시작점이 정해졌어요"
+
+#: src/focus-test/focus-test-result.tsx
+msgctxt "qI81MQ"
+msgid "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
+msgstr "{count, plural, other {계획에서 이미 아는 레슨 #개도 건너뛰어요.}}"
+
+#. Button on the Focus test's result: continues the test with more questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "X1M8Kl"
+msgid "Answer more questions"
+msgstr "문제 더 풀기"
+
+#. Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "J1HRdz"
-msgid "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked."
-msgstr "계획에는 {subjects, plural, other {전체 #개 과목}}이 반영돼요. 이번에는 {questions, plural, other {최대 #개의 문제}}를 풀기 때문에 일부 과목은 확인하지 못할 수 있어요."
+msgctxt "67jQK8"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most."
+msgstr "시험 과목별로 간단한 문제를 풀어요. 이미 아는 내용은 계획에서 건너뛰어 가장 필요한 공부에 시간을 쓸 수 있어요."
 
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "QyMX3n"
-msgid "Let's find where your study time should go"
-msgstr "어떤 과목에 시간을 쓸지 알아봐요"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "o-6o1J"
-msgid "Find where to start"
-msgstr "어디서 시작할지 알아보기"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "lArp48"
-msgid "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus."
-msgstr "비중이 큰 과목부터 간단한 문제를 풀어요. 답변을 바탕으로 이미 아는 내용은 계획에서 건너뛰고, 집중하면 좋은 과목을 추천해요."
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "hBZ8RL"
-msgid "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know."
-msgstr "비중이 큰 과목부터 간단한 문제를 풀어요. 답변을 바탕으로 이미 아는 내용은 계획에서 건너뛰어요."
-
-#: src/focus-test/focus-test-screens.tsx
-#: src/plan/plan-tools.tsx
-msgctxt "InWqys"
-msgid "Optional"
-msgstr "선택 사항"
-
-#: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-view.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {#개 과목}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "kO1w73"
-msgid "There's no grade. “I don't know yet” is a useful answer."
-msgstr "점수는 매기지 않아요. “아직 모르겠어요”도 도움이 되는 답이에요."
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "rnG7Zf"
-msgid "Stop whenever you need to. We save each answer."
-msgstr "필요하면 언제든 멈추세요. 답변은 하나씩 저장해요."
+msgctxt "JFKisp"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know."
+msgstr "시험 과목별로 간단한 문제를 풀어요. 이미 아는 내용은 계획에서 건너뛰어요."
 
 #: src/focus-test/focus-test-screens.tsx
 #: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
 msgctxt "SKxNcp"
 msgid "Start the test"
 msgstr "테스트 시작하기"
@@ -4152,50 +4158,22 @@ msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "테스트 이어서 풀기"
 
+#. Shown when the learner comes back to a Focus test they left halfway: the answers they already gave are kept.
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "Gwo70s"
-msgid "{count, plural, one {# answer saved} other {# answers saved}}"
-msgstr "{count, plural, other {답변 #개 저장됨}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "c9Xh-2"
-msgid "{count, plural, one {Up to # question left} other {Up to # questions left}}"
-msgstr "{count, plural, other {남은 문제 최대 #개}}"
+msgctxt "BwHZIs"
+msgid "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}"
+msgstr "{count, plural, other {답변 #개가 저장되어 있어요.}}"
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "답변이 저장됐어요"
 
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "_lke7y"
-msgid "See your starting plan"
-msgstr "초기 학습 계획 보기"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aKjgQE"
-msgid "Your starting plan"
-msgstr "초기 학습 계획"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "m2K9LP"
-msgid "Continue to daily time"
-msgstr "하루 학습 시간 설정하기"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dCgSSr"
-msgid "Continue the test · About {time}"
-msgstr "테스트 이어서 풀기 · 약 {time}"
-
+#. Opens the list of every exam subject with how its Focus test questions went.
 #: src/focus-test/focus-test-subjects.tsx
-msgctxt "WSzPNf"
-msgid "View all subjects"
-msgstr "모든 과목 보기"
-
-#: src/focus-test/focus-test-subjects.tsx
-msgctxt "lto9A4"
-msgid "View subjects"
-msgstr "과목 보기"
+msgctxt "a9uRoF"
+msgid "See all subjects"
+msgstr "전체 과목 보기"
 
 #: src/focus-test/focus-test-subjects.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -4229,38 +4207,17 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {서술형: 여기서는 확인하지 않음} listening {듣기: 여기서는 확인하지 않음} speaking {말하기: 여기서는 확인하지 않음} other {실기: 여기서는 확인하지 않음}}"
 
-#. A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.
+#. Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kCg3aW"
-msgid "Your answers suggest focusing here."
-msgstr "답변을 보면 이 과목에 집중하는 게 좋아요."
+msgctxt "sdUdiu"
+msgid "Find out where to focus"
+msgstr "집중할 과목을 알아보세요"
 
+#. The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "51W9Dr"
-msgid "This part has a minimum score."
-msgstr "이 파트에는 최소 점수 기준이 있어요."
-
-#. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "0_2y4Q"
-msgid "This part counts heavily; it isn't checked here."
-msgstr "이 파트는 시험에서 비중이 크지만 여기서는 확인하지 않아요."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "TEkiKm"
-msgid "This subject counts heavily. Its starting point hasn't been checked yet."
-msgstr "이 과목은 시험에서 비중이 커요. 아직 어느 정도 아는지 확인하지 않았어요."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "8nVO91"
-msgid "This subject counts heavily."
-msgstr "이 과목은 시험에서 비중이 커요."
-
-#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "sd5daO"
-msgid "Your next sessions ask a few more test questions."
-msgstr "다음 학습에서는 진단 문제가 조금 더 나와요."
+msgctxt "Hz7C8k"
+msgid "Find out where to start"
+msgstr "어디부터 시작할지 알아보세요"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -4268,35 +4225,83 @@ msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "약 {time}"
 
+#. {time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "1nBn4K"
-msgid "{count, plural, one {Up to # question} other {Up to # questions}}"
-msgstr "{count, plural, other {최대 #문제}}"
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "약 {time} 남음"
 
+#. Button that ends the Focus test with the answers given so far and shows its result.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTTP0x"
-msgid "Not started"
-msgstr "시작 전"
+msgctxt "AcDjzM"
+msgid "See my result"
+msgstr "내 결과 보기"
 
+#. Under “Focus test” in a list: the learner started the test and has not finished it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "8hg4ei"
-msgid "{count, plural, one {# question left} other {# questions left}}"
-msgstr "{count, plural, other {남은 문제 #개}}"
+msgctxt "q1WWIr"
+msgid "In progress"
+msgstr "진행 중"
 
+#. Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTto4O"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}"
-msgstr "{asked, number}과목 출제 / {total, plural, other {전체 #과목}}"
+msgctxt "KAccXF"
+msgid "Paused in your sessions"
+msgstr "학습 중 추가 문제 일시 중지됨"
 
+#. Under “Focus test” in a list, once the learner took the test: opens its result.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "6JsTrv"
-msgid "Your answers are in your plan"
-msgstr "답변이 계획에 반영됨"
+msgctxt "TZTNNl"
+msgid "See your result"
+msgstr "결과 보기"
 
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "BgXaSJ"
-msgid "{count, plural, one {Up to # more question} other {Up to # more questions}}"
-msgstr "{count, plural, other {추가로 최대 #문제}}"
+#: src/focus-test/use-result-line.ts
+msgctxt "vKUJpo"
+msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr "{count, plural, other {이미 아는 레슨 #개는 계획에서 건너뛰어요.}}"
+
+#. The Focus test's result when no answer showed something the learner already knows: every exam subject starts at its first lessons.
+#: src/focus-test/use-result-line.ts
+msgctxt "PLJ-7h"
+msgid "Your plan starts each subject from the basics."
+msgstr "계획에서는 모든 과목을 기초부터 시작해요."
+
+#. After the learner agreed to give the listed exam subjects more time: the study plan changed.
+#: src/focus-test/use-result-line.ts
+msgctxt "G-NFHn"
+msgid "Your plan now gives these subjects more time."
+msgstr "계획에서 이 과목들에 시간을 더 배정했어요."
+
+#: src/focus-test/use-result-line.ts
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "계획은 그대로예요."
+
+#. Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.
+#: src/focus-test/use-result-line.ts
+msgctxt "60Ever"
+msgid "Your plan gives these subjects more time."
+msgstr "계획에서 이 과목들에 시간을 더 배정해요."
+
+#. Above the exam subjects the Focus test suggests: the learner picked other subjects to focus on, and the study plan keeps their pick. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "Q9-GXF"
+msgid "Your plan keeps the focus you chose. This is what the test suggests."
+msgstr "계획의 집중 과목은 선택한 그대로예요. 아래는 진단에서 추천하는 과목이에요."
+
+#. Above the exam subjects the Focus test suggests: the learner answered “Not now” to giving them more time, so the study plan was left unchanged.
+#: src/focus-test/use-result-line.ts
+msgctxt "wMXRsU"
+msgid "You kept your plan as it is. This is what the test suggests."
+msgstr "계획은 그대로 두었어요. 아래는 진단에서 추천하는 과목이에요."
+
+#. Under “Here's where to focus”, above a list of exam subjects: why the Focus test suggests these subjects, then the fact that focusing on them is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "98jjZc"
+msgid "Based on your answers and what counts most in your exam. Focusing never removes a subject."
+msgstr "답변과 시험에서 비중이 큰 부분을 바탕으로 추천했어요. 집중을 이유로 과목을 제외하지 않아요."
 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
@@ -4435,6 +4440,7 @@ msgid "Connection lost"
 msgstr "연결이 끊겼어요"
 
 #: src/generation/generation-wait.tsx
+#: src/onboarding/steps/step-parts.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
@@ -9228,6 +9234,12 @@ msgid "{document, select, notice {To pass, the notice says} other {To pass, the 
 msgstr "{document, select, notice {공고에 나온 합격 기준} other {공식 안내서에 나온 합격 기준}}"
 
 #: src/mock/mock-result-view.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ZH37vY"
+msgid "{count, plural, one {# subject} other {# subjects}}"
+msgstr "{count, plural, other {#개 과목}}"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "zyAru3"
 msgid "{mock} done"
 msgstr "{mock} 완료"
@@ -9970,11 +9982,6 @@ msgctxt "bL7-Qo"
 msgid "Get a plan with dates, and your first lesson"
 msgstr "일정이 담긴 계획과 첫 레슨 받기"
 
-#: src/onboarding/how-it-works.tsx
-msgctxt "HK3ph8"
-msgid "How it works"
-msgstr "이용 방법"
-
 #: src/onboarding/library-course-offer.tsx
 msgctxt "u1Zt5F"
 msgid "A Library course fits your goal. Start it now"
@@ -10342,11 +10349,6 @@ msgid "That's enough questions for today"
 msgstr "오늘은 이만큼만 풀어도 충분해요"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "ZrB8AL"
-msgid "Your starting point is set"
-msgstr "학습 시작점이 정해졌어요"
-
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "_8ObLn"
 msgid "Your first sessions ask a few more to fine-tune your plan."
 msgstr "처음 몇 번의 학습에서 문제를 조금 더 풀며 계획을 다듬어요."
@@ -10372,10 +10374,11 @@ msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "추가한 자료를 바탕으로 문제를 만들고 있어요. 자료를 읽는 데 몇 분 걸려요."
 
+#. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "1bV_YK"
-msgid "They come from the skills your goal needs. It usually takes a minute or two."
-msgstr "목표를 이루는 데 필요한 능력을 바탕으로 문제를 만들고 있어요. 보통 1~2분 정도 걸려요."
+msgctxt "WFtloO"
+msgid "This usually takes a minute or two."
+msgstr "보통 1~2분 정도 걸려요."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "QRwbAL"
@@ -10876,6 +10879,12 @@ msgstr "하루에 얼마나 공부할 수 있나요?"
 msgctxt "_4tOwT"
 msgid "Skip"
 msgstr "건너뛰기"
+
+#. Headline when a screen failed to load. Next to it is a “Try again” button.
+#: src/onboarding/steps/step-parts.tsx
+msgctxt "jNPr7M"
+msgid "This didn't open"
+msgstr "화면을 불러오지 못했어요"
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
@@ -11492,32 +11501,11 @@ msgctxt "JzlCcg"
 msgid "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}"
 msgstr "{count, plural, other {레슨 #개를 더 공부할 시간이 있어요}}"
 
+#. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
-msgctxt "Ig9e24"
-msgid "Check where to focus · About {time}"
-msgstr "중점 과목 확인하기 · 약 {time}"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "pUYvFh"
-msgid "Test questions in your sessions are paused."
-msgstr "학습 중 진단 문제 출제가 일시 중지됐어요."
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "dchZ4e"
-msgid "Ask them again"
-msgstr "진단 문제 다시 받기"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "5QbEi_"
-msgid "Pause test questions"
-msgstr "진단 문제 일시 중지하기"
-
-#: src/plan/plan-focus-test.tsx
-#: src/plan/plan-focus.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "집중 진단"
+msgctxt "rSLsxO"
+msgid "Take the Focus test"
+msgstr "집중 진단 받기"
 
 #: src/plan/plan-focus.tsx
 msgctxt "pt8kOU"
@@ -11886,6 +11874,11 @@ msgstr "예시로만 학습"
 msgctxt "1F736y"
 msgid "Needed to practice"
 msgstr "실습에 필요"
+
+#: src/plan/plan-tools.tsx
+msgctxt "InWqys"
+msgid "Optional"
+msgstr "선택 사항"
 
 #: src/plan/plan-tools.tsx
 msgctxt "-fGv0z"
@@ -14856,20 +14849,17 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "알겠어요. 계획에서 테스트를 볼 수 있어요."
 
+#. One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.
 #: src/today/today-focus-test.tsx
-msgctxt "5RKoZf"
-msgid "A quick test can suggest where your study time should go."
-msgstr "간단한 테스트로 어디에 집중해서 공부하면 좋을지 알아볼 수 있어요."
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요."
 
+#. {time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.
 #: src/today/today-focus-test.tsx
-msgctxt "oolB1Q"
-msgid "Find where your study time should go"
-msgstr "어디에 집중해서 공부할지 알아보세요"
-
-#: src/today/today-focus-test.tsx
-msgctxt "bt5yte"
-msgid "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus."
-msgstr "시험 전까지 모든 내용을 공부하기에는 학습 시간이 부족해요. 과목별로 간단한 문제를 풀면 어디에 집중하면 좋을지 알 수 있어요."
+msgctxt "o-vRxa"
+msgid "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most."
+msgstr "시험 전까지 모든 내용을 공부할 시간이 부족해요. 집중 진단으로 약 {time} 만에 공부가 가장 필요한 과목을 알 수 있어요."
 
 #: src/today/today-heading.tsx
 msgctxt "FR3uzc"

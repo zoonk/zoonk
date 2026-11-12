@@ -45,9 +45,7 @@ describe("the learner's pace from chosen test answers", () => {
     const { finished, summary } = await readPace([60_000, 60_000, 60_000, 60_000]);
     expect(summary).toMatchObject({ paceMs: 60_000 });
 
-    expect(finished).toMatchObject({
-      completion: { focusTest: { offer: { minutes: 10, questions: 10 } } },
-    });
+    expect(finished).toMatchObject({ completion: { focusTest: { offer: { minutes: 10 } } } });
   });
 
   it("excludes unknown taps from the own pace and caps each chosen answer", async () => {
@@ -60,8 +58,6 @@ describe("the learner's pace from chosen test answers", () => {
 
     expect(summary).toMatchObject({ paceMs: 20_000 });
 
-    expect(finished).toMatchObject({
-      completion: { focusTest: { offer: { minutes: 3, questions: 10 } } },
-    });
+    expect(finished).toMatchObject({ completion: { focusTest: { offer: { minutes: 3 } } } });
   });
 });

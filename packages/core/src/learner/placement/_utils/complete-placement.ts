@@ -8,6 +8,7 @@ import { replanAfterPlacement } from "../../../plans/replan-after-placement";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
 import { readFocusTestRecord } from "../focus-test-state";
+import { type SittingOffer } from "../focus-test-view";
 import { type AreaStart, type PhaseStart } from "../placement-steps";
 import { applyPlacement } from "./apply-placement";
 import { type PlacementState } from "./load-placement-state";
@@ -64,7 +65,12 @@ export async function completePlacement({
   plan: GoalPlan;
   sittingId?: string | null;
   timeZone: string;
-}): Promise<{ completion: PlacementCompletion; state: PlacementState }> {
+}): Promise<{
+  completion: PlacementCompletion;
+  /** The sitting an exam goal's start would open after this finish. */
+  offer: SittingOffer | null;
+  state: PlacementState;
+}> {
   const { id: goalId, userId } = goal;
   const now = new Date();
   const tested = goal.kind === "exam";
@@ -86,14 +92,14 @@ export async function completePlacement({
 
   await owePlanStartLessons({ goalId, userId });
 
-  const state = tested
+  const { offer, state } = tested
     ? await settleFocusTest({
         goalId,
         timeZone,
         today: getDateInTimeZone({ date: now, timeZone }),
         userId,
       })
-    : applied.state;
+    : { offer: null, state: applied.state };
 
   return {
     completion: {
@@ -104,6 +110,7 @@ export async function completePlacement({
       phases: state.phases,
       testedOutPlanItemIds: applied.testedOutPlanItemIds,
     },
+    offer,
     state,
   };
 }

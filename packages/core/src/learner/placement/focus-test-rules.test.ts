@@ -1,3 +1,4 @@
+import { assert, double, property } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
   type FocusCandidate,
@@ -106,6 +107,45 @@ function subjects(count: number): FocusCandidate[] {
 }
 
 describe("the suggested focus", () => {
+  it("keeps a system incumbent until a challenger needs over ten percent more", () => {
+    const incumbent = candidate({ key: "current", share: 0.2 });
+    const challenger = (share: number) => candidate({ key: "new", share });
+
+    expect(rankFocus([challenger(0.218), incumbent], { incumbent: ["current"] })[0]?.key).toBe(
+      "current",
+    );
+
+    expect(rankFocus([challenger(0.22), incumbent], { incumbent: ["current"] })[0]?.key).toBe(
+      "current",
+    );
+
+    expect(rankFocus([challenger(0.23), incumbent], { incumbent: ["current"] })[0]?.key).toBe(
+      "new",
+    );
+
+    expect(rankFocus([challenger(0.218), incumbent])[0]?.key).toBe("new");
+  });
+
+  it("never replaces a positive-need incumbent for a gain smaller than the margin", () => {
+    assert(
+      property(
+        double({ max: 0.4, min: 0.01, noNaN: true }),
+        double({ max: 0.099, min: 0, noNaN: true }),
+        (share, gain) => {
+          const ranked = rankFocus(
+            [
+              candidate({ key: "new", share: share * (1 + gain) }),
+              candidate({ key: "current", share }),
+            ],
+            { incumbent: ["current"] },
+          );
+
+          expect(ranked[0]?.key).toBe("current");
+        },
+      ),
+    );
+  });
+
   it("ranks by the exam's share times what the answers leave unknown", () => {
     const ranked = rankFocus([
       candidate({ asked: true, belief: 0.9, key: "right" }),

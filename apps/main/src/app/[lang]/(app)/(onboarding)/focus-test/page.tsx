@@ -1,6 +1,6 @@
 import { LearnNoGoal } from "@/app/[lang]/(app)/(learn)/_components/learn-no-goal";
 import { redirect } from "@/i18n/navigation";
-import { FOCUS_TEST_GOAL_PARAM } from "@/lib/focus-test/focus-test-href";
+import { FOCUS_TEST_GOAL_PARAM, FOCUS_TEST_STARTED_PARAM } from "@/lib/focus-test/focus-test-href";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { OnboardingPage } from "@zoonk/learn/onboarding/frame";
@@ -60,7 +60,12 @@ async function FocusTestContent({ searchParams }: Props) {
 
   return (
     <OnboardingPage backHref={backHref}>
-      <FocusTestClient backHref={backHref} goalId={goal.id} subject={getGoalSubject(goal)} />
+      <FocusTestClient
+        backHref={backHref}
+        goalId={goal.id}
+        started={query[FOCUS_TEST_STARTED_PARAM] !== undefined}
+        subject={getGoalSubject(goal)}
+      />
     </OnboardingPage>
   );
 }

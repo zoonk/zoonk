@@ -10,7 +10,6 @@ const CASES = [
     asked: "Target",
     expected: "Target",
     name: "a missed subject",
-    reason: "answers",
     subjectState: "answered",
     target: "Target",
     ticked: false,
@@ -20,7 +19,6 @@ const CASES = [
     asked: "Light",
     expected: "Target",
     name: "an unasked subject",
-    reason: "notAsked",
     subjectState: "notAsked",
     target: "Target",
     ticked: false,
@@ -30,7 +28,6 @@ const CASES = [
     asked: "Target",
     expected: "Other",
     name: "a subject answered right",
-    reason: "notAsked",
     subjectState: "answered",
     target: "Target",
     ticked: false,
@@ -40,7 +37,6 @@ const CASES = [
     asked: "Light",
     expected: "Essay",
     name: "a written subject",
-    reason: "notChecked",
     subjectState: "notChecked",
     target: "Essay",
     ticked: false,
@@ -50,7 +46,6 @@ const CASES = [
     asked: "Light",
     expected: "Target",
     name: "a subject ticked as known but never asked",
-    reason: "notAsked",
     subjectState: "notAsked",
     target: "Target",
     ticked: true,
@@ -106,17 +101,13 @@ describe("the Focus test ranking acceptance examples", () => {
 
     const focus = result.status === "ready" ? result.placement.focusTest : null;
 
-    expect(focus?.checkpoint?.focus?.rows).toMatchObject([
-      { reason: sample.reason, subject: { name: sample.expected } },
-    ]);
+    expect(focus?.checkpoint?.focus?.rows).toMatchObject([{ subject: { name: sample.expected } }]);
 
     expect(focus?.subjects[0]).toMatchObject({
       asked: sample.asked === sample.target ? 1 : 0,
       state: sample.subjectState,
     });
 
-    expect(focus?.checkpoint?.focus?.rows[0]?.part).toBe(
-      sample.target === "Essay" ? "written" : null,
-    );
+    expect(focus?.subjects[0]?.part).toBe(sample.target === "Essay" ? "written" : null);
   });
 });

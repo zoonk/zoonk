@@ -6,8 +6,6 @@ import {
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type PlacementOutcome, type PlacementQuestion } from "../onboarding/onboarding-actions";
 
-export type SittingEnd = NonNullable<FocusTestSitting["end"]>;
-
 export type QuestionPhase = {
   failures: number;
   kind: "question";
@@ -18,18 +16,19 @@ export type QuestionPhase = {
 
 export type FocusTestPhase =
   | QuestionPhase
-  | { kind: "loadFailed" | "loading" | "unavailable" }
+  /** `ended`: the open sitting asks nothing more and isn't closed yet. */
+  | { kind: "ended" | "loadFailed" | "loading" | "unavailable" }
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
   | { answered: boolean; kind: "waiting" }
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
-  | { kind: "resume"; question: QuestionPhase }
-  | { end: SittingEnd | null; kind: "ended" }
-  | { end: SittingEnd | null; focusTest: FocusTestView; kind: "checkpoint" };
+  /** `answered`: every answer the learner has saved, earlier sittings included. */
+  | { answered: number; kind: "resume"; question: QuestionPhase }
+  | { focusTest: FocusTestView; kind: "checkpoint" };
 
 /** Null when there's no result to show and nothing to offer. */
 function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
   if (focusTest.checkpoint) {
-    return { end: null, focusTest, kind: "checkpoint" };
+    return { focusTest, kind: "checkpoint" };
   }
 
   return focusTest.offer && { focusTest, kind: "invitation", next: focusTest.offer };
@@ -37,15 +36,18 @@ function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
 
 /**
  * `opening` is a page load, which never drops the learner into a question: a sitting with answers
- * shows its resume screen, and one without is offered again. A test with no result and nothing to
- * ask is `unavailable`, and a read that failed is `loadFailed`.
+ * shows its resume screen, and one without is offered again, unless the learner `started` it on the
+ * screen that led here. A test with no result and nothing to ask is `unavailable`, and a read that
+ * failed is `loadFailed`.
  */
 export function toFocusTestPhase({
   opening,
   outcome,
+  started = false,
 }: {
   opening: boolean;
   outcome: PlacementOutcome;
+  started?: boolean;
 }): FocusTestPhase {
   if (outcome.status === "failed") {
     return { kind: "loadFailed" };
@@ -74,7 +76,7 @@ export function toFocusTestPhase({
   }
 
   if (!next) {
-    return { end: sitting.end, kind: "ended" };
+    return { kind: "ended" };
   }
 
   const question: QuestionPhase = {
@@ -89,7 +91,9 @@ export function toFocusTestPhase({
     return question;
   }
 
-  return sitting.answered > 0
-    ? { kind: "resume", question }
-    : (toRestingPhase(focusTest) ?? question);
+  if (sitting.answered > 0) {
+    return { answered: outcome.answered, kind: "resume", question };
+  }
+
+  return started ? question : (toRestingPhase(focusTest) ?? question);
 }

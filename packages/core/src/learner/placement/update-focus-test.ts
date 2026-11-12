@@ -8,7 +8,6 @@ import {
   getUserProgressCacheTag,
 } from "../../cache/tags";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { dropSessionTestQuestions } from "../../sessions/_utils/drop-test-questions";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { writeLearnerChange } from "../_utils/write-learner-change";
@@ -93,16 +92,11 @@ export async function updateFocusTest({
   ]);
 
   const saved = await prisma.goal.findUniqueOrThrow({
-    select: { createdAt: true, details: true, kind: true, plan: { select: { settings: true } } },
+    select: { createdAt: true, details: true, kind: true, targetDate: true },
     where: { id: goalId },
   });
 
-  const focusTest = readFocusTestSummary({
-    focusAreas: parsePlanSettings(saved.plan?.settings).focusAreas,
-    goal: saved,
-    localDate: today,
-    timeZone,
-  });
+  const focusTest = readFocusTestSummary({ goal: saved, localDate: today, timeZone });
 
   return focusTest ? { focusTest, status: "ready" } : { status: "unavailable" };
 }

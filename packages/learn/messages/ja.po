@@ -63,7 +63,7 @@ msgstr "スキップ"
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
 #: src/explain/explain-ending.tsx
-#: src/focus-test/focus-test-screens.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -153,8 +153,9 @@ msgstr "1日の学習時間"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/focus-test/use-focus-test-texts.ts
 #: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
@@ -2317,7 +2318,7 @@ msgstr "「今日」に戻る"
 
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2909,7 +2910,7 @@ msgid "Not applied. Your plan stays as it was."
 msgstr "変更は適用していません。学習計画は元のままです。"
 
 #: src/conversation/tutor-plan-change.tsx
-#: src/focus-test/focus-test-proposal.tsx
+#: src/focus-test/use-result-line.ts
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
 #: src/today/today-plan-change.tsx
@@ -3972,86 +3973,6 @@ msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "メッセージを送信できませんでした。もう一度試すか、hello@zoonk.comにメールでご連絡ください。"
 
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "md_tC7"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}} so far"
-msgstr "これまでに{asked, number}科目から出題（全{total, plural, other {#科目}}）"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dBBQr6"
-msgid "Your starting points are set."
-msgstr "学習のスタート地点が決まりました。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aQrSbp"
-msgid "That's all the questions ready for now. Your next sessions ask the rest."
-msgstr "今、用意できている問題はここまでです。残りは次回以降の学習で出題します。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "q5QB29"
-msgid "Where you'll start"
-msgstr "学習のスタート地点"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "vKUJpo"
-msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
-msgstr "{count, plural, other {学習計画では、すでに内容を知っている#レッスンをスキップします。}}"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "r0RTjS"
-msgid "Your subjects start from the basics for now."
-msgstr "今のところ、どの科目も基礎から学ぶ計画です。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "60_Cs5"
-msgid "If your time can't cover everything, your plan gives these more time."
-msgstr "すべてを学ぶ時間が足りない場合、学習計画ではこれらの科目に多くの時間を割きます。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "HkifIb"
-msgid "Your time can't cover everything. Your plan can give these more time."
-msgstr "すべてを学ぶには時間が足りません。これらの科目に多くの時間を割く計画にできます。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "ITVIDG"
-msgid "Your plan gives these more time."
-msgstr "学習計画では、これらの科目に多くの時間を割きます。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "YiaEQx"
-msgid "You chose your own focus, and your plan keeps it. This is what the test suggests."
-msgstr "学習計画では、自分で選んだ重点科目を引き続き優先します。こちらはテスト結果からの提案です。"
-
-#. Shown above exam subjects the Focus test suggested giving more study time. The learner answered “Not now” or undid that change, so their study plan was left unchanged.
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "jSJkc5"
-msgid "You kept your plan as it is."
-msgstr "学習計画をそのままにしました。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "nvNCUr"
-msgid "For now, this follows mainly what counts most in your exam."
-msgstr "今のところ、主に試験での重要度をもとにした提案です。"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-msgctxt "N09SQx"
-msgid "Suggested focus"
-msgstr "おすすめの重点科目"
-
-#: src/focus-test/focus-test-checkpoint.tsx
-#: src/onboarding/steps/reveal-coverage.tsx
-msgctxt "s2lEZy"
-msgid "Change focus"
-msgstr "重点科目を変える"
-
-#: src/focus-test/focus-test-flow.tsx
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "JmND9E"
-msgid "Use my answers"
-msgstr "ここまでの回答を使う"
-
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/onboarding/steps/placement-waiting.tsx
@@ -4074,17 +3995,92 @@ msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "ここで終えて回答を使う"
 
-#: src/focus-test/focus-test-proposal.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "学習計画はそのままです。"
+#. Under “Focusing never removes a subject”. “The ones” are exam subjects. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ebBs5s"
+msgid "The ones you need most get more time when your time can't cover everything."
+msgstr "試験までにすべてを学ぶ時間が足りないときは、特に学習が必要な科目に多くの時間を使います。"
+
+#. Title of a short fact about the Focus test. Say only this: giving some exam subjects more study time (focusing) is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "auxYjk"
+msgid "Focusing never removes a subject"
+msgstr "重点を置いても、それを理由に科目を学習計画から外すことはありません"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3eMENr"
+msgid "The test starts with the subjects that weigh most in your exam."
+msgstr "試験で配点の高い科目から出題します。"
+
+#. Title of a short fact about the Focus test: its first questions are on the exam subjects that weigh most in the score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ia0ABg"
+msgid "What counts most comes first"
+msgstr "配点の高い科目から"
+
+#. “I don't know yet” is the button on every Focus test question; use the same words as that button.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "r7JaA6"
+msgid "“I don't know yet” is a fine answer."
+msgstr "「まだわかりません」で大丈夫です。"
+
+#. Title of a short fact about the Focus test: it gives no grade or score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "rIfFed"
+msgid "There's no grade"
+msgstr "点数はつきません"
+
+#. Under “Stop anytime”: every Focus test answer is saved as soon as it is given.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3YgnmP"
+msgid "Each answer is saved."
+msgstr "回答は1問ごとに保存されます。"
+
+#. Title of a short fact about the Focus test: the learner can stop it whenever they want.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "g1Knsp"
+msgid "Stop anytime"
+msgstr "いつでも中断できます"
+
+#. Under “A few more in your first week”. “These questions” are the Focus test's questions; “that” is the study sessions asking them.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "m3Cw5S"
+msgid "Your study sessions ask a few more of these questions. You can pause that."
+msgstr "学習中にも、重点診断の問題が追加で数問出ます。出題は一時停止できます。"
+
+#. Title of a short fact about the Focus test: during the learner's first week, their study sessions ask a few more of its questions. “A few more” means questions.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "Y6o_Rw"
+msgid "A few more in your first week"
+msgstr "最初の1週間は追加で数問"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "HK3ph8"
+msgid "How it works"
+msgstr "使い方"
 
 #: src/focus-test/focus-test-proposal.tsx
-msgctxt "Q-qRTX"
-msgid "Done. Your plan now gives these more time."
-msgstr "変更しました。これらの科目に多くの時間を割く学習計画になりました。"
+#: src/focus-test/focus-test-result.tsx
+#: src/focus-test/focus-test-screens.tsx
+#: src/plan/plan-focus-test.tsx
+#: src/plan/plan-focus.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "重点診断"
+
+#. Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "nWvvzY"
+msgid "Give these subjects more time?"
+msgstr "これらの科目の学習時間を増やしますか？"
+
+#. Why the Focus test asks to give some subjects more time. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-proposal.tsx
+msgctxt "ZQfsV7"
+msgid "Your time can't cover everything before your exam."
+msgstr "試験までにすべてを学ぶには、時間が足りません。"
 
 #: src/focus-test/focus-test-proposal.tsx
 #: src/today/today-plan-change.tsx
@@ -4092,57 +4088,67 @@ msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "学習計画を更新する"
 
-#. “This sitting” is one go at the Focus test, answered in one stretch. It is not a study session, which is a different thing in the app: use another word, or say “this test” or “this time”.
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "s2lEZy"
+msgid "Change focus"
+msgstr "重点科目を変える"
+
+#. Under the switch “Ask a few more in my sessions”: sessions ask those questions only during the learner's first week.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "fkY35_"
+msgid "During your first week"
+msgstr "最初の1週間だけ"
+
+#. Label of an on/off switch on the Focus test's result: whether the learner's study sessions ask a few more Focus test questions. “A few more” means questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "ksG62i"
+msgid "Ask a few more in my sessions"
+msgstr "学習中に追加で数問出題する"
+
+#. Shown with a check mark above the Focus test's result: the learner's answers were saved.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "g2pcsk"
+msgid "Answers saved"
+msgstr "回答を保存しました"
+
+#. Headline of the Focus test's result, above a short numbered list of the exam subjects that need most of the learner's study time. It answers the invitation “Find out where to focus”. Keep it short. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "K9pcMz"
+msgid "Here's where to focus"
+msgstr "重点的に学ぶ科目はこちら"
+
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "ZrB8AL"
+msgid "Your starting point is set"
+msgstr "学習のスタート地点が決まりました"
+
+#: src/focus-test/focus-test-result.tsx
+msgctxt "qI81MQ"
+msgid "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
+msgstr "{count, plural, other {学習計画では、すでに知っている内容の#レッスンもスキップします。}}"
+
+#. Button on the Focus test's result: continues the test with more questions.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "X1M8Kl"
+msgid "Answer more questions"
+msgstr "続けて問題に答える"
+
+#. Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "J1HRdz"
-msgid "Your plan considers all {subjects, plural, one {# subject} other {# subjects}}. This sitting has {questions, plural, one {up to # question} other {up to # questions}}, so some subjects may not be checked."
-msgstr "学習計画は全{subjects, plural, other {#科目}}を考慮して立てます。今回は{questions, plural, other {最大#問}}なので、出題されない科目もあります。"
+msgctxt "67jQK8"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most."
+msgstr "試験科目から短い問題が出ます。学習計画では、すでに知っている内容をスキップして、特に学習が必要なところに時間を使えます。"
 
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "QyMX3n"
-msgid "Let's find where your study time should go"
-msgstr "どの科目に時間をかけるか調べましょう"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "o-6o1J"
-msgid "Find where to start"
-msgstr "学習のスタート地点を見つける"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "lArp48"
-msgid "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus."
-msgstr "重要度の高い科目から順に、短い問題を出します。回答をもとに、すでに知っている内容を学習計画でスキップし、重点的に学ぶ科目を提案します。"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "hBZ8RL"
-msgid "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know."
-msgstr "重要度の高い科目から順に、短い問題を出します。回答をもとに、すでに知っている内容を学習計画でスキップします。"
-
-#: src/focus-test/focus-test-screens.tsx
-#: src/plan/plan-tools.tsx
-msgctxt "InWqys"
-msgid "Optional"
-msgstr "省略可能"
-
-#: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-view.tsx
-#: src/syllabus/syllabus-section.tsx
-msgctxt "ZH37vY"
-msgid "{count, plural, one {# subject} other {# subjects}}"
-msgstr "{count, plural, other {#科目}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "kO1w73"
-msgid "There's no grade. “I don't know yet” is a useful answer."
-msgstr "成績はつきません。「まだわからない」という回答も役に立ちます。"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "rnG7Zf"
-msgid "Stop whenever you need to. We save each answer."
-msgstr "いつでも中断できます。回答は1問ごとに保存します。"
+msgctxt "JFKisp"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know."
+msgstr "試験科目から短い問題が出ます。学習計画では、すでに知っている内容をスキップします。"
 
 #: src/focus-test/focus-test-screens.tsx
 #: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
 msgctxt "SKxNcp"
 msgid "Start the test"
 msgstr "テストを始める"
@@ -4152,50 +4158,22 @@ msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "テストを続ける"
 
+#. Shown when the learner comes back to a Focus test they left halfway: the answers they already gave are kept.
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "Gwo70s"
-msgid "{count, plural, one {# answer saved} other {# answers saved}}"
-msgstr "{count, plural, other {#件の回答を保存済み}}"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "c9Xh-2"
-msgid "{count, plural, one {Up to # question left} other {Up to # questions left}}"
-msgstr "{count, plural, other {残り最大#問}}"
+msgctxt "BwHZIs"
+msgid "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}"
+msgstr "{count, plural, other {#問の回答が保存されています。}}"
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "回答を保存しました"
 
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "_lke7y"
-msgid "See your starting plan"
-msgstr "最初の学習計画を見る"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "aKjgQE"
-msgid "Your starting plan"
-msgstr "最初の学習計画"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "m2K9LP"
-msgid "Continue to daily time"
-msgstr "1日の学習時間の設定に進む"
-
-#: src/focus-test/focus-test-screens.tsx
-msgctxt "dCgSSr"
-msgid "Continue the test · About {time}"
-msgstr "テストを続ける・約{time}"
-
+#. Opens the list of every exam subject with how its Focus test questions went.
 #: src/focus-test/focus-test-subjects.tsx
-msgctxt "WSzPNf"
-msgid "View all subjects"
+msgctxt "a9uRoF"
+msgid "See all subjects"
 msgstr "すべての科目を見る"
-
-#: src/focus-test/focus-test-subjects.tsx
-msgctxt "lto9A4"
-msgid "View subjects"
-msgstr "科目を見る"
 
 #: src/focus-test/focus-test-subjects.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -4229,38 +4207,17 @@ msgctxt "DjRHAP"
 msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
 msgstr "{part, select, written {ライティング：ここでは診断できません} listening {リスニング：ここでは診断できません} speaking {スピーキング：ここでは診断できません} other {実技：ここでは診断できません}}"
 
-#. A reason beside an exam subject in a list titled “Suggested focus”: the learner's test answers suggest giving that subject more of their study time. “Here” is the subject. Use the same word for “focus” as in “Suggested focus”.
+#. Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "kCg3aW"
-msgid "Your answers suggest focusing here."
-msgstr "回答から、この科目を重点的に学ぶことをおすすめします。"
+msgctxt "sdUdiu"
+msgid "Find out where to focus"
+msgstr "重点的に学ぶ科目がわかります"
 
+#. The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "51W9Dr"
-msgid "This part has a minimum score."
-msgstr "このパートには最低スコアが設定されています。"
-
-#. Why the plan gives a part of the exam more time: it weighs a lot in the exam's score, and the Focus test can't ask about it.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "0_2y4Q"
-msgid "This part counts heavily; it isn't checked here."
-msgstr "このパートは配点が高いですが、ここでは診断できません。"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "TEkiKm"
-msgid "This subject counts heavily. Its starting point hasn't been checked yet."
-msgstr "この科目は配点が高いです。今の理解度はまだ診断していません。"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "8nVO91"
-msgid "This subject counts heavily."
-msgstr "この科目は配点が高いです。"
-
-#. “Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "sd5daO"
-msgid "Your next sessions ask a few more test questions."
-msgstr "次回以降の学習では、重点診断の問題を少し多めに出します。"
+msgctxt "Hz7C8k"
+msgid "Find out where to start"
+msgstr "どこから学び始めるかがわかります"
 
 #: src/focus-test/use-focus-test-texts.ts
 #: src/mock/mock-chooser-picked.tsx
@@ -4268,35 +4225,83 @@ msgctxt "rzrdrM"
 msgid "About {time}"
 msgstr "約{time}"
 
+#. {time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "1nBn4K"
-msgid "{count, plural, one {Up to # question} other {Up to # questions}}"
-msgstr "{count, plural, other {最大#問}}"
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "残り約{time}"
 
+#. Button that ends the Focus test with the answers given so far and shows its result.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTTP0x"
-msgid "Not started"
-msgstr "未開始"
+msgctxt "AcDjzM"
+msgid "See my result"
+msgstr "結果を見る"
 
+#. Under “Focus test” in a list: the learner started the test and has not finished it.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "8hg4ei"
-msgid "{count, plural, one {# question left} other {# questions left}}"
-msgstr "{count, plural, other {残り#問}}"
+msgctxt "q1WWIr"
+msgid "In progress"
+msgstr "進行中"
 
+#. Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "xTto4O"
-msgid "Questions on {asked, number} of {total, plural, one {# subject} other {# subjects}}"
-msgstr "{asked, number}科目の問題を出題済み（全{total, plural, other {#科目}}）"
+msgctxt "KAccXF"
+msgid "Paused in your sessions"
+msgstr "学習中の追加問題は一時停止中"
 
+#. Under “Focus test” in a list, once the learner took the test: opens its result.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "6JsTrv"
-msgid "Your answers are in your plan"
-msgstr "回答は学習計画に反映されています"
+msgctxt "TZTNNl"
+msgid "See your result"
+msgstr "結果を見る"
 
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "BgXaSJ"
-msgid "{count, plural, one {Up to # more question} other {Up to # more questions}}"
-msgstr "{count, plural, other {追加で最大#問}}"
+#: src/focus-test/use-result-line.ts
+msgctxt "vKUJpo"
+msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr "{count, plural, other {学習計画では、すでに内容を知っている#レッスンをスキップします。}}"
+
+#. The Focus test's result when no answer showed something the learner already knows: every exam subject starts at its first lessons.
+#: src/focus-test/use-result-line.ts
+msgctxt "PLJ-7h"
+msgid "Your plan starts each subject from the basics."
+msgstr "学習計画では、どの科目も基礎から始めます。"
+
+#. After the learner agreed to give the listed exam subjects more time: the study plan changed.
+#: src/focus-test/use-result-line.ts
+msgctxt "G-NFHn"
+msgid "Your plan now gives these subjects more time."
+msgstr "これらの科目の学習時間を増やしました。"
+
+#: src/focus-test/use-result-line.ts
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "学習計画はそのままです。"
+
+#. Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.
+#: src/focus-test/use-result-line.ts
+msgctxt "60Ever"
+msgid "Your plan gives these subjects more time."
+msgstr "学習計画では、これらの科目の時間を多く取っています。"
+
+#. Above the exam subjects the Focus test suggests: the learner picked other subjects to focus on, and the study plan keeps their pick. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "Q9-GXF"
+msgid "Your plan keeps the focus you chose. This is what the test suggests."
+msgstr "学習計画では、選んだ科目に引き続き重点を置いています。こちらは診断からの提案です。"
+
+#. Above the exam subjects the Focus test suggests: the learner answered “Not now” to giving them more time, so the study plan was left unchanged.
+#: src/focus-test/use-result-line.ts
+msgctxt "wMXRsU"
+msgid "You kept your plan as it is. This is what the test suggests."
+msgstr "学習計画はそのままにしました。こちらは診断からの提案です。"
+
+#. Under “Here's where to focus”, above a list of exam subjects: why the Focus test suggests these subjects, then the fact that focusing on them is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "98jjZc"
+msgid "Based on your answers and what counts most in your exam. Focusing never removes a subject."
+msgstr "回答内容と試験での重要度をもとに提案しています。重点を置いても、それを理由に科目を学習計画から外すことはありません。"
 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
@@ -4435,6 +4440,7 @@ msgid "Connection lost"
 msgstr "接続が切れました"
 
 #: src/generation/generation-wait.tsx
+#: src/onboarding/steps/step-parts.tsx
 #: src/wait/first-lesson-row.tsx
 msgctxt "YXnM-X"
 msgid "Something went wrong on our side."
@@ -9228,6 +9234,12 @@ msgid "{document, select, notice {To pass, the notice says} other {To pass, the 
 msgstr "{document, select, notice {要項に記載された合格条件} other {公式ガイドに記載された合格条件}}"
 
 #: src/mock/mock-result-view.tsx
+#: src/syllabus/syllabus-section.tsx
+msgctxt "ZH37vY"
+msgid "{count, plural, one {# subject} other {# subjects}}"
+msgstr "{count, plural, other {#科目}}"
+
+#: src/mock/mock-result-view.tsx
 msgctxt "zyAru3"
 msgid "{mock} done"
 msgstr "{mock}を終えました"
@@ -9970,11 +9982,6 @@ msgctxt "bL7-Qo"
 msgid "Get a plan with dates, and your first lesson"
 msgstr "日程付きの学習計画と最初のレッスンを受け取る"
 
-#: src/onboarding/how-it-works.tsx
-msgctxt "HK3ph8"
-msgid "How it works"
-msgstr "使い方"
-
 #: src/onboarding/library-course-offer.tsx
 msgctxt "u1Zt5F"
 msgid "A Library course fits your goal. Start it now"
@@ -10342,11 +10349,6 @@ msgid "That's enough questions for today"
 msgstr "今日の問題はここまでです"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "ZrB8AL"
-msgid "Your starting point is set"
-msgstr "学習のスタート地点が決まりました"
-
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "_8ObLn"
 msgid "Your first sessions ask a few more to fine-tune your plan."
 msgstr "最初の数回の学習では、もう少し問題を出して学習計画を調整します。"
@@ -10372,10 +10374,11 @@ msgctxt "kx8w4b"
 msgid "They come from the material you added. Reading it takes a few minutes."
 msgstr "追加した資料をもとに問題を作成しています。資料の読み取りには数分かかります。"
 
+#. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "1bV_YK"
-msgid "They come from the skills your goal needs. It usually takes a minute or two."
-msgstr "目標に必要なスキルをもとに問題を作成しています。通常は1〜2分かかります。"
+msgctxt "WFtloO"
+msgid "This usually takes a minute or two."
+msgstr "通常は1〜2分ほどかかります。"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "QRwbAL"
@@ -10876,6 +10879,12 @@ msgstr "1日にどれくらい学習時間を取れますか？"
 msgctxt "_4tOwT"
 msgid "Skip"
 msgstr "スキップ"
+
+#. Headline when a screen failed to load. Next to it is a “Try again” button.
+#: src/onboarding/steps/step-parts.tsx
+msgctxt "jNPr7M"
+msgid "This didn't open"
+msgstr "画面を開けませんでした"
 
 #: src/onboarding/steps/study-week.tsx
 #: src/plan/plan-properties.tsx
@@ -11492,32 +11501,11 @@ msgctxt "JzlCcg"
 msgid "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}"
 msgstr "{count, plural, other {今の学習時間ならあと#レッスン追加できます}}"
 
+#. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
-msgctxt "Ig9e24"
-msgid "Check where to focus · About {time}"
-msgstr "重点的に学ぶ分野を診断する・約{time}"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "pUYvFh"
-msgid "Test questions in your sessions are paused."
-msgstr "学習中のテスト問題の出題を一時停止しています。"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "dchZ4e"
-msgid "Ask them again"
-msgstr "出題を再開する"
-
-#: src/plan/plan-focus-test.tsx
-msgctxt "5QbEi_"
-msgid "Pause test questions"
-msgstr "テスト問題の出題を一時停止する"
-
-#: src/plan/plan-focus-test.tsx
-#: src/plan/plan-focus.tsx
-#: src/today/today-focus-test.tsx
-msgctxt "-3M8u-"
-msgid "Focus test"
-msgstr "重点診断"
+msgctxt "rSLsxO"
+msgid "Take the Focus test"
+msgstr "重点診断を受ける"
 
 #: src/plan/plan-focus.tsx
 msgctxt "pt8kOU"
@@ -11886,6 +11874,11 @@ msgstr "例のみ"
 msgctxt "1F736y"
 msgid "Needed to practice"
 msgstr "練習に必要"
+
+#: src/plan/plan-tools.tsx
+msgctxt "InWqys"
+msgid "Optional"
+msgstr "省略可能"
 
 #: src/plan/plan-tools.tsx
 msgctxt "-fGv0z"
@@ -14856,20 +14849,17 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "わかりました。テストは学習計画から受けられます。"
 
+#. One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.
 #: src/today/today-focus-test.tsx
-msgctxt "5RKoZf"
-msgid "A quick test can suggest where your study time should go."
-msgstr "短いテストで、学習時間をどこにかけるとよいか見えてきます。"
+msgctxt "KYliMN"
+msgid "The Focus test shows what to study most."
+msgstr "重点診断で、重点的に学ぶ科目がわかります。"
 
+#. {time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.
 #: src/today/today-focus-test.tsx
-msgctxt "oolB1Q"
-msgid "Find where your study time should go"
-msgstr "重点的に学ぶ内容を見つける"
-
-#: src/today/today-focus-test.tsx
-msgctxt "bt5yte"
-msgid "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus."
-msgstr "試験までの学習時間では、すべてを学びきれません。各科目の問題を少し解くと、どこに力を入れるとよいか見えてきます。"
+msgctxt "o-vRxa"
+msgid "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most."
+msgstr "試験までにすべてを学ぶには、時間が足りません。約{time}の重点診断で、重点的に学ぶ科目がわかります。"
 
 #: src/today/today-heading.tsx
 msgctxt "FR3uzc"

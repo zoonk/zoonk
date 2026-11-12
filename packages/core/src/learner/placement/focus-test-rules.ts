@@ -1,8 +1,4 @@
-import {
-  type FOCUS_REASONS,
-  type SessionQuestions,
-  type UncheckedPart,
-} from "./focus-test-contract";
+import { type SessionQuestions, type UncheckedPart } from "./focus-test-contract";
 import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
 
 const MS_PER_MINUTE = 60_000;
@@ -30,6 +26,9 @@ const MAX_FOCUS_SUBJECTS = 3;
 const SUBJECTS_PER_FOCUS = 3;
 
 const MIN_FOCUS_CHOICES = 2;
+
+/** Small differences in answer evidence must not reverse a system-owned focus. */
+const FOCUS_CHANGE_MARGIN = 0.1;
 
 export const UNKNOWN_STREAK = 5;
 
@@ -81,7 +80,7 @@ export function hasUnknownStreak(outcomes: readonly ("correct" | "dontKnow" | "w
   return streak >= UNKNOWN_STREAK;
 }
 
-export type FocusReason = (typeof FOCUS_REASONS)[number];
+export type FocusReason = "answers" | "minimumScore" | "notAsked" | "notChecked" | "weight";
 
 export type FocusCandidate = {
   /** Has a test answer. */
@@ -116,6 +115,7 @@ function getReason(candidate: FocusCandidate): FocusReason {
 /** Takes candidates in the notice's order and returns the most needed first. */
 export function rankFocus(
   candidates: readonly FocusCandidate[],
+  { incumbent = [] }: { incumbent?: readonly string[] } = {},
 ): { key: string; reason: FocusReason }[] {
   if (candidates.length < MIN_FOCUS_CHOICES) {
     return [];
@@ -129,12 +129,20 @@ export function rankFocus(
   return candidates
     .map((candidate, index) => ({
       candidate,
+      incumbent: incumbent.includes(candidate.key),
       index,
-      need: candidate.share * (1 - candidate.belief),
+      need:
+        candidate.share *
+        (1 - candidate.belief) *
+        (incumbent.includes(candidate.key) ? 1 + FOCUS_CHANGE_MARGIN : 1),
     }))
     .filter((entry) => entry.need > 0)
     .toSorted(
-      (a, b) => b.need - a.need || b.candidate.share - a.candidate.share || a.index - b.index,
+      (a, b) =>
+        b.need - a.need ||
+        Number(b.incumbent) - Number(a.incumbent) ||
+        b.candidate.share - a.candidate.share ||
+        a.index - b.index,
     )
     .slice(0, count)
     .map(({ candidate }) => ({ key: candidate.key, reason: getReason(candidate) }));

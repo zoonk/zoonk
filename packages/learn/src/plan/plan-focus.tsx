@@ -18,7 +18,7 @@ import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { ChangeSaveError } from "../_components/save-error";
 import { FactSegments } from "../_components/task-meta";
-import { useFocusTestStateFacts } from "../focus-test/use-focus-test-texts";
+import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
 import { LearnLink } from "../learn-link";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { PlanBases } from "./plan-bases";
@@ -57,7 +57,7 @@ function sameAreas(a: readonly string[], b: readonly string[]): boolean {
 
 function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href: string }) {
   const t = useExtracted();
-  const stateFacts = useFocusTestStateFacts();
+  const rowFacts = useFocusTestRowFacts();
 
   return (
     <LearnLink
@@ -68,7 +68,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="text-sm font-medium">{t("Focus test")}</span>
         <span className="text-muted-foreground text-xs">
-          <FactSegments facts={stateFacts(focusTest)} />
+          <FactSegments facts={rowFacts(focusTest)} />
         </span>
       </span>
       <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />

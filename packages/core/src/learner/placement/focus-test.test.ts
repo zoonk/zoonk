@@ -118,9 +118,7 @@ describe("an exam goal's Focus test", () => {
       dayBudgetSpent: 0,
       focusTest: {
         checkpoint: null,
-        counts: { asked: 0, quick: 3, total: 3 },
-        dated: true,
-        offer: { kind: "first", minutes: 12, pastCeiling: 0, questions: 12 },
+        offer: { minutes: 12 },
         sessionQuestions: "off",
         sitting: null,
         subjects: THREE_SUBJECTS.map(({ name }) => ({
@@ -132,6 +130,7 @@ describe("an exam goal's Focus test", () => {
           shortName: null,
           state: "notAsked",
         })),
+        suggestsFocus: true,
       },
       next: null,
       started: false,
@@ -141,18 +140,16 @@ describe("an exam goal's Focus test", () => {
     await expect(readRecord(goal.id)).resolves.toBeNull();
   });
 
-  it("promises what fits fifteen minutes on a 24-subject exam and counts the subjects past it", async () => {
+  it("promises what fits fifteen minutes on a 24-subject exam", async () => {
     const { goal } = await examTestGoalFixture({ subjects: manySubjects(24) });
     const placement = await read(goal.id);
 
-    expect(placement.focusTest?.offer).toStrictEqual({
-      kind: "first",
-      minutes: 15,
-      pastCeiling: 9,
-      questions: 15,
-    });
+    expect(placement.focusTest?.offer).toStrictEqual({ minutes: 15 });
+    expect(placement.focusTest?.subjects).toHaveLength(24);
 
-    expect(placement.focusTest?.counts).toStrictEqual({ asked: 0, quick: 24, total: 24 });
+    const started = await startSitting(goal.id);
+
+    expect(started.focusTest?.sitting).toMatchObject({ minutes: 15, questions: 15 });
   });
 
   it("opens one sitting however often it starts, and asks each subject before any twice, the heaviest first", async () => {
@@ -164,14 +161,11 @@ describe("an exam goal's Focus test", () => {
 
     expect(first).toMatchObject({
       focusTest: {
-        offer: { kind: "first", minutes: 12, pastCeiling: 0, questions: 12 },
+        offer: { minutes: 12 },
         sessionQuestions: "on",
         sitting: {
           answered: 0,
-          end: null,
           hint: null,
-          kind: "first",
-          left: 12,
           minutes: 12,
           questions: 12,
           subject: { name: "Direito Administrativo" },
@@ -182,6 +176,7 @@ describe("an exam goal's Focus test", () => {
     });
 
     const opened = await readRecord(goal.id);
+    expect(opened?.sitting).toMatchObject({ kind: "first", questions: 12 });
     await startSitting(goal.id);
 
     await expect(readRecord(goal.id)).resolves.toMatchObject({
@@ -205,9 +200,9 @@ describe("an exam goal's Focus test", () => {
     expect(fourth).toMatchObject({
       dayBudgetSpent: 3 / 12,
       focusTest: {
-        counts: { asked: 3, quick: 3, total: 3 },
         offer: null,
-        sitting: { answered: 3, left: 9, minutes: 9, questions: 12 },
+        sitting: { answered: 3, minutes: 9, questions: 12 },
+        subjects: [{ asked: 1 }, { asked: 1 }, { asked: 1 }],
       },
       started: true,
       status: "asking",
@@ -233,15 +228,16 @@ describe("an exam goal's Focus test", () => {
 
     expect(second).toMatchObject({
       areas: [{ confident: true }, { confident: true }],
-      focusTest: { counts: { asked: 1 }, sessionQuestions: "on", sitting: { end: null } },
+      focusTest: { sessionQuestions: "on" },
       status: "asking",
     });
 
     const last = await answer({ given: DONT_KNOW, goalId: goal.id, placement: second });
 
     expect(last).toMatchObject({
-      focusTest: { counts: { asked: 2 }, sessionQuestions: "off", sitting: { end: "settled" } },
+      focusTest: { sessionQuestions: "off", subjects: [{ asked: 1 }, { asked: 1 }] },
       next: null,
+      status: "done",
     });
   });
 
@@ -254,7 +250,7 @@ describe("an exam goal's Focus test", () => {
       answer({ goalId: goal.id, placement: first }),
     ]);
 
-    expect(repeated.focusTest?.sitting).toMatchObject({ answered: 1, left: 11 });
+    expect(repeated.focusTest?.sitting).toMatchObject({ answered: 1, minutes: 11 });
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
@@ -302,18 +298,20 @@ describe("an exam goal's Focus test", () => {
 
     const first = await startSitting(goal.id);
     const ended = await answerTimes({ goalId: goal.id, placement: first, times: 4 });
-    expect(ended.focusTest?.sitting?.end).toBe("ceiling");
+    expect(ended).toMatchObject({ next: null, status: "done" });
 
     const continued = await startSitting(goal.id);
 
     expect(continued).toMatchObject({
       focusTest: {
-        sitting: { answered: 0, kind: "continuation", left: 4, questions: 4 },
+        sitting: { answered: 0, minutes: 4, questions: 4 },
         subjects: [{ asked: 4, right: 4 }],
       },
       next: expect.anything(),
       status: "asking",
     });
+
+    await expect(readRecord(goal.id)).resolves.toMatchObject({ sitting: { kind: "continuation" } });
 
     await expect(
       prisma.learningEvent.findMany({ where: { lessonKind: "focusTest", userId: user.id } }),
@@ -329,14 +327,14 @@ describe("an exam goal's Focus test", () => {
     const flush = runDeferredWork();
     const first = await startSitting(goal.id);
 
-    expect(first.focusTest?.sitting).toMatchObject({ left: 4, questions: 4 });
+    expect(first.focusTest?.sitting).toMatchObject({ minutes: 4, questions: 4 });
 
     const last = await answerTimes({ goalId: goal.id, placement: first, times: 4 });
 
     expect(last).toMatchObject({
       dayBudgetSpent: 1,
       dayBudgetUsed: true,
-      focusTest: { sitting: { answered: 4, end: "ceiling", left: 0, subject: null } },
+      focusTest: { sitting: { answered: 4, minutes: 0, subject: null } },
       next: null,
       status: "done",
     });
@@ -346,8 +344,7 @@ describe("an exam goal's Focus test", () => {
 
     expect(completion.focusTest).toMatchObject({
       checkpoint: { focus: null, lessonsSkipped: completion.testedOutPlanItemIds.length },
-      counts: { asked: 1, quick: 1, total: 1 },
-      offer: { kind: "continuation", minutes: 4, questions: 4 },
+      offer: { minutes: 4 },
       sessionQuestions: "on",
       sitting: null,
       subjects: [{ asked: 4, right: 4, state: "answered" }],
@@ -379,9 +376,11 @@ describe("an exam goal's Focus test", () => {
     ).resolves.toStrictEqual([{ correctAnswers: 4, seconds: 120 }]);
 
     await expect(startSitting(goal.id)).resolves.toMatchObject({
-      focusTest: { sitting: { answered: 0, kind: "continuation", questions: 4 } },
+      focusTest: { sitting: { answered: 0, questions: 4 } },
       status: "asking",
     });
+
+    await expect(readRecord(goal.id)).resolves.toMatchObject({ sitting: { kind: "continuation" } });
   });
 
   it("finishes a sitting that is over when the learner starts the next", async () => {
@@ -395,12 +394,11 @@ describe("an exam goal's Focus test", () => {
     const next = await startSitting(goal.id);
 
     expect(next).toMatchObject({
-      focusTest: {
-        checkpoint: { lessonsSkipped: expect.any(Number) },
-        sitting: { answered: 0, kind: "continuation" },
-      },
+      focusTest: { checkpoint: { lessonsSkipped: expect.any(Number) }, sitting: { answered: 0 } },
       status: "asking",
     });
+
+    await expect(readRecord(goal.id)).resolves.toMatchObject({ sitting: { kind: "continuation" } });
   });
 
   it.each(["start", "finish"] as const)(
@@ -517,7 +515,7 @@ describe("an exam goal's Focus test", () => {
       const beforeRead = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
       await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
-        plan: { focusTest: { sessionQuestions: "on", subjects: { asked: 1, total: 2 } } },
+        plan: { focusTest: { sessionQuestions: "on", state: "checked" } },
         status: "ready",
       });
 
@@ -529,7 +527,7 @@ describe("an exam goal's Focus test", () => {
     },
   );
 
-  it("says its starting points are set once nothing useful is left to ask", async () => {
+  it("ends once nothing useful is left to ask, and sessions ask no more", async () => {
     const { goal } = await examTestGoalFixture({ subjects: THREE_SUBJECTS.slice(0, 2) });
     const first = await startSitting(goal.id);
 
@@ -541,7 +539,7 @@ describe("an exam goal's Focus test", () => {
     });
 
     expect(last).toMatchObject({
-      focusTest: { offer: null, sessionQuestions: "off", sitting: { end: "settled", left: 6 } },
+      focusTest: { offer: null, sessionQuestions: "off", sitting: { answered: 2, minutes: 6 } },
       next: null,
       status: "done",
     });
@@ -556,7 +554,7 @@ describe("an exam goal's Focus test", () => {
     const last = await answerTimes({ goalId: goal.id, placement: first, times: 2 });
 
     expect(last).toMatchObject({
-      focusTest: { sitting: { answered: 2, end: "noQuestionsReady", left: 6 } },
+      focusTest: { sessionQuestions: "on", sitting: { answered: 2, minutes: 6 } },
       next: null,
       status: "done",
     });
@@ -589,7 +587,7 @@ describe("an exam goal's Focus test", () => {
     expect(completion).toMatchObject({
       focusTest: {
         checkpoint: null,
-        offer: { kind: "first", questions: 12 },
+        offer: { minutes: 12 },
         sessionQuestions: "off",
         sitting: null,
       },
@@ -627,13 +625,13 @@ describe("an exam goal's Focus test", () => {
     });
 
     await expect(read(goal.id)).resolves.toMatchObject({
-      focusTest: { offer: { kind: "first", questions: 12 }, sessionQuestions: "off" },
+      focusTest: { offer: { minutes: 12 }, sessionQuestions: "off" },
     });
 
     const started = await startSitting(goal.id);
 
     expect(started).toMatchObject({
-      focusTest: { sitting: { answered: 0, end: null, questions: 12 } },
+      focusTest: { sitting: { answered: 0, questions: 12 } },
       next: null,
       status: "waitingForQuestions",
     });
@@ -683,13 +681,12 @@ describe("the Focus test's suggested focus", () => {
 
     const completion = await answerHeaviest(goal.id, DONT_KNOW);
 
-    expect(completion.focusTest?.checkpoint?.focus).toMatchObject({
-      basis: "answers",
+    expect(completion.focusTest?.checkpoint?.focus).toStrictEqual({
       proposal: null,
-      rows: [
-        { areas: ["Matéria 01"], reason: "answers", subject: { name: "Matéria 01" } },
-        { areas: ["Matéria 02"], reason: "notAsked", subject: { name: "Matéria 02" } },
-      ],
+      rows: ["Matéria 01", "Matéria 02"].map((name) => ({
+        areas: [name],
+        subject: { key: name, name, shortName: null },
+      })),
       state: "ifTimeShort",
     });
 
@@ -709,11 +706,19 @@ describe("the Focus test's suggested focus", () => {
     });
 
     const fromUndated = await answerHeaviest(undated.goal.id, DONT_KNOW);
-    expect(fromUndated.focusTest).toMatchObject({ checkpoint: { focus: null }, dated: false });
+
+    expect(fromUndated.focusTest).toMatchObject({
+      checkpoint: { focus: null },
+      suggestsFocus: false,
+    });
 
     mockSession(covered.user.id);
 
     const fromCovered = await answerHeaviest(covered.goal.id, DONT_KNOW);
-    expect(fromCovered.focusTest).toMatchObject({ checkpoint: { focus: null }, dated: true });
+
+    expect(fromCovered.focusTest).toMatchObject({
+      checkpoint: { focus: null },
+      suggestsFocus: true,
+    });
   });
 });

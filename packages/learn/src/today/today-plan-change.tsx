@@ -253,7 +253,11 @@ function PlanChangeNotice({
       <SuggestionContent>
         <SuggestionHeader>{title || summary}</SuggestionHeader>
         {title && <SuggestionDescription>{summary}</SuggestionDescription>}
-        <ProposalEffect byDate={byDate} change={change} />
+        {change.source === FOCUS_TEST_SOURCE ? (
+          <PlanEffectDiff byDate={byDate} effect={change.effect} />
+        ) : (
+          <ProposalEffect byDate={byDate} change={change} />
+        )}
         {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
 
         {result ? (

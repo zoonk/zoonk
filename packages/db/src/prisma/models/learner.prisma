@@ -78,6 +78,7 @@ model Attempt {
   @@unique([mockExamId, itemId], name: "mockAttempt")
   @@index([userId, answeredAt])
   @@index([userId, skillId])
+  @@index([userId, focusTestId], where: raw("(focus_test_id IS NOT NULL)"))
   @@index([stepId])
   @@index([itemId])
   @@index([skillId])
