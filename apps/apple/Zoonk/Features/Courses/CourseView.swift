@@ -170,12 +170,7 @@ private struct CourseHeroSection: View {
         }
 
         if let country = detail.course.contentCountry {
-          Text(
-            ([contentCountryLine(country.name)]
-              + [country.lessonVariety.map(lessonLanguageLine)].compactMap(\.self)).joinedFacts()
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          ContentCountryFacts(country: country)
         }
 
         PlanLine(startsHere: false)
@@ -192,6 +187,31 @@ private struct CourseHeroSection: View {
   private var promise: String? {
     catalogText(detail.course.landingPage?.valueProposition)
       ?? catalogText(detail.course.description)
+  }
+}
+
+/// "Content country: Portugal · Lesson language: Português (Brasil)" on one line when it fits, else
+/// one fact a line, so a value never wraps away from its label.
+private struct ContentCountryFacts: View {
+  let country: ContentCountry
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      Text(facts.joinedFacts())
+
+      VStack(alignment: .leading, spacing: 2) {
+        ForEach(facts, id: \.self) { fact in
+          Text(fact)
+        }
+      }
+      .accessibilityElement(children: .combine)
+    }
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
+  }
+
+  private var facts: [String] {
+    [contentCountryLine(country.name)] + [country.lessonVariety.map(lessonLanguageLine)].compactMap(\.self)
   }
 }
 
