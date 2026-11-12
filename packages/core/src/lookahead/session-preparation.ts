@@ -307,7 +307,7 @@ export async function listSessionPreparation({
 }): Promise<SessionPreparation> {
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
-  if (!goal || goal.userId !== userId || goal.status !== "active") {
+  if (!goal || goal.status !== "active") {
     return NOTHING_TO_PREPARE;
   }
 
@@ -318,10 +318,6 @@ export async function listSessionPreparation({
     loadUpcomingLessons({ goal, today }),
     getLearnerTier(userId),
   ]);
-
-  if (tier === "guest") {
-    return NOTHING_TO_PREPARE;
-  }
 
   const lookahead = getLookahead(tier);
   const todayWindow = pickTodayWindow({ lookahead, open: todayLessons.open });

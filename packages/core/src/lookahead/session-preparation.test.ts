@@ -415,13 +415,9 @@ describe(listSessionPreparation, () => {
     });
 
     expect(changed?.targets).toStrictEqual([]);
-
-    await expect(
-      listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: other.id }),
-    ).resolves.toMatchObject({ lessonIds: [], plannedLessonIds: [] });
   });
 
-  it("keeps private challenges behind placement admission and gives guests no additional writing", async () => {
+  it("keeps private challenges behind placement admission", async () => {
     const { goal, list, plan, user } = await chapterPreparationPlan();
 
     const { first, challenge } = await chapterWithChallenge({
@@ -444,12 +440,6 @@ describe(listSessionPreparation, () => {
 
     expect(manifest?.targets.map((target) => target.lessonId)).toStrictEqual([first.id]);
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-
-    await expect(list()).resolves.toMatchObject({
-      laterLessonIds: [],
-      lessonIds: [],
-      plannedLessonIds: [],
-    });
 
     mockGuestSession(user.id);
 

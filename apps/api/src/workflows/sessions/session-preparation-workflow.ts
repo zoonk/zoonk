@@ -118,7 +118,7 @@ async function startLessonWork({
       .filter((lessonId) => admitted.has(lessonId))
       .map((lessonId) =>
         start(lessonContentWorkflow, [
-          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest, wait: "soon" },
+          { analytics, forExam, lessonId, planGoalId: input.goalId, planManifest },
         ]),
       ),
     ...laterLessonIds
@@ -174,7 +174,7 @@ async function personalizeLessons({
     return;
   }
 
-  await waitForWrittenLessons(preparation.plannedLessonIds);
+  await waitForWrittenLessons(preparation.lessonIds);
 
   await preparePersonalLayer({
     analytics,
