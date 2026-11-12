@@ -11,6 +11,10 @@ import {
 
 const INITIAL_STATE: ReviewFlagActionState = { error: null, message: null, submissionId: 0 };
 
+/**
+ * Dismissing is the decision only a person can make (this is still right), so it's the row's
+ * button; a rewrite is what the daily run does anyway, so starting one now is the quiet action.
+ */
 export function ReviewFlagActions({ flagId }: { flagId: string }) {
   const [rewrite, rewriteAction] = useAdminActionState({
     action: rewriteReviewFlagAction,
@@ -29,7 +33,9 @@ export function ReviewFlagActions({ flagId }: { flagId: string }) {
       <div className="flex gap-2">
         <form action={rewriteAction}>
           <input name="flagId" type="hidden" value={flagId} />
-          <AdminActionSubmitButton icon={<RefreshCwIcon />}>Rewrite now</AdminActionSubmitButton>
+          <AdminActionSubmitButton icon={<RefreshCwIcon />} variant="ghost">
+            Rewrite now
+          </AdminActionSubmitButton>
         </form>
         <form action={dismissAction}>
           <input name="flagId" type="hidden" value={flagId} />

@@ -1,59 +1,63 @@
-import { AdminSection } from "@/components/admin-section";
-import {
-  type AdminTableColumn,
-  AdminTableColumns,
-  AdminTableColumnsSkeleton,
-} from "@/components/admin-table-columns";
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminSection, AdminSectionEmpty, AdminSectionSkeleton } from "@/components/admin-section";
 import { type AdminReviewFlag, listOpenReviewFlags } from "@/data/review-flags/list-review-flags";
-import { formatDateTime } from "@/lib/format";
-import { TableCell } from "@zoonk/ui/components/table";
+import { formatDate, toWords } from "@/lib/format";
+import { getItemLabel } from "@/lib/item-label";
 import Link from "next/link";
 import { ReviewFlagActions } from "./review-flag-actions";
 
-const COLUMNS: AdminTableColumn[] = [{ label: "Flagged" }, { label: "" }];
+const LINK_CLASS = "hit-area relative underline-offset-3 hover:underline";
 
-function FlaggedTarget({ flag }: { flag: AdminReviewFlag }) {
+/** The thing itself: a lesson's title, a practice question's own words. */
+function FlaggedContent({ flag }: { flag: AdminReviewFlag }) {
   if (flag.lesson) {
     return (
-      <AdminTableRowLink href={`/lessons/${flag.lesson.id}`} prefetch={false}>
-        Lesson · {flag.lesson.title}
-      </AdminTableRowLink>
+      <>
+        <Link className={LINK_CLASS} href={`/lessons/${flag.lesson.id}`} prefetch={false}>
+          {flag.lesson.title}
+        </Link>
+        <span className="text-muted-foreground block text-xs">Lesson</span>
+      </>
     );
   }
 
   if (flag.item) {
     return (
-      <AdminTableRowLink href={`/items/${flag.item.id}`} prefetch={false}>
-        Question · {flag.item.sourceCitation ?? flag.item.format}
-      </AdminTableRowLink>
+      <>
+        <Link
+          className={`${LINK_CLASS} line-clamp-2`}
+          href={`/items/${flag.item.id}`}
+          prefetch={false}
+        >
+          {getItemLabel(flag.item)}
+        </Link>
+        <span className="text-muted-foreground block text-xs">
+          {["Practice question", flag.item.sourceCitation].filter(Boolean).join(" · ")}
+        </span>
+      </>
     );
   }
 
-  return "—";
+  return "Content that no longer exists";
 }
 
-function NoticeOrigin({ notice }: { notice: AdminReviewFlag["notice"] }) {
+function NoticeFacts({ notice }: { notice: AdminReviewFlag["notice"] }) {
   const exam = notice.examBlueprint;
+  const changed = notice.fields.map((field) => toWords(field).toLowerCase()).join(", ");
 
-  return exam ? (
-    <Link className="text-sm hover:underline" href={`/exams/${exam.id}`} prefetch={false}>
-      {exam.name}
-    </Link>
-  ) : (
-    <Link
-      className="text-sm hover:underline"
-      href={`/sources/${notice.source.id}`}
-      prefetch={false}
-    >
-      {notice.source.title}
-    </Link>
+  return (
+    <p className="text-muted-foreground text-[0.8125rem]">
+      <Link
+        className={`${LINK_CLASS} text-foreground`}
+        href={exam ? `/exams/${exam.id}` : `/sources/${notice.source.id}`}
+        prefetch={false}
+      >
+        {exam ? exam.name : notice.source.title}
+      </Link>
+      {" · "}
+      {formatDate(notice.createdAt)}
+      {changed ? ` · changed ${changed}` : ""}
+    </p>
   );
-}
-
-function describeNotice(notice: AdminReviewFlag["notice"]): string {
-  const fields = notice.fields.length > 0 ? ` · changed: ${notice.fields.join(", ")}` : "";
-  return `${formatDateTime(notice.createdAt)}${fields}`;
 }
 
 export async function ReviewFlagList() {
@@ -61,37 +65,31 @@ export async function ReviewFlagList() {
   const groups = [...Map.groupBy(flags, (flag) => flag.noticeId).values()];
 
   if (groups.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        Nothing needs review. Content built on a source that changes shows up here.
-      </p>
-    );
+    return <AdminSectionEmpty>No content is waiting on a source change.</AdminSectionEmpty>;
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       {groups.map((group) => {
         const [first] = group;
 
         return first ? (
-          <AdminSection
-            action={<NoticeOrigin notice={first.notice} />}
-            description={describeNotice(first.notice)}
-            key={first.noticeId}
-            title={first.notice.message}
-          >
-            <AdminTableColumns columns={COLUMNS} emptyLabel="Nothing flagged" isEmpty={false}>
+          <AdminSection key={first.noticeId} title={first.notice.message}>
+            <NoticeFacts notice={first.notice} />
+
+            <ul className="divide-y border-t">
               {group.map((flag) => (
-                <AdminTableRow key={flag.id}>
-                  <TableCell className="min-w-64 whitespace-normal">
-                    <FlaggedTarget flag={flag} />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <ReviewFlagActions flagId={flag.id} />
-                  </TableCell>
-                </AdminTableRow>
+                <li
+                  className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-2.5 text-sm"
+                  key={flag.id}
+                >
+                  <div className="min-w-0 flex-1 basis-64">
+                    <FlaggedContent flag={flag} />
+                  </div>
+                  <ReviewFlagActions flagId={flag.id} />
+                </li>
               ))}
-            </AdminTableColumns>
+            </ul>
           </AdminSection>
         ) : null;
       })}
@@ -100,5 +98,5 @@ export async function ReviewFlagList() {
 }
 
 export function ReviewFlagListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={COLUMNS} />;
+  return <AdminSectionSkeleton description rows={3} />;
 }
