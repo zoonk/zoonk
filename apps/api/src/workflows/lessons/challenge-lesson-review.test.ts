@@ -192,6 +192,9 @@ describe("challenge prepublication review", () => {
   it.each([
     ["names text the case doesn't have", { find: "Day 9", replace: "Day 10" }],
     ["breaks the case's code checks", { find: "1,200", replace: "1,\n200" }],
+    ["renames a choice id", { find: "skip", replace: "renamed-choice" }],
+    ["flips what a meter counts as good", { find: "low", replace: "high" }],
+    ["sets a meter to a value it can't have", { find: "low", replace: "lower" }],
   ])("writes a fresh draft from the review's findings when the fix %s", async (_label, edit) => {
     const target = await lesson();
     vi.mocked(checkChallengeQuality).mockResolvedValueOnce(taskResult({ findings: [finding] }));
@@ -252,6 +255,26 @@ describe("challenge prepublication review", () => {
 
     const variant = await prisma.stepVariant.findFirstOrThrow({ where: { stepId } });
     expect(variant.content).toMatchObject({ setting: "Day 4 at Aurora Shop" });
+  });
+
+  it("records a field draft's rejection when its fix would change the case's settings", async () => {
+    const stepId = await fieldStep();
+    vi.mocked(checkChallengeQuality).mockResolvedValueOnce(taskResult({ findings: [finding] }));
+
+    vi.mocked(fixChallengeCase).mockResolvedValue(
+      taskResult({ edits: [{ find: "low", replace: "lower" }] }),
+    );
+
+    await expect(
+      prepareFieldChallenge({
+        target: { field: "nursing", ownerId: null, stepId },
+        workflowRunId: randomUUID(),
+      }),
+    ).resolves.toBe("heldBack");
+
+    expect(fixChallengeCase).toHaveBeenCalledOnce();
+    const generation = await prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId } });
+    expect(generation.heldBackDrafts).toHaveLength(1);
   });
 
   it("holds a field draft its fix couldn't clear for the next preparation, then publishes its replacement", async () => {

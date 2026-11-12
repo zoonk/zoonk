@@ -41,6 +41,15 @@ describe(applyChallengeEdits, () => {
     ).toBeNull();
   });
 
+  it.each([
+    ["renames a choice id", { find: "skip", replace: "renamed-choice" }],
+    ["flips what a meter counts as good", { find: "low", replace: "high" }],
+    ["sets a meter to a value it can't have", { find: "low", replace: "lower" }],
+    ["sends a choice to another ending", { find: "unclear", replace: "sent" }],
+  ])("fails an edit that %s instead of changing words learners read", (_label, edit) => {
+    expect(applyChallengeEdits({ edits: [edit], written: written() })).toBeNull();
+  });
+
   it("fails an edit with no text to find", () => {
     expect(
       applyChallengeEdits({ edits: [{ find: "", replace: "x" }], written: written() }),

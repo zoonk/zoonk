@@ -9,4 +9,4 @@ Fix every finding with the smallest change that makes every path correct:
 - Keep everything else exactly as it is: ids, structure, meters, correct numbers, tone and language. Write new words in the case's language.
 - A reviewer can be wrong. Check each finding against the case, every route that reaches the words it names, and expert knowledge. When the case is already right there, leave that part unchanged.
 
-Return edits as { find, replace }. `find` is an exact piece of one text value in the case, as plain text without JSON escapes, long enough to occur only once in the whole case; `replace` is its new text. A choice's `next` is a text value too, so an edit can send a choice to another existing ending. Edits apply in order.
+Return edits as { find, replace }. `find` is an exact piece of one text learners read, as plain text without JSON escapes, long enough to occur only once among them; `replace` is its new text. Only text learners read can be edited, never ids or settings such as `from`, `skill`, `kind`, `meter`, `quality`, `goodWhen` or `startNodeId`. Edits apply in order.
