@@ -127,6 +127,7 @@ describe("questioning a change's strings", () => {
       ['msgid "Save"'],
       [`msgid "${long}"`],
       ["#: src/start.tsx", 'msgid "Continue to daily time"'],
+      ["#: src/start.tsx", 'msgid "Show all {count, number}"'],
       ['msgid "Your sitting may take up to an hour"'],
       ['#. "Coverage" means the share of subjects studied.', 'msgid "Coverage"'],
     ]);
@@ -135,16 +136,19 @@ describe("questioning a change's strings", () => {
       audit(
         Object.fromEntries([
           [STYLE_GUIDE, STYLE],
-          [SOURCE, '<Button>{t("Continue to daily time")}</Button>'],
+          [
+            SOURCE,
+            '<Button>{t("Continue to daily time")}</Button>\n<Button>{t("Show all {count, number}")}</Button>',
+          ],
           [WEB, after],
         ]),
         { [WEB]: before },
       ),
       [
         "Long button label 9 Continue to daily time",
-        "Hedge 11 Your sitting may take up to an hour",
-        "Term learners never see 11 sitting: Your sitting may take up to an hour",
-        'Note defines a word 14 "Coverage" means the share of subjects studied.',
+        "Hedge 14 Your sitting may take up to an hour",
+        "Term learners never see 14 sitting: Your sitting may take up to an hour",
+        'Note defines a word 17 "Coverage" means the share of subjects studied.',
       ],
     );
   });

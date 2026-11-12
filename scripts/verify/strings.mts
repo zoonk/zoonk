@@ -22,6 +22,9 @@ const DEFINING_NOTE =
 const MARKETING_SOURCE =
   /^apps\/blog\/|^apps\/main\/src\/(?:app\/\[lang\]\/(?:\(home\)|\(app\)\/\(catalog\)|blog|c|plan-link|pricing)\/|components\/(?:catalog|pricing|public)\/)/u;
 
+/** An ICU argument such as `{count, number}`, which a learner sees as one word. */
+const ARGUMENT = /\{\w+(?:,\s*\w+){0,2}\}/gu;
+
 /** How far above a string's line its `<…Button>` may open, for `t({ description, message })`. */
 const BUTTON_WINDOW = 6;
 const SAMPLE_LENGTH = 100;
@@ -234,7 +237,7 @@ export function judgeString(
   { read, terms }: { read: (path: string) => string; terms: string[] },
 ): { rule: Rule; sample: string }[] {
   const term = termIn(string.text, terms);
-  const words = countWords(string.text);
+  const words = countWords(string.text.replaceAll(ARGUMENT, "x"));
 
   const usedInApp =
     string.sources.length === 0 || !string.sources.every((source) => MARKETING_SOURCE.test(source));
