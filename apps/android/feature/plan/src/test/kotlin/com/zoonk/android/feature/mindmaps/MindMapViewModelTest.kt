@@ -21,9 +21,11 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -32,6 +34,7 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -42,6 +45,7 @@ import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MindMapViewModelTest {
@@ -346,6 +350,68 @@ class MindMapViewModelTest {
             assertNull(maps.requests.value[chapterId])
             assertEquals(2, api.lists)
             shown.cancel()
+        }
+
+    @Test
+    fun aListReadOnItsWayWhenATapStartsTheMapCantUndoIt() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            var status = "available"
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+            api.mindMaps = {
+                val read = goalMindMaps(listOf(mapJson(3, "Waves and sound", status)))
+                if (++reads == 2) withContext(NonCancellable) { release.await() }
+                read
+            }
+            api.create = {
+                status = "drawing"
+                generation("drawing")
+            }
+            store.list[goalId].load()
+            val earlier = launch { store.list[goalId].refresh() }
+            advanceUntilIdle()
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+            release.complete(Unit)
+            earlier.join()
+
+            assertEquals(MindMapShown.Drawing, store.listed(chapterId).status.shown)
+            assertEquals(5.seconds, listCadence(listOf(store.listed(chapterId)), pending = false))
+        }
+
+    @Test
+    fun twoTapsInARowBothShowTheirMapsStarted() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val second = UUID.fromString(mapChapter(4))
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+
+            fun row(
+                id: UUID,
+                position: Int,
+            ) = mapJson(position, "Chapter $position", if (api.created.any { it.chapterId == id }) "drawing" else "available")
+            api.mindMaps = {
+                val read = goalMindMaps(listOf(row(chapterId, 3), row(second, 4)))
+                if (++reads == 2) release.await()
+                // The network: a dropped read stops at once, a new one takes a round trip.
+                delay(100)
+                read
+            }
+            store.list[goalId].load()
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+            maps.create(second)
+            advanceUntilIdle()
+            release.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(emptyMap<UUID, MindMapLocal>(), maps.requests.value)
+            assertEquals(MindMapShown.Drawing, store.listed(chapterId).status.shown)
+            assertEquals(MindMapShown.Drawing, store.listed(second).status.shown)
         }
 
     @Test
@@ -666,6 +732,36 @@ class MindMapViewModelTest {
             advanceUntilIdle()
             assertEquals(CreateAll.Unreachable, maps.createAll.value)
             shown.cancel()
+        }
+
+    @Test
+    fun aListReadOnItsWayWhenCreatingEveryMapCantUndoIt() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            var status = "available"
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+            api.mindMaps = {
+                val read = goalMindMaps(listOf(mapJson(3, "Waves and sound", status)))
+                if (++reads == 2) withContext(NonCancellable) { release.await() }
+                read
+            }
+            val accepted = api.createAll
+            api.createAll = {
+                status = "drawing"
+                accepted()
+            }
+            store.list[goalId].load()
+            val earlier = launch { store.list[goalId].refresh() }
+            advanceUntilIdle()
+
+            maps.createAll()
+            advanceUntilIdle()
+            release.complete(Unit)
+            earlier.join()
+
+            assertEquals(MindMapShown.Drawing, store.listed(chapterId).status.shown)
+            assertNull(maps.createAll.value)
         }
 
     @Test

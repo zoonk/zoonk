@@ -359,11 +359,10 @@ class MindMapStore(
     /** Reads the map again wherever a read of it is kept (the others load fresh when shown); false when one didn't come through. */
     private suspend fun refresh(key: ChapterKey): Boolean = listOf(list[key.goalId], chapter[key]).map { it.reread() }.all { it }
 
+    /** A read already on its way may predate what this one is for (a map started, a status read), so it's dropped rather than joined. */
     private suspend fun Resource<*>.reread(): Boolean {
-        if (!state.value.hasContent) {
-            invalidate()
-            return true
-        }
+        invalidate()
+        if (!state.value.hasContent) return true
         val before = revision
         refresh()
         return revision != before
