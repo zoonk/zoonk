@@ -22,7 +22,7 @@ const countColumns: AdminTableColumn[] = [
 
 const latestColumns: AdminTableColumn[] = [
   { label: "Workflow" },
-  { label: "Content" },
+  { fill: true, label: "Content" },
   { label: "State" },
   { label: "Updated" },
 ];

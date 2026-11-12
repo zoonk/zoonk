@@ -8,7 +8,7 @@ import { TableCell } from "@zoonk/ui/components/table";
 
 const EXPLANATION_COLUMNS: AdminTableColumn[] = [
   { label: "Answer" },
-  { label: "Explanation" },
+  { fill: true, label: "Explanation" },
   { label: "Language" },
   { label: "Provenance" },
   { label: "Created" },

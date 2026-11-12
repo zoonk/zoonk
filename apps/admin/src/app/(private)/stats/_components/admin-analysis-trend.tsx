@@ -61,7 +61,7 @@ export function AdminAnalysisTrend({
   return (
     <section className="flex min-h-136 flex-1 flex-col gap-8 py-4 sm:gap-10">
       <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
           <p className="text-5xl leading-none font-semibold tracking-tight tabular-nums sm:text-6xl">
             {value}
           </p>

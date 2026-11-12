@@ -63,11 +63,14 @@ function StatsExplorerControls({
       </ContainerTitle>
 
       {selectedView.usesPeriod ? (
-        <StatsPeriodPicker
-          currentQuery={currentQuery}
-          path={selectedView.path}
-          statsPeriod={statsPeriod}
-        />
+        // The title carries 20 px of padding above its line; this puts the picker on that line.
+        <div className="sm:mt-5">
+          <StatsPeriodPicker
+            currentQuery={currentQuery}
+            path={selectedView.path}
+            statsPeriod={statsPeriod}
+          />
+        </div>
       ) : null}
     </div>
   );

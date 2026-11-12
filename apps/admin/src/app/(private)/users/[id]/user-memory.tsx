@@ -29,7 +29,7 @@ function FactRow({ fact, userId }: { fact: MemoryFactRow; userId: string }) {
   ];
 
   return (
-    <li className="flex flex-wrap items-start justify-between gap-3 py-2.5">
+    <li className="flex flex-wrap items-center justify-between gap-3 py-2.5">
       <span className="flex max-w-3xl flex-col gap-0.5 text-sm">
         <FactStatement fact={fact} />
         <span className="text-muted-foreground text-xs">{facts.filter(Boolean).join(" · ")}</span>
@@ -63,8 +63,8 @@ export async function UserMemorySection({ userId }: { userId: string }) {
         <AdminSection title="Latest insights">
           <ul className="flex flex-col divide-y text-sm">
             {shownInsights.map((insight) => (
-              <li className="flex max-w-3xl flex-col gap-0.5 py-2.5" key={insight.id}>
-                <span>{insight.message}</span>
+              <li className="flex flex-col gap-0.5 py-2.5" key={insight.id}>
+                <span className="max-w-3xl">{insight.message}</span>
                 <span className="text-muted-foreground text-xs">
                   {[formatDate(insight.localDate), insight.kind, insight.status]
                     .flatMap((value) => (value ? [toWords(value)] : []))

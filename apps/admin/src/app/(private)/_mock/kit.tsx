@@ -86,9 +86,13 @@ export function MockSearch({ placeholder, value }: { placeholder: string; value?
   );
 }
 
-export function MockSelect({ children }: { children: React.ReactNode }) {
+export function MockSelect({ children, field }: { children: React.ReactNode; field?: boolean }) {
   return (
-    <Button size="sm" variant="outline">
+    <Button
+      className={field ? "w-full justify-between font-normal" : undefined}
+      size={field ? "lg" : "sm"}
+      variant="outline"
+    >
       {children}
       <ChevronDownIcon aria-hidden="true" className="text-muted-foreground" />
     </Button>
@@ -130,8 +134,8 @@ export function MockRows({
           {row.map((cell, index) => (
             <TableCell
               className={cn(
-                "whitespace-normal",
-                columns[index]?.align === "right" && "text-right whitespace-nowrap tabular-nums",
+                index === 0 && "whitespace-normal",
+                columns[index]?.align === "right" && "text-right tabular-nums",
                 index > 0 && "text-muted-foreground",
               )}
               // oxlint-disable-next-line react/no-array-index-key -- A static mock table.

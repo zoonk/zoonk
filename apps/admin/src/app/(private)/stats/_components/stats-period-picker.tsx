@@ -101,7 +101,7 @@ export function StatsPeriodPicker({
           <Button
             aria-label={`Choose period. Current: ${statsPeriod.periodLabel}`}
             className="max-w-full justify-between sm:max-w-64"
-            variant="ghost"
+            variant="outline"
           />
         }
       >

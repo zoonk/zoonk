@@ -42,11 +42,11 @@ export default function LessonsMockPage() {
         >
           <div className="flex flex-col gap-2">
             <Label>Model</Label>
-            <MockSelect>openai/gpt-6.1-sol (560 screens)</MockSelect>
+            <MockSelect field>openai/gpt-6.1-sol (560 screens)</MockSelect>
           </div>
           <div className="flex flex-col gap-2">
             <Label>Prompt version</Label>
-            <MockSelect>All prompt versions</MockSelect>
+            <MockSelect field>All prompt versions</MockSelect>
           </div>
         </MockConfirmButton>
       }

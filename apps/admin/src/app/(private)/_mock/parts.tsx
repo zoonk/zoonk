@@ -20,7 +20,7 @@ export function MockOptions({ options }: { options: MockOption[] }) {
           ) : (
             <span
               aria-hidden="true"
-              className="border-border mt-1 size-4 shrink-0 rounded-full border"
+              className="border-input mt-1 size-4 shrink-0 rounded-full border"
             />
           )}
           <span className="flex min-w-0 flex-col">

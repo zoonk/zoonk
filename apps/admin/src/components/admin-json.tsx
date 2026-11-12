@@ -5,12 +5,14 @@ const JSON_INDENT = 2;
 export function AdminDisclosure({
   children,
   label,
+  open,
 }: {
   children: React.ReactNode;
   label: React.ReactNode;
+  open?: boolean;
 }) {
   return (
-    <details className="group text-xs">
+    <details className="group text-xs" open={open}>
       <summary className="text-muted-foreground hover:text-foreground flex min-h-11 cursor-pointer list-none items-center gap-1.5 select-none [&::-webkit-details-marker]:hidden">
         <ChevronRightIcon
           aria-hidden="true"

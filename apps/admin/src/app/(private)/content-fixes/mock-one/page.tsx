@@ -5,6 +5,7 @@ import {
   AdminDetailHeader,
   AdminDetailPage,
 } from "@/components/admin-detail";
+import { AdminDisclosure } from "@/components/admin-json";
 import { AdminSection } from "@/components/admin-section";
 import { Button } from "@zoonk/ui/components/button";
 import { MockLink } from "../../_mock/parts";
@@ -52,11 +53,8 @@ export default async function ContentFixMockPage({
                 />
               </AdminSection>
 
-              <details className="text-sm" open={technical}>
-                <summary className="text-muted-foreground cursor-pointer text-[0.8125rem] font-medium">
-                  Technical details
-                </summary>
-                <div className="pt-3">
+              <AdminDisclosure label="Technical details" open={technical}>
+                <div className="pb-2 text-sm">
                   <Facts
                     rows={[
                       ["Environment", "Development · main.zoonk.localhost:1355"],
@@ -65,7 +63,7 @@ export default async function ContentFixMockPage({
                     ]}
                   />
                 </div>
-              </details>
+              </AdminDisclosure>
             </>
           }
         >
@@ -105,7 +103,7 @@ export default async function ContentFixMockPage({
           </AdminSection>
 
           <AdminSection title="What else approving does">
-            <ul className="text-muted-foreground flex list-disc flex-col gap-1 pl-5 text-sm">
+            <ul className="text-muted-foreground flex flex-col gap-1 text-sm">
               <li>Learners who open the lesson next get the fixed version.</li>
               <li>The lesson&apos;s idea marks, icons and maps stay as they were drawn.</li>
             </ul>

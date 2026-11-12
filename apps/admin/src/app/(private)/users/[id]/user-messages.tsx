@@ -8,11 +8,14 @@ import { feedbackStatusLabels, getFeedbackSubject } from "../../feedback/_utils/
 
 const FEEDBACK_COLUMNS: AdminTableColumn[] = [
   { label: "Sent" },
-  { label: "About" },
+  { fill: true, label: "About" },
   { label: "State" },
 ];
 
-const QUESTION_COLUMNS: AdminTableColumn[] = [{ label: "Asked" }, { label: "Question" }];
+const QUESTION_COLUMNS: AdminTableColumn[] = [
+  { label: "Asked" },
+  { fill: true, label: "Question" },
+];
 
 /** What they wrote to us and asked their buddy: the last few, each opening its own page. */
 export async function UserMessages({ userId }: { userId: string }) {

@@ -40,7 +40,7 @@ function Screen({
           <span className="text-muted-foreground text-xs leading-5 font-medium">{kind}</span>
           <span className="text-muted-foreground shrink-0 text-xs">{answers}</span>
         </div>
-        <div className="flex max-w-2xl flex-col gap-3 text-sm leading-6">{children}</div>
+        <div className="max-w-column flex flex-col gap-3 text-sm leading-6">{children}</div>
       </div>
     </li>
   );
@@ -107,12 +107,6 @@ function Screens({ json }: { json: boolean }) {
       }
     >
       <div className="flex flex-col">
-        <a
-          className="text-muted-foreground hover:text-foreground self-end text-xs font-medium"
-          href="#"
-        >
-          {json ? "Hide JSON" : "Show JSON"}
-        </a>
         <ol className="divide-y">
           <Screen kind="Hook" number={1}>
             <p>
@@ -223,6 +217,12 @@ function Screens({ json }: { json: boolean }) {
             </ul>
           </Screen>
         </ol>
+        <a
+          className="text-muted-foreground hover:text-foreground flex min-h-11 items-center self-start text-xs font-medium"
+          href="#"
+        >
+          {json ? "Hide JSON" : "Show JSON"}
+        </a>
       </div>
     </AdminDetailColumns>
   );

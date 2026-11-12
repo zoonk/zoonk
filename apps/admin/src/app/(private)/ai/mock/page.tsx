@@ -54,7 +54,7 @@ const BY = {
       table("Top learners").map((row) => [
         <span className="block" key="who">
           {strong(parts(row[0])[0])}
-          <span className="block text-xs">{parts(row[0])[1]}</span>
+          <span className="text-muted-foreground block text-xs">{parts(row[0])[1]}</span>
         </span>,
         row[1]?.text,
         row[2]?.text,
@@ -73,7 +73,7 @@ const BY = {
       table("Spend by model").map((row) => [
         <span className="block" key="model">
           {strong(row[0]?.text)}
-          <span className="block text-xs">{words(row[1]?.text)}</span>
+          <span className="text-muted-foreground block text-xs">{words(row[1]?.text)}</span>
         </span>,
         row[2]?.text,
         row[3]?.text,
@@ -252,7 +252,7 @@ function Plus() {
           rows={table("Plus learners by cost").map((row) => [
             <span className="block" key="who">
               {strong(parts(row[0])[0])}
-              <span className="block text-xs">{parts(row[0])[1]}</span>
+              <span className="text-muted-foreground block text-xs">{parts(row[0])[1]}</span>
             </span>,
             row[1]?.text.replace("Granted", "Given by Zoonk"),
             <span className="block max-w-xs" key="goal">

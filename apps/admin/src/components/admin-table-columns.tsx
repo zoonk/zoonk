@@ -15,23 +15,34 @@ import Link from "next/link";
 
 export type AdminTableColumn = {
   align?: "right";
+  /** The column that takes the room the others leave. The first one, unless another says so. */
+  fill?: boolean;
   label: string;
   /** Makes the header a link that sorts the list by this column, highest or newest first. */
   sort?: { href: string; isActive: boolean };
 };
 
-function AdminTableColumnHead({ column }: { column: AdminTableColumn }) {
+/**
+ * One column takes the room that's left and every other is at least one step wide, so a short
+ * fact (a date, a count, a state) sits in the same place whatever the rows say, on every table.
+ */
+const FILL_COLUMN_CLASS = "w-full";
+const FACT_COLUMN_CLASS = "min-w-28";
+
+function AdminTableColumnHead({ column, fills }: { column: AdminTableColumn; fills: boolean }) {
   const { align, label, sort } = column;
 
+  const className = cn(
+    fills ? FILL_COLUMN_CLASS : FACT_COLUMN_CLASS,
+    align === "right" && "text-right",
+  );
+
   if (!sort) {
-    return <TableHead className={align === "right" ? "text-right" : ""}>{label}</TableHead>;
+    return <TableHead className={className}>{label}</TableHead>;
   }
 
   return (
-    <TableHead
-      aria-sort={sort.isActive ? "descending" : undefined}
-      className={align === "right" ? "text-right" : ""}
-    >
+    <TableHead aria-sort={sort.isActive ? "descending" : undefined} className={className}>
       <Link
         aria-current={sort.isActive ? "page" : undefined}
         className={cn(
@@ -55,11 +66,16 @@ function AdminTableColumnHead({ column }: { column: AdminTableColumn }) {
 }
 
 function AdminTableColumnsHeader({ columns }: { columns: AdminTableColumn[] }) {
+  const fillIndex = Math.max(
+    0,
+    columns.findIndex((column) => column.fill),
+  );
+
   return (
     <TableHeader>
       <TableRow>
-        {columns.map((column) => (
-          <AdminTableColumnHead column={column} key={column.label} />
+        {columns.map((column, index) => (
+          <AdminTableColumnHead column={column} fills={index === fillIndex} key={column.label} />
         ))}
       </TableRow>
     </TableHeader>

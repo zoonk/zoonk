@@ -12,7 +12,7 @@ import { MediaRow } from "./media-row";
 
 const MEDIA_COLUMNS: AdminTableColumn[] = [
   { label: "Preview" },
-  { label: "Reuse key" },
+  { fill: true, label: "Reuse key" },
   { label: "Kind" },
   { label: "Language" },
   { label: "Style" },

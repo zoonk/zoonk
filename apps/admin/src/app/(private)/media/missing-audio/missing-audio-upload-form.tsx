@@ -35,7 +35,7 @@ export function MissingAudioUploadForm({
         <Input
           accept="audio/mpeg,audio/mp4,audio/m4a,audio/wav,audio/x-wav,audio/ogg,audio/webm"
           aria-label={`Audio file for ${text}`}
-          className="max-w-64"
+          className="h-7.5 max-w-64 rounded-md px-2 py-0 text-xs file:h-7 file:text-xs md:text-xs"
           key={state.submissionId}
           name="audio"
           required

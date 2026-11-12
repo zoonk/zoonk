@@ -98,8 +98,8 @@ function PlanChanges({ goals }: { goals: UserGoal[] }) {
   return (
     <ul className="flex flex-col divide-y text-sm">
       {changes.map(({ change, goal }) => (
-        <li className="flex max-w-3xl flex-col gap-0.5 py-2.5" key={change.id}>
-          <span>{change.reason}</span>
+        <li className="flex flex-col gap-0.5 py-2.5" key={change.id}>
+          <span className="max-w-3xl">{change.reason}</span>
           <span className="text-muted-foreground text-xs">
             {[
               formatDate(change.createdAt),

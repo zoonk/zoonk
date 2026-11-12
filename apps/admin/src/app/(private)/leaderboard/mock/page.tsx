@@ -2,8 +2,8 @@ import dump from "@/app/(private)/_mock/data/leaderboard-7.json";
 import { type Dump, Lead, MockList, MockViews, parts, readView } from "@/app/(private)/_mock/kit";
 
 const COLUMNS = [
-  { align: "right" as const, label: "Rank" },
-  { label: "Learner" },
+  { label: "Rank" },
+  { fill: true, label: "Learner" },
   { align: "right" as const, label: "Brain Power" },
 ];
 
@@ -18,7 +18,9 @@ export default async function LeaderboardMockPage({
       columns={COLUMNS}
       empty="No Brain Power earned today."
       rows={rows.map((row) => [
-        row[0]?.text,
+        <span className="font-mono text-[0.8125rem]" key="rank">
+          {row[0]?.text}
+        </span>,
         <span className="text-foreground block" key="lead">
           <Lead second={parts(row[1])[1]} title={parts(row[1])[0]} />
         </span>,

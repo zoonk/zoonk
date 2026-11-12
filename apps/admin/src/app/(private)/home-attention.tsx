@@ -87,7 +87,7 @@ export async function HomeAttention() {
       {rows.map((row) => (
         <li key={row.href}>
           <Link
-            className={`${ROW_CLASS} group hover:bg-muted/50 focus-visible:ring-ring/50 -mx-3 rounded-lg px-3 outline-none focus-visible:ring-[3px]`}
+            className={`${ROW_CLASS} group hover:bg-muted/50 focus-visible:ring-ring/50 -mx-2.5 rounded-lg px-2.5 outline-none focus-visible:ring-[3px]`}
             href={row.href}
             prefetch
           >
@@ -100,7 +100,7 @@ export async function HomeAttention() {
             </span>
             <ChevronRightIcon
               aria-hidden="true"
-              className="text-faint group-hover:text-foreground size-4 shrink-0"
+              className="text-faint group-hover:text-foreground -mr-[5px] size-4 shrink-0"
             />
           </Link>
         </li>

@@ -42,7 +42,7 @@ export function MessageDetail({ message }: { message: FeedbackMessage }) {
 
   return (
     <>
-      <p className="max-w-3xl text-base leading-7 wrap-break-word whitespace-pre-wrap">
+      <p className="max-w-column text-base leading-7 wrap-break-word whitespace-pre-wrap">
         {message.message}
       </p>
 
@@ -60,7 +60,7 @@ export function MessageDetail({ message }: { message: FeedbackMessage }) {
         </DetailFields>
 
         <AdminDisclosure label="Technical details">
-          <div className="pb-2">
+          <div className="divide-y pb-2">
             <DetailFields>
               <DetailField label="URL">
                 <span className="break-all">{context.url ?? "—"}</span>

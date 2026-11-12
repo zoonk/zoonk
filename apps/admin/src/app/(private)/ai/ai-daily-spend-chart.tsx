@@ -1,5 +1,6 @@
 "use client";
 
+import { CHART_CATEGORY_PADDING, ChartValueTick, getEvenTicks } from "@/components/chart-axis";
 import { formatUsd } from "@/lib/ai-format";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -24,27 +25,38 @@ function DailySpendTooltip({ active, payload }: { active?: boolean; payload?: un
   );
 }
 
+const DATE_LABELS = 8;
+
+function formatDollars(value: number): string {
+  return `$${Math.round(value).toLocaleString("en")}`;
+}
+
 export function AiDailySpendChart({ points }: { points: DailySpendPoint[] }) {
+  const ticks = getEvenTicks(Math.max(...points.map((point) => point.costUsd), 0));
+  // A fixed step, so the dates are evenly spaced whatever each one's width.
+  const labelEvery = Math.max(1, Math.ceil(points.length / DATE_LABELS));
+
   return (
     <figure aria-label="AI spend per day" className="h-56 w-full">
       <ResponsiveContainer height="100%" width="100%">
-        <BarChart data={points} margin={{ bottom: 0, left: 0, right: 8, top: 8 }}>
+        <BarChart data={points} margin={{ bottom: 0, left: 0, right: 0, top: 8 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
           <XAxis
             axisLine={false}
             dataKey="label"
             fontSize={11}
-            interval="preserveStartEnd"
+            interval={labelEvery - 1}
+            padding={CHART_CATEGORY_PADDING}
             stroke="var(--muted-foreground)"
             tickLine={false}
           />
           <YAxis
             allowDecimals={false}
             axisLine={false}
-            fontSize={11}
-            stroke="var(--muted-foreground)"
-            tickFormatter={(value: number) => `$${Math.round(value)}`}
+            domain={[0, ticks.at(-1) ?? 1]}
+            tick={<ChartValueTick format={formatDollars} />}
             tickLine={false}
+            ticks={ticks}
             width={44}
           />
           <Tooltip content={<DailySpendTooltip />} cursor={{ fill: "var(--muted)" }} />

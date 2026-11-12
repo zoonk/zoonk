@@ -63,11 +63,7 @@ export function AdminDetailHeader({
   return (
     <DetailHero className={cn(CONTAINER_HEADER_EDGES_CLASS, menu && MENU_HERO_CLASS)}>
       <DetailHeroText>
-        <AdminBreadcrumb
-          className={BREADCRUMB_OVER_TITLE_CLASS}
-          current={title}
-          parents={parents}
-        />
+        <AdminBreadcrumb current={title} parents={parents} />
         <DetailTitle className={titleClassName}>{title}</DetailTitle>
         <DetailFacts>
           {alert && <span className="text-destructive-text">{alert}</span>}
@@ -86,9 +82,6 @@ export function AdminDetailHeader({
   );
 }
 
-/** A list's title sits 20 px under the header's top; the breadcrumb's line and gap are 24, so it gives 4 back. */
-const BREADCRUMB_OVER_TITLE_CLASS = "-mt-1";
-
 const MENU_HERO_CLASS = "max-md:flex-row max-md:items-end max-md:justify-between";
 
 export function AdminDetailHeaderSkeleton({
@@ -102,7 +95,6 @@ export function AdminDetailHeaderSkeleton({
     <DetailHero className={cn(CONTAINER_HEADER_EDGES_CLASS, actions === "menu" && MENU_HERO_CLASS)}>
       <DetailHeroText>
         <AdminBreadcrumb
-          className={BREADCRUMB_OVER_TITLE_CLASS}
           current={<Skeleton aria-hidden="true" className="h-3.5 w-28" />}
           parents={parents}
         />

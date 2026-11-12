@@ -64,7 +64,7 @@ export async function UserStudySessions({ userId }: { userId: string }) {
     { label: "State" },
     { align: "right", label: "Time planned" },
     { align: "right", label: "Parts done" },
-    { label: "Parts" },
+    { fill: true, label: "Parts" },
   ];
 
   return (

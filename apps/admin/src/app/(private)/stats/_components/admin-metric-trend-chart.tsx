@@ -1,5 +1,6 @@
 "use client";
 
+import { CHART_CATEGORY_PADDING, ChartValueTick, getEvenTicks } from "@/components/chart-axis";
 import { formatDuration } from "@/lib/format-duration";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -9,7 +10,8 @@ const BAR_OPACITY = 0.72;
 const BAR_CORNER_RADIUS = 4;
 const BAR_RADIUS: [number, number, number, number] = [BAR_CORNER_RADIUS, BAR_CORNER_RADIUS, 0, 0];
 const MAX_BAR_SIZE = 40;
-const MAX_NUMBER_AXIS_TICKS = 5;
+// oxlint-disable-next-line eslint/no-magic-numbers -- Quarters of a percent axis.
+const PERCENT_TICKS = [0, 25, 50, 75, 100];
 const SECONDS_PER_HOUR = 3600;
 const SECONDS_PER_MINUTE = 60;
 
@@ -94,34 +96,21 @@ function getFlatTrendLabel({
   return hasCompleteTrend ? "Every bucket" : "Observed buckets";
 }
 
-function getTrendDomain({
+/** Durations keep Recharts' own ticks, which are even when it also picks the axis's end. */
+function getTrendTicks({
   maximumValue,
   valueFormat,
 }: {
   maximumValue: number;
   valueFormat: MetricTrendValueFormat;
-}): [number, number] | undefined {
+}): number[] | undefined {
   if (valueFormat === "percent") {
-    return [0, 100];
+    return PERCENT_TICKS;
   }
 
   if (valueFormat === "number") {
-    return [0, Math.max(1, Math.ceil(maximumValue))];
+    return getEvenTicks(maximumValue);
   }
-}
-
-function getTrendTickCount({
-  maximumValue,
-  valueFormat,
-}: {
-  maximumValue: number;
-  valueFormat: MetricTrendValueFormat;
-}): number | undefined {
-  if (valueFormat !== "number") {
-    return;
-  }
-
-  return Math.min(MAX_NUMBER_AXIS_TICKS, Math.ceil(maximumValue) + 1);
 }
 
 function AdminMetricTrendTooltip({
@@ -173,8 +162,8 @@ export function AdminMetricTrendChart({
 
   const isFlatTrend = extremes.low.value === extremes.peak.value;
   const hasCompleteTrend = dataPoints.every((dataPoint) => dataPoint.value !== null);
-  const domain = getTrendDomain({ maximumValue: extremes.peak.value, valueFormat });
-  const tickCount = getTrendTickCount({ maximumValue: extremes.peak.value, valueFormat });
+  const ticks = getTrendTicks({ maximumValue: extremes.peak.value, valueFormat });
+  const hasNothingToDraw = extremes.peak.value === 0;
 
   return (
     <figure aria-label={`${label} trend`} className="flex min-h-0 flex-1 flex-col gap-5">
@@ -197,50 +186,53 @@ export function AdminMetricTrendChart({
         )}
       </figcaption>
 
-      <div className="h-88 w-full sm:h-120 lg:h-[min(54vh,34rem)]">
-        <ResponsiveContainer height="100%" width="100%">
-          <BarChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 8, top: 12 }}>
-            <CartesianGrid stroke="var(--border)" strokeDasharray="2 6" vertical={false} />
-            <XAxis
-              axisLine={false}
-              dataKey="label"
-              fontSize={11}
-              interval="preserveStartEnd"
-              minTickGap={48}
-              stroke="var(--muted-foreground)"
-              tickLine={false}
-              tickMargin={10}
-            />
-            <YAxis
-              allowDecimals={valueFormat !== "number"}
-              axisLine={false}
-              domain={domain}
-              fontSize={11}
-              stroke="var(--muted-foreground)"
-              tickFormatter={(value) =>
-                formatMetricTrendAxisValue({ format: valueFormat, value: Number(value) })
-              }
-              tickLine={false}
-              tickMargin={8}
-              tickCount={tickCount}
-              width={48}
-            />
-            <Tooltip
-              content={<AdminMetricTrendTooltip valueFormat={valueFormat} />}
-              cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "3 3" }}
-            />
+      {/* Every value is 0: the line above says so, and bars of no height would be an empty frame. */}
+      {hasNothingToDraw ? null : (
+        <div className="h-88 w-full sm:h-120 lg:h-[min(54vh,34rem)]">
+          <ResponsiveContainer height="100%" width="100%">
+            <BarChart data={dataPoints} margin={{ bottom: 0, left: 0, right: 0, top: 12 }}>
+              <CartesianGrid stroke="var(--border)" strokeDasharray="2 6" vertical={false} />
+              <XAxis
+                axisLine={false}
+                dataKey="label"
+                fontSize={11}
+                interval="preserveStartEnd"
+                minTickGap={48}
+                padding={CHART_CATEGORY_PADDING}
+                stroke="var(--muted-foreground)"
+                tickLine={false}
+                tickMargin={10}
+              />
+              <YAxis
+                allowDecimals={valueFormat !== "number"}
+                axisLine={false}
+                domain={ticks ? [0, ticks.at(-1) ?? 1] : undefined}
+                tick={
+                  <ChartValueTick
+                    format={(value) => formatMetricTrendAxisValue({ format: valueFormat, value })}
+                  />
+                }
+                tickLine={false}
+                ticks={ticks}
+                width={48}
+              />
+              <Tooltip
+                content={<AdminMetricTrendTooltip valueFormat={valueFormat} />}
+                cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "3 3" }}
+              />
 
-            <Bar
-              dataKey="value"
-              fill="var(--foreground)"
-              isAnimationActive={false}
-              maxBarSize={MAX_BAR_SIZE}
-              opacity={BAR_OPACITY}
-              radius={BAR_RADIUS}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+              <Bar
+                dataKey="value"
+                fill="var(--foreground)"
+                isAnimationActive={false}
+                maxBarSize={MAX_BAR_SIZE}
+                opacity={BAR_OPACITY}
+                radius={BAR_RADIUS}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </figure>
   );
 }
