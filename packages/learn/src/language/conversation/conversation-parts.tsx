@@ -8,13 +8,31 @@ import { useExtracted } from "next-intl";
 import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 
+/** A call's 32px mark: the character, the microphone, the phone. */
+export const CALL_MARK_CLASS =
+  "grid size-8 shrink-0 place-items-center rounded-full [&>svg]:size-4";
+
+/**
+ * Whoever has the turn gets a line just inside the mark's edge, with a gap before its fill. It is
+ * drawn inside the mark's 32px, so the mark never grows past its column.
+ */
+export function callTurnClass(hasTurn: boolean) {
+  return cn(
+    "ring-[3.5px] inset-ring-[1.5px] transition-shadow duration-150 ring-inset motion-reduce:transition-none",
+    hasTurn
+      ? "inset-ring-foreground/40 ring-background"
+      : "ring-transparent inset-ring-transparent",
+  );
+}
+
 export function CharacterAvatar({ name, talking }: { name: string; talking: boolean }) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "bg-secondary text-secondary-foreground grid size-8 shrink-0 place-items-center rounded-full text-sm font-medium ring-[1.5px] ring-transparent transition-shadow duration-150 motion-reduce:transition-none",
-        talking && "ring-foreground/40",
+        CALL_MARK_CLASS,
+        "bg-secondary text-secondary-foreground text-sm font-medium",
+        callTurnClass(talking),
       )}
       data-slot="character-avatar"
     >

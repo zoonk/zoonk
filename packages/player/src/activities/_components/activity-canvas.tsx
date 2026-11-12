@@ -20,8 +20,15 @@ export const ACTIVITY_FIELD_CLASS = cn(
 /** A place still to fill: the same 1px line, dashed. */
 export const ACTIVITY_EMPTY_CLASS = "border-dashed bg-transparent";
 
-/** The box the learner is working in. Its 2px line is drawn inside the box, so nothing around it moves. */
-export const ACTIVITY_ACTIVE_CLASS = "border-viz-accent ring-viz-accent ring-1 ring-inset";
+/**
+ * A box's 2px line: the one the learner is working in, and the right and wrong ones once checked.
+ * It is drawn inside the box, so the box and everything around it stay where they were.
+ */
+export const ACTIVITY_LINE_CLASS = {
+  active: "border-viz-accent ring-viz-accent ring-1 ring-inset",
+  right: "border-success ring-success ring-1 ring-inset",
+  wrong: "border-destructive ring-destructive ring-1 ring-inset",
+};
 
 export function ActivityCanvas({
   className,

@@ -4,7 +4,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Check, GripVertical, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { ACTIVITY_CARD_CLASS, ACTIVITY_PRESS_CLASS } from "../_components/activity-canvas";
+import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_EMPTY_CLASS,
+  ACTIVITY_PRESS_CLASS,
+} from "../_components/activity-canvas";
 import { useActivityDraggable, useActivityDropTarget } from "../_components/activity-drag-drop";
 
 export type ArgumentPart = "evidence" | "reasoning";
@@ -108,7 +112,9 @@ export function ArgumentSlot({
     <section
       aria-label={label}
       className={cn(
-        "flex flex-col gap-1.5 rounded-xl border border-dashed px-3 py-2.5",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_EMPTY_CLASS,
+        "flex flex-col gap-1.5",
         isOpen && "border-viz-accent/60 bg-viz-accent-soft/40",
         isOver && "border-viz-accent bg-viz-accent-soft",
         isFilled && "bg-background border-solid",

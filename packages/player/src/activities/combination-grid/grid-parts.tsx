@@ -2,7 +2,7 @@
 
 import { isDominantPhenotype } from "@zoonk/core/library/activities/combination-grid";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ACTIVITY_ACTIVE_CLASS, ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_BOX_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 
 export type GridTraits = { dominant: string; recessive: string } | null;
 
@@ -82,7 +82,7 @@ export function GridHeader({
         ACTIVITY_BOX_CLASS,
         "flex min-h-11 items-center justify-center motion-safe:transition-colors",
         isAllele ? "text-xl" : numberSize,
-        isLit && cn(ACTIVITY_ACTIVE_CLASS, "bg-viz-accent-soft"),
+        isLit && cn(ACTIVITY_LINE_CLASS.active, "bg-viz-accent-soft"),
       )}
     >
       {/* A sum or product grid's cells are the answer, so its headers stay quieter than them. */}

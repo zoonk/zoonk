@@ -11,6 +11,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
@@ -21,6 +22,7 @@ import {
 } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
+import { THREAD_SIDE_CLASS } from "./lesson-question-thread-viewport";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function LessonQuestionPanelDescription({
@@ -62,7 +64,7 @@ function LessonQuestionPanelHeader({
   const t = useExtracted();
 
   return (
-    <DrawerHeader className="border-border gap-0 border-b px-4 pt-2.5 pb-3">
+    <DrawerHeader className={cn(THREAD_SIDE_CLASS, "border-border gap-0 border-b pt-2.5 pb-3")}>
       <div className="flex items-center gap-2.5">
         <span
           aria-hidden="true"
@@ -156,7 +158,7 @@ export function LessonQuestionDrawer({
 
           {canAskQuestions && (
             <QuestionComposer
-              className="px-3 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+              className={cn(THREAD_SIDE_CLASS, "pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]")}
               controller={controller}
             />
           )}

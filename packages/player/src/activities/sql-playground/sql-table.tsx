@@ -58,11 +58,13 @@ function SqlRow({ row, state }: { row: readonly ActivityCell[]; state: RowState 
 
 export function SqlRowsTable({
   caption,
+  className,
   columns,
   rowStates,
   rows,
 }: {
   caption: string;
+  className?: string;
   columns: readonly string[];
   rowStates?: readonly RowState[];
   rows: readonly (readonly ActivityCell[])[];
@@ -72,6 +74,7 @@ export function SqlRowsTable({
       className={cn(
         ACTIVITY_BOX_CLASS,
         "has-focus-visible:ring-ring/50 overflow-hidden has-focus-visible:ring-[3px]",
+        className,
       )}
     >
       <div
@@ -136,13 +139,13 @@ export function SqlTableViewer({ table }: { table: Table }) {
         />
       </summary>
 
-      <div className="px-2 pb-2">
-        <SqlRowsTable
-          caption={t("Table {name}", { name: table.name })}
-          columns={table.columns.map((column) => column.name)}
-          rows={table.rows}
-        />
-      </div>
+      {/* The table is the lower part of this box, not a second box inside it. */}
+      <SqlRowsTable
+        caption={t("Table {name}", { name: table.name })}
+        className="rounded-t-none border-x-0 border-b-0"
+        columns={table.columns.map((column) => column.name)}
+        rows={table.rows}
+      />
     </details>
   );
 }

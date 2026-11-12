@@ -82,7 +82,12 @@ function SignUpPrompt() {
   const { loginHref } = useLessonQuestionNavigation();
 
   return (
-    <div className={cn(TUTOR_COMPOSER_FRAME_CLASS, "flex items-center gap-3 py-2 pr-2 pl-3.5")}>
+    <div
+      className={cn(
+        TUTOR_COMPOSER_FRAME_CLASS,
+        "flex min-h-11 items-center gap-3 py-1.75 pr-1.75 pl-3",
+      )}
+    >
       <p className="text-muted-foreground flex-1 text-sm">
         {t("Create a free account to start the conversation.")}
       </p>

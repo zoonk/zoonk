@@ -12,6 +12,7 @@ import { usePlayerInteractionState } from "../../player-context";
 import { getNumberKeyShortcut } from "../../player-shortcuts";
 import {
   ACTIVITY_CARD_CLASS,
+  ACTIVITY_LINE_CLASS,
   ACTIVITY_PRESS_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
@@ -82,8 +83,8 @@ function FindErrorStep({
         "focus-visible:border-ring flex w-full items-start gap-3 text-sm leading-snug sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
         !isChecked && isPicked && "border-primary ring-primary/15 ring-[3px]",
-        verdict === "error" && "border-success bg-success/10 border-2",
-        verdict === "picked" && "border-destructive bg-destructive/10 border-2",
+        verdict === "error" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+        verdict === "picked" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
       disabled={isChecked}
       onClick={onToggle}

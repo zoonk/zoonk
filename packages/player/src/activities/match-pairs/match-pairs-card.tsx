@@ -3,7 +3,12 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { ACTIVITY_CARD_CLASS, ACTIVITY_PRESS_CLASS } from "../_components/activity-canvas";
+import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_EMPTY_CLASS,
+  ACTIVITY_LINE_CLASS,
+  ACTIVITY_PRESS_CLASS,
+} from "../_components/activity-canvas";
 
 export type MatchCardState = "idle" | "matched" | "missed" | "noMatch" | "selected";
 
@@ -34,8 +39,8 @@ export function MatchPairsCard({
         state === "selected" && "border-primary ring-primary/15 ring-[3px]",
         state === "matched" && "border-success/40 bg-success/10 text-success-text",
         state === "missed" &&
-          "border-destructive bg-destructive/10 motion-safe:animate-shake border-2",
-        state === "noMatch" && "text-muted-foreground border-dashed bg-transparent",
+          cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10 motion-safe:animate-shake"),
+        state === "noMatch" && cn(ACTIVITY_EMPTY_CLASS, "text-muted-foreground"),
       )}
       data-slot="match-pairs-card"
       disabled={isDisabled}

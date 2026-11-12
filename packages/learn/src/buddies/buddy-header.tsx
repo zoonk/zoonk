@@ -5,9 +5,11 @@ import { useExtracted } from "next-intl";
 import { BuddyArt } from "./buddy-art";
 import { type LearnBuddy } from "./use-buddy-name";
 
-/** `-mb-12` takes back the page's bottom padding, since the composer has its own. */
-export const BUDDY_COLUMN_CLASS =
-  "-mb-12 mx-auto flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
+/**
+ * Starts on the page's edge like every other page in the app, so the buddy's pages share one edge.
+ * `-mb-12` takes back the page's bottom padding, since the composer has its own.
+ */
+export const BUDDY_COLUMN_CLASS = "-mb-12 flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
 
 /** `children` is the day's line, under the name in place of the buddy's line; `menu` stays at the end. */
 export function BuddyHeader({
