@@ -49,15 +49,17 @@ extension View {
   }
 
   /// The learner's pick among a few choices, as main's `ChoiceRows`: the answer surface's pick, an
-  /// ink ring on its tint, where the current row's highlight would be.
+  /// ink ring on its tint, where the current row's highlight would be. For `ZoonkList`'s rows.
   func pickedRow(_ isPicked: Bool) -> some View {
-    listRowBackground(
-      isPicked
-        ? Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
-          .padding(.horizontal, 6)
-          .padding(.vertical, 2)
-        : nil
-    )
+    // Behind the row's content rather than in `listRowBackground`, which keeps the colors it first
+    // drew in: a row picked before a switch to dark mode stayed near-white under white text.
+    background {
+      if isPicked {
+        Color.clear.answerSurface(.picked, cornerRadius: Radius.lg)
+          .containerRelativeFrame(.horizontal) { width, _ in width - 12 }
+          .padding(.vertical, -10)
+      }
+    }
     .listRowSeparator(isPicked ? .hidden : .automatic)
   }
 }
