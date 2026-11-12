@@ -13,7 +13,7 @@ import {
   libraryLessonStatuses,
 } from "@/lib/library-lesson-filters";
 import { MAX_LESSONS_PER_REGENERATION } from "@zoonk/core/library/lessons/regeneration-filter";
-import { RegenerateLessonsForm } from "./regenerate-lessons-form";
+import { RewriteLessonsBar } from "./rewrite-lessons-bar";
 
 type LibraryLessonFilterValues = {
   model?: string;
@@ -92,7 +92,7 @@ export async function LibraryLessonFilters({
       </div>
 
       {hasProvenanceFilter ? (
-        <RegenerateLessonsForm
+        <RewriteLessonsBar
           batchSize={MAX_LESSONS_PER_REGENERATION}
           matching={matching}
           model={model}
