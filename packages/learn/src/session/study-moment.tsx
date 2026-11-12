@@ -93,7 +93,7 @@ function MomentActions({
         <ActionFailed>{t("We couldn't open the next step. Try again.")}</ActionFailed>
       )}
       {stop.failed && (
-        <ActionFailed>{t("That didn't go through. Try again in a moment.")}</ActionFailed>
+        <ActionFailed>{t("We couldn't stop for today. Try again.")}</ActionFailed>
       )}
 
       <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>

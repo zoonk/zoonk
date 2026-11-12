@@ -181,7 +181,7 @@ function NextStopActionBar({
 
       {stop.failed && (
         <p className="text-destructive-text text-sm" role="alert">
-          {t("That didn't go through. Try again in a moment.")}
+          {t("We couldn't stop for today. Try again.")}
         </p>
       )}
 

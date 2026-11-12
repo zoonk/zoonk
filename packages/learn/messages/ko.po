@@ -2146,9 +2146,7 @@ msgstr "다음 학습 때"
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
-#: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
-#: src/session/study-moment.tsx
 msgctxt "fEu6ab"
 msgid "That didn't go through. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
@@ -13876,6 +13874,12 @@ msgstr "다음 레슨"
 msgctxt "kY8Exq"
 msgid "Practice now"
 msgstr "지금 연습하기"
+
+#: src/session/next-stop.tsx
+#: src/session/study-moment.tsx
+msgctxt "8i8j-M"
+msgid "We couldn't stop for today. Try again."
+msgstr ""
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
