@@ -34,18 +34,16 @@ function isGoingWell(area: RebalanceArea): boolean {
 
 export function pickRebalance({
   areas,
-  focusAreas,
   lastRebalanceAt,
   now,
   weakestAreaId,
 }: {
   areas: readonly RebalanceArea[];
-  focusAreas: readonly string[];
   lastRebalanceAt: Date | null;
   now: Date;
   weakestAreaId: string | null;
 }): string[] | null {
-  if (!isRebalanceDue({ lastRebalanceAt, now }) || focusAreas.length > 0) {
+  if (!isRebalanceDue({ lastRebalanceAt, now })) {
     return null;
   }
 

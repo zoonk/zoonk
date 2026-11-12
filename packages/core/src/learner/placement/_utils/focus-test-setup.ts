@@ -7,7 +7,6 @@ import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getExamChoiceFormats } from "../../../library/exams/exam-choice-format";
 import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { type PlanGraph, type PlanSettings } from "../../../plans/planner/plan-state";
 import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
 import { type TestProgress, getAreaOrder, getTestProgress } from "../focus-test-progress";
@@ -66,7 +65,6 @@ export function summaryInputsKey({ goal, graph, settings }: SummaryInputs): stri
     dated: goal.targetDate !== null,
     examBlueprintId: goal.examBlueprintId,
     focusAreas: settings.focusAreas,
-    focusedSkillIds: [...listFocusedSkillIds({ graph, settings })].toSorted(),
     knownAreas: [...new Set(getKnownSubjects(goal))].toSorted(),
     level: getOwnLevel({ goal }),
     measured: isLevelMeasured(goal),

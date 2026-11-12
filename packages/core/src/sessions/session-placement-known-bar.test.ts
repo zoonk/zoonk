@@ -17,7 +17,7 @@ import { startStudyBlock } from "./start-study-block";
 const TIME_ZONE = "UTC";
 const DAY_MS = 86_400_000;
 
-describe("one in-session placement answer on a focused topic", () => {
+describe("one in-session multiple-choice test answer", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     const now = new Date();
@@ -43,7 +43,7 @@ describe("one in-session placement answer on a focused topic", () => {
       ],
     });
 
-    const focused = library.skills[0]!.id;
+    const target = library.skills[0]!.id;
     const other = library.skills[1]!.id;
 
     const { goal, plan } = await unplannedGoalFixture({
@@ -55,22 +55,9 @@ describe("one in-session placement answer on a focused topic", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     await finishChallengesFixture(plan.id);
 
-    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-
-    await prisma.plan.update({
-      data: {
-        settings: {
-          ...(stored.settings as object),
-          focusAreas: ["Cells"],
-          focusParts: [{ area: "Cells", name: "Organelles", skillIds: [focused] }],
-        },
-      },
-      where: { id: plan.id },
-    });
-
     const items = await Promise.all([
-      itemFixture({ content: choiceItemContent(), skillId: focused }),
-      itemFixture({ content: choiceItemContent(), skillId: focused }),
+      itemFixture({ content: choiceItemContent(), skillId: target }),
+      itemFixture({ content: choiceItemContent(), skillId: target }),
       itemFixture({ content: choiceItemContent(), skillId: other }),
     ]);
 
@@ -107,15 +94,15 @@ describe("one in-session placement answer on a focused topic", () => {
     });
 
     const [lessons, rightAnswers, read] = await Promise.all([
-      prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id, skillId: focused } }),
-      prisma.attempt.count({ where: { isCorrect: true, skillId: focused, userId: user.id } }),
+      prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id, skillId: target } }),
+      prisma.attempt.count({ where: { isCorrect: true, skillId: target, userId: user.id } }),
       getGoalPlacement({ goalId: goal.id }),
     ]);
 
     const statuses = [...new Set(lessons.map((item) => item.status))];
 
     expect(result.status).toBe("ready");
-    expect(read.status === "ready" && read.placement.knownSkillIds.includes(focused)).toBe(false);
+    expect(read.status === "ready" && read.placement.knownSkillIds.includes(target)).toBe(false);
     expect(rightAnswers).toBe(1);
     expect(statuses).toStrictEqual(["todo"]);
   });

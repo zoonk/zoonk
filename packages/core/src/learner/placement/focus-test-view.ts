@@ -74,12 +74,8 @@ export function listFocusRows({
 }): FocusRow[] {
   const ranked = rankFocus(
     subjects.map((subject) => ({
-      asked: subject.asked > 0,
       belief: getMeanBelief({ beliefs, skillIds: skillsOf(subject) }),
       key: subject.key,
-      minimumScore: subject.minimumScore,
-      missed: subject.missed,
-      part: subject.part,
       share: subject.share,
     })),
     {

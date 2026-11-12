@@ -25,7 +25,6 @@ import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
 import { type StudyAnswerInput, type StudyAnswerResult } from "./contract";
 import { shouldSuggestPause } from "./pause-suggestion";
 
-/** Misses restore lessons only for a topic previously skipped as known, even after practice confirmed it. */
 async function isRelearnMiss({
   isCorrect,
   item,

@@ -108,12 +108,7 @@ export async function loadFocusProposalFacts({
   const declined = statuses.has("declined") || statuses.has("undone");
 
   const due =
-    proposes &&
-    !declined &&
-    !waiting &&
-    !statuses.has("proposed") &&
-    !isSameFocus(focusAreas, suggested) &&
-    !handPicked;
+    proposes && !declined && !waiting && !isSameFocus(focusAreas, suggested) && !handPicked;
 
   return {
     declined,

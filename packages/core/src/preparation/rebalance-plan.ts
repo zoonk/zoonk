@@ -84,7 +84,6 @@ export async function rebalancePlanAfterSession({
 
   const focus = pickRebalance({
     areas: toRebalanceAreas({ areas, graph, skills: inputs.skills }),
-    focusAreas: parsePlanSettings(plan.settings).focusAreas,
     lastRebalanceAt: last?.createdAt ?? null,
     now,
     weakestAreaId,

@@ -1,4 +1,4 @@
-import { type SessionQuestions, type UncheckedPart } from "./focus-test-contract";
+import { type SessionQuestions } from "./focus-test-contract";
 import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
 
 const MS_PER_MINUTE = 60_000;
@@ -80,43 +80,19 @@ export function hasUnknownStreak(outcomes: readonly ("correct" | "dontKnow" | "w
   return streak >= UNKNOWN_STREAK;
 }
 
-export type FocusReason = "answers" | "minimumScore" | "notAsked" | "notChecked" | "weight";
-
 export type FocusCandidate = {
-  /** Has a test answer. */
-  asked: boolean;
   /** Mean belief over its topics, from real answers only: 0 to 1. */
   belief: number;
   key: string;
-  minimumScore: boolean;
-  /** One of its test answers was wrong or "I don't know yet". */
-  missed: boolean;
-  part: UncheckedPart | null;
   /** Its planning share of the exam. */
   share: number;
 };
-
-function getReason(candidate: FocusCandidate): FocusReason {
-  if (candidate.missed) {
-    return "answers";
-  }
-
-  if (candidate.minimumScore) {
-    return "minimumScore";
-  }
-
-  if (candidate.part) {
-    return "notChecked";
-  }
-
-  return candidate.asked ? "weight" : "notAsked";
-}
 
 /** Takes candidates in the notice's order and returns the most needed first. */
 export function rankFocus(
   candidates: readonly FocusCandidate[],
   { incumbent = [] }: { incumbent?: readonly string[] } = {},
-): { key: string; reason: FocusReason }[] {
+): { key: string }[] {
   if (candidates.length < MIN_FOCUS_CHOICES) {
     return [];
   }
@@ -145,7 +121,7 @@ export function rankFocus(
         a.index - b.index,
     )
     .slice(0, count)
-    .map(({ candidate }) => ({ key: candidate.key, reason: getReason(candidate) }));
+    .map(({ candidate }) => ({ key: candidate.key }));
 }
 
 /** Sessions ask the test's questions through the first week, then only while a subject it can ask about has no answer. */

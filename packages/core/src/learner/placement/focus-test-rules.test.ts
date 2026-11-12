@@ -91,15 +91,7 @@ describe('the hint after "I don\'t know yet" answers', () => {
 });
 
 function candidate(overrides: Partial<FocusCandidate> & { key: string }): FocusCandidate {
-  return {
-    asked: false,
-    belief: 0.5,
-    minimumScore: false,
-    missed: false,
-    part: null,
-    share: 0.1,
-    ...overrides,
-  };
+  return { belief: 0.5, share: 0.1, ...overrides };
 }
 
 function subjects(count: number): FocusCandidate[] {
@@ -148,43 +140,24 @@ describe("the suggested focus", () => {
 
   it("ranks by the exam's share times what the answers leave unknown", () => {
     const ranked = rankFocus([
-      candidate({ asked: true, belief: 0.9, key: "right" }),
+      candidate({ belief: 0.9, key: "right" }),
       candidate({ key: "notAsked" }),
-      candidate({ asked: true, belief: 0.1, key: "missed", missed: true }),
-      candidate({ key: "written", part: "written" }),
+      candidate({ belief: 0.1, key: "missed" }),
+      candidate({ key: "written" }),
       candidate({ key: "light", share: 0.01 }),
       candidate({ key: "heavy", share: 0.3 }),
     ]);
 
-    expect(ranked).toStrictEqual([
-      { key: "heavy", reason: "notAsked" },
-      { key: "missed", reason: "answers" },
-    ]);
+    expect(ranked).toStrictEqual([{ key: "heavy" }, { key: "missed" }]);
   });
 
-  it("keeps a part the test can't check eligible, and says why it's there", () => {
+  it("keeps a subject answered right eligible when it still weighs most", () => {
     const ranked = rankFocus([
-      candidate({ asked: true, belief: 0.9, key: "a" }),
-      candidate({ key: "essay", part: "written", share: 0.3 }),
-      candidate({ key: "qualifying", minimumScore: true, share: 0.2 }),
-      candidate({ asked: true, belief: 0.9, key: "b" }),
-      candidate({ asked: true, belief: 0.9, key: "c" }),
-      candidate({ asked: true, belief: 0.9, key: "d" }),
-    ]);
-
-    expect(ranked).toStrictEqual([
-      { key: "essay", reason: "notChecked" },
-      { key: "qualifying", reason: "minimumScore" },
-    ]);
-  });
-
-  it("names a subject answered right that still weighs most", () => {
-    const ranked = rankFocus([
-      candidate({ asked: true, belief: 0.8, key: "heavy", share: 0.6 }),
+      candidate({ belief: 0.8, key: "heavy", share: 0.6 }),
       candidate({ key: "light", share: 0.05 }),
     ]);
 
-    expect(ranked).toStrictEqual([{ key: "heavy", reason: "weight" }]);
+    expect(ranked).toStrictEqual([{ key: "heavy" }]);
   });
 
   it("suggests one subject in three, three at most, and none for a single subject", () => {
@@ -197,8 +170,8 @@ describe("the suggested focus", () => {
 
   it("leaves out a subject the learner fully knows", () => {
     expect(
-      rankFocus([candidate({ asked: true, belief: 1, key: "known" }), candidate({ key: "other" })]),
-    ).toStrictEqual([{ key: "other", reason: "notAsked" }]);
+      rankFocus([candidate({ belief: 1, key: "known" }), candidate({ key: "other" })]),
+    ).toStrictEqual([{ key: "other" }]);
   });
 });
 
