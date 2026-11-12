@@ -39,6 +39,15 @@
   "player_challenge_much_higher": "2355b18821c9965f83a4d97d1fa79560d78b2b7cead0796266b82bf7acb67d5e",
   "player_challenge_much_lower": "bb2f500d019e7da6ab6d1397d398ef7f790e924e999da38eae12339470cf3849",
   "player_challenge_no_change": "6b7de7856fe635227e4a437f39b93bd68375dff39412591f2325a76ceadf9309",
+  "player_challenge_phase_plan": "b6b2f35a4d11c49aac7ae39a57b862606c6768ef6e6dc3ebd8243e65696de5f8",
+  "player_challenge_phase_plan_line_1": "2810220db2c08042abc2b092eb3524a4ab27a48b89f1504ff1d89e2f889f953b",
+  "player_challenge_phase_plan_line_2": "5ed09b1176edd4b98d75ace6c44cf153e747bb9cdc24a3aeb1515d1d5b9c2edf",
+  "player_challenge_phase_redraft": "0e18df545ce4c814a7675f3342870b2dfd772db55f37bed82df673a8d6594a33",
+  "player_challenge_phase_redraft_line_1": "50fb81955cca0d0fae4e52a380376e8a3da601356fae7edb631c9eb91ed4f335",
+  "player_challenge_phase_redraft_line_2": "52b1306f2af69b907d34a33b70fe942733d1cc12dd84132539158247ff3a314f",
+  "player_challenge_phase_write": "5275fc0353c2ffa340939d67de5b52044181d00b3bcc55e3aa4e9da332b5c419",
+  "player_challenge_phase_write_line_1": "c5d4f456d096ea017d013bfc44c9111f641eb0e597d878049b86111407a34204",
+  "player_challenge_phase_write_line_2": "83ebeeaa8af0a61ef6cb77c01da939ef44fdb8e23a4282dd6408a82e17d3b958",
   "player_challenge_practice": "0e52f079a3fb59504d48ce62d78e716262ee4b131fa5da4857ef0eb3077feefb",
   "player_challenge_said": "cb9be45036d3d5db0c5b4a042b3637f2b2eef4a893d96c696b6e2ce4b9ef5392",
   "player_challenge_scenario_complete": "fedb7d2d81894dfa0911aebf9468edad03498f28995de904e33f9def7f9ebcdb",
@@ -305,6 +314,16 @@
     <string name="player_phase_draw_line_1">Her ekranda anlatılanları çiziyoruz…</string>
     <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
     <string name="player_phase_draw_line_2">Her kavram için bir simge çiziyoruz…</string>
+    <string name="player_challenge_phase_plan">Meydan okumayı planlama</string>
+    <string name="player_challenge_phase_plan_line_1">Durumu seçiyoruz…</string>
+    <string name="player_challenge_phase_plan_line_2">Karşına çıkacak seçenekleri belirliyoruz…</string>
+    <string name="player_challenge_phase_write">Meydan okumayı hazırlama</string>
+    <string name="player_challenge_phase_write_line_1">Her seçimin sonuçlarını hazırlıyoruz…</string>
+    <string name="player_challenge_phase_write_line_2">Her yolu kontrol ediyoruz…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
+    <string name="player_challenge_phase_redraft">Kontrolde bulunan sorunu düzeltme</string>
+    <string name="player_challenge_phase_redraft_line_1">Meydan okumayı yeniden planlıyoruz…</string>
+    <string name="player_challenge_phase_redraft_line_2">Tutarsız kısımları yeniden hazırlıyoruz…</string>
     <string name="player_writing_note">Genellikle birkaç dakika sürer. Ders hazır olur olmaz burada açılır.</string>
     <string name="player_ready_while_waiting">Beklerken başlayabilirsin</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

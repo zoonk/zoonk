@@ -39,6 +39,15 @@
   "player_challenge_much_higher": "990e95953aaad7b96446561b0af026a5bb916550b580c3f8b6a72a36212053ae",
   "player_challenge_much_lower": "d7b4e4e105a0e54f21fa77c809193503e0bc86c92f622fb8262d61a9a2777ded",
   "player_challenge_no_change": "152e52058147e71d89f2d8a6c71488e2e30ceb95848035d8eb6b31d1615c8131",
+  "player_challenge_phase_plan": "b089cd8b774ebe1aa8b968bb581bec867262b229497e81fc72b8fe7ed2159c25",
+  "player_challenge_phase_plan_line_1": "c6083b433894beb396d4f95e4ba6680a59957c352b14dea7993570940c91699d",
+  "player_challenge_phase_plan_line_2": "97fab720923fb81b1d260abb6e63bb8e0c52a8ea3ffe873936ddf157397c6e5c",
+  "player_challenge_phase_redraft": "bade433453b9c720759ac0874136c28700b109012bdf8472a34e8db83bf5d135",
+  "player_challenge_phase_redraft_line_1": "68277a144f28d6e686e0a8eb60da811f1a4aeeeebb22062d4072ab79a422bd29",
+  "player_challenge_phase_redraft_line_2": "9f6afa4edaaf636f71bf6e67976434aee7a4167d99bd1f1a7a96d5ed75e4bf03",
+  "player_challenge_phase_write": "30758daed640ec20c5e75851eac6aa48c537a7f9fbeee4690b62dc936a7c2a86",
+  "player_challenge_phase_write_line_1": "3c695aaef7f2a07afd0c94a8b7cb4e2994ed22c097cd109a6866268c3bc168c6",
+  "player_challenge_phase_write_line_2": "39075d6101aa2391e4591ec4508ace95734ac2ce9de00792257c476982687fb8",
   "player_challenge_practice": "5dd4ae61746e8ff037a805b8b8d7f2a7868d0875740b12a47307af560dcbce64",
   "player_challenge_said": "b446c9a8cdbd11f56bf67eba1b7906d2681085f9c8bfff53b284823ac543dcd6",
   "player_challenge_scenario_complete": "7d7b7e4a641c3dc24c2034d4679366fd8527252b15abd1a813c6b6b582bc6af9",
@@ -309,6 +318,16 @@
     <string name="player_phase_draw_line_1">Rysujemy to, co opisano na każdym ekranie…</string>
     <!-- Zoonk at work on a lesson. "Idea" is one of the lesson map's ideas, as in "Idea 2 of 4". -->
     <string name="player_phase_draw_line_2">Rysujemy ikonę dla każdego zagadnienia…</string>
+    <string name="player_challenge_phase_plan">Planujemy wyzwanie</string>
+    <string name="player_challenge_phase_plan_line_1">Wybieramy sytuację…</string>
+    <string name="player_challenge_phase_plan_line_2">Ustalamy, przed jakimi wyborami staniesz…</string>
+    <string name="player_challenge_phase_write">Przygotowujemy wyzwanie</string>
+    <string name="player_challenge_phase_write_line_1">Przygotowujemy opis skutków każdego wyboru…</string>
+    <string name="player_challenge_phase_write_line_2">Sprawdzamy każdą ścieżkę…</string>
+    <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again. -->
+    <string name="player_challenge_phase_redraft">Poprawiamy wykryte błędy</string>
+    <string name="player_challenge_phase_redraft_line_1">Ponownie planujemy wyzwanie…</string>
+    <string name="player_challenge_phase_redraft_line_2">Poprawiamy niespójne fragmenty…</string>
     <string name="player_writing_note">Zwykle trwa to kilka minut. Lekcja otworzy się tutaj, gdy tylko będzie gotowa.</string>
     <string name="player_ready_while_waiting">Na czas oczekiwania</string>
     <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->

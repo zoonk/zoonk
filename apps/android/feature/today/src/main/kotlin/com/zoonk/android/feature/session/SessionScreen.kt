@@ -366,6 +366,7 @@ internal fun NextStop(
                 else -> null
             }
         val waiting = lesson != null
+        val waitKind = known?.kind ?: GenerationKind.Lesson
         val run by viewModel.run.collectAsStateWithLifecycle()
         val failure =
             when {
@@ -566,14 +567,14 @@ internal fun NextStop(
                                 quiz.open()
                                 val share =
                                     com.zoonk.android.ui.components.rememberGenerationProgress(
-                                        GenerationKind.Lesson,
+                                        waitKind,
                                         shown,
                                     )
                                 WaitContent(
                                     quiz,
                                     hold,
                                     AnalyticsEvent.WarmUpSurface.LessonWait,
-                                    GenerationKind.Lesson,
+                                    waitKind,
                                     shown,
                                     stringResource(if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note),
                                     goalId = goalId?.toString(),
@@ -581,6 +582,7 @@ internal fun NextStop(
                                     onRetry = { retry() },
                                 ) {
                                     LessonWritingProgress(
+                                        waitKind,
                                         shown,
                                         {
                                             if (run.failure ==

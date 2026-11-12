@@ -247,6 +247,40 @@ enum class GenerationKind(
                 "writeLesson" to StepPlace.Phase("write"),
             ),
     ),
+    Challenge(
+        label = R.string.challenge_writing,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "plan",
+                    75,
+                    R.string.player_challenge_phase_plan,
+                    listOf(R.string.player_challenge_phase_plan_line_1, R.string.player_challenge_phase_plan_line_2),
+                ),
+                GenerationPhase(
+                    "write",
+                    50,
+                    R.string.player_challenge_phase_write,
+                    listOf(R.string.player_challenge_phase_write_line_1, R.string.player_challenge_phase_write_line_2),
+                ),
+                GenerationPhase(
+                    "redraft",
+                    125,
+                    R.string.player_challenge_phase_redraft,
+                    listOf(R.string.player_challenge_phase_redraft_line_1, R.string.player_challenge_phase_redraft_line_2),
+                    optional = true,
+                ),
+            ),
+        steps =
+            mapOf(
+                "joinRunningLesson" to StepPlace.Join,
+                "lessonReady" to StepPlace.Done,
+                "planChallenge" to StepPlace.Phase("plan"),
+                "redraftChallenge" to StepPlace.Phase("redraft"),
+                "reviewChallenge" to StepPlace.Phase("write"),
+                "writeChallenge" to StepPlace.Phase("write"),
+            ),
+    ),
     ConversationCall(
         label = R.string.conversation_writing_call,
         phases =

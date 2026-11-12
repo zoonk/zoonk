@@ -112,6 +112,25 @@ class GenerationKindTest {
     }
 
     @Test
+    fun aHeldBackChallengeKeepsWorkingOnItsRedraftNeverDone() {
+        val redrafting =
+            GenerationKind.Challenge.progress(
+                run(
+                    "writeLesson" to StepState.Started,
+                    "planChallenge" to StepState.Completed,
+                    "writeChallenge" to StepState.Completed,
+                    "reviewChallenge" to StepState.Completed,
+                    "redraftChallenge" to StepState.Started,
+                ),
+            )
+
+        assertEquals(listOf("plan", "write", "redraft"), redrafting.phases.map { it.phase.id })
+        assertEquals(listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Active), redrafting.phases.map { it.status })
+        assertEquals(125f / 250f, redrafting.share)
+        assertEquals(1f, redrafting.target)
+    }
+
+    @Test
     fun aLessonsMarkingAndDrawingRunSideBySideEachDoneOnItsOwnSteps() {
         val written = arrayOf("planLesson" to StepState.Completed, "writeLesson" to StepState.Completed)
 
