@@ -1,5 +1,6 @@
 "use client";
 
+import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
 import { CheckpointCallPreparing } from "@zoonk/learn/language/checkpoint-call";
 import { PronunciationReviewScreen } from "@zoonk/learn/language/pronunciation";
 import { type FollowedRunProps, GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
@@ -25,6 +26,7 @@ const ADAPTERS: any = {
 };
 
 const CALL_STEP = "writeCall";
+const T0 = Date.now() - 9000;
 
 const noVoice: VoiceText = () => Promise.resolve({ limit: null, status: "failed" });
 const never = () => new Promise<never>(() => {});
@@ -36,6 +38,48 @@ const WORDS = [
 
 function State() {
   const state = useSearchParams().get("state") ?? "";
+
+  if (state.startsWith("explain-")) {
+    const ready = state === "explain-ready";
+
+    return (
+      <ExplainWaiting
+        closeHref="/"
+        deeper={<ExplainDeeperLink description="Build a plan for the whole subject" href="#" />}
+        explanation={{
+          lesson: ready ? ({} as any) : null,
+          outline: ["Prices rise when money chases goods", "Why a little inflation is normal", "What your salary has to do"],
+          title: "How does inflation work?",
+        }}
+        onCheck={() => null}
+        onRetry={async () => true}
+        onStart={() => null}
+        progress={
+          ready
+            ? null
+            : {
+                failure: null,
+                status: "following",
+                stepTimes: { classifyQuestion: { completed: T0 + 2000, started: T0 }, findExplanation: { completed: T0 + 4000, started: T0 + 2000 }, writeExplanation: { started: T0 + 4000 } },
+                steps: { classifyQuestion: "completed", findExplanation: "completed", writeExplanation: "started" },
+              }
+        }
+      />
+    );
+  }
+
+  if (state === "call-limit-guest") {
+    return (
+      <CallProblem
+        error={"limit" as any}
+        exitHref="/"
+        limit={{ period: "total", tier: "guest" } as any}
+        onRetry={() => null}
+        onTakeover={() => null}
+        title="Practice call"
+      />
+    );
+  }
 
   if (state.startsWith("call-")) {
     return (

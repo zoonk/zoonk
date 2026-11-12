@@ -54,6 +54,8 @@ function States() {
             ? (["check"] as const)
             : state === "wrong"
               ? (["check", "check"] as const)
+              : state === "skipwriting"
+                ? (["typedAnswer", "check"] as const)
             : (["explanation", "check"] as const);
 
     const built = buildLesson(

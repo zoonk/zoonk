@@ -2802,6 +2802,17 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "레슨을 열고 있어요"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr ""
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, other {개념 #개 복습하기}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -2811,17 +2822,6 @@ msgstr "뒤로"
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "레슨 소개"
-
-#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "9VWjJv"
-msgid "Ready to start now"
-msgstr ""
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, other {개념 #개 복습하기}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"

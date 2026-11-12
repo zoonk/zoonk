@@ -2802,6 +2802,17 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Otwieramy twoją lekcję"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr ""
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, one {Powtórz # zagadnienie} few {Powtórz # zagadnienia} other {Powtórz # zagadnień}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -2811,17 +2822,6 @@ msgstr "Wróć"
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "O tej lekcji"
-
-#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "9VWjJv"
-msgid "Ready to start now"
-msgstr ""
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, one {Powtórz # zagadnienie} few {Powtórz # zagadnienia} other {Powtórz # zagadnień}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
