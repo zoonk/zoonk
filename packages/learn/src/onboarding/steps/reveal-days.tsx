@@ -141,13 +141,17 @@ function TodayRow({
     });
   };
 
+  const busy = pending || locked;
+
+  // A submit of the list's form, so a tap before the page hydrates opens the step once it does.
   return (
     <>
       <ListRowButton
         aria-busy={pending || undefined}
         data-highlighted={tag ? "" : undefined}
-        disabled={pending || locked}
-        onClick={open}
+        disabled={busy}
+        formAction={busy ? undefined : () => open()}
+        type={busy ? "button" : "submit"}
       >
         {content}
       </ListRowButton>
@@ -241,18 +245,20 @@ export function RevealToday({
         </PageSectionDetail>
       </PageSectionHeader>
 
-      <ListGroup>
-        {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
-          <TodayRow
-            block={block}
-            key={block.position}
-            line={label(block)}
-            locked={locked}
-            onOpen={open && opensFromReveal(block) ? () => open(block) : null}
-            tag={block === next ? nextTag : null}
-          />
-        ))}
-      </ListGroup>
+      <form className="contents">
+        <ListGroup>
+          {[...done, ...before, ...(next ? [next] : []), ...after].map((block) => (
+            <TodayRow
+              block={block}
+              key={block.position}
+              line={label(block)}
+              locked={locked}
+              onOpen={open && opensFromReveal(block) ? () => open(block) : null}
+              tag={block === next ? nextTag : null}
+            />
+          ))}
+        </ListGroup>
+      </form>
     </PageSection>
   );
 }
