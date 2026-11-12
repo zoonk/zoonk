@@ -26,7 +26,7 @@ struct MindMapReader: View {
         if let maps {
           deck(maps)
         } else if case .failed = list.state {
-          unreachable { Task { await list.refresh() } }
+          MindMapUnreachable { Task { await list.refresh() } }
         } else {
           ProgressView()
         }
@@ -210,29 +210,11 @@ struct MindMapReader: View {
   @ViewBuilder
   private func waiting(_ lessons: Resource<ChapterLessonMaps>) -> some View {
     if case .failed = lessons.state {
-      unreachable { Task { await lessons.refresh() } }
+      MindMapUnreachable { Task { await lessons.refresh() } }
     } else {
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-  }
-
-  private func unreachable(retry: @escaping () -> Void) -> some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "We couldn't reach the server.", tableName: "MindMaps",
-          comment: "A map that failed to load")
-      } icon: {
-        Image(systemName: "wifi.exclamationmark")
-      }
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "MindMaps", comment: "Retries")
-      }
-      .buttonStyle(.outline)
-    }
-    .lonePage()
   }
 
   @ViewBuilder

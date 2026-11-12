@@ -92,23 +92,9 @@ struct MindMapsScreen: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
-        Label {
-          Text(
-            "We couldn't reach the server.", tableName: "MindMaps",
-            comment: "Shown when mind maps failed to load")
-        } icon: {
-          Image(systemName: "wifi.exclamationmark")
-        }
-      } actions: {
-        Button {
-          Task { await list.refresh() }
-        } label: {
-          Text("Try again", tableName: "MindMaps", comment: "Retries")
-        }
-        .buttonStyle(.outline)
+      MindMapUnreachable {
+        Task { await list.refresh() }
       }
-      .lonePage()
     case .idle, .loading:
       ProgressView()
     }

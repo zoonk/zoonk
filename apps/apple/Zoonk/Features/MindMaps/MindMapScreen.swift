@@ -93,26 +93,40 @@ struct MindMapScreen: View {
         }
       }
     case .failed, .empty:
-      ContentUnavailableView {
-        Label {
-          Text(
-            "We couldn't reach the server.", tableName: "MindMaps",
-            comment: "A map that failed to load")
-        } icon: {
-          Image(systemName: "wifi.exclamationmark")
-        }
-      } actions: {
-        Button {
-          Task { await map.refresh() }
-        } label: {
-          Text("Try again", tableName: "MindMaps", comment: "Retries")
-        }
-        .buttonStyle(.outline)
+      MindMapUnreachable {
+        Task { await map.refresh() }
       }
-      .lonePage()
     case .idle, .loading:
       ProgressView()
     }
+  }
+}
+
+/// A read of maps that didn't reach the server, as main says it, with an outlined Try again so a
+/// screen's own main button stays the only filled one.
+struct MindMapUnreachable: View {
+  let retry: () -> Void
+
+  var body: some View {
+    ContentUnavailableView {
+      Label {
+        Text(
+          "We couldn't reach the server.", tableName: "MindMaps",
+          comment: "A map that failed to load")
+      } icon: {
+        Image(systemName: "wifi.exclamationmark")
+      }
+    } description: {
+      Text(
+        "Check your connection.", tableName: "MindMaps",
+        comment: "Under a map that failed to load: what the learner can check")
+    } actions: {
+      Button(action: retry) {
+        Text("Try again", tableName: "MindMaps", comment: "Retries")
+      }
+      .buttonStyle(.outline)
+    }
+    .lonePage()
   }
 }
 
