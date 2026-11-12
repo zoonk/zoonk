@@ -1,6 +1,6 @@
 # Gizlilik Politikası
 
-- **Yürürlük tarihi:** 1 Kasım 2026
+- **Yürürlük tarihi:** 12 Kasım 2026
 - **Şirket:** Zoonk Tecnologia e Educação Ltda
 - **CNPJ:** 42.262.784/0001-76
 - **Adres:** Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil
@@ -78,8 +78,9 @@ Reklam göstermeyiz; verilerini asla satmayız ve reklam amacıyla paylaşmayız
 
 - Zoonk’un nasıl kullanıldığını anlamak, sorunları gidermek ve Zoonk’u geliştirmek için PostHog (kullanım analizi ve oturum kayıtları) ve Vercel Web Analytics kullanırız. Oturum kaydı, ekranların nasıl görüntülendiğini ve kullanıldığını gösterir. Yazdıkların veya yüklediklerin ekrandaysa bir kayıtta görünebilir. Analiz verilerini yalnızca Zoonk’u işletmek için bunlara ihtiyacı olan kişiler görebilir.
 - **Ne zaman başlar:** AB, AEA, Birleşik Krallık, İsviçre ve Türkiye’de, kullanım verileriyle ilgili bildirimimizde “Kabul et” seçeneğini seçene kadar başlamazlar. Diğer yerlerde sen kapatmadıkça açıktırlar. Giriş sayfalarımız bunları yüklemez.
-- **Kapatma:** Web’de veya uygulamalarımızda Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğini kullan. Kapatmak, tarayıcındaki kullanım analizini ve sunucularımızın hesabınla ilgili kaydettiği olayları durdurur. Cihazlarından herhangi birinde oradan kapatırsan, hesabın için her yerde kapanır.
-- **Sunucularımızdan gelen olaylar:** Sunucularımız da Zoonk’un nasıl kullanıldığını anlamak için bir dersi bitirmen veya nasıl giriş yaptığın gibi bazı olayları kaydeder. Bunlar çerez kullanmaz ve meşru menfaatimize dayanır. “Kullanım verilerini paylaş” seçeneğini kapatmak bunları da durdurur. Uygulamalarımızda analiz araçları yoktur; bu nedenle orada yalnızca bu olaylar geçerlidir.
+- **Uygulamalarımızda:** iOS ve Android uygulamalarımız da PostHog’u aynı kurallarla ve aynı ayarla kullanır. Yukarıdaki ülkelerde, “Kullanım verilerini paylaş” seçeneğini açana kadar başlamazlar. Oturum kaydı yapmaz, çerez kullanmaz ve yalnızca uygulamayı açmak veya bir görüşmeyi bitirmek gibi olayları gönderirler.
+- **Kapatma:** Web’de veya uygulamalarımızda Ayarlar › Tercihler bölümündeki “Kullanım verilerini paylaş” seçeneğini kullan. Kapatmak, tarayıcındaki ve uygulamalarımızdaki kullanım analizini ve sunucularımızın hesabınla ilgili kaydettiği olayları durdurur. Cihazlarından herhangi birinde oradan kapatırsan, hesabın için her yerde kapanır.
+- **Sunucularımızdan gelen olaylar:** Sunucularımız da Zoonk’un nasıl kullanıldığını anlamak için bir dersi bitirmen veya nasıl giriş yaptığın gibi bazı olayları kaydeder. Bunlar çerez kullanmaz ve meşru menfaatimize dayanır. “Kullanım verilerini paylaş” seçeneğini kapatmak bunları da durdurur.
 - **Ülken:** Her ziyarette fiyatları göstermek ve ülkenin kurallarını uygulamak için ülkeni IP adresinden, bu mümkün olmadığında tarayıcının dilinden belirleriz. Bunu hesabına kaydetmeyiz.
 
 Cihazındaki çerezler ve benzeri depolama araçları:
@@ -94,11 +95,11 @@ Tarayıcı ayarlarından çerezleri engelleyebilir veya silebilirsin. Hepsini en
 
 Tarayıcın veya uygulaman şu hizmetlere doğrudan bilgi gönderir:
 
-- **PostHog:** kullanım verileri açıkken gördüğün ekranlar, tıklamalar ve dokunmalar, bir ziyaretçi kimliği, varsa hesap kimliğin ve kullanıcı adın, cihaz, tarayıcı, IP adresi ve oturum kayıtları; kullanımı anlamak ve sorunları gidermek için.
+- **PostHog:** kullanım verileri açıkken varsa hesap kimliğin ve kullanıcı adın, cihaz, tarayıcı veya uygulama sürümü ve IP adresi; kullanımı anlamak ve sorunları gidermek için. Web’de ayrıca gördüğün ekranlar, tıklamalar ve dokunmalar, bir ziyaretçi kimliği ve oturum kayıtları. Uygulamalarımızda, uygulamayı açmak veya bir görüşmeyi bitirmek gibi olaylar.
 - **Vercel Web Analytics:** kullanım verileri açıkken sayfanın adresi, geldiğin sayfa, cihaz ve tarayıcı; ziyaretleri saymak için.
 - **Vercel Blob:** dosya yüklediğinde yüklediğin dosyalar ve IP adresin; bunları saklamak için (bölüm 6).
 - **OpenAI:** canlı sesli sohbetlerde sesin, IP adresin ve tarayıcın veya cihazın; sohbeti yürütmek için (bölüm 5).
-- **Sentry:** hata ayrıntıları, cihaz ve tarayıcı; hataları düzeltmek için.
+- **Sentry:** hata ayrıntıları, çökmeler, bazı işlemlerin ne kadar sürdüğü, cihaz ve tarayıcı veya uygulama sürümü; hataları ve yavaşlıkları düzeltmek için. Hesabını içermez ve “Kullanım verilerini paylaş” seçeneğine bağlı değildir.
 - **jsDelivr:** programlama etkinliklerinde IP adresin ve tarayıcın; programlama araçlarını yüklemek için.
 - **GitHub Pages:** müzik etkinliklerinde IP adresin ve tarayıcın; enstrüman seslerini yüklemek için.
 
