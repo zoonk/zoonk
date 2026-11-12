@@ -14,8 +14,8 @@ import { writePlanInputs } from "../../library/_utils/plan-input-write";
 import {
   applyFixChanges,
   getFixCacheTags,
+  lockFixPlans,
   lockFixRows,
-  lockRetiredItemPlans,
 } from "./_utils/apply-content-fix";
 import { changedSince } from "./_utils/changed-since";
 import { logContentFix } from "./_utils/content-fix-view";
@@ -195,7 +195,7 @@ function applyApproval({
     const changes = contentFixChangesSchema.parse(fix.changes);
     const unit = { id: fix.unitId, kind: fix.unit };
 
-    await lockRetiredItemPlans(tx, changes);
+    await lockFixPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
 
     // Fixes that waited on these locks are ordered by when they applied, not when they were claimed.

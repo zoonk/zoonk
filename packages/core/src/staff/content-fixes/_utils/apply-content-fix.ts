@@ -50,24 +50,30 @@ export async function lockFixRows(
   }
 }
 
-/** Retiring or restoring a question changes what plans can pick, so plans built from its skill are marked first. */
-export async function lockRetiredItemPlans(
+export async function lockFixPlans(
   tx: TransactionClient,
   changes: readonly StoredChange[],
 ): Promise<void> {
-  const ids = changes.filter((change) => change.model === "Item").map((change) => change.id);
+  const ids = idsOf(changes, "Item");
+  const chapterIds = idsOf(changes, "Chapter");
+  const lessonIds = idsOf(changes, "Lesson");
 
-  if (ids.length === 0) {
+  if (ids.length === 0 && chapterIds.length === 0 && lessonIds.length === 0) {
     return;
   }
 
-  const items = await tx.item.findMany({
-    select: { examBlueprintId: true, skillId: true },
-    where: { id: { in: ids } },
-  });
+  const items =
+    ids.length > 0
+      ? await tx.item.findMany({
+          select: { examBlueprintId: true, skillId: true },
+          where: { id: { in: ids } },
+        })
+      : [];
 
   await lockPlanSourceWrite(tx, {
     blueprintIds: [...new Set(items.flatMap((item) => item.examBlueprintId ?? []))],
+    chapterIds,
+    lessonIds,
     skillIds: [...new Set(items.map((item) => item.skillId))],
   });
 }

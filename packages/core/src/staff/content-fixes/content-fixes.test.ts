@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { STAFF_PROPOSE_SCOPE, STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { type Step, prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   answerExplanationFixture,
@@ -308,6 +309,10 @@ describe(proposeContentFix, () => {
 describe(approveContentFix, () => {
   it("applies exactly the stored change once a staff passkey signs this fix's challenge", async () => {
     const { check, lesson } = await publishedLesson();
+    const learner = await userFixture();
+    const goal = await goalFixture({ userId: learner.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await planItemFixture({ lessonId: lesson.id, planId: plan.id });
     await answerExplanationFixture({ stepId: check.id });
     await signInProposer();
     const fix = await proposeFix(fixedQuestion(check));
@@ -317,6 +322,11 @@ describe(approveContentFix, () => {
       cacheNotified: true,
       fix: { id: fix.id, staleReason: null, status: "applied" },
       status: "decided",
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      sourceVersion: plan.sourceVersion,
     });
 
     const [step, explanations, stored, after] = await Promise.all([
@@ -343,6 +353,31 @@ describe(approveContentFix, () => {
       cacheNotified: null,
       fix: { status: "applied" },
       status: "decided",
+    });
+  });
+
+  it("marks dependent plans when an approved fix renames their lesson", async () => {
+    const { lesson } = await publishedLesson();
+    const learner = await userFixture();
+    const goal = await goalFixture({ userId: learner.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await planItemFixture({ lessonId: lesson.id, planId: plan.id });
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [rename(lesson.id, "Fixed lesson title")],
+      reason: "Correct the title.",
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      sourceVersion: plan.sourceVersion + 1,
     });
   });
 
