@@ -37,6 +37,8 @@ async function placedGoal() {
   const skillId = library.skills[0]?.id ?? "";
   const item = await itemFixture({ content: choiceItemContent(), skillId });
   await attemptFixture({ isCorrect: true, itemId: item.id, skillId, userId: user.id });
+  const confirmation = await itemFixture({ content: choiceItemContent(), skillId });
+  await attemptFixture({ isCorrect: true, itemId: confirmation.id, skillId, userId: user.id });
 
   mockSession(user.id);
   await createGoalPlan({ goalId: goal.id, graph: library.graph });

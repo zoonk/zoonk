@@ -105,6 +105,13 @@ export const planTimeAdviceSchema = z
       .describe(
         "Estimated finish date for an undated goal at the requested daily time and study week, including practice and milestones. Null for dated goals, while not ready, or when the schedule cannot hold the whole selected curriculum. This estimate does not set a deadline.",
       ),
+    focusSubjects: z
+      .array(z.object({ name: z.string(), shortName: z.string().nullable() }))
+      .default([])
+      .meta({
+        description:
+          "The subjects saving this time would give more of it, from the learner's Focus test: suggest giving them more attention. Empty unless the time asked about doesn't cover everything by the date and the learner answered a test question",
+      }),
     fullCourseEndDate: isoDateSchema
       .nullable()
       .default(null)

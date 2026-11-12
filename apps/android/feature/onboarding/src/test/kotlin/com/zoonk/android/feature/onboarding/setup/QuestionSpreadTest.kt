@@ -18,8 +18,6 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -67,7 +65,6 @@ class QuestionSpreadTest {
                     AppRoute.GoalSetup(GOAL_ID),
                     store,
                     PlanStore(FakePlanApi(), cache),
-                    MockStore(FakeMockApi(options = null), cache),
                     isGuest = false,
                     rememberAppNavigator(),
                 )

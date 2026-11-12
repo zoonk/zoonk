@@ -58,6 +58,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     case exam
     case examAccess
     case examChoice
+    case focusTest
     case insight
     case planChange
     case practice
@@ -93,6 +94,25 @@ struct TodayView: Decodable, Equatable, Sendable {
       let date: String
     }
 
+    /// An edit the change makes, read only for the subjects a focus gives more time.
+    struct Operation: Decodable, Equatable, Sendable {
+      let kind: String
+      /// For `focusAreas`.
+      let areas: [String]?
+
+      private enum CodingKeys: String, CodingKey {
+        case kind
+        case areas
+      }
+
+      init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        kind = try container.decode(String.self, forKey: .kind)
+        areas =
+          kind == "focusAreas" ? try container.decodeIfPresent([String].self, forKey: .areas) : nil
+      }
+    }
+
     let behind: Behind?
     let canApply: Bool
     let canUndo: Bool
@@ -101,10 +121,13 @@ struct TodayView: Decodable, Equatable, Sendable {
     let id: String
     let kind: String
     let officialDate: OfficialDate?
+    let operations: [Operation]
     let reason: String?
     let source: String
     let status: String
     let todaySession: String?
+
+    var setsFocus: Bool { operations.contains { $0.kind == "focusAreas" } }
   }
 
   struct Pattern: Decodable, Equatable, Sendable {
@@ -148,6 +171,8 @@ struct TodayView: Decodable, Equatable, Sendable {
   let earlierWork: [EarlierWork]
   let exam: ExamMoment?
   let examChoice: ExamChoice?
+  /// The Focus test's first sitting, while Today suggests it.
+  let focusTest: FocusTestSummary.Size?
   let goal: Goal
   /// At most one, until it's answered.
   let insight: MemoryInsight?

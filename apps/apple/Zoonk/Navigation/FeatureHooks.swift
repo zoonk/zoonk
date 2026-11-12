@@ -55,8 +55,8 @@ extension TutorPlaces {
         router.open(.startGoal())
       case .chapterTest(let chapterId):
         router.open(.testOut(chapterId: chapterId))
-      case .chooseFocus:
-        router.select(.plan)
+      case .chooseFocus(let goalId):
+        router.open(.focusTest(goalId: goalId))
       case .call(let conversationId):
         router.open(.conversation(conversationId: conversationId))
       case .mockChooser:

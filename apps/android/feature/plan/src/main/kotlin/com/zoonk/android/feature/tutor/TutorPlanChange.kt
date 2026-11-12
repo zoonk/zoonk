@@ -70,7 +70,7 @@ internal fun TutorPlanChange(
 
             if (proposed) {
                 PlanEffectDiff(change.effect)
-                planChangeFootnote(change.effect)?.let {
+                planChangeFootnote(change)?.let {
                     Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }

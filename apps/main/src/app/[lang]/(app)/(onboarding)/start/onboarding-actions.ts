@@ -2,9 +2,6 @@
 
 import { postAsLearner } from "@/lib/api/learner-api";
 import { toGoalStartFailure } from "@/lib/goals/goal-limit-reason";
-import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
-import { finishMock } from "@zoonk/core/exams/mocks/finish";
-import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
 import { updateGoal } from "@zoonk/core/goals/update";
 import { instrumentWaitlistJoinSchema } from "@zoonk/core/instrument-waitlist/contract";
@@ -15,7 +12,12 @@ import {
   placementCompletionInputSchema,
 } from "@zoonk/core/learner/placement/contract";
 import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
+import {
+  type FocusTestView,
+  placementSittingInputSchema,
+} from "@zoonk/core/learner/placement/focus-test-contract";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
+import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
@@ -26,7 +28,6 @@ import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   type AnswerOutcome,
   type CreateGoalsOutcome,
-  type PlacementMockOutcome,
   type PlacementOutcome,
   type PlanOutcome,
   type WaitlistOutcome,
@@ -123,15 +124,10 @@ type PlacementState = Extract<
 
 const NOT_READY = new Set<PlacementState["status"]>(["preparing", "waitingForQuestions"]);
 
-function toPlacementOutcome({
-  isCorrect,
-  placement,
-}: {
-  isCorrect: boolean | null;
-  placement: PlacementState;
-}): PlacementOutcome {
+/** Whether an answer was right stays on the server: no placement screen shows it. */
+function toPlacementOutcome(placement: PlacementState): PlacementOutcome {
   if (NOT_READY.has(placement.status)) {
-    return { status: "notReady" };
+    return { focusTest: placement.focusTest, status: "notReady" };
   }
 
   if (placement.status === "failed") {
@@ -147,7 +143,7 @@ function toPlacementOutcome({
     complete: placement.complete,
     dayBudgetSpent: placement.dayBudgetSpent,
     dayBudgetUsed: placement.dayBudgetUsed,
-    isCorrect,
+    focusTest: placement.focusTest,
     next: placement.next,
     started: placement.started,
     status: "ready",
@@ -168,9 +164,26 @@ export async function getPlacementAction({
 
   const result = await getGoalPlacement({ goalId, timeZone });
 
-  return result.status === "ready"
-    ? toPlacementOutcome({ isCorrect: null, placement: result.placement })
-    : { status: "failed" };
+  return result.status === "ready" ? toPlacementOutcome(result.placement) : { status: "failed" };
+}
+
+/** Opens an exam goal's next sitting; asked again, it answers with the one already open. */
+export async function startPlacementSittingAction({
+  goalId,
+  ...input
+}: {
+  goalId: string;
+  timeZone: string;
+}): Promise<PlacementOutcome> {
+  const parsed = placementSittingInputSchema.safeParse(input);
+
+  if (!parsed.success || !isUuid(goalId)) {
+    return { status: "failed" };
+  }
+
+  const result = await startPlacementSitting({ goalId, input: parsed.data });
+
+  return result.status === "ready" ? toPlacementOutcome(result.placement) : { status: "failed" };
 }
 
 export async function answerPlacementAction({
@@ -191,11 +204,10 @@ export async function answerPlacementAction({
 
   const result = await answerPlacementQuestion({ goalId, input: parsed.data });
 
-  return result.status === "ready"
-    ? toPlacementOutcome({ isCorrect: result.isCorrect, placement: result.placement })
-    : { status: "failed" };
+  return result.status === "ready" ? toPlacementOutcome(result.placement) : { status: "failed" };
 }
 
+/** Null when it wasn't saved. An exam goal's finish carries its Focus test as it stands after it. */
 export async function finishPlacementAction({
   goalId,
   ...input
@@ -203,16 +215,16 @@ export async function finishPlacementAction({
   fromScratch: boolean;
   goalId: string;
   timeZone: string;
-}): Promise<boolean> {
+}): Promise<{ focusTest: FocusTestView | null } | null> {
   const parsed = placementCompletionInputSchema.safeParse(input);
 
   if (!parsed.success || !isUuid(goalId)) {
-    return false;
+    return null;
   }
 
   const result = await finishGoalPlacement({ goalId, input: parsed.data });
 
-  return result.status === "ready";
+  return result.status === "ready" ? { focusTest: result.completion.focusTest } : null;
 }
 
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
@@ -278,34 +290,4 @@ export async function retryGenerationAction(goalId: string): Promise<string | nu
   });
 
   return generationSchema.safeParse(response.json).data?.generationId ?? null;
-}
-
-export async function getPlacementMockAction(goalId: string): Promise<PlacementMockOutcome> {
-  const result = isUuid(goalId) ? await getMockOptions({ goalId }) : null;
-  const view = result?.status === "ready" ? result.view : null;
-  const placement = view?.placement ?? null;
-  const shortest = placement?.options[0];
-  const longest = placement?.options.at(-1);
-
-  return {
-    mock: placement?.mock ?? null,
-    offer:
-      view && shortest && longest
-        ? {
-            access: view.access,
-            minutes: { longest: longest.estimatedMinutes, shortest: shortest.estimatedMinutes },
-          }
-        : null,
-  };
-}
-
-export async function stopPlacementMockAction(mockId: string, timeZone: string): Promise<boolean> {
-  const input = mockTimeZoneInputSchema.safeParse({ timeZone });
-
-  if (!isUuid(mockId) || !input.success) {
-    return false;
-  }
-
-  const result = await finishMock({ blockId: mockId, input: input.data });
-  return result.status === "finished";
 }

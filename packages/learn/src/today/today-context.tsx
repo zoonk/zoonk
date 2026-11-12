@@ -53,6 +53,7 @@ export type TodayActions = {
     status: PlanChangeDecisionInput["status"];
     surface?: PlanChangeDecisionInput["surface"];
   }) => Promise<PlanChangeView | "stale" | null>;
+  dismissFocusTest: () => Promise<boolean>;
   /** The standalone player for a lesson finished today, never its block in the session. */
   lessonHref: (block: DayStep) => string | null;
   lessonAgainHref: (lessonId: string) => string;
@@ -62,6 +63,8 @@ export type TodayActions = {
   prepareLessons: () => Promise<boolean>;
   mistakesHref: string;
   refresh: () => unknown;
+  /** Starts the Focus test and opens its first question; false when it didn't start. */
+  startFocusTest: () => Promise<boolean>;
   startTestOut: (chapterId: string) => Promise<TestOutStart>;
   examHref: string;
   plusHref: string;

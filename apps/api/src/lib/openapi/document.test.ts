@@ -250,10 +250,7 @@ describe("OpenAPI document", () => {
       items: { properties: { questions: { items: object } } };
     };
 
-    const focusTest = schemas.FocusTest?.properties?.questions as { items: object };
-
     expect(practice.items.properties.questions.items).not.toHaveProperty("allOf");
-    expect(focusTest.items).not.toHaveProperty("allOf");
   });
 
   it("never intersects closed objects in a lesson's screens, which strict clients can't decode", () => {

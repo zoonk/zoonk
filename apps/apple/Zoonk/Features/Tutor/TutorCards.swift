@@ -17,6 +17,12 @@ struct TutorPlanChangeCard: View {
           Text(reason)
         }
 
+        if let focusEffect {
+          Text(focusEffect)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+
         if let status = statusLine {
           status
             .typeStyle(.note)
@@ -122,6 +128,20 @@ struct TutorPlanChangeCard: View {
     case .proposed:
       nil
     }
+  }
+
+  /// Only a focus says its effect here, leading with what each subject gains, as on Today.
+  private var focusEffect: String? {
+    guard change.status == .proposed,
+      let operations = try? PracticeJSON.recode(
+        change.operations, as: [TodayView.PlanChange.Operation].self),
+      operations.contains(where: { $0.kind == "focusAreas" })
+    else {
+      return nil
+    }
+
+    let effect = change.effect.flatMap { try? PracticeJSON.recode($0, as: PlanEffect.self) }
+    return planProposalEffectText(effect, setsFocus: true, today: PlanDate.isoDate(.now))
   }
 
   private var isForOneWeek: Bool {

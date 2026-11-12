@@ -11,5 +11,4 @@ fun EntryProviderScope<NavKey>.mockChooserEntries(
     navigator: AppNavigator,
 ) {
     entry<AppRoute.MockChooser> { MockChooserScreen(app, navigator) }
-    entry<AppRoute.PlacementMock> { PlacementMockScreen(it, app, navigator) }
 }

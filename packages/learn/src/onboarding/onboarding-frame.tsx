@@ -6,6 +6,7 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
 import { PageEyebrow } from "../_components/page";
+import { PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { toLabelCase } from "../_utils/label-case";
 import { OnboardingBarRow } from "./onboarding-bar";
 import {
@@ -234,10 +235,12 @@ export function OnboardingHeading({
   return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
 }
 
-/**
- * `pinned` keeps it on a phone's screen while the answers scroll under it, for a step whose answer
- * doesn't move on by itself, so Continue and its notice are always in sight.
- */
+/** The bottom padding reaches into the page's own, so a short screen's buttons stay where they were. */
+const PINNED_FOOTER_CLASS = cn(
+  PINNED_ACTIONS_CLASS,
+  "bottom-0 -mb-[max(1rem,env(safe-area-inset-bottom))] pb-[max(1rem,env(safe-area-inset-bottom))]",
+);
+
 export function OnboardingFooter({
   children,
   className,
@@ -251,8 +254,7 @@ export function OnboardingFooter({
       className={cn(
         "mt-auto flex flex-col gap-2 pt-4 sm:mt-0",
         standalone && "pb-[max(0.5rem,env(safe-area-inset-bottom))]",
-        pinned &&
-          "max-sm:bg-background max-sm:border-border max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-4 max-sm:border-t max-sm:px-4 max-sm:pt-3 max-sm:pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        pinned && PINNED_FOOTER_CLASS,
         className,
       )}
       {...props}

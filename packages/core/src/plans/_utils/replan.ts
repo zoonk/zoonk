@@ -153,7 +153,6 @@ export async function computePlan({
       loadPlannerInputs({
         difficultyBias: state.settings.difficultyBias,
         examPicks: state.settings,
-        focus: state.settings,
         goal: context.goal,
         graph: resolved,
         targetDate,

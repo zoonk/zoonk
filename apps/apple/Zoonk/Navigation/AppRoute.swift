@@ -30,12 +30,12 @@ enum AppRoute: Hashable, Identifiable {
   case pattern(patternId: String)
   /// `resultId` opens a test-out already sent, as it was recorded.
   case testOut(chapterId: String, resultId: String? = nil)
-  case focusTest(goalId: String)
+  /// `startsTest` opens on the first question, for a learner who already chose to start.
+  case focusTest(goalId: String, startsTest: Bool = false)
   case challenge(planItemId: String, sessionId: String? = nil)
   case checkpoint(blockId: String, sessionId: String? = nil)
   case essay(blockId: String)
   case mock(blockId: String, sessionId: String? = nil)
-  case placementMock(goalId: String)
   /// A chapter's map full screen, on the goal that opened it.
   case mindMap(goalId: String, chapterId: String)
   /// The Mind maps page's reader: a goal's tab of maps one per screen, from `start` or this device's

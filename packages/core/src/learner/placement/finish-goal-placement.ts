@@ -2,32 +2,18 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
-import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
-import { applyPlacement } from "./_utils/apply-placement";
+import { type PlacementCompletion, completePlacement } from "./_utils/complete-placement";
 import { type PlacementCompletionInput } from "./placement-contract";
-import {
-  type AreaStart,
-  type PhaseStart,
-  getScratchAreaStarts,
-  getScratchPhaseStarts,
-} from "./placement-steps";
-
-type PlacementCompletion = {
-  areas: AreaStart[];
-  /** False when the plan has no skills. */
-  complete: boolean;
-  knownSkillIds: string[];
-  phases: PhaseStart[];
-  testedOutPlanItemIds: string[];
-};
+import { getScratchAreaStarts, getScratchPhaseStarts } from "./placement-steps";
 
 export type FinishPlacementResult =
   | { completion: PlacementCompletion; status: "ready" }
   | { status: "notFound" }
-  | { status: "unauthorized" };
+  | { status: "unauthorized" }
+  | { status: "unavailable" };
 
 async function declinePlacement(goal: Goal) {
   await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
@@ -45,7 +31,11 @@ async function declinePlacement(goal: Goal) {
   });
 }
 
-/** May stop before placement settles; starting from scratch also disables first-week placement questions. */
+/**
+ * May stop before placement settles; starting from scratch also disables first-week placement
+ * questions. `unavailable`: an exam goal's Focus test has no "from scratch", only "Skip for now",
+ * which is a finish with nothing answered.
+ */
 export async function finishGoalPlacement({
   goalId,
   input,
@@ -59,6 +49,10 @@ export async function finishGoalPlacement({
     return owned;
   }
 
+  if (input.fromScratch && owned.goal.kind === "exam") {
+    return { status: "unavailable" };
+  }
+
   const plan = await loadPlacementPlan(goalId);
 
   if (input.fromScratch) {
@@ -69,6 +63,7 @@ export async function finishGoalPlacement({
       completion: {
         areas: getScratchAreaStarts(plan.skills),
         complete: plan.skills.length > 0,
+        focusTest: null,
         knownSkillIds: [],
         phases: getScratchPhaseStarts(plan.skills),
         testedOutPlanItemIds: [],
@@ -77,31 +72,11 @@ export async function finishGoalPlacement({
     };
   }
 
-  const now = new Date();
-  const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
-
-  const { changeId, pastBasicsAreas, state, testedOutPlanItemIds } = await applyPlacement({
-    goalId,
-    now,
+  const { completion } = await completePlacement({
+    goal: owned.goal,
     plan,
-    timeZone,
-    userId: owned.userId,
+    timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone }),
   });
 
-  if (!changeId) {
-    await replanAfterPlacement({ goalId, now, pastBasicsAreas, timeZone });
-  }
-
-  await owePlanStartLessons({ goalId, userId: owned.userId });
-
-  return {
-    completion: {
-      areas: state.areas,
-      complete: state.complete,
-      knownSkillIds: state.knownSkillIds,
-      phases: state.phases,
-      testedOutPlanItemIds,
-    },
-    status: "ready",
-  };
+  return { completion, status: "ready" };
 }

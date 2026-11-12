@@ -68,6 +68,8 @@ struct ScheduleQuestion: View {
     let lastFound: TimeToCover?
     let minutes: Int?
     let advice: TimeAdvice?
+    /// The subjects the last time asked about would focus, kept while a new time is asked about.
+    let focusSubjects: [String]
     let adviceKey: AdviceKey
     let asksAdvice: Bool
     let line: ScheduleTime.Line
@@ -154,7 +156,7 @@ struct ScheduleQuestion: View {
   }
 
   private func question(_ shown: Shown) -> some View {
-    QuestionForm(isSaving: isSaving, failed: failed, failure: refusalWords) {
+    QuestionForm {
       // The date and its days left inform the time to pick.
       StepHeader(
         title: Text(
@@ -179,6 +181,7 @@ struct ScheduleQuestion: View {
 
           VStack(alignment: .leading, spacing: 0) {
             timeAnswer(shown)
+            focusLine(shown)
             dateLink(shown)
           }
         }
@@ -200,7 +203,7 @@ struct ScheduleQuestion: View {
         }
         .locksWhileSaving()
       }
-
+    } buttons: {
       StepButtons(
         canContinue: ScheduleTime.canContinue(
           hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked),
@@ -214,6 +217,7 @@ struct ScheduleQuestion: View {
         \.isSavingAnswer,
         isSaving || ScheduleTime.waitsToSave(line: shown.line, picked: picked))
     }
+    .sendsAnswer(isSaving: isSaving, failed: failed, failure: refusalWords)
   }
 
   private func gate(_ shown: Shown) -> Gate {
@@ -286,6 +290,7 @@ struct ScheduleQuestion: View {
 
     return Shown(
       dated: dated, found: current, lastFound: lastFound, minutes: minutes, advice: advice,
+      focusSubjects: (advised.last(for: adviceKey)?.focusSubjects ?? []).map(\.shown),
       adviceKey: adviceKey,
       asksAdvice: !days.isEmpty
         && ScheduleTime.asksAboutTime(
@@ -467,6 +472,22 @@ struct ScheduleQuestion: View {
       picked = ScheduleTime.pickedMinutes(
         startsOnRecommended: view.startsOnRecommended, first: found.first, found: shown.found,
         minutes: minutes)
+    }
+  }
+
+  /// Where a time that doesn't cover everything should go, for a learner whose Focus test has
+  /// answers.
+  @ViewBuilder
+  private func focusLine(_ shown: Shown) -> some View {
+    if !shown.focusSubjects.isEmpty {
+      Text(
+        "With this time, we suggest giving \(shown.focusSubjects.formatted(.list(type: .and))) more attention.",
+        tableName: "Onboarding",
+        comment: "Under the daily time: up to three subjects the plan would give more time"
+      )
+      .foregroundStyle(.mutedForeground)
+      .opacity(shown.updating ? 0.5 : 1)
+      .padding(.top, 8)
     }
   }
 

@@ -1,11 +1,6 @@
 import { type OnboardingView } from "@zoonk/core/view-models/onboarding/contract";
 import { type ExamTarget } from "../steps/question-steps";
 
-export function getSubject(view: OnboardingView): string {
-  const subject = view.goal.details.subject;
-  return typeof subject === "string" && subject.trim() ? subject : view.goal.displayName;
-}
-
 export function getNativeLanguage(view: OnboardingView): string {
   const native = view.goal.details.nativeLanguage;
   return typeof native === "string" && native.trim() ? native : view.goal.language;

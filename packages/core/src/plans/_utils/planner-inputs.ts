@@ -7,8 +7,7 @@ import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
-import { listFocusedSkillIds } from "../planner/focus-targets";
-import { type DifficultyBias, type PlanGraph, type PlanSettings } from "../planner/plan-state";
+import { type DifficultyBias, type PlanGraph } from "../planner/plan-state";
 import { type SkillReadiness } from "../planner/skill-order";
 import { getLevelFloor } from "./level-bands";
 import { loadExamFacts } from "./planner-exam-facts";
@@ -86,7 +85,6 @@ async function loadReadiness({
 export async function loadPlannerInputs({
   difficultyBias,
   examPicks,
-  focus = { focusAreas: [], focusParts: [] },
   goal,
   graph,
   targetDate,
@@ -94,7 +92,6 @@ export async function loadPlannerInputs({
 }: {
   difficultyBias: DifficultyBias;
   examPicks?: ExamPicks;
-  focus?: Pick<PlanSettings, "focusAreas" | "focusParts">;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
   targetDate: Date | null;
@@ -103,19 +100,12 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
-  const focused = listFocusedSkillIds({ graph, settings: focus });
-
   const [lessons, prerequisites, readiness, exam, evidence, bands] = await Promise.all([
     loadGoalPlannerLessons({ goal, graph, userId }),
     loadSkillPrerequisites(skillIds),
     loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
     loadExamFacts({ goal, graph, picks: examPicks }),
-    loadSkillEvidence({
-      focused: (skillId) => focused.has(skillId),
-      goalId: goal.id,
-      skillIds,
-      userId,
-    }),
+    loadSkillEvidence({ goalId: goal.id, skillIds, userId }),
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
   ]);
 

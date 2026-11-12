@@ -33,8 +33,8 @@ class MockChooserViewModelTest {
     private val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
     private val api = FakeMockStartApi()
     private val runs = ReadyRuns()
-    private val full = MockChoice.Practice(MockShape(area = null, day = 1, kind = MockShape.Kind.FULL))
-    private val math = MockChoice.Practice(MockShape(area = "Mathematics", day = null, kind = MockShape.Kind.AREA))
+    private val full = MockShape(area = null, day = 1, kind = MockShape.Kind.FULL)
+    private val math = MockShape(area = "Mathematics", day = null, kind = MockShape.Kind.AREA)
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)

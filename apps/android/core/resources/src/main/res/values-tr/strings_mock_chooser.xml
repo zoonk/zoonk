@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "mock_chooser_about": "6ead66916b5b7b79caba03cff89f9936061c6169012eb59767f433e276d16c23",
-  "mock_chooser_about_recommended": "4b6a05b89db75267a8f11b2b76d89bc2e114671db39d2ff71703b235ef14ed33",
   "mock_chooser_failed": "37ea8e8a19d6b844737bfae1699597b50cdc083f696a495e6efa59ab34b1b860",
   "mock_chooser_full_day_number_without": "134bbf9d254449ab8ed4dec0d4573495c6705f1c42849edca16d352873d0240b",
   "mock_chooser_full_day_without": "0162d917df0a7b080068218a94548e0d6450778adc7b48875cd13f90b7831d45",
@@ -24,18 +23,6 @@
   "mock_chooser_parts": "0d63399a6dfe81c0d31ad6ce383fa758383872c0ebb2cd67906ec330b59fe4d5",
   "mock_chooser_pick_free": "6b9c1b7d751705208821843801b75a8cad1922b48c85676abf8d8fcd57bda5e9",
   "mock_chooser_picked": "79607e86e90f84e607f5d4ef9b1103de9dfdae19eb03dc1a116e26867c95f54f",
-  "mock_chooser_placement_detail": "4f246b4b38e42484fccbb53500fbaf8f524fd1f9905c46439d7293e190422574",
-  "mock_chooser_placement_long": "1c35da55327cfd961c671ed2e7db6cb289be7f3b5e17b70664ee9fb88ac56165",
-  "mock_chooser_placement_medium": "4e8f446ebdb6dc21e69ea661199c3c88425161bb89eba3e7426443f3a99d81e1",
-  "mock_chooser_placement_note": "c246b1c3e8df284c8bb9b2ddcdcfebe988549f6433df6913d85bcea1b50c507f",
-  "mock_chooser_placement_plus": "689970ce00b5bf47578fbd47d541709da946fae8c803d2bb42b2bf7fe32975d6",
-  "mock_chooser_placement_short": "b6e02f554f17aecf643447b7d4c493479baec7f56189fa9f663032cb8dac8749",
-  "mock_chooser_placement_size": "8aec127d69d96d63c9324595a0e7d4a58fb452b11b9fd936d781cbb773945752",
-  "mock_chooser_placement_size_spoken": "8d0927894751b0c8f2aaebfde349a37d72da3c3d93d277f39b7890fa8665bc9f",
-  "mock_chooser_placement_start": "c97eeaaafe5326446049ac6cfdc661f6cd4589d4b1907e298a1e1dda2aaa0d53",
-  "mock_chooser_placement_title": "a84a358c3e4d965775d42cb88569f9be74eb1cde75dc9727e3e97fc19f31a9c8",
-  "mock_chooser_placement_top_subject": "ace7f0b176abb426926960b4e4784f0c86834ee5e81f1a108dc60dc1285ebfde",
-  "mock_chooser_placement_top_subjects": "22730b2258f96006c448cb1805729c6caf58baa26fccb7ec3ac99e20e2feece3",
   "mock_chooser_plus": "58b9107d868f72b15ae6a3e6bf1b6b6421f6e76f512b9bba97e87db88a9813c8",
   "mock_chooser_preparing": "b5c3e09bb2aa2e82aaf1a789b058e887e1c7a5076604db98e2d0ccff34fa3dd4",
   "mock_chooser_preparing_detail": "a97e16099c20a0ac810f5bd7cc52159c009663dde2e3c355144f4417428b43b3",
@@ -101,12 +88,6 @@
         <item quantity="one">%1$d soru, yaklaşık %2$s</item>
         <item quantity="other">%1$d soru, yaklaşık %2$s</item>
     </plurals>
-    <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d soru</string>
-    <plurals name="mock_chooser_placement_size_spoken">
-        <item quantity="one">%d soru</item>
-        <item quantity="other">%d soru</item>
-    </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
         <item quantity="one">Şimdilik %1$d soru hazır; gerçek sınavda ise %2$s soru var. Bu yüzden bu deneme sınavı yaklaşık %3$s sürer.</item>
@@ -129,28 +110,12 @@
     <string name="mock_chooser_usually_takes">Genelde gereken süre</string>
     <!-- %1$s is a duration, such as "1 hr 20 min". -->
     <string name="mock_chooser_about">Yaklaşık %1$s</string>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="mock_chooser_about_recommended">Yaklaşık %1$s (önerilen)</string>
     <string name="mock_chooser_subjects">Branşlar</string>
     <!-- The exam's sections a mock sits, such as Listening and Reading. -->
     <string name="mock_chooser_parts">Oturumlar</string>
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">Yazılı kısım</string>
     <string name="mock_chooser_last_mock">Son deneme sınavın</string>
-    <string name="mock_chooser_placement_title">Seviyeni belirlemek için bir deneme sınavı</string>
-    <string name="mock_chooser_placement_detail">Sınav formatında. Planının başlangıcını cevapların belirler.</string>
-    <string name="mock_chooser_placement_start">Deneme sınavına başla</string>
-    <string name="mock_chooser_placement_note">İstediğin zaman durabilirsin: planın cevapladığın sorulara göre şekillenir. Sonucun en sonda görünür.</string>
-    <string name="mock_chooser_placement_plus">Deneme sınavları Plus’a dahildir. Plus olmadan başlangıç seviyeni kısa sorularla belirleriz.</string>
-    <string name="mock_chooser_placement_top_subject">Puan ağırlığı en yüksek branş. İlk günlerde diğer branşlardan da sorular gelir.</string>
-    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
-    <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">Puan ağırlığı en yüksek %d branş. İlk günlerde diğer branşlardan da sorular gelir.</item>
-        <item quantity="other">Puan ağırlığı en yüksek %d branş. İlk günlerde diğer branşlardan da sorular gelir.</item>
-    </plurals>
-    <string name="mock_chooser_placement_short">Hızlı bir kontrol. İlk günlerde seviyeni daha net belirleriz.</string>
-    <string name="mock_chooser_placement_medium">Tüm branşlar. İyi bir başlangıç noktası.</string>
-    <string name="mock_chooser_placement_long">En doğru başlangıç noktası.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_past_edition">%1$s için branş başına soru sayıları %2$s sayımına dayanıyor.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->

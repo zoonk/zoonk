@@ -24,7 +24,6 @@ import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
-import com.zoonk.api.models.MockTimeZoneInput
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
@@ -33,7 +32,9 @@ import com.zoonk.api.models.OnboardingResume
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
+import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.PlacementCompletionInput
+import com.zoonk.api.models.PlacementSittingInput
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -214,16 +215,17 @@ interface OnboardingApi {
         input: PlacementAnswerInput,
     ): PlacementAnswerResult
 
+    /** Opens an exam goal's next Focus test sitting; asked again, it answers with the one already open. */
+    suspend fun startPlacementSitting(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Placement
+
     suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-    )
-
-    suspend fun finishMock(
-        session: AuthenticatedSession,
-        mockId: String,
-    )
+    ): PlacementCompletion
 
     /** Reading it never starts writing the language pair's questions. */
     suspend fun levelTest(
@@ -490,24 +492,22 @@ class LiveOnboardingApi(
         input: PlacementAnswerInput,
     ) = perform { api.streamingClients(session).learner.createPlacementAnswer(UUID.fromString(goalId), input) }
 
+    override suspend fun startPlacementSitting(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform {
+        api.clients(session).learner.createPlacementSitting(UUID.fromString(goalId), PlacementSittingInput(TimeZone.getDefault().id))
+    }
+
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-    ) {
-        perform {
-            api.clients(session).learner.completeGoalPlacement(
-                UUID.fromString(goalId),
-                PlacementCompletionInput(fromScratch = fromScratch, timeZone = TimeZone.getDefault().id),
-            )
-        }
-    }
-
-    override suspend fun finishMock(
-        session: AuthenticatedSession,
-        mockId: String,
-    ) {
-        perform { api.clients(session).exams.finishMock(UUID.fromString(mockId), MockTimeZoneInput(TimeZone.getDefault().id)) }
+    ) = perform {
+        api.clients(session).learner.completeGoalPlacement(
+            UUID.fromString(goalId),
+            PlacementCompletionInput(fromScratch = fromScratch, timeZone = TimeZone.getDefault().id),
+        )
     }
 
     override suspend fun levelTest(

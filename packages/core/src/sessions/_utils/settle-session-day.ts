@@ -1,17 +1,15 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { after } from "next/server";
-import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getSessionMemoryFollowUps } from "../../memory/memory-follow-ups";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
-import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
 import { measureSessionState } from "./capture-snapshot";
+import { oweSessionPlanSettlement } from "./owe-session-plan-settlement";
 import { refitSessionLessons } from "./refit-session-lessons";
 import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
@@ -137,13 +135,14 @@ async function completeIfFinished({
       // Memory reads once at the first stop or end; later work belongs to the next session's reading.
       const firstEnd = !current.endedAt && !current.stoppedAt;
 
-      await oweFollowUps({
-        db: tx,
+      await oweSessionPlanSettlement(tx, {
         followUps: [
           { input: { sessionId: session.id }, kind: "prepareSession" },
           ...(firstEnd ? memoryFollowUps : []),
         ],
-        userId,
+        goal: session.goal,
+        session: current,
+        timeZone,
       });
 
       return { session: current, status: "completed" as const };
@@ -172,11 +171,7 @@ async function completeIfFinished({
   }
 
   if (session.goalId) {
-    const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
-
-    if (refreshed && !completed.session.endedAt && !completed.session.stoppedAt) {
-      after(() => rebalancePlanAfterSession({ goalId: session.goalId, userId }));
-    }
+    await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
   }
 
   return true;

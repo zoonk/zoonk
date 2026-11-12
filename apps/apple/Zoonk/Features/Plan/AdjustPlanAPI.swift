@@ -131,6 +131,14 @@ struct PlanEffect: Decodable, Equatable, Sendable {
     let before: Value
   }
 
+  struct AreaEnd: Decodable, Equatable, Sendable {
+    let after: String
+    let area: String
+    let before: String
+    /// Negative when it has fewer to go; absent when its end moves by rounding only.
+    let lessonsGained: Int?
+  }
+
   struct Topics: Decodable, Equatable, Sendable {
     let area: String
     let topics: [String]
@@ -148,7 +156,7 @@ struct PlanEffect: Decodable, Equatable, Sendable {
     let kind: String
   }
 
-  let areaEnds: [AreaMove<String>]?
+  let areaEnds: [AreaEnd]?
   let areaLessons: [AreaMove<Int>]?
   let endDateAfter: String?
   let endDateBefore: String?

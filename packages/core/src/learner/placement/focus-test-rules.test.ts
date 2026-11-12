@@ -1,0 +1,209 @@
+import { assert, double, property } from "fast-check";
+import { describe, expect, it } from "vitest";
+import {
+  type FocusCandidate,
+  getPaceMs,
+  getSessionQuestions,
+  getSittingMinutes,
+  getSittingQuestions,
+  hasUnknownStreak,
+  rankFocus,
+} from "./focus-test-rules";
+
+const MINUTE = 60_000;
+
+function firstSitting(quickSubjects: number, paceMs = MINUTE) {
+  const questions = getSittingQuestions({ kind: "first", paceMs, quickSubjects });
+  return { minutes: getSittingMinutes({ paceMs, questions }), questions };
+}
+
+describe("a sitting's promised count", () => {
+  it("fits a first sitting into about fifteen minutes at the starting pace", () => {
+    expect(firstSitting(24)).toStrictEqual({ minutes: 15, questions: 15 });
+    expect(firstSitting(40)).toStrictEqual({ minutes: 15, questions: 15 });
+  });
+
+  it("asks at most four questions a subject when the exam has few", () => {
+    expect(firstSitting(3)).toStrictEqual({ minutes: 12, questions: 12 });
+    expect(firstSitting(2)).toStrictEqual({ minutes: 8, questions: 8 });
+    expect(firstSitting(1)).toStrictEqual({ minutes: 4, questions: 4 });
+  });
+
+  it("sizes a first sitting to the exam once the pace leaves room", () => {
+    const fast = 20_000;
+
+    expect(firstSitting(12, fast).questions).toBe(20);
+    expect(firstSitting(24, fast).questions).toBe(24);
+    expect(firstSitting(40, fast).questions).toBe(30);
+  });
+
+  it("offers a further sitting of up to ten questions, timed from the same count", () => {
+    const questions = getSittingQuestions({
+      kind: "continuation",
+      paceMs: MINUTE,
+      quickSubjects: 24,
+    });
+
+    expect(questions).toBe(10);
+    expect(getSittingMinutes({ paceMs: MINUTE, questions })).toBe(10);
+    expect(getSittingMinutes({ paceMs: 45_000, questions })).toBe(8);
+  });
+
+  it("shortens a further sitting for a learner who takes longer", () => {
+    expect(
+      getSittingQuestions({ kind: "continuation", paceMs: 2 * MINUTE, quickSubjects: 24 }),
+    ).toBe(7);
+  });
+
+  it("never promises a minute for no questions, and at least one for any", () => {
+    expect(getSittingMinutes({ paceMs: MINUTE, questions: 0 })).toBe(0);
+    expect(getSittingMinutes({ paceMs: 8000, questions: 2 })).toBe(1);
+  });
+});
+
+describe("the learner's pace", () => {
+  it("starts at a minute a question until five answers say otherwise", () => {
+    expect(getPaceMs({ answers: 0, durationMs: 0 })).toBe(MINUTE);
+    expect(getPaceMs({ answers: 4, durationMs: 32_000 })).toBe(MINUTE);
+  });
+
+  it("is the mean of their answers, quick taps included", () => {
+    expect(getPaceMs({ answers: 5, durationMs: 226_000 })).toBe(45_200);
+  });
+
+  it("keeps a twenty-second floor for fast chosen answers", () => {
+    const paceMs = getPaceMs({ answers: 5, durationMs: 750 });
+
+    expect(paceMs).toBe(20_000);
+    expect(getSittingMinutes({ paceMs, questions: 10 })).toBe(3);
+    expect(getPaceMs({ answers: 5, durationMs: 100_000 })).toBe(20_000);
+  });
+});
+
+describe('the hint after "I don\'t know yet" answers', () => {
+  it("shows after five in a row and goes once the learner answers", () => {
+    const unknown = Array.from({ length: 5 }, () => "dontKnow" as const);
+
+    expect(hasUnknownStreak(unknown.slice(1))).toBe(false);
+    expect(hasUnknownStreak(["correct", ...unknown])).toBe(true);
+    expect(hasUnknownStreak([...unknown, "wrong"])).toBe(false);
+  });
+});
+
+function candidate(overrides: Partial<FocusCandidate> & { key: string }): FocusCandidate {
+  return { belief: 0.5, share: 0.1, ...overrides };
+}
+
+function subjects(count: number): FocusCandidate[] {
+  return Array.from({ length: count }, (_, index) => candidate({ key: `subject-${index}` }));
+}
+
+describe("the suggested focus", () => {
+  it("keeps a system incumbent until a challenger needs over ten percent more", () => {
+    const incumbent = candidate({ key: "current", share: 0.2 });
+    const challenger = (share: number) => candidate({ key: "new", share });
+
+    expect(rankFocus([challenger(0.218), incumbent], { incumbent: ["current"] })[0]?.key).toBe(
+      "current",
+    );
+
+    expect(rankFocus([challenger(0.22), incumbent], { incumbent: ["current"] })[0]?.key).toBe(
+      "current",
+    );
+
+    expect(rankFocus([challenger(0.23), incumbent], { incumbent: ["current"] })[0]?.key).toBe(
+      "new",
+    );
+
+    expect(rankFocus([challenger(0.218), incumbent])[0]?.key).toBe("new");
+  });
+
+  it("never replaces a positive-need incumbent for a gain smaller than the margin", () => {
+    assert(
+      property(
+        double({ max: 0.4, min: 0.01, noNaN: true }),
+        double({ max: 0.099, min: 0, noNaN: true }),
+        (share, gain) => {
+          const ranked = rankFocus(
+            [
+              candidate({ key: "new", share: share * (1 + gain) }),
+              candidate({ key: "current", share }),
+            ],
+            { incumbent: ["current"] },
+          );
+
+          expect(ranked[0]?.key).toBe("current");
+        },
+      ),
+    );
+  });
+
+  it("ranks by the exam's share times what the answers leave unknown", () => {
+    const ranked = rankFocus([
+      candidate({ belief: 0.9, key: "right" }),
+      candidate({ key: "notAsked" }),
+      candidate({ belief: 0.1, key: "missed" }),
+      candidate({ key: "written" }),
+      candidate({ key: "light", share: 0.01 }),
+      candidate({ key: "heavy", share: 0.3 }),
+    ]);
+
+    expect(ranked).toStrictEqual([{ key: "heavy" }, { key: "missed" }]);
+  });
+
+  it("keeps a subject answered right eligible when it still weighs most", () => {
+    const ranked = rankFocus([
+      candidate({ belief: 0.8, key: "heavy", share: 0.6 }),
+      candidate({ key: "light", share: 0.05 }),
+    ]);
+
+    expect(ranked).toStrictEqual([{ key: "heavy" }]);
+  });
+
+  it("suggests one subject in three, three at most, and none for a single subject", () => {
+    expect(rankFocus(subjects(1))).toHaveLength(0);
+    expect(rankFocus(subjects(2))).toHaveLength(1);
+    expect(rankFocus(subjects(5))).toHaveLength(1);
+    expect(rankFocus(subjects(6))).toHaveLength(2);
+    expect(rankFocus(subjects(24))).toHaveLength(3);
+  });
+
+  it("leaves out a subject the learner fully knows", () => {
+    expect(
+      rankFocus([candidate({ belief: 1, key: "known" }), candidate({ key: "other" })]),
+    ).toStrictEqual([{ key: "other" }]);
+  });
+});
+
+describe("the test's questions inside sessions", () => {
+  const started = {
+    complete: false,
+    goalDay: 2,
+    paused: false,
+    skippedToday: false,
+    started: true,
+    unaskedSubjects: true,
+  };
+
+  it("stay off until the learner starts the test", () => {
+    expect(getSessionQuestions({ ...started, started: false })).toBe("off");
+  });
+
+  it("are asked through the first week", () => {
+    expect(getSessionQuestions({ ...started, unaskedSubjects: false })).toBe("on");
+  });
+
+  it("go on past the first week while a subject has no answer, then stop", () => {
+    expect(getSessionQuestions({ ...started, goalDay: 20 })).toBe("on");
+    expect(getSessionQuestions({ ...started, goalDay: 20, unaskedSubjects: false })).toBe("off");
+  });
+
+  it("stop once nothing useful is left to ask", () => {
+    expect(getSessionQuestions({ ...started, complete: true })).toBe("off");
+  });
+
+  it("follow the learner's pause and their not today", () => {
+    expect(getSessionQuestions({ ...started, skippedToday: true })).toBe("skippedToday");
+    expect(getSessionQuestions({ ...started, paused: true, skippedToday: true })).toBe("paused");
+  });
+});

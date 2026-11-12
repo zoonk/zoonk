@@ -15,7 +15,11 @@ import { lookUpChoiceOptionsStep } from "./steps/choice-options-step";
 import { lookUpCourseWeightsStep } from "./steps/course-weights-step";
 import { findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
 import { hasPrivateUploadsStep } from "./steps/inspect-uploads-step";
-import { linkGoalToBlueprintStep, unlinkGoalFromSharedExamStep } from "./steps/link-goal-step";
+import {
+  linkGoalToBlueprintStep,
+  refreshFollowerSummariesStep,
+  unlinkGoalFromSharedExamStep,
+} from "./steps/link-goal-step";
 import { type ResearchGoal, loadResearchGoalStep } from "./steps/load-research-goal-step";
 import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
 import { planExamResearchStep, planSourceResearchStep } from "./steps/plan-research-step";
@@ -56,6 +60,8 @@ async function finishExam({
       ]),
       scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]),
     ]);
+
+    await refreshFollowerSummariesStep(examBlueprintId);
   }
 
   return { examBlueprintId, sourceIds: [], status: "ready" };

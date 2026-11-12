@@ -119,7 +119,11 @@ async function proposeForGoal({
 
     const { leftOut } = data;
 
-    if (result.status === "invalid" || result.status === "unchanged") {
+    if (result.status === "unchanged") {
+      return { leftOut, status: result.status };
+    }
+
+    if (result.status === "invalid") {
       return { ...result, leftOut };
     }
 

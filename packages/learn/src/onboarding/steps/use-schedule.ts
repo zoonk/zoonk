@@ -217,6 +217,8 @@ export function useSchedule({
       weekendOn: week.weekendOn,
       weekendPicked: week.weekendPicked,
     } satisfies ScheduleDraft,
+    // The last answer's, so the line stays while a new time is asked about.
+    focusAdvice: lastAnswers.advice,
     found,
     fullCourse,
     // When the plan's answer says the goal has no date, the advice asks next: that answer said the plan is ready.

@@ -79,6 +79,30 @@ const pointsTallyShape = {
     }),
 };
 
+const GRADED_BEFORE = "Absent from mocks graded before it was recorded";
+
+export const areaPointsShape = {
+  part: z
+    .string()
+    .nullable()
+    .optional()
+    .meta({
+      description: `The test its questions count toward, as \`points.parts\` names it; null when they count toward several or the notice names none. ${GRADED_BEFORE}`,
+    }),
+  points: z
+    .object({
+      asked: z.number().meta({ description: "What its questions were worth, in points" }),
+      earned: z
+        .number()
+        .meta({
+          description:
+            "Points earned, a wrong answer losing its penalty, so it can be negative; equals `correct` where a wrong answer costs nothing and every question is worth 1",
+        }),
+    })
+    .optional()
+    .meta({ description: GRADED_BEFORE }),
+};
+
 export const mockPointsSchema = z
   .object({
     ...pointsTallyShape,

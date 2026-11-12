@@ -4,8 +4,11 @@ import {
   changePlanAction,
   chooseExamOptionAction,
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { getFocusTestActions } from "@/app/[lang]/(app)/(onboarding)/start/focus-test-client-actions";
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
+import { updateFocusTestAction } from "@/lib/focus-test/focus-test-controls";
+import { STARTED_FOCUS_TEST_HREF } from "@/lib/focus-test/focus-test-href";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -31,6 +34,7 @@ import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
 import { useTodayVisit } from "@zoonk/learn/today/visit";
+import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type TodayScreenData } from "./today-view";
 import { useDecidePlanChange } from "./use-decide-plan-change";
@@ -58,6 +62,19 @@ function usePrefetchSessionFrame(href: string) {
 
 /** `answered` is null when the learner dismissed the request. */
 type UploadAnswer = { answered: GoalUploadRequest | null; visit: number };
+
+function useUploadAnswer() {
+  const visit = useTodayVisit();
+  const [upload, setUpload] = useState<UploadAnswer | null>(null);
+  const uploadThisVisit = upload?.visit === visit ? upload : null;
+
+  return {
+    answeredUpload: uploadThisVisit?.answered ?? null,
+    onUploadAnswered: (request: GoalUploadRequest) => setUpload({ answered: request, visit }),
+    onUploadDismissed: () => setUpload({ answered: null, visit }),
+    uploadDismissed: uploadThisVisit !== null,
+  };
+}
 
 /**
  * An upload ask answered here shows its thanks while the learner stays, whatever Today read since,
@@ -115,6 +132,32 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
   });
 }
 
+function useFocusTestSuggestionActions(goalId: string) {
+  const router = useRouter();
+
+  return {
+    dismissFocusTest: async (): Promise<boolean> => {
+      const saved = await updateFocusTestAction(goalId, {
+        suggestion: "dismissed",
+        timeZone: getLocalTimeZone(),
+      });
+
+      return saved !== null;
+    },
+    /** The start is the learner's press here, so the test's page opens on its first question. */
+    startFocusTest: async (): Promise<boolean> => {
+      const outcome = await getFocusTestActions(goalId).start();
+
+      if (outcome.status === "failed") {
+        return false;
+      }
+
+      router.push(STARTED_FOCUS_TEST_HREF);
+      return true;
+    },
+  };
+}
+
 /** The page keys it by goal and day, so a new day (midnight, a goal switch) draws fresh. */
 export function TodayClient({
   banner,
@@ -134,6 +177,7 @@ export function TodayClient({
   const goalId = today.session.goalId ?? today.goal.id;
   const refresh = useCallback(() => router.refresh(), [router]);
   const steps = useMemo(() => toTapSteps(data), [data]);
+  const focusTestActions = useFocusTestSuggestionActions(today.goal.id);
 
   const taps = useDayTaps({
     day: {
@@ -168,9 +212,7 @@ export function TodayClient({
     showIntro,
   });
 
-  const visit = useTodayVisit();
-  const [upload, setUpload] = useState<UploadAnswer | null>(null);
-  const uploadThisVisit = upload?.visit === visit ? upload : null;
+  const uploadAnswer = useUploadAnswer();
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
   const sessionHref = getSessionHref({ goalId, limit: null });
@@ -201,6 +243,7 @@ export function TodayClient({
       level={data.language?.level ?? null}
       readAt={readAt}
       actions={{
+        ...focusTestActions,
         addExtraTime: taps.addExtraTime,
         adjustTimeHref: "/plan?focus=time",
         answerInsight: answerMemoryInsightAction,
@@ -258,14 +301,7 @@ export function TodayClient({
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
       mistakes={data.mistakes}
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
-      notices={toHostNotices({
-        answeredUpload: uploadThisVisit?.answered ?? null,
-        data,
-        goalId: today.goal.id,
-        onUploadAnswered: (request) => setUpload({ answered: request, visit }),
-        onUploadDismissed: () => setUpload({ answered: null, visit }),
-        uploadDismissed: uploadThisVisit !== null,
-      })}
+      notices={toHostNotices({ ...uploadAnswer, data, goalId: today.goal.id })}
       planEnd={data.planEnd}
       speakingEntry={
         data.language?.speaking && (

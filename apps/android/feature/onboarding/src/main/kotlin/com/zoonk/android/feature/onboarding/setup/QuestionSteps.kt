@@ -48,9 +48,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.onboarding.CheckList
 import com.zoonk.android.feature.onboarding.Choice
 import com.zoonk.android.feature.onboarding.ChoiceList
-import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
-import com.zoonk.android.feature.onboarding.start.isCompactWidth
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.toggled
 import com.zoonk.android.ui.characters.BuddyKind
@@ -96,11 +94,7 @@ import java.util.TimeZone
 /** Which of a step's buttons sent the answer being saved: only it spins, and the other waits. */
 private enum class StepSender { Continue, Skip }
 
-/**
- * [content] gets the form's Continue, for a field whose keyboard action sends the answer as Continue does. With
- * [pinActions], a phone docks the notice line and the buttons to the page's bottom, for a list that runs past the
- * screen where a tap only picks; a stopped plan's card stays with the content, where it has room.
- */
+/** [content] gets the form's Continue, for a field whose keyboard action sends the answer as Continue does. */
 @Composable
 internal fun ColumnScope.StepForm(
     title: String,
@@ -113,7 +107,6 @@ internal fun ColumnScope.StepForm(
     onSkip: (() -> Unit)? = null,
     skipLabel: String? = null,
     notice: (@Composable () -> Unit)? = null,
-    pinActions: Boolean = false,
     content: @Composable ColumnScope.(continueStep: () -> Unit) -> Unit = {},
 ) {
     SetupContent {
@@ -128,7 +121,8 @@ internal fun ColumnScope.StepForm(
 
         StepHeading(title, description, subject)
         content(continueStep)
-        val actions = @Composable {
+        PlanStartNotice()
+        PageActions {
             notice?.invoke()
             Button(
                 busy = pending && sender == StepSender.Continue,
@@ -151,15 +145,6 @@ internal fun ColumnScope.StepForm(
                 ) {
                     Text(skipLabel ?: stringResource(R.string.onboarding_skip))
                 }
-            }
-        }
-        if (pinActions && isCompactWidth() && LocalSetupPage.current != null) {
-            PlanStartNotice()
-            PageActions(content = actions)
-        } else {
-            OnboardingActions {
-                PlanStartNotice()
-                actions()
             }
         }
     }

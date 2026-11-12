@@ -3,8 +3,18 @@ import SwiftUI
 struct SessionScreen: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
+  @Environment(PlanStore.self) private var plans
   @Environment(StudySessionStore.self) private var store
   @Environment(TodayStore.self) private var today
+
+  /// An exam goal's session questions can skip the Focus test's for today.
+  private var examGoalID: String? {
+    guard case .day(let view)? = today.today.value, view.goal.kind == .exam else {
+      return nil
+    }
+
+    return view.goal.id
+  }
 
   var body: some View {
     let playback = router.playback
@@ -27,7 +37,16 @@ struct SessionScreen: View {
             }
 
             return true
-          }
+          },
+          skipTestQuestions: examGoalID.map { goalID in
+            SkipTestQuestionsAction(goalID: goalID) {
+              let skipped = await plans.updateFocusTest(
+                goalId: goalID, FocusTestControls(sessionQuestions: .skippedToday))
+
+              if case .done = skipped { return true } else { return false }
+            }
+          },
+          onGone: { playback.finish(nil) }
         )
         .id(blockID)
       } else {

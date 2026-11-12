@@ -53,8 +53,6 @@ import com.zoonk.android.feature.catalog.CHAPTER_ONE
 import com.zoonk.android.feature.catalog.COURSE
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.FakeCatalogApi
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.course.CourseStartScreen
 import com.zoonk.android.feature.onboarding.noAllowance
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
@@ -73,6 +71,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -324,7 +323,7 @@ class OnboardingScreenshots {
                     )
                 },
                 "placement-intro" to {
-                    Placement(FakeOnboardingApi(), mocks = FakeMockApi(mockOptionsOf(access = "plusRequired")))
+                    Placement(FakeOnboardingApi())
                 },
                 "placement-question" to {
                     Placement(FakeOnboardingApi().apply { placement = placementOf(answered = 2, started = true, spent = 0.35) })
@@ -355,6 +354,12 @@ class OnboardingScreenshots {
                                 )
                         },
                     )
+                },
+                "reveal-focus-trade-off" to {
+                    Reveal(setupPlanApi().apply { shownPlan = focusedPlan(FOCUS_CHECKED, focused = true) })
+                },
+                "reveal-focus-test-offer" to {
+                    Reveal(setupPlanApi().apply { shownPlan = focusedPlan(FOCUS_NOT_STARTED, focused = false) })
                 },
                 "reveal-exam-choice" to {
                     Reveal(
@@ -619,7 +624,6 @@ class OnboardingScreenshots {
                 AppRoute.GoalSetup(GOAL_ID),
                 store,
                 rememberPlans(plans),
-                rememberMocks(),
                 isGuest = false,
                 rememberAppNavigator(),
             )
@@ -647,7 +651,6 @@ class OnboardingScreenshots {
         private fun Placement(
             api: FakeOnboardingApi,
             run: GenerationRun = GenerationRun(),
-            mocks: FakeMockApi = FakeMockApi(options = null),
         ) {
             val store = rememberStore(api)
             SetupColumn {
@@ -658,8 +661,6 @@ class OnboardingScreenshots {
                     run,
                     onRetryRun = {},
                     store,
-                    rememberMocks(mocks),
-                    rememberAppNavigator(),
                     onProgress = {},
                     onDone = { WriteOutcome.Done(Unit) },
                 )
@@ -706,13 +707,6 @@ class OnboardingScreenshots {
             }
 
         @Composable
-        private fun rememberMocks(api: FakeMockApi = FakeMockApi(options = null)) =
-            remember {
-                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-                MockStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
-            }
-
-        @Composable
         private fun rememberStore(api: FakeOnboardingApi) =
             remember {
                 val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
@@ -751,3 +745,23 @@ private const val ENEM_DETAILS =
 private const val EXPLAIN = """{"status":"explain","question":"How does inflation work?"}"""
 private const val INSTRUMENT = """{"status":"instrument","instrument":"guitar"}"""
 private const val UNSAFE = """{"status":"unsafe"}"""
+
+private const val FOCUS_NOT_STARTED =
+    """{"state":"notStarted","offer":{"minutes":15},"sessionQuestions":"off","suggestsFocus":true}"""
+private const val FOCUS_CHECKED =
+    """{"state":"checked","offer":{"minutes":10},"sessionQuestions":"on","suggestsFocus":true}"""
+
+/** A short exam plan whose first three subjects get more time when [focused]. */
+private fun focusedPlan(
+    focusTest: String,
+    focused: Boolean,
+): com.zoonk.api.models.Plan {
+    val areas =
+        listOf("Administrative law", "Constitutional law", "Portuguese", "Logical reasoning", "Statistics").mapIndexed { index, name ->
+            """{"focusPart":null,"focused":${focused && index < 3},"name":"$name","partOf":null,"pastBasics":false,"reduced":false,"skillCount":4,"skipped":false}"""
+        }
+    return planOf(feasibility = feasibilityOf(coreFits = false, deepensMostAsked = false), numbers = numbersOf(1_380.0)).copy(
+        areas = ApiJson.decodeFromString("[${areas.joinToString(",")}]"),
+        focusTest = ApiJson.decodeFromString(focusTest),
+    )
+}

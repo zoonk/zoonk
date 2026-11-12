@@ -17,6 +17,8 @@ struct TodayDayView: View {
   /// answer did; the next waits for the next visit. Today opens on its first settled read, not on
   /// the stored one shown while a newer read loads.
   @State private var shownNotice: TodayView.Notice?
+  /// The learner said Not now to the Focus test on this visit.
+  @State private var focusTestNoted = false
   @State private var examChecklist: Set<ExamView.ChecklistItem> = []
   @State private var examChoice: PlanEditor?
   @State private var examChoiceDraft: [String] = []
@@ -278,6 +280,10 @@ struct TodayDayView: View {
       TodayExamChoiceSection(
         goalID: view.goal.id, choice: view.examChoice, editor: $examChoice,
         draft: $examChoiceDraft)
+    case .focusTest:
+      TodayFocusTestSection(
+        goalID: view.goal.id, offer: view.focusTest, dismissed: $focusTestNoted,
+        onAnswer: holdShownNotice)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
         SuggestedGoalSection(suggestion: suggestion)
@@ -485,6 +491,7 @@ struct TodayDayView: View {
     answeredUpload = nil
     answeredInsight = nil
     insightAnswers = [:]
+    focusTestNoted = false
     store.dropAnsweredPlanChange()
     UsageAnalytics.track(.todayViewed)
     countNotice()
@@ -547,13 +554,7 @@ extension AppRouter {
     }
 
     guard let step = destination.step else {
-      if let session = tasks.firstIndex(of: .session) {
-        task(at: session + 1).wrappedValue = nil
-      } else {
-        open(.session)
-      }
-
-      return
+      return open(.session)
     }
 
     if tasks.contains(.session) {

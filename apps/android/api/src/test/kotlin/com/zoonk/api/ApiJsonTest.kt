@@ -9,12 +9,9 @@ class ApiJsonTest {
     @Test
     fun aBodyKeepsTheNullsItsContractRequiresAndLeavesOutWhatItDoesNotSet() {
         val body =
-            AnytimeMockInput(
-                purpose = AnytimeMockInput.Purpose.PRACTICE,
-                shape = MockShape(area = null, day = null, kind = MockShape.Kind.HALF),
-            )
+            AnytimeMockInput(shape = MockShape(area = null, day = null, kind = MockShape.Kind.HALF))
         assertEquals(
-            """{"purpose":"practice","shape":{"area":null,"day":null,"kind":"half"}}""",
+            """{"shape":{"area":null,"day":null,"kind":"half"}}""",
             ApiRequestJson.encodeToString(AnytimeMockInput.serializer(), body),
         )
     }

@@ -14,6 +14,7 @@ function today(overrides: Partial<Today> = {}): Today {
   return {
     exam: null,
     examChoice: null,
+    focusTest: null,
     insight: null,
     planChange: null,
     session: {

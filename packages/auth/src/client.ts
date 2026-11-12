@@ -21,13 +21,18 @@ export function signOutAppHost() {
   return authClient.signOut();
 }
 
-/** The app and central auth can share a database session, so this signs out of both. */
+/**
+ * The app and central auth can share a database session, so this signs out of both. Only this
+ * app's sign-out decides whether the page reloads: once it succeeds the account is gone here,
+ * whatever central auth answered.
+ */
 export async function logout() {
-  const { data } = await safeAsync(() =>
-    Promise.all([signOutAppHost(), centralAuthClient.signOut()]),
-  );
+  const [{ data }] = await Promise.all([
+    safeAsync(signOutAppHost),
+    safeAsync(() => centralAuthClient.signOut()),
+  ]);
 
-  if (data?.every((response) => !response.error)) {
+  if (data && !data.error) {
     globalThis.location.href = "/";
   }
 }

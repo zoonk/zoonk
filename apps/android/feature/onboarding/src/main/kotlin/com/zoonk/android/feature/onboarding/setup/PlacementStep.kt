@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,8 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -49,7 +48,6 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
@@ -57,30 +55,21 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
-import com.zoonk.android.navigation.AppNavigator
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.KindDot
-import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.LabelChip
-import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
-import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonkType
@@ -92,7 +81,7 @@ import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
-import java.util.UUID
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 import com.zoonk.api.models.LessonVisual as ApiLessonVisual
@@ -106,8 +95,6 @@ internal fun ColumnScope.PlacementStep(
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
-    mocks: MockStore,
-    navigator: AppNavigator,
     onProgress: (Float?) -> Unit,
     onDone: suspend () -> WriteOutcome<*>,
     onReportSaveFailure: () -> Unit = {},
@@ -116,8 +103,8 @@ internal fun ColumnScope.PlacementStep(
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
-    val options by mocks.options[UUID.fromString(goalId)].collectShown()
-    val phase = vm.phase(placement, options)
+    val phase = vm.phase(placement)
+    val scope = rememberCoroutineScope()
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
     val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
     val shown = if (hold.over) phase else PlacementPhase.Waiting
@@ -131,17 +118,19 @@ internal fun ColumnScope.PlacementStep(
             StepLoading()
         }
 
-        is PlacementPhase.Intro -> {
+        PlacementPhase.LoadFailed -> {
+            SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
+        }
+
+        PlacementPhase.Intro -> {
             com.zoonk.android.data
                 .TrackOnboardingQuestion(goalId, "placement")
             PlacementIntro(
                 subject = subject,
                 areaCount = areaCount,
-                mock = shown.mock,
                 pending = vm.isSaving,
                 starting = vm.isStarting,
                 failed = vm.finishFailed,
-                onMock = { navigator.open(AppRoute.PlacementMock(goalId)) },
                 onStart = vm::start,
                 onScratch = { finish(true) },
             )
@@ -159,14 +148,7 @@ internal fun ColumnScope.PlacementStep(
         }
 
         PlacementPhase.Unavailable -> {
-            PlacementOutcome(
-                eyebrow = null,
-                title = stringResource(R.string.onboarding_placement_unavailable_title),
-                description = stringResource(R.string.onboarding_placement_unavailable_description),
-                pending = vm.isSaving,
-                failed = vm.finishFailed,
-                onContinue = { finish(false) },
-            )
+            PlacementUnavailable(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
         }
 
         is PlacementPhase.Question -> {
@@ -192,15 +174,6 @@ internal fun ColumnScope.PlacementStep(
             }
         }
 
-        is PlacementPhase.MockRunning -> {
-            PlacementMockRunning(
-                pending = vm.isSaving,
-                failed = vm.finishFailed,
-                onContinue = { navigator.open(AppRoute.Mock(shown.mockId)) },
-                onStop = { vm.finish(fromScratch = false, stopMockId = shown.mockId, onDone = onDone) },
-            )
-        }
-
         is PlacementPhase.Done -> {
             PlacementDone(shown, pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
         }
@@ -218,11 +191,9 @@ internal fun ColumnScope.StepLoading() {
 private fun ColumnScope.PlacementIntro(
     subject: String,
     areaCount: Int,
-    mock: MockOffer?,
     pending: Boolean,
     starting: Boolean,
     failed: Boolean,
-    onMock: () -> Unit,
     onStart: () -> Unit,
     onScratch: () -> Unit,
 ) {
@@ -236,7 +207,6 @@ private fun ColumnScope.PlacementIntro(
                 stringResource(R.string.onboarding_placement_description)
             },
         )
-        mock?.let { MockOfferRow(it, onMock) }
         OnboardingActions {
             FinishFailed(failed)
             Button(
@@ -261,49 +231,17 @@ private fun ColumnScope.PlacementIntro(
     }
 }
 
+/** The Focus test passes its own way out of the wait: a learner with answers uses them, one on a plan just goes back. */
 @Composable
-private fun MockOfferRow(
-    mock: MockOffer,
-    onClick: () -> Unit,
-) {
-    val locale = currentLocale()
-    val longest = formatMinutes(mock.longestMinutes.toInt(), locale)
-    val description =
-        if (mock.longestMinutes == mock.shortestMinutes) {
-            stringResource(R.string.onboarding_placement_mock_about, longest)
-        } else {
-            stringResource(R.string.onboarding_placement_mock_range, formatMinutes(mock.shortestMinutes.toInt(), locale), longest)
-        }
-    val plus = stringResource(R.string.onboarding_placement_plus_description)
-
-    ListRow(
-        headline = { Text(stringResource(R.string.onboarding_placement_mock_title)) },
-        modifier = Modifier.bleed(LIST_ITEM_INSET),
-        onClick = onClick,
-        leading = { KindDot(LearnKind.Mock) },
-        supporting = { Text(description) },
-        meta =
-            if (mock.plusRequired) {
-                {
-                    LabelChip(
-                        stringResource(R.string.onboarding_placement_plus),
-                        Modifier.clearAndSetSemantics { contentDescription = plus },
-                    )
-                }
-            } else {
-                null
-            },
-    )
-}
-
-@Composable
-private fun ColumnScope.PlacementWaiting(
+internal fun ColumnScope.PlacementWaiting(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     hold: ReadyHold,
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
+    skipLabel: String = stringResource(R.string.onboarding_placement_skip_for_now),
+    skipNote: String? = stringResource(R.string.onboarding_placement_skip_note),
 ) {
     var patient by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -331,15 +269,17 @@ private fun ColumnScope.PlacementWaiting(
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                     ) {
-                        Text(stringResource(R.string.onboarding_placement_skip_for_now))
+                        Text(skipLabel)
                     }
-                    Text(
-                        text = stringResource(R.string.onboarding_placement_skip_note),
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    skipNote?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
         },
@@ -351,7 +291,7 @@ private fun ColumnScope.PlacementWaiting(
                     when {
                         hold.holding -> R.string.warm_up_questions_ready_description
                         READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
-                        else -> R.string.onboarding_placement_waiting_skills
+                        else -> R.string.onboarding_placement_waiting_time
                     },
                 ),
             )
@@ -381,6 +321,9 @@ internal fun ColumnScope.PlacementQuestion(
     onStop: () -> Unit,
     onReportSaveFailure: () -> Unit = {},
     dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
+    stopLabel: String = stringResource(R.string.onboarding_placement_stop),
+    /** Said right above Stop, when stopping is worth suggesting. */
+    stopHint: String? = null,
     media: @Composable () -> Unit = {},
 ) {
     val choices = choices(item.format, labels)
@@ -429,6 +372,15 @@ internal fun ColumnScope.PlacementQuestion(
             } else {
                 AnswerList(choices, picked, onPick = { picked = it })
             }
+            stopHint?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
             TextButton(
                 onClick = {
                     sender = PlacementSender.Stop
@@ -439,7 +391,7 @@ internal fun ColumnScope.PlacementQuestion(
                 focusableWhenDisabled = pending,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.onboarding_placement_stop))
+                Text(stopLabel)
             }
         },
     ) {
@@ -571,17 +523,6 @@ private fun ColumnScope.PlacementDone(
     onContinue: () -> Unit,
 ) {
     when {
-        done.fromMock -> {
-            PlacementOutcome(
-                eyebrow = stringResource(R.string.onboarding_placement_mock_done),
-                title = stringResource(R.string.onboarding_placement_mock_set_title),
-                description = pluralStringResource(R.plurals.onboarding_placement_mock_set_description, done.answered, done.answered),
-                pending = pending,
-                failed = failed,
-                onContinue = onContinue,
-            )
-        }
-
         done.forToday -> {
             PlacementOutcome(
                 eyebrow = pluralStringResource(R.plurals.onboarding_placement_answered, done.answered, done.answered),
@@ -607,6 +548,23 @@ private fun ColumnScope.PlacementDone(
 }
 
 @Composable
+internal fun ColumnScope.PlacementUnavailable(
+    pending: Boolean,
+    failed: Boolean,
+    onContinue: () -> Unit,
+) {
+    PlacementOutcome(
+        eyebrow = null,
+        title = stringResource(R.string.onboarding_placement_unavailable_title),
+        description = stringResource(R.string.onboarding_placement_unavailable_description),
+        pending = pending,
+        failed = failed,
+        onContinue = onContinue,
+        action = stringResource(R.string.onboarding_continue),
+    )
+}
+
+@Composable
 private fun ColumnScope.PlacementOutcome(
     eyebrow: String?,
     title: String,
@@ -614,6 +572,7 @@ private fun ColumnScope.PlacementOutcome(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    action: String = stringResource(R.string.onboarding_placement_see_plan),
 ) {
     SetupContent {
         eyebrow?.let { SuccessEyebrow(it) }
@@ -626,36 +585,7 @@ private fun ColumnScope.PlacementOutcome(
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
-                Text(stringResource(R.string.onboarding_placement_see_plan))
-            }
-        }
-    }
-}
-
-@Composable
-private fun ColumnScope.PlacementMockRunning(
-    pending: Boolean,
-    failed: Boolean,
-    onContinue: () -> Unit,
-    onStop: () -> Unit,
-) {
-    SetupContent {
-        OnboardingHeading(
-            stringResource(R.string.onboarding_placement_mock_waiting_title),
-            stringResource(R.string.onboarding_placement_mock_waiting_description),
-        )
-        OnboardingActions {
-            FinishFailed(failed)
-            Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.onboarding_placement_continue_mock))
-            }
-            TextButton(
-                busy = pending,
-                onClick = onStop,
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { ButtonIcon(R.drawable.ic_stop_circle) },
-            ) {
-                Text(stringResource(R.string.onboarding_placement_stop_mock))
+                Text(action)
             }
         }
     }
@@ -672,7 +602,7 @@ internal fun FinishFailed(failed: Boolean) {
     )
 }
 
-private fun String.labelCase() = replaceFirstChar { it.uppercase() }
+internal fun String.labelCase() = replaceFirstChar { it.uppercase() }
 
 private val DONT_KNOW = PlacementAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAnswerAnyOf3Value(ChoiceAnswerAnyOf3(dontKnow = true)))
 private val PATIENCE = 20.seconds

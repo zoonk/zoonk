@@ -3,6 +3,7 @@
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
+import { ChangeSaveError } from "../../_components/save-error";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
 import {
@@ -62,7 +63,11 @@ function PlacementProgress({
 
   const description = readsMaterial
     ? t("They come from the material you added. Reading it takes a few minutes.")
-    : t("They come from the skills your goal needs. It usually takes a minute or two.");
+    : t({
+        description:
+          "Shown while the learner waits for their first questions to be prepared. “This” is the wait.",
+        message: "This usually takes a minute or two.",
+      });
 
   return (
     <GenerationWait
@@ -107,15 +112,21 @@ function PlacementStatus({
   );
 }
 
+type SkipCopy = { label: string; note: string | null };
+
 function PlacementBar({
   canSkip,
   holding,
   onSkip,
+  skip,
+  skipFailed,
   skipping,
 }: {
   canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
+  skip?: SkipCopy;
+  skipFailed: boolean;
   skipping: boolean;
 }) {
   const t = useExtracted();
@@ -142,11 +153,14 @@ function PlacementBar({
       {canSkip && (
         <div className="flex flex-col gap-1 lg:items-end">
           <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
-            {t("Skip for now")}
+            {skip?.label ?? t("Skip for now")}
           </OnboardingSecondaryButton>
-          <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
-            {t("Your first sessions will ask a few of these instead.")}
-          </p>
+          {skipFailed && <ChangeSaveError className="text-center lg:text-right" />}
+          {skip?.note !== null && (
+            <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
+              {skip?.note ?? t("Your first sessions will ask a few of these instead.")}
+            </p>
+          )}
         </div>
       )}
     </WaitBar>
@@ -158,12 +172,16 @@ function PlacementWaitPage({
   holding,
   onSkip,
   run,
+  skip,
+  skipFailed,
   skipping,
 }: {
   canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
   run: GenerationRun;
+  skip?: SkipCopy;
+  skipFailed: boolean;
   skipping: boolean;
 }) {
   const since = useMountTime().getTime();
@@ -174,7 +192,14 @@ function PlacementWaitPage({
     <WaitBackToQuiz>
       <OnboardingColumn
         bar={
-          <PlacementBar canSkip={canSkip} holding={holding} onSkip={onSkip} skipping={skipping} />
+          <PlacementBar
+            canSkip={canSkip}
+            holding={holding}
+            onSkip={onSkip}
+            skip={skip}
+            skipFailed={skipFailed}
+            skipping={skipping}
+          />
         }
         rail={
           <>
@@ -200,6 +225,8 @@ export function PlacementWaiting({
   questionsReady,
   readWarmUp,
   run,
+  skip,
+  skipFailed = false,
   skipping,
 }: {
   buildFailed: boolean;
@@ -210,6 +237,10 @@ export function PlacementWaiting({
   questionsReady: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
+  /** What leaving the wait is called and does, when it isn't placement's own skip. */
+  skip?: SkipCopy;
+  /** Leaving didn't save: said beside the control, which stays the retry. */
+  skipFailed?: boolean;
   skipping: boolean;
 }) {
   const patient = usePatience();
@@ -234,6 +265,8 @@ export function PlacementWaiting({
         holding={holding}
         onSkip={onSkip}
         run={shown}
+        skip={skip}
+        skipFailed={skipFailed}
         skipping={skipping}
       />
     </WaitScreen>

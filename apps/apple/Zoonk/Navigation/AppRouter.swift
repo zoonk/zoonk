@@ -73,11 +73,16 @@ final class AppRouter {
   }
 
   /// A push closes any task first. A Study place already selected in the sidebar goes back to its
-  /// root, and a route already on the stack is gone back to, instead of stacking itself again.
+  /// root, and a route already on the stack, or a task already open, is gone back to, instead of
+  /// stacking itself again.
   func open(_ route: AppRoute) {
     switch route.presentation {
     case .task:
-      tasks.append(route)
+      if let depth = tasks.lastIndex(of: route) {
+        task(at: depth + 1).wrappedValue = nil
+      } else {
+        tasks.append(route)
+      }
     case .push:
       tasks = []
 

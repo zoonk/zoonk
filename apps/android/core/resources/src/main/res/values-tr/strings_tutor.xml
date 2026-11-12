@@ -56,7 +56,7 @@
   "tutor_offer_chapter_test_lessons": "6ff5a85ad3134fef06dec89d4e6a6e1c3571750113340ef93c04b6ccd8bf05ed",
   "tutor_offer_choose": "b871ef7f4cfc1a1d3ad6e6a92d2acb290844c5b5d4b381534f9731d64ee9d04a",
   "tutor_offer_choose_focus": "fcfb00401b190a24fc17ffa9e549ba67236f52e4db66138332533733df08093a",
-  "tutor_offer_choose_focus_description": "8707977ac707ccf05ab0579e0e0937a5b709c9add247d75961f1183ec5a83bf1",
+  "tutor_offer_choose_focus_description": "63e432b5404c05ea077a8740c3f9822561011afbdef896b71c4035a55d5bd21a",
   "tutor_offer_country_applied": "7c8d5b65851de74df45b215fb11ca6872ed7e33c245b18c8fb2b88535328d9e8",
   "tutor_offer_country_description": "8b99f8d507048b99cda35942218bbc8b2b0ada3eb64b115ea6f01693a222b5fc",
   "tutor_offer_essay_biweekly": "3cd7c27b501d2b073d310325b7f547f30010120cd07467f7b6b78f54c37c8bb1",
@@ -229,7 +229,7 @@
     </plurals>
     <string name="tutor_offer_take_test">Testi çöz</string>
     <string name="tutor_offer_choose_focus">Neye odaklanacağını seç</string>
-    <string name="tutor_offer_choose_focus_description">Daha ayrıntılı çalışacağın branşları seç veya bunları senin için belirleyen kısa bir teste gir.</string>
+    <string name="tutor_offer_choose_focus_description">Hangi branşlara daha fazla çalışma süresi ayırman gerektiğini öğren.</string>
     <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
     <string name="tutor_offer_call_with">%1$s (%2$s) ile kısa bir sesli sohbet.</string>
     <string name="tutor_offer_call">Seviyene uygun kısa bir sesli sohbet.</string>

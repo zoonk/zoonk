@@ -23,7 +23,7 @@ const NO_WRITTEN_PARTS: readonly string[] = [];
 
 type PickedSize = { estimatedMinutes: number; minutes: number; questions: number };
 
-export function ChooserPicked({
+function ChooserPicked({
   asks,
   size,
   written = NO_WRITTEN_PARTS,

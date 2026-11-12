@@ -3,18 +3,18 @@ import {
   placementCompletionInputSchema,
   placementQuerySchema,
 } from "@zoonk/core/learner/placement/contract";
+import {
+  focusTestControlsInputSchema,
+  focusTestSummarySchema,
+  placementSittingInputSchema,
+} from "@zoonk/core/learner/placement/focus-test-contract";
 import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { z } from "zod";
 import {
-  chapterTestOutRecordSchema,
-  chapterTestOutResponseSchema,
-  chapterTestOutResultSchema,
-  nothingToSkipSchema,
   placementAnswerResponseSchema,
   placementCompletionResponseSchema,
   placementResponseSchema,
-  testOutGenerationSchema,
 } from "../schemas/learner";
 import {
   goalChapterPathParamsSchema,
@@ -30,6 +30,13 @@ import {
   unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
+import {
+  chapterTestOutRecordSchema,
+  chapterTestOutResponseSchema,
+  chapterTestOutResultSchema,
+  nothingToSkipSchema,
+  testOutGenerationSchema,
+} from "../schemas/test-out";
 import { AUTHENTICATED_SECURITY } from "../security";
 
 const learnerErrors = {
@@ -166,11 +173,31 @@ export const placementPaths = {
       summary: "Get a goal's placement",
       tags: ["Learner"],
     },
+    patch: {
+      description:
+        "The learner's own switches on an exam goal's Focus test. `sessionQuestions`: `skippedToday` (\"Not today\", on a session question marked `placement`) and `paused` take today's unanswered test questions out of the day's session, until the learner's next day or until `on`; read the study block again afterwards, and a block left with no questions is gone from the day. `suggestion: dismissed` stops Today's suggestion of the test. 404 for a goal that isn't an exam.",
+      operationId: "updateGoalFocusTest",
+      requestBody: {
+        content: { "application/json": { schema: focusTestControlsInputSchema } },
+        required: true,
+      },
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        ...learnerErrors,
+        "200": {
+          content: { "application/json": { schema: focusTestSummarySchema } },
+          description: "The Focus test as the plan's row shows it",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Change a Focus test's session questions or suggestion",
+      tags: ["Learner"],
+    },
   },
   "/goals/{goalId}/placement/answers": {
     post: {
       description:
-        'Grades one placement answer, including "I don\'t know yet", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook.',
+        'Grades one placement answer, including "I don\'t know yet", and returns the updated placement with the next question. Placement answers never go to the mistakes notebook. For an exam goal (its Focus test) never show `isCorrect`; an item the learner already answered in the test is not recorded again, so a retry is safe; once the returned `status` is `done`, the open sitting asks nothing more: close it with POST /goals/{goalId}/placement/completion.',
       operationId: "createPlacementAnswer",
       requestBody: {
         content: { "application/json": { schema: placementAnswerInputSchema } },
@@ -193,7 +220,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/completion": {
     post: {
       description:
-        "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
+        "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. For an exam goal it closes the open Focus test sitting and returns the test with its result (`focusTest.checkpoint`); with no sitting and no answer it postpones the test (\"Skip for now\"): sessions ask no test questions until it starts; on a plan the learner has seen, a focus the answers suggest arrives as a proposed plan change (`source: focusTest`), never applied by itself; and `fromScratch` is refused with 422. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
       operationId: "completeGoalPlacement",
       requestBody: {
         content: { "application/json": { schema: placementCompletionInputSchema } },
@@ -206,9 +233,32 @@ export const placementPaths = {
           content: { "application/json": { schema: placementCompletionResponseSchema } },
           description: "Where each phase and area starts",
         },
+        "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Finish a goal's placement",
+      tags: ["Learner"],
+    },
+  },
+  "/goals/{goalId}/placement/sittings": {
+    post: {
+      description:
+        "Starts or continues an exam goal's Focus test: opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 for a goal that isn't an exam.",
+      operationId: "createPlacementSitting",
+      requestBody: {
+        content: { "application/json": { schema: placementSittingInputSchema } },
+        required: true,
+      },
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        ...learnerErrors,
+        "200": {
+          content: { "application/json": { schema: placementResponseSchema } },
+          description: "The placement with its open sitting",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Start a Focus test sitting",
       tags: ["Learner"],
     },
   },

@@ -9,12 +9,9 @@
   "profile_questions_address_title": "3d2bcb096439c110d24c108e436ec0f7c84e2beb9041236105d9fdd1cfcc75b9",
   "profile_questions_cap": "da7e186d98419ace31df1961b1dfa7a46efda65b136aa1db35126908ef2897e8",
   "profile_questions_condition_note": "76522f184770230755d7be3f40717040041a18d1cae99186f43c8b4e1c7bc537",
-  "profile_questions_conditions_description": "c9f1ba13052856e1020449bbfd2fd97ee69f8d29996be5e06a77c58f71da81d7",
-  "profile_questions_conditions_next": "e2770d61df4a6b08ad358ef83296d0e800371843e6ab385e65df9c8173c37292",
+  "profile_questions_conditions_description": "ce70c881221017e7a9d2b507b4a4efe35785cbadd5ae107e14085fb959c2ed96",
   "profile_questions_conditions_saved": "400e40d4888a672ae7c1e95a4c34bbd9ba42e608c3c376470484b2d70355c8e2",
   "profile_questions_conditions_title": "a2b418c6612ea166df3b50804cee5532aa7f1908f6bf2f82b2dc90ed20a8dd76",
-  "profile_questions_consent": "0d5fd319ba270437c29294f71a2c13c173da38394fab42f97fb667086050aa3a",
-  "profile_questions_consent_help": "6abee20b8617710fd2ac703ed2bc4a2fcc191644cdfac3d0d4ea2ba70eeafbfa",
   "profile_questions_description": "d5e4962a793317e8a5cf78afff0e17e1ca30daef5790d0787c4cc8523f112a3e",
   "profile_questions_earlier_answer": "db03489c94dcc62d96cbceebcb1284bf4038f88319bc14e7c1eb6714ed8e2535",
   "profile_questions_for_fun": "7610c12486196101942815f86379413f320c213a5a2da2b61dc588b06c41b145",
@@ -127,11 +124,8 @@
     <string name="profile_questions_activities_favorites">O que mais você curte? (opcional)</string>
     <string name="profile_questions_activities_placeholder">Ex.: fazer pão, carros, astronomia</string>
     <string name="profile_questions_conditions_title">Alguma dessas opções se aplica a você?</string>
-    <string name="profile_questions_conditions_description">Opcional. Nada aqui é salvo sem sua autorização.</string>
-    <string name="profile_questions_conditions_next">Opcional. Na próxima tela, a gente vai sugerir o que costuma ajudar. Nada aqui é salvo sem sua autorização.</string>
+    <string name="profile_questions_conditions_description">Opcional. Suas escolhas ficam salvas no seu perfil para seu parceiro se adaptar a você. Você pode remover essas informações quando quiser nas Configurações.</string>
     <string name="profile_questions_condition_note">O que a gente deve saber?</string>
-    <string name="profile_questions_consent">Salvar isso no meu perfil</string>
-    <string name="profile_questions_consent_help">O Zoonk usa essas informações para se adaptar a você, agora e com o tempo. Elas nunca são compartilhadas nem usadas nos exemplos das aulas. Você pode apagar essas informações quando quiser em Configurações.</string>
     <string name="profile_questions_support_title">O que te ajuda a aprender?</string>
     <string name="profile_questions_support_description">Escolha tudo o que te ajuda. Não precisa de rótulo nem diagnóstico.</string>
     <string name="profile_questions_address_title">Como a gente fala com você?</string>

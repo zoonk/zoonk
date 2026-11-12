@@ -105,18 +105,21 @@ function RevealActions({
           {t("Adjust")}
         </Button>
 
-        <Button
-          aria-keyshortcuts="Enter"
-          busy={pending}
-          className="flex-2 font-[560] lg:flex-none"
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStart}
-          ref={startRef}
-          size="lg"
-        >
-          {started ? t("Continue") : t("Start")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        {/* A submit, so a press before the page hydrates starts once it does. */}
+        <form action={() => onStart()} className="contents">
+          <Button
+            aria-keyshortcuts="Enter"
+            busy={pending}
+            className="flex-2 font-[560] lg:flex-none"
+            icon={<PlayIcon aria-hidden="true" />}
+            ref={startRef}
+            size="lg"
+            type="submit"
+          >
+            {started ? t("Continue") : t("Start")}
+            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          </Button>
+        </form>
       </div>
 
       {isGuest && <SavePlanNote className="lg:text-right" signUpHref={signUpHref} />}

@@ -7,15 +7,10 @@ import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamDocument } from "../exam-document";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
-import {
-  findPlacementMock,
-  findRunningAnytimeMock,
-  loadAnytimeMockSetup,
-} from "./_utils/anytime-mock-setup";
+import { findRunningAnytimeMock, loadAnytimeMockSetup } from "./_utils/anytime-mock-setup";
 import { findLastMock } from "./_utils/finished-mocks";
 import { getBankTypedParts } from "./_utils/mock-typed-parts";
 import { type MockOptionsView, mockConditionsSchema } from "./mock-contract";
-import { getRecommendedPlacementLength, toPlacementOptionView } from "./placement-mock";
 
 export type MockOptionsResult =
   | { status: "ready"; view: MockOptionsView }
@@ -38,7 +33,7 @@ export async function getMockOptions({
     return { status: "notExam" };
   }
 
-  const [setup, access, running, placementMock, lastMock] = await Promise.all([
+  const [setup, access, running, lastMock] = await Promise.all([
     loadAnytimeMockSetup(
       goal,
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
@@ -51,12 +46,10 @@ export async function getMockOptions({
     ),
     getAnytimeMockAccess(goal),
     findRunningAnytimeMock({ goalId: goal.id, now: getRequestInstant(), userId: goal.userId }),
-    findPlacementMock({ goalId: goal.id, userId: goal.userId }),
     findLastMock(goal.id),
   ]);
 
   const conditions = running ? mockConditionsSchema.safeParse(running.conditions).data : null;
-  const recommended = getRecommendedPlacementLength(setup.placement);
 
   return {
     status: "ready",
@@ -67,14 +60,6 @@ export async function getMockOptions({
       goalId: goal.id,
       lastMock,
       options: setup.options,
-      placement: recommended && {
-        mock: placementMock && {
-          id: placementMock.id,
-          status: placementMock.status === "finished" ? "finished" : "running",
-        },
-        options: setup.placement.map((option) => toPlacementOptionView(option)),
-        recommended,
-      },
       running:
         running && conditions
           ? { id: running.id, purpose: conditions.purpose, shape: conditions.shape }

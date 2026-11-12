@@ -1,4 +1,5 @@
 import "server-only";
+import { refreshGoalTestSummary } from "../../learner/placement/_utils/test-sitting";
 import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { persistStudyDay } from "./persist-study-day";
@@ -28,6 +29,8 @@ export async function openPlannedDay(
     }
 
     const session = await followSavedDay({ session: refilled, timeZone });
+    // Every Start catches up a Focus test summary a write left behind; a new day's plan save does it.
+    await refreshGoalTestSummary(goal);
     return { created: false, session, status: "opened" };
   }
 

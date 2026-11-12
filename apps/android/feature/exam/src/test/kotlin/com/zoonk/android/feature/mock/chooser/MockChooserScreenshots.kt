@@ -101,18 +101,6 @@ class MockChooserScreenshots {
     fun expandedDark() = capture("chooser-expanded-dark", dark = true)
 
     @Test
-    @Config(qualifiers = "w411dp-h1200dp-xxhdpi")
-    fun placementPhone() = capture("placement-phone", placement = true, options = PLACEMENT)
-
-    @Test
-    @Config(qualifiers = "w411dp-h1200dp-xxhdpi")
-    fun placementWithoutPlus() = capture("placement-phone-free", placement = true, options = """$PLACEMENT,"access":"plusRequired"""")
-
-    @Test
-    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
-    fun placementExpanded() = capture("placement-expanded", placement = true, options = PLACEMENT)
-
-    @Test
     @Config(qualifiers = "w411dp-h1000dp-xxhdpi")
     fun writing() = writing("chooser-writing")
 
@@ -150,7 +138,6 @@ class MockChooserScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
-        placement: Boolean = false,
         options: String = OPTIONS,
         fold: Boolean = false,
         act: () -> Unit = {},
@@ -170,7 +157,6 @@ class MockChooserScreenshots {
                 Surface {
                     MockChooser(
                         goalId = GOAL,
-                        placement = placement,
                         app = app,
                         navigator = rememberAppNavigator(),
                         mockStore = remember { MockStore(mocks, cache) },
@@ -215,15 +201,6 @@ class MockChooserScreenshots {
              "measure":52,"number":2,"purpose":"practice","scoring":"raw","shape":{"area":null,"day":1,"kind":"full"},"total":90},
             "sizeSource":{"formats":null,"material":false,"pastEdition":{"edition":"2024 exam","title":null,"url":"https://www.inep.gov.br/enem"},
              "questions":"notice","subjects":"pastEdition","time":"unstated"}
-            """.trimIndent()
-
-        val PLACEMENT =
-            """
-            "examName":"ENEM",
-            "placement":{"mock":null,"recommended":"medium","options":[
-             {"areas":["Mathematics","Languages"],"coversAllAreas":false,"estimatedMinutes":15,"length":"short","minutes":20,"questions":12},
-             {"areas":["Languages","Human Sciences","Mathematics","Natural Sciences"],"coversAllAreas":true,"estimatedMinutes":30,"length":"medium","minutes":40,"questions":24},
-             {"areas":["Languages","Human Sciences","Mathematics","Natural Sciences"],"coversAllAreas":true,"estimatedMinutes":60,"length":"long","minutes":80,"questions":48}]}
             """.trimIndent()
     }
 }

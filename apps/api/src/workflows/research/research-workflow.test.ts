@@ -40,6 +40,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../mocks/workflow";
+import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
 import { researchWorkflow } from "./research-workflow";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
@@ -202,6 +203,8 @@ async function examGoal() {
 
   return { goal, user };
 }
+
+const RECOUNTED = { focusTest: { summary: { inputsKey: expect.any(String), quick: 1, total: 1 } } };
 
 describe(researchWorkflow, () => {
   beforeEach(() => {
@@ -1086,7 +1089,7 @@ describe(researchWorkflow, () => {
     });
   });
 
-  it("looks up how many options the questions have when the notice says only that they're multiple choice", async () => {
+  it("looks up how many options the questions have when the notice says only that they're multiple choice, and counts its learners' Focus tests again", async () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
     const citation = { passage: "180 questões objetivas", sourceId: "notice" };
@@ -1110,6 +1113,8 @@ describe(researchWorkflow, () => {
       },
     });
 
+    const follower = await followWithOutdatedSummary(blueprint.id);
+
     vi.mocked(findChoiceOptions).mockResolvedValue({
       ...TASK_RESULT,
       data: {
@@ -1129,6 +1134,8 @@ describe(researchWorkflow, () => {
       options: 5,
       source: { url: "https://example.com/provas" },
     });
+
+    await expect(readFollowerDetails(follower.id)).resolves.toMatchObject(RECOUNTED);
 
     const next = await examGoal();
     await researchWorkflow({ goalId: next.goal.id });

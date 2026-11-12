@@ -79,14 +79,14 @@ extension APIClientFactory {
   /// A run's stream ends with its last event: one of these when it's ready, an error, or a join
   /// naming the run already doing the same work.
   private static let readySteps: Set<String> = [
-    "callReady", "challengeQuestionsReady", "explanationReady", "focusTestQuestionsReady",
-    "goalReady", "lessonReady", "levelTestBankReady", "mockQuestionsReady", "setupLessonsReady",
-    "testOutQuestionsReady", "understandingReady",
+    "callReady", "challengeQuestionsReady", "explanationReady", "goalReady", "lessonReady",
+    "levelTestBankReady", "mockQuestionsReady", "setupLessonsReady", "testOutQuestionsReady",
+    "understandingReady",
   ]
 
   private static let joinSteps: Set<String> = [
-    "joinChallengeQuestions", "joinFocusTestQuestions", "joinLevelTestBank", "joinMockQuestions",
-    "joinRunningCall", "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
+    "joinChallengeQuestions", "joinLevelTestBank", "joinMockQuestions", "joinRunningCall",
+    "joinRunningExplanation", "joinRunningGoal", "joinRunningLesson",
     "joinRunningUnderstanding", "joinSetupLessons", "joinTestOutQuestions",
   ]
 

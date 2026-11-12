@@ -1,5 +1,6 @@
 "use client";
 
+import { FOCUS_TEST_SOURCE } from "@zoonk/core/learner/placement/focus-test-contract";
 import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
@@ -48,7 +49,7 @@ export function ProposalEffect({
   change,
 }: {
   byDate?: boolean;
-  change: Pick<PlanChangeView, "effect">;
+  change: Pick<PlanChangeView, "effect" | "operations">;
 }) {
   const proposalEffectText = useProposalEffectText();
   const { planEnd, today } = useTodayScreen();
@@ -107,7 +108,9 @@ function ChangeActions({
     <SuggestionActions>
       {change.canApply && (
         <SuggestionAction action={() => onAnswer("applied")} disabled={disabled}>
-          {overridesNotice ? t("Use my date anyway") : t("Apply")}
+          {overridesNotice && t("Use my date anyway")}
+          {!overridesNotice &&
+            (change.source === FOCUS_TEST_SOURCE ? t("Update my plan") : t("Apply"))}
         </SuggestionAction>
       )}
 
@@ -250,7 +253,11 @@ function PlanChangeNotice({
       <SuggestionContent>
         <SuggestionHeader>{title || summary}</SuggestionHeader>
         {title && <SuggestionDescription>{summary}</SuggestionDescription>}
-        <ProposalEffect byDate={byDate} change={change} />
+        {change.source === FOCUS_TEST_SOURCE ? (
+          <PlanEffectDiff byDate={byDate} effect={change.effect} />
+        ) : (
+          <ProposalEffect byDate={byDate} change={change} />
+        )}
         {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
 
         {result ? (

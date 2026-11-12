@@ -166,8 +166,6 @@ private struct GoalSteps: View {
   @State private var confirmingStartOver = false
   /// Start over's request, cancelled if the screen goes away first, so it never acts after.
   @State private var startingOver: Task<Void, Never>?
-  /// The conditions picked, consented or not, kept on this device only to check what often helps
-  /// on the screen after.
   @State private var conditionPicks: [String] = []
 
   init(
@@ -405,9 +403,6 @@ private struct GoalSteps: View {
       }
     case .addressForm:
       context.skipDeclines = true
-    case .conditions:
-      let next = view.steps.firstIndex(of: step).map { view.steps.dropFirst($0 + 1).first }
-      context.supportIsNext = next == .learningSupport
     case .learningSupport where revisiting == nil && history.last == .conditions:
       context.prechecked = draft.precheck(for: conditionPicks)
     default:
@@ -558,6 +553,10 @@ private struct StepScreen: View {
           LevelTestStep(
             goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
             testMinutes: view.quickTestMinutes, onDone: onPlacementDone)
+        } else if view.goal.kind == .exam {
+          FocusTestFlow(
+            goalID: view.goal.id, subject: subject, host: .onboarding, onboarding: view,
+            onDone: onPlacementDone)
         } else {
           PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
         }

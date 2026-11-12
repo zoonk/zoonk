@@ -20,6 +20,7 @@ const MAX_CHANGES = 10;
  */
 const LEARNER_FACING_SOURCES = new Set([
   "learner",
+  "mock",
   OWN_LEVEL_SOURCE,
   "planEdit",
   "preparation",

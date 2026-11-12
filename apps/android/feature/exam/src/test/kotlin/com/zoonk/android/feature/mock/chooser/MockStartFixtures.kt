@@ -9,6 +9,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.MockQuestionsGeneration
+import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.util.UUID
@@ -49,25 +50,25 @@ internal fun usageLimit() =
 internal class FakeMockStartApi : MockStartApi {
     var starts: List<() -> AnytimeMock> = listOf { started() }
     var writes: List<() -> MockQuestionsGeneration> = listOf { writing(MockQuestionsGeneration.Status.READY) }
-    val started = mutableListOf<Pair<MockChoice, Boolean>>()
-    val asked = mutableListOf<MockChoice>()
+    val started = mutableListOf<Pair<MockShape, Boolean>>()
+    val asked = mutableListOf<MockShape>()
 
     override suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
         acceptFewer: Boolean,
     ): AnytimeMock {
-        started += choice to acceptFewer
+        started += shape to acceptFewer
         return starts[minOf(started.size, starts.size) - 1]()
     }
 
     override suspend fun writeQuestions(
         session: AuthenticatedSession,
         goalId: UUID,
-        choice: MockChoice,
+        shape: MockShape,
     ): MockQuestionsGeneration {
-        asked += choice
+        asked += shape
         return writes[minOf(asked.size, writes.size) - 1]()
     }
 }

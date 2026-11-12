@@ -106,7 +106,7 @@
     </plurals>
     <string name="tutor_offer_take_test">Take the test</string>
     <string name="tutor_offer_choose_focus">Choose where to focus</string>
-    <string name="tutor_offer_choose_focus_description">Pick the subjects that get more depth, or take a short test that picks them.</string>
+    <string name="tutor_offer_choose_focus_description">Find which subjects should get more of your study time.</string>
     <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
     <string name="tutor_offer_call_with">A short call out loud with %1$s, %2$s.</string>
     <string name="tutor_offer_call">A short call out loud, at your level.</string>

@@ -7,10 +7,9 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { gradeChoiceAnswer, parseChoiceItem } from "../learner/_utils/choice-items";
+import { answerPlacementQuestion } from "../learner/placement/answer-placement-question";
 import { getChapterTestOut } from "../learner/test-out/get-chapter-test-out";
 import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-out";
-import { getFocusTest } from "../plans/focus-test/get-focus-test";
-import { submitFocusTest } from "../plans/focus-test/submit-focus-test";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 
 describe("diagnostic recall of notebook originals", () => {
@@ -71,13 +70,13 @@ describe("diagnostic recall of notebook originals", () => {
       mockSession(user.id);
       const chapterId = chapters[0]?.id ?? "";
       const scope = { chapterId, goalId: goal.id };
-      const read = await (kind === "chapter" ? getChapterTestOut(scope) : getFocusTest(scope));
+      const read = await getChapterTestOut(scope);
 
       if (read.status !== "ready") {
         throw new Error(`Expected a ready test, got ${read.status}`);
       }
 
-      const questions = "testOut" in read ? read.testOut.questions : read.focusTest.questions;
+      const questions = read.testOut.questions;
       expect(questions.find((question) => question.itemId === item.id)?.image?.url).toBe(asset.url);
 
       const input = {
@@ -91,7 +90,10 @@ describe("diagnostic recall of notebook originals", () => {
 
       const result = await (kind === "chapter"
         ? submitChapterTestOut({ ...scope, input })
-        : submitFocusTest({ ...scope, input }));
+        : answerPlacementQuestion({
+            goalId: goal.id,
+            input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id },
+          }));
 
       expect(result.status).toBe("ready");
 

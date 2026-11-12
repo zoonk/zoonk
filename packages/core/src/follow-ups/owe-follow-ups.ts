@@ -10,6 +10,7 @@ function getFollowUpKey(followUp: FollowUp): string {
   switch (followUp.kind) {
     case "refreshStudyDay":
     case "prepareSession":
+    case "settleSessionPlan":
       return followUp.input.sessionId;
     case "settleSessionDay":
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;

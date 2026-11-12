@@ -3,9 +3,8 @@ import { type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
-import { listFocusedSkillIds } from "../../plans/planner/focus-targets";
 import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
-import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import {
   type ClaimEvent,
   type DatedClaim,
@@ -126,25 +125,25 @@ async function loadAnswerEvents({
 
   const itemIds = [...new Set(answers.flatMap((answer) => answer.itemId ?? []))];
 
-  const trueFalse =
+  const items =
     itemIds.length > 0
       ? await prisma.item.findMany({
-          select: { id: true },
-          where: { format: "trueFalse", id: { in: itemIds } },
+          select: { format: true, id: true },
+          where: { id: { in: itemIds } },
         })
       : [];
 
-  const trueFalseIds = new Set(trueFalse.map((item) => item.id));
+  const formats = new Map(items.map((item) => [item.id, item.format]));
 
   return answers.flatMap((answer): ClaimEvent[] =>
     answer.skillId
       ? [
           {
             at: answer.answeredAt,
+            format: formats.get(answer.itemId ?? "") ?? "multipleChoice",
             isCorrect: answer.isCorrect,
             kind: answer.studySessionId && !answer.isPlacement ? "practice" : "test",
             skillId: answer.skillId,
-            trueFalse: answer.itemId !== null && trueFalseIds.has(answer.itemId),
           },
         ]
       : [],
@@ -215,12 +214,9 @@ export async function loadClaimEvents({
 }
 
 export async function loadSkillEvidence({
-  focused,
   passedOver,
   ...input
 }: {
-  /** The skills the learner focused on: their own answers take them as known twice. */
-  focused?: (skillId: string) => boolean;
   goalId: string;
   /** The basics the learner passed over by choice, still to confirm (see `listKnownSkills`). */
   passedOver?: (skillId: string) => boolean;
@@ -236,7 +232,7 @@ export async function loadSkillEvidence({
   return {
     answeredWrong: listAnsweredWrong(events),
     claims: readSkillClaims(events),
-    known: listKnownSkills({ events, focused, passedOver }),
+    known: listKnownSkills({ events, passedOver }),
   };
 }
 
@@ -252,19 +248,11 @@ export async function loadAnswerPlanReadings({
   skillId: string;
   userId: string;
 }): Promise<{ after: string; before: string }> {
-  const [events, plan] = await Promise.all([
-    loadClaimEvents({ goalId, skillIds: [skillId], userId }),
-    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } }),
-  ]);
-
-  const focused = listFocusedSkillIds({
-    graph: parsePlanGraph(plan?.graph),
-    settings: parsePlanSettings(plan?.settings),
-  }).has(skillId);
+  const events = await loadClaimEvents({ goalId, skillIds: [skillId], userId });
 
   const read = (list: readonly ClaimEvent[]) =>
     [
-      listKnownSkills({ events: list, focused: () => focused }).has(skillId),
+      listKnownSkills({ events: list }).has(skillId),
       readSkillClaims(list).get(skillId) === "gap",
       listAnsweredWrong(list).has(skillId),
     ].join("|");

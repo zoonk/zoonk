@@ -28,8 +28,6 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StepState
 import com.zoonk.android.data.StepTimes
-import com.zoonk.android.feature.exam.FakeMockApi
-import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.setup.LocalSetupWarmUp
 import com.zoonk.android.feature.onboarding.setup.NoticeReading
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
@@ -127,7 +125,6 @@ class WarmUpScreenshots {
         val readingPlans = PlanStore(readingPlanApi, cache)
         val onboardingApi = FakeOnboardingApi().apply { placement = placementOf(status = "preparing", next = null) }
         val onboarding = OnboardingStore(onboardingApi, cache, session) { SignInResult.SignedIn }
-        val mocks = MockStore(FakeMockApi(options = null), cache)
         var scene by mutableIntStateOf(0)
         var scheduleReady by mutableStateOf(false)
         var noticeRead by mutableStateOf(false)
@@ -197,8 +194,6 @@ class WarmUpScreenshots {
                                             MAPPING,
                                             onRetryRun = {},
                                             onboarding,
-                                            mocks,
-                                            rememberAppNavigator(),
                                             onProgress = {},
                                             onDone = { WriteOutcome.Done(Unit) },
                                         )

@@ -27,8 +27,6 @@ type QuestionsHeader = { closeHref: string; screen: string; title: string };
 
 export type ChoiceQuestionAnswer = { answer: ChoiceAnswer; durationMs: number; itemId: string };
 
-type UpcomingQuestions = { ended: boolean; total: number; waiting: React.ReactNode };
-
 /**
  * The host clears the draft once the answers are graded (`clearAnswerDraft`); until then, a reload
  * goes on from the next question.
@@ -118,7 +116,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   questions,
   trueFalseLabels,
   unsent,
-  upcoming,
 }: {
   aside?: TaskFrameAside | null;
   draftKey?: string;
@@ -129,7 +126,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   questions: readonly Question[];
   trueFalseLabels: TrueFalseLabels;
   unsent: UnsentAnswers<ChoiceQuestionAnswer[]> | null;
-  upcoming?: UpcomingQuestions | null;
 }) {
   const t = useExtracted();
   const [index, setIndex] = useState(0);
@@ -139,7 +135,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const shownAt = useRef(0);
   const questionRef = useRef<HTMLDivElement>(null);
   const question = questions[index];
-  const total = Math.max(questions.length, upcoming?.total ?? 0);
+  const total = questions.length;
   const itemId = question?.itemId ?? null;
   const questionIds = useMemo(() => questions.map((entry) => entry.itemId), [questions]);
 
@@ -181,11 +177,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
     onFinish(next);
   };
 
-  const finishNow = () => {
-    draft.finish(answers);
-    onFinish(answers);
-  };
-
   const current = Math.min(index + 1, total);
   const locked = pending || unsent !== null;
 
@@ -194,7 +185,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       aside={aside}
       exitHref={header.closeHref}
       footer={
-        (question || upcoming?.ended) && (
+        question && (
           <>
             {unsent && !pending && (
               <AnswersSaveError
@@ -203,14 +194,11 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
               />
             )}
             <QuestionsFooter
-              canFinish={!question && Boolean(upcoming?.ended)}
               isLast={index + 1 >= total}
               locked={locked}
               onDontKnow={() => answer({ dontKnow: true }, "notSure")}
-              onFinish={finishNow}
               onNext={() => selected && answer(selected, "check")}
               pending={pending}
-              question={question !== undefined}
               selected={selected !== null}
               sender={sender}
             />
@@ -237,8 +225,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
           : undefined
       }
     >
-      {!question && upcoming?.waiting}
-
       {question && (
         <div className="flex flex-col gap-4" ref={questionRef}>
           <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
@@ -264,40 +250,24 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
 }
 
 function QuestionsFooter({
-  canFinish,
   isLast,
   locked,
   onDontKnow,
-  onFinish,
   onNext,
   pending,
-  question,
   selected,
   sender,
 }: {
-  canFinish: boolean;
   isLast: boolean;
   /** A failed send keeps its answers as they are: only its Try again sends them. */
   locked: boolean;
   onDontKnow: () => void;
-  onFinish: () => void;
   onNext: () => void;
   pending: boolean;
-  question: boolean;
   selected: boolean;
   sender: AnswerSender | null;
 }) {
   const t = useExtracted();
-
-  if (!question) {
-    return canFinish ? (
-      <TaskActions>
-        <TaskMainButton busy={pending} disabled={locked} onClick={onFinish} {...FORWARD_ICON}>
-          {t("Finish with these answers")}
-        </TaskMainButton>
-      </TaskActions>
-    ) : null;
-  }
 
   return (
     <TaskActions>

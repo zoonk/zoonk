@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  type MockOptionView,
-  type PlacementMockLength,
-  type PlacementMockOptionView,
-} from "@zoonk/core/exams/mocks/contract";
+import { type MockOptionView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted, useFormatter } from "next-intl";
-import { type RowChoice } from "../_components/choice-rows";
 import { useFormatDuration } from "../_utils/time-format";
 import { useMockDaySizeLabel } from "./mock-labels";
 
@@ -80,55 +75,4 @@ export function useMockOptionSize() {
       message: "{count} q · ~{time}",
       values: { count: String(option.questions), time: duration(option.estimatedMinutes) },
     });
-}
-
-function usePlacementPrecision() {
-  const t = useExtracted();
-
-  return (option: PlacementMockOptionView): string => {
-    if (!option.coversAllAreas) {
-      return t(
-        "The {count, plural, one {subject} other {# subjects}} worth most. Your first days ask about the rest.",
-        { count: option.areas.length },
-      );
-    }
-
-    if (option.length === "short") {
-      return t("A quick check. Your first days fine-tune it.");
-    }
-
-    return option.length === "long"
-      ? t("The most precise starting point.")
-      : t("Every subject. A good starting point.");
-  };
-}
-
-export function usePlacementLengthChoices({
-  options,
-  recommended,
-}: {
-  options: readonly PlacementMockOptionView[];
-  recommended: PlacementMockLength;
-}): RowChoice<PlacementMockLength>[] {
-  const t = useExtracted();
-  const duration = useFormatDuration();
-  const precision = usePlacementPrecision();
-
-  return options.map((option) => {
-    const time = duration(option.estimatedMinutes);
-
-    return {
-      description: precision(option),
-      label:
-        option.length === recommended
-          ? t("About {time} (recommended)", { time })
-          : t("About {time}", { time }),
-      trailing: t({
-        description: "{count} is a number of questions in a mock exam.",
-        message: "{count} q",
-        values: { count: String(option.questions) },
-      }),
-      value: option.length,
-    };
-  });
 }

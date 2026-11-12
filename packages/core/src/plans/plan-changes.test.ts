@@ -102,14 +102,6 @@ describe("plan changes", () => {
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(stored.settings).not.toMatchObject({ focusAreas: ["Math"] });
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
-
-    await expect(
-      changeGoalPlan({
-        goalId: goal.id,
-        input: { operations: [{ areas: ["Math"], kind: "focusAreas" }] },
-        saveFocusAnyway: true,
-      }),
-    ).resolves.toMatchObject({ status: "applied" });
   });
 
   it.each(["today", "tutor"] as const)(

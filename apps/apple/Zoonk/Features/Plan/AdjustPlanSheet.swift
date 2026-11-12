@@ -375,6 +375,62 @@ func planEffectText(_ effect: PlanEffect?, today: String, isEstimated: Bool) -> 
       comment: "How a change moves the plan's end; the arguments are dates like 'May 5'")
 }
 
+/// Main's `useAreaEndTexts`: when each subject whose end moves finishes, and what it gains or loses.
+func planAreaEndTexts(_ effect: PlanEffect?, today: String) -> [String] {
+  let estimated = effect?.lessonsAddedEstimated ?? false
+
+  return (effect?.areaEnds ?? []).map { end in
+    let area = end.area
+    let after = PlanDate.text(end.after, today: today)
+    let before = PlanDate.text(end.before, today: today)
+    let gained = end.lessonsGained ?? 0
+
+    if end.after == end.before {
+      return String(
+        localized:
+          "You still finish \(area) around \(after), with all its lessons: everything fits by your date.",
+        table: "Plan", comment: "A subject a change doesn't move; the date is a day like 'May 5'")
+    }
+
+    if gained > 0 && end.after > end.before {
+      return estimated
+        ? String(
+          localized:
+            "\(area) gets about \(gained) more lessons, so you finish it around \(after) instead of \(before).",
+          table: "Plan",
+          comment:
+            "A subject a change gives more lessons, some not written yet; the dates are days like 'May 5'"
+        )
+        : String(
+          localized:
+            "\(area) gets \(gained) more lessons, so you finish it around \(after) instead of \(before).",
+          table: "Plan",
+          comment: "A subject a change gives more lessons; the dates are days like 'May 5'")
+    }
+
+    if gained < 0 && end.after < end.before {
+      return String(
+        localized:
+          "\(area) has \(-gained) lessons fewer to go, so you finish it around \(after) instead of \(before).",
+        table: "Plan",
+        comment: "A subject a change leaves fewer lessons to do; the dates are days like 'May 5'")
+    }
+
+    return String(
+      localized: "You finish \(area) around \(after) instead of \(before).", table: "Plan",
+      comment: "When a change moves a subject's end; the dates are days like 'May 5'")
+  }
+}
+
+/// A proposal's effect beside its buttons; a focus leads with what each subject gains.
+func planProposalEffectText(_ effect: PlanEffect?, setsFocus: Bool, today: String) -> String? {
+  let sentences =
+    (setsFocus ? planAreaEndTexts(effect, today: today) : [])
+    + [planLessonsEffectText(effect)].compactMap(\.self)
+
+  return sentences.isEmpty ? nil : sentences.joinedSentences()
+}
+
 /// Mirrors main's `useLessonsEffectText` for a plan with a date: what a change adds and leaves out,
 /// naming a few of the lessons it leaves out and the topics not written yet.
 func planLessonsEffectText(_ effect: PlanEffect?) -> String? {

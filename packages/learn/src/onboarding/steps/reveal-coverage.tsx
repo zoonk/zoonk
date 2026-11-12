@@ -1,11 +1,14 @@
 "use client";
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { Button } from "@zoonk/ui/components/button";
-import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { useExtracted, useFormatter } from "next-intl";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { FreeWeekOverNotice } from "../../_components/free-week-over";
+import { useGoalDateValues } from "../../_utils/iso-date";
 import { useSentenceSpace } from "../../_utils/locale";
+import { useFormatDuration } from "../../_utils/time-format";
+import { LearnLink } from "../../learn-link";
 import { usePlanScreen } from "../../plan/plan-context";
 import {
   MoveDateFailure,
@@ -15,12 +18,16 @@ import {
   useMoveDate,
   usePlanCoverage,
 } from "../../plan/plan-coverage";
+import { useCanChooseFocus, useChooseFocus } from "../../plan/plan-focus";
+import { useFocusTestOfferHref, useTakeFocusTestLabel } from "../../plan/plan-focus-test";
 import { useFullCourse, useFullCourseText } from "../../plan/plan-full-course";
 import { PassMarks } from "../../syllabus/syllabus-notes";
 import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { SyllabusTopicsSheet, useSyllabusSummaryText } from "../../syllabus/syllabus-summary";
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
+
+const LINKS_CLASS = "flex flex-wrap gap-x-4 gap-y-1 text-sm";
 
 function CoveredWords({ coverage }: { coverage: Coverage }) {
   const coveredText = useCoveredText();
@@ -35,6 +42,89 @@ function SyllabusWords({ syllabus }: { syllabus: SyllabusView }) {
   return useSyllabusSummaryText({ dailyMinutes: plan.schedule.dailyMinutes, syllabus });
 }
 
+/** What a short plan trades: null unless the time doesn't cover everything and the plan has a focus. */
+function useFocusTradeOff(): string | null {
+  const t = useExtracted();
+  const format = useFormatter();
+  const formatDuration = useFormatDuration();
+  const goalDate = useGoalDateValues();
+  const coverage = usePlanCoverage();
+  const { plan } = usePlanScreen();
+  const { dailyMinutes, targetDate, targetDateNamedMonth } = plan.schedule;
+
+  const focused = plan.areas
+    .filter((area) => area.focused && !area.partOf)
+    .map((area) => area.name);
+
+  if (!coverage || !targetDate || focused.length === 0) {
+    return null;
+  }
+
+  return t({
+    description:
+      'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "4 hr"; {areas} lists up to three exam subjects.',
+    message:
+      "{dateKind, select, month {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.} other {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.}}",
+    values: {
+      ...goalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth, style: "long" }),
+      areas: format.list(focused, { type: "conjunction" }),
+      time: formatDuration(dailyMinutes),
+    },
+  });
+}
+
+function FocusTradeOff({ syllabus, text }: { syllabus: SyllabusView | null; text: string }) {
+  const t = useExtracted();
+  const { focusTestHref, plan } = usePlanScreen();
+  const canChooseFocus = useCanChooseFocus();
+  const chooseFocus = useChooseFocus();
+  const tested = plan.focusTest !== null && plan.focusTest.state !== "notStarted";
+  const testHref = tested ? focusTestHref : undefined;
+
+  const links = [
+    syllabus
+      ? {
+          key: "fits",
+          link: <SyllabusTopicsSheet label={t("See what fits")} syllabus={syllabus} />,
+        }
+      : null,
+    canChooseFocus
+      ? {
+          key: "focus",
+          link: (
+            <Button onClick={chooseFocus} variant="link">
+              {t("Change focus")}
+            </Button>
+          ),
+        }
+      : null,
+    testHref
+      ? {
+          key: "test",
+          link: (
+            <LearnLink className={buttonVariants({ variant: "link" })} href={testHref}>
+              {t("What your test changed")}
+            </LearnLink>
+          ),
+        }
+      : null,
+  ].filter((entry) => entry !== null);
+
+  return (
+    <div className="flex flex-col gap-2" data-slot="reveal-coverage">
+      <p className="text-muted-foreground text-sm text-pretty">{text}</p>
+
+      <p className={LINKS_CLASS}>
+        {links.map((entry) => (
+          <Fragment key={entry.key}>{entry.link}</Fragment>
+        ))}
+      </p>
+
+      {syllabus && <PassMarks passMarks={syllabus.passMarks} />}
+    </div>
+  );
+}
+
 export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
@@ -46,6 +136,9 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
   const done = useRef<HTMLParagraphElement>(null);
   const shown = hasSyllabusSection(syllabus) ? syllabus : null;
   const covered = moved && !coverage;
+  const tradeOff = useFocusTradeOff();
+  const testOfferHref = useFocusTestOfferHref();
+  const takeFocusTest = useTakeFocusTestLabel();
 
   useEffect(() => {
     if (covered) {
@@ -55,6 +148,10 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
 
   if (plan.access.freeWeekOver) {
     return <FreeWeekOverNotice />;
+  }
+
+  if (tradeOff) {
+    return <FocusTradeOff syllabus={shown} text={tradeOff} />;
   }
 
   const words = coverage ? (
@@ -85,13 +182,18 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
             </Button>
           </>
         )}
-        {shown && (
-          <>
-            <span aria-hidden="true">{" · "}</span>
-            <SyllabusTopicsSheet syllabus={shown} />
-          </>
-        )}
       </p>
+
+      {(shown || testOfferHref) && (
+        <p className={LINKS_CLASS}>
+          {shown && <SyllabusTopicsSheet syllabus={shown} />}
+          {testOfferHref && (
+            <LearnLink className={buttonVariants({ variant: "link" })} href={testOfferHref}>
+              {takeFocusTest}
+            </LearnLink>
+          )}
+        </p>
+      )}
 
       <MoveDateFailure move={move} />
       {shown && <PassMarks passMarks={shown.passMarks} />}

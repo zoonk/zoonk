@@ -9,14 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.AuthenticatedSession
@@ -35,7 +36,6 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.MockOptions
-import com.zoonk.api.models.MockOptionsPlacementMock
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -49,7 +49,7 @@ fun MockChooserScreen(
     val goalId = summary.value?.planGoal?.id
 
     if (goalId != null) {
-        key(goalId) { MockChooser(goalId, placement = false, app, navigator) }
+        key(goalId) { MockChooser(goalId, app, navigator) }
         return
     }
 
@@ -62,7 +62,7 @@ fun MockChooserScreen(
         }
 
         is LoadState.Loaded, LoadState.Empty -> {
-            Leave(ChooserExit.Away(placementGoal = null), navigator)
+            Leave(ChooserExit.Away, navigator)
         }
 
         else -> {
@@ -71,26 +71,9 @@ fun MockChooserScreen(
     }
 }
 
-/** Main's `/mock/placement/{goalId}`: onboarding's mock, which sets where the plan starts. */
-@Composable
-fun PlacementMockScreen(
-    route: AppRoute.PlacementMock,
-    app: AppContainer,
-    navigator: AppNavigator,
-) {
-    val goalId = remember(route.goalId) { runCatching { UUID.fromString(route.goalId) }.getOrNull() }
-
-    if (goalId == null) {
-        Leave(ChooserExit.Away(placementGoal = route.goalId), navigator)
-    } else {
-        MockChooser(goalId, placement = true, app, navigator)
-    }
-}
-
 @Composable
 internal fun MockChooser(
     goalId: UUID,
-    placement: Boolean,
     app: AppContainer,
     navigator: AppNavigator,
     mockStore: MockStore = app.mocks,
@@ -99,14 +82,14 @@ internal fun MockChooser(
 ) {
     val options = mockStore.options[goalId]
     val state by options.collectShown()
-    val viewModel = viewModel(key = "mock-chooser-$goalId-$placement") { MockChooserViewModel(goalId, starter, app.sessions, generations) }
+    val viewModel = viewModel(key = "mock-chooser-$goalId") { MockChooserViewModel(goalId, starter, app.sessions, generations) }
     val opened by viewModel.opened.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
     val run by viewModel.run.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val loaded = state.value
-    val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state, placement, goalId)
+    val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state)
     val writing = status == ChooserStatus.Writing
     val focus =
         rememberPressFocus(
@@ -134,12 +117,11 @@ internal fun MockChooser(
         return
     }
 
-    ChooserFrame(navigator, title = loaded?.let { chooserTitle(placement) }) {
+    ChooserFrame(navigator, title = loaded?.let { stringResource(R.string.mock_chooser_title) }) {
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
             writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester)
-            placement -> PlacementChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
             else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
         }
     }
@@ -154,33 +136,16 @@ internal sealed interface ChooserExit {
     /** The goal has no mocks to take now. */
     data object ToExam : ChooserExit
 
-    /** Not an exam, or no placement mock to take: to Today, or back to onboarding. */
-    data class Away(
-        val placementGoal: String?,
-    ) : ChooserExit
+    /** Not an exam: to Today. */
+    data object Away : ChooserExit
 }
 
-private fun chooserExit(
-    state: LoadState<MockOptions>,
-    placement: Boolean,
-    goalId: UUID,
-): ChooserExit? {
-    val away = ChooserExit.Away(placementGoal = goalId.toString().takeIf { placement })
+private fun chooserExit(state: LoadState<MockOptions>): ChooserExit? {
     val options = state.value
     return when {
-        options == null -> away.takeIf { state is LoadState.Empty || (state as? LoadState.Failed)?.error == ApiError.NotFound }
-        placement -> placementExit(options, away)
+        options == null -> ChooserExit.Away.takeIf { state is LoadState.Empty || (state as? LoadState.Failed)?.error == ApiError.NotFound }
         else -> options.running?.let { ChooserExit.ToMock(it.id.toString()) } ?: ChooserExit.ToExam.takeIf { options.options.isEmpty() }
     }
-}
-
-private fun placementExit(
-    options: MockOptions,
-    away: ChooserExit,
-): ChooserExit? {
-    val placement = options.placement ?: return away
-    val mock = placement.mock ?: return null
-    return if (mock.status == MockOptionsPlacementMock.Status.FINISHED) away else ChooserExit.ToMock(mock.id.toString())
 }
 
 /** The chooser was only a way there, so it goes from the back stack as main's redirect does. */
@@ -195,7 +160,7 @@ private fun Leave(
         when (exit) {
             is ChooserExit.ToMock -> navigator.open(AppRoute.Mock(exit.id))
             ChooserExit.ToExam -> navigator.open(AppRoute.Exam)
-            is ChooserExit.Away -> exit.placementGoal?.let { navigator.open(AppRoute.GoalSetup(it)) } ?: navigator.showRoot(AppTab.Today)
+            ChooserExit.Away -> navigator.showRoot(AppTab.Today)
         }
     }
 }

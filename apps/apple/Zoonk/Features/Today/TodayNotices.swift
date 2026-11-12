@@ -410,3 +410,125 @@ struct TodayUploadRequestSection: View {
         comment: "Opens the ways to add a language certificate's official guide")
   }
 }
+
+/// Main's `TodayFocusTest`: in a short exam plan's first week, the Focus test for a learner who
+/// hasn't started it. Answered with "Not now", it stays while the learner is here to say what the
+/// answer did; gone for any other reason, such as a test taken since, it's gone here too.
+struct TodayFocusTestSection: View {
+  let goalID: String
+  let offer: FocusTestSummary.Size?
+  /// Kept by Today for the visit, since Today stops holding the suggestion once it's dismissed.
+  @Binding var dismissed: Bool
+  let onAnswer: () -> Void
+
+  @Environment(AppRouter.self) private var router
+  @Environment(PlanStore.self) private var plans
+  @State private var kept: FocusTestSummary.Size?
+  @State private var isOpen = false
+  @State private var isDismissing = false
+  @State private var failed = false
+
+  var body: some View {
+    let shown = offer ?? (isDismissing ? kept : nil)
+
+    if dismissed || shown != nil {
+      Section {
+        if dismissed {
+          SuggestionLine {
+            StatusMark(status: .done)
+          } summary: {
+            Text(Self.noted)
+              .typeWeight(.medium)
+              .foregroundStyle(Color(.foreground))
+          } action: {
+            EmptyView()
+          }
+          .listRowSeparator(.hidden)
+        } else if let shown {
+          SuggestionLine {
+            SuggestionMark(kind: .symbol("scope"))
+          } summary: {
+            Text(
+              "The Focus test shows what to study most.", tableName: "Today",
+              comment: "Today's suggestion of the Focus test, in one line")
+          } action: {
+            SuggestionOpen(isOpen: $isOpen) {
+              details(shown)
+            }
+          }
+          .listRowSeparator(.hidden)
+        }
+      }
+      .announcesStatus(dismissed ? String(localized: Self.noted) : nil)
+      .onAppear { kept = offer ?? kept }
+      .onChange(of: offer) { kept = offer ?? kept }
+    }
+  }
+
+  private static let noted = LocalizedStringResource(
+    "Noted. You can take the test from your plan.", table: "Today",
+    comment: "After the learner dismissed Today's suggestion of the Focus test")
+
+  @ViewBuilder
+  private func details(_ shown: FocusTestSummary.Size) -> some View {
+    Text(FocusTestCopy.title(findsFocus: true))
+      .typeStyle(.body.weight(.semibold))
+      .foregroundStyle(Color(.foreground))
+
+    Text(
+      "Your time can't cover everything before your exam. In about \(studyDuration(minutes: shown.minutes)), the Focus test shows what to study most.",
+      tableName: "Today",
+      comment: "Why Today suggests the Focus test; then about how long it takes, such as \"15 min\""
+    )
+    .foregroundStyle(.mutedForeground)
+
+    ButtonRow {
+      Button {
+        isOpen = false
+        router.open(.focusTest(goalId: goalID, startsTest: true))
+      } label: {
+        Text("Start the test", tableName: "FocusTest", comment: "Starts the Focus test")
+          .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.mainAction)
+
+      BusyButton(isBusy: isDismissing) {
+        dismiss()
+      } label: {
+        Text(FocusTestCopy.notNow)
+          .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.outline)
+    }
+    .disabled(isDismissing)
+
+    if failed {
+      SuggestionSaveError()
+    }
+  }
+
+  private func dismiss() {
+    guard !isDismissing else {
+      return
+    }
+
+    onAnswer()
+    isDismissing = true
+    failed = false
+
+    Task {
+      defer { isDismissing = false }
+
+      switch await plans.updateFocusTest(goalId: goalID, FocusTestControls(suggestion: .dismissed))
+      {
+      case .done:
+        dismissed = true
+        isOpen = false
+      case .failed:
+        failed = true
+      case .obsolete:
+        break
+      }
+    }
+  }
+}

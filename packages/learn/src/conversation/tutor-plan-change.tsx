@@ -15,6 +15,7 @@ import { SURFACE_CLASS } from "../_components/surface";
 import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
+  getFocusedAreas,
   useAddedTopicsStartText,
   useAreaEndTexts,
   useAreaStartTexts,
@@ -48,7 +49,10 @@ function useChangeFootnote() {
   const reviewFirstText = useReviewFirstText();
   const space = useSentenceSpace();
 
-  return function changeFootnote(effect: PlanChangeView["effect"]): string | null {
+  return function changeFootnote({
+    effect,
+    operations,
+  }: Pick<PlanChangeView, "effect" | "operations">): string | null {
     if (!effect) {
       return null;
     }
@@ -61,9 +65,18 @@ function useChangeFootnote() {
         (!effect.reviewFirst && !ends.some((areaEnd) => areaEnd.area === start.area)),
     );
 
+    const focused = getFocusedAreas(operations);
+
+    const gains = ends.filter(
+      ({ after, area, before, lessonsGained = 0 }) =>
+        focused.includes(area) && lessonsGained > 0 && after > before,
+    );
+
     const sentences = [
+      // An end that moves is in the diff, but a focus still says what its subjects gain first.
+      ...areaEndTexts(gains, { estimated: effect.lessonsAddedEstimated }),
       ...areaStartTexts(starts),
-      // An end that moves is in the diff; one that stays says why.
+      // An end that stays says why.
       ...areaEndTexts(ends.filter((areaEnd) => areaEnd.after === areaEnd.before)),
       reviewFirstText(effect),
       lessonsText(effect, { named: true }),
@@ -234,7 +247,7 @@ export function TutorPlanChange({
   const statusLine = useStatusLine(change);
   const { answer, failed, isPending } = useAnswer({ cardRef, change, decide, onAnswered });
   const proposed = change.status === "proposed";
-  const footnote = proposed ? changeFootnote(change.effect) : null;
+  const footnote = proposed ? changeFootnote(change) : null;
 
   return (
     <section

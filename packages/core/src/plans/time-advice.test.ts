@@ -862,6 +862,7 @@ describe(getPlanTimeAdvice, () => {
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
       coveredShare: null,
       endDate: null,
+      focusSubjects: [],
       fullCourseEndDate: null,
       measure: "goal",
       numbers: null,

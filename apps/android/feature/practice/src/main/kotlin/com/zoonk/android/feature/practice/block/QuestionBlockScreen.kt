@@ -99,7 +99,9 @@ fun QuestionBlock(
         return
     }
     val viewModel =
-        viewModel(key = "block:$blockId:${runAccount(app)}") { QuestionBlockViewModel(key, app.questionBlocks, app.studyOpener) }
+        viewModel(
+            key = "block:$blockId:${runAccount(app)}",
+        ) { QuestionBlockViewModel(key, app.questionBlocks, app.studyOpener, app.focusTests) }
     QuestionBlockContent(viewModel, app, navigator, onClose, onLeave, finished)
 }
 

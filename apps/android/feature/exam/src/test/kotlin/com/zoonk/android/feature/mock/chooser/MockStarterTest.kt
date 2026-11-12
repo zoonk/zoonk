@@ -13,7 +13,6 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockShape
-import com.zoonk.api.models.PlacementMockOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -28,7 +27,7 @@ import org.junit.Test
 class MockStarterTest {
     private val dispatcher = StandardTestDispatcher()
     private val api = FakeMockStartApi()
-    private val full = MockChoice.Practice(MockShape(area = null, day = 1, kind = MockShape.Kind.FULL))
+    private val full = MockShape(area = null, day = 1, kind = MockShape.Kind.FULL)
 
     private fun TestScope.cache() =
         AppCache(
@@ -73,7 +72,6 @@ class MockStarterTest {
     @Test
     fun questionsAreAskedForAgainEveryThreeSecondsWhileTheSkillMapIsDrawn() =
         runTest(dispatcher) {
-            val placement = MockChoice.Placement(PlacementMockOption.Length.MEDIUM)
             api.writes =
                 listOf(
                     { writing(MockQuestionsGeneration.Status.PREPARING) },
@@ -81,10 +79,10 @@ class MockStarterTest {
                     { writing(MockQuestionsGeneration.Status.GENERATING, "run-1") },
                 )
 
-            val result = MockStarter(api, cache()).writeQuestions(GOAL, placement)
+            val result = MockStarter(api, cache()).writeQuestions(GOAL, full)
 
             assertEquals(MutationResult.Done(QuestionWriting.Writing("run-1")), result)
-            assertEquals(listOf(placement, placement, placement), api.asked)
+            assertEquals(listOf(full, full, full), api.asked)
             assertEquals(6_000L, currentTime)
         }
 

@@ -68,11 +68,13 @@ const timeZoneSchema = z
 
 /**
  * Only core writes these: research the notice's question formats, which shared questions read,
- * and the level test its progress and result, which set the learner's skill levels.
+ * the level test its progress and result, which set the learner's skill levels, and an exam goal's
+ * Focus test its sitting and summary.
  */
 const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
-  "countryDependent",
   "contentCountrySource",
+  "countryDependent",
+  "focusTest",
   "levelTest",
   "noticeFormats",
   "skillLevels",

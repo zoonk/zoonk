@@ -14,7 +14,7 @@ import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
-import { mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
+import { areaPointsShape, mockMarkingSchema, mockPointsSchema } from "./mock-points-contract";
 import {
   type MockAdaptView,
   type MockCurrentSection,
@@ -110,6 +110,7 @@ export type MockTimeZoneInput = z.infer<typeof mockTimeZoneInputSchema>;
 const areaResultSchema = z.object({
   correct: z.number(),
   name: z.string(),
+  ...areaPointsShape,
   score: z.object({ high: z.number(), low: z.number(), score: z.number() }).nullable(),
   secondsPerQuestion: z.number(),
   targetSecondsPerQuestion: z.number().nullable(),
@@ -232,28 +233,10 @@ export type MockView = {
   trueFalseLabels: TrueFalseLabels;
 };
 
-export const PLACEMENT_MOCK_LENGTHS = ["short", "medium", "long"] as const;
-
-export type PlacementMockLength = (typeof PLACEMENT_MOCK_LENGTHS)[number];
-
 const anytimeMockChoiceSchema = z.object({
-  length: z
-    .enum(PLACEMENT_MOCK_LENGTHS)
-    .optional()
-    .meta({
-      description:
-        "For `placement`: how long, as `placement.options` lists them; the recommended one when left out",
-    }),
-  purpose: z
-    .enum(["practice", "placement"])
-    .optional()
-    .meta({
-      description:
-        "`practice` (the default): one of the goal's options, by `shape`. `placement`: a diagnostic mock in the exam's format in onboarding, instead of the quick placement; its answers set where the plan starts",
-    }),
-  shape: mockShapeSchema
-    .optional()
-    .meta({ description: "For `practice`: the option picked from GET /v1/goals/{goalId}/mocks" }),
+  shape: mockShapeSchema.meta({
+    description: "The option picked from GET /v1/goals/{goalId}/mocks",
+  }),
 });
 
 export type AnytimeMockChoice = z.infer<typeof anytimeMockChoiceSchema>;
@@ -288,15 +271,6 @@ export type MockOptionView = MockShape & {
   written: string[];
 };
 
-export type PlacementMockOptionView = {
-  areas: string[];
-  coversAllAreas: boolean;
-  estimatedMinutes: number;
-  length: PlacementMockLength;
-  minutes: number;
-  questions: number;
-};
-
 export type MockOptionsView = {
   access: "open" | "plusRequired";
   examDocument: ExamDocument;
@@ -305,11 +279,6 @@ export type MockOptionsView = {
   goalId: string;
   lastMock: ExamMockSummary | null;
   options: MockOptionView[];
-  placement: {
-    mock: { id: string; status: "finished" | "running" } | null;
-    options: PlacementMockOptionView[];
-    recommended: PlacementMockLength;
-  } | null;
   running: { id: string; purpose: MockPurpose; shape: MockShape | null } | null;
 };
 

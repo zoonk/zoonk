@@ -15,6 +15,7 @@ import {
 } from "./onboarding-frame";
 import { OnboardingRailProvider } from "./onboarding-rail";
 import { StartOverMenuSkeleton } from "./start-over-menu";
+import { StepLoading } from "./steps/step-parts";
 
 const EXAMPLE_ROWS = 5;
 
@@ -141,5 +142,14 @@ export function StepsSkeleton() {
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingRailProvider>
+  );
+}
+
+/** The test reads itself in the browser, so its page waits in the shape that read shows first. */
+export function FocusTestSkeleton() {
+  return (
+    <OnboardingFrame>
+      <StepLoading />
+    </OnboardingFrame>
   );
 }

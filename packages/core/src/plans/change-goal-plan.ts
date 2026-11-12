@@ -60,12 +60,12 @@ async function undoSetBack({
 export async function changeGoalPlan({
   goalId,
   input,
-  saveFocusAnyway = false,
+  source = "learner",
   trackAnalytics = true,
 }: {
   goalId: string;
   input: PlanChangeInput;
-  saveFocusAnyway?: boolean;
+  source?: "learner" | "mock";
   trackAnalytics?: boolean;
 }): Promise<PlanChangeResult> {
   return withPlanRetry(async () => {
@@ -98,10 +98,10 @@ export async function changeGoalPlan({
       followToday: !input.operations.every((operation) => isChallengeMove(operation)),
       operations: input.operations,
       reason: LEARNER_CHANGE_NOTE,
-      source: "learner",
+      source,
     } as const;
 
-    const steers = !saveFocusAnyway && input.operations.every((op) => isSteering(op));
+    const steers = input.operations.every((op) => isSteering(op));
     const result = await (steers ? applySteeringNow(request) : applyChangeNow(request));
 
     if (result.status === "invalid" || result.status === "unchanged") {

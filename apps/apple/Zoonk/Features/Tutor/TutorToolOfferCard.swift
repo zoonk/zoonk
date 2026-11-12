@@ -191,10 +191,10 @@ struct TutorToolOfferCard: View {
           "Choose where to focus", tableName: "Tutor",
           comment: "The buddy offers choosing the plan's focus"),
         description: Text(
-          "Pick the subjects that get more depth, or take a short test that picks them.",
-          tableName: "Tutor", comment: "What choosing the plan's focus does"),
+          "Find which subjects should get more of your study time.", tableName: "Tutor",
+          comment: "What choosing the plan's focus does"),
         action: .open(
-          Text("Choose", tableName: "Tutor", comment: "Opens choosing the plan's focus"),
+          Text("Open", tableName: "Tutor", comment: "Opens choosing the plan's focus"),
           .chooseFocus(goalId: focus.goalId)))
     case .case4(let call) where call.call.paused:
       return Content(

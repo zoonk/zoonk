@@ -17,6 +17,7 @@ import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
 import { analytics } from "../../_test-utils/test-boundaries";
+import { askPlacement } from "../_test-utils/exam-test-goal";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
@@ -172,6 +173,7 @@ async function answerNext({
       name: "Placement Answered",
       properties: {
         answer: "dontKnow" in answer ? "dont_know" : "correct",
+        duration_ms: 5000,
         question_number: (placement?.answered ?? 0) + 1,
         skill_id: placement?.next?.skillId,
       },
@@ -866,7 +868,7 @@ describe(finishGoalPlacement, () => {
     await answerNext({ answer: RIGHT, goalId: goal.id, placement: first });
 
     await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
-      completion: { knownSkillIds: [skills[0]?.id] },
+      completion: { knownSkillIds: [] },
     });
   });
 
@@ -913,7 +915,7 @@ describe(finishGoalPlacement, () => {
     });
   });
 
-  it("tests out a basic its own answer confirms even while the plan's time leaves it out", async () => {
+  it("tests out a basic its own answers confirm even while the plan's time leaves it out", async () => {
     const { goal, items, skills } = await graphGoalFixture({
       details: { knownSubjects: ["Portuguese"] },
       inPlan: [1, 2, 3],
@@ -925,14 +927,15 @@ describe(finishGoalPlacement, () => {
       ],
     });
 
-    await answerPlacementQuestion({
-      goalId: goal.id,
-      input: {
-        answer: RIGHT,
-        durationMs: 5000,
-        itemId: items.find((item) => item.skillId === skills[0]?.id)?.id ?? "",
-      },
-    });
+    const checks = items.filter((item) => item.skillId === skills[0]?.id).slice(0, 2);
+
+    for (const item of checks) {
+      // oxlint-disable-next-line no-await-in-loop -- Each answer updates placement's state.
+      await answerPlacementQuestion({
+        goalId: goal.id,
+        input: { answer: RIGHT, durationMs: 5000, itemId: item.id },
+      });
+    }
 
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
@@ -980,7 +983,7 @@ describe(finishGoalPlacement, () => {
     ]);
   });
 
-  it("takes a topic answered right once as known, never one it missed or a true-or-false guess", async () => {
+  it("takes a topic answered right twice as known, never one it missed or a true-or-false guess", async () => {
     const { goal, items, skills, user } = await graphGoalFixture({
       planSkills: [
         { area: "Ethics", band: "intermediate", builds: null },
@@ -1009,6 +1012,7 @@ describe(finishGoalPlacement, () => {
       attemptFixture({
         answeredAt: new Date(Date.now() - 60_000 + attrs.at),
         isCorrect: attrs.isCorrect,
+        isPlacement: true,
         itemId: attrs.itemId ?? itemOf(attrs.skill),
         skillId: skillAt(attrs.skill),
         userId: user.id,
@@ -1016,6 +1020,7 @@ describe(finishGoalPlacement, () => {
 
     await Promise.all([
       answer({ at: 0, isCorrect: true, skill: 0 }),
+      answer({ at: 1, isCorrect: true, skill: 0 }),
       answer({ at: 0, isCorrect: true, itemId: statement.id, skill: 1 }),
       answer({ at: 0, isCorrect: true, skill: 2 }),
       answer({ at: 1000, isCorrect: false, skill: 2 }),
@@ -1040,7 +1045,7 @@ describe(finishGoalPlacement, () => {
     ]);
   });
 
-  it("never takes a topic the learner asked to focus on as known from one answer", async () => {
+  it("requires two right answers for focused and other topics alike", async () => {
     const { goal, items, skills, user } = await graphGoalFixture({
       planSkills: [
         { area: "Biology", band: "intermediate", builds: null },
@@ -1065,6 +1070,7 @@ describe(finishGoalPlacement, () => {
       attemptFixture({
         answeredAt: new Date(Date.now() - 60_000 + at),
         isCorrect: true,
+        isPlacement: true,
         itemId: itemsOf(skill)[item]?.id,
         skillId: skillAt(skill),
         userId: user.id,
@@ -1076,10 +1082,14 @@ describe(finishGoalPlacement, () => {
     ]);
 
     await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
-      completion: { knownSkillIds: [skillAt(0)] },
+      completion: { knownSkillIds: [] },
     });
 
-    await answerRight({ at: 1000, item: 1, skill: 1 });
+    await Promise.all([
+      answerRight({ at: 1000, item: 1, skill: 0 }),
+      answerRight({ at: 1000, item: 1, skill: 1 }),
+    ]);
+
     const again = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     expect(again.status === "ready" && sortIds(again.completion.knownSkillIds)).toStrictEqual(
@@ -1162,7 +1172,7 @@ describe(finishGoalPlacement, () => {
       }),
     ]);
 
-    const first = await readNext(goal.id);
+    const first = await askPlacement(goal.id);
     expect(first?.next?.skillId).toBe(skills[0]?.id);
 
     const afterMiss = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement: first });
@@ -1171,10 +1181,18 @@ describe(finishGoalPlacement, () => {
     const asked = new Set([first?.next?.skillId]);
     let placement = afterMiss;
 
-    for (let turn = 0; turn < topics * 2 && placement?.status === "asking"; turn += 1) {
-      asked.add(placement.next?.skillId);
+    for (let turn = 0; turn < topics * 2; turn += 1) {
+      // A sitting that reached its count gives way to the next one.
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: RIGHT, goalId: goal.id, placement });
+      const asking = placement?.next ? placement : await askPlacement(goal.id);
+
+      if (!asking?.next) {
+        break;
+      }
+
+      asked.add(asking.next.skillId);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+      placement = await answerNext({ answer: RIGHT, goalId: goal.id, placement: asking });
     }
 
     expect(sortIds([...asked])).toStrictEqual(sortIds(skills.map((skill) => skill.id)));
@@ -1206,11 +1224,20 @@ describe(finishGoalPlacement, () => {
       }),
     ]);
 
-    let placement = await readNext(goal.id);
+    let placement = await askPlacement(goal.id);
 
-    for (let turn = 0; turn < skills.length && placement?.status === "asking"; turn += 1) {
+    for (const _ of skills) {
+      // A sitting that reached its count gives way to the next one.
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement });
+      const asking = placement?.next ? placement : await askPlacement(goal.id);
+      placement = asking;
+
+      if (!asking?.next) {
+        break;
+      }
+
+      // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement: asking });
     }
 
     expect(placement).toMatchObject({
@@ -1240,6 +1267,7 @@ describe(finishGoalPlacement, () => {
     expect(result.status === "ready" && result.completion).toStrictEqual({
       areas: [{ area: null, confident: true, startSkillId: skills[0]?.id }],
       complete: true,
+      focusTest: null,
       knownSkillIds: [],
       phases: [
         { confident: true, phase: 0, startSkillId: skills[0]?.id },
