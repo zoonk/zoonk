@@ -36,6 +36,10 @@ function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
   );
 }
 
+function namesAdded(effect: PlanEffect | null): boolean {
+  return (effect?.topicsAdded?.length ?? 0) + (effect?.outcomesAdded?.length ?? 0) > 0;
+}
+
 /**
  * What a plan change does: the one consequence a learner would notice, and every other change
  * behind "See all changes".
@@ -59,8 +63,7 @@ export function PlanEffectDiff({
 }) {
   const t = useExtracted();
   const found = usePlanChangeConsequence()(effect, { byDate, goalDate });
-  const namesAdded = (effect?.topicsAdded?.length ?? 0) + (effect?.outcomesAdded?.length ?? 0) > 0;
-  const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded;
+  const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded(effect);
   const consequence = summary && !repeatsTitle ? found : null;
   const rows = usePlanChangeRows()(effect, { byDate, goalDate });
   const stated = summary ? found : null;
