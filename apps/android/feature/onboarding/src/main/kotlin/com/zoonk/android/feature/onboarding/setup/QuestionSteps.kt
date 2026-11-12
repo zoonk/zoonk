@@ -155,7 +155,7 @@ internal fun ColumnScope.StepForm(
         }
         if (pinActions && isCompactWidth() && LocalSetupPage.current != null) {
             PlanStartNotice()
-            PageWaitActions(content = actions)
+            PageActions(content = actions)
         } else {
             OnboardingActions {
                 PlanStartNotice()
