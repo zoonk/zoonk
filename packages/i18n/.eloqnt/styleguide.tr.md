@@ -90,14 +90,14 @@
 
 ## Plan terminology
 
-- “Pace”: “Tempo”; the “On pace” / “Keeping pace” status: “Yolunda”
+- “Pace”: “Tempo”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “Yolunda”
 - “Finished”: “Tamamlandı”
-- “Past date”: “Hedef tarih geçti”, not “Süresi doldu”, “Tarihi geçti” or “Bitti”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “Hedef tarih geçti”, not “Süresi doldu”, “Tarihi geçti” or “Bitti”
 - “Needs adjusting”: “Ayarlanmalı”
 - “Too tight”: “Çok sıkışık”
 - “left out”: “dışarıda kaldı”, not “atlandı”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “atla” / “atlandı”
-- “Daily time”: “Günlük çalışma süresi”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “Günlük çalışma süresi”
 - “rest day”: “dinlenme günü”
 
 ## Buddy names

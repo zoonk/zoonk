@@ -46,11 +46,13 @@ Claude and OpenAI models pair by tier: Haiku and Luna, Sonnet and Terra, Opus an
 
 Two models from different families find gaps one model misses, and each drops weak ideas once the other shows evidence from the code. They don't know how the user and learners actually work, though, and can agree on assumptions that contradict it. So the brief carries that context, and the user decides before any code is written.
 
-1. **Brief:** Both get the same brief: the question, the user's constraints and real usage, the current behavior with `file:line` references as the starting point rather than the limit ([think big](../../AGENTS.md#principles)), what the answer must cover, fixed headings for it, and a read-only rule (no edits, commits or posts).
+1. **Brief:** Both get the same brief: the question, the user's constraints and real usage, the current behavior with `file:line` references as the starting point rather than the limit ([think big](../../AGENTS.md#principles)), what the answer must cover, fixed headings for it (for a design with screens, one of them is "Edge cases, and which of them the learner never needs to read about"), and a read-only rule (no edits, commits or posts).
 2. **First proposals:** Each writes its first proposal without seeing the other's, so neither anchors on the other.
 3. **Rounds:** Relay each one's latest proposal to the other verbatim. Each reply says what it accepts, gives each objection with its evidence, revises its proposal under the same headings, and ends with `AGREEMENT: yes` or `AGREEMENT: no` and what's still open. Rounds cross: each reply answers the other's previous round.
 4. **Sign-off:** Once they're close, merge their proposals into one list and send it to both to sign. A point still open after a few rounds goes to the user with both sides instead of another round.
 5. **User:** Re-check the code claims the agreement rests on, name the assumptions it makes about learners and the user, and add your own recommendation. The user aligns on the plan before any code is written.
+
+A debate decides what each screen is for, what the learner decides there and what stays off it. It doesn't write final copy. For each screen the agreed design gives the one message, the main action's label, at most one supporting line, and a list of what it leaves out and where that goes instead ([Words](../skills/zoonk-design/SKILL.md#words)). Before the user approves, the lead builds or mocks the screens at phone size: the user approves pictures, never a list of sentences. A build brief made from the result says so too: a line the design didn't list isn't a requirement, and removing one isn't dropping a feature.
 
 ## Sharing one machine
 

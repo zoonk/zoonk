@@ -92,14 +92,14 @@
 
 ## Plan terminology
 
-- “Pace”: “ペース”; the “On pace” / “Keeping pace” status: “順調”
+- “Pace”: “ペース”; the “Up to date” status (formerly “On pace” / “Keeping pace”): “順調”
 - “Finished”: “完了”
-- “Past date”: “期日を過ぎた”, not “期限切れ” or “終了”
+- “Date passed”, “Exam date passed” (formerly “Past date”): “期日を過ぎた”, not “期限切れ” or “終了”
 - “Needs adjusting”: “調整が必要”
 - “Too tight”: “詰め込みすぎ”
 - “left out”: “入りきらない” (“計画に入りきらなかったレッスン”), not “外れた” or “スキップ”
 - “Skip” (the learner's choice) and “skipped” (a test showed it's known): “スキップ”
-- “Daily time”: “1日の学習時間”
+- “Time a day” as a label or a setting's name (how long the learner studies each day; formerly “Daily time”): “1日の学習時間”
 - “rest day”: “休みの日”
 
 ## Buddy names

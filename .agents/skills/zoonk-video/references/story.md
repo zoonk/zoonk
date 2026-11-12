@@ -6,7 +6,7 @@ The 2.0 launch film (`example/zoonk-2/long.js`) follows a proven shape:
 
 1. **Cold open.** Real goals typed into the goal box, then the questions every learner has. The brand comes in about 10 s.
 2. **Reveal.** A dark frame, the logo, the version and the tagline.
-3. **How it works.** One phone stays in the scene while its screens change and the camera follows the voice: your goal, what you already know, whether your daily time is enough, lessons ready each day, a missed day.
+3. **How it works.** One phone stays in the scene while its screens change and the camera follows the voice: your goal, what you already know, whether your time a day is enough, lessons ready each day, a missed day.
 4. **Every goal.** The four goal cards, then exams, languages, career and learn anything, each with its best real screens.
 5. **Lessons.** Real activities in one phone, a wrong answer explained, Zu, help inside a lesson.
 6. **Progress.** Belts like in martial arts, Zu growing up, a break that resets nothing, and the Trickster as the final boss.
@@ -26,7 +26,7 @@ The viewer has never seen the app. Every line names a problem they have and how 
   - A name appears only in the line that introduces it, such as Zu or the Trickster.
 - **Lead with the problem.** "Changing careers? Learn the skills and tools the new job asks for." A detail only a current learner notices ("your portfolio always stays in the plan") answers no question the viewer has.
 - **Cut what isn't a reason to care.** Power-user features, like changing the plan by asking, take time from the story without making anyone want the product.
-- **Plain words.** "See right away if it's enough to reach your goal", not "shows you, honestly, what your daily time covers by your date". Which date? Why "honestly"?
+- **Plain words.** "See right away if it's enough to reach your goal", not "shows you, honestly, what your daily time covers by your date". Which date? Why "honestly"? The [English style guide](../../../../packages/i18n/.eloqnt/styleguide.en.md#plain-words-first) lists the words a stranger never hears and what to say instead.
 - **Only claims that last.** A film stays up for years. Leave out what may soon change: platforms ("in your browser"), counts ("ten languages"), sign-up terms ("no account needed") and prices.
 - **Characters can change the tone.** A line can get its own voice direction (`TONE` in `narration.py`). The Trickster is introduced like a final boss, the camera creeps in on him, and his scene ends there.
 
