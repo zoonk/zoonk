@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -102,7 +103,10 @@ test.describe("Mind maps", () => {
     try {
       await page.goto(`/learn/${lessonId}`);
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-      await page.getByRole("button", { name: /^Continue/u }).click();
+
+      const next = page.getByRole("button", { name: /^Continue/u });
+      await expectHydrated(next);
+      await next.click();
 
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
@@ -273,6 +277,60 @@ test.describe("Mind maps", () => {
       await expect(
         page.getByRole("link", { name: new RegExp(second.chapter.title, "u") }),
       ).toBeVisible({ timeout: 15_000 });
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("a lesson's Close brings back the chapter page with the map the learner started still on its way", async ({
+    browser,
+  }) => {
+    const { first, user } = await createLearner();
+    const { chapter } = first;
+    const page = await openAs(browser, user);
+    const map = page.locator('[data-slot="chapter-map-aside"]');
+    const release = Promise.withResolvers<null>();
+
+    try {
+      await page.goto("/plan");
+
+      const chapterLink = page
+        .getByRole("list", { name: "Your path" })
+        .getByRole("link", { name: new RegExp(chapter.title, "u") });
+
+      await expectHydrated(chapterLink);
+      await chapterLink.click();
+      await map.getByRole("button", { name: "Create" }).click();
+      await expect(map.getByText("Drawing the mind map…")).toBeVisible();
+
+      await page.getByRole("link", { name: /An almost empty atom/u }).click();
+      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+
+      // The router shows the copy it kept from before the Create; its own fresh copy can be slow.
+      await page.route(
+        (url) => url.pathname.endsWith(`/content/chapters/${chapter.id}`),
+        async (route) => {
+          const headers = route.request().headers();
+
+          if (headers.rsc && !headers["next-router-prefetch"]) {
+            await release.promise;
+          }
+
+          await route.fallback();
+        },
+      );
+
+      await page.getByRole("link", { name: "Close lesson" }).click();
+      await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
+      await expect(map.getByText("Drawing the mind map…")).toBeVisible();
+
+      await drawMap(chapter.id);
+
+      await expect(map.getByRole("button", { name: "Full screen" })).toBeVisible({
+        timeout: 15_000,
+      });
+
+      release.resolve(null);
     } finally {
       await page.context().close();
     }

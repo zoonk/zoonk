@@ -1,10 +1,10 @@
 "use client";
 
 import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
-import { useServedState } from "../_utils/use-served-state";
+import { useRereadServed, useServedState } from "../_utils/use-served-state";
 import {
   type MindMapsPage,
   type MindMapsPageChapter,
@@ -56,9 +56,6 @@ function withoutSaved(page: MindMapsPage, { kind, targetId }: SavedMapTarget): M
 /**
  * The Mind maps page's state: what the server sent, kept current by one read of the list while
  * any map is on its way, with the learner's own taps (create one, create all, remove a save).
- *
- * Every copy the server sends after the first starts a read of the list at once: the router can
- * hand back the copy the page opened with, which predates the learner's taps.
  */
 export function useMindMapsLibrary({
   actions,
@@ -122,15 +119,7 @@ export function useMindMapsLibrary({
     }
   };
 
-  const readServed = useEffectEvent(() => void refresh().catch(() => null));
-  const lastServed = useRef(served);
-
-  useEffect(() => {
-    if (served !== lastServed.current) {
-      lastServed.current = served;
-      readServed();
-    }
-  }, [served]);
+  useRereadServed(served, () => void refresh().catch(() => null));
 
   const isDrawing = page.chapters.some((chapter) => chapter.status === "drawing");
   const isWriting = page.chapters.some((chapter) => chapter.status === "writingLessons");

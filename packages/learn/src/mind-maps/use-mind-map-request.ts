@@ -1,7 +1,7 @@
 "use client";
 
 import { type ChapterMindMapView, type MindMapStatus } from "@zoonk/core/mind-maps/contract";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-actions";
@@ -35,6 +35,7 @@ export function useMindMapRequest({
   const [localView, setLocalView] = useState(view);
   const [savedNow, setSavedNow] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
+  const changes = useRef(0);
   const { chapterId, status } = view;
 
   if (localView !== view) {
@@ -64,10 +65,21 @@ export function useMindMapRequest({
     }
   };
 
-  const showReady = async (): Promise<boolean> => {
+  /**
+   * An answer shows only if nothing came after its read started: a later read, or a create's
+   * answer. An older answer can predate them and undo them.
+   */
+  const startRead = () => {
+    changes.current += 1;
+    const started = changes.current;
+    return () => started === changes.current;
+  };
+
+  const showRead = async (): Promise<boolean> => {
+    const isLatest = startRead();
     const next = await actions.read(chapterId).catch(() => null);
 
-    if (next) {
+    if (next && isLatest()) {
       onViewChange(next);
     }
 
@@ -79,9 +91,14 @@ export function useMindMapRequest({
     intervalMs: status === "writingLessons" ? WRITING_POLL_MS : DRAWING_POLL_MS,
     key: status,
     onPoll: async () => {
+      const isLatest = startRead();
       const next = await actions.readStatus(chapterId);
 
-      if (next === null || (next === "ready" && !(await showReady()))) {
+      if (!isLatest()) {
+        return;
+      }
+
+      if (next === null || (next === "ready" && !(await showRead()))) {
         throw new Error("The map couldn't be read.");
       }
 
@@ -94,12 +111,14 @@ export function useMindMapRequest({
   });
 
   const settle = async (outcome: MindMapRequestOutcome) => {
+    changes.current += 1;
+
     if (outcome.status === "refused") {
       setLocal({ limit: outcome.limit, shown: "refused" });
       return;
     }
 
-    if (outcome.status === "failed" || (outcome.status === "ready" && !(await showReady()))) {
+    if (outcome.status === "failed" || (outcome.status === "ready" && !(await showRead()))) {
       setLocal({ shown: "unreachable" });
       return;
     }
@@ -125,6 +144,7 @@ export function useMindMapRequest({
     create,
     isPending,
     limit: local?.limit ?? null,
+    reread: () => void showRead(),
     retry: isStuck ? poll.restart : create,
     save,
     shown: isStuck ? "unreachable" : (local?.shown ?? status),
