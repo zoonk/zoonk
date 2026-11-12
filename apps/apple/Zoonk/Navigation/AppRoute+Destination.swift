@@ -131,8 +131,8 @@ extension AppRoute {
       PatternScreen(patternId: patternId)
     case .testOut(let chapterId, let resultId):
       TestOutScreen(chapterId: chapterId, resultId: resultId)
-    case .focusTest(let goalId):
-      FocusTestScreen(goalId: goalId)
+    case .focusTest(let goalId, let startsTest):
+      FocusTestScreen(goalId: goalId, startsTest: startsTest)
     case .challenge(let planItemId, let sessionId):
       ChallengeScreen(planItemId: planItemId, sessionId: sessionId)
     case .checkpoint(let blockId, let sessionId):

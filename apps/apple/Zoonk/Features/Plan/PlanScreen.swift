@@ -298,7 +298,9 @@ private struct PlanContent: View {
   private func structureSections(
     context: PlanContext, structure: GoalSyllabus?, namesChoices: Bool
   ) -> some View {
-    let focusTest = context.plan.focusTest.map { PlanFocusTestRow(goalId: goal.id, summary: $0) }
+    let focusTest = context.plan.focusTest.map {
+      PlanFocusTestRow(goalId: goal.id, summary: $0, dated: goal.targetDate != nil)
+    }
 
     if let structure {
       // Unpicked choices are the suggestion's; beside the page its settings name the pick.

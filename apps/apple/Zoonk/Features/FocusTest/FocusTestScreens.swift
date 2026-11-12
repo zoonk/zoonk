@@ -1,26 +1,7 @@
 import SwiftUI
 
-/// The time is the screen's one big number: it's what decides whether someone starts.
-private struct SittingSize: View {
-  let minutes: Int
-  let facts: [String]
-
-  var body: some View {
-    Section {
-      VStack(alignment: .leading, spacing: 6) {
-        BigQuantity(FocusTestCopy.about(minutes: minutes))
-
-        Text(facts.joinedFacts())
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
-      }
-      .accessibilityElement(children: .combine)
-      .listRowBackground(Color.clear)
-    }
-  }
-}
-
-private struct SaveFailure: View {
+/// A save on a Focus test screen failed; the button that started it tries again.
+struct FocusTestSaveFailure: View {
   let failed: Bool
 
   var body: some View {
@@ -35,80 +16,49 @@ private struct SaveFailure: View {
   }
 }
 
-/// Main's `FocusTestInvitation`: optional, with its length up front.
+/// Main's `FocusTestInvitation`: what the test does for the learner and what it costs, with the
+/// rest one tap away in How it works.
 struct FocusTestInvitation: View {
   let focusTest: FocusTest
-  let next: FocusTest.Offer
-  let subject: String
   let host: FocusTestHost
   let pressed: FocusTestPress?
   let failed: Bool
   let onStart: () -> Void
   let onSkip: () -> Void
 
-  @State private var showsSubjects = false
+  @State private var showsHowItWorks = false
 
   var body: some View {
-    ZoonkList {
-      StepHeader(subject: subject, title: title, description: description)
+    let findsFocus = focusTest.dated && focusTest.subjects.count > 1
 
-      SittingSize(
-        minutes: next.minutes,
-        facts: [
-          String(
-            localized: "Optional", table: "FocusTest",
-            comment: "The Focus test can be skipped"),
-          FocusTestCopy.upTo(questions: next.questions),
-          FocusTestCopy.subjects(focusTest.counts.total),
-        ])
+    ZoonkList {
+      StepHeader(
+        subject: focusTest.offer.map { FocusTestCopy.offered(minutes: $0.minutes) },
+        title: Text(FocusTestCopy.title(findsFocus: findsFocus)),
+        description: findsFocus
+          ? Text(
+            "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most.",
+            tableName: "FocusTest",
+            comment: "What the Focus test is and why it helps, for an exam with a date")
+          : Text(
+            "Quick questions on your exam's subjects. Your plan skips what you already know.",
+            tableName: "FocusTest",
+            comment: "What the Focus test is, for an exam without a date or with one subject"))
 
       Section {
-        VStack(alignment: .leading, spacing: 6) {
+        Button {
+          showsHowItWorks = true
+        } label: {
           Text(
-            "There's no grade. “I don't know yet” is a useful answer.", tableName: "FocusTest",
-            comment: "On the Focus test's invitation")
-          Text(
-            "Stop whenever you need to. We save each answer.", tableName: "FocusTest",
-            comment: "On the Focus test's invitation")
+            "How it works", tableName: "FocusTest",
+            comment: "Opens what to expect from the Focus test, from its offer"
+          )
+          .underline()
         }
         .listRowBackground(Color.clear)
-      } footer: {
-        if next.pastCeiling > 0 {
-          SectionFooter {
-            VStack(alignment: .leading, spacing: 4) {
-              Text(
-                [
-                  String(
-                    localized: "Your plan considers all \(focusTest.counts.total) subjects.",
-                    table: "FocusTest",
-                    comment:
-                      "The Focus test's invitation, when its sitting can't reach every subject"),
-                  String(
-                    localized:
-                      "This sitting has up to \(next.questions) questions, so some subjects may not be checked.",
-                    table: "FocusTest",
-                    comment: """
-                      The Focus test's invitation, when its sitting can't reach every subject. A \
-                      sitting is one go at the test, not a study session: say "this test" or "this time"
-                      """),
-                ].joined(separator: " "))
-
-              Button {
-                showsSubjects = true
-              } label: {
-                Text(
-                  "View subjects", tableName: "FocusTest",
-                  comment: "Opens the exam's subjects from the Focus test's invitation"
-                )
-                .underline()
-              }
-              .buttonStyle(.borderless)
-            }
-          }
-        }
       }
 
-      SaveFailure(failed: failed)
+      FocusTestSaveFailure(failed: failed)
 
       StepButtons(
         continueLabel: Text(
@@ -125,74 +75,93 @@ struct FocusTestInvitation: View {
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, pressed != nil)
-    .sheet(isPresented: $showsSubjects) {
-      FocusTestSubjectsSheet(subjects: focusTest.subjects, answered: false)
+    .sheet(isPresented: $showsHowItWorks) {
+      FocusTestHowItWorks()
         .zoonkStyles()
     }
   }
+}
 
-  private var title: Text {
-    focusTest.dated
-      ? Text(
-        "Let's find where your study time should go", tableName: "FocusTest",
-        comment: "Title of the Focus test's invitation, for an exam with a date")
-      : Text(
-        "Find where to start", tableName: "FocusTest",
-        comment: "Title of the Focus test's invitation, for an exam without a date")
-  }
-
-  private var description: Text {
-    focusTest.dated && focusTest.counts.total > 1
-      ? Text(
-        "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus.",
-        tableName: "FocusTest", comment: "What the Focus test is, for an exam with a date")
-      : Text(
-        "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know.",
-        tableName: "FocusTest",
-        comment: "What the Focus test is, for an exam without a date or with one subject")
+/// Main's `FocusTestHowItWorks`: the test's rules, for whoever wants them before starting.
+private struct FocusTestHowItWorks: View {
+  var body: some View {
+    FocusTestSheet(
+      title: Text(
+        "How it works", tableName: "FocusTest",
+        comment: "Title of the sheet that says what to expect from the Focus test")
+    ) {
+      Section {
+        ListRow(
+          Text(
+            "What counts most comes first", tableName: "FocusTest",
+            comment: "A row of the Focus test's How it works sheet"),
+          description: Text(
+            "The test starts with the subjects that weigh most in your exam.",
+            tableName: "FocusTest", comment: "How it works: under \"What counts most comes first\"")
+        )
+        ListRow(
+          Text(
+            "There's no grade", tableName: "FocusTest",
+            comment: "A row of the Focus test's How it works sheet"),
+          description: Text(
+            "“I don't know yet” is a fine answer.", tableName: "FocusTest",
+            comment: "How it works: under \"There's no grade\""))
+        ListRow(
+          Text(
+            "Stop anytime", tableName: "FocusTest",
+            comment: "A row of the Focus test's How it works sheet"),
+          description: Text(
+            "Each answer is saved.", tableName: "FocusTest",
+            comment: "How it works: under \"Stop anytime\""))
+        ListRow(
+          Text(
+            "Focusing never removes a subject", tableName: "FocusTest",
+            comment: "A row of the Focus test's How it works sheet"),
+          description: Text(
+            "The ones you need most get more time when your time can't cover everything.",
+            tableName: "FocusTest",
+            comment: "How it works: under \"Focusing never removes a subject\""))
+        ListRow(
+          Text(
+            "A few more in your first week", tableName: "FocusTest",
+            comment: "A row of the Focus test's How it works sheet"),
+          description: Text(
+            "Your study sessions ask a few more of these questions. You can pause that.",
+            tableName: "FocusTest", comment: "How it works: under \"A few more in your first week\""
+          ))
+      }
+    }
   }
 }
 
 /// Main's `FocusTestResume`: an open sitting the learner left with answers in it.
 struct FocusTestResume: View {
   let sitting: FocusTest.Sitting
-  let subject: String
   let pressed: FocusTestPress?
   let failed: Bool
   let onContinue: () -> Void
-  let onUseAnswers: () -> Void
+  let onSeeResult: () -> Void
 
   var body: some View {
     ZoonkList {
       StepHeader(
-        subject: subject,
+        subject: FocusTestCopy.left(minutes: sitting.minutes),
         title: Text(
           "Continue your test", tableName: "FocusTest",
           comment: "Title of an open Focus test sitting the learner came back to"),
-        description: nil)
+        description: Text(
+          "Your \(sitting.answered) answers are saved.", tableName: "FocusTest",
+          comment: "Under \"Continue your test\": how many answers the open sitting saved"))
 
-      SittingSize(
-        minutes: sitting.minutes,
-        facts: [
-          String(
-            localized: "\(sitting.answered) answers saved", table: "FocusTest",
-            comment: "How many answers an open Focus test sitting has saved"),
-          String(
-            localized: "Up to \(sitting.left) questions left", table: "FocusTest",
-            comment: "How many questions an open Focus test sitting can still ask"),
-        ])
-
-      SaveFailure(failed: failed)
+      FocusTestSaveFailure(failed: failed)
 
       StepButtons(
         continueLabel: Text(
           "Continue", tableName: "FocusTest",
           comment: "Goes on with an open Focus test sitting"),
         continueIcon: .play,
-        skipLabel: Text(
-          "Use my answers", tableName: "FocusTest",
-          comment: "Leaves the Focus test with the answers given so far"),
-        skipIcon: nil, onContinue: onContinue, onSkip: onUseAnswers)
+        skipLabel: Text(FocusTestCopy.seeResult),
+        skipIcon: nil, onContinue: onContinue, onSkip: onSeeResult)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, pressed != nil)
@@ -201,7 +170,6 @@ struct FocusTestResume: View {
 
 /// A sitting that's over and not closed yet: the learner came back to it, or closing it failed.
 struct FocusTestEnded: View {
-  let end: FocusTest.Sitting.End?
   let subject: String
   let isSaving: Bool
   let failed: Bool
@@ -214,15 +182,11 @@ struct FocusTestEnded: View {
         title: Text(
           "Your answers are saved", tableName: "FocusTest",
           comment: "Title once a Focus test sitting has nothing more to ask"),
-        description: FocusTestCopy.endLine(end).map { Text($0) })
+        description: nil)
 
-      SaveFailure(failed: failed)
+      FocusTestSaveFailure(failed: failed)
 
-      StepButtons(
-        continueLabel: Text(
-          "See your starting plan", tableName: "FocusTest",
-          comment: "Shows what the Focus test's answers set in the plan"),
-        onContinue: onFinish)
+      StepButtons(continueLabel: Text(FocusTestCopy.seeResult), onContinue: onFinish)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isSaving)
@@ -245,7 +209,7 @@ struct FocusTestUnavailable: View {
           "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead.",
           tableName: "Onboarding", comment: "Why placement is skipped"))
 
-      SaveFailure(failed: failed)
+      FocusTestSaveFailure(failed: failed)
 
       StepButtons(onContinue: onContinue)
     }
@@ -254,32 +218,42 @@ struct FocusTestUnavailable: View {
   }
 }
 
-/// Main's `FocusTestSubjectsSheet`: the exam's subjects in the notice's order, in plain words.
+/// Main's `FocusTestSubjectsSheet`: the exam's subjects in the notice's order, with how each one's
+/// answers went.
 struct FocusTestSubjectsSheet: View {
   let subjects: [FocusTest.Subject]
-  /// The learner has test answers, so each subject says how it went.
-  let answered: Bool
+
+  var body: some View {
+    FocusTestSheet(
+      title: Text(
+        "Subjects", tableName: "FocusTest", comment: "Title of the Focus test's subject list")
+    ) {
+      Section {
+        ForEach(subjects) { subject in
+          LabeledContent {
+            Text(FocusTestCopy.state(of: subject))
+          } label: {
+            Text(subject.shown)
+          }
+        }
+      }
+    }
+  }
+}
+
+/// A Focus test sheet: a titled list the learner closes.
+private struct FocusTestSheet<Content: View>: View {
+  let title: Text
+  @ViewBuilder let content: Content
 
   @Environment(\.dismiss) private var dismiss
 
   var body: some View {
     NavigationStack {
       ZoonkList {
-        Section {
-          ForEach(subjects) { subject in
-            LabeledContent {
-              if answered || subject.state == .notChecked {
-                Text(FocusTestCopy.state(of: subject))
-              }
-            } label: {
-              Text(subject.shown)
-            }
-          }
-        }
+        content
       }
-      .navigationTitle(
-        Text("Subjects", tableName: "FocusTest", comment: "Title of the Focus test's subject list")
-      )
+      .navigationTitle(title)
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .confirmationAction) {

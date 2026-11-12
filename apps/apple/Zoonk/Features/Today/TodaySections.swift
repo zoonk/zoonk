@@ -411,7 +411,11 @@ struct TodayPlanChangeSection: View {
         planLessonsEffectText(change.effect),
       ].compactMap(\.self)
 
-    if !effect.isEmpty {
+    // A focus the Focus test proposes says what it changes with the diff alone, as the test's own
+    // proposal does.
+    if change.source == "focusTest" {
+      PlanEffectDiff(effect: change.effect, today: today)
+    } else if !effect.isEmpty {
       Text(effect.joinedSentences())
         .foregroundStyle(.mutedForeground)
     }

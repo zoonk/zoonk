@@ -17,13 +17,16 @@ enum FocusTestPress {
 /// what to ask, how many and when a sitting is over, and the screen says it. Main's `FocusTestFlow`.
 struct FocusTestFlow: View {
   let goalID: String
-  /// The goal's name, over every screen but a question, which names its own subject.
+  /// The goal's name, over a question with no subject of its own and a sitting that ended.
   let subject: String
   let host: FocusTestHost
   /// The goal being set up, for its wait's run and deck; nil on a plan that's already there.
   var onboarding: GoalOnboarding?
   /// On a plan: the focus sheet, for the checkpoint's Change focus.
   var changeFocus: (() -> Void)?
+  /// The learner already chose to start, such as on Today: the test opens on its first question
+  /// instead of offering itself again.
+  var startsTest = false
   /// Leaves the test: onboarding saves its step, a plan goes back to itself.
   let onDone: () async throws -> Void
 
@@ -39,6 +42,8 @@ struct FocusTestFlow: View {
   @State private var shownAt = ContinuousClock.now
   @State private var showsSaveReport = false
   @State private var waitRound = 0
+  /// `startsTest`'s start ran; one that failed offers the test with its Start to try again.
+  @State private var triedStart = false
   /// The goal's run while its questions are written, as the wait shows it.
   @State private var run = GenerationWait(kind: .placement).started
 
@@ -94,33 +99,36 @@ struct FocusTestFlow: View {
       FocusTestUnavailable(isSaving: pressed != nil, failed: failed) {
         save(.main) { try await leave(closing: host == .onboarding) }
       }
-    case .invitation(let focusTest, let next):
-      FocusTestInvitation(
-        focusTest: focusTest, next: next, subject: subject, host: host, pressed: pressed,
-        failed: failed
-      ) {
-        save(.main, start)
-      } onSkip: {
-        // Only onboarding has a skip to save: a plan that's already there just goes back to itself.
-        save(.other) { try await leave(closing: host == .onboarding) }
+    case .invitation(let focusTest):
+      if startsTest, !triedStart {
+        StepLoading()
+          .task { await startOnOpen() }
+      } else {
+        FocusTestInvitation(focusTest: focusTest, host: host, pressed: pressed, failed: failed) {
+          save(.main, start)
+        } onSkip: {
+          // Only onboarding has a skip to save: a plan that's already there just goes back to
+          // itself.
+          save(.other) { try await leave(closing: host == .onboarding) }
+        }
       }
     case .resume(let asked):
-      FocusTestResume(sitting: asked.sitting, subject: subject, pressed: pressed, failed: failed) {
+      FocusTestResume(sitting: asked.sitting, pressed: pressed, failed: failed) {
         failed = false
         reached = .question(asked)
-      } onUseAnswers: {
+      } onSeeResult: {
         save(.other) { try await leave(closing: true) }
       }
     case .question(let asked):
       question(asked)
-    case .ended(let end):
-      FocusTestEnded(end: end, subject: subject, isSaving: pressed != nil, failed: failed) {
-        save(.main) { try await close(end) }
+    case .ended:
+      FocusTestEnded(subject: subject, isSaving: pressed != nil, failed: failed) {
+        save(.main) { try await close() }
       }
-    case .checkpoint(let focusTest, let end):
+    case .checkpoint(let focusTest):
       FocusTestCheckpoint(
-        focusTest: focusTest, end: end, subject: subject, host: host, goalID: goalID,
-        changeFocus: changeFocus, pressed: pressed, failed: failed
+        focusTest: focusTest, host: host, goalID: goalID, changeFocus: changeFocus,
+        pressed: pressed, failed: failed
       ) {
         save(.main) { try await onDone() }
       } onContinueTest: {
@@ -167,9 +175,7 @@ struct FocusTestFlow: View {
       isActing: false,
       skip: .init(
         label: answered
-          ? Text(
-            "Use my answers", tableName: "FocusTest",
-            comment: "Leaves the Focus test with the answers given so far")
+          ? Text(FocusTestCopy.seeResult)
           : host == .onboarding
             ? Text(
               "Skip for now", tableName: "FocusTest",
@@ -222,17 +228,29 @@ struct FocusTestFlow: View {
     try await show(try await store.startPlacementSitting(goalID: goalID))
   }
 
+  private func startOnOpen() async {
+    do {
+      try await start()
+    } catch is CancellationError {
+      return
+    } catch {
+      failed = true
+    }
+
+    triedStart = true
+  }
+
   /// A sitting that's over closes in the same save; if that fails, its screen holds the retry.
   private func show(_ placement: GoalPlacement) async throws {
     let next = FocusTestPhase(placement, opening: false)
 
-    guard case .ended(let end) = next else {
+    guard next == .ended else {
       reached = next
       return
     }
 
     do {
-      try await close(end)
+      try await close()
     } catch {
       reached = next
       throw error
@@ -240,11 +258,11 @@ struct FocusTestFlow: View {
   }
 
   /// Closing applies the answers; a test that still has none is only skipped, and the host moves on.
-  private func close(_ end: FocusTest.Sitting.End?) async throws {
+  private func close() async throws {
     let focusTest = try await store.finishPlacement(goalID: goalID)
 
     if let focusTest, focusTest.checkpoint != nil {
-      reached = .checkpoint(focusTest, end: end)
+      reached = .checkpoint(focusTest)
     } else {
       try await onDone()
     }
@@ -254,7 +272,7 @@ struct FocusTestFlow: View {
   /// that's already there only goes back to itself.
   private func leave(closing: Bool) async throws {
     if closing {
-      try await close(nil)
+      try await close()
     } else {
       try await onDone()
     }
@@ -313,7 +331,7 @@ struct FocusTestFlow: View {
       defer { isAnswering = false }
 
       do {
-        try await close(nil)
+        try await close()
         questionFailures = 0
       } catch is CancellationError {
       } catch {

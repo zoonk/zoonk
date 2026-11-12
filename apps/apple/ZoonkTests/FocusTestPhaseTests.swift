@@ -9,15 +9,13 @@ final class FocusTestPhaseTests: XCTestCase {
   func testInvitesALearnerWhoHasntStartedWithTheSittingItWouldOpen() throws {
     let test = try focusTest(offer: offer)
 
-    XCTAssertEqual(
-      phase(.done, test, opening: true),
-      .invitation(test, next: offered))
+    XCTAssertEqual(phase(.done, test, opening: true), .invitation(test))
   }
 
   func testShowsTheResultOnceTheLearnerHasAnswersAndNoSittingIsOpen() throws {
     let test = try focusTest(offer: offer, checkpoint: checkpoint)
 
-    XCTAssertEqual(phase(.done, test, opening: true), .checkpoint(test, end: nil))
+    XCTAssertEqual(phase(.done, test, opening: true), .checkpoint(test))
   }
 
   func testAsksTheNextQuestionRightAfterAStartOrAnAnswer() throws {
@@ -42,14 +40,13 @@ final class FocusTestPhaseTests: XCTestCase {
   func testInvitesAgainWhenASittingWasLeftBeforeItsFirstAnswer() throws {
     let test = try focusTest(sitting: sitting(answered: 0), offer: offer)
 
-    XCTAssertEqual(
-      phase(.asking, test, next: question, opening: true), .invitation(test, next: offered))
+    XCTAssertEqual(phase(.asking, test, next: question, opening: true), .invitation(test))
   }
 
-  func testEndsASittingThatHasNothingMoreToAskWithItsReason() throws {
-    let test = try focusTest(sitting: sitting(answered: 4, end: "settled"))
+  func testEndsASittingThatHasNothingMoreToAsk() throws {
+    let test = try focusTest(sitting: sitting(answered: 4))
 
-    XCTAssertEqual(phase(.done, test, opening: false), .ended(.settled))
+    XCTAssertEqual(phase(.done, test, opening: false), .ended)
   }
 
   func testWaitsWhileQuestionsAreWrittenAndSaysWhetherThereAreAnswersToUse() throws {
@@ -65,9 +62,7 @@ final class FocusTestPhaseTests: XCTestCase {
   func testStillInvitesWhileThePlanIsWrittenWhenTheSittingsSizeIsKnown() throws {
     let test = try focusTest(offer: offer)
 
-    XCTAssertEqual(
-      phase(.preparing, test, opening: true),
-      .invitation(test, next: offered))
+    XCTAssertEqual(phase(.preparing, test, opening: true), .invitation(test))
   }
 
   func testHasNothingToShowForAGoalWithNoTestOrATestWithNothingToAsk() throws {
@@ -84,25 +79,19 @@ final class FocusTestPhaseTests: XCTestCase {
       status: status, focusTest: focusTest, next: next, labels: .trueFalse, opening: opening)
   }
 
-  private let offer = #"{"kind":"first","questions":15,"minutes":15,"pastCeiling":9}"#
-  private let offered = FocusTest.Offer(kind: .first, questions: 15, minutes: 15, pastCeiling: 9)
+  private let offer = #"{"minutes":15}"#
   private let checkpoint = #"{"focus":null,"lessonsSkipped":4}"#
 
-  private func sitting(answered: Int, end: String? = nil) -> String {
-    let endJSON = end.map { #""\#($0)""# } ?? "null"
-
-    return #"""
-      {"kind":"first","questions":15,"answered":\#(answered),"left":\#(15 - answered),
-      "minutes":15,"subject":null,"hint":null,"end":\#(endJSON)}
-      """#
+  private func sitting(answered: Int) -> String {
+    #"{"questions":15,"answered":\#(answered),"minutes":15,"subject":null,"hint":null}"#
   }
 
   private func focusTest(
     sitting: String = "null", offer: String = "null", checkpoint: String = "null"
   ) throws -> FocusTest {
     let json = #"""
-      {"checkpoint":\#(checkpoint),"counts":{"asked":0,"quick":24,"total":24},"dated":true,
-      "offer":\#(offer),"sessionQuestions":"off","sitting":\#(sitting),"subjects":[]}
+      {"checkpoint":\#(checkpoint),"dated":true,"offer":\#(offer),"sessionQuestions":"off",
+      "sitting":\#(sitting),"subjects":[]}
       """#
 
     return try JSONDecoder().decode(FocusTest.self, from: Data(json.utf8))

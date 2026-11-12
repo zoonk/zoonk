@@ -500,11 +500,11 @@ struct PlanSuggestionSection: View {
         }
 
         // Where the time should go, for a learner who hasn't taken the Focus test.
-        if let offer = context.plan.focusTest?.notStartedOffer {
+        if context.plan.focusTest?.notStartedOffer != nil {
           Button {
             router.open(.focusTest(goalId: context.goal.id))
           } label: {
-            Text(FocusTestCopy.checkWhereToFocus(minutes: offer.minutes))
+            Text(FocusTestCopy.takeTest)
           }
         }
 

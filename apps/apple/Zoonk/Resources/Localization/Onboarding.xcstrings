@@ -24642,6 +24642,9 @@
         }
       }
     },
+    "This usually takes a minute or two." : {
+      "comment" : "How long placement questions take to write"
+    },
     "Time a day" : {
       "comment" : "Label of the daily study time picker",
       "localizations" : {

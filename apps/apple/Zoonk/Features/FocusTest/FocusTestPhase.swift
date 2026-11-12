@@ -13,12 +13,12 @@ enum FocusTestPhase: Equatable {
   case unavailable
   /// `answered`: the learner has test answers, so leaving the wait uses them.
   case waiting(answered: Bool, failure: GenerationFailure?)
-  case invitation(FocusTest, next: FocusTest.Offer)
+  case invitation(FocusTest)
   case resume(FocusTestQuestion)
   case question(FocusTestQuestion)
   /// A sitting that's over and not closed yet: the learner came back to it, or closing it failed.
-  case ended(FocusTest.Sitting.End?)
-  case checkpoint(FocusTest, end: FocusTest.Sitting.End?)
+  case ended
+  case checkpoint(FocusTest)
 
   var isWaiting: Bool {
     if case .waiting = self { true } else { false }
@@ -57,7 +57,7 @@ enum FocusTestPhase: Equatable {
       }
 
       guard let next else {
-        self = .ended(sitting.end)
+        self = .ended
         return
       }
 
@@ -76,9 +76,9 @@ enum FocusTestPhase: Equatable {
   /// Nil when there's no result to show and nothing to offer.
   static func resting(_ focusTest: FocusTest) -> Self? {
     if focusTest.checkpoint != nil {
-      return .checkpoint(focusTest, end: nil)
+      return .checkpoint(focusTest)
     }
 
-    return focusTest.offer.map { .invitation(focusTest, next: $0) }
+    return focusTest.offer == nil ? nil : .invitation(focusTest)
   }
 }

@@ -445,7 +445,7 @@ struct TodayFocusTestSection: View {
             SuggestionMark(kind: .symbol("scope"))
           } summary: {
             Text(
-              "A quick test can suggest where your study time should go.", tableName: "Today",
+              "The Focus test shows what to study most.", tableName: "Today",
               comment: "Today's suggestion of the Focus test, in one line")
           } action: {
             SuggestionOpen(isOpen: $isOpen) {
@@ -467,25 +467,23 @@ struct TodayFocusTestSection: View {
 
   @ViewBuilder
   private func details(_ shown: FocusTestSummary.Size) -> some View {
-    Text(
-      "Find where your study time should go", tableName: "Today",
-      comment: "Title of Today's suggestion of the Focus test"
-    )
-    .typeStyle(.body.weight(.semibold))
-    .foregroundStyle(Color(.foreground))
+    Text(FocusTestCopy.title(findsFocus: true))
+      .typeStyle(.body.weight(.semibold))
+      .foregroundStyle(Color(.foreground))
 
     Text(
-      "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus.",
-      tableName: "Today", comment: "Why Today suggests the Focus test"
+      "Your time can't cover everything before your exam. In about \(studyDuration(minutes: shown.minutes)), the Focus test shows what to study most.",
+      tableName: "Today",
+      comment: "Why Today suggests the Focus test; then about how long it takes, such as \"15 min\""
     )
     .foregroundStyle(.mutedForeground)
 
     ButtonRow {
       Button {
         isOpen = false
-        router.open(.focusTest(goalId: goalID))
+        router.open(.focusTest(goalId: goalID, startsTest: true))
       } label: {
-        Text(FocusTestCopy.checkWhereToFocus(minutes: shown.minutes))
+        Text("Start the test", tableName: "FocusTest", comment: "Starts the Focus test")
           .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)

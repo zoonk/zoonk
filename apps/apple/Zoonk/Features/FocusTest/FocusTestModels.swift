@@ -4,15 +4,6 @@ import Foundation
 /// sitting's count, its time, each subject's state and the suggested focus; the screens only say
 /// them.
 struct FocusTest: Decodable, Equatable, Sendable {
-  struct Counts: Decodable, Equatable, Sendable {
-    /// Subjects with at least one test answer.
-    let asked: Int
-    /// Subjects the test can ask about.
-    let quick: Int
-    /// Every subject, written and listening parts included.
-    let total: Int
-  }
-
   struct SubjectName: Decodable, Equatable, Sendable {
     let key: String
     let name: String
@@ -58,44 +49,25 @@ struct FocusTest: Decodable, Equatable, Sendable {
     var shown: String { shortName ?? name }
   }
 
-  enum SittingKind: String, Decodable, Sendable {
-    case first
-    case continuation
-  }
-
   struct Sitting: Decodable, Equatable, Sendable {
-    enum End: String, Decodable, Sendable {
-      case ceiling
-      case settled
-      case noQuestionsReady
-    }
-
     enum Hint: String, Decodable, Sendable {
       case manyUnknown
     }
 
-    let kind: SittingKind
     /// The count promised when it started: "Question 7 of 15".
     let questions: Int
     let answered: Int
-    let left: Int
-    /// About how long `left` takes.
+    /// About how long what's left takes.
     let minutes: Int
     /// The subject the next question asks about.
     let subject: SubjectName?
     let hint: Hint?
-    /// Why it asks nothing more; nil while it goes on.
-    let end: End?
   }
 
   /// What Start or Continue the test opens, said before the tap. A sitting left before its first
   /// answer is still offered as it was promised.
   struct Offer: Decodable, Equatable, Sendable {
-    let kind: SittingKind
-    let questions: Int
     let minutes: Int
-    /// Subjects without an answer this sitting can't reach.
-    let pastCeiling: Int
   }
 
   struct Checkpoint: Decodable, Equatable, Sendable {
@@ -105,11 +77,6 @@ struct FocusTest: Decodable, Equatable, Sendable {
   }
 
   struct Focus: Decodable, Equatable, Sendable {
-    enum Basis: String, Decodable, Sendable {
-      case answers
-      case importance
-    }
-
     enum State: String, Decodable, Sendable {
       /// The plan isn't shown yet: saving a daily time that's short sets it.
       case ifTimeShort
@@ -122,7 +89,6 @@ struct FocusTest: Decodable, Equatable, Sendable {
       case suggested
     }
 
-    let basis: Basis
     let rows: [Row]
     let state: State
     /// For `proposed`.
@@ -130,29 +96,22 @@ struct FocusTest: Decodable, Equatable, Sendable {
   }
 
   struct Row: Decodable, Equatable, Identifiable, Sendable {
-    enum Reason: String, Decodable, Sendable {
-      case answers
-      case minimumScore
-      case notChecked
-      case notAsked
-      case weight
-    }
-
     let subject: SubjectName
-    let areas: [String]
-    let reason: Reason
 
     var id: String { subject.key }
   }
 
   let checkpoint: Checkpoint?
-  let counts: Counts
+  /// The goal has a date, so the test can also suggest where to focus.
   let dated: Bool
   let offer: Offer?
   let sessionQuestions: FocusTestSessionQuestions
   let sitting: Sitting?
   /// Every subject, in the notice's order.
   let subjects: [Subject]
+
+  /// Up to three subjects the plan should give more time, the most needed first.
+  var focusRows: [Row] { checkpoint?.focus?.rows ?? [] }
 }
 
 /// Whether sessions ask a few test questions each.
@@ -173,21 +132,12 @@ struct FocusTestSummary: Decodable, Equatable, Sendable {
 
   struct Size: Decodable, Equatable, Sendable {
     let minutes: Int
-    let questions: Int
-  }
-
-  struct Subjects: Decodable, Equatable, Sendable {
-    let asked: Int
-    let total: Int
   }
 
   /// `notStarted`: the first sitting; `sitting`: what's left of it; `checked`: a further one.
   let offer: Size?
   let sessionQuestions: FocusTestSessionQuestions
-  /// The plan's focus came from the test.
-  let setsFocus: Bool
   let state: State
-  let subjects: Subjects?
 
   /// The first sitting, for a learner who hasn't started the test: what a plan whose time is short
   /// offers.

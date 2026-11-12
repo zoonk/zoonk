@@ -201,10 +201,8 @@ private struct PlanFocusSection: View {
             router.open(.focusTest(goalId: goal.id))
           } label: {
             ListRow(
-              Text(
-                "Focus test", tableName: "FocusTest",
-                comment: "Title of an exam goal's Focus test"),
-              description: Text(FocusTestCopy.stateFacts(focusTest).joinedFacts())
+              Text(FocusTestCopy.name),
+              description: Text(FocusTestCopy.planLine(focusTest, dated: goal.targetDate != nil))
             ) {
               Image(systemName: "scope")
             }

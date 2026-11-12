@@ -756,7 +756,7 @@ private struct PlanReveal: View {
 
     if let tradeOff = focusTradeOff {
       focusTradeOffSection(tradeOff, structure: structure)
-    } else if structure != nil || skipperOffer != nil {
+    } else if structure != nil || offersTest {
       Section {
         if let structure {
           Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
@@ -769,11 +769,11 @@ private struct PlanReveal: View {
           }
         }
 
-        if let offer = skipperOffer {
+        if offersTest {
           Button {
             router.open(.focusTest(goalId: view.goal.id))
           } label: {
-            Text(FocusTestCopy.checkWhereToFocus(minutes: offer.minutes))
+            Text(FocusTestCopy.takeTest)
           }
         }
       }
@@ -790,8 +790,8 @@ private struct PlanReveal: View {
   }
 
   /// A learner who skipped the Focus test, short on time, is offered it here.
-  private var skipperOffer: FocusTestSummary.Size? {
-    isShort ? plan.focusTest?.notStartedOffer : nil
+  private var offersTest: Bool {
+    isShort && plan.focusTest?.notStartedOffer != nil
   }
 
   /// What a short plan trades: nil unless the time doesn't cover everything and the plan has a

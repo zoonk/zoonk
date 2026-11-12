@@ -16093,6 +16093,9 @@
         }
       }
     },
+    "The Focus test shows what to study most." : {
+      "comment" : "Today's suggestion of the Focus test, in one line"
+    },
     "The last %lld lessons are in today's plan" : {
       "comment" : "Mission to finish a chapter whose remaining lessons are all in today's plan",
       "localizations" : {
@@ -20396,6 +20399,9 @@
           }
         }
       }
+    },
+    "Your time can't cover everything before your exam. In about %@, the Focus test shows what to study most." : {
+      "comment" : "Why Today suggests the Focus test; then about how long it takes, such as \"15 min\""
     }
   },
   "version" : "1.0"

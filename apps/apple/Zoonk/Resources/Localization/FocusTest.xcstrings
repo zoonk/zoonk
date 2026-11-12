@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "“I don't know yet” is a fine answer." : {
+      "comment" : "How it works: under \"There's no grade\""
+    },
     "%lld answers saved" : {
       "comment" : "How many answers an open Focus test sitting has saved",
       "localizations" : {
@@ -591,6 +594,9 @@
         }
       }
     },
+    "A few more in your first week" : {
+      "comment" : "A row of the Focus test's How it works sheet"
+    },
     "About %@" : {
       "comment" : "About how long a Focus test sitting takes, such as \"About 15 min\"",
       "localizations" : {
@@ -650,6 +656,18 @@
         }
       }
     },
+    "About %@ left" : {
+      "comment" : "About how long the rest of an open Focus test takes, such as \"About 9 min left\""
+    },
+    "Answer more questions" : {
+      "comment" : "Opens another Focus test sitting from its result on the plan"
+    },
+    "Answers saved" : {
+      "comment" : "Over the Focus test's result in onboarding: nothing the learner answered was lost"
+    },
+    "Ask a few more in my sessions" : {
+      "comment" : "Switch on the Focus test's result: sessions ask a few of its questions"
+    },
     "Ask them again" : {
       "comment" : "Turns the Focus test's questions in sessions back on",
       "localizations" : {
@@ -708,6 +726,9 @@
           }
         }
       }
+    },
+    "Based on your answers and what counts most in your exam. Focusing never removes a subject." : {
+      "comment" : "Under the Focus test's result: why these subjects"
     },
     "Change focus" : {
       "comment" : "Opens the choice of the subjects the plan gives more time",
@@ -1181,6 +1202,18 @@
         }
       }
     },
+    "During your first week" : {
+      "comment" : "Under the switch for the Focus test's questions in sessions"
+    },
+    "Each answer is saved." : {
+      "comment" : "How it works: under \"Stop anytime\""
+    },
+    "Find out where to focus" : {
+      "comment" : "What the Focus test does, for an exam with a date and more than one subject"
+    },
+    "Find out where to start" : {
+      "comment" : "What the Focus test does, for an exam without a date or with one subject"
+    },
     "Find where to start" : {
       "comment" : "Title of the Focus test's invitation, for an exam without a date",
       "localizations" : {
@@ -1299,6 +1332,9 @@
         }
       }
     },
+    "Focusing never removes a subject" : {
+      "comment" : "A row of the Focus test's How it works sheet"
+    },
     "For now, this follows mainly what counts most in your exam." : {
       "comment" : "Suggested focus with no answer behind it yet: it follows the exam's weights",
       "localizations" : {
@@ -1357,6 +1393,9 @@
           }
         }
       }
+    },
+    "Give these subjects more time?" : {
+      "comment" : "Title of the focus the Focus test proposes for a plan already there"
     },
     "Haven't studied most of this yet? That's fine. You can stop here and start learning." : {
       "comment" : "Above Stop, after five \"I don't know yet\" in a row in the Focus test",
@@ -1417,6 +1456,12 @@
         }
       }
     },
+    "Here's where to focus" : {
+      "comment" : "Title of the Focus test's result: the subjects to give more time"
+    },
+    "How it works" : {
+      "comment" : "Opens what to expect from the Focus test, from its offer\nTitle of the sheet that says what to expect from the Focus test"
+    },
     "If your time can't cover everything, your plan gives these more time." : {
       "comment" : "Suggested focus before the plan is shown",
       "localizations" : {
@@ -1475,6 +1520,9 @@
           }
         }
       }
+    },
+    "In progress" : {
+      "comment" : "The Focus test's line on the plan while a sitting is open"
     },
     "Let's find where your study time should go" : {
       "comment" : "Title of the Focus test's invitation, for an exam with a date",
@@ -2007,6 +2055,9 @@
         }
       }
     },
+    "Paused in your sessions" : {
+      "comment" : "The Focus test's line on the plan once the learner paused its questions in sessions"
+    },
     "Practical part: not checked here" : {
       "comment" : "A practical part of the exam that the Focus test can't check",
       "localizations" : {
@@ -2196,6 +2247,12 @@
         }
       }
     },
+    "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most." : {
+      "comment" : "What the Focus test is and why it helps, for an exam with a date"
+    },
+    "Quick questions on your exam's subjects. Your plan skips what you already know." : {
+      "comment" : "What the Focus test is, for an exam without a date or with one subject"
+    },
     "Quick questions on your subjects, the ones that count most first. Your answers help your plan skip what you already know and suggest where to focus." : {
       "comment" : "What the Focus test is, for an exam with a date",
       "localizations" : {
@@ -2313,6 +2370,15 @@
           }
         }
       }
+    },
+    "See all subjects" : {
+      "comment" : "Opens every subject with how its Focus test answers went"
+    },
+    "See my result" : {
+      "comment" : "Ends the Focus test with the answers given so far and shows its result"
+    },
+    "See your result" : {
+      "comment" : "The Focus test's line on the plan once it's taken: opens its result"
     },
     "See your starting plan" : {
       "comment" : "Shows what the Focus test's answers set in the plan",
@@ -2609,6 +2675,9 @@
         }
       }
     },
+    "Stop anytime" : {
+      "comment" : "A row of the Focus test's How it works sheet"
+    },
     "Stop whenever you need to. We save each answer." : {
       "comment" : "On the Focus test's invitation",
       "localizations" : {
@@ -2786,6 +2855,9 @@
         }
       }
     },
+    "Take the Focus test" : {
+      "comment" : "Opens the Focus test for a learner whose time doesn't cover the exam"
+    },
     "Test questions in your sessions are paused." : {
       "comment" : "Under the plan's Focus test row while its session questions are paused",
       "localizations" : {
@@ -2962,6 +3034,15 @@
           }
         }
       }
+    },
+    "The ones you need most get more time when your time can't cover everything." : {
+      "comment" : "How it works: under \"Focusing never removes a subject\""
+    },
+    "The test starts with the subjects that weigh most in your exam." : {
+      "comment" : "How it works: under \"What counts most comes first\""
+    },
+    "There's no grade" : {
+      "comment" : "A row of the Focus test's How it works sheet"
     },
     "There's no grade. “I don't know yet” is a useful answer." : {
       "comment" : "On the Focus test's invitation",
@@ -4310,6 +4391,9 @@
         }
       }
     },
+    "What counts most comes first" : {
+      "comment" : "A row of the Focus test's How it works sheet"
+    },
     "Where you'll start" : {
       "comment" : "Section of the Focus test's result: the plan's starting points",
       "localizations" : {
@@ -4605,6 +4689,32 @@
         }
       }
     },
+    "You kept your plan as it is. This is what the test suggests." : {
+      "comment" : "Under the Focus test's result after the learner said Not now to it, or undid it"
+    },
+    "Your %lld answers are saved." : {
+      "comment" : "Under \"Continue your test\": how many answers the open sitting saved",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your %lld answer is saved."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your %lld answers are saved."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Your answers are in your plan" : {
       "comment" : "The Focus test's result on the plan, for a goal placed before it counted subjects",
       "localizations" : {
@@ -4837,6 +4947,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonraki çalışmalarında birkaç test sorusu daha soracağız."
+          }
+        }
+      }
+    },
+    "Your plan also skips %lld lessons you already know." : {
+      "comment" : "Under the Focus test's suggested subjects, when its answers skip lessons",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan also skips %lld lesson you already know."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan also skips %lld lessons you already know."
+                }
+              }
+            }
           }
         }
       }
@@ -5079,6 +5212,15 @@
         }
       }
     },
+    "Your plan gives these subjects more time." : {
+      "comment" : "Under the Focus test's result when the plan already follows it"
+    },
+    "Your plan keeps the focus you chose. This is what the test suggests." : {
+      "comment" : "Under the Focus test's result beside a focus the learner chose"
+    },
+    "Your plan now gives these subjects more time." : {
+      "comment" : "After applying the focus the Focus test proposed"
+    },
     "Your plan skips %lld lessons you already know." : {
       "comment" : "Where the plan starts after the Focus test",
       "localizations" : {
@@ -5252,6 +5394,9 @@
         }
       }
     },
+    "Your plan starts each subject from the basics." : {
+      "comment" : "Where the plan starts after the Focus test, with nothing to skip yet"
+    },
     "Your plan stays as it was." : {
       "comment" : "After declining the focus the Focus test proposed",
       "localizations" : {
@@ -5370,6 +5515,9 @@
         }
       }
     },
+    "Your starting point is set" : {
+      "comment" : "Title of the Focus test's result when it has no subjects to focus on"
+    },
     "Your starting points are set." : {
       "comment" : "A Focus test sitting ended early: every subject's starting point is set",
       "localizations" : {
@@ -5429,6 +5577,9 @@
         }
       }
     },
+    "Your study sessions ask a few more of these questions. You can pause that." : {
+      "comment" : "How it works: under \"A few more in your first week\""
+    },
     "Your subjects start from the basics for now." : {
       "comment" : "Where the plan starts after the Focus test, with nothing to skip yet",
       "localizations" : {
@@ -5487,6 +5638,9 @@
           }
         }
       }
+    },
+    "Your time can't cover everything before your exam." : {
+      "comment" : "Why the Focus test proposes giving some subjects more time"
     },
     "Your time can't cover everything. Your plan can give these more time." : {
       "comment" : "Suggested focus the learner can apply to their plan",

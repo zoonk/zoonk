@@ -5,6 +5,8 @@ import SwiftUI
 /// has none, so it chooses its focus on the plan.
 struct FocusTestScreen: View {
   let goalId: String
+  /// The learner chose to start where the test was suggested, so it opens on its first question.
+  var startsTest = false
 
   @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
@@ -29,7 +31,7 @@ struct FocusTestScreen: View {
         } else {
           FocusTestFlow(
             goalID: goalId, subject: goal?.displayName ?? "", host: .plan,
-            changeFocus: canChangeFocus ? { choosesFocus = true } : nil
+            changeFocus: canChangeFocus ? { choosesFocus = true } : nil, startsTest: startsTest
           ) {
             dismiss()
           }
@@ -38,10 +40,10 @@ struct FocusTestScreen: View {
           .id(session.authenticatedSession)
         }
       }
-      .navigationTitle(
-        Text("Focus test", tableName: "FocusTest", comment: "Title of an exam goal's Focus test")
-      )
+      .navigationTitle(Text(FocusTestCopy.name))
       .navigationBarTitleDisplayMode(.inline)
+      // Each screen's eyebrow names the test; the title stays for VoiceOver and window names.
+      .toolbar(removing: .title)
       .taskClose {
         Button(role: .close) { dismiss() }
       }

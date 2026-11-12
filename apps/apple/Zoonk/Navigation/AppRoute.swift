@@ -30,7 +30,8 @@ enum AppRoute: Hashable, Identifiable {
   case pattern(patternId: String)
   /// `resultId` opens a test-out already sent, as it was recorded.
   case testOut(chapterId: String, resultId: String? = nil)
-  case focusTest(goalId: String)
+  /// `startsTest` opens on the first question, for a learner who already chose to start.
+  case focusTest(goalId: String, startsTest: Bool = false)
   case challenge(planItemId: String, sessionId: String? = nil)
   case checkpoint(blockId: String, sessionId: String? = nil)
   case essay(blockId: String)

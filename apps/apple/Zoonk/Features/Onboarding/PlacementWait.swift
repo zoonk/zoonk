@@ -63,8 +63,8 @@ struct PlacementWaitScreen: View {
         title: title,
         description: holding == nil
           ? Text(
-            "They come from the skills your goal needs. It usually takes a minute or two.",
-            tableName: "Onboarding", comment: "Why placement questions take a moment")
+            "This usually takes a minute or two.", tableName: "Onboarding",
+            comment: "How long placement questions take to write")
           : Text(
             "Start them whenever you're ready.", tableName: "Onboarding",
             comment: "Under \"Your questions are ready\" on placement's wait"))
