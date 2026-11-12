@@ -194,8 +194,9 @@ function SavedTab({ hrefs, library }: TabProps) {
                 onRemove={() => remove(entry)}
                 saved={{
                   ...entry,
-                  chapter:
-                    chapters.find((chapter) => chapter.chapterId === entry.chapterId) ?? null,
+                  thumbnailUrl:
+                    chapters.find((chapter) => chapter.chapterId === entry.chapterId)
+                      ?.thumbnailUrl ?? null,
                 }}
                 study={hrefs.study}
               />

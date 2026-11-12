@@ -132,11 +132,13 @@ function useSavedKindLabel(kind: SavedMindMapView["kind"]): string {
       });
 }
 
-export type SavedMapRowData = SavedMindMapView & {
-  chapter: Pick<MindMapsPageChapter, "position" | "thumbnailUrl"> | null;
-};
+export type SavedMapRowData = SavedMindMapView & Pick<MindMapsPageChapter, "thumbnailUrl">;
 
-/** A saved map: it opens the Saved deck on that map, and its bookmark removes it. */
+/**
+ * A saved map: it opens the Saved deck on that map, and its bookmark removes it. It says its kind,
+ * not its chapter's number: the list has no subject headers, so two subjects' "Chapter 1" would
+ * read alike.
+ */
 export function SavedMapRow({
   onRemove,
   saved,
@@ -146,13 +148,8 @@ export function SavedMapRow({
   saved: SavedMapRowData;
   study: string;
 }) {
-  const t = useExtracted();
   const kind = useSavedKindLabel(saved.kind);
   const isChapter = saved.kind === "chapter";
-
-  const number = saved.chapter
-    ? t("Chapter {number, number}", { number: saved.chapter.position })
-    : null;
 
   const place = saved.chapterId && {
     chapterId: saved.chapterId,
@@ -168,7 +165,7 @@ export function SavedMapRow({
       >
         <ListRowLeading className={LEADING_CLASS}>
           {isChapter ? (
-            <MindMapSlot thumbnailUrl={saved.chapter?.thumbnailUrl ?? null}>
+            <MindMapSlot thumbnailUrl={saved.thumbnailUrl}>
               <KindIcon kind="mindMap" />
             </MindMapSlot>
           ) : (
@@ -179,9 +176,7 @@ export function SavedMapRow({
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{saved.title}</ListRowTitle>
-          <ListRowDescription>
-            {[number, isChapter ? null : kind].filter(Boolean).join(" · ") || kind}
-          </ListRowDescription>
+          <ListRowDescription>{kind}</ListRowDescription>
         </ListRowContent>
       </LearnLink>
 
