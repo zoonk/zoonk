@@ -1,14 +1,12 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { readFileSync } from "node:fs";
-import { runInNewContext } from "node:vm";
 import * as database from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag, revalidateTag } from "next/cache";
-import { loadBindings, transform } from "next/dist/build/swc";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { type CachedRead, compileCachedModule } from "../_test-utils/compiled-cache";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import * as courseTags from "../cache/tags";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
@@ -19,10 +17,9 @@ import { getCourse } from "./get-course-by-slug";
 import { renameCourseForAdmin } from "./rename-course";
 
 type CacheEntry = { result: Promise<unknown>; tags: Set<string> };
-type CachedRead = (...args: unknown[]) => Promise<unknown>;
 
-/** Vitest does not compile cache directives, so use Next's compiler with a cache stand-in. */
-function courseCachePlatform(code: string) {
+/** A cache stand-in whose entries pass their tags to the scopes that read them. */
+async function courseCachePlatform() {
   const sharedEntries = new Map<string, CacheEntry>();
   const requestEntries = new Map<string, CacheEntry>();
   const activeTags = new AsyncLocalStorage<Set<string>>();
@@ -59,32 +56,21 @@ function courseCachePlatform(code: string) {
     });
   });
 
-  const compiledExports = {} as { getCourse: typeof getCourse };
-
-  const imports: Record<string, unknown> = {
-    "../cache/tags": courseTags,
-    "../navigation/decode-route-param": routeParams,
-    "@zoonk/db": database,
-    "next/cache": { cacheTag },
-    "private-next-rsc-cache-wrapper": { cache },
-    "private-next-rsc-server-reference": { registerServerReference: (read: unknown) => read },
-    react: { cache: (read: unknown) => read },
-    "server-only": {},
-  };
-
-  runInNewContext(code, {
-    exports: compiledExports,
-    module: { exports: compiledExports },
-    require: (name: string) => {
-      if (!(name in imports)) {
-        throw new Error(`Unexpected course-read dependency: ${name}`);
-      }
-
-      return imports[name];
+  const compiled = await compileCachedModule({
+    cache,
+    imports: {
+      "../cache/tags": courseTags,
+      "../navigation/decode-route-param": routeParams,
+      "@zoonk/db": database,
+      "next/cache": { cacheTag },
     },
+    source: new URL("get-course-by-slug.ts", import.meta.url),
   });
 
-  return { getCourse: compiledExports.getCourse, nextRequest: () => requestEntries.clear() };
+  return {
+    getCourse: compiled.getCourse as typeof getCourse,
+    nextRequest: () => requestEntries.clear(),
+  };
 }
 
 describe(getCourse, () => {
@@ -221,28 +207,6 @@ describe(getCourse, () => {
 });
 
 describe("the complete course route cache", () => {
-  const filename = new URL("get-course-by-slug.ts", import.meta.url).pathname;
-  const compiled = { code: "" };
-
-  beforeAll(async () => {
-    await loadBindings();
-
-    const result = await transform(readFileSync(filename, "utf8"), {
-      filename,
-      jsc: { parser: { syntax: "typescript" }, target: "es2022" },
-      module: { type: "commonjs" },
-      serverActions: {
-        cacheKinds: ["default", "private", "remote"],
-        hashSalt: "course-route-test",
-        isDevelopment: false,
-        isReactServerLayer: true,
-        useCacheEnabled: true,
-      },
-    });
-
-    compiled.code = result.code;
-  });
-
   afterEach(() => {
     vi.mocked(cacheTag).mockReset();
     vi.mocked(revalidateTag).mockReset();
@@ -251,7 +215,7 @@ describe("the complete course route cache", () => {
   it.each(["legacy slug % value", "x".repeat(300)])(
     "expires a legacy route's cached address on rename: %s",
     async (legacySlug) => {
-      const platform = courseCachePlatform(compiled.code);
+      const platform = await courseCachePlatform();
 
       const [organization, admin] = await Promise.all([
         organizationFixture({ kind: "brand" }),
@@ -294,7 +258,7 @@ describe("the complete course route cache", () => {
   );
 
   it("shares one normalized read across requests until a write expires its tags", async () => {
-    const platform = courseCachePlatform(compiled.code);
+    const platform = await courseCachePlatform();
     const organization = await organizationFixture({ kind: "brand" });
 
     const course = await courseFixture({
@@ -343,7 +307,7 @@ describe("the complete course route cache", () => {
   });
 
   it("expires a cached route miss when the real outline mutation publishes the course", async () => {
-    const platform = courseCachePlatform(compiled.code);
+    const platform = await courseCachePlatform();
     const organization = await organizationFixture({ kind: "brand" });
     const workflowRunId = `run-${crypto.randomUUID()}`;
 
