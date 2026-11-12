@@ -56,7 +56,10 @@ export function getAnswerPoints({ credit, marking, outcome }: PointsAnswer): num
   return outcome === "wrong" ? -marking.points * marking.wrongPenalty : marking.points * credit;
 }
 
-function sumPoints(answers: readonly PointsAnswer[]) {
+export function sumAnswerPoints(answers: readonly PointsAnswer[]): {
+  asked: number;
+  earned: number;
+} {
   return {
     asked: withoutNoise(answers.reduce((sum, answer) => sum + answer.marking.points, 0)),
     earned: withoutNoise(answers.reduce((sum, answer) => sum + getAnswerPoints(answer), 0)),
@@ -102,6 +105,25 @@ function judge({
       ? null
       : Math.max(MINIMUM_ROUNDING_STEP[minimum.unit], withoutNoise(minimum.value - score)),
   };
+}
+
+/** A test that ended below its minimum, or, in a mock that asked only part of it, is projected to. */
+export function fallsShort({
+  max,
+  met,
+  minimum,
+  projected,
+}: Pick<Tally, "max" | "met" | "minimum" | "projected">): boolean {
+  if (met !== null) {
+    return !met;
+  }
+
+  return (
+    minimum !== null &&
+    max !== null &&
+    projected !== null &&
+    judge({ asked: max, earned: projected, minimum }).met === false
+  );
 }
 
 function isWholeTest({
@@ -160,7 +182,7 @@ function scorePart({
   part: MarkedPart;
   scope: PointsScope;
 }) {
-  const { asked, earned } = sumPoints(answers);
+  const { asked, earned } = sumAnswerPoints(answers);
   const max = part.maxPoints;
   const whole = isWholeTest({ answerCount: answers.length, asked, max, questions: part.questions });
 
@@ -209,7 +231,7 @@ function scoreTotal({
 
   const inTotal = answers.filter(({ marking: { part } }) => part === null || !qualifying.has(part));
 
-  const { asked, earned } = sumPoints(inTotal);
+  const { asked, earned } = sumAnswerPoints(inTotal);
   const countedParts = parts.filter((part) => countedNames.has(part.name));
 
   const complete = inTotal.every(
@@ -246,7 +268,7 @@ function scoreTotal({
 }
 
 function scoreMockOnly(answers: readonly PointsAnswer[]): MockPoints {
-  const { asked, earned } = sumPoints(answers);
+  const { asked, earned } = sumAnswerPoints(answers);
 
   return {
     asked,

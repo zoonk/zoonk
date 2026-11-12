@@ -89867,6 +89867,30 @@
                 "name": {
                   "type": "string"
                 },
+                "part": {
+                  "description": "The test its questions count toward, as `points.parts` names it; null when they count toward several or the notice names none. Absent from mocks graded before it was recorded",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "points": {
+                  "description": "Absent from mocks graded before it was recorded",
+                  "type": "object",
+                  "properties": {
+                    "asked": {
+                      "type": "number",
+                      "description": "What its questions were worth, in points"
+                    },
+                    "earned": {
+                      "type": "number",
+                      "description": "Points earned, a wrong answer losing its penalty, so it can be negative; equals `correct` where a wrong answer costs nothing and every question is worth 1"
+                    }
+                  },
+                  "required": [
+                    "asked",
+                    "earned"
+                  ],
+                  "additionalProperties": false
+                },
                 "score": {
                   "nullable": true,
                   "type": "object",
