@@ -459,7 +459,8 @@ final class TodayStoreTests: XCTestCase {
     let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
     let api = StudyAPIStub(
       readiness: try decode(
-        #"{"alternative":null,"generationId":null,"setAside":true,"status":"failed"}"#))
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":true,"status":"failed"}"#
+      ))
     let cache = signedInCache()
     let today = TodayStore(api: api, cache: cache)
     let store = StudySessionStore(api: api, cache: cache, today: today)
@@ -478,7 +479,8 @@ final class TodayStoreTests: XCTestCase {
   func testALessonReadAnsweredAfterItsLearnerLeftIsDropped() async throws {
     let api = StudyAPIStub(
       readiness: try decode(
-        #"{"alternative":null,"generationId":null,"setAside":true,"status":"failed"}"#),
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":true,"status":"failed"}"#
+      ),
       holdsReadiness: true)
     let cache = signedInCache()
     let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
@@ -497,7 +499,8 @@ final class TodayStoreTests: XCTestCase {
     let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
     let api = StudyAPIStub(
       readiness: try decode(
-        #"{"alternative":null,"generationId":null,"setAside":false,"status":"failed"}"#))
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":false,"status":"failed"}"#
+      ))
     let cache = signedInCache()
     let today = TodayStore(api: api, cache: cache)
     let store = StudySessionStore(api: api, cache: cache, today: today)
@@ -961,7 +964,7 @@ private actor StudyAPIStub: StudyAPIClient {
     decided: TodayView.PlanChange? = nil, holdsOpening: Bool = false,
     unwrittenLessons: Set<String> = [], unreachableLessons: Set<String> = [],
     readiness: Components.Schemas.LessonReadiness = .init(
-      alternative: nil, generationId: nil, setAside: false, status: .ready),
+      alternative: nil, generationId: nil, kind: .lesson, setAside: false, status: .ready),
     holdsReadiness: Bool = false
   ) {
     self.unwrittenLessons = unwrittenLessons
@@ -1154,7 +1157,8 @@ private actor StudyAPIStub: StudyAPIClient {
     }
 
     return unwrittenLessons.contains(lessonID)
-      ? .init(alternative: nil, generationId: nil, setAside: false, status: .failed) : readiness
+      ? .init(alternative: nil, generationId: nil, kind: .lesson, setAside: false, status: .failed)
+      : readiness
   }
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {

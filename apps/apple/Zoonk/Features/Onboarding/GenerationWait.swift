@@ -11,6 +11,7 @@ struct GenerationWait: Equatable, Sendable {
     case explanation
     case levelTestBank
     case lesson
+    case challenge
   }
 
   enum PhaseState: Equatable, Sendable {
@@ -280,7 +281,8 @@ struct GenerationWait: Equatable, Sendable {
         phases[index].endedAt = [phases[index].endedAt, at].compactMap(\.self).max()
         end(index, at: at)
         startNextStage(after: stage, at: at)
-      } else {
+      } else if phases[index].state != .done {
+        // A redraft reports its steps again: a phase that finished stays finished.
         phases[index].state = .working
       }
 
@@ -378,6 +380,10 @@ struct GenerationWait: Equatable, Sendable {
     case (.lesson, "markLesson"): .phase("mark")
     case (.lesson, "drawPictures"): .phase("draw")
     case (.lesson, "lessonReady"): .done
+    case (.challenge, "planChallenge"): .phase("plan")
+    case (.challenge, "writeChallenge"), (.challenge, "reviewChallenge"): .phase("write")
+    case (.challenge, "redraftChallenge"): .phase("redraft")
+    case (.challenge, "lessonReady"): .done
     default: nil
     }
   }
@@ -619,6 +625,55 @@ struct GenerationWait: Equatable, Sendable {
               comment:
                 "What the wait is doing while a lesson's pictures are drawn. \"Idea\" is one of the lesson map's ideas, as in \"Idea 2 of 4\"."
             ),
+          ]),
+      ]
+    case .challenge:
+      [
+        Phase(
+          id: "plan",
+          label: LocalizedStringResource(
+            "Planning the challenge", table: "Player",
+            comment: "A step of the wait while a challenge is written"),
+          isOptional: false, seconds: 75,
+          lines: [
+            LocalizedStringResource(
+              "Picking the situation…", table: "Player",
+              comment: "What the wait is doing while a challenge is planned"),
+            LocalizedStringResource(
+              "Mapping the choices you'll face…", table: "Player",
+              comment: "What the wait is doing while a challenge is planned"),
+          ]),
+        Phase(
+          id: "write",
+          label: LocalizedStringResource(
+            "Writing the challenge", table: "Player",
+            comment: "A step of the wait while a challenge is written"),
+          isOptional: false, seconds: 50,
+          lines: [
+            LocalizedStringResource(
+              "Writing what each choice leads to…", table: "Player",
+              comment: "What the wait is doing while a challenge is written"),
+            LocalizedStringResource(
+              "Checking every path…", table: "Player",
+              comment: "What the wait is doing while a challenge is written"),
+          ]),
+        Phase(
+          id: "redraft",
+          label: LocalizedStringResource(
+            "Fixing what the check found", table: "Player",
+            comment:
+              "A step of the wait while a challenge is written, after \"Writing the challenge\": its check found a problem, so the challenge is written again"
+          ),
+          isOptional: true, seconds: 125,
+          lines: [
+            LocalizedStringResource(
+              "Planning the challenge again…", table: "Player",
+              comment:
+                "What the wait is doing while a challenge its check held back is written again"),
+            LocalizedStringResource(
+              "Rewriting the parts that didn't add up…", table: "Player",
+              comment:
+                "What the wait is doing while a challenge its check held back is written again"),
           ]),
       ]
     }
@@ -1163,6 +1218,10 @@ extension GenerationWait.Kind {
     case .lesson:
       LocalizedStringResource(
         "Writing your lesson", table: "Player", comment: "VoiceOver: the bar of a lesson's wait")
+    case .challenge:
+      LocalizedStringResource(
+        "Writing your challenge", table: "Player",
+        comment: "VoiceOver: the bar of a challenge's wait")
     }
   }
 }

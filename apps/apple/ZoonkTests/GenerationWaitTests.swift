@@ -62,6 +62,31 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testAHeldBackChallengeKeepsWorkingOnItsRedraftUntilItIsReady() {
+    var wait = GenerationWait(kind: .challenge)
+
+    XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write"])
+
+    for (status, step) in [
+      ("started", "writeLesson"), ("completed", "planChallenge"), ("completed", "writeChallenge"),
+      ("completed", "reviewChallenge"), ("started", "redraftChallenge"),
+      ("started", "writeLesson"), ("started", "planChallenge"), ("completed", "planChallenge"),
+      ("started", "writeChallenge"),
+    ] {
+      wait.apply(GenerationEvent(status: status, step: step))
+    }
+
+    XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write", "redraft"])
+    XCTAssertEqual(
+      wait.visiblePhases.map(\.state), [.done, .done, .working],
+      "the redraft's own steps never send the wait back")
+    XCTAssertFalse(wait.isDone)
+
+    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+    XCTAssertTrue(wait.isDone)
+  }
+
   func testALessonsMarksAndPicturesEachFinishOnTheirOwnStepInEitherOrder() {
     for (first, second) in [("markLesson", "drawPictures"), ("drawPictures", "markLesson")] {
       var wait = GenerationWait(kind: .lesson)
