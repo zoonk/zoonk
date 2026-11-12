@@ -368,6 +368,9 @@ Then one line: would a principal designer find anything to pick at here, and wha
 Zoonk's own, never findings on a screen. If one looks wrong, report it once as `principle`, with the reason.
 
 - A highlighted or hovered row reaches 10px past the column on both sides, so rows stay square and hairlines straight.
+- A highlighted row's band is inset 2px top and bottom, so two highlighted rows in a list don't touch; the row is still its full height.
+- A chat bubble has one small corner, its tail, on the side of who wrote it.
+- A control with no outline hangs its hover box past the column so its glyph's ink sits on the edge (`edge`).
 - In the player, ✕ and "…" sit in the window's corners, not on the column, and the main action sits in the bottom-right corner on wide screens.
 - Onboarding, the player and the buddy's conversation center one column; pages that are worked in never do.
 - Content is flat: no shadows, few boxes. Body text is 14px in the app.
