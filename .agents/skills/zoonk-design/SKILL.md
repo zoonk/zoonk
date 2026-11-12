@@ -15,7 +15,20 @@ Build clean, subtle, harmonious interfaces. **Don't make me think:** make the pu
 
 Start with the person's goal, knowledge, and context. Identify what they need to decide and what the product can handle for them. Choose the structure before the controls; a feature list is not an interface.
 
-Look up the design system first: what every token, type role, shape, pattern and special moment means lives in `apps/playground/src/design-system/` and shows live, in every mode, at `/design` in the playground (`http://playground.zoonk.localhost:1355/design` from the main checkout's `pnpm dev`); the values live in `packages/ui/src/styles/globals.css`. Inspect relevant screens and shared components in the current main app and reuse its patterns ([App patterns](references/app-patterns.md)). Mockups are a starting point, not the target: judge a screen by using it, and rethink it when using it shows friction, even if the result looks nothing like the mockup. Question patterns that make the task harder. When the structure is uncertain, prototype with representative content before polishing.
+Look up the design system first: what every token, type role, shape, pattern and special moment means lives in `apps/playground/src/design-system/` and shows live, in every mode, at `/design` in the playground (`http://playground.zoonk.localhost:1355/design` from the main checkout's `pnpm dev`); the values live in `packages/ui/src/styles/globals.css`. Inspect relevant screens in the current main app and reuse their patterns ([App patterns](references/app-patterns.md)) and [their pieces](#find-the-piece-before-you-build-one). Mockups are a starting point, not the target: judge a screen by using it, and rethink it when using it shows friction, even if the result looks nothing like the mockup. Question patterns that make the task harder. When the structure is uncertain, prototype with representative content before polishing.
+
+### Find the piece before you build one
+
+One moment is drawn by one piece everywhere. Before you write a component, a class list or a sentence, find what already draws it. Search by what the learner sees, since a copy usually has another name but the same words:
+
+```sh
+rg -l -F "I don't know yet" apps packages -g '!*.po' -g '!*.test.*'  # each sentence and label it shows, web and native
+rg -l "ArrowLeftIcon" apps packages -g '*.tsx'        # its icon
+rg -l -F "max-w-column" apps packages -g '*.tsx'      # its most specific class: a theme token or an arbitrary value
+ls packages/ui/src/components packages/learn/src/_components packages/learn/src/shell packages/player/src/components
+```
+
+Use the piece that does this. Extend the one that does almost this, in the same change, and check its other callers. Write a second one only for a different product rule, and name that rule in the PR. Before building a missing web primitive, check the shadcn registry; build with Tailwind utilities and semantic tokens.
 
 ## Shape the experience
 
@@ -100,7 +113,6 @@ The look is **Instrument**: a calm study instrument in the spirit of Linear and 
 - **Clean is not boring.** Hierarchy comes from size, weight and tone, a readout, the buddy or the Trickster where they belong, and color that means something, not from decoration. One suggestion at a time (`Suggestion`); one way to draw each thing.
 - Keep company logos out of app interfaces; use that space for the person's task. Logos belong only on marketing pages and the login page.
 - Group through spacing, labels and hairlines before adding a container.
-- Reuse `@zoonk/ui`, the learn kit (`packages/learn/src/_components`: `Page`, `PageHeader`, `PageSection`, `DetailLayout`, `ListGroup`, `KindMark`, `StatusMark`, `BigQuantity`, `MeterParts`, `SubjectLabel`, `Route`, `StatTile`, `NoticeCard`, `Suggestion`, `DiffLines`) and the shell (`packages/learn/src/shell`: `PageWithAside`, `LearnPageBar`, `TaskFrame`). Check existing primitives and the shadcn registry before building a missing web primitive. Use Tailwind utilities and semantic tokens.
 - Write to the [Words](#words) budget.
 - Build every page from the [page templates](references/app-patterns.md#page-templates) (tab root, detail, catalog, section, browse, task, conversation) and their shared pieces. Keep the same placement for the same things on every page: navigation, search, the main action, page widths and alignment.
 
@@ -146,7 +158,7 @@ A wrong guess, an unknown word or a "not sure" is a finding. Don't explain the s
 
 ### The craft read
 
-The first-glance test asks whether a screen is understood; the craft read asks whether it is drawn right, and you can't judge that on your own screen either. For every new or changed screen, once it works and before the designer's review ([verify](../verify/SKILL.md)), give an agent that didn't build it the screenshots at 390 and 1440 and [craft](references/craft.md), and nothing else. It answers [the craft read's questions](references/craft.md#the-craft-read) for each screenshot and reports each fault as [a finding](references/craft.md#a-finding): the place, the rule, what is wrong with its numbers, and whether the fault is the screen's or a shared piece's.
+The first-glance test asks whether a screen is understood; the craft read asks whether it is drawn right, and you can't judge that on your own screen either. For every new or changed screen, once it works and before the designer's review ([verify](../verify/SKILL.md)), give an agent that didn't build it the screenshots at 390 and 1440, the same screenshots of the existing screens that do the same thing (the ones the PR names), and [craft](references/craft.md), and nothing else. It answers [the craft read's questions](references/craft.md#the-craft-read) for each screenshot and reports each fault as [a finding](references/craft.md#a-finding): the place, the rule, what is wrong with its numbers, and whether the fault is the screen's or a shared piece's.
 
 Fix every finding and run the read again on the screens that changed, until it finds nothing it can point at. A fault in a shared piece (a bar, a button, a list row, a token's use) is fixed in that piece, so every screen gets it, never with a margin on the one screen. A finding that the design system itself breaks a rule goes to the user once, as a decision about the system. When a finding is one of the system's [deliberate choices](references/craft.md#deliberate-choices), say so and leave it.
 
