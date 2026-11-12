@@ -194,7 +194,7 @@ function GoalDateValue() {
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (!targetDate) {
-    return goal.kind === "exam" ? t("To be confirmed") : t("No end date");
+    return goal.kind === "exam" ? t("To be confirmed") : t("No date");
   }
 
   return (
