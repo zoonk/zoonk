@@ -272,6 +272,7 @@ test.describe("Buddy tab", () => {
       expect(await readRebuilds()).toBe(0);
 
       await germany.getByRole("button", { name: "Apply" }).click();
+
       await expect(status).toHaveText(
         "Saved. Your new plan is being prepared, and you can keep studying meanwhile.",
       );
