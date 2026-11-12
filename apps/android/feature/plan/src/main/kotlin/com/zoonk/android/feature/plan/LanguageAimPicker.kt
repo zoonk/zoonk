@@ -61,13 +61,13 @@ fun LanguageAimRow(
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
     onPick: (String, () -> Unit) -> Unit,
+    modifier: Modifier = Modifier,
     pending: Boolean = false,
     failed: Boolean = false,
     endDate: LocalDate? = null,
     description: String? = null,
     note: String? = null,
     dates: @Composable () -> Map<String, LocalDate?> = { emptyMap() },
-    modifier: Modifier = Modifier,
 ) {
     if (choices.isEmpty()) return
     ListRow(

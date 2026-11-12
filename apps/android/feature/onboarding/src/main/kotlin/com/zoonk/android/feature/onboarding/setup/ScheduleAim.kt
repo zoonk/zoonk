@@ -63,9 +63,9 @@ internal fun ScheduleAim(
         aimOpen,
         { aimOpen = it },
         context.change,
-        context.pending,
-        context.failed,
-        endDate,
+        pending = context.pending,
+        failed = context.failed,
+        endDate = endDate,
         description = description,
         dates = {
             languageAim.choices.filterNot { it.aim.value == aim }.associate { choice ->
