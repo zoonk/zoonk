@@ -1139,11 +1139,6 @@ msgid "How much do you already know?"
 msgstr "이미 어느 정도 알고 있나요?"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "eePhP0"
-msgid "It only changes where your plan starts."
-msgstr "계획의 시작 지점만 달라져요."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요."

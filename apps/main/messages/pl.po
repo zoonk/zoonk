@@ -1139,11 +1139,6 @@ msgid "How much do you already know?"
 msgstr "Ile już wiesz?"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "eePhP0"
-msgid "It only changes where your plan starts."
-msgstr "To decyduje tylko o tym, od czego zacznie się twój plan."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "Twój plan obejmuje ten kurs i jest dopasowany do czasu, który masz każdego dnia."
