@@ -385,6 +385,18 @@ describe("home country", () => {
     ).resolves.toBe(0);
   });
 
+  it("doesn't tag the chosen country in its own picker's suggestions", async () => {
+    await plannedLearner();
+
+    const result = await updateLearningProfile({ homeCountry: "PT" });
+
+    expect(result).toMatchObject({ status: "updated" });
+
+    expect(result.status === "updated" && result.profile.suggested).toContainEqual(
+      expect.objectContaining({ code: "PT", tag: null }),
+    );
+  });
+
   it("rejects an unknown country before creating a profile", async () => {
     const user = await useLearner();
 

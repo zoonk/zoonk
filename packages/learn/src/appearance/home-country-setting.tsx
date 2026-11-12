@@ -27,9 +27,6 @@ export function HomeCountrySetting({
   const [open, setOpen] = useState(false);
   const title = t("Where you live");
 
-  // The picker is titled "Where you live", so a row tagged with it would repeat the title.
-  const untagged = suggested.map((country) => ({ ...country, tag: null }));
-
   return (
     <SettingRow
       description={t(
@@ -66,7 +63,7 @@ export function HomeCountrySetting({
           }
         }}
         open={open}
-        suggested={untagged}
+        suggested={suggested}
         title={title}
         value={value?.code ?? null}
       />

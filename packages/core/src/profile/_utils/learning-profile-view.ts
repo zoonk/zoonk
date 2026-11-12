@@ -44,11 +44,12 @@ function toLearningProfileView({
       toCountryChoice({ code: profile?.homeCountry ?? null, language })?.name ?? null,
     shareUsageData: profile?.shareUsageData ?? null,
     soundsEnabled: profile?.soundsEnabled ?? true,
+    // These feed the "Where you live" picker, where a "where you live" tag would repeat its title.
     suggested: getCountrySuggestions({
       homeCountry: profile?.homeCountry ?? null,
       language,
       recent,
-    }),
+    }).map((country) => ({ ...country, tag: null })),
   };
 }
 
