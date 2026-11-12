@@ -124,7 +124,8 @@ struct MindMapReader: View {
         actionBar(cards, index: index)
           .keepsOffFold()
       }
-      // Previous is see-through, so a map scrolling under the bar stops at its edge.
+      // The bar's soft edge doesn't reach a page's own scroll inside the pager, so an outline would
+      // run crisp under the see-through Previous.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
       .taskTitle(Text(title))
       .announcesStatus(title)
@@ -386,26 +387,32 @@ private struct ChapterMapPage: View {
             .scenePadding()
         }
       } secondary: {
-        MindMapOutlineView(outline: outline) { EmptyView() }
+        ScrollView {
+          MindMapOutlineView(outline: outline)
+            .scenePadding()
+        }
       } single: {
-        MindMapOutlineView(outline: outline) {
-          Section {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
             picture(url)
-              .listRowSeparator(.hidden)
+            MindMapOutlineView(outline: outline)
           }
+          .taskColumn(alignment: .leading)
         }
       }
     } else if let outline = map.outline {
-      MindMapOutlineView(outline: outline) {
-        Section {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
           Text(
             "Its picture had mistakes, so here's the mind map as text.", tableName: "MindMaps",
             comment: "A map whose picture failed its check, shown as its outline"
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden)
+
+          MindMapOutlineView(outline: outline)
         }
+        .taskColumn(alignment: .leading)
       }
       .lonePage()
     } else if let url {

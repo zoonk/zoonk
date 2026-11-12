@@ -1,6 +1,65 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "**In short:** %@" : {
+      "comment" : "The map's summary, after its label in bold",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Kurz gesagt:** %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**En resumen:** %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**En bref :** %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**In breve:** %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**まとめ：**%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**요약:** %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**W skrócie:** %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Em resumo:** %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Kısaca:** %@"
+          }
+        }
+      }
+    },
     "%lld chapters need their lessons written first." : {
       "comment" : "Chapters whose maps the button can't make, since each writes its lessons first",
       "localizations" : {
@@ -2083,65 +2142,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Her ders, kavramlarını gösteren küçük bir haritayla biter. Derslerin hazırlandığında haritalar burada görünür."
-          }
-        }
-      }
-    },
-    "In short: %@" : {
-      "comment" : "The map's summary",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurz gesagt: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En resumen: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En bref : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In breve: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "要約：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "요약: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W skrócie: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em resumo: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kısaca: %@"
           }
         }
       }

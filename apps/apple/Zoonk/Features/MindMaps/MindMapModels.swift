@@ -31,9 +31,21 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
       let title: String
     }
 
+    /// Two to five things the chapter sets side by side.
+    struct Comparison: Decodable, Equatable, Sendable {
+      struct Column: Decodable, Equatable, Hashable, Sendable {
+        let name: String
+        let points: [String]
+      }
+
+      let columns: [Column]
+      let title: String
+    }
+
     let branches: [Branch]
     let centralIdea: String
-    let summary: String?
+    let comparison: Comparison?
+    let summary: String
     let title: String
   }
 
