@@ -4,17 +4,18 @@
   "mindmaps_alt": "5e45e9ad7ab826c515dfbebc4924a3b9cc02a32615b3d7425ba1c7e08ea5dd60",
   "mindmaps_alt_chapter": "860d58f689c860858d18fe276636f881bd658f2dce81cb353f637eabb7013fe6",
   "mindmaps_alt_sentence": "0ab8e822b50976dd52ff9d14c185d437bb92c581b4a699b3c65f5f4c368cc2df",
-  "mindmaps_as_picture": "b5b27b9d978f1275c15ab9ffccf2c881e2c543a45e438848f6f43c6553610b9c",
   "mindmaps_as_text": "6b08109929478e80530bdb62d80349bc21c6dace449d273a3fd181912cb030c6",
   "mindmaps_as_text_note": "d298a4615f2f7d301ac63b32086b0db5d83918bcd580aac9e93a44e10940dfa6",
   "mindmaps_being_made": "146d701ea1d32d69d15d78e78f4bf941d0648ab326bc64e653f050d294676ea8",
   "mindmaps_can_make_more": "ad20b0150da25cdbddc3124f3b1cf42e09c4f54768ed4cf34ef5ead130086ba0",
   "mindmaps_chapter_count": "0c2e2215690b8efeabfd9e06147412d72f18fd89c2eddeb0eb1671c03f5fc70a",
   "mindmaps_chapter_finished": "0443c3cb444462c7b7fadfcdf372514235bfcc507c1e26057e43853468870a42",
+  "mindmaps_chapter_map": "6f77b40184aa4b7ffc04f8f3b31ad265f2ba2e9df13a7c0472a360e13ea9acde",
   "mindmaps_chapter_number": "a5b50abb0415d05f0d721cb4c6ad829ca7fa219955eca6f3300682810f05975e",
   "mindmaps_create": "81d6d735e06d6566fca73d6200b66b03396cd74c7df7acbf4861030f8abe648a",
   "mindmaps_create_count": "f625874846a996fdaa73452b76a2a1fb524de13115b84864411fcbae8fad51f8",
   "mindmaps_create_spoken": "9ae9904178c0311a2b08687dcfd8c57ede8c50cb9c030c2d8d217b5933e007b2",
+  "mindmaps_didnt_finish": "f28cbd4cfc9dee5b5541d59feedfdac4b48c386d216b33e83e50335b185eb8df",
   "mindmaps_done": "ace28dc513dddebb684679b6809de38a690fd0f4570196ba4ecea81b4eae0605",
   "mindmaps_download": "695cbc5b887ab007787c3873f5288738e297d1eb7e170c5824ee0674a0942c41",
   "mindmaps_drawing": "de2c36f73e28a935596eaecc07fbc603d483f28511f8bfa2b56e6b6756cc7867",
@@ -93,10 +94,8 @@
     <string name="mindmaps_alt">Mindmap: %1$s. %2$s</string>
     <!-- The same, for a title that already ends a sentence. -->
     <string name="mindmaps_alt_sentence">Mindmap: %1$s %2$s</string>
-    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also the viewer's button that shows the map in words. -->
+    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also what screen readers say for the viewer's switch that shows the map in words. -->
     <string name="mindmaps_as_text">Als Text</string>
-    <!-- The viewer's button that shows the map's picture again after it was shown as text. -->
-    <string name="mindmaps_as_picture">Als Bild anzeigen</string>
     <!-- The title of a chapter's mind map row on the chapter's page. -->
     <string name="mindmaps_row_title">Mindmap</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
@@ -169,7 +168,9 @@
         <item quantity="one">%1$s gesperrt</item>
         <item quantity="other">%1$s gesperrt</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">Kapitel-Mindmap</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">Lektions-Mindmap</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Alle %1$s anzeigen</string>
@@ -194,6 +195,11 @@
     <plurals name="mindmaps_being_made">
         <item quantity="one">Wir erstellen %1$s Mindmap. Du kannst die Seite währenddessen verlassen.</item>
         <item quantity="other">Wir erstellen %1$s Mindmaps. Du kannst die Seite währenddessen verlassen.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="one">Wir konnten %1$s Mindmap nicht fertigstellen. Versuch es noch einmal.</item>
+        <item quantity="other">Wir konnten %1$s Mindmaps nicht fertigstellen. Versuch es noch einmal.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

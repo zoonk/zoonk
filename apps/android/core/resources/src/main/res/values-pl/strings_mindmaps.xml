@@ -4,17 +4,18 @@
   "mindmaps_alt": "fea4aa8dc4042f8ac10092daf77ca31fb20d19ad430b95e5f0b61fc06b5c1e2a",
   "mindmaps_alt_chapter": "6f38c55d06f1c416973a3bd9e4bc35e2795c2bbfb74be23be8192093512a40c0",
   "mindmaps_alt_sentence": "36d46f32eef48247e35f8d7aaa2e7d6cbc9d3931476a38175a216611c81331df",
-  "mindmaps_as_picture": "5f9fb2c4412167e13a5fafe2bd58e3fa27c1764f4d56d314be00fcdb6c31f2be",
   "mindmaps_as_text": "1d92eee63774100f80ea61371b7c43800ec9f0a15f1e3fa57e33b681c26d5b66",
   "mindmaps_as_text_note": "192dab3a88513934a02d51658e62c195d1fe68d71be3c9ac2c88353a213e7ec4",
   "mindmaps_being_made": "105e0993cbc4ba70e31b61933ef2b2d00290bfe9e5be012b691b2eff3d35d0db",
   "mindmaps_can_make_more": "c2d7272243df7969519521105987463a014d45c6da85998dcab0a79fbd8e14cf",
   "mindmaps_chapter_count": "ea4643ee4b1157c3c4dfbb5289dbddc58bc39ddcb2b79342e6eaf004d32a56fc",
   "mindmaps_chapter_finished": "46d684658fcc4f9551c1fffdf238a59f0ed3ccfbb6d07dfb97549b6555e2e47e",
+  "mindmaps_chapter_map": "6e9168e531e859502fdf735ae8d1f41e6464889045ac828078072fe40e94dfdb",
   "mindmaps_chapter_number": "e84ccc4b88f24a70f4922ef06cd482fdbecbdb2fb277de969cde64c7fdd7b6b9",
   "mindmaps_create": "fcd7663d7e4bea0c517a4b72a630703cfdf4084f98507358f24e957c62829252",
   "mindmaps_create_count": "5b919ccd3364f9555d8d0053e16dd42fdab3a2108de3dbe0a9e0cfc4bbecb7ce",
   "mindmaps_create_spoken": "7a8499c380462bddf7083a49f827093c44e66cd5599dc76cefc9f5d3326f3fef",
+  "mindmaps_didnt_finish": "3028a37556f0e0fe59c18a39697399d98ab669dcf7ccc0d324e57a76c6892c57",
   "mindmaps_done": "f5079b82033ff0e719da4fb69835dbda4cd5c1342115a1a605f3495979d94c0e",
   "mindmaps_download": "5bd9a949981450555e4da48bd7d5eb083b6b188467b31bddef39765bace4f6c0",
   "mindmaps_drawing": "fdd016d2b8712e8d3583ed68e1de4aa7457baaaabdcbeb31e7ad98252d7bc522",
@@ -95,10 +96,8 @@
     <string name="mindmaps_alt">Mapa myśli: %1$s. %2$s</string>
     <!-- The same, for a title that already ends a sentence. -->
     <string name="mindmaps_alt_sentence">Mapa myśli: %1$s %2$s</string>
-    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also the viewer's button that shows the map in words. -->
+    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also what screen readers say for the viewer's switch that shows the map in words. -->
     <string name="mindmaps_as_text">W formie tekstu</string>
-    <!-- The viewer's button that shows the map's picture again after it was shown as text. -->
-    <string name="mindmaps_as_picture">Pokaż obrazek</string>
     <!-- The title of a chapter's mind map row on the chapter's page. -->
     <string name="mindmaps_row_title">Mapa myśli</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
@@ -183,7 +182,9 @@
         <item quantity="many">%1$s zablokowanych</item>
         <item quantity="other">%1$s zablokowanych</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">Mapa rozdziału</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">Mapa lekcji</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Pokaż wszystkie %1$s</string>
@@ -212,6 +213,13 @@
         <item quantity="few">Przygotowujemy %1$s mapy. Możesz w tym czasie opuścić stronę.</item>
         <item quantity="many">Przygotowujemy %1$s map. Możesz w tym czasie opuścić stronę.</item>
         <item quantity="other">Przygotowujemy %1$s map. Możesz w tym czasie opuścić stronę.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="one">%1$s mapa nie została ukończona. Spróbuj ponownie.</item>
+        <item quantity="few">%1$s mapy nie zostały ukończone. Spróbuj ponownie.</item>
+        <item quantity="many">%1$s map nie zostało ukończonych. Spróbuj ponownie.</item>
+        <item quantity="other">%1$s map nie zostało ukończonych. Spróbuj ponownie.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

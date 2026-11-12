@@ -21,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -54,7 +56,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,13 +65,13 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -210,13 +211,9 @@ internal fun MindMapViewer(
         TaskScaffold(
             onClose = onClose,
             modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
-            title = { Text(map.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            title = { LessonTitle(map.title) },
             actions = {
-                if (image != null && !outlineBeside) {
-                    TextButton(onClick = { asText = !asText }) {
-                        Text(stringResource(if (asText) R.string.mindmaps_as_picture else R.string.mindmaps_as_text))
-                    }
-                }
+                if (image != null && !outlineBeside) AsTextToggle(asText, onToggle = { asText = !asText })
                 if (onBookmark != null) MapBookmark(map.saved, onBookmark)
                 if (onSave != null) {
                     IconButton(onClick = onSave) {
@@ -267,6 +264,25 @@ internal fun MindMapViewer(
                 }
             }
         }
+    }
+}
+
+/** Main's "As text" switch, an icon that stays filled while the words show, so the bar keeps its room for the title. */
+@Composable
+private fun AsTextToggle(
+    asText: Boolean,
+    onToggle: () -> Unit,
+) {
+    IconToggleButton(
+        checked = asText,
+        onCheckedChange = { onToggle() },
+        colors =
+            IconButtonDefaults.iconToggleButtonColors(
+                checkedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                checkedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            ),
+    ) {
+        Icon(painterResource(R.drawable.ic_notes), contentDescription = stringResource(R.string.mindmaps_as_text))
     }
 }
 

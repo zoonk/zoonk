@@ -4,17 +4,18 @@
   "mindmaps_alt": "3600de1f1280d3e9fb172b32e70f58a1027276783906a90c7f850e883546c16e",
   "mindmaps_alt_chapter": "73ed29db0209177a40fe7af37cf0111cd93220f3ee22390c912b3d8ca055d98f",
   "mindmaps_alt_sentence": "b3c0115c00ba8e9f7c6e2f687dd38e34292418ec4c9ba936ec06da4408f6325c",
-  "mindmaps_as_picture": "bb6574dcbc4e99a45f95ac2776272a42cd223746f9e261129624b570f4e5e056",
   "mindmaps_as_text": "fc1e15be5324450aa1950fca7c46b44d191e7d9e4c4908f4f943a8d17211a73f",
   "mindmaps_as_text_note": "08cbf4a2e2967d9ce339ae3a00e05e2892c81137cc432f034b5c12c42a3ab476",
   "mindmaps_being_made": "a35ebfceeaa88b4c2b0d3f3fa4a3d0c8a40205cedfeafc35b9312a272ac2b55c",
   "mindmaps_can_make_more": "1ecaefa1071f068d65e3c2afce99c19db4f2c7436a11714f2b7a9cd9d0e32e9f",
   "mindmaps_chapter_count": "42a759dd7f7ef2fc96aef5067a23edc4162a39a2ea35b35bc8b1cd48421813b8",
   "mindmaps_chapter_finished": "616586994a6641aa6234a1919f26b68184b85cb1191796f5555ade1f5e88fed2",
+  "mindmaps_chapter_map": "0a753ebf5f719fddae2b9c455595b253d20274b2d26a0351e40aaf63a396e36a",
   "mindmaps_chapter_number": "2c1f1d51fb44844abd6c1929f9d3de3d0c4adc686b4e8d6c1bbd3a8b4ae1cf8d",
   "mindmaps_create": "6baf318ab485765ffcc73d97ae957b469f353903a0b83e3b544631c789cf82d8",
   "mindmaps_create_count": "235ef76e21d17482e6a214f876adb2cd99e40a7078e59267a37e2aaf0a9af19c",
   "mindmaps_create_spoken": "c642b459c7b94fcc16a1c8ff69bb388cc5a6cb9874db97e0d0a342aaafd5695d",
+  "mindmaps_didnt_finish": "a353361179a8808e1233d82e63ac356269e7108dd7ffa4b6df2d499738d716cf",
   "mindmaps_done": "a4eeb47e648a48de419cbe370ac0d6d147aded8c1b2cee394dad9c263039cbbb",
   "mindmaps_download": "c6c4ef3c31ed4cc05847e161eda22e7421162f0bdc5d635e75cfbbd76dd90b75",
   "mindmaps_drawing": "d88412a6dfbe0faad1e97d6fd5f7665082b93f1c92cc980baad34bcb4a2014c9",
@@ -92,10 +93,8 @@
     <string name="mindmaps_alt">마인드맵: %1$s. %2$s</string>
     <!-- The same, for a title that already ends a sentence. -->
     <string name="mindmaps_alt_sentence">마인드맵: %1$s %2$s</string>
-    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also the viewer's button that shows the map in words. -->
+    <!-- A map whose picture had mistakes, in its row on the Mind maps page; also what screen readers say for the viewer's switch that shows the map in words. -->
     <string name="mindmaps_as_text">글로 보기</string>
-    <!-- The viewer's button that shows the map's picture again after it was shown as text. -->
-    <string name="mindmaps_as_picture">그림으로 보기</string>
     <!-- The title of a chapter's mind map row on the chapter's page. -->
     <string name="mindmaps_row_title">마인드맵</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
@@ -162,7 +161,9 @@
     <plurals name="mindmaps_locked_count">
         <item quantity="other">잠김 %1$s개</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">챕터 마인드맵</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">레슨 마인드맵</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">%1$s개 모두 보기</string>
@@ -185,6 +186,10 @@
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
         <item quantity="other">%1$s개를 만들고 있어요. 만드는 동안 나가도 괜찮아요.</item>
+    </plurals>
+    <!-- Under "Not made yet", when chapter maps the Create button tries again failed. %1$s is how many. -->
+    <plurals name="mindmaps_didnt_finish">
+        <item quantity="other">마인드맵 %1$s개를 완성하지 못했어요. 다시 시도해 보세요.</item>
     </plurals>
     <!-- Under the Create button, when the learner's allowance covers fewer chapter maps than are ready to make. %1$s is how many it starts. -->
     <plurals name="mindmaps_can_make_more">

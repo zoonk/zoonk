@@ -597,6 +597,22 @@ class MindMapViewModelTest {
         }
 
     @Test
+    fun creatingEveryMapReadsAgainAChapterReadEarlierOnceItShowsAgain() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            store.chapter[key].load()
+            api.chapter = { chapterMindMap("drawing") }
+
+            maps.createAll()
+            advanceUntilIdle()
+            val reopened = launch { store.chapter[key].shown.collect {} }
+            advanceUntilIdle()
+
+            assertEquals(MindMapShown.Drawing, store.chapterShown())
+            reopened.cancel()
+        }
+
+    @Test
     fun aNewerReadOfTheListClearsTheCreateAllError() =
         runTest(dispatcher) {
             val (maps, store) = setUp()

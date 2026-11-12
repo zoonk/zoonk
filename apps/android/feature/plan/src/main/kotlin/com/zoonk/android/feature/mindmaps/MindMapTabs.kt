@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -149,7 +150,8 @@ private fun ChapterRow(
 /**
  * Main's "Not made yet": a button that starts as many maps as can start now, one line (the first
  * that applies), and those chapters folded under Show chapters, each with its Create while a new
- * map can start. The list mixes subjects without their headers, so its rows go without their number.
+ * map can start (a failed one keeps Try again, which is free). The list mixes subjects without
+ * their headers, so its rows go without their number.
  */
 private fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,
@@ -170,8 +172,7 @@ private fun LazyListScope.notMadeBlock(
         )
     }
     if (open) {
-        val offer = mindMaps.createOffer
-        val stop = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
+        val stop = mindMaps.createOffer.stop?.limit(actions.state.tier)
         // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
         if (stop == null && actions.state.tier != LimitTier.Plus && notMade.any { it.lessonsToWrite > 0 }) {
             item(key = "not-made-note", contentType = "note") {
@@ -204,6 +205,7 @@ private fun NotMadeSummary(
             OutlinedButton(
                 onClick = actions.page.createAll,
                 busy = actions.state.createAll == CreateAll.Pending,
+                leadingIcon = { ButtonIcon(R.drawable.ic_add) },
             ) { Text(pluralStringResource(R.plurals.mindmaps_create_count, count, formatNumber(count.toDouble(), currentLocale()))) }
         }
 
@@ -212,8 +214,10 @@ private fun NotMadeSummary(
 }
 
 /**
- * The block's one line, the first that applies: the tap didn't reach the server, what stops every
- * map from starting, maps on their way, how many more fit now, or chapters whose lessons come first.
+ * The block's one line, the first that applies: the tap didn't reach the server, maps on their way,
+ * maps the button tries again, what stops every map from starting, how many more fit now, or
+ * chapters whose lessons come first. Maps the learner just started come before the limit, which
+ * read first looks like a refusal.
  */
 @Composable
 private fun NotMadeLine(
@@ -223,8 +227,10 @@ private fun NotMadeLine(
     val offer = mindMaps.createOffer
     val locale = currentLocale()
     val onTheWay = mindMaps.chapters.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
+    // A failed chapter that still needs lessons isn't the button's to retry; its own row says so.
+    val retried = mindMaps.chapters.count { it.status == GoalMindMap.Status.FAILED && it.lessonsToWrite == 0L }
     // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
-    val limit = (offer.stop?.limit(actions.state.tier) ?: actions.state.cap.takeIf { offer.eligible > 0 }).takeIf { offer.startable == 0L }
+    val limit = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
     val text =
@@ -233,13 +239,17 @@ private fun NotMadeLine(
                 stringResource(R.string.mindmaps_unreachable)
             }
 
+            onTheWay > 0 -> {
+                counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
+            }
+
+            retried > 0 -> {
+                counted(R.plurals.mindmaps_didnt_finish, retried.toLong())
+            }
+
             limit != null -> {
                 MindMapLimit(limit, offer.stop.limitSubject, actions.page.navigate)
                 return
-            }
-
-            onTheWay > 0 -> {
-                counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
             }
 
             offer.startable in 1..<offer.eligible -> {
@@ -386,14 +396,17 @@ internal val SavedMindMap.target: MindMapTarget get() = MindMapTarget(kind, targ
 
 private val SavedMindMap.key: String get() = "${kind.value}-$targetId"
 
+/** A saved map's kind, under its title. Saved has no subject headers, so a chapter's number would read alike across subjects. */
+@Composable
+private fun SavedMindMap.kindLabel(): String =
+    stringResource(if (kind == SavedMindMapKind.LESSON) R.string.mindmaps_lesson_map else R.string.mindmaps_chapter_map)
+
 @Composable
 private fun SavedRow(
     entry: SavedMindMap,
     chapter: GoalMindMap?,
     actions: TabActions,
 ) {
-    val locale = currentLocale()
-    val number = chapter?.let { stringResource(R.string.mindmaps_chapter_number, formatNumber(it.position.toDouble(), locale)) }
     val lesson = entry.kind == SavedMindMapKind.LESSON
     val remove = { actions.page.save(entry.target, entry.chapterId, false) }
     var menu by remember { mutableStateOf(false) }
@@ -407,7 +420,7 @@ private fun SavedRow(
                 onLongClickLabel = stringResource(R.string.mindmaps_unsave),
                 onLongClick = { menu = true },
                 leading = { MapMark(chapter?.image?.thumbnailUrl?.takeUnless { lesson }, MindMapShown.Ready) },
-                supporting = { Text(factsLine(number, if (lesson) stringResource(R.string.mindmaps_lesson_map) else null)) },
+                supporting = { Text(entry.kindLabel()) },
             )
             SaveMenu(menu, saved = true, onDismiss = { menu = false }, onToggle = remove)
         }
@@ -423,7 +436,7 @@ private fun GoneRow(
     ListRow(
         headline = { Text(entry.title) },
         leading = { MapMark(null, MindMapShown.Unavailable) },
-        supporting = if (entry.kind == SavedMindMapKind.LESSON) ({ Text(stringResource(R.string.mindmaps_lesson_map)) }) else null,
+        supporting = { Text(entry.kindLabel()) },
         trailing = {
             TextButton(
                 onClick = { actions.page.save(entry.target, entry.chapterId, false) },
