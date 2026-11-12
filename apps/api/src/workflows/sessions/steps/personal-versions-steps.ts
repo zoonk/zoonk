@@ -33,6 +33,7 @@ export async function prepareToolVersionStep({
     key: target.key,
     label: target.label,
     stepId: target.stepId,
+    workflowRunId,
   });
 
   return result.status;

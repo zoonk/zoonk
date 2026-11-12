@@ -466,6 +466,7 @@
     "./library/tools/setup-lesson-contract": "./src/library/tools/setup-lesson-contract.ts",
     "./library/tools/write-setup-lesson": "./src/library/tools/find-or-create-setup-lesson.ts",
     "./library/variants/example-line": "./src/library/variants/get-step-example-line.ts",
+    "./library/variants/generation": "./src/library/variants/variant-generation.ts",
     "./library/variants/get-or-create": "./src/library/variants/get-or-create-step-variant.ts",
     "./library/variants/version-targets": "./src/library/variants/learner-version-targets.ts",
     "./library/warm-ups/check": "./src/library/warm-ups/check-warm-up.ts",

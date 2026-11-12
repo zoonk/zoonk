@@ -9,9 +9,8 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { createOrFindByIdentity, toProvenanceData } from "../_utils/library-rows";
 import { STEP_CONTRACT_VERSION } from "../steps/contract/step-contract";
 import { toVariantContent } from "./_utils/variant-content";
+import { holdBackStepVariantDraft, reserveStepVariantGeneration } from "./variant-generation";
 import { toVariantKey } from "./variant-keys";
-
-const GENERATION_ATTEMPTS = 2;
 
 const TOOL_KIND = "tool";
 
@@ -20,12 +19,13 @@ type VariantScreenKind = (typeof VARIANT_SCREEN_KINDS)[number];
 export type StepVariantResult =
   | { status: "notFound" }
   | { status: "unsupported" }
+  | { status: "exhausted" }
   | { status: "failed"; problems: string[] }
   | { status: "ready"; created: boolean; variant: StepVariant };
 
 type GeneratedVariant =
   | { content: object; provenance: Awaited<ReturnType<typeof generateStepVariant>>["provenance"] }
-  | { problems: string[] };
+  | { problems: string[]; model: string };
 
 function isVariantScreen(kind: string): kind is VariantScreenKind {
   return VARIANT_SCREEN_KINDS.some((screenKind) => screenKind === kind);
@@ -50,12 +50,12 @@ function findVariant({ key, stepId }: { key: string; stepId: string }) {
 
 async function generateVariantContent({
   analytics,
-  attempt = 1,
+  problems,
   key,
   step,
 }: {
   analytics: GenerateStepVariantParams["analytics"];
-  attempt?: number;
+  problems: string[];
   key: string;
   step: VariantStep & { kind: VariantScreenKind };
 }): Promise<GeneratedVariant> {
@@ -67,6 +67,7 @@ async function generateVariantContent({
     language: lesson.language,
     lessonTitle: lesson.title,
     level: lesson.level,
+    problems,
     screen: { content: step.content, kind: step.kind },
   });
 
@@ -82,9 +83,7 @@ async function generateVariantContent({
     return { content: converted.content, provenance };
   }
 
-  return attempt < GENERATION_ATTEMPTS
-    ? generateVariantContent({ analytics, attempt: attempt + 1, key, step })
-    : { problems: converted.problems };
+  return { model: provenance.model, problems: converted.problems };
 }
 
 /** Internal capability without a session check; callers must authorize access before requesting a version. */
@@ -93,11 +92,13 @@ export async function getOrCreateStepVariant({
   key,
   label,
   stepId,
+  workflowRunId,
 }: {
   analytics?: GenerateStepVariantParams["analytics"];
   key: string;
   label?: string;
   stepId: string;
+  workflowRunId: string;
 }): Promise<StepVariantResult> {
   const variantKey = toVariantKey(key);
 
@@ -125,13 +126,35 @@ export async function getOrCreateStepVariant({
     return { status: "unsupported" };
   }
 
+  const attempt = { key: variantKey, kind: TOOL_KIND, stepId, workflowRunId } as const;
+  const reservation = await reserveStepVariantGeneration(attempt);
+
+  if (reservation.status === "ready") {
+    return { created: false, status: "ready", variant: reservation.variant };
+  }
+
+  if (reservation.status === "heldBack") {
+    return { problems: reservation.draft.problems.map(({ problem }) => problem), status: "failed" };
+  }
+
+  if (reservation.status === "exhausted") {
+    return { status: "exhausted" };
+  }
+
   const generated = await generateVariantContent({
     analytics: { contentScope: "shared", ...analytics },
     key: label ?? variantKey,
+    problems: reservation.problems.map(({ problem }) => problem),
     step: { ...step, kind: step.kind },
   });
 
   if ("problems" in generated) {
+    await holdBackStepVariantDraft({
+      ...attempt,
+      model: generated.model,
+      problems: generated.problems.map((problem) => ({ problem, screen: null })),
+    });
+
     return { problems: generated.problems, status: "failed" };
   }
 

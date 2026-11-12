@@ -46,6 +46,7 @@ export type GenerateStepVariantParams = {
   lessonTitle: string;
   level: CourseLevel;
   language: string;
+  problems?: string[];
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -68,6 +69,7 @@ ${formatLocalContext(params.language)}
     LEVEL: ${params.level}
     LESSON_TITLE: ${params.lessonTitle}
     SCREEN: ${JSON.stringify(params.screen.content)}
+    PROBLEMS_TO_AVOID: ${JSON.stringify(params.problems ?? [])}
 ${formatTool(params)}  `;
 }
 
