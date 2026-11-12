@@ -34,7 +34,12 @@ function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns:
   return (
     <>
       {entry.summary.scored}/{totalRuns}
-      {failed > 0 && <span className="text-destructive-text"> · {failed} failed</span>}
+      {failed > 0 && (
+        <span className="text-destructive-text">
+          {" "}
+          · {failed} {failed === 1 ? "run" : "runs"} failed
+        </span>
+      )}
     </>
   );
 }
@@ -67,14 +72,19 @@ function MainCells({
     <>
       <TableCell>
         <Link
-          className="inline-flex min-h-11 items-center font-medium underline-offset-4 hover:underline"
+          className="-my-2 inline-flex min-h-11 items-center font-medium underline-offset-4 hover:underline"
           href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
         >
           {entry.displayName}
         </Link>
       </TableCell>
-      <TableCell className="font-semibold">
+      <TableCell
+        className={entry.averageScore === null ? "text-muted-foreground" : "font-semibold"}
+      >
         {entry.averageScore?.toFixed(2) ?? "Not scored"}
+      </TableCell>
+      <TableCell>
+        <CasesScored entry={entry} totalRuns={totalRuns} />
       </TableCell>
       {columns.showAccuracy && (
         <TableCell>{entry.accuracy === null ? "—" : formatPercent(entry.accuracy)}</TableCell>
@@ -91,9 +101,6 @@ function MainCells({
           {formatLatencyVerdict(entry.meetsLatencyBudget)}
         </TableCell>
       )}
-      <TableCell>
-        <CasesScored entry={entry} totalRuns={totalRuns} />
-      </TableCell>
     </>
   );
 }
@@ -190,22 +197,28 @@ export function Leaderboard({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-end gap-2">
-        <MoreColumnsButton isOpen={showsMore} onToggle={() => setShowsMore((shown) => !shown)} />
-        <LeaderboardExport entries={sortedEntries} taskId={taskId} />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-muted-foreground text-sm">
+          Each output is scored on its own, against its test case.
+        </p>
+
+        <div className="flex items-center gap-2">
+          <MoreColumnsButton isOpen={showsMore} onToggle={() => setShowsMore((shown) => !shown)} />
+          <LeaderboardExport entries={sortedEntries} taskId={taskId} />
+        </div>
       </div>
 
       <Table>
         <TableHeader>
           <TableRow>
             <SortHead {...sortProps("modelName")}>Model</SortHead>
-            <SortHead {...sortProps("averageScore")}>Score</SortHead>
+            <SortHead {...sortProps("averageScore")}>Score / 10</SortHead>
+            <TableHead title={HISTORICAL_ATTEMPTS_NOTE}>Cases scored</TableHead>
             {showAccuracy && <TableHead>Accuracy</TableHead>}
             {showKeyFlaws && <TableHead>Key flaws</TableHead>}
             <SortHead {...sortProps("costPer1000Runs")}>Cost / 1k runs</SortHead>
-            <SortHead {...sortProps("latencyP50")}>p50</SortHead>
+            <SortHead {...sortProps("latencyP50")}>Latency p50</SortHead>
             {showBudget && <TableHead>Latency budget</TableHead>}
-            <TableHead title={HISTORICAL_ATTEMPTS_NOTE}>Cases scored</TableHead>
 
             {showsMore && (
               <>

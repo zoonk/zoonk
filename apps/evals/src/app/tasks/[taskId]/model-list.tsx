@@ -26,7 +26,6 @@ export function ModelList({
           className="text-muted-foreground size-4 transition-transform group-open:rotate-90"
         />
         Run another model
-        <span className="text-muted-foreground font-mono text-xs font-normal">{models.length}</span>
       </summary>
 
       <ul className="grid gap-x-10 pt-1 sm:grid-cols-2 lg:grid-cols-4">

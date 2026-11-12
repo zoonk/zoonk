@@ -11,18 +11,16 @@ import { FailedTestCase, OutputTestCase, TestCase } from "./test-case";
 export async function EvalResults({
   results,
   outputs,
-  totalRuns,
 }: {
   results: TaskEvalResults;
   outputs: TaskModelOutputResults;
-  totalRuns: number;
 }) {
   const prices = GATEWAY_PRICES;
   const stats = getStatsFromResults({ evalResults: results, prices });
 
   return (
     <div className="flex flex-col gap-8">
-      <SummaryCard summary={aggregateEvalResults(results)} stats={stats} totalRuns={totalRuns} />
+      <SummaryCard summary={aggregateEvalResults(results)} stats={stats} />
 
       {stats.classification && <ClassificationSummaryCard summary={stats.classification} />}
 

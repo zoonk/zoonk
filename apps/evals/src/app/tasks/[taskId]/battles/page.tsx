@@ -9,6 +9,7 @@ import { getBattleMatchups } from "@/lib/battle-loader";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
+  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   ContainerTitle,
@@ -55,6 +56,10 @@ export default function BattlesPage({ params }: BattlesRouteProps) {
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>Judge comments</ContainerTitle>
+          <ContainerDescription>
+            Each judge&apos;s average score for a model, out of 10, and what it wrote about every
+            test case. A judge never scores its own model family.
+          </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

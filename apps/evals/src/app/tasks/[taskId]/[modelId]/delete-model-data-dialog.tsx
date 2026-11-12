@@ -44,7 +44,7 @@ export function DeleteModelDataDialog({
         render={<Button disabled={disabled} type="button" variant="destructive" />}
       >
         <Trash2Icon />
-        Delete
+        Delete results
       </AlertDialogTrigger>
 
       <AlertDialogContent>

@@ -23,19 +23,11 @@ function Detail({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
-export function SummaryCard({
-  summary,
-  stats,
-  totalRuns,
-}: {
-  summary: EvalSummary;
-  stats: TaskStats;
-  totalRuns: number;
-}) {
+export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: TaskStats }) {
   return (
     <section className="flex flex-col gap-4">
       <dl className="grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">
-        <Headline label="Score" value={summary.averageScore?.toFixed(2) ?? "Not scored"} />
+        <Headline label="Score / 10" value={summary.averageScore?.toFixed(2) ?? "Not scored"} />
 
         {stats.classification && (
           <Headline label="Accuracy" value={formatPercent(stats.classification.accuracy)} />
@@ -54,7 +46,6 @@ export function SummaryCard({
 
         <Headline label="Cost per 1,000 runs" value={formatDollars(stats.costPer1000Runs)} />
         <Headline label="Latency p50" value={formatSeconds(stats.latencyP50)} />
-        <Headline label="Cases scored" value={`${summary.scored}/${totalRuns}`} />
       </dl>
 
       <details className="group">

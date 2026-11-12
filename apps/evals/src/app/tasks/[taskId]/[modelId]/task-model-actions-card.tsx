@@ -63,15 +63,9 @@ export function TaskModelActionsCard({
           icon={<PlayIcon />}
           variant={needsEval ? "default" : "outline"}
         >
-          Run eval
+          Score outputs
         </SubmitButton>
       </form>
-
-      {hasOutputs && (
-        <span className="text-muted-foreground min-h-9 content-center font-mono text-xs">
-          {outputStatus.completedOutputs}/{outputStatus.totalOutputs} outputs
-        </span>
-      )}
 
       <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
         <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
@@ -108,7 +102,7 @@ export function TaskModelActionsCardSkeleton() {
       </ButtonSkeleton>
       <ButtonSkeleton variant="outline">
         <PlayIcon />
-        Run eval
+        Score outputs
       </ButtonSkeleton>
 
       <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
@@ -122,7 +116,7 @@ export function TaskModelActionsCardSkeleton() {
         </ButtonSkeleton>
         <ButtonSkeleton variant="destructive">
           <Trash2Icon />
-          Delete
+          Delete results
         </ButtonSkeleton>
       </div>
     </div>

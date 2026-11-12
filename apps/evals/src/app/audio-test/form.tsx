@@ -79,7 +79,7 @@ export function AudioTestForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="voice">Gemini voice</Label>
+          <Label htmlFor="voice">Voice (Gemini models only)</Label>
           <Select defaultValue="Kore" disabled={isPending} name="voice">
             <SelectTrigger id="voice">
               <SelectValue />

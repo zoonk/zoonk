@@ -62,15 +62,9 @@ function CodeChecks({ checks }: { checks: BattleLeaderboardEntry["codeChecks"] }
   }
 
   return (
-    <>
-      {checks.passed}/{checks.total} parts
-      {checks.problems > 0 && (
-        <span className="text-warning-text">
-          {" "}
-          · {checks.problems} {checks.problems === 1 ? "problem" : "problems"}
-        </span>
-      )}
-    </>
+    <span className={checks.passed < checks.total ? "text-warning-text" : undefined}>
+      {checks.passed}/{checks.total}
+    </span>
   );
 }
 
@@ -115,7 +109,11 @@ export function BattleLeaderboard({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-muted-foreground text-sm">
+          Judges from other model families compare every model&apos;s output on the same test case.
+        </p>
+
         <MoreColumnsButton isOpen={showsMore} onToggle={() => setShowsMore((shown) => !shown)} />
       </div>
 
@@ -124,10 +122,10 @@ export function BattleLeaderboard({
           <TableRow>
             <TableHead className="w-10">#</TableHead>
             <SortHead {...sortProps("modelName")}>Model</SortHead>
-            <SortHead {...sortProps("averageScore")}>Score</SortHead>
-            {hasCodeChecks && <TableHead>Code checks</TableHead>}
+            <SortHead {...sortProps("averageScore")}>Score / 10</SortHead>
+            {hasCodeChecks && <TableHead>Parts passing code checks</TableHead>}
             <SortHead {...sortProps("costPer1000Runs")}>Cost / 1k runs</SortHead>
-            <SortHead {...sortProps("latencyP50")}>p50</SortHead>
+            <SortHead {...sortProps("latencyP50")}>Latency p50</SortHead>
 
             {showsMore && (
               <>
@@ -147,7 +145,7 @@ export function BattleLeaderboard({
               <TableCell className="text-muted-foreground">{index + 1}</TableCell>
               <TableCell>
                 <Link
-                  className="inline-flex min-h-11 items-center font-medium underline-offset-4 hover:underline"
+                  className="-my-2 inline-flex min-h-11 items-center font-medium underline-offset-4 hover:underline"
                   href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
                 >
                   {entry.modelName}
@@ -185,8 +183,7 @@ export function BattleLeaderboard({
       </Table>
 
       <p className="text-muted-foreground text-xs">
-        A judge never scores its own model family. Judges have cost {formatDollars(judgeCost)} so
-        far.
+        Judges have cost {formatDollars(judgeCost)} so far.
       </p>
     </div>
   );

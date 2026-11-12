@@ -5,7 +5,6 @@ import {
   ModelPageBreadcrumb,
   TaskLinkBreadcrumb,
 } from "@/components/breadcrumb";
-import { ModelStatusBadge } from "@/components/model-status-badge";
 import { getTaskResults } from "@/lib/eval-runner";
 import { aggregateEvalResults } from "@/lib/eval-summary";
 import { getModelById, getModelDisplayName } from "@/lib/models";
@@ -81,15 +80,19 @@ async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
 }
 
 async function TaskModelHeader({ params }: TaskModelRouteProps) {
-  const { model, modelId, task, taskId } = await getTaskModelRouteFromParams(params);
+  const { model, outputStatus, results, taskName } = await getTaskModelContentFromParams(params);
+  const scored = results?.results.length ?? 0;
 
   return (
     <ContainerHeader>
       <ContainerHeaderGroup>
         <ContainerTitle>
-          {getModelDisplayName(model)} on {task.name}
+          {getModelDisplayName(model)} on {taskName}
         </ContainerTitle>
-        <ModelStatusBadge modelId={modelId} taskId={taskId} />
+        <p className="text-muted-foreground font-mono text-xs">
+          {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written · {scored}{" "}
+          scored
+        </p>
       </ContainerHeaderGroup>
     </ContainerHeader>
   );
@@ -155,16 +158,10 @@ async function TaskModelActions({ params }: TaskModelRouteProps) {
 }
 
 async function TaskModelResults({ params }: TaskModelRouteProps) {
-  const { generatedOutputs, outputStatus, results } = await getTaskModelContentFromParams(params);
+  const { generatedOutputs, results } = await getTaskModelContentFromParams(params);
 
   if (results && generatedOutputs) {
-    return (
-      <EvalResults
-        outputs={generatedOutputs}
-        results={results}
-        totalRuns={outputStatus.totalOutputs}
-      />
-    );
+    return <EvalResults outputs={generatedOutputs} results={results} />;
   }
 
   return null;
