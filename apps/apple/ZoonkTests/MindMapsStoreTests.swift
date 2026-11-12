@@ -315,6 +315,20 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertFalse(store.creatingAll.contains("goal"))
   }
 
+  func testAMapReadBeforeCreatingAllReadsAgainOnceTheListSaysItStarted() async {
+    let api = MindMapsAPIStub(server: .available, statuses: [])
+    let store = makeStore(api: api)
+    let list = store.list(goalId: "goal")
+    let map = store.map(goalId: "goal", chapterId: "chapter")
+    await list.load()
+    await map.load()
+
+    await store.createAll(goalId: "goal")
+    await map.load()
+
+    XCTAssertEqual(map.value?.status, .drawing)
+  }
+
   func testCreatingAllThatDoesntReachTheServerSaysSo() async {
     let api = MindMapsAPIStub(server: .available, statuses: [])
     let store = makeStore(api: api)

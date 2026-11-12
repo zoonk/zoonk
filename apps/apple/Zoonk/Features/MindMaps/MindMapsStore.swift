@@ -58,6 +58,7 @@ final class MindMapsStore {
       let read = try await api.list(token: session.bearerToken, goalId: goalId)
       await self?.readCameThrough(
         started, keys: [goalId] + read.chapters.map { "\(goalId):\($0.chapterId)" })
+      await self?.listed(read, goalId: goalId)
       return read
     }
 
@@ -401,6 +402,20 @@ final class MindMapsStore {
   private func failCreateAll(_ failure: MindMapRequestFailure?, goalId: String) {
     createAllFailures[goalId] = failure
     failedAt[goalId] = failure == nil ? nil : reads
+  }
+
+  /// A map read on its own before the list said it moved on (Create all started it, or the list's
+  /// follower saw it drawn) reads again when it next shows: only a single map's tap reads both.
+  private func listed(_ read: GoalMindMaps, goalId: String) {
+    for chapter in read.chapters {
+      guard let map = maps["\(goalId):\(chapter.chapterId)"], let value = map.value,
+        value.status != chapter.status
+      else {
+        continue
+      }
+
+      map.invalidate()
+    }
   }
 
   private func readStarted() -> Int {
