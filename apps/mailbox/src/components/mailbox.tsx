@@ -18,7 +18,7 @@ export function MailboxHeader({ className, ...props }: ComponentProps<"header">)
   return (
     <header
       className={cn(
-        "border-border bg-background/90 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur-lg sm:flex-nowrap sm:px-6 sm:py-4",
+        "border-border bg-background/90 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg sm:flex-nowrap sm:py-4 md:px-6",
         className,
       )}
       {...props}
@@ -98,7 +98,7 @@ export function MailboxMessageButton({ className, ...props }: ComponentProps<"bu
   return (
     <button
       className={cn(
-        "focus-visible:ring-ring aria-pressed:bg-muted hover:bg-muted aria-pressed:before:bg-foreground relative grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 border-0 bg-transparent py-4 pr-4 pl-5 text-left transition-colors outline-none before:absolute before:inset-y-3 before:left-0 before:w-0.5 before:bg-transparent focus-visible:ring-2 focus-visible:ring-inset motion-reduce:transition-none",
+        "focus-visible:ring-ring aria-pressed:bg-muted hover:bg-muted grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 border-0 bg-transparent px-5 py-4 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset motion-reduce:transition-none md:px-6",
         className,
       )}
       type="button"

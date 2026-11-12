@@ -136,16 +136,15 @@ function SignInCode({ code }: { code: string }) {
   const { copy: copyText, isCopied } = useClipboard();
 
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-      <p className="flex flex-col gap-1">
-        <span className="text-muted-foreground text-xs">{copy.signInCode}</span>
-        <span className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">
-          {code}
-        </span>
-      </p>
-      <MailboxButton onClick={() => void copyText(code).catch(() => null)}>
-        {isCopied ? copy.copied : copy.copyCode}
-      </MailboxButton>
+    <div className="flex flex-col gap-1">
+      <p className="text-muted-foreground font-mono text-[11px]">{copy.signInCode}</p>
+
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <p className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">{code}</p>
+        <MailboxButton onClick={() => void copyText(code).catch(() => null)}>
+          {isCopied ? copy.copied : copy.copyCode}
+        </MailboxButton>
+      </div>
     </div>
   );
 }
@@ -155,7 +154,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
 
   return (
     <MailboxPreview>
-      <header className="border-border flex flex-col gap-4 border-b px-5 py-5 md:px-8">
+      <header className="border-border flex flex-col gap-4 border-b p-5 md:px-6">
         {code && <SignInCode code={code} />}
 
         <div className="flex flex-col gap-1">
@@ -171,17 +170,17 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
         </div>
       </header>
 
-      <div className="p-5 md:p-8">
+      <div className="p-5 md:p-6">
         {email.htmlBody ? (
           <iframe
-            className="border-border block min-h-95 w-full rounded-[3px] border bg-white md:min-h-105"
+            className="border-border block min-h-95 w-full rounded-xl border bg-white md:min-h-105"
             referrerPolicy="no-referrer"
             sandbox=""
             srcDoc={email.htmlBody}
             title={`${email.subject} email body`}
           />
         ) : (
-          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-[3px] border p-7 font-mono text-sm leading-[1.65] whitespace-pre-wrap md:min-h-105">
+          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-7 font-mono text-sm leading-[1.65] whitespace-pre-wrap md:min-h-105">
             {email.textBody || copy.noBody}
           </pre>
         )}
