@@ -17,9 +17,7 @@ export function pickReviewers({
   writerModels?: readonly string[];
 }): { fallbackModels: string[]; model: string } {
   const writerFamilies = new Set(
-    [...(writerModel ? [writerModel] : []), ...writerModels].flatMap((model) =>
-      model.split(", ").map((writer) => getModelFamily(writer)),
-    ),
+    [...(writerModel ? [writerModel] : []), ...writerModels].map((model) => getModelFamily(model)),
   );
 
   const [model, ...fallbackModels] = reviewers.filter(
