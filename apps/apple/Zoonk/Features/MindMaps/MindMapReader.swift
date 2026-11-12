@@ -126,7 +126,7 @@ struct MindMapReader: View {
       }
       // Previous is see-through, so a map scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
-      .navigationTitle(title)
+      .taskTitle(Text(title))
       .announcesStatus(title)
       .taskAction(isShown: save != nil) {
         if let save {
@@ -469,8 +469,7 @@ private struct MindMapZoom: View {
     NavigationStack {
       ZoomableRemoteImage(url: map.url, title: map.target.title)
         .ignoresSafeArea(edges: .bottom)
-        .navigationTitle(map.target.title)
-        .toolbarTitleDisplayMode(.inline)
+        .taskTitle(Text(map.target.title))
         .taskClose {
           Button(role: .close) {
             dismiss()

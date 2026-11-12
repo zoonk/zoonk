@@ -92,46 +92,41 @@ private struct LessonPlayerContent: View {
 
   var body: some View {
     NavigationStack {
-      VerticalToolbarReader { hasVerticalBar in
-        content
-          // Main's task header: the title in the bar, the lesson's segments under it.
-          .safeAreaBar(edge: .top) {
-            if let segments {
-              TaskSegments(
-                segments: segments,
-                label: Text(
-                  "Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"),
-                value: Text(
-                  store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
-              )
-              // The lesson's column; on iPhone Duo, the page before the hinge.
-              .frame(maxWidth: 680)
-              .lonePage()
-              .scenePadding(.horizontal)
-              .padding(.bottom, 4)
+      content
+        // Main's task header: the title in the bar, the lesson's segments under it.
+        .safeAreaBar(edge: .top) {
+          if let segments {
+            TaskSegments(
+              segments: segments,
+              label: Text(
+                "Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"),
+              value: Text(
+                store.state?.progress ?? 0, format: .percent.precision(.fractionLength(0)))
+            )
+            // The lesson's column; on iPhone Duo, the page before the hinge.
+            .frame(maxWidth: 680)
+            .lonePage()
+            .scenePadding(.horizontal)
+            .padding(.bottom, 4)
+          }
+        }
+        .taskTitle(title)
+        .taskClose { closeButton }
+        .toolbar {
+          if showsUnsavedAnswers {
+            ToolbarItem(placement: .primaryAction) {
+              UnsavedAnswersButton()
             }
           }
-          .navigationTitle(title)
-          .navigationBarTitleDisplayMode(.inline)
-          // A vertical bar (iPhone Duo) has no room for a title.
-          .toolbar(removing: hasVerticalBar ? .title : nil)
-          .taskClose { closeButton }
-          .toolbar {
-            if showsUnsavedAnswers {
-              ToolbarItem(placement: .primaryAction) {
-                UnsavedAnswersButton()
-              }
-            }
+        }
+        .taskOptions(
+          isShown: store.screen == .playing && store.state != nil,
+          label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
+        ) {
+          if let state = store.state {
+            screenMenuItems(state)
           }
-          .taskOptions(
-            isShown: store.screen == .playing && store.state != nil,
-            label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
-          ) {
-            if let state = store.state {
-              screenMenuItems(state)
-            }
-          }
-      }
+        }
     }
     // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
     .simultaneousGesture(TapGesture().onEnded { store.act() })
@@ -498,16 +493,6 @@ struct LessonAskPanel: View {
           startingOffer: store.startingOffer(about: stepId)),
         isBeside)
     }
-  }
-}
-
-/// Read inside the lesson's own navigation stack, whose bar it is.
-private struct VerticalToolbarReader<Content: View>: View {
-  @Environment(\.isToolbarVertical) private var isToolbarVertical
-  @ViewBuilder let content: (Bool) -> Content
-
-  var body: some View {
-    content(isToolbarVertical)
   }
 }
 
