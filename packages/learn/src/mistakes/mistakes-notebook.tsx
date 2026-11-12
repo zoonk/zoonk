@@ -101,7 +101,7 @@ function NotebookHero({
       <DetailHeroText>
         {goalTitle && <PageEyebrow>{goalTitle}</PageEyebrow>}
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
-        <DetailFacts>
+        <DetailFacts className="empty:hidden">
           <NotebookAvailabilityText availability={availability} />
         </DetailFacts>
       </DetailHeroText>

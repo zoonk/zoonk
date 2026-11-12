@@ -86,7 +86,7 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
   const showDay = moment.day && moment.stage !== "afterExam";
 
   return (
-    <section aria-label={copy.title} className="flex flex-col gap-4" data-slot="exam-moment">
+    <section aria-label={copy.title} className="flex flex-col gap-6" data-slot="exam-moment">
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className="flex h-5 shrink-0 items-center">
           <Icon className="text-muted-foreground size-4" />
@@ -98,8 +98,10 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
               {dayText(moment.day)}
             </p>
           )}
-          {copy.lead && <p className="pt-1 text-[0.9375rem] font-medium">{copy.lead}</p>}
-          <p className="text-muted-foreground text-[0.8125rem] leading-snug">{copy.body}</p>
+          <p className="text-muted-foreground text-[0.8125rem] leading-snug">
+            {copy.lead && <span className="text-foreground">{copy.lead} </span>}
+            {copy.body}
+          </p>
         </div>
       </div>
 

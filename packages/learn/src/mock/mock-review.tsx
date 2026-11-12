@@ -157,7 +157,7 @@ export function MockReviewDrawer() {
   }
 
   return (
-    <DetailsDrawer label={t("See answers")} title={t("Questions to review")} trigger="link">
+    <DetailsDrawer label={t("See answers")} title={t("Questions to review")} trigger="small">
       <MockReviewList />
     </DetailsDrawer>
   );

@@ -183,7 +183,7 @@ export function MockChooserScreen({
   view: MockOptionsView;
 }) {
   if (status.kind === "writing") {
-    return <MockWriting bar={bar} run={status.run} />;
+    return <MockWriting bar={bar} eyebrow={view.examName} run={status.run} />;
   }
 
   return (

@@ -236,7 +236,7 @@ export function PreparationReadout({ change }: { change: Preparation }) {
 
 export function PreparationMeter({ change }: { change: Preparation }) {
   return (
-    <Meter className="h-1.5 w-full max-w-xs">
+    <Meter className="h-1.5 w-full">
       <MeterFill className="bg-success" share={change.after} />
     </Meter>
   );

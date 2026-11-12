@@ -5,11 +5,10 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
 import { Disclosure } from "../_components/disclosure";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { PageSection } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -135,7 +134,6 @@ export function NotMadeYet({
   tier: EntitlementTier;
 }) {
   const t = useExtracted();
-  const titleId = useId();
   const { bulk, page } = library;
   const { startable } = page.createOffer;
   const plus = tier === "plus";
@@ -143,13 +141,7 @@ export function NotMadeYet({
   const later = chapters.filter((chapter) => !canMakeNow(chapter));
 
   return (
-    <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
-      <PageSectionHeader>
-        <PageSectionTitle className="sr-only" id={titleId}>
-          {t("Other chapters")}
-        </PageSectionTitle>
-      </PageSectionHeader>
-
+    <PageSection aria-label={t("Other chapters")} data-slot="maps-not-made">
       {now.length > 0 && (
         <ul className={LIST_GROUP_CLASS}>
           {now.map((chapter) => (

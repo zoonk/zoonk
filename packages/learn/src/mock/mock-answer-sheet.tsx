@@ -35,7 +35,7 @@ function useSheetCountLine(): string {
 }
 
 const CELL_SIZE = {
-  row: { cell: "h-7 rounded-[0.375rem] text-xs", essay: "size-3.5" },
+  row: { cell: "h-7.5 rounded-md text-xs", essay: "size-3.5" },
   sheet: { cell: "h-11 rounded-lg text-sm", essay: "size-4" },
 } as const;
 
@@ -113,7 +113,11 @@ export function MockQuestionMap({ className }: { className?: string }) {
     return null;
   }
 
-  const start = Math.floor(runner.position / MAP_ROW) * MAP_ROW;
+  // The last stretch still shows a full row, so the current question is never a lone cell.
+  const start = Math.max(
+    0,
+    Math.min(Math.floor(runner.position / MAP_ROW) * MAP_ROW, questions.length - MAP_ROW),
+  );
 
   return (
     <ol
@@ -269,7 +273,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           />
         </DrawerContent>
 
-        <div className="border-border border-t px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="border-border border-t px-6 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <SheetHandIn
             onHandIn={() => {
               setOpen(false);

@@ -14,10 +14,11 @@ import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
-const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
+const TRIGGER: Record<"link" | "option" | "secondary" | "small", React.ReactElement> = {
   link: <Button className="self-start" variant="link" />,
   option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
+  small: <Button className="shrink-0" size="sm" variant="outline" />,
 };
 
 export function DrawerCloseButton() {
@@ -40,7 +41,7 @@ export function DetailsDrawer({
   children: React.ReactNode;
   label: string;
   title: string;
-  trigger?: "link" | "option" | "secondary";
+  trigger?: "link" | "option" | "secondary" | "small";
 }) {
   return (
     <Drawer>

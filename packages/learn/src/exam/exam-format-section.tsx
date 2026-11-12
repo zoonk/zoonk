@@ -70,21 +70,30 @@ function useDayParts() {
   };
 }
 
-function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
+function useDayTitle() {
   const t = useExtracted();
   const dayDate = useExamDayDate();
+
+  return ({ day, numbered }: { day: ExamFormatDay; numbered: boolean }): string => {
+    const number = t("Day {number, number}", { number: day.day });
+
+    if (!day.date) {
+      return number;
+    }
+
+    return numbered ? `${number} · ${dayDate(day.date)}` : dayDate(day.date);
+  };
+}
+
+function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
+  const dayTitle = useDayTitle();
   const dayParts = useDayParts();
   const formatDuration = useFormatDuration();
 
   return (
-    <li className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 py-2.5">
-      <span className="text-muted-foreground font-mono text-xs tabular-nums">
-        {numbered ? t("Day {number, number}", { number: day.day }) : null}
-      </span>
+    <li className="py-2.5">
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-[0.8125rem] font-medium">
-          {day.date ? dayDate(day.date) : t("Day {number, number}", { number: day.day })}
-        </span>
+        <span className="text-[0.8125rem] font-medium">{dayTitle({ day, numbered })}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>

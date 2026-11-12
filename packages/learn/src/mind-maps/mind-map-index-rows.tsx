@@ -11,7 +11,6 @@ import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
   ListRowDescription,
-  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -108,15 +107,15 @@ export function LessonGroupRow({ group, study }: { group: LessonGroupRowData; st
       }
       prefetch={isLocked ? undefined : "intent"}
     >
-      {isLocked && (
-        <ListRowIcon>
-          <LockIcon />
-        </ListRowIcon>
-      )}
       <ListRowContent>
         <ListRowTitle>{group.title}</ListRowTitle>
         <ListRowDescription>{facts.join(" · ")}</ListRowDescription>
       </ListRowContent>
+      {isLocked && (
+        <ListRowTrailing>
+          <LockIcon aria-hidden="true" className="size-4" />
+        </ListRowTrailing>
+      )}
     </ListRowLink>
   );
 }

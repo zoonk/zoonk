@@ -152,7 +152,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
             size="xl"
             variant="outline"
           >
-            {t("Skip the rewrite")}
+            {t("Skip")}
           </Button>
         )}
         <Button

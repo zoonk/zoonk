@@ -187,9 +187,11 @@ export function ExamResultSection() {
 
         <Button
           busy={status === "pending"}
+          className="sm:self-start"
           disabled={!canSave}
           focusableWhenDisabled
           icon={<CheckIcon aria-hidden="true" />}
+          size="lg"
           type="submit"
         >
           {t("Save my result")}

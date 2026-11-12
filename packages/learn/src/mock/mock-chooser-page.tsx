@@ -204,16 +204,28 @@ export function ChooserRefusal({ busy, status }: { busy: boolean; status: MockCh
   );
 }
 
-export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }) {
+/** The exam's name stays over the title, so the title doesn't jump when Start is pressed. */
+export function MockWriting({
+  bar,
+  eyebrow,
+  run,
+}: {
+  bar: ReactNode;
+  eyebrow: string;
+  run: GenerationRun;
+}) {
   const t = useExtracted();
 
   return (
     <ChooserLayout bar={bar}>
       <GenerationWait kind="mockQuestions" run={run}>
-        {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
-        <GenerationTimelineTitle render={<h1 />}>
-          {t("Getting your mock exam ready…")}
-        </GenerationTimelineTitle>
+        <div className="flex flex-col gap-1">
+          <PageEyebrow>{eyebrow}</PageEyebrow>
+          {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
+          <GenerationTimelineTitle render={<h1 />}>
+            {t("Getting your mock exam ready…")}
+          </GenerationTimelineTitle>
+        </div>
         <GenerationTimelineDescription>
           {t(
             "We're writing questions like the exam's for you. It starts here as soon as they're ready.",

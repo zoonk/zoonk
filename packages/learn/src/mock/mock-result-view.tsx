@@ -171,7 +171,7 @@ function ScoreStep({ result }: { result: MockResult }) {
 
       {hasBreakdown(result) && <MockResultBreakdown result={result} />}
 
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-1 empty:hidden">
+      <div className="flex flex-wrap items-center gap-2 empty:hidden">
         <MockResultDetails result={result} />
         <div className="contents lg:hidden">
           <MockReviewDrawer />

@@ -52,7 +52,7 @@ export function MockResultDetails({ result }: { result: MockResult }) {
   }
 
   return (
-    <DetailsDrawer label={t("Details")} title={t("Details")} trigger="link">
+    <DetailsDrawer label={t("Details")} title={t("Details")} trigger="small">
       <div className="flex flex-col gap-8 pb-2">
         {hasAnswers && (
           <ResultSection title={t("Answers")}>
