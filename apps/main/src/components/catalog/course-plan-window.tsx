@@ -47,7 +47,13 @@ async function FirstDay({
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-[0.9375rem] font-semibold">{t("Your first day")}</span>
+        <span className="text-[0.9375rem] font-semibold">
+          {t({
+            description:
+              "Heading over the lessons a new learner would study on the first day of this course.",
+            message: "Your first day",
+          })}
+        </span>
         <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
           {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
           {" · "}
@@ -90,7 +96,11 @@ export async function CoursePlanWindow({
   titleId: string;
 }) {
   const t = await getExtracted();
-  const title = t("How long it takes");
+
+  const title = t({
+    description: "Heading on a course's page: how long the whole course takes to finish.",
+    message: "How long it takes",
+  });
 
   return (
     <div
@@ -117,10 +127,13 @@ export async function CoursePlanWindow({
           </p>
 
           <p className="text-muted-foreground max-w-120 text-[0.9375rem] leading-relaxed text-pretty">
-            {t(
-              "at {minutes, plural, one {# minute} other {# minutes}} a day. Less if you already know some of it: your plan skips what you know.",
-              { minutes },
-            )}
+            {t({
+              description:
+                "Under a big number of weeks (“~32 weeks”): how long the course takes when studying this many minutes a day.",
+              message:
+                "Studying {minutes, plural, one {# minute} other {# minutes}} a day. Your plan skips what you already know, so it can take less.",
+              values: { minutes },
+            })}
           </p>
         </div>
 

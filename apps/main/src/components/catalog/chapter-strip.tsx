@@ -133,7 +133,12 @@ export async function ChapterStrip({
     <section aria-labelledby={stripId} className={cn(ROUTE_CLASS, "flex min-w-0 flex-col gap-6")}>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h2 className="text-section" id={stripId}>
-          {t("Part of {course}", { course })}
+          {t({
+            description:
+              "Heading over a map showing where this chapter sits in its course. {course} is the course's name.",
+            message: "Part of {course}",
+            values: { course },
+          })}
         </h2>
         <span className="text-muted-foreground font-mono text-xs tabular-nums">{label}</span>
       </div>

@@ -71,7 +71,7 @@ export async function AreaOutline({
 
   return (
     <div className="flex flex-col gap-2">
-      {order.map((area) => {
+      {order.map((area, index) => {
         const areaChapters = groups.get(area) ?? [];
 
         return (
@@ -80,6 +80,7 @@ export async function AreaOutline({
               count: areaChapters.length,
             })}
             key={area}
+            open={index === 0}
             summary={area}
           >
             <AreaChapters chapters={areaChapters} {...shared} />
