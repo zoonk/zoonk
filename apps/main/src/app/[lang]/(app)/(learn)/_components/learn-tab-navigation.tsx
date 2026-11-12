@@ -1,6 +1,7 @@
 "use client";
 
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { usePathname } from "@/i18n/navigation";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
@@ -19,6 +20,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
+import { VisitorSideLinks } from "./learn-sidebar-learner";
 
 const TAB_PATHS: Record<string, LearnTab> = {
   buddy: "buddy",
@@ -123,7 +125,7 @@ const ONBOARDING_FIRST_PAINT_CLASS =
   "contents [[data-slot=learn-shell-content]:has([data-onboarding-bar])_&]:hidden";
 
 /** A page with its own id has a path only known once it's open, so the tabs are unmarked until then. */
-function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+function LearnerSideTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
   const todayCount = <TodayCount learner={learner} />;
 
@@ -143,6 +145,32 @@ function SideTabs({ learner }: { learner: LearnerSummaryState }) {
   );
 }
 
+/**
+ * The tabs are a learner's own pages: for someone without a session each would only open a log-in
+ * wall, so they get the catalog and the prices instead. Until the learner is read, the page's
+ * signed-in mark picks which to draw.
+ */
+function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+  if (learner.status === "visitor") {
+    return <VisitorSideLinks />;
+  }
+
+  if (learner.status !== "ready") {
+    return (
+      <>
+        <VisitorLook>
+          <VisitorSideLinks />
+        </VisitorLook>
+        <div className="signed-in:contents hidden">
+          <LearnerSideTabs learner={learner} />
+        </div>
+      </>
+    );
+  }
+
+  return <LearnerSideTabs learner={learner} />;
+}
+
 function FrameSideTabs() {
   return <SideTabs learner={useFrameLearner()} />;
 }
@@ -155,7 +183,7 @@ export function LearnSideTabs() {
   );
 }
 
-function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+function LearnerBottomTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
 
   return (
@@ -169,6 +197,23 @@ function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
       <CurrentBottomTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
+}
+
+/** No tab bar for someone without a session: the top bar holds what they can use. */
+function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+  if (learner.status === "visitor") {
+    return null;
+  }
+
+  if (learner.status !== "ready") {
+    return (
+      <div className="signed-in:contents hidden">
+        <LearnerBottomTabs learner={learner} />
+      </div>
+    );
+  }
+
+  return <LearnerBottomTabs learner={learner} />;
 }
 
 function FrameBottomTabs() {

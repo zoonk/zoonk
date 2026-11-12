@@ -13,7 +13,7 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
+import { SIDEBAR_ACCOUNT_CLASS, SidebarSection } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
@@ -42,16 +42,56 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
   );
 }
 
-function FrameStudyLinks() {
-  const learner = useFrameLearner();
-  return <StudyLinksView places={learner.status === "ready" ? learner.summary.places : null} />;
+function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
+  const t = useExtracted();
+
+  return (
+    <SidebarSection aria-label={t("Study")} label={t("Study")}>
+      <StudyLinksView places={places} />
+    </SidebarSection>
+  );
 }
 
-export function StudyLinks() {
+function PendingStudySection() {
   return (
-    <Suspense fallback={<StudyLinksView places={null} />}>
-      <FrameStudyLinks />
+    <div className="signed-in:contents hidden">
+      <StudySectionView places={null} />
+    </div>
+  );
+}
+
+/** Every link here opens a learner's own page, so someone without a session gets none of them. */
+function FrameStudySection() {
+  const learner = useFrameLearner();
+
+  if (learner.status === "visitor") {
+    return null;
+  }
+
+  if (learner.status !== "ready") {
+    return <PendingStudySection />;
+  }
+
+  return <StudySectionView places={learner.summary.places} />;
+}
+
+export function StudySection() {
+  return (
+    <Suspense fallback={<PendingStudySection />}>
+      <FrameStudySection />
     </Suspense>
+  );
+}
+
+/** What someone without a session can use: the catalog and the prices. */
+export function VisitorSideLinks() {
+  const t = useExtracted();
+
+  return (
+    <SidebarSection aria-label={t("Menu")}>
+      <LearnSidebarLink label={t("Courses")} menu="courses" />
+      <LearnSidebarLink label={t("Pricing")} menu="pricing" />
+    </SidebarSection>
   );
 }
 

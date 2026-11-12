@@ -54,9 +54,11 @@ export function LearnSidebarFeedback() {
 type SidebarMenu =
   | "certificates"
   | "completedLessons"
+  | "courses"
   | "exam"
   | "mindMaps"
   | "mistakes"
+  | "pricing"
   | "speaking"
   | "stats";
 
