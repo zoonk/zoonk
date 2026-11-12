@@ -63,7 +63,8 @@ export function CountryField({
           t({
             description:
               "{taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.",
-            message: "Lessons and their audio use {taughtVariety}.",
+            message:
+              "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}.",
             values: {
               taughtVariety: getVarietyNameInSentence({
                 language,

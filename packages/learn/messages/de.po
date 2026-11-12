@@ -3824,10 +3824,8 @@ msgctxt "XffT_n"
 msgid "How the score works"
 msgstr "So funktioniert der Score"
 
-#. Beside a language goal's reason: a certificate's plan follows its exam.
 #: src/exam/exam-screen.tsx
 #: src/onboarding/entry/goal-examples.tsx
-#: src/onboarding/steps/reason-step.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Prüfung"
@@ -4094,8 +4092,8 @@ msgid "Answer more questions"
 msgstr "Weitere Fragen beantworten"
 
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "-65K7v"
-msgid "A short test on your exam's subjects. Your plan skips what you already know."
+msgctxt "VDQxvD"
+msgid "A short test on your exam's subjects."
 msgstr ""
 
 #: src/focus-test/focus-test-screens.tsx
@@ -5429,9 +5427,14 @@ msgstr "Keine Präferenz"
 
 #. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/language-variety/country-field.tsx
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr ""
+
+#. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
 #: src/language-variety/use-variety-words.ts
-msgctxt "xN7z6c"
-msgid "Lessons and their audio use {taughtVariety}."
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
 msgstr ""
 
 #: src/language/_utils/use-skill-name.ts
@@ -9979,12 +9982,10 @@ msgctxt "HUvYmi"
 msgid "Question {number, number} of {total, number}"
 msgstr "Frage {number, number} von {total, number}"
 
-#. Stops a recording. Hints tell the learner to press it by this name.
 #: src/onboarding/steps/placement-question.tsx
-#: src/speech/record-button.tsx
-msgctxt "q_uwLT"
-msgid "Stop"
-msgstr "Stopp"
+msgctxt "md-KoP"
+msgid "Finish now"
+msgstr ""
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "N7Heuq"
@@ -10043,6 +10044,11 @@ msgstr "Lektion 1 starten"
 msgctxt "5o1SSN"
 msgid "Lesson 1 is ready."
 msgstr "Lektion 1 ist bereit."
+
+#: src/onboarding/steps/profile-step.tsx
+msgctxt "c2z6MR"
+msgid "About you"
+msgstr ""
 
 #. Which of the questions about the learner this is, such as 4 of 10.
 #: src/onboarding/steps/profile-step.tsx
@@ -10323,19 +10329,24 @@ msgid "E.g., reports, A/B tests"
 msgstr "Z. B. Berichte, A/B-Tests"
 
 #: src/onboarding/steps/schedule-step.tsx
+msgctxt "ZlcS6d"
+msgid "Change exam date"
+msgstr ""
+
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "eGfhjz"
+msgid "Change end date"
+msgstr ""
+
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "Td7PW4"
+msgid "Choose an end date"
+msgstr ""
+
+#: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
 msgid "How much time can you study each day?"
 msgstr "Wie viel Zeit kannst du jeden Tag lernen?"
-
-#: src/onboarding/steps/schedule-step.tsx
-msgctxt "pttbjJ"
-msgid "Change date"
-msgstr "Datum ändern"
-
-#: src/onboarding/steps/schedule-step.tsx
-msgctxt "BJnENG"
-msgid "Choose a date"
-msgstr "Datum auswählen"
 
 #. Headline when a screen failed to load. Next to it is a “Try again” button.
 #: src/onboarding/steps/step-parts.tsx
@@ -12144,8 +12155,8 @@ msgid "We couldn't work out the time needed."
 msgstr "Wir konnten die benötigte Zeit nicht berechnen."
 
 #: src/plan/use-time-to-cover.ts
-msgctxt "0uyvFm"
-msgid "Cover everything"
+msgctxt "8bQ4-P"
+msgid "Find the time"
 msgstr ""
 
 #: src/plan/use-time-to-cover.ts
@@ -12542,6 +12553,11 @@ msgstr "Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich de
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
+msgstr ""
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "2423hY"
+msgid "Your buddy and your feedback will talk to you this way."
 msgstr ""
 
 #: src/profile-questions/profile-row-bodies.tsx
@@ -13637,6 +13653,12 @@ msgstr "Schließen"
 msgctxt "goalSwitcher.0I_Rwu"
 msgid "Get Plus"
 msgstr "Plus holen"
+
+#. Stops a recording. Hints tell the learner to press it by this name.
+#: src/speech/record-button.tsx
+msgctxt "q_uwLT"
+msgid "Stop"
+msgstr "Stopp"
 
 #. Starts a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx

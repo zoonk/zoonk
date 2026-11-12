@@ -48,7 +48,7 @@ export function FocusTestInvitation({
         <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
         <OnboardingDescription>
-          {t("A short test on your exam's subjects. Your plan skips what you already know.")}
+          {t("A short test on your exam's subjects.")}
         </OnboardingDescription>
       </OnboardingHeading>
 

@@ -1149,9 +1149,9 @@ msgid "Your plan follows this course, in the time you have each day."
 msgstr "하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "6CVLNb"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "우선 하루 {minutes, plural, other {#분}}으로 시작해요. 다음 단계에서 바꿀 수 있어요."
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr ""
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx

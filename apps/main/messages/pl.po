@@ -1149,9 +1149,9 @@ msgid "Your plan follows this course, in the time you have each day."
 msgstr "Twój plan obejmuje ten kurs i jest dopasowany do czasu, który masz każdego dnia."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "6CVLNb"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "Na razie {minutes, plural, one {# minuta} many {# minut} other {# minuty}} dziennie. Możesz to zmienić w kolejnych krokach."
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr ""
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx

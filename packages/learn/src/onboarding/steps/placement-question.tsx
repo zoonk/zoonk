@@ -295,7 +295,7 @@ export function PlacementQuestionScreen({
           type="button"
           variant="ghost"
         >
-          {t("Stop")}
+          {t("Finish now")}
         </Button>
       </OnboardingColumn>
     </OnboardingTestQuestion>

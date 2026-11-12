@@ -59,6 +59,16 @@ function getScheduleAnswer(schedule: Schedule): OnboardingAnswerInput | null {
 }
 
 /** The answer leads: the time, then the one line on what it gets the learner. */
+function DateLinkLabel({ dated, exam }: { dated: boolean; exam: boolean }) {
+  const t = useExtracted();
+
+  if (exam) {
+    return t("Change exam date");
+  }
+
+  return dated ? t("Change end date") : t("Choose an end date");
+}
+
 function ScheduleTime({
   aim,
   exam,
@@ -228,7 +238,7 @@ export function ScheduleStep({
           type="button"
           variant="link"
         >
-          {schedule.dated ? t("Change date") : t("Choose a date")}
+          <DateLinkLabel dated={schedule.dated} exam={exam} />
         </Button>
       </StepForm>
     </PlanWait>

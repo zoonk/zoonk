@@ -78,8 +78,9 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
     case "play":
     case "read":
     case "activities":
-    case "addressForm":
       return null;
+    case "addressForm":
+      return t("Your buddy and your feedback will talk to you this way.");
     default:
       return question satisfies never;
   }

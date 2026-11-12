@@ -14,20 +14,6 @@ function asksWords(reason: LanguageReason | null): boolean {
   return reason === "certificate" || reason === "other";
 }
 
-function ReasonSize({ view }: { view: LanguageReasonView }) {
-  const t = useExtracted();
-
-  return (
-    <span className="text-foreground shrink-0 self-center font-mono text-xs font-medium tabular-nums">
-      {view.aim ??
-        t({
-          description: "Beside a language goal's reason: a certificate's plan follows its exam.",
-          message: "Exam",
-        })}
-    </span>
-  );
-}
-
 /** The field sits inside the reasons' radio group, whose arrow keys would move off it. */
 function keepKeys(event: React.KeyboardEvent<HTMLInputElement>) {
   event.stopPropagation();
@@ -89,7 +75,6 @@ export function ReasonStep({
       view.reason === reason && asksWords(reason) ? (
         <ReasonWords onChange={setWords} reason={view.reason} value={words} />
       ) : undefined,
-    trailing: <ReasonSize view={view} />,
     value: view.reason,
   }));
 
