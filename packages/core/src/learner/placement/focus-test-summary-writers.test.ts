@@ -12,8 +12,13 @@ import {
   linkGoalToExamBlueprint,
   unlinkGoalFromSharedExam,
 } from "../../library/exams/exam-learners";
+import {
+  findSubjectQuestionsLookup,
+  recordSubjectQuestions,
+} from "../../library/exams/record-subject-questions";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { getGoalPlan } from "../../plans/get-goal-plan";
+import { getPlanTimeAdvice } from "../../plans/get-time-advice";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { openStudyDay } from "../../sessions/open-study-day";
 import { saveAnswerInputs } from "../../view-models/onboarding/_utils/save-onboarding-answer";
@@ -294,5 +299,43 @@ describe("the saved Focus test summary", () => {
 
     const summary = await readSummary(goal.id);
     expect(summary).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("weighs subjects by the past questions research finds after the test began", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    const blueprintId = goal.examBlueprintId ?? "";
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprintId } });
+
+    await prisma.examBlueprint.update({
+      data: {
+        structure: { ...examStructureSchema.parse(blueprint.structure), pastQuestions: null },
+      },
+      where: { id: blueprintId },
+    });
+
+    await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    const lookup = await findSubjectQuestionsLookup({ examBlueprintId: blueprintId });
+    const subjects = lookup?.subjects ?? [];
+
+    await recordSubjectQuestions({
+      board: null,
+      edition: null,
+      examBlueprintId: blueprintId,
+      questions: subjects.map((name) => (name === "Ética" ? 95 : 1)),
+      source: { title: "Previous paper", url: "https://example.com/previous-paper" },
+      subjects,
+    });
+
+    const summary = await computeSummary(goal);
+    expect(summary?.suggested[0]).toMatchObject({ name: "Ética" });
+    await expect(readSummary(goal.id)).resolves.toStrictEqual(summary);
+
+    await expect(getPlanTimeAdvice({ goalId: goal.id, input: {} })).resolves.toMatchObject({
+      advice: {
+        focusSubjects: summary?.suggested.map(({ name, shortName }) => ({ name, shortName })),
+      },
+      status: "ready",
+    });
   });
 });

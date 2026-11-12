@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { type Goal, type TransactionClient } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import {
@@ -228,6 +228,19 @@ export async function refreshTestSummary({
   }
 
   await keepTestSummary({ goalId, tx, userId: goal.userId });
+}
+
+/** Keeps the saved summaries of the goals following a notice current after a write to the notice. */
+export async function refreshNoticeTestSummaries(examBlueprintId: string): Promise<void> {
+  const goals = await prisma.goal.findMany({
+    select: { details: true, id: true, userId: true },
+    where: { examBlueprintId },
+  });
+
+  for (const goal of goals.filter((following) => readFocusTestRecord(following)?.summary)) {
+    // oxlint-disable-next-line no-await-in-loop -- Each summary owns a transaction; a popular notice must not exhaust the pool.
+    await saveTestSummary({ goalId: goal.id, userId: goal.userId });
+  }
 }
 
 export async function keepPlanTestSummary({

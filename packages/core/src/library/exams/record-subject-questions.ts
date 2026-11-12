@@ -2,6 +2,7 @@ import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
+import { refreshNoticeTestSummaries } from "../../learner/placement/_utils/test-sitting";
 import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type ExamStructure, examEditionSchema, examStructureSchema } from "./blueprint-contract";
 import { needsPastQuestions } from "./subject-questions";
@@ -96,4 +97,5 @@ export async function recordSubjectQuestions({
   });
 
   revalidateCacheTags([getExamBlueprintCacheTag(examBlueprintId)]);
+  await refreshNoticeTestSummaries(examBlueprintId);
 }
