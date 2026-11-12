@@ -61,7 +61,7 @@ msgstr "Start a goal"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/public-footer.tsx
 #: src/components/public/public-nav-links.tsx
@@ -188,7 +188,6 @@ msgid "Ask {buddy}…"
 msgstr "Ask {buddy}…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "Start a new goal"
@@ -654,6 +653,7 @@ msgstr "Course options"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/components/public/public-footer.tsx
 #: src/components/public/public-nav-links.tsx
 msgctxt "R85gsW"
@@ -815,6 +815,16 @@ msgid "Tell us what you want to learn, and we'll plan every day until you get th
 msgstr "Tell us what you want to learn, and we'll plan every day until you get there."
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "UTFsoN"
+msgid "Study"
+msgstr "Study"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "tKMlOc"
+msgid "Menu"
+msgstr "Menu"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, level {level}"
@@ -823,11 +833,6 @@ msgstr "{belt}, level {level}"
 msgctxt "zF7Cth"
 msgid "Guest"
 msgstr "Guest"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
-msgctxt "UTFsoN"
-msgid "Study"
-msgstr "Study"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 msgctxt "JZy6jo"
@@ -843,11 +848,6 @@ msgstr "Collapse sidebar"
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Expand sidebar"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
-msgctxt "CPAYvm"
-msgid "{count, plural, one {# activity left} other {# activities left}}"
-msgstr "{count, plural, one {# activity left} other {# activities left}}"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "ijwVvk"
@@ -993,9 +993,11 @@ msgid "Quick explanation"
 msgstr "Quick explanation"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "kgu6gE"
-msgid "Continue explanation"
-msgstr "Continue explanation"
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continue"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
@@ -1008,35 +1010,24 @@ msgid "Your study reminder was for {goal}."
 msgstr "Your study reminder was for {goal}."
 
 #: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
-msgctxt "h6bnZW"
-msgid "Switch to this goal"
-msgstr "Switch to this goal"
-
-#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "hnzjLt"
-msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
+msgctxt "n1Whvj"
+msgid "Switch"
+msgstr "Switch"
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "4CJCep"
-msgid "Resume {goal}"
-msgstr "Resume {goal}"
+msgctxt "74ApEM"
+msgid "That's as many goals as you can study at once without Plus. Pause another goal to resume this one."
+msgstr "That's as many goals as you can study at once without Plus. Pause another goal to resume this one."
 
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "kL0PL2"
-msgid "Start a new goal, or pick another one above."
-msgstr "Start a new goal, or pick another one above."
+#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
+msgctxt "3y9DGg"
+msgid "Resume"
+msgstr "Resume"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "PcSnMu"
 msgid "You finished your {goal} goal."
 msgstr "You finished your {goal} goal."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "EQpfkS"
-msgid "Finished"
-msgstr "Finished"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
@@ -1053,20 +1044,10 @@ msgctxt "ND345k"
 msgid "This goal is paused."
 msgstr "This goal is paused."
 
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "Paused"
-
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "See your plan"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "7aP-Hw"
-msgid "Look it over before you start."
-msgstr "Look it over before you start."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1074,39 +1055,19 @@ msgid "Your {goal} plan is ready."
 msgstr "Your {goal} plan is ready."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "yKjBeN"
-msgid "Plan ready"
-msgstr "Plan ready"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "nggkj2"
-msgid "Continue setting up"
-msgstr "Continue setting up"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "DchlAP"
-msgid "It's built from what you tell us."
-msgstr "It's built from what you tell us."
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"
 msgid "Your {goal} plan needs a few more answers."
 msgstr "Your {goal} plan needs a few more answers."
 
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "dMgVfu"
-msgid "Setting up"
-msgstr "Setting up"
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "_pSoTA"
+msgid "A goal you started"
+msgstr "A goal you started"
 
 #: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "YC2aql"
-msgid "What you wrote"
-msgstr "What you wrote"
-
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continue"
+msgctxt "jAiADb"
+msgid "You didn't finish setting this up."
+msgstr "You didn't finish setting this up."
 
 #: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
 msgctxt "-3M8u-"

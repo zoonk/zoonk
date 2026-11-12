@@ -61,7 +61,7 @@ msgstr "목표 시작하기"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/public-footer.tsx
 #: src/components/public/public-nav-links.tsx
@@ -188,7 +188,6 @@ msgid "Ask {buddy}…"
 msgstr "{buddy}에게 물어보기…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "새 목표 시작하기"
@@ -654,6 +653,7 @@ msgstr "코스 옵션"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/components/public/public-footer.tsx
 #: src/components/public/public-nav-links.tsx
 msgctxt "R85gsW"
@@ -815,6 +815,16 @@ msgid "Tell us what you want to learn, and we'll plan every day until you get th
 msgstr "배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요."
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "UTFsoN"
+msgid "Study"
+msgstr "학습"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "tKMlOc"
+msgid "Menu"
+msgstr "메뉴"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}, 레벨 {level}"
@@ -823,11 +833,6 @@ msgstr "{belt}, 레벨 {level}"
 msgctxt "zF7Cth"
 msgid "Guest"
 msgstr "게스트"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
-msgctxt "UTFsoN"
-msgid "Study"
-msgstr "학습"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 msgctxt "JZy6jo"
@@ -843,11 +848,6 @@ msgstr "사이드바 접기"
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
-msgctxt "CPAYvm"
-msgid "{count, plural, one {# activity left} other {# activities left}}"
-msgstr "{count, plural, other {활동이 #개 남았어요}}"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "ijwVvk"
@@ -993,9 +993,11 @@ msgid "Quick explanation"
 msgstr "간단한 설명"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "kgu6gE"
-msgid "Continue explanation"
-msgstr "설명 이어서 보기"
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "계속하기"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
@@ -1008,35 +1010,24 @@ msgid "Your study reminder was for {goal}."
 msgstr "학습 알림은 {goal} 목표에 대한 알림이었어요."
 
 #: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
-msgctxt "h6bnZW"
-msgid "Switch to this goal"
-msgstr "이 목표로 전환하기"
-
-#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "hnzjLt"
-msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
+msgctxt "n1Whvj"
+msgid "Switch"
+msgstr "바꾸기"
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "4CJCep"
-msgid "Resume {goal}"
-msgstr "{goal} 이어서 하기"
+msgctxt "74ApEM"
+msgid "That's as many goals as you can study at once without Plus. Pause another goal to resume this one."
+msgstr "Plus 없이 동시에 공부할 수 있는 목표 수를 다 채웠어요. 이 목표를 이어서 공부하려면 다른 목표를 일시 중지하세요."
 
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "kL0PL2"
-msgid "Start a new goal, or pick another one above."
-msgstr "새 목표를 시작하거나 위에서 다른 목표를 선택하세요."
+#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
+msgctxt "3y9DGg"
+msgid "Resume"
+msgstr "이어가기"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "PcSnMu"
 msgid "You finished your {goal} goal."
 msgstr "{goal} 목표를 완료했어요."
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "EQpfkS"
-msgid "Finished"
-msgstr "완료"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
@@ -1053,20 +1044,10 @@ msgctxt "ND345k"
 msgid "This goal is paused."
 msgstr "이 목표는 일시 중지되었어요."
 
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "일시 중지됨"
-
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "내 계획 보기"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "7aP-Hw"
-msgid "Look it over before you start."
-msgstr "시작하기 전에 계획을 살펴보세요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1074,39 +1055,19 @@ msgid "Your {goal} plan is ready."
 msgstr "{goal} 계획이 준비됐어요."
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "yKjBeN"
-msgid "Plan ready"
-msgstr "계획 준비 완료"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "nggkj2"
-msgid "Continue setting up"
-msgstr "설정 이어서 하기"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "DchlAP"
-msgid "It's built from what you tell us."
-msgstr "알려 주신 내용을 바탕으로 계획을 만들어요."
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"
 msgid "Your {goal} plan needs a few more answers."
 msgstr "{goal} 계획을 세우려면 몇 가지 답변이 더 필요해요."
 
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "dMgVfu"
-msgid "Setting up"
-msgstr "설정 중"
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "_pSoTA"
+msgid "A goal you started"
+msgstr "시작한 목표"
 
 #: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "YC2aql"
-msgid "What you wrote"
-msgstr "작성한 내용"
-
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "계속하기"
+msgctxt "jAiADb"
+msgid "You didn't finish setting this up."
+msgstr "아직 목표 설정을 마치지 않았어요."
 
 #: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
 msgctxt "-3M8u-"
