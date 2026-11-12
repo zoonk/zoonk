@@ -70,7 +70,8 @@ function startProxy(environment: NodeJS.ProcessEnv): void {
   execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "proxy", "start"], {
     cwd: currentDirectory,
     env: environment,
-    stdio: "inherit",
+    // Its "already running" notice and restart advice answer nothing a `pnpm dev` asked; errors still show.
+    stdio: ["ignore", "ignore", "inherit"],
   });
 }
 
