@@ -24,6 +24,7 @@ const CONFLICT_OF_INTEREST_LESSON: LessonSpecParams = {
   activityTemplates: ACTIVITY_TEMPLATES,
   chapterLessons: WRONG_PARAGRAPH_PLAN.chapterLessons,
   chapterTitle: WRONG_PARAGRAPH_PLAN.chapterTitle,
+  country: null,
   courseTitle: WRONG_PARAGRAPH_PLAN.courseTitle,
   exams: WRONG_PARAGRAPH_PLAN.exams,
   language: "pt",
