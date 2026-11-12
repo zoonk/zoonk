@@ -2,7 +2,7 @@
 
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ListGroup,
   ListRowButton,
@@ -88,6 +88,8 @@ export function CountryStep({
   const [other, setOther] = useState<CountryChoice | null>(null);
   const [code, setCode] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const listRef = useRef<HTMLDivElement>(null);
+  const pickedInPicker = useRef(false);
   const rows = getRows({ defaultCountry, other, suggested });
   const picked = rows.find((country) => country.code === code) ?? null;
 
@@ -111,13 +113,15 @@ export function CountryStep({
       title={t("Which country should your lessons be about?")}
     >
       <ListGroup>
-        <ChoiceList
-          choices={choices}
-          label={t("Country")}
-          onChange={setCode}
-          readOnly={pending}
-          value={code}
-        />
+        <div className="contents" ref={listRef}>
+          <ChoiceList
+            choices={choices}
+            label={t("Country")}
+            onChange={setCode}
+            readOnly={pending}
+            value={code}
+          />
+        </div>
 
         <ListRowButton
           aria-haspopup="dialog"
@@ -133,10 +137,22 @@ export function CountryStep({
       </ListGroup>
 
       <CountryPicker
+        // A country picked here becomes the list's checked row; focusing it says which one it is.
+        finalFocus={() => {
+          const fromPicker = pickedInPicker.current;
+          pickedInPicker.current = false;
+
+          return (
+            (fromPicker &&
+              listRef.current?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]')) ||
+            true
+          );
+        }}
         language={language}
         onOpenChange={setPickerOpen}
         onPick={(country) => {
           if (country) {
+            pickedInPicker.current = true;
             setOther(country);
             setCode(country.code);
           }

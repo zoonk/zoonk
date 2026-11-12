@@ -39,6 +39,7 @@ test.describe("Content country", () => {
 
     const portugal = page.getByRole("radio", { name: "Portugal" });
     await expect(portugal).toBeChecked();
+    await expect(portugal).toBeFocused();
 
     const readGoal = () => prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 

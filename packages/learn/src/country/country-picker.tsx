@@ -135,6 +135,7 @@ function CatalogState({ onRetry, status }: { onRetry: () => void; status: "faile
  */
 export function CountryPicker({
   children,
+  finalFocus,
   language,
   noneLabel,
   onOpenChange,
@@ -146,6 +147,7 @@ export function CountryPicker({
   value,
 }: {
   children?: React.ReactNode;
+  finalFocus?: React.ComponentProps<typeof CommandDialog>["finalFocus"];
   /** The list's names and lesson varieties: a goal's language for its content, else the app's. */
   language: string;
   noneLabel?: string;
@@ -193,7 +195,13 @@ export function CountryPicker({
   };
 
   return (
-    <CommandDialog onOpenChange={changeOpen} open={open} overNested={overNested} suggestionsFirst>
+    <CommandDialog
+      finalFocus={finalFocus}
+      onOpenChange={changeOpen}
+      open={open}
+      overNested={overNested}
+      suggestionsFirst
+    >
       <CommandDialogTitle className="not-sr-only px-4 pt-4 text-base font-semibold sm:px-4 sm:pt-3.5 sm:pb-1">
         {title}
       </CommandDialogTitle>
