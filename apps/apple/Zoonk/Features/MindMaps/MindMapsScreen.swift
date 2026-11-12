@@ -243,7 +243,20 @@ private struct MindMapCreateSection: View {
         .announcesStatus(note(line))
       }
 
-      DisclosureGroup(isExpanded: $showsChapters) {
+      FoldRow(isUnfolded: $showsChapters) {
+        LabeledContent {
+          Text(verbatim: notMade.count.formatted())
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        } label: {
+          Text(
+            "Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map"
+          )
+          .typeStyle(.body)
+        }
+      }
+
+      if showsChapters {
         if canStart, showsLessonsNote {
           Text(
             "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
@@ -256,17 +269,6 @@ private struct MindMapCreateSection: View {
 
         ForEach(notMade) { map in
           MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
-        }
-      } label: {
-        LabeledContent {
-          Text(verbatim: notMade.count.formatted())
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
-        } label: {
-          Text(
-            "Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map"
-          )
-          .typeStyle(.body)
         }
       }
     } header: {
@@ -633,6 +635,20 @@ private struct EmptyTab<Title: View, Description: View>: View {
 
 // MARK: - Index
 
+/// A row that shows the rows after it: they follow it as rows of their own, on the page's left
+/// edge, where a `DisclosureGroup`'s content would sit indented under it.
+private struct FoldRow<Label: View>: View {
+  @Binding var isUnfolded: Bool
+  @ViewBuilder let label: Label
+
+  var body: some View {
+    DisclosureGroup(isExpanded: $isUnfolded) {
+    } label: {
+      label
+    }
+  }
+}
+
 /// Main's bounded index: sections stay open while there are 12 maps or fewer, past that each
 /// subject folds to its header; without subjects, the first 8 and "Show all".
 private struct MindMapIndex<Item: Identifiable, Row: View>: View {
@@ -677,12 +693,14 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
     } else if hasSubjects {
       ForEach(groups, id: \.key) { group in
         Section {
-          DisclosureGroup(isExpanded: $unfolded.contains(group.key)) {
-            ForEach(group.items) { row($0) }
-          } label: {
+          FoldRow(isUnfolded: $unfolded.contains(group.key)) {
             SectionTitle(Text(group.subject?.name ?? "")) {
               Text(verbatim: group.items.count.formatted())
             }
+          }
+
+          if unfolded.contains(group.key) {
+            ForEach(group.items) { row($0) }
           }
         }
         .id(group.key)
