@@ -89,11 +89,13 @@ function NextTag({ children }: { children: string }) {
 function TodayRow({
   block,
   line,
+  locked,
   onOpen,
   tag,
 }: {
   block: DayStep;
   line: string | null;
+  locked: boolean;
   onOpen: (() => Promise<boolean>) | null;
   tag: string | null;
 }) {
@@ -144,7 +146,7 @@ function TodayRow({
       <ListRowButton
         aria-busy={pending || undefined}
         data-highlighted={tag ? "" : undefined}
-        disabled={pending}
+        disabled={pending || locked}
         onClick={open}
       >
         {content}
@@ -203,9 +205,12 @@ export function RevealDayOpener({
 
 /** Today's own day, in Today's order: what the learner finished, then where they go on. */
 export function RevealToday({
+  locked,
   open,
   reveal,
 }: {
+  /** While Start opens its step, so a row tapped meanwhile can't open another. */
+  locked: boolean;
   open: ((step: DayStep) => Promise<boolean>) | null;
   reveal: PlanRevealDays | null;
 }) {
@@ -242,6 +247,7 @@ export function RevealToday({
             block={block}
             key={block.position}
             line={label(block)}
+            locked={locked}
             onOpen={open && opensFromReveal(block) ? () => open(block) : null}
             tag={block === next ? nextTag : null}
           />

@@ -69,33 +69,25 @@ function PlanCreated() {
  * from `lg`. Start works from the moment's first frame.
  */
 function RevealActions({
+  failure,
   isGuest,
   onAdjust,
   onStart,
+  pending,
   signUpHref,
   started,
 }: {
+  /** What failed, so the learner reads whether the plan didn't save or its step didn't open. */
+  failure: StartFailure | null;
   isGuest: boolean;
   onAdjust: () => void;
-  /** What failed, so the learner reads whether the plan didn't save or its step didn't open. */
-  onStart: () => Promise<StartFailure | null>;
+  onStart: () => void;
+  pending: boolean;
   signUpHref: string;
   started: boolean;
 }) {
   const t = useExtracted();
   const startRef = useEnterClick<HTMLButtonElement>();
-  const [pending, startTransition] = useTransition();
-  const [failure, setFailure] = useState<StartFailure | null>(null);
-
-  // Busy until the next page opens; a failed start keeps the learner here to try again.
-  const start = () => {
-    setFailure(null);
-
-    startTransition(async () => {
-      const { data, error } = await safeAsync(onStart);
-      setFailure(error ? "save" : data);
-    });
-  };
 
   return (
     <div
@@ -118,7 +110,7 @@ function RevealActions({
           busy={pending}
           className="flex-2 font-[560] lg:flex-none"
           icon={<PlayIcon aria-hidden="true" />}
-          onClick={start}
+          onClick={onStart}
           ref={startRef}
           size="lg"
         >
@@ -182,6 +174,22 @@ function RevealColumn({
         }
       : null;
 
+  const [starting, startTransition] = useTransition();
+  const [startFailure, setStartFailure] = useState<StartFailure | null>(null);
+
+  // Busy until the next page opens, with the rows waiting; a failed start keeps the learner here.
+  const start = () => {
+    setStartFailure(null);
+
+    startTransition(async () => {
+      const { data, error } = await safeAsync(
+        openStart ?? (async () => ((await onStart()) ? null : "save")),
+      );
+
+      setStartFailure(error ? "save" : data);
+    });
+  };
+
   const [editor, setEditor] = useState<{ open: boolean; section: PlanEditorSection | null }>({
     open: false,
     section: null,
@@ -221,7 +229,7 @@ function RevealColumn({
         <RevealNoticeDay />
       </header>
 
-      <RevealToday open={openStep} reveal={reveal} />
+      <RevealToday locked={starting} open={openStep} reveal={reveal} />
       <RevealWeek reveal={reveal} />
 
       <div className="flex flex-col gap-2">
@@ -241,7 +249,9 @@ function RevealColumn({
       <RevealActions
         isGuest={isGuest}
         onAdjust={() => setEditor({ open: true, section: null })}
-        onStart={openStart ?? (async () => ((await onStart()) ? null : "save"))}
+        failure={startFailure}
+        onStart={start}
+        pending={starting}
         signUpHref={signUpHref}
         started={started}
       />
