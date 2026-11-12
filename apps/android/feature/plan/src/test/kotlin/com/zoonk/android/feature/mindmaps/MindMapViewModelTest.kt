@@ -384,6 +384,43 @@ class MindMapViewModelTest {
         }
 
     @Test
+    fun lessonMapsReadOnTheirWayWhenTheListShowsMoreReadAgain() =
+        runTest(dispatcher) {
+            val (_, store) = setUp()
+            var lessons = listOf(1, 2)
+            api.mindMaps = {
+                goalMindMaps(
+                    listOf(mapJson(3, "Waves and sound", if (lessons.size < 3) "writingLessons" else "ready")),
+                    listOf(lessonGroupJson(3, lessons)),
+                )
+            }
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+            api.lessonMaps = {
+                val written = lessons
+                if (++reads == 1) release.await()
+                chapterLessonMaps(lessons = written.map { lessonMindMapJson(it, "Lesson $it") })
+            }
+            store.list[goalId].load()
+            val firstRead = launch { store.lessonMaps[key].load() }
+            advanceUntilIdle()
+
+            lessons = listOf(1, 2, 3)
+            store.list[goalId].refresh()
+            release.complete(Unit)
+            firstRead.join()
+            store.lessonMaps[key].load()
+
+            assertEquals(
+                listOf(1, 2, 3).map(::mapLesson),
+                store.lessonMaps[key]
+                    .state.value.value
+                    ?.lessons
+                    ?.map { it.lessonId.toString() },
+            )
+        }
+
+    @Test
     fun threeMissesInARowSayTheServerIsOutOfReachAndTryAgainAsksAgain() =
         runTest(dispatcher) {
             val (maps) = setUp()

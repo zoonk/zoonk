@@ -239,7 +239,7 @@ class MindMapStore(
     suspend fun createAll(goalId: UUID): Boolean? =
         when (cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
             is MutationResult.Done -> {
-                chapter.invalidate { key, _ -> key.goalId == goalId }
+                chapter.invalidate { it.goalId == goalId }
                 list[goalId].reread()
             }
 
@@ -253,22 +253,23 @@ class MindMapStore(
         }
 
     /**
-     * A chapter's lesson maps read before the list showed more of them (a map's run wrote the rest)
-     * read again when they next show, since the study deck takes its lessons from the list.
+     * Lessons a list read shows for a chapter that the list didn't before (a map's run wrote them)
+     * mark that chapter's lesson maps stale, a read still on its way included, since the study deck
+     * takes its lessons from the list. Only a change does, so reading the list again doesn't restart
+     * a read on its way.
      */
     private fun listed(
         goalId: UUID,
         maps: GoalMindMaps,
     ) {
-        val listed = maps.lessonGroups.associate { it.chapterId to it.lessonIds }
-        lessonMaps.invalidate { key, read ->
-            read != null &&
-                key.goalId == goalId &&
-                !read.lessons
-                    .filter { !it.locked }
-                    .map { it.lessonId }
-                    .containsAll(listed[key.chapterId].orEmpty())
-        }
+        val before =
+            list[goalId]
+                .state.value.value
+                ?.lessonGroups
+                .orEmpty()
+                .associate { it.chapterId to it.lessonIds }
+        val grown = maps.lessonGroups.filterNot { before[it.chapterId].orEmpty().containsAll(it.lessonIds) }.map { it.chapterId }
+        lessonMaps.invalidate { it.goalId == goalId && it.chapterId in grown }
     }
 
     /** The number of the last read started: what a screen notes now gives way to any read started later. */

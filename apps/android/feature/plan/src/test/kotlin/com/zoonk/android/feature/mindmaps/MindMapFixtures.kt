@@ -137,7 +137,7 @@ internal class FakeMindMapApi : MindMapApi {
     var picture: () -> ByteArray = { byteArrayOf(1, 2, 3) }
     var chapter: () -> ChapterMindMap = { chapterMindMap("available") }
     var mindMaps: () -> GoalMindMaps = { goalMindMaps() }
-    var lessonMaps: () -> ChapterLessonMaps = { chapterLessonMaps() }
+    var lessonMaps: suspend () -> ChapterLessonMaps = { chapterLessonMaps() }
     val saved = mutableListOf<Pair<MindMapTarget, Boolean>>()
     var save: suspend (MindMapTarget, Boolean) -> SavedMindMapState = { target, saved -> savedState(target, saved) }
     var createdAll = 0
