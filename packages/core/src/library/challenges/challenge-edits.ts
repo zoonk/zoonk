@@ -3,8 +3,7 @@ import { type WrittenChallengeCase, challengeCaseSchema } from "@zoonk/ai/tasks/
 import { sumOf } from "@zoonk/utils/number";
 
 /**
- * The words learners read, and `next`, which the content check keeps pointing at a real decision
- * or ending. Every other field, such as an id, `quality` or `goodWhen`, stays as the writer set it.
+ * The words learners read. Ids, routes and settings such as `goodWhen` stay as the writer set them.
  */
 const EDITABLE_FIELDS = new Set([
   "deadline",
@@ -13,7 +12,6 @@ const EDITABLE_FIELDS = new Set([
   "label",
   "mission",
   "name",
-  "next",
   "note",
   "outcome",
   "practice",
