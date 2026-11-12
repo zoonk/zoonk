@@ -4369,7 +4369,6 @@ msgid "Checking the exam dates"
 msgstr "Revisando las fechas del examen"
 
 #: src/generation/use-generation-copy.ts
-#: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
 #: src/today/today-preparing.tsx
@@ -9966,6 +9965,11 @@ msgstr ""
 msgctxt "Tezxsy"
 msgid "Your plan is ready"
 msgstr "Tu plan está listo"
+
+#: src/onboarding/steps/notice-reading.tsx
+msgctxt "O9QcuL"
+msgid "Your plan, from what you told us"
+msgstr ""
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "hToC0O"

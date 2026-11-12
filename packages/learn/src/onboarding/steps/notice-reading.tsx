@@ -100,7 +100,9 @@ export function NoticeReading({
       <GenerationTimelineSteps aria-label={title}>
         <GenerationTimelineStep status="completed">
           <GenerationTimelineStepIndicator />
-          <GenerationTimelineStepLabel>{t("Building your plan")}</GenerationTimelineStepLabel>
+          <GenerationTimelineStepLabel>
+            {t("Your plan, from what you told us")}
+          </GenerationTimelineStepLabel>
         </GenerationTimelineStep>
 
         <GenerationTimelineStep status={getReadingStatus({ holding, stop })}>
