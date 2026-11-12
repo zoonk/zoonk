@@ -29,7 +29,12 @@ export async function ContentCountryLine({
         description:
           "{variety} is a language with its country, such as “Portuguese (Brazil)”. It always follows the colon, so it never needs an article or a case.",
         message: "Lesson language: {variety}",
-        values: { variety: getVarietyName({ ...country.lessonVariety, userLanguage: country.lessonVariety.language }) },
+        values: {
+          variety: getVarietyName({
+            ...country.lessonVariety,
+            userLanguage: country.lessonVariety.language,
+          }),
+        },
       }),
   ].filter(Boolean);
 

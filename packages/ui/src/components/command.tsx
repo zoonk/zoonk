@@ -29,8 +29,8 @@ import {
 } from "@zoonk/ui/components/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SearchIcon } from "lucide-react";
-import type * as React from "react";
 import { useRef } from "react";
+import type * as React from "react";
 
 const Command = Autocomplete.Root;
 
