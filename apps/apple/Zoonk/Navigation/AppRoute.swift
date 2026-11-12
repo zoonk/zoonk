@@ -36,7 +36,11 @@ enum AppRoute: Hashable, Identifiable {
   case checkpoint(blockId: String, sessionId: String? = nil)
   case essay(blockId: String)
   case mock(blockId: String, sessionId: String? = nil)
-  case mindMap(chapterId: String)
+  /// A chapter's map full screen, on the goal that opened it.
+  case mindMap(goalId: String, chapterId: String)
+  /// The Mind maps page's reader: a goal's tab of maps one per screen, from `start` or this device's
+  /// place.
+  case mindMapStudy(goalId: String, tab: GoalMindMaps.Tab, start: MindMapPosition? = nil)
   case pronunciation(goalId: String? = nil)
   case conversation(conversationId: String)
   /// `goal` only fills the box: reading the words waits for the learner's tap. `draftId` opens a

@@ -20,6 +20,7 @@
   "limit_mind_maps_free_month": "f97a66fd7a05d2a948990b55f0b6653b70507b045b5bf8ea7dbacbed234be4b2",
   "limit_mind_maps_guest": "dba128cf93352009f8726b8e7a7fd13d36fb28a9a87bf00be0424966c59b4963",
   "limit_mind_maps_plus": "90be59f91ad1b099c301108c84de17258d79f770533a16f84b2ceb449de53c45",
+  "limit_mind_maps_plus_month": "e3484023e03964b33fa4b3987050a25baf0861e248be085f02758a40931cde6d",
   "limit_outlines_free_day": "3091573725b50be29799fa32dfd38c3b8ac9410d784f826326b4f75ebebae62d",
   "limit_outlines_free_month": "68eebc2b6c50c5c48efe941ee156f946bb635c514a3e6cd21caed3e75309da46",
   "limit_outlines_guest": "f22546e66e0b3a2018953f11d4a285b16ba5abe77919c1419cc3759a0524873b",
@@ -45,6 +46,7 @@
     <string name="limit_lessons_free_day">오늘의 새 레슨은 여기까지예요. 내일 다시 이용할 수 있고, Plus를 구독하면 지금 계속 학습할 수 있어요.</string>
     <string name="limit_mind_maps_guest">계정 없이 체험할 수 있는 마인드맵을 만들었어요. 더 만들려면 무료 계정을 만드세요.</string>
     <string name="limit_mind_maps_plus">오늘 만들 수 있는 마인드맵을 모두 만들었어요. 내일 더 만들 수 있어요.</string>
+    <string name="limit_mind_maps_plus_month">이번 달에 새로 만들 수 있는 마인드맵 수를 다 채웠어요. 다음 달에 더 만들 수 있어요.</string>
     <string name="limit_mind_maps_free_month">이번 달에 만들 수 있는 마인드맵을 모두 만들었어요. 다음 달에 더 만들 수 있고, Plus를 구독하면 지금 계속 만들 수 있어요.</string>
     <string name="limit_mind_maps_free_day">오늘 만들 수 있는 마인드맵을 모두 만들었어요. 내일 더 만들 수 있고, Plus를 구독하면 지금 계속 만들 수 있어요.</string>
     <string name="limit_outlines_guest">계정 없이 미리 볼 수 있는 주제를 모두 봤어요. 더 보려면 무료 계정을 만드세요.</string>

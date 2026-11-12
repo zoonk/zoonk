@@ -1,90 +1,5 @@
 import Foundation
 import Observation
-import OpenAPIRuntime
-
-struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
-  enum Status: String, Decodable, Sendable {
-    case available
-    case drawing
-    case failed
-    /// The chapter's lessons are Plus-only for this learner, so its map is too.
-    case plusRequired
-    case ready
-    /// A language's unit, or nothing in its outline to draw from: no row at all.
-    case unavailable
-    case writingLessons
-
-    var isOnItsWay: Bool {
-      self == .writingLessons || self == .drawing
-    }
-  }
-
-  struct Image: Decodable, Equatable, Sendable {
-    let height: Int
-    let thumbnailUrl: String?
-    let url: String
-    let width: Int
-  }
-
-  struct Outline: Decodable, Equatable, Sendable {
-    struct Branch: Decodable, Equatable, Hashable, Sendable {
-      let explanation: String
-      let points: [String]
-      let title: String
-    }
-
-    let branches: [Branch]
-    let centralIdea: String
-    let summary: String?
-    let title: String
-  }
-
-  struct Subject: Decodable, Equatable, Sendable {
-    let key: String
-    let name: String
-  }
-
-  let chapterId: String
-  let image: Image?
-  /// The chapter's lessons not written yet, which making its map writes first.
-  let lessonsToWrite: Int
-  let outline: Outline?
-  let position: Int
-  let status: Status
-  let subject: Subject?
-  let title: String
-
-  var id: String { chapterId }
-}
-
-struct GoalMindMaps: Decodable, Equatable, Sendable {
-  /// Every chapter of the plan that can have a map, in plan order.
-  let chapters: [ChapterMindMap]
-}
-
-/// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first, or the day's
-/// AI spend.
-struct MindMapLimit: Equatable, Sendable {
-  enum Resource: Hashable, Sendable {
-    case aiSpend, lessons, mindMap
-  }
-
-  let limit: HelpLimit
-  let resource: Resource
-}
-
-/// What a tap or following a run got that the map's own status doesn't say. It stands for the read
-/// it appeared over: a newer read of the map that comes through clears it.
-enum MindMapRequestFailure: Equatable, Sendable {
-  case refused(MindMapLimit)
-  case unreachable
-}
-
-enum MindMapRequest: Equatable, Sendable {
-  /// Ready, on its way, Plus-only or a chapter without one: reading it again says which.
-  case read
-  case refused(MindMapLimit)
-}
 
 /// Nothing is made on a screen's load: only a learner's tap asks for a map.
 @MainActor
@@ -92,7 +7,8 @@ enum MindMapRequest: Equatable, Sendable {
 final class MindMapsStore {
   private(set) var requesting: Set<String> = []
   private(set) var failures: [String: MindMapRequestFailure] = [:]
-  /// The read count when each failure appeared; a read started after it clears it.
+  /// The read count when each failure appeared, by map key or, for Create all, by goal; a read
+  /// started after it clears it.
   @ObservationIgnored private var failedAt: [String: Int] = [:]
   @ObservationIgnored private var reads = 0
 
@@ -100,13 +16,24 @@ final class MindMapsStore {
   @ObservationIgnored private let cache: AppCache
   @ObservationIgnored private let drawingPoll: Duration
   @ObservationIgnored private let writingPoll: Duration
+  @ObservationIgnored private let positions: MindMapPositions
   @ObservationIgnored private var lists: [String: Resource<GoalMindMaps>] = [:]
   @ObservationIgnored private var maps: [String: Resource<ChapterMindMap>] = [:]
+  @ObservationIgnored private var lessons: [String: Resource<ChapterLessonMaps>] = [:]
+
+  /// What each learner asked for while it saves: shown at once, and dropped once the save is done
+  /// or failed, when the maps read say again.
+  private(set) var pendingSaves: [PendingSave: Bool] = [:]
+  private(set) var saveFailure: SaveFailure?
+  /// Goals whose "Create all chapter maps" is on its way.
+  private(set) var creatingAll: Set<String> = []
+  private(set) var createAllFailures: [String: MindMapRequestFailure] = [:]
 
   init(
     api: any MindMapsAPIClient, cache: AppCache, drawingPoll: Duration = .seconds(4),
-    writingPoll: Duration = .seconds(15)
+    writingPoll: Duration = .seconds(15), positions: MindMapPositions = MindMapPositions()
   ) {
+    self.positions = positions
     self.api = api
     self.cache = cache
     self.drawingPoll = drawingPoll
@@ -120,16 +47,18 @@ final class MindMapsStore {
 
     let api = api
     let list: Resource<GoalMindMaps> = cache.resource(
-      audience: .signedIn, domains: [.goals, .userProgress, .userSubscription],
-      isEmpty: \.chapters.isEmpty
+      audience: .signedIn, domains: [.goals, .savedMindMaps, .userProgress, .userSubscription],
+      isEmpty: \.isEmpty
     ) { [weak self] session in
       guard let session else {
         return nil
       }
 
-      let started = await self?.readStarted()
+      let started = self?.readStarted()
       let read = try await api.list(token: session.bearerToken, goalId: goalId)
-      await self?.readCameThrough(started, keys: read.chapters.map { "\(goalId):\($0.chapterId)" })
+      self?.readCameThrough(
+        started, keys: [goalId] + read.chapters.map { "\(goalId):\($0.chapterId)" })
+      self?.listed(read, goalId: goalId)
       return read
     }
 
@@ -146,21 +75,157 @@ final class MindMapsStore {
 
     let api = api
     let map: Resource<ChapterMindMap> = cache.resource(
-      audience: .signedIn, domains: [.goals, .userProgress, .userSubscription]
+      audience: .signedIn, domains: [.goals, .savedMindMaps, .userProgress, .userSubscription]
     ) { [weak self] session in
       guard let session else {
         return nil
       }
 
-      let started = await self?.readStarted()
+      let started = self?.readStarted()
       let read = try await api.map(
         token: session.bearerToken, goalId: goalId, chapterId: chapterId)
-      await self?.readCameThrough(started, keys: [key])
+      self?.readCameThrough(started, keys: [key])
       return read
     }
 
     maps[key] = map
     return map
+  }
+
+  func lessonMaps(goalId: String, chapterId: String) -> Resource<ChapterLessonMaps> {
+    let key = "\(goalId):\(chapterId)"
+
+    if let resource = lessons[key] {
+      return resource
+    }
+
+    let api = api
+    let resource: Resource<ChapterLessonMaps> = cache.resource(
+      audience: .signedIn, domains: [.goals, .savedMindMaps, .userProgress, .userSubscription]
+    ) { session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.lessonMaps(
+        token: session.bearerToken, goalId: goalId, chapterId: chapterId)
+    }
+
+    lessons[key] = resource
+    return resource
+  }
+
+  /// Where this learner last was in the goal's tab, on this device.
+  func position(goalId: String, tab: GoalMindMaps.Tab) -> MindMapPosition? {
+    guard let userId = cache.session.account?.user.id else {
+      return nil
+    }
+
+    return positions.position(userId: userId, goalId: goalId, tab: tab)
+  }
+
+  func remember(_ position: MindMapPosition?, goalId: String, tab: GoalMindMaps.Tab) {
+    guard let userId = cache.session.account?.user.id else {
+      return
+    }
+
+    positions.save(position, userId: userId, goalId: goalId, tab: tab)
+  }
+
+  /// `server` is what the maps read last says.
+  func isSaved(_ key: MindMapKey, server: Bool) -> Bool {
+    guard let session = cache.session.authenticatedSession else {
+      return server
+    }
+
+    return pendingSaves[PendingSave(session: session, key: key)] ?? server
+  }
+
+  /// Shown at once. Taps faster than the saves end in the last one asked for; a failure goes back
+  /// to what the maps read says and says so. Not `QueuedSaves`: the server takes the state wanted,
+  /// so only each map's last tap is sent, and a map saves where the goal's list isn't read, such as
+  /// the chapter's map viewer.
+  func setSaved(_ saved: Bool, target: SaveTarget, goalId: String) {
+    guard let session = cache.session.authenticatedSession else {
+      return
+    }
+
+    let pending = PendingSave(session: session, key: target.key)
+    let isSaving = pendingSaves[pending] != nil
+    pendingSaves[pending] = saved
+
+    if saveFailure?.key == target.key {
+      saveFailure = nil
+    }
+
+    guard !isSaving else {
+      return
+    }
+
+    Task {
+      await save(pending, target: target, goalId: goalId)
+    }
+  }
+
+  /// Hidden once the session it was made for changes.
+  func saveFailed(goalId: String) -> Bool {
+    guard let saveFailure else {
+      return false
+    }
+
+    return saveFailure.goalId == goalId
+      && saveFailure.session == cache.session.authenticatedSession
+  }
+
+  func dismissSaveFailure() {
+    saveFailure = nil
+  }
+
+  /// Starts every chapter map one tap can start; what it couldn't start shows in the list read
+  /// again.
+  func createAll(goalId: String) async {
+    guard !creatingAll.contains(goalId) else {
+      return
+    }
+
+    creatingAll.insert(goalId)
+    defer { creatingAll.remove(goalId) }
+    failCreateAll(nil, goalId: goalId)
+
+    let api = api
+    let started = await cache.mutate { identity in
+      try await api.createAll(token: identity.bearerToken, goalId: goalId)
+    }
+
+    switch started {
+    case .done:
+      if await !Self.reread(lists[goalId]) {
+        failCreateAll(.unreachable, goalId: goalId)
+      }
+    case .failed:
+      failCreateAll(.unreachable, goalId: goalId)
+    case .obsolete:
+      break
+    }
+  }
+
+  /// One follower for the whole list while any of its maps is on its way: every map's row reads the
+  /// list it refreshes. It ends once nothing is on its way, or when the screen goes.
+  func followList(goalId: String) async {
+    while let list = lists[goalId], let value = list.value,
+      value.chapters.contains(where: \.status.isOnItsWay)
+    {
+      let beat =
+        value.chapters.contains { $0.status == .drawing } ? drawingPoll : writingPoll
+
+      do {
+        try await Task.sleep(for: beat)
+      } catch {
+        return
+      }
+
+      await list.refresh()
+    }
   }
 
   func failure(goalId: String, chapterId: String) -> MindMapRequestFailure? {
@@ -253,10 +318,114 @@ final class MindMapsStore {
     }
   }
 
+  private func save(_ pending: PendingSave, target: SaveTarget, goalId: String) async {
+    let key = pending.key
+    var sent: Bool?
+
+    while let wanted = pendingSaves[pending], wanted != sent {
+      let api = api
+      let result: MutationResult<Bool> =
+        cache.session.authenticatedSession == pending.session
+        ? await cache.mutate { identity in
+          try await api.save(token: identity.bearerToken, goalId: goalId, key: key, saved: wanted)
+        } : .obsolete
+
+      switch result {
+      case .done(let saved):
+        sent = saved
+        show(saved, target: target, goalId: goalId)
+      case .failed:
+        pendingSaves[pending] = nil
+        saveFailure = SaveFailure(goalId: goalId, key: key, session: pending.session)
+      case .obsolete:
+        pendingSaves[pending] = nil
+        return
+      }
+    }
+
+    pendingSaves[pending] = nil
+
+    // A save the server took is the learner's in every goal whose maps hold it, a later tap's
+    // failure included, and the Saved tab lists saves in syllabus order, which only the server
+    // knows.
+    if sent != nil {
+      cache.invalidate([.savedMindMaps])
+    }
+  }
+
+  /// Every copy of the map read so far says it, so dropping the pending save changes nothing shown.
+  private func show(_ saved: Bool, target: SaveTarget, goalId: String) {
+    let key = target.key
+
+    lists[goalId]?.update { list in
+      var entries = list.saved.filter { $0.key != key }
+
+      if saved {
+        entries.insert(
+          SavedMindMap(
+            available: true, chapterId: target.chapterId, kind: key.kind,
+            targetId: key.targetId, title: target.title),
+          at: entries.firstIndex { !$0.available } ?? entries.endIndex)
+      }
+
+      return GoalMindMaps(
+        chapters: list.chapters.map {
+          key.kind == .chapter && $0.chapterId == key.targetId ? $0.saving(saved) : $0
+        },
+        createOffer: list.createOffer, firstTab: list.firstTab, lessonGroups: list.lessonGroups,
+        saved: entries)
+    }
+
+    switch key.kind {
+    case .chapter:
+      maps["\(goalId):\(key.targetId)"]?.update { $0.saving(saved) }
+    case .lesson:
+      for (id, resource) in lessons where id.hasPrefix("\(goalId):") {
+        guard resource.value?.lessons.contains(where: { $0.lessonId == key.targetId }) == true
+        else {
+          continue
+        }
+
+        resource.update { maps in
+          ChapterLessonMaps(
+            chapter: maps.chapter,
+            lessons: maps.lessons.map { $0.lessonId == key.targetId ? $0.saving(saved) : $0 })
+        }
+      }
+    }
+  }
+
   private func fail(_ failure: MindMapRequestFailure?, goalId: String, chapterId: String) {
     let key = "\(goalId):\(chapterId)"
     failures[key] = failure
     failedAt[key] = failure == nil ? nil : reads
+  }
+
+  private func failCreateAll(_ failure: MindMapRequestFailure?, goalId: String) {
+    createAllFailures[goalId] = failure
+    failedAt[goalId] = failure == nil ? nil : reads
+  }
+
+  /// What a list read shows that the list didn't before marks that chapter's reads stale, one still
+  /// on its way included, since it may predate the change: its map once the map moved on (Create all
+  /// started it, or the list's follower saw it drawn; only a single map's tap reads both), and its
+  /// lesson maps once more of its lessons show (a map's run wrote them; the reader's deck takes them
+  /// from the list). Only a change does, so the follower's beats don't restart a read on its way.
+  private func listed(_ read: GoalMindMaps, goalId: String) {
+    let before = lists[goalId]?.value
+
+    for chapter in read.chapters
+    where before?.chapter(chapter.chapterId)?.status != chapter.status {
+      maps["\(goalId):\(chapter.chapterId)"]?.invalidate()
+    }
+
+    for group in read.lessonGroups {
+      let shown = before?.lessonGroups.first { $0.chapterId == group.chapterId }?.lessonIds ?? []
+
+      if !Set(shown).isSuperset(of: group.lessonIds) {
+        lessons["\(goalId):\(group.chapterId)"]?.invalidate()
+      }
+    }
   }
 
   private func readStarted() -> Int {
@@ -271,6 +440,7 @@ final class MindMapsStore {
 
     for key in keys where (failedAt[key] ?? started) < started {
       failures[key] = nil
+      createAllFailures[key] = nil
       failedAt[key] = nil
     }
   }
@@ -292,101 +462,34 @@ final class MindMapsStore {
     return listed && read
   }
 
+  /// A read already on its way may predate what this one is for (a map started, a status read), so
+  /// it's dropped rather than joined.
   private static func reread<Value>(_ resource: Resource<Value>?) async -> Bool {
     guard let resource, resource.value != nil else {
       return true
     }
 
     let revision = resource.revision
+    resource.invalidate()
     await resource.refresh()
     return resource.revision != revision
   }
 }
 
-protocol MindMapsAPIClient: Sendable {
-  func list(token: String, goalId: String) async throws -> GoalMindMaps
-  func map(token: String, goalId: String, chapterId: String) async throws -> ChapterMindMap
-  func status(token: String, goalId: String, chapterId: String) async throws
-    -> ChapterMindMap.Status
-  func create(token: String, goalId: String, chapterId: String) async throws -> MindMapRequest
+/// A map to save, with what the Saved tab shows of it before the list is read again.
+struct SaveTarget: Equatable, Sendable {
+  let key: MindMapKey
+  let title: String
+  let chapterId: String?
 }
 
-struct MindMapsAPI: MindMapsAPIClient {
-  let clients: APIClientFactory
+struct PendingSave: Hashable, Sendable {
+  let session: AuthenticatedSession
+  let key: MindMapKey
+}
 
-  func list(token: String, goalId: String) async throws -> GoalMindMaps {
-    try await clients.perform(token: token) { client in
-      switch try await client.listGoalMindMaps(path: .init(goalId: goalId)) {
-      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  func map(token: String, goalId: String, chapterId: String) async throws -> ChapterMindMap {
-    try await clients.perform(token: token) { client in
-      switch try await client.getChapterMindMap(path: .init(goalId: goalId, chapterId: chapterId)) {
-      case .ok(let response): return try PracticeJSON.recode(try response.body.json)
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  func status(token: String, goalId: String, chapterId: String) async throws
-    -> ChapterMindMap.Status
-  {
-    try await clients.perform(token: token) { client in
-      switch try await client.getChapterMindMapStatus(
-        path: .init(goalId: goalId, chapterId: chapterId))
-      {
-      case .ok(let response):
-        return ChapterMindMap.Status(rawValue: try response.body.json.status.rawValue) ?? .failed
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  func create(token: String, goalId: String, chapterId: String) async throws -> MindMapRequest {
-    try await clients.perform(token: token) { client in
-      switch try await client.createChapterMindMapGeneration(
-        path: .init(goalId: goalId, chapterId: chapterId))
-      {
-      case .ok, .accepted, .unprocessableContent: return .read
-      case .code402(let response): return Self.refusal(try? response.body.json, status: 402)
-      case .forbidden(let response): return Self.refusal(try? response.body.json, status: 403)
-      case .tooManyRequests(let response): return Self.refusal(try? response.body.json, status: 429)
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  /// `PLUS_REQUIRED` is the map's own status, which the row reads; a limit names what ran out in
-  /// `details.limit.resource`.
-  private static func refusal(_ error: Components.Schemas._Error?, status: Int) -> MindMapRequest {
-    let refusal = voiceRefusal(status: status, error: error)
-
-    guard let limit = refusal.limit else {
-      return .read
-    }
-
-    let details = refusal.details?.value as? [String: (any Sendable)?]
-    let resource = ((details?["limit"] ?? nil) as? [String: (any Sendable)?])?["resource"] ?? nil
-
-    let ranOut: MindMapLimit.Resource =
-      switch resource as? String {
-      case "aiSpend": .aiSpend
-      case "lessonStart", "generatedLessons": .lessons
-      default: .mindMap
-      }
-
-    return .refused(MindMapLimit(limit: limit, resource: ranOut))
-  }
+struct SaveFailure: Equatable, Sendable {
+  let goalId: String
+  let key: MindMapKey
+  let session: AuthenticatedSession
 }

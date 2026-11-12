@@ -2,7 +2,7 @@
 
 import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { createContext, use } from "react";
-import { useServedState } from "../_utils/use-served-state";
+import { useRereadServed, useServedState } from "../_utils/use-served-state";
 import { type MindMapActions } from "../mind-maps/mind-map-actions";
 import { MindMapAside } from "../mind-maps/mind-map-aside";
 import { MindMapRowView } from "../mind-maps/mind-map-row";
@@ -30,6 +30,7 @@ function ChapterMapState({
 }) {
   const [view, setView] = useServedState(mindMap.view);
   const request = useMindMapRequest({ actions: mindMap.actions, onViewChange: setView, view });
+  useRereadServed(mindMap.view, request.reread);
 
   return (
     <ChapterMapContext value={{ plus: mindMap.plus, request, view }}>{children}</ChapterMapContext>

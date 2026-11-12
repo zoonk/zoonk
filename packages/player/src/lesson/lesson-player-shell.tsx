@@ -6,6 +6,7 @@ import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Activity, useRef, useState } from "react";
+import { type ScreenTurn } from "../components/screen-turn";
 import { PlayerAudioProvider } from "../player-audio-context";
 import { getPlayerStepAudioUrl } from "../player-step";
 import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
@@ -31,7 +32,7 @@ import { LessonStage } from "./lesson-stage";
 import { getScreenRef, useKeptScreens } from "./use-kept-screens";
 import { useLessonKeyboard } from "./use-lesson-keyboard";
 import { useRevealFeedback } from "./use-reveal-feedback";
-import { type ScreenTurn, useScreenTurn, useScreenTurns } from "./use-screen-turns";
+import { useScreenTurn, useScreenTurns } from "./use-screen-turns";
 import { useSwipeNavigation } from "./use-swipe-navigation";
 
 function getPromptAudioUrl(step: PlayableLibraryStep): string | null {

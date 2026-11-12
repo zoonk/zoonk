@@ -167,7 +167,9 @@ function useMindMapLimitMessage(limit: MindMapLimit): string {
   }
 
   if (limit.tier === "plus") {
-    return t("That's all the new mind maps for today. You can make more tomorrow.");
+    return limit.period === "month"
+      ? t("That's all the new mind maps for this month. You can make more next month.")
+      : t("That's all the new mind maps for today. You can make more tomorrow.");
   }
 
   return limit.period === "month"

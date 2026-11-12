@@ -98,10 +98,12 @@ export function toChapterMindMapView({
   facts,
   now,
   position,
+  saved,
 }: {
   facts: ChapterMapFacts;
   now: Date;
   position: number;
+  saved: boolean;
 }): ChapterMindMapView {
   const status = getMindMapStatus({ ...facts, now });
   const isReady = status === "ready";
@@ -112,6 +114,7 @@ export function toChapterMindMapView({
     lessonsToWrite: facts.lessonsToWrite,
     outline: isReady ? toMindMapOutline(facts.row?.structure) : null,
     position,
+    saved,
     status,
     title: facts.title,
   };

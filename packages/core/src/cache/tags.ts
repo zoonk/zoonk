@@ -90,3 +90,7 @@ export function getInstrumentWaitlistCacheTag(userId: string): string {
 export function getCertificatesCacheTag(userId: string): string {
   return `certificates:${userId}`;
 }
+
+export function getSavedMindMapsCacheTag(userId: string): string {
+  return `saved-mind-maps:${userId}`;
+}

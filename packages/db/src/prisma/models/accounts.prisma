@@ -73,6 +73,7 @@ model User {
   oauthAccessTokens     OauthAccessToken[]
   oauthConsents         OauthConsent[]
   studyReminder         StudyReminder?
+  savedMindMaps         SavedMindMap[]
   passkeys              Passkey[]
   proposedContentFixes  ContentFix[]              @relation("ContentFixProposer")
   decidedContentFixes   ContentFix[]              @relation("ContentFixDecider")

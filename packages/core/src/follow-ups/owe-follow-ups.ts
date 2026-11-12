@@ -21,8 +21,12 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.goalId;
     case "writeLesson":
       return followUp.input.lessonId;
+    // An admitted run is owed apart from an ask, so an ask from a write that read the map before
+    // the admission committed can't replace the run the learner was charged for.
     case "makeChapterMindMap":
-      return followUp.input.chapterId;
+      return followUp.input.launch
+        ? `${followUp.input.chapterId}:launch`
+        : followUp.input.chapterId;
     case "classifyMistakeCause":
       return followUp.input.mistakeId;
     case "findMistakePattern":

@@ -11,7 +11,7 @@ import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { getChapterMindMapToken } from "../mind-maps/chapter-mind-map-input";
+import { getChapterMindMapToken, toChapterMindMapInput } from "../mind-maps/chapter-mind-map-input";
 import { chapterMindMapWorkflow } from "../mind-maps/chapter-mind-map-workflow";
 import { alphabetReviewWorkflow } from "../quality/alphabet-review-workflow";
 import { sourceVisibilityWorkflow } from "../research/source-visibility-workflow";
@@ -88,11 +88,17 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
       return;
     }
     case "makeChapterMindMap": {
-      const making = await requestOwedMindMapStep({ ...followUp.input, userId });
+      const { chapterId, goalId, launch } = followUp.input;
 
-      if (making) {
-        await startOnce(chapterMindMapWorkflow, [making], getChapterMindMapToken(making.chapterId));
-      }
+      // Only a map's admission owes its launch, so an owed map without one asks first, and the
+      // launch it owes starts on the next pass.
+      await (launch
+        ? startOnce(
+            chapterMindMapWorkflow,
+            [toChapterMindMapInput({ chapterId, launch })],
+            getChapterMindMapToken(chapterId),
+          )
+        : requestOwedMindMapStep({ chapterId, goalId, userId }));
 
       return;
     }

@@ -4,13 +4,24 @@ import SwiftUI
 /// chapter ends, and on the Mind maps page. Only a tap makes a map; one on its way is followed
 /// until it's done.
 struct MindMapRow: View {
-  enum Place {
+  enum Place: Equatable {
     /// The chapter's page, where the row is the chapter's "Mind map".
     case chapter
     /// Where the chapter ends, named after it.
     case finish
-    /// The Mind maps page, named after the chapter, with its number.
+    /// The Mind maps page's index, named after the chapter, with its number.
     case library
+    /// The Mind maps page's "Not made yet" list. It mixes subjects without their headers, so a
+    /// row goes by its title alone, and it offers Create only while a new map can start.
+    case notMade(canStart: Bool)
+
+    /// The Mind maps page, which follows every map on its way itself.
+    var isMindMapsPage: Bool {
+      switch self {
+      case .library, .notMade: true
+      case .chapter, .finish: false
+      }
+    }
   }
 
   private enum Shown {
@@ -27,7 +38,7 @@ struct MindMapRow: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      if place == .library, shown == .ready {
+      if place.isMindMapsPage, shown == .ready {
         Button(action: open) {
           row.disclosureChevron()
         }
@@ -50,11 +61,17 @@ struct MindMapRow: View {
     .announcesStatus(waitLine)
     // Read only: a map on its way when the row showed, or once a tap started it, is followed
     // until its status changes or the connection drops; a newer read of the map starts it again.
-    .task(id: map.status.isOnItsWay && failure == nil) {
-      if map.status.isOnItsWay, failure == nil {
+    // The Mind maps page follows its whole list instead.
+    .task(id: !place.isMindMapsPage && map.status.isOnItsWay && failure == nil) {
+      if !place.isMindMapsPage, map.status.isOnItsWay, failure == nil {
         await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
+    .savesMindMap(
+      SaveTarget(
+        key: MindMapKey(kind: .chapter, targetId: map.chapterId), title: map.title,
+        chapterId: map.chapterId), goalId: goalId, server: map.saved,
+      isAvailable: place.isMindMapsPage && shown == .ready)
   }
 
   private var failure: MindMapRequestFailure? {
@@ -67,7 +84,15 @@ struct MindMapRow: View {
     } content: {
       words
     } end: {
-      action
+      HStack(spacing: 12) {
+        if place.isMindMapsPage, shown == .ready,
+          store.isSaved(MindMapKey(kind: .chapter, targetId: map.chapterId), server: map.saved)
+        {
+          SavedMark()
+        }
+
+        action
+      }
     }
   }
 
@@ -134,7 +159,7 @@ struct MindMapRow: View {
       }
 
       return Text("Mind map", tableName: "MindMaps", comment: "A chapter's mind map, on its page")
-    case .finish, .library:
+    case .finish, .library, .notMade:
       return Text(map.title)
     }
   }
@@ -154,7 +179,7 @@ struct MindMapRow: View {
             localized: "Mind map ready", table: "MindMaps",
             comment: "A finished chapter's map, drawn and ready to open"))
       ].compactMap(\.self)
-    case .library:
+    case .library, .notMade:
       // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
@@ -174,13 +199,13 @@ struct MindMapRow: View {
         default: waitLine ?? stateLine(ready: nil)
         }
 
-      return [
-        [
-          String(
-            localized: "Chapter \(map.position)", table: "MindMaps", comment: "A chapter's number"),
-          words,
-        ].compactMap(\.self).joinedFacts()
-      ]
+      let number =
+        place == .library
+        ? String(
+          localized: "Chapter \(map.position)", table: "MindMaps", comment: "A chapter's number")
+        : nil
+
+      return [[number, words].compactMap(\.self).joinedFacts()]
     }
   }
 
@@ -260,7 +285,7 @@ struct MindMapRow: View {
   @ViewBuilder
   private var action: some View {
     switch shown {
-    case .create:
+    case .create where place != .notMade(canStart: false):
       Button(action: create) {
         Text("Create", tableName: "MindMaps", comment: "Makes the chapter's mind map")
       }
@@ -272,15 +297,15 @@ struct MindMapRow: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
-    case .ready where place != .library:
+    case .ready where !place.isMindMapsPage:
       Button(action: open) {
         Text("Open", tableName: "MindMaps", comment: "Opens the chapter's mind map")
       }
       .buttonStyle(.outline)
       .controlSize(.small)
-    case .plusRequired where place != .library:
+    case .plusRequired where !place.isMindMapsPage:
       PlusMark()
-    case .ready, .plusRequired, .writingLessons, .drawing:
+    case .create, .ready, .plusRequired, .writingLessons, .drawing:
       EmptyView()
     }
   }
@@ -291,8 +316,17 @@ struct MindMapRow: View {
     }
   }
 
+  /// From the Mind maps page, into its Chapters deck at this map.
   private func open() {
-    router.open(.mindMap(chapterId: map.chapterId))
+    if place.isMindMapsPage {
+      router.open(
+        .mindMapStudy(
+          goalId: goalId, tab: .chapters,
+          start: MindMapPosition(
+            chapterId: map.chapterId, key: MindMapKey(kind: .chapter, targetId: map.chapterId))))
+    } else {
+      router.open(.mindMap(goalId: goalId, chapterId: map.chapterId))
+    }
   }
 }
 
@@ -367,6 +401,10 @@ extension MindMapLimit {
         localized:
           "You've made the mind map you can try without an account. Create a free account to make more.",
         table: "MindMaps", comment: "A guest made the one map they can without an account")
+    case (.plus, .month):
+      String(
+        localized: "That's all the new mind maps for this month. You can make more next month.",
+        table: "MindMaps", comment: "A Plus learner made this month's maps")
     case (.plus, _):
       String(
         localized: "That's all the new mind maps for today. You can make more tomorrow.",

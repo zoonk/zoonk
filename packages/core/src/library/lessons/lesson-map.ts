@@ -41,7 +41,11 @@ export const lessonMapSchema = z
           "`nested`: each idea is a level inside the next, smallest first. `hub`: ideas under the lesson's title",
       }),
   })
-  .strict();
+  .strict()
+  .meta({
+    description: "A small map of what the lesson teaches: its ideas, each in one complete sentence",
+    id: "LessonMap",
+  });
 
 export type LessonMap = z.infer<typeof lessonMapSchema>;
 

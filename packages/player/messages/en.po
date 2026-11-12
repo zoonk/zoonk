@@ -348,6 +348,7 @@ msgstr "{runtime} didn't load. Check your connection and try again."
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/mind-maps/mind-map-slides.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3377,6 +3378,7 @@ msgid "I don't know yet"
 msgstr "I don't know yet"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/mind-maps/mind-map-reader.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Next"
@@ -3758,6 +3760,61 @@ msgstr "You wrote <strong>{answer}</strong> on “<question></question>”"
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "You picked <strong>{answer}</strong> on “<question></question>”"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "More options"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "pyQIKJ"
+msgid "Start from the first map"
+msgstr "Start from the first map"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "lNec3q"
+msgid "Open chapter"
+msgstr "Open chapter"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "4E3hLR"
+msgid "Open lesson"
+msgstr "Open lesson"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "Done"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Mind maps"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "BgCJ3j"
+msgid "There are no maps to study here yet."
+msgstr "There are no maps to study here yet."
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "lvN_47"
+msgid "Previous map"
+msgstr "Previous map"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Its picture had mistakes, so here's the mind map as text."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "7FWazb"
+msgid "We couldn't reach the server. Check your connection."
+msgstr "We couldn't reach the server. Check your connection."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "WE1JdL"
+msgid "This map isn't available anymore."
+msgstr "This map isn't available anymore."
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

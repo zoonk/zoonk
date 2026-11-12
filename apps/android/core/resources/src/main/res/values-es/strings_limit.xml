@@ -20,6 +20,7 @@
   "limit_mind_maps_free_month": "cbc8052f45afdf7c8a0fcb73bacfed60a20c9c1cce34a895521aade6e044acf2",
   "limit_mind_maps_guest": "79e8363abefebdab204c7c07ea834d7021f9a8eab3f71e20d79dcfcf252d3568",
   "limit_mind_maps_plus": "837095a0c37c9b62e39e1cb39e9b14bfcb18864a429dd09f9dd67b8ac415b7d7",
+  "limit_mind_maps_plus_month": "920f4fbe45bf64ceeae573182402a72fee9337890a750c33b2dbd7401f288605",
   "limit_outlines_free_day": "c36f4a4c4637eeefaf57e45eb10f896177a6ebff6ffe6a7b2362c7d47e192a80",
   "limit_outlines_free_month": "c7e695f237f40476add2b30b223c45d7e943d9419757c46d54ee7d085e0db259",
   "limit_outlines_guest": "ddd4022e2d84d6696e16ea6818b9b96711a342e3a76c6770b772ba1f5ba56fa3",
@@ -45,6 +46,7 @@
     <string name="limit_lessons_free_day">Llegaste al límite de lecciones nuevas de hoy. Mañana podrás tomar más o puedes obtener Plus para seguir ahora.</string>
     <string name="limit_mind_maps_guest">Ya creaste el mapa mental que puedes probar sin una cuenta. Crea una cuenta gratis para hacer más.</string>
     <string name="limit_mind_maps_plus">Llegaste al límite de mapas mentales nuevos de hoy. Mañana podrás crear más.</string>
+    <string name="limit_mind_maps_plus_month">Llegaste al límite de mapas mentales nuevos de este mes. Puedes crear más el próximo mes.</string>
     <string name="limit_mind_maps_free_month">Llegaste al límite de mapas mentales nuevos de este mes. El próximo mes podrás crear más o puedes obtener Plus para seguir ahora.</string>
     <string name="limit_mind_maps_free_day">Llegaste al límite de mapas mentales nuevos de hoy. Mañana podrás crear más o puedes obtener Plus para seguir ahora.</string>
     <string name="limit_outlines_guest">Ya viste el tema que puedes consultar por adelantado sin una cuenta. Crea una cuenta gratis para ver más.</string>

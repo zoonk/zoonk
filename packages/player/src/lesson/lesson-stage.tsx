@@ -7,6 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect } from "react";
+import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
 import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../components/step-layouts";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
@@ -22,7 +23,6 @@ import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
-import { type ScreenTurn } from "./use-screen-turns";
 import { CHECK_BOUNDS } from "./use-step-grading";
 
 function NoticeLine({
@@ -151,12 +151,6 @@ function LessonCheckNote() {
 
 const PICTURES_AHEAD = 2;
 
-const TURN_CLASS: Record<ScreenTurn, string> = {
-  back: "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8 motion-safe:duration-base motion-safe:ease-out",
-  forward:
-    "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-base motion-safe:ease-out",
-};
-
 export function LessonScreenFrame({
   children,
   turn,
@@ -170,7 +164,7 @@ export function LessonScreenFrame({
 
   return (
     <div
-      className={cn("flex w-full flex-col", FILL_SCREEN_CLASS, turn && TURN_CLASS[turn])}
+      className={cn("flex w-full flex-col", FILL_SCREEN_CLASS, turn && SCREEN_TURN_CLASS[turn])}
       data-slot="lesson-screen"
       data-turn={turn ?? undefined}
     >

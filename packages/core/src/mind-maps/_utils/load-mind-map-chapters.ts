@@ -4,7 +4,7 @@ import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-vi
 import { loadExamPrepAccess, loadPlusOnlyLessonIds } from "../../sessions/_utils/plus-only-lessons";
 import { chapterLessonStats } from "./chapter-lesson-stats";
 import { type MindMapRow } from "./mind-map-view";
-import { planChapters } from "./plan-chapters";
+import { mindMapScopeChapters } from "./scope-chapters";
 
 type MindMapChapterRow = {
   canHaveMap: boolean;
@@ -28,11 +28,14 @@ export type MindMapChapterFacts = {
   /** Outside a language, with a lesson written or still to write. */
   canHaveMap: boolean;
   chapterId: string;
+  lessonIds: string[];
   lessonsToWrite: number;
   /** The learner's finish owes this map and no run has taken it yet. */
   owed: boolean;
+  /** Its lessons a free exam plan past its first week keeps for Plus. */
+  plusLessonIds: string[];
   plusRequired: boolean;
-  /** Internal plan order; display numbering must use loadChapterNumbering. */
+  /** Internal scope order; display numbering must use loadChapterNumbering. */
   position: number;
   row: MindMapRow | null;
   title: string;
@@ -56,7 +59,7 @@ function toMindMapRow(chapter: MindMapChapterRow): MindMapRow | null {
   };
 }
 
-/** The goal's learner-visible chapters in saved plan order, with what each map row needs. */
+/** The goal's learner-visible mind map scope, in its order, with what each map row needs. */
 function readChapterRows({
   chapterIds,
   goalId,
@@ -70,7 +73,7 @@ function readChapterRows({
     SELECT * FROM (
       SELECT
         pc.chapter_id AS "chapterId",
-        pc.plan_position AS "position",
+        pc.position AS "position",
         c.title,
         g.kind <> 'language' AND c.target_language IS NULL
           AND (stats.written OR stats.to_write > 0) AS "canHaveMap",
@@ -79,7 +82,7 @@ function readChapterRows({
         EXISTS (
           SELECT 1 FROM follow_ups f
           WHERE f.user_id = g.user_id AND f.kind = 'make_chapter_mind_map'
-            AND f.key = pc.chapter_id::text
+            AND f.input->>'chapterId' = pc.chapter_id::text
         ) AS "mapOwed",
         mm.status::text AS "mapStatus",
         mm.structure AS "mapStructure",
@@ -88,8 +91,8 @@ function readChapterRows({
         mm.image_height AS "mapImageHeight",
         mm.thumbnail_url AS "mapThumbnailUrl",
         mm.updated_at AS "mapUpdatedAt"
-      FROM (${planChapters(sql`g.id = ${goalId}::uuid`)}) pc
-      JOIN goals g ON g.id = pc.goal_id
+      FROM (${mindMapScopeChapters(goalId)}) pc
+      JOIN goals g ON g.id = ${goalId}::uuid
       JOIN library_chapters c ON c.id = pc.chapter_id
         AND (c.visibility = 'public' OR c.owner_id = g.user_id)
       CROSS JOIN LATERAL (${chapterLessonStats(sql`pc.chapter_id`)}) stats
@@ -100,8 +103,9 @@ function readChapterRows({
 }
 
 /**
- * Returns only visible chapters, in saved plan order. `readViewer` decides the Plus lock: a page's
- * display read, a fresh session check for a learner's tap, or the learner a workflow acts for.
+ * Returns only visible chapters of the goal's mind map scope, in its order. `readViewer` decides
+ * the Plus lock: a page's display read, a fresh session check for a learner's tap, or the learner
+ * a workflow acts for.
  */
 export async function loadMindMapChapters({
   chapterIds,
@@ -124,14 +128,20 @@ export async function loadMindMapChapters({
     userId: goal.userId,
   });
 
-  return chapters.map((chapter) => ({
-    canHaveMap: chapter.canHaveMap,
-    chapterId: chapter.chapterId,
-    lessonsToWrite: chapter.lessonsToWrite,
-    owed: chapter.mapOwed,
-    plusRequired: chapter.lessonIds.some((lessonId) => held.has(lessonId)),
-    position: chapter.position,
-    row: toMindMapRow(chapter),
-    title: chapter.title,
-  }));
+  return chapters.map((chapter) => {
+    const plusLessonIds = chapter.lessonIds.filter((lessonId) => held.has(lessonId));
+
+    return {
+      canHaveMap: chapter.canHaveMap,
+      chapterId: chapter.chapterId,
+      lessonIds: chapter.lessonIds,
+      lessonsToWrite: chapter.lessonsToWrite,
+      owed: chapter.mapOwed,
+      plusLessonIds,
+      plusRequired: plusLessonIds.length > 0,
+      position: chapter.position,
+      row: toMindMapRow(chapter),
+      title: chapter.title,
+    };
+  });
 }

@@ -21,6 +21,7 @@ import { toMindMapSrc } from "./_utils/mind-map-urls";
 import { useStateLines } from "./mind-map-copy";
 import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
 import { MindMapOutline } from "./mind-map-outline";
+import { type MindMapSave } from "./mind-map-save-button";
 import { MindMapDownloadLink, MindMapViewer } from "./mind-map-viewer";
 import { type MindMapRequest } from "./use-mind-map-request";
 
@@ -30,10 +31,12 @@ const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 function MindMapPicture({
   image,
   outline,
+  save,
   title,
 }: {
   image: MindMapImage;
   outline: Outline;
+  save: MindMapSave;
   title: string;
 }) {
   const t = useExtracted();
@@ -77,6 +80,7 @@ function MindMapPicture({
         onOpenChange={setOpen}
         open={open}
         outline={outline}
+        save={save}
         title={title}
       />
     </Surface>
@@ -91,7 +95,7 @@ function MindMapText({ outline }: { outline: Outline }) {
       <p className={STATE_TEXT_CLASS}>
         {t("Its picture had mistakes, so here's the mind map as text.")}
       </p>
-      <MindMapOutline outline={outline} />
+      <MindMapOutline outline={outline} titled />
     </div>
   );
 }
@@ -208,7 +212,12 @@ export function MindMapAside({
 
   if (shown === "ready" && view.outline) {
     return view.image ? (
-      <MindMapPicture image={view.image} outline={view.outline} title={view.title} />
+      <MindMapPicture
+        image={view.image}
+        outline={view.outline}
+        save={request.save}
+        title={view.title}
+      />
     ) : (
       <MindMapText outline={view.outline} />
     );

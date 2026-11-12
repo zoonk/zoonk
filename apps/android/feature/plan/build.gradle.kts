@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(project(":feature:account"))
+    implementation(project(":feature:activities"))
     implementation(project(":feature:conversation"))
 
     implementation(libs.androidx.compose.material3.adaptive)

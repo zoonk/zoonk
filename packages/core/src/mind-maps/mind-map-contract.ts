@@ -82,6 +82,7 @@ export const chapterMindMapSchema = z
         description:
           "The chapter's number in its subject, as the subject's page lists it; in the plan when the goal's subjects have no pages",
       }),
+    saved: z.boolean().meta({ description: "The learner saved this map to study again" }),
     status: mindMapStatusSchema,
     title: z.string().meta({ description: "The chapter's title" }),
   })
@@ -112,17 +113,204 @@ const goalMindMapSchema = chapterMindMapSchema
   })
   .meta({ id: "GoalMindMap" });
 
+const savedMindMapKindSchema = z.enum(["chapter", "lesson"]).meta({ id: "SavedMindMapKind" });
+
+const lessonMapGroupSchema = z
+  .object({
+    chapterId: uuidSchema(),
+    count: z
+      .int()
+      .min(1)
+      .meta({
+        description:
+          "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists",
+      }),
+    lessonIds: z
+      .array(uuidSchema())
+      .meta({
+        description:
+          "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were",
+      }),
+    locked: z
+      .int()
+      .min(0)
+      .meta({
+        description: "How many of them a free exam plan past its first week keeps for Plus",
+      }),
+  })
+  .meta({ id: "LessonMapGroup" });
+
+const savedMindMapSchema = z
+  .object({
+    available: z
+      .boolean()
+      .meta({
+        description:
+          "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope that isn't locked. False when it can no longer open here (its chapter left the plan, its content went, it's locked for Plus); list those last, under no longer available, with a way to remove them",
+      }),
+    chapterId: uuidSchema()
+      .nullable()
+      .meta({
+        description:
+          "The chapter it opens in: the chapter itself, or for a lesson the first chapter of this goal's scope that holds it. Null when no chapter of the scope does",
+      }),
+    kind: savedMindMapKindSchema,
+    targetId: uuidSchema().meta({ description: "The chapter's or the lesson's id" }),
+    title: z
+      .string()
+      .meta({ description: "Its title now, or as it was when saved once it can no longer open" }),
+  })
+  .meta({ id: "SavedMindMap" });
+
+const mindMapAllowanceStopSchema = z
+  .object({
+    period: z
+      .enum(["day", "month", "total"])
+      .nullable()
+      .meta({
+        description:
+          "Which of the learner's limits ran out; null for `slowDown` and `signUpRequired`",
+      }),
+    reason: z
+      .enum(["limitReached", "slowDown", "signUpRequired"])
+      .meta({
+        description:
+          "`limitReached`: a mind map limit or the day's AI budget ran out. `slowDown`: try again after `resetsAt`. `signUpRequired`: a guest must create an account to make more",
+      }),
+    resetsAt: z.iso
+      .datetime()
+      .nullable()
+      .meta({
+        description:
+          "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
+      }),
+    resource: z
+      .enum(["aiSpend", "mindMap"])
+      .nullable()
+      .meta({ description: "What ran out: the learner's mind maps, or the day's AI budget" }),
+  })
+  .meta({ id: "MindMapAllowanceStop" });
+
+export type MindMapAllowanceStop = z.infer<typeof mindMapAllowanceStopSchema>;
+
+const mindMapCreateOfferSchema = z
+  .object({
+    eligible: z
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written and that aren't locked: what `POST /goals/{goalId}/mind-maps/generations` makes",
+      }),
+    needLessons: z
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "Chapters without a map whose lessons aren't all written yet. Making them all at once doesn't write lessons: each chapter's own `POST .../mind-map/generations` writes them first",
+      }),
+    startable: z
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "How many of the `eligible` chapters one request would start now, in course order, within the learner's current allowance. A failed map the learner already claimed starts again for free, so it counts even when `stop` is set. 0 with `stop` set means nothing can start now",
+      }),
+    stop: mindMapAllowanceStopSchema
+      .nullable()
+      .meta({
+        description:
+          "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A chapter offers to create its map only while this is null, or when its map failed (the retry is free)",
+      }),
+  })
+  .meta({ id: "MindMapCreateOffer" });
+
+export type MindMapCreateOffer = z.infer<typeof mindMapCreateOfferSchema>;
+
 export const goalMindMapsSchema = z
   .object({
     chapters: z
       .array(goalMindMapSchema)
-      .meta({ description: "Every chapter of the plan that can have a map, in plan order" }),
+      .meta({
+        description:
+          "Every chapter of the goal's scope that can have a map, in syllabus order: the plan's, and for a goal that follows a course every chapter of that course",
+      }),
+    createOffer: mindMapCreateOfferSchema,
+    firstTab: z
+      .enum(["chapters", "lessons"])
+      .meta({
+        description:
+          "The tab to open first: `chapters` when a chapter map is `ready`, else `lessons` when a lesson map opens, else `chapters`",
+      }),
     goal: z.object({ displayName: z.string(), id: uuidSchema(), title: z.string() }),
+    lessonGroups: z
+      .array(lessonMapGroupSchema)
+      .meta({
+        description:
+          "Each listed chapter with lesson maps, in the order of `chapters`; chapters without any are left out. A lesson two chapters share is listed once, under the first",
+      }),
+    saved: z
+      .array(savedMindMapSchema)
+      .meta({
+        description:
+          "The Saved tab: every saved map of this goal's scope, then this goal's own saves that can no longer open (`available` false). Syllabus order: chapter maps and each chapter's lesson maps in chapter order, then the unavailable ones, newest save first",
+      }),
   })
   .meta({ id: "GoalMindMaps" });
 
 export type GoalMindMapsView = z.infer<typeof goalMindMapsSchema>;
 export type GoalMindMapView = GoalMindMapsView["chapters"][number];
+export type LessonMapGroup = z.infer<typeof lessonMapGroupSchema>;
+export type SavedMindMapView = z.infer<typeof savedMindMapSchema>;
+
+export const saveMindMapSchema = z
+  .object({
+    kind: savedMindMapKindSchema,
+    saved: z.boolean().meta({ description: "True saves it, false removes it" }),
+    targetId: uuidSchema().meta({ description: "The chapter's or the lesson's id" }),
+  })
+  .meta({ id: "SaveMindMap" });
+
+export type SaveMindMapInput = z.infer<typeof saveMindMapSchema>;
+
+export const savedMindMapStateSchema = saveMindMapSchema
+  .extend({ saved: z.boolean().meta({ description: "Whether it's saved now" }) })
+  .meta({ id: "SavedMindMapState" });
+
+export const goalMindMapGenerationsSchema = z
+  .object({
+    accepted: z
+      .array(uuidSchema())
+      .meta({
+        description:
+          "Chapters whose maps this request started, in course order; each counted once toward the learner's mind maps",
+      }),
+    joined: z
+      .array(uuidSchema())
+      .meta({
+        description:
+          "Chapters whose maps were already ready or on their way, from any learner; nothing counted",
+      }),
+    stop: mindMapAllowanceStopSchema
+      .nullable()
+      .meta({ description: "Why `unstarted` chapters with reason `allowance` weren't started" }),
+    unstarted: z
+      .array(
+        z.object({
+          chapterId: uuidSchema(),
+          reason: z
+            .enum(["allowance", "needsLessons", "plusRequired"])
+            .meta({
+              description:
+                "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them. `plusRequired`: locked for Plus",
+            }),
+        }),
+      )
+      .meta({ description: "Chapters without a ready map that this request didn't start" }),
+  })
+  .meta({ id: "GoalMindMapGenerations" });
+
+export type GoalMindMapGenerations = z.infer<typeof goalMindMapGenerationsSchema>;
 
 /** A goal whose plan is made of chapters has a Mind maps page from its first day. */
 export function hasMindMapsPage(kind: GoalKind): boolean {

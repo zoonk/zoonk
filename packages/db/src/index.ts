@@ -131,6 +131,7 @@ export {
   PlanItemStatus,
   PlanSetupTask,
   ResearchUploadReason,
+  SavedMindMapKind,
   SourceKind,
   StepKind,
   StudyBlockKind,

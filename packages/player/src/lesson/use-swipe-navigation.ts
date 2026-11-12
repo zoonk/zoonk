@@ -11,10 +11,13 @@ const SWIPE_MAX_MS = 800;
 
 const ZOOMED_SCALE = 1.01;
 
+/** For a button that fills the screen, such as a picture a tap opens: a swipe may start on it. */
+export const SWIPE_THROUGH = { "data-swipe-through": "" } as const;
+
 const INTERACTIVE_SELECTOR = [
   "a",
   "audio",
-  "button:not(:disabled)",
+  "button:not(:disabled, [data-swipe-through])",
   "input:not(:disabled)",
   "label",
   "select:not(:disabled)",

@@ -91,6 +91,8 @@ class AppLinkTest {
         setOf(
             AppRoute.QuestionBlock::class.java,
             AppRoute.MindMap::class.java,
+            // The study reader opens from the Mind maps page; no link leads to it.
+            AppRoute.MindMapStudy::class.java,
             // The API reads courses, chapters and lessons by id; main's catalog URLs carry slugs.
             AppRoute.CatalogCourse::class.java,
             AppRoute.CatalogChapter::class.java,

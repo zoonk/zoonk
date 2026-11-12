@@ -158,6 +158,21 @@ async function moveStepExampleLines({ guestUserId, transaction, userId }: GuestL
 }
 
 /** Each move deletes and reinserts in one statement, so concurrent account writes resolve at the unique constraint. */
+async function moveSavedMindMaps({ guestUserId, transaction, userId }: GuestLinkContext) {
+  await transaction.$executeRaw`
+    WITH guest_rows AS (
+      DELETE FROM saved_mind_maps
+      WHERE user_id = ${guestUserId}::uuid
+      RETURNING *
+    )
+    INSERT INTO saved_mind_maps (id, user_id, kind, target_id, title, goal_id, created_at)
+    SELECT id, ${userId}::uuid, kind, target_id, title, goal_id, created_at
+    FROM guest_rows
+    ORDER BY kind, target_id
+    ON CONFLICT (user_id, kind, target_id) DO NOTHING
+  `;
+}
+
 export async function moveKeyedRows(context: GuestLinkContext) {
   await moveLearnerSkills(context);
   await moveMilestones(context);
@@ -169,4 +184,5 @@ export async function moveKeyedRows(context: GuestLinkContext) {
   await moveGoalUnderstandings(context);
   await movePronunciationReviews(context);
   await moveStepExampleLines(context);
+  await moveSavedMindMaps(context);
 }

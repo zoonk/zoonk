@@ -2,6 +2,7 @@ import { type TeachingStepKind } from "@zoonk/core/lesson-player/playable-lesson
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { activityExpectedSchema } from "@zoonk/core/library/activities/expected-answer";
 import { toleranceSchema } from "@zoonk/core/library/activities/schemas";
+import { lessonMapSchema } from "@zoonk/core/library/lessons/map";
 import { stepMarksSchema } from "@zoonk/core/library/marks/contract";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
@@ -11,7 +12,6 @@ import { baseMapViewSchema } from "@zoonk/player/base-map-view";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { serializedStepSchema } from "./language-exercise";
-import { lessonMapResponseSchema } from "./lesson-map";
 
 const stepBaseShape = {
   id: uuidSchema(),
@@ -197,7 +197,7 @@ export const playableLibraryLessonResponseSchema = z
         level: z.enum(CourseLevel),
         skills: z.array(lessonSkillSchema),
         steps: z.array(playableStepSchema),
-        summary: lessonMapResponseSchema
+        summary: lessonMapSchema
           .nullable()
           .meta({
             description:

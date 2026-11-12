@@ -4,7 +4,10 @@ import { type ChapterMindMapView, type MindMapStatus } from "@zoonk/core/mind-ma
 import { useState, useTransition } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
+import { useReadOrder } from "../_utils/use-read-order";
 import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-actions";
+import { type MindMapSave } from "./mind-map-save-button";
+import { useMindMapSaves } from "./use-mind-map-saves";
 
 const DRAWING_POLL_MS = 4000;
 const WRITING_POLL_MS = 15_000;
@@ -31,13 +34,34 @@ export function useMindMapRequest({
 }) {
   const [local, setLocal] = useState<Local | null>(null);
   const [localView, setLocalView] = useState(view);
+  const [savedNow, setSavedNow] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
+  const order = useReadOrder();
   const { chapterId, status } = view;
 
   if (localView !== view) {
     setLocalView(view);
     setLocal(null);
+    setSavedNow(null);
   }
+
+  const saves = useMindMapSaves({
+    onSaved: (_target, saved) => {
+      order.supersedeReads();
+      setSavedNow(saved);
+    },
+    save: actions.save,
+  });
+
+  const saveState = {
+    saved: savedNow ?? view.saved,
+    target: { kind: "chapter", targetId: chapterId },
+  } as const;
+
+  const save: MindMapSave = {
+    onToggle: () => saves.toggle(saveState),
+    saved: saves.isSaved(saveState),
+  };
 
   const showStatus = (next: MindMapStatus) => {
     if (next !== status) {
@@ -45,10 +69,11 @@ export function useMindMapRequest({
     }
   };
 
-  const showReady = async (): Promise<boolean> => {
+  const showRead = async (): Promise<boolean> => {
+    const read = order.startRead();
     const next = await actions.read(chapterId).catch(() => null);
 
-    if (next) {
+    if (next && read.isLatest()) {
       onViewChange(next);
     }
 
@@ -60,9 +85,14 @@ export function useMindMapRequest({
     intervalMs: status === "writingLessons" ? WRITING_POLL_MS : DRAWING_POLL_MS,
     key: status,
     onPoll: async () => {
+      const read = order.startRead();
       const next = await actions.readStatus(chapterId);
 
-      if (next === null || (next === "ready" && !(await showReady()))) {
+      if (!read.isLatest()) {
+        return;
+      }
+
+      if (next === null || (next === "ready" && !(await showRead()))) {
         throw new Error("The map couldn't be read.");
       }
 
@@ -75,12 +105,14 @@ export function useMindMapRequest({
   });
 
   const settle = async (outcome: MindMapRequestOutcome) => {
+    order.supersedeReads();
+
     if (outcome.status === "refused") {
       setLocal({ limit: outcome.limit, shown: "refused" });
       return;
     }
 
-    if (outcome.status === "failed" || (outcome.status === "ready" && !(await showReady()))) {
+    if (outcome.status === "failed" || (outcome.status === "ready" && !(await showRead()))) {
       setLocal({ shown: "unreachable" });
       return;
     }
@@ -106,7 +138,9 @@ export function useMindMapRequest({
     create,
     isPending,
     limit: local?.limit ?? null,
+    reread: () => void showRead(),
     retry: isStuck ? poll.restart : create,
+    save,
     shown: isStuck ? "unreachable" : (local?.shown ?? status),
   };
 }

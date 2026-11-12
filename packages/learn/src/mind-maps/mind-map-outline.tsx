@@ -26,13 +26,22 @@ function Comparison({ comparison }: { comparison: NonNullable<Outline["compariso
   );
 }
 
-export function MindMapOutline({ className, outline }: { className?: string; outline: Outline }) {
+export function MindMapOutline({
+  className,
+  outline,
+  titled = false,
+}: {
+  className?: string;
+  outline: Outline;
+  /** Starts with the map's title, where nothing above the outline shows it whole. */
+  titled?: boolean;
+}) {
   const t = useExtracted();
 
   return (
     <div className={cn("flex flex-col gap-5", className)} data-slot="mind-map-outline">
       <div className="flex flex-col gap-1">
-        <h3 className="text-base font-semibold text-balance">{outline.title}</h3>
+        {titled && <h3 className="text-base font-semibold text-balance">{outline.title}</h3>}
         <p className="text-muted-foreground text-sm text-pretty">{outline.centralIdea}</p>
       </div>
 

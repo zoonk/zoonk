@@ -348,6 +348,7 @@ msgstr "{runtime} yüklenemedi. Bağlantını kontrol edip tekrar dene."
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/mind-maps/mind-map-slides.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3377,6 +3378,7 @@ msgid "I don't know yet"
 msgstr "Henüz bilmiyorum"
 
 #: src/lesson/lesson-action-bar.tsx
+#: src/mind-maps/mind-map-reader.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Devam et"
@@ -3758,6 +3760,61 @@ msgstr "<strong>{answer}</strong> cevabını “<question></question>” sorusun
 msgctxt "x-V0mZ"
 msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "<strong>{answer}</strong> cevabını “<question></question>” sorusunda seçtin"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "Diğer seçenekler"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "pyQIKJ"
+msgid "Start from the first map"
+msgstr "İlk haritadan başla"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "lNec3q"
+msgid "Open chapter"
+msgstr "Üniteyi aç"
+
+#: src/mind-maps/mind-map-reader-menu.tsx
+msgctxt "4E3hLR"
+msgid "Open lesson"
+msgstr "Dersi aç"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "JXdbo8"
+msgid "Done"
+msgstr "Tamamlandı"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Zihin haritaları"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "BgCJ3j"
+msgid "There are no maps to study here yet."
+msgstr "Burada henüz çalışabileceğin bir harita yok."
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "lvN_47"
+msgid "Previous map"
+msgstr "Önceki haritaya dön"
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "Vxnu0A"
+msgid "Its picture had mistakes, so here's the mind map as text."
+msgstr "Görselde hatalar vardı, bu yüzden zihin haritasını metin olarak gösteriyoruz."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "7FWazb"
+msgid "We couldn't reach the server. Check your connection."
+msgstr "Sunucuya ulaşamadık. Bağlantını kontrol et."
+
+#: src/mind-maps/mind-map-slides.tsx
+msgctxt "WE1JdL"
+msgid "This map isn't available anymore."
+msgstr "Bu harita artık kullanılamıyor."
 
 #: src/questions/ask-tutor.tsx
 msgctxt "H7C1B-"

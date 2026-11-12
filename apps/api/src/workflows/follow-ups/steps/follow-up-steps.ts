@@ -8,10 +8,6 @@ import { requestLessonGenerationFor } from "@zoonk/core/lookahead/request-lesson
 import { requestChapterMindMapFor } from "@zoonk/core/mind-maps/request";
 import { type LessonContentInput } from "../../lessons/lesson-content-workflow";
 import { requestLiveLessonWriting } from "../../lessons/lesson-writing-request";
-import {
-  type ChapterMindMapInput,
-  toChapterMindMapInput,
-} from "../../mind-maps/chapter-mind-map-input";
 
 export async function listFollowUpsStep(
   userId: string,
@@ -54,19 +50,13 @@ export async function requestLessonWritingStep({
     : null;
 }
 
-/** An owed map passes the learner's own admission, as their tap would; null when there's nothing to start. */
-export async function requestOwedMindMapStep({
-  chapterId,
-  goalId,
-  userId,
-}: {
+/** An owed map passes the learner's own admission, as their tap would, which owes its run once admitted. */
+export async function requestOwedMindMapStep(input: {
   chapterId: string;
   goalId: string;
   userId: string;
-}): Promise<ChapterMindMapInput | null> {
+}): Promise<void> {
   "use step";
 
-  const request = await requestChapterMindMapFor({ chapterId, goalId, userId });
-
-  return request.status === "start" ? toChapterMindMapInput({ chapterId, request }) : null;
+  await requestChapterMindMapFor(input);
 }

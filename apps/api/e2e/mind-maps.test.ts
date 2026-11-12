@@ -3,8 +3,11 @@ import { request } from "@playwright/test";
 import {
   chapterMindMapSchema,
   chapterMindMapStatusSchema,
+  goalMindMapGenerationsSchema,
   goalMindMapsSchema,
+  savedMindMapStateSchema,
 } from "@zoonk/core/mind-maps/contract";
+import { chapterLessonMapsSchema } from "@zoonk/core/mind-maps/lesson-maps-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
@@ -23,6 +26,19 @@ import { readBody } from "./helpers/response";
 
 const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
+
+const STRUCTURE = {
+  branches: ["Nucleus", "Membrane", "Mitochondria"].map((title) => ({
+    drawing: title,
+    explanation: `What the ${title} does`,
+    points: [title],
+    title,
+  })),
+  centralIdea: "A cell is made of parts",
+  comparison: null,
+  summary: "Each part of a cell has a job",
+  title: "Cell parts",
+};
 
 async function createGoal(userId: string) {
   const suffix = randomUUID().slice(0, 6);
@@ -58,7 +74,7 @@ async function createGoal(userId: string) {
     }),
   ]);
 
-  return { current, currentLesson, finished, goal };
+  return { current, currentLesson, finished, finishedLesson, goal };
 }
 
 test.describe("Mind maps API", () => {
@@ -111,31 +127,46 @@ test.describe("Mind maps API", () => {
     const finishedPath = `/v1/goals/${goal.id}/chapters/${finished.id}/mind-map`;
     const currentPath = `/v1/goals/${goal.id}/chapters/${current.id}/mind-map`;
 
-    const listed = (status: { current: string; finished: string }) => ({
-      chapters: [
-        {
-          chapterId: finished.id,
-          image: null,
-          lessonsToWrite: 0,
-          outline: null,
-          position: 1,
-          status: status.finished,
-          subject: null,
-          title: finished.title,
+    const listed = (status: { current: string; finished: string }) => {
+      const before = status.finished === "available";
+
+      return {
+        chapters: [
+          {
+            chapterId: finished.id,
+            image: null,
+            lessonsToWrite: 0,
+            outline: null,
+            position: 1,
+            saved: false,
+            status: status.finished,
+            subject: null,
+            title: finished.title,
+          },
+          {
+            chapterId: current.id,
+            image: null,
+            lessonsToWrite: 1,
+            outline: null,
+            position: 2,
+            saved: false,
+            status: status.current,
+            subject: null,
+            title: current.title,
+          },
+        ],
+        createOffer: {
+          eligible: before ? 1 : 0,
+          needLessons: before ? 1 : 0,
+          startable: before ? 1 : 0,
+          stop: null,
         },
-        {
-          chapterId: current.id,
-          image: null,
-          lessonsToWrite: 1,
-          outline: null,
-          position: 2,
-          status: status.current,
-          subject: null,
-          title: current.title,
-        },
-      ],
-      goal: { displayName: "Cell biology", id: goal.id, title: "Cells" },
-    });
+        firstTab: "chapters",
+        goal: { displayName: "Cell biology", id: goal.id, title: "Cells" },
+        lessonGroups: [],
+        saved: [],
+      };
+    };
 
     await expect(
       readBody({ response: await apiContext.get(finishedPath), schema: chapterMindMapSchema }),
@@ -145,6 +176,7 @@ test.describe("Mind maps API", () => {
       lessonsToWrite: 0,
       outline: null,
       position: 1,
+      saved: false,
       status: "available",
       title: finished.title,
     });
@@ -156,26 +188,21 @@ test.describe("Mind maps API", () => {
       }),
     ).resolves.toStrictEqual(listed({ current: "available", finished: "available" }));
 
-    const writing = await apiContext.post(`${currentPath}/generations`);
-
-    const writingBody = await readBody({
-      response: writing,
-      schema: mindMapGenerationSchema,
-      status: ACCEPTED,
-    });
-
-    expect(writingBody).toStrictEqual({
-      generationId: expect.any(String),
-      status: "writingLessons",
-    });
-
-    expect(writing.headers().location).toBe(`/v1/generations/${writingBody.generationId}`);
-
-    const drawing = await apiContext.post(`${finishedPath}/generations`);
+    await expect(
+      readBody({
+        response: await apiContext.post(`${currentPath}/generations`),
+        schema: mindMapGenerationSchema,
+        status: ACCEPTED,
+      }),
+    ).resolves.toStrictEqual({ generationId: null, status: "writingLessons" });
 
     await expect(
-      readBody({ response: drawing, schema: mindMapGenerationSchema, status: ACCEPTED }),
-    ).resolves.toStrictEqual({ generationId: expect.any(String), status: "drawing" });
+      readBody({
+        response: await apiContext.post(`${finishedPath}/generations`),
+        schema: mindMapGenerationSchema,
+        status: ACCEPTED,
+      }),
+    ).resolves.toStrictEqual({ generationId: null, status: "drawing" });
 
     await expect(
       readBody({
@@ -211,6 +238,86 @@ test.describe("Mind maps API", () => {
         schema: goalMindMapsSchema,
       }),
     ).resolves.toStrictEqual(listed({ current: "writingLessons", finished: "drawing" }));
+
+    await apiContext.dispose();
+  });
+
+  test("makes every chapter map at once, lists lesson maps, and saves a ready map", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "mind-map-study",
+    });
+
+    const { current, finished, finishedLesson, goal } = await createGoal(user.id);
+    const lessonMap = { ideas: [{ text: "A cell has parts." }] };
+
+    await prisma.lesson.update({ data: { summary: lessonMap }, where: { id: finishedLesson.id } });
+
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/chapters/${finished.id}/lesson-maps`),
+        schema: chapterLessonMapsSchema,
+      }),
+    ).resolves.toStrictEqual({
+      chapter: { id: finished.id, position: 1, title: finished.title },
+      lessons: [
+        {
+          lessonId: finishedLesson.id,
+          locked: false,
+          map: { ideas: [{ about: null, icon: null, text: "A cell has parts." }], shape: "hub" },
+          position: 1,
+          saved: false,
+          title: finishedLesson.title,
+        },
+      ],
+    });
+
+    await expect(
+      readBody({
+        response: await apiContext.post(`/v1/goals/${goal.id}/mind-maps/generations`),
+        schema: goalMindMapGenerationsSchema,
+        status: ACCEPTED,
+      }),
+    ).resolves.toStrictEqual({
+      accepted: [finished.id],
+      joined: [],
+      stop: null,
+      unstarted: [{ chapterId: current.id, reason: "needsLessons" }],
+    });
+
+    await prisma.chapterMindMap.update({
+      data: { status: "completed", structure: STRUCTURE },
+      where: { chapterId: finished.id },
+    });
+
+    const saving = { kind: "chapter", saved: true, targetId: finished.id };
+
+    await expect(
+      readBody({
+        response: await apiContext.post(`/v1/goals/${goal.id}/mind-maps/saved`, { data: saving }),
+        schema: savedMindMapStateSchema,
+      }),
+    ).resolves.toStrictEqual(saving);
+
+    await expect(
+      readBody({
+        response: await apiContext.get(`/v1/goals/${goal.id}/mind-maps`),
+        schema: goalMindMapsSchema,
+      }),
+    ).resolves.toMatchObject({
+      lessonGroups: [
+        { chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id], locked: 0 },
+      ],
+      saved: [
+        {
+          available: true,
+          chapterId: finished.id,
+          kind: "chapter",
+          targetId: finished.id,
+          title: finished.title,
+        },
+      ],
+    });
 
     await apiContext.dispose();
   });

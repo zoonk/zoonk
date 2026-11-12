@@ -3,12 +3,6 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
-import { startOnce } from "@/workflows/_shared/run-token";
-import {
-  getChapterMindMapToken,
-  toChapterMindMapInput,
-} from "@/workflows/mind-maps/chapter-mind-map-input";
-import { chapterMindMapWorkflow } from "@/workflows/mind-maps/chapter-mind-map-workflow";
 import { requestChapterMindMap } from "@zoonk/core/mind-maps/request";
 import { NextResponse } from "next/server";
 
@@ -64,20 +58,7 @@ async function createMindMapGeneration(
     return NextResponse.json({ generationId: null, status: "ready" });
   }
 
-  if (result.status !== "start") {
-    return onItsWay(result);
-  }
-
-  const generationId = await startOnce(
-    chapterMindMapWorkflow,
-    [toChapterMindMapInput({ chapterId: path.chapterId, request: result })],
-    getChapterMindMapToken(path.chapterId),
-  );
-
-  return onItsWay({
-    generationId,
-    status: result.lessonIds.length > 0 ? "writingLessons" : "drawing",
-  });
+  return onItsWay(result);
 }
 
 export const POST = withApiErrorBoundary(createMindMapGeneration);

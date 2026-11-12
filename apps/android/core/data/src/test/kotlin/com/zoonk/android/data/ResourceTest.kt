@@ -1,6 +1,7 @@
 package com.zoonk.android.data
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -23,8 +24,10 @@ class ResourceTest {
     private val bia = AuthenticatedSession("bia", "token-b", "local-b")
     private val clock = TestTimeSource()
 
-    private fun TestScope.cache(session: SessionSource) =
-        AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), clock)
+    private fun TestScope.cache(
+        session: SessionSource,
+        dispatcher: CoroutineDispatcher = StandardTestDispatcher(testScheduler),
+    ) = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher), clock)
 
     @Test
     fun cachedContentStaysVisibleButAnEditorWaitsForAFreshReadIncludingAfterFailure() =
@@ -114,8 +117,7 @@ class ResourceTest {
     @Test
     fun aReadThatAnswersWithoutWaitingFinishes() =
         runTest {
-            val scope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
-            val resource = AppCache(FakeSession(ana), scope, clock).resource<String>(Audience.SignedIn) { "today" }
+            val resource = cache(FakeSession(ana), UnconfinedTestDispatcher(testScheduler)).resource<String>(Audience.SignedIn) { "today" }
             resource.refresh()
             assertEquals(LoadState.Loaded("today"), resource.state.value)
         }
@@ -209,6 +211,80 @@ class ResourceTest {
 
             hidden.load()
             assertEquals(LoadState.Loaded(2), hidden.state.value)
+            screen.cancel()
+        }
+
+    @Test
+    fun aLoadAnInvalidationInterruptsWaitsForTheNewRead() =
+        runTest {
+            for (dispatcher in listOf(StandardTestDispatcher(testScheduler), UnconfinedTestDispatcher(testScheduler))) {
+                val cache = cache(FakeSession(ana), dispatcher)
+                var reads = 0
+                val firstRead = CompletableDeferred<Unit>()
+                val resource =
+                    cache.resource<Int>(Audience.SignedIn, setOf(DataDomain.UserProgress)) {
+                        if (++reads == 1) firstRead.await()
+                        reads
+                    }
+
+                val load = launch(dispatcher) { resource.load() }
+                runCurrent()
+                cache.invalidate(setOf(DataDomain.UserProgress))
+                load.join()
+
+                assertEquals("On $dispatcher", LoadState.Loaded(2), resource.state.value)
+                assertEquals("On $dispatcher", 2, reads)
+            }
+        }
+
+    @Test
+    fun aReplaceInterruptingARefreshStartsNoReadThatCouldUndoIt() =
+        runTest {
+            // Resumes the waiting refresh inside the replace's cancel, as the app's Main.immediate does.
+            val immediate = UnconfinedTestDispatcher(testScheduler)
+            val cache = cache(FakeSession(ana), immediate)
+            var reads = 0
+            val server = CompletableDeferred<Unit>()
+            val profile =
+                cache.resource<String>(Audience.SignedIn) {
+                    val read = ++reads
+                    if (read > 1) server.await()
+                    "read $read"
+                }
+            profile.load()
+
+            val refresh = launch(immediate) { profile.refresh() }
+            profile.replace("sounds off")
+            server.complete(Unit)
+            refresh.join()
+
+            assertEquals(LoadState.Loaded("sounds off"), profile.state.value)
+            assertEquals(2, reads)
+        }
+
+    @Test
+    fun aSessionChangeWhileAShownReadIsOnItsWayLoadsTheNewSessionsValue() =
+        runTest {
+            val immediate = UnconfinedTestDispatcher(testScheduler)
+            val session = FakeSession(ana)
+            val cache = cache(session, immediate)
+            val anasRead = CompletableDeferred<Unit>()
+            val fetchedFor = mutableListOf<String?>()
+            val today =
+                cache.resource<String>(Audience.SignedIn) { s ->
+                    fetchedFor += s?.accountId
+                    if (s == ana) anasRead.await()
+                    "today for ${s?.accountId}"
+                }
+            val screen = launch(immediate) { today.shown.collect {} }
+
+            session.session = bia
+            cache.followSession()
+            anasRead.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(LoadState.Loaded("today for bia"), today.state.value)
+            assertEquals(listOf("ana", "bia"), fetchedFor)
             screen.cancel()
         }
 

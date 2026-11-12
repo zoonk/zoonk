@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -60,7 +61,9 @@ async function createLastLessonGoal(userId: string) {
 async function finishLastLesson(page: Page, lessonId: string) {
   await page.goto(`/learn/${lessonId}`);
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-  await page.getByRole("button", { name: /^Continue/u }).click();
+  const next = page.getByRole("button", { name: /^Continue/u });
+  await expectHydrated(next);
+  await next.click();
 
   const moment = page.getByRole("dialog", { name: "Beginner complete!" });
   await expect(moment).toBeVisible();

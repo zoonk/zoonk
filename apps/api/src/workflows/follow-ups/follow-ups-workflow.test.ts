@@ -97,6 +97,51 @@ describe(followUpsWorkflow, () => {
     await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("starts a map its owing write already admitted as admitted, without asking again", async () => {
+    const { chapter, goal, user } = await owedMindMap();
+
+    const launch = {
+      analytics: { distinctId: user.id, goalId: goal.id, platform: "web" as const },
+      forExam: false,
+      lessonIds: [],
+    };
+
+    await Promise.all([
+      prisma.followUp.updateMany({
+        data: { input: { chapterId: chapter.id, goalId: goal.id, launch } },
+        where: { key: chapter.id, userId: user.id },
+      }),
+      prisma.chapterMindMap.create({
+        data: { chapterId: chapter.id, language: "en", status: "running" },
+      }),
+      prisma.usageRecord.createMany({
+        data: [chapter.id, randomUUID(), randomUUID()].map((targetId) => ({
+          generated: true,
+          kind: "mindMap" as const,
+          targetId,
+          userId: user.id,
+        })),
+      }),
+    ]);
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(getStartMock()).toHaveBeenCalledWith(
+      chapterMindMapWorkflow,
+      [
+        {
+          analytics: launch.analytics,
+          chapterId: chapter.id,
+          lessons: { forExam: false, ids: [] },
+        },
+      ],
+      { experimental_hook: { token: `mind-map:${chapter.id}` } },
+    );
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(3);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("ends an owed map the learner's limits refuse, without starting it", async () => {
     const { chapter, user } = await owedMindMap();
 

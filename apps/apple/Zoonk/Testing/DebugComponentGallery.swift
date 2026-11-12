@@ -549,7 +549,7 @@
     ) -> ChapterMindMap {
       ChapterMindMap(
         chapterId: "debug-\(id)", image: nil, lessonsToWrite: lessons, outline: nil, position: 3,
-        status: status, subject: nil, title: "Porcentagem e descontos")
+        saved: false, status: status, subject: nil, title: "Porcentagem e descontos")
     }
   }
 

@@ -24,6 +24,7 @@ const TABLES = [
   "goal_understandings",
   "pronunciation_reviews",
   "step_example_lines",
+  "saved_mind_maps",
 ] as const;
 
 type KeyedTable = (typeof TABLES)[number];
@@ -188,6 +189,21 @@ async function seedSharedRows({ table, userIds }: { table: KeyedTable; userIds: 
         ),
       );
     }
+    case "saved_mind_maps":
+      return Promise.all(
+        userIds.map((userId) =>
+          prisma.savedMindMap.create({
+            data: {
+              createdAt: OLDER,
+              goalId: randomUUID(),
+              kind: "chapter",
+              targetId: key,
+              title: "Saved chapter",
+              userId,
+            },
+          }),
+        ),
+      );
     default:
       throw new Error("Unknown keyed table");
   }
@@ -213,6 +229,8 @@ function readRows({ table, userId }: { table: KeyedTable; userId: string }) {
       return prisma.pronunciationReview.findMany({ where });
     case "step_example_lines":
       return prisma.stepExampleLine.findMany({ where });
+    case "saved_mind_maps":
+      return prisma.savedMindMap.findMany({ where });
     default:
       throw new Error("Unknown keyed table");
   }

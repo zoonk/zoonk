@@ -21,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -54,7 +56,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,14 +65,13 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.android.feature.goalcontent.WithPlanGoal
+import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
@@ -82,6 +82,7 @@ import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapImage
 import com.zoonk.api.models.MindMapOutline
+import com.zoonk.api.models.SavedMindMapKind
 import java.util.UUID
 import kotlin.math.exp
 
@@ -90,11 +91,13 @@ internal data class ViewedMap(
     val title: String,
     val image: MindMapImage?,
     val outline: MindMapOutline,
+    val saved: Boolean = false,
 )
 
 /**
- * A chapter's map full screen. Opened from the Mind maps page it reads the map the page already has;
- * opened from anywhere else it reads the chapter's map.
+ * A chapter's map full screen, on the goal that opened it whatever goal is active. Opened from the
+ * Mind maps page it reads the map the page already has; opened from anywhere else it reads the
+ * chapter's map.
  */
 @Composable
 fun MindMapScreen(
@@ -103,43 +106,45 @@ fun MindMapScreen(
     navigator: AppNavigator,
 ) {
     val close: () -> Unit = { navigator.closeTask() }
+    val host = mindMapsHost(app)
+    val goalId = remember(route.goalId) { runCatching { UUID.fromString(route.goalId) }.getOrNull() }
+    val chapterId = remember(route.chapterId) { runCatching { UUID.fromString(route.chapterId) }.getOrNull() }
+    if (host == null || goalId == null || chapterId == null) {
+        TaskNotFound(navigator)
+        return
+    }
 
-    WithPlanGoal(app.learnerSummary.summary, navigator, frame = { TaskScaffold(onClose = close, content = it) }) { goal ->
-        val host = mindMapsHost(app)
-        val chapterId = runCatching { UUID.fromString(route.chapterId) }.getOrNull()
-        if (host == null || chapterId == null) {
-            TaskNotFound(navigator)
-            return@WithPlanGoal
+    val listed by app.mindMaps.list[goalId]
+        .state
+        .collectAsStateWithLifecycle()
+    val fromList =
+        listed.value
+            ?.chapters
+            ?.firstOrNull { it.chapterId == chapterId && it.status == GoalMindMap.Status.READY }
+            ?.let { map -> map.outline?.let { ViewedMap(map.title, map.image, it, map.saved) } }
+    val viewed = fromList?.let(Viewed::Shown) ?: chapterMap(app, ChapterKey(goalId, chapterId))
+
+    when (viewed) {
+        Viewed.Loading -> {
+            TaskScaffold(onClose = close) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
         }
 
-        val listed by app.mindMaps.list[goal.id]
-            .state
-            .collectAsStateWithLifecycle()
-        val fromList =
-            listed.value
-                ?.chapters
-                ?.firstOrNull { it.chapterId == chapterId && it.status == GoalMindMap.Status.READY }
-                ?.let { map -> map.outline?.let { ViewedMap(map.title, map.image, it) } }
-        val viewed = fromList?.let(Viewed::Shown) ?: chapterMap(app, ChapterKey(goal.id, chapterId))
+        Viewed.Missing -> {
+            TaskNotFound(navigator)
+        }
 
-        when (viewed) {
-            Viewed.Loading -> {
-                TaskScaffold(onClose = close) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
-            }
-
-            Viewed.Missing -> {
-                TaskNotFound(navigator)
-            }
-
-            is Viewed.Shown -> {
-                val maps = host.maps(goal.id)
-                CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
-                    MindMapViewer(
-                        viewed.map,
-                        onClose = close,
-                        onSave = viewed.map.image?.let { rememberSavePicture(maps, it, viewed.map.title) },
-                    )
-                }
+        is Viewed.Shown -> {
+            val maps = host.maps(goalId)
+            val saves by maps.saves.collectAsStateWithLifecycle()
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            val saved = saves[target] ?: viewed.map.saved
+            CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
+                MindMapViewer(
+                    viewed.map.copy(saved = saved),
+                    onClose = close,
+                    onSave = viewed.map.image?.let { rememberSavePicture(maps, it, viewed.map.title) },
+                    onBookmark = { maps.save(target, chapterId, !saved) },
+                )
             }
         }
     }
@@ -165,7 +170,11 @@ private fun chapterMap(
     val map = state.value
     return when {
         map != null -> {
-            map.outline?.takeIf { map.status == ChapterMindMap.Status.READY }?.let { Viewed.Shown(ViewedMap(map.title, map.image, it)) }
+            map.outline?.takeIf { map.status == ChapterMindMap.Status.READY }?.let {
+                Viewed.Shown(
+                    ViewedMap(map.title, map.image, it, map.saved),
+                )
+            }
                 ?: Viewed.Missing
         }
 
@@ -188,6 +197,7 @@ internal fun MindMapViewer(
     map: ViewedMap,
     onClose: () -> Unit,
     onSave: (() -> Unit)?,
+    onBookmark: (() -> Unit)? = null,
 ) {
     var view by rememberSaveable(stateSaver = PAN_ZOOM_SAVER) { mutableStateOf(PanZoom.FIT) }
     var frame by remember { mutableStateOf(Size.Zero) }
@@ -200,13 +210,11 @@ internal fun MindMapViewer(
 
         TaskScaffold(
             onClose = onClose,
-            title = { Text(map.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            modifier = Modifier.onKeyEvent { it.type == KeyEventType.KeyDown && it.key == Key.Escape && true.also { onClose() } },
+            title = { LessonTitle(map.title) },
             actions = {
-                if (image != null && !outlineBeside) {
-                    TextButton(onClick = { asText = !asText }) {
-                        Text(stringResource(if (asText) R.string.mindmaps_as_picture else R.string.mindmaps_as_text))
-                    }
-                }
+                if (image != null && !outlineBeside) AsTextToggle(asText, onToggle = { asText = !asText })
+                if (onBookmark != null) MapBookmark(map.saved, onBookmark)
                 if (onSave != null) {
                     IconButton(onClick = onSave) {
                         Icon(painterResource(R.drawable.ic_download), contentDescription = stringResource(R.string.mindmaps_download))
@@ -214,6 +222,7 @@ internal fun MindMapViewer(
                 }
             },
         ) { padding ->
+            KeyFocus()
             if (image == null || textOnly) {
                 OutlineOnly(map, noted = image == null, Modifier.fillMaxSize().padding(padding))
             } else {
@@ -255,6 +264,25 @@ internal fun MindMapViewer(
                 }
             }
         }
+    }
+}
+
+/** Main's "As text" switch, an icon that stays filled while the words show, so the bar keeps its room for the title. */
+@Composable
+private fun AsTextToggle(
+    asText: Boolean,
+    onToggle: () -> Unit,
+) {
+    IconToggleButton(
+        checked = asText,
+        onCheckedChange = { onToggle() },
+        colors =
+            IconButtonDefaults.iconToggleButtonColors(
+                checkedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                checkedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            ),
+    ) {
+        Icon(painterResource(R.drawable.ic_notes), contentDescription = stringResource(R.string.mindmaps_as_text))
     }
 }
 

@@ -1,6 +1,7 @@
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -32,7 +33,9 @@ async function answerHook(page: Page) {
 
 async function readExplanation(page: Page) {
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-  await primary(page, /^Next/u).click();
+  const next = primary(page, /^Next/u);
+  await expectHydrated(next);
+  await next.click();
 }
 
 async function followWorkedExample(page: Page) {

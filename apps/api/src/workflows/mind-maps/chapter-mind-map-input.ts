@@ -1,4 +1,4 @@
-import { type ChapterMindMapRequest } from "@zoonk/core/mind-maps/request";
+import { type MindMapLaunch } from "@zoonk/core/mind-maps/request";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 
 /** `lessons`: the chapter's lessons to write first, which the request that claimed the map charged. */
@@ -15,14 +15,14 @@ export function getChapterMindMapToken(chapterId: string): string {
 /** The run a request that claimed the map starts, from a tap or an owed follow-up alike. */
 export function toChapterMindMapInput({
   chapterId,
-  request,
+  launch,
 }: {
   chapterId: string;
-  request: Extract<ChapterMindMapRequest, { status: "start" }>;
+  launch: MindMapLaunch;
 }): ChapterMindMapInput {
   return {
-    analytics: request.analytics,
+    analytics: launch.analytics,
     chapterId,
-    lessons: { forExam: request.forExam, ids: request.lessonIds },
+    lessons: { forExam: launch.forExam, ids: launch.lessonIds },
   };
 }

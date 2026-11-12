@@ -298,9 +298,7 @@ struct LessonPage<Content: View>: View {
       VStack(alignment: .leading, spacing: 24) {
         content
       }
-      .frame(maxWidth: 680, alignment: .leading)
-      .frame(maxWidth: .infinity)
-      .scenePadding()
+      .taskColumn(alignment: .leading)
       .frame(minHeight: fillsHeight ? visibleHeight : nil, alignment: .top)
     }
     .onScrollGeometryChange(for: CGFloat.self, of: \.containerSize.height) { _, height in
@@ -420,7 +418,7 @@ struct LessonActionBar: View {
   @Environment(\.lessonTutor) private var tutor
 
   var body: some View {
-    HStack(spacing: 10) {
+    TaskActionBar {
       if state.canGoBack {
         StepBackButton(
           label: Text(
@@ -440,9 +438,6 @@ struct LessonActionBar: View {
         askButton
       }
     }
-    .frame(maxWidth: 680)
-    .frame(maxWidth: .infinity)
-    .scenePadding()
   }
 
   @ViewBuilder

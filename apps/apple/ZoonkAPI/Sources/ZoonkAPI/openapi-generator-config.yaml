@@ -46,6 +46,7 @@ filter:
     - createGoalFromPlanLink
     - createGoalGeneration
     - createGoalLessonPreparation
+    - createGoalMindMapGenerations
     - createGoalUnderstanding
     - createGoalUnderstandingGeneration
     - createGoals
@@ -183,6 +184,7 @@ filter:
     - joinInstrumentWaitlist
     - leaveInstrumentWaitlist
     - listCertificates
+    - listChapterLessonMaps
     - listChapterLessons
     - listCountries
     - listCourseCategoryCounts
@@ -214,6 +216,7 @@ filter:
     - requestSpeechClip
     - resumeStripeSubscription
     - reviseGoalUnderstanding
+    - saveMindMap
     - saveMockAnswer
     - searchCatalog
     - selectCurrentUserStudyReminderPhone

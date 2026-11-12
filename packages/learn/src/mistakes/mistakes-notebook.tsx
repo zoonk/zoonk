@@ -33,6 +33,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { INBOX_PAGE_CLASS, PageEyebrow } from "../_components/page";
+import { PageTab, PageTabs } from "../_components/page-tabs";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
@@ -128,9 +129,6 @@ function NotebookHero({
   );
 }
 
-const TAB_CLASS =
-  "focus-visible:ring-ring/50 hit-area relative flex min-h-8 items-center gap-1.5 rounded-md px-2.5 py-1 text-[0.8125rem] font-medium outline-none transition-colors focus-visible:ring-[3px] aria-[current=page]:bg-muted aria-[current=page]:text-foreground text-muted-foreground hover:text-foreground hover:bg-muted/70";
-
 function NotebookTabs({
   counts,
   notebookHref,
@@ -148,22 +146,18 @@ function NotebookTabs({
   ];
 
   return (
-    <nav aria-label={t("Mistakes")} data-slot="mistakes-tabs">
-      <ul className="flex flex-wrap items-center gap-1">
-        {tabs.map((tab) => (
-          <li key={tab.status}>
-            <LearnLink
-              aria-current={tab.current ? "page" : undefined}
-              className={TAB_CLASS}
-              href={buildNotebookHref({ notebook: notebookHref, status: tab.status })}
-            >
-              {tab.label}
-              <span className="font-mono text-xs tabular-nums">{tab.count}</span>
-            </LearnLink>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <PageTabs data-slot="mistakes-tabs" label={t("Mistakes")}>
+      {tabs.map((tab) => (
+        <PageTab
+          count={tab.count}
+          current={tab.current}
+          href={buildNotebookHref({ notebook: notebookHref, status: tab.status })}
+          key={tab.status}
+        >
+          {tab.label}
+        </PageTab>
+      ))}
+    </PageTabs>
   );
 }
 

@@ -10,13 +10,16 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
+import { cn } from "@zoonk/ui/lib/utils";
 import { DownloadIcon, MinusIcon, PlusIcon, ScanIcon, TextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { TASK_TITLE_CLASS } from "../_components/task-header";
 import { toMindMapDownloadHref, toMindMapFileName, toMindMapSrc } from "./_utils/mind-map-urls";
 import { MAX_SCALE, fitSide } from "./_utils/pan-zoom";
 import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
 import { MindMapOutline } from "./mind-map-outline";
+import { type MindMapSave, MindMapSaveButton } from "./mind-map-save-button";
 import { usePanZoom } from "./use-pan-zoom";
 
 const PERCENT = 100;
@@ -163,13 +166,14 @@ function AsTextToggle({
   return (
     <Button
       aria-pressed={pressed}
-      className="min-[72rem]:hidden"
+      // From 72rem the outline shows beside the picture, so only an "on" toggle stays, to turn off.
+      className={cn(!pressed && "min-[72rem]:hidden")}
       onClick={() => onChange(!pressed)}
-      size="bar"
+      size="icon-bar"
       variant={pressed ? "secondary" : "ghost"}
     >
-      <TextIcon aria-hidden="true" data-icon="inline-start" />
-      {t("As text")}
+      <TextIcon aria-hidden="true" />
+      <span className="sr-only">{t("As text")}</span>
     </Button>
   );
 }
@@ -180,12 +184,14 @@ export function MindMapViewer({
   onOpenChange,
   open,
   outline,
+  save,
   title,
 }: {
   image: MindMapImage | null;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   outline: Outline | null;
+  save: MindMapSave;
   title: string;
 }) {
   const t = useExtracted();
@@ -218,11 +224,17 @@ export function MindMapViewer({
               <span className="sr-only">{t("Close")}</span>
             </DialogClose>
 
-            <DialogTitle className="min-w-0 flex-1 truncate text-center text-base font-semibold">
+            <DialogTitle
+              className={cn(
+                "line-clamp-2 min-w-0 flex-1 text-center text-balance",
+                TASK_TITLE_CLASS,
+              )}
+            >
               {title}
             </DialogTitle>
 
             {image && outline && <AsTextToggle onChange={setAsText} pressed={asText} />}
+            <MindMapSaveButton {...save} labelled={false} size="icon-bar" variant="ghost" />
             {image && <MindMapDownloadLink className={barButton} image={image} title={title} />}
           </header>
 

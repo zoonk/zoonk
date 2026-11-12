@@ -156,3 +156,39 @@ export async function countUsage({
 }): Promise<UsageCounts> {
   return getUsageCounts(await loadUsageTotals({ client, now, userId }), kind);
 }
+
+/** The totals once one more use is recorded now. */
+export function addUsage({
+  costMicros,
+  generated,
+  kind,
+  now,
+  totals,
+}: {
+  costMicros: number;
+  generated: boolean;
+  kind: UsageKind;
+  now: Date;
+  totals: UsageTotals;
+}): UsageTotals {
+  const used = totals.kinds.get(kind) ?? NO_USAGE;
+
+  return {
+    ...totals,
+    kinds: new Map([
+      ...totals.kinds,
+      [
+        kind,
+        {
+          ...used,
+          day: used.day + 1,
+          generatedTotal: used.generatedTotal + (generated ? 1 : 0),
+          lastUsedAt: now,
+          month: used.month + 1,
+          total: used.total + 1,
+        },
+      ],
+    ]),
+    spentTodayMicros: totals.spentTodayMicros + costMicros,
+  };
+}

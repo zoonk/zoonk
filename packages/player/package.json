@@ -10,6 +10,8 @@
     "./lesson/practice": "./src/lesson/lesson-practice-step.tsx",
     "./lesson/types": "./src/lesson/lesson-player-types.ts",
     "./messages": "./src/messages.ts",
+    "./mind-maps/deck": "./src/mind-maps/mind-map-deck.ts",
+    "./mind-maps/reader": "./src/mind-maps/mind-map-reader.tsx",
     "./messages/*.po": "./messages/*.po",
     "./preview": "./src/preview/player-preview.tsx",
     "./preview/catalog": "./src/preview/preview-catalog.ts",

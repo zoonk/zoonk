@@ -16,13 +16,16 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
+import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -31,6 +34,7 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonElement
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -41,6 +45,7 @@ import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MindMapViewModelTest {
@@ -348,6 +353,140 @@ class MindMapViewModelTest {
         }
 
     @Test
+    fun aListReadOnItsWayWhenATapStartsTheMapCantUndoIt() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            var status = "available"
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+            api.mindMaps = {
+                val read = goalMindMaps(listOf(mapJson(3, "Waves and sound", status)))
+                if (++reads == 2) withContext(NonCancellable) { release.await() }
+                read
+            }
+            api.create = {
+                status = "drawing"
+                generation("drawing")
+            }
+            store.list[goalId].load()
+            val earlier = launch { store.list[goalId].refresh() }
+            advanceUntilIdle()
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+            release.complete(Unit)
+            earlier.join()
+
+            assertEquals(MindMapShown.Drawing, store.listed(chapterId).status.shown)
+            assertEquals(5.seconds, listCadence(listOf(store.listed(chapterId)), pending = false))
+        }
+
+    @Test
+    fun twoTapsInARowBothShowTheirMapsStarted() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val second = UUID.fromString(mapChapter(4))
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+
+            fun row(
+                id: UUID,
+                position: Int,
+            ) = mapJson(position, "Chapter $position", if (api.created.any { it.chapterId == id }) "drawing" else "available")
+            api.mindMaps = {
+                val read = goalMindMaps(listOf(row(chapterId, 3), row(second, 4)))
+                if (++reads == 2) release.await()
+                // The network: a dropped read stops at once, a new one takes a round trip.
+                delay(100)
+                read
+            }
+            store.list[goalId].load()
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+            maps.create(second)
+            advanceUntilIdle()
+            release.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(emptyMap<UUID, MindMapLocal>(), maps.requests.value)
+            assertEquals(MindMapShown.Drawing, store.listed(chapterId).status.shown)
+            assertEquals(MindMapShown.Drawing, store.listed(second).status.shown)
+        }
+
+    @Test
+    fun lessonMapsReadBeforeCreatingTheMapReadAgainOnceTheListShowsTheLessonsItWrote() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            var status = "available"
+            var lessons = listOf(1, 2)
+            api.mindMaps = {
+                goalMindMaps(
+                    listOf(mapJson(3, "Waves and sound", status, lessonsToWrite = 3 - lessons.size)),
+                    listOf(lessonGroupJson(3, lessons)),
+                )
+            }
+            api.lessonMaps = { chapterLessonMaps(lessons = lessons.map { lessonMindMapJson(it, "Lesson $it") }) }
+            api.create = { generation("writingLessons") }
+            store.list[goalId].load()
+            store.lessonMaps[key].load()
+
+            status = "writingLessons"
+            maps.create(chapterId)
+            advanceUntilIdle()
+            status = "ready"
+            lessons = listOf(1, 2, 3)
+            api.statuses.add(ChapterMindMapStatus.Status.READY)
+            maps.follow(chapterId, MindMapShown.WritingLessons)
+            store.lessonMaps[key].load()
+
+            assertEquals(
+                listOf(1, 2, 3).map(::mapLesson),
+                store.lessonMaps[key]
+                    .state.value.value
+                    ?.lessons
+                    ?.map { it.lessonId.toString() },
+            )
+        }
+
+    @Test
+    fun lessonMapsReadOnTheirWayWhenTheListShowsMoreReadAgain() =
+        runTest(dispatcher) {
+            val (_, store) = setUp()
+            var lessons = listOf(1, 2)
+            api.mindMaps = {
+                goalMindMaps(
+                    listOf(mapJson(3, "Waves and sound", if (lessons.size < 3) "writingLessons" else "ready")),
+                    listOf(lessonGroupJson(3, lessons)),
+                )
+            }
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+            api.lessonMaps = {
+                val written = lessons
+                if (++reads == 1) release.await()
+                chapterLessonMaps(lessons = written.map { lessonMindMapJson(it, "Lesson $it") })
+            }
+            store.list[goalId].load()
+            val firstRead = launch { store.lessonMaps[key].load() }
+            advanceUntilIdle()
+
+            lessons = listOf(1, 2, 3)
+            store.list[goalId].refresh()
+            release.complete(Unit)
+            firstRead.join()
+            store.lessonMaps[key].load()
+
+            assertEquals(
+                listOf(1, 2, 3).map(::mapLesson),
+                store.lessonMaps[key]
+                    .state.value.value
+                    ?.lessons
+                    ?.map { it.lessonId.toString() },
+            )
+        }
+
+    @Test
     fun threeMissesInARowSayTheServerIsOutOfReachAndTryAgainAsksAgain() =
         runTest(dispatcher) {
             val (maps) = setUp()
@@ -512,11 +651,182 @@ class MindMapViewModelTest {
             assertEquals(PictureSave.Failed, maps.save.value)
         }
 
-    private fun TestScope.setUp(): Triple<MindMapViewModel, MindMapStore, AppCache> {
+    @Test
+    fun aSaveShowsAtOnceThenTheListShowsWhatTheServerKept() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "ready", saved = true))) }
+
+            maps.save(target, chapterId, saved = true)
+            assertEquals(true, maps.saves.value[target])
+            advanceUntilIdle()
+
+            assertEquals(listOf(target to true), api.saved)
+            assertNull(maps.saves.value[target])
+            assertTrue(store.listed(chapterId).saved)
+            shown.cancel()
+        }
+
+    @Test
+    fun tapsWhileASaveIsOnItsWayEndOnTheLastOne() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            val target = MindMapTarget(SavedMindMapKind.LESSON, UUID.fromString(mapLesson(1)))
+            val first = CompletableDeferred<Unit>()
+            api.save = { t, saved ->
+                if (api.saved.size == 1) first.await()
+                savedState(t, saved)
+            }
+
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+            maps.save(target, chapterId, saved = false)
+            maps.save(target, chapterId, saved = true)
+            maps.save(target, chapterId, saved = false)
+            advanceUntilIdle()
+            assertEquals(listOf(target to true), api.saved)
+            assertEquals(false, maps.saves.value[target])
+
+            first.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf(target to true, target to false), api.saved)
+            assertNull(maps.saves.value[target])
+        }
+
+    @Test
+    fun aFailedSaveShowsTheReadsAgainAndSaysSo() =
+        runTest(dispatcher) {
+            var said = 0
+            val (maps) = setUp(saveFailed = { said++ })
+            val target = MindMapTarget(SavedMindMapKind.CHAPTER, chapterId)
+            api.save = { _, _ -> throw ApiException(ApiError.Unavailable) }
+
+            maps.save(target, chapterId, saved = true)
+            advanceUntilIdle()
+
+            assertNull(maps.saves.value[target])
+            assertEquals(1, said)
+        }
+
+    @Test
+    fun creatingEveryMapReadsTheListAgainAndSaysWhenTheServerWasOutOfReach() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            val reads = api.lists
+
+            maps.createAll()
+            assertEquals(CreateAll.Pending, maps.createAll.value)
+            advanceUntilIdle()
+            assertEquals(1, api.createdAll)
+            assertEquals(reads + 1, api.lists)
+            assertNull(maps.createAll.value)
+
+            api.createAll = { throw ApiException(ApiError.Network) }
+            maps.createAll()
+            advanceUntilIdle()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+            shown.cancel()
+        }
+
+    @Test
+    fun aListReadOnItsWayWhenCreatingEveryMapCantUndoIt() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            var status = "available"
+            val release = CompletableDeferred<Unit>()
+            var reads = 0
+            api.mindMaps = {
+                val read = goalMindMaps(listOf(mapJson(3, "Waves and sound", status)))
+                if (++reads == 2) withContext(NonCancellable) { release.await() }
+                read
+            }
+            val accepted = api.createAll
+            api.createAll = {
+                status = "drawing"
+                accepted()
+            }
+            store.list[goalId].load()
+            val earlier = launch { store.list[goalId].refresh() }
+            advanceUntilIdle()
+
+            maps.createAll()
+            advanceUntilIdle()
+            release.complete(Unit)
+            earlier.join()
+
+            assertEquals(MindMapShown.Drawing, store.listed(chapterId).status.shown)
+            assertNull(maps.createAll.value)
+        }
+
+    @Test
+    fun creatingEveryMapReadsAgainAChapterReadEarlierOnceItShowsAgain() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            store.chapter[key].load()
+            api.chapter = { chapterMindMap("drawing") }
+
+            maps.createAll()
+            advanceUntilIdle()
+            val reopened = launch { store.chapter[key].shown.collect {} }
+            advanceUntilIdle()
+
+            assertEquals(MindMapShown.Drawing, store.chapterShown())
+            reopened.cancel()
+        }
+
+    @Test
+    fun aNewerReadOfTheListClearsTheCreateAllError() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            api.createAll = { throw ApiException(ApiError.Network) }
+            maps.createAll()
+            advanceUntilIdle()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+
+            store.list[goalId].refresh()
+            advanceUntilIdle()
+
+            assertNull(maps.createAll.value)
+            shown.cancel()
+        }
+
+    @Test
+    fun aChaptersReadLeavesTheCreateAllErrorUntilTheListReadsAgain() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            store.list[goalId].load()
+            api.mindMaps = { throw ApiException(ApiError.Network) }
+            maps.createAll()
+            advanceUntilIdle()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+
+            store.chapter[key].load()
+            assertEquals(CreateAll.Unreachable, maps.createAll.value)
+
+            api.mindMaps = { goalMindMaps() }
+            store.list[goalId].refresh()
+            assertNull(maps.createAll.value)
+        }
+
+    private fun TestScope.setUp(saveFailed: () -> Unit = {}): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return Triple(MindMapViewModel(store, ana, goalId, { current }, io = dispatcher), store, cache)
+        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, io = dispatcher), store, cache)
     }
+
+    private fun MindMapStore.listed(id: UUID) =
+        list[goalId]
+            .state.value.value!!
+            .chapters
+            .first { it.chapterId == id }
 
     private fun MindMapStore.chapterShown() =
         chapter[key]

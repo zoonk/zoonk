@@ -1,0 +1,22 @@
+enum SavedMindMapKind {
+  chapter
+  lesson
+}
+
+/// A map the learner saved to study again. Learner data: `targetId` and `goalId` are plain ids, so
+/// a save outlives the content and goal it came from and still shows its `title`.
+model SavedMindMap {
+  id        String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      SavedMindMapKind
+  /// The chapter or the lesson whose map was saved.
+  targetId  String           @map("target_id") @db.Uuid
+  title     String
+  /// The goal it was saved from.
+  goalId    String           @map("goal_id") @db.Uuid
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  @@unique([userId, kind, targetId], name: "userKindTarget")
+  @@map("saved_mind_maps")
+}

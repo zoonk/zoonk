@@ -85,8 +85,9 @@ class Resource<T : Any> internal constructor(
     }
 
     /**
-     * Marks it stale: refetched now if a screen shows it, otherwise on its next [load]. A write can
-     * bring back what wasn't found (a moved challenge's Undo), so a not-found is dropped.
+     * Marks it stale: refetched now if a screen shows it, otherwise on its next [load]. A read on its
+     * way may predate the write, so it's dropped, and a call waiting for it waits for a new read. A
+     * write can bring back what wasn't found (a moved challenge's Undo), so a not-found is dropped.
      */
     fun invalidate() {
         isInvalidated = true
@@ -110,25 +111,27 @@ class Resource<T : Any> internal constructor(
     /** For a response carrying the whole new value: it counts as fresh and an older read in flight can't land. */
     fun replace(value: T) {
         followSession()
-        cancelRequest()
-        stored.value = shownState(value)
-        loadedAt = timeSource.markNow()
-        isInvalidated = false
-        fresh.value = LoadState.Loaded(Unit)
-        revision++
+        cancelRequest {
+            stored.value = shownState(value)
+            loadedAt = timeSource.markNow()
+            isInvalidated = false
+            fresh.value = LoadState.Loaded(Unit)
+            revision++
+        }
     }
 
     fun replacing(value: T) = Replacement(this) { replace(value) }
 
     fun followSession() {
         if (audience == Audience.Everyone || owner == session.current) return
-        cancelRequest()
-        owner = session.current
-        stored.value = LoadState.Idle
-        loadedAt = null
-        isInvalidated = false
-        fresh.value = LoadState.Idle
-        revision++
+        cancelRequest {
+            owner = session.current
+            stored.value = LoadState.Idle
+            loadedAt = null
+            isInvalidated = false
+            fresh.value = LoadState.Idle
+            revision++
+        }
         if (isShown && canRequest) scope.launch { run() }
     }
 
@@ -139,12 +142,15 @@ class Resource<T : Any> internal constructor(
     private fun shownState(value: T?): LoadState<T> = value?.takeUnless(isEmpty)?.let { LoadState.Loaded(it) } ?: LoadState.Empty
 
     private suspend fun run() {
+        val shown = revision
         val pending = request ?: start()
         try {
             pending.await()
         } catch (e: CancellationException) {
-            // Only this caller's own cancellation propagates, not the replaced request's.
+            // Only this caller's own cancellation propagates. A dropped request makes it wait for a new
+            // read instead, unless a newer value (a replace, another session's) already settled it.
             currentCoroutineContext().ensureActive()
+            if (request !== pending && revision == shown) run()
         }
     }
 
@@ -218,11 +224,14 @@ class Resource<T : Any> internal constructor(
         }
     }
 
-    // Cancelling last: on Main.immediate a caller awaiting the request resumes inside cancel(), and must find it gone.
+    // On Main.immediate, a caller awaiting the request resumes inside cancel() and one awaiting [isRefreshing] inside its
+    // set, so both run after [change]: a replace's or a session's new revision then ends their wait instead of starting
+    // another read.
     // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-main-coroutine-dispatcher/immediate.html
-    private fun cancelRequest() {
+    private inline fun cancelRequest(change: () -> Unit = {}) {
         val cancelled = request
         request = null
+        change()
         refreshing.value = false
         if (stored.value == LoadState.Loading) stored.value = LoadState.Idle
         cancelled?.cancel()

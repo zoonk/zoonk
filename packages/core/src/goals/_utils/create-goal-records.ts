@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { claimUsagesInWrite } from "../../entitlements/claim-usage";
+import { claimBundleInWrite, openUsageLedgerInWrite } from "../../entitlements/bundle-claims";
 import { type UsageDecision } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -147,13 +147,12 @@ export async function createGoal(
       await pauseGoal(transaction, { goalId: input.pauseGoalId, userId });
     }
 
-    const decision = await claimUsagesInWrite({
-      claims: [
-        { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
-      ],
-      transaction,
-      viewer,
-    });
+    const claims = [
+      { generated: isExplanation, kind: isExplanation ? "explanation" : "goal", targetId: id },
+    ] as const;
+
+    const ledger = await openUsageLedgerInWrite({ claims, now: new Date(), transaction, viewer });
+    const { decision } = await claimBundleInWrite({ claims, ledger, transaction });
 
     if (decision.status !== "allowed") {
       return unchanged(decision);
