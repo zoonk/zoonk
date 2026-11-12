@@ -54,6 +54,52 @@ final class SettingsStoreTests: XCTestCase {
     XCTAssertEqual(updates, [])
   }
 
+  func testPreferencesChosenWhileTheyLoadSaveInTheOrderChosen() async {
+    let api = SettingsAPIStub()
+    let store = makeStore(api: api)
+    await api.holdPreferences(for: "preview-session")
+
+    let portugal = PreferencesUpdate.homeCountry(CountryChoice(code: "PT", name: "Portugal"))
+    let brazil = PreferencesUpdate.homeCountry(CountryChoice(code: "BR", name: "Brazil"))
+
+    let first = Task { await store.updatePreferences(portugal) }
+    await api.waitForHeldPreferences()
+    let second = Task { await store.updatePreferences(brazil) }
+    for _ in 0..<10 {
+      await Task.yield()
+    }
+    await api.releasePreferences()
+    _ = await first.value
+    _ = await second.value
+
+    let updates = await api.updates
+    XCTAssertEqual(updates, [portugal, brazil])
+    XCTAssertEqual(store.preferences.value?.homeCountry?.code, "BR")
+  }
+
+  func testAPreferenceChosenBeforeTheNextLearnerSignedInIsNotSavedAsTheirs() async {
+    let accounts = SwitchingAccountAPI()
+    let session = await accounts.signedIn(as: "learner-a")
+    let cache = AppCache(session: session)
+    let api = SettingsAPIStub()
+    let store = SettingsStore(api: api, cache: cache)
+    await api.holdPreferences(for: "token-learner-a")
+
+    let save = Task {
+      await store.updatePreferences(.homeCountry(CountryChoice(code: "PT", name: "Portugal")))
+    }
+    await api.waitForHeldPreferences()
+    await accounts.signIn(session, as: "learner-b")
+    cache.followSession()
+    await store.preferences.load()
+    await api.releasePreferences()
+    _ = await save.value
+
+    let tokens = await api.updateTokens
+    XCTAssertEqual(tokens, [])
+    XCTAssertNil(store.preferences.value?.homeCountry)
+  }
+
   func testAFailedSaveLeavesALaterChangeOfTheSameSetting() async {
     let api = SettingsAPIStub()
     let store = makeStore(api: api)
@@ -363,6 +409,7 @@ final class SettingsStoreTests: XCTestCase {
 
 private actor SettingsAPIStub: SettingsAPIClient {
   private(set) var updates: [PreferencesUpdate] = []
+  private(set) var updateTokens: [String] = []
   private(set) var restoredFactIds: [String] = []
   private(set) var restoreCount = 0
   private(set) var webPlusChangeTokens: [String] = []
@@ -378,6 +425,8 @@ private actor SettingsAPIStub: SettingsAPIClient {
   private var heldUpdateResponse: CheckedContinuation<Void, Error>?
   private var holdsEdits = false
   private var heldEdit: CheckedContinuation<Void, Error>?
+  private var heldPreferencesToken: String?
+  private var heldPreferences: CheckedContinuation<Void, Never>?
 
   private let preferencesError: Error?
   private let updateError: Error?
@@ -411,6 +460,11 @@ private actor SettingsAPIStub: SettingsAPIClient {
   }
 
   func getPreferences(token: String) async throws -> LearningPreferences {
+    if token == heldPreferencesToken {
+      heldPreferencesToken = nil
+      await withCheckedContinuation { heldPreferences = $0 }
+    }
+
     if let preferencesError {
       throw preferencesError
     }
@@ -422,6 +476,7 @@ private actor SettingsAPIStub: SettingsAPIClient {
     -> LearningPreferences
   {
     updates.append(update)
+    updateTokens.append(token)
 
     if update == heldUpdate {
       heldUpdate = nil
@@ -433,6 +488,21 @@ private actor SettingsAPIStub: SettingsAPIClient {
     }
 
     return update.applied(to: .settingsTestFixture)
+  }
+
+  func holdPreferences(for token: String) {
+    heldPreferencesToken = token
+  }
+
+  func waitForHeldPreferences() async {
+    while heldPreferences == nil {
+      await Task.yield()
+    }
+  }
+
+  func releasePreferences() {
+    heldPreferences?.resume()
+    heldPreferences = nil
   }
 
   func hold(_ update: PreferencesUpdate) {
