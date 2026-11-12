@@ -1,10 +1,10 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
 const FIELD_ROW_CLASS =
-  "grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 py-2 text-sm sm:grid-cols-[11rem_minmax(0,1fr)]";
+  "grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 py-2 text-sm @lg:grid-cols-[11rem_minmax(0,1fr)]";
 
 export function DetailFields({ children }: { children: React.ReactNode }) {
-  return <dl className="divide-y">{children}</dl>;
+  return <dl className="@container divide-y">{children}</dl>;
 }
 
 export function DetailField({ label, children }: { label: string; children: React.ReactNode }) {
@@ -18,7 +18,7 @@ export function DetailField({ label, children }: { label: string; children: Reac
 
 export function DetailFieldsSkeleton({ rows }: { rows: number }) {
   return (
-    <div className="divide-y">
+    <div className="@container divide-y">
       {Array.from({ length: rows }, (_, index) => (
         <div className={FIELD_ROW_CLASS} key={index}>
           <span className="flex h-5 items-center">

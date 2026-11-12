@@ -17,7 +17,7 @@ export async function UserAiSpend({ userId }: { userId: string }) {
   const { days, tasks } = await getUserAiSpend(userId);
 
   return (
-    <AdminSection description={`Last ${days} days, per task.`} title="AI spend">
+    <AdminSection title={`AI spend, last ${days} days`}>
       <AdminTableColumns columns={columns} emptyLabel="No AI calls." isEmpty={tasks.length === 0}>
         {tasks.map((row) => (
           <TableRow key={row.task}>

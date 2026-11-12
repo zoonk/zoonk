@@ -1,37 +1,19 @@
-import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { AdminSection } from "@/components/admin-section";
+import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { getUserLearnerSkills } from "@/data/users/get-user-learner-skills";
-import { formatDate } from "@/lib/format";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { formatCount, formatDate, toWords } from "@/lib/format";
+import { TableCell } from "@zoonk/ui/components/table";
 
-type RecentLearnerSkill = Awaited<ReturnType<typeof getUserLearnerSkills>>["recent"][number];
-
-function LearnerSkillRow({ learnerSkill }: { learnerSkill: RecentLearnerSkill }) {
-  return (
-    <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink href={`/skills/${learnerSkill.skill.id}`}>
-          {learnerSkill.skill.name}
-        </AdminTableRowLink>
-      </TableCell>
-      <TableCell className="capitalize">{learnerSkill.state}</TableCell>
-      <TableCell>{formatDate(learnerSkill.due)}</TableCell>
-      <TableCell className="text-right tabular-nums">{learnerSkill.reps}</TableCell>
-      <TableCell className="text-right tabular-nums">{learnerSkill.lapses}</TableCell>
-      <TableCell className="text-right tabular-nums">{learnerSkill.recallDays}</TableCell>
-      <TableCell className="text-muted-foreground">
-        {formatDate(learnerSkill.lastReviewedAt)}
-      </TableCell>
-    </AdminTableRow>
-  );
-}
+const COLUMNS: AdminTableColumn[] = [
+  { label: "Skill" },
+  { label: "State" },
+  { label: "Next review" },
+  { align: "right", label: "Reviews" },
+  { align: "right", label: "Times forgotten" },
+  { align: "right", label: "Remembered for" },
+  { label: "Last review" },
+];
 
 export async function UserLearnerSkills({ userId }: { userId: string }) {
   "use cache: private";
@@ -41,30 +23,33 @@ export async function UserLearnerSkills({ userId }: { userId: string }) {
   return (
     <AdminSection
       description={states.map((row) => `${row.count} ${row.state}`).join(" · ")}
-      title={`Skills (${total})`}
+      title={`Skills practiced (${total.toLocaleString("en")})`}
     >
-      {recent.length === 0 ? (
-        <AdminSectionEmpty>No skills practiced yet.</AdminSectionEmpty>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Skill</TableHead>
-              <TableHead>State</TableHead>
-              <TableHead>Due</TableHead>
-              <TableHead className="text-right">Reps</TableHead>
-              <TableHead className="text-right">Lapses</TableHead>
-              <TableHead className="text-right">Days remembered</TableHead>
-              <TableHead>Last review</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {recent.map((learnerSkill) => (
-              <LearnerSkillRow key={learnerSkill.id} learnerSkill={learnerSkill} />
-            ))}
-          </TableBody>
-        </Table>
-      )}
+      <AdminTableColumns
+        columns={COLUMNS}
+        emptyLabel="No skills practiced yet."
+        isEmpty={recent.length === 0}
+      >
+        {recent.map((learnerSkill) => (
+          <AdminTableRow key={learnerSkill.id}>
+            <TableCell className="min-w-56 whitespace-normal">
+              <AdminTableRowLink href={`/skills/${learnerSkill.skill.id}`}>
+                {learnerSkill.skill.name}
+              </AdminTableRowLink>
+            </TableCell>
+            <TableCell>{toWords(learnerSkill.state)}</TableCell>
+            <TableCell>{formatDate(learnerSkill.due)}</TableCell>
+            <TableCell className="text-right tabular-nums">{learnerSkill.reps}</TableCell>
+            <TableCell className="text-right tabular-nums">{learnerSkill.lapses}</TableCell>
+            <TableCell className="text-right tabular-nums">
+              {formatCount(learnerSkill.recallDays, "day")}
+            </TableCell>
+            <TableCell className="text-muted-foreground">
+              {formatDate(learnerSkill.lastReviewedAt)}
+            </TableCell>
+          </AdminTableRow>
+        ))}
+      </AdminTableColumns>
     </AdminSection>
   );
 }

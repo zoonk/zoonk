@@ -1,40 +1,41 @@
-import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { AdminSection } from "@/components/admin-section";
+import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import {
   type UserStudySession,
   listUserStudySessions,
 } from "@/data/users/list-user-study-sessions";
-import { formatDate } from "@/lib/format";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { formatDate, toWords } from "@/lib/format";
+import { TableCell, TableRow } from "@zoonk/ui/components/table";
 
-function SessionRow({ session }: { session: UserStudySession }) {
-  const finished = session.blocks.filter((block) => block.status === "completed").length;
-  const brainPower = session.blocks.reduce((total, block) => total + block.brainPower, 0);
+/** "Review, Learn ×5, Practice": each kind once, in the session's order. */
+function describeBlocks(blocks: UserStudySession["blocks"]): string {
+  const counts = Map.groupBy(blocks, (block) => block.kind);
+
+  return [...counts]
+    .map(([kind, rows]) => (rows.length > 1 ? `${toWords(kind)} ×${rows.length}` : toWords(kind)))
+    .join(", ");
+}
+
+function SessionRow({ session, showGoal }: { session: UserStudySession; showGoal: boolean }) {
+  const done = session.blocks.filter((block) => block.status === "completed").length;
 
   return (
     <TableRow>
       <TableCell>{formatDate(session.localDate)}</TableCell>
-      <TableCell className="min-w-40">{session.goal?.title ?? "—"}</TableCell>
-      <TableCell className="capitalize">
-        {session.status}
+      {showGoal ? <TableCell className="min-w-40">{session.goal?.title ?? "—"}</TableCell> : null}
+      <TableCell>
+        {toWords(session.status)}
         {session.freshStart ? (
-          <span className="text-muted-foreground text-xs"> · {session.freshStart}</span>
+          <span className="text-muted-foreground"> · {toWords(session.freshStart)}</span>
         ) : null}
       </TableCell>
       <TableCell className="text-right tabular-nums">{session.plannedMinutes} min</TableCell>
       <TableCell className="text-right tabular-nums">
-        {finished} / {session.blocks.length}
+        {done} of {session.blocks.length}
       </TableCell>
-      <TableCell className="text-muted-foreground text-xs">
-        {session.blocks.map((block) => block.kind).join(", ") || "—"}
+      <TableCell className="text-muted-foreground whitespace-normal">
+        {describeBlocks(session.blocks) || "—"}
       </TableCell>
-      <TableCell className="text-right tabular-nums">{brainPower}</TableCell>
     </TableRow>
   );
 }
@@ -43,31 +44,28 @@ export async function UserStudySessions({ userId }: { userId: string }) {
   "use cache: private";
 
   const sessions = await listUserStudySessions(userId);
+  const showGoal = new Set(sessions.map((session) => session.goal?.id)).size > 1;
+
+  const columns: AdminTableColumn[] = [
+    { label: "Day" },
+    ...(showGoal ? [{ label: "Goal" }] : []),
+    { label: "State" },
+    { align: "right", label: "Planned" },
+    { align: "right", label: "Done" },
+    { label: "What was in it" },
+  ];
 
   return (
-    <AdminSection title="Study sessions">
-      {sessions.length === 0 ? (
-        <AdminSectionEmpty>No study sessions yet.</AdminSectionEmpty>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Day</TableHead>
-              <TableHead>Goal</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Planned</TableHead>
-              <TableHead className="text-right">Blocks done</TableHead>
-              <TableHead>Blocks</TableHead>
-              <TableHead className="text-right">Brain Power</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sessions.map((session) => (
-              <SessionRow key={session.id} session={session} />
-            ))}
-          </TableBody>
-        </Table>
-      )}
+    <AdminSection title="Recent sessions">
+      <AdminTableColumns
+        columns={columns}
+        emptyLabel="No study sessions yet."
+        isEmpty={sessions.length === 0}
+      >
+        {sessions.map((session) => (
+          <SessionRow key={session.id} session={session} showGoal={showGoal} />
+        ))}
+      </AdminTableColumns>
     </AdminSection>
   );
 }

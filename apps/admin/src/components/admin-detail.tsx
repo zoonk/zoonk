@@ -22,6 +22,25 @@ export function AdminDetailBody({ children }: { children: React.ReactNode }) {
   return <ContainerBody className="gap-8">{children}</ContainerBody>;
 }
 
+/**
+ * A record's first tab on a wide window: what staff came for on the left, the short facts beside it.
+ * Narrower, the facts follow below.
+ */
+export function AdminDetailColumns({
+  aside,
+  children,
+}: {
+  aside: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-12">
+      <div className="flex min-w-0 flex-col gap-8">{children}</div>
+      <aside className="flex min-w-0 flex-col gap-8">{aside}</aside>
+    </div>
+  );
+}
+
 export function AdminDetailHeader({
   actions,
   alert,

@@ -1,8 +1,7 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { type UserMemory, listUserMemory } from "@/data/users/list-user-memory";
-import { formatDate } from "@/lib/format";
-import { Badge } from "@zoonk/ui/components/badge";
-import { EraseMemoryFactDialog } from "./erase-memory-fact-dialog";
+import { formatDate, toWords } from "@/lib/format";
+import { EraseMemoryFactButton } from "./erase-memory-fact-button";
 
 type MemoryFactRow = UserMemory["facts"][number];
 
@@ -21,24 +20,21 @@ function FactStatement({ fact }: { fact: MemoryFactRow }) {
 }
 
 function FactRow({ fact, userId }: { fact: MemoryFactRow; userId: string }) {
+  const facts = [
+    fact.status !== "active" && toWords(fact.status),
+    toWords(fact.category),
+    toWords(fact.origin),
+    formatDate(fact.createdAt),
+    fact.expiresAt && `expires ${formatDate(fact.expiresAt)}`,
+  ];
+
   return (
-    <li className="flex flex-wrap items-start justify-between gap-3 py-2">
-      <span className="flex flex-col gap-0.5 text-sm">
+    <li className="flex flex-wrap items-start justify-between gap-3 py-2.5">
+      <span className="flex max-w-3xl flex-col gap-0.5 text-sm">
         <FactStatement fact={fact} />
-        <span className="text-muted-foreground text-xs">
-          {fact.category} · {fact.origin} · {formatDate(fact.createdAt)}
-          {fact.expiresAt ? ` · expires ${formatDate(fact.expiresAt)}` : ""}
-          {fact.model ? ` · ${fact.model}` : ""}
-        </span>
+        <span className="text-muted-foreground text-xs">{facts.filter(Boolean).join(" · ")}</span>
       </span>
-      <span className="flex items-center gap-2">
-        {fact.status === "active" ? null : (
-          <Badge className="capitalize" variant="outline">
-            {fact.status}
-          </Badge>
-        )}
-        <EraseMemoryFactDialog factId={fact.id} userId={userId} />
-      </span>
+      <EraseMemoryFactButton factId={fact.id} userId={userId} />
     </li>
   );
 }
@@ -50,36 +46,35 @@ export async function UserMemorySection({ userId }: { userId: string }) {
   const shownInsights = insights.filter((insight) => insight.message);
 
   return (
-    <AdminSection
-      description="Replaced and deleted facts are kept 30 days for undo. Erasing removes a fact now."
-      title={`Memory (${facts.length} facts)`}
-    >
-      {facts.length === 0 ? (
-        <AdminSectionEmpty>Nothing remembered.</AdminSectionEmpty>
-      ) : (
-        <ul className="flex flex-col divide-y">
-          {facts.map((fact) => (
-            <FactRow fact={fact} key={fact.id} userId={userId} />
-          ))}
-        </ul>
-      )}
+    <>
+      <AdminSection title={`What Zoonk remembers (${facts.length})`}>
+        {facts.length === 0 ? (
+          <AdminSectionEmpty>Nothing remembered.</AdminSectionEmpty>
+        ) : (
+          <ul className="flex flex-col divide-y">
+            {facts.map((fact) => (
+              <FactRow fact={fact} key={fact.id} userId={userId} />
+            ))}
+          </ul>
+        )}
+      </AdminSection>
 
       {shownInsights.length > 0 ? (
-        <div className="mt-4 flex flex-col gap-1">
-          <span className="text-muted-foreground text-xs font-medium">Latest insights</span>
-          <ul className="flex flex-col gap-1 text-sm">
+        <AdminSection title="Latest insights">
+          <ul className="flex flex-col divide-y text-sm">
             {shownInsights.map((insight) => (
-              <li key={insight.id}>
-                {insight.message}
+              <li className="flex max-w-3xl flex-col gap-0.5 py-2.5" key={insight.id}>
+                <span>{insight.message}</span>
                 <span className="text-muted-foreground text-xs">
-                  {" · "}
-                  {formatDate(insight.localDate)} · {insight.kind} · {insight.status}
+                  {[formatDate(insight.localDate), insight.kind, insight.status]
+                    .flatMap((value) => (value ? [toWords(value)] : []))
+                    .join(" · ")}
                 </span>
               </li>
             ))}
           </ul>
-        </div>
+        </AdminSection>
       ) : null}
-    </AdminSection>
+    </>
   );
 }
