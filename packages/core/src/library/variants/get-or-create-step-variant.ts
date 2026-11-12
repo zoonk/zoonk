@@ -97,6 +97,10 @@ async function generateVariantContent({
   return { model: provenance.model, problems: converted.problems };
 }
 
+export function getToolVersionToken({ key, stepId }: { key: string; stepId: string }) {
+  return `tool-version:${stepId}:${toVariantKey(key)}`;
+}
+
 /** Internal capability without a session check; callers must authorize access before requesting a version. */
 export async function getOrCreateStepVariant({
   analytics,

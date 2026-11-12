@@ -24,11 +24,9 @@ import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { startChallengeQuestions } from "./challenge-question-starts";
 import { prepareFieldChallenge } from "./prepare-field-challenge";
+import { prepareToolVersion } from "./prepare-tool-version";
 import { writeLanguageCalls } from "./steps/language-call-steps";
-import {
-  listLearnerVersionTargetsStep,
-  prepareToolVersionStep,
-} from "./steps/personal-versions-steps";
+import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
 import {
   type ClaimQuestions,
   type SessionPreparationRequest,
@@ -75,7 +73,7 @@ async function preparePersonalLayer({
 
   await Promise.allSettled([
     ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
-    ...versions.tools.map((target) => prepareToolVersionStep({ ...context, target })),
+    ...versions.tools.map((target) => prepareToolVersion({ ...context, target })),
     ...versions.challenges.map((target) => prepareFieldChallenge({ ...context, target })),
   ]);
 }
