@@ -1953,9 +1953,9 @@ msgid "See when you perform best over the past 90 days."
 msgstr "Son 90 günde en başarılı olduğun zamanları gör."
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-msgctxt "SXjWkq"
-msgid "When you answer best, over the last 90 days."
-msgstr "Son 90 günde en iyi cevap verdiğin zamanlar."
+msgctxt "YSaA5q"
+msgid "When you answer best, from your last 90 days."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1969,7 +1969,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, other {# cevap}}, dikkate alınması için en az {minimum, number} gerekli"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1981,7 +1980,6 @@ msgid "Throughout the week"
 msgstr "Hafta boyunca"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -2038,29 +2036,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "Bir günün ya da saatin hesaba katılması için {count, plural, other {# cevap}} gerekir, bu yüzden şans eseri doğru verilen tek bir cevap bir eğilim oluşturmaz."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "En fazla {points, plural, =0 {# puan} other {# puan}} fark"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Henüz yeterli cevap yok"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, other {# cevap}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "Son 90 günde"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Cevaplar"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr ""
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"

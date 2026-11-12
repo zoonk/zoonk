@@ -2456,6 +2456,7 @@ msgid "Skills"
 msgstr "스킬"
 
 #: src/chapter/chapter-screen.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -6925,20 +6926,16 @@ msgid "See the rule"
 msgstr "규칙 보기"
 
 #: src/language/pattern/language-pattern-screen.tsx
-msgctxt "iXs0Jb"
-msgid "Practice this · {time}"
-msgstr "연습하기 · {time}"
-
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pattern/pattern-intro.tsx
 msgctxt "uhjTvw"
 msgid "The rule"
 msgstr "규칙"
 
 #: src/language/pattern/language-pattern-screen.tsx
-msgctxt "q56JGx"
-msgid "See how you did"
-msgstr "결과 보기"
+#: src/mock/mock-screen.tsx
+msgctxt "4tdaRm"
+msgid "See result"
+msgstr ""
 
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/session/question-block/question-actions.tsx
@@ -7587,7 +7584,6 @@ msgid "Full screen"
 msgstr "전체 화면"
 
 #: src/mind-maps/mind-map-aside.tsx
-#: src/mind-maps/mind-map-copy.ts
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
@@ -7612,19 +7608,14 @@ msgid "Create"
 msgstr "만들기"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, other {만들 레슨 #개}}"
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, other {레슨 #개를 먼저 만들어야 해서 몇 분 걸려요.}}"
-
-#: src/mind-maps/mind-map-copy.ts
 msgctxt "FE72mn"
 msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 msgstr "{count, plural, other {레슨 #개를 먼저 만들어요. 만든 레슨은 무료 레슨 수에 포함돼요.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "uhTP9c"
+msgid "Shown as text"
+msgstr ""
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "lY6tDJ"
@@ -7637,19 +7628,14 @@ msgid "This takes a few minutes. You can leave; it'll be here."
 msgstr "몇 분 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요."
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "레슨, 마인드맵 순서로 만들고 있어요…"
+msgctxt "TuOw3Y"
+msgid "Getting your mind map ready…"
+msgstr ""
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "cdPOua"
 msgid "About half a minute. You can leave; it'll be here."
 msgstr "30초 정도 걸려요. 화면을 나가도 나중에 여기서 확인할 수 있어요."
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "마인드맵을 그리고 있어요…"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "lZl8_B"
@@ -7757,9 +7743,9 @@ msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "아직 챕터 마인드맵이 없어요. 챕터를 끝낼 때마다 하나씩 생겨요."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Lw4uCO"
-msgid "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
-msgstr "아직 레슨 마인드맵이 없어요. 레슨마다 마지막에 내용을 정리한 작은 마인드맵이 나와요. 레슨이 만들어지면 여기에 표시돼요."
+msgctxt "UpexRz"
+msgid "No lesson maps yet. Every lesson ends with one."
+msgstr ""
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7811,29 +7797,19 @@ msgid "{count, plural, one {You can make # more right now.} other {You can make 
 msgstr "{count, plural, other {지금 #개를 더 만들 수 있어요.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "wnIf2i"
-msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-msgstr "{count, plural, other {챕터 #개는 레슨을 먼저 만들어야 해요.}}"
+msgctxt "BekXxP"
+msgid "Other chapters"
+msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "w3kQHy"
-msgid "Not made yet"
-msgstr "아직 만들지 않음"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "duK7Tu"
-msgid "{count, plural, one {Create # chapter map} other {Create # chapter maps}}"
-msgstr "{count, plural, other {챕터 마인드맵 #개 만들기}}"
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BZ0-yt"
 msgid "Show chapters"
 msgstr "챕터 보기"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "레슨을 만들면 무료 레슨 한도에서 차감돼요."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -8289,6 +8265,12 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
 
 #: src/mistakes/mistake-entry.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "jzcSPW"
+msgid "Fixed"
+msgstr "고친 문제"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"
 msgid "{cause} · Fixed"
 msgstr "{cause} · 고친 문제"
@@ -8309,9 +8291,9 @@ msgid "Practice tomorrow"
 msgstr "내일 연습할 수 있어요"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "8Gu0rE"
-msgid "Practice this skill"
-msgstr "이 스킬 연습하기"
+msgctxt "E7KLhm"
+msgid "Practice this topic"
+msgstr ""
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "UuiQw6"
@@ -8341,20 +8323,9 @@ msgid "Help with this question"
 msgstr "이 문제 도움말"
 
 #: src/mistakes/mistakes-notebook.tsx
-#: src/mistakes/practice-done.tsx
-msgctxt "IBOhsd"
-msgid "Mistakes come back for practice from the day after you make them."
-msgstr "틀린 문제는 다음 날부터 다시 연습할 수 있어요."
-
-#: src/mistakes/mistakes-notebook.tsx
 msgctxt "GvnPe5"
 msgid "To fix"
 msgstr "고칠 문제"
-
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "jzcSPW"
-msgid "Fixed"
-msgstr "고친 문제"
 
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "8anod9"
@@ -8408,15 +8379,14 @@ msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other 
 msgstr "{count, plural, =0 {연습 가능한 문제 #개} other {#문제 연습 가능}}"
 
 #: src/mistakes/mistakes-row.tsx
-#: src/mistakes/notebook-availability-text.tsx
 msgctxt "XiaKfK"
 msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
 msgstr "{count, plural, =0 {내일 연습 가능한 문제 #개} other {내일 #문제 연습 가능}}"
 
 #: src/mistakes/notebook-availability-text.tsx
-msgctxt "lzzeMG"
-msgid "{count, plural, =0 {# fixed} one {# fixed} other {# fixed}}"
-msgstr "{count, plural, =0 {고친 문제 #개} other {#문제 고침}}"
+msgctxt "LoO9E7"
+msgid "Practice opens tomorrow"
+msgstr ""
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -8427,6 +8397,11 @@ msgstr "{count, plural, other {#문제 고침}}"
 msgctxt "ith1Nx"
 msgid "Nothing to practice yet"
 msgstr "아직 연습할 문제가 없어요"
+
+#: src/mistakes/practice-done.tsx
+msgctxt "IBOhsd"
+msgid "Mistakes come back for practice from the day after you make them."
+msgstr "틀린 문제는 다음 날부터 다시 연습할 수 있어요."
 
 #: src/mistakes/practice-done.tsx
 msgctxt "zaS-g7"
@@ -8472,9 +8447,9 @@ msgstr "정답: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
-msgctxt "Bbb4bg"
-msgid "Content gap"
-msgstr "아직 모르는 내용"
+msgctxt "qCC0US"
+msgid "Didn't know it yet"
+msgstr ""
 
 #. Why the learner got a question wrong: they misread the question.
 #: src/mistakes/use-cause-label.ts
@@ -9372,11 +9347,6 @@ msgstr ""
 #: src/mock/mock-runner-view.tsx
 msgctxt "YQJ4cZ"
 msgid "Flag a question you're not sure about."
-msgstr ""
-
-#: src/mock/mock-screen.tsx
-msgctxt "4tdaRm"
-msgid "See result"
 msgstr ""
 
 #: src/mock/mock-screen.tsx

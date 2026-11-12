@@ -3,7 +3,6 @@
 import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PlusNotice } from "../_components/plus-lock";
 import { MockSummaryRow } from "../mock/mock-summary-row";
 import { useExamScreen } from "./exam-context";
 import { ExamNextMock } from "./exam-next-mock";
@@ -53,7 +52,6 @@ export function ExamMocks({ offered }: { offered: boolean }) {
         </ol>
       )}
 
-      {locked && <PlusNotice title={t("Mock exams are part of Plus")} />}
     </PageSection>
   );
 }

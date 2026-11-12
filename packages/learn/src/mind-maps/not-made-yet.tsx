@@ -107,14 +107,7 @@ function NotMadeLine({
   }
 
   if (needLessons > 0) {
-    return (
-      <p className={LINE_CLASS}>
-        {t(
-          "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}",
-          { count: needLessons },
-        )}
-      </p>
-    );
+    return null;
   }
 
   return null;
@@ -142,7 +135,7 @@ export function NotMadeYet({
   return (
     <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
       <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{t("Not made yet")}</PageSectionTitle>
+        <PageSectionTitle id={titleId}>{t("Other chapters")}</PageSectionTitle>
       </PageSectionHeader>
 
       {startable > 0 && (
@@ -154,9 +147,7 @@ export function NotMadeYet({
           size="lg"
           variant="outline"
         >
-          {t("{count, plural, one {Create # chapter map} other {Create # chapter maps}}", {
-            count: startable,
-          })}
+          {t("Create all")}
         </Button>
       )}
 
@@ -166,10 +157,6 @@ export function NotMadeYet({
 
       <ListGroup>
         <Disclosure aside={chapters.length} icon={null} title={t("Show chapters")}>
-          {!plus && needLessons > 0 && page.createOffer.stop === null && (
-            <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
-          )}
-
           <ul className={LIST_GROUP_CLASS}>
             {chapters.map((chapter) => (
               <li key={chapter.chapterId}>

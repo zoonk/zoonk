@@ -18,7 +18,7 @@ export default async function PatternsPage() {
 
   return (
     <StatsPage
-      description={t("When you answer best, over the last 90 days.")}
+      description={t("When you answer best, from your last 90 days.")}
       title={t("Patterns")}
     >
       <Suspense fallback={<PatternsContentSkeleton />}>

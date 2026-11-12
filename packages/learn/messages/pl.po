@@ -2456,6 +2456,7 @@ msgid "Skills"
 msgstr "Umiejętności"
 
 #: src/chapter/chapter-screen.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -6925,20 +6926,16 @@ msgid "See the rule"
 msgstr "Zobacz zasadę"
 
 #: src/language/pattern/language-pattern-screen.tsx
-msgctxt "iXs0Jb"
-msgid "Practice this · {time}"
-msgstr "Przećwicz to · {time}"
-
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pattern/pattern-intro.tsx
 msgctxt "uhjTvw"
 msgid "The rule"
 msgstr "Zasada"
 
 #: src/language/pattern/language-pattern-screen.tsx
-msgctxt "q56JGx"
-msgid "See how you did"
-msgstr "Zobacz, jak ci poszło"
+#: src/mock/mock-screen.tsx
+msgctxt "4tdaRm"
+msgid "See result"
+msgstr ""
 
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/session/question-block/question-actions.tsx
@@ -7587,7 +7584,6 @@ msgid "Full screen"
 msgstr "Otwórz na pełnym ekranie"
 
 #: src/mind-maps/mind-map-aside.tsx
-#: src/mind-maps/mind-map-copy.ts
 #: src/mind-maps/mind-map-viewer.tsx
 msgctxt "Vxnu0A"
 msgid "Its picture had mistakes, so here's the mind map as text."
@@ -7612,19 +7608,14 @@ msgid "Create"
 msgstr "Utwórz"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "fOetuN"
-msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
-msgstr "{count, plural, one {# lekcja do przygotowania} few {# lekcje do przygotowania} other {# lekcji do przygotowania}}"
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "ZkDPp1"
-msgid "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}"
-msgstr "{count, plural, one {Najpierw przygotujemy # lekcję, więc zajmie to kilka minut.} few {Najpierw przygotujemy # lekcje, więc zajmie to kilka minut.} other {Najpierw przygotujemy # lekcji, więc zajmie to kilka minut.}}"
-
-#: src/mind-maps/mind-map-copy.ts
 msgctxt "FE72mn"
 msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 msgstr "{count, plural, one {Najpierw przygotujemy # lekcję i wliczymy ją do twojej puli bezpłatnych lekcji.} few {Najpierw przygotujemy # lekcje i wliczymy je do twojej puli bezpłatnych lekcji.} other {Najpierw przygotujemy # lekcji i wliczymy je do twojej puli bezpłatnych lekcji.}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "uhTP9c"
+msgid "Shown as text"
+msgstr ""
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "lY6tDJ"
@@ -7637,19 +7628,14 @@ msgid "This takes a few minutes. You can leave; it'll be here."
 msgstr "To potrwa kilka minut. Możesz wyjść, a mapa będzie tu czekać."
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "gAZmi-"
-msgid "Writing the lessons, then the mind map…"
-msgstr "Przygotowujemy lekcje, a potem mapę myśli…"
+msgctxt "TuOw3Y"
+msgid "Getting your mind map ready…"
+msgstr ""
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "cdPOua"
 msgid "About half a minute. You can leave; it'll be here."
 msgstr "Około pół minuty. Możesz wyjść, a mapa będzie tu czekać."
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "DSQIYK"
-msgid "Drawing the mind map…"
-msgstr "Rysujemy mapę myśli…"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "lZl8_B"
@@ -7757,9 +7743,9 @@ msgid "No chapter maps yet. Every chapter you finish gets one."
 msgstr "Nie ma jeszcze map rozdziałów. Każdy ukończony rozdział ma swoją mapę."
 
 #: src/mind-maps/mind-maps-screen.tsx
-msgctxt "Lw4uCO"
-msgid "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written."
-msgstr "Nie ma jeszcze map lekcji. Każda lekcja kończy się małą mapą omawianych zagadnień. Mapy pojawią się tutaj, gdy twoje lekcje będą gotowe."
+msgctxt "UpexRz"
+msgid "No lesson maps yet. Every lesson ends with one."
+msgstr ""
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7811,29 +7797,19 @@ msgid "{count, plural, one {You can make # more right now.} other {You can make 
 msgstr "{count, plural, one {Możesz teraz utworzyć jeszcze # mapę.} few {Możesz teraz utworzyć jeszcze # mapy.} other {Możesz teraz utworzyć jeszcze # map.}}"
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "wnIf2i"
-msgid "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}"
-msgstr "{count, plural, one {Najpierw trzeba przygotować lekcje do # rozdziału.} other {Najpierw trzeba przygotować lekcje do # rozdziałów.}}"
+msgctxt "BekXxP"
+msgid "Other chapters"
+msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
-msgctxt "w3kQHy"
-msgid "Not made yet"
-msgstr "Jeszcze niegotowe"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "duK7Tu"
-msgid "{count, plural, one {Create # chapter map} other {Create # chapter maps}}"
-msgstr "{count, plural, one {Utwórz # mapę rozdziału} few {Utwórz # mapy rozdziałów} other {Utwórz # map rozdziałów}}"
+msgctxt "Q3GPLT"
+msgid "Create all"
+msgstr ""
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BZ0-yt"
 msgid "Show chapters"
 msgstr "Pokaż rozdziały"
-
-#: src/mind-maps/not-made-yet.tsx
-msgctxt "9Vf09f"
-msgid "Writing lessons counts toward your free lessons."
-msgstr "Przygotowanie lekcji wlicza się do twojego limitu bezpłatnych lekcji."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -8289,6 +8265,12 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Odpowiadaj tylko wtedy, gdy masz pewność. Możesz też powiedzieć, że nie masz pewności."
 
 #: src/mistakes/mistake-entry.tsx
+#: src/mistakes/mistakes-notebook.tsx
+msgctxt "jzcSPW"
+msgid "Fixed"
+msgstr "Poprawione"
+
+#: src/mistakes/mistake-entry.tsx
 msgctxt "gENrdL"
 msgid "{cause} · Fixed"
 msgstr "{cause} · Poprawiony"
@@ -8309,9 +8291,9 @@ msgid "Practice tomorrow"
 msgstr "Do przećwiczenia jutro"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "8Gu0rE"
-msgid "Practice this skill"
-msgstr "Poćwicz tę umiejętność"
+msgctxt "E7KLhm"
+msgid "Practice this topic"
+msgstr ""
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "UuiQw6"
@@ -8341,20 +8323,9 @@ msgid "Help with this question"
 msgstr "Pomoc przy tym pytaniu"
 
 #: src/mistakes/mistakes-notebook.tsx
-#: src/mistakes/practice-done.tsx
-msgctxt "IBOhsd"
-msgid "Mistakes come back for practice from the day after you make them."
-msgstr "Do błędów możesz wrócić w ćwiczeniach już następnego dnia."
-
-#: src/mistakes/mistakes-notebook.tsx
 msgctxt "GvnPe5"
 msgid "To fix"
 msgstr "Do poprawy"
-
-#: src/mistakes/mistakes-notebook.tsx
-msgctxt "jzcSPW"
-msgid "Fixed"
-msgstr "Poprawione"
 
 #: src/mistakes/mistakes-notebook.tsx
 msgctxt "8anod9"
@@ -8408,15 +8379,14 @@ msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other 
 msgstr "{count, plural, =0 {# do przećwiczenia} other {# do przećwiczenia}}"
 
 #: src/mistakes/mistakes-row.tsx
-#: src/mistakes/notebook-availability-text.tsx
 msgctxt "XiaKfK"
 msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
 msgstr "{count, plural, =0 {# dostępnych jutro} one {# błąd dostępny jutro} few {# błędy dostępne jutro} other {# błędów dostępnych jutro}}"
 
 #: src/mistakes/notebook-availability-text.tsx
-msgctxt "lzzeMG"
-msgid "{count, plural, =0 {# fixed} one {# fixed} other {# fixed}}"
-msgstr "{count, plural, =0 {# poprawionych} one {# poprawiony błąd} few {# poprawione błędy} other {# poprawionych błędów}}"
+msgctxt "LoO9E7"
+msgid "Practice opens tomorrow"
+msgstr ""
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -8427,6 +8397,11 @@ msgstr "{count, plural, one {# poprawiony błąd} few {# poprawione błędy} oth
 msgctxt "ith1Nx"
 msgid "Nothing to practice yet"
 msgstr "Jeszcze nie ma nic do przećwiczenia"
+
+#: src/mistakes/practice-done.tsx
+msgctxt "IBOhsd"
+msgid "Mistakes come back for practice from the day after you make them."
+msgstr "Do błędów możesz wrócić w ćwiczeniach już następnego dnia."
 
 #: src/mistakes/practice-done.tsx
 msgctxt "zaS-g7"
@@ -8472,9 +8447,9 @@ msgstr "Poprawna odpowiedź: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
-msgctxt "Bbb4bg"
-msgid "Content gap"
-msgstr "Luka w wiedzy"
+msgctxt "qCC0US"
+msgid "Didn't know it yet"
+msgstr ""
 
 #. Why the learner got a question wrong: they misread the question.
 #: src/mistakes/use-cause-label.ts
@@ -9372,11 +9347,6 @@ msgstr ""
 #: src/mock/mock-runner-view.tsx
 msgctxt "YQJ4cZ"
 msgid "Flag a question you're not sure about."
-msgstr ""
-
-#: src/mock/mock-screen.tsx
-msgctxt "4tdaRm"
-msgid "See result"
 msgstr ""
 
 #: src/mock/mock-screen.tsx

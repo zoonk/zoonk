@@ -94,7 +94,7 @@ function NotebookHero({
 }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLAnchorElement>({ enabled: notebook.availability.ready > 0 });
-  const { availability, counts } = notebook;
+  const { availability } = notebook;
 
   return (
     <DetailHero>
@@ -102,13 +102,8 @@ function NotebookHero({
         {goalTitle && <PageEyebrow>{goalTitle}</PageEyebrow>}
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
         <DetailFacts>
-          <NotebookAvailabilityText availability={availability} fixed={counts.fixed} />
+          <NotebookAvailabilityText availability={availability} />
         </DetailFacts>
-        {availability.ready === 0 && availability.tomorrow > 0 && (
-          <p className="text-muted-foreground text-sm text-pretty">
-            {t("Mistakes come back for practice from the day after you make them.")}
-          </p>
-        )}
       </DetailHeroText>
 
       {availability.ready > 0 && (

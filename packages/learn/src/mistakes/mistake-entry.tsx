@@ -43,6 +43,15 @@ function MistakeCauseLabel({
   const causeLabel = useCauseLabel();
   const CauseIcon = CAUSE_ICON[cause ?? "unsorted"];
 
+  // A mistake nobody sorted yet has no tag: "not sorted" is the sorter's state, not the learner's.
+  if (!cause) {
+    return fixed ? (
+      <p className="text-muted-foreground text-xs font-medium">{t("Fixed")}</p>
+    ) : (
+      <span />
+    );
+  }
+
   return (
     <p className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs font-medium">
       <CauseIcon aria-hidden="true" className="size-3.5 shrink-0" />
@@ -141,7 +150,7 @@ function MistakeEntryActions({
           // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
           prefetch={false}
         >
-          {t("Practice this skill")}
+          {t("Practice this topic")}
         </LearnLink>
       )}
 

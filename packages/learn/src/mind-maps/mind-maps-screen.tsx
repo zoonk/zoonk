@@ -142,9 +142,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
   if (rows.length === 0) {
     return (
       <EmptyTab>
-        {t(
-          "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written.",
-        )}
+        {t("No lesson maps yet. Every lesson ends with one.")}
       </EmptyTab>
     );
   }
@@ -292,12 +290,8 @@ export function MindMapsScreen({
           </DetailHeroText>
 
           <DetailActions>
-            {countDeck({ page, tab: current }) > 0 ? (
+            {countDeck({ page, tab: current }) > 0 && (
               <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
-            ) : (
-              <Button className={DETAIL_PRIMARY_CLASS} disabled>
-                <StudyLabel />
-              </Button>
             )}
           </DetailActions>
         </DetailHero>

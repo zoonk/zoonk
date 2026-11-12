@@ -174,7 +174,7 @@ export function LanguagePatternScreen({
         footer={
           <TaskActions>
             <TaskMainButton onClick={drill.start}>
-              {t("Practice this · {time}", { time: formatDuration(DRILL_MINUTES) })}
+              {t("Practice")}
             </TaskMainButton>
           </TaskActions>
         }
@@ -215,7 +215,7 @@ export function LanguagePatternScreen({
           <TaskActions>
             {checked ? (
               <TaskMainButton busy={drill.isSaving} onClick={drill.next} {...FORWARD_ICON}>
-                {isLast ? t("See how you did") : t("Continue")}
+                {isLast ? t("See result") : t("Continue")}
               </TaskMainButton>
             ) : (
               <TaskMainButton

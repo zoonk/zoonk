@@ -19,15 +19,12 @@ function useAvailableLine({ place, plus, shown, view }: MindMapCopyInput): strin
   const count = view.lessonsToWrite;
 
   if (writesLessons && place === "library") {
-    return t("{count, plural, one {# lesson to write} other {# lessons to write}}", { count });
+    return null;
   }
 
   if (writesLessons) {
     return plus
-      ? t(
-          "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}",
-          { count },
-        )
+      ? t("Its main ideas in one picture")
       : t(
           "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
           { count },
@@ -48,7 +45,7 @@ function useReadyLine({ place, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
 
   if (!view.image) {
-    return t("Its picture had mistakes, so here's the mind map as text.");
+    return t("Shown as text");
   }
 
   if (place === "finish") {
@@ -69,14 +66,14 @@ export function useStateLines(input: MindMapCopyInput): {
   if (input.shown === "writingLessons") {
     return {
       hint: t("This takes a few minutes. You can leave; it'll be here."),
-      line: t("Writing the lessons, then the mind map…"),
+      line: t("Getting your mind map ready…"),
     };
   }
 
   if (input.shown === "drawing") {
     return {
       hint: t("About half a minute. You can leave; it'll be here."),
-      line: t("Drawing the mind map…"),
+      line: t("Getting your mind map ready…"),
     };
   }
 
