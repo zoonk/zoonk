@@ -100,7 +100,6 @@ export async function closeTestSitting({
 }: {
   goal: Pick<Goal, "id" | "planRevealedAt" | "userId">;
   sittingId: string | null;
-  /** The plan's skills, which say which of the learner's answers are this goal's. */
   skillIds: string[];
   timeZone: string;
 }): Promise<ClosedSitting | null> {
@@ -121,7 +120,7 @@ export async function closeTestSitting({
     const answers = await tx.attempt.findMany({
       select: { answer: true, durationMs: true, isCorrect: true },
       where: {
-        answeredAt: { gte: new Date(before.sitting.startedAt) },
+        focusTestId: before.sitting.id,
         ...SITTING_ANSWER_FILTER,
         skillId: { in: skillIds },
         userId,

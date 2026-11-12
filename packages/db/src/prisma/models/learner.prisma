@@ -60,6 +60,7 @@ model Attempt {
   studySession   StudySession? @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
   mockExamId     String?       @map("mock_exam_id") @db.Uuid
   mockExam       MockExam?     @relation(fields: [mockExamId], references: [id], onDelete: SetNull)
+  focusTestId    String?       @map("focus_test_id") @db.Uuid
   answer         Json
   targetLanguage String?       @map("target_language") @db.VarChar(10)
   isCorrect      Boolean       @map("is_correct")

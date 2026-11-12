@@ -65,12 +65,12 @@ export type TestSkillAnswers = {
 };
 
 async function loadTestSkills({
-  sittingStartedAt,
+  sittingId,
   skillIds,
   tx,
   userId,
 }: {
-  sittingStartedAt: Date | null;
+  sittingId: string | null;
   skillIds: string[];
   tx: TransactionClient;
   userId: string;
@@ -81,7 +81,7 @@ async function loadTestSkills({
       COUNT(*) FILTER (WHERE NOT (answer @> '{"dontKnow":true}'::jsonb))::int AS "paceAnswers",
       COALESCE(SUM(LEAST(duration_ms, ${MAX_PACED_ANSWER_MS}))
         FILTER (WHERE NOT (answer @> '{"dontKnow":true}'::jsonb)), 0)::float8 AS "paceDurationMs",
-      COUNT(*) FILTER (WHERE ${SITTING_ANSWER_SQL} AND answered_at >= ${sittingStartedAt}::timestamp)::int AS "sittingAnswers"
+      COUNT(*) FILTER (WHERE ${SITTING_ANSWER_SQL} AND focus_test_id = ${sittingId}::uuid)::int AS "sittingAnswers"
     FROM attempts
     WHERE user_id = ${userId}::uuid AND skill_id = ANY(${skillIds}::uuid[])
       AND ${COVERAGE_ANSWER_SQL}
@@ -109,12 +109,12 @@ export async function loadAnsweredTestItems({
 /** Returns evidence oldest first. */
 export async function loadEvidence({
   skillIds,
-  sittingStartedAt = null,
+  sittingId = null,
   tx = prisma,
   userId,
 }: {
   skillIds: string[];
-  sittingStartedAt?: Date | null;
+  sittingId?: string | null;
   tx?: TransactionClient;
   userId: string;
 }) {
@@ -140,15 +140,15 @@ export async function loadEvidence({
         take: MAX_EVIDENCE,
         where: { skillId: { in: skillIds }, userId },
       }),
-    () => loadTestSkills({ sittingStartedAt, skillIds, tx, userId }),
+    () => loadTestSkills({ sittingId, skillIds, tx, userId }),
     () =>
-      sittingStartedAt
+      sittingId
         ? tx.attempt.findMany({
             orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
             select: { answer: true, isCorrect: true },
             take: UNKNOWN_STREAK,
             where: {
-              answeredAt: { gte: sittingStartedAt },
+              focusTestId: sittingId,
               ...SITTING_ANSWER_FILTER,
               skillId: { in: skillIds },
               userId,

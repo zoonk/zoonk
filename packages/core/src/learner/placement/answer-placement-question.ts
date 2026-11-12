@@ -21,6 +21,7 @@ import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-pla
 import { SITTING_ANSWER_FILTER } from "./_utils/placement-answers";
 import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
 import { saveTestSummary } from "./_utils/test-sitting";
+import { readFocusTestRecord } from "./focus-test-state";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
 
 export type PlacementAnswerResult =
@@ -107,7 +108,13 @@ function gradeAnswer({
  * A question placement asked outside a session is answered once: a repeated send, such as a retry
  * after a lost response, records and counts nothing again.
  */
-async function recordPlacementAnswer(input: LearnerAnswer): Promise<boolean> {
+async function recordPlacementAnswer({
+  goalId,
+  input,
+}: {
+  goalId: string;
+  input: LearnerAnswer;
+}): Promise<boolean> {
   const { itemId, userId } = input;
 
   const events = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
@@ -120,7 +127,14 @@ async function recordPlacementAnswer(input: LearnerAnswer): Promise<boolean> {
       return unchanged(null);
     }
 
-    const { events: recorded } = await persistLearnerAnswer({ input, transaction: tx });
+    const goal = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
+    const focusTestId = readFocusTestRecord(goal)?.sitting?.id ?? null;
+
+    const { events: recorded } = await persistLearnerAnswer({
+      input: { ...input, focusTestId },
+      transaction: tx,
+    });
+
     return recorded;
   });
 
@@ -171,16 +185,19 @@ export async function answerPlacementQuestion({
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
   const recorded = await recordPlacementAnswer({
-    answer: input.answer,
-    graded: { durationMs: input.durationMs, isCorrect },
-    isPlacement: true,
-    itemId: item.id,
-    language: item.language,
-    mistake: { questionText: snapshot.question, snapshot },
-    purpose: "diagnostic",
-    skillId: item.skillId,
-    timeZone,
-    userId: owned.userId,
+    goalId,
+    input: {
+      answer: input.answer,
+      graded: { durationMs: input.durationMs, isCorrect },
+      isPlacement: true,
+      itemId: item.id,
+      language: item.language,
+      mistake: { questionText: snapshot.question, snapshot },
+      purpose: "diagnostic",
+      skillId: item.skillId,
+      timeZone,
+      userId: owned.userId,
+    },
   });
 
   const read = {

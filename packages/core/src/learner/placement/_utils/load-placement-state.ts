@@ -143,15 +143,7 @@ async function loadPlacementFacts({
 
   const [answersRead, { bankItems, build }] = await readDatabaseFacts(
     tx,
-    () =>
-      loadEvidence({
-        sittingStartedAt: exam.test?.record?.sitting
-          ? new Date(exam.test.record.sitting.startedAt)
-          : null,
-        skillIds,
-        tx,
-        userId,
-      }),
+    () => loadEvidence({ sittingId: exam.test?.record?.sitting?.id ?? null, skillIds, tx, userId }),
     () =>
       loadPlanBuild({
         askedAt: getTestStart(exam.test),
