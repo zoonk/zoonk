@@ -38,6 +38,7 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.GoalExamCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,8 +90,15 @@ class FocusTestScreenTest {
             isActive = true,
             isSettingUp = false,
             kind = LearnerSummaryGoal.Kind.EXAM,
+            language = "en",
             languageFlag = null,
             regionChoices = emptyList(),
+            contentCountry = null,
+            countryDependent = false,
+            examCountry = null,
+            examplesCountry = null,
+            languageCountry = GoalExamCountry("US", "United States"),
+            suggested = emptyList(),
             status = LearnerSummaryGoal.Status.ACTIVE,
             targetDate = null,
             targetLanguage = null,
