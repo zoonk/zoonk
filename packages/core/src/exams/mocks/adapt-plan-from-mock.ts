@@ -1,8 +1,11 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { markPlanItemsTestedOut } from "../../learner/_utils/known-skills";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { loadFocusOwnership } from "../../learner/placement/_utils/focus-proposal-facts";
+import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { type UnchangedFocusReason } from "../../plans/_utils/apply-plan-change";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { loadMockPlanOffers } from "./_utils/mock-adapt";
@@ -65,13 +68,25 @@ export async function adaptPlanFromMock({
     return { reason: null, status: "unchanged" };
   }
 
+  const plan = await prisma.plan.findUniqueOrThrow({
+    select: { id: true },
+    where: { goalId: goal.id },
+  });
+
+  const { handPicked } = await loadFocusOwnership({
+    focusAreas: offers.focusAreas,
+    planId: plan.id,
+    record: readFocusTestRecord(goal),
+    tx: prisma,
+  });
+
   const changed = await changeGoalPlan({
     goalId: goal.id,
     input: {
       operations: [{ areas: [...offers.focusAreas, offers.view.focus.area], kind: "focusAreas" }],
       timeZone,
     },
-    source: "mock",
+    source: handPicked ? "learner" : "mock",
     trackAnalytics: false,
   });
 

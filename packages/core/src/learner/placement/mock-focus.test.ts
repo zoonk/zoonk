@@ -1,10 +1,14 @@
 import { prisma } from "@zoonk/db";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { adaptPlanFromMock } from "../../exams/mocks/adapt-plan-from-mock";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
 import { loadPlanChangeView } from "../../plans/_utils/owned-plan";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
+import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
+import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../_test-utils/exam-test-goal";
 
 async function goalFixture() {
@@ -99,5 +103,69 @@ describe("a focus accepted from a mock", () => {
 
     const ownView = own.status === "applied" && own.change ? own.change : null;
     expect(ownView?.reason).toBeNull();
+  });
+
+  it("leaves the subject the learner picked by hand alone a week later", async () => {
+    const { goal, plan, user } = await goalFixture();
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ areas: ["Ética"], kind: "focusAreas" }] },
+      trackAnalytics: false,
+    });
+
+    await acceptMockFocus({ goalId: goal.id, userId: user.id });
+
+    await expect(
+      prisma.plan
+        .findUniqueOrThrow({ where: { id: plan.id } })
+        .then((row) => parsePlanSettings(row.settings).focusAreas),
+    ).resolves.toStrictEqual(["Ética", "Direito"]);
+
+    await prisma.planChange.updateMany({
+      data: { createdAt: new Date(Date.now() - 8 * MS_PER_DAY) },
+      where: { planId: plan.id },
+    });
+
+    const graph = parsePlanGraph(plan.graph);
+    const items = await prisma.item.findMany({ where: { examBlueprintId: goal.examBlueprintId } });
+
+    const right = items.find(
+      (item) =>
+        item.skillId &&
+        item.skillId === graph.skills.find((skill) => skill.area === "Direito")?.skillId,
+    )!;
+
+    await attemptFixture({
+      isCorrect: true,
+      isPlacement: true,
+      itemId: right.id,
+      skillId: right.skillId,
+      userId: user.id,
+    });
+
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    await Promise.all(
+      Array.from({ length: 12 }, () =>
+        attemptFixture({
+          isCorrect: true,
+          itemId: right.id,
+          skillId: right.skillId,
+          studySessionId: session.id,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+
+    const waiting = await prisma.planChange.findMany({
+      where: { payload: { equals: "focusTest", path: ["source"] }, planId: plan.id },
+    });
+
+    expect(
+      waiting.map((change) => ({ payload: change.payload, status: change.status })),
+    ).toStrictEqual([]);
   });
 });
