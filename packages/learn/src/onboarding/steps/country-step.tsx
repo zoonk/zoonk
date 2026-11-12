@@ -121,10 +121,11 @@ export function CountryStep({
 
         <ListRowButton
           aria-haspopup="dialog"
-          className="min-h-12"
           disabled={pending}
           onClick={() => setPickerOpen(true)}
         >
+          {/* Lines its name up with the countries', which start after their number keys. */}
+          <span aria-hidden="true" className="hidden w-5 shrink-0 pointer-fine:block" />
           <ListRowContent>
             <ListRowTitle>{t("Another country")}</ListRowTitle>
           </ListRowContent>
