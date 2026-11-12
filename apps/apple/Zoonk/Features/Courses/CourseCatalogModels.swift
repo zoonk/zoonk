@@ -62,6 +62,8 @@ struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
 struct Course: Codable, Equatable, Identifiable, Sendable {
   /// Oldest first: the first is the course's subject.
   let categories: [CourseCategory]
+  /// Set only for a course written for a country other than its language's own.
+  var contentCountry: ContentCountry? = nil
   let description: String?
   /// The course's published editions in every language, itself included.
   let editions: [CourseEdition]

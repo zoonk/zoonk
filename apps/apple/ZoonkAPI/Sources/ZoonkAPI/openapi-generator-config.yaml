@@ -185,6 +185,7 @@ filter:
     - leaveInstrumentWaitlist
     - listCertificates
     - listChapterLessons
+    - listCountries
     - listCourseCategoryCounts
     - listCourseChapters
     - listCourses

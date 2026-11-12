@@ -357,7 +357,7 @@ private val WRITING_REFRESH = 10.seconds
 
 /** Runs [block] while the screen is started and [active], restarting it when [key] changes. */
 @Composable
-private fun WhileShown(
+internal fun WhileShown(
     active: Boolean,
     key: Any? = null,
     block: suspend () -> Unit,

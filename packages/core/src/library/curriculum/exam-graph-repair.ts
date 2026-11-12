@@ -22,6 +22,7 @@ function toExamScope(blueprint: ExamBlueprint): CurriculumScope {
   const exams = toGoalCandidateExams({ blueprint, kind: "exam" });
 
   return {
+    country: blueprint.country,
     exams,
     generalGoal: toExamIdentity({ details: {}, exams }) ?? blueprint.name,
     language: blueprint.language,
@@ -134,6 +135,7 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
 
   const ids = await saveGoalSkills({
     analytics: { contentScope: "shared" },
+    courses: checked.graph.courses,
     provenance: checked.provenance,
     scope,
     skills: added,

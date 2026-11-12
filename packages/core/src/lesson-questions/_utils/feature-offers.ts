@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { getLanguageCountry, isCountryCode } from "@zoonk/utils/countries";
 import {
   getTaughtRegion,
   getVarietyFlagCode,
@@ -9,6 +10,8 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { type Allowance } from "../../entitlements/contract";
 import { getAllowance } from "../../entitlements/get-allowance";
+import { getLessonVariety } from "../../goals/_utils/content-country-view";
+import { hasCountryReading, isCountryGoal } from "../../goals/_utils/goal-content-country";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -192,4 +195,51 @@ export async function offerPlus(): Promise<TutorToolResult> {
   const allowance = await getAllowance();
 
   return { offer: { kind: "plus", subscribed: allowance?.tier === "plus" }, status: "offered" };
+}
+
+export async function offerCountry({
+  country,
+  goal,
+  kind,
+}: {
+  country: string | null;
+  goal: Goal;
+  kind: "contentCountry" | "homeCountry";
+}): Promise<TutorToolResult> {
+  const code = country?.trim().toUpperCase() ?? "";
+
+  if (!isCountryCode(code)) {
+    return { reason: "countryNotOffered", status: "unavailable" };
+  }
+
+  if (kind === "contentCountry" && !isCountryGoal(goal)) {
+    return { reason: "notCountryGoal", status: "unavailable" };
+  }
+
+  const profile =
+    kind === "homeCountry"
+      ? await prisma.userLearningProfile.findUnique({ where: { userId: goal.userId } })
+      : null;
+
+  const ownCountry = getLanguageCountry(goal.language);
+
+  const current =
+    kind === "homeCountry" ? profile?.homeCountry : (goal.contentCountry ?? ownCountry);
+
+  if (code === current && (kind === "homeCountry" || hasCountryReading(goal))) {
+    return { reason: "alreadySet", status: "unavailable" };
+  }
+
+  return {
+    offer: {
+      country: code,
+      countryName: new Intl.DisplayNames([goal.language], { type: "region" }).of(code) ?? code,
+      goalId: goal.id,
+      kind,
+      languageFlag: code.toLowerCase(),
+      lessonVariety:
+        kind === "contentCountry" ? getLessonVariety({ code, language: goal.language }) : null,
+    },
+    status: "offered",
+  };
 }

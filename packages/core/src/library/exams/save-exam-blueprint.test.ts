@@ -731,7 +731,7 @@ describe(saveExamBlueprint, () => {
     });
 
     expect(saved.blueprint).toMatchObject({
-      identityKey: `private:${owner.id}:bioquimica-prova-2`,
+      identityKey: `private:${owner.id}:BR:bioquimica-prova-2`,
       ownerId: owner.id,
       visibility: "private",
     });
@@ -883,7 +883,7 @@ describe(findSameExam, () => {
     expect(found?.id).toBe(blueprint.id);
 
     expect(decideExamIdentity).toHaveBeenLastCalledWith(
-      expect.objectContaining({ request: expect.objectContaining({ country: "BR" }) }),
+      expect.objectContaining({ request: expect.objectContaining({ country: null }) }),
     );
   });
 
@@ -891,7 +891,7 @@ describe(findSameExam, () => {
     const name = `Concurso ${randomUUID()}`;
 
     const blueprint = await examBlueprintFixture({
-      identityKey: buildExamIdentityKey({ name, ownerId: null, role: null }),
+      identityKey: buildExamIdentityKey({ country: "BR", name, ownerId: null, role: null }),
       language: "pt",
       name,
     });
@@ -899,7 +899,7 @@ describe(findSameExam, () => {
     vi.mocked(decideExamIdentity).mockClear();
 
     const found = await findSameExam({
-      request: { board: null, country: null, language: "pt", name, ownerId: null, role: null },
+      request: { board: null, country: "BR", language: "pt", name, ownerId: null, role: null },
       searchTerms: [],
     });
 

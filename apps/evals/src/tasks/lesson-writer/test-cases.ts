@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/lesson-writer";
 import { describeActivityTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
@@ -25,7 +25,7 @@ import { VISUAL_LESSON_SPECS } from "./visual-lesson-specs";
 import { WALK_LESSONS } from "./walk-lesson-specs";
 
 type LessonWriterInput = Omit<
-  WriteLessonDraftParams,
+  OptionalCountry<WriteLessonDraftParams>,
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 

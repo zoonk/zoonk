@@ -102,6 +102,7 @@ export async function loadMockWritingSkills({
     prisma.goal.findUnique({ select: { examBlueprint: true }, where: { id: goalId } }),
     prisma.skill.findMany({
       select: {
+        country: true,
         description: true,
         id: true,
         language: true,

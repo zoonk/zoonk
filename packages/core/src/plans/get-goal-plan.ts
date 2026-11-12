@@ -25,7 +25,9 @@ export async function getGoalPlan(goalId: string): Promise<GoalPlanResult> {
 
   const [{ nextDays, ...plan }, rebuilding] = await Promise.all([
     buildPlanView(loaded),
-    readCurriculumRebuild(loaded.context.goal.userId, goalId),
+    loaded.context.goal.planRevealedAt
+      ? false
+      : readCurriculumRebuild(loaded.context.goal.userId, goalId),
   ]);
 
   return { nextDays, plan: { ...plan, ready: plan.ready && !rebuilding }, status: "ready" };

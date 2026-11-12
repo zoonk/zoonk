@@ -357,7 +357,6 @@ msgid "Reminders"
 msgstr "Erinnerungen"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/footer-languages.tsx
 msgctxt "y1Z3or"
 msgid "Language"
@@ -573,6 +572,18 @@ msgstr "Kapiteloptionen"
 msgctxt "DcXGUl"
 msgid "{chapter}: {course} course"
 msgstr "{chapter}: Kurs {course}"
+
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/content-country-line.tsx
+msgctxt "RZJ-9n"
+msgid "Content country: {country}"
+msgstr "Land für deine Inhalte: {country}"
+
+#. {variety} is a language with its country, such as “Portuguese (Brazil)”. It always follows the colon, so it never needs an article or a case.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/content-country-line.tsx
+msgctxt "J3aEI6"
+msgid "Lesson language: {variety}"
+msgstr "Sprache der Lektionen: {variety}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
 msgctxt "kRwSyb"
@@ -1451,6 +1462,11 @@ msgstr "Gespeichert."
 msgctxt "JXl2gz"
 msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
 msgstr "Was du uns hier erzählst, prägt deine Beispiele und deinen Kumpel. Alle Angaben sind freiwillig."
+
+#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
+msgctxt "uOIiKt"
+msgid "Language and region"
+msgstr "Sprache und Region"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/components/public/public-footer.tsx

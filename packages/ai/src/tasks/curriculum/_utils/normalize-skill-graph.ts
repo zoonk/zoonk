@@ -28,7 +28,13 @@ type RawSkillGraphSkill = {
 };
 
 export type RawSkillGraph = {
-  courses: { key: string; levels: CourseLevel[]; supporting?: boolean; title: string }[];
+  courses: {
+    countrySpecific: boolean;
+    key: string;
+    levels: CourseLevel[];
+    supporting?: boolean;
+    title: string;
+  }[];
   phases: { milestone: string; title: string }[];
   skills: RawSkillGraphSkill[];
 };
@@ -59,7 +65,13 @@ type SkillGraphSkill = {
   libraryId?: string;
 };
 
-type SkillGraphCourse = { key: string; title: string; levels: CourseLevel[] };
+type SkillGraphCourse = {
+  key: string;
+  title: string;
+  levels: CourseLevel[];
+  /** Its subject is a country's laws, taxes, money, schools, institutions or exams. */
+  countrySpecific: boolean;
+};
 
 type SkillGraphPhase = {
   title: string;
@@ -158,7 +170,12 @@ export function normalizeCourses({
 
     const levels = sortLevels([...course.levels, ...courseSkills.map((skill) => skill.level)]);
 
-    return { key, levels, title: toPlainLine(course.title) };
+    return {
+      countrySpecific: course.countrySpecific,
+      key,
+      levels,
+      title: toPlainLine(course.title),
+    };
   });
 }
 

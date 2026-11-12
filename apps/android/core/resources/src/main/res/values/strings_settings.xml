@@ -41,7 +41,7 @@
     <string name="settings_preferences_lessons">Lessons</string>
     <string name="settings_preferences_sounds">Sounds</string>
     <string name="settings_preferences_sounds_description">When you get it right or finish</string>
-    <string name="settings_preferences_language">Language</string>
+    <string name="settings_preferences_language">Language and region</string>
     <string name="settings_preferences_app_language">App language</string>
     <string name="settings_preferences_on_this_device">On this device</string>
     <string name="settings_preferences_save_failed">That didn\'t save. Try again.</string>
@@ -53,4 +53,14 @@
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Share usage data</string>
     <string name="settings_preferences_share_usage_data_description">Shows us how you use Zoonk, so we can improve it</string>
+    <!-- A setting in Preferences: the country the learner lives in. -->
+    <string name="settings_home_country">Where you live</string>
+    <!-- Under that setting. -->
+    <string name="settings_home_country_description">For new goals and your examples. It doesn\'t change the plans you already have.</string>
+    <!-- That setting's value when the learner hasn't said where they live, and the picker's first choice, which clears it. -->
+    <string name="settings_home_country_none">Not set</string>
+    <!-- The app language in Preferences, as each language names itself; fixed, never translated. -->
+    <string name="settings_app_language_en" translatable="false">English (US)</string>
+    <string name="settings_app_language_es" translatable="false">Español (México)</string>
+    <string name="settings_app_language_pt" translatable="false">Português (Brasil)</string>
 </resources>

@@ -1267,6 +1267,65 @@
         }
       }
     },
+    "Applying it rebuilds your plan for this country. The lessons you've finished stay done." : {
+      "comment" : "What applying the content country the buddy offered does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du das übernimmst, erstelle ich deinen Plan für dieses Land neu. Abgeschlossene Lektionen bleiben abgeschlossen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al aplicarlo, tu plan se vuelve a preparar para este país. Las lecciones que terminaste siguen marcadas como completadas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan est recréé pour ce pays quand tu appliques ce choix. Les leçons déjà terminées restent validées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se applichi la modifica, il tuo piano viene ricreato per questo paese. Le lezioni che hai finito restano completate."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "適用すると、この国に合わせて学習計画を作り直します。終えたレッスンは完了済みのままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "적용하면 이 국가에 맞춰 계획을 다시 만들어요. 끝낸 레슨은 완료 상태로 유지돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastosowanie tej zmiany oznacza przygotowanie twojego planu od nowa dla tego kraju. Ukończone lekcje pozostają zaliczone."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao aplicar, seu plano é refeito para esse país. As aulas que você já fez continuam feitas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uyguladığında planın bu ülkeye göre yeniden hazırlanır. Bitirdiğin dersler yeni planda da tamamlanmış sayılır."
+          }
+        }
+      }
+    },
     "Ask %@" : {
       "comment" : "Opens the buddy's panel; the argument is the buddy's name\nTitle of the buddy's panel; the argument is the buddy's name",
       "localizations" : {
@@ -3509,6 +3568,65 @@
         }
       }
     },
+    "For new goals and your examples. It doesn't change the plans you already have." : {
+      "comment" : "What the country the learner lives in changes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gilt für neue Ziele und deine Beispiele. Deine bestehenden Pläne ändern sich dadurch nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para tus nuevos objetivos y ejemplos. No cambia los planes que ya tienes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour tes nouveaux objectifs et tes exemples. Ce choix ne change pas tes plans actuels."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per i nuovi obiettivi e gli esempi delle lezioni. Non modifica i piani che hai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい目標や学習で使う例に反映されます。現在の学習計画は変わりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 목표와 예시에 적용돼요. 기존 계획은 바뀌지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dotyczy nowych celów i przykładów w lekcjach. Nie zmienia twoich obecnych planów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vale para novos objetivos e para os seus exemplos. Não muda os planos que você já tem."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni hedeflerin ve sana verilen örnekler için kullanılır. Mevcut planlarını değiştirmez."
+          }
+        }
+      }
+    },
     "Get answer" : {
       "comment" : "Asks the buddy for an answer that wasn't written yet",
       "localizations" : {
@@ -5039,6 +5157,124 @@
         }
       }
     },
+    "Save" : {
+      "comment" : "Saves what the buddy offered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydet"
+          }
+        }
+      }
+    },
+    "Saved. You can change it in Preferences." : {
+      "comment" : "The learner saved the country they live in, which the buddy offered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeichert. Du kannst das in den Einstellungen ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado. Puedes cambiarlo en Preferencias."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré. Tu peux modifier ce choix dans les Préférences."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvato. Puoi cambiarlo nelle Preferenze."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました。設定から変更できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장했어요. 환경설정에서 바꿀 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano. Możesz to zmienić w preferencjach."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo. Você pode mudar isso em Preferências."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi. Tercihler bölümünden değiştirebilirsin."
+          }
+        }
+      }
+    },
     "Saved. You can change it in your plan." : {
       "comment" : "The learner saved the country the buddy offered; the plan is the Plan tab",
       "localizations" : {
@@ -5094,6 +5330,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydedildi. Planında değiştirebilirsin."
+          }
+        }
+      }
+    },
+    "Saved. Your new plan is being prepared, and you can keep studying meanwhile." : {
+      "comment" : "The learner applied the content country the buddy offered; the plan is rebuilt for it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeichert. Ich bereite deinen neuen Plan vor, und du kannst währenddessen weiterlernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardado. Estamos preparando tu nuevo plan y puedes seguir estudiando mientras tanto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistré. Ton nouveau plan est en préparation et tu peux continuer à étudier en attendant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvato. Stiamo preparando il tuo nuovo piano e nel frattempo puoi continuare a studiare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存しました。新しい学習計画を準備しています。その間も学習を続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장했어요. 새 계획을 준비하고 있어요. 그동안 계속 공부할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisano. Przygotowujemy twój nowy plan, a ty możesz w tym czasie uczyć się dalej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvo. Seu novo plano está sendo preparado, e dá para seguir estudando enquanto isso."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi. Yeni planını hazırlıyoruz, bu sırada çalışmaya devam edebilirsin."
           }
         }
       }
@@ -7574,6 +7869,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Burada çalışmam gereken neler kaldı?"
+          }
+        }
+      }
+    },
+    "Where you live: %@" : {
+      "comment" : "The buddy offers saving the country the learner lives in; the argument is a country's name, such as Portugal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wo du wohnst: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donde vives: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Là où tu vis : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dove vivi: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "お住まいの国：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "거주 국가: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kraj zamieszkania: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onde você mora: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yaşadığın ülke: %@"
           }
         }
       }

@@ -1,4 +1,4 @@
-import { type TestCase } from "@/lib/types";
+import { type OptionalCountry, type TestCase } from "@/lib/types";
 import { type CourseDetailsParams } from "@zoonk/ai/tasks/courses/details";
 import { type CourseDetailsExpected } from "./scorer";
 
@@ -14,7 +14,7 @@ function chapter(level: string, title: string, description: string) {
   return { description, level, title };
 }
 
-export const TEST_CASES: TestCase<CourseDetailsExpected, CourseDetailsParams>[] = [
+export const TEST_CASES: TestCase<CourseDetailsExpected, OptionalCountry<CourseDetailsParams>>[] = [
   {
     expectations: `
       - MUST be in US English

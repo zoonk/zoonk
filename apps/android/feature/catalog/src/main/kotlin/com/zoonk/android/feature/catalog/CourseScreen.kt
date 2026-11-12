@@ -35,6 +35,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.country.countryDisclosure
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -239,6 +240,11 @@ private fun CourseHero(
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))
             Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.lead)
+        }
+
+        course.contentCountry?.let {
+            Spacer(Modifier.size(8.dp))
+            Text(countryDisclosure(it), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
 
         Spacer(Modifier.size(16.dp))

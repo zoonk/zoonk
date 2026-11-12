@@ -5,10 +5,16 @@ struct LearningPreferences: Equatable, Sendable {
   var buddyPicked: Bool
   var availableGlasses: [BuddyGlasses]
   var soundsEnabled: Bool
+  /// Where the learner says they live, named in the app's language; nil when they haven't said.
+  var homeCountry: CountryChoice? = nil
+  /// The countries its picker offers first.
+  var suggestedCountries: [CountryChoice] = []
 }
 
 enum PreferencesUpdate: Equatable, Sendable {
   case buddy(BuddyChoice)
+  /// Nil clears it.
+  case homeCountry(CountryChoice?)
   /// The summary shows it, so it changes nothing here.
   case shareUsageData(Bool)
   case soundsEnabled(Bool)
@@ -20,6 +26,8 @@ enum PreferencesUpdate: Equatable, Sendable {
     case .buddy(let buddy):
       next.buddy = buddy
       next.buddyPicked = true
+    case .homeCountry(let country):
+      next.homeCountry = country
     case .shareUsageData:
       break
     case .soundsEnabled(let enabled):
@@ -39,6 +47,9 @@ enum PreferencesUpdate: Equatable, Sendable {
     case .buddy:
       next.buddy = source.buddy
       next.buddyPicked = source.buddyPicked
+    case .homeCountry:
+      next.homeCountry = source.homeCountry
+      next.suggestedCountries = source.suggestedCountries
     case .shareUsageData:
       break
     case .soundsEnabled:
@@ -46,6 +57,11 @@ enum PreferencesUpdate: Equatable, Sendable {
     }
 
     return next
+  }
+
+  /// Clearing a country sends its `null`, which the generated client would leave out.
+  var nullKeys: [String] {
+    self == .homeCountry(nil) ? ["homeCountry"] : []
   }
 
   var body: Components.Schemas.LearningProfileUpdate {
@@ -57,6 +73,8 @@ enum PreferencesUpdate: Equatable, Sendable {
             glasses: .init(rawValue: buddy.glasses.rawValue),
             kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
             name: buddy.name)))
+    case .homeCountry(let country):
+      .init(homeCountry: country?.code)
     case .shareUsageData(let shares):
       .init(shareUsageData: shares)
     case .soundsEnabled(let enabled):
@@ -156,7 +174,11 @@ extension LearningPreferences {
         glasses: BuddyGlasses(rawValue: profile.buddy.glasses.rawValue) ?? .round),
       buddyPicked: profile.buddy.picked,
       availableGlasses: profile.availableGlasses.compactMap { BuddyGlasses(rawValue: $0.rawValue) },
-      soundsEnabled: profile.soundsEnabled)
+      soundsEnabled: profile.soundsEnabled,
+      homeCountry: profile.homeCountry.map { code in
+        CountryChoice(code: code, name: profile.homeCountryName ?? code, isHome: true)
+      },
+      suggestedCountries: .init(suggested: profile.suggested))
   }
 }
 

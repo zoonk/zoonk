@@ -18,6 +18,7 @@ export async function getCourseDetail({ courseId }: { courseId: string }) {
     return null;
   }
 
+  const contentCountry = outline?.contentCountry ?? null;
   const written = outline?.levels.map((band) => band.level) ?? [];
 
   const levels = listCourseLevels({ format: course.format, written }).map((level) => ({
@@ -27,7 +28,16 @@ export async function getCourseDetail({ courseId }: { courseId: string }) {
 
   if (!course.organization) {
     const quickTestMinutes = await getCourseQuickTestMinutes(course);
-    return { ...course, editions: [], exam, examplePlan: null, levels, quickTestMinutes };
+
+    return {
+      ...course,
+      contentCountry,
+      editions: [],
+      exam,
+      examplePlan: null,
+      levels,
+      quickTestMinutes,
+    };
   }
 
   const [examplePlan, editions, quickTestMinutes] = await Promise.all([
@@ -36,5 +46,5 @@ export async function getCourseDetail({ courseId }: { courseId: string }) {
     getCourseQuickTestMinutes(course),
   ]);
 
-  return { ...course, editions, exam, examplePlan, levels, quickTestMinutes };
+  return { ...course, contentCountry, editions, exam, examplePlan, levels, quickTestMinutes };
 }

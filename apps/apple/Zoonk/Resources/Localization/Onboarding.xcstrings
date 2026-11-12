@@ -4589,6 +4589,65 @@
         }
       }
     },
+    "Another country" : {
+      "comment" : "Opens every country, after the ones the content country question suggests",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anderes Land"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro país"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un autre pays"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli un altro paese"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかの国"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 국가"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz inny kraj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outro país"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka bir ülke"
+          }
+        }
+      }
+    },
     "Another date" : {
       "comment" : "Picks another date than the exam's",
       "localizations" : {
@@ -12956,6 +13015,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "IELTS, YDS, YÖKDİL ve diğerleri"
+          }
+        }
+      }
+    },
+    "If you skip: %@" : {
+      "comment" : "Above the content country question's buttons: the country Skip keeps; the argument is a country's name, such as Brazil",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du diesen Schritt überspringst: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si saltas este paso: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si tu sautes cette étape : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se salti: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキップした場合：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "건너뛰면: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeśli pominiesz ten krok: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se você pular: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atlarsan: %@"
           }
         }
       }
@@ -28268,6 +28386,65 @@
         }
       }
     },
+    "What you learn here changes from country to country. You can change it later in your plan." : {
+      "comment" : "Under the content country question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du hier lernst, hängt vom Land ab. Du kannst das Land später in deinem Plan ändern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que aprendes aquí cambia según el país. Puedes cambiar el país después en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu apprends ici varie selon le pays. Tu peux modifier ce choix plus tard dans ton plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quello che impari qui cambia da paese a paese. Puoi cambiare questa scelta più avanti nel tuo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここで学ぶ内容は国によって変わります。あとで学習計画から変更できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "국가에 따라 배우는 내용이 달라져요. 나중에 계획에서 국가를 바꿀 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treść lekcji zależy od kraju. Możesz go później zmienić w swoim planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você aprende aqui muda de um país para outro. Dá para mudar depois no seu plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada öğreneceklerin ülkeden ülkeye değişir. Ülkeyi daha sonra planından değiştirebilirsin."
+          }
+        }
+      }
+    },
     "What you wrote" : {
       "comment" : "Header over the learner's typed goal",
       "localizations" : {
@@ -28628,6 +28805,65 @@
         }
       }
     },
+    "where you live" : {
+      "comment" : "Marks the content country row as the country the learner said they live in, in Settings",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wo du wohnst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "donde vives"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "là où tu vis"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dove vivi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "お住まいの国"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "거주 국가"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu mieszkasz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "onde você mora"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yaşadığın ülke"
+          }
+        }
+      }
+    },
     "Where: %@" : {
       "comment" : "Where the course is; a label, so the place's article doesn't matter",
       "localizations" : {
@@ -28683,6 +28919,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nerede: %@"
+          }
+        }
+      }
+    },
+    "Which country should your lessons be about?" : {
+      "comment" : "Onboarding question for a goal whose content changes from country to country",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um welches Land soll es in deinen Lektionen gehen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Sobre qué país quieres que traten tus lecciones?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur quel pays veux-tu que portent tes leçons ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A quale paese devono riferirsi le tue lezioni?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの国に合わせたレッスンにしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "레슨에서 어느 나라에 대해 배울까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Którego kraju mają dotyczyć twoje lekcje?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre qual país devem ser suas aulas?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Derslerin hangi ülkeyle ilgili olsun?"
           }
         }
       }

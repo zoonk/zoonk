@@ -496,6 +496,7 @@ describe("shared warm-up writing", () => {
 
     expect(generateWarmUpCards).toHaveBeenCalledExactlyOnceWith({
       analytics: undefined,
+      country: null,
       goal: scope.generalGoal,
       kind: "exam",
       language: "en",

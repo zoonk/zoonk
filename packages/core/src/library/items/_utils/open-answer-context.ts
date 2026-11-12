@@ -1,10 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../_utils/library-visibility";
+import { getLessonCountry } from "../../content-country";
 import { parseStepContent } from "../../steps/contract/step-contract";
 import { type AnswerExplanationTarget } from "../answer-explanations";
 import { parseItemContent } from "../item-content";
 
 export type OpenAnswerContext = {
+  country: string | null;
   acceptedAnswers: string[];
   context: string | null;
   keyPoints: string[];
@@ -16,7 +18,10 @@ export type OpenAnswerContext = {
 };
 
 async function getItemContext(itemId: string): Promise<OpenAnswerContext | null> {
-  const item = await prisma.item.findUnique({ where: { id: itemId } });
+  const item = await prisma.item.findUnique({
+    include: { skill: { select: { country: true } } },
+    where: { id: itemId },
+  });
 
   if (!item) {
     return null;
@@ -28,7 +33,12 @@ async function getItemContext(itemId: string): Promise<OpenAnswerContext | null>
     return null;
   }
 
-  return { ...parsed.content, language: item.language, storedContent: item.content };
+  return {
+    ...parsed.content,
+    country: item.skill.country,
+    language: item.language,
+    storedContent: item.content,
+  };
 }
 
 async function getStepContext({
@@ -39,7 +49,15 @@ async function getStepContext({
   userId: string;
 }): Promise<OpenAnswerContext | null> {
   const step = await prisma.step.findFirst({
-    include: { lesson: { select: { language: true } } },
+    include: {
+      lesson: {
+        select: {
+          homeChapter: { select: { homeCourse: { select: { country: true } } } },
+          language: true,
+        },
+      },
+      skill: { select: { country: true } },
+    },
     where: { id: stepId, kind: "typedAnswer", lesson: libraryRowsVisibleTo(userId) },
   });
 
@@ -52,6 +70,7 @@ async function getStepContext({
   return {
     acceptedAnswers: content.acceptedAnswers ?? [],
     context: content.context ?? null,
+    country: getLessonCountry({ course: step.lesson.homeChapter?.homeCourse, skill: step.skill }),
     keyPoints: content.keyPoints,
     language: step.lesson.language,
     question: content.question,

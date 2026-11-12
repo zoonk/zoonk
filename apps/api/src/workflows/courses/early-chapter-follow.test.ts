@@ -139,6 +139,7 @@ describe(writeOutlineBandStep, () => {
       analytics: { distinctId: user.id, goalId: goal.id, platform: "web" as const },
       courseId: course.id,
       plan: {
+        country: null,
         courseTitle: course.title,
         extensions: [],
         isNewBand: true,

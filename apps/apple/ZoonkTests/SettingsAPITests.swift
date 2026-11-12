@@ -20,6 +20,20 @@ final class SettingsAPITests: XCTestCase {
       [["soundsEnabled": false], ["shareUsageData": false]])
   }
 
+  func testClearingWhereTheLearnerLivesSendsItsNull() async throws {
+    let transport = ProfileUpdateTransport()
+    let api = SettingsAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!, transport: transport))
+
+    _ = try await api.updatePreferences(
+      token: "token", .homeCountry(CountryChoice(code: "PT", name: "Portugal")))
+    _ = try await api.updatePreferences(token: "token", .homeCountry(nil))
+
+    XCTAssertEqual(
+      transport.sentBodies.value, [["homeCountry": "PT"], ["homeCountry": NSNull()]])
+  }
+
   func testNoWebPlusIsNotFound() async {
     let api = webPlusAPI(
       .notFound, #"{"error":{"code":"NOT_FOUND","message":"No web subscription left to cancel"}}"#)
@@ -178,8 +192,11 @@ private struct ProfileUpdateTransport: ClientTransport {
             "activeGoalId": null,
             "availableGlasses": ["round"],
             "buddy": { "glasses": "round", "kind": "zu", "name": null, "picked": false },
+            "homeCountry": null,
+            "homeCountryName": null,
             "shareUsageData": null,
-            "soundsEnabled": true
+            "soundsEnabled": true,
+            "suggested": []
           }
         }
         """)

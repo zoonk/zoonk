@@ -1,6 +1,7 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
+import { goalContentCountrySchema, suggestedCountriesSchema } from "../../goals/country-contract";
 import { goalDraftSchema, regionChoiceSchema } from "../../goals/goal-contract";
 import { languageAimViewSchema } from "../../language/aims/language-aim-schemas";
 import {
@@ -37,6 +38,8 @@ const examDateSchema = z
 
 const understoodGoalSchema = z
   .object({
+    contentCountry: goalContentCountrySchema.nullable().optional(),
+    countryDependent: z.boolean().optional(),
     cutoff: targetCutoffSchema
       .nullable()
       .default(null)
@@ -68,6 +71,7 @@ const understoodGoalSchema = z
         description:
           "The countries a language goal can pick for `draft.targetRegion`, named in the learner's language; edit it with field targetRegion. Empty for other goals and languages without countries",
       }),
+    suggested: suggestedCountriesSchema.default([]),
   })
   .meta({ id: "UnderstoodGoal" }) satisfies z.ZodType<UnderstoodGoalView>;
 

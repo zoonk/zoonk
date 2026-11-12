@@ -1,9 +1,12 @@
 import "server-only";
 import { type PlanScopeContext } from "@zoonk/ai/tasks/lessons/question-context";
 import { type Goal, prisma } from "@zoonk/db";
+import { getLanguageCountry } from "@zoonk/utils/countries";
 import { getString } from "@zoonk/utils/json";
 import { getTaughtRegion, getVarietyName } from "@zoonk/utils/language-regions";
 import { loadExamNoticeFacts } from "../../exams/_utils/exam-notice-facts";
+import { toCountryChoice } from "../../goals/_utils/content-country-view";
+import { getGoalContentCountry } from "../../goals/_utils/goal-content-country";
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getLibraryCourse } from "../../library/courses/get-library-course";
@@ -88,12 +91,12 @@ async function loadCourse({
 }: {
   goal: Goal;
   plan: PlanView;
-}): Promise<{ course: PlanScopeContext["course"]; ownCourse: boolean }> {
+}): Promise<{ course: PlanScopeContext["course"]; ownCourse: boolean; country: string | null }> {
   const planCourse = goal.kind === "exam" ? null : plan.course;
   const course = planCourse ? await getLibraryCourse({ courseId: planCourse.courseId }) : null;
 
   if (!planCourse || !course) {
-    return { course: null, ownCourse: false };
+    return { country: null, course: null, ownCourse: false };
   }
 
   const inPlan = new Set(
@@ -101,6 +104,7 @@ async function loadCourse({
   );
 
   return {
+    country: course.country,
     course: {
       description: course.description,
       levels: course.levels.map((band) => ({
@@ -216,9 +220,34 @@ function toGoalContext({
   };
 }
 
+async function loadCountryFacts(goal: Goal) {
+  const [profile, blueprint] = await Promise.all([
+    prisma.userLearningProfile.findUnique({ where: { userId: goal.userId } }),
+    goal.examBlueprintId
+      ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+      : null,
+  ]);
+
+  const code =
+    blueprint?.country ?? getGoalContentCountry({ goal }) ?? getLanguageCountry(goal.language);
+
+  return {
+    blueprint,
+    contentCountry: toCountryChoice({ code, language: "en" })?.name,
+    learnerHomeCountry: toCountryChoice({ code: profile?.homeCountry ?? null, language: "en" })
+      ?.name,
+    profile,
+  };
+}
+
 /** A pending plan can answer subject questions but cannot propose plan changes yet. */
 async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> {
-  const [exam, cutoff] = await Promise.all([loadExamNoticeFacts(goal), loadGoalCutoff(goal)]);
+  const countries = await loadCountryFacts(goal);
+
+  const [exam, cutoff] = await Promise.all([
+    loadExamNoticeFacts(goal, { blueprint: countries.blueprint }),
+    loadGoalCutoff(goal),
+  ]);
 
   return {
     catchUp: null,
@@ -226,8 +255,12 @@ async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> 
     course: null,
     estimate: { endDate: null, remainingHours: 0 },
     exam,
-    goal: toGoalContext({ cutoff, dailyMinutes: goal.dailyMinutes, goal }),
+    goal: {
+      ...toGoalContext({ cutoff, dailyMinutes: goal.dailyMinutes, goal }),
+      ...(countries.contentCountry && { contentCountry: countries.contentCountry }),
+    },
     language: goal.language,
+    ...(countries.learnerHomeCountry && { learnerHomeCountry: countries.learnerHomeCountry }),
     mistakes: [],
     next: [],
     phase: null,
@@ -261,24 +294,38 @@ export async function buildPlanContextSnapshot(
 
   const { plan } = result;
 
-  const activeGoalId = conversation ? await findActiveGoalId(goal.userId) : null;
+  const countries = await loadCountryFacts(goal);
+  const activeGoalId = conversation ? await findActiveGoalId(goal.userId, countries.profile) : null;
   const scope = { activeGoal: activeGoalId === goal.id };
 
-  const [{ course, ownCourse }, day, mistakes, exam, cutoff] = await Promise.all([
-    loadCourse({ goal, plan }),
-    loadPlanDayContext({ goal, plan, scope }),
-    loadRecentMistakes(goal),
-    loadExamNoticeFacts(goal),
-    loadGoalCutoff(goal),
-  ]);
+  const [{ country: sourceCountry, course, ownCourse }, day, mistakes, exam, cutoff] =
+    await Promise.all([
+      loadCourse({ goal, plan }),
+      loadPlanDayContext({ goal, plan, scope }),
+      loadRecentMistakes(goal),
+      loadExamNoticeFacts(goal, { blueprint: countries.blueprint }),
+      loadGoalCutoff(goal),
+    ]);
+
+  const contentCountry = toCountryChoice({
+    code:
+      countries.blueprint?.country ??
+      getGoalContentCountry({ existingCountry: sourceCountry, goal }) ??
+      getLanguageCountry(goal.language),
+    language: "en",
+  })?.name;
 
   return {
-    ...day,
     course,
+    ...day,
     estimate: { endDate: plan.estimate.endDate, remainingHours: plan.estimate.remainingHours },
     exam,
-    goal: toGoalContext({ cutoff, dailyMinutes: plan.schedule.dailyMinutes, goal }),
+    goal: {
+      ...toGoalContext({ cutoff, dailyMinutes: plan.schedule.dailyMinutes, goal }),
+      ...(contentCountry && { contentCountry }),
+    },
     language: goal.language,
+    ...(countries.learnerHomeCountry && { learnerHomeCountry: countries.learnerHomeCountry }),
     mistakes,
     next: toNextDays(plan),
     phase: toPhase(plan),

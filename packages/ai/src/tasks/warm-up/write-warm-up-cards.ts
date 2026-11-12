@@ -36,6 +36,8 @@ export type WriteWarmUpCardsParams = {
   goal: string;
   kind: WarmUpGoalKind;
   language: string;
+  /** The goal's content country, normalized; null is the language's own. Shared with the deck. */
+  country: string | null;
   /** An exam's subject areas, named by its public blueprint. */
   subjects?: string[];
   targetLanguage?: string;
@@ -57,7 +59,7 @@ function formatInputs(params: WriteWarmUpCardsParams): string {
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
     params.kind === "language" && `TARGET_LANGUAGE: ${formatTargetLanguage(params)}`,
     params.kind === "exam" && `SUBJECTS: ${params.subjects?.join("; ") || "none"}`,
-    formatLocalContext(params.language),
+    formatLocalContext({ country: params.country, language: params.language }),
   ]
     .filter(Boolean)
     .join("\n");

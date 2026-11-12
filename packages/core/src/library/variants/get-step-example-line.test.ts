@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { selectRelevantMemoryFacts } from "@zoonk/ai/tasks/memory/relevance";
 import { generateExampleLines } from "@zoonk/ai/tasks/variants/example-lines";
 import { prisma } from "@zoonk/db";
@@ -212,6 +212,47 @@ describe(getStepExampleLine, () => {
 
     expect(generateExampleLines).toHaveBeenLastCalledWith(
       expect.objectContaining({ plainWords: true }),
+    );
+  });
+
+  it("keeps a line saved before where the learner lives was asked, then writes it again once they say", async () => {
+    const learner = await createLearner();
+    const step = await createExplanation();
+    const fact = await shareFact(learner.id);
+
+    const savedBeforeKey = createHash("sha256")
+      .update(JSON.stringify({ goal: null, plainWords: false, statements: [fact.statement] }))
+      .digest("hex");
+
+    await prisma.stepExampleLine.create({
+      data: {
+        contextKey: savedBeforeKey,
+        model: "test",
+        promptVersion: "test",
+        runId: randomUUID(),
+        stepId: step.id,
+        text: "A line from before.",
+        userId: learner.id,
+      },
+    });
+
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toMatchObject({
+      canRequest: false,
+      line: "A line from before.",
+    });
+
+    await learningProfileFixture({ homeCountry: "PT", userId: learner.id });
+
+    await expect(getStepExampleLine({ stepId: step.id })).resolves.toMatchObject({
+      canRequest: true,
+      line: null,
+    });
+
+    mockLines(["A line in euros."]);
+    await requestStepExampleLine({ stepId: step.id });
+
+    expect(generateExampleLines).toHaveBeenLastCalledWith(
+      expect.objectContaining({ learnerHomeCountry: "PT" }),
     );
   });
 

@@ -78,6 +78,7 @@ function fix(params: { screenCount: number; shortAnswers?: boolean }) {
   return fixLessonDraft({
     activityTemplates: [],
     chapterTitle: "Chapter",
+    country: null,
     courseTitle: "Course",
     language: "en",
     lesson,

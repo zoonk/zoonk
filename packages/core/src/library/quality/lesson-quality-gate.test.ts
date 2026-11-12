@@ -9,6 +9,7 @@ function gate(text: string) {
     context: {
       activityTemplates: [],
       chapterTitle: "Temperature",
+      country: null,
       courseTitle: "Weather",
       language: "en",
       level: "beginner",

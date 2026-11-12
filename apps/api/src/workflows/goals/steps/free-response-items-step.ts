@@ -27,6 +27,7 @@ export async function prepareFreeResponseItemStep({
   const { data, provenance } = await generateItems({
     analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
     count: 1,
+    country: skill.country,
     examFormat: exam,
     format: "essay",
     language: skill.language,

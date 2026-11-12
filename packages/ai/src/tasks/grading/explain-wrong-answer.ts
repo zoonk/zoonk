@@ -30,6 +30,8 @@ export type ExplainWrongAnswerParams = {
   misconceptions?: string[];
   answer: string;
   language: string;
+  /** The country the question's skill is set in; null is the language's own. */
+  country: string | null;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -45,6 +47,7 @@ export async function explainWrongAnswer({
   analytics,
   answer,
   correctAnswer,
+  country,
   keyPoints,
   language,
   misconceptions,
@@ -55,7 +58,7 @@ export async function explainWrongAnswer({
 }: ExplainWrongAnswerParams) {
   const userPrompt = `
     LANGUAGE: ${getPromptLanguageName({ language })}
-${formatLocalContext(language)}
+${formatLocalContext({ country, language })}
     QUESTION: ${question}
     CORRECT_ANSWER: ${correctAnswer}
     KEY_POINTS:

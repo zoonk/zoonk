@@ -56,7 +56,9 @@ async function buildScopedPlan({
     followUp: input.followUp,
     inputs,
     opening: rebuild
-      ? readSavedGoalOpeningStep(input.goalId).then((saved) => saved?.skill ?? null)
+      ? readSavedGoalOpeningStep(input.goalId, scope.country ?? null).then(
+          (saved) => saved?.skill ?? null,
+        )
       : opening?.skill,
     rebuild,
     researchId,

@@ -6,6 +6,7 @@ import {
   getUserSubscriptionCacheTag,
 } from "../cache/tags";
 import { readActiveGoal, readLearningProfile } from "../learner/facts/learning-profile";
+import { readRecentCountries } from "../learner/facts/recent-countries";
 import { readActiveSubscription } from "../learner/facts/subscription";
 import { getOwnedGoal } from "../learner/get-owned-goal";
 import { loadGoalViews } from "./_utils/goal-view";
@@ -37,6 +38,7 @@ export async function getGoal(goalId: string): Promise<GoalResult> {
   const [goal] = await loadGoalViews({
     activeGoalId,
     goals: [owned.goal],
+    readRecentCountries,
     readSubscription: readActiveSubscription,
   });
 

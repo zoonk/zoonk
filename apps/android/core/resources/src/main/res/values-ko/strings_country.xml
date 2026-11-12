@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "country_all": "f411c321a3090686942f390bc3c88ba955623122a13c9622630066eee62a0e93",
+  "country_change_body": "1ec0ea9e660b41d2c41636c4ae58b48ec0c983b6ba73f903d3e5df1271b1b068",
+  "country_change_confirm": "6863b53d3b7ee35012c2d686701b8673cfe31ecdc7bdf0b769be23e563ca9d11",
+  "country_change_title": "8cbdeeb47245c5299bfad3d219bcb88574169c3e88a23020d912d80e97f39d12",
+  "country_content_label": "c3f63d271a6b43e5a8b15147cde3703031caa03b0f54871ac06bb17e96b39dfd",
+  "country_content_value": "f45d95f30659a83fa41a2bc0490e8e40f59a57ef0b3b2e66b30af344f24e8040",
+  "country_exam_label": "b325e323db589cb7fe9e55a1c24fd1349c64b31a400e8f0553710da2ce124ecd",
+  "country_home_label": "c674fa8f406f956e39deae006bb1defef64e3800964253ae4bc7aeca34182620",
+  "country_lesson_examples_label": "6c799eec6b081722cedb4cbec00b9de4a5c5db602207bec57215c5bfcec31b25",
+  "country_lesson_language_label": "9a325c43afef0e1c2879cc7c89544eda45ba249aa7e9add2d4ea304425d8f6d3",
+  "country_lesson_language_value": "a2b357d4a28aa10f6759acafdfbfbef6efc60b30025157f175d10257efbea517",
+  "country_load_failed": "43c8236385c1439d7baba0c065b5ce4970fa79b01677be02955727da96d2dc7f",
+  "country_no_match": "73f454abe38bf6e65adf9859ceb0e3c0db90a91419d45db82e848ce7061a3b28",
+  "country_rebuild_body": "fddedea4b064e65288c60ce1db9bcc1aafa469e06eda0c2baa32a134ef722622",
+  "country_rebuild_failed_body": "6e7ba0925ec8c5489acbdc57db2ac7d8e7d69a7983130d2922413666681bd1f2",
+  "country_rebuild_failed_title": "fd889abb4af360cd0d14d603814a92f26ef7232168f4085fd923dfb3c0aeb0fa",
+  "country_rebuild_ready": "858ea67dffc58543301f134b607efc1fea512970ec6e69458815ae1711526d50",
+  "country_rebuild_title": "42523d04bb1e2c5eaf743d20109a928548b98d463694474bb81e618fef4f563e",
+  "country_result_count": "3961a4cc4a383e9160a13e707bbb8823ed217cf5d3283dcf76728919abe9a55c",
+  "country_search": "5e4a9d6e5e2ae5ca812651980e804f7061f2dfac264029929e36ef363a0e0965",
+  "country_suggested": "e51ada66fc025a93f8b9a1d8095c541945f060d8c188302325be438d2497fb5f"
+}
+-->
+<resources>
+    <!-- The search field at the top of the country picker. -->
+    <string name="country_search">나라 검색</string>
+    <!-- A heading in the country picker over a few countries picked for the learner: earlier answers, where they live, the countries of their language. -->
+    <string name="country_suggested">추천</string>
+    <!-- A heading in the country picker over every country, A to Z. -->
+    <string name="country_all">모든 나라</string>
+    <!-- Shown in the country picker when the search matches no country. -->
+    <string name="country_no_match">검색된 나라가 없어요</string>
+    <!-- Read by TalkBack as the country picker's search changes: how many countries match. -->
+    <plurals name="country_result_count">
+        <item quantity="other">국가 %1$d개</item>
+    </plurals>
+    <!-- Shown in the country picker when the full list of countries didn't load; a Try again button follows. -->
+    <string name="country_load_failed">목록을 불러오지 못했어요.</string>
+    <!-- Read by TalkBack for the country the learner said they live in; %1$s is the country's name. -->
+    <string name="country_home_label">%1$s, 현재 사는 나라</string>
+    <!-- A label in the plan: the country a course's content is about, such as its laws or taxes. The country's name follows it as a value. -->
+    <string name="country_content_label">콘텐츠 기준 국가</string>
+    <!-- %1$s is a country's name in the reader's language; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_content_value">학습 기준 국가: %1$s</string>
+    <!-- A label in the plan: the country of an exam from another country. The country's name follows it as a value. -->
+    <string name="country_exam_label">시험 국가</string>
+    <!-- A label in the plan: the language lessons use, such as "Portuguese (Brazil)", shown when the content's country speaks the language another way. -->
+    <string name="country_lesson_language_label">레슨 언어</string>
+    <!-- %1$s is a language with its country, such as "Portuguese (Brazil)"; it always follows the colon, so it never needs an article or a case. -->
+    <string name="country_lesson_language_value">레슨 언어: %1$s</string>
+    <!-- A label in the plan: the country whose examples a general course uses, which is where the learner lives. The country's name follows it as a value. -->
+    <string name="country_lesson_examples_label">레슨 예시</string>
+    <!-- The title of a dialog confirming a new content country for a started plan. -->
+    <string name="country_change_title">콘텐츠 기준 국가를 바꿀까요?</string>
+    <!-- The body of that dialog; %1$s is the new country's name in the reader's language, after the colon so it needs no article or case. -->
+    <string name="country_change_body">변경할 국가: %1$s. 이 국가에 맞춰 계획을 다시 만들어요. 레슨 완료 기록은 그대로 유지되고, 새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요.</string>
+    <!-- The dialog's button that saves the new country and rebuilds the plan for it. -->
+    <string name="country_change_confirm">계획 다시 만들기</string>
+    <!-- A notice at the top of the plan while a new plan is prepared for the new content country. -->
+    <string name="country_rebuild_title">새 계획을 준비하고 있어요</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_body">새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요. 레슨 완료 기록도 그대로 유지돼요.</string>
+    <!-- Replaces that notice once the new plan is saved and shown. -->
+    <string name="country_rebuild_ready">새 계획이 준비됐어요.</string>
+    <!-- A notice at the top of the plan when the new plan for the new content country couldn't be prepared; a Try again button follows. -->
+    <string name="country_rebuild_failed_title">새 계획을 준비하지 못했어요</string>
+    <!-- Under that notice's title. -->
+    <string name="country_rebuild_failed_body">기존 레슨은 계획에 그대로 남아 있어요.</string>
+</resources>

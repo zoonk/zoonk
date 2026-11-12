@@ -8,6 +8,7 @@ import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-con
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
 import { holdScripts } from "@zoonk/e2e/hydration";
+import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { fulfillTutorAnswer, proposeFutureRestDay, toProposal } from "./tutor-answer";
@@ -215,6 +216,69 @@ test.describe("Buddy tab", () => {
       await expect.poll(readCountry).toBe("AU");
       await expect(canada.getByRole("button", { name: "Apply" })).toBeVisible();
       await expect(status).toBeEmpty();
+    });
+  });
+
+  test("the buddy offers another content country, which saves and owes the plan's rebuild only on the learner's tap", async ({
+    browser,
+  }) => {
+    // The persona's goal is in Portuguese, which names its countries; the app speaks English.
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+      const details = isJsonObject(goal.details) ? goal.details : {};
+
+      await prisma.goal.update({
+        data: { contentCountry: "PT", details: { ...details, countryDependent: true } },
+        where: { id: goal.id },
+      });
+
+      const readCountry = async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.contentCountry;
+      };
+
+      const readRebuilds = () =>
+        prisma.followUp.count({ where: { key: goal.id, kind: "rebuildGoalCurriculum" } });
+
+      await stubBuddy({
+        answers: [
+          {
+            answer: "Tap Apply and I'll rebuild your plan for Germany.",
+            toolOffer: {
+              country: "DE",
+              countryName: "Alemanha",
+              goalId: goal.id,
+              kind: "contentCountry",
+              languageFlag: "de",
+              lessonVariety: null,
+            },
+          },
+        ],
+        page,
+      });
+
+      await page.goto("/buddy");
+
+      const conversation = page.getByRole("region", { name: /^Conversation with /u });
+      await conversation.getByRole("textbox", { name: /^Message /u }).fill("I moved to Germany.");
+      await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
+      await conversation.getByRole("textbox", { name: /^Message /u }).press("Enter");
+
+      const germany = conversation.getByRole("region", { name: "Content country: Alemanha" });
+      const status = germany.getByRole("status");
+      await expect(germany.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(status).toBeEmpty();
+      expect(await readCountry()).toBe("PT");
+      expect(await readRebuilds()).toBe(0);
+
+      await germany.getByRole("button", { name: "Apply" }).click();
+
+      await expect(status).toHaveText(
+        "Saved. Your new plan is being prepared, and you can keep studying meanwhile.",
+      );
+
+      await expect.poll(readCountry).toBe("DE");
+      await expect.poll(readRebuilds).toBe(1);
     });
   });
 });

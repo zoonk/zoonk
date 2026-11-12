@@ -207,6 +207,11 @@ export type TaskEvalResults = {
   failedRuns?: FailedRun[];
 };
 
+/** A case set in its language's own country leaves `country` out. */
+export type OptionalCountry<T extends { country: string | null }> = Omit<T, "country"> & {
+  country?: string | null;
+};
+
 /** Execute registry tasks only with their paired test case; the default input type intentionally forbids arbitrary input. */
 export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   id: string;

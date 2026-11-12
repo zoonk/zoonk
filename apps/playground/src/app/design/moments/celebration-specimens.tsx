@@ -44,6 +44,7 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
       {children}
     </a>
   ),
+  loadCountries: async () => [],
   routes: { buddy: "#", journey: "#", signUp: "#", today: "#", upgrade: "#" },
 };
 

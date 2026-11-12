@@ -12,6 +12,7 @@ type UnavailableReason =
   | "noMock"
   | "notExam"
   | "notLanguage"
+  | "notCountryGoal"
   /** The exam has no written test to practice. */
   | "notWritten"
   | "nothingDue"

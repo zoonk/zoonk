@@ -19,9 +19,11 @@ export async function loadConfirmationWords(language: string) {
     chooseFocus: t(
       "Below you can choose where to focus, or take a short test that chooses for you.",
     ),
+    contentCountry: t("Below you can change the country your lessons are about."),
     conversationCall: t("Below you can start a short practice call whenever you're ready."),
     essay: (subject: string) =>
       t("Below you can see when your plan practices {subject}.", { subject }),
+    homeCountry: t("Below you can save where you live for new goals and your examples."),
     logbook: t("Below is your week in review."),
     memory: t("Below you can see and change what I remember about you."),
     mistakes: t("Below is your mistakes notebook, with practice for each one."),
@@ -43,6 +45,8 @@ function describeOffer({ offer, words }: { offer: TutorToolOffer; words: Confirm
       return words.chapterTest(offer.chapterTitle);
     case "essay":
       return words.essay(offer.subject);
+    case "contentCountry":
+    case "homeCountry":
     case "chooseFocus":
     case "conversationCall":
     case "logbook":

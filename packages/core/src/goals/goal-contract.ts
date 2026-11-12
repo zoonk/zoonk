@@ -10,6 +10,7 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
+import { type GoalCountryFields, countryCodeSchema } from "./country-contract";
 import {
   MAX_GOAL_DETAILS_LENGTH,
   MAX_GOAL_PROMPT_LENGTH,
@@ -70,6 +71,8 @@ const timeZoneSchema = z
  * and the level test its progress and result, which set the learner's skill levels.
  */
 const CORE_DETAILS_KEYS: ReadonlySet<string> = new Set([
+  "countryDependent",
+  "contentCountrySource",
   "levelTest",
   "noticeFormats",
   "skillLevels",
@@ -125,6 +128,13 @@ function withTargetRegion<Draft extends DraftLanguage>(goal: Draft): Draft {
 
 export const goalDraftSchema = z
   .object({
+    contentCountry: countryCodeSchema
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "The content country for a non-exam, non-language goal, or null for its language’s own country. Changing a country-dependent goal rebuilds the same goal, keeps finished lessons, and leaves its current plan usable until the new graph saves. Refused for exam and language goals.",
+      }),
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
     displayName: z.string().trim().min(1).optional(),
@@ -203,6 +213,13 @@ export type GoalDraft = z.infer<typeof goalDraftSchema>;
 
 export const goalUpdateInputSchema = z
   .object({
+    contentCountry: countryCodeSchema
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "The content country for a non-exam, non-language goal, or null for its language’s own country. Changing a country-dependent goal rebuilds the same goal, keeps finished lessons, and leaves its current plan usable until the new graph saves. Refused for exam and language goals.",
+      }),
     dailyMinutes: dailyMinutesSchema.optional(),
     details: detailsSchema.optional(),
     displayName: z.string().trim().min(1).max(MAX_GOAL_TITLE_LENGTH).optional(),
@@ -244,7 +261,7 @@ export const goalUpdateInputSchema = z
 
 export type GoalUpdateInput = z.infer<typeof goalUpdateInputSchema>;
 
-export type GoalView = {
+export type GoalView = GoalCountryFields & {
   displayName: string;
   createdAt: string;
   dailyMinutes: number;

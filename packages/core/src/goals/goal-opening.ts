@@ -67,11 +67,11 @@ export async function readGoalOpening({
 /** The lesson, skill and course an earlier run of the goal picked. */
 export type SavedGoalOpening = { lesson: OpeningLesson; skill: GoalOpeningSkill };
 
-/**
- * Internal workflow bridge: the goal's run reads what an earlier run of it saved, so a retried run
- * writes the same graph start without writing the opening again.
- */
-export async function readSavedGoalOpening(goalId: string): Promise<SavedGoalOpening | null> {
+/** An opening picked for another country belongs to the goal's old content, so no run reuses it. */
+async function findSavedOpening(
+  goalId: string,
+  country: string | null,
+): Promise<{ lessonId: string | null; saved: SavedGoalOpening | null }> {
   const goal = await prisma.goal.findUnique({
     select: { openingLesson: { select: { id: true, title: true } }, openingSkill: true },
     where: { id: goalId },
@@ -80,10 +80,37 @@ export async function readSavedGoalOpening(goalId: string): Promise<SavedGoalOpe
   const lesson = goal?.openingLesson;
 
   if (!lesson) {
-    return null;
+    return { lessonId: null, saved: null };
   }
 
-  return { lesson, skill: goalOpeningSkillSchema.parse(goal.openingSkill) };
+  const skill = goalOpeningSkillSchema.parse(goal.openingSkill);
+
+  const course = await prisma.course.findFirst({
+    select: { country: true },
+    where: { id: skill.course.id },
+  });
+
+  const countrySpecific = Boolean(course?.country) || skill.course.countrySpecific;
+  const fits = course && course.country === (countrySpecific ? country : null);
+
+  return {
+    lessonId: lesson.id,
+    saved: fits
+      ? { lesson, skill: { ...skill, course: { ...skill.course, countrySpecific } } }
+      : null,
+  };
+}
+
+/**
+ * Internal workflow bridge: the goal's run reads what an earlier run of it saved for the same
+ * content country, so a retried run writes the same graph start without writing the opening again.
+ */
+export async function readSavedGoalOpening(
+  goalId: string,
+  country: string | null,
+): Promise<SavedGoalOpening | null> {
+  const { saved } = await findSavedOpening(goalId, country);
+  return saved;
 }
 
 /**
@@ -126,21 +153,30 @@ export async function findOpeningLesson({
 }
 
 /**
- * Internal workflow bridge: `goalId` must come from the goal's own run. The first lesson saved
- * stays the goal's, so a retried or repeated run opens the same one.
+ * Internal workflow bridge: `goalId` must come from the goal's own run. The first lesson saved for
+ * the country stays the goal's, so a retried or repeated run opens the same one; one saved for
+ * another country is replaced.
  */
 export async function saveGoalOpening({
+  country,
   goalId,
   lessonId,
   opening,
 }: {
+  country: string | null;
   goalId: string;
   lessonId: string;
   opening: GoalOpeningSkill;
 }): Promise<OpeningLesson | null> {
+  const found = await findSavedOpening(goalId, country);
+
+  if (found.saved) {
+    return found.saved.lesson;
+  }
+
   await prisma.goal.updateMany({
     data: { openingLessonId: lessonId, openingSkill: opening },
-    where: { id: goalId, openingLessonId: null },
+    where: { id: goalId, openingLessonId: found.lessonId },
   });
 
   const goal = await prisma.goal.findUniqueOrThrow({

@@ -33,6 +33,7 @@ async function writeItemSetStep({
 
   const { data, provenance } = await writeItemSet({
     analytics,
+    country: first.country,
     examFormat: first.exam,
     format,
     language: first.language,

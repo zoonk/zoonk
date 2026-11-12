@@ -29,6 +29,7 @@ import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { type PlacementChoice, type PlacementItemExam, getPickingExam } from "./item-exam";
 
 export type PlacementItemSkill = {
+  country: string | null;
   description: string;
   exam: PlacementItemExam | null;
   id: string;
@@ -137,6 +138,7 @@ function toPick({
   }
 
   return {
+    country: row.country,
     description: row.description,
     exam,
     id: row.id,
@@ -211,6 +213,7 @@ export async function pickPlacementItemSkills({
 
   const skills = await prisma.skill.findMany({
     select: {
+      country: true,
       description: true,
       id: true,
       items: {

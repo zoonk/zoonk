@@ -122,7 +122,9 @@ describe(addLibraryCourses, () => {
 
     const frame = addLibraryCourses({
       frame: {
-        courses: [{ key: "physics", levels: ["intermediate"], title: "Física" }],
+        courses: [
+          { countrySpecific: false, key: "physics", levels: ["intermediate"], title: "Física" },
+        ],
         phases: [{ milestone: "Base", title: "Base" }],
       },
       library: exam,

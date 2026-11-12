@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -20,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.country.lessonVarietyName
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -36,6 +37,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.varietyName
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
 import com.zoonk.api.models.PlanPhase
@@ -255,6 +257,7 @@ internal fun PlanProperties(
                     onClickLabel = adjust,
                 )
             }
+            CountryRows(page.goal, onOpen?.let { { it(PlanSection.Country) } }, adjust)
             if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) {
                 val skipped =
                     page.plan.steering.skippedActivities
@@ -278,8 +281,41 @@ internal fun PlanProperties(
     }
 }
 
-enum class PlanSection { Language, Date, Time, Days, Choices, Practice }
+enum class PlanSection { Language, Country, Date, Time, Days, Choices, Practice }
 
+/**
+ * The goal's one country row in the Language row's slot: a country-dependent goal's content country
+ * (with the lesson language when core discloses one), a foreign exam's country, or the country a
+ * general course takes its examples from. Only the content country opens Adjust plan.
+ */
+@Composable
+private fun CountryRows(
+    goal: LearnerSummaryGoal,
+    onOpen: (() -> Unit)?,
+    adjust: String,
+) {
+    goal.contentCountry?.let { country ->
+        val editable = goal.editableCountry != null
+        PropertyRow(
+            stringResource(
+                if (country.kind ==
+                    GoalContentCountry.Kind.EXAM
+                ) {
+                    R.string.country_exam_label
+                } else {
+                    R.string.country_content_label
+                },
+            ),
+            country.name,
+            onOpen.takeIf { editable },
+            onClickLabel = adjust,
+        )
+        country.lessonVariety?.let { PropertyRow(stringResource(R.string.country_lesson_language_label), lessonVarietyName(it), null) }
+    }
+    goal.examplesCountry?.let { PropertyRow(stringResource(R.string.country_lesson_examples_label), it.name, null) }
+}
+
+/** A label and its value on one line, the value at the end; when both don't fit (large text, a long country name), the value goes under the label. */
 @Composable
 private fun PropertyRow(
     label: String,
@@ -289,7 +325,7 @@ private fun PropertyRow(
     plus: Boolean = false,
     warning: Boolean = false,
 ) {
-    Row(
+    FlowRow(
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -302,37 +338,27 @@ private fun PropertyRow(
                     },
                 ).heightIn(min = 48.dp)
                 .padding(horizontal = LIST_ITEM_INSET, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+        itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = label,
-            modifier = Modifier.weight(LABEL_SHARE),
+            modifier = Modifier.padding(end = 12.dp),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
-        Row(
-            Modifier.weight(1 - LABEL_SHARE),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             if (plus) PlusMark()
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = if (warning) FontWeight.Medium else null,
                 color = if (warning) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.End,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
-
-private const val LABEL_SHARE = 0.4f
 
 @Composable
 private fun goalDateValue(page: PlanPageState): String {

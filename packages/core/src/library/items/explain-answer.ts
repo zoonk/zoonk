@@ -71,6 +71,7 @@ export async function explainAnswer({
     analytics: { contentScope: "shared", distinctId: session.user.id },
     answer,
     correctAnswer: context.sampleAnswer,
+    country: context.country,
     keyPoints: context.keyPoints,
     language,
     question: context.context ? `${context.context}\n\n${context.question}` : context.question,

@@ -58,7 +58,10 @@ fun reasonTitleResource(reason: String): Int? =
 fun LanguageAimRow(
     aim: String,
     choices: List<LanguageAimChoicesInner>,
+    open: Boolean,
+    onOpenChange: (Boolean) -> Unit,
     onPick: (String, () -> Unit) -> Unit,
+    modifier: Modifier = Modifier,
     pending: Boolean = false,
     failed: Boolean = false,
     endDate: LocalDate? = null,
@@ -67,7 +70,6 @@ fun LanguageAimRow(
     dates: @Composable () -> Map<String, LocalDate?> = { emptyMap() },
 ) {
     if (choices.isEmpty()) return
-    var open by rememberSaveable { mutableStateOf(false) }
     ListRow(
         headline = { Text(stringResource(R.string.onboarding_your_aim)) },
         supporting = {
@@ -76,14 +78,15 @@ fun LanguageAimRow(
         },
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,
-        onClick = { open = true },
+        onClick = { onOpenChange(true) },
+        modifier = modifier,
     )
     if (open) {
         LanguageAimSheet(
             aim,
             choices,
-            onDismiss = { open = false },
-            onPick = { onPick(it) { open = false } },
+            onDismiss = { onOpenChange(false) },
+            onPick = { onPick(it) { onOpenChange(false) } },
             pending,
             failed,
             endDate,

@@ -20,7 +20,9 @@ function skill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: str
 }
 
 const graph: GoalSkillGraph = {
-  courses: [{ key: "bio", levels: ["beginner", "intermediate"], title: "Biology" }],
+  courses: [
+    { countrySpecific: false, key: "bio", levels: ["beginner", "intermediate"], title: "Biology" },
+  ],
   estimatedHours: 3,
   phases: [
     { estimatedHours: 1, milestone: "Cells", title: "Cells" },
@@ -210,8 +212,8 @@ const OUTLINE: ExamOutline = {
 const examGraph: GoalSkillGraph = {
   ...graph,
   courses: [
-    { key: "pt", levels: ["intermediate"], title: "Português" },
-    { key: "pol", levels: ["beginner"], title: "Ciência Política" },
+    { countrySpecific: false, key: "pt", levels: ["intermediate"], title: "Português" },
+    { countrySpecific: false, key: "pol", levels: ["beginner"], title: "Ciência Política" },
   ],
   skills: [
     skill({
