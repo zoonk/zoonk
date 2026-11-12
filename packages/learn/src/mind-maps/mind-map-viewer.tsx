@@ -10,9 +10,11 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
+import { cn } from "@zoonk/ui/lib/utils";
 import { DownloadIcon, MinusIcon, PlusIcon, ScanIcon, TextIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { TASK_TITLE_CLASS } from "../_components/task-header";
 import { toMindMapDownloadHref, toMindMapFileName, toMindMapSrc } from "./_utils/mind-map-urls";
 import { MAX_SCALE, fitSide } from "./_utils/pan-zoom";
 import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
@@ -146,7 +148,7 @@ function OutlinePane({ outline, pictureFailed }: { outline: Outline; pictureFail
             {t("Its picture had mistakes, so here's the mind map as text.")}
           </p>
         )}
-        <MindMapOutline outline={outline} titled />
+        <MindMapOutline outline={outline} />
       </div>
     </div>
   );
@@ -166,11 +168,11 @@ function AsTextToggle({
       aria-pressed={pressed}
       className="min-[72rem]:hidden"
       onClick={() => onChange(!pressed)}
-      size="bar"
+      size="icon-bar"
       variant={pressed ? "secondary" : "ghost"}
     >
-      <TextIcon aria-hidden="true" data-icon="inline-start" />
-      {t("As text")}
+      <TextIcon aria-hidden="true" />
+      <span className="sr-only">{t("As text")}</span>
     </Button>
   );
 }
@@ -221,7 +223,9 @@ export function MindMapViewer({
               <span className="sr-only">{t("Close")}</span>
             </DialogClose>
 
-            <DialogTitle className="min-w-0 flex-1 truncate text-center text-base font-semibold">
+            <DialogTitle
+              className={cn("min-w-0 flex-1 text-center text-balance", TASK_TITLE_CLASS)}
+            >
               {title}
             </DialogTitle>
 
