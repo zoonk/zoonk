@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -141,7 +142,8 @@ fun GoalSetupScreen(
 ) {
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId, route.revealMoment) }
+    val vm = viewModel { GoalSetupViewModel(store, createSavedStateHandle(), route.goalId, route.revealMoment) }
+    SideEffect { vm.drafts = drafts }
     val state by store.onboardings[vm.goalId].collectShown()
     val run by vm.follower.run.collectAsStateWithLifecycle()
     val first = run.firstLesson.withRead(state.value?.firstLesson, state.value?.generationId, run.id)

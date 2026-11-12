@@ -11,6 +11,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.setup.LocalSetupDrafts
 import com.zoonk.android.feature.onboarding.setup.SetupDrafts
 import com.zoonk.android.feature.onboarding.setup.refreshed
 import com.zoonk.android.feature.onboarding.setup.typedDraftStep
@@ -43,9 +44,11 @@ internal class FocusTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
     private val plans: PlanStore,
-    private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
 ) : ViewModel() {
+    /** Kept as the screen's [LocalSetupDrafts], which a guest who signs in replaces without leaving the screen. */
+    var drafts: SetupDrafts? = null
+
     private var savedEntered by handle.saved { false }
 
     /** The learner started or resumed a sitting in this visit, so its questions show instead of its resume screen. */
@@ -119,11 +122,12 @@ internal class FocusTestViewModel(
         if (busy) return
         answering = true
         failed = false
+        val draft = drafts?.words(goalId, typedDraftStep(question.item.itemId))
         viewModelScope.launch {
             when (val sent = store.answerPlacement(goalId, question.item.itemId, answer, durationMs)) {
                 is WriteOutcome.Done -> {
                     saveFailures = 0
-                    drafts?.words(goalId, typedDraftStep(question.item.itemId))?.remove()
+                    draft?.remove()
                     // A sitting that's over closes in the same save; if that fails, its screen holds the retry.
                     sent.value.placement
                         .sittingOver()

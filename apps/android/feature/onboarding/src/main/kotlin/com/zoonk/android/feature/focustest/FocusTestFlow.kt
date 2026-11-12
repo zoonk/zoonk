@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,7 +54,8 @@ internal fun ColumnScope.FocusTestFlow(
     onReportSaveFailure: () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
-    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, drafts, createSavedStateHandle()) }
+    val vm = viewModel(key = "focus-test:$goalId") { FocusTestViewModel(goalId, store, plans, createSavedStateHandle()) }
+    SideEffect { vm.drafts = drafts }
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val phase = vm.phase(placement)

@@ -5,6 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertCountEquals
@@ -80,7 +81,10 @@ class GoalSetupFlowTest {
     val folder = TemporaryFolder()
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private val session = FakeSession(ana)
+    private val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var screen by mutableIntStateOf(0)
+    private var drafts by mutableStateOf<SetupDrafts?>(null)
 
     private val spinning = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)
 
@@ -94,11 +98,15 @@ class GoalSetupFlowTest {
         rule.mainClock.advanceTimeBy(1_000)
     }
 
-    private fun show(
-        drafts: SetupDrafts? = null,
-        restoration: StateRestorationTester? = null,
-    ) {
-        val session = FakeSession(ana)
+    private fun draftStore() =
+        DraftStore(folder.newFolder(), background, debounce = Duration.ZERO).also {
+            runBlocking { it.follow { DraftsChange(next = ana.accountId) } }
+        }
+
+    // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
+    private fun SetupDrafts.reason() = words(GOAL_ID, "reason").value.stateIn(background, SharingStarted.Eagerly, null)
+
+    private fun show(restoration: StateRestorationTester? = null) {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
         val plans = PlanStore(planApi, cache)
@@ -370,14 +378,9 @@ class GoalSetupFlowTest {
 
     @Test
     fun unsentWordsComeBackWhenTheScreenIsRebuiltAndGoOnceTheAnswerSaves() {
-        val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val draftStore = DraftStore(folder.newFolder(), background, debounce = Duration.ZERO)
-        runBlocking { draftStore.follow { DraftsChange(next = ana.accountId) } }
-        val drafts = SetupDrafts(draftStore, ana)
-        // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
-        val saved = drafts.words(GOAL_ID, "reason").value.stateIn(background, SharingStarted.Eagerly, null)
+        val saved = SetupDrafts(draftStore(), ana).also { drafts = it }.reason()
         api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
-        show(drafts = drafts)
+        show()
 
         rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
         rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
@@ -391,5 +394,27 @@ class GoalSetupFlowTest {
         rule.waitForIdle()
         assertEquals(listOf(GOAL_ID), api.answers.map { it.first })
         rule.waitUntil(5_000) { saved.value == null }
+    }
+
+    @Test
+    fun aGuestsUnsentWordsThatMovedIntoTheAccountTheySignedInToGoOnceTheAnswerSaves() {
+        val store = draftStore()
+        val typed = SetupDrafts(store, ana).also { drafts = it }.reason()
+        api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
+        show()
+        rule.onNodeWithText("Pass a certificate").performScrollTo().performClick()
+        rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
+        rule.waitUntil(5_000) { typed.value == listOf("certificate", "To pass the DELE") }
+
+        val account = AuthenticatedSession("registered", "token-b", "local-b")
+        runBlocking { store.follow { DraftsChange(next = account.accountId, moveFrom = ana.accountId) } }
+        session.session = account
+        val moved = SetupDrafts(store, account).also { drafts = it }.reason()
+        rule.waitUntil(5_000) { moved.value == listOf("certificate", "To pass the DELE") }
+
+        api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.waitUntil(5_000) { api.answers.size == 1 }
+        rule.waitUntil(5_000) { moved.value == null }
     }
 }

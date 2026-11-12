@@ -3,6 +3,7 @@ package com.zoonk.android.feature.focustest
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
@@ -61,7 +62,20 @@ class FocusTestScreenTest {
     val folder = TemporaryFolder()
 
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private val session = FakeSession(ana)
+    private val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val api =
+        FakeOnboardingApi().apply {
+            placement =
+                placementOf(
+                    next = typedQuestion(),
+                    answered = 1,
+                    started = true,
+                    focusTest = focusTestOf(sitting = focusSittingOf(answered = 1), offer = null),
+                )
+        }
     private var screen by mutableIntStateOf(0)
+    private var drafts by mutableStateOf<SetupDrafts?>(null)
 
     private val examGoal =
         LearnerSummaryGoal(
@@ -83,25 +97,15 @@ class FocusTestScreenTest {
             displayName = "DELE B2",
         )
 
-    @Test
-    fun anUnsentAnswerOnATestOpenedFromThePlanComesBackWhenTheScreenIsRebuiltAndGoesOnceItSaves() {
-        val background = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val draftStore = DraftStore(folder.newFolder(), background, debounce = Duration.ZERO)
-        runBlocking { draftStore.follow { DraftsChange(next = ana.accountId) } }
-        val drafts = SetupDrafts(draftStore, ana)
-        // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
-        val saved = drafts.words(GOAL_ID, typedDraftStep(ITEM_ID)).value.stateIn(background, SharingStarted.Eagerly, null)
-        val api =
-            FakeOnboardingApi().apply {
-                placement =
-                    placementOf(
-                        next = typedQuestion(),
-                        answered = 1,
-                        started = true,
-                        focusTest = focusTestOf(sitting = focusSittingOf(answered = 1), offer = null),
-                    )
-            }
-        val session = FakeSession(ana)
+    private fun draftStore() =
+        DraftStore(folder.newFolder(), background, debounce = Duration.ZERO).also {
+            runBlocking { it.follow { DraftsChange(next = ana.accountId) } }
+        }
+
+    // Blocking the main thread to read it could deadlock with the screen's own read, which resumes there.
+    private fun SetupDrafts.typedAnswer() = words(GOAL_ID, typedDraftStep(ITEM_ID)).value.stateIn(background, SharingStarted.Eagerly, null)
+
+    private fun showTestFromThePlan() {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val summaries = LearnerSummaryStore({ summary(0, Long.MAX_VALUE).copy(goals = listOf(examGoal)) }, cache, background)
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
@@ -113,14 +117,45 @@ class FocusTestScreenTest {
                 }
             }
         }
+    }
 
+    private fun typeTheAnswer() {
         rule.onNodeWithText("Continue").performScrollTo().performClick()
-        rule.onNode(hasSetTextAction()).performTextInput("Testimony about what someone else said")
-        rule.waitUntil(5_000) { saved.value == listOf("Testimony about what someone else said") }
+        rule.onNode(hasSetTextAction()).performTextInput(ANSWER)
+    }
+
+    @Test
+    fun anUnsentAnswerOnATestOpenedFromThePlanComesBackWhenTheScreenIsRebuiltAndGoesOnceItSaves() {
+        val saved = SetupDrafts(draftStore(), ana).also { drafts = it }.typedAnswer()
+        showTestFromThePlan()
+
+        typeTheAnswer()
+        rule.waitUntil(5_000) { saved.value == listOf(ANSWER) }
         screen++
 
-        rule.onNodeWithText("Testimony about what someone else said").assertIsDisplayed()
+        rule.onNodeWithText(ANSWER).assertIsDisplayed()
         rule.onNodeWithText("Confirm").performClick()
         rule.waitUntil(5_000) { api.placementAnswers.size == 1 && saved.value == null }
     }
+
+    @Test
+    fun aGuestsUnsentAnswerThatMovedIntoTheAccountTheySignedInToGoesOnceItSaves() {
+        val store = draftStore()
+        val typed = SetupDrafts(store, ana).also { drafts = it }.typedAnswer()
+        showTestFromThePlan()
+        typeTheAnswer()
+        rule.waitUntil(5_000) { typed.value == listOf(ANSWER) }
+
+        val account = AuthenticatedSession("registered", "token-b", "local-b")
+        runBlocking { store.follow { DraftsChange(next = account.accountId, moveFrom = ana.accountId) } }
+        session.session = account
+        val moved = SetupDrafts(store, account).also { drafts = it }.typedAnswer()
+        rule.waitUntil(5_000) { moved.value == listOf(ANSWER) }
+
+        rule.onNodeWithText("Confirm").performClick()
+        rule.waitUntil(5_000) { api.placementAnswers.size == 1 }
+        rule.waitUntil(5_000) { moved.value == null }
+    }
 }
+
+private const val ANSWER = "Testimony about what someone else said"
