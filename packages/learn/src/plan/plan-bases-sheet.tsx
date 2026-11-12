@@ -6,7 +6,6 @@ import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
@@ -16,7 +15,6 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { ChangeSaveError } from "../_components/save-error";
-import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
@@ -27,11 +25,9 @@ import {
   getSharedChoice,
   listOpen,
 } from "./plan-bases-choices";
-import { useBasesFootnote } from "./plan-bases-effect";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, currentPlanPreview } from "./plan-preview-state";
-import { useKnownText, usePrerequisitesDescription } from "./use-bases-texts";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
@@ -97,8 +93,6 @@ function BasesFooter({
   preview: PlanPreviewState;
 }) {
   const t = useExtracted();
-  const footnote = useBasesFootnote();
-  const space = useSentenceSpace();
   const saveButton = useRef<HTMLButtonElement>(null);
   const loading = preview.status === "idle" || preview.status === "loading";
 
@@ -109,8 +103,6 @@ function BasesFooter({
   };
 
   const changes = preview.status === "ready" && !preview.preview.unchanged ? preview.preview : null;
-
-  const notes = changes ? footnote({ ...changes, ready: true }) : [];
 
   return (
     <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">
@@ -133,7 +125,6 @@ function BasesFooter({
             <p>{t("Your plan stays as it is.")}</p>
           )}
           {changes && <PlanEffectDiff effect={changes.effect} />}
-          {notes.length > 0 && <p className="text-xs leading-snug">{notes.join(space)}</p>}
         </div>
       )}
 
@@ -143,7 +134,7 @@ function BasesFooter({
         onClick={onSave}
         ref={saveButton}
       >
-        {t("Save choices")}
+        {t("Save")}
       </Button>
 
       {failed && <ChangeSaveError />}
@@ -152,8 +143,6 @@ function BasesFooter({
 }
 
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
-  const t = useExtracted();
-  const knownText = useKnownText();
   const advice = useBasesAdvice();
   const { change, failed, isPending } = usePlanChange();
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
@@ -173,7 +162,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
 
   const areas = [...Map.groupBy(bases.items, (item) => item.area)];
   const shared = getSharedChoice(listOpen(bases.items), choiceOf);
-  const someStudied = bases.items.some((item) => item.studied);
 
   const save = () => {
     if (isPending || preview.status !== "ready" || changed.length === 0) {
@@ -217,18 +205,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
             value={shared}
           />
 
-          {shared === null && (
-            <p className="text-muted-foreground text-sm text-pretty">
-              {t("Your prerequisites have different choices. Picking one above applies it to all.")}
-            </p>
-          )}
-
-          {someStudied && (
-            <p className="text-muted-foreground text-sm text-pretty">
-              {t("Prerequisites you've studied stay studied.")}
-            </p>
-          )}
-
           <BasesAdvice
             ask={() => void advice.ask()}
             followed={changed.length === 0 && shared !== null && shared === advice.recommended}
@@ -245,8 +221,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
             readOnly={isPending}
           />
         )}
-
-        <p className="text-muted-foreground text-sm text-pretty">{knownText(bases)}</p>
       </DrawerContent>
 
       <BasesFooter
@@ -271,16 +245,12 @@ export function PlanBasesSheet({
   open: boolean;
 }) {
   const t = useExtracted();
-  const description = usePrerequisitesDescription();
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">{t("Prerequisites")}</DrawerTitle>
-            <DrawerDescription>{description}</DrawerDescription>
-          </div>
+        <DrawerHeader className="flex-row items-center justify-between gap-3">
+          <DrawerTitle className="text-xl font-semibold">{t("Prerequisites")}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
 

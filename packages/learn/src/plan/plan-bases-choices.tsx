@@ -22,10 +22,13 @@ function useChoiceName() {
 
   const names: Record<BaseChoice, string> = {
     deep: t({
-      description: "Choice to study a prerequisite with all its lessons, in depth.",
-      message: "In depth",
+      description: "Choice to study a prerequisite with all its lessons.",
+      message: "Full lessons",
     }),
-    essential: t("Essentials"),
+    essential: t({
+      description: "Choice to study only the first, most important lessons of a prerequisite.",
+      message: "Key points",
+    }),
     quick: t("Quick lesson"),
     skip: t("Skip"),
   };
@@ -84,15 +87,7 @@ export function AllBasesChoice({
   const choiceName = useChoiceName();
   const formatDuration = useFormatDuration();
 
-  const descriptions: Record<BaseChoice, string> = {
-    deep: t("Every lesson"),
-    essential: t("The first third of the lessons"),
-    quick: t("One short lesson each"),
-    skip: t("Leave them out of your plan"),
-  };
-
   const choices = listOpenChoices(items).map((choice) => ({
-    description: descriptions[choice],
     label: choiceName(choice),
     mark: choice === recommended ? t("Recommended") : undefined,
     trailing:
@@ -175,7 +170,7 @@ function SubjectChoice({
       >
         {value === null && (
           <NativeSelectOption disabled value={MIXED}>
-            {t("Different choices")}
+            {t("Mixed")}
           </NativeSelectOption>
         )}
 

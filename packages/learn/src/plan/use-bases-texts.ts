@@ -6,9 +6,7 @@ import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 
-export type RecommendedBases = Pick<PlanBasesAdvice, "daysLeft"> & {
-  recommended: NonNullable<PlanBasesAdvice["recommended"]>;
-};
+export type RecommendedBases = NonNullable<PlanBasesAdvice["recommended"]>;
 
 export function usePlanBases(): PlanBasesView | null {
   const { plan } = usePlanScreen();
@@ -17,51 +15,16 @@ export function usePlanBases(): PlanBasesView | null {
 
 export function useAdviceText() {
   const t = useExtracted();
-  const { goal } = usePlanScreen();
-  const isExam = goal.kind === "exam";
 
-  return ({ daysLeft, recommended }: RecommendedBases): string => {
+  return (recommended: RecommendedBases): string => {
     if (recommended === "deep") {
-      return t("Your time covers everything, so we recommend each prerequisite in depth.");
+      return t("We recommend full lessons. Your time covers them.");
     }
 
-    if (recommended === "quick" && daysLeft !== null) {
-      return isExam
-        ? t(
-            "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what comes up most.",
-            { days: daysLeft },
-          )
-        : t(
-            "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what matters most to your goal.",
-            { days: daysLeft },
-          );
-    }
-
-    return isExam
-      ? t("We recommend the essentials, so the topics that build on them make sense.")
-      : t("We recommend the essentials, so what builds on them makes sense.");
+    return recommended === "quick"
+      ? t("We recommend a quick lesson each, so there's time for the rest.")
+      : t("We recommend the key points.");
   };
-}
-
-export function usePrerequisitesDescription() {
-  const t = useExtracted();
-  const { goal } = usePlanScreen();
-
-  return goal.kind === "exam"
-    ? t("Topics that come up a lot build on these.")
-    : t("Your goal's final work builds on these.");
-}
-
-export function useKnownText() {
-  const t = useExtracted();
-
-  return (bases: PlanBasesView): string =>
-    bases.knownCount > 0
-      ? t(
-          "{count, plural, one {# prerequisite you showed you know is already out of your plan.} other {# prerequisites you showed you know are already out of your plan.}}",
-          { count: bases.knownCount },
-        )
-      : t("Already know some? Show it in a test and they leave your plan on their own.");
 }
 
 function minutesOf(item: PlanBasesView["items"][number]): number {
@@ -83,34 +46,31 @@ export function useSummaryText() {
 
     if (choices.size > 1) {
       return t(
-        "{count, plural, one {# prerequisite, {time} with your choice.} other {# prerequisites, {time} with your choices.}}",
+        "{count, plural, one {# prerequisite} other {# prerequisites}} · your choices · {time}",
         values,
       );
     }
 
     if (shared === "deep") {
       return t(
-        "{count, plural, one {# prerequisite, {time} in depth.} other {# prerequisites, {time} in depth.}}",
+        "{count, plural, one {# prerequisite} other {# prerequisites}} · full lessons · {time}",
         values,
       );
     }
 
     if (shared === "quick") {
       return t(
-        "{count, plural, one {# prerequisite, {time} for its quick lesson.} other {# prerequisites, {time} for a quick lesson each.}}",
+        "{count, plural, one {# prerequisite} other {# prerequisites}} · quick lesson · {time}",
         values,
       );
     }
 
     if (shared === "skip") {
-      return t(
-        "{count, plural, one {# prerequisite, skipped.} other {# prerequisites, all skipped.}}",
-        values,
-      );
+      return t("{count, plural, one {# prerequisite} other {# prerequisites}} · skipped", values);
     }
 
     return t(
-      "{count, plural, one {# prerequisite, {time} for its essentials.} other {# prerequisites, {time} for their essentials.}}",
+      "{count, plural, one {# prerequisite} other {# prerequisites}} · key points · {time}",
       values,
     );
   };
