@@ -22,6 +22,7 @@ import {
   BAND_STATE_CLASS,
   getBandColumnsStyle,
 } from "./roadmap-styles";
+import { usePhaseWhen } from "./use-phase-when";
 import {
   getLessonShare,
   useRoadmapFinish,
@@ -41,6 +42,7 @@ function RoadmapCompact({
   const t = useExtracted();
   const { phases } = useRoadmapPhases();
   const position = useRoadmapPosition();
+  const phaseWhen = usePhaseWhen();
 
   const content = (
     <>
@@ -66,24 +68,19 @@ function RoadmapCompact({
 
       {position && (
         <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
-          <span className="flex flex-wrap items-baseline">
-            <span
-              className={cn(TRUNCATED_TITLE_CLASS, "max-w-max min-w-0 grow basis-24 font-medium")}
-            >
-              {position.name}
-            </span>
-            {position.day && (
-              <span className="text-muted-foreground whitespace-pre-wrap">{` · ${position.day}`}</span>
+          <span className="flex min-w-0 flex-wrap items-baseline">
+            <span className="font-medium">{position.place}</span>
+            {position.name && (
+              <span
+                className={cn(
+                  TRUNCATED_TITLE_CLASS,
+                  "text-muted-foreground max-w-max min-w-0 grow basis-24 whitespace-pre",
+                )}
+              >{` · ${position.name}`}</span>
             )}
           </span>
           <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
-            <span aria-hidden="true">
-              {t("{number, number} of {total, number}", {
-                number: position.number,
-                total: position.total,
-              })}
-            </span>
-            <span className="sr-only">{position.place}</span>
+            {phaseWhen(position.phase)}
             {onOpen && <ChevronRightIcon aria-hidden="true" className="size-3.5" />}
           </span>
         </span>

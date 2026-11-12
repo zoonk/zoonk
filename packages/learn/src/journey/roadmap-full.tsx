@@ -142,13 +142,13 @@ function RoadmapLegend() {
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
           <Trickster className="size-3.5" />
-          {t("Phase challenge")}
+          {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
       )}
       {finish && (
         <span className="flex items-center gap-1.5">
           <FlagIcon className="size-3.5" />
-          {goal.kind === "exam" ? t("Exam day") : t("Goal date")}
+          {goal.kind === "exam" ? t("Exam date") : t("End date")}
         </span>
       )}
     </span>
@@ -164,10 +164,8 @@ function RoadmapPosition() {
 
   return (
     <p className="min-w-0 truncate text-xs">
-      <span className="font-medium">{position.name}</span>
-      <span className="text-muted-foreground font-mono tabular-nums">
-        {[position.day, position.place].filter(Boolean).map((part) => ` · ${part}`)}
-      </span>
+      <span className="font-medium">{position.place}</span>
+      {position.name && <span className="text-muted-foreground">{` · ${position.name}`}</span>}
     </p>
   );
 }

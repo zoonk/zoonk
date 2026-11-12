@@ -71,7 +71,7 @@ export function CheckpointRow({
           className={cn("font-medium", isDone && "text-muted-foreground")}
           mark={checkpoint.locked && <PlusMark />}
         >
-          {t("Phase challenge")}
+          {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </MarkedText>
 
         <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
@@ -113,12 +113,13 @@ export function usePhaseMocksLine() {
 
     return nextSitting
       ? t(
-          "{count, plural, one {# mock exam} other {# mock exams}} for the next sitting, on {date}",
+          "{count, plural, one {# mock exam before your next exam date, {date}} other {# mock exams before your next exam date, {date}}}",
           { count, date: formatDate(nextSitting, "day") },
         )
-      : t("{count, plural, one {# mock exam} other {# mock exams}} for the next sitting", {
-          count,
-        });
+      : t(
+          "{count, plural, one {# mock exam before your next exam date} other {# mock exams before your next exam date}}",
+          { count },
+        );
   };
 }
 
@@ -126,13 +127,11 @@ export function MockRow({
   challengeHref,
   date,
   examHref,
-  forNextSitting = false,
   locked = false,
 }: {
   challengeHref: (planItemId: string) => string;
   date: string;
   examHref: string | null;
-  forNextSitting?: boolean;
   locked?: boolean;
 }) {
   const t = useExtracted();
@@ -150,7 +149,7 @@ export function MockRow({
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="flex flex-col">
           <MarkedText className="font-medium text-pretty" mark={locked && <PlusMark />}>
-            {forNextSitting ? t("Mock exam for the next sitting") : t("Mock exam")}
+            {t("Mock exam")}
           </MarkedText>
           {funded?.minutes ? (
             <span className="text-muted-foreground font-mono text-xs tabular-nums">

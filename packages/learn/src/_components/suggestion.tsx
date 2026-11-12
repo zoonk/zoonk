@@ -150,7 +150,7 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground stacked:line-clamp-none line-clamp-2 min-w-0 flex-1 text-[0.8125rem] leading-snug",
+        "stacked:line-clamp-none line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-medium text-pretty",
         className,
       )}
       data-slot="suggestion-summary"

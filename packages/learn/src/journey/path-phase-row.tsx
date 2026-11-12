@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
 import { toLocalIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
-import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
+import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { useShortDays } from "../plan/use-short-plan";
 import { CurrentPhaseMark } from "./current-phase-mark";
@@ -19,7 +19,7 @@ const TRAILING_CLASS =
 export function PhaseLessons({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
 
-  if (phase.lessonsTotal === 0) {
+  if (phase.lessonsTotal === 0 || phase.state !== "current") {
     return null;
   }
 
@@ -168,19 +168,18 @@ function isLeftOut(phase: PlanPhaseView): boolean {
 
 function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
+  const { goal } = usePlanScreen();
   const lessons = phase.lessonsTotal - phase.lessonsDone;
 
   if (phase.state === "leftOut") {
     return <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>;
   }
 
-  if (phase.state !== "unfinished") {
+  if (phase.state === "unfinished" && lessons > 0) {
     return (
       <span className="text-muted-foreground text-xs">
-        {t({
-          description:
-            "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date.",
-          message: "No time for this phase's challenge before your date",
+        {t("{count, plural, one {# lesson not studied} other {# lessons not studied}}", {
+          count: lessons,
         })}
       </span>
     );
@@ -188,54 +187,21 @@ function PhaseLeftOut({ phase }: { phase: PlanPhaseView }) {
 
   return (
     <span className="text-muted-foreground text-xs">
-      {lessons > 0
-        ? t("{count, plural, one {# lesson was left out} other {# lessons were left out}}", {
-            count: lessons,
-          })
-        : t("Challenge left out")}
+      {goal.kind === "language"
+        ? t("The call isn't in your plan")
+        : t("The Trickster isn't in your plan")}
     </span>
   );
 }
 
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
-  const t = useExtracted();
-
-  const challengeDate =
-    phase.checkpoint?.state === "upcoming" && phase.checkpoint.when === "date"
-      ? phase.checkpoint.date
-      : null;
-
-  const writing = phase.chapters.some((chapter) => chapter.writing);
-
   if (isLeftOut(phase)) {
     return <PhaseLeftOut phase={phase} />;
   }
 
   const lessonsLeft = phase.lessonsDone < phase.lessonsTotal;
 
-  if (phase.state !== "current" || open) {
-    return null;
-  }
-
-  if (!writing && lessonsLeft) {
-    return <PhaseResume phase={phase} />;
-  }
-
-  if (!challengeDate) {
-    return writing ? (
-      <span className="text-muted-foreground text-xs">{t("More lessons on the way")}</span>
-    ) : null;
-  }
-
-  const date = () => <PlanDateText className="font-sans" estimate isoDate={challengeDate} />;
-
-  return (
-    <span className="text-muted-foreground text-xs">
-      {writing
-        ? t.rich("More lessons on the way · challenge <date></date>", { date })
-        : t.rich("Lessons done · challenge <date></date>", { date })}
-    </span>
-  );
+  return phase.state === "current" && !open && lessonsLeft ? <PhaseResume phase={phase} /> : null;
 }
 
 function usePhaseState() {

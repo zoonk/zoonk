@@ -14,7 +14,7 @@ import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
-import { JourneyChapters, WritingAheadLine } from "./journey-chapters";
+import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
@@ -60,13 +60,12 @@ function PhaseColumns({
 const NESTED_CLASS = "flex flex-col pl-7";
 
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { goal } = usePlanScreen();
-
   return (
-    <div className={NESTED_CLASS}>
-      {phase.checkpoint && <CheckpointRow checkpoint={phase.checkpoint} links={links} />}
-      <WritingAheadLine chapters={phase.chapters} unit={goal.kind === "language"} />
-    </div>
+    phase.checkpoint && (
+      <div className={NESTED_CLASS}>
+        <CheckpointRow checkpoint={phase.checkpoint} links={links} />
+      </div>
+    )
   );
 }
 

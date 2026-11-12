@@ -144,7 +144,6 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
                   challengeHref={links.challenge}
                   date={mocks.nextDate}
                   examHref={links.exam}
-                  forNextSitting={forNextSitting}
                   locked={locked}
                 />
               </li>

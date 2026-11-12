@@ -51,7 +51,7 @@ export function useFarTopicLine() {
         : null;
     }
 
-    const count = t("{count, plural, =1 {# lesson} other {About # lessons}}", { count: lessons });
+    const count = t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons });
 
     return nextDate
       ? t({
@@ -76,5 +76,5 @@ export function useWritingLine() {
     far: boolean;
     lessons: number | null;
     nextDate?: string | null;
-  }) => (far ? farLine({ lessons, nextDate }) : t("Lessons on the way"));
+  }) => (far ? farLine({ lessons, nextDate }) : t("Not ready yet"));
 }
