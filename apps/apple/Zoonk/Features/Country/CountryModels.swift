@@ -36,8 +36,9 @@ struct LessonVariety: Codable, Equatable, Hashable, Sendable {
   let language: String
   let region: String
 
+  /// Named in its own language, as core names the countries beside it: the goal's.
   var name: String {
-    Locale.current.varietyName(language: language, region: region)
+    Locale(identifier: language).varietyName(language: language, region: region)
   }
 }
 

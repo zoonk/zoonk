@@ -29,4 +29,9 @@ final class CountryChoiceTests: XCTestCase {
         CountryChoice(code: "BR", name: "Brasil"),
       ])
   }
+
+  func testALessonLanguageIsNamedInItsOwnLanguageLikeTheCountriesBesideIt() {
+    XCTAssertEqual(LessonVariety(language: "pt", region: "BR").name, "Português (Brasil)")
+    XCTAssertEqual(LessonVariety(language: "es", region: "MX").name, "Español (México)")
+  }
 }
