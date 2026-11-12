@@ -27,7 +27,7 @@ function useGlassesCopy(glasses: BuddyGlasses | null): Omit<CeremonyCopy, "actio
 
   switch (glasses) {
     case "star":
-      return { detail: t("For winning your first phase challenge."), title: t("Star glasses!") };
+      return { detail: t("For winning your first challenge."), title: t("Star glasses!") };
     case "aviator":
       return {
         detail: t("For finishing your first weekly challenge."),
@@ -41,7 +41,7 @@ function useGlassesCopy(glasses: BuddyGlasses | null): Omit<CeremonyCopy, "actio
     case "retro":
       return { detail: t("For finishing 50 reviews."), title: t("Retro glasses!") };
     case "monocle":
-      return { detail: t("For winning the final challenge."), title: t("A monocle!") };
+      return { detail: t("For winning your plan's last challenge."), title: t("A monocle!") };
     case "round":
     case null:
       return { detail: t("They come with your buddy."), title: t("New glasses!") };
@@ -56,16 +56,12 @@ function useStageLine({ buddyName, key }: { buddyName: string; key: string }): s
 
   switch (stage) {
     case "adult":
-      return t("{buddy} is an Adult now, fully grown with your Brain Power.", { buddy: buddyName });
+      return t("{buddy} is fully grown, thanks to your Brain Power.", { buddy: buddyName });
     case "baby":
     case "young":
-      return t("{buddy} is Young now, and keeps growing with your Brain Power.", {
-        buddy: buddyName,
-      });
+      return t("Your Brain Power helped {buddy} grow.", { buddy: buddyName });
     default:
-      return t("{buddy} is Young now, and keeps growing with your Brain Power.", {
-        buddy: buddyName,
-      });
+      return t("Your Brain Power helped {buddy} grow.", { buddy: buddyName });
   }
 }
 
