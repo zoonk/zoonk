@@ -28,8 +28,13 @@ export async function rebalanceFocusTest({
     return;
   }
 
-  const { focusAreas } = parsePlanSettings(plan.settings);
   const record = readFocusTestRecord(goal);
+
+  if (!record?.summary?.asked) {
+    return;
+  }
+
+  const { focusAreas } = parsePlanSettings(plan.settings);
   const ownership = await loadFocusOwnership({ focusAreas, planId: plan.id, record, tx: prisma });
 
   if (ownership.handPicked) {

@@ -10,6 +10,7 @@ import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { PLAN_SHOWN, shortPlanExamGoalFixture } from "../_test-utils/exam-test-goal";
+import { saveTestSummary } from "./_utils/test-sitting";
 
 async function goalFixture() {
   return shortPlanExamGoalFixture({
@@ -158,6 +159,7 @@ describe("a focus accepted from a mock", () => {
       ),
     );
 
+    await saveTestSummary({ goalId: goal.id, userId: user.id });
     await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
 
     const waiting = await prisma.planChange.findMany({

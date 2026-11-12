@@ -162,6 +162,10 @@ async function setup(
     ),
   );
 
+  if (testAnswers) {
+    await testSitting.saveTestSummary({ goalId: goal.id, userId: user.id });
+  }
+
   return fixture;
 }
 
@@ -172,10 +176,19 @@ async function proposals(planId: string) {
 }
 
 describe("weekly reviews of a system-owned focus", () => {
-  it("requires a Focus test answer before attributing a proposal to the test", async () => {
+  it("does not recount a test with no answered subject on repeated settlements", async () => {
     const { goal, plan, user } = await setup("mock", { testAnswers: false });
-    await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
-    await expect(proposals(plan.id)).resolves.toHaveLength(0);
+    const summary = vi.spyOn(testSitting, "saveTestSummary");
+
+    try {
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      await rebalancePlanAfterSession({ goalId: goal.id, userId: user.id });
+      expect(summary).not.toHaveBeenCalled();
+      await expect(proposals(plan.id)).resolves.toHaveLength(0);
+    } finally {
+      summary.mockRestore();
+    }
   });
 
   it.each(["focusTest", "mock"] as const)(
