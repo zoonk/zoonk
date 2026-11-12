@@ -241,8 +241,14 @@ class MindMapStore(
                 chapter.invalidate { it.goalId == goalId }
                 list[goalId].reread()
             }
-            is MutationResult.Failed -> false
-            MutationResult.Obsolete -> null
+
+            is MutationResult.Failed -> {
+                false
+            }
+
+            MutationResult.Obsolete -> {
+                null
+            }
         }
 
     /** The number of the last read started: what a screen notes now gives way to any read started later. */
