@@ -1,6 +1,13 @@
 import SwiftUI
 
 extension View {
+  /// A task's title in its bar, on up to two lines so an ordinary chapter or lesson title shows
+  /// whole between the close and the bar's buttons. The system still has it as the screen's title
+  /// (VoiceOver, the window, Back's menu), and a vertical bar (iPhone Duo) has no room for it.
+  func taskTitle(_ title: Text) -> some View {
+    modifier(TaskTitleToolbar(title: title))
+  }
+
   /// A task's close in its toolbar, the item the bar keeps when it runs out of room (iPhone Duo's
   /// short vertical bar can), so leaving never hides in the overflow menu.
   func taskClose<Close: View>(@ViewBuilder _ close: () -> Close) -> some View {
@@ -21,6 +28,35 @@ extension View {
     -> some View
   {
     modifier(TaskActionToolbar(isShown: isShown, action: action()))
+  }
+}
+
+private struct TaskTitleToolbar: ViewModifier {
+  @Environment(\.isToolbarVertical) private var isToolbarVertical
+
+  let title: Text
+
+  func body(content: Content) -> some View {
+    content
+      .navigationTitle(title)
+      .toolbarTitleDisplayMode(.inline)
+      .toolbar {
+        // Stands in for the bar's own title, which keeps to one line.
+        ToolbarItem(placement: .title) {
+          title
+            // The bar's own title font, without the tracking main's body sets for app text, so a
+            // title that fits one line looks as the system draws it.
+            .font(.headline)
+            .tracking(0)
+            .lineLimit(2)
+            .multilineTextAlignment(.center)
+            .minimumScaleFactor(0.85)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityAddTraits(.isHeader)
+        }
+      }
+      // Takes the title item with it.
+      .toolbar(removing: isToolbarVertical ? .title : nil)
   }
 }
 

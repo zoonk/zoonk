@@ -92,23 +92,9 @@ struct MindMapsScreen: View {
       }
       .lonePage()
     case .failed:
-      ContentUnavailableView {
-        Label {
-          Text(
-            "We couldn't reach the server.", tableName: "MindMaps",
-            comment: "Shown when mind maps failed to load")
-        } icon: {
-          Image(systemName: "wifi.exclamationmark")
-        }
-      } actions: {
-        Button {
-          Task { await list.refresh() }
-        } label: {
-          Text("Try again", tableName: "MindMaps", comment: "Retries")
-        }
-        .buttonStyle(.outline)
+      MindMapUnreachable {
+        Task { await list.refresh() }
       }
-      .lonePage()
     case .idle, .loading:
       ProgressView()
     }
@@ -232,7 +218,8 @@ private struct MindMapCreateSection: View {
   var body: some View {
     let offer = maps.createOffer
     let line = line(offer)
-    let canStart = offer.startable > 0 || offer.stop == nil
+    // A failed map's row keeps its Try again, whose retry is free.
+    let canStart = offer.stop == nil
 
     Section {
       if offer.startable > 0 || line != nil {
@@ -246,6 +233,8 @@ private struct MindMapCreateSection: View {
                 comment: "Makes as many chapter maps as one tap can start now")
             }
             .buttonStyle(.outline)
+            .controlSize(.large)
+            .listRowButtonIcon()
           }
 
           if let line {
@@ -256,7 +245,20 @@ private struct MindMapCreateSection: View {
         .announcesStatus(note(line))
       }
 
-      DisclosureGroup(isExpanded: $showsChapters) {
+      FoldRow(isUnfolded: $showsChapters) {
+        LabeledContent {
+          Text(verbatim: notMade.count.formatted())
+            .typeStyle(.data)
+            .foregroundStyle(.mutedForeground)
+        } label: {
+          Text(
+            "Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map"
+          )
+          .typeStyle(.body)
+        }
+      }
+
+      if showsChapters {
         if canStart, showsLessonsNote {
           Text(
             "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
@@ -270,17 +272,6 @@ private struct MindMapCreateSection: View {
         ForEach(notMade) { map in
           MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
         }
-      } label: {
-        LabeledContent {
-          Text(verbatim: notMade.count.formatted())
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
-        } label: {
-          Text(
-            "Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map"
-          )
-          .typeStyle(.body)
-        }
       }
     } header: {
       SectionTitle(
@@ -288,10 +279,13 @@ private struct MindMapCreateSection: View {
     }
   }
 
-  /// The one line under the button: the first of these that applies.
+  /// The one line under the button: the first of these that applies. Maps on their way and maps
+  /// that didn't finish come before the limit: the learner just started them, and the limit read
+  /// first looks like a refusal.
   private enum Line {
     case unreachable
     case onTheWay(Int)
+    case unfinished(Int)
     case stopped(MindMapLimit)
     case fewer(Int)
     case needLessons(Int)
@@ -299,6 +293,9 @@ private struct MindMapCreateSection: View {
 
   private func line(_ offer: MindMapCreateOffer) -> Line? {
     let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
+    // Only the ones the button retries: a failed map whose lessons aren't written says so in its
+    // own row.
+    let unfinished = maps.chapters.count { $0.status == .failed && $0.lessonsToWrite == 0 }
 
     if store.createAllFailures[goalId] == .unreachable {
       return .unreachable
@@ -308,11 +305,15 @@ private struct MindMapCreateSection: View {
       return .onTheWay(onTheWay)
     }
 
+    if unfinished > 0 {
+      return .unfinished(unfinished)
+    }
+
     if offer.startable == 0, let stop = offer.stop {
       return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 
-    if offer.startable < offer.eligible {
+    if offer.startable > 0, offer.startable < offer.eligible {
       return .fewer(offer.startable)
     }
 
@@ -333,7 +334,7 @@ private struct MindMapCreateSection: View {
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
       HelpLimitNotice(limit: limit.limit, message: limit.message)
-    case .onTheWay, .fewer, .needLessons:
+    case .onTheWay, .unfinished, .fewer, .needLessons:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -347,6 +348,11 @@ private struct MindMapCreateSection: View {
       String(
         localized: "\(count) on the way. You can leave while they're made.", table: "MindMaps",
         comment: "How many chapter maps are being made now")
+    case .unfinished(let count):
+      String(
+        localized: "\(count) maps didn't finish. Try again.", table: "MindMaps",
+        comment:
+          "Chapter maps whose making failed; the button above makes them again, for free")
     case .fewer(let count):
       String(
         localized: "You can make \(count) more right now.", table: "MindMaps",
@@ -514,9 +520,13 @@ private struct MindMapSavedTab: View {
             .buttonStyle(.outline)
             .controlSize(.small)
           } label: {
-            Text(save.title)
-              .typeStyle(.rowTitle)
-              .foregroundStyle(.mutedForeground)
+            VStack(alignment: .leading, spacing: 2) {
+              Text(save.title)
+                .typeStyle(.rowTitle)
+                .foregroundStyle(.mutedForeground)
+
+              SavedKind(kind: save.kind)
+            }
           }
         }
       } header: {
@@ -568,9 +578,7 @@ private struct SavedRow: View {
             .typeStyle(.rowTitle)
             .foregroundStyle(Color(.foreground))
 
-          Text(verbatim: facts)
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
+          SavedKind(kind: save.kind)
         }
         .accessibilityElement(children: .combine)
       } end: {
@@ -584,22 +592,25 @@ private struct SavedRow: View {
   private var thumbnail: URL? {
     item.chapter?.image.flatMap { URL(string: $0.thumbnailUrl ?? $0.url) }
   }
+}
 
-  private var facts: String {
-    var facts: [String] = []
+/// A saved map's kind, as main's Saved tab names it in place of a chapter's number.
+private struct SavedKind: View {
+  let kind: SavedMindMapKind
 
-    if let chapter = item.chapter {
-      facts.append(
-        String(
-          localized: "Chapter \(chapter.position)", table: "MindMaps",
-          comment: "A chapter's number"))
+  var body: some View {
+    Group {
+      switch kind {
+      case .chapter:
+        Text(
+          "Chapter map", tableName: "MindMaps",
+          comment: "A kind of mind map: one for a whole chapter")
+      case .lesson:
+        Text(LessonMapView.name)
+      }
     }
-
-    if item.save.kind == .lesson {
-      facts.append(String(localized: LessonMapView.name))
-    }
-
-    return facts.joinedFacts()
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -625,6 +636,20 @@ private struct EmptyTab<Title: View, Description: View>: View {
 }
 
 // MARK: - Index
+
+/// A row that shows the rows after it: they follow it as rows of their own, on the page's left
+/// edge, where a `DisclosureGroup`'s content would sit indented under it.
+private struct FoldRow<Label: View>: View {
+  @Binding var isUnfolded: Bool
+  @ViewBuilder let label: Label
+
+  var body: some View {
+    DisclosureGroup(isExpanded: $isUnfolded) {
+    } label: {
+      label
+    }
+  }
+}
 
 /// Main's bounded index: sections stay open while there are 12 maps or fewer, past that each
 /// subject folds to its header; without subjects, the first 8 and "Show all".
@@ -670,12 +695,14 @@ private struct MindMapIndex<Item: Identifiable, Row: View>: View {
     } else if hasSubjects {
       ForEach(groups, id: \.key) { group in
         Section {
-          DisclosureGroup(isExpanded: $unfolded.contains(group.key)) {
-            ForEach(group.items) { row($0) }
-          } label: {
+          FoldRow(isUnfolded: $unfolded.contains(group.key)) {
             SectionTitle(Text(group.subject?.name ?? "")) {
               Text(verbatim: group.items.count.formatted())
             }
+          }
+
+          if unfolded.contains(group.key) {
+            ForEach(group.items) { row($0) }
           }
         }
         .id(group.key)

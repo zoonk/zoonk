@@ -31,9 +31,21 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
       let title: String
     }
 
+    /// Two to five things the chapter sets side by side.
+    struct Comparison: Decodable, Equatable, Sendable {
+      struct Column: Decodable, Equatable, Hashable, Sendable {
+        let name: String
+        let points: [String]
+      }
+
+      let columns: [Column]
+      let title: String
+    }
+
     let branches: [Branch]
     let centralIdea: String
-    let summary: String?
+    let comparison: Comparison?
+    let summary: String
     let title: String
   }
 
@@ -103,8 +115,9 @@ struct MindMapCreateOffer: Decodable, Equatable, Sendable {
   let eligible: Int
   /// Chapters without a map whose lessons aren't all written: each writes them from its own row.
   let needLessons: Int
-  /// How many of `eligible` one tap would start now.
+  /// How many of `eligible` one tap would start now, a failed map's free retry included.
   let startable: Int
+  /// What stops a new map now; nil while the allowance has room for one more.
   let stop: MindMapAllowanceStop?
 }
 

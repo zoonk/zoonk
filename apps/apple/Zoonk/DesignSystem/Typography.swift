@@ -209,8 +209,9 @@ extension Text {
 
   /// `Text(_:)` for Markdown in a type role. SwiftUI draws strong emphasis as the font's bold face,
   /// and Geist from semibold up already counts as bold, as regular text does under Bold Text; so
-  /// each strong run takes `typeWeight(.bold, legibility:)` instead.
-  init(_ text: AttributedString, legibility: LegibilityWeight?) {
+  /// each strong run takes `typeWeight(strong, legibility:)` instead, bold unless a label asks for
+  /// main's `font-medium`.
+  init(_ text: AttributedString, strong: Font.Weight = .bold, legibility: LegibilityWeight?) {
     let runs = text.runs[\.inlinePresentationIntent]
 
     guard runs.contains(where: { $0.0?.contains(.stronglyEmphasized) == true }) else {
@@ -226,7 +227,7 @@ extension Text {
 
       if let intent, intent.contains(.stronglyEmphasized) {
         piece.inlinePresentationIntent = intent.subtracting(.stronglyEmphasized)
-        pieces.appendInterpolation(Text(piece).typeWeight(.bold, legibility: legibility))
+        pieces.appendInterpolation(Text(piece).typeWeight(strong, legibility: legibility))
       } else {
         pieces.appendInterpolation(Text(piece))
       }

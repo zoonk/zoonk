@@ -26,7 +26,7 @@ struct MindMapReader: View {
         if let maps {
           deck(maps)
         } else if case .failed = list.state {
-          unreachable { Task { await list.refresh() } }
+          MindMapUnreachable { Task { await list.refresh() } }
         } else {
           ProgressView()
         }
@@ -124,9 +124,10 @@ struct MindMapReader: View {
         actionBar(cards, index: index)
           .keepsOffFold()
       }
-      // Previous is see-through, so a map scrolling under the bar stops at its edge.
+      // The bar's soft edge doesn't reach a page's own scroll inside the pager, so an outline would
+      // run crisp under the see-through Previous.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
-      .navigationTitle(title)
+      .taskTitle(Text(title))
       .announcesStatus(title)
       .taskAction(isShown: save != nil) {
         if let save {
@@ -209,29 +210,11 @@ struct MindMapReader: View {
   @ViewBuilder
   private func waiting(_ lessons: Resource<ChapterLessonMaps>) -> some View {
     if case .failed = lessons.state {
-      unreachable { Task { await lessons.refresh() } }
+      MindMapUnreachable { Task { await lessons.refresh() } }
     } else {
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-  }
-
-  private func unreachable(retry: @escaping () -> Void) -> some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "We couldn't reach the server.", tableName: "MindMaps",
-          comment: "A map that failed to load")
-      } icon: {
-        Image(systemName: "wifi.exclamationmark")
-      }
-    } actions: {
-      Button(action: retry) {
-        Text("Try again", tableName: "MindMaps", comment: "Retries")
-      }
-      .buttonStyle(.outline)
-    }
-    .lonePage()
   }
 
   @ViewBuilder
@@ -386,26 +369,32 @@ private struct ChapterMapPage: View {
             .scenePadding()
         }
       } secondary: {
-        MindMapOutlineView(outline: outline) { EmptyView() }
+        ScrollView {
+          MindMapOutlineView(outline: outline)
+            .scenePadding()
+        }
       } single: {
-        MindMapOutlineView(outline: outline) {
-          Section {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
             picture(url)
-              .listRowSeparator(.hidden)
+            MindMapOutlineView(outline: outline)
           }
+          .taskColumn(alignment: .leading)
         }
       }
     } else if let outline = map.outline {
-      MindMapOutlineView(outline: outline) {
-        Section {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
           Text(
             "Its picture had mistakes, so here's the mind map as text.", tableName: "MindMaps",
             comment: "A map whose picture failed its check, shown as its outline"
           )
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden)
+
+          MindMapOutlineView(outline: outline)
         }
+        .taskColumn(alignment: .leading)
       }
       .lonePage()
     } else if let url {
@@ -469,8 +458,7 @@ private struct MindMapZoom: View {
     NavigationStack {
       ZoomableRemoteImage(url: map.url, title: map.target.title)
         .ignoresSafeArea(edges: .bottom)
-        .navigationTitle(map.target.title)
-        .toolbarTitleDisplayMode(.inline)
+        .taskTitle(Text(map.target.title))
         .taskClose {
           Button(role: .close) {
             dismiss()
