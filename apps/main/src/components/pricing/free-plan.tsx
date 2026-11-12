@@ -49,7 +49,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
       <p className="text-muted-foreground flex min-h-10 items-center justify-center text-sm">
         {t({
           description:
-            "On the Free tier's card, in the button's place, for a learner who doesn't have Plus: Free is what they have today.",
+            "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.",
           message: "What you have now",
         })}
       </p>

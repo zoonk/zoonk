@@ -95,7 +95,9 @@ async function PlanLinkBody({ params }: Props) {
               <p className="text-muted-foreground text-[13px] sm:text-sm">{makeItYours}</p>
             </div>
           ) : (
-            <StartBlock note={makeItYours}>
+            <StartBlock
+              note={t("You get your own plan for the same subject. Start free, no account needed.")}
+            >
               <Link
                 className={getStartControlClassName()}
                 href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
@@ -129,7 +131,6 @@ async function PlanLinkBody({ params }: Props) {
                 id: String(index),
                 title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
               }))}
-              startId="0"
             />
           </CatalogAsideBlock>
         </div>

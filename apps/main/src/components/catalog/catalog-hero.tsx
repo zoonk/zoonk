@@ -21,13 +21,13 @@ export async function PlanLine({ start = "known" }: { start?: PlanStart }) {
 
   const lines: Record<PlanStart, string> = {
     chapter: t(
-      "Zoonk builds you a plan for each day. It fits your time and starts at this chapter.",
+      "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter.",
     ),
     exam: t(
-      "Zoonk builds you a plan for each day until your exam. It fits your time and starts from what you already know.",
+      "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
     ),
     known: t(
-      "Zoonk builds you a plan for each day. It fits your time and starts from what you already know.",
+      "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know.",
     ),
   };
 

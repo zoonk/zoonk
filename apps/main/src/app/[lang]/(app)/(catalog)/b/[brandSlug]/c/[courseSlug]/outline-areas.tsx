@@ -7,6 +7,7 @@ import {
   OutlineChapterList,
   OutlineChapterRow,
   type OutlineParams,
+  ZoneChapterNames,
 } from "./outline-chapter-row";
 
 function AreaChapters({
@@ -81,7 +82,12 @@ export async function AreaOutline({
             })}
             key={area}
             open={index === 0}
-            summary={area}
+            summary={
+              <span className="flex flex-col gap-1">
+                {area}
+                <ZoneChapterNames chapters={areaChapters} />
+              </span>
+            }
           >
             <AreaChapters chapters={areaChapters} {...shared} />
           </RouteZone>

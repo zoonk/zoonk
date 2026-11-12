@@ -1,18 +1,15 @@
 import { CourseHere, CourseLevelZone } from "@/components/catalog/course-progress";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZoneAhead } from "@zoonk/learn/route-line";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import {
-  OUTLINE_SEPARATOR,
   type OutlineBand,
   OutlineChapterList,
   OutlineChapterRow,
   type OutlineParams,
+  ZoneChapterNames,
 } from "./outline-chapter-row";
-
-const CHAPTERS_NAMED = 3;
 
 const LEVEL_LINE_CLASS =
   "text-muted-foreground text-[13px] leading-snug font-normal text-pretty sm:text-sm";
@@ -103,14 +100,7 @@ export async function OutlineLevel({
           courseId={courseId}
           label={label}
           level={band.level}
-          line={
-            <span className={cn(LEVEL_LINE_CLASS, "group-open/zone:hidden")}>
-              {band.chapters
-                .slice(0, CHAPTERS_NAMED)
-                .map((chapter) => chapter.title)
-                .join(OUTLINE_SEPARATOR)}
-            </span>
-          }
+          line={<ZoneChapterNames chapters={band.chapters} />}
         />
       }
     >

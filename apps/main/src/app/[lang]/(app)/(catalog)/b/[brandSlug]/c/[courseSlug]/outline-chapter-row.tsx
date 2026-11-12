@@ -12,7 +12,21 @@ export type OutlineBand = LibraryOutline["levels"][number];
 export type OutlineChapter = OutlineBand["chapters"][number];
 
 /** A no-break space keeps each dot at the end of a line, never at the start of the next. */
-export const OUTLINE_SEPARATOR = " · ";
+const OUTLINE_SEPARATOR = " · ";
+
+const CHAPTERS_NAMED = 3;
+
+/** A closed level or subject says what it holds; open, its rows do. */
+export function ZoneChapterNames({ chapters }: { chapters: OutlineChapter[] }) {
+  return (
+    <span className="text-muted-foreground text-[13px] leading-snug font-normal text-pretty group-open/zone:hidden sm:text-sm">
+      {chapters
+        .slice(0, CHAPTERS_NAMED)
+        .map((chapter) => chapter.title)
+        .join(OUTLINE_SEPARATOR)}
+    </span>
+  );
+}
 
 const CHAPTERS_SHOWN = 6;
 

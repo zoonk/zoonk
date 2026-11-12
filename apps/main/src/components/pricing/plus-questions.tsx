@@ -131,9 +131,12 @@ export async function PlusQuestions({
 
         <PublicDisclosure summary={t("What happens if I cancel?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t(
-              "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
-            )}
+            {t({
+              description:
+                "“Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.",
+              message:
+                "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
+            })}
           </p>
         </PublicDisclosure>
 

@@ -1,11 +1,4 @@
-import { cn } from "@zoonk/ui/lib/utils";
-
 type NumberedRow = { description?: string; id: string; title: React.ReactNode };
-
-const ROW_CLASS =
-  "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors";
-
-const HIGHLIGHTED_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
 function NumberedRowContent({ number, row }: { number: number; row: NumberedRow }) {
   return (
@@ -26,20 +19,14 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
   );
 }
 
-export function NumberedRows({ rows, startId }: { rows: NumberedRow[]; startId: string }) {
+export function NumberedRows({ rows }: { rows: NumberedRow[] }) {
   return (
     <ol className="divided-rows flex flex-col">
-      {rows.map((row, index) => {
-        const highlighted = row.id === startId;
-
-        return (
-          <li data-highlighted={highlighted || undefined} key={row.id}>
-            <div className={cn(ROW_CLASS, highlighted && HIGHLIGHTED_ROW_CLASS)}>
-              <NumberedRowContent number={index + 1} row={row} />
-            </div>
-          </li>
-        );
-      })}
+      {rows.map((row, index) => (
+        <li className="flex items-start gap-3 py-3" key={row.id}>
+          <NumberedRowContent number={index + 1} row={row} />
+        </li>
+      ))}
     </ol>
   );
 }
