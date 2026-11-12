@@ -88,10 +88,11 @@ function PlanRebuildFollower({ goalId }: { goalId: string }) {
   usePoll({
     active: true,
     intervalMs: REBUILD_POLL_MS,
+    // A read that keeps failing (the goal gone, the API down) stops after usePoll's few errors.
     onPoll: async (signal) => {
       const rebuild = await readGoalRebuild(goalId);
 
-      if (rebuild && rebuild !== "preparing" && !signal.aborted) {
+      if (rebuild !== "preparing" && !signal.aborted) {
         router.refresh();
       }
     },

@@ -11,21 +11,14 @@ const goalRebuildSchema = z.object({
   contentCountry: goalContentCountrySchema.pick({ rebuild: true }).nullable(),
 });
 
-/** The goal's own rebuild state, the one Apple and Android follow. Null when it couldn't be read. */
-export async function readGoalRebuild(
-  goalId: string,
-): Promise<GoalContentCountry["rebuild"] | null> {
+/** The goal's own rebuild state, the one Apple and Android follow. Throws when it can't be read. */
+export async function readGoalRebuild(goalId: string): Promise<GoalContentCountry["rebuild"]> {
   const response = await getFromBrowser(`/v1/goals/${encodeURIComponent(goalId)}`);
 
   if (!response?.ok) {
-    return null;
+    throw new Error(`Couldn't read goal ${goalId}: ${response?.status ?? "no response"}`);
   }
 
-  const parsed = goalRebuildSchema.safeParse(await response.json().catch(() => null));
-
-  if (!parsed.success) {
-    return null;
-  }
-
-  return parsed.data.contentCountry?.rebuild ?? "none";
+  const body: unknown = await response.json();
+  return goalRebuildSchema.parse(body).contentCountry?.rebuild ?? "none";
 }
