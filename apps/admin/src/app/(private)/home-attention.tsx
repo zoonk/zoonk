@@ -14,7 +14,7 @@ type AttentionRow = { count: number; detail: string; href: Route; title: string 
 const MINUTES_PER_HOUR = 60;
 
 function since({ oldest }: InboxQueue): string {
-  return oldest ? `since ${formatDate(oldest)}` : "";
+  return oldest ? `, the oldest from ${formatDate(oldest)}` : "";
 }
 
 async function loadAttentionRows(): Promise<AttentionRow[]> {
@@ -30,19 +30,19 @@ async function loadAttentionRows(): Promise<AttentionRow[]> {
   const rows: AttentionRow[] = [
     {
       count: failed + stuck,
-      detail: `${failed} failed · ${stuck} stuck for over ${STUCK_RUNNING_MINUTES / MINUTES_PER_HOUR} hour`,
+      detail: `${failed} failed · ${stuck} started over ${STUCK_RUNNING_MINUTES / MINUTES_PER_HOUR} hour ago and never finished`,
       href: "/ai",
       title: "Failed AI runs",
     },
     {
       count: inbox.feedback.count,
-      detail: `New messages ${since(inbox.feedback)}`,
+      detail: `New messages${since(inbox.feedback)}`,
       href: "/feedback/messages",
       title: "Feedback",
     },
     {
       count: inbox.contentFixes.count,
-      detail: `Waiting for approval ${since(inbox.contentFixes)}`,
+      detail: `Waiting for approval${since(inbox.contentFixes)}`,
       href: "/content-fixes",
       title: "Content fixes",
     },

@@ -74,7 +74,7 @@ export default function LessonMockPage() {
   return (
     <AdminDetailPage>
       <AdminDetailHeader
-        facts={["Written", "English", "6 min", "10 screens", "Updated Nov 12, 2026"]}
+        facts={["English", "6 min", "10 screens", "Updated Nov 12, 2026"]}
         parents={[{ href: "/lessons", label: "Lessons" }]}
         title="Where a price comes from"
       />

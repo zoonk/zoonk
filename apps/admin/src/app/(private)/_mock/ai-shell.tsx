@@ -5,7 +5,7 @@ import { MockLink } from "./parts";
 
 const TABS = [
   { label: "Spend", value: "spend" },
-  { label: "Failed runs (40)", value: "failed" },
+  { label: "Failed or stuck (40)", value: "failed" },
   { label: "Plus learners", value: "plus" },
   { label: "Written by", value: "written" },
 ] as const;
@@ -24,8 +24,8 @@ export function AiMockShell({
       <AdminPageHeader title="AI" />
       <AdminPageBody className="gap-8">
         {notice ? (
-          <AdminNotice title="40 AI runs need a look" tone="destructive">
-            5 failed and 35 have been running for over 1 hour. <MockLink>See failed runs</MockLink>
+          <AdminNotice title="40 AI runs failed or are stuck" tone="destructive">
+            5 failed. 35 started over an hour ago and never finished. <MockLink>See them</MockLink>
           </AdminNotice>
         ) : null}
         <AdminTabs current={current} label="AI" path="/ai/mock" tabs={TABS} />

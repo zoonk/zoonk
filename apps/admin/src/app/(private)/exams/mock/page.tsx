@@ -54,7 +54,6 @@ export default function ExamMockPage() {
                   <DetailField label="Official notice">
                     <MockLink>Edital de Abertura do 48º EOU</MockLink>
                   </DetailField>
-                  <DetailField label="Last checked">Oct 9, 2026</DetailField>
                   <DetailField label="Next check">Nov 13, 2026</DetailField>
                 </DetailFields>
               </AdminSection>
@@ -75,7 +74,6 @@ export default function ExamMockPage() {
             <DetailFields>
               <DetailField label="Exam date">Jan 10, 2027</DetailField>
               <DetailField label="Registration ends">Oct 5, 2026</DetailField>
-              <DetailField label="Good until">Jan 9, 2027</DetailField>
             </DetailFields>
           </AdminSection>
 
@@ -87,7 +85,7 @@ export default function ExamMockPage() {
                   Digital no conteúdo programático.
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  Nov 11, 2026 · Exam date, Subjects · Learners with this goal were told
+                  Nov 11, 2026 · Changed the exam date and the subjects
                 </p>
               </li>
             </ul>

@@ -39,6 +39,7 @@ export function AiDailySpendChart({ points }: { points: DailySpendPoint[] }) {
             tickLine={false}
           />
           <YAxis
+            allowDecimals={false}
             axisLine={false}
             fontSize={11}
             stroke="var(--muted-foreground)"

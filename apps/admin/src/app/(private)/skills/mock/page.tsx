@@ -98,11 +98,11 @@ export default function SkillMockPage() {
           </AdminSection>
 
           <div className="grid gap-8 md:grid-cols-2">
-            <AdminSection title="Needs first (1)">
+            <AdminSection title="Learned before this (1)">
               <SkillList skills={[["Operar com números racionais e reais", "Intermediate"]]} />
             </AdminSection>
 
-            <AdminSection title="Builds toward (7)">
+            <AdminSection title="Learned after this (7)">
               <SkillList skills={BUILDS_TOWARD} />
             </AdminSection>
           </div>

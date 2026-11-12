@@ -47,7 +47,7 @@ export default function ItemMockPage() {
 
       <AdminDetailBody>
         <AdminNotice title="A source this question was built on changed after it was written.">
-          <MockLink>See the source change</MockLink>
+          <MockLink>Review it in Source changes</MockLink>
         </AdminNotice>
 
         <AdminTabs current="question" label="Practice question" path="/items/mock" tabs={TABS} />
