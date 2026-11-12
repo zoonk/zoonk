@@ -85,8 +85,9 @@ class Resource<T : Any> internal constructor(
     }
 
     /**
-     * Marks it stale: refetched now if a screen shows it, otherwise on its next [load]. A write can
-     * bring back what wasn't found (a moved challenge's Undo), so a not-found is dropped.
+     * Marks it stale: refetched now if a screen shows it, otherwise on its next [load]. A read on its
+     * way may predate the write, so it's dropped, and a call waiting for it waits for a new read. A
+     * write can bring back what wasn't found (a moved challenge's Undo), so a not-found is dropped.
      */
     fun invalidate() {
         isInvalidated = true
@@ -139,12 +140,15 @@ class Resource<T : Any> internal constructor(
     private fun shownState(value: T?): LoadState<T> = value?.takeUnless(isEmpty)?.let { LoadState.Loaded(it) } ?: LoadState.Empty
 
     private suspend fun run() {
+        val shown = revision
         val pending = request ?: start()
         try {
             pending.await()
         } catch (e: CancellationException) {
-            // Only this caller's own cancellation propagates, not the replaced request's.
+            // Only this caller's own cancellation propagates. A dropped request makes it wait for a new
+            // read instead, unless a newer value (a replace, another session's) already settled it.
             currentCoroutineContext().ensureActive()
+            if (request !== pending && revision == shown) run()
         }
     }
 
