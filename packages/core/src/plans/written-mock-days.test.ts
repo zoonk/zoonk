@@ -8,7 +8,8 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
-import { parsePlanSettings } from "./planner/plan-state";
+import { addDays, daysBetween, fromIsoDate, toIsoDate } from "./planner/plan-calendar";
+import { parsePlanPhases, parsePlanSettings } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 const START = "2026-01-05";
@@ -64,6 +65,17 @@ async function planExam(sections: Section[]) {
   mockSession(user.id);
 
   return { goal, plan };
+}
+
+function listDays(start: string | null, end: string | null): string[] {
+  if (!start || !end) {
+    return [];
+  }
+
+  const first = fromIsoDate(start);
+  const length = daysBetween(first, fromIsoDate(end)) + 1;
+
+  return Array.from({ length }, (_, offset) => toIsoDate(addDays(first, offset)));
 }
 
 async function readPlan(planId: string) {
@@ -147,6 +159,19 @@ describe("exam days whose weekly mock would ask nothing", () => {
       );
 
       expect(settings.practiceBias).toBe("morePractice");
+
+      const finalStretch = parsePlanPhases(saved.phases).find(
+        (phase) => phase.kind === "finalStretch",
+      );
+
+      const studied = new Set(
+        saved.items.flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : [])),
+      );
+
+      const days = listDays(finalStretch?.startDate ?? null, finalStretch?.endDate ?? null);
+
+      expect(days.length).toBeGreaterThan(0);
+      expect(days.filter((day) => !studied.has(day))).toStrictEqual([]);
     },
   );
 });

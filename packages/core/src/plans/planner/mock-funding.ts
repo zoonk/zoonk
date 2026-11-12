@@ -15,6 +15,7 @@ import { toIsoDate } from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { type MovedEvent, type PlanSettings } from "./plan-state";
 import { type DayShape, type PlanDay } from "./schedule-units";
+import { reviewEvent } from "./short-exam-plan";
 
 export type MockFunding = PlanSettings["mockFunding"][number];
 
@@ -192,6 +193,14 @@ function fundWindow({
   });
 }
 
+function withoutEmptyMock({ date, day }: { date: Date; day: DayShape }): DayShape {
+  if (day.open || day.minutes <= 0) {
+    return day;
+  }
+
+  return { ...day, events: [...day.events, reviewEvent({ date, minutes: day.minutes })] };
+}
+
 export type FundedMocks = {
   days: PlanDay[];
   funding: MockFunding[];
@@ -263,6 +272,11 @@ export function fundMocks({
     const date = labels[index] ?? "";
     const ownDay = { ...day.shape, events: day.shape.events.filter((event) => event !== found) };
 
+    if (released.has(date)) {
+      shapes[index] = ownDay;
+      return;
+    }
+
     const source = matches.get(date);
 
     const identity =
@@ -284,8 +298,8 @@ export function fundMocks({
         }
       : found;
 
-    if (released.has(date) || mock.minutes <= PLAN_EPSILON) {
-      shapes[index] = ownDay;
+    if (mock.minutes <= PLAN_EPSILON) {
+      shapes[index] = withoutEmptyMock({ date: day.date, day: ownDay });
       return;
     }
 
