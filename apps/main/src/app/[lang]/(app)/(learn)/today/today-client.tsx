@@ -63,6 +63,19 @@ function usePrefetchSessionFrame(href: string) {
 /** `answered` is null when the learner dismissed the request. */
 type UploadAnswer = { answered: GoalUploadRequest | null; visit: number };
 
+function useUploadAnswer() {
+  const visit = useTodayVisit();
+  const [upload, setUpload] = useState<UploadAnswer | null>(null);
+  const uploadThisVisit = upload?.visit === visit ? upload : null;
+
+  return {
+    answeredUpload: uploadThisVisit?.answered ?? null,
+    onUploadAnswered: (request: GoalUploadRequest) => setUpload({ answered: request, visit }),
+    onUploadDismissed: () => setUpload({ answered: null, visit }),
+    uploadDismissed: uploadThisVisit !== null,
+  };
+}
+
 /**
  * An upload ask answered here shows its thanks while the learner stays, whatever Today read since,
  * and one dismissed here stays away.
@@ -199,9 +212,7 @@ export function TodayClient({
     showIntro,
   });
 
-  const visit = useTodayVisit();
-  const [upload, setUpload] = useState<UploadAnswer | null>(null);
-  const uploadThisVisit = upload?.visit === visit ? upload : null;
+  const uploadAnswer = useUploadAnswer();
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
   const sessionHref = getSessionHref({ goalId, limit: null });
@@ -290,14 +301,7 @@ export function TodayClient({
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
       mistakes={data.mistakes}
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
-      notices={toHostNotices({
-        answeredUpload: uploadThisVisit?.answered ?? null,
-        data,
-        goalId: today.goal.id,
-        onUploadAnswered: (request) => setUpload({ answered: request, visit }),
-        onUploadDismissed: () => setUpload({ answered: null, visit }),
-        uploadDismissed: uploadThisVisit !== null,
-      })}
+      notices={toHostNotices({ ...uploadAnswer, data, goalId: today.goal.id })}
       planEnd={data.planEnd}
       speakingEntry={
         data.language?.speaking && (
