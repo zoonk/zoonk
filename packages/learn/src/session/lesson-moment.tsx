@@ -11,8 +11,6 @@ import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { useStudyTimeFact } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
-import { type ReminderOfferActions } from "../reminders/reminder-offer";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
@@ -41,23 +39,19 @@ type OutsideSessionResult = NonNullable<LessonMomentCompletion["result"]>;
 
 function SavedMoment({
   buddy,
-  lessonSeconds,
   moment,
   onContinue,
   onStartTestOut,
   onStop,
   continueHref,
-  reminderActions,
   testedOut,
 }: {
   buddy?: LearnBuddy | null;
-  lessonSeconds: number;
   moment: StudyMomentView;
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
   continueHref?: string | null;
-  reminderActions: ReminderOfferActions;
   testedOut: boolean;
 }) {
   return (
@@ -67,13 +61,11 @@ function SavedMoment({
       finishedChapterId={moment.finishedChapterId}
       inLessonPlayer
       kind="learn"
-      lessonSeconds={lessonSeconds}
       moment={moment}
       next={moment.next?.block ?? null}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
-      reminderActions={reminderActions}
       testedOut={testedOut}
     />
   );
@@ -105,12 +97,11 @@ function OutsideSession({
           <DayMoment
             buddy={buddy}
             ceremony={result.ceremony}
+            finishedChapter={result.finishedChapter}
             missionMoment={null}
             reached={result.reached}
           />
         )}
-
-        <FinishedChapterMoment chapter={result?.finishedChapter ?? null} />
       </TaskBody>
 
       <TaskActionBar>
@@ -155,7 +146,6 @@ export function LessonMoment({
   onStartTestOut,
   onStop,
   continueHref,
-  reminderActions,
 }: {
   buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
@@ -164,7 +154,6 @@ export function LessonMoment({
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
   continueHref?: string | null;
-  reminderActions: ReminderOfferActions;
 }) {
   const t = useExtracted();
   const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
@@ -186,13 +175,11 @@ export function LessonMoment({
   return (
     <SavedMoment
       buddy={buddy}
-      lessonSeconds={result.seconds}
       moment={moment}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}
       onStop={onStop}
       continueHref={continueHref}
-      reminderActions={reminderActions}
       testedOut={completion.testedOut}
     />
   );

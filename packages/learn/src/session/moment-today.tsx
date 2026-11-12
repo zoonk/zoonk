@@ -1,10 +1,8 @@
 "use client";
 
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
-import { useFormatDuration } from "../_utils/time-format";
 import { DayMeter } from "../today/day-segments";
 import { getDayMeterParts } from "./day-meter-parts";
 import { type SessionQueueRow } from "./session-queue-rows";
@@ -54,39 +52,6 @@ function TodayLead({ moment }: { moment: StudyMomentView }) {
   });
 }
 
-function useTodayCaption(moment: StudyMomentView): string | null {
-  const t = useExtracted();
-  const { lead, lessonsComing } = moment.dayProgress;
-  const { completed, total } = moment.sessionBar;
-
-  if (lead === "left") {
-    return t(
-      "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}}",
-      { completed, total: String(total) },
-    );
-  }
-
-  return lead === "open" && lessonsComing ? t("More as you go") : null;
-}
-
-function DeferredLessons({ moment }: { moment: StudyMomentView }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-
-  if (moment.deferredLessonsCount === 0) {
-    return null;
-  }
-
-  return (
-    <p className="text-muted-foreground text-xs text-pretty">
-      {t(
-        "{count, plural, one {# lesson moved} other {# lessons moved}} to another day to fit your {time} today.",
-        { count: moment.deferredLessonsCount, time: formatDuration(moment.minutes.dailyGoal) },
-      )}
-    </p>
-  );
-}
-
 /**
  * Only the part this block just finished fills, on Brain Power's beat; everything else is drawn
  * where it stands.
@@ -98,10 +63,10 @@ export function MomentToday({
   moment: StudyMomentView;
   rows: readonly SessionQueueRow[];
 }) {
+  const t = useExtracted();
   const format = useFormatter();
   const celebrate = useCelebration();
-  const { lead, percent } = moment.dayProgress;
-  const caption = useTodayCaption(moment);
+  const { catchUp, lead, lessonsComing, percent } = moment.dayProgress;
 
   return (
     <section className="flex w-full flex-col gap-2" data-slot="moment-today">
@@ -122,28 +87,21 @@ export function MomentToday({
         parts={getDayMeterParts({ rows })}
       />
 
-      {caption && (
-        <p
-          className={cn(
-            "text-muted-foreground text-xs",
-            lead === "left" && "font-mono tabular-nums",
-          )}
-        >
-          {caption}
-        </p>
+      {/* One caption at most: what's left to catch up, or that today's list is still growing. */}
+      {catchUp && <MomentCatchUp catchUp={catchUp} />}
+      {!catchUp && lead === "open" && lessonsComing && (
+        <p className="text-muted-foreground text-xs">{t("More as you go")}</p>
       )}
-
-      <DeferredLessons moment={moment} />
     </section>
   );
 }
 
-export function MomentCatchUp({ catchUp }: { catchUp: StudyMomentView["dayProgress"]["catchUp"] }) {
+function MomentCatchUp({
+  catchUp,
+}: {
+  catchUp: NonNullable<StudyMomentView["dayProgress"]["catchUp"]>;
+}) {
   const t = useExtracted();
-
-  if (!catchUp) {
-    return null;
-  }
 
   if (catchUp.lessonsLeft === 0) {
     return (

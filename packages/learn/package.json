@@ -141,6 +141,7 @@
     "./session/day-step-opener": "./src/session/day-step-opener.tsx",
     "./session/failed-moment": "./src/session/failed-moment.tsx",
     "./session/lesson-celebration": "./src/session/lesson-celebration.ts",
+    "./session/pick-day-moment": "./src/session/pick-day-moment.ts",
     "./session/lesson-moment": "./src/session/lesson-moment.tsx",
     "./session/moment-ceremony": "./src/session/moment-ceremony.tsx",
     "./session/moment-header": "./src/session/moment-header.tsx",

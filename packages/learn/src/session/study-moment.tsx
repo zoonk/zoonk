@@ -11,50 +11,25 @@ import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
-import { useFormatDuration, useStudyTimeFact } from "../_utils/time-format";
+import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
-import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
-import { ReminderOffer, type ReminderOfferActions } from "../reminders/reminder-offer";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
 import { MomentHeader } from "./moment-header";
-import { MomentCatchUp, MomentToday } from "./moment-today";
+import { MomentToday } from "./moment-today";
+import { pickDayMoment } from "./pick-day-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
-import { TestOutOffer } from "./test-out-offer";
 import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
-
-function MomentEarned({
-  lessonSeconds = 0,
-  moment,
-}: {
-  lessonSeconds?: number;
-  moment: StudyMomentView;
-}) {
-  const t = useExtracted();
-  const studied = useStudyTimeFact(lessonSeconds);
-  const brainPower = getOwnBrainPower(moment);
-
-  const facts = [
-    studied,
-    moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
-  ];
-
-  return (
-    <MomentReadouts brainPower={brainPower} facts={facts}>
-      <MomentCatchUp catchUp={moment.dayProgress.catchUp} />
-    </MomentReadouts>
-  );
-}
 
 function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
   const t = useExtracted();
@@ -117,7 +92,9 @@ function MomentActions({
       {proceed.failed && (
         <ActionFailed>{t("We couldn't open the next step. Try again.")}</ActionFailed>
       )}
-      {stop.failed && <ActionFailed>{t("We couldn't stop the session. Try again.")}</ActionFailed>}
+      {stop.failed && (
+        <ActionFailed>{t("That didn't go through. Try again in a moment.")}</ActionFailed>
+      )}
 
       <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
         {!sessionCompleted && (
@@ -136,7 +113,7 @@ function MomentActions({
           <MomentContinueLink href={continueHref} />
         ) : (
           <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
-            {sessionCompleted ? t("See today's summary") : t("Continue")}
+            {t("Continue")}
           </EnterButton>
         )}
       </TaskActions>
@@ -150,14 +127,12 @@ export function StudyMoment({
   exitHref,
   inLessonPlayer = false,
   kind,
-  lessonSeconds,
   moment,
   next,
   finishedChapterId = null,
   onContinue,
   onStartTestOut,
   onStop,
-  reminderActions,
   renderCeremony,
   testedOut = false,
 }: {
@@ -167,19 +142,16 @@ export function StudyMoment({
   finishedChapterId?: string | null;
   inLessonPlayer?: boolean;
   kind: MomentKind;
-  lessonSeconds?: number;
   moment: StudyMomentView;
   next: StudyBlock | null;
   onContinue: () => Promise<boolean>;
   onStartTestOut?: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
-  reminderActions?: ReminderOfferActions;
   renderCeremony?: MomentCeremony;
   testedOut?: boolean;
 }) {
   const title = useMomentTitle({ kind, testedOut });
   const nextBlock = moment.sessionCompleted ? null : next;
-  const offer = onStartTestOut ? moment.testOutOffer : null;
   const hasHeader = !inLessonPlayer && exitHref !== undefined;
 
   const queue = {
@@ -194,42 +166,45 @@ export function StudyMoment({
   const aside = useSessionQueueAside(queue);
 
   const nextChapterId =
-    !offer && nextBlock?.canTestOut && nextBlock.chapterId !== finishedChapterId
-      ? nextBlock.chapterId
-      : null;
+    nextBlock?.canTestOut && nextBlock.chapterId !== finishedChapterId ? nextBlock.chapterId : null;
+
+  // After a run of easy lessons core offers the chapter's test; before a new chapter the next
+  // lesson's can be taken. Either way it's one line, the one Today uses.
+  const testChapterId = moment.testOutOffer?.chapterId ?? nextChapterId;
+
+  const dayMoment = {
+    ceremony: moment.ceremony,
+    finishedChapter: moment.finishedChapter,
+    missionMoment: {
+      completed: moment.completedMissions,
+      fullMeal: moment.fullMeal,
+      missions: moment.missions,
+    },
+    reached: moment.reached,
+  };
+
+  // The day's bonus is said by the missions' moment; where another moment shows instead, the bonus
+  // is part of what this block earned.
+  const brainPower =
+    pickDayMoment(dayMoment) === "missions" ? getOwnBrainPower(moment) : moment.brainPower;
 
   const content = (
     <MomentAfterCeremony moments={moment} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <MomentHeader title={title}>
-          <MomentEarned lessonSeconds={lessonSeconds} moment={moment} />
+          <MomentReadouts brainPower={brainPower} />
         </MomentHeader>
 
         <MomentToday moment={moment} rows={queue.rows} />
 
-        <DayMoment
-          buddy={buddy}
-          ceremony={moment.ceremony}
-          missionMoment={{
-            completed: moment.completedMissions,
-            fullMeal: moment.fullMeal,
-            missions: moment.missions,
-          }}
-          reached={moment.reached}
-        />
-
-        <FinishedChapterMoment chapter={moment.finishedChapter} />
-
-        <ReminderOffer actions={reminderActions} offer={moment.reminderOffer} />
+        <DayMoment buddy={buddy} {...dayMoment} />
 
         {nextBlock && (
-          <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />
+          <NextBlock block={nextBlock} subject={Boolean(testChapterId && onStartTestOut)} />
         )}
 
-        {offer && onStartTestOut && <TestOutOffer offer={offer} onStart={onStartTestOut} />}
-
-        {nextChapterId && onStartTestOut && (
-          <TestOutStartLink onStart={() => onStartTestOut(nextChapterId)} />
+        {testChapterId && onStartTestOut && (
+          <TestOutStartLink onStart={() => onStartTestOut(testChapterId)} />
         )}
       </TaskBody>
 

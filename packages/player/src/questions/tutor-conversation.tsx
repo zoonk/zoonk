@@ -273,7 +273,7 @@ function ConversationBody({
           </WaitForFirstShow>
         )}
 
-        <ConversationMissionMoment buddyName={identity.name} moment={missionMoment} />
+        <ConversationMissionMoment moment={missionMoment} />
       </div>
 
       <div className={cn(COMPOSER_POSITION, "flex flex-col gap-2.5")}>

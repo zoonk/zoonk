@@ -4,16 +4,15 @@ import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type BeltColor } from "@zoonk/utils/belt-level";
+import { BELT_COLORS_ORDER, type BeltColor, LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
 import { ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { BeltTicks } from "../_components/belt-ticks";
 import { Meter, MeterFill } from "../_components/meter";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
-import { useBeltName } from "../_utils/use-belt-name";
+import { useBeltName, useBeltStep } from "../_utils/use-belt-name";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
-import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 import { type StudyMomentView } from "./session-types";
 
 type Reached = StudyMomentView["reached"];
@@ -21,10 +20,6 @@ type Reached = StudyMomentView["reached"];
 const PERCENT = 100;
 
 const LIGHT_BELTS: ReadonlySet<BeltColor> = new Set(["white", "yellow", "orange"]);
-
-/** Where the buddy starts glowing (`getBuddyEnergyState`). */
-const GLOWING_ENERGY = 80;
-const MAX_ENERGY = 100;
 
 type RowMotion = { delayMs: number } | null;
 
@@ -40,7 +35,7 @@ function ReachedRow({
   title,
 }: {
   bar: React.ReactNode;
-  detail: string;
+  detail: string | null;
   mark: React.ReactNode;
   slot: string;
   title: string;
@@ -51,7 +46,7 @@ function ReachedRow({
         {mark}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="font-semibold text-balance">{title}</span>
-          <span className="text-muted-foreground text-xs text-pretty">{detail}</span>
+          {detail && <span className="text-muted-foreground text-xs text-pretty">{detail}</span>}
         </span>
       </span>
       {bar}
@@ -59,7 +54,7 @@ function ReachedRow({
   );
 }
 
-function LevelBadge({
+function BeltBadge({
   color,
   level,
   motion,
@@ -78,7 +73,7 @@ function LevelBadge({
         beltColorClasses[color],
         LIGHT_BELTS.has(color) ? "text-black/80" : "text-white",
       )}
-      data-slot="level-badge"
+      data-slot="belt-badge"
       style={beatStyle(motion)}
     >
       {level}
@@ -86,15 +81,38 @@ function LevelBadge({
   );
 }
 
-function LevelReached({
+/** How many numbers are left before the next belt, which starts after this belt's last one. */
+function useNextBeltLine() {
+  const t = useExtracted();
+  const beltName = useBeltName();
+
+  function describe({ color, level }: NonNullable<Reached["level"]>): string | null {
+    const next = BELT_COLORS_ORDER[BELT_COLORS_ORDER.indexOf(color) + 1];
+
+    if (!next) {
+      return null;
+    }
+
+    return t({
+      description:
+        'Under a belt and its number, such as "White belt 4": how many numbers are left before the next belt. {belt} is that belt\'s name, such as "Yellow belt".',
+      message: "{count, plural, one {# more to {belt}} other {# more to {belt}}}",
+      values: { belt: beltName(next), count: LEVELS_PER_COLOR - level + 1 },
+    });
+  }
+
+  return describe;
+}
+
+function BeltReached({
   level,
   motion,
 }: {
   level: NonNullable<Reached["level"]>;
   motion: RowMotion;
 }) {
-  const t = useExtracted();
-  const beltName = useBeltName();
+  const beltStep = useBeltStep();
+  const nextBeltLine = useNextBeltLine();
 
   return (
     <ReachedRow
@@ -106,13 +124,10 @@ function LevelReached({
           level={level.level}
         />
       }
-      detail={t("{belt}, level {level}", {
-        belt: beltName(level.color),
-        level: String(level.level),
-      })}
-      mark={<LevelBadge color={level.color} level={level.level} motion={motion} />}
-      slot="reached-level"
-      title={t("Level up!")}
+      detail={nextBeltLine(level)}
+      mark={<BeltBadge color={level.color} level={level.level} motion={motion} />}
+      slot="reached-belt"
+      title={beltStep(level)}
     />
   );
 }
@@ -133,22 +148,7 @@ function EnergyReached({
   const t = useExtracted();
   const formatShare = useFormatShare();
   const name = useBuddyName(resolveLearnBuddy(buddy ?? null));
-  const share = formatShare(energy / PERCENT);
-  const max = energy >= MAX_ENERGY;
-
-  const detail = () => {
-    if (max) {
-      return buddy === undefined
-        ? t("As high as Energy goes.")
-        : t("{buddy} is glowing as bright as it gets.", { buddy: name });
-    }
-
-    if (energy === GLOWING_ENERGY && buddy !== undefined) {
-      return t("{buddy} is glowing now.", { buddy: name });
-    }
-
-    return t("Right answers raise it. A day away lowers it a little.");
-  };
+  const energyLine = t("Energy at {energy}", { energy: formatShare(energy / PERCENT) });
 
   return (
     <ReachedRow
@@ -157,7 +157,7 @@ function EnergyReached({
           <MeterFill className="bg-energy" share={energy / PERCENT} />
         </Meter>
       }
-      detail={detail()}
+      detail={buddy === undefined ? null : energyLine}
       mark={
         <span
           aria-hidden="true"
@@ -171,44 +171,29 @@ function EnergyReached({
         </span>
       }
       slot="reached-energy"
-      title={
-        max
-          ? t("Max Energy: {energy}", { energy: share })
-          : t("Energy at {energy}", { energy: share })
-      }
+      title={buddy === undefined ? energyLine : t("{buddy} is glowing", { buddy: name })}
     />
   );
 }
 
+/** One row: the belt's new number, or the buddy glowing. The day's moment picks which. */
 export function ReachedMoment({
   buddy,
-  ceremony,
-  delayMs,
   reached,
+  show,
 }: {
   buddy?: LearnBuddy | null;
-  ceremony: Pick<CeremonyMilestone, "kind"> | null;
-  delayMs: number;
   reached: Reached;
+  show: "belt" | "glow";
 }) {
   const celebrate = useCelebration();
-  const level = ceremony?.kind === "belt" ? null : reached.level;
-
-  if (!level && reached.energy === null) {
-    return null;
-  }
-
-  const energyDelay = level ? delayMs + BEAT_MS : delayMs;
+  const motion = celebrate ? { delayMs: BEAT_MS } : null;
 
   return (
     <StepRows data-slot="reached-moment">
-      {level && <LevelReached level={level} motion={celebrate ? { delayMs } : null} />}
-      {reached.energy !== null && (
-        <EnergyReached
-          buddy={buddy}
-          energy={reached.energy}
-          motion={celebrate ? { delayMs: energyDelay } : null}
-        />
+      {show === "belt" && reached.level && <BeltReached level={reached.level} motion={motion} />}
+      {show === "glow" && reached.energy !== null && (
+        <EnergyReached buddy={buddy} energy={reached.energy} motion={motion} />
       )}
     </StepRows>
   );

@@ -9,6 +9,7 @@ import {
   MomentSavingTitle,
   PendingMainAction,
 } from "@zoonk/learn/session/moment-header";
+import { pickDayMoment } from "@zoonk/learn/session/pick-day-moment";
 import {
   TASK_MAIN_ACTION_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
@@ -119,12 +120,39 @@ function SavedReadouts({ completion, correctCount, incorrectCount }: LessonCompl
   );
 }
 
+/** A lesson's end shows one extra moment at most; the host draws a finished chapter's. */
+function ExtraMoment({
+  result,
+}: {
+  result: NonNullable<LessonCompletionSlotProps["completion"]["result"]>;
+}) {
+  const { buddy, slots } = useLessonPlayerConfig();
+  const celebration = getLessonCelebration(result);
+  const { finishedChapter } = result;
+
+  if (
+    slots.finishedChapter &&
+    finishedChapter &&
+    pickDayMoment({ ...celebration, finishedChapter }) === "chapter"
+  ) {
+    return slots.finishedChapter(finishedChapter);
+  }
+
+  return (
+    <DayMoment
+      buddy={buddy}
+      ceremony={celebration.ceremony}
+      missionMoment={celebration.missionMoment}
+      reached={celebration.reached}
+    />
+  );
+}
+
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { completion, onRetry } = props;
   const t = useExtracted();
-  const { buddy, slots } = useLessonPlayerConfig();
+  const { slots } = useLessonPlayerConfig();
   const { result } = completion;
-  const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
   const planReveal = isSaved ? (result?.planReveal ?? null) : null;
   const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
@@ -140,16 +168,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           {isSaved && <SavedReadouts {...props} />}
         </MomentHeader>
 
-        {isSaved && celebration && (
-          <DayMoment
-            buddy={buddy}
-            ceremony={celebration.ceremony}
-            missionMoment={celebration.missionMoment}
-            reached={celebration.reached}
-          />
-        )}
-
-        {isSaved && result?.finishedChapter && slots.finishedChapter?.(result.finishedChapter)}
+        {isSaved && result && <ExtraMoment result={result} />}
         {planReveal && <LessonCompletionPlan reveal={planReveal} />}
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
