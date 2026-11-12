@@ -1,7 +1,6 @@
 "use client";
 
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cn } from "@zoonk/ui/lib/utils";
 import { RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
@@ -14,21 +13,9 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 
-export function StepIcon({
-  children,
-  success = false,
-}: {
-  children: React.ReactNode;
-  success?: boolean;
-}) {
+export function StepIcon({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "text-muted-foreground flex shrink-0 [&_svg]:size-6",
-        success && "text-success-text",
-      )}
-    >
+    <span aria-hidden="true" className="text-muted-foreground flex shrink-0 [&_svg]:size-6">
       {children}
     </span>
   );

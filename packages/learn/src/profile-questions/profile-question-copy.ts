@@ -65,7 +65,7 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
     case "work":
       return t("We use this to pick examples you'll care about.");
     case "studies":
-      return t("Past or present, finished or not.");
+      return t("Past or present, finished or not. Pick up to 3.");
     case "conditions":
       return t(
         "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.",
@@ -78,7 +78,7 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
     case "play":
     case "read":
     case "activities":
-      return null;
+      return t("Pick up to 3.");
     case "addressForm":
       return t("Your buddy and your feedback will talk to you this way.");
     default:

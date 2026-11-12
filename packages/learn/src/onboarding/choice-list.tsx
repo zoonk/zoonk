@@ -126,7 +126,7 @@ export function ChoiceList<Value extends string>({
   return (
     <RadioGroup
       aria-label={label}
-      className={LIST_GROUP_CLASS}
+      className={cn(LIST_GROUP_CLASS, "gap-0")}
       onKeyDown={(event) => {
         pointerPick.current = null;
         const highlighted = choices.find((choice) => choice.value === value);
@@ -190,8 +190,7 @@ export function CheckList<Value extends string>({
   const isFull = max !== undefined && value.length >= max;
 
   return (
-    <fieldset className={LIST_GROUP_CLASS}>
-      <legend className="sr-only">{label}</legend>
+    <div aria-label={label} className={LIST_GROUP_CLASS} role="group">
       {choices.map((choice) => {
         const isPicked = value.includes(choice.value);
         const isDisabled = readOnly || (!isPicked && isFull);
@@ -208,7 +207,7 @@ export function CheckList<Value extends string>({
             </ListRowContent>
             <Checkbox
               checked={isPicked}
-              className={CHOICE_CONTROL_CLASS}
+              className={cn(CHOICE_CONTROL_CLASS, "rounded-sm")}
               disabled={isDisabled}
               onCheckedChange={(checked) =>
                 onChange(
@@ -221,6 +220,6 @@ export function CheckList<Value extends string>({
           </label>
         );
       })}
-    </fieldset>
+    </div>
   );
 }

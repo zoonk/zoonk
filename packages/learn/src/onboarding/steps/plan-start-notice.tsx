@@ -30,7 +30,11 @@ export function PlanStartNoticeSlot() {
     return null;
   }
 
-  return <div aria-live="polite">{run && <PlanStartNotice run={run} />}</div>;
+  return (
+    <div aria-live="polite" className="not-empty:pb-2">
+      {run && <PlanStartNotice run={run} />}
+    </div>
+  );
 }
 
 function PlanStartNotice({ run }: { run: GenerationRun }) {

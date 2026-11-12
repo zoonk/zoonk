@@ -99,7 +99,10 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
     <OnboardingRailSection id="onboarding-plan-so-far" title={t("Your plan so far")}>
       <dl className="flex flex-col [&>div+div]:border-t">
         {facts.map((fact) => (
-          <div className="grid grid-cols-[6rem_minmax(0,1fr)] gap-3 py-2.5 text-sm" key={fact.id}>
+          <div
+            className="grid grid-cols-[6rem_minmax(0,1fr)] items-baseline gap-3 py-2.5 text-sm"
+            key={fact.id}
+          >
             <dt className="text-muted-foreground text-[0.8125rem]">{fact.label}</dt>
             <dd className="flex min-w-0 flex-col gap-0.5">
               <span

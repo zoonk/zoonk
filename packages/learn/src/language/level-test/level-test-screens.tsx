@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { CircleCheckIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
+import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
@@ -18,9 +18,9 @@ import {
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
+  OnboardingSubject,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
-import { StepIcon } from "../../onboarding/steps/step-parts";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -133,10 +133,8 @@ export function TestDone({
 
   return (
     <OnboardingColumn>
-      <StepIcon success>
-        <CircleCheckIcon />
-      </StepIcon>
       <OnboardingHeading>
+        <OnboardingSubject>{t("Level test")}</OnboardingSubject>
         <OnboardingTitle>{t("Your level")}</OnboardingTitle>
       </OnboardingHeading>
       <LevelBars levels={levels} />

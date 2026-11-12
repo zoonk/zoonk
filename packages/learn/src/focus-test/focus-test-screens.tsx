@@ -4,7 +4,7 @@ import {
   type FocusTestOffer,
   type FocusTestSitting,
 } from "@zoonk/core/learner/placement/focus-test-contract";
-import { PlayIcon } from "lucide-react";
+import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import {
@@ -47,9 +47,7 @@ export function FocusTestInvitation({
       <OnboardingHeading>
         <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
-        <OnboardingDescription>
-          {t("A short test on your exam's subjects.")}
-        </OnboardingDescription>
+        <OnboardingDescription>{t("A short test on your exam's subjects.")}</OnboardingDescription>
       </OnboardingHeading>
 
       <OnboardingFooter>
@@ -65,6 +63,7 @@ export function FocusTestInvitation({
         <OnboardingSecondaryButton
           busy={pressed === "other"}
           disabled={pressed === "main"}
+          icon={host === "onboarding" ? <SkipForwardIcon aria-hidden="true" /> : undefined}
           onClick={onSkip}
         >
           {host === "onboarding" ? t("Skip for now") : t("Not now")}

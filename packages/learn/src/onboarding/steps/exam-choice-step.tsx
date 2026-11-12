@@ -74,7 +74,7 @@ export function ExamChoiceStep({
 
         return (
           <section className="flex flex-col gap-2" key={choice.group}>
-            <h2 className="text-muted-foreground text-sm font-medium">{choice.group}</h2>
+            <h2 className="text-sm font-medium">{choice.group}</h2>
 
             {choice.take > 1 ? (
               <>

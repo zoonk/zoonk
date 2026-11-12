@@ -8,12 +8,13 @@ import { type ReactNode, useLayoutEffect } from "react";
 import { PageEyebrow } from "../_components/page";
 import { PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { toLabelCase } from "../_utils/label-case";
-import { OnboardingBarRow } from "./onboarding-bar";
+import { OnboardingBarRow, isStepBar } from "./onboarding-bar";
 import {
   NO_BAR,
   type OnboardingBar,
   OnboardingScreenProvider,
   useOnboardingHost,
+  useOnboardingScreen,
   useOnboardingSection,
 } from "./onboarding-host";
 import { OnboardingScreenPage, OnboardingSectionFrame } from "./onboarding-page";
@@ -217,12 +218,15 @@ export function OnboardingHeading({
   className?: string;
 }) {
   const host = useOnboardingHost();
+  const { bar } = useOnboardingScreen();
 
   if (host?.kind === "page") {
     return (
       <div
         className={cn(
           "flex min-w-0 flex-col gap-1 *:data-[slot=onboarding-description]:pt-1",
+          // A step keeps the eyebrow's line when it has none, so every step's title is at one height.
+          isStepBar(bar) && "first:not-has-[>[data-slot=page-eyebrow]]:pt-5",
           className,
         )}
         data-slot="onboarding-heading"

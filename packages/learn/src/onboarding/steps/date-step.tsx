@@ -6,7 +6,6 @@ import {
   type OnboardingAnswerInput,
   type OnboardingDateProblem,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
@@ -41,7 +40,10 @@ function ExamDateStep({
 
   return (
     <StepForm
-      description={[passedNote, exam.estimated && t("This is the expected date until the notice confirms it.")]
+      description={[
+        passedNote,
+        exam.estimated && t("This is the expected date until the notice confirms it."),
+      ]
         .filter(Boolean)
         .join(space)}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}
@@ -150,21 +152,7 @@ function DateFieldStep({
       title={t("Is there a date you're aiming for?")}
     >
       <div className="flex flex-col gap-2">
-        <div className="flex min-h-5 items-center justify-between gap-3">
-          <Label htmlFor={inputId}>{t("Date")}</Label>
-
-          {dated && (
-            <Button
-              disabled={pending}
-              focusableWhenDisabled
-              onClick={() => setDate("")}
-              type="button"
-              variant="link"
-            >
-              {t("Remove date")}
-            </Button>
-          )}
-        </div>
+        <Label htmlFor={inputId}>{t("Date")}</Label>
 
         <Input
           aria-describedby={noteId}

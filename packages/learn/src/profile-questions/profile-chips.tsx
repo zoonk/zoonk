@@ -1,8 +1,6 @@
 "use client";
 
 import { Toggle } from "@zoonk/ui/components/toggle";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 type ChipOption = { id: string; label: string; pressed: boolean };
@@ -19,13 +17,12 @@ export function ProfileChip({
       pressed={pressed}
       variant="outline"
     >
-      {pressed && <CheckIcon aria-hidden="true" strokeWidth={2.5} />}
       {label}
     </Toggle>
   );
 }
 
-/** The cap line stays mounted while empty, so it's heard when a fourth pick brings it. */
+/** The cap line stays mounted while empty, so it's heard when a refused pick brings it. */
 export function ProfileChips({
   capped,
   label,
@@ -54,7 +51,7 @@ export function ProfileChips({
         ))}
       </div>
 
-      <p aria-live="polite" className={cn("text-muted-foreground text-sm", capped && "mt-3")}>
+      <p aria-live="polite" className="sr-only">
         {capped && t("Pick up to 3.")}
       </p>
     </fieldset>
