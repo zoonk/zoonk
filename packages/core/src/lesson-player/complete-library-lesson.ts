@@ -2,10 +2,7 @@ import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
-import {
-  loadLessonPlanSkillIds,
-  loadLessonReviewSkillIds,
-} from "../learner/_utils/lesson-plan-skills";
+import { loadLessonPlanSkillIds } from "../learner/_utils/lesson-plan-skills";
 import { scoreLessonAnswers } from "../sessions/score-lesson-answers";
 import { getSession } from "../users/get-session";
 import { findOptionalStepIds, loadCompletionSteps } from "./_utils/completion-steps";
@@ -19,7 +16,7 @@ import {
 } from "./_utils/lesson-study-block";
 import { loadPlayedLesson } from "./_utils/load-played-lesson";
 import { findOwedPlanReveal } from "./_utils/owed-plan-reveal";
-import { getNextReviewAt, loadLessonAttempts } from "./_utils/plan-skill-review";
+import { loadLessonAttempts } from "./_utils/plan-skill-review";
 import { type LibraryLessonCompletionInput } from "./completion-input-contract";
 import { type LibraryLessonCompletion } from "./contract";
 import { tallyLessonRun } from "./lesson-run";
@@ -33,17 +30,15 @@ export type LibraryLessonCompletionOutcome =
 /** Retries must use the saved outcome without counting the run twice. */
 async function readFinishedRun({
   run,
-  skillIds,
   userId,
 }: {
   run: LearningEvent;
-  skillIds: string[];
   userId: string;
 }): Promise<RunCompletion> {
-  const [progress, nextReviewAt] = await Promise.all([
-    prisma.userProgress.findUnique({ select: { totalBrainPower: true }, where: { userId } }),
-    getNextReviewAt({ skillIds, userId }),
-  ]);
+  const progress = await prisma.userProgress.findUnique({
+    select: { totalBrainPower: true },
+    where: { userId },
+  });
 
   return {
     brainPower: run.brainPower,
@@ -51,7 +46,6 @@ async function readFinishedRun({
     energyDelta: run.energyDelta,
     incorrectCount: run.incorrectAnswers,
     isFirstCompletion: run.kind === "lesson",
-    nextReviewAt,
     seconds: run.seconds,
     totalBrainPower: Number(progress?.totalBrainPower ?? 0),
   };
@@ -103,21 +97,7 @@ export async function completeLibraryLesson({
     return { status: "invalid" };
   }
 
-  const [skillIds, timeZone] = await Promise.all([
-    isOwnExplanation(lesson)
-      ? []
-      : loadLessonReviewSkillIds({
-          lessonId,
-          ownSkillIds: [
-            ...new Set([
-              ...lesson.skills.map((skill) => skill.skillId),
-              ...completionSteps.steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
-            ]),
-          ],
-          userId,
-        }),
-    getLearnerTimeZone({ timeZone: input.timeZone, userId }),
-  ]);
+  const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
 
   const settle = async (
     completion: RunCompletion,
@@ -133,7 +113,7 @@ export async function completeLibraryLesson({
 
   if (run.endedAt) {
     return {
-      completion: await settle(await readFinishedRun({ run, skillIds, userId })),
+      completion: await settle(await readFinishedRun({ run, userId })),
       status: "completed",
     };
   }
@@ -157,19 +137,17 @@ export async function completeLibraryLesson({
   });
 
   // Resolve membership before taking progress/run locks; the transaction uses only its own client.
-  const planSkillIds =
-    skillIds.length > 0
-      ? await loadLessonPlanSkillIds({ lessonIds: [lessonId], userId })
-      : new Map<string, string[]>();
+  const heldSkillIds = isOwnExplanation(lesson)
+    ? new Map<string, string[]>()
+    : await loadLessonPlanSkillIds({ lessonIds: [lessonId], userId });
 
   const finished = await finishLessonRun({
     answerPoints,
     answeredCount: attempts.length,
     answers: attempts,
     lessonId,
-    planSkillIds: planSkillIds.get(lessonId) ?? [],
+    planSkillIds: heldSkillIds.get(lessonId) ?? [],
     run,
-    skillIds,
     skippedWritingStepIds,
     tally,
     timeZone,
@@ -182,7 +160,7 @@ export async function completeLibraryLesson({
     const closedRun = await prisma.learningEvent.findUniqueOrThrow({ where: { id: run.id } });
 
     return {
-      completion: await settle(await readFinishedRun({ run: closedRun, skillIds, userId })),
+      completion: await settle(await readFinishedRun({ run: closedRun, userId })),
       status: "completed",
     };
   }

@@ -118,7 +118,7 @@ describe(repairWrittenLesson, () => {
     expect(repaired.summary.ideas[0]?.text).toBe("Small numbers get powers like $10^{-3}$.");
   });
 
-  it("keeps a quote unwrapped when a price on its screen's line kept the screen unwrapped", () => {
+  it("keeps a quote unwrapped when a power code can't wrap on its screen's line kept the screen unwrapped", () => {
     const sentence = "It contains 10^3 cells.";
 
     const explanation: WrittenScreen = {
@@ -126,7 +126,7 @@ describe(repairWrittenLesson, () => {
       explore: null,
       image: null,
       kind: "explanation",
-      text: `A kit costs $5. ${sentence}`,
+      text: `Its area is x^2. ${sentence}`,
       title: "A kit",
       visual: null,
     };
@@ -152,7 +152,7 @@ describe(repairWrittenLesson, () => {
       spec,
     }).screens;
 
-    expect(kit?.kind === "explanation" && kit.text).toBe(`A kit costs $5. ${sentence}`);
+    expect(kit?.kind === "explanation" && kit.text).toBe(`Its area is x^2. ${sentence}`);
     expect(question?.kind === "check" && question.basis?.quote).toBe(sentence);
   });
 
@@ -164,7 +164,7 @@ describe(repairWrittenLesson, () => {
     );
 
     expect(
-      quoteAfterRepair({ quote: sentence, text: `A kit costs $5. ${sentence}`, title: sentence }),
+      quoteAfterRepair({ quote: sentence, text: `Its area is x^2. ${sentence}`, title: sentence }),
     ).toBe(sentence);
 
     expect(
@@ -293,6 +293,48 @@ describe(repairWrittenLesson, () => {
       context: "| Sensor | mm |\n|---|---|\n| A | 49,8 |",
       options: [{ reason: "Porque sim.", text: "Sensor A" }],
     });
+  });
+
+  it("repairs an activity's prose and a math check's wrong-answer reasons like every other text, but never a label", () => {
+    const lesson = writtenTemperatureLesson();
+    const [mathCheck, activity] = [lesson.screens[3], lesson.screens[5]];
+
+    if (mathCheck?.kind !== "mathCheck" || activity?.kind !== "activity") {
+      throw new Error("Screen 4 is a math check and screen 6 an activity.");
+    }
+
+    const [mistake, ...others] = mathCheck.math.commonMistakes;
+    const content: object = JSON.parse(activity.content);
+    const label = "The 10^{-5} scale";
+
+    const flawed = {
+      ...lesson,
+      screens: lesson.screens.map((screen, index) => {
+        if (index === 3) {
+          const reason = "A rise adds **degrees; the sensor resolves 10^{-5} °C.";
+          const commonMistakes = [{ ...mistake!, reason }, ...others];
+          return { ...mathCheck, math: { ...mathCheck.math, commonMistakes } };
+        }
+
+        return index === 5
+          ? { ...activity, content: JSON.stringify({ ...content, prompt: "Follow the **dot." }) }
+          : screen;
+      }),
+      summary: { ideas: [{ label, text: "A rise moves up the thermometer." }], shape: "hub" },
+    } satisfies typeof lesson;
+
+    const repaired = repairWrittenLesson({ language: "en", lesson: flawed, spec });
+    const [reasoned, played] = [repaired.screens[3], repaired.screens[5]];
+
+    expect(reasoned?.kind === "mathCheck" && reasoned.math.commonMistakes[0]?.reason).toBe(
+      "A rise adds degrees; the sensor resolves $10^{-5}$ °C.",
+    );
+
+    expect(played?.kind === "activity" && JSON.parse(played.content)).toMatchObject({
+      prompt: "Follow the dot.",
+    });
+
+    expect(repaired.summary.ideas[0]?.label).toBe(label);
   });
 
   it("repairs a question's basis quote like the line it copies, so it still matches", () => {

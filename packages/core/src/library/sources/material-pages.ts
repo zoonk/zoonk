@@ -48,7 +48,7 @@ function toSections(text: string): string[] {
   );
 }
 
-function toSourcePages({
+export function toSourcePages({
   index,
   source,
 }: {
@@ -96,25 +96,28 @@ function toTerms(text: string): Set<string> {
   );
 }
 
-function countShared({ page, terms }: { page: MaterialPage; terms: Set<string> }): number {
-  return [...toTerms(page.text)].filter((term) => terms.has(term)).length;
+function countShared({ text, terms }: { text: string; terms: Set<string> }): number {
+  return [...toTerms(text)].filter((term) => terms.has(term)).length;
 }
 
-type RankedPage = { page: MaterialPage; position: number; score: number };
+type Ranked<TPage> = { page: TPage; position: number; score: number };
 
-function rankPages({
+type RankedPage = Ranked<MaterialPage>;
+
+/** Most terms shared with `query` first, then in the text's order. */
+export function rankPages<TPage extends { text: string }>({
   minShared,
   pages,
   query,
 }: {
   minShared: number;
-  pages: readonly MaterialPage[];
+  pages: readonly TPage[];
   query: string;
-}): RankedPage[] {
+}): Ranked<TPage>[] {
   const terms = toTerms(query);
 
   return pages
-    .map((page, position) => ({ page, position, score: countShared({ page, terms }) }))
+    .map((page, position) => ({ page, position, score: countShared({ terms, text: page.text }) }))
     .filter((entry) => entry.score >= minShared)
     .toSorted((first, second) => second.score - first.score || first.position - second.position);
 }

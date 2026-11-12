@@ -80,8 +80,8 @@ struct StepLoading: View {
 /// The screens Back returns to: placement sits between the questions; the plan isn't one.
 private let stepScreens: Set<Components.Schemas.OnboardingStep> = [
   .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level, .schedule,
-  .buddy, .placement, .work, .tools, .studies, .watch, .listen, .play, .read, .activities,
-  .conditions, .learningSupport,
+  .buddy, .placement, .addressForm, .work, .tools, .studies, .watch, .listen, .play, .read,
+  .activities, .conditions, .learningSupport,
 ]
 
 extension [Components.Schemas.OnboardingStep] {
@@ -403,6 +403,8 @@ private struct GoalSteps: View {
         draft.text = role
         context.jobFromEarlierAnswer = true
       }
+    case .addressForm:
+      context.skipDeclines = true
     case .conditions:
       let next = view.steps.firstIndex(of: step).map { view.steps.dropFirst($0 + 1).first }
       context.supportIsNext = next == .learningSupport

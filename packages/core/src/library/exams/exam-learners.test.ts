@@ -1,6 +1,12 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
@@ -9,7 +15,11 @@ import {
   specialtyBlueprintFixture,
 } from "../../exams/choices/_test-utils/choice-blueprint";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { linkGoalToExamBlueprint, toResearchPlanInput } from "./exam-learners";
+import {
+  countActiveSourceGoals,
+  linkGoalToExamBlueprint,
+  toResearchPlanInput,
+} from "./exam-learners";
 
 const DETAILS = {
   examName: "OAB 1ª fase",
@@ -185,5 +195,29 @@ describe(linkGoalToExamBlueprint, () => {
 
     expect(parsePlanSettings(saved.settings).examChoices).toStrictEqual(auditing);
     expect(saved.inputVersion).toBe(plan.inputVersion);
+  });
+});
+
+describe(countActiveSourceGoals, () => {
+  it("counts the learners of courses whose lessons read a law", async () => {
+    const [course, law, user] = await Promise.all([
+      courseFixture(),
+      sourceFixture(),
+      userFixture(),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: course.id });
+    const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
+      prisma.lessonSource.create({ data: { articles: [], lessonId: lesson.id, sourceId: law.id } }),
+    ]);
+
+    await expect(countActiveSourceGoals(law.id)).resolves.toBe(0);
+
+    await goalFixture({ primaryCourseId: course.id, userId: user.id });
+
+    await expect(countActiveSourceGoals(law.id)).resolves.toBe(1);
   });
 });

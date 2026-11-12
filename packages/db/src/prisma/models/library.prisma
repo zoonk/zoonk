@@ -175,6 +175,7 @@ model Lesson {
   questionThreads        LessonQuestionThread[]
   reviewFlags            ContentReviewFlag[]
   anonymousPaces         AnonymousLessonPace[]
+  sources                LessonSource[]
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@unique([homeChapterId, slug], name: "homeChapterSlug")
@@ -230,6 +231,8 @@ model Step {
   mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
   /// Null on older links; ordinary screen edits never change it.
   pictureAvailableAt DateTime?           @map("picture_available_at")
+  /// Set when its picture, or an option's, failed its checks and was taken out, so nothing waits for it.
+  pictureRemovedAt   DateTime?           @map("picture_removed_at")
   /// The screen's citation, shown to learners. What its writer read is in `sources`.
   sourceId           String?             @map("source_id") @db.Uuid
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
@@ -278,6 +281,22 @@ model StepSource {
   @@id([stepId, sourceId])
   @@index([sourceId])
   @@map("library_step_sources")
+}
+
+/// A law's official text a lesson is planned and written from. `articles` labels the parts of the
+/// text picked for the lesson, read again from the current text, so its planner, writer, reviewer
+/// and fixer read the same ones.
+model LessonSource {
+  lessonId  String   @map("lesson_id") @db.Uuid
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sourceId  String   @map("source_id") @db.Uuid
+  source    Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  articles  String[]
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([lessonId, sourceId])
+  @@index([sourceId])
+  @@map("library_lesson_sources")
 }
 
 /// When a picture is taken out of use its row goes with it, and the option shows its description.

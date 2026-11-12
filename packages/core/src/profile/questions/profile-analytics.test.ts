@@ -8,7 +8,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { answerOnboardingQuestion } from "../../view-models/onboarding/answer-onboarding-question";
 import { answerProfileQuestion } from "./answer-profile-question";
-import { profileAnswerInputSchema } from "./profile-question-contract";
+import { PROFILE_QUESTIONS, profileAnswerInputSchema } from "./profile-question-contract";
 
 async function learner() {
   const user = await userFixture();
@@ -120,6 +120,10 @@ describe("profile write analytics", () => {
       },
       properties: { outcome: "answered", question: "learningSupport" },
     },
+    {
+      input: { answer: { form: "feminine" }, question: "addressForm" },
+      properties: { outcome: "answered", question: "addressForm" },
+    },
   ])("omits sensitive answer details from $input.question", async ({ input, properties }) => {
     await learner();
     const flush = runDeferredWork();
@@ -131,7 +135,7 @@ describe("profile write analytics", () => {
     ]);
 
     expect(JSON.stringify(vi.mocked(trackServerEvent).mock.calls)).not.toMatch(
-      /PRIVATE|shorterDays|noSoundEffects/u,
+      /PRIVATE|shorterDays|noSoundEffects|feminine/u,
     );
   });
 
@@ -327,7 +331,10 @@ describe("profile write analytics", () => {
     ]);
 
     expect(events("Profile Question Saved")).toStrictEqual([]);
-    await expect(prisma.profileAnswer.count({ where: { userId: user.id } })).resolves.toBe(10);
+
+    await expect(prisma.profileAnswer.count({ where: { userId: user.id } })).resolves.toBe(
+      PROFILE_QUESTIONS.length,
+    );
   });
 
   it("does not count memory-gated biography questions in Skip all", async () => {
@@ -389,7 +396,7 @@ describe("profile write analytics", () => {
 
       await expect(
         prisma.profileAnswer.count({ where: { outcome: "declined", userId: user.id } }),
-      ).resolves.toBe(10);
+      ).resolves.toBe(PROFILE_QUESTIONS.length);
     },
   );
 

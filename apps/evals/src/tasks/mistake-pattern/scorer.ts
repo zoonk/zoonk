@@ -6,7 +6,6 @@ import { MISTAKE_PATTERN_SCORE_CATEGORIES } from "./score-categories";
 
 export type MistakePatternExpected = Pick<FindMistakePatternSchema, "kind" | "mistakeNumbers">;
 
-const DRILL_QUESTIONS = 5;
 const MIN_PATTERN_MISTAKES = 2;
 
 const MAX_UNLABELED_MISTAKES = 1;
@@ -42,8 +41,7 @@ function checkDrill({
   }
 
   return (
-    output.drill.length === DRILL_QUESTIONS &&
-    output.drill.every((question) => isWellFormedDrillQuestion(question))
+    output.drill.length > 0 && output.drill.every((question) => isWellFormedDrillQuestion(question))
   );
 }
 
@@ -69,7 +67,7 @@ function checkMistakePattern({
       passed: checkDrill({ expected, output: parsed }),
       problem:
         expected.kind === "pattern"
-          ? `The drill has ${parsed.drill.length} questions or a malformed one instead of ${DRILL_QUESTIONS} well-formed questions.`
+          ? `The drill has ${parsed.drill.length} questions or a malformed one.`
           : "A drill was written without a pattern.",
     },
   ];

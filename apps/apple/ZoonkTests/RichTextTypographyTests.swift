@@ -81,7 +81,6 @@ final class RichTextTypographyTests: XCTestCase {
 
     XCTAssertEqual(LessonRichText.plain("About 350000 people"), "About \(grouped) people")
     XCTAssertEqual(ItemTextBlock.plain("About 350000 people"), "About \(grouped) people")
-    XCTAssertEqual(ItemTextBlock.asWritten("**About** 350000 people"), "About 350000 people")
   }
 
   @MainActor

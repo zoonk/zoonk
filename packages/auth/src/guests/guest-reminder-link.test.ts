@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   createTestEmail,
   guestAuth,
@@ -16,9 +16,6 @@ const EARLY = new Date("2026-09-01T10:00:00Z");
 const LATE = new Date("2026-09-05T10:00:00Z");
 const MONDAY = new Date("2026-09-07T00:00:00Z");
 const TUESDAY = new Date("2026-09-08T00:00:00Z");
-
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
 
 describe("guest study reminder linking", () => {
   it("moves the guest's reminder, phone included, to an account without one", async () => {

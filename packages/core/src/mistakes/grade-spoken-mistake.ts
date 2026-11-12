@@ -203,7 +203,6 @@ async function recordSpokenPractice({
     outcome.status === "saved" ? outcome.saved.isCorrect : outcome.recorded.attempt.isCorrect;
 
   const lessonResult = toCheckResult({
-    nextReviewAt: null,
     savedMistake: !isCorrect,
     verdict: {
       answerText: grade.transcript,

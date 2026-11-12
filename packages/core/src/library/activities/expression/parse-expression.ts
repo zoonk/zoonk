@@ -324,6 +324,33 @@ function collectVariables(node: ExpressionNode): string[] {
   }
 }
 
+function getOperations(node: ExpressionNode): ExpressionNode[] {
+  switch (node.kind) {
+    case "binary":
+      return [node, ...getOperations(node.left), ...getOperations(node.right)];
+    case "call":
+      return [node, ...node.args.flatMap((arg) => getOperations(arg))];
+    case "negate":
+      return [node, ...getOperations(node.argument)];
+    case "constant":
+    case "number":
+    case "variable":
+      return [];
+    default:
+      throw new Error("Unknown expression node.");
+  }
+}
+
+/** The expression's result and every value it computes on the way there. */
+export function getSubexpressions(expression: ParsedExpression): ParsedExpression[] {
+  const operations = getOperations(expression.ast);
+
+  return (operations.length > 0 ? operations : [expression.ast]).map((ast) => ({
+    ...expression,
+    ast,
+  }));
+}
+
 export function parseExpression(source: string): ParseExpressionResult {
   if (source.length > MAX_EXPRESSION_LENGTH) {
     return fail(MAX_EXPRESSION_LENGTH, "Expression is too long");

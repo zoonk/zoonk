@@ -219,6 +219,26 @@ describe(toProfileAnswer, () => {
     });
   });
 
+  it("the address form sends one form, and I'd rather not say declines it", () => {
+    const picked = toggleProfilePick({
+      draft: toggleProfilePick({ draft: draft(), id: "feminine", question: "addressForm" }).draft,
+      id: "neutral",
+      question: "addressForm",
+    }).draft;
+
+    expect(
+      toProfileAnswer({ draft: picked, memoryEnabled: false, question: "addressForm" }),
+    ).toStrictEqual({ answer: { declined: false, form: "neutral" }, question: "addressForm" });
+
+    expect(
+      toProfileAnswer({
+        draft: toggleProfileExclusive({ draft: picked, exclusive: "ratherNot" }),
+        memoryEnabled: true,
+        question: "addressForm",
+      }),
+    ).toStrictEqual({ answer: { declined: true, form: null }, question: "addressForm" });
+  });
+
   it("the job goes only with a working status", () => {
     expect(
       toProfileAnswer({

@@ -8,9 +8,6 @@ const MIN_OPTIONS = 2;
 export const MAX_GUESS_OPTIONS = 4;
 export const MAX_CHECK_OPTIONS = 5;
 const MIN_WORKED_STEPS = 2;
-const MAX_WORKED_STEPS = 8;
-const MAX_KEY_POINTS = 5;
-const MAX_ACCEPTED_ANSWERS = 5;
 
 export const LESSON_MAP_SHAPES = ["hub", "nested"] as const;
 
@@ -53,10 +50,7 @@ const workedExampleScreen = z.object({
   kind: z.literal("workedExample"),
   title: z.string(),
   problem: z.string(),
-  steps: z
-    .array(z.object({ text: z.string(), math: z.string().nullable() }))
-    .min(MIN_WORKED_STEPS)
-    .max(MAX_WORKED_STEPS),
+  steps: z.array(z.object({ text: z.string(), math: z.string().nullable() })).min(MIN_WORKED_STEPS),
   result: z.string(),
   image: imageRequestSchema,
   visual,
@@ -99,9 +93,9 @@ const typedAnswerScreen = z.object({
   kind: z.literal("typedAnswer"),
   context: z.string().nullable(),
   question: z.string(),
-  keyPoints: z.array(z.string()).min(1).max(MAX_KEY_POINTS),
+  keyPoints: z.array(z.string()).min(1),
   sampleAnswer: z.string(),
-  acceptedAnswers: z.array(z.string()).max(MAX_ACCEPTED_ANSWERS),
+  acceptedAnswers: z.array(z.string()),
   visual,
 });
 

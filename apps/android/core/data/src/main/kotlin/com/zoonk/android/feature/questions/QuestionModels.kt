@@ -53,7 +53,6 @@ data class Question(
     val mistakeId: String? = null,
     val tutorAvailable: Boolean = true,
     val capsuleKey: String? = null,
-    val timeMachine: TimeMachine? = null,
     val answered: AnsweredMark? = null,
     val area: String? = null,
 )
@@ -254,14 +253,6 @@ data class Drill(
     /** A content gap brings its lesson's ideas back on a screen of their own before the questions. */
     val isIdeaFirst: Boolean get() = kind == Kind.Reteach && !lesson?.ideas.isNullOrEmpty()
 }
-
-/** The learner's last answer to this question before today; its words only when it was wrong. */
-@Serializable
-data class TimeMachine(
-    val answeredAt: String,
-    val isCorrect: Boolean,
-    val answer: String? = null,
-)
 
 /** Answered on an earlier visit; a blank is neither right nor wrong. */
 @Serializable

@@ -223,7 +223,7 @@ class AppContainer private constructor(
     val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 
     // Account and Plus (L1).
-    val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
+    val account = AccountStore(LiveAccountApi(api), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val profileQuestions = ProfileQuestionsStore(LiveProfileQuestionsApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)

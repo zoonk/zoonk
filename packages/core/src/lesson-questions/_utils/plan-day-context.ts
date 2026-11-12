@@ -11,7 +11,9 @@ import {
   type StudySessionBlock,
   prisma,
 } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { WEEKLY_CHALLENGE_KINDS } from "../../checkpoints/_utils/load-weekly-challenge";
+import { isPastPlusOnlyMock } from "../../checkpoints/plus-only-mock";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PlanItemView, type PlanView } from "../../plans/plan-view-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -287,7 +289,9 @@ async function loadChallenges({
 }): Promise<NonNullable<PlanScopeContext["challenges"]>> {
   const checkpoint = plan.phases.find((phase) => phase.state === "current")?.checkpoint;
 
-  const weekly = await prisma.planItem.findFirst({
+  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+
+  const planned = await prisma.planItem.findMany({
     orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
     select: { id: true, kind: true, scheduledFor: true },
     where: {
@@ -297,6 +301,11 @@ async function loadChallenges({
       status: "todo",
     },
   });
+
+  const weekly = planned.find(
+    (item) =>
+      !isPastPlusOnlyMock({ includesMockExams: !plan.access.mocksRequirePlus, item, today }),
+  );
 
   return [
     ...(checkpoint?.state === "upcoming"

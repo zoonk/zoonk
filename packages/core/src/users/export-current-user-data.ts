@@ -105,6 +105,7 @@ export async function exportCurrentUserData() {
 
   return {
     account,
+    addressForm: learningProfile?.addressForm ?? null,
     answers: { attempts },
     buddy,
     conditions: conditions.map(({ condition, note, createdAt }) => ({

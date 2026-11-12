@@ -9,6 +9,7 @@ export type RawSubjectQuestionsFinding = {
   sourceTitle: string | null;
   sourceUrl: string | null;
   status: "found" | "unknown";
+  unlistedSubjects: { name: string; questions: number }[];
 };
 
 /** Null for a subject the source gives no single count for. */
@@ -49,16 +50,26 @@ function toQuestions({
   });
 }
 
-/**
- * Some subjects' counts may fall short of the total: the source can count a subject the reading
- * missed (one reading of the OAB's notice dropped ethics and its 8 of 80).
- */
-function fitsTotal({ questions, total }: { questions: (number | null)[]; total: number | null }) {
+function fitsTotal({
+  questions,
+  total,
+  unlistedSubjects,
+}: {
+  questions: (number | null)[];
+  total: number | null;
+  unlistedSubjects: RawSubjectQuestionsFinding["unlistedSubjects"];
+}) {
   if (total === null) {
     return true;
   }
 
-  const sum = questions.reduce<number>((all, count) => all + (count ?? 0), 0);
+  const unlisted = unlistedSubjects.map((subject) => subject.questions);
+
+  if (!unlisted.every((count) => isCount(count))) {
+    return false;
+  }
+
+  const sum = [...questions, ...unlisted].reduce<number>((all, count) => all + (count ?? 0), 0);
   return questions.includes(null) ? sum <= total : sum === total;
 }
 
@@ -93,7 +104,7 @@ export function toSubjectQuestionsFinding({
     return UNKNOWN;
   }
 
-  if (!fitsTotal({ questions, total })) {
+  if (!fitsTotal({ questions, total, unlistedSubjects: raw.unlistedSubjects })) {
     return UNKNOWN;
   }
 

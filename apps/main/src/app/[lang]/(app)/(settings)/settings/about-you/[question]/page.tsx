@@ -5,7 +5,6 @@ import {
   isProfileQuestion,
 } from "@zoonk/core/profile/questions/contract";
 import { getProfileQuestions } from "@zoonk/core/profile/questions/get";
-import { LearnBackLink } from "@zoonk/learn/bar";
 import { Page } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -60,18 +59,9 @@ function QuestionSkeleton() {
   );
 }
 
-export default async function AboutYouQuestionPage(props: Props) {
-  const t = await getExtracted();
-
+export default function AboutYouQuestionPage(props: Props) {
   return (
     <Page className="max-w-form">
-      <LearnBackLink
-        className="-ml-2 self-start"
-        crumb
-        href="/settings/about-you"
-        label={t("About you")}
-      />
-
       <Suspense fallback={<QuestionSkeleton />}>
         <QuestionContent {...props} />
       </Suspense>

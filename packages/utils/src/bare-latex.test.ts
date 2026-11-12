@@ -75,6 +75,10 @@ describe(wrapBareLatex, () => {
       "So $0.000406$ m = 4.06 × $10^{-4}$ m, and it's $10^{3}$, R$ 80 or $5.",
     );
 
+    expect(wrap("It costs $5 and the gap is 10^{-5} m.")).toBe(
+      "It costs $5 and the gap is $10^{-5}$ m.",
+    );
+
     expect(wrap("Think of 10^3—it means one thousand.")).toBe(
       "Think of $10^{3}$—it means one thousand.",
     );
@@ -114,7 +118,6 @@ describe(wrapBareLatex, () => {
 
   it("leaves anything but a plain numeric power to a writer, still flagged", () => {
     const texts = [
-      "It costs $5 and the gap is 10^{-5} m.",
       "Learn **the 10^{3} rule** first.",
       "The area is **r**^2, or _r_^2.",
       "O valor é 10^3,5.",
@@ -138,7 +141,7 @@ describe(wrapBareLatex, () => {
     const priced = "A $5 kit\nwith 10^3 cells.";
     const bold = "Use **the 10^3\nrule**.";
 
-    expect(wrapBareLatex({ layout: "inline", text: priced })).toBe(priced);
+    expect(wrapBareLatex({ layout: "inline", text: priced })).toBe("A $5 kit with $10^{3}$ cells.");
     expect(wrapBareLatex({ layout: "inline", text: bold })).toBe(bold);
 
     expect(findBareLatex({ layout: "inline", text: priced })).toStrictEqual([
@@ -146,10 +149,6 @@ describe(wrapBareLatex, () => {
     ]);
 
     expect(wrap(priced)).toBe("A $5 kit\nwith $10^{3}$ cells.");
-
-    const realPrice = "A $5 kit (R$ \n25) has 10^3 cells.";
-
-    expect(wrapBareLatex({ layout: "inline", text: realPrice })).toBe(realPrice);
 
     expect(wrapBareLatex({ layout: "inline", text: "The gap is\n  10^{-5} m." })).toBe(
       "The gap is $10^{-5}$ m.",

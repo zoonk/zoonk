@@ -21,6 +21,9 @@ export const LABEL_GAP = 6;
 export const LABEL_LINE_HEIGHT = 14;
 export const BAR_THICKNESS = 14;
 export const VALUE_GAP = 4;
+export const GROUP_SHARE = 0.68;
+export const BAR_GAP = 2;
+const MIN_BAR_WIDTH = 4;
 const BAR_SPACING = 2;
 const NAME_GAP = 4;
 const ROW_GAP = 12;
@@ -60,6 +63,11 @@ export type RowLayout = {
 
 export function fitsLabel(label: string, room: number): boolean {
   return getLabelWidth(label) <= room + LABEL_GAP;
+}
+
+/** Upright bars share their category's band, so each series thins them; past this they're slivers. */
+function fitsBarsSideBySide({ band, seriesCount }: { band: number; seriesCount: number }): boolean {
+  return (band * GROUP_SHARE) / seriesCount - BAR_GAP >= MIN_BAR_WIDTH;
 }
 
 function getValueAxis({
@@ -232,7 +240,10 @@ export function getLayout({
   const band = plotWidth / visual.categories.length;
   const labels = getCategoryLabels({ band, categories: visual.categories });
 
-  if (visual.chart === "bar" && !fitsUnderBars(labels)) {
+  const upright =
+    fitsUnderBars(labels) && fitsBarsSideBySide({ band, seriesCount: visual.series.length });
+
+  if (visual.chart === "bar" && !upright) {
     return getRowLayout({ axis, formatValue, visual, width });
   }
 

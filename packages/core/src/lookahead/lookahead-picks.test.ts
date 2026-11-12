@@ -755,7 +755,7 @@ describe(pickPlacementItemSkills, () => {
     ]);
   });
 
-  it("keeps the situations of questions the learner answered, first, when only unanswered ones count", async () => {
+  it("keeps the situations of questions the learner answered, and every newer one, when only unanswered ones count", async () => {
     const { blueprint, goal, skillIds } = await examGoalWithSkills({
       count: 1,
       structure: ENEM_STRUCTURE,
@@ -797,8 +797,9 @@ describe(pickPlacementItemSkills, () => {
     });
 
     expect(picked.skills.map((skill) => skill.id)).toStrictEqual([skillId]);
-    expect(picked.skills[0]?.usedSituations[0]).toBe(placementCase);
-    expect(picked.skills[0]?.usedSituations).toHaveLength(8);
-    expect(picked.skills[0]?.usedSituations[1]).toBe(newer.at(-1));
+
+    expect(picked.skills[0]?.usedSituations.toSorted()).toStrictEqual(
+      [placementCase, ...newer].toSorted(),
+    );
   });
 });

@@ -5,11 +5,12 @@ import {
   labelSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
+import { aimForItems } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { trigFunctions } from "../expression/expression-functions";
 import { duplicateIssues, isClose, issue } from "./_utils/template-helpers";
 
-const MAX_POINTS = 6;
+const POINTS_TARGET = 6;
 const MIN_POINTS = 3;
 const MIN_AREA = 1e-6;
 const HALF_TURN_DEGREES = 180;
@@ -123,7 +124,7 @@ const geometryBoardFields = z
   .object({
     invariant: explanationSchema,
     measure: z.enum(["angleSum", "area", "perimeter", "pythagoras"]),
-    points: uniqueIdsSchema(pointSchema, { max: MAX_POINTS, min: MIN_POINTS }),
+    points: uniqueIdsSchema(pointSchema, { min: MIN_POINTS }).describe(aimForItems(POINTS_TARGET)),
   })
   .strict();
 

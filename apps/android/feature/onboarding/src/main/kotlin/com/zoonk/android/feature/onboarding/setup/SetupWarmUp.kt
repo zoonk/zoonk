@@ -134,7 +134,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
         val actionsVisible =
             hold.holding || firstReady || course != null ||
                 (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
-        PageWaitActions(hold, visible = actionsVisible) {
+        PageActions(hold, visible = actionsVisible) {
             when {
                 hold.holding -> {
                     if (!quiz.showingProgress && next == PlanNext.TimeQuestion) {

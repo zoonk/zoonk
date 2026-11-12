@@ -9226,130 +9226,6 @@
         }
       }
     },
-    "On %@ this one tripped you up." : {
-      "comment" : "Time machine note: wrong last time, without the answer's text.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Am %@ hast du dich bei dieser Frage geirrt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El %@ te equivocaste en esta pregunta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le %@, cette question t’a posé problème."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il %@ hai avuto difficoltà con questa domanda."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@に間違えた問題です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 이 문제를 틀렸어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To pytanie sprawiło ci trudność (%@)."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em %@, você errou esta pergunta."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tarihinde bu soru seni zorlamıştı."
-          }
-        }
-      }
-    },
-    "On %@ you answered “%@”." : {
-      "comment" : "Time machine note: the learner's earlier wrong answer, quoted.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Am %1$@ hast du „%2$@“ geantwortet."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "On %1$@ you answered “%2$@”."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El %1$@ respondiste “%2$@”."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le %1$@, tu as répondu « %2$@ »."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il %1$@ hai risposto «%2$@»."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@に「%2$@」と答えました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@에 “%2$@”(이)라고 답했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoja odpowiedź (%1$@): „%2$@”."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em %1$@, você respondeu “%2$@”."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ tarihinde “%2$@” cevabını vermiştin."
-          }
-        }
-      }
-    },
     "Only answer when you're sure. Saying you're not sure is fine." : {
       "comment" : "How a no-guessing drill goes.",
       "localizations" : {
@@ -11671,65 +11547,6 @@
         }
       }
     },
-    "Right again, like on %@." : {
-      "comment" : "Time machine note: right today and the last time.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wieder richtig, wie am %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acertaste de nuevo, como el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Encore une bonne réponse, comme le %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risposta giusta anche oggi, come il %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@のときと同じく、今回も正解です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 이어 이번에도 맞혔어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Znowu poprawnie, tak jak %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você acertou de novo, assim como em %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yine doğru, tıpkı %@ tarihinde olduğu gibi."
-          }
-        }
-      }
-    },
     "Right answer: %@" : {
       "comment" : "The right answer in words, under a wrong answer's verdict.",
       "localizations" : {
@@ -11956,61 +11773,61 @@
         }
       }
     },
-    "Saved to your mistakes · it comes back tomorrow" : {
+    "Saved to your mistakes" : {
       "comment" : "After a wrong answer saved to the mistakes notebook.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Fehlerheft gespeichert · die Frage kommt morgen noch einmal"
+            "value" : "Im Fehlerheft gespeichert"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado en tu cuaderno de errores · volverá mañana"
+            "value" : "Guardado en tu cuaderno de errores"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouté à ton carnet d’erreurs · de retour demain"
+            "value" : "Ajoutée à ton carnet d’erreurs"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvato nel tuo quaderno degli errori · tornerà domani"
+            "value" : "Salvato nel tuo quaderno degli errori"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "間違いノートに保存しました・明日もう一度出題します"
+            "value" : "間違いノートに保存しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오답 노트에 저장했어요 · 내일 다시 나와요"
+            "value" : "오답 노트에 저장했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zapisano w zeszycie błędów · wróci jutro"
+            "value" : "Zapisano w zeszycie błędów"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salvo no seu caderno de erros · volta amanhã"
+            "value" : "Salvo no seu Caderno de erros"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yanlış defterine kaydedildi · yarın tekrar karşına çıkacak"
+            "value" : "Yanlış defterine kaydedildi"
           }
         }
       }
@@ -13490,6 +13307,124 @@
         }
       }
     },
+    "The ones you missed come back another day, when they stick better." : {
+      "comment" : "End of a mistakes practice run with a miss.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du noch nicht richtig beantwortet hast, kommt an einem anderen Tag wieder, damit du es dir besser merkst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que no respondiste bien vuelve otro día para que lo recuerdes mejor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les questions que tu as ratées reviennent un autre jour, pour que tu les retiennes mieux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quello che sbagli torna un altro giorno, così ti resta più impresso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた問題は、記憶に残りやすくなるように、日を置いてまた出てきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te, przy których pojawił się błąd, wrócą innego dnia, żeby łatwiej było je zapamiętać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você errou volta outro dia, quando fica mais fácil fixar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır."
+          }
+        }
+      }
+    },
+    "The ones you missed come back another day. The rest are still ready to practice." : {
+      "comment" : "End of a mistakes practice run stopped early after a miss.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du nicht richtig beantwortet hast, kommt an einem anderen Tag wieder. Den Rest kannst du weiterhin üben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que no respondiste bien volverá otro día. El resto aún está disponible para practicar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu retrouveras un autre jour les erreurs que tu n’as pas corrigées. Tu peux toujours réviser les autres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ritroverai un altro giorno quello che hai sbagliato. Puoi ancora esercitarti sul resto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "間違えた問題は別の日にまた出てきます。残りの問題は引き続き練習できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te z błędną odpowiedzią wrócą innego dnia. Pozostałe nadal możesz przećwiczyć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você errou volta outro dia. O restante continua disponível para praticar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin."
+          }
+        }
+      }
+    },
     "The questions were removed" : {
       "comment" : "A checkpoint ended without questions.",
       "localizations" : {
@@ -13608,61 +13543,61 @@
         }
       }
     },
-    "The rest come back another day, when they stick better." : {
-      "comment" : "End of a mistakes practice run with a miss.",
+    "The rest are still ready to practice." : {
+      "comment" : "End of a mistakes practice run stopped early, with no miss.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Rest kommt an einem anderen Tag wieder, damit du ihn dir besser merken kannst."
+            "value" : "Den Rest kannst du weiterhin üben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El resto vuelve otro día para que lo recuerdes mejor."
+            "value" : "El resto aún está disponible para practicar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les autres reviendront un autre jour, pour mieux les retenir."
+            "value" : "Tu peux toujours réviser les autres."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le altre tornano un altro giorno, così ti restano meglio in mente."
+            "value" : "Puoi ancora esercitarti sul resto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "残りの問題は、記憶に定着しやすいように、別の日にまた出題されます。"
+            "value" : "残りの問題は引き続き練習できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "나머지 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
+            "value" : "나머지 문제는 언제든 연습할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reszta wróci innego dnia, żeby wiedza lepiej się utrwaliła."
+            "value" : "Pozostałe nadal możesz przećwiczyć."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O restante volta outro dia, para você fixar melhor."
+            "value" : "O restante continua disponível para praticar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kalanlar, daha iyi hatırlaman için başka bir gün tekrar karşına çıkacak."
+            "value" : "Kalanlarla hâlâ alıştırma yapabilirsin."
           }
         }
       }
@@ -16387,65 +16322,6 @@
         }
       }
     },
-    "You got it right on %@. Reviewing it now helps it stick." : {
-      "comment" : "Time machine note: right last time, wrong today.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Am %@ hast du die Frage richtig beantwortet. Wenn du sie jetzt wiederholst, merkst du es dir besser."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acertaste el %@. Repasarlo ahora te ayuda a recordarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu avais bien répondu le %@. Le revoir maintenant t’aidera à mieux le retenir."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avevi risposto bene il %@. Ripassare ora ti aiuta a ricordare meglio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@には正解していました。今復習すると、記憶に定着しやすくなります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에는 맞혔어요. 지금 복습하면 더 오래 기억할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoja odpowiedź z %@ była poprawna. Ta powtórka pomoże ci to utrwalić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você acertou em %@. Revisar agora ajuda a lembrar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tarihinde doğru cevaplamıştın. Şimdi tekrar edersen aklında daha iyi kalır."
-          }
-        }
-      }
-    },
     "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost." : {
       "comment" : "Why a checkpoint without questions isn't scored.",
       "localizations" : {
@@ -16678,65 +16554,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Senin söylediğin"
-          }
-        }
-      }
-    },
-    "You saw this on %@." : {
-      "comment" : "Time machine line above a question seen before.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast das am %@ gesehen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Viste esto el %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as vu ceci le %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai visto questa domanda il %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@に見た問題です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 봤던 문제예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To pytanie pojawiło się już %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você viu isso em %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunu %@ tarihinde görmüştün."
           }
         }
       }

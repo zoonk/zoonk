@@ -32,12 +32,15 @@ export function normalizeDraft({ params, raw }: { params: DraftParams; raw: RawS
 type GraphDraft = ReturnType<typeof normalizeDraft>;
 
 /**
- * Not worth a new draft: the planner ranks a skill beyond the notice after the notice's, and one
- * phase's name would cost a whole new graph. Evals still count both.
+ * Targets the prompt sets, not worth a new draft: how deep or textbook-ordered prerequisites run, a
+ * skill beyond the notice ranked before the notice's (the planner ranks it after), and one phase's
+ * name would each cost a whole new graph. Evals still count them.
  */
 const KEPT_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
+  "deepChain",
   "offNoticeFirst",
   "repeatedPhaseName",
+  "textbookChain",
 ]);
 
 export function findRedraftProblems({

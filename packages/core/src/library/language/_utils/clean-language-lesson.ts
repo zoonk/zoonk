@@ -5,8 +5,6 @@ import { normalizePunctuation, segmentWords } from "@zoonk/utils/string";
 
 const BLANK = "[BLANK]";
 
-const MAX_ACCEPTED_ANSWERS = 5;
-
 function cleanText(text: string): string {
   return normalizePunctuation(text).trim();
 }
@@ -163,7 +161,7 @@ function cleanWriting(content: LanguageLessonContent): LanguageLessonContent["wr
   );
 
   return {
-    answers: answers.slice(0, MAX_ACCEPTED_ANSWERS),
+    answers,
     keyPoints: content.writing.keyPoints.map(cleanText).filter(Boolean),
     prompt: cleanText(content.writing.prompt),
   };

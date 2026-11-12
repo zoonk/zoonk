@@ -77,7 +77,7 @@ async function recordNumeric({
 
   if (recorded.mistake) {
     await prisma.mistake.update({
-      data: { createdAt: YESTERDAY },
+      data: { createdAt: YESTERDAY, missedAt: YESTERDAY },
       where: { id: recorded.mistake.id },
     });
   }
@@ -257,7 +257,7 @@ describe("other original bank formats", () => {
       }
 
       await prisma.mistake.update({
-        data: { createdAt: YESTERDAY },
+        data: { createdAt: YESTERDAY, missedAt: YESTERDAY },
         where: { id: recorded.mistake.id },
       });
 
@@ -328,7 +328,7 @@ describe("other original bank formats", () => {
     }
 
     await prisma.mistake.update({
-      data: { createdAt: YESTERDAY },
+      data: { createdAt: YESTERDAY, missedAt: YESTERDAY },
       where: { id: recorded.mistake.id },
     });
 

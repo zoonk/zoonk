@@ -22,6 +22,12 @@ enum MistakePracticePhase: Equatable {
   }
 }
 
+enum PracticeEndNote: Equatable {
+  case missed
+  case missedAndUnreached
+  case unreached
+}
+
 /// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the
 /// run in progress.
 struct MistakePracticeState: Equatable {
@@ -144,6 +150,17 @@ struct MistakePracticeState: Equatable {
       reached = reached.merged(with: PracticeReached(energy: energy, level: nil))
     }
     phase = .ended(summary)
+  }
+
+  var endNote: PracticeEndNote? {
+    let missed = verdicts.contains { $0 != .right }
+    let unreached = verdicts.count < steps.count
+    switch (missed, unreached) {
+    case (true, true): return .missedAndUnreached
+    case (true, false): return .missed
+    case (false, true): return .unreached
+    case (false, false): return nil
+    }
   }
 
   var segments: [TaskSegment] {

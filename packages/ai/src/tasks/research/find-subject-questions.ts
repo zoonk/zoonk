@@ -11,9 +11,8 @@ import { toSubjectQuestionsFinding } from "./subject-questions-finding";
 export type { SubjectQuestionsFinding } from "./subject-questions-finding";
 
 /**
- * At low reasoning, since a plan waits on it: on 6 cases (8 Nov 2026), Luna and Flash each scored
- * 9.67 (EN 10.00, PT 9.50) at $8.47/1k and $18.56/1k. The OAB case every model missed fails in the
- * total check, not the model.
+ * At low reasoning, since a plan waits on it: on 8 cases run twice (11 Nov 2026), Luna scored 9.75
+ * (missing one run of the new-board case) and Flash 10.00, at $10.59/1k and $17.23/1k.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
@@ -29,6 +28,7 @@ const schema = z.object({
   sourceTitle: z.string().nullable(),
   sourceUrl: z.string().nullable(),
   status: z.enum(["found", "unknown"]),
+  unlistedSubjects: z.array(z.object({ name: z.string(), questions: z.number().int() })),
 });
 
 type FindSubjectQuestionsInput = {

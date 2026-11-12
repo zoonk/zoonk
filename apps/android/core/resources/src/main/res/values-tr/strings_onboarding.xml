@@ -54,11 +54,12 @@
   "onboarding_course_starting": "bedb4524b5f9d274c2503111d788778aebc3629237b25ca5df25822cab72e013",
   "onboarding_create_account": "05015b654c655de993cdf2da2835fa7ae1f357687477485266d55d5a856dee9e",
   "onboarding_create_account_short": "b0e28ced773071cc73e257d098d7145ab84fa3c81dfd8b3f183e06a14a293598",
+  "onboarding_date_continue_without": "57c757268d9688b8abe57c53ed092507bf43e469bc6ba32a39335c4b8cdae3d8",
   "onboarding_date_description": "9923e20e44ed2b351f3409cddbf3f0060b5e9e87de5b79d888224654db3ba9f7",
   "onboarding_date_is_today": "5e55499833e0b0830312ce1f7bfd2b467b975094adc9643394dcba6bcf04e044",
   "onboarding_date_label": "845fa0dac856328db6389a5c0188404d70fa0193eac744d17eb08d6c7fc577a5",
-  "onboarding_date_none": "272aff49928e1d6af6bff0e5f08b89eed245305aa3e031698004b887a7d25b99",
   "onboarding_date_passed": "740290df046a09583999881623caa93f6eb691295b7514c29d172f3542c3003e",
+  "onboarding_date_remove": "1c57459ca83ee3d6765841abada15e8adbb83064ac908af57ba6afe4839cf24a",
   "onboarding_date_title": "f6d3952bcb3e377e77f94f0f600b1794130e03988bc2d1a852d833fadda9eede",
   "onboarding_day_too_short": "8d0447b10e7bffa9c24c834aab0fb2ac681354e394e30c12709986fe2704ad10",
   "onboarding_days": "e951790bcef9739af1a92f9e1c5687c591d92c11963e74112866f99508c4e193",
@@ -152,7 +153,6 @@
   "onboarding_limit_daily_explanations": "c6f6a1a9b5c19d3bab182303238ed448d8211f21f26b5b809ccc7fd6a1aaedeb",
   "onboarding_limit_daily_goals": "27c2b8c2d1f629666da6dcd438aa73620eee9d0a3a96921a403821362e999182",
   "onboarding_limit_guest": "606bf0abec1818007ca7d552499db1b8629256186f22984ef2ca6573c0f920a0",
-  "onboarding_limit_guest_blocked": "b4f9481635973e6d8dbaef615f30cb460a16d6060709b642fa456b7aaa7ac8e7",
   "onboarding_limit_monthly_explanations": "f8ed57081c4f742b8c74dc9afe984357a73bc615f6dfc3645d7c6cc95a8767db",
   "onboarding_limit_monthly_goals": "55d853fd17271708e169321941e13aa2008bc0f994ecfb6e40c8bc89b4e52d0c",
   "onboarding_limit_sign_up_required": "daa945d6ba31308c3e683363b0b6d5490e4aca083d7c8da92de7e565359df87a",
@@ -500,7 +500,6 @@
     <string name="onboarding_limit_daily_goals">Paketinin günlük yeni hedef başlatma sınırına ulaştın. Yarın tekrar dene.</string>
     <string name="onboarding_limit_guest">Hesap oluşturmadan tek bir hedefi takip edebilirsin. Devam etmek için ücretsiz hesap oluştur.</string>
     <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_guest_blocked">Güvenlik kontrolü hesap olmadan başlamanı engelledi. Devam etmek için ücretsiz bir hesap oluştur.</string>
     <string name="onboarding_limit_monthly_explanations">Ücretsiz pakette aylık yeni soru sınırına ulaştın. Gelecek ay tekrar dene ya da hemen devam etmek için Plus’a geç.</string>
     <string name="onboarding_limit_monthly_goals">Ücretsiz pakette aylık yeni hedef başlatma sınırına ulaştın. Gelecek ay tekrar dene ya da hemen devam etmek için Plus’a geç.</string>
     <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
@@ -542,6 +541,12 @@
     <string name="onboarding_understood_locked_goal">Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedef şimdilik hedef listende bekliyor.</string>
     <!-- The same, for two or more goals shown just above. -->
     <string name="onboarding_understood_locked_goals">Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedefler şimdilik hedef listende bekliyor.</string>
+    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
+    <string name="onboarding_understood_free_account_title">Ücretsiz hesapla kullanılabilir</string>
+    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
+    <string name="onboarding_understood_locked_goal_guest">Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedef şimdilik hedef listende bekliyor.</string>
+    <!-- The same, for two or more goals shown just above. -->
+    <string name="onboarding_understood_locked_goals_guest">Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedefler şimdilik hedef listende bekliyor.</string>
     <string name="onboarding_looks_right">Onayla</string>
     <string name="onboarding_fix_something">Düzeltme yap</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -988,7 +993,8 @@
     <string name="onboarding_another_date">Başka bir tarih seç</string>
     <string name="onboarding_date_title">Hedeflediğin bir tarih var mı?</string>
     <string name="onboarding_date_description">Tarih belirlemezsen tüm konuları kendi temponda çalışırsın, biz de her aşamaya ne zaman ulaşacağını gösteririz.</string>
-    <string name="onboarding_date_none">Tarih belirlemeden tüm konuları çalış</string>
+    <string name="onboarding_date_continue_without">Tarih belirlemeden devam et</string>
+    <string name="onboarding_date_remove">Tarihi kaldır</string>
     <string name="onboarding_date_label">Tarih</string>
     <!-- In the setup's plan so far, beside "Date", when the learner chose to study without a date. -->
     <string name="onboarding_no_date">Tarih yok</string>
@@ -1123,12 +1129,6 @@
     </plurals>
     <string name="onboarding_reason_choices">Bu dili öğrenme nedenin</string>
     <string name="onboarding_aim_description">Kursunun hedef seviyesi, planının süresini belirler.</string>
-    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
-    <string name="onboarding_understood_free_account_title">Ücretsiz hesapla kullanılabilir</string>
-    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
-    <string name="onboarding_understood_locked_goal_guest">Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedef şimdilik hedef listende bekliyor.</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals_guest">Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedefler şimdilik hedef listende bekliyor.</string>
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Ülke</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->

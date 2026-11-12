@@ -100,6 +100,6 @@ export async function mistakeFixture(
   });
 
   return prisma.mistake.create({
-    data: { snapshot: { answer: "Wrong answer", question }, ...attrs },
+    data: { missedAt: attrs.createdAt, snapshot: { answer: "Wrong answer", question }, ...attrs },
   });
 }

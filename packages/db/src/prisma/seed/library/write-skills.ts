@@ -181,24 +181,20 @@ export async function writeVocabulary({
       });
 
       if (entry.pronunciation) {
+        const guide = {
+          generatedAt: null,
+          model: null,
+          promptVersion: null,
+          pronunciation: entry.pronunciation.in(language),
+          runId: null,
+          tip: entry.tip?.in(language) ?? null,
+        };
+
         await prisma.wordPronunciation.upsert({
-          create: {
-            pronunciation: entry.pronunciation.in(language),
-            tip: entry.tip?.in(language) ?? null,
-            userLanguage: language,
-            wordId: word.id,
-          },
-          update: {},
+          create: { ...guide, userLanguage: language, wordId: word.id },
+          update: guide,
           where: { wordPronunciation: { userLanguage: language, wordId: word.id } },
         });
-
-        // A shared pronunciation written elsewhere keeps its text; only a missing tip is added.
-        if (entry.tip) {
-          await prisma.wordPronunciation.updateMany({
-            data: { tip: entry.tip.in(language) },
-            where: { tip: null, userLanguage: language, wordId: word.id },
-          });
-        }
       }
 
       return [entry.text, word.id] as const;

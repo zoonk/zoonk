@@ -6764,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "이렇게 들렸어요: “{heard}”"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "{date}에 다시 나와요."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "이 단어는 잘 익혔어요. 다시 나오지 않아요."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "억양이 달라도 계속할 수 있어요. 발음이 아직 다른 단어는 내일 다시 나와요."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "억양은 걸림돌이 되지 않아요."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -7964,9 +7954,19 @@ msgid "Nothing to practice yet"
 msgstr "아직 연습할 문제가 없어요"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "나머지 문제는 더 오래 기억에 남도록 다른 날 다시 나와요."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "나머지 문제는 언제든 연습할 수 있어요."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -9607,12 +9607,6 @@ msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
 msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
 
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qi0x0O"
-msgid "A security check blocked this browser. Try another browser, or create a free account."
-msgstr "보안 검사에서 이 브라우저가 차단됐어요. 다른 브라우저를 사용하거나 무료 계정을 만들어 보세요."
-
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
@@ -9881,14 +9875,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "날짜를 정하지 않으면 원하는 속도로 모든 내용을 공부할 수 있고, 각 단계에 언제 도달할지 알려 드려요."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "날짜 없이 모두 공부하기"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "날짜 없이 계속하기"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "목표로 정한 날짜가 있나요?"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "날짜 지우기"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"
@@ -12721,6 +12720,12 @@ msgctxt "hguHsn"
 msgid "What helps you learn"
 msgstr "학습에 도움이 되는 것"
 
+#. Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "DGS8Ad"
+msgid "How we address you"
+msgstr "성별에 따른 표현"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "LveDpT"
 msgid "Not shared"
@@ -12741,6 +12746,12 @@ msgstr "답변하지 않음"
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
 msgstr "{count, plural, other {#개 저장됨}}"
+
+#. An answer the learner saved, without showing it.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "저장됨"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "AYPOzn"
@@ -12919,6 +12930,12 @@ msgctxt "W7cEaa"
 msgid "What helps you learn?"
 msgstr "공부할 때 무엇이 도움이 되나요?"
 
+#. Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "MgGE60"
+msgid "How should we address you?"
+msgstr "여성형, 남성형, 중립형 중 어떤 표현이 좋을까요?"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "jA1Ffb"
 msgid "We'll use situations from your day in your examples."
@@ -12948,6 +12965,11 @@ msgstr "선택 사항이에요. 저장에 동의한 경우에만 이 내용을 �
 msgctxt "310Na4"
 msgid "Pick anything that helps. No label or diagnosis needed."
 msgstr "도움이 되는 건 모두 골라 주세요. 꼭 특정 유형에 해당하거나 진단을 받아야 하는 건 아니에요."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "짝꿍의 말과 피드백에 이 표현을 써요. 레슨은 그대로예요."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "vHNPYm"
@@ -13388,12 +13410,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "레슨이 아직 저장되지 않았어요"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "{date}에 복습"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13593,11 +13609,6 @@ msgid "Saved to your mistakes"
 msgstr "오답 노트에 저장했어요"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "오답 노트에 저장했어요 · 내일 다시 나와요"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "미응답"
@@ -13633,31 +13644,6 @@ msgstr "순점수 {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답을 비워 두세요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "{date}에 봤던 문제예요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "{date}에 이어 이번에도 맞혔어요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "{date}에 맞혔던 문제예요. 지금 복습하면 더 오래 기억할 수 있어요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "{date}에는 “{answer}”라고 답했어요."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "{date}에 헷갈렸던 문제예요."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13796,12 +13782,6 @@ msgstr "1분도 안 돼 끝냈어요"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "{time} 만에 끝냈어요"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "{days}에 다시 복습해요"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

@@ -14,9 +14,6 @@ import {
 } from "./guests/_test-utils/guest-auth";
 import { baseAuthConfig, signInDatabaseHooks } from "./server";
 
-/** BotID only classifies requests on Vercel, so tests stand in for its verdict. */
-vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
-
 /** Email delivery requires Next's request context; authentication and persistence stay real. */
 vi.mock("./plugins/otp", () => ({ sendVerificationOTP: vi.fn() }));
 

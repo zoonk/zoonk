@@ -118,6 +118,35 @@ describe(generateLevelTestBank, () => {
     expect(provenance).toMatchObject({ gatewayCostUsd: expect.closeTo(0.25), model: MODEL });
   });
 
+  it("keeps four options on every question instead of failing a level over its wrong options", async () => {
+    vi.mocked(generateText).mockImplementation(({ prompt }) => {
+      const text = typeof prompt === "string" ? prompt : "";
+      const level = /LEVEL: (?<level>\w\d)/u.exec(text)?.groups?.level ?? "none";
+      const written = writeLevel(level);
+      const [first, second] = written.output.reading;
+
+      const reading = [
+        { ...first, wrongOptions: [...(first?.wrongOptions ?? []), `wrong 4 ${level}`] },
+        { ...second, wrongOptions: second?.wrongOptions.slice(0, 2) ?? [] },
+      ];
+
+      return Promise.resolve({ ...written, output: { ...written.output, reading } }) as never;
+    });
+
+    const { data } = await generateLevelTestBank({ learnerLanguage: "pt", targetLanguage: "en" });
+    const reading = data.questions.filter((question) => question.skill === "reading");
+
+    expect(reading.map((question) => question.passage)).toStrictEqual(
+      ["A1", "A2", "B1", "B2", "C1"].map((level) => `passage ${level} reading 1`),
+    );
+
+    expect(data.questions.every((question) => question.options.length === 4)).toBe(true);
+
+    expect(
+      reading.some((question) => question.options.some((option) => option.startsWith("wrong 4"))),
+    ).toBe(false);
+  });
+
   it("sets every level's texts where the tested language is spoken", async () => {
     const calls = answerLevelsLater();
     const pending = generateLevelTestBank({ learnerLanguage: "pt", targetLanguage: "it" });

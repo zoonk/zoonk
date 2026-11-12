@@ -15,11 +15,6 @@ import { type AnsweredActivity, settleAnsweredActivity } from "./_utils/settle-a
 import { getCompletionEnergyContext } from "./completion-energy";
 import { upsertDailyProgress } from "./daily-progress";
 
-/** BotID requires Vercel; guest authentication, transactions and PostgreSQL locks stay real. */
-vi.mock("../../../auth/node_modules/botid/server", () => ({
-  checkBotId: vi.fn().mockResolvedValue({ isBot: false }),
-}));
-
 async function createLinkOwners() {
   const [account, guest] = await Promise.all([
     createExistingAccount({ createdAt: new Date("2026-09-01T00:00:00Z") }),

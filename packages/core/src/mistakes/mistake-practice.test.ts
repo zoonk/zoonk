@@ -1,6 +1,8 @@
 import { classifyMistakeCause } from "@zoonk/ai/tasks/mistakes/cause";
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
@@ -11,6 +13,7 @@ import {
   textSetContent,
 } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../_test-utils/frozen-clock";
@@ -22,6 +25,7 @@ import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { MAX_PRACTICE_ANSWERS } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
+import { loadMistakePracticeAvailability } from "./mistake-availability";
 import { resolveMistakeCause } from "./resolve-mistake-cause";
 
 const deferred: Promise<unknown>[] = [];
@@ -427,7 +431,7 @@ describe(answerMistakePractice, () => {
     expect(classifyMistakeCause).not.toHaveBeenCalled();
   });
 
-  it("announces a fix only for the answer that fixed the notebook entry", async () => {
+  it("gives a later answer to a fixed mistake the answer that fixed it, without counting it again", async () => {
     const { extra, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
@@ -443,15 +447,17 @@ describe(answerMistakePractice, () => {
     });
 
     const next = await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
+      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: extra.id },
       mistakeId: mistake.id,
     });
 
     expect(first).toMatchObject({ feedback: { fixed: true, mistakeStatus: "fixed" } });
-    expect(next).toMatchObject({ feedback: { fixed: false, mistakeStatus: "fixed" } });
+    expect(next).toStrictEqual(first);
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
-  it("records a new next-day entry when a fixed question is missed again", async () => {
+  it("records one answer when the same mistake is answered at once from two screens", async () => {
     const { extra, skill, user } = await setup();
 
     const mistake = await mistakeFixture({
@@ -461,27 +467,154 @@ describe(answerMistakePractice, () => {
       userId: user.id,
     });
 
-    await answerMistakePractice({
-      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
+    const results = await Promise.all(
+      [0, 1, 0].map((selectedIndex) =>
+        answerMistakePractice({
+          input: {
+            answer: { selectedIndex },
+            attemptId: crypto.randomUUID(),
+            durationMs: 9000,
+            itemId: extra.id,
+          },
+          mistakeId: mistake.id,
+        }),
+      ),
+    );
+
+    const answerIds = results.flatMap((result) =>
+      result.status === "ready" ? [result.feedback.answerId] : [],
+    );
+
+    expect(new Set(answerIds).size).toBe(1);
+    expect(results.every((result) => ["ready", "retryable"].includes(result.status))).toBe(true);
+
+    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
+  });
+
+  it("keeps a mistake missed in practice for another day, so it can't be fixed by repeating the answer just shown", async () => {
+    const { original, skill, user } = await setup();
+
+    const mistake = await mistakeFixture({
+      createdAt: YESTERDAY,
+      itemId: original.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const missed = await answerMistakePractice({
+      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: original.id },
       mistakeId: mistake.id,
     });
 
-    const result = await answerMistakePractice({
-      input: { answer: { dontKnow: true }, durationMs: 9000, itemId: extra.id },
+    expect(missed).toMatchObject({ feedback: { isCorrect: false, mistakeStatus: "open" } });
+
+    const again = await getMistakePractice({ timeZone: "UTC" });
+    expect(again).toMatchObject({ practice: [], status: "ready" });
+
+    await expect(
+      loadMistakePracticeAvailability({
+        localDate: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
+        timeZone: "UTC",
+        userId: user.id,
+      }),
+    ).resolves.toMatchObject({ availability: { ready: 0, tomorrow: 1 } });
+
+    const repeated = await answerMistakePractice({
+      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: original.id },
       mistakeId: mistake.id,
     });
 
-    expect(result).toMatchObject({
-      feedback: { fixed: false, mistakeStatus: "fixed", trap: null },
-    });
+    expect(repeated).toStrictEqual(missed);
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
-    ).resolves.toMatchObject({ status: "fixed" });
+    ).resolves.toMatchObject({ status: "open" });
+  });
+
+  it("counts the practice day in the learner's stored zone for the run and its answers alike", async () => {
+    freezeClock();
+    vi.setSystemTime(new Date("2026-11-11T01:00:00Z"));
+
+    const { original, skill, user } = await setup();
+    const goal = await goalFixture({ timezone: "America/Sao_Paulo", userId: user.id });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+
+    const mistake = await mistakeFixture({
+      createdAt: new Date("2026-11-10T12:00:00Z"),
+      itemId: original.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    await expect(getMistakePractice({ timeZone: "UTC" })).resolves.toMatchObject({ practice: [] });
 
     await expect(
-      prisma.mistake.findMany({ where: { itemId: extra.id, status: "open", userId: user.id } }),
-    ).resolves.toMatchObject([{ cause: "gap", fixedAt: null }]);
+      answerMistakePractice({
+        input: {
+          answer: { selectedIndex: 0 },
+          durationMs: 9000,
+          itemId: original.id,
+          timeZone: "UTC",
+        },
+        mistakeId: mistake.id,
+      }),
+    ).resolves.toStrictEqual({ status: "invalidItem" });
+
+    vi.setSystemTime(new Date("2026-11-11T03:30:00Z"));
+
+    await expect(getMistakePractice({ timeZone: "UTC" })).resolves.toMatchObject({
+      practice: [{ mistakeId: mistake.id }],
+    });
+  });
+
+  it("keeps a mistake missed again in a lesson for another day", async () => {
+    const { original, skill, user } = await setup();
+
+    const mistake = await mistakeFixture({
+      createdAt: YESTERDAY,
+      itemId: original.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const parsed = parseChoiceItem(original);
+
+    if (!parsed) {
+      throw new Error("The original must be playable");
+    }
+
+    const graded = gradeChoiceAnswer({ answer: { selectedIndex: 1 }, item: parsed });
+
+    const missed = await recordLearnerAnswer({
+      answer: { selectedIndex: 1 },
+      graded: { durationMs: 9000, isCorrect: false },
+      itemId: original.id,
+      language: "en",
+      mistake: { questionText: graded.snapshot.question, snapshot: graded.snapshot },
+      purpose: "learning",
+      skillId: skill.id,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(missed.mistake).toMatchObject({ id: mistake.id });
+
+    const gradedRight = gradeChoiceAnswer({ answer: { selectedIndex: 0 }, item: parsed });
+
+    const right = await recordLearnerAnswer({
+      answer: { selectedIndex: 0 },
+      graded: { durationMs: 9000, isCorrect: true },
+      itemId: original.id,
+      language: "en",
+      mistake: { questionText: gradedRight.snapshot.question, snapshot: gradedRight.snapshot },
+      purpose: "learning",
+      skillId: skill.id,
+      timeZone: "UTC",
+      userId: user.id,
+    });
+
+    expect(right.fixedMistakeIds).toStrictEqual([]);
+    await expect(getMistakePractice({ timeZone: "UTC" })).resolves.toMatchObject({ practice: [] });
   });
 
   it("fixes a mistake answered right on a later day", async () => {
@@ -651,26 +784,31 @@ describe(answerMistakePractice, () => {
   });
 
   it("names only the trap matching a wrong answer in a trap drill", async () => {
-    const { extra, skill, user } = await setup();
+    const { extra, original, skill, user } = await setup();
 
-    const mistake = await mistakeFixture({
-      cause: "trap",
-      createdAt: YESTERDAY,
-      itemId: extra.id,
-      skillId: skill.id,
-      userId: user.id,
+    const trapMistake = (itemId: string) =>
+      mistakeFixture({
+        cause: "trap",
+        createdAt: YESTERDAY,
+        itemId,
+        skillId: skill.id,
+        userId: user.id,
+      });
+
+    const [rightMistake, wrongMistake] = await Promise.all([
+      trapMistake(extra.id),
+      trapMistake(original.id),
+    ]);
+
+    const right = await answerMistakePractice({
+      input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
+      mistakeId: rightMistake.id,
     });
 
-    const [right, wrong] = await Promise.all([
-      answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 9000, itemId: extra.id },
-        mistakeId: mistake.id,
-      }),
-      answerMistakePractice({
-        input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: extra.id },
-        mistakeId: mistake.id,
-      }),
-    ]);
+    const wrong = await answerMistakePractice({
+      input: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: original.id },
+      mistakeId: wrongMistake.id,
+    });
 
     expect(right.status === "ready" && right.feedback.trap).toBeNull();
     expect(wrong.status === "ready" && wrong.feedback.trap).toBe("Applies the rule backwards");

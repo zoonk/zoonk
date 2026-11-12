@@ -71,6 +71,7 @@ const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [
   { gatewayModelId: "perplexity/pplx-decider-v1.2", name: "pplx-decider-v1.2" },
   { gatewayModelId: LUNA_DECISIONS_MODEL_ID, name: "gpt-6-luna-decisions" },
   { gatewayModelId: "liquid/d1", name: "liquid-d1" },
+  { gatewayModelId: "google/gemini-decision-1", name: "gemini-decision-1" },
   { gatewayModelId: "openai/gpt-6-luna", name: "gpt-6-luna (evaluation)" },
   { gatewayModelId: "google/gemini-3.5-flash-lite", name: "gemini-3.5-flash-lite (evaluation)" },
   { gatewayModelId: "anthropic/claude-haiku-5.5", name: "claude-haiku-5.5 (evaluation)" },

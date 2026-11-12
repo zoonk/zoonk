@@ -12,6 +12,8 @@ import {
   mockSearchTerms,
   uniqueWord,
 } from "../identity/_test-utils/identity-mocks";
+import { splitLawArticles } from "./law-articles";
+import { hashFirstReading } from "./parse-document";
 import { recordSourceChangeNotice } from "./source-change-notices";
 import { getOwedSourceChange } from "./unnoticed-changes";
 import {
@@ -42,6 +44,40 @@ function newUrl() {
 }
 
 const EDITAL = { kind: "official", language: "pt", publisher: null, title: "Edital" } as const;
+
+/** Planalto serves its laws in windows-1252 and declares no charset. */
+function latin1Page(body: string): Uint8Array {
+  return Buffer.from(`<html><body>${body}</body></html>`, "latin1");
+}
+
+function serveBytes(bytes: Uint8Array) {
+  vi.mocked(fetch).mockImplementation(
+    async () => new PageResponse(bytes, { headers: { "content-type": "text/html" } }),
+  );
+}
+
+function storeLawPage(bytes: Uint8Array) {
+  serveBytes(bytes);
+  return storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+}
+
+/** As the reader before `readVersion` stored the page: its text and hash, under reader version 0. */
+async function storeAsFirstReader({
+  bytes,
+  sourceId,
+  text,
+}: {
+  bytes: Uint8Array;
+  sourceId: string;
+  text: string;
+}) {
+  const contentHash = await hashFirstReading({ bytes, contentType: "text/html" });
+
+  await prisma.source.update({
+    data: { contentHash, extractedText: text, readVersion: 0 },
+    where: { id: sourceId },
+  });
+}
 
 function noticePage({ questions, token }: { questions: number; token: string }) {
   return `<html><body><input type="hidden" value="${token}"><h1>Edital 2026</h1><p>A prova terá ${questions} questões.</p></body></html>`;
@@ -199,6 +235,72 @@ describe(storeWebSource, () => {
     expect(again.id).toBe(source.id);
     expect(again.contentHash).toBe(source.contentHash);
   });
+
+  it("names a page stored under its file name once a later store knows its own name", async () => {
+    const url = newUrl();
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = { ...EDITAL, topic: "regulation" as const, url: `${url}/l9784.htm` };
+    const source = await storeWebSource({ ...law, title: "L9784" });
+    await storeWebSource({ ...law, title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+    await storeWebSource({ ...law, title: "L9784" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+
+    await storeWebSource({ ...law, title: "Lei do Processo Administrativo" });
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+  });
+
+  it("keeps the first name given to a page stored under its file name when stores race", async () => {
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = { ...EDITAL, topic: "regulation" as const, url: `${newUrl()}/l9784.htm` };
+    const source = await storeWebSource({ ...law, title: "L9784" });
+    const held = holdSourceLock(source.id);
+    const pid = await held.pid;
+
+    const first = storeWebSource({ ...law, title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+    await waitForBlockedStatement(pid, /\bsources\b/u);
+    const second = storeWebSource({ ...law, title: "Lei do Processo Administrativo" });
+    await waitForBlockedStatement(pid, /\bsources\b/u, 2);
+    held.release();
+    await Promise.all([first, second, held.done]);
+
+    await expect(
+      prisma.source.findUniqueOrThrow({ select: { title: true }, where: { id: source.id } }),
+    ).resolves.toStrictEqual({ title: "Lei nº 9.784, de 29 de janeiro de 1999" });
+  });
+
+  it("keeps a law longer than an upload whole, down to its last article", async () => {
+    const articles = Array.from(
+      { length: 4000 },
+      (_, index) =>
+        `<p>Art. ${index + 1}. ${"O servidor público responde pelos seus atos. ".repeat(4)}</p>`,
+    );
+
+    servePage(`<html><body>${articles.join("")}</body></html>`);
+
+    const [law, notice] = await Promise.all([
+      storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() }),
+      storeWebSource({ ...EDITAL, topic: "exam", url: newUrl() }),
+    ]);
+
+    const [storedLaw, storedNotice] = await Promise.all([
+      prisma.source.findUniqueOrThrow({ where: { id: law.id } }),
+      prisma.source.findUniqueOrThrow({ where: { id: notice.id } }),
+    ]);
+
+    const lawText = storedLaw.extractedText ?? "";
+
+    expect(lawText.length).toBeGreaterThan(700_000);
+    expect(splitLawArticles(lawText).at(-1)?.heading).toBe("Art. 4000");
+    expect(storedNotice.extractedText).toHaveLength(500_000);
+  });
 });
 
 describe(refreshWebSource, () => {
@@ -253,6 +355,54 @@ describe(refreshWebSource, () => {
       unnoticedChanges: expect.stringContaining("- A prova terá 50 questões."),
       unnoticedFromHash: law.contentHash,
     });
+  });
+
+  it("re-reads a law stored by an older reader without telling learners it changed", async () => {
+    const page = latin1Page("<p>Art. 1º O prazo é de <s>dez</s> quinze dias.</p>");
+    const law = await storeLawPage(page);
+
+    await storeAsFirstReader({
+      bytes: page,
+      sourceId: law.id,
+      text: "Art. 1\uFFFD O prazo \uFFFD de dez quinze dias.",
+    });
+
+    await expect(refreshWebSource(law.id)).resolves.toMatchObject({ status: "changed" });
+
+    await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
+      { contentHash: law.contentHash, readVersion: 1, unnoticedChanges: null },
+    );
+  });
+
+  it("still tells learners a law changed when it changed on its first read by a newer reader", async () => {
+    const before = latin1Page("<p>Art. 1º A alíquota é de 1,5%.</p>");
+    const law = await storeLawPage(before);
+
+    await storeAsFirstReader({
+      bytes: before,
+      sourceId: law.id,
+      text: "Art. 1\uFFFD A al\uFFFDquota \uFFFD de 1,5%.",
+    });
+
+    serveBytes(latin1Page("<p>Art. 1º A alíquota é de 15%.</p>"));
+    await refreshWebSource(law.id);
+
+    await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
+      { unnoticedChanges: expect.stringContaining("+ Art. 1º A alíquota é de 15%.") },
+    );
+  });
+
+  it("records the current reader on a law whose text reads the same", async () => {
+    servePage(noticePage({ questions: 50, token: "a" }));
+
+    const law = await storeWebSource({ ...EDITAL, topic: "regulation", url: newUrl() });
+    await prisma.source.update({ data: { readVersion: 0 }, where: { id: law.id } });
+
+    await expect(refreshWebSource(law.id)).resolves.toMatchObject({ status: "unchanged" });
+
+    await expect(prisma.source.findUniqueOrThrow({ where: { id: law.id } })).resolves.toMatchObject(
+      { readVersion: 1 },
+    );
   });
 
   it("keeps what each of two saves at once changed in a law, whichever saves first", async () => {

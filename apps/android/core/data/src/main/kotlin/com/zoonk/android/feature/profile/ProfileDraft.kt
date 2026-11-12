@@ -34,7 +34,7 @@ data class ProfileDraft(
     ): Boolean =
         declined ||
             when (question) {
-                ProfileQuestion.WORK -> picks.isNotEmpty()
+                ProfileQuestion.WORK, ProfileQuestion.ADDRESS_FORM -> picks.isNotEmpty()
                 ProfileQuestion.STUDIES -> picks.isNotEmpty() && ("other" !in picks || !subjects["other"].isNullOrBlank())
                 ProfileQuestion.CONDITIONS -> picks.isNotEmpty() && ("other" !in picks || text.isNotBlank())
                 else -> picks.isNotEmpty() || (text.isNotBlank() && (question != ProfileQuestion.LEARNING_SUPPORT || memoryEnabled))
@@ -61,7 +61,7 @@ data class ProfileDraft(
         memoryEnabled: Boolean,
     ): Boolean =
         when (question) {
-            ProfileQuestion.WORK, ProfileQuestion.STUDIES, ProfileQuestion.CONDITIONS -> picks.isEmpty()
+            ProfileQuestion.WORK, ProfileQuestion.STUDIES, ProfileQuestion.CONDITIONS, ProfileQuestion.ADDRESS_FORM -> picks.isEmpty()
             else -> picks.isEmpty() && (text.isBlank() || (question == ProfileQuestion.LEARNING_SUPPORT && !memoryEnabled))
         }
 
@@ -85,6 +85,7 @@ data class ProfileDraft(
                 val decline = declined || (question == ProfileQuestion.CONDITIONS && (!consented || picks.isEmpty()))
                 put("declined", decline)
                 if (question == ProfileQuestion.LEARNING_SUPPORT) put("soundEffects", "noSoundEffects" !in picks)
+                if (question == ProfileQuestion.ADDRESS_FORM) put("form", picks.firstOrNull()?.takeUnless { decline })
                 if (!decline) {
                     when (question) {
                         ProfileQuestion.WORK -> {
@@ -123,6 +124,8 @@ data class ProfileDraft(
                             put("needs", buildJsonArray { picks.filterNot { it == "noSoundEffects" }.forEach { add(JsonPrimitive(it)) } })
                             if (memoryEnabled) put("note", text.trim().ifEmpty { null })
                         }
+
+                        ProfileQuestion.ADDRESS_FORM -> {}
 
                         else -> {
                             put("picks", buildJsonArray { picks.forEach { add(JsonPrimitive(it)) } })

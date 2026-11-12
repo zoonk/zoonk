@@ -7,9 +7,15 @@ import { toRegistrableDomain } from "../products/product-keys";
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { PermanentDocumentError, fetchDocument } from "./fetch-document";
 import { getSourceValidUntil } from "./freshness-schedule";
-import { hashDocument, parseDocument } from "./parse-document";
+import { hashDocument, hashFirstReading, parseDocument } from "./parse-document";
+import { retitleFileNameSource } from "./retitle-source";
 import { getKnownReusePolicy } from "./reuse-policy";
-import { type SourceStructure, type SourceTopic, sourceStructureSchema } from "./source-contract";
+import {
+  SOURCE_READ_VERSION,
+  type SourceStructure,
+  type SourceTopic,
+  sourceStructureSchema,
+} from "./source-contract";
 import { oweSourceChangeNotice } from "./unnoticed-changes";
 
 type WebSource = Omit<Source, "extractedText">;
@@ -25,16 +31,34 @@ export type StoreWebSourceInput = {
   acceptUrl?: (url: string) => boolean;
 };
 
-export async function fetchAndParse(url: string) {
+export async function fetchAndParse(url: string, topic?: SourceTopic) {
   const document = await fetchDocument(url);
-  const parsed = await parseDocument({ bytes: document.bytes, contentType: document.contentType });
+
+  const parsed = await parseDocument({
+    bytes: document.bytes,
+    charset: document.charset,
+    contentType: document.contentType,
+    topic,
+  });
 
   return {
     contentHash: hashDocument({ bytes: document.bytes, text: parsed.text }),
     contentType: document.contentType,
+    document,
     parsed,
     url: document.url,
   };
+}
+
+/** Only a source an older reader stored needs the first reading's hash to tell a re-read apart. */
+function hashStoredReading({
+  fetched,
+  readVersion,
+}: {
+  fetched: Awaited<ReturnType<typeof fetchAndParse>>;
+  readVersion: number;
+}): Promise<string> | null {
+  return readVersion < SOURCE_READ_VERSION ? hashFirstReading(fetched.document) : null;
 }
 
 function toStructure({
@@ -63,6 +87,7 @@ function toSourceContent({
     extractedText: fetched.parsed.text,
     fetchedAt: now,
     mimeType: fetched.contentType,
+    readVersion: SOURCE_READ_VERSION,
     structure: toStructure({ parsed: fetched.parsed, topic }),
     validUntil,
   };
@@ -70,15 +95,23 @@ function toSourceContent({
 
 function saveChangedContent({
   content,
+  firstReadingHash,
   sourceId,
   topic,
 }: {
-  content: ReturnType<typeof toSourceContent>;
+  content: ReturnType<typeof toSourceContent> & { title?: string };
+  firstReadingHash: string | null;
   sourceId: string;
   topic: SourceTopic;
 }): Promise<WebSource> {
   return prisma.$transaction(async (tx) => {
-    const owed = await oweSourceChangeNotice({ sourceId, text: content.extractedText, topic, tx });
+    const owed = await oweSourceChangeNotice({
+      firstReadingHash,
+      sourceId,
+      text: content.extractedText,
+      topic,
+      tx,
+    });
 
     return tx.source.update({
       data: { ...content, ...owed },
@@ -89,7 +122,7 @@ function saveChangedContent({
 }
 
 export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSource> {
-  const fetched = await fetchAndParse(input.url);
+  const fetched = await fetchAndParse(input.url, input.topic);
 
   if (input.acceptUrl && !input.acceptUrl(fetched.url)) {
     throw new PermanentDocumentError(
@@ -108,10 +141,22 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
     validUntil: getSourceValidUntil({ fetchedAt: now, topic: input.topic }),
   });
 
-  const stored = await prisma.source.findUnique({ select: { contentHash: true, id: true }, where });
+  const stored = await prisma.source.findUnique({
+    select: { contentHash: true, id: true, readVersion: true },
+    where,
+  });
+
+  if (stored) {
+    await retitleFileNameSource({ sourceId: stored.id, title: input.title });
+  }
 
   if (stored && stored.contentHash !== content.contentHash) {
-    return saveChangedContent({ content, sourceId: stored.id, topic: input.topic });
+    return saveChangedContent({
+      content,
+      firstReadingHash: await hashStoredReading({ fetched, readVersion: stored.readVersion }),
+      sourceId: stored.id,
+      topic: input.topic,
+    });
   }
 
   return prisma.source.upsert({
@@ -187,9 +232,9 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
     return null;
   }
 
-  const fetched = await fetchAndParse(source.url);
-  const now = new Date();
   const topic = getTopic(source);
+  const fetched = await fetchAndParse(source.url, topic);
+  const now = new Date();
 
   // A product page was official where research found it; another site's page never replaces it.
   if (topic === "product" && toRegistrableDomain(fetched.url) !== toRegistrableDomain(source.url)) {
@@ -198,7 +243,7 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
 
   if (fetched.contentHash === source.contentHash) {
     const updated = await prisma.source.update({
-      data: { fetchedAt: now },
+      data: { fetchedAt: now, readVersion: SOURCE_READ_VERSION },
       omit: { extractedText: true },
       where: { id: source.id },
     });
@@ -215,7 +260,12 @@ export async function refreshWebSource(sourceId: string): Promise<SourceRefresh 
   });
 
   return {
-    source: await saveChangedContent({ content, sourceId: source.id, topic }),
+    source: await saveChangedContent({
+      content,
+      firstReadingHash: await hashStoredReading({ fetched, readVersion: source.readVersion }),
+      sourceId: source.id,
+      topic,
+    }),
     status: "changed",
   };
 }

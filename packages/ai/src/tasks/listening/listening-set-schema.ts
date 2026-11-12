@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "../items/item-schemas";
+import { fitsTypedQuestion } from "./listening-answer-fit";
 
 export const LISTENING_QUESTION_FORMATS = ["multipleChoice", "trueFalse", "typed"] as const;
 
@@ -22,6 +23,9 @@ const evidence = z.string();
 /** From the call's list, from 1. */
 const skill = z.number().int();
 
+/** Code keeps only the accepted answers within it. */
+const answerLimit = z.object({ plusNumber: z.boolean(), words: z.number().int() });
+
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the evidence comes before the question written from it. */
 const LISTENING_QUESTION_SCHEMAS = {
   multipleChoice: z.object({
@@ -34,16 +38,36 @@ const LISTENING_QUESTION_SCHEMAS = {
     skill,
     ...GENERATED_ITEM_SCHEMAS.trueFalse.omit(NO_PICTURES).shape,
   }),
-  typed: z.object({ evidence, skill, ...GENERATED_ITEM_SCHEMAS.typed.omit(NO_PICTURES).shape }),
+  typed: z.object({
+    evidence,
+    skill,
+    answerLimit,
+    ...GENERATED_ITEM_SCHEMAS.typed.omit(NO_PICTURES).shape,
+  }),
 } as const satisfies Record<ListeningQuestionFormat, z.ZodType>;
 
 export type ListeningQuestion = z.infer<
   (typeof LISTENING_QUESTION_SCHEMAS)[ListeningQuestionFormat]
 >;
 
+type TypedListeningQuestion = Extract<ListeningQuestion, { format: "typed" }>;
+
+/** Learners are graded on these answers, so each must be one the exam would accept. */
+function keepFittingAnswers(question: TypedListeningQuestion): TypedListeningQuestion {
+  const acceptedAnswers = question.acceptedAnswers.filter((answer) =>
+    fitsTypedQuestion(answer, question),
+  );
+
+  const sampleAnswer = fitsTypedQuestion(question.sampleAnswer, question)
+    ? question.sampleAnswer
+    : (acceptedAnswers[0] ?? question.sampleAnswer);
+
+  return { ...question, acceptedAnswers, sampleAnswer };
+}
+
 export function toListeningItem(question: ListeningQuestion): GeneratedItem {
   return GENERATED_ITEM_SCHEMAS[question.format].parse({
-    ...question,
+    ...(question.format === "typed" ? keepFittingAnswers(question) : question),
     fixedOrder: false,
     image: null,
     visual: null,

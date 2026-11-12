@@ -38,6 +38,21 @@ model AnonymousLessonPace {
   @@map("anonymous_lesson_paces")
 }
 
+/// One level test's answers, kept from its first answer so the daily check sees abandoned tests too.
+/// `questions` holds each answered question as asked, since a check can remove it from the bank.
+model AnonymousLevelTest {
+  id             String @id @db.Uuid
+  language       String @db.VarChar(10)
+  targetLanguage String @map("target_language") @db.VarChar(10)
+  bankRunId      String @map("bank_run_id")
+  startScore     Float  @map("start_score")
+  answers        Json
+  questions      Json
+
+  @@index([language, targetLanguage, bankRunId])
+  @@map("anonymous_level_tests")
+}
+
 model AnonymousExamResult {
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   examBlueprintId String        @map("exam_blueprint_id") @db.Uuid

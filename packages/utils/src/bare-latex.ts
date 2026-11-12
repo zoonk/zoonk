@@ -122,7 +122,6 @@ function insertMath(text: string, pieces: BareLatex[]): string {
     );
 }
 
-/** A `$` the line already has, such as a price's, can pair with a new one; then the line stays. */
 function wrapLine(line: string): string {
   const hidden = hideMathAndCode(line);
   const pieces = findBareLatexIn(hidden);
@@ -137,6 +136,7 @@ function wrapLine(line: string): string {
 
   const wrapped = insertMath(line, pieces);
 
+  // A `$` the line already has can pair with a new one; then the line stays as written.
   const expected = [
     ...findMathSpans(line),
     ...pieces.map((piece) => ({ content: piece.latex ?? "", start: piece.start })),

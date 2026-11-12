@@ -45,7 +45,7 @@ export type TutorToolActions = {
     goalId: string;
     minutes: number;
   }) => Promise<CallStartOutcome>;
-  /** Resolves to whether the country saved on the goal. */
+  /** Resolves to whether the country saved on the goal, once `getGoalRegion` says it. */
   setGoalRegion: (input: { goalId: string; region: string }) => Promise<boolean>;
   startTestOut: (input: { chapterId: string; goalId: string }) => Promise<TestOutStart>;
 };

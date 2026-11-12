@@ -5,6 +5,7 @@ import {
 import { type shuffle } from "@zoonk/utils/shuffle";
 import { vi } from "vitest";
 import { type getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { checkLikeTheKeys } from "./level-test-bank";
 
 export const nextCache = {
   cacheTag: vi.fn(),
@@ -74,6 +75,9 @@ export const boundaries = {
     generateAlphabetLesson: vi.fn(),
   },
   "@zoonk/ai/tasks/language/assess-pronunciation": { assessPronunciation: vi.fn() },
+  "@zoonk/ai/tasks/language/check-level-test-questions": {
+    checkLevelTestQuestions: vi.fn(checkLikeTheKeys),
+  },
   "@zoonk/ai/tasks/language/check-sentence-orders": { checkSentenceOrders: vi.fn() },
   "@zoonk/ai/tasks/language/conversation-feedback": { writeConversationFeedback: vi.fn() },
   "@zoonk/ai/tasks/language/conversation-objectives": { checkConversationObjectives: vi.fn() },
@@ -82,7 +86,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/language/exam-speaking-photo": { drawExamSpeakingPhoto: vi.fn() },
   "@zoonk/ai/tasks/language/explain-spoken-answer": { explainSpokenAnswer: vi.fn() },
   "@zoonk/ai/tasks/language/language-lesson": { generateLanguageLesson: vi.fn() },
-  "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBank: vi.fn() },
+  "@zoonk/ai/tasks/language/level-test-bank": { generateLevelTestBankLevel: vi.fn() },
   "@zoonk/ai/tasks/language/live-call-session": {
     createLiveCallSession: vi.fn(),
     hangUpLiveCallSession: vi.fn(),
@@ -103,7 +107,6 @@ export const boundaries = {
   "@zoonk/ai/tasks/memory/insight": { generateMemoryInsight: vi.fn() },
   "@zoonk/ai/tasks/memory/reconcile": { reconcileMemoryFact: vi.fn() },
   "@zoonk/ai/tasks/memory/relevance": { selectRelevantMemoryFacts: vi.fn() },
-  "@zoonk/ai/tasks/memory/search-terms": { generateMemorySearchTerms: vi.fn() },
   "@zoonk/ai/tasks/memory/session-patterns": { findSessionPatterns: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/check": { checkMindMapImage: vi.fn() },
   "@zoonk/ai/tasks/mind-maps/image": { generateMindMapImage: vi.fn() },

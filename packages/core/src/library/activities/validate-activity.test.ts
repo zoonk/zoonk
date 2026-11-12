@@ -19,6 +19,19 @@ function issueCodes(content: unknown): string[] {
   return result.ok ? [] : result.issues.map((item) => item.code);
 }
 
+function processOf(count: number) {
+  const longProcess = structuredClone(fixtures.processOrder);
+
+  longProcess.fields.steps = Array.from({ length: count }, (_, index) => ({
+    icon: DEFAULT_PROCESS_ICON,
+    id: `step-${index}`,
+    text: `Step ${index + 1}`,
+    why: `It needs step ${index}.`,
+  }));
+
+  return longProcess;
+}
+
 describe(validateActivity, () => {
   it.each(activityTemplates.map((template) => template.id))("accepts the %s fixture", (id) => {
     const result = validateActivity(fixtures[id]);
@@ -219,6 +232,84 @@ describe(validateActivity, () => {
     expect(validateActivity(longLabel).ok).toBe(true);
   });
 
+  it("keeps a list past its target as written, up to what an answer can send back", () => {
+    const kept = validateActivity(processOf(9));
+    const unanswerable = validateActivity(processOf(201));
+
+    expect(kept.ok ? [] : kept.issues).toStrictEqual([]);
+
+    expect(unanswerable.ok ? [] : unanswerable.issues).toStrictEqual([
+      expect.objectContaining({ code: "inconsistentFields", path: "fields" }),
+    ]);
+  });
+
+  it("refuses sources with more passages than a learner's marks can send back", () => {
+    const manyPassages = structuredClone(fixtures.sourceComparison);
+    const [first] = manyPassages.fields.sources;
+    const words = Array.from({ length: 201 }, (_, index) => `z${index}q`);
+
+    manyPassages.fields.sources[0] = {
+      ...first!,
+      excerpt: words.join(" "),
+      passages: words.map((text, index) => ({ id: `p-${index}`, isTarget: index === 0, text })),
+    };
+
+    const result = validateActivity(manyPassages);
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([
+      expect.objectContaining({ code: "inconsistentFields", path: "fields.sources" }),
+    ]);
+  });
+
+  it("refuses a cause chain or SQL tables whose wrong answers couldn't be sent back", () => {
+    const manyNodes = structuredClone(fixtures.causeEffectChain);
+
+    manyNodes.fields.nodes = Array.from({ length: 15 }, (_, index) => ({
+      id: `n${index}`,
+      label: `Event ${index + 1}`,
+      year: 1900 + index,
+    }));
+
+    manyNodes.fields.links = manyNodes.fields.nodes
+      .slice(1)
+      .map((node, index) => ({ from: `n${index}`, to: node.id, why: "One led to the next." }));
+
+    const wideTables = structuredClone(fixtures.sqlPlayground);
+    const columns = Array.from({ length: 199 }, (_, index) => `c${index}`);
+
+    wideTables.fields.tables.push({
+      columns: columns.map((name) => ({ name, type: "text" as const })),
+      name: "wide",
+      rows: [columns],
+    });
+
+    const chain = validateActivity(manyNodes);
+    const sql = validateActivity(wideTables);
+
+    expect(chain.ok ? [] : chain.issues).toContainEqual(
+      expect.objectContaining({ code: "inconsistentFields", path: "fields.nodes" }),
+    );
+
+    expect(sql.ok ? [] : sql.issues).toContainEqual(
+      expect.objectContaining({ code: "inconsistentFields", path: "fields.tables" }),
+    );
+  });
+
+  it("keeps a list the learner never sends back, however long", () => {
+    const manyPlaces = structuredClone(fixtures.mapExplorer);
+    const [first] = manyPlaces.fields.places;
+
+    manyPlaces.fields.places = Array.from({ length: 201 }, (_, index) => ({
+      ...first!,
+      id: `place-${index}`,
+      label: `Place ${index + 1}`,
+    }));
+
+    const result = validateActivity(manyPlaces);
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([]);
+  });
+
   it("rejects inconsistent template data", () => {
     const partsOff = structuredClone(fixtures.areaModel);
 
@@ -343,18 +434,10 @@ describe(validateActivity, () => {
     const sameTwice = structuredClone(fixtures.labeledDiagram);
     sameTwice.fields.parts = [...sameTwice.fields.parts, { label: "Septum", part: "Aorta" }];
 
-    const tooMany = structuredClone(fixtures.labeledDiagram);
-
-    tooMany.fields.parts = ["a", "b", "c", "d", "e", "f", "g"].map((part) => ({
-      label: part.toUpperCase(),
-      part,
-    }));
-
     const unknownMixUp = structuredClone(fixtures.labeledDiagram);
     unknownMixUp.fields.mixUps = [{ feedback: "Why.", labels: ["Aorta", "Vena cava"] }];
 
     expect(issueCodes(sameTwice)).toContain("inconsistentFields");
-    expect(issueCodes(tooMany)).toContain("invalidSchema");
     expect(issueCodes(unknownMixUp)).toContain("inconsistentFields");
   });
 

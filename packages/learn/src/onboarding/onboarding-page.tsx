@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { Page } from "../_components/page";
+import { ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS } from "../_components/task-layout";
 import { PageWithAside } from "../shell/learn-shell";
 import { OnboardingBarRow, OnboardingPageBar } from "./onboarding-bar";
 import { type OnboardingBar, useOnboardingScreen } from "./onboarding-host";
@@ -52,8 +53,11 @@ const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
  * Reaches past the page's own padding (the shell's, or the column's beside an aside), so its
  * hairline runs across the page and it rests on the screen's bottom edge.
  */
-const BOTTOM_BAR_CLASS =
-  "bg-background border-border sticky bottom-0 z-10 -mx-4 -mb-12 border-t px-4 empty:hidden pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10";
+const BOTTOM_BAR_CLASS = cn(
+  ACTION_BAR_SURFACE_CLASS,
+  BAR_PADDING_CLASS,
+  "-mx-4 -mb-12 px-4 empty:hidden sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10",
+);
 
 export function OnboardingScreenPage({
   backHref,

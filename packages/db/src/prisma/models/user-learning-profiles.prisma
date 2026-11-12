@@ -21,6 +21,8 @@ model UserLearningProfile {
   userId         String         @unique @map("user_id") @db.Uuid
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   learningNeeds  LearningNeed[] @default([]) @map("learning_needs")
+  /// Only the learner sets it, never inferred; null means neutral.
+  addressForm    AddressForm?   @map("address_form")
   buddyKind      BuddyKind?     @map("buddy_kind")
   buddyName      String?        @map("buddy_name")
   buddyGlasses   BuddyGlasses   @default(round) @map("buddy_glasses")

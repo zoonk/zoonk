@@ -12,6 +12,7 @@ import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
@@ -223,6 +224,55 @@ describe(saveLessonSpecs, () => {
       first.id,
       ...splitIds,
       planned.id,
+    ]);
+  });
+
+  it("gives the parts this run splits off the laws their lesson reads, and leaves a reused lesson's alone", async () => {
+    const { chapter, first, planned } = await chapterWithLessons();
+    const [part, shared] = [splitPart("Temperatures, part two"), splitPart("Temperatures, recap")];
+    const [earlierRun, workflowRunId] = [randomUUID(), randomUUID()];
+    const law = await sourceFixture({ extractedText: "Art. 1º Texto." });
+
+    await Promise.all([
+      claimLibraryGeneration({ id: planned.id, target: "lessonSpec", workflowRunId: earlierRun }),
+      claimLibraryGeneration({ id: first.id, target: "lessonSpec", workflowRunId }),
+      prisma.lessonSource.create({
+        data: { articles: ["Art. 1º"], lessonId: first.id, sourceId: law.id },
+      }),
+    ]);
+
+    const earlier = await saveLessonSpecs({
+      homeChapterId: chapter.id,
+      lessonId: planned.id,
+      provenance,
+      scope,
+      specs: [temperatureSpec(), shared],
+      workflowRunId: earlierRun,
+    });
+
+    const saved = await saveLessonSpecs({
+      homeChapterId: chapter.id,
+      lessonId: first.id,
+      provenance,
+      scope,
+      specs: [temperatureSpec(), part, shared],
+      workflowRunId,
+    });
+
+    const [, sharedId] = earlier.status === "saved" ? earlier.lessonIds : [];
+    const [, partId, reusedId] = saved.status === "saved" ? saved.lessonIds : [];
+
+    expect(reusedId).toBe(sharedId);
+
+    const links = await prisma.lessonSource.findMany({
+      orderBy: { createdAt: "asc" },
+      select: { articles: true, lessonId: true },
+      where: { sourceId: law.id },
+    });
+
+    expect(links).toStrictEqual([
+      { articles: ["Art. 1º"], lessonId: first.id },
+      { articles: ["Art. 1º"], lessonId: partId },
     ]);
   });
 

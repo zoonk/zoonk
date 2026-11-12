@@ -28,7 +28,6 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
     select: 1 as const,
     set: null,
     skillId: "skill",
-    timeMachine: null,
     unit: null,
     visual: null,
   };

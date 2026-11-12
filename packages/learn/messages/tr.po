@@ -6764,19 +6764,9 @@ msgid "We heard “{heard}”"
 msgstr "“{heard}” diye duyduk"
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "-col7H"
-msgid "It comes back {date}."
-msgstr "{date} tarihinde tekrar karşına çıkacak."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "noYTIn"
-msgid "You've got this one. It won't come back."
-msgstr "Bu kelimeyi artık doğru söylüyorsun. Bir daha karşına çıkmayacak."
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Aksanın sana asla engel olmaz. Hâlâ farklı telaffuz ettiğin kelimeler yarın tekrar karşına çıkar."
+msgctxt "zonHth"
+msgid "An accent never blocks you."
+msgstr "Aksanın sana asla engel olmaz."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -7964,9 +7954,19 @@ msgid "Nothing to practice yet"
 msgstr "Henüz alıştırma yapacak bir şey yok"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "Kalanlar, aklında daha iyi kalmaları için başka bir gün tekrar gelecek."
+msgctxt "zaS-g7"
+msgid "The ones you missed come back another day, when they stick better."
+msgstr "Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "gMgMMy"
+msgid "The ones you missed come back another day. The rest are still ready to practice."
+msgstr "Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin."
+
+#: src/mistakes/practice-done.tsx
+msgctxt "4bskgW"
+msgid "The rest are still ready to practice."
+msgstr "Kalanlarla hâlâ alıştırma yapabilirsin."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -9607,12 +9607,6 @@ msgctxt "goalErrors.u1Pjvx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
 msgstr "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat ya da Plus’a geç."
 
-#. Shown when automated bot protection refuses to let this browser continue without an account.
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qi0x0O"
-msgid "A security check blocked this browser. Try another browser, or create a free account."
-msgstr "Güvenlik kontrolü bu tarayıcıyı engelledi. Başka bir tarayıcı dene ya da ücretsiz hesap oluştur."
-
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.4-VMGC"
 msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
@@ -9881,14 +9875,19 @@ msgid "Without a date, you study everything at your own pace, and we show when y
 msgstr "Tarih belirlemezsen tüm konuları kendi temponda çalışırsın, biz de her aşamaya ne zaman ulaşacağını gösteririz."
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "xdO2E5"
-msgid "No date, study everything"
-msgstr "Tarih belirlemeden tüm konuları çalış"
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "Tarih belirlemeden devam et"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "Hedeflediğin bir tarih var mı?"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "Tarihi kaldır"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"
@@ -12721,6 +12720,12 @@ msgctxt "hguHsn"
 msgid "What helps you learn"
 msgstr "Öğrenmene yardımcı olanlar"
 
+#. Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "DGS8Ad"
+msgid "How we address you"
+msgstr "Sana hitap şeklimiz"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "LveDpT"
 msgid "Not shared"
@@ -12741,6 +12746,12 @@ msgstr "Cevaplanmadı"
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
 msgstr "{count, plural, other {# kaydedildi}}"
+
+#. An answer the learner saved, without showing it.
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "fsB_4p"
+msgid "Saved"
+msgstr "Kaydedildi"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "AYPOzn"
@@ -12919,6 +12930,12 @@ msgctxt "W7cEaa"
 msgid "What helps you learn?"
 msgstr "Öğrenmene neler yardımcı olur?"
 
+#. Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as 'you're right'. Not a question about pronouns or identity. Translate as a natural, friendly question.
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "MgGE60"
+msgid "How should we address you?"
+msgstr "Sana nasıl hitap edelim?"
+
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "jA1Ffb"
 msgid "We'll use situations from your day in your examples."
@@ -12948,6 +12965,11 @@ msgstr "İsteğe bağlı. Sen onaylamadıkça buradaki hiçbir bilgi kaydedilmez
 msgctxt "310Na4"
 msgid "Pick anything that helps. No label or diagnosis needed."
 msgstr "Sana yardımcı olan her şeyi seç. Kendini bir kategoriye koyman ya da tanı almış olman gerekmez."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "Ders arkadaşın sana bu şekilde hitap edecek, geri bildirimler de buna göre yazılacak. Dersler aynı kalacak."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "vHNPYm"
@@ -13388,12 +13410,6 @@ msgid "Your lesson isn't saved yet"
 msgstr "Dersin henüz kaydedilmedi"
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Tekrar tarihi: {date}"
-
-#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13593,11 +13609,6 @@ msgid "Saved to your mistakes"
 msgstr "Yanlış defterine kaydedildi"
 
 #: src/session/question-block/question-feedback.tsx
-msgctxt "Kvx6Wm"
-msgid "Saved to your mistakes · it comes back tomorrow"
-msgstr "Yanlış defterine kaydedildi · yarın tekrar karşına çıkacak"
-
-#: src/session/question-block/question-feedback.tsx
 msgctxt "_o5iJI"
 msgid "Left blank"
 msgstr "Boş bırakıldı"
@@ -13633,31 +13644,6 @@ msgstr "net {net}"
 msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "Bir yanlış cevap bir doğru cevabı götürür. Emin değil misin? Boş bırak."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "s5ATQF"
-msgid "You saw this on {date}."
-msgstr "Bunu {date} tarihinde gördün."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "gjTB0m"
-msgid "Right again, like on {date}."
-msgstr "Yine doğru, tıpkı {date} tarihinde olduğu gibi."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "B1t4KX"
-msgid "You got it right on {date}. Reviewing it now helps it stick."
-msgstr "{date} tarihinde doğru cevapladın. Şimdi tekrar etmek aklında kalmasına yardımcı olur."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "HpADV2"
-msgid "On {date} you answered “{answer}”."
-msgstr "{date} tarihinde “{answer}” cevabını verdin."
-
-#: src/session/question-block/time-machine.tsx
-msgctxt "ZPSLSh"
-msgid "On {date} this one tripped you up."
-msgstr "{date} tarihinde bu soruda zorlandın."
 
 #: src/session/reached-moment.tsx
 #: src/session/summary/summary-parts.tsx
@@ -13796,12 +13782,6 @@ msgstr "Bir dakikadan kısa sürede tamamlandı"
 msgctxt "dQnLX6"
 msgid "Done in {time}"
 msgstr "{time} içinde tamamlandı"
-
-#. When the skills to review come back. {days} lists days, like "May 5 and May 7".
-#: src/session/summary/summary-parts.tsx
-msgctxt "KxAe8j"
-msgid "Back {days}"
-msgstr "Tekrar zamanı: {days}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"

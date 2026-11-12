@@ -54,7 +54,6 @@
         <item quantity="other">%d mistakes fixed. They leave your notebook.</item>
     </plurals>
     <string name="questions_saved">Saved to your mistakes</string>
-    <string name="questions_saved_tomorrow">Saved to your mistakes · it comes back tomorrow</string>
     <string name="questions_show_less">Show less</string>
     <string name="questions_read_again">Read it all again</string>
     <string name="questions_set_place_audio">Question %1$d of %2$d on this recording</string>

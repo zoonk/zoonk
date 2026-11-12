@@ -1,0 +1,858 @@
+{
+  "modelId": "openai/gpt-6.1-terra",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Wrong: 12.813 official domains, 9.784 official domains",
+          "kind": "majorErrors",
+          "score": 9.428571428571429
+        },
+        {
+          "conclusion": "Wrong: 12.813 official domains, 9.784 official domains",
+          "kind": "minorErrors",
+          "score": 9.428571428571429
+        },
+        {
+          "conclusion": "Wrong: 12.813 official domains, 9.784 official domains",
+          "kind": "potentialImprovements",
+          "score": 9.428571428571429
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "forbidden": [
+            "concurso",
+            "edital"
+          ],
+          "laws": [
+            {
+              "articles": [
+                "4"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "12.813",
+                "12813"
+              ]
+            },
+            {
+              "articles": [
+                "18",
+                "19",
+                "20"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "9.784",
+                "9784"
+              ]
+            }
+          ]
+        },
+        "id": "pt-conflito-interesses-lei-12813-1",
+        "origin": "production",
+        "userInput": {
+          "chapterTitle": "Ética pública e conduta profissional na CGU",
+          "courseTitle": "Direito Administrativo",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Identificar conflitos de interesses e preservar a imparcialidade funcional",
+          "lessonDescription": "Como reconhecer interesses privados que ameaçam a atuação imparcial e aplicar as regras de impedimento e suspeição.",
+          "lessonTitle": "Imparcialidade e conflito de interesses",
+          "skills": [
+            "Identificar conflitos de interesses",
+            "Preservar a imparcialidade funcional"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "5"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br",
+                "stf.jus.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "constituicao"
+              ]
+            }
+          ]
+        },
+        "id": "pt-remedios-constitucionais-1",
+        "userInput": {
+          "chapterTitle": "Direitos e garantias fundamentais",
+          "courseTitle": "Direito Constitucional",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Escolher o remédio constitucional que cabe em cada caso",
+          "lessonDescription": "Quando cabem habeas corpus, habeas data e mandado de segurança, e o que cada um protege.",
+          "lessonTitle": "Habeas corpus, habeas data e mandado de segurança",
+          "skills": [
+            "Distinguir habeas corpus de mandado de segurança",
+            "Reconhecer quando cabe habeas data"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "4",
+                "13"
+              ],
+              "country": "GB",
+              "domains": [
+                "legislation.gov.uk"
+              ],
+              "language": "en",
+              "nameIncludes": [
+                "equality act"
+              ]
+            }
+          ]
+        },
+        "id": "en-uk-protected-characteristics-1",
+        "userInput": {
+          "chapterTitle": "Discrimination at work",
+          "courseTitle": "UK Employment Law",
+          "isPrivate": false,
+          "language": "en",
+          "lessonCanDo": "Tell whether a workplace decision is direct discrimination",
+          "lessonDescription": "Which personal characteristics the Equality Act protects at work, and what makes less favourable treatment direct discrimination.",
+          "lessonTitle": "The protected characteristics",
+          "skills": [
+            "Name the protected characteristics",
+            "Recognize direct discrimination"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "24"
+              ],
+              "country": "ES",
+              "domains": [
+                "boe.es"
+              ],
+              "language": "es",
+              "nameIncludes": [
+                "39/2015"
+              ]
+            }
+          ]
+        },
+        "id": "es-silencio-administrativo-1",
+        "userInput": {
+          "chapterTitle": "El procedimiento administrativo común",
+          "courseTitle": "Derecho Administrativo español",
+          "isPrivate": false,
+          "language": "es",
+          "lessonCanDo": "Determinar si el silencio de la Administración estima o desestima una solicitud",
+          "lessonDescription": "Qué ocurre cuando la Administración no resuelve a tiempo un procedimiento iniciado a solicitud del interesado, y cuándo el silencio es positivo o negativo.",
+          "lessonTitle": "El silencio administrativo",
+          "skills": [
+            "Aplicar la regla general del silencio positivo",
+            "Reconocer las excepciones de silencio negativo"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "622"
+              ],
+              "country": "DE",
+              "domains": [
+                "gesetze-im-internet.de",
+                "bundesjustizamt.de",
+                "recht.bund.de"
+              ],
+              "language": "de",
+              "nameIncludes": [
+                "bgb",
+                "burgerliches gesetzbuch"
+              ]
+            }
+          ]
+        },
+        "id": "en-germany-notice-periods-1",
+        "userInput": {
+          "chapterTitle": "Employment contracts",
+          "courseTitle": "Working in Germany",
+          "isPrivate": false,
+          "language": "en",
+          "lessonCanDo": "Work out the statutory notice period for an employee in Germany",
+          "lessonDescription": "How long the statutory notice periods are in Germany when an employee resigns or is dismissed, and how the employer's period grows with years of service.",
+          "lessonTitle": "Notice periods when you resign or are dismissed",
+          "skills": [
+            "Apply the basic four-week notice period",
+            "Extend the employer's notice period by years of service"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "107.51",
+                "107.31",
+                "107.29"
+              ],
+              "country": "US",
+              "domains": [
+                "ecfr.gov",
+                "faa.gov",
+                "govinfo.gov",
+                "federalregister.gov"
+              ],
+              "language": "en",
+              "nameIncludes": [
+                "part 107",
+                "14 cfr"
+              ]
+            }
+          ]
+        },
+        "id": "en-us-drone-operating-limits-1",
+        "userInput": {
+          "chapterTitle": "Operating rules",
+          "courseTitle": "Flying Drones Commercially in the US",
+          "isPrivate": false,
+          "language": "en",
+          "lessonCanDo": "Tell whether a planned commercial drone flight follows the FAA's operating limits",
+          "lessonDescription": "The FAA's operating limits for small drones flown for work: maximum altitude, keeping the drone in sight, and when you may fly at night.",
+          "lessonTitle": "Altitude, line of sight and night flights",
+          "skills": [
+            "Apply the altitude limit",
+            "Keep visual line of sight",
+            "Check the conditions for night operations"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "87"
+              ],
+              "country": "MX",
+              "domains": [
+                "diputados.gob.mx",
+                "dof.gob.mx",
+                "gob.mx"
+              ],
+              "language": "es",
+              "nameIncludes": [
+                "ley federal del trabajo"
+              ]
+            }
+          ]
+        },
+        "id": "es-mx-aguinaldo-1",
+        "userInput": {
+          "chapterTitle": "Prestaciones de ley",
+          "courseTitle": "Derecho laboral en México",
+          "isPrivate": false,
+          "language": "es",
+          "lessonCanDo": "Calcular el aguinaldo que corresponde a un trabajador",
+          "lessonDescription": "Cuánto aguinaldo corresponde por ley, hasta cuándo se paga y cómo se calcula cuando no se trabajó el año completo.",
+          "lessonTitle": "El aguinaldo",
+          "skills": [
+            "Calcular el aguinaldo mínimo",
+            "Calcular el aguinaldo proporcional"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "6"
+              ],
+              "country": "EU",
+              "domains": [
+                "eur-lex.europa.eu",
+                "europa.eu"
+              ],
+              "language": "en",
+              "nameIncludes": [
+                "2016/679",
+                "gdpr",
+                "general data protection regulation"
+              ]
+            }
+          ]
+        },
+        "id": "en-eu-lawful-bases-1",
+        "userInput": {
+          "chapterTitle": "Lawful processing",
+          "courseTitle": "GDPR for Marketing Teams",
+          "isPrivate": false,
+          "language": "en",
+          "lessonCanDo": "Pick the lawful basis for a marketing use of personal data",
+          "lessonDescription": "The six lawful bases for processing personal data, and when consent or legitimate interests fits a marketing activity.",
+          "lessonTitle": "The six lawful bases",
+          "skills": [
+            "Name the six lawful bases",
+            "Choose between consent and legitimate interests"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "forbidden": [
+            "fiorella"
+          ],
+          "laws": [
+            {
+              "articles": [
+                "7",
+                "11"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br",
+                "gov.br/anpd"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "13.709",
+                "13709",
+                "lgpd"
+              ]
+            }
+          ]
+        },
+        "id": "pt-private-lgpd-employee-data-1",
+        "userInput": {
+          "chapterTitle": "Dados de funcionários",
+          "courseTitle": "LGPD para o RH da Fiorella Calçados",
+          "isPrivate": true,
+          "language": "pt",
+          "lessonCanDo": "Escolher a base legal para tratar um dado de funcionário",
+          "lessonDescription": "Em que hipóteses a lei permite tratar dados pessoais e dados sensíveis de funcionários sem o consentimento deles.",
+          "lessonTitle": "Bases legais para tratar dados de funcionários",
+          "skills": [
+            "Identificar a base legal para dados pessoais",
+            "Identificar a base legal para dados sensíveis"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "forbidden": [
+            "exame de ordem",
+            "fgv",
+            "1ª fase"
+          ],
+          "laws": [
+            {
+              "articles": [
+                "22",
+                "23"
+              ],
+              "country": "BR",
+              "domains": [
+                "planalto.gov.br",
+                "camara.leg.br",
+                "normas.leg.br",
+                "lexml.gov.br",
+                "senado.leg.br",
+                "oab.org.br"
+              ],
+              "language": "pt",
+              "minDomains": 3,
+              "nameIncludes": [
+                "8.906",
+                "8906"
+              ]
+            }
+          ]
+        },
+        "id": "pt-oab-honorarios-1",
+        "userInput": {
+          "chapterTitle": "Ética profissional",
+          "courseTitle": "OAB 1ª fase: Ética e Estatuto da Advocacia",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Identificar a que honorários o advogado tem direito em cada caso",
+          "lessonDescription": "Os honorários convencionados, fixados por arbitramento judicial e de sucumbência, e a quem pertencem os de sucumbência.",
+          "lessonTitle": "Honorários advocatícios",
+          "skills": [
+            "Distinguir as espécies de honorários",
+            "Reconhecer a titularidade dos honorários de sucumbência"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": [
+            {
+              "articles": [
+                "237",
+                "238",
+                "239"
+              ],
+              "country": "PT",
+              "domains": [
+                "dre.pt",
+                "diariodarepublica.pt",
+                "pgdlisboa.pt"
+              ],
+              "language": "pt",
+              "nameIncludes": [
+                "codigo do trabalho",
+                "7/2009"
+              ]
+            }
+          ]
+        },
+        "id": "pt-portugal-ferias-1",
+        "userInput": {
+          "chapterTitle": "Tempo de trabalho e férias",
+          "courseTitle": "Direito do Trabalho em Portugal",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Calcular os dias de férias a que um trabalhador tem direito",
+          "lessonDescription": "Quantos dias úteis de férias a lei garante por ano e como se contam no ano de admissão.",
+          "lessonTitle": "O direito a férias",
+          "skills": [
+            "Contar os dias úteis de férias",
+            "Aplicar a regra do ano de admissão"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": []
+        },
+        "id": "en-legal-traditions-none-1",
+        "userInput": {
+          "chapterTitle": "Legal systems of the world",
+          "courseTitle": "Introduction to Law",
+          "isPrivate": false,
+          "language": "en",
+          "lessonCanDo": "Tell a common law system from a civil law system",
+          "lessonDescription": "How common law systems build rules from judges' decisions while civil law systems start from written codes.",
+          "lessonTitle": "Common law and civil law",
+          "skills": [
+            "Describe the role of precedent",
+            "Describe the role of codification"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "forbidden": [
+            "enem"
+          ],
+          "laws": []
+        },
+        "id": "pt-enem-biologia-none-1",
+        "userInput": {
+          "chapterTitle": "Metabolismo energético",
+          "courseTitle": "Biologia para o ENEM",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Comparar o que entra e o que sai na fotossíntese e na respiração celular",
+          "lessonDescription": "Como a fotossíntese guarda energia na glicose e a respiração celular a libera, e como as duas se completam.",
+          "lessonTitle": "Fotossíntese e respiração celular",
+          "skills": [
+            "Descrever as etapas da fotossíntese",
+            "Relacionar fotossíntese e respiração celular"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "forbidden": [
+            "brightwave"
+          ],
+          "laws": []
+        },
+        "id": "en-private-employer-gift-policy-none-1",
+        "userInput": {
+          "chapterTitle": "Our code of conduct",
+          "courseTitle": "Onboarding at Brightwave Logistics",
+          "isPrivate": true,
+          "language": "en",
+          "lessonCanDo": "Decide whether to accept, declare or refuse a supplier's gift",
+          "lessonDescription": "Which gifts from suppliers you may accept at Brightwave, which ones you must declare, and how to declare them in the gifts register.",
+          "lessonTitle": "Gifts and hospitality from suppliers",
+          "skills": [
+            "Apply the gift value limit",
+            "Declare a gift in the register"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": []
+        },
+        "id": "pt-crase-gramatica-none-1",
+        "userInput": {
+          "chapterTitle": "Crase",
+          "courseTitle": "Língua Portuguesa",
+          "isPrivate": false,
+          "language": "pt",
+          "lessonCanDo": "Decidir quando usar a crase antes de palavras femininas",
+          "lessonDescription": "Quando o a antes de uma palavra feminina leva acento grave, e os casos em que a crase é proibida ou opcional.",
+          "lessonTitle": "Crase antes de palavras femininas",
+          "skills": [
+            "Reconhecer a crase obrigatória",
+            "Reconhecer a crase proibida e a opcional"
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "laws": []
+        },
+        "id": "en-unknown-country-tenancy-none-1",
+        "userInput": {
+          "chapterTitle": "Ending a tenancy",
+          "courseTitle": "Renting a Home",
+          "isPrivate": false,
+          "language": "en",
+          "lessonCanDo": "Work out how much notice a landlord must give before ending a tenancy",
+          "lessonDescription": "How much notice a landlord must give a tenant before ending a tenancy, and what makes a notice valid.",
+          "lessonTitle": "Notice from your landlord",
+          "skills": [
+            "Count the notice period",
+            "Check that a notice is valid"
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-laws"
+}

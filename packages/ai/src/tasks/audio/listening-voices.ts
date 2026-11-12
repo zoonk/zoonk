@@ -9,6 +9,11 @@ const VOICES_BY_GENDER = {
 
 type VoiceGender = keyof typeof VOICES_BY_GENDER;
 
+/** Past this many speakers of one gender, two of them share a voice. */
+export function countListeningVoices(gender: VoiceGender): number {
+  return VOICES_BY_GENDER[gender].length;
+}
+
 /**
  * Every speaker gets a different voice, so a listener tells them apart. The same `seed` always gets
  * the same voices, and two recordings don't all start with the same two.

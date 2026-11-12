@@ -12,7 +12,9 @@ export const callFeedbackSchema = z
     kind: z.literal("call"),
     pronunciation: z
       .array(z.object({ respelling: z.string(), tip: z.string(), word: z.string() }))
-      .meta({ description: "At most two words the learner said that are often hard to say" }),
+      .meta({
+        description: "Words the learner said that are often hard to say, usually none to two",
+      }),
     wentWell: z.array(z.string()).meta({ description: "Phrases the learner said well" }),
   })
   .meta({ id: "LanguageCallFeedback" });

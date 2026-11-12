@@ -14,7 +14,6 @@
   "account_did_not_get_it": "e07d88cb24b915f9a3515920f5c59c758d67361ed031f8b100fe458e9978b9ce",
   "account_email": "8ba7f51792980f1341d7806add424619095117730534aa46fb05b5e3a212ca3c",
   "account_email_placeholder": "01c131d33fff4602d2c0517edfe2496bc86f5e94f6c230e08cc99d239a5f56f1",
-  "account_failure_bot_detected": "77d50023ec9eb18a4d6700478b1c9bd8b06c517ca6019c90235b6fa23a93418f",
   "account_failure_code_expired": "aef011d3285c1cbf9722d5c95d28283960e347c5f5e7c836c6105f5335924e2c",
   "account_failure_code_locked": "d1580bb63673947d56c0359302a5469c4348308d285eba83a5b9af48ff7f8276",
   "account_failure_disposable_email": "fff08b68fca835d04039a136013c8b80d57c76e20877081bb6677316a7fa601a",
@@ -89,7 +88,6 @@
     <string name="account_new_code_failed">新しいコードを送信できませんでした。もう一度お試しください。</string>
     <string name="account_failure_invalid_email">有効なメールアドレスを入力してください</string>
     <string name="account_failure_disposable_email">使い捨てのメールアドレスは使えません。別のメールアドレスか、プライバシー保護用のエイリアスを使ってください。</string>
-    <string name="account_failure_bot_detected">セキュリティチェックでこのリクエストがブロックされました。「Googleで続ける」を試すか、hello@zoonk.comまでお問い合わせください。</string>
     <string name="account_failure_network">Zoonkに接続できませんでした。通信状況を確認して、もう一度お試しください。</string>
     <string name="account_failure_rate_limited">試行回数の上限に達しました。1分待ってからもう一度お試しください。</string>
     <string name="account_failure_wrong_code">コードが違います。メールを確認して、もう一度入力してください。</string>

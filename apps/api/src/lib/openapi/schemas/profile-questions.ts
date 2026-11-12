@@ -26,7 +26,7 @@ const profileQuestionViewSchema = z
           .array(z.string())
           .meta({
             description:
-              "Saved option, status, condition or need ids; noSoundEffects represents disabled sounds",
+              "Saved option, status, condition, need or address form ids; noSoundEffects represents disabled sounds",
           }),
         studies: z
           .array(
