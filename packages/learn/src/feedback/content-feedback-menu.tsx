@@ -62,11 +62,37 @@ export function ContentFeedbackMenu({
   );
 }
 
-export function ReportProblemMenu({ label, screen }: { label: string; screen: string }) {
+/** `place="bar"` is the page bar's borderless icon; the default is the bordered one beside a page's main button. */
+export function ReportProblemMenu({
+  label,
+  place = "detail",
+  screen,
+}: {
+  label: string;
+  place?: "bar" | "detail";
+  screen: string;
+}) {
   const feedback = useContentFeedback();
 
   if (!feedback) {
     return null;
+  }
+
+  if (place === "bar") {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<Button className="shrink-0" size="icon-bar" variant="ghost" />}
+        >
+          <EllipsisIcon aria-hidden="true" />
+          <span className="sr-only">{label}</span>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="end" className="w-60">
+          <ReportProblemItem screen={screen} />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   }
 
   return (

@@ -15,6 +15,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { PageEyebrow } from "../_components/page";
@@ -79,7 +80,8 @@ function ExamEyebrow() {
   const { exam } = useExamScreen();
   const days = exam.daysLeft;
 
-  if (days === null || days <= 0) {
+  // The day before, the card under the title says "tomorrow": the count would say it twice.
+  if (days === null || days <= 0 || exam.stage === "dayBefore") {
     return <PageEyebrow>{t("Exam")}</PageEyebrow>;
   }
 
@@ -92,9 +94,18 @@ function ExamEyebrow() {
   );
 }
 
+/** On a phone the options sit across from the back arrow every day, so the page's top never moves. */
 function ExamBar() {
+  const t = useExtracted();
   const { exam, hrefs } = useExamScreen();
-  return <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName} />;
+
+  return (
+    <div className="contents lg:hidden">
+      <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName}>
+        <ReportProblemMenu label={t("Exam options")} place="bar" screen="exam" />
+      </LearnPageBar>
+    </div>
+  );
 }
 
 /** Why the dates may change, behind a tap: the page says once that they're estimated. */
@@ -182,6 +193,7 @@ function isLastDays(stage: ExamView["stage"]): boolean {
 function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
+  const main = isLastDays(exam.stage) ? null : mockAction;
 
   return (
     <>
@@ -192,9 +204,11 @@ function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
           <ExamFacts />
         </DetailHeroText>
 
-        <DetailActions>
-          {isLastDays(exam.stage) ? null : mockAction}
-          <ReportProblemMenu label={t("Exam options")} screen="exam" />
+        <DetailActions className={cn(!main && "max-lg:hidden")}>
+          {main}
+          <div className="contents max-lg:hidden">
+            <ReportProblemMenu label={t("Exam options")} screen="exam" />
+          </div>
         </DetailActions>
       </DetailHero>
 
@@ -215,7 +229,8 @@ function ExamMoment() {
       href={null}
       moment={{
         checklist: exam.stage === "dayBefore" || exam.stage === "examDay" ? exam.checklist : [],
-        day: exam.days[0] ?? null,
+        // The date is under the page's title already.
+        day: null,
         examName: exam.examName,
         mocksTaken: exam.mocks.length,
         prepared: exam.prepared,
@@ -290,7 +305,10 @@ export function ExamScreen({
         <DetailContent>
           <ExamMoment />
           <ExamResultSection />
-          <ExamMocks entry={isLastDays(exam.stage) && mockAction !== null} offered={mockAction !== null} />
+          <ExamMocks
+            entry={isLastDays(exam.stage) && mockAction !== null}
+            offered={mockAction !== null}
+          />
           <ExamMockProgress />
           {exam.format.length === 0 && <ExamMapSection />}
           <ExamSpeaking />
