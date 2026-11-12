@@ -61,7 +61,14 @@ Work in this order, since each step rests on the one before:
 `team`: one or two companions by role, never by name: someone curious alongside the learner (a friend, a guide who likes questions), who wonders, guesses and is surprised, not a technician with a task. Each has a short `id` ("guide", "ai"), a `role` in `LANGUAGE`, what they know or want (`expertise`, one line) and `ai`: true for at most one AI assistant.
 {{/whatIf}}
 
-The app gives each colleague a name from the learner's own team, so refer to a colleague inside any text as `{{id}}` ("{{product}} wants to launch today"). Never write a person's name, and never name the learner: talk to them as "you", with no word about them that agrees with a gender ("Addressing the learner", below); only colleagues have one. The names come in a fixed order: not counting the AI assistant, the first colleague in `team` is a woman, the second a man, the third a woman and the fourth a man. Write each `role`, and every word that refers to them, in that gender where `LANGUAGE` marks it.
+The app gives each colleague a name from the learner's own team, so refer to a colleague inside any text as `{{id}}` ("{{product}} wants to launch today"). Never write a person's name, and never name the learner: talk to them as "you", with no word about them that agrees with a gender ("Addressing the learner", below); only the human colleagues have one. The names come in a fixed order: not counting the AI assistant, the first colleague in `team` is a woman, the second a man, the third a woman and the fourth a man. Write each `role`, and every word that refers to them, in that gender where `LANGUAGE` marks it.
+
+The AI assistant gets no name and has no gender: the app shows its `role` wherever its `{{id}}` appears. Use its `{{id}}` like a name that takes no article, and keep the words around it free of gender: no article or contraction before it, and no pronoun, adjective or participle that agrees with it. Rephrase a sentence that would need one. For example:
+
+- Portuguese: "Pedi para {{ai}} refazer a conta", never "à {{ai}}", "ao {{ai}}", "da {{ai}}" or "do {{ai}}".
+- Spanish: "Le pedí a {{ai}} que repitiera la cuenta", never "al {{ai}}" or "a la {{ai}}".
+- French: "J'ai demandé à {{ai}} de refaire le calcul", never "au {{ai}}" or "à la {{ai}}".
+- German: "Ich habe {{ai}} gebeten, nachzurechnen", never "den {{ai}}" or "die {{ai}}".
 
 # Skills
 
@@ -70,7 +77,7 @@ The app gives each colleague a name from the learner's own team, so refer to a c
 # Meters
 
 {{#job}}
-`meters`: 1 to 3 things the decisions move, named in the job's own terms ("Risk of a wrong call", "{{product}}'s patience", "Budget left"). Each has an `id`, a `label` aiming for 40 characters or fewer, a `start` from 0 to 100 and `goodWhen`: `low` or `high`. Pick meters that pull against each other, so buying one costs another. A meter measures something in the case's world that a choice really changes, so doing what the evidence supports never makes the mission's own meter worse: a strong choice pays on another one. No meter counts the clock (time left, margin until the deadline): `deadline` and each `timePasses` already say where the clock is, and a 0 to 100 meter can't stay in step with them. For time pressure, use what a delay costs: a colleague's patience, the team's room for other work.
+`meters`: 1 to 3 things the decisions move, named in the job's own terms ("Risk of a wrong call", "{{product}}'s patience", "Budget left"). Each has an `id`, a `label` aiming for 40 characters or fewer, a `start` from 0 to 100 and `goodWhen`: `low` or `high`. Pick meters that pull against each other, so buying one costs another. Each choice on a path moves a meter from its `start`, and the app stops it at 0 and at 100, so set `start` with room for a whole path to move it the way its choices push: a meter that every strong choice improves starts far from its good end. A meter measures something in the case's world that a choice really changes, so doing what the evidence supports never makes the mission's own meter worse: a strong choice pays on another one. No meter counts the clock (time left, margin until the deadline): `deadline` and each `timePasses` already say where the clock is, and a 0 to 100 meter can't stay in step with them. For time pressure, use what a delay costs: a colleague's patience, the team's room for other work.
 {{/job}}
 {{#whatIf}}
 `meters`: one thing the decisions move, or none. It has an `id`, a `label` aiming for 40 characters or fewer, a `start` from 0 to 100 and `goodWhen`: `low` or `high`.
@@ -115,7 +122,7 @@ Each decision has:
 - `id`: short and in English ("start", "recount").
 - `situation`: what has just happened and what the learner now has to decide, in one or two sentences.
 - `pull`: what pulls toward the tempting choice: who wants it and why they have a point (a deadline that's real, money that waiting really loses, a colleague who'd be let down).
-- `insight`: the idea from the chapter that settles this decision. The learner has to bring it themselves: no colleague will say it before the pick, and it comes out afterwards, in what the choice leads to. So the decision is answerable from the chapter and what the learner has seen so far, never from something only a colleague knows.
+- `insight`: the idea from the chapter that settles this decision: what one of `SKILLS` teaches, at work in this moment, never general good sense about work (keeping to the scope, not overreacting). The learner has to bring it themselves: no colleague will say it before the pick, and it comes out afterwards, in what the choice leads to. So the decision is answerable from the chapter and what the learner has seen so far, never from something only a colleague knows.
 - `skills`: the one or two skill ids this decision trains.
 - `choices`: 2 to 4 actions. Each has:
   - `id`: short and in English ("ask-ai", "ship-now"), unique within its decision.
@@ -134,7 +141,8 @@ Make every decision a real choice:
 - Asking the colleague what they've seen or know is a real option in at least one decision, and it tells the learner something they then use.
 {{/whatIf}}
 {{#job}}
-- The strong choice isn't always the most careful one. In at least one decision caution loses, for a reason that belongs to this case: the delay itself costs someone something, the careful option answers a question nobody asked, or it spends what the mission needs most. The more cautious choice there is `fair` or `weak`. A safety check on a person is never that decision. Don't build it as "act, or have what's already checked reviewed once more": nobody argues for a second look at settled work, and it reads the same in every case.
+- The strong choice isn't always the most careful one. In at least one decision caution loses, for a reason that belongs to this case: the delay itself costs someone something, the extra care can't change the answer, or it spends what the mission needs most. The more cautious choice there is `fair` or `weak`. A safety check on a person is never that decision. Don't build it as "act, or have what's already checked reviewed once more": nobody argues for a second look at settled work, and it reads the same in every case.
+- That decision, like every other, is a step the mission needs. Don't add a wider job to the case (checking everything else as well, holding everything back, a cleanup next door) so the learner can turn it down: when the mission is answered, the case ends. A colleague pushes to widen the work only when how far to go is the mission's own question and the chapter's idea draws the line.
 - Asking a colleague or the AI assistant for a check is a real option somewhere. Where it's the smart move it's strong, and it establishes what the check finds.
 - A sound professional step (a second check by a colleague, a call to the person responsible) isn't rated down just for taking someone's time. Rate it below another choice only when that choice is better for a reason the learner could see.
 {{/job}}
@@ -185,4 +193,4 @@ Write everything in `LANGUAGE`, the plan's notes and facts included, with the nu
 
 # Final check
 
-Before answering, check that: `skills` has an entry for each skill in `SKILLS`; every calculation in `facts` is right, every `fact` is rounded as the job would say it and every panel value copies a fact; every choice buys and costs something real; no decision's `insight` is something only a colleague could know; every `next`, `establishes`, `restsOn`, decision `skills` and `{{id}}` points at something that exists; every path ends after the allowed number of decisions with no loops; no ending cites a fact one of its paths never established; and every word is in `LANGUAGE`.
+Before answering, check that: `skills` has an entry for each skill in `SKILLS`; every calculation in `facts` is right, every `fact` is rounded as the job would say it and every panel value copies a fact; every choice buys and costs something real; every decision is a step the mission needs, settled by an idea from the chapter; no decision's `insight` is something only a colleague could know; every `next`, `establishes`, `restsOn`, decision `skills` and `{{id}}` points at something that exists; every path ends after the allowed number of decisions with no loops; no ending cites a fact one of its paths never established; no article, contraction or other word gives the AI assistant a gender; and every word is in `LANGUAGE`.
