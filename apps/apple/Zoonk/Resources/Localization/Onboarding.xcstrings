@@ -14152,13 +14152,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überspringen wir die Fragen"
+            "value" : "Lass uns die Fragen überspringen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vamos a saltarnos las preguntas"
+            "value" : "Saltemos las preguntas"
           }
         },
         "fr" : {
@@ -24158,65 +24158,6 @@
         }
       }
     },
-    "They come from the skills your goal needs. It usually takes a minute or two." : {
-      "comment" : "Why placement questions take a moment",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sie richten sich nach den Fähigkeiten, die du für dein Ziel brauchst. Das dauert normalerweise ein bis zwei Minuten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las preguntas se basan en las habilidades que necesitas para tu objetivo. Prepararlas suele tardar uno o dos minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elles sont préparées à partir des compétences nécessaires à ton objectif. Cela prend généralement une ou deux minutes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le domande si basano sulle competenze necessarie per il tuo obiettivo. Di solito ci vuole un minuto o due."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標に必要なスキルをもとに問題を作成しています。通常1〜2分ほどかかります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표에 필요한 능력에 맞춰 문제를 만들고 있어요. 보통 1~2분 정도 걸려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy je na podstawie umiejętności potrzebnych do osiągnięcia twojego celu. Zwykle zajmuje to minutę lub dwie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elas são criadas a partir das habilidades que seu objetivo exige. Isso costuma levar um ou dois minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soruları hedefin için gereken becerilere göre hazırlıyoruz. Bu genellikle bir iki dakika sürer."
-          }
-        }
-      }
-    },
     "This didn't finish" : {
       "comment" : "A run that failed",
       "localizations" : {
@@ -24643,7 +24584,63 @@
       }
     },
     "This usually takes a minute or two." : {
-      "comment" : "How long placement questions take to write"
+      "comment" : "How long placement questions take to write",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das dauert meist ein bis zwei Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto suele tardar uno o dos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça prend généralement une ou deux minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di solito ci vuole un minuto o due."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通常は1〜2分ほどかかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보통 1~2분 정도 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwykle zajmuje to minutę lub dwie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso costuma levar um ou dois minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu genelde bir iki dakika sürer."
+          }
+        }
+      }
     },
     "Time a day" : {
       "comment" : "Label of the daily study time picker",
