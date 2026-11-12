@@ -23,25 +23,29 @@ type AnswerGoal = {
   tx: TransactionClient;
 };
 
+/** The waiting build reads the first answer; a later one may change what a run read, so it rebuilds. */
+function savesAsGoalEdit(current: AnswerGoal["current"]): boolean {
+  return (
+    current.planRevealedAt !== null ||
+    !hasCountryReading(current) ||
+    getAnsweredQuestions(isJsonObject(current.details) ? current.details : {}).includes(
+      "contentCountry",
+    ) ||
+    parsePlanGraph(current.plan?.graph).skills.length > 0
+  );
+}
+
 function needsCurriculumRebuild({
   current,
   data,
   input,
 }: Pick<AnswerGoal, "current" | "data" | "input">): boolean {
-  if (
-    input.question === "contentCountry" &&
-    current.curriculumQuestions.includes("contentCountry") &&
-    !getAnsweredQuestions(isJsonObject(current.details) ? current.details : {}).includes(
-      "contentCountry",
-    )
-  ) {
-    return true;
+  if (input.question === "contentCountry") {
+    return current.curriculumQuestions.includes("contentCountry");
   }
 
   return (
-    (current.curriculumQuestions.includes(input.question) ||
-      (input.question === "contentCountry" &&
-        parsePlanGraph(current.plan?.graph).skills.length > 0)) &&
+    current.curriculumQuestions.includes(input.question) &&
     Object.entries(data).some(([key, value]) =>
       key === "details"
         ? !isDeepStrictEqual(withoutAnswered(value), withoutAnswered(current.details))
@@ -57,11 +61,7 @@ export async function saveAnswerGoal({
   own,
   tx,
 }: AnswerGoal): Promise<boolean> {
-  if (
-    own &&
-    input.question === "contentCountry" &&
-    (current.planRevealedAt !== null || !hasCountryReading(current))
-  ) {
+  if (own && input.question === "contentCountry" && savesAsGoalEdit(current)) {
     const saved = await saveMetadataInTransaction(tx, {
       goal: current,
       input: { contentCountry: input.country },

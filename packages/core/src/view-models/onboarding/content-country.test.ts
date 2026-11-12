@@ -4,8 +4,10 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
 import { resolveNewGoalCountry } from "../../goals/_utils/goal-content-country";
 import { type GoalDraft } from "../../goals/goal-contract";
+import { updateGoal } from "../../goals/update-goal";
 import { saveAnswerInputs } from "./_utils/save-onboarding-answer";
 import { getMissingQuestions } from "./onboarding-steps";
 
@@ -80,6 +82,47 @@ describe("content country question", () => {
     await expect(
       prisma.followUp.findMany({ where: { key: current.id, kind: "rebuildGoalCurriculum" } }),
     ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 0 }]);
+  });
+
+  it("owes one rebuild when another tab or the goal's settings change the country the first build read", async () => {
+    const user = await userFixture();
+
+    const current = await goalFixture({
+      curriculumQuestions: ["purpose", "level"],
+      details: { answered: [], countryDependent: true },
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await planFixture({ goalId: current.id });
+
+    const answer = (country: string) =>
+      saveAnswerInputs({ goal: current, input: { country, question: "contentCountry" } });
+
+    await answer("PT");
+    await answer("PT");
+
+    await expect(
+      prisma.followUp.count({ where: { key: current.id, kind: "rebuildGoalCurriculum" } }),
+    ).resolves.toBe(0);
+
+    await answer("DE");
+    await answer("DE");
+
+    await expect(
+      prisma.followUp.findMany({ where: { key: current.id, kind: "rebuildGoalCurriculum" } }),
+    ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 0 }]);
+
+    mockSession(user.id);
+    await updateGoal({ goalId: current.id, input: { contentCountry: "ES" } });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ where: { id: current.id } }),
+    ).resolves.toMatchObject({ contentCountry: "ES", planRevealedAt: null });
+
+    await expect(
+      prisma.followUp.findMany({ where: { key: current.id, kind: "rebuildGoalCurriculum" } }),
+    ).resolves.toMatchObject([{ input: { goalId: current.id }, revision: 1 }]);
   });
 
   it.each(["home", "picked"])(
