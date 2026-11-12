@@ -1,9 +1,10 @@
 "use client";
 
 import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
+import { useReadOrder } from "../_utils/use-read-order";
 import { useRereadServed, useServedState } from "../_utils/use-served-state";
 import {
   type MindMapsPage,
@@ -68,10 +69,10 @@ export function useMindMapsLibrary({
   const [notes, setNotes] = useState<ReadonlyMap<string, RowNote>>(new Map());
   const [sending, setSending] = useState<ReadonlySet<string>>(new Set());
   const [bulk, setBulk] = useState<Bulk>({ status: "idle", stop: null });
-  const readsAndSaves = useRef(0);
+  const order = useReadOrder();
 
   const note = (chapterId: string, next: Omit<RowNote, "failedAt"> | null) => {
-    const failedAt = readsAndSaves.current;
+    const failedAt = order.now();
 
     setNotes((current) => {
       const others = [...current].filter(([id]) => id !== chapterId);
@@ -81,7 +82,7 @@ export function useMindMapsLibrary({
 
   const saves = useMindMapSaves({
     onSaved: (target, saved) => {
-      readsAndSaves.current += 1;
+      order.supersedeReads();
 
       if (!saved) {
         setPage((current) => withoutSaved(current, target));
@@ -90,13 +91,8 @@ export function useMindMapsLibrary({
     save: actions.save,
   });
 
-  /**
-   * The answer replaces the page only if nothing came after its read started: a later read (every
-   * accepted create starts one) or a stored save. An older answer can predate them and undo them.
-   */
   const refresh = async () => {
-    readsAndSaves.current += 1;
-    const started = readsAndSaves.current;
+    const read = order.startRead();
     const listed = await actions.list();
 
     if (!listed) {
@@ -104,17 +100,17 @@ export function useMindMapsLibrary({
     }
 
     setNotes((current) => {
-      const kept = [...current].filter(([, entry]) => entry.failedAt >= started);
+      const kept = [...current].filter(([, entry]) => entry.failedAt >= read.started);
       return kept.length === current.size ? current : new Map(kept);
     });
 
     setBulk((current) =>
-      current.status === "unreachable" && current.failedAt < started
+      current.status === "unreachable" && current.failedAt < read.started
         ? { status: "idle", stop: null }
         : current,
     );
 
-    if (started === readsAndSaves.current) {
+    if (read.isLatest()) {
       setPage(toMindMapsPage(listed));
     }
   };
@@ -174,7 +170,7 @@ export function useMindMapsLibrary({
     const started = await actions.requestAll().catch(() => null);
 
     if (!started) {
-      setBulk({ failedAt: readsAndSaves.current, status: "unreachable", stop: null });
+      setBulk({ failedAt: order.now(), status: "unreachable", stop: null });
       return;
     }
 
