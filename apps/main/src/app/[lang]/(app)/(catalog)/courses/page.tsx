@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     alternates: { canonical: getLocalizedUrl({ href: "/courses", language }) },
     description: t(
-      "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more.",
+      "Pick a course and get a plan for each day that fits your time and starts from what you already know. Short lessons in science, math, languages, exams and more. Start free.",
     ),
     robots: { follow: true, index: true },
     title: t("Explore courses"),

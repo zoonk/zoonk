@@ -37,10 +37,10 @@ export async function getCategoryMeta(params: { category: CourseCategory }) {
 
   return {
     description: t(
-      "{category} courses. The best {category} online courses, interactive lessons to learn.",
+      "{category} courses in short lessons, with a plan for each day that starts from what you already know. Start free.",
       { category: label },
     ),
-    title: t("{category} Courses", { category: label }),
+    title: t("{category} courses", { category: label }),
   };
 }
 

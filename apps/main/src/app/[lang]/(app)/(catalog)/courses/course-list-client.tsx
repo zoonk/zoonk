@@ -20,7 +20,7 @@ import {
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { getFirstSentence } from "@zoonk/utils/string";
-import { Loader2Icon, NotebookPenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
+import { ArrowRightIcon, Loader2Icon, NotebookPenIcon, RefreshCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { loadMoreCourses } from "./actions";
 import {
@@ -156,15 +156,17 @@ export function CourseListClient({
           <EmptyMedia variant="icon">
             <NotebookPenIcon aria-hidden="true" />
           </EmptyMedia>
-          <EmptyTitle>{t("No courses")}</EmptyTitle>
-          <EmptyDescription>{t("No courses available yet.")}</EmptyDescription>
+          <EmptyTitle>{t("No courses here yet")}</EmptyTitle>
+          <EmptyDescription>
+            {t("Tell Zoonk what you want to learn and get a plan for it.")}
+          </EmptyDescription>
         </EmptyHeader>
 
         {category && (
           <EmptyContent>
             <Link className={buttonVariants({ variant: "outline" })} href="/start" prefetch>
-              <PlusIcon aria-hidden="true" />
-              {t("Start a goal")}
+              {t("Build my plan")}
+              <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
             </Link>
           </EmptyContent>
         )}
