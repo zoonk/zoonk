@@ -2,37 +2,52 @@ import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messages";
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
-import { feedbackContentKindLabels, feedbackReportTypeLabels } from "../_utils/feedback-labels";
-import { MessageSender } from "./message-sender";
-import { MessageStatusBadge } from "./message-status-badge";
+import {
+  feedbackStatusLabels,
+  getFeedbackLearnerLabel,
+  getFeedbackPlatform,
+  getFeedbackSubject,
+} from "../_utils/feedback-labels";
 
-/** Rows show where a message came from, never its text: that stays on the detail page. */
-export function MessageRow({ message }: { message: ListedFeedbackMessage }) {
-  const { context } = message;
-  const contentLabel = context.contentKind ? feedbackContentKindLabels[context.contentKind] : "—";
+/** Rows show who wrote and what about, never the message's text: that stays on its own page. */
+export function MessageRow({
+  message,
+  showState,
+}: {
+  message: ListedFeedbackMessage;
+  showState: boolean;
+}) {
+  const { context, email, user } = message;
+  const subject = getFeedbackSubject(context);
+  const page = context.screen ?? context.url;
 
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink href={`/feedback/messages/${message.id}`} prefetch>
-          {formatDate(message.createdAt)}
+      <TableCell className="max-w-64">
+        <AdminTableRowLink className="block" href={`/feedback/messages/${message.id}`} prefetch>
+          <span className="block truncate font-medium">
+            {user ? getFeedbackLearnerLabel(user) : (email ?? "Unknown sender")}
+          </span>
+          {user ? (
+            <span className="text-muted-foreground block truncate text-xs">
+              {email ?? "No reply email"}
+            </span>
+          ) : null}
         </AdminTableRowLink>
       </TableCell>
-      <TableCell>
-        <MessageStatusBadge status={message.status} />
+      <TableCell className="max-w-72">
+        <span className="block truncate">{subject}</span>
+        {page && page !== subject ? (
+          <span className="text-muted-foreground block truncate text-xs">{page}</span>
+        ) : null}
       </TableCell>
-      <TableCell className="max-w-56">
-        <MessageSender email={message.email} user={message.user} />
-      </TableCell>
-      <TableCell className="max-w-64 truncate text-xs">
-        {context.screen ?? context.url ?? "—"}
-      </TableCell>
-      <TableCell className="text-xs">
-        {[context.platform, context.appVersion].filter(Boolean).join(" · ") || "—"}
-      </TableCell>
-      <TableCell className="text-xs">
-        {context.reportType ? feedbackReportTypeLabels[context.reportType] : contentLabel}
-      </TableCell>
+      <TableCell className="text-muted-foreground">{getFeedbackPlatform(context) ?? "—"}</TableCell>
+      <TableCell className="text-muted-foreground">{formatDate(message.createdAt)}</TableCell>
+      {showState ? (
+        <TableCell className={message.status === "new" ? "font-medium" : "text-muted-foreground"}>
+          {feedbackStatusLabels[message.status]}
+        </TableCell>
+      ) : null}
     </AdminTableRow>
   );
 }

@@ -1,8 +1,15 @@
 import { Button } from "@zoonk/ui/components/button";
 import Link from "next/link";
 
-export type AdminFilterOption = { href: string; isActive: boolean; label: string };
+export type AdminFilterOption = {
+  /** How many wait in this view. Only for the view that is a to-do list. */
+  count?: number;
+  href: string;
+  isActive: boolean;
+  label: string;
+};
 
+/** A list's views, as links: the one that narrows it to what's waiting comes first. */
 export function AdminFilterNav({
   label,
   options,
@@ -23,6 +30,11 @@ export function AdminFilterNav({
           variant={option.isActive ? "secondary" : "ghost"}
         >
           {option.label}
+          {option.count ? (
+            <span className="text-muted-foreground font-mono text-xs tabular-nums">
+              {option.count.toLocaleString("en")}
+            </span>
+          ) : null}
         </Button>
       ))}
     </nav>
