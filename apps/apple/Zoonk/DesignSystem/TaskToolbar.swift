@@ -1,8 +1,9 @@
 import SwiftUI
 
 extension View {
-  /// A task's title in its bar, on up to two lines so an ordinary chapter or lesson title shows
-  /// whole between the close and the bar's buttons. The system still has it as the screen's title
+  /// A task's title in its bar, centered between the close and the bar's buttons and on up to two
+  /// lines there, so an ordinary chapter or lesson title shows whole and every title of a deck
+  /// keeps one center. The system still has it as the screen's title
   /// (VoiceOver, the window, Back's menu), and a vertical bar (iPhone Duo) has no room for it.
   func taskTitle(_ title: Text) -> some View {
     modifier(TaskTitleToolbar(title: title))
@@ -52,6 +53,10 @@ private struct TaskTitleToolbar: ViewModifier {
             .multilineTextAlignment(.center)
             .minimumScaleFactor(0.85)
             .fixedSize(horizontal: false, vertical: true)
+            // The bar sizes a title to its ideal width when it first lays it out, and then puts a
+            // short one on the screen's middle or after the close. Asking for every width gets it
+            // the whole room between the buttons on every layout, so each title centers there.
+            .frame(idealWidth: UIView.layoutFittingExpandedSize.width, maxWidth: .infinity)
             .accessibilityAddTraits(.isHeader)
         }
       }
