@@ -88,7 +88,7 @@ function AdminSidebarContent({
 
 export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
-    <Sidebar aria-label="Sidebar" className="gap-4">
+    <Sidebar aria-label="Sidebar" className="gap-3">
       {/* One row, so the whole navigation fits a laptop's height; collapsed, the toggle sits over the search. */}
       <SidebarHeader className="sidebar-collapsed:flex-col-reverse sidebar-collapsed:gap-4 flex-row items-center gap-1">
         <SidebarSearch label="Search…" onClick={openCommandPalette} />
