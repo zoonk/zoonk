@@ -81,15 +81,21 @@ function listLatestFailures() {
   `;
 }
 
+export const countGenerationFailures = cacheAdminData(async () => {
+  const counts = await countFailures();
+
+  return counts.map((row) => ({
+    failed: Number(row.failed),
+    stuck: Number(row.stuck),
+    workflow: row.workflow,
+  }));
+});
+
 export const getGenerationFailures = cacheAdminData(async () => {
-  const [counts, latest] = await Promise.all([countFailures(), listLatestFailures()]);
+  const [counts, latest] = await Promise.all([countGenerationFailures(), listLatestFailures()]);
 
   return {
-    counts: counts.map((row) => ({
-      failed: Number(row.failed),
-      stuck: Number(row.stuck),
-      workflow: row.workflow,
-    })),
+    counts,
     latest: latest.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
   };
 });

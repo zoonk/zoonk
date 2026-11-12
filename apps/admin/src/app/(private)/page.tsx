@@ -1,32 +1,30 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
+import { AdminSection } from "@/components/admin-section";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { AppStats, AppStatsFallback } from "./app-stats";
+import { HomeAttention, HomeAttentionSkeleton } from "./home-attention";
+import { HomeWeek, HomeWeekSkeleton } from "./home-week";
 
 export const metadata: Metadata = { title: "Zoonk Admin" };
 
 export default function Home() {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Home</ContainerTitle>
-          <ContainerDescription>Overview of platform metrics and activity.</ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Home" />
 
-      <ContainerBody>
-        <Suspense fallback={<AppStatsFallback />}>
-          <AppStats />
-        </Suspense>
-      </ContainerBody>
-    </Container>
+      <AdminPageBody className="gap-10">
+        <AdminSection title="Needs attention">
+          <Suspense fallback={<HomeAttentionSkeleton />}>
+            <HomeAttention />
+          </Suspense>
+        </AdminSection>
+
+        <AdminSection description="Compared with the 7 days before" title="Last 7 days">
+          <Suspense fallback={<HomeWeekSkeleton />}>
+            <HomeWeek />
+          </Suspense>
+        </AdminSection>
+      </AdminPageBody>
+    </AdminPage>
   );
 }
