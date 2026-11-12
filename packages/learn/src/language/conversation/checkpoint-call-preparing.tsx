@@ -28,7 +28,7 @@ export function CheckpointCallPreparing({
   if (call.writing) {
     return (
       <TaskFrame exitHref={exitHref} headerTitle={title}>
-        <WritingWait className="pt-4" kind="conversationCall" writing={call.writing}>
+        <WritingWait kind="conversationCall" writing={call.writing}>
           <GenerationTimelineTitle>{t("Getting your call ready")}</GenerationTimelineTitle>
           <GenerationTimelineDescription>
             {t("This takes about half a minute.")}

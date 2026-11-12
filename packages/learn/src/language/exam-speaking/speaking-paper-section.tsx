@@ -21,7 +21,7 @@ import {
 } from "../../_components/page";
 import { PlusNotice } from "../../_components/plus-lock";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitMessage } from "../conversation/call-limit-message";
+import { CallLimitReason } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
 
@@ -138,7 +138,7 @@ export function SpeakingPaperSection({
         />
       )}
 
-      {call.failed && limit && <CallLimitMessage className="py-4" limit={limit} />}
+      {call.failed && limit && <CallLimitReason className="py-4" limit={limit} role="alert" />}
 
       {call.failed && !limit && (
         <p className="text-destructive-text px-1 text-sm" role="alert">

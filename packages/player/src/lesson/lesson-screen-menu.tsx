@@ -50,6 +50,19 @@ function useMapSheet(isDone: boolean) {
   return { change, onMenuOpenChange, open };
 }
 
+function AiNote() {
+  const t = useExtracted();
+
+  return (
+    <DropdownMenuLabel className="flex items-start gap-2.5" data-slot="lesson-ai-note">
+      <span className="flex h-lh w-4 shrink-0 items-center justify-center">
+        <SparklesIcon aria-hidden="true" className="size-3.5" />
+      </span>
+      {t("Made with AI. It may contain mistakes.")}
+    </DropdownMenuLabel>
+  );
+}
+
 export function LessonScreenMenu() {
   const t = useExtracted();
   const { lesson, slots } = useLessonPlayerConfig();
@@ -85,10 +98,7 @@ export function LessonScreenMenu() {
 
         <DropdownMenuContent align="end" className="w-64" finalFocus={getLessonFocusTarget}>
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="flex items-start gap-2" data-slot="lesson-ai-note">
-              <SparklesIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-              {t("Made with AI. It may contain mistakes.")}
-            </DropdownMenuLabel>
+            <AiNote />
           </DropdownMenuGroup>
 
           {(screen.canKnowThis || showsMap || reportItem) && <DropdownMenuSeparator />}

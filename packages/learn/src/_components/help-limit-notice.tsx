@@ -265,6 +265,12 @@ export function OutlineLimitNotice({
   return <LimitNoticeBody {...props} limit={limit} words={useOutlineLimitWords(limit)} />;
 }
 
+/** When a learner's calls come back, for a screen that draws its own way on. */
+export function useCallLimitLine(limit: CallLimit): string | undefined {
+  const comesBack = useComesBackLine();
+  return comesBack({ period: limit.period, status: "limitReached", tier: limit.tier });
+}
+
 /** Its screen's title says what ran out, so this is only the line and the way on. */
 export function CallLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: CallLimit }) {
   const comesBack = useComesBackLine();

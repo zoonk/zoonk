@@ -107,7 +107,7 @@ export function CodeRunnerActivity({
 
   return (
     <ActivityCanvas className="gap-3" labelId={labelId}>
-      <div className="bg-background flex flex-col gap-2 rounded-2xl border px-3 pt-3 pb-3.5">
+      <div className="bg-background flex flex-col gap-2 rounded-xl border px-3 pt-3 pb-3.5">
         <div className="flex items-center justify-between gap-3 px-1.5">
           <p className="text-muted-foreground font-mono text-xs">
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}

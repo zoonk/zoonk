@@ -1,14 +1,17 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { ArrowLeftIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLimit, useCallLimitLine } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
-import { CallLimitMessage } from "./call-limit-message";
+import { useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
 import { CallOffMessage } from "./conversation-parts";
 import { type LiveCallError } from "./live-call-lifecycle";
@@ -18,7 +21,7 @@ type CallProblemKind = Exclude<LiveCallError, "dropped"> | "takenOver";
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
     <CallOffMessage title={title}>
-      <p className="text-muted-foreground text-pretty">{text}</p>
+      <p className="text-muted-foreground text-base leading-relaxed text-pretty">{text}</p>
     </CallOffMessage>
   );
 }
@@ -39,7 +42,7 @@ function ProblemWithBack({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
+          <TaskMainLink href={exitHref} icon={<ChevronLeftIcon aria-hidden="true" />}>
             {t("Back")}
           </TaskMainLink>
         </TaskActions>
@@ -47,6 +50,46 @@ function ProblemWithBack({
       headerTitle={title}
     >
       {children}
+    </TaskFrame>
+  );
+}
+
+/** As a lesson's limit screen is: what ran out, when it comes back, the way on, then Back. */
+function CallLimitScreen({
+  exitHref,
+  limit,
+  title,
+}: {
+  exitHref: string;
+  limit: CallLimit;
+  title: string;
+}) {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+  const line = useCallLimitLine(limit);
+  const wayOn = buttonVariants({ size: "xl" });
+
+  return (
+    <TaskFrame exitHref={exitHref} headerTitle={title}>
+      <CallOffMessage title={useCallLimitTitle(limit)}>
+        {line && <p className="text-muted-foreground text-base leading-relaxed">{line}</p>}
+      </CallOffMessage>
+
+      <div className="flex flex-col gap-2 sm:flex-row">
+        {limit.tier === "guest" && (
+          <a className={wayOn} href={routes.signUp}>
+            {t("Create a free account")}
+          </a>
+        )}
+        {limit.tier === "free" && (
+          <LearnLink className={wayOn} href={routes.upgrade}>
+            {t("See Plus")}
+          </LearnLink>
+        )}
+        <LearnLink className={buttonVariants({ size: "xl", variant: "outline" })} href={exitHref}>
+          {t("Back")}
+        </LearnLink>
+      </div>
     </TaskFrame>
   );
 }
@@ -71,9 +114,11 @@ export function CallProblem({
 
   if (error === "limit") {
     return (
-      <ProblemWithBack exitHref={exitHref} title={title}>
-        <CallLimitMessage limit={limit ?? { period: "day", tier: "plus" }} />
-      </ProblemWithBack>
+      <CallLimitScreen
+        exitHref={exitHref}
+        limit={limit ?? { period: "day", tier: "plus" }}
+        title={title}
+      />
     );
   }
 

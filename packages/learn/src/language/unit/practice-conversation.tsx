@@ -25,8 +25,8 @@ import {
 import { PlusMark, PlusNotice } from "../../_components/plus-lock";
 import { useFormatDuration } from "../../_utils/time-format";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitMessage } from "../conversation/call-limit-message";
-import { CallOffMessage } from "../conversation/conversation-parts";
+import { CallLimitReason } from "../conversation/call-limit-message";
+import { CallReason } from "../conversation/conversation-parts";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
 type LengthChoice = { locked: boolean; minutes: number };
@@ -84,7 +84,7 @@ function CallsPausedMessage({ className }: { className: string }) {
   const t = useExtracted();
 
   return (
-    <CallOffMessage className={className} title={t("Calls are paused")}>
+    <CallReason className={className} role="alert" title={t("Calls are paused")}>
       <p className="text-muted-foreground text-sm text-pretty">
         {t({
           description:
@@ -92,7 +92,7 @@ function CallsPausedMessage({ className }: { className: string }) {
           message: "It's the same for everyone right now. Try again later.",
         })}
       </p>
-    </CallOffMessage>
+    </CallReason>
   );
 }
 
@@ -122,7 +122,7 @@ function CallSetup({
   }
 
   if (conversation.limit) {
-    return <CallLimitMessage className="py-4" limit={conversation.limit} />;
+    return <CallLimitReason className="py-4" limit={conversation.limit} />;
   }
 
   const isLocked = conversation.plusMinutes.includes(minutes);

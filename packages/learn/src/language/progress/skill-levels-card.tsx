@@ -132,7 +132,7 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
   }
 
   return (
-    <p className="flex items-start gap-2 text-sm">
+    <p className="flex items-start gap-3 text-sm">
       <LineMarker aria-hidden="true">
         <TrendingUpIcon className="text-success-text size-4" />
       </LineMarker>

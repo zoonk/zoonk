@@ -60,11 +60,7 @@ const FRAME_CLASS: Record<ComposerVariant, string> = {
     "bg-card ring-input rounded-option! items-end border-0 ring-1 ring-inset",
     FOCUS_CLASS,
   ),
-  page: cn(
-    TUTOR_COMPOSER_FRAME_CLASS,
-    "items-end rounded-[0.875rem]! border-transparent",
-    FOCUS_CLASS,
-  ),
+  page: cn(TUTOR_COMPOSER_FRAME_CLASS, "items-end rounded-xl! border-transparent", FOCUS_CLASS),
 };
 
 const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
@@ -152,7 +148,7 @@ function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: Composer
     <div
       className={cn(
         LIMIT_FRAME_CLASS[variant],
-        "focus-visible:outline-ring flex min-h-11 items-center py-2 pr-2 pl-3.5 outline-none focus-visible:outline-2 focus-visible:outline-solid",
+        "focus-visible:outline-ring flex min-h-11 items-center p-3 outline-none focus-visible:outline-2 focus-visible:outline-solid",
       )}
       data-slot="question-composer-limit"
       ref={ref}
@@ -248,7 +244,7 @@ export function QuestionComposer({
           <InputGroupButton
             aria-label={submitLabel}
             busy={state.creating !== null}
-            className="size-7.5 rounded-lg"
+            className="size-7.5 rounded-md"
             disabled={!canSend || createNavigationError}
             focusableWhenDisabled
             icon={<SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />}

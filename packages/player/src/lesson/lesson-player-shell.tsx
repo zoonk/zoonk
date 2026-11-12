@@ -166,7 +166,7 @@ function LessonPlayerFrame() {
   const { actions, state } = useLessonPlayer();
   const dotPaper = useDotPaper();
   const mainRef = useRef<HTMLElement>(null);
-  const asideRoot = getTaskAsideRootProps();
+  const asideRoot = state.run.status === "refused" ? undefined : getTaskAsideRootProps();
 
   const turns = useScreenTurns();
 
@@ -178,9 +178,9 @@ function LessonPlayerFrame() {
     <div
       className={cn(
         "ph-no-rageclick bg-background flex h-dvh flex-col overflow-hidden",
-        asideRoot.className,
+        asideRoot?.className,
       )}
-      data-aside={asideRoot["data-aside"]}
+      data-aside={asideRoot?.["data-aside"]}
       data-phase={state.phase}
       data-slot="lesson-player"
       onClickCapture={actions.engage}
@@ -205,7 +205,7 @@ function LessonPlayerFrame() {
         </div>
       </main>
 
-      <LessonAside />
+      {asideRoot && <LessonAside />}
     </div>
   );
 }

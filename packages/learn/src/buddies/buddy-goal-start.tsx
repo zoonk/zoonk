@@ -1,6 +1,7 @@
 "use client";
 
 import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
+import { Button } from "@zoonk/ui/components/button";
 import { HistoryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
@@ -32,16 +33,17 @@ function GoalChips({ examples, onPick }: { examples: string[]; onPick: (goal: st
   const t = useExtracted();
 
   return (
-    <ul aria-label={t("Examples")} className="flex flex-wrap gap-1.5">
+    <ul aria-label={t("Examples")} className="flex flex-wrap gap-2">
       {examples.map((example) => (
         <li className="min-w-0" key={example}>
-          <button
-            className="text-muted-foreground ring-input hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area bg-background relative flex h-6.5 max-w-full items-center rounded-md px-2.5 text-xs font-medium ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px] disabled:opacity-50"
+          <Button
+            className="text-muted-foreground max-w-full"
             onClick={() => onPick(example)}
-            type="button"
+            size="sm"
+            variant="outline"
           >
             <span className="truncate">{example}</span>
-          </button>
+          </Button>
         </li>
       ))}
     </ul>

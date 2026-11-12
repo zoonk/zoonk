@@ -14,6 +14,7 @@ export function OfferCard({
   children,
   description,
   locked = false,
+  note,
   ref,
   tile,
   title,
@@ -21,6 +22,8 @@ export function OfferCard({
   children: React.ReactNode;
   description: React.ReactNode;
   locked?: boolean;
+  /** How it went, in the description's place and type once the card is used. */
+  note?: React.ReactNode;
   /** For a card whose button leaves once it's used, so focus can stay on the card. */
   ref?: React.Ref<HTMLElement>;
   tile: React.ReactNode;
@@ -49,6 +52,7 @@ export function OfferCard({
           {description && (
             <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
           )}
+          {note}
         </div>
       </div>
       {children}

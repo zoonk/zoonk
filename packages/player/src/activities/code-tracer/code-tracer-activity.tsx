@@ -128,7 +128,7 @@ export function CodeTracerActivity({
     <ActivityCanvas className="gap-3" labelId={labelId}>
       <TracerVariables values={values} />
 
-      <div className="bg-background flex flex-col gap-1 rounded-2xl border px-2 pt-2 pb-2.5">
+      <div className="bg-background flex flex-col gap-1 rounded-xl border px-2 pt-2 pb-2.5">
         <div className="pl-2">
           <TracerControls
             canGoBack={step > start}

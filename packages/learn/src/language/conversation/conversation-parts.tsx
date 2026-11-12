@@ -44,37 +44,30 @@ export function CharacterRow({
   );
 }
 
-export function CallOffMessage({
-  children,
-  className,
-  title,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  title: string;
-}) {
+/** A whole screen saying a call can't go on. Inside a sheet or under another title, use `CallReason`. */
+export function CallOffMessage({ children, title }: { children: React.ReactNode; title: string }) {
   return (
-    <div className={cn("flex flex-col gap-1.5 py-6", className)} role="alert">
-      <p className="text-[1.1875rem] leading-snug font-[560] tracking-[-0.02em] text-balance">
-        {title}
-      </p>
+    <div className="flex flex-col gap-2" role="alert">
+      <p className="text-title">{title}</p>
       {children}
     </div>
   );
 }
 
-/** Why a call can't go on, under its screen's own title. */
+/** Why a call can't go on, under its screen's or its sheet's own title. */
 export function CallReason({
   children,
   className,
+  role,
   title,
 }: {
   children: React.ReactNode;
   className?: string;
+  role?: "alert";
   title: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn("flex flex-col gap-1", className)} role={role}>
       <p className="font-medium">{title}</p>
       {children}
     </div>
@@ -121,8 +114,8 @@ export function SoundNote() {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground flex items-start gap-2 text-[0.8125rem] leading-snug text-pretty">
-      <LineMarker>
+    <p className="text-muted-foreground flex items-start gap-3 text-[0.8125rem] leading-snug text-pretty">
+      <LineMarker className="w-4 justify-center">
         <Volume2Icon aria-hidden="true" className="size-3.5" />
       </LineMarker>
       {t("Turn your sound on.")}

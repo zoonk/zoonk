@@ -9,7 +9,7 @@ import { OfferButton, OfferCard, OfferTile } from "./tutor-offer-card";
 
 export function FlagTile({ fallback, flag }: { fallback: React.ReactNode; flag: string | null }) {
   return isFlagCode(flag) ? (
-    <Flag className="w-4.5" code={flag} />
+    <Flag className="w-4" code={flag} />
   ) : (
     <OfferTile>{fallback}</OfferTile>
   );
@@ -56,9 +56,17 @@ export function ApplyOfferCard({
   };
 
   return (
-    <OfferCard description={saved ? null : description} ref={cardRef} tile={tile} title={title}>
-      <StatusRegion className="text-muted-foreground text-sm">{saved && savedText}</StatusRegion>
-
+    <OfferCard
+      description={saved ? null : description}
+      note={
+        <StatusRegion className="text-muted-foreground text-[0.8125rem] text-pretty">
+          {saved && savedText}
+        </StatusRegion>
+      }
+      ref={cardRef}
+      tile={tile}
+      title={title}
+    >
       {!saved && (
         <form action={apply}>
           <OfferButton busy={isPending} type="submit">

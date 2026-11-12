@@ -9,7 +9,7 @@ export function ActivityCanvas({
   return (
     <figure
       aria-labelledby={labelId}
-      className={cn("bg-muted/50 flex flex-col gap-3 rounded-2xl p-4", className)}
+      className={cn("bg-muted/50 flex flex-col gap-3 rounded-xl p-4", className)}
       data-slot="activity-canvas"
       {...props}
     />
@@ -50,5 +50,5 @@ export function ActivityReadout({ className, ...props }: React.ComponentProps<"p
 }
 
 export function ActivityCanvasSkeleton() {
-  return <Skeleton className="h-64 w-full rounded-2xl" data-slot="activity-canvas-skeleton" />;
+  return <Skeleton className="h-64 w-full rounded-xl" data-slot="activity-canvas-skeleton" />;
 }

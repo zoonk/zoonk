@@ -212,9 +212,9 @@ function WaitNote({ state }: { state: WaitState }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="text-2xl font-semibold tracking-tight text-balance">{title}</h1>
+      <h1 className="text-title">{title}</h1>
       {(state === "notReady" || state === "gettingReady") && (
-        <p className="text-muted-foreground text-pretty">
+        <p className="text-muted-foreground text-base leading-relaxed text-pretty">
           {t("It takes a few minutes, and keeps going if you leave.")}
         </p>
       )}

@@ -30,13 +30,13 @@ export function ViewToggle({
   return (
     <div
       aria-label={t("Show the music as")}
-      className="bg-muted flex items-center rounded-full p-0.5"
+      className="bg-muted flex items-center rounded-lg p-0.5"
       role="radiogroup"
     >
       {views.map((option) => (
         <label
           className={cn(
-            "relative flex h-11 min-w-11 cursor-pointer items-center justify-center rounded-full px-3.5 text-sm font-medium",
+            "relative flex h-11 min-w-11 cursor-pointer items-center justify-center rounded-md px-3.5 text-sm font-medium",
             "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
             view === option.value
               ? "bg-background text-foreground shadow-xs"
@@ -72,7 +72,7 @@ export function TempoSelect({
   return (
     <select
       aria-label={t("Tempo")}
-      className="border-border bg-background focus-visible:ring-ring/50 h-11 shrink-0 rounded-full border px-3 text-sm tabular-nums outline-none focus-visible:ring-[3px]"
+      className="border-border bg-background focus-visible:ring-ring/50 h-11 shrink-0 rounded-lg border px-3 text-sm tabular-nums outline-none focus-visible:ring-[3px]"
       onChange={(event) => onChange(Number(event.target.value))}
       value={tempo}
     >

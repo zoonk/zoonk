@@ -126,7 +126,7 @@ export function ChallengeDebriefView({
             <li
               className={cn(
                 CHIP_CLASS,
-                "h-auto min-h-5.5 py-1 leading-4 text-balance",
+                "h-auto min-h-5.5 py-0.75 leading-4 text-balance",
                 skill.id === debrief.practice?.id &&
                   "bg-warning/10 text-warning-text ring-warning/40",
               )}

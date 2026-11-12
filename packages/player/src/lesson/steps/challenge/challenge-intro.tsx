@@ -31,7 +31,7 @@ function ChallengeTeamList({
           const name = names.names[slot.id] ?? slot.role;
 
           return (
-            <li className="flex items-center gap-2.5" key={slot.id}>
+            <li className="flex items-center gap-3" key={slot.id}>
               <ChallengeAvatar name={name} slot={slot} />
               <span className="flex flex-col">
                 <span className="text-foreground text-sm font-semibold">{name}</span>
