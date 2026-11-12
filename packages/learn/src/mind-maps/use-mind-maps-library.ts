@@ -112,6 +112,8 @@ export function useMindMapsLibrary({
 
     if (read.isLatest()) {
       setPage(toMindMapsPage(listed));
+    } else if (read.isLastRead()) {
+      await refresh();
     }
   };
 
