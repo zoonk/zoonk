@@ -336,6 +336,85 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("a read of the chapter's map that arrives after the learner saved it leaves the map saved", async ({
+    browser,
+  }) => {
+    const { first, user } = await createLearner();
+    const { chapter } = first;
+
+    await drawMap(chapter.id);
+
+    const page = await openAs(browser, user);
+    const viewer = page.getByRole("dialog", { name: chapter.title });
+    const savedCount = () => prisma.savedMindMap.count({ where: { userId: user.id } });
+    const routerCopy = Promise.withResolvers<null>();
+    const answered = Promise.withResolvers<null>();
+    const release = Promise.withResolvers<null>();
+    const delivered = Promise.withResolvers<null>();
+
+    try {
+      await page.goto(`/content/chapters/${chapter.id}`);
+
+      const lesson = page.getByRole("link", { name: /An almost empty atom/u });
+      await expectHydrated(lesson);
+      await lesson.click();
+      await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+
+      await page.route(
+        (url) => url.pathname.endsWith(`/content/chapters/${chapter.id}`),
+        async (route) => {
+          const headers = route.request().headers();
+
+          if (headers.rsc && !headers["next-router-prefetch"]) {
+            await routerCopy.promise;
+          }
+
+          await route.fallback();
+        },
+      );
+
+      // Close lesson brings back the router's kept copy, so the page reads its map again. That
+      // read is answered before the Save and arrives after it.
+      await page.route("**/v1/goals/*/chapters/*/mind-map", async (route) => {
+        const response = await route.fetch();
+        answered.resolve(null);
+        await release.promise;
+
+        try {
+          await route.fulfill({ response });
+        } finally {
+          delivered.resolve(null);
+        }
+      });
+
+      await page.getByRole("link", { name: "Close lesson" }).click();
+      await answered.promise;
+      await page.getByRole("button", { name: "Full screen" }).click();
+
+      const storing = page.waitForResponse(
+        (response) =>
+          response.url().endsWith("/mind-maps/saved") && response.request().method() === "POST",
+      );
+
+      await viewer.getByRole("button", { exact: true, name: "Save" }).click();
+      const stored = await storing;
+      await stored.finished();
+
+      release.resolve(null);
+      await delivered.promise;
+
+      // Still saved, so the next press removes it rather than saving it again.
+      const saved = viewer.getByRole("button", { exact: true, name: "Saved" });
+      await expect(saved).toBeVisible();
+      await saved.click();
+      await expect.poll(savedCount).toBe(0);
+    } finally {
+      routerCopy.resolve(null);
+      release.resolve(null);
+      await page.context().close();
+    }
+  });
+
   test("a free learner out of maps for the day sees why, and no chapter offers to create one", async ({
     browser,
   }) => {

@@ -1,9 +1,10 @@
 "use client";
 
 import { type ChapterMindMapView, type MindMapStatus } from "@zoonk/core/mind-maps/contract";
-import { useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { type MindMapLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
+import { useReadOrder } from "../_utils/use-read-order";
 import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-actions";
 import { type MindMapSave } from "./mind-map-save-button";
 import { useMindMapSaves } from "./use-mind-map-saves";
@@ -35,7 +36,7 @@ export function useMindMapRequest({
   const [localView, setLocalView] = useState(view);
   const [savedNow, setSavedNow] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
-  const changes = useRef(0);
+  const order = useReadOrder();
   const { chapterId, status } = view;
 
   if (localView !== view) {
@@ -45,7 +46,10 @@ export function useMindMapRequest({
   }
 
   const saves = useMindMapSaves({
-    onSaved: (_target, saved) => setSavedNow(saved),
+    onSaved: (_target, saved) => {
+      order.supersedeReads();
+      setSavedNow(saved);
+    },
     save: actions.save,
   });
 
@@ -65,21 +69,11 @@ export function useMindMapRequest({
     }
   };
 
-  /**
-   * An answer shows only if nothing came after its read started: a later read, or a create's
-   * answer. An older answer can predate them and undo them.
-   */
-  const startRead = () => {
-    changes.current += 1;
-    const started = changes.current;
-    return () => started === changes.current;
-  };
-
   const showRead = async (): Promise<boolean> => {
-    const isLatest = startRead();
+    const read = order.startRead();
     const next = await actions.read(chapterId).catch(() => null);
 
-    if (next && isLatest()) {
+    if (next && read.isLatest()) {
       onViewChange(next);
     }
 
@@ -91,10 +85,10 @@ export function useMindMapRequest({
     intervalMs: status === "writingLessons" ? WRITING_POLL_MS : DRAWING_POLL_MS,
     key: status,
     onPoll: async () => {
-      const isLatest = startRead();
+      const read = order.startRead();
       const next = await actions.readStatus(chapterId);
 
-      if (!isLatest()) {
+      if (!read.isLatest()) {
         return;
       }
 
@@ -111,7 +105,7 @@ export function useMindMapRequest({
   });
 
   const settle = async (outcome: MindMapRequestOutcome) => {
-    changes.current += 1;
+    order.supersedeReads();
 
     if (outcome.status === "refused") {
       setLocal({ limit: outcome.limit, shown: "refused" });
