@@ -55,7 +55,7 @@ export async function PricingHero() {
           description:
             "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals a learner without Plus can study at once, not how many new goals they start per day or month.",
           message:
-            "Free: {goals, plural, one {one goal} other {# goals}} at a time. Plus: every goal and every lesson, all the way to the big day.",
+            "Zoonk builds a study plan for each goal you set: an exam, a language, a new career. Free: {goals, plural, one {one goal} other {# goals}} at a time. Plus: every goal and every lesson.",
           values: { goals: getFreePlanLimits().activeGoals ?? 0 },
         })}
       </p>

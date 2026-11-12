@@ -96,7 +96,9 @@ async function PlanLinkBody({ params }: Props) {
             </div>
           ) : (
             <StartBlock
-              note={t("You get your own plan for the same subject. Start free, no account needed.")}
+              note={t(
+                "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
+              )}
             >
               <Link
                 className={getStartControlClassName()}
