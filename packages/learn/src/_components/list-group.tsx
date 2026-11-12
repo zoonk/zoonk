@@ -128,7 +128,10 @@ export function ListRowButton({
 export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("flex shrink-0 items-center self-center empty:hidden", className)}
+      className={cn(
+        "flex min-w-4 shrink-0 items-center justify-center self-center empty:hidden",
+        className,
+      )}
       data-slot="list-row-leading"
       {...props}
     />
