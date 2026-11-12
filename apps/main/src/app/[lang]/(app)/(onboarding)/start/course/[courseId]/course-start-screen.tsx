@@ -103,9 +103,6 @@ function StartHeading({
       <OnboardingHeading>
         <OnboardingSubject>{course.title}</OnboardingSubject>
         <OnboardingTitle>{t("How much do you already know?")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t("It only changes where your plan starts.")}
-        </OnboardingDescription>
       </OnboardingHeading>
     );
   }
