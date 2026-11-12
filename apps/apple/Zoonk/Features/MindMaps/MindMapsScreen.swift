@@ -502,8 +502,8 @@ private struct MindMapSavedTab: View {
 
     let items = open.map { SavedItem(save: $0, chapter: $0.chapterId.flatMap(maps.chapter)) }
 
-    MindMapIndex(items: items, subject: \.chapter?.subject) { item in
-      SavedRow(goalId: goalId, item: item)
+    Section {
+      ForEach(items) { SavedRow(goalId: goalId, item: $0) }
     }
 
     if !gone.isEmpty {
