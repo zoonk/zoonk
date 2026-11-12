@@ -7627,14 +7627,19 @@ msgid "This takes a few minutes. You can leave; it'll be here."
 msgstr "数分かかります。画面を離れても、後でここから確認できます。"
 
 #: src/mind-maps/mind-map-copy.ts
-msgctxt "TuOw3Y"
-msgid "Getting your mind map ready…"
+msgctxt "gAZmi-"
+msgid "Writing the lessons, then the mind map…"
 msgstr ""
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "cdPOua"
 msgid "About half a minute. You can leave; it'll be here."
 msgstr "30秒ほどかかります。画面を離れても、後でここから確認できます。"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "DSQIYK"
+msgid "Drawing the mind map…"
+msgstr ""
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "lZl8_B"
@@ -8577,8 +8582,8 @@ msgid "Getting your mock exam ready…"
 msgstr ""
 
 #: src/mock/mock-chooser-page.tsx
-msgctxt "V7vxze"
-msgid "It starts here when it's ready."
+msgctxt "4FZiEz"
+msgid "We're writing questions like the exam's for you. It starts here as soon as they're ready."
 msgstr ""
 
 #: src/mock/mock-chooser-picked.tsx

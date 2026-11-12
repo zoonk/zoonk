@@ -46,7 +46,7 @@ import {
   UnavailableMapRow,
 } from "./mind-map-index-rows";
 import { useMindMapPlace } from "./mind-map-resume";
-import { NotMadeYet } from "./not-made-yet";
+import { NotMadeYet, canMakeNow } from "./not-made-yet";
 import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
@@ -122,7 +122,9 @@ function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: 
       {index.length > 0 ? (
         <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
       ) : (
-        <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+        !notMade.some((chapter) => canMakeNow(chapter)) && (
+          <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+        )
       )}
 
       {notMade.length > 0 && <NotMadeYet chapters={notMade} library={library} tier={tier} />}

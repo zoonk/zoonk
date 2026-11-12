@@ -69,14 +69,14 @@ export function useStateLines(input: MindMapCopyInput): {
   if (input.shown === "writingLessons") {
     return {
       hint: t("This takes a few minutes. You can leave; it'll be here."),
-      line: t("Getting your mind map ready…"),
+      line: t("Writing the lessons, then the mind map…"),
     };
   }
 
   if (input.shown === "drawing") {
     return {
       hint: t("About half a minute. You can leave; it'll be here."),
-      line: t("Getting your mind map ready…"),
+      line: t("Drawing the mind map…"),
     };
   }
 

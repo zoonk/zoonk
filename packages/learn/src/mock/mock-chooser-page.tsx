@@ -215,7 +215,9 @@ export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }
           {t("Getting your mock exam ready…")}
         </GenerationTimelineTitle>
         <GenerationTimelineDescription>
-          {t("It starts here when it's ready.")}
+          {t(
+            "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
+          )}
         </GenerationTimelineDescription>
       </GenerationWait>
     </ChooserLayout>

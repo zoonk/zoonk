@@ -114,7 +114,7 @@ function NotMadeLine({
 }
 
 /** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
-function canMakeNow(chapter: MindMapsPageChapter): boolean {
+export function canMakeNow(chapter: MindMapsPageChapter): boolean {
   return (
     chapter.lessonsToWrite === 0 &&
     (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
@@ -179,7 +179,7 @@ export function NotMadeYet({
       )}
 
       <StatusRegion>
-        <NotMadeLine chapters={chapters} library={library} tier={tier} />
+        <NotMadeLine chapters={later} library={library} tier={tier} />
       </StatusRegion>
 
       <ListGroup>
