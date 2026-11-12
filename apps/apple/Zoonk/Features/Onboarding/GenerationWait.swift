@@ -349,7 +349,6 @@ struct GenerationWait: Equatable, Sendable {
     case done
   }
 
-  /// A phase is finished once every step mapped to it completed, as main's wait counts it.
   private static func steps(of phase: String, kind: Kind) -> Set<String> {
     Set(places(for: kind).filter { $0.value == .phase(phase) }.keys)
   }
