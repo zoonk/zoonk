@@ -44,8 +44,9 @@ function scripted(): ScriptedChallenge {
       runId: randomUUID(),
       usage: {},
     },
-    summary: { ideas: [], shape: "hub" as const },
+    scriptModel: "openai/gpt-6.1-sol",
     writerModels: ["openai/gpt-6.1-sol"],
+    written,
   };
 }
 

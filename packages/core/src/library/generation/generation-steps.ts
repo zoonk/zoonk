@@ -7,6 +7,8 @@ const LESSON_CONTENT_STEPS = [
   "planChallenge",
   "writeChallenge",
   "reviewChallenge",
+  "fixChallenge",
+  "recheckChallenge",
   "redraftChallenge",
   "lessonReady",
 ] as const;

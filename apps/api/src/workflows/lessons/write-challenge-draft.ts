@@ -1,7 +1,9 @@
 import { type ChallengeDraft } from "@zoonk/core/library/challenges/draft";
 import {
   finishChallengeDraftStep,
+  fixChallengeStep,
   planChallengeStep,
+  recheckChallengeStep,
   reviewChallengeStep,
   scriptChallengeStep,
 } from "./steps/challenge-draft-steps";
@@ -30,9 +32,19 @@ export async function draftChallenge({
     return scripted;
   }
 
-  const problems = await reviewChallengeStep({ lessonId, scripted, stage });
+  const findings = await reviewChallengeStep({ lessonId, scripted, stage });
 
-  return problems.length > 0 ? { model: scripted.provenance.model, problems } : scripted;
+  if (findings.length === 0) {
+    return scripted;
+  }
+
+  const fixed = await fixChallengeStep({ findings, lessonId, scripted, stage });
+
+  if ("problems" in fixed) {
+    return fixed;
+  }
+
+  return recheckChallengeStep({ fixed, lessonId, stage });
 }
 
 export async function writeChallengeDraft({

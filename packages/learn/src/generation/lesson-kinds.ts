@@ -10,11 +10,13 @@ export const lesson = {
   ],
   steps: {
     drawPictures: "draw",
+    fixChallenge: "aside",
     joinRunningLesson: "join",
     lessonReady: "done",
     markLesson: "mark",
     planChallenge: "aside",
     planLesson: "plan",
+    recheckChallenge: "aside",
     redraftChallenge: "aside",
     reviewChallenge: "aside",
     writeChallenge: "aside",
@@ -29,18 +31,20 @@ export const challenge = {
   phases: [
     { id: "plan", seconds: 75 },
     { id: "write", seconds: 50 },
-    { id: "redraft", optional: true, seconds: 125 },
+    { id: "fix", optional: true, seconds: 25 },
   ],
   steps: {
     drawPictures: "aside",
+    fixChallenge: "fix",
     joinRunningLesson: "join",
     lessonReady: "done",
     markLesson: "aside",
     planChallenge: "plan",
     planLesson: "aside",
-    redraftChallenge: "redraft",
+    recheckChallenge: "fix",
+    redraftChallenge: "fix",
     reviewChallenge: "write",
     writeChallenge: "write",
     writeLesson: "aside",
   },
-} as const satisfies GenerationKindDefinition<LessonContentStepName, "plan" | "redraft" | "write">;
+} as const satisfies GenerationKindDefinition<LessonContentStepName, "fix" | "plan" | "write">;

@@ -120,7 +120,7 @@ describe(getPhaseProgress, () => {
     ).toStrictEqual(["plan:active", "write:pending", "mark:pending", "draw:pending"]);
   });
 
-  it("keeps a held-back challenge working on its redraft, never done", () => {
+  it("keeps a challenge on its fix through the recheck and any redraft, never done", () => {
     const checked = {
       planChallenge: "completed",
       reviewChallenge: "completed",
@@ -134,19 +134,29 @@ describe(getPhaseProgress, () => {
       }),
     ).toStrictEqual(["plan:completed", "write:active"]);
 
-    const redrafting = progressOf("challenge", {
-      steps: { ...checked, redraftChallenge: "started" },
-    });
+    const fixing = progressOf("challenge", { steps: { ...checked, fixChallenge: "started" } });
 
-    expect(redrafting.phases.map((phase) => `${phase.id}:${phase.status}`)).toStrictEqual([
+    expect(fixing.phases.map((phase) => `${phase.id}:${phase.status}`)).toStrictEqual([
       "plan:completed",
       "write:completed",
-      "redraft:active",
+      "fix:active",
     ]);
 
-    expect(redrafting.progress).toBeCloseTo((125 / 250) * 100);
-    expect(redrafting.target).toBe(100);
-    expect(redrafting.activeMs).toBe(125_000);
+    expect(fixing.progress).toBeCloseTo((125 / 150) * 100);
+    expect(fixing.target).toBe(100);
+    expect(fixing.activeMs).toBe(25_000);
+
+    expect(
+      statusesOf("challenge", {
+        steps: {
+          ...checked,
+          fixChallenge: "completed",
+          planChallenge: "started",
+          recheckChallenge: "completed",
+          redraftChallenge: "started",
+        },
+      }),
+    ).toStrictEqual(["plan:completed", "write:completed", "fix:active"]);
   });
 
   it("runs a lesson's marking and drawing side by side, each done on its own steps", () => {
