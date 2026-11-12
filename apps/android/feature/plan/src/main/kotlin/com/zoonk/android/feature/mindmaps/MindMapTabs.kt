@@ -394,14 +394,17 @@ internal val SavedMindMap.target: MindMapTarget get() = MindMapTarget(kind, targ
 
 private val SavedMindMap.key: String get() = "${kind.value}-$targetId"
 
+/** A saved map's kind, under its title. Saved has no subject headers, so a chapter's number would read alike across subjects. */
+@Composable
+private fun SavedMindMap.kindLabel(): String =
+    stringResource(if (kind == SavedMindMapKind.LESSON) R.string.mindmaps_lesson_map else R.string.mindmaps_chapter_map)
+
 @Composable
 private fun SavedRow(
     entry: SavedMindMap,
     chapter: GoalMindMap?,
     actions: TabActions,
 ) {
-    val locale = currentLocale()
-    val number = chapter?.let { stringResource(R.string.mindmaps_chapter_number, formatNumber(it.position.toDouble(), locale)) }
     val lesson = entry.kind == SavedMindMapKind.LESSON
     val remove = { actions.page.save(entry.target, entry.chapterId, false) }
     var menu by remember { mutableStateOf(false) }
@@ -415,7 +418,7 @@ private fun SavedRow(
                 onLongClickLabel = stringResource(R.string.mindmaps_unsave),
                 onLongClick = { menu = true },
                 leading = { MapMark(chapter?.image?.thumbnailUrl?.takeUnless { lesson }, MindMapShown.Ready) },
-                supporting = { Text(factsLine(number, if (lesson) stringResource(R.string.mindmaps_lesson_map) else null)) },
+                supporting = { Text(entry.kindLabel()) },
             )
             SaveMenu(menu, saved = true, onDismiss = { menu = false }, onToggle = remove)
         }
@@ -431,7 +434,7 @@ private fun GoneRow(
     ListRow(
         headline = { Text(entry.title) },
         leading = { MapMark(null, MindMapShown.Unavailable) },
-        supporting = if (entry.kind == SavedMindMapKind.LESSON) ({ Text(stringResource(R.string.mindmaps_lesson_map)) }) else null,
+        supporting = { Text(entry.kindLabel()) },
         trailing = {
             TextButton(
                 onClick = { actions.page.save(entry.target, entry.chapterId, false) },

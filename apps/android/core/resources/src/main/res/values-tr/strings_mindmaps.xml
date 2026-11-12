@@ -10,6 +10,7 @@
   "mindmaps_can_make_more": "9e840dac929f73c3eefa07854876248ab80a4a47e8660725200c7cb11ecf7416",
   "mindmaps_chapter_count": "ff6f716cb1955b1b6665b7cbf339c6a5cedb6c9e055fcb46ef6031b20e9e50f9",
   "mindmaps_chapter_finished": "585286dd586e53cef5b0ef447e3f09bce94a08ad43af468189f1751690114eee",
+  "mindmaps_chapter_map": "d3b9a3717e10688d8d38d9309eb3b9994f9eab4bf5d5c94b996bac789b9ce9ae",
   "mindmaps_chapter_number": "c5cc22be9a5cb6fcbb06499c047a87f7dac8cc9d5e982ce13f95cea9c4d67e6c",
   "mindmaps_create": "03191730764d64d8b6a55a0688d1329343d34b7435d02efb7e37a15f5919c385",
   "mindmaps_create_count": "6dd70b9f5c26b786a781277645407f55ac5e640c95e87412458f81c958b3af59",
@@ -167,7 +168,9 @@
         <item quantity="one">%1$s kilitli</item>
         <item quantity="other">%1$s kilitli</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">Ünite haritası</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">Ders haritası</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Tümünü göster (%1$s)</string>

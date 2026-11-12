@@ -10,6 +10,7 @@
   "mindmaps_can_make_more": "561762b70da6aa7ab2e9236de8ad0f68afc54234cbcfddd1f2eaefd23912153c",
   "mindmaps_chapter_count": "25b5778eb0f10519cf6a0e82dc049c224548f5e2aa963b55fb05251e75207ff0",
   "mindmaps_chapter_finished": "3a8b695d3ad9facf4f74aee22a64c1e9cca4a2d1f397164de47f801333cc4a50",
+  "mindmaps_chapter_map": "7b18352edff230e096db58d0208b603184171973e792f502e4523d597f88d769",
   "mindmaps_chapter_number": "8a6706a3a2c2a0d80f37dd7bdd4e2b19fd72e37dc5231f5cab21dfa14c7e3163",
   "mindmaps_create": "4fb9ee6373de0a1f6ccdde1782c0504b7fb6b76b3533d1b2d98791829cca7ea1",
   "mindmaps_create_count": "1c30873ba1abf1fc2e1ed0f6784759d1147300d289c3265bc715c506446635d1",
@@ -160,7 +161,9 @@
     <plurals name="mindmaps_locked_count">
         <item quantity="other">%1$s枚がロック中</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">章のマップ</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">レッスンのマップ</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">全%1$s件を表示する</string>

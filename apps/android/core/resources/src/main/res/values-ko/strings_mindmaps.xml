@@ -10,6 +10,7 @@
   "mindmaps_can_make_more": "1ecaefa1071f068d65e3c2afce99c19db4f2c7436a11714f2b7a9cd9d0e32e9f",
   "mindmaps_chapter_count": "42a759dd7f7ef2fc96aef5067a23edc4162a39a2ea35b35bc8b1cd48421813b8",
   "mindmaps_chapter_finished": "616586994a6641aa6234a1919f26b68184b85cb1191796f5555ade1f5e88fed2",
+  "mindmaps_chapter_map": "0a753ebf5f719fddae2b9c455595b253d20274b2d26a0351e40aaf63a396e36a",
   "mindmaps_chapter_number": "2c1f1d51fb44844abd6c1929f9d3de3d0c4adc686b4e8d6c1bbd3a8b4ae1cf8d",
   "mindmaps_create": "6baf318ab485765ffcc73d97ae957b469f353903a0b83e3b544631c789cf82d8",
   "mindmaps_create_count": "235ef76e21d17482e6a214f876adb2cd99e40a7078e59267a37e2aaf0a9af19c",
@@ -160,7 +161,9 @@
     <plurals name="mindmaps_locked_count">
         <item quantity="other">잠김 %1$s개</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">챕터 마인드맵</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">레슨 마인드맵</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">%1$s개 모두 보기</string>

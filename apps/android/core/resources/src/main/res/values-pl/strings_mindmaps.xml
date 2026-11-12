@@ -10,6 +10,7 @@
   "mindmaps_can_make_more": "c2d7272243df7969519521105987463a014d45c6da85998dcab0a79fbd8e14cf",
   "mindmaps_chapter_count": "ea4643ee4b1157c3c4dfbb5289dbddc58bc39ddcb2b79342e6eaf004d32a56fc",
   "mindmaps_chapter_finished": "46d684658fcc4f9551c1fffdf238a59f0ed3ccfbb6d07dfb97549b6555e2e47e",
+  "mindmaps_chapter_map": "6e9168e531e859502fdf735ae8d1f41e6464889045ac828078072fe40e94dfdb",
   "mindmaps_chapter_number": "e84ccc4b88f24a70f4922ef06cd482fdbecbdb2fb277de969cde64c7fdd7b6b9",
   "mindmaps_create": "fcd7663d7e4bea0c517a4b72a630703cfdf4084f98507358f24e957c62829252",
   "mindmaps_create_count": "5b919ccd3364f9555d8d0053e16dd42fdab3a2108de3dbe0a9e0cfc4bbecb7ce",
@@ -181,7 +182,9 @@
         <item quantity="many">%1$s zablokowanych</item>
         <item quantity="other">%1$s zablokowanych</item>
     </plurals>
-    <!-- A saved lesson's map, after its chapter's number: "Chapter 5 · Lesson map". -->
+    <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
+    <string name="mindmaps_chapter_map">Mapa rozdziału</string>
+    <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
     <string name="mindmaps_lesson_map">Mapa lekcji</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Pokaż wszystkie %1$s</string>
