@@ -234,7 +234,16 @@ export function OnboardingHeading({
   return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
 }
 
-export function OnboardingFooter({ children, className, ...props }: React.ComponentProps<"div">) {
+/**
+ * `pinned` keeps it on a phone's screen while the answers scroll under it, for a step whose answer
+ * doesn't move on by itself, so Continue and its notice are always in sight.
+ */
+export function OnboardingFooter({
+  children,
+  className,
+  pinned = false,
+  ...props
+}: React.ComponentProps<"div"> & { pinned?: boolean }) {
   const standalone = useOnboardingHost() === null;
 
   return (
@@ -242,6 +251,8 @@ export function OnboardingFooter({ children, className, ...props }: React.Compon
       className={cn(
         "mt-auto flex flex-col gap-2 pt-4 sm:mt-0",
         standalone && "pb-[max(0.5rem,env(safe-area-inset-bottom))]",
+        pinned &&
+          "max-sm:bg-background max-sm:border-border max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-4 max-sm:border-t max-sm:px-4 max-sm:pt-3 max-sm:pb-[max(0.75rem,env(safe-area-inset-bottom))]",
         className,
       )}
       {...props}

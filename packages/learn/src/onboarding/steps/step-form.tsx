@@ -24,6 +24,7 @@ export function StepForm({
   onContinue,
   onSkip,
   pending,
+  pinFooter,
   rail,
   skipLabel,
   subject,
@@ -38,6 +39,7 @@ export function StepForm({
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;
+  pinFooter?: boolean;
   rail?: React.ReactNode;
   skipLabel?: string;
   subject?: string;
@@ -71,7 +73,7 @@ export function StepForm({
 
         {children}
 
-        <OnboardingFooter>
+        <OnboardingFooter pinned={pinFooter}>
           {notice}
           <OnboardingPrimaryButton
             busy={sender === "continue"}
