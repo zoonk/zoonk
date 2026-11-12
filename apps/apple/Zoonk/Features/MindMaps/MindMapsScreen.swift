@@ -516,9 +516,13 @@ private struct MindMapSavedTab: View {
             .buttonStyle(.outline)
             .controlSize(.small)
           } label: {
-            Text(save.title)
-              .typeStyle(.rowTitle)
-              .foregroundStyle(.mutedForeground)
+            VStack(alignment: .leading, spacing: 2) {
+              Text(save.title)
+                .typeStyle(.rowTitle)
+                .foregroundStyle(.mutedForeground)
+
+              SavedKind(kind: save.kind)
+            }
           }
         }
       } header: {
@@ -570,9 +574,7 @@ private struct SavedRow: View {
             .typeStyle(.rowTitle)
             .foregroundStyle(Color(.foreground))
 
-          Text(verbatim: facts)
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
+          SavedKind(kind: save.kind)
         }
         .accessibilityElement(children: .combine)
       } end: {
@@ -586,22 +588,25 @@ private struct SavedRow: View {
   private var thumbnail: URL? {
     item.chapter?.image.flatMap { URL(string: $0.thumbnailUrl ?? $0.url) }
   }
+}
 
-  private var facts: String {
-    var facts: [String] = []
+/// A saved map's kind, as main's Saved tab names it in place of a chapter's number.
+private struct SavedKind: View {
+  let kind: SavedMindMapKind
 
-    if let chapter = item.chapter {
-      facts.append(
-        String(
-          localized: "Chapter \(chapter.position)", table: "MindMaps",
-          comment: "A chapter's number"))
+  var body: some View {
+    Group {
+      switch kind {
+      case .chapter:
+        Text(
+          "Chapter map", tableName: "MindMaps",
+          comment: "A kind of mind map: one for a whole chapter")
+      case .lesson:
+        Text(LessonMapView.name)
+      }
     }
-
-    if item.save.kind == .lesson {
-      facts.append(String(localized: LessonMapView.name))
-    }
-
-    return facts.joinedFacts()
+    .typeStyle(.meta)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
