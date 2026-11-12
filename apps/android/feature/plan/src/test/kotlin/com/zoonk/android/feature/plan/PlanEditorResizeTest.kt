@@ -33,9 +33,42 @@ class PlanEditorResizeTest {
 
     private val restoration = StateRestorationTester(compose)
 
+    private var width by mutableStateOf(411.dp)
+
     @Test
     fun aCountryAwaitingConfirmationStaysAsTheEditorMovesToTheSidePanel() {
-        var width by mutableStateOf(411.dp)
+        showEditor { PlanEdits() }
+
+        compose.onNodeWithText("Content country").performClick()
+        compose.onNodeWithText("Portugal").performClick()
+        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
+
+        assertConfirmationSurvivesTurningThePhone()
+    }
+
+    @Test
+    fun aCountryPickedAgainAfterAFailedSaveStaysAsTheEditorMovesToTheSidePanel() {
+        var failed by mutableStateOf(false)
+        showEditor {
+            PlanEdits(
+                failed = if (failed) setOf(PlanPart.Country) else emptySet(),
+                setContentCountry = { _, _ -> failed = true },
+            )
+        }
+
+        compose.onNodeWithText("Content country").performClick()
+        compose.onNodeWithText("Portugal").performClick()
+        compose.onNodeWithText("Rebuild plan").performClick()
+        compose.waitForIdle()
+        compose.onNodeWithText("Change the content country?").assertDoesNotExist()
+
+        compose.onNodeWithText("Portugal").performClick()
+        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
+
+        assertConfirmationSurvivesTurningThePhone()
+    }
+
+    private fun showEditor(edits: () -> PlanEdits) {
         val summary = learnerSummary()
         val goal =
             summary.goals.first().copy(
@@ -61,14 +94,12 @@ class PlanEditorResizeTest {
                     override val containerSize get() = with(density) { IntSize(width.roundToPx(), 900.dp.roundToPx()) }
                 }
             CompositionLocalProvider(LocalWindowInfo provides sized) {
-                ZoonkTheme { PlanEditor(page, PlanEdits(), section = null, onTellBuddy = {}, onDismiss = {}) }
+                ZoonkTheme { PlanEditor(page, edits(), section = null, onTellBuddy = {}, onDismiss = {}) }
             }
         }
+    }
 
-        compose.onNodeWithText("Content country").performClick()
-        compose.onNodeWithText("Portugal").performClick()
-        compose.onNodeWithText("Change the content country?").assertIsDisplayed()
-
+    private fun assertConfirmationSurvivesTurningThePhone() {
         width = 900.dp
         compose.waitForIdle()
         compose.onNodeWithText("Change the content country?").assertIsDisplayed()

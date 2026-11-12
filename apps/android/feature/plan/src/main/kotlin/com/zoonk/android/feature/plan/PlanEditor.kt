@@ -191,9 +191,11 @@ internal class EditorDrafts(
 
 internal enum class PlanPicker { Aim, Variety, Country }
 
+/** [sent] once the learner confirmed it, so only that save's failure closes the question. */
 internal data class CountryAsked(
     val code: String,
     val name: String,
+    val sent: Boolean = false,
 ) : Serializable
 
 /** The choices not saved yet, by skill; [opening] tells this opening's save from an earlier one's. */

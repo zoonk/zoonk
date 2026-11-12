@@ -62,8 +62,8 @@ internal fun ContentCountryRow(
     modifier: Modifier = Modifier,
 ) {
     val lessonLanguage = lessonLanguageLine(country.lessonVariety)
-    // A failed save closes the question, and the picker shows the error with the old country still picked.
-    LaunchedEffect(failed) { if (failed) drafts.countryAsked = null }
+    // A failed save closes the question it answered, and the picker shows the error with the old country still picked.
+    LaunchedEffect(failed) { if (failed && drafts.countryAsked?.sent == true) drafts.countryAsked = null }
 
     ListRow(
         headline = { Text(stringResource(R.string.country_content_label)) },
@@ -102,6 +102,7 @@ internal fun ContentCountryRow(
                     busy = pending,
                     enabled = !pending,
                     onClick = {
+                        drafts.countryAsked = asked.copy(sent = true)
                         onPick(asked.code) {
                             drafts.countryAsked = null
                             drafts.picking = null
