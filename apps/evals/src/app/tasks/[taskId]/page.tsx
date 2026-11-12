@@ -149,7 +149,12 @@ async function TaskModels({ params }: TaskRouteProps) {
     getModelsWithResults(taskId),
   ]);
 
-  return <ModelList models={models} open={modelsWithResults.length === 0} taskId={taskId} />;
+  const pricedModels = models.map((item) => ({
+    ...item,
+    pricing: GATEWAY_PRICES.models[item.model.gatewayModelId],
+  }));
+
+  return <ModelList models={pricedModels} open={modelsWithResults.length === 0} taskId={taskId} />;
 }
 
 export default function TaskPage({ params }: TaskRouteProps) {

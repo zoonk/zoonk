@@ -1,16 +1,23 @@
 import { StatusBadge } from "@/components/model-status-badge";
 import { type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type ModelStatus } from "@/lib/utils";
+import { type ModelPricing } from "@zoonk/ai/pricing/gateway-prices";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
+
+const TOKENS_PER_MILLION = 1_000_000;
+
+function formatPrice(price: number): string {
+  return `$${Number((price * TOKENS_PER_MILLION).toFixed(3))}`;
+}
 
 export function ModelList({
   models,
   open,
   taskId,
 }: {
-  models: { model: ModelConfig; status: ModelStatus }[];
+  models: { model: ModelConfig; pricing?: ModelPricing; status: ModelStatus }[];
   open: boolean;
   taskId: string;
 }) {
@@ -28,15 +35,25 @@ export function ModelList({
         Run another model
       </summary>
 
-      <ul className="grid gap-x-10 pt-1 sm:grid-cols-2 lg:grid-cols-4">
-        {models.map(({ model, status }) => (
+      <p className="text-muted-foreground text-xs">Price per million tokens: input / output.</p>
+
+      <ul className="grid gap-x-10 pt-1 sm:grid-cols-2 lg:grid-cols-3">
+        {models.map(({ model, pricing, status }) => (
           <li key={model.id}>
             <Link
               className="hover:bg-muted -mx-2 flex min-h-11 items-center justify-between gap-3 rounded-md px-2 text-sm"
               href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
             >
-              <span className="truncate">{getModelDisplayName(model)}</span>
-              {status !== "notStarted" && <StatusBadge status={status} />}
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="truncate">{getModelDisplayName(model)}</span>
+                {status !== "notStarted" && <StatusBadge status={status} />}
+              </span>
+
+              {pricing && (
+                <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
+                  {formatPrice(pricing.input)} / {formatPrice(pricing.output)}
+                </span>
+              )}
             </Link>
           </li>
         ))}
