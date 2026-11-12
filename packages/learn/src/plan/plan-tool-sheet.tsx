@@ -117,7 +117,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
         {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
         {failed && <ChangeSaveError />}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <Button onClick={onClose} size="lg" type="button" variant="outline">
             {t("Cancel")}
           </Button>

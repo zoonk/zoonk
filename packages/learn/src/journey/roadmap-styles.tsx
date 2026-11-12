@@ -15,7 +15,9 @@ export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
 export const BAND_CLASS =
   "relative flex min-h-8 min-w-min items-center gap-1 rounded-md px-2.5 py-1 text-left text-[0.78125rem] font-medium";
 
-export const BAND_NAME_CLASS = "min-w-0 leading-4 text-balance hyphens-auto";
+/** Only a long word is split, so a short phase's band grows to its words instead of cutting them. */
+export const BAND_NAME_CLASS =
+  "min-w-0 leading-4 text-balance hyphens-auto [hyphenate-limit-chars:12_5_5]";
 
 /** Inline in the name, so a narrow band's lines get its whole width. */
 export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";

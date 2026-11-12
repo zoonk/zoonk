@@ -45,7 +45,7 @@ function OtherOptions({ item }: { item: SlotItem }) {
         <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="w-64">
+      <DropdownMenuContent align="start" className="min-w-64">
         <DropdownMenuItem onClick={() => host.onEdit("date")}>{t("Adjust plan")}</DropdownMenuItem>
         <DropdownMenuItem onClick={() => dismiss(item.key)}>{t("Not now")}</DropdownMenuItem>
       </DropdownMenuContent>

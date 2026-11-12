@@ -81,7 +81,7 @@ export function NotPlannedCallout({
           <p>
             {t("This subject isn't in your plan: not enough time before your exam.")}
             {space}
-            <LearnLink className="font-medium underline underline-offset-4" href={adjustHref}>
+            <LearnLink className="font-medium underline underline-offset-2" href={adjustHref}>
               {t("Adjust plan")}
             </LearnLink>
           </p>

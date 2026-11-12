@@ -9,6 +9,7 @@ import { ChoiceRows } from "../_components/choice-rows";
 import { Disclosure } from "../_components/disclosure";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
 import { SettingRow } from "../_components/setting-rows";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 
 export type BaseChoice = PlanBaseView["choice"];
@@ -145,7 +146,7 @@ function SubjectChoice({
     <SettingRow
       className="max-sm:flex-col max-sm:items-stretch max-sm:gap-y-0 max-sm:pb-3"
       description={
-        minutes > 0 ? t("{names} · {time}", { names, time: formatDuration(minutes) }) : names
+        <FactSegments facts={minutes > 0 ? [names, formatDuration(minutes)] : [names]} />
       }
       descriptionId={descriptionId}
       label={<label htmlFor={selectId}>{area}</label>}

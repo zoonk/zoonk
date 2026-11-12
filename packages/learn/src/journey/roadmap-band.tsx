@@ -10,6 +10,12 @@ import { getLessonShare } from "./use-roadmap";
 
 const PERCENT = 100;
 
+/**
+ * A line can break after an inline icon, which left the check alone above a narrow band's name.
+ * Ending its no-wrap box with a word joiner keeps it on the first word's line.
+ */
+const WORD_JOINER = "\u2060";
+
 export function BandFace({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const phaseName = usePhaseName();
@@ -19,7 +25,10 @@ export function BandFace({ phase }: { phase: PlanPhaseView }) {
     <>
       <span className={BAND_NAME_CLASS}>
         {phase.state === "done" && (
-          <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
+          <span className="whitespace-nowrap">
+            <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
+            {WORD_JOINER}
+          </span>
         )}
         {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
       </span>

@@ -97,12 +97,7 @@ export function OfferPreview({
         <SuggestionDescription aria-busy="true" role="status">
           {t("Checking what changes…")}
         </SuggestionDescription>
-        <SuggestionActions>
-          {/* Keyed, so a focused Try again never turns into the Not now beside it. */}
-          <SuggestionAction key="not-now" onClick={() => setPreview()} variant="outline">
-            {t("Not now")}
-          </SuggestionAction>
-        </SuggestionActions>
+        <CheckingActions onCancel={() => setPreview()} />
       </>
     );
   }
@@ -154,6 +149,25 @@ export function OfferPreview({
   );
 }
 
+/**
+ * The button the check leads to holds its place, off, so no button moves or changes size when the
+ * check ends. Keyed, so a focused Try again never turns into the button beside it.
+ */
+function CheckingActions({ onCancel }: { onCancel: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <SuggestionActions>
+      <SuggestionAction disabled key="apply">
+        {t("Change my plan")}
+      </SuggestionAction>
+      <SuggestionAction key="not-now" onClick={onCancel} variant="outline">
+        {t("Not now")}
+      </SuggestionAction>
+    </SuggestionActions>
+  );
+}
+
 export function CheckingChange({ onCancel }: { onCancel: () => void }) {
   const t = useExtracted();
 
@@ -162,11 +176,7 @@ export function CheckingChange({ onCancel }: { onCancel: () => void }) {
       <SuggestionDescription aria-busy="true" role="status">
         {t("Checking what changes…")}
       </SuggestionDescription>
-      <SuggestionActions>
-        <SuggestionAction key="not-now" onClick={onCancel} variant="outline">
-          {t("Not now")}
-        </SuggestionAction>
-      </SuggestionActions>
+      <CheckingActions onCancel={onCancel} />
     </>
   );
 }
@@ -288,7 +298,7 @@ export function OtherOptions({
         <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="w-64">
+      <DropdownMenuContent align="start" className="min-w-64">
         {onMoveDate && (
           <DropdownMenuItem onClick={onMoveDate}>
             {t("Move your date to cover everything")}

@@ -16,7 +16,7 @@ const PERCENT = 100;
 
 const PHASE_END_SHARE = 0.9;
 
-const FLAG_ROOM = "1rem";
+const FLAG_ROOM = "1.25rem";
 
 function LaneMark({
   beforeFlag = false,

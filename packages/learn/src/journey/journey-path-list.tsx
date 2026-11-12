@@ -145,7 +145,7 @@ function ChaptersPhase({
           />
         </CollapsibleTrigger>
 
-        <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+        <CollapsibleContent className="-mx-2.5 h-(--collapsible-panel-height) overflow-hidden px-2.5 transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
           <div className={NESTED_CLASS}>
             <JourneyChapters
               chapters={phase.chapters}

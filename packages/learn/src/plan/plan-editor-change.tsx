@@ -15,12 +15,11 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
   const { failed, isPending, undo } = useUndoChange({ change });
 
   return (
-    <>
-      <PlanChangeSummary change={change} icon={SlidersHorizontalIcon} />
+    <PlanChangeSummary change={change} icon={SlidersHorizontalIcon}>
       {change.canUndo && (
         <Button
           busy={isPending}
-          className="self-start"
+          className="mt-1.5 self-start"
           icon={<Undo2Icon aria-hidden="true" />}
           onClick={undo}
           size="sm"
@@ -30,7 +29,7 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
         </Button>
       )}
       {failed && <ChangeSaveError />}
-    </>
+    </PlanChangeSummary>
   );
 }
 

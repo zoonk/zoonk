@@ -13,9 +13,12 @@ import { useUndoChange } from "./use-undo-change";
 
 export function PlanChangeSummary({
   change,
+  children,
   icon: Icon,
 }: {
   change: PlanChangeView;
+  /** What follows the note on its text edge, such as Undo. */
+  children?: React.ReactNode;
   icon: LucideIcon;
 }) {
   const t = useExtracted();
@@ -39,6 +42,7 @@ export function PlanChangeSummary({
         {!undone && (
           <p className="text-muted-foreground text-sm">{appliedLine(change.todaySession)}</p>
         )}
+        {children}
       </div>
     </div>
   );

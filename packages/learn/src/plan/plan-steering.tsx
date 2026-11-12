@@ -80,7 +80,7 @@ export function PlanSteering() {
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="mb-2 text-sm font-medium">{t("How is it going?")}</legend>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {steers.map((steer) => (
           <Toggle
             className="h-11 px-4"

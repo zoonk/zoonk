@@ -24,7 +24,13 @@ import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
-import { NumberButton, type PlanNumber, type PlanNumberVariant } from "./plan-number-button";
+import {
+  NUMBER_ITEM_CLASS,
+  NUMBER_ROWS_CLASS,
+  NumberButton,
+  type PlanNumber,
+  type PlanNumberVariant,
+} from "./plan-number-button";
 import { PreparationDetails } from "./preparation/preparation-details";
 import { ScheduleDetails, useScheduleNumber } from "./schedule-details";
 
@@ -213,13 +219,14 @@ export function PlanNumbers({
     <>
       <ul
         className={cn(
-          "grid grid-cols-2 items-stretch",
-          variant === "tiles" ? "gap-2" : "gap-x-6",
+          "grid grid-cols-2",
+          NUMBER_ROWS_CLASS,
+          variant === "tiles" ? "gap-x-2" : "gap-x-6",
           className,
         )}
         data-slot="journey-standing"
       >
-        <li className={cn("min-w-0", !status && "col-span-2")}>
+        <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "col-span-2")}>
           <NumberButton
             number={standingNumber}
             onOpen={() => setOpen("standing")}
@@ -227,7 +234,7 @@ export function PlanNumbers({
           />
         </li>
         {status && (
-          <li className="min-w-0">
+          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
             <NumberButton
               number={scheduleNumber}
               onOpen={() => setOpen("schedule")}

@@ -44,7 +44,7 @@ function PathLine({ walked }: { walked: boolean }) {
       aria-hidden="true"
       data-slot="path-line"
       className={cn(
-        "absolute top-8 -bottom-3 left-[7.5px] w-px",
+        "absolute top-9 -bottom-2 left-[7.5px] w-px",
         walked ? "bg-success/60" : "bg-border",
       )}
     />
@@ -167,13 +167,11 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
 
   const content = (
     <span className={HEADER_BODY_CLASS}>
-      <span className="text-sm font-medium">{goal.displayName}</span>
-      {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
-      {date && (
-        <span className="text-muted-foreground basis-full font-mono text-xs tabular-nums">
-          {date}
-        </span>
-      )}
+      <span className="flex flex-col">
+        <span className="text-sm font-medium">{goal.displayName}</span>
+        {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
+      </span>
+      {date && <span className={DATE_CLASS}>{date}</span>}
     </span>
   );
 

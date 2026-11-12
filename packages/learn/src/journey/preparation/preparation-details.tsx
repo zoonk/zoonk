@@ -99,12 +99,12 @@ function PreparationParts({
     <dl className="flex flex-col text-sm [&>div+div]:border-t" data-slot="preparation-parts">
       {parts.map((part) => (
         <div
-          className="flex items-baseline justify-between gap-4 py-2.5"
+          className="flex min-h-11 items-center justify-between gap-4 py-2"
           data-part={part.key}
           key={part.key}
         >
           <dt className="text-muted-foreground">{part.label}</dt>
-          <dd className="font-medium tabular-nums">{part.value}</dd>
+          <dd className="font-mono tabular-nums">{part.value}</dd>
         </div>
       ))}
     </dl>

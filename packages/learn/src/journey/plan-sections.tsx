@@ -71,7 +71,7 @@ function FullCourseRow({ href }: { href: string }) {
   const t = useExtracted();
 
   return (
-    <PathLinkRow href={href} icon={<LibraryIcon className="size-4" />}>
+    <PathLinkRow className="min-h-12" href={href} icon={<LibraryIcon className="size-4" />}>
       {t("See the full course")}
     </PathLinkRow>
   );
@@ -99,8 +99,14 @@ export function PathSection({
       {children}
       {alphabet && <AlphabetRow alphabet={alphabet.link} onSkip={alphabet.onSkip} />}
 
-      <JourneyPathList links={links} />
-      {courseHref && <FullCourseRow href={courseHref} />}
+      <div className="flex flex-col">
+        <JourneyPathList links={links} />
+        {courseHref && (
+          <div className="border-t">
+            <FullCourseRow href={courseHref} />
+          </div>
+        )}
+      </div>
     </PageSection>
   );
 }
@@ -184,7 +190,7 @@ export function PhasesSheet({
           <DrawerTitle className="text-xl font-semibold">{t("Your path")}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
-        <DrawerContent className="pt-2">
+        <DrawerContent>
           <JourneyPath links={links} />
         </DrawerContent>
       </DrawerPopup>

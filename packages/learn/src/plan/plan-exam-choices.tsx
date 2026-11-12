@@ -179,7 +179,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
                 pending={isPending}
               />
             ) : (
-              <SuggestionActions>
+              <SuggestionActions className="*:min-w-0 *:flex-1">
                 {choice.options.map((option) => (
                   <SuggestionAction
                     action={() => choose({ group: choice.group, subjects: [option.name] })}

@@ -176,11 +176,13 @@ export function TutorPlanChange({
       ref={cardRef}
       tabIndex={-1}
     >
-      <h3 className="text-sm leading-snug font-semibold text-pretty" id={titleId}>
-        {words.title}
-      </h3>
+      <div className="flex flex-col gap-1">
+        <h3 className="text-sm leading-snug font-semibold text-pretty" id={titleId}>
+          {words.title}
+        </h3>
 
-      {words.why && <p className="text-muted-foreground text-sm leading-snug">{words.why}</p>}
+        {words.why && <p className="text-muted-foreground text-sm leading-snug">{words.why}</p>}
+      </div>
       {proposed && <PlanEffectDiff effect={change.effect} />}
       {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
