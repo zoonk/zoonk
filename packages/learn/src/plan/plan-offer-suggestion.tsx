@@ -21,7 +21,7 @@ export function PlanOfferSuggestion({
   said,
   title,
 }: {
-  /** The offer's own verb, such as "Add them". */
+  /** The offer's own verb, such as "Add to my plan". */
   accept: string;
   actions: React.ReactNode;
   canApply?: boolean;

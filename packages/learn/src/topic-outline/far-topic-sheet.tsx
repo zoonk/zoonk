@@ -44,7 +44,10 @@ function useStateCopy(shown: TopicOutlineShown): { action: string | null; messag
     return { action: null, message: t("This topic has no more lessons to get ready.") };
   }
 
-  return { action: t("Get them ready"), message: t("These lessons aren't ready yet.") };
+  return {
+    action: t("Get them ready"),
+    message: t("Getting these lessons ready takes about half a minute."),
+  };
 }
 
 function OutlineChapters({

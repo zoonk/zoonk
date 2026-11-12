@@ -20,7 +20,7 @@ export function usePhaseDatesQuestion() {
     if (late.length > 1) {
       return {
         title: t("Move your phase dates later?"),
-        why: t("You finish each phase's lessons first."),
+        why: t("That gives you time to finish each phase's lessons."),
       };
     }
 
@@ -30,7 +30,7 @@ export function usePhaseDatesQuestion() {
           "{days, plural, one {Move the end of {phase} # day later?} other {Move the end of {phase} # days later?}}",
           { days: daysBetween(first.before, first.after), phase: first.name },
         ),
-        why: t("You finish its lessons first."),
+        why: t("That gives you time to finish its lessons."),
       };
     }
 

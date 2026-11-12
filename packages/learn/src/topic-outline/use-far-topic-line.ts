@@ -45,7 +45,7 @@ export function useFarTopicLine() {
       return nextDate
         ? t({
             description: '{start} is a day, like "Nov 5", or a month, like "December".',
-            message: "{dateKind, select, month {From {start}} other {From {start}}}",
+            message: "{dateKind, select, month {Starts in {start}} other {Starts {start}}}",
             values: startWords(nextDate),
           })
         : null;
@@ -57,7 +57,7 @@ export function useFarTopicLine() {
       ? t({
           description: '{start} is a day, like "Nov 5", or a month, like "December".',
           message:
-            "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}",
+            "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}",
           values: { count, ...startWords(nextDate) },
         })
       : count;

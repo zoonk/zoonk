@@ -11536,13 +11536,13 @@ msgid "You finish around {month}."
 msgstr "Você termina por volta de {month}."
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "oNcvYC"
-msgid "Add them"
+msgctxt "hKZBEc"
+msgid "Add to my plan"
 msgstr ""
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "lfT_tB"
-msgid "{count, plural, one {# more lesson fits your time} other {# more lessons fit your time}}"
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
 msgstr ""
 
 #. Link that opens the Focus test, for a learner who has not taken it.
@@ -12424,8 +12424,8 @@ msgid "Move your phase dates later?"
 msgstr ""
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "jZw-A0"
-msgid "You finish each phase's lessons first."
+msgctxt "hMsz2_"
+msgid "That gives you time to finish each phase's lessons."
 msgstr ""
 
 #: src/plan/use-phase-dates-sentence.ts
@@ -12434,8 +12434,8 @@ msgid "{days, plural, one {Move the end of {phase} # day later?} other {Move the
 msgstr ""
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "uiEHhW"
-msgid "You finish its lessons first."
+msgctxt "HGzql1"
+msgid "That gives you time to finish its lessons."
 msgstr ""
 
 #: src/plan/use-phase-dates-sentence.ts
@@ -14232,8 +14232,8 @@ msgid "You took this subject out of your plan."
 msgstr "Você tirou esta matéria do seu plano."
 
 #: src/syllabus/subject-not-planned.tsx
-msgctxt "l9zBoT"
-msgid "This subject isn't in your plan: your time doesn't cover it."
+msgctxt "Xs-i9Q"
+msgid "This subject isn't in your plan: not enough time before your exam."
 msgstr ""
 
 #: src/syllabus/subject-not-planned.tsx
@@ -15028,21 +15028,21 @@ msgid "Get them ready"
 msgstr ""
 
 #: src/topic-outline/far-topic-sheet.tsx
-msgctxt "YiNQI7"
-msgid "These lessons aren't ready yet."
+msgctxt "Wvd9Tn"
+msgid "Getting these lessons ready takes about half a minute."
 msgstr ""
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
-msgctxt "2bgkMA"
-msgid "{dateKind, select, month {From {start}} other {From {start}}}"
-msgstr "{dateKind, select, month {A partir de {start}} other {A partir de {start}}}"
+msgctxt "GNNk9G"
+msgid "{dateKind, select, month {Starts in {start}} other {Starts {start}}}"
+msgstr ""
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
-msgctxt "96EsHJ"
-msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
-msgstr "{dateKind, select, month {{count} · a partir de {start}} other {{count} · a partir de {start}}}"
+msgctxt "83fmM5"
+msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
+msgstr ""
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"

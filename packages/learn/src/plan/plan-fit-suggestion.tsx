@@ -14,7 +14,7 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
 
   return (
     <PlanOfferSuggestion
-      accept={t("Add them")}
+      accept={t("Add to my plan")}
       actions={
         <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
           {t("Not now")}
@@ -25,7 +25,7 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
       offer={offer}
       said="lessonsAdded"
       title={t(
-        "{count, plural, one {# more lesson fits your time} other {# more lessons fit your time}}",
+        "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}",
         { count: offer?.effect.lessonsAdded ?? 0 },
       )}
     />
