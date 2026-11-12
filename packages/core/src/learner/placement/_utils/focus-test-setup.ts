@@ -4,7 +4,10 @@ import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { toListeningExam } from "../../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
+import { getExamChoiceFormats } from "../../../library/exams/exam-choice-format";
+import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
+import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { type PlanGraph, type PlanSettings } from "../../../plans/planner/plan-state";
 import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
 import { type TestProgress, getAreaOrder, getTestProgress } from "../focus-test-progress";
@@ -12,6 +15,7 @@ import { type FocusTestRecord, readFocusTestRecord } from "../focus-test-state";
 import { type TestSubject, listTestSubjects, mapSkillAreas } from "../focus-test-subjects";
 import { getKnownSubjects, getOwnLevel, isLevelMeasured } from "../placement-contract";
 import { isOwnMaterialTest } from "../placement-material";
+import { confirmsInWriting, getPlacementQuickFormat } from "../placement-quick-format";
 import { type TestSkillAnswers } from "./placement-evidence";
 
 type TestGoal = Goal & { examBlueprint: ExamBlueprint | null };
@@ -42,20 +46,28 @@ function listGoalSubjects({
   });
 }
 
-/** What a Focus test summary is counted from besides the answers, as one comparable key. */
+/**
+ * What the placement engine counts a Focus test summary from besides the answers and questions, as
+ * one comparable key: what `loadGoalExam` and the question filter derive from the goal, notice and plan.
+ */
 export function summaryInputsKey({ goal, graph, settings }: SummaryInputs): string {
   const blueprint = goal.examBlueprint;
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
 
   const inputs = {
     areas: [...mapSkillAreas(graph)].toSorted(([first], [second]) => first.localeCompare(second)),
+    choices: getExamChoiceFormats(structure).map(({ kind, options }) => ({ kind, options })),
     dated: goal.targetDate !== null,
+    examBlueprintId: goal.examBlueprintId,
     focusAreas: settings.focusAreas,
-    knownAreas: getKnownSubjects(goal),
+    focusedSkillIds: [...listFocusedSkillIds({ graph, settings })].toSorted(),
+    knownAreas: [...new Set(getKnownSubjects(goal))].toSorted(),
     level: getOwnLevel({ goal }),
     measured: isLevelMeasured(goal),
     ownMaterial: isOwnMaterialTest(blueprint),
+    quickFormat: getPlacementQuickFormat(structure ?? readNoticeFormats(goal.details)),
     subjects: listGoalSubjects({ goal, graph, settings, structure }),
+    typed: confirmsInWriting(goal),
   };
 
   return createHash("sha256").update(JSON.stringify(inputs)).digest("hex");

@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import {
@@ -9,6 +11,7 @@ import {
   holdPlanLock,
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
+import { mockSession } from "../../_test-utils/mock-session";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import {
@@ -17,11 +20,17 @@ import {
   unlinkGoalFromSharedExam,
 } from "../../library/exams/exam-learners";
 import {
+  findChoiceOptionsLookup,
+  recordChoiceOptions,
+} from "../../library/exams/record-choice-options";
+import {
   findSubjectQuestionsLookup,
   recordSubjectQuestions,
 } from "../../library/exams/record-subject-questions";
 import { readBlueprintContent, saveExamBlueprint } from "../../library/exams/save-exam-blueprint";
+import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
+import { createGoalPlan } from "../../plans/create-goal-plan";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { getPlanTimeAdvice } from "../../plans/get-time-advice";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
@@ -133,6 +142,14 @@ function setTargetDate(goalId: string, targetDate: string | null) {
   return changeGoalPlan({ goalId, input: { operations: [{ kind: "setTargetDate", targetDate }] } });
 }
 
+function openToday(goalId: string) {
+  return openStudyDay({
+    goalId,
+    shownDate: new Date().toISOString().slice(0, 10),
+    timeZone: "UTC",
+  });
+}
+
 /** The learner's next Start, with a review due so the day has something to open. */
 async function startNextDay({ id, userId }: { id: string; userId: string }) {
   const { graph } = await prisma.plan.findUniqueOrThrow({ where: { goalId: id } });
@@ -147,11 +164,98 @@ async function startNextDay({ id, userId }: { id: string; userId: string }) {
     userId,
   });
 
-  return openStudyDay({
-    goalId: id,
-    shownDate: new Date().toISOString().slice(0, 10),
-    timeZone: "UTC",
+  return openToday(id);
+}
+
+async function nameSubjectsShortWithoutRefresh(blueprintId: string) {
+  const blueprint = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprintId } });
+  const structure = examStructureSchema.parse(blueprint.structure);
+
+  await prisma.examBlueprint.update({
+    data: {
+      structure: {
+        ...structure,
+        subjects: structure.subjects.map((subject) => ({
+          ...subject,
+          shortName: `${subject.name} (short)`,
+        })),
+      },
+    },
+    where: { id: blueprint.id },
   });
+}
+
+function expectShortNames(summary: Awaited<ReturnType<typeof readSummary>>) {
+  expect(summary?.suggested.length).toBeGreaterThan(0);
+
+  expect(summary?.suggested.map(({ shortName }) => shortName)).toStrictEqual(
+    summary?.suggested.map(({ name }) => `${name} (short)`),
+  );
+}
+
+/**
+ * An exam plan with two topics in A and one in B, short of time, that a learner answered: right
+ * once on A's first topic, "I don't know" on the others. Focusing a part of A asks its topic twice.
+ */
+async function focusedPartGoal() {
+  const user = await userFixture();
+
+  const library = await planLibraryFixture({
+    skills: [
+      { area: "A", lessons: 4 },
+      { area: "A", lessons: 4 },
+      { area: "B", lessons: 4 },
+    ],
+  });
+
+  const { goal } = await unplannedGoalFixture({
+    dailyMinutes: 5,
+    kind: "exam",
+    targetDate: new Date(Date.now() + 5 * MS_PER_DAY),
+    userId: user.id,
+    ...PLAN_SHOWN,
+  });
+
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  mockSession(user.id);
+
+  const focusPart = (index: number, minutes: number) =>
+    changeGoalPlan({
+      goalId: goal.id,
+      input: {
+        operations: [
+          {
+            areas: ["A"],
+            kind: "focusAreas",
+            parts: [
+              { area: "A", name: `Part ${index}`, skillIds: [library.skills[index]?.id ?? ""] },
+            ],
+          },
+          { kind: "setDailyMinutes", minutes },
+        ],
+      },
+    });
+
+  await expect(focusPart(0, 6)).resolves.toMatchObject({ status: "applied" });
+
+  await Promise.all(
+    library.skills.map(async (skill, index) => {
+      const item = await itemFixture({ format: "numeric", skillId: skill.id });
+
+      await attemptFixture({
+        answer: index === 0 ? { value: 42 } : { dontKnow: true },
+        durationMs: 30_000,
+        isCorrect: index === 0,
+        isPlacement: true,
+        itemId: item.id,
+        skillId: skill.id,
+        userId: user.id,
+      });
+    }),
+  );
+
+  await startFocusTestSummary(goal.id);
+  return { focusPart, goal };
 }
 
 describe("the saved Focus test summary", () => {
@@ -427,37 +531,80 @@ describe("the saved Focus test summary", () => {
   it("catches up at the learner's next Start with a change no write recounted", async () => {
     const { goal, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
     await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
-
-    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
-      where: { id: goal.examBlueprintId ?? "" },
-    });
-
-    const structure = examStructureSchema.parse(blueprint.structure);
-
-    await prisma.examBlueprint.update({
-      data: {
-        structure: {
-          ...structure,
-          subjects: structure.subjects.map((subject) => ({
-            ...subject,
-            shortName: `${subject.name} (short)`,
-          })),
-        },
-      },
-      where: { id: blueprint.id },
-    });
+    await nameSubjectsShortWithoutRefresh(goal.examBlueprintId ?? "");
 
     await expect(startNextDay({ id: goal.id, userId: user.id })).resolves.toMatchObject({
       status: "opened",
     });
 
     const summary = await readSummary(goal.id);
-    expect(summary?.suggested.length).toBeGreaterThan(0);
-
-    expect(summary?.suggested.map(({ shortName }) => shortName)).toStrictEqual(
-      summary?.suggested.map(({ name }) => `${name} (short)`),
-    );
-
+    expectShortNames(summary);
     expect(summary).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("catches up when the learner opens again a day saved before a change no write recounted", async () => {
+    const { goal, user } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    await expect(answerDontKnow(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(startNextDay({ id: goal.id, userId: user.id })).resolves.toMatchObject({
+      created: true,
+      status: "opened",
+    });
+
+    await nameSubjectsShortWithoutRefresh(goal.examBlueprintId ?? "");
+
+    await expect(openToday(goal.id)).resolves.toMatchObject({ created: false, status: "opened" });
+
+    const summary = await readSummary(goal.id);
+    expectShortNames(summary);
+    expect(summary).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("counts the topics of the focused part the plan asks twice", async () => {
+    const { focusPart, goal } = await focusedPartGoal();
+    await expect(readSummary(goal.id)).resolves.toMatchObject({ complete: false });
+
+    await expect(focusPart(1, 7)).resolves.toMatchObject({ status: "applied" });
+
+    const summary = await readSummary(goal.id);
+    expect(summary).toMatchObject({ complete: true, offerQuestions: null });
+    expect(summary).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("counts the questions that keep fitting once research finds the options a question has", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    const examBlueprintId = goal.examBlueprintId ?? "";
+    await expect(readSummary(goal.id)).resolves.toMatchObject({ offerQuestions: 15 });
+    await expect(findChoiceOptionsLookup({ examBlueprintId })).resolves.not.toBeNull();
+
+    await recordChoiceOptions({
+      board: null,
+      edition: null,
+      examBlueprintId,
+      options: 5,
+      source: { title: "Previous paper", url: "https://example.com/previous-paper" },
+    });
+
+    await refreshFollowerSummaries(examBlueprintId);
+
+    const summary = await readSummary(goal.id);
+    expect(summary).toMatchObject({ offerQuestions: null });
+    expect(summary).toStrictEqual(await computeSummary(goal));
+  });
+
+  it("keeps the summary when the learner names the subjects they know in another order", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+
+    const answerKnown = (knownSubjects: string[]) =>
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { knownSubjects, level: "basic", question: "level" },
+      });
+
+    await expect(answerKnown(["Direito", "Português"])).resolves.toMatchObject({ status: "saved" });
+    const summary = await readSummary(goal.id);
+
+    await expect(answerKnown(["Português", "Direito"])).resolves.toMatchObject({ status: "saved" });
+    await expect(readSummary(goal.id)).resolves.toStrictEqual(summary);
   });
 });

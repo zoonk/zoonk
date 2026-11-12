@@ -219,11 +219,11 @@ export async function keepSummaryCurrent({
   goal: Goal;
   plan: Pick<PlanState, "graph" | "settings">;
   tx: TransactionClient;
-}): Promise<boolean> {
+}): Promise<void> {
   const summary = readFocusTestRecord(goal)?.summary;
 
   if (!summary) {
-    return false;
+    return;
   }
 
   const examBlueprint = goal.examBlueprintId
@@ -231,13 +231,10 @@ export async function keepSummaryCurrent({
     : null;
 
   if (
-    summary.inputsKey === summaryInputsKey({ goal: { ...goal, examBlueprint }, graph, settings })
+    summary.inputsKey !== summaryInputsKey({ goal: { ...goal, examBlueprint }, graph, settings })
   ) {
-    return false;
+    await keepTestSummary({ goalId: goal.id, tx, userId: goal.userId });
   }
-
-  await keepTestSummary({ goalId: goal.id, tx, userId: goal.userId });
-  return true;
 }
 
 /** `keepSummaryCurrent` for a write that has only the goal's id. */
@@ -247,11 +244,11 @@ export async function refreshTestSummary({
 }: {
   goalId: string;
   tx: TransactionClient;
-}): Promise<boolean> {
+}): Promise<void> {
   const goal = await tx.goal.findUnique({ where: { id: goalId } });
 
   if (!goal || !readFocusTestRecord(goal)?.summary) {
-    return false;
+    return;
   }
 
   const plan = await tx.plan.findUniqueOrThrow({
@@ -259,5 +256,16 @@ export async function refreshTestSummary({
     where: { goalId },
   });
 
-  return keepSummaryCurrent({ goal, plan: getPlanState({ goal, plan }), tx });
+  await keepSummaryCurrent({ goal, plan: getPlanState({ goal, plan }), tx });
+}
+
+/** `refreshTestSummary` in a transaction of its own under the learner's lock; none for a goal read with no summary. */
+export async function refreshGoalTestSummary(
+  goal: Pick<Goal, "details" | "id" | "userId">,
+): Promise<void> {
+  if (readFocusTestRecord(goal)?.summary) {
+    await writeLearnerChange({ userId: goal.userId }, (tx) =>
+      refreshTestSummary({ goalId: goal.id, tx }),
+    );
+  }
 }

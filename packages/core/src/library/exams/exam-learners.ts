@@ -10,8 +10,10 @@ import {
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { refreshTestSummary } from "../../learner/placement/_utils/test-sitting";
-import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
+import {
+  refreshGoalTestSummary,
+  refreshTestSummary,
+} from "../../learner/placement/_utils/test-sitting";
 import { getPlanState } from "../../plans/_utils/plan-context";
 import { applyPlanOperations } from "../../plans/planner/plan-operations";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
@@ -192,11 +194,9 @@ export async function refreshFollowerSummaries(examBlueprintId: string): Promise
     where: { examBlueprintId },
   });
 
-  for (const goal of goals.filter((following) => readFocusTestRecord(following)?.summary)) {
+  for (const goal of goals) {
     // oxlint-disable-next-line no-await-in-loop -- Each learner's lock is its own transaction; a popular notice must not exhaust the pool.
-    await writeLearnerChange({ userId: goal.userId }, async (tx) =>
-      (await refreshTestSummary({ goalId: goal.id, tx })) ? true : unchanged(false),
-    );
+    await refreshGoalTestSummary(goal);
   }
 }
 
