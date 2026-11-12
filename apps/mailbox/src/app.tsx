@@ -120,13 +120,20 @@ function EmailListMessage({
     <MailboxListItem>
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
         <span className="truncate text-sm font-semibold tracking-[-0.01em]">{email.subject}</span>
-        <time className="text-muted-foreground font-mono text-[11px]" dateTime={email.receivedAt}>
+        <time
+          className="text-muted-foreground justify-self-end font-mono text-[11px]"
+          dateTime={email.receivedAt}
+        >
           {timeFormatter.format(new Date(email.receivedAt))}
         </time>
         <span className="text-muted-foreground truncate font-mono text-[11px]">
           {`${copy.to} ${email.to}`}
         </span>
-        {code && <span className="font-mono text-sm font-semibold tabular-nums">{code}</span>}
+        {code && (
+          <span className="justify-self-end font-mono text-sm font-semibold tabular-nums">
+            {code}
+          </span>
+        )}
       </MailboxMessageButton>
     </MailboxListItem>
   );
