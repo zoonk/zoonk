@@ -46,9 +46,11 @@ function hashContext({
   plainWords,
 }: Omit<ExampleLineContext, "key">): string {
   const statements = facts.map((fact) => fact.statement).toSorted();
+  // Lines saved before learners could say where they live keep their key while they still haven't.
+  const home = learnerHomeCountry ? { learnerHomeCountry } : {};
 
   return createHash("sha256")
-    .update(JSON.stringify({ goal, learnerHomeCountry, plainWords, statements }))
+    .update(JSON.stringify({ goal, ...home, plainWords, statements }))
     .digest("hex");
 }
 
