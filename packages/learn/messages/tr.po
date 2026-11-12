@@ -2507,7 +2507,7 @@ msgid "Next"
 msgstr "Devam et"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Onayla"
@@ -10176,14 +10176,14 @@ msgid "Your answer, in your own words"
 msgstr "Cevabını kendi cümlelerinle yaz"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "Burada bitir ve planını gör"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "Soru {number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "Burada bitir ve planını gör"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"

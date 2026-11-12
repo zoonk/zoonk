@@ -2507,7 +2507,7 @@ msgid "Next"
 msgstr "Next"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Confirm"
@@ -10176,14 +10176,14 @@ msgid "Your answer, in your own words"
 msgstr "Your answer, in your own words"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "Stop here and see my plan"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "Question {number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "Stop here and see my plan"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"
