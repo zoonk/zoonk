@@ -407,6 +407,7 @@ private fun ColumnScope.QuestionStep(
     onReportLevelTest: () -> Unit,
 ) {
     when (step) {
+        OnboardingStep.ADDRESS_FORM,
         OnboardingStep.WORK,
         OnboardingStep.TOOLS,
         OnboardingStep.STUDIES,

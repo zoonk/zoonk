@@ -48,6 +48,7 @@ fun profileQuestionTitle(question: ProfileQuestion): String =
             ProfileQuestion.ACTIVITIES -> R.string.profile_questions_activities_title
             ProfileQuestion.CONDITIONS -> R.string.profile_questions_conditions_title
             ProfileQuestion.LEARNING_SUPPORT -> R.string.profile_questions_support_title
+            ProfileQuestion.ADDRESS_FORM -> R.string.profile_questions_address_title
         },
     )
 
@@ -78,6 +79,10 @@ fun profileQuestionDescription(
                 R.string.profile_questions_support_description
             }
 
+            ProfileQuestion.ADDRESS_FORM -> {
+                R.string.profile_questions_address_description
+            }
+
             else -> {
                 R.string.profile_questions_interest_description
             }
@@ -93,6 +98,7 @@ fun ProfileQuestionBody(
     memoryEnabled: Boolean = true,
     role: String? = null,
     suggested: Boolean = false,
+    declineAsSkip: Boolean = false,
 ) {
     var atCap by rememberSaveable(question.id) { mutableStateOf(false) }
     var noteOpen by rememberSaveable(question.id) { mutableStateOf(false) }
@@ -140,6 +146,20 @@ fun ProfileQuestionBody(
                             }
                         }
                     },
+                )
+            }
+
+            ProfileQuestion.ADDRESS_FORM -> {
+                ChoiceList(
+                    choices =
+                        choices +
+                            listOfNotNull(
+                                Choice("_declined", stringResource(R.string.profile_questions_prefer_not)).takeUnless { declineAsSkip },
+                            ),
+                    value = if (draft.declined) "_declined" else draft.picks.firstOrNull(),
+                    label = label,
+                    readOnly = !enabled,
+                    onChange = { id -> change(if (id == "_declined") ProfileDraft(declined = true) else ProfileDraft(picks = listOf(id))) },
                 )
             }
 

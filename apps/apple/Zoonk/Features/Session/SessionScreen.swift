@@ -795,14 +795,6 @@ private struct MomentSummary: View {
         .foregroundStyle(.mutedForeground)
       }
 
-      if let date = moment.comesBackOn.flatMap(studyDate) {
-        Text(
-          "Review on \(date.formatted(.studyDay.month(.abbreviated).day()))", tableName: "Session",
-          comment: "When the block's lesson comes back"
-        )
-        .foregroundStyle(.mutedForeground)
-      }
-
       if let catchUp = moment.dayProgress.catchUp {
         CatchUpLine(catchUp: catchUp)
           .padding(.top, 8)

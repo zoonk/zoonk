@@ -13,7 +13,6 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   }
 
   struct ComesBack: Decodable, Equatable, Sendable {
-    let date: String
     let skills: Int
   }
 
@@ -97,8 +96,6 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   let brainPower: Int
   let ceremony: Milestone?
   let certificates: [CertificateFacts]
-  /// `YYYY-MM-DD`.
-  let comesBackOn: String?
   let completedMissions: [StudyMission.Kind]
   let correct: Int
   let finishedChapter: Components.Schemas.FinishedChapter?

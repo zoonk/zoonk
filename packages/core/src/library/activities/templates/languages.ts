@@ -7,18 +7,19 @@ import {
   optionTextSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
+import { aimForItems } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { patternEnding } from "./_utils/language";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
 
-const MAX_CHOICES = 6;
-const MAX_ROWS = 8;
-const MAX_LINES = 6;
-const MAX_REPLIES = 4;
+const CHOICES_TARGET = 6;
+const ROWS_TARGET = 8;
+const LINES_TARGET = 6;
+const REPLIES_TARGET = 4;
 
 const patternTableFields = z
   .object({
-    choices: z.array(labelSchema).min(2).max(MAX_CHOICES),
+    choices: z.array(labelSchema).min(2).describe(aimForItems(CHOICES_TARGET)),
     modelMeaning: labelSchema.optional(),
     modelWord: labelSchema,
     newMeaning: labelSchema.optional(),
@@ -36,7 +37,7 @@ const patternTableFields = z
           .strict(),
       )
       .min(2)
-      .max(MAX_ROWS),
+      .describe(aimForItems(ROWS_TARGET)),
   })
   .strict();
 
@@ -104,8 +105,8 @@ export const dialogueSimulatorTemplate = defineActivityTemplate({
             .strict(),
         )
         .min(1)
-        .max(MAX_LINES),
-      replies: uniqueIdsSchema(replySchema, { max: MAX_REPLIES, min: 2 }),
+        .describe(aimForItems(LINES_TARGET)),
+      replies: uniqueIdsSchema(replySchema, { min: 2 }).describe(aimForItems(REPLIES_TARGET)),
       scene: explanationSchema,
     })
     .strict(),

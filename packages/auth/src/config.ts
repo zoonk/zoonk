@@ -8,8 +8,7 @@ export const IS_COOKIE_CACHE_ENABLED = process.env.AUTH_COOKIE_CACHE_ENABLED !==
 
 /**
  * Per IP, so a class of 40 behind one network can start as guests or sign in with email codes
- * together, with retry headroom. BotID or the apps' attestation still checks each request, and a
- * code allows 3 tries.
+ * together, with retry headroom. A code allows 3 tries.
  */
 export const SHARED_IP_SIGN_IN_RATE_LIMIT = { max: 60, window: 60 };
 

@@ -17,7 +17,7 @@
   "goal_switcher_ready_to_start": "4e810a4ce5094384edc4e71079a04b6a636451f187cff473738f7d04b2e1270e",
   "goal_switcher_start_failed": "108f83a8ec761ec346e3f80326824f93938ba52816ba5de73576f3471eeb2e9c",
   "goal_switcher_start_goal": "11ad4758b3aece2a7c92c2e4b34f921a2d77cf4228eb5bc36e4ff3c962d26f40",
-  "goal_switcher_starts_with_plus": "d87c9a7907c6be78f010a57d17e26bace8356248d0624ebbea2e7745e776e7ba",
+  "goal_switcher_starts_with_free_account": "9ece3685b7f73660d0ec5e8a4b839a5f7a194c7b3df7f48255ee4c333dc60eb1",
   "goal_switcher_your_goals": "189aec31990202f801326be80f3366653bd4780c4a08d23816bb3cf11f7f79eb"
 }
 -->
@@ -34,8 +34,8 @@
     <string name="goal_switcher_finished">Ukończony</string>
     <string name="goal_switcher_paused">Wstrzymany</string>
     <string name="goal_switcher_failed">Nie udało się zmienić celu. Spróbuj ponownie.</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_starts_with_plus">Możesz zacząć z pakietem Plus</string>
+    <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
+    <string name="goal_switcher_starts_with_free_account">Wymaga bezpłatnego konta</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Możesz zacząć</string>
     <string name="goal_switcher_start_failed">Nie udało się rozpocząć pracy nad tym celem. Spróbuj ponownie.</string>

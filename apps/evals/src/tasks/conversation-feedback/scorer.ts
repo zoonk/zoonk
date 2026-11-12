@@ -8,7 +8,6 @@ import { normalizeString } from "@zoonk/utils/string";
 import { CONVERSATION_FEEDBACK_SCORE_CATEGORIES } from "./score-categories";
 
 const MIN_WORD_COVERAGE = 0.8;
-const MAX_PRONUNCIATION_WORDS = 2;
 const PUNCTUATION = /[^\p{L}\p{N}'\s]/gu;
 const EM_DASH = "—";
 
@@ -55,10 +54,6 @@ function checkFeedback({
     {
       passed: !feedback.improve || wasSaidByLearner({ phrase: feedback.improve.said, turns }),
       problem: `The fix quotes "${feedback.improve?.said}", which the learner didn't say.`,
-    },
-    {
-      passed: feedback.pronunciation.length <= MAX_PRONUNCIATION_WORDS,
-      problem: `It lists ${feedback.pronunciation.length} pronunciation words instead of at most ${MAX_PRONUNCIATION_WORDS}.`,
     },
     ...feedback.pronunciation.map((item) => ({
       passed: wasSaidByLearner({ phrase: item.word, turns }),

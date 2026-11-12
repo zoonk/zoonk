@@ -46,7 +46,7 @@ describe("staff record routes", () => {
     const excluded = databaseSchema.models.filter(
       (model) =>
         model.name.startsWith("Oauth") ||
-        ["DeviceCode", "Verification", "RestoreKey", "AppAttestKey"].includes(model.name),
+        ["DeviceCode", "Verification", "RestoreKey"].includes(model.name),
     );
 
     await Promise.all(

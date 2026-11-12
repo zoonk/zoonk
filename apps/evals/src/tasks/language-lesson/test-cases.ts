@@ -180,6 +180,25 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
+    expectations: `Brazilian Portuguese speaker learning Italian, A2, saying what the weather was like, with the imperfect ("pioveva", "faceva freddo", "c'era il sole", "nevicava"). Every wrong option and every distractor tile is a real Italian word or form, written whole: a form like "grandinava" ("it was hailing") is a good distractor next to "pioveva", but split into "grand inava" or misspelled it's a non-word, which scores at most 5 for practice design. Wrong forms are real forms a learner would confuse with the answer ("è piovuto", "piove"), and none is also right where it's used.`,
+    id: "pt-it-a2-past-weather",
+    userInput: {
+      knownWords: ["oggi", "ieri", "il tempo"],
+      learnerLanguage: "pt",
+      lessonCanDo: "Dizer como estava o tempo ontem ou na semana passada",
+      lessonDescription: "Conte como estava o tempo num dia que já passou: chuva, sol, frio",
+      lessonTitle: "Como estava o tempo",
+      level: "A2",
+      targetLanguage: "it",
+      unitCanDos: [
+        "Falar do tempo de hoje",
+        "Contar como foi um passeio",
+        "Combinar um programa conforme o tempo",
+      ],
+      unitTitle: "O tempo e os passeios",
+    },
+  },
+  {
     expectations: `US English speaker learning Polish, A2, answering a doctor's questions about symptoms. The doctor and the patient don't know each other, so the doctor is polite: "Pan" or "Pani" ("Co Panu dolega?", "Czy przyjmuje Pani jakieś leki?") or an impersonal question ("Od kiedy boli głowa?"), never "ty" ("Co cię boli?", "Czy bierzesz leki?"), in the sentences, tip examples, practice and writing answers.`,
     id: "en-pl-a2-doctor",
     userInput: {

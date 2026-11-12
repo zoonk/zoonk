@@ -8,6 +8,10 @@ const options = [
   { id: "b", isCorrect: false, reason: "That's the discount, not the price.", text: "$15" },
 ];
 
+function many<ITEM>(count: number, item: (index: number) => ITEM): ITEM[] {
+  return Array.from({ length: count }, (_, index) => item(index + 1));
+}
+
 const contents: StepContentByKind = {
   activity: {
     check: { explanation: "Each jump is drawn.", kind: "interaction" },
@@ -176,6 +180,31 @@ describe("step contract", () => {
 
     expect(safeParseStepContent("check", numberedCheckContent).success).toBe(true);
     expect(safeParseStepContent("check", pastTheLast).success).toBe(false);
+  });
+
+  it("keeps lists a model wrote past the prompt's count", () => {
+    const summary = { ideas: many(7, (index) => ({ text: `Idea ${index}.` })) };
+
+    const worked = {
+      ...contents.workedExample,
+      steps: many(10, (index) => ({ text: `Move ${index}.` })),
+    };
+
+    const typed = {
+      ...contents.typedAnswer,
+      acceptedAnswers: many(7, (index) => `Answer ${index}`),
+      keyPoints: many(7, (index) => `Point ${index}.`),
+    };
+
+    const numbered = {
+      ...numberedCheckContent,
+      image: { ...numberedCheckContent.image, parts: many(8, (index) => `part ${index}`) },
+    };
+
+    expect(safeParseStepContent("summary", summary).success).toBe(true);
+    expect(safeParseStepContent("workedExample", worked).success).toBe(true);
+    expect(safeParseStepContent("typedAnswer", typed).success).toBe(true);
+    expect(safeParseStepContent("check", numbered).success).toBe(true);
   });
 
   it("takes spoken answers in every language a goal can name, scripts and regions too", () => {

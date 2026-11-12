@@ -3,7 +3,9 @@
 /**
  * The default decision model; a task whose eval chose another names it. Liquid d1 trains on
  * prompts, so it never reads a learner's input, and GPT-6 Luna Decisions cost more than the native
- * model chosen on every decision eval that ran it (8 Nov 2026).
+ * model chosen on every decision eval that ran it (8 Nov 2026). Gemini Decision 1 cost 2–11x the
+ * chosen model per run on the nine tasks a decision model decides and matched or beat its accuracy
+ * on four, two of them only at cutoffs fitted to the cases (11 Nov 2026).
  */
 export const JEV_MODEL_ID = "typesafe-ai/jev";
 
@@ -29,6 +31,7 @@ const NATIVE_EVALUATION_MODELS: ReadonlySet<string> = new Set([
   "perplexity/pplx-decider-v1.2",
   LUNA_DECISIONS_MODEL_ID,
   "liquid/d1",
+  "google/gemini-decision-1",
 ]);
 
 export function isNativeEvaluationModel(modelId: string): boolean {

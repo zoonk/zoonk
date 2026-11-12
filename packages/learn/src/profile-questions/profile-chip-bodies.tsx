@@ -139,6 +139,35 @@ export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: 
   );
 }
 
+export function AddressFormBody(props: BodyProps & { declineAsSkip: boolean; label: string }) {
+  const { draft, question } = props;
+  const exclusiveLabels = useExclusiveLabels();
+
+  return (
+    <ChoiceList
+      choices={[
+        ...question.options.map((option) => ({
+          description: option.description ?? undefined,
+          label: option.label,
+          value: option.id,
+        })),
+        ...(props.declineAsSkip
+          ? []
+          : [{ label: exclusiveLabels.ratherNot, value: "ratherNot" as const }]),
+      ]}
+      label={props.label}
+      onChange={(value) =>
+        props.onChange(
+          value === "ratherNot"
+            ? toggleProfileExclusive({ draft, exclusive: value })
+            : toggleProfilePick({ draft, id: value, question: question.id }).draft,
+        )
+      }
+      value={draft.exclusive ?? draft.picks[0] ?? null}
+    />
+  );
+}
+
 export function StudiesBody(props: BodyProps & { label: string }) {
   const t = useExtracted();
   const { draft, question } = props;

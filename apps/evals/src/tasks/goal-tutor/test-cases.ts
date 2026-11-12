@@ -601,6 +601,7 @@ const ENEM_TARGET = {
 } satisfies PlanScopeContext;
 
 function goalCase({
+  addressForm,
   appTools,
   context,
   expectations,
@@ -611,6 +612,7 @@ function goalCase({
   priorTurns = [],
   question,
 }: {
+  addressForm?: GoalTutorCase["userInput"]["addressForm"];
   appTools?: GoalTutorCase["userInput"]["appTools"];
   lookUps?: GoalTutorLookUpStandIn;
   context: PlanScopeContext;
@@ -625,6 +627,7 @@ function goalCase({
     expectations: `${expectations}\n${SHARED_EXPECTATIONS}`,
     id,
     userInput: {
+      addressForm,
       appTools,
       contextSnapshot: context,
       learnerMemory: memory,
@@ -1152,7 +1155,53 @@ const PHYSICS_ODD_TITLE = {
 const PLAN_STATUS_EXPECTATIONS =
   "Short and direct (normally under 100 words), in the learner's language, leading with the action. Facts (titles, dates, counts) only from CURRENT_CONTEXT, and every lesson, challenge or page it points the learner to is linked with a link it was given (\"links.kept\"), never a made-up one. It never says which earlier day a lesson came from (the plan doesn't keep it). proposedChange is null.";
 
+const UX_RESEARCH_CHECK =
+  "Pesquisa qualitativa é pra entender o porquê das pessoas e a quantitativa pra medir quanto, né? Entendi certo?";
+
+const UX_RESEARCH_EXPECTATIONS =
+  "Confirms the learner's distinction in the first sentence (qualitative research explores why and how, with few people; quantitative measures how many or how much, with many) and adds one concrete UX example of each. proposedChange is null.";
+
+const SPANISH_UX_PLAN = {
+  ...UX_PLAN,
+  goal: { ...UX_PLAN.goal, title: "Trabajar en diseño UX" },
+  language: "es",
+  phase: {
+    ...UX_PLAN.phase,
+    chapters: [
+      { lessonsDone: 1, lessonsTotal: 4, state: "current", title: "Investigación con usuarios" },
+    ],
+  },
+} satisfies PlanScopeContext;
+
 export const TEST_CASES: GoalTutorCase[] = [
+  goalCase({
+    context: UX_PLAN,
+    expectations: `${UX_RESEARCH_EXPECTATIONS} No form is saved, so no word written to the learner agrees with a gender, the generic masculine included: "Você está certo", "certa", "Você foi preciso" or any other gendered word about the learner caps at 6.5. "Isso mesmo" and "Você entendeu bem" are fine.`,
+    id: "pt-confirms-understanding-without-gender",
+    question: UX_RESEARCH_CHECK,
+  }),
+  goalCase({
+    addressForm: "feminine",
+    context: UX_PLAN,
+    expectations: `${UX_RESEARCH_EXPECTATIONS} The learner asked to be addressed in the feminine: words about them take feminine forms when any come up ("Você está certa"), and wording that doesn't mark gender is fine too. Any masculine form about the learner ("certo", "correto") caps at 6.5.`,
+    id: "pt-confirms-understanding-feminine",
+    question: UX_RESEARCH_CHECK,
+  }),
+  goalCase({
+    addressForm: "masculine",
+    context: UX_PLAN,
+    expectations: `${UX_RESEARCH_EXPECTATIONS} The learner asked to be addressed in the masculine: words about them take masculine forms when any come up ("Você está certo"), and wording that doesn't mark gender is fine too. Any feminine form about the learner ("certa", "correta") caps at 6.5.`,
+    id: "pt-confirms-understanding-masculine",
+    question: UX_RESEARCH_CHECK,
+  }),
+  goalCase({
+    context: SPANISH_UX_PLAN,
+    expectations:
+      'Answers in Spanish. The learner describes their first user interview in their own masculine words ("encaminado"); their own sentences never tell the app how to address them, and no form is saved. Says plainly that one interview going well is a good start and gives one concrete next step for user research, without promising a job. No word written to the learner agrees with a gender: "Vas bien encaminado", "Estás listo", "lista" or any other gendered word about the learner caps at 6.5. "Vas por buen camino" is fine. proposedChange is null.',
+    id: "es-progress-check-without-gender",
+    question:
+      "Hice mi primera entrevista con usuarios y creo que me salió bien. ¿Voy bien encaminado?",
+  }),
   goalCase({
     context: CONCURSO_PLAN,
     expectations:
@@ -1277,7 +1326,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     appTools: { startGoal: { plusRequired: true } },
     context: CONCURSO_PLAN,
     expectations:
-      "A second exam from a learner on the free plan: offeredTools has startGoal, offered and locked (Plus), with the INSS concurso as the goal. The answer says plainly, in one or two sentences and without a sales pitch, that the free plan follows one goal at a time: she can pause this goal from the Journey's menu to start the new one, or follow both with Plus. Saying she can't study for it in the app, or pushing Plus over several sentences, caps at 6.0. proposedChange is null.",
+      "A second exam from a learner on the free plan: offeredTools has startGoal, offered and locked (Plus), with the INSS concurso as the goal. The answer says plainly, in one or two sentences and without a sales pitch, that starting another goal right now comes with Plus and that she can keep going with her current goals. Saying how many goals she follows, that pausing one makes room, or that she can't study for it in the app, or pushing Plus over several sentences, caps at 6.0. proposedChange is null.",
     id: "pt-concurso-second-exam-free",
     question: "dá pra estudar pro concurso do INSS junto com esse?",
   }),

@@ -73,7 +73,7 @@ describe(checkQuickExplanation, () => {
     expect(checkQuickExplanation(explanation)).toStrictEqual(["Two check options are the same."]);
   });
 
-  it("keeps the story between 4 and 6 screens", () => {
+  it("takes a story a screen shorter or longer than the prompt's 4 to 6", () => {
     const short = { ...validExplanation, screens: [screen(1), screen(2), screen(3)] };
 
     const long = {
@@ -81,8 +81,8 @@ describe(checkQuickExplanation, () => {
       screens: [1, 2, 3, 4, 5, 6, 7].map((index) => screen(index)),
     };
 
-    expect(checkQuickExplanation(short)).toStrictEqual(["Has 3 screens instead of 4 to 6."]);
-    expect(checkQuickExplanation(long)).toStrictEqual(["Has 7 screens instead of 4 to 6."]);
+    expect(checkQuickExplanation(short)).toStrictEqual([]);
+    expect(checkQuickExplanation(long)).toStrictEqual([]);
   });
 
   it("reports repeated screens and recap bullets", () => {

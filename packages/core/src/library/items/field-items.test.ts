@@ -1,6 +1,6 @@
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
@@ -57,6 +57,39 @@ describe(listGoalFieldItemTargets, () => {
     ]);
 
     expect(targets.every((target) => target.field === "nursing")).toBe(true);
+  });
+
+  it("gives each target the cases its skill's general and same-field questions already use", async () => {
+    const user = await userFixture();
+    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+
+    await Promise.all([
+      planFixture({
+        goalId: goal.id,
+        graph: { skills: [planSkill({ phase: 0, skillId: skill.id })] },
+      }),
+      itemFixture({
+        content: { ...choiceItemContent(), context: "A patient doubles a missed dose." },
+        field: "nursing",
+        skillId: skill.id,
+      }),
+      itemFixture({
+        content: { ...choiceItemContent(), context: "A bill split three ways." },
+        skillId: skill.id,
+      }),
+      itemFixture({
+        content: { ...choiceItemContent(), context: "A client signs a lease." },
+        field: "law",
+        skillId: skill.id,
+      }),
+    ]);
+
+    const [target] = await listGoalFieldItemTargets({ field: "nursing", goalId: goal.id });
+
+    expect(target?.usedSituations.toSorted()).toStrictEqual([
+      "A bill split three ways.",
+      "A patient doubles a missed dose.",
+    ]);
   });
 });
 

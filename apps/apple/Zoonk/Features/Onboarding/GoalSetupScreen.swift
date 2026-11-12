@@ -33,18 +33,9 @@ struct GoalSetupContent: View {
         GoalSteps(view: view, onStartOver: onStartOver) { goalID = $0 }
           .id(view.goal.id)
       case .failed:
-        ContentUnavailableView {
-          Text(
-            "We couldn't load your goal", tableName: "Onboarding",
-            comment: "A goal's onboarding failed to load")
-        } actions: {
-          Button {
-            Task { await resource.refresh() }
-          } label: {
-            Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
-          }
+        GoalLoadFailure {
+          await resource.refresh()
         }
-        .lonePage()
         .closesTask()
       case .idle, .loading, .empty:
         StepLoading()
@@ -55,6 +46,25 @@ struct GoalSetupContent: View {
     .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
     .toolbarTitleDisplayMode(.inline)
     .loads(resource, refreshable: false)
+  }
+}
+
+struct GoalLoadFailure: View {
+  let retry: () async -> Void
+
+  var body: some View {
+    ContentUnavailableView {
+      Text(
+        "We couldn't load your goal", tableName: "Onboarding",
+        comment: "A goal's onboarding failed to load")
+    } actions: {
+      Button {
+        Task { await retry() }
+      } label: {
+        Text("Try again", tableName: "Onboarding", comment: "Loads the goal's onboarding again")
+      }
+    }
+    .lonePage()
   }
 }
 
@@ -70,8 +80,8 @@ struct StepLoading: View {
 /// The screens Back returns to: placement sits between the questions; the plan isn't one.
 private let stepScreens: Set<Components.Schemas.OnboardingStep> = [
   .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level, .schedule,
-  .buddy, .placement, .work, .tools, .studies, .watch, .listen, .play, .read, .activities,
-  .conditions, .learningSupport,
+  .buddy, .placement, .addressForm, .work, .tools, .studies, .watch, .listen, .play, .read,
+  .activities, .conditions, .learningSupport,
 ]
 
 extension [Components.Schemas.OnboardingStep] {
@@ -393,6 +403,8 @@ private struct GoalSteps: View {
         draft.text = role
         context.jobFromEarlierAnswer = true
       }
+    case .addressForm:
+      context.skipDeclines = true
     case .conditions:
       let next = view.steps.firstIndex(of: step).map { view.steps.dropFirst($0 + 1).first }
       context.supportIsNext = next == .learningSupport

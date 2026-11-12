@@ -54,9 +54,8 @@ const TOPIC_AREAS = [
   "restaurants and cafés",
 ] as const;
 
+/** Each photo is drawn, so code keeps the first five rather than paying for more. */
 const MAX_PHOTOS = 5;
-const MIN_HINTS = 3;
-const MAX_HINTS = 5;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the card before the script that runs it. */
 const cardOutputSchema = z.object({
@@ -66,12 +65,12 @@ const cardOutputSchema = z.object({
   table: z
     .object({ title: z.string(), columns: z.array(z.string()), rows: z.array(z.array(z.string())) })
     .nullable(),
-  photos: z.array(z.object({ scene: z.string(), alt: z.string() })).max(MAX_PHOTOS),
+  photos: z.array(z.object({ scene: z.string(), alt: z.string() })),
   summary: z.string(),
   character: z.object({ name: z.string(), role: z.string(), place: z.string() }),
   characterBrief: z.string(),
   openingLine: z.string(),
-  hints: z.array(z.string()).min(MIN_HINTS).max(MAX_HINTS),
+  hints: z.array(z.string()),
 });
 /* oxlint-enable eslint/sort-keys */
 
@@ -156,7 +155,7 @@ function repairCard({
 
   return {
     ...repaired,
-    photos: stimulus === "photos" ? repaired.photos : [],
+    photos: stimulus === "photos" ? repaired.photos.slice(0, MAX_PHOTOS) : [],
     table: stimulus === "data" ? repaired.table : null,
     text: stimulus === "text" ? repaired.text : null,
   };

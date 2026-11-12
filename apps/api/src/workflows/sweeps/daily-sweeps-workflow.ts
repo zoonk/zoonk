@@ -7,6 +7,10 @@ import { followUpsWorkflow, getFollowUpsToken } from "../follow-ups/follow-ups-w
 import { listLearnersWithOldFollowUpsStep } from "../follow-ups/steps/follow-up-steps";
 import { startPictureChecks } from "../images/start-picture-checks";
 import {
+  getLevelTestBankCheckToken,
+  levelTestBankCheckWorkflow,
+} from "../language/level-test-bank-check-workflow";
+import {
   getSentenceOrdersToken,
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
@@ -14,10 +18,12 @@ import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-leve
 import { updateCoursesBehind } from "../products/product-releases";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
+  checkLevelTestAnswersStep,
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
   deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
+  listOwedLevelTestBankChecksStep,
   listOwedPictureChecksStep,
   listOwedSentenceOrdersStep,
   listOwedSkillLevelsStep,
@@ -40,6 +46,8 @@ type SweepCounts = {
   freshnessChecks: number;
   guestsDeleted: number;
   itemsRecalibrated: number;
+  levelTestBankChecks: number;
+  levelTestQuestionsRemoved: number;
   memoryFactsPurged: number;
   oauthRecordsPurged: number;
   pictureChecks: number;
@@ -80,6 +88,18 @@ async function checkOwedPictures(): Promise<number> {
   await startPictureChecks({ assetIds });
 
   return assetIds.length;
+}
+
+async function checkOwedLevelTestBanks(): Promise<number> {
+  const pairs = await listOwedLevelTestBankChecksStep();
+
+  await Promise.all(
+    pairs.map((pair) =>
+      startOnce(levelTestBankCheckWorkflow, [{ pair }], getLevelTestBankCheckToken(pair)),
+    ),
+  );
+
+  return pairs.length;
 }
 
 async function writeOwedSentenceOrders(): Promise<number> {
@@ -151,6 +171,8 @@ async function sweep(): Promise<SweepCounts> {
     followUps,
     courseReleases,
     pictures,
+    levelTestBanks,
+    levelTestAnswers,
     sentenceOrders,
     skillLevels,
   ] = await Promise.allSettled([
@@ -167,6 +189,8 @@ async function sweep(): Promise<SweepCounts> {
     // Also catches an update whose start failed.
     updateCoursesBehind(),
     checkOwedPictures(),
+    checkOwedLevelTestBanks(),
+    checkLevelTestAnswersStep(),
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
   ]);
@@ -180,6 +204,8 @@ async function sweep(): Promise<SweepCounts> {
     freshnessChecks: countOf(checks),
     guestsDeleted: countOf(guests),
     itemsRecalibrated: countOf(items),
+    levelTestBankChecks: countOf(levelTestBanks),
+    levelTestQuestionsRemoved: countOf(levelTestAnswers),
     memoryFactsPurged: countOf(facts),
     oauthRecordsPurged: access.status === "fulfilled" ? access.value.oauthRecordsPurged : 0,
     pictureChecks: countOf(pictures),

@@ -56,6 +56,7 @@
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
+          GallerySection(id: "charts", title: "Lesson charts") { LessonCharts() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
         .barTitleAfterHero("Design system")
@@ -83,6 +84,39 @@
     }
   }
 
+  /// Charts with more series than the prompt aims for, where telling them apart is hardest.
+  private struct LessonCharts: View {
+    private static let regions: [(String, [Double])] = [
+      ("Norte", [12, 18, 24, 31]), ("Nordeste", [20, 22, 19, 27]), ("Sudeste", [8, 14, 22, 16]),
+      ("Sul", [28, 25, 30, 36]), ("Centro-Oeste", [15, 11, 13, 21]),
+      ("Capital", [33, 29, 26, 24]), ("Interior", [5, 9, 12, 10]), ("Litoral", [24, 31, 35, 40]),
+    ]
+
+    private static func chart(_ style: String, series: Int) -> LessonChart? {
+      let json: [String: Any] = [
+        "chart": style, "title": "Ofícios por região", "categoryLabel": "Mês",
+        "valueLabel": "Ofícios", "categories": ["Jan", "Fev", "Mar", "Abr"],
+        "series": regions.prefix(series).map { ["name": $0.0, "values": $0.1] },
+      ]
+
+      return (try? JSONSerialization.data(withJSONObject: json)).flatMap {
+        try? JSONDecoder().decode(LessonChart.self, from: $0)
+      }
+    }
+
+    private let charts = [("bar", 5), ("line", 5), ("bar", 8), ("line", 8)].compactMap {
+      LessonCharts.chart($0.0, series: $0.1)
+    }
+
+    var body: some View {
+      VStack(alignment: .leading, spacing: 32) {
+        ForEach(Array(charts.enumerated()), id: \.offset) { _, chart in
+          LessonChartView(chart: chart)
+        }
+      }
+    }
+  }
+
   private struct ColorRoleSwatches: View {
     private let roles: [(String, Color)] = [
       ("background", Color(.background)), ("card", .card), ("muted", .muted),
@@ -94,6 +128,7 @@
       ("kind-mock", LearnKind.mock.color), ("kind-conv", LearnKind.conversation.color),
       ("kind-map", LearnKind.mindMap.color), ("viz-accent", .vizAccent),
       ("viz-highlight", .vizHighlight), ("viz-secondary", .vizSecondary),
+      ("viz-series-4", .vizSeries4), ("viz-series-5", .vizSeries5), ("viz-series-6", .vizSeries6),
     ]
 
     var body: some View {

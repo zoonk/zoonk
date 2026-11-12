@@ -96,12 +96,13 @@ function toCauseInput({
   };
 }
 
-/** Reuses an existing open entry; an ambiguous cause owes its classification, in the same transaction. */
+/** Reuses an existing open entry, which waits a day again; an ambiguous cause owes its classification, in the same transaction. */
 export async function recordMistake(
   {
     attemptId,
     itemId,
     language,
+    missedAt,
     practicedMistakeId,
     signals,
     skillId,
@@ -112,6 +113,7 @@ export async function recordMistake(
   }: MistakeTarget & {
     attemptId: string;
     language: string;
+    missedAt: Date;
     practicedMistakeId?: string | null;
     signals: MistakeSignals;
     skillId: string | null;
@@ -147,15 +149,12 @@ export async function recordMistake(
       replay &&
       matchesMistakeSource({ replay, snapshot: existing.snapshot });
 
-    if (!unknownGap && !preserve) {
-      return existing;
-    }
-
     const originalJson = JSON.stringify({ ...original, ...(preserve ? { replay } : {}) });
     const originalSnapshot: unknown = JSON.parse(originalJson);
 
     return transaction.mistake.update({
       data: {
+        missedAt: new Date(Math.max(missedAt.getTime(), existing.missedAt.getTime())),
         ...(unknownGap ? { cause: "gap", fixedAt: null, status: "open" } : {}),
         ...(preserve ? { snapshot: z.record(z.string(), z.json()).parse(originalSnapshot) } : {}),
       },
@@ -171,6 +170,7 @@ export async function recordMistake(
       attemptId,
       cause,
       itemId,
+      missedAt,
       skillId,
       snapshot: z.record(z.string(), z.json()).parse(preserved),
       stepId,

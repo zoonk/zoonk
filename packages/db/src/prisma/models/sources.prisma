@@ -38,6 +38,9 @@ model Source {
   /// Moves on with every save that adds to `unnoticedChanges` and every notice that clears them, so
   /// a notice clears, and a failed notice run counts against, only the change it read.
   unnoticedRevision  Int                  @default(0) @map("unnoticed_revision")
+  /// The `SOURCE_READ_VERSION` that turned the page into `extractedText`. A text read the older way
+  /// differs only in how it was read, so saving it read the new way tells learners nothing changed.
+  readVersion        Int                  @default(0) @map("read_version")
   /// Notice runs that failed after their retries since the page last changed; a change whose notice
   /// keeps failing isn't tried again until the page changes.
   noticeFailures     Int                  @default(0) @map("notice_failures")
@@ -49,6 +52,8 @@ model Source {
   changeNotices      SourceChangeNotice[]
   steps              Step[]
   stepSources        StepSource[]
+  lessons            LessonSource[]
+  lawLookups         LawLookup[]
   uploads            SourceUpload[]
   releases           ProductRelease[]
   releasesOf         Product[]            @relation("ProductReleasesSource")
@@ -61,6 +66,25 @@ model Source {
   @@index([ownerId])
   @@index([unnoticedChangedAt])
   @@map("sources")
+}
+
+/// One search for a law's official text answers every lesson that teaches it until it's 30 days
+/// old, including a null `source` when no acceptable text was found. `name` is normalized.
+model LawLookup {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  country   String   @db.VarChar(2)
+  /// The official text's language, which can differ from the lessons'.
+  language  String   @db.VarChar(10)
+  name      String
+  sourceId  String?  @map("source_id") @db.Uuid
+  source    Source?  @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  checkedAt DateTime @map("checked_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([country, language, name], name: "lawKey")
+  @@index([sourceId])
+  @@map("law_lookups")
 }
 
 /// The current edition is metadata, so lessons and items carry over between editions. A blueprint

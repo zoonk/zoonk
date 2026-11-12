@@ -356,7 +356,7 @@ private fun ColumnScope.RevealBody(
         reveal?.let { RevealWeek(it) }
 
         val started = studyDay?.steps?.any { it.isFinished } == true
-        PageWaitActions {
+        PageActions {
             if (saveFailed) {
                 Text(
                     stringResource(R.string.onboarding_save_failed),

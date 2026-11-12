@@ -10,7 +10,7 @@ import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboardi
  */
 export type GoalError = { limit?: GoalLimitReason; message: string; needsAccount: boolean };
 
-const ACCOUNT_REASONS = new Set<GoalLimitReason>(["browserBlocked", "guest", "signUpRequired"]);
+const ACCOUNT_REASONS = new Set<GoalLimitReason>(["guest", "signUpRequired"]);
 
 export function needsAccountFor(reason: GoalLimitReason): boolean {
   return ACCOUNT_REASONS.has(reason);
@@ -20,11 +20,11 @@ export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
   const messages: Record<GoalLimitReason, string> = {
-    browserBlocked: t({
+    activeGoals: t({
       description:
-        "Shown when automated bot protection refuses to let this browser continue without an account.",
+        "Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
       message:
-        "A security check blocked this browser. Try another browser, or create a free account.",
+        "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.",
     }),
     dailyExplanations: t(
       "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
@@ -38,9 +38,6 @@ export function useGoalLimitMessage() {
     ),
     monthlyGoals: t(
       "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-    ),
-    oneActiveGoal: t(
-      "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.",
     ),
     signUpRequired: t("Create your free account to continue."),
     slowDown: t("You're starting goals quickly. Try again in a few minutes."),
@@ -107,10 +104,6 @@ export function useStartError() {
 
     if (outcome.status === "signUpRequired") {
       return { message: goalLimitMessage("signUpRequired"), needsAccount: true };
-    }
-
-    if (outcome.status === "browserBlocked") {
-      return { message: goalLimitMessage("browserBlocked"), needsAccount: true };
     }
 
     return {

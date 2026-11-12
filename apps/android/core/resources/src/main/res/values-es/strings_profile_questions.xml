@@ -5,6 +5,8 @@
   "profile_questions_activities_placeholder": "b12a1e999b0b7b710b8f79e55251366dd80103f28bbb16beb61552ddeb481d8a",
   "profile_questions_activities_title": "dff7a1eae63ffc83715c7a5aa2e0e94e05d67d25e9c1fa21a5764125a206b541",
   "profile_questions_add": "fb62c1342f1e62660e0b43bbf8be19a226c87695d0b0ed867644c0e5d935d47e",
+  "profile_questions_address_description": "ccb869c0e8c48c6a42aaebc46867d29d1b63a95d82c7df53bc4685545593dd3d",
+  "profile_questions_address_title": "43247754ce403fb15225de728a2787056bbe94d617976445c479342e073aff2c",
   "profile_questions_cap": "cad4b557dffd1ad97fe63026c7dde1f0bd9ce1b32353f2b8fa7e99685c6d38c4",
   "profile_questions_condition_note": "9c9cca1dd2bd4d1304a2c1dbaaf855056bac849c43d02e967b1e2926366b99d2",
   "profile_questions_conditions_description": "05c717e3ac511efb5616ac61bd7ecc50756f6f0768ffcba332a8fb4e776812d5",
@@ -41,6 +43,7 @@
   "profile_questions_read_placeholder": "1f04bb457839526a7c0ff1ffbb5503c74ed30f15b0f30b8c71ccf4985e6ab13d",
   "profile_questions_read_title": "bf6b834b1a87f6b59db397ec5d9830a9757da1e88aadbbdadd5ca0fa35a99d50",
   "profile_questions_row_activities": "75433e439435b5f8a277131272e66632e2ce5feda893d754eb194fba5f14bff1",
+  "profile_questions_row_address": "e44aafaeb500b64faded758aaf16f75d18094be53af650cf2fb9b6d3e2ae3156",
   "profile_questions_row_conditions": "41a608583a8dcffa8717b0b989dc11435979031d7c8ae97a324eb925fa2c6f49",
   "profile_questions_row_listen": "470b5692d116dc0348e7a27ce9142255d74929c89a881ba38313222a5c989ab2",
   "profile_questions_row_play": "48f9c85e0f57beed8583d377ce04cbe1e24ae6d5b61dff7b8b6ecfb81cb3454a",
@@ -51,6 +54,7 @@
   "profile_questions_row_watch": "593089318e498e525a8f0001f2fabeadd734e5b4a004d8d01e4b212ce2108c42",
   "profile_questions_row_work": "812162ae2557483fd4d39a97dc282b1e11038ca09b4f2662295ed302d39b17ec",
   "profile_questions_save_start_lesson": "dc6831f73a8eada280658444e285070cdbbdd2ce1161f7cda8799840457097f5",
+  "profile_questions_saved": "5df035f374aad467f2b27219d6e4720a9dc6323715278ec09f6a81fd0bdb84c7",
   "profile_questions_skip_all": "f5470120624b596b08dc864d9fddc659d34b6941273d8ee526f5b2c6d9416f23",
   "profile_questions_skip_all_label": "6544383645ecadc9f63a025bf7689e357a705c3ea4c0639ae983d89cc25c65e7",
   "profile_questions_something_else": "1af4af7b8482bbeae9cc4adc32473f9cf4c30cdbfd4ca61dd592d5cfdeaea69f",
@@ -130,6 +134,8 @@
     <string name="profile_questions_consent_help">Zoonk usa esta información para adaptarse a ti, ahora y con el tiempo. Nunca se comparte ni se usa en ejemplos de lecciones. Puedes eliminarla cuando quieras en Configuración.</string>
     <string name="profile_questions_support_title">¿Qué te ayuda a aprender?</string>
     <string name="profile_questions_support_description">Elige todo lo que te ayude. No necesitas una etiqueta ni un diagnóstico.</string>
+    <string name="profile_questions_address_title">¿Cómo prefieres que nos dirijamos a ti?</string>
+    <string name="profile_questions_address_description">Tu compañero y los comentarios que recibas usarán estas formas al hablarte. Las lecciones no cambian.</string>
     <string name="profile_questions_suggested">Marcamos las opciones que suelen ayudar según lo que elegiste. Cambia lo que quieras.</string>
     <string name="profile_questions_nothing_particular">Nada en particular</string>
     <string name="profile_questions_something_else">+ Algo más que me ayuda</string>
@@ -157,8 +163,10 @@
     <string name="profile_questions_row_activities">Hacer</string>
     <string name="profile_questions_row_conditions">Condiciones</string>
     <string name="profile_questions_row_support">Lo que te ayuda a aprender</string>
+    <string name="profile_questions_row_address">Cómo nos dirigimos a ti</string>
     <string name="profile_questions_not_answered">Sin responder</string>
     <string name="profile_questions_not_shared">Sin compartir</string>
+    <string name="profile_questions_saved">Respuesta guardada</string>
     <string name="profile_questions_add">Agregar</string>
     <plurals name="profile_questions_conditions_saved">
         <item quantity="one">%1$d guardada</item>

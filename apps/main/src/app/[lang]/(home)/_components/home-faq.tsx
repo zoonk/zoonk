@@ -27,7 +27,7 @@ function emailLink(address: string) {
 export async function HomeFaq() {
   const t = await getExtracted();
   const space = getSentenceSpace(await getAppLocale());
-  const { exam } = await getExampleSet();
+  const { exams } = await getExampleSet();
   const limits = getFreePlanLimits();
 
   const email = t({
@@ -98,10 +98,10 @@ export async function HomeFaq() {
     {
       answer: t({
         description:
-          "{exam} is the country's national exam, such as the Enem or the SAT. In Brazilian Portuguese: “Praticamente qualquer coisa. Provas como o {exam}, vestibulares, concursos públicos e a prova da OAB, idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”",
+          "{exams} lists exams people in your country study for, ending with a school test, such as “concurso, Enem, OAB, vestibular ou prova da escola”. In Brazilian Portuguese: “Qualquer prova, como concurso, Enem, OAB, vestibular ou prova da escola. Também idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito.”",
         message:
-          "Pretty much anything. Exams like the {exam}, university entrance exams, civil service exams and the bar exam, languages, a new career or any topic you want to learn. Write your goal in your own words.",
-        values: { exam: exam.name },
+          "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words.",
+        values: { exams },
       }),
       id: "goals",
       question: t({

@@ -1,0 +1,566 @@
+{
+  "cases": [
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Use "
+        },
+        {
+          "kind": "math",
+          "text": "x^2"
+        },
+        {
+          "kind": "text",
+          "text": " here"
+        }
+      ],
+      "text": "Use \\(x^2\\) here"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Display "
+        },
+        {
+          "kind": "displayMath",
+          "text": "x^2 + 1"
+        },
+        {
+          "kind": "text",
+          "text": " here"
+        }
+      ],
+      "text": "Display \\[x^2 + 1\\] here"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "The value "
+        },
+        {
+          "kind": "math",
+          "text": "5"
+        },
+        {
+          "kind": "text",
+          "text": " is odd"
+        }
+      ],
+      "text": "The value $5$ is odd"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "It costs $5 and the gap is "
+        },
+        {
+          "kind": "math",
+          "text": "10^{-5}"
+        },
+        {
+          "kind": "text",
+          "text": " m"
+        }
+      ],
+      "text": "It costs $5 and the gap is $10^{-5}$ m"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Let "
+        },
+        {
+          "kind": "math",
+          "text": "n"
+        },
+        {
+          "kind": "text",
+          "text": " be even"
+        }
+      ],
+      "text": "Let $n$ be even"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Area is "
+        },
+        {
+          "kind": "displayMath",
+          "text": "\\frac{1}{2} x^2"
+        },
+        {
+          "kind": "text",
+          "text": " here"
+        }
+      ],
+      "text": "Area is $$\\frac{1}{2} x^2$$ here"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Between "
+        },
+        {
+          "kind": "math",
+          "text": "a"
+        },
+        {
+          "kind": "text",
+          "text": " and "
+        },
+        {
+          "kind": "math",
+          "text": "b"
+        },
+        {
+          "kind": "text",
+          "text": ", it costs $3"
+        }
+      ],
+      "text": "Between $a$ and $b$, it costs $3"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Pay R$5 for "
+        },
+        {
+          "kind": "math",
+          "text": "x^2"
+        }
+      ],
+      "text": "Pay R$5 for $x^2$"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "**the "
+        },
+        {
+          "kind": "math",
+          "text": "10^{3}"
+        },
+        {
+          "kind": "text",
+          "text": " rule** here"
+        }
+      ],
+      "text": "**the $10^{3}$ rule** here"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "**"
+        },
+        {
+          "kind": "math",
+          "text": "E = mc^2"
+        },
+        {
+          "kind": "text",
+          "text": "**"
+        }
+      ],
+      "text": "**$E = mc^2$**"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "*about "
+        },
+        {
+          "kind": "math",
+          "text": "x^2"
+        },
+        {
+          "kind": "text",
+          "text": " squared*"
+        }
+      ],
+      "text": "*about $x^2$ squared*"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Use **"
+        },
+        {
+          "kind": "math",
+          "text": "v = d / t"
+        },
+        {
+          "kind": "text",
+          "text": "** to find speed."
+        }
+      ],
+      "text": "Use **$v = d / t$** to find speed."
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "It is **bold** and "
+        },
+        {
+          "kind": "math",
+          "text": "x^2"
+        },
+        {
+          "kind": "text",
+          "text": " math"
+        }
+      ],
+      "text": "It is **bold** and $x^2$ math"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "**$20.12**"
+        }
+      ],
+      "text": "**$20.12**"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "It costs $5 or **about $10** now."
+        }
+      ],
+      "text": "It costs $5 or **about $10** now."
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "V(x)=-V_0 pour "
+        },
+        {
+          "kind": "math",
+          "text": "|x|<a"
+        },
+        {
+          "kind": "text",
+          "text": " et V(x)=0 ailleurs, avec "
+        },
+        {
+          "kind": "math",
+          "text": "a>0"
+        },
+        {
+          "kind": "text",
+          "text": "."
+        }
+      ],
+      "text": "V(x)=-V_0 pour \\(|x|<a\\) et V(x)=0 ailleurs, avec \\(a>0\\)."
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Pour "
+        },
+        {
+          "kind": "math",
+          "text": "0<p<1"
+        },
+        {
+          "kind": "text",
+          "text": ", si "
+        },
+        {
+          "kind": "math",
+          "text": "p>0{,}5"
+        },
+        {
+          "kind": "text",
+          "text": " alors"
+        }
+      ],
+      "text": "Pour \\(0<p<1\\), si \\(p>0{,}5\\) alors"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "If "
+        },
+        {
+          "kind": "math",
+          "text": "x<b"
+        },
+        {
+          "kind": "text",
+          "text": " and "
+        },
+        {
+          "kind": "math",
+          "text": "y>c"
+        },
+        {
+          "kind": "text",
+          "text": ", then"
+        }
+      ],
+      "text": "If $x<b$ and $y>c$, then"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "It costs $5 and $10, or R$ 80."
+        }
+      ],
+      "text": "It costs $5 and $10, or R$ 80."
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "A US$5 fee"
+        }
+      ],
+      "text": "A US$5 fee"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Pay \\$5 now, then "
+        },
+        {
+          "kind": "math",
+          "text": "x"
+        }
+      ],
+      "text": "Pay \\$5 now, then $x$"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Pay "
+        },
+        {
+          "kind": "math",
+          "text": "\\$5 + x"
+        },
+        {
+          "kind": "text",
+          "text": " now"
+        }
+      ],
+      "text": "Pay $\\$5 + x$ now"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Add $x + US$5$ here"
+        }
+      ],
+      "text": "Add $x + US$5$ here"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "An empty $$ $$ stays text"
+        }
+      ],
+      "text": "An empty $$ $$ stays text"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "$$ $$ is empty, but "
+        },
+        {
+          "kind": "displayMath",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": " is not"
+        }
+      ],
+      "text": "$$ $$ is empty, but $$x$$ is not"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Doubled "
+        },
+        {
+          "kind": "math",
+          "text": "x^2"
+        },
+        {
+          "kind": "text",
+          "text": " and "
+        },
+        {
+          "kind": "displayMath",
+          "text": "y^2"
+        },
+        {
+          "kind": "text",
+          "text": " backslashes"
+        }
+      ],
+      "text": "Doubled \\\\(x^2\\\\) and \\\\[y^2\\\\] backslashes"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "An unclosed $x + 1 formula"
+        }
+      ],
+      "text": "An unclosed $x + 1 formula"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "$ x$ has a space after its opener"
+        }
+      ],
+      "text": "$ x$ has a space after its opener"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "$x$5 is not math"
+        }
+      ],
+      "text": "$x$5 is not math"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Größe "
+        },
+        {
+          "kind": "math",
+          "text": "\\alpha"
+        },
+        {
+          "kind": "text",
+          "text": " ist ß, 東京 "
+        },
+        {
+          "kind": "math",
+          "text": "β"
+        },
+        {
+          "kind": "text",
+          "text": " 🚀"
+        }
+      ],
+      "text": "Größe $\\alpha$ ist ß, 東京 $β$ 🚀"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Compare "
+        },
+        {
+          "kind": "math",
+          "text": "a"
+        },
+        {
+          "kind": "text",
+          "text": ", "
+        },
+        {
+          "kind": "displayMath",
+          "text": "b"
+        },
+        {
+          "kind": "text",
+          "text": ", "
+        },
+        {
+          "kind": "math",
+          "text": "c"
+        },
+        {
+          "kind": "text",
+          "text": " and "
+        },
+        {
+          "kind": "displayMath",
+          "text": "d"
+        },
+        {
+          "kind": "text",
+          "text": " at once"
+        }
+      ],
+      "text": "Compare $a$, $$b$$, \\(c\\) and \\[d\\] at once"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "A byte order mark after $﻿x$ isn't math"
+        }
+      ],
+      "text": "A byte order mark after $﻿x$ isn't math"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "A next-line mark after "
+        },
+        {
+          "kind": "math",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": " is math"
+        }
+      ],
+      "text": "A next-line mark after $x$ is math"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Display "
+        },
+        {
+          "kind": "displayMath",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": " trims like JavaScript"
+        }
+      ],
+      "text": "Display $$x﻿$$ trims like JavaScript"
+    }
+  ]
+}

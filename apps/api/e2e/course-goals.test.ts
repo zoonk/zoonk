@@ -288,7 +288,11 @@ test.describe("Course goals API", () => {
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(prisma.plan.count({ where: { goal: { userId: user.id } } })).resolves.toBe(0);
 
-    await goalFixture({ userId: user.id });
+    await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
 
     const refused = await apiContext.post(`/v1/courses/${course.id}/goals`, { data: {} });
 

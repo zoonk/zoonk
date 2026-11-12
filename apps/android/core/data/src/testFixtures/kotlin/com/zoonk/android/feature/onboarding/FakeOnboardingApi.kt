@@ -27,6 +27,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingResume
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
@@ -52,19 +53,20 @@ const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
 fun understoodDraft(
     prompt: String = "pass the bar exam",
     understanding: String = goalsUnderstanding(),
+    activeGoalsLeft: Int? = null,
 ): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","timeZone":"UTC","understanding":$understanding}""",
+        """{"activeGoalsLeft":$activeGoalsLeft,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","timeZone":"UTC","understanding":$understanding}""",
     )
 
 fun failedDraft(): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"pass the bar exam","status":"failed","timeZone":"UTC","understanding":null}""",
+        """{"activeGoalsLeft":null,"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"pass the bar exam","status":"failed","timeZone":"UTC","understanding":null}""",
     )
 
 fun readingDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
     ApiJson.decodeFromString(
-        """{"activeGoalLimit":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","timeZone":"UTC","understanding":null}""",
+        """{"activeGoalsLeft":null,"generationId":"run-1","goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understanding","timeZone":"UTC","understanding":null}""",
     )
 
 fun goalsUnderstanding(
@@ -174,6 +176,8 @@ class FakeOnboardingApi : OnboardingApi {
         drafts += id
         return draft
     }
+
+    override suspend fun resume(session: AuthenticatedSession) = OnboardingResume(resume = null)
 
     var readsAgain = 0
     var readAgainGate: CompletableDeferred<Unit>? = null

@@ -5,15 +5,14 @@ import {
   labelSchema,
   optionTextSchema,
 } from "../../steps/contract/content-schemas";
-import { expressionSchema, identifierSchema } from "../activity-schemas";
+import { aimForItems, expressionSchema, identifierSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { parseExpression } from "../expression/parse-expression";
 import { solveLinearEquation } from "./_utils/linear-equation";
 import { isClose, issue } from "./_utils/template-helpers";
 
-const MAX_HINTS = 4;
-const MAX_OBJECTS = 3;
-const MAX_STEPS = 4;
+const HINTS_TARGET = 4;
+const STEPS_TARGET = 4;
 const SYMBOL_TARGET = 3;
 
 const equationSchema = z.object({ left: expressionSchema, right: expressionSchema }).strict();
@@ -24,7 +23,7 @@ const balanceFields = z
     hints: z
       .array(z.object({ hint: explanationSchema, move: optionTextSchema }).strict())
       .min(1)
-      .max(MAX_HINTS),
+      .describe(aimForItems(HINTS_TARGET)),
     objects: z
       .array(
         z
@@ -34,12 +33,11 @@ const balanceFields = z
           })
           .strict(),
       )
-      .min(1)
-      .max(MAX_OBJECTS),
+      .min(1),
     steps: z
       .array(equationSchema.extend({ move: optionTextSchema }).strict())
       .min(1)
-      .max(MAX_STEPS),
+      .describe(aimForItems(STEPS_TARGET)),
     variable: identifierSchema,
   })
   .strict();

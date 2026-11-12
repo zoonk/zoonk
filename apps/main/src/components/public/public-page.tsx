@@ -11,12 +11,10 @@ export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-5 sm:px-8";
 export function PublicPage({
   children,
   className,
-  exploreLinks,
   pathname,
 }: {
   children: ReactNode;
   className?: string;
-  exploreLinks?: boolean;
   pathname?: string;
 }) {
   return (
@@ -24,7 +22,7 @@ export function PublicPage({
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
       <PublicHeader />
       <main className={cn("flex-1", className)}>{children}</main>
-      <PublicFooter exploreLinks={exploreLinks} pathname={pathname} />
+      <PublicFooter pathname={pathname} />
     </div>
   );
 }

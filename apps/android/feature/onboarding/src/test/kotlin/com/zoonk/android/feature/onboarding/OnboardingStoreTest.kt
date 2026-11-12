@@ -114,29 +114,6 @@ class OnboardingStoreTest {
         }
 
     @Test
-    fun aVisitorTheSecurityCheckWontLetInAsAGuestIsAskedForAnAccount() =
-        runTest {
-            val session = FakeSession(null)
-            val api = FakeOnboardingApi()
-            val store =
-                OnboardingStore(
-                    api,
-                    AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))),
-                    session,
-                ) { SignInResult.Failed(ApiError.Unavailable, "BOT_DETECTED") }
-
-            val goal = store.sendGoal("pass the bar exam", "en")
-            val course = store.startCourse("course-1", chapterId = null, dailyMinutes = null, level = null)
-
-            assertEquals(WriteOutcome.Refused(Refusal.GuestBlocked), goal)
-            assertEquals(WriteOutcome.Refused(Refusal.GuestBlocked), course)
-            assertEquals(GoalError.Limit(GoalLimitReason.GuestBlocked), goal.startError())
-            assertTrue(goal.startError().needsAccount)
-            assertTrue(api.understandCalls.isEmpty())
-            assertTrue(api.courseStarts.isEmpty())
-        }
-
-    @Test
     fun limitsSayWhatRanOutAndWhen() =
         runTest {
             val session = FakeSession(ana)
@@ -178,7 +155,7 @@ class OnboardingStoreTest {
                 store.createGoals(
                     GoalCreateInput(dailyMinutes = 15, goals = emptyList()),
                 )
-            assertEquals(GoalLimitReason.OneActiveGoal, (created as WriteOutcome.Refused).refusal.goalLimitReason())
+            assertEquals(GoalLimitReason.ActiveGoals, (created as WriteOutcome.Refused).refusal.goalLimitReason())
 
             api.refusal = ApiException(ApiError.Unavailable, "SLOW_DOWN", status = 429)
             assertEquals(GoalError.OneMoment, store.sendGoal("x", "en").startError())
@@ -221,7 +198,20 @@ class OnboardingStoreTest {
                 """"dailyLimit":null,"monthlyLimit":3,"totalLimit":null,"usedToday":1,"usedThisMonth":3,"usedTotal":3""",
             ).goalStartLimit(),
         )
-        assertEquals(GoalLimitReason.OneActiveGoal, allowance("free", room, """{"limit":1,"used":1}""").goalStartLimit())
+        assertEquals(GoalLimitReason.ActiveGoals, allowance("free", room, """{"limit":3,"used":3}""").goalStartLimit())
+        assertNull(allowance("free", room, """{"limit":3,"used":2}""").goalStartLimit())
+
+        val noneToday = """"dailyLimit":3,"monthlyLimit":10,"totalLimit":null,"usedToday":3,"usedThisMonth":3,"usedTotal":3"""
+        assertEquals(GoalLimitReason.ActiveGoals, allowance("free", noneToday, """{"limit":3,"used":3}""").goalStartLimit())
+        assertEquals(GoalLimitReason.DailyGoals, allowance("free", noneToday, """{"limit":3,"used":2}""").goalStartLimit())
+        assertEquals(
+            GoalLimitReason.Guest,
+            allowance(
+                "guest",
+                """"dailyLimit":null,"monthlyLimit":null,"totalLimit":1,"usedToday":1,"usedThisMonth":1,"usedTotal":1""",
+                """{"limit":1,"used":1}""",
+            ).goalStartLimit(),
+        )
         assertFalse(GoalLimitReason.DailyGoals.isPlusLimit)
     }
 

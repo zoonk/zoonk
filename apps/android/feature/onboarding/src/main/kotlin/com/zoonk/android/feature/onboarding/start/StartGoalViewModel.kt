@@ -16,6 +16,7 @@ import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.AttachedSource
 import com.zoonk.android.feature.onboarding.GoalError
+import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
@@ -146,6 +147,7 @@ class StartGoalViewModel(
 
     /** The session this flow's words, material and answers belong to. */
     private var sessionKey: String? = null
+    private var sessionHasAccount = false
 
     /** The run the screen's draft is read by, so the same run isn't followed from the start again. */
     private var followed: String? = null
@@ -280,11 +282,26 @@ class StartGoalViewModel(
 
     fun backToEntry(words: String) = showEntry(words)
 
-    /** Another learner, or none, sees nothing of this one's words, material or answers. */
-    fun followSession(key: String?) {
+    /**
+     * Another learner, or none, sees nothing of this one's words, material or answers. A guest who
+     * signs in keeps them: their draft moves to the account, which reads it with its own room.
+     */
+    fun followSession(
+        key: String?,
+        hasAccount: Boolean,
+    ) {
         val previous = sessionKey
+        val upgradesGuest = previous != null && !sessionHasAccount && key != null && hasAccount
         sessionKey = key
+        sessionHasAccount = hasAccount
         if (previous == null || previous == key) return
+        if (upgradesGuest) {
+            entryError = null
+            creationError = null
+            draftLimit = null
+            waitlist = null
+            return
+        }
         turns = emptyList()
         isAttachOpen = false
         update { it.copy(attached = emptyList(), intent = null) }
@@ -417,6 +434,11 @@ class StartGoalViewModel(
         if (read != null) create(explanation(draft, read.question), onCreated)
     }
 
+    /** A refusal for the goals the plan follows lasts until a draft read after it has room again. */
+    fun readRoom(activeGoalsLeft: Long?) {
+        if (activeGoalsLeft != 0L && (creationError as? GoalError.Limit)?.reason == GoalLimitReason.ActiveGoals) creationError = null
+    }
+
     fun isOpeningExplanation(draft: OnboardingDraft) = isCreating || store.wasSentHere(draft.id.toString())
 
     fun create(
@@ -433,7 +455,10 @@ class StartGoalViewModel(
                 }
 
                 is WriteOutcome.Refused -> {
-                    creationError = GoalError.Limit(outcome.refusal.goalLimitReason())
+                    val reason = outcome.refusal.goalLimitReason()
+                    creationError = GoalError.Limit(reason)
+                    // The draft's room was read before this refusal; read it again so the card counts the goals followed now.
+                    if (reason == GoalLimitReason.ActiveGoals) draftId?.let { store.drafts[it].refresh() }
                 }
 
                 WriteOutcome.Failed -> {

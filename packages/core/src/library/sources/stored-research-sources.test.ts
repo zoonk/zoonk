@@ -2,7 +2,7 @@ import { decideLibraryIdentity } from "@zoonk/ai/tasks/identity/decision";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
-import { findStoredResearchSources } from "./stored-research-sources";
+import { findStoredResearchSources, loadResearchSourceCandidates } from "./stored-research-sources";
 
 const DAY_MS = 86_400_000;
 
@@ -167,5 +167,26 @@ describe(findStoredResearchSources, () => {
       target.id,
       partial.id,
     ]);
+  });
+});
+
+describe(loadResearchSourceCandidates, () => {
+  it("shows the judge where a law starts, not the site's menus above it", async () => {
+    const menus = Array.from({ length: 300 }, (_, index) => `Menu ${index}`).join("\n");
+    const law = ["CONSTITUIÇÃO DE 1988 - Publicação Original", "PREÂMBULO", LAW_TEXT].join("\n");
+
+    const [lawPage, plainPage] = await Promise.all([
+      sourceFixture({ extractedText: `${menus}\n${law}` }),
+      sourceFixture({ extractedText: `${menus}\nTexto sem artigos.` }),
+    ]);
+
+    const [lawCandidate, plainCandidate] = await loadResearchSourceCandidates([
+      lawPage.id,
+      plainPage.id,
+    ]);
+
+    expect(lawCandidate?.item.opening).toContain("CONSTITUIÇÃO DE 1988 - Publicação Original");
+    expect(lawCandidate?.item.opening).toContain("Art. 1º Esta Lei");
+    expect(plainCandidate?.item.opening).toMatch(/^Menu 0 Menu 1 /u);
   });
 });

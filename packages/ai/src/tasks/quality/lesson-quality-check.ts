@@ -1,6 +1,5 @@
 import "server-only";
 import { Output, generateText } from "ai";
-import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
@@ -8,18 +7,10 @@ import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type LessonWritingContext, formatLessonPlan } from "../lesson-writer/format-lesson-plan";
 import { type LessonMap } from "../lesson-writer/written-lesson-schema";
 import { getLessonCheckModels } from "./lesson-check-models";
+import { lessonIssuesSchema, toLessonIssue } from "./lesson-issues";
 import promptTemplate from "./lesson-quality-check.prompt.md";
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: where and what before how to fix it. */
-const schema = z.object({
-  issues: z.array(
-    z.object({ screen: z.number().int().nullable(), problem: z.string(), fix: z.string() }),
-  ),
-});
-/* oxlint-enable eslint/sort-keys */
-
-/** `screen` is a 0-based index, or null for the whole lesson. */
-export type LessonQualityIssue = z.infer<typeof schema>["issues"][number];
+export { type LessonQualityIssue } from "./lesson-issues";
 
 type ReviewedLesson = { screens: { kind: string; content: unknown }[]; summary: LessonMap | null };
 
@@ -40,23 +31,11 @@ function formatLesson(lesson: ReviewedLesson): string {
   return JSON.stringify({ screens, summary: lesson.summary }, null, 1);
 }
 
-/** Screen numbers are 1-based for the model; anything outside the lesson becomes lesson-wide. */
-function toIssue({
-  issue,
-  screenCount,
-}: {
-  issue: LessonQualityIssue;
-  screenCount: number;
-}): LessonQualityIssue {
-  const index = issue.screen === null ? null : issue.screen - 1;
-  return { ...issue, screen: index !== null && index >= 0 && index < screenCount ? index : null };
-}
-
 export async function checkLessonQuality(params: CheckLessonQualityParams) {
   const { analytics, lesson, reasoning, serviceTier, useFallback = true } = params;
 
   const models = getLessonCheckModels({
-    alphabet: params.alphabet,
+    kind: params.alphabet ? "alphabet" : "written",
     writerModel: params.writerModel,
   });
 
@@ -85,7 +64,7 @@ ${formatLesson(lesson)}
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: lessonIssuesSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -96,7 +75,7 @@ ${formatLesson(lesson)}
   });
 
   const issues = result.output.issues.map((issue) =>
-    toIssue({ issue, screenCount: lesson.screens.length }),
+    toLessonIssue({ issue, screenCount: lesson.screens.length }),
   );
 
   return { data: { issues }, provenance, systemPrompt, usage: result.usage, userPrompt };

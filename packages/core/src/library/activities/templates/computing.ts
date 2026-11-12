@@ -8,22 +8,22 @@ import {
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { codeSchema, identifierSchema } from "../activity-schemas";
+import { aimForItems, codeSchema, identifierSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
-import { duplicateIssues, issue } from "./_utils/template-helpers";
+import { answerCapacityIssues, duplicateIssues, issue } from "./_utils/template-helpers";
 import { normalizeProgramOutput } from "./_utils/text-normalizers";
 
-const MAX_EDITABLE_LINES = 10;
+const EDITABLE_LINES_TARGET = 10;
 const OUTPUT_TARGET = 500;
-const MAX_MISTAKES = 4;
-const MAX_PAUSES = 4;
-const MAX_PAUSE_OPTIONS = 4;
-const MAX_TRACE_STEPS = 40;
-const MAX_WATCHED = 4;
+const MISTAKES_TARGET = 4;
+const PAUSES_TARGET = 4;
+const PAUSE_OPTIONS_TARGET = 4;
+const TRACE_STEPS_TARGET = 40;
+const WATCHED_TARGET = 4;
 const TRACE_VALUE_TARGET = 60;
-const MAX_COLUMNS = 6;
-const MAX_ROWS = 30;
-const MAX_TABLES = 3;
+const COLUMNS_TARGET = 6;
+const ROWS_TARGET = 30;
+const TABLES_TARGET = 3;
 
 const languageSchema = z.enum(["javascript", "python"]);
 
@@ -37,7 +37,10 @@ function lineCount(code: string): number {
 
 const codeRunnerFields = z
   .object({
-    editableLines: z.array(z.number().int().positive()).min(1).max(MAX_EDITABLE_LINES),
+    editableLines: z
+      .array(z.number().int().positive())
+      .min(1)
+      .describe(aimForItems(EDITABLE_LINES_TARGET)),
     expectedOutput: aimForCharacters(z.string().min(1), OUTPUT_TARGET),
     fileName: labelSchema.optional(),
     language: languageSchema,
@@ -50,7 +53,7 @@ const codeRunnerFields = z
           })
           .strict(),
       )
-      .max(MAX_MISTAKES),
+      .describe(aimForItems(MISTAKES_TARGET)),
     solution: codeSchema,
     starterCode: codeSchema,
   })
@@ -131,9 +134,8 @@ const codeTracerFields = z
         z
           .object({
             options: uniqueIdsSchema(z.object({ id: idSchema, text: labelSchema }).strict(), {
-              max: MAX_PAUSE_OPTIONS,
               min: 2,
-            }),
+            }).describe(aimForItems(PAUSE_OPTIONS_TARGET)),
             question: promptSchema,
             step: z.number().int().nonnegative(),
             variable: identifierSchema,
@@ -141,21 +143,19 @@ const codeTracerFields = z
           .strict(),
       )
       .min(1)
-      .max(MAX_PAUSES),
+      .describe(aimForItems(PAUSES_TARGET)),
     trace: z
       .array(
         z
           .object({
             line: z.number().int().positive(),
-            values: z
-              .array(z.object({ name: identifierSchema, value: traceValueSchema }).strict())
-              .max(MAX_WATCHED),
+            values: z.array(z.object({ name: identifierSchema, value: traceValueSchema }).strict()),
           })
           .strict(),
       )
       .min(2)
-      .max(MAX_TRACE_STEPS),
-    watch: z.array(identifierSchema).min(1).max(MAX_WATCHED),
+      .describe(aimForItems(TRACE_STEPS_TARGET)),
+    watch: z.array(identifierSchema).min(1).describe(aimForItems(WATCHED_TARGET)),
   })
   .strict();
 
@@ -229,14 +229,14 @@ const sqlFields = z
   .object({
     expected: z
       .object({
-        columns: z.array(labelSchema).min(1).max(MAX_COLUMNS),
+        columns: z.array(labelSchema).min(1).describe(aimForItems(COLUMNS_TARGET)),
         orderMatters: z.boolean(),
-        rows: z.array(z.array(cellSchema)).max(MAX_ROWS),
+        rows: z.array(z.array(cellSchema)).describe(aimForItems(ROWS_TARGET)),
       })
       .strict(),
     mistakes: z
       .array(z.object({ feedback: explanationSchema, mistake: optionTextSchema }).strict())
-      .max(MAX_MISTAKES),
+      .describe(aimForItems(MISTAKES_TARGET)),
     solution: codeSchema,
     tables: z
       .array(
@@ -245,14 +245,14 @@ const sqlFields = z
             columns: z
               .array(z.object({ name: identifierSchema, type: columnTypeSchema }).strict())
               .min(1)
-              .max(MAX_COLUMNS),
+              .describe(aimForItems(COLUMNS_TARGET)),
             name: identifierSchema,
-            rows: z.array(z.array(cellSchema)).min(1).max(MAX_ROWS),
+            rows: z.array(z.array(cellSchema)).min(1).describe(aimForItems(ROWS_TARGET)),
           })
           .strict(),
       )
       .min(1)
-      .max(MAX_TABLES),
+      .describe(aimForItems(TABLES_TARGET)),
   })
   .strict();
 
@@ -272,7 +272,10 @@ function cellFits(
 }
 
 function sqlIssues(fields: z.output<typeof sqlFields>) {
+  const columns = fields.tables.reduce((total, table) => total + table.columns.length, 0);
+
   return [
+    ...answerCapacityIssues({ count: columns, path: "fields.tables", what: "columns in a row" }),
     ...duplicateIssues(
       fields.tables.map((table) => table.name),
       "fields.tables",

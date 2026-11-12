@@ -431,7 +431,6 @@ private fun failureMessage(failure: AccountFailure): String =
         when (failure) {
             AccountFailure.InvalidEmail -> R.string.account_failure_invalid_email
             AccountFailure.DisposableEmail -> R.string.account_failure_disposable_email
-            AccountFailure.BotDetected -> R.string.account_failure_bot_detected
             AccountFailure.Network -> R.string.account_failure_network
             AccountFailure.RateLimited -> R.string.account_failure_rate_limited
             AccountFailure.WrongCode -> R.string.account_failure_wrong_code

@@ -5,25 +5,26 @@ import {
   partSchema,
   pictureRequestSchema,
 } from "../../steps/contract/content-schemas";
+import { aimForItems } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
 
-const MAX_PARTS = 6;
-const MAX_DISTRACTORS = 3;
-const MAX_MIX_UPS = 4;
+const PARTS_TARGET = 6;
+const DISTRACTORS_TARGET = 3;
+const MIX_UPS_TARGET = 4;
 
 const labeledDiagramFields = z
   .object({
-    distractors: z.array(labelSchema).max(MAX_DISTRACTORS),
+    distractors: z.array(labelSchema).describe(aimForItems(DISTRACTORS_TARGET)),
     mixUps: z
       .array(
         z.object({ feedback: explanationSchema, labels: z.array(labelSchema).length(2) }).strict(),
       )
-      .max(MAX_MIX_UPS),
+      .describe(aimForItems(MIX_UPS_TARGET)),
     parts: z
       .array(z.object({ label: labelSchema, part: partSchema }).strict())
       .min(2)
-      .max(MAX_PARTS),
+      .describe(aimForItems(PARTS_TARGET)),
     picture: pictureRequestSchema,
   })
   .strict();

@@ -2,6 +2,8 @@
 
 import { goalUpdateInputSchema } from "@zoonk/core/goals/contract";
 import { updateGoal } from "@zoonk/core/goals/update";
+import { getLearnerSummary } from "@zoonk/core/learner/summary";
+import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 
 export async function setGoalStatusAction(
@@ -23,10 +25,7 @@ export async function setGoalStatusAction(
   return result.status === "updated" ? "saved" : "failed";
 }
 
-export async function setGoalCountryAction(
-  goalId: string,
-  targetRegion: unknown,
-): Promise<boolean> {
+async function saveGoalCountry(goalId: string, targetRegion: unknown): Promise<boolean> {
   const input = goalUpdateInputSchema.safeParse({ targetRegion });
 
   if (!input.success) {
@@ -35,6 +34,20 @@ export async function setGoalCountryAction(
 
   const result = await updateGoal({ goalId, input: input.data });
   return result.status === "updated";
+}
+
+export async function setGoalCountryAction(
+  goalId: string,
+  targetRegion: unknown,
+): Promise<boolean> {
+  return saveGoalCountry(goalId, targetRegion);
+}
+
+export async function applyGoalCountryAction(
+  goalId: string,
+  targetRegion: unknown,
+): Promise<LearnerSummary | null> {
+  return (await saveGoalCountry(goalId, targetRegion)) ? getLearnerSummary() : null;
 }
 
 export async function renameGoalAction(goalId: string, displayName: unknown): Promise<boolean> {

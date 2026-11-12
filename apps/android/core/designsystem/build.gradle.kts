@@ -47,3 +47,12 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
 }
+
+val nativeMathFixtures = rootProject.file("../../packages/utils/src/math-spans-native-fixtures.json")
+val nativeTutorMathFixtures = rootProject.file("../../packages/player/src/questions/tutor-math-native-fixtures.json")
+
+tasks.withType<Test>().configureEach {
+    inputs.files(nativeMathFixtures, nativeTutorMathFixtures)
+    systemProperty("zoonk.mathFixtures", nativeMathFixtures.absolutePath)
+    systemProperty("zoonk.tutorMathFixtures", nativeTutorMathFixtures.absolutePath)
+}

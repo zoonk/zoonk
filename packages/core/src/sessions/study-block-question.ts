@@ -3,9 +3,6 @@ import { type ItemCitation } from "../library/sources/source-citation";
 import { type DrillView } from "../mistakes/mistake-drills";
 import { type SessionQuestion } from "./_utils/session-items";
 
-/** Never reveal prior right answers; match/order and numeric answers with different numbers have no useful answer text. */
-export type TimeMachine = { answer: string | null; answeredAt: Date; isCorrect: boolean };
-
 export type StudyBlockQuestion = SessionQuestion & {
   /** Blank net-scored statements count as neither right nor wrong. */
   answered: { blank: boolean; isCorrect: boolean } | null;
@@ -19,5 +16,4 @@ export type StudyBlockQuestion = SessionQuestion & {
   quoted: boolean;
   /** Shared stimulus; null for standalone questions. */
   set: ItemSetView | null;
-  timeMachine: TimeMachine | null;
 };

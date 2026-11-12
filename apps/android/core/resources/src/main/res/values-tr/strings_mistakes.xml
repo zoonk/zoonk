@@ -19,12 +19,14 @@
   "mistakes_open_lesson": "d98824721b294f85a337001ef8da9631566542fef874db63b8e3b1160796be11",
   "mistakes_other_questions": "ed762989a059fc9e5724038dfe05c55a8170318804becae0ec6b0e396c194ce4",
   "mistakes_practice": "32e3b3b0a83cb4fa553b483f530f531e873dcf503aa5b5b55fb3a0ccb321312f",
-  "mistakes_practice_comes_back": "b500365a69f12618f58daf6e71ac2073c512ca9b79a3eec0f0ccbe1759205df3",
+  "mistakes_practice_comes_back": "a546457f9cbbcc680cbc217ed8cf7931ddff2a89b21826034fc3412bf40b4108",
   "mistakes_practice_end": "0997f6444b889def68216e3f370bdfeb1c7dfff01bebe5bd01594d89cb4ef945",
   "mistakes_practice_fixed": "3d26a89032cdd18b0d96996658c1d0f211c29a0d80b4a6a01deae1b2bc7d72fd",
+  "mistakes_practice_missed_and_unreached": "1cd106cb214f255f88a2b782a403fd1fce25a1b240b1f78141da5cf62468eae2",
   "mistakes_practice_skill": "ccf255598a3b2964a61d7ceca8aea5b043cc797410074aae061e138664761ed7",
   "mistakes_practice_title": "37b0b4f3c940210dfec9f98fef3a3f9887a1f7412e62c74161f26edfb627835a",
   "mistakes_practice_tomorrow": "e9e964b9241390e69016cf91418243599bd2304f199bdd5feb58c88eafae404b",
+  "mistakes_practice_unreached": "be966fd22fdd0d57d9d5d9377b33c8f9e395eb0340f189fbf65c5bf8f9acd788",
   "mistakes_ready": "58b186e8504cde3430ab976620c08b0f7f770345434ea5ae3c7c5e9e203d965d",
   "mistakes_show_more": "1bbf067f3904e72e52deee339ed8cee6edb550ab76ac93bde1baed01175334b7",
   "mistakes_tab_fixed": "4acfc7cacde8862796dc0b9cc3731a58d756d4a5b5a5d970173de6e8f5ade37f",
@@ -36,7 +38,9 @@
     <string name="mistakes_practice_title">Yanlışlarına çalış</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
     <string name="mistakes_practice_end">Alıştırmayı bitir. Verdiğin cevaplar geçerli sayılır.</string>
-    <string name="mistakes_practice_comes_back">Kalanlar, aklında daha iyi kalmaları için başka bir gün tekrar gelecek.</string>
+    <string name="mistakes_practice_comes_back">Yanlış cevapladıkların başka bir gün yeniden karşına çıkar, böylece aklında daha iyi kalır.</string>
+    <string name="mistakes_practice_missed_and_unreached">Yanlış cevapladıkların başka bir gün tekrar karşına çıkacak. Kalanlarla hâlâ alıştırma yapabilirsin.</string>
+    <string name="mistakes_practice_unreached">Kalanlarla hâlâ alıştırma yapabilirsin.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d yanlış düzeltildi</item>
         <item quantity="other">%d yanlış düzeltildi</item>

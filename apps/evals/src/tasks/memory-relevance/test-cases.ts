@@ -89,6 +89,13 @@ export const TEST_CASES: TestCase<MemoryRelevanceExpected, MemoryRelevanceInput>
     statement: "Needs 700+ in the essay",
   }),
   relevanceCase({
+    category: "goals",
+    id: "en-priorities-exam-date",
+    need: "Decide which topics to prioritize before the learner's exam",
+    relevant: true,
+    statement: "Has the ENEM on November 8",
+  }),
+  relevanceCase({
     category: "routine",
     id: "en-example-bus",
     need: "Write a personal example for a chemistry lesson on acids",

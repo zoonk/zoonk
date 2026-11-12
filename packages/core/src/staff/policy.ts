@@ -1,7 +1,6 @@
 const excludedModels = [
   "Verification",
   "RestoreKey",
-  "AppAttestKey",
   "OauthClient",
   "OauthResource",
   "OauthClientResource",

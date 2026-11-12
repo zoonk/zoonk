@@ -6,14 +6,15 @@ import {
   optionTextSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
+import { aimForItems } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
 import { DEFAULT_PROCESS_ICON, processIconNames } from "../process-icons";
 import { countBonds, isKnownElement, parseMolecularFormula } from "./_utils/chemistry";
 import { isBuildableMolecule } from "./_utils/molecule-structure";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
 
-const MAX_STEPS = 7;
-const MAX_ELEMENTS = 6;
+const STEPS_TARGET = 7;
+const ELEMENTS_TARGET = 6;
 const FORMULA_TARGET = 24;
 
 const MAX_MOLECULE_ATOMS = 12;
@@ -35,7 +36,9 @@ export const processOrderTemplate = defineActivityTemplate({
     "Arrange the steps of a process in order, like photosynthesis, and learn why each needs the one before. Steps are written in their true order; the player shuffles them. Fills: the steps, an icon for each from the allowed Lucide names and why each step comes after the previous one.",
   expected: (fields) => ({ ids: fields.steps.map((step) => step.id), kind: "order" }),
   fields: z
-    .object({ steps: uniqueIdsSchema(processStepSchema, { max: MAX_STEPS, min: 3 }) })
+    .object({
+      steps: uniqueIdsSchema(processStepSchema, { min: 3 }).describe(aimForItems(STEPS_TARGET)),
+    })
     .strict(),
   id: "processOrder",
   needsData: false,
@@ -53,7 +56,7 @@ const moleculeFields = z
     elements: z
       .array(z.string().regex(/^[A-Z][a-z]?$/u))
       .min(1)
-      .max(MAX_ELEMENTS),
+      .describe(aimForItems(ELEMENTS_TARGET)),
     formula: aimForCharacters(z.string().min(1), FORMULA_TARGET),
   })
   .strict();

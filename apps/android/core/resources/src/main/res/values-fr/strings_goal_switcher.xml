@@ -17,7 +17,7 @@
   "goal_switcher_ready_to_start": "4466c01dc22cf1be90ddb76c0465ba123d19464cacb2812472c01da4334755f6",
   "goal_switcher_start_failed": "ab230b46f0231a0a21763da9c3e56dc32ce7d26cb0dcac42c0927cb3ce159b82",
   "goal_switcher_start_goal": "80b0dcda46f852d8b0670e5cec419ad14aad0f0cbad72ef30c7303d481b3459f",
-  "goal_switcher_starts_with_plus": "ffa5a9fbc5bd778d70204d0779d5b90b3bdd9dbde78faec94fc014f794b952a4",
+  "goal_switcher_starts_with_free_account": "2e3c814b6c02ca6027d01d8ab2f124c2c0aefea2be409923c3873f711ca4e547",
   "goal_switcher_your_goals": "81a187c6c60761343ac8357ba4d8b2adb94445ec0a56170ad49596bf6ed4ed57"
 }
 -->
@@ -34,8 +34,8 @@
     <string name="goal_switcher_finished">Terminé</string>
     <string name="goal_switcher_paused">En pause</string>
     <string name="goal_switcher_failed">Impossible de changer d’objectif. Réessaie.</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_starts_with_plus">Démarrage avec Plus</string>
+    <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
+    <string name="goal_switcher_starts_with_free_account">Disponible avec un compte gratuit</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Prêt à démarrer</string>
     <string name="goal_switcher_start_failed">Impossible de démarrer cet objectif. Réessaie.</string>

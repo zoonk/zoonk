@@ -5,8 +5,9 @@ import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/dra
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { CreateAccountLink } from "../../_components/create-account-link";
 import { PlusNotice } from "../../_components/plus-lock";
-import { GoalLimitWall, isPlusGoalLimit } from "../entry/goal-limit-notice";
+import { GoalLimitWall } from "../entry/goal-limit-notice";
 import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
@@ -20,6 +21,7 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { type UnderstandingDraft } from "./understanding-draft";
+import { useCardLimit } from "./understood-limit";
 import { UnderstoodFactItem, UnderstoodRowItem } from "./understood-row";
 import { UnderstoodWords } from "./understood-words";
 import {
@@ -155,11 +157,59 @@ function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   );
 }
 
+/** A guest's next step is a free account, which follows more goals at once; an account's is Plus. */
+function LockedGoalsNote({
+  count,
+  hasAccount,
+  offersRemedy,
+}: {
+  count: number;
+  hasAccount: boolean;
+  offersRemedy: boolean;
+}) {
+  const t = useExtracted();
+
+  if (hasAccount) {
+    return (
+      <PlusNotice cta={offersRemedy}>
+        {t({
+          description:
+            "Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.",
+          message:
+            "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}",
+          values: { count },
+        })}
+      </PlusNotice>
+    );
+  }
+
+  return (
+    <PlusNotice
+      action={offersRemedy && <CreateAccountLink />}
+      cta={false}
+      title={t({
+        description:
+          "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.",
+        message: "Available with a free account",
+      })}
+    >
+      {t({
+        description:
+          "Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.",
+        message:
+          "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}",
+        values: { count },
+      })}
+    </PlusNotice>
+  );
+}
+
 export function UnderstoodScreen({
   draft,
   error,
   goal,
   goalLimit = null,
+  hasAccount,
   isCreating,
   material,
   onConfirm,
@@ -171,6 +221,7 @@ export function UnderstoodScreen({
   error: GoalError | null;
   goal: string;
   goalLimit?: GoalLimitReason | null;
+  hasAccount: boolean;
   isCreating: boolean;
   material: readonly { title: string }[];
   onConfirm: () => void;
@@ -187,7 +238,7 @@ export function UnderstoodScreen({
   const fixButtonRef = useRef<HTMLButtonElement>(null);
   const schedule = scheduleRow(draft.schedule, draft.minutesSaid);
   const firstGoalRows = [materialRow(material), schedule].filter((row) => row !== null);
-  const plusLimit = [error?.limit, goalLimit].find((reason) => reason && isPlusGoalLimit(reason));
+  const { cardError, plusLimit } = useCardLimit({ draft, error, goalLimit, hasAccount });
 
   const edit = (next: FieldEdit | null) => {
     setEdited(next ? null : editing);
@@ -238,12 +289,13 @@ export function UnderstoodScreen({
             <LockedGoalCard goal={understood} key={index} />
           ))}
 
-          <PlusNotice cta={!plusLimit}>
-            {t(
-              "{count, plural, one {Following more than one goal at a time comes with Plus. Until then, this goal waits in your goals.} other {Following more than one goal at a time comes with Plus. Until then, these goals wait in your goals.}}",
-              { count: draft.lockedGoals.length },
-            )}
-          </PlusNotice>
+          {draft.goals.length > 0 && (
+            <LockedGoalsNote
+              count={draft.lockedGoals.length}
+              hasAccount={hasAccount}
+              offersRemedy={!plusLimit && !error?.needsAccount}
+            />
+          )}
         </div>
       )}
 
@@ -252,7 +304,7 @@ export function UnderstoodScreen({
           <GoalLimitWall reason={plusLimit} />
         </OnboardingFooter>
       ) : (
-        <GoalFooter error={error} signUpHref={signUpHref}>
+        <GoalFooter error={cardError} signUpHref={signUpHref}>
           <form action={() => onConfirm()} className="contents">
             <OnboardingPrimaryButton
               busy={isCreating}

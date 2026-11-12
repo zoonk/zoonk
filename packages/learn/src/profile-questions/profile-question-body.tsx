@@ -1,15 +1,18 @@
 "use client";
 
 import { type BodyProps } from "./profile-body-parts";
-import { ChipBody, StudiesBody, WorkBody } from "./profile-chip-bodies";
+import { AddressFormBody, ChipBody, StudiesBody, WorkBody } from "./profile-chip-bodies";
 import { ConditionsBody, SupportBody } from "./profile-row-bodies";
 
 export function ProfileQuestionBody({
+  declineAsSkip = false,
   jobPrefill = null,
   label,
   prechecked = false,
   ...props
 }: BodyProps & {
+  /** Onboarding declines through its skip button instead of a row. */
+  declineAsSkip?: boolean;
   /** The goal's current role, prefilled into the job field. */
   jobPrefill?: string | null;
   /** Names the answer area for screen readers: the screen's title. */
@@ -25,6 +28,8 @@ export function ProfileQuestionBody({
       return <ConditionsBody {...props} label={label} />;
     case "learningSupport":
       return <SupportBody {...props} label={label} prechecked={prechecked} />;
+    case "addressForm":
+      return <AddressFormBody {...props} declineAsSkip={declineAsSkip} label={label} />;
     case "tools":
     case "watch":
     case "listen":

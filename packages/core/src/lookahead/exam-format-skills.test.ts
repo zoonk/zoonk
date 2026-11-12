@@ -220,6 +220,32 @@ describe(pickExamFormatSkills, () => {
     ]);
   });
 
+  it("gives each pick the cases its skill's general and exam questions already use", async () => {
+    const { blueprint, goal, skills } = await jeeGoal();
+    const skillId = skills[1]?.id ?? "";
+
+    await Promise.all([
+      itemFixture({
+        content: { ...choiceItemContent(), context: "Hector restocks at 80 units a week." },
+        skillId,
+      }),
+      itemFixture({
+        content: { ...choiceItemContent(), context: "Two machines share one shift." },
+        examBlueprintId: blueprint.id,
+        format: "typed",
+        skillId,
+      }),
+    ]);
+
+    const picks = await pickExamFormatSkills({ goalId: goal.id });
+    const pick = picks.find((candidate) => candidate.skill.id === skillId);
+
+    expect(pick?.skill.usedSituations.toSorted()).toStrictEqual([
+      "Hector restocks at 80 units a week.",
+      "Two machines share one shift.",
+    ]);
+  });
+
   it("picks first-phase skills by weight, skipping written ones", async () => {
     const { blueprint, goal, skills } = await jeeGoal();
     const [first, second, third, fourth] = skills;

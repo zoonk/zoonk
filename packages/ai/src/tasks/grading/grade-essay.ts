@@ -5,6 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
+import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
@@ -141,7 +142,7 @@ function getSystemPrompt(rubric: EssayRubric): string {
     },
   });
 
-  return `${rubricPrompt}\n${regionalFormsPrompt}`;
+  return `${rubricPrompt}\n${regionalFormsPrompt}\n${NEUTRAL_ADDRESS_PROMPT}`;
 }
 
 function formatCriterion(criterion: EssayCriterionDefinition): string {

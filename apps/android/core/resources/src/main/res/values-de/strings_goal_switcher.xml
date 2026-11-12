@@ -17,7 +17,7 @@
   "goal_switcher_ready_to_start": "c4f9de93a83dea8c1fed4f73fe68ac7a9c8141fbc2a3e3f15951d7ffac3bab7e",
   "goal_switcher_start_failed": "0e2db4a02df7ab427f9b190d9696e1acd6d1c8900e58d0bd375997f591e9a1b8",
   "goal_switcher_start_goal": "6d3713cf74eb492c52e25b9c967ad840ef8bf23a40dab1caf35f07ecc8c0eaf7",
-  "goal_switcher_starts_with_plus": "19b462ba312c33c3d1dea55d94aaacd2c9279457c10e8fe34478691282a2dcf7",
+  "goal_switcher_starts_with_free_account": "cedf77b1292024c6bee15a778b3e3050e8d7f0f182c1f79ef03002f0890953f2",
   "goal_switcher_your_goals": "abda8ae99a29005b57b2e0d38806f2d836116a9d5a21fec3f3df2ee06426f49b"
 }
 -->
@@ -34,8 +34,8 @@
     <string name="goal_switcher_finished">Abgeschlossen</string>
     <string name="goal_switcher_paused">Pausiert</string>
     <string name="goal_switcher_failed">Wir konnten das Ziel nicht wechseln. Versuch es noch einmal.</string>
-    <!-- Under a goal the learner typed with their goals that their plan didn't start: the free plan follows one goal at a time. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_starts_with_plus">Startet mit Plus</string>
+    <!-- Status under a goal a guest typed with their goals that they can't start yet, read like "Starts with Plus" under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a "free account" (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up. -->
+    <string name="goal_switcher_starts_with_free_account">Startet mit einem kostenlosen Konto</string>
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Bereit zum Start</string>
     <string name="goal_switcher_start_failed">Wir konnten dieses Ziel nicht starten. Versuch es noch einmal.</string>

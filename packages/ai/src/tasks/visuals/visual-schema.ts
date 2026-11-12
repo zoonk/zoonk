@@ -13,10 +13,7 @@ export const CHART_UNIT_TARGET = 12;
 const label = aimForCharacters(z.string(), LABEL_TARGET);
 const title = aimForCharacters(z.string(), TITLE_TARGET);
 const MIN_CATEGORIES = 2;
-const MAX_CATEGORIES = 12;
-const MAX_SERIES = 3;
 const MIN_EVENTS = 2;
-const MAX_EVENTS = 8;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind first, then what the visual is about, then its data. */
 
@@ -30,16 +27,10 @@ const chartVisualSchema = z.object({
   unit: aimForCharacters(z.string(), CHART_UNIT_TARGET).nullable(),
   /** For a screen about a cropped axis; null lets the app choose (bars start at zero). */
   axisStart: z.number().nullable(),
-  categories: z.array(label).min(MIN_CATEGORIES).max(MAX_CATEGORIES),
+  categories: z.array(label).min(MIN_CATEGORIES),
   series: z
-    .array(
-      z.object({
-        name: label,
-        values: z.array(z.number()).min(MIN_CATEGORIES).max(MAX_CATEGORIES),
-      }),
-    )
-    .min(1)
-    .max(MAX_SERIES),
+    .array(z.object({ name: label, values: z.array(z.number()).min(MIN_CATEGORIES) }))
+    .min(1),
   /** Null for a made-up example. */
   source: title.nullable(),
 });
@@ -55,8 +46,7 @@ const timelineVisualSchema = z.object({
         detail: aimForCharacters(z.string(), DETAIL_TARGET).nullable(),
       }),
     )
-    .min(MIN_EVENTS)
-    .max(MAX_EVENTS),
+    .min(MIN_EVENTS),
 });
 
 /* oxlint-enable eslint/sort-keys */

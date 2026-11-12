@@ -293,7 +293,6 @@ struct LessonPlayerAPI: Sendable {
           correctCount: completion.correctCount, incorrectCount: completion.incorrectCount,
           energyDelta: completion.energyDelta, seconds: completion.seconds,
           isFirstCompletion: completion.isFirstCompletion,
-          nextReviewAt: completion.nextReviewAt,
           day: block?.day ?? DayResult(completion), block: block,
           finishedChapter: completion.finishedChapter?.value1,
           planReveal: completion.planReveal.map {
@@ -538,7 +537,6 @@ protocol CheckResultPayload {
   var correctAnswer: String? { get }
   var feedback: String? { get }
   var isCorrect: Bool { get }
-  var nextReviewAt: Date? { get }
   var savedMistake: Bool { get }
   var score: Double? { get }
   var spelling: String? { get }
@@ -576,7 +574,6 @@ extension LessonStepResult {
     keyPoints = payload.resultKeyPoints
     score = payload.score
     spelling = payload.spelling
-    nextReviewAt = payload.nextReviewAt
     savedMistake = payload.savedMistake
   }
 }

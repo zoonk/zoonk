@@ -47,10 +47,17 @@ private val UPPERCASE_LETTER = Regex("\\p{Lu}")
 
 // JavaScript's `\s`, spelled out: the JVM's `\s` is ASCII only, and Android's ICU regex rejects `(?U)`.
 private const val SPACE = "[\\t\\n\\u000B\\f\\r \\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF]"
+private val MATH_WHITESPACE = Regex(SPACE)
+private val PRICE_AFTER_SIGN = Regex("^$SPACE?[0-9]")
 private val UNORDERED_ITEM = Regex("^$SPACE*[-*•]$SPACE+(.+)$")
 private val ORDERED_ITEM = Regex("^$SPACE*[0-9]{1,3}[.)]$SPACE+(.+)$")
 private val LINE_BREAK = Regex("$SPACE*\\n$SPACE*")
 private val LINE_END = Regex("\\r?\\n")
+
+private fun isMathWhitespaceAt(
+    text: String,
+    index: Int,
+): Boolean = text.getOrNull(index)?.let { MATH_WHITESPACE.matches(it.toString()) } ?: true
 
 private fun isDigitAt(
     text: String,
@@ -68,7 +75,7 @@ private fun isCurrencySign(
     index: Int,
 ): Boolean {
     val before = text.getOrNull(index - 1) ?: return false
-    val priceAfter = isDigitAt(text, index + 1) || (text.getOrNull(index + 1)?.isWhitespace() == true && isDigitAt(text, index + 2))
+    val priceAfter = PRICE_AFTER_SIGN.containsMatchIn(text.substring(index + 1))
     return UPPERCASE_LETTER.matches(before.toString()) && priceAfter
 }
 
@@ -88,21 +95,17 @@ private tailrec fun findInlineMathClose(
     val index = text.indexOf('$', from)
     if (index == -1) return null
 
-    val isClose = isDelimiter(text, index) && !isWhitespaceAt(text, index - 1) && !isDigitAt(text, index + 1)
-    return if (isClose) index else findInlineMathClose(text, index + 1)
+    if (isEscaped(text, index)) return findInlineMathClose(text, index + 1)
+
+    val isClose = isDelimiter(text, index) && !isMathWhitespaceAt(text, index - 1) && !isDigitAt(text, index + 1)
+    return if (isClose) index else null
 }
 
-private fun matchMathAt(
+private fun matchInlineMathAt(
     text: String,
     start: Int,
 ): MathSpan? {
-    if (text.startsWith("$$", start)) {
-        val close = text.indexOf("$$", start + 2)
-        val content = if (close == -1) "" else text.substring(start + 2, close).trim()
-        return if (content.isNotEmpty()) MathSpan(content, start, close + 2, display = true) else null
-    }
-
-    if (isWhitespaceAt(text, start + 1)) return null
+    if (isMathWhitespaceAt(text, start + 1)) return null
 
     val close = findInlineMathClose(text, start + 2) ?: return null
     return MathSpan(text.substring(start + 1, close), start, close + 1, display = false)
@@ -115,8 +118,19 @@ private tailrec fun findDollarMath(
     val start = text.indexOf('$', from)
     if (start == -1) return null
 
-    val span = if (isDelimiter(text, start)) matchMathAt(text, start) else null
-    return span ?: findDollarMath(text, start + 1)
+    if (!isDelimiter(text, start)) return findDollarMath(text, start + 1)
+
+    if (text.startsWith("$$", start)) {
+        val close = text.indexOf("$$", start + 2)
+        if (close == -1) return findDollarMath(text, start + 1)
+
+        val content = text.substring(start + 2, close).trim { MATH_WHITESPACE.matches(it.toString()) }
+        if (content.isNotEmpty()) return MathSpan(content, start, close + 2, display = true)
+
+        return findDollarMath(text, close + 2)
+    }
+
+    return matchInlineMathAt(text, start) ?: findDollarMath(text, start + 1)
 }
 
 private data class Delimiters(
@@ -165,12 +179,17 @@ fun toOneLine(text: String): String = text.replace(LINE_BREAK, " ")
 fun plainText(text: String): String = parseRichInline(text).joinToString("") { it.text }
 
 /** Math first, so emphasis markers never touch LaTeX. */
-fun parseRichInline(text: String): List<RichSegment> {
-    val math = findMath(text) ?: return parseMarkup(text)
+fun parseRichInline(text: String): List<RichSegment> =
+    splitLessonMath(text).flatMap { if (it.kind == SegmentKind.Text) parseMarkup(it.text) else listOf(it) }
 
-    return parseMarkup(text.substring(0, math.start)) +
+internal fun splitLessonMath(text: String): List<RichSegment> {
+    if (text.isEmpty()) return emptyList()
+    val math = findMath(text) ?: return listOf(RichSegment(SegmentKind.Text, text))
+    val before = text.substring(0, math.start)
+
+    return (if (before.isEmpty()) emptyList() else listOf(RichSegment(SegmentKind.Text, before))) +
         RichSegment(if (math.display) SegmentKind.DisplayMath else SegmentKind.Math, math.content) +
-        parseRichInline(text.substring(math.end))
+        splitLessonMath(text.substring(math.end))
 }
 
 private sealed interface Line {

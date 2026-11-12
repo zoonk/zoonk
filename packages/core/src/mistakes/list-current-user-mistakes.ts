@@ -4,7 +4,6 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { readExamPicks } from "../exams/choices/exam-choices";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readSavedPlan } from "../learner/facts/saved-plan";
 import { getOwnedGoal } from "../learner/get-owned-goal";
 import { readExamBlueprint } from "../library/exams/read-exam-blueprint";
@@ -13,7 +12,7 @@ import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
 import { getScopeSkillIds } from "./_utils/mistake-scope";
 import { type MistakeAvailability, type MistakeListInput } from "./contract";
-import { loadMistakePracticeAvailability } from "./mistake-availability";
+import { getPracticeTimeZone, loadMistakePracticeAvailability } from "./mistake-availability";
 import { type MistakeLesson, findMistakeLessons } from "./mistake-lessons";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
@@ -106,7 +105,7 @@ export async function listCurrentUserMistakes(
 
   const scope = { userId, ...(skillIds ? { skillId: { in: skillIds } } : {}) };
 
-  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
+  const timeZone = await getPracticeTimeZone({ goal, timeZone: input.timeZone, userId });
 
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
 
