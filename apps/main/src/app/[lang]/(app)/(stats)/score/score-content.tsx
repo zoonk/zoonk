@@ -3,12 +3,11 @@ import { getAppLocale } from "@/i18n/locale";
 import { getMenu } from "@/lib/menu";
 import { getScoreHistory } from "@zoonk/core/progress/get-score-history";
 import { getSession } from "@zoonk/core/users/session";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { ScoreChart, ScoreChartSkeleton } from "./score-chart";
-import { ScoreLine, ScoreTiles } from "./score-stats";
+import { ScoreTile } from "./score-stats";
 
 export async function ScoreContent() {
   const locale = await getAppLocale();
@@ -24,9 +23,8 @@ export async function ScoreContent() {
 
   return (
     <ProgressContent>
-      <ScoreTiles performance={history} />
+      <ScoreTile performance={history} />
       <ScoreChart dataPoints={history.dataPoints} performance={history} />
-      <ScoreLine />
     </ProgressContent>
   );
 }
@@ -34,9 +32,8 @@ export async function ScoreContent() {
 export function ScoreContentSkeleton() {
   return (
     <ProgressContent>
-      <StatTilesSkeleton count={3} />
+      <StatTilesSkeleton count={1} />
       <ScoreChartSkeleton />
-      <Skeleton className="h-4 w-72 max-w-full" />
     </ProgressContent>
   );
 }

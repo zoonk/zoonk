@@ -44,11 +44,9 @@ function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
 export async function BeltRack({
   beltColors,
   currentIndex,
-  labelledBy,
 }: {
   beltColors: BeltColorOption[];
   currentIndex: number;
-  labelledBy: string;
 }) {
   const t = await getExtracted();
   const firstBelt = beltColors[0];
@@ -62,7 +60,7 @@ export async function BeltRack({
 
   return (
     <div className="flex flex-col gap-2">
-      <ol aria-labelledby={labelledBy} className="flex">
+      <ol aria-label={t("Belts")} className="flex">
         {beltColors.map((belt, index) => (
           <li
             aria-current={index === currentIndex ? "step" : undefined}

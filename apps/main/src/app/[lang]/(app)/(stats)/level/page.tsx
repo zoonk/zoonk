@@ -1,3 +1,4 @@
+import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -7,14 +8,19 @@ import { LevelContent, LevelContentSkeleton } from "./level-content";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return { description: t("Your belt, level and Brain Power."), title: t("Level") };
+  return { description: t("Your belt and Brain Power."), title: t("Belt") };
 }
 
 export default async function LevelPage() {
   const t = await getExtracted();
 
   return (
-    <StatsPage title={t("Level")}>
+    <StatsPage
+      description={t("Every lesson adds {points} Brain Power, and it never goes down.", {
+        points: String(BRAIN_POWER_PER_LESSON),
+      })}
+      title={t("Belt")}
+    >
       <Suspense fallback={<LevelContentSkeleton />}>
         <LevelContent />
       </Suspense>

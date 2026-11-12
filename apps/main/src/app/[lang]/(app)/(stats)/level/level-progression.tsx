@@ -1,6 +1,5 @@
-import { type BeltColorOption, getBeltColors } from "@/lib/belt-colors";
+import { type BeltColorOption, getBeltColors, getBeltLabel } from "@/lib/belt-colors";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
-import { PageSectionTitle } from "@zoonk/learn/page";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -10,7 +9,6 @@ import { formatWholeNumber } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { BeltRack } from "./belt-rack";
 
-const BELT_PROGRESSION_TITLE_ID = "belt-progression-title";
 const PERCENT = 100;
 
 const LIGHT_BELTS = new Set<BeltColor>(["white", "yellow", "orange", "green"]);
@@ -50,7 +48,7 @@ function RankStripe({ isReached, share }: { isReached: boolean; share?: number }
   );
 }
 
-/** Decorative: the words above it name the belt and level. */
+/** Decorative: the words above it name the belt and its number. */
 function BeltDrawing({
   belt,
   className,
@@ -112,55 +110,50 @@ function BeltDrawing({
   );
 }
 
-async function NextBelt({
-  className,
+/** After a belt's tenth number comes the next belt, so the line names that belt alone. */
+async function NextStep({
   level,
   nextBelt,
 }: {
-  className?: string;
   level: BeltLevelDetails;
   nextBelt?: BeltColorOption;
 }) {
   const t = await getExtracted();
   const format = await getFormatter();
+  const belt = await getBeltLabel({ color: level.color });
 
-  if (!(level.nextBelt && nextBelt)) {
+  if (level.isMaxLevel) {
     return (
-      <p className={cn("flex items-center gap-1.5 text-sm font-medium", className)}>
+      <p className="flex items-center gap-1.5 text-sm font-medium">
         <DoneMark />
         {t("Every belt earned")}
       </p>
     );
   }
 
-  return (
-    <div className={cn("flex flex-col gap-1", className)}>
-      <p className="text-label">{t("Next belt")}</p>
+  const points = formatWholeNumber({ format, value: level.bpToNextLevel });
 
-      <p className="flex items-center gap-2 text-sm font-medium">
-        <BeltIndicator aria-hidden color={nextBelt.key} label={nextBelt.label} size="sm" />
-        <span>
-          {t.rich("{belt} at <mono>{points}</mono> Brain Power", {
+  return (
+    <p className="text-muted-foreground text-sm">
+      {nextBelt && level.level === LEVELS_PER_COLOR
+        ? t.rich("<mono>{points}</mono> Brain Power to {belt}", {
             belt: nextBelt.label,
             mono: renderNumber,
-            points: formatWholeNumber({ format, value: level.nextBelt.startBrainPower }),
+            points,
+          })
+        : t.rich({
+            description:
+              'The points still needed for the belt\'s next number. {belt} {level} is a belt and its number from 1 to 10, such as "White belt 4".',
+            message: "<mono>{points}</mono> Brain Power to {belt} {level}",
+            values: { belt, level: String(level.level + 1), mono: renderNumber, points },
           })}
-        </span>
-      </p>
-
-      <p className="text-muted-foreground text-xs">
-        {t.rich({
-          description: "The Brain Power the learner still needs to earn the next belt.",
-          message: "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}",
-          values: { mono: renderNumber, points: level.nextBelt.brainPowerToGo },
-        })}
-      </p>
-    </div>
+    </p>
   );
 }
 
 export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevelDetails }) {
   const t = await getExtracted();
+  const format = await getFormatter();
   const beltColors = await getBeltColors();
   const currentIndex = BELT_COLORS_ORDER.indexOf(currentBelt.color);
   const belt = beltColors[currentIndex];
@@ -172,11 +165,11 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
   const nextBelt = beltColors.find((option) => option.key === currentBelt.nextBelt?.color);
   // White and black would wash the panel white or gray; their panel stays neutral.
   const isNeutral = belt.key === "white" || belt.key === "black";
+  // On a belt's tenth number the panel already names the next belt.
+  const namesNextBelt = currentBelt.level < LEVELS_PER_COLOR;
 
   return (
-    <section aria-labelledby={BELT_PROGRESSION_TITLE_ID} className="flex flex-col gap-4">
-      <PageSectionTitle id={BELT_PROGRESSION_TITLE_ID}>{t("Belt progression")}</PageSectionTitle>
-
+    <div className="flex flex-col gap-4">
       <div
         className={cn(
           "relative overflow-hidden rounded-xl p-4 md:px-6 md:pt-5 md:pb-4",
@@ -187,21 +180,27 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           <span aria-hidden="true" className={cn("absolute inset-0 opacity-10", belt.bgClass)} />
         )}
 
-        <div className="relative grid gap-x-6 gap-y-4 md:grid-cols-[1fr_auto]">
-          <div className="flex flex-col gap-0.5">
-            <p className="text-lg font-semibold tracking-tight">{belt.label}</p>
-            <p className="text-muted-foreground text-sm">
-              {t.rich("Level <mono>{level}</mono> of {count}", {
-                count: String(LEVELS_PER_COLOR),
-                level: String(currentBelt.level),
-                mono: renderNumber,
+        <div className="relative flex flex-col gap-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+            <p className="text-lg font-semibold tracking-tight">
+              {t({
+                description:
+                  'A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt\'s name, such as "White belt".',
+                message: "{belt} {level}",
+                values: { belt: belt.label, level: String(currentBelt.level) },
+              })}
+            </p>
+
+            <p className="text-brain-text text-sm font-medium tabular-nums">
+              {t("{points} Brain Power", {
+                points: formatWholeNumber({ format, value: currentBelt.totalBrainPower }),
               })}
             </p>
           </div>
 
           <BeltDrawing
             belt={belt}
-            className="-ml-4 md:col-span-2 md:row-start-2 md:-ml-6"
+            className="-ml-4 md:-ml-6"
             level={currentBelt.level}
             share={
               currentBelt.isMaxLevel
@@ -210,28 +209,32 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
             }
           />
 
-          <NextBelt
-            className="md:col-start-2 md:row-start-1 md:items-end md:text-right"
-            level={currentBelt}
-            nextBelt={nextBelt}
-          />
+          <NextStep level={currentBelt} nextBelt={nextBelt} />
         </div>
       </div>
 
-      <BeltRack
-        beltColors={beltColors}
-        currentIndex={currentIndex}
-        labelledBy={BELT_PROGRESSION_TITLE_ID}
-      />
-    </section>
+      <BeltRack beltColors={beltColors} currentIndex={currentIndex} />
+
+      {currentBelt.nextBelt && nextBelt && namesNextBelt && (
+        <p className="text-muted-foreground flex items-center gap-2 text-sm">
+          <BeltIndicator aria-hidden color={nextBelt.key} label={nextBelt.label} size="sm" />
+          <span>
+            {t.rich("Next: {belt} at <mono>{points}</mono> Brain Power", {
+              belt: nextBelt.label,
+              mono: renderNumber,
+              points: formatWholeNumber({ format, value: currentBelt.nextBelt.startBrainPower }),
+            })}
+          </span>
+        </p>
+      )}
+    </div>
   );
 }
 
 export function LevelProgressionSkeleton() {
   return (
     <div className="flex flex-col gap-4">
-      <Skeleton className="h-3.5 w-32" />
-      <Skeleton className="h-44 w-full rounded-xl md:h-36" />
+      <Skeleton className="h-36 w-full rounded-xl md:h-36" />
       <div className="flex justify-between">
         {BELT_COLORS_ORDER.map((color) => (
           <Skeleton className="h-6.5 w-8 rounded-md md:h-9.5 md:w-13" key={color} />
