@@ -65,16 +65,8 @@ async function PlanLinkBody({ params }: Props) {
 
   const { outline } = result;
 
-  // A phase too small to measure shows no size, so nothing ever reads "~0 min".
-  const phaseSize = (hours: number) => {
-    const minutes = approximateMinutes(hours);
-    return minutes > 0 ? t("~{time}", { time: duration(minutes) }) : null;
-  };
-
-  const counts = { phases: outline.phases.length, skills: outline.skillCount };
-
   const makeItYours = t(
-    "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
+    "You get your own plan for the same subject. It starts from what you already know.",
   );
 
   return (
@@ -84,7 +76,7 @@ async function PlanLinkBody({ params }: Props) {
 
         <div className="min-w-0">
           <p className="text-muted-foreground text-sm font-medium sm:text-[15px]">
-            {t("A study plan someone shared with you")}
+            {t("Someone shared their study plan with you")}
           </p>
 
           <h1 className="text-headline mt-3 sm:mt-4" id="plan-link-title">
@@ -108,7 +100,11 @@ async function PlanLinkBody({ params }: Props) {
                 className={getStartControlClassName()}
                 href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
               >
-                {t("Start from this plan")}
+                {t({
+                  description:
+                    "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+                  message: "Start my own plan",
+                })}
                 <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
               </Link>
             </StartBlock>
@@ -117,19 +113,21 @@ async function PlanLinkBody({ params }: Props) {
 
         <div className="lg:mt-3">
           <CatalogAsideBlock
-            facts={t(
-              "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}",
-              { ...counts, time: duration(Math.max(1, approximateMinutes(outline.hours))) },
-            )}
+            facts={t("~{time} of study", {
+              time: duration(Math.max(1, approximateMinutes(outline.hours))),
+            })}
             id="plan-link-phases"
-            title={t("A study plan")}
+            title={t({
+              description:
+                "Heading over the list of a shared study plan's parts. “it” is the plan.",
+              message: "What's in it",
+            })}
           >
             <NumberedRows
               rows={outline.phases.map((phase, index) => ({
                 description: phase.milestone ?? undefined,
                 id: String(index),
                 title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
-                trailing: phaseSize(phase.hours) ?? undefined,
               }))}
               startId="0"
             />

@@ -52,7 +52,11 @@ export function StartPlanForm({
         type="submit"
         {...FORWARD_ICON}
       >
-        {t("Start from this plan")}
+        {t({
+          description:
+            "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+          message: "Start my own plan",
+        })}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </Button>
       {state && "error" in state && state.error === "refused" && (

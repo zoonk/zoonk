@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-type NumberedRow = { description?: string; id: string; title: React.ReactNode; trailing?: string };
+type NumberedRow = { description?: string; id: string; title: React.ReactNode };
 
 const ROW_CLASS =
   "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors";
@@ -22,12 +22,6 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
           </span>
         )}
       </span>
-
-      {row.trailing && (
-        <span className="text-muted-foreground shrink-0 font-mono text-xs leading-5 whitespace-nowrap tabular-nums">
-          {row.trailing}
-        </span>
-      )}
     </>
   );
 }
