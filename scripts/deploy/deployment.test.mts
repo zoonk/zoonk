@@ -135,6 +135,7 @@ describe(deploy, () => {
     const [api, ...clients] = submissions;
 
     expect(api?.body.env).toMatchObject({
+      ADMIN_APP_URL: "https://zoonk-admin-pr-42-zoonk.vercel.app",
       MAIN_APP_URL: "https://zoonk-pr-42-zoonk.vercel.app",
       NEXT_PUBLIC_API_URL: "",
     });
@@ -146,6 +147,7 @@ describe(deploy, () => {
       );
 
       expect(call.body.env).not.toHaveProperty("MAIN_APP_URL");
+      expect(call.body.env).not.toHaveProperty("ADMIN_APP_URL");
     }
 
     expect(
@@ -177,29 +179,34 @@ describe(deploy, () => {
   });
 
   it.each([
-    { target: "production", url: "https://www.zoonk.com" },
-    { target: "staging", url: "https://main.zoonk.dev" },
-  ] as const)("points the $target API at the $target main app", async ({ target, url }) => {
-    const submissions: Call[] = [];
+    { adminUrl: "https://admin.zoonk.com", target: "production", url: "https://www.zoonk.com" },
+    { adminUrl: "https://admin.zoonk.dev", target: "staging", url: "https://main.zoonk.dev" },
+  ] as const)(
+    "points the $target API at the $target main and admin apps",
+    async ({ adminUrl, target, url }) => {
+      const submissions: Call[] = [];
 
-    intercept((call) => {
-      if (call.method === "POST") {
-        submissions.push(call);
-        return { id: String(call.body.project) };
+      intercept((call) => {
+        if (call.method === "POST") {
+          submissions.push(call);
+          return { id: String(call.body.project) };
+        }
+
+        return { aliasAssigned: true, readyState: "READY", url: `${target}.vercel.app` };
+      });
+
+      await deploy(target);
+
+      const [api, ...clients] = submissions;
+      expect(api?.body.env).toHaveProperty("MAIN_APP_URL", url);
+      expect(api?.body.env).toHaveProperty("ADMIN_APP_URL", adminUrl);
+
+      for (const call of clients) {
+        expect(call.body.env).not.toHaveProperty("MAIN_APP_URL");
+        expect(call.body.env).not.toHaveProperty("ADMIN_APP_URL");
       }
-
-      return { aliasAssigned: true, readyState: "READY", url: `${target}.vercel.app` };
-    });
-
-    await deploy(target);
-
-    const [api, ...clients] = submissions;
-    expect(api?.body.env).toHaveProperty("MAIN_APP_URL", url);
-
-    for (const call of clients) {
-      expect(call.body.env).not.toHaveProperty("MAIN_APP_URL");
-    }
-  });
+    },
+  );
 
   it.each(["ERROR", "BLOCKED", "CANCELED"])(
     "reports a %s production app after the remaining builds have completed",

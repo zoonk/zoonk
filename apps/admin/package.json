@@ -19,13 +19,15 @@
     "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "diff": "9.0.0",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "nuqs": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "recharts": "catalog:",
-    "server-only": "catalog:"
+    "server-only": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "catalog:",

@@ -15,7 +15,13 @@ export async function gradeSpokenRecording({
 }: {
   audio: SpokenAudio;
   cacheExplanation?: boolean;
-  step: { id: string; learnerLanguage: string; targetLanguage: string; targetText: string };
+  step: {
+    id: string;
+    learnerLanguage: string;
+    storedContent: unknown;
+    targetLanguage: string;
+    targetText: string;
+  };
   userId: string;
 }): Promise<Omit<SpokenAnswerGrade, "attemptId" | "practice"> | null> {
   const { match, transcript } = await hearSpokenSentence({

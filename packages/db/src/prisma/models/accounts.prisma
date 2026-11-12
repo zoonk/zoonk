@@ -73,6 +73,9 @@ model User {
   oauthAccessTokens     OauthAccessToken[]
   oauthConsents         OauthConsent[]
   studyReminder         StudyReminder?
+  passkeys              Passkey[]
+  proposedContentFixes  ContentFix[]              @relation("ContentFixProposer")
+  decidedContentFixes   ContentFix[]              @relation("ContentFixDecider")
 
   @@unique([email])
   @@unique([username])
@@ -100,6 +103,28 @@ model Session {
   @@unique([token])
   @@index([userId])
   @@map("sessions")
+}
+
+/// Better Auth's passkey plugin owns these rows. A staff person's passkey approves content fixes.
+model Passkey {
+  id           String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  name         String?
+  /// Base64 of the COSE public key.
+  publicKey    String    @map("public_key")
+  userId       String    @map("user_id") @db.Uuid
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Base64url.
+  credentialID String    @map("credential_id")
+  counter      Int
+  deviceType   String    @map("device_type")
+  backedUp     Boolean   @map("backed_up")
+  transports   String?
+  createdAt    DateTime? @default(now()) @map("created_at")
+  aaguid       String?
+
+  @@unique([credentialID])
+  @@index([userId])
+  @@map("passkeys")
 }
 
 /// An Android restore key, which Google moves to the learner's next phone. It signs that phone in

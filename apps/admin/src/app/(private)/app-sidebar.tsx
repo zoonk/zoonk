@@ -24,13 +24,26 @@ function isActive(pathname: string, url: string) {
   return pathname.startsWith(url);
 }
 
-function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
+type AdminNavUrl = (typeof adminNavigation)[number]["items"][number]["url"];
+
+/** What follows an item's label, such as how many content fixes wait for review. */
+export type AdminNavCounts = Partial<Record<AdminNavUrl, React.ReactNode>>;
+
+function AdminNav({ counts, onNavigate }: { counts: AdminNavCounts; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return adminNavigation.map((group) => (
     <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
       {group.items.map(({ icon: Icon, label, url }) => (
-        <SidebarTooltip key={label} label={label}>
+        <SidebarTooltip
+          key={label}
+          label={
+            <>
+              {label}
+              {counts[url]}
+            </>
+          }
+        >
           <Link
             aria-current={isActive(pathname, url) ? "page" : undefined}
             className={SIDEBAR_ITEM_CLASS}
@@ -40,6 +53,7 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
           >
             <Icon aria-hidden="true" />
             <span className="min-w-0 flex-1 truncate">{label}</span>
+            {counts[url]}
           </Link>
         </SidebarTooltip>
       ))}
@@ -47,16 +61,16 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
   ));
 }
 
+type AdminSidebarProps = { account: AdminAccount; counts: AdminNavCounts };
+
 function AdminSidebarContent({
   account,
+  counts,
   onNavigate,
-}: {
-  account: AdminAccount;
-  onNavigate?: () => void;
-}) {
+}: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
-      <AdminNav onNavigate={onNavigate} />
+      <AdminNav counts={counts} onNavigate={onNavigate} />
 
       <SidebarFooter>
         <AdminAccountMenu account={account} />
@@ -65,7 +79,7 @@ function AdminSidebarContent({
   );
 }
 
-export function AppSidebar({ account }: { account: AdminAccount }) {
+export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-4">
       <SidebarHeader className="gap-4">
@@ -75,25 +89,26 @@ export function AppSidebar({ account }: { account: AdminAccount }) {
         <SidebarSearch label="Search…" onClick={openCommandPalette} />
       </SidebarHeader>
 
-      <AdminSidebarContent account={account} />
+      <AdminSidebarContent account={account} counts={counts} />
     </Sidebar>
   );
 }
 
 export function AdminMenuSheet({
   account,
+  counts,
   onOpenChange,
   open,
-}: {
-  account: AdminAccount;
-  onOpenChange: (open: boolean) => void;
-  open: boolean;
-}) {
+}: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
       <SheetContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
         <SheetTitle className="sr-only">Menu</SheetTitle>
-        <AdminSidebarContent account={account} onNavigate={() => onOpenChange(false)} />
+        <AdminSidebarContent
+          account={account}
+          counts={counts}
+          onNavigate={() => onOpenChange(false)}
+        />
       </SheetContent>
     </Sheet>
   );

@@ -13,6 +13,7 @@ import { catalogResourcePaths } from "./paths/catalog-resources";
 import { certificatePaths } from "./paths/certificates";
 import { checkpointPaths } from "./paths/checkpoints";
 import { completedLessonPaths } from "./paths/completed-lessons";
+import { contentFixPaths } from "./paths/content-fixes";
 import { contentGenerationPaths } from "./paths/content-generation";
 import { countryPaths } from "./paths/countries";
 import { courseEstimatePaths } from "./paths/course-estimates";
@@ -107,6 +108,7 @@ const paths = withInternalErrorResponses({
   ...certificatePaths,
   ...checkpointPaths,
   ...completedLessonPaths,
+  ...contentFixPaths,
   ...contentGenerationPaths,
   ...courseGoalPaths,
   ...courseEstimatePaths,

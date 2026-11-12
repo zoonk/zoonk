@@ -39,7 +39,14 @@ import { loadPlanContext } from "../plans/_utils/plan-context";
 import { resolvePlanInputDependents } from "../plans/_utils/plan-input-dependencies";
 import { computePlan } from "../plans/_utils/replan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
+import {
+  applyFixChanges,
+  lockFixPlans,
+  lockFixRows,
+} from "../staff/content-fixes/_utils/apply-content-fix";
+import { type StoredChange, contentFixChangesSchema } from "../staff/content-fixes/contract";
 import { getSession } from "../users/get-session";
+import { writePlanInputs } from "./_utils/plan-input-write";
 import { attachChapterToCourse } from "./chapters/attach-course-chapter";
 import { findEarlyOutlineChapter } from "./curriculum/early-outline-chapter";
 import { addMissingExamGraphSkills } from "./curriculum/exam-graph-repair";
@@ -455,6 +462,24 @@ const REGISTRY: Record<string, Registration[]> = {
       verdict: "excluded",
       why: "the lesson's can-do line",
       writes: ["lesson.updateMany"],
+    },
+  ],
+  "staff/content-fixes/_utils/apply-content-fix.ts": [
+    {
+      verdict: "marks",
+      why: "retiring or restoring bank items changes skill and exam plans",
+      writes: ["item.update"],
+    },
+    {
+      verdict: "marks",
+      why: "chapter and lesson text and maps are plan inputs",
+      writes: ["chapter.update", "lesson.update"],
+    },
+    {
+      fields: ["updatedAt"],
+      verdict: "excluded",
+      why: "screen-only fixes bump the player version without changing plan inputs",
+      writes: ["lesson.update"],
     },
   ],
 };
@@ -1639,6 +1664,139 @@ async function alphabetCase(): Promise<WriterCase> {
   };
 }
 
+function writeFix({
+  changes,
+  unit,
+}: {
+  changes: StoredChange[];
+  unit: { id: string; kind: "chapter" | "lesson" | "item" };
+}) {
+  return writePlanInputs(async (tx) => {
+    await lockFixPlans(tx, changes);
+    await lockFixRows(tx, { changes, unit });
+    await applyFixChanges(tx, { changes, unit });
+  });
+}
+
+async function textFixCase(
+  kind: "chapter" | "lesson",
+  field: "title" | "description" | "summary",
+): Promise<WriterCase & { planIds: string[] }> {
+  const iconId = randomUUID();
+
+  const [lesson, chapter, skill, unrelated] = await Promise.all([
+    libraryLessonFixture({
+      summary: { ideas: [{ iconId, label: "Old idea", text: "Old map" }], shape: "hub" },
+    }),
+    libraryChapterFixture(),
+    skillFixture(),
+    learnerPlan(),
+  ]);
+
+  await Promise.all([
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
+    chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+  ]);
+
+  const [plan, direct] = await Promise.all([
+    learnerPlan({ plan: { sourceSkillIds: [skill.id] } }),
+    planOnLesson(lesson.id),
+  ]);
+
+  const unit = { id: kind === "chapter" ? chapter.id : lesson.id, kind };
+
+  const after =
+    field === "summary"
+      ? { ideas: [{ iconId, label: "Fixed idea", text: "Fixed map" }], shape: "hub" }
+      : "Fixed text";
+
+  const before =
+    field === "summary" ? lesson.summary : (kind === "chapter" ? chapter : lesson)[field];
+
+  const changes = contentFixChangesSchema.parse([
+    {
+      fields: [{ after, before, field }],
+      id: unit.id,
+      model: kind === "chapter" ? "Chapter" : "Lesson",
+      op: "set",
+    },
+  ]);
+
+  return {
+    expectWritten: async () => {
+      const row =
+        kind === "chapter"
+          ? await prisma.chapter.findUniqueOrThrow({ where: { id: unit.id } })
+          : await prisma.lesson.findUniqueOrThrow({ where: { id: unit.id } });
+
+      expect(row).toMatchObject({ [field]: after });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: direct.id } }),
+      ).resolves.toMatchObject({
+        inputVersion: direct.inputVersion,
+        sourceVersion: direct.sourceVersion + 1,
+      });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: unrelated.id } }),
+      ).resolves.toMatchObject({
+        inputVersion: unrelated.inputVersion,
+        sourceVersion: unrelated.sourceVersion,
+      });
+    },
+    plan,
+    planIds: [plan.id, direct.id, unrelated.id],
+    root: lessonRoot(lesson.id),
+    write: () => writeFix({ changes, unit }),
+  };
+}
+
+async function itemFixCase(op: "retire" | "unretire"): Promise<WriterCase> {
+  const [skill, blueprint] = await Promise.all([skillFixture(), examBlueprintFixture()]);
+
+  const item = await itemFixture({
+    examBlueprintId: blueprint.id,
+    retiredAt: op === "unretire" ? new Date() : null,
+    skillId: skill.id,
+  });
+
+  const [plan, exam, unrelated] = await Promise.all([
+    learnerPlan({ plan: { sourceSkillIds: [skill.id] } }),
+    examPlan(blueprint.id),
+    learnerPlan(),
+  ]);
+
+  return {
+    expectWritten: async () => {
+      await expect(
+        prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
+      ).resolves.toMatchObject({ retiredAt: op === "retire" ? expect.any(Date) : null });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: exam.id } }),
+      ).resolves.toMatchObject({
+        inputVersion: exam.inputVersion,
+        sourceVersion: exam.sourceVersion + 1,
+      });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: unrelated.id } }),
+      ).resolves.toMatchObject({
+        inputVersion: unrelated.inputVersion,
+        sourceVersion: unrelated.sourceVersion,
+      });
+    },
+    plan,
+    root: skillRoot(skill.id),
+    write: () =>
+      writeFix({
+        changes: [{ id: item.id, model: "Item", op }],
+        unit: { id: item.id, kind: "item" },
+      }),
+  };
+}
+
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
@@ -1670,11 +1828,39 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
+  "staff/content-fixes/_utils/apply-content-fix.ts": {
+    "chapter title": () => textFixCase("chapter", "title"),
+    "lesson title": () => textFixCase("lesson", "title"),
+    "restore item": () => itemFixCase("unretire"),
+    "retire item": () => itemFixCase("retire"),
+  },
 };
 
 const CASES = Object.entries(WRITER_CASES).flatMap(([file, cases]) =>
   Object.entries(cases).map(([name, build]) => ({ build, file, name })),
 );
+
+describe("content fixes to what plans don't read", () => {
+  it.each([
+    ["chapter", "description"],
+    ["lesson", "description"],
+    ["lesson", "summary"],
+  ] as const)("leave plans alone when they change a %s %s", async (kind, field) => {
+    const { planIds, write } = await textFixCase(kind, field);
+
+    const versions = () =>
+      prisma.plan.findMany({
+        orderBy: { id: "asc" },
+        select: { inputVersion: true, sourceVersion: true },
+        where: { id: { in: planIds } },
+      });
+
+    const before = await versions();
+    await write();
+
+    await expect(versions()).resolves.toStrictEqual(before);
+  });
+});
 
 describe("plan source writers lock what plans read and mark them", () => {
   it("has a case for every writer the registry says marks", () => {

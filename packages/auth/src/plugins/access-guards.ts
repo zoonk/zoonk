@@ -9,6 +9,20 @@ import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
 import { profileUpdateSchema } from "../profile-update";
 
+const IMPERSONATION_PATHS = new Set(["/admin/impersonate-user", "/admin/stop-impersonating"]);
+
+/**
+ * Staff authority (admin role, not banned) is provisioned outside browser sessions: the apps call
+ * none of the admin plugin's other endpoints, and several (role, ban, unban, user updates) can grant
+ * or restore it.
+ */
+const guardStaffAuthority = createAuthMiddleware(async () => {
+  throw new APIError("FORBIDDEN", {
+    code: "STAFF_AUTHORITY_LOCKED",
+    message: "Staff accounts cannot be created or updated here.",
+  });
+});
+
 /** One Plus per learner: the answer names where the learner's Plus is managed. */
 const guardPlusPurchase = createAuthMiddleware(async (context) => {
   const session = await getSessionFromCtx(context);
@@ -112,6 +126,11 @@ export function accessGuardsPlugin() {
         },
       ],
       before: [
+        {
+          handler: guardStaffAuthority,
+          matcher: (context) =>
+            context.path?.startsWith("/admin/") === true && !IMPERSONATION_PATHS.has(context.path),
+        },
         {
           handler: guardPlusPurchase,
           matcher: (context) => context.path === "/subscription/upgrade",

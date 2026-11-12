@@ -115,7 +115,7 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 | Delegating to subagents or running agents in parallel           | [Agent orchestration](.agents/guides/orchestration.md)                             |
 | Local services, sign-in, or validation commands                 | [Development guide](.agents/guides/development.md)                                 |
 | Addressing, fixing or verifying a GitHub issue                  | [Addressing an issue](.agents/skills/zoonk-address-issue/SKILL.md)                 |
-| Reading production data, such as for a production bug           | [Staff data](.agents/skills/zoonk-staff-data/SKILL.md)                             |
+| Reading production data, or proposing a fix to shared content   | [Staff data](.agents/skills/zoonk-staff-data/SKILL.md)                             |
 | Reporting a bug for someone                                     | [Bug report](.agents/skills/zoonk-bug-report/SKILL.md)                             |
 | Requesting a feature for someone (Discussions, not issues)      | [Feature request](.agents/skills/zoonk-feature-request/SKILL.md)                   |
 | Creating a release (production deploy and release notes)        | [Release](.agents/skills/zoonk-release/SKILL.md)                                   |

@@ -2558,6 +2558,203 @@
         }
       }
     },
+    "/content-fixes/{fixId}/approval-options": {
+      "post": {
+        "description": "Starts approving a proposed content fix: a single-use challenge for one of the signed-in staff person's own passkeys, with user verification. Asking again replaces the challenge. Staff sessions only; a CLI login can't approve.",
+        "operationId": "createContentFixApprovalOptions",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Start approving a content fix (staff)",
+        "tags": [
+          "Content fixes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fixId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Content fix ID"
+            },
+            "required": true,
+            "description": "Content fix ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The options to sign, or why there's nothing to sign",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentFixApprovalOptionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content-fixes/{fixId}/decisions": {
+      "post": {
+        "description": "Approves a proposed content fix with a passkey assertion over its challenge, or rejects it. Approving applies exactly the recorded change, only while every field still holds its recorded value; otherwise the fix ends stale and nothing changes. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
+        "operationId": "createContentFixDecision",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Approve or reject a content fix (staff)",
+        "tags": [
+          "Content fixes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fixId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Content fix ID"
+            },
+            "required": true,
+            "description": "Content fix ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentFixDecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "What was decided, or why the approval wasn't accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentFixDecision"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/generations": {
       "get": {
         "description": "The run writing a goal's curriculum or, for an explain question, its explanation, for a wait that opened without it (its start failed, or its answer was lost): ask again every few seconds until `generationId` is there, then stream it. Only reads: it never starts a run. Uncached.",
@@ -25776,6 +25973,122 @@
         },
         "additionalProperties": false
       },
+      "ContentFixDecisionRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "assertion": {
+                "type": "object",
+                "properties": {
+                  "authenticatorAttachment": {
+                    "type": "string",
+                    "enum": [
+                      "platform",
+                      "cross-platform"
+                    ]
+                  },
+                  "clientExtensionResults": {
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "id": {
+                    "type": "string",
+                    "maxLength": 1364,
+                    "format": "base64url",
+                    "contentEncoding": "base64url",
+                    "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                  },
+                  "rawId": {
+                    "type": "string",
+                    "maxLength": 1364,
+                    "format": "base64url",
+                    "contentEncoding": "base64url",
+                    "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                  },
+                  "response": {
+                    "type": "object",
+                    "properties": {
+                      "authenticatorData": {
+                        "type": "string",
+                        "format": "base64url",
+                        "contentEncoding": "base64url",
+                        "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                      },
+                      "clientDataJSON": {
+                        "type": "string",
+                        "format": "base64url",
+                        "contentEncoding": "base64url",
+                        "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                      },
+                      "signature": {
+                        "type": "string",
+                        "format": "base64url",
+                        "contentEncoding": "base64url",
+                        "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                      },
+                      "userHandle": {
+                        "type": "string",
+                        "format": "base64url",
+                        "contentEncoding": "base64url",
+                        "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                      }
+                    },
+                    "required": [
+                      "authenticatorData",
+                      "clientDataJSON",
+                      "signature"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "public-key"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "rawId",
+                  "response",
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "approve"
+                ]
+              }
+            },
+            "required": [
+              "assertion",
+              "decision"
+            ],
+            "additionalProperties": false,
+            "description": "The approver's own passkey signed this fix's challenge on Admin's page"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "reject"
+                ]
+              }
+            },
+            "required": [
+              "decision"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
+      },
       "GenerationWaitInput": {
         "type": "object",
         "properties": {
@@ -38117,6 +38430,216 @@
           "title"
         ],
         "additionalProperties": false
+      },
+      "ContentFixApprovalOptionsResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "options": {
+                "$ref": "#/components/schemas/ContentFixApprovalOptions"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ready"
+                ]
+              }
+            },
+            "required": [
+              "options",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "needsPasskey"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "additionalProperties": false,
+            "description": "The staff person has no passkey yet; they add one in Main's settings"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "fix": {
+                "$ref": "#/components/schemas/DecidedContentFix"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "decided"
+                ]
+              }
+            },
+            "required": [
+              "fix",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "type": "object"
+      },
+      "ContentFixApprovalOptions": {
+        "type": "object",
+        "properties": {
+          "allowCredentials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "transports": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "public-key"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "type"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "rpId": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "userVerification": {
+            "type": "string",
+            "enum": [
+              "required"
+            ]
+          }
+        },
+        "required": [
+          "allowCredentials",
+          "challenge",
+          "rpId",
+          "timeout",
+          "userVerification"
+        ],
+        "additionalProperties": false,
+        "description": "Pass to `navigator.credentials.get()` (`startAuthentication` in `@simplewebauthn/browser`)"
+      },
+      "DecidedContentFix": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "staleReason": {
+            "nullable": true,
+            "description": "Why approving found the content no longer as the fix described it",
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "applied",
+              "rejected",
+              "stale"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "staleReason",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "ContentFixDecision": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "cacheNotified": {
+                "nullable": true,
+                "description": "Set when this request applied the fix: false means Main shows the old content until its cache expires. Null for an outcome decided earlier.",
+                "type": "boolean"
+              },
+              "fix": {
+                "$ref": "#/components/schemas/DecidedContentFix"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "decided"
+                ]
+              }
+            },
+            "required": [
+              "cacheNotified",
+              "fix",
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "approvalExpired"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "additionalProperties": false,
+            "description": "The challenge was used or expired; ask for new approval options"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "assertionInvalid"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "additionalProperties": false,
+            "description": "The assertion isn't this person's passkey signing this fix's challenge"
+          }
+        ],
+        "type": "object"
       },
       "GoalGenerationRun": {
         "type": "object",

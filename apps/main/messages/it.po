@@ -386,6 +386,7 @@ msgstr "Vai a una pagina, esegui un’azione o fai una domanda."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Annulla"
@@ -1199,6 +1200,7 @@ msgid "For your safety, sign in again, then delete your account."
 msgstr "Per la tua sicurezza, accedi di nuovo, poi elimina il tuo account."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "scfgdM"
 msgid "Sign in again"
 msgstr "Accedi di nuovo"
@@ -1312,6 +1314,125 @@ msgctxt "1VpnDN"
 msgid "Your name, username and account."
 msgstr "Il tuo nome, il nome utente e il tuo account."
 
+#. The name of a passkey the person hasn't named yet, in their list of passkeys.
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "unnamedPasskey"
+msgid "Passkey"
+msgstr "Passkey"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Chiudi"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "2Hinlp"
+msgid "Rename passkey"
+msgstr "Rinomina la passkey"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "IKuKBl"
+msgid "Passkey name"
+msgstr "Nome della passkey"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "0gDM9C"
+msgid "Such as “MacBook” or “Phone”"
+msgstr "Ad esempio “MacBook” o “Telefono”"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Salva"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "YhaU4B"
+msgid "Delete “{name}”?"
+msgstr "Vuoi eliminare “{name}”?"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "JrYshd"
+msgid "It won't approve content fixes anymore. You'll confirm with one of your passkeys first."
+msgstr "Non potrai più usarla per approvare le correzioni ai contenuti. Prima dovrai confermare con una delle tue passkey."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+msgctxt "-G_yv9"
+msgid "Delete passkey"
+msgstr "Elimina la passkey"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "xEwuru"
+msgid "For your safety, sign in again, then add your passkey."
+msgstr "Per la tua sicurezza, accedi di nuovo, poi aggiungi la tua passkey."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "AadXSK"
+msgid "This device already has a passkey for your account."
+msgstr "Questo dispositivo ha già una passkey per il tuo account."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+#: src/app/[lang]/device/cli-login-form.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "kaDIbJ"
+msgid "That didn't work. Try again in a moment."
+msgstr "Non ha funzionato. Riprova tra poco."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Cuv8_X"
+msgid "That wasn't confirmed with one of your passkeys. Try again."
+msgstr "L’operazione non è stata confermata con una delle tue passkey. Riprova."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "jUqYir"
+msgid "Added {date}"
+msgstr "Aggiunta il {date}"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "_IFxIZ"
+msgid "Options for “{name}”"
+msgstr "Opzioni per “{name}”"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "iXNbPf"
+msgid "Rename"
+msgstr "Rinomina"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "K3r6DQ"
+msgid "Delete"
+msgstr "Elimina"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "QCATv6"
+msgid "You'll confirm with a passkey you already have first."
+msgstr "Dovrai prima confermare con una passkey che hai già."
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "guwku_"
+msgid "Your fingerprint, face or screen lock on this device"
+msgstr "La tua impronta digitale, il tuo volto o il blocco schermo di questo dispositivo"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "Ck5euH"
+msgid "Add a passkey"
+msgstr "Aggiungi una passkey"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "2_2yg-"
+msgid "Add"
+msgstr "Aggiungi"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "ASrBq8"
+msgid "Passkeys"
+msgstr "Passkey"
+
+#: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
+msgctxt "G9nqiW"
+msgid "You approve content fixes in Admin with a passkey."
+msgstr "Approvi le correzioni ai contenuti in Admin con una passkey."
+
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
@@ -1331,11 +1452,6 @@ msgstr "{username} è disponibile"
 msgctxt "R76cpj"
 msgid "{username} is already taken"
 msgstr "{username} è già in uso"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "Salva"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
@@ -2554,9 +2670,14 @@ msgid "The CLI reads production data as {email}, such as accounts, plans and ans
 msgstr "La CLI usa l’account {email} per leggere i dati di produzione, come account, piani e risposte."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "d6AYf2"
-msgid "It can't change anything."
-msgstr "Non può modificare nulla."
+msgctxt "IpYj6L"
+msgid "It can propose fixes to course content. Each one waits until a person approves it in Admin with a passkey."
+msgstr "Può proporre correzioni ai contenuti dei corsi. Ogni correzione resta in attesa finché una persona non la approva in Admin con una passkey."
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "ngUvxA"
+msgid "It can't change anything by itself."
+msgstr "Non può modificare nulla da sé."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "Gp0v_r"
@@ -2577,12 +2698,6 @@ msgstr "Nega"
 msgctxt "R-mNZZ"
 msgid "This code has expired. Run {command} again for a new one."
 msgstr "Questo codice è scaduto. Esegui di nuovo {command} per ottenerne uno nuovo."
-
-#: src/app/[lang]/device/cli-login-form.tsx
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "kaDIbJ"
-msgid "That didn't work. Try again in a moment."
-msgstr "Non ha funzionato. Riprova tra poco."
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "rl-7PV"

@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { usageError } from "./errors.ts";
+import { isRecord, parseJson } from "./http.ts";
 import { type OutputShape } from "./output.ts";
 
 export type ApiRequest =
@@ -17,6 +19,7 @@ type Options = {
   limit?: string;
   offset?: string;
   order?: string;
+  reason?: string;
   where?: string[];
 };
 
@@ -117,6 +120,32 @@ function parseFields(fields: string | undefined): OutputShape | undefined {
   return { fields: names, kind: "fields" };
 }
 
+function readText(path: string): string {
+  try {
+    return readFileSync(path, "utf8");
+  } catch {
+    throw usageError(`Can't read ${path}.`);
+  }
+}
+
+function readJsonObject(path: string): Record<string, unknown> {
+  const body = parseJson(readText(path));
+
+  if (!isRecord(body)) {
+    throw usageError(`${path} must hold one JSON object: { reason, feedbackId?, changes }.`);
+  }
+
+  return body;
+}
+
+function requireReason(reason: string | undefined): string {
+  if (!reason?.trim()) {
+    throw usageError(`Say why with --reason "<why the fix is wrong>".`);
+  }
+
+  return reason;
+}
+
 function get(path: string, shape?: OutputShape): Command {
   return { name: "request", request: { method: "GET", path }, shape };
 }
@@ -182,6 +211,23 @@ const COMMANDS = new Map<string, CommandSpec>([
           parseFields(fields),
         ),
       options: ["where", "order", "limit", "offset", "fields"],
+    },
+  ],
+  [
+    "staff fixes propose",
+    {
+      arguments: 1,
+      build: ([file = ""]) => post("/staff/content-fixes", readJsonObject(file)),
+      options: [],
+    },
+  ],
+  [
+    "staff fixes revert",
+    {
+      arguments: 1,
+      build: ([fixId], { reason }) =>
+        post("/staff/content-fixes/revert", { fixId, reason: requireReason(reason) }),
+      options: ["reason"],
     },
   ],
   [
@@ -264,6 +310,7 @@ function parseCommandLine(argv: string[]) {
         limit: { type: "string" },
         offset: { type: "string" },
         order: { type: "string" },
+        reason: { type: "string" },
         where: { multiple: true, type: "string" },
       },
     });

@@ -1,0 +1,54 @@
+enum ContentFixStatus {
+  proposed
+  applied
+  rejected
+  stale
+}
+
+enum ContentFixUnit {
+  course
+  chapter
+  lesson
+  item
+}
+
+/// A reviewed change to shared Library content. Staff propose it from the CLI, and a staff person
+/// approves it in Admin with a passkey; approving applies `changes` only while every field still
+/// holds its `before`. Content ids are plain columns, so the record outlives what it changed.
+model ContentFix {
+  id                String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  status            ContentFixStatus @default(proposed)
+  unit              ContentFixUnit
+  unitId            String           @map("unit_id") @db.Uuid
+  reason            String
+  /// Core's `contentFixChangesSchema`: each row's fields with their `before` and `after`.
+  changes           Json
+  /// Core's `contentFixEffectsSchema`: what applying it does besides its changes.
+  effects           Json
+  feedbackId        String?          @map("feedback_id") @db.Uuid
+  feedback          Feedback?        @relation(fields: [feedbackId], references: [id], onDelete: SetNull)
+  revertsId         String?          @map("reverts_id") @db.Uuid
+  reverts           ContentFix?      @relation("ContentFixReverts", fields: [revertsId], references: [id], onDelete: SetNull)
+  revertedBy        ContentFix[]     @relation("ContentFixReverts")
+  proposerId        String?          @map("proposer_id") @db.Uuid
+  proposer          User?            @relation("ContentFixProposer", fields: [proposerId], references: [id], onDelete: SetNull)
+  proposerClientId  String           @map("proposer_client_id")
+  deciderId         String?          @map("decider_id") @db.Uuid
+  decider           User?            @relation("ContentFixDecider", fields: [deciderId], references: [id], onDelete: SetNull)
+  decidedAt         DateTime?        @map("decided_at")
+  /// Why approving found the content no longer as the fix described it.
+  staleReason       String?          @map("stale_reason")
+  /// The WebAuthn challenge the approval's assertion must sign, cleared once an approval uses it.
+  approvalChallenge String?          @map("approval_challenge")
+  approvalExpiresAt DateTime?        @map("approval_expires_at")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status, createdAt])
+  @@index([unit, unitId])
+  @@index([feedbackId])
+  @@index([revertsId])
+  @@index([proposerId])
+  @@index([deciderId])
+  @@map("content_fixes")
+}
