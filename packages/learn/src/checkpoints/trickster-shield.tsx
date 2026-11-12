@@ -93,9 +93,15 @@ export function TricksterShield({
         aria-hidden="true"
         className="text-muted-foreground shrink-0 font-mono text-xs whitespace-nowrap tabular-nums"
       >
-        {toGo === 0 && t("Broken")}
-        {toGo > 0 && held && t("Held")}
-        {toGo > 0 && !held && t("{count, plural, one {# to go} other {# to go}}", { count: toGo })}
+        {toGo === 0 && t("You won")}
+        {toGo > 0 && held && t("He won")}
+        {toGo > 0 &&
+          !held &&
+          t({
+            description: "Right answers the learner still needs to beat the Trickster.",
+            message: "{count, plural, one {# more to win} other {# more to win}}",
+            values: { count: toGo },
+          })}
       </span>
     </div>
   );

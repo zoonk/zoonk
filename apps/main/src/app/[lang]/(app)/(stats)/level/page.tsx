@@ -1,4 +1,3 @@
-import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -16,9 +15,7 @@ export default async function LevelPage() {
 
   return (
     <StatsPage
-      description={t("Every lesson adds {points} Brain Power, and it never goes down.", {
-        points: String(BRAIN_POWER_PER_LESSON),
-      })}
+      description={t("You earn Brain Power for everything you study, and it never goes down.")}
       title={t("Belt")}
     >
       <Suspense fallback={<LevelContentSkeleton />}>

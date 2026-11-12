@@ -23,12 +23,14 @@ import {
   StepRows,
   StepTitle,
 } from "../../_components/step-card";
+import { deviceStorage } from "../../_utils/device-storage";
 import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
 import { ReminderOffer } from "../../reminders/reminder-offer";
 import { type StudySessionSummary } from "../session-types";
 import { useIsStopped, useSessionSummary } from "./summary-context";
+import { EarnedToday } from "./summary-rewards";
 
 /** In the title's one face: the mono face's wide space read "Done in 13  min". */
 function DoneTitle() {
@@ -118,7 +120,7 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
   );
 }
 
-function SessionNumbers() {
+function SessionNumbers({ rewardsBelow = false }: { rewardsBelow?: boolean }) {
   const t = useExtracted();
   const format = useFormatter();
   const { summary } = useSessionSummary();
@@ -160,7 +162,7 @@ function SessionNumbers() {
       )}
 
       <StatTile
-        className="with-aside:hidden"
+        className={cn("with-aside:hidden", rewardsBelow && "hidden")}
         detail={summary.belt && <BeltDetail belt={summary.belt} />}
         icon={<BrainIcon />}
         label={t("Brain Power")}
@@ -207,6 +209,9 @@ export function DoneStep() {
   // Showing the offer claims it, so a re-read summary comes back without one; it stays for this visit.
   // oxlint-disable-next-line react/hook-use-state -- Read once as the summary opens, never updated.
   const [reminderOffer] = useState(summary.reminderOffer);
+  // Prototype only, for the founder's review: the summary's second option keeps "Earned today".
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the summary opens, never updated.
+  const [keepsRewards] = useState(() => deviceStorage.get("zoonk:b2-summary-rewards") === "1");
 
   return (
     <StepCard className="items-stretch">
@@ -220,7 +225,13 @@ export function DoneStep() {
         )}
       </StepHeader>
 
-      <SessionNumbers />
+      <SessionNumbers rewardsBelow={keepsRewards} />
+      {keepsRewards && (
+        <section className="with-aside:hidden flex w-full flex-col gap-1">
+          <PageSectionTitle>{t("Earned today")}</PageSectionTitle>
+          <EarnedToday />
+        </section>
+      )}
       <TomorrowRow />
       <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>

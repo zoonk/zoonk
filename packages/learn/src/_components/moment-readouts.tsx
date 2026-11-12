@@ -84,7 +84,13 @@ export function BrainPowerReadout({
   });
 }
 
-type MomentScore = { answered: number; correct: number; spoken?: boolean };
+type MomentScore = {
+  answered: number;
+  correct: number;
+  spoken?: boolean;
+  /** For a duel, which stops once it's decided: its right answers alone, with no "of". */
+  countOnly?: boolean;
+};
 
 function ScoreWords({ score }: { score: MomentScore }) {
   const t = useExtracted();
@@ -95,6 +101,15 @@ function ScoreWords({ score }: { score: MomentScore }) {
     correct: score.correct,
     number: scoreNumber,
   };
+
+  if (score.countOnly) {
+    return t.rich({
+      description: "How many answers the learner got right in a challenge.",
+      message:
+        "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}",
+      values: { correct: score.correct, number: scoreNumber },
+    });
+  }
 
   return score.spoken
     ? t.rich({

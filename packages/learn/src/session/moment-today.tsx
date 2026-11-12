@@ -23,16 +23,6 @@ function TodayLead({ moment }: { moment: StudyMomentView }) {
   const { completed, total } = moment.sessionBar;
   const { lead } = moment.dayProgress;
 
-  if (lead === "left") {
-    return t.rich({
-      description:
-        "Counts the blocks of today's study session (lessons, reviews, practice), so it names no noun such as lessons.",
-      message:
-        "{left, plural, =0 {<number>#</number> left today} one {<number>#</number> left today} other {<number>#</number> left today}}",
-      values: { left: total - completed, number: leadNumber },
-    });
-  }
-
   if (lead === "open") {
     return t.rich({
       description:

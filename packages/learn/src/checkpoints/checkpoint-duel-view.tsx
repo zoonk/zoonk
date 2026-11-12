@@ -224,7 +224,11 @@ function TricksterPanel() {
             facts={[
               !score.decision &&
                 toGo > 0 &&
-                t("{count, plural, one {# to go} other {# to go}}", { count: toGo }),
+                t({
+                  description: "Right answers the learner still needs to beat the Trickster.",
+                  message: "{count, plural, one {# more to win} other {# more to win}}",
+                  values: { count: toGo },
+                }),
               !score.decision &&
                 t(
                   "{count, plural, =0 {No questions left} one {# question left} other {# questions left}}",

@@ -63,9 +63,9 @@ function ScoreLine() {
           }),
       ]}
       score={{
-        // A duel stops once it's decided, so its score is out of the questions it was set to ask.
-        answered: Math.max(outcome.total, checkpoint.questions.length),
+        answered: outcome.total,
         correct: outcome.correct,
+        countOnly: checkpoint.kind !== "weekly",
       }}
     />
   );
