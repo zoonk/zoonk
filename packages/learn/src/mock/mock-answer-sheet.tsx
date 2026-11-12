@@ -36,7 +36,7 @@ function useSheetCountLine(): string {
 }
 
 const CELL_SIZE = {
-  row: { cell: "h-7 rounded-[0.375rem] text-xs", essay: "size-3.5" },
+  row: { cell: "h-7 rounded-sm text-xs", essay: "size-3.5" },
   sheet: { cell: "h-11 rounded-lg text-sm", essay: "size-4" },
 } as const;
 
@@ -138,7 +138,7 @@ export function SheetLegend({ className }: { className?: string }) {
     <p className={cn("text-muted-foreground flex items-start gap-1.5 text-xs", className)}>
       <span
         aria-hidden="true"
-        className="ring-warning mt-1 size-2 shrink-0 rounded-[2px] ring-[1.5px] ring-inset"
+        className="ring-warning mt-1 size-2 shrink-0 rounded-xs ring-[1.5px] ring-inset"
       />
       {t("flagged · no feedback until the end, like on exam day")}
     </p>

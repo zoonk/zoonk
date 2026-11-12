@@ -36,7 +36,7 @@ export async function LessonMore({
         >
           <ul className="flex flex-col gap-3">
             {ideas.map((idea) => (
-              <li className="flex gap-3 text-[15px] leading-relaxed sm:text-base" key={idea}>
+              <li className="text-reading flex gap-3 leading-relaxed sm:text-base" key={idea}>
                 <LineMarker>
                   <span aria-hidden="true" className="bg-foreground/35 size-1.5 rounded-full" />
                 </LineMarker>

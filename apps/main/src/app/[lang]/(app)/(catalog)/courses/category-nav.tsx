@@ -21,7 +21,7 @@ const CHIPS_FRAME_CLASS =
 const LIST_FRAME_CLASS = "sticky top-8 hidden self-start lg:block";
 
 const LIST_LINK_CLASS =
-  "text-muted-foreground hover:bg-muted/50 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "text-muted-foreground hover:bg-muted/50 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-compact font-medium outline-none transition-colors focus-visible:ring-[3px]";
 
 function revealChip(chip: HTMLAnchorElement | null) {
   chip?.scrollIntoView({ block: "nearest", inline: "nearest" });

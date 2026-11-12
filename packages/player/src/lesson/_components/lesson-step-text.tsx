@@ -28,7 +28,7 @@ export function LessonContext({ children }: { children?: string }) {
 }
 
 export const LESSON_BODY_CLASS =
-  "text-foreground text-lg leading-relaxed md:text-[1.1875rem] md:leading-[1.6]";
+  "text-foreground text-lg leading-relaxed md:text-xl md:leading-[1.6]";
 
 /** Knowledge lessons put a teaching screen's bold terms on the highlighter; language lessons keep plain bold. */
 export function useTermHighlighter(): string | null {

@@ -86,14 +86,14 @@ A column is start-aligned. Centering is for a screen built that way (login, a ce
 
 ### S1. Gaps come from the scale
 
-Space between blocks, and a container's padding, is a multiple of 4px: 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64, 96. Inside one control (icon to label, a chip's padding, the buttons of one bar) 2, 6 and 10 are also used.
+Space between blocks, and a container's padding, is a multiple of 4px: 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64, 96. Inside one control (icon to label, a chip's padding) 2, 6 and 10 are also used.
 
 - **Check.** Gaps between sibling blocks and each container's paddings are in the set.
 - **Usual break.** A one-off margin to make one screen "look right".
 
 ### S2. The same things sit the same distance apart
 
-In a list, grid or stack of one kind, every gap is equal, and the same kind of pair has the same gap on every screen (`Page`'s sections 28px, tiles 8px, a task bar's buttons 10px).
+In a list, grid or stack of one kind, every gap is equal, and the same kind of pair has the same gap on every screen (`Page`'s sections 28px, tiles 8px, a bar's buttons 8px).
 
 - **Check.** Gaps between consecutive siblings of one component differ by 1px at most.
 - **Usual break.** A margin on one child of a stack that already has a gap.
@@ -123,10 +123,10 @@ Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px o
 
 ### H1. One radius per role
 
-A corner's radius is its role's token from `RADII` (`apps/playground/src/design-system/shape.ts`), never a literal: small buttons and chips `rounded-md` (8px), buttons, inputs and a highlighted row `rounded-lg` (10px), answer options and tiles `rounded-option` (12px), panels, cards and menus `rounded-xl` (14px), sheets and dialogs `rounded-2xl` (18px), full for avatars, dots, rings and a switch. Meters, cells and keycaps keep their own 2 to 4px.
+A corner's radius is its role's token from `RADII` (`apps/playground/src/design-system/shape.ts`), never a literal: cells and small marks `rounded-xs` (2px), meters `rounded-meter` (3px), what sits inside a control (a keycap, a checkbox, a goal mark) `rounded-sm` (6px), small buttons and chips `rounded-md` (8px), buttons, inputs and a highlighted row `rounded-lg` (10px), every container (answer options, tiles, panels, cards, menus) `rounded-xl` (14px), sheets and dialogs `rounded-2xl` (18px), full for avatars, dots, rings and a switch.
 
 - **Check.** Boxes with the same job on one screen have the same corners; every radius is a token's value.
-- **Usual break.** `rounded-[0.625rem]`; a panel given the option's radius.
+- **Usual break.** `rounded-[0.625rem]`; two kinds of container 2px apart.
 
 ### H2. Nested corners are concentric
 
@@ -160,7 +160,7 @@ Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no
 
 ### Z1. Heights from the set, one height per row
 
-A control's height is one of `Button`'s: 44px for a screen's action (`lg`) and for inputs, 36px by default, 30px beside text (`sm`), 24px inside another control (`xs`); a bar's button is 44px and 40px from `lg`; chips are 22px. Controls on one row share one height. `icon-sm` is 32px: beside an `sm` button, size it to 30.
+A control's height is one of `Button`'s: 44px for a screen's action (`lg`) and for inputs, 36px by default, 30px beside text (`sm`), 24px inside another control (`xs`); a bar's button is 44px and 40px from `lg`; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
 
 - **Check.** In any row of controls, visible heights are equal within 0.5px, and each is in the set.
 - **Usual break.** A 44px select beside 36px buttons in a toolbar.
@@ -190,10 +190,10 @@ In a bar with a main and a second action, both are one height, and on a phone th
 
 ### T1. Sizes come from the roles
 
-Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`) or one a shared piece sets for itself (a small button's 13px, the sidebar's 13.5px). A screen's own code never writes a size (`text-[…]`). A block uses three sizes at most: the main thing, its supporting line, its meta.
+Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`): 11.5px `text-2xs`, 12px `text-xs`, 13px `text-compact`, 14px `text-sm`, 15px `text-reading`, then 16, 18, 20, 24 and 30px from Tailwind's scale, and the sizes the title, headline, display, lead and readout roles set for themselves. No code writes a size (`text-[…]`) except a readout's 40 and 56px. A block uses three sizes at most: the main thing, its supporting line, its meta.
 
 - **Check.** List the sizes in each block: four or more is a finding, and so is a size no role or shared piece has.
-- **Usual break.** `text-[1.1875rem]` for one heading.
+- **Usual break.** `text-[1.1875rem]` for one heading; 13.5px beside 13px.
 
 ### T2. Steps you can see
 
@@ -241,10 +241,10 @@ Every interface icon on the web is Lucide. Characters, flags, the logo, brand ma
 
 ### I2. Sizes matched to the text
 
-16px beside 14px text and 14px as a list's mark (`ICON_RULES`); a shared control sets its own (20px in a bar's icon button, 12px in an `xs` button). A screen picks no other size, and icons side by side are one size.
+Five sizes (`ICON_RULES`): 16px beside text, 14px as a list's mark, 20px alone in a bar's button or beside 18px text, 24px as an empty state's or a notice's one mark, 12px inside a 24px control. No other size, and icons side by side are one size.
 
 - **Check.** No icon larger than 1.3 times its text's size; one size per row of icons.
-- **Usual break.** `size-4.5` or `size-7`: an icon scaled to fill a gap.
+- **Usual break.** `size-4.5` or `size-[18px]`: an icon scaled to fill a gap.
 
 ### I3. One weight
 
@@ -255,10 +255,10 @@ Lucide's stroke is 2 on its 24-unit canvas, so the line thins and thickens with 
 
 ### I4. One thing, one icon
 
-Back to a page is `chevron-left` (`LearnBackLink`), a task's previous step `arrow-left`, close `x`, more `ellipsis`, go forward `arrow-right` after the label (`FORWARD_ICON`). A row that opens a page ends in `chevron-right`, one that folds in `chevron-down`. A kind's icon comes from `KIND_MARKS`.
+The way back is `chevron-left`, bare or before the page's name: a bar's back (`LearnBackLink`), a crumb, a task's previous step, the login page's way out. Close is `x`, more `ellipsis`. An arrow belongs to a labeled button: `arrow-right` after the label to go forward (`FORWARD_ICON`), `arrow-left` before it on the button that ends a task by going back ("Back to Today"). A row that opens a page ends in `chevron-right`, one that folds in `chevron-down`. A kind's icon comes from `KIND_MARKS`.
 
 - **Check.** This screen's back, close and more are drawn as the last screen drew them.
-- **Usual break.** An arrow for the way back to a page.
+- **Usual break.** An arrow, alone or beside a page's name, for the way back.
 
 ### I5. One gap to the text
 
@@ -308,7 +308,7 @@ A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. Ho
 
 ### X2. A state is drawn one way
 
-A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`). The current item in navigation is the `muted` fill. The current tab has one look on a screen and its siblings.
+A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`). The current item in navigation is the `muted` fill. The current tab has one look in every app, the navigation's `muted` fill (`TAB_CLASS`).
 
 - **Check.** No two kinds of "selected" on one screen drawn differently.
 - **Usual break.** A toggle chip "on" with a 1px border beside radio cards "on" with a 2px ring.
@@ -373,6 +373,6 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - Content is flat: no shadows, few boxes. Body text is 14px in the app.
 - Colored marks and words are soft until the device asks for more contrast. The main action is the text color.
 - Eyebrows and facts lines are mono, uppercase where the role says so.
-- A switch is a pill; keycaps are small 4px squares; meters are 6px with 3px corners.
+- A switch is a pill; meters are 6px with 3px corners.
 - A caption directly under a full-width button is centered.
 - Characters and flags are pictures with their own shapes and blank margins.

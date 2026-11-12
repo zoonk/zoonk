@@ -32,7 +32,7 @@ export function ListGroup({
 
 export const LIST_ROW_CLASS = cn(
   "relative isolate flex w-full min-w-0 items-stretch gap-3 text-left",
-  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
+  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
   "in-data-[list=panel]:px-4 in-data-[list=panel]:before:inset-0 in-data-[list=panel]:before:rounded-none",
 );
 

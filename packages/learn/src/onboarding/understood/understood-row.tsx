@@ -199,13 +199,13 @@ function ChoiceDates({
 const FACT_ROW_CLASS =
   "group/fact flex items-start gap-3 py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)_auto]";
 
-const LABEL_CLASS = "text-muted-foreground text-[0.8125rem] sm:pt-px";
+const LABEL_CLASS = "text-muted-foreground text-compact sm:pt-px";
 
 function RowFact({ row }: { row: Row }) {
   return (
     <>
       <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-[0.9375rem] font-medium">{row.value}</span>
+        <span className="text-reading font-medium">{row.value}</span>
         {row.badge && <span className="text-muted-foreground text-xs">{row.badge}</span>}
       </span>
 

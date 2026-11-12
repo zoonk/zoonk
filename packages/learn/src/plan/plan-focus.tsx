@@ -62,7 +62,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
 
   return (
     <LearnLink
-      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 rounded-option flex min-h-14 items-center gap-3 px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
+      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 flex min-h-14 items-center gap-3 rounded-xl px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
       href={href}
     >
       <CrosshairIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />

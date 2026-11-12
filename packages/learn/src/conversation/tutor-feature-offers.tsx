@@ -38,9 +38,9 @@ function CatalogCourseRow({
       >
         <SubjectIcon imageUrl={course.imageUrl} size="md" />
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[0.9375rem] font-medium">{course.title}</span>
+          <span className="text-reading font-medium">{course.title}</span>
           {course.description && (
-            <span className="text-muted-foreground line-clamp-2 text-[0.8125rem]">
+            <span className="text-muted-foreground text-compact line-clamp-2">
               {course.description}
             </span>
           )}

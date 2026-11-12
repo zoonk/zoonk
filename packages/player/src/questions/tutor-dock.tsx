@@ -89,7 +89,7 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <a
-      className="bg-card ring-input rounded-option text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 px-2.5 text-sm ring-1 transition-colors ring-inset"
+      className="bg-card ring-input text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 rounded-xl px-2.5 text-sm ring-1 transition-colors ring-inset"
       href={loginHref}
     >
       <span

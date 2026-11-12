@@ -66,7 +66,7 @@ const BAR_ICON_LINK_CLASS = buttonVariants({ edge: "start", size: "icon-bar", va
 /** The bar's icon link on a phone; from `lg` the chevron and the parent page's name, as a crumb. */
 export const CRUMB_LINK_CLASS = cn(
   BAR_ICON_LINK_CLASS,
-  "lg:text-muted-foreground lg:h-8 lg:w-auto lg:gap-0.5 lg:border-0 lg:pr-1 lg:text-[0.8125rem] lg:font-normal lg:[--control-size:initial] lg:[--icon-size:--spacing(4)] lg:hover:bg-transparent",
+  "lg:text-muted-foreground lg:text-compact lg:h-8 lg:w-auto lg:gap-0.5 lg:border-0 lg:pr-1 lg:font-normal lg:[--control-size:initial] lg:[--icon-size:--spacing(4)] lg:hover:bg-transparent",
 );
 
 function BackLinkName({ label }: { label?: string }) {
@@ -157,7 +157,7 @@ function PageBarStart({
       {title && !root && (
         <span
           aria-hidden="true"
-          className="hidden min-w-0 items-center gap-1.5 text-[0.8125rem] lg:flex"
+          className="text-compact hidden min-w-0 items-center gap-1.5 lg:flex"
         >
           {label && <span className="text-faint before:content-['/']" />}
           <span className="truncate font-medium">{title}</span>

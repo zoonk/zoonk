@@ -42,7 +42,7 @@ export function MailboxStatus({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "text-muted-foreground inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.06em] uppercase",
+        "text-muted-foreground text-2xs inline-flex items-center gap-2 font-mono tracking-[0.06em] uppercase",
         className,
       )}
       {...props}
@@ -61,7 +61,7 @@ export function MailboxButton({
 }: ComponentProps<typeof Button>) {
   return (
     <Button
-      className={cn("rounded-lg text-[13px] motion-reduce:transition-none", className)}
+      className={cn("text-compact rounded-lg motion-reduce:transition-none", className)}
       type="button"
       variant={variant}
       {...props}

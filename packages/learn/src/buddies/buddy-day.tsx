@@ -143,7 +143,7 @@ export function BuddyDaySkeleton() {
           <span className={PAGE_SECTION_TITLE_CLASS}>{t("Energy")}</span>
           <Skeleton className="h-3 w-8 rounded-sm" />
         </span>
-        <Skeleton className="h-1.5 w-full rounded-[3px]" />
+        <Skeleton className="rounded-meter h-1.5 w-full" />
         <Skeleton className="h-3 w-4/5" />
       </div>
       <div className="flex flex-col gap-3">

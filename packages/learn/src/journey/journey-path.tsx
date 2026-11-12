@@ -92,7 +92,7 @@ function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
 const HEADER_CLASS = "flex min-h-11 w-full items-baseline gap-3 py-3 text-left";
 
 const HEADER_INTERACTIVE_CLASS =
-  "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 w-[calc(100%+1.25rem)] rounded-[0.625rem] px-2.5 outline-none transition-colors focus-visible:ring-[3px]";
+  "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 w-[calc(100%+1.25rem)] rounded-lg px-2.5 outline-none transition-colors focus-visible:ring-[3px]";
 
 function ChevronSpace() {
   return <span aria-hidden="true" className="size-4 shrink-0" />;

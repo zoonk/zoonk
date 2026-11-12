@@ -16,7 +16,7 @@ import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
 
 export const PATH_ROW_CLASS =
-  "-mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-[0.625rem] px-2.5 py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "-mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 

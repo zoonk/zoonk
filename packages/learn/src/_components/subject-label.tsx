@@ -36,7 +36,7 @@ export function SubjectGlyph({ className, subject }: { className?: string; subje
   return (
     <span
       aria-hidden="true"
-      className={cn("bg-subject size-2 shrink-0 rounded-[2px]", className)}
+      className={cn("bg-subject size-2 shrink-0 rounded-xs", className)}
       data-slot="subject-glyph"
       data-subject={subject}
     />

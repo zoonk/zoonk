@@ -44,7 +44,7 @@ function Alternative({
   const t = useExtracted();
 
   const rowClass =
-    "bg-muted hover:bg-muted/70 -mx-2.5 flex min-h-11 items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75 text-sm font-medium transition-colors";
+    "bg-muted hover:bg-muted/70 -mx-2.5 flex min-h-11 items-center gap-3 rounded-lg px-2.5 py-2.75 text-sm font-medium transition-colors";
 
   return (
     <section className="flex flex-col gap-2">

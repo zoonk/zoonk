@@ -68,7 +68,7 @@ export function TaskHeaderTitle({
       {detail && (
         <p
           aria-live={announce ? "polite" : undefined}
-          className="text-muted-foreground font-mono text-[0.6875rem] leading-4 tabular-nums"
+          className="text-muted-foreground text-2xs font-mono leading-4 tabular-nums"
         >
           {detail}
         </p>
