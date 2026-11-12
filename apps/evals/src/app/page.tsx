@@ -1,22 +1,38 @@
 import { AppBreadcrumb, HomePageBreadcrumb } from "@/components/breadcrumb";
-import { TASKS } from "@/tasks";
+import { countScoredModels } from "@/lib/task-results";
+import { TASK_GROUPS } from "@/tasks";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   ContainerBody,
-  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import "@zoonk/ui/globals.css";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
 import Link from "next/link";
+import { Suspense } from "react";
+import { TaskFinder, type TaskFinderGroup } from "./_components/task-finder";
+
+const GROUPS: TaskFinderGroup[] = TASK_GROUPS.map((group) => ({
+  name: group.name,
+  tasks: group.tasks.map(({ description, id, name }) => ({ description, id, name })),
+}));
+
+async function TaskFinderWithResults() {
+  const groups = await Promise.all(
+    GROUPS.map(async (group) => ({
+      ...group,
+      tasks: await Promise.all(
+        group.tasks.map(async (task) => ({
+          ...task,
+          scoredModels: await countScoredModels(task.id),
+        })),
+      ),
+    })),
+  );
+
+  return <TaskFinder groups={groups} />;
+}
 
 export default function Home() {
   return (
@@ -27,39 +43,18 @@ export default function Home() {
 
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>Evals Dashboard</ContainerTitle>
-          <ContainerDescription>Run and monitor evaluations for AI tasks</ContainerDescription>
+          <ContainerTitle>Evals</ContainerTitle>
         </ContainerHeaderGroup>
+
+        <Link className={buttonVariants({ variant: "outline" })} href="/audio-test">
+          Audio test
+        </Link>
       </ContainerHeader>
 
-      <ContainerBody className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Item variant="outline">
-          <ItemContent>
-            <ItemTitle>Audio Test</ItemTitle>
-            <ItemDescription>Test AI-generated audio for words and sentences</ItemDescription>
-          </ItemContent>
-
-          <ItemActions>
-            <Link className={buttonVariants({ variant: "outline" })} href="/audio-test">
-              Test Audio
-            </Link>
-          </ItemActions>
-        </Item>
-
-        {TASKS.map((task) => (
-          <Item key={task.id} variant="outline">
-            <ItemContent>
-              <ItemTitle>{task.name}</ItemTitle>
-              <ItemDescription>{task.description}</ItemDescription>
-            </ItemContent>
-
-            <ItemActions>
-              <Link className={buttonVariants({ variant: "outline" })} href={`/tasks/${task.id}`}>
-                View Task
-              </Link>
-            </ItemActions>
-          </Item>
-        ))}
+      <ContainerBody>
+        <Suspense fallback={<TaskFinder groups={GROUPS} />}>
+          <TaskFinderWithResults />
+        </Suspense>
       </ContainerBody>
     </main>
   );
