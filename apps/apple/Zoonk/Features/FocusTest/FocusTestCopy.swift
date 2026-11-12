@@ -40,6 +40,17 @@ enum FocusTestCopy {
   }
 
   /// Leaves the test with the answers it has, for its result.
+  /// The test's actions, from its own table wherever they show, Today included, so each language
+  /// words them one way.
+  static let continueLabel = LocalizedStringResource(
+    "Continue", table: "FocusTest", comment: "Goes on from a Focus test screen")
+  static let notNow = LocalizedStringResource(
+    "Not now", table: "FocusTest",
+    comment: "Leaves the Focus test, its suggestion or the focus it proposes for now")
+  static let updatePlan = LocalizedStringResource(
+    "Update my plan", table: "FocusTest",
+    comment: "Applies the focus the Focus test proposes to the plan")
+
   static let seeResult = LocalizedStringResource(
     "See my result", table: "FocusTest",
     comment: "Ends the Focus test with the answers given so far and shows its result")

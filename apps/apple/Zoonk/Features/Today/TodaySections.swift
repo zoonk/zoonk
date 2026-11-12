@@ -458,9 +458,7 @@ struct TodayPlanChangeSection: View {
         "Use my date anyway", tableName: "Today",
         comment: "Applies a change that moves the exam off the notice's date")
       : change.source == "focusTest"
-        ? Text(
-          "Update my plan", tableName: "Today",
-          comment: "Applies the focus a learner's Focus test answers propose")
+        ? Text(FocusTestCopy.updatePlan)
         : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
   }
 
@@ -473,6 +471,10 @@ struct TodayPlanChangeSection: View {
         : Text(
           "Keep the official date", tableName: "Today",
           comment: "Declines a change and keeps the date the exam's official calendar sets")
+    }
+
+    if change.source == "focusTest" {
+      return Text(FocusTestCopy.notNow)
     }
 
     return keepsMine

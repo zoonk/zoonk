@@ -494,10 +494,8 @@ struct TodayFocusTestSection: View {
       BusyButton(isBusy: isDismissing) {
         dismiss()
       } label: {
-        Text(
-          "Not now", tableName: "Today", comment: "Dismisses Today's suggestion of the Focus test"
-        )
-        .frame(maxWidth: .infinity)
+        Text(FocusTestCopy.notNow)
+          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.outline)
     }

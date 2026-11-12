@@ -598,7 +598,7 @@
       }
     },
     "Continue" : {
-      "comment" : "Goes on with an open Focus test sitting\nThe Focus test's state on the plan: a sitting is open with questions left",
+      "comment" : "Goes on from a Focus test screen",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1601,7 +1601,7 @@
       }
     },
     "Not now" : {
-      "comment" : "Declines the focus the Focus test proposes\nLeaves the Focus test without taking it, back to the plan",
+      "comment" : "Leaves the Focus test, its suggestion or the focus it proposes for now",
       "localizations" : {
         "de" : {
           "stringUnit" : {

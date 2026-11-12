@@ -75,13 +75,9 @@ struct FocusTestCheckpoint: View {
       FocusTestSaveFailure(failed: decideFailed)
 
       StepButtons(
-        continueLabel: Text(
-          "Update my plan", tableName: "FocusTest",
-          comment: "Applies the focus the Focus test proposes to the plan"),
+        continueLabel: Text(FocusTestCopy.updatePlan),
         continueIcon: nil,
-        skipLabel: Text(
-          "Not now", tableName: "FocusTest",
-          comment: "Declines the focus the Focus test proposes"),
+        skipLabel: Text(FocusTestCopy.notNow),
         skipIcon: nil,
         onContinue: { decide(.applied, on: proposal) },
         onSkip: { decide(.declined, on: proposal) })
@@ -156,7 +152,7 @@ struct FocusTestCheckpoint: View {
 
       StepButtons(
         continueLabel: host == .onboarding
-          ? nil
+          ? Text(FocusTestCopy.continueLabel)
           : Text(
             "Done", tableName: "FocusTest",
             comment: "Leaves the Focus test's result for the plan"),

@@ -192,9 +192,7 @@ struct FocusTestFlow: View {
             ? Text(
               "Skip for now", tableName: "FocusTest",
               comment: "Postpones the Focus test; it can be taken later from the plan")
-            : Text(
-              "Not now", tableName: "FocusTest",
-              comment: "Leaves the Focus test without taking it, back to the plan"),
+            : Text(FocusTestCopy.notNow),
         note: !answered && host == .onboarding
           ? Text(
             "You can take the test later, from your plan.", tableName: "FocusTest",
