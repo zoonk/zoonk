@@ -212,47 +212,52 @@ export async function saveTestSummary(read: SummaryRead) {
  * holds the learner's lock, with the goal and plan as committed there.
  */
 export async function keepSummaryCurrent({
+  goal,
+  plan: { graph, settings },
   tx,
-  ...inputs
-}: Parameters<typeof summaryInputsKey>[0] & { tx: TransactionClient }): Promise<boolean> {
-  const summary = readFocusTestRecord(inputs.goal)?.summary;
+}: {
+  goal: Goal;
+  plan: Pick<PlanState, "graph" | "settings">;
+  tx: TransactionClient;
+}): Promise<boolean> {
+  const summary = readFocusTestRecord(goal)?.summary;
 
-  if (!summary || summary.inputsKey === summaryInputsKey(inputs)) {
+  if (!summary) {
     return false;
   }
 
-  await keepTestSummary({ goalId: inputs.goal.id, tx, userId: inputs.goal.userId });
+  const examBlueprint = goal.examBlueprintId
+    ? await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
+    : null;
+
+  if (
+    summary.inputsKey === summaryInputsKey({ goal: { ...goal, examBlueprint }, graph, settings })
+  ) {
+    return false;
+  }
+
+  await keepTestSummary({ goalId: goal.id, tx, userId: goal.userId });
   return true;
 }
 
-/** `keepSummaryCurrent` for a write that has the goal's id; pass the plan it wrote, if it wrote one. */
+/** `keepSummaryCurrent` for a write that has only the goal's id. */
 export async function refreshTestSummary({
   goalId,
-  plan,
   tx,
 }: {
   goalId: string;
-  plan?: Pick<PlanState, "graph" | "settings">;
   tx: TransactionClient;
 }): Promise<boolean> {
-  const goal = await tx.goal.findUnique({
-    include: { examBlueprint: true },
-    where: { id: goalId },
-  });
+  const goal = await tx.goal.findUnique({ where: { id: goalId } });
 
   if (!goal || !readFocusTestRecord(goal)?.summary) {
     return false;
   }
 
-  const { graph, settings } =
-    plan ??
-    getPlanState({
-      goal,
-      plan: await tx.plan.findUniqueOrThrow({
-        select: { graph: true, settings: true },
-        where: { goalId },
-      }),
-    });
+  const plan = await tx.plan.findUniqueOrThrow({
+    select: { graph: true, settings: true },
+    where: { goalId },
+  });
 
-  return keepSummaryCurrent({ goal, graph, settings, tx });
+  return keepSummaryCurrent({ goal, plan: getPlanState({ goal, plan }), tx });
 }

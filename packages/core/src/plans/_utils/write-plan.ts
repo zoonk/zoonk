@@ -1,7 +1,7 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { clearChangedTestFocus } from "../../learner/placement/_utils/focus-test-record";
-import { refreshTestSummary } from "../../learner/placement/_utils/test-sitting";
+import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import {
@@ -187,7 +187,8 @@ export async function writePlan({
   await saveProposalPreviews({ previews: plan.previews, tx });
 
   if (context.goal.kind === "exam") {
-    await refreshTestSummary({ goalId: context.goal.id, plan: plan.state, tx });
+    const goal = await tx.goal.findUniqueOrThrow({ where: { id: context.goal.id } });
+    await keepSummaryCurrent({ goal, plan: plan.state, tx });
   }
 }
 

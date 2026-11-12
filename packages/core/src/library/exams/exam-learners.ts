@@ -8,8 +8,6 @@ import {
   prisma,
 } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getGoalsCacheTag } from "../../cache/tags";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { refreshTestSummary } from "../../learner/placement/_utils/test-sitting";
@@ -196,13 +194,9 @@ export async function refreshFollowerSummaries(examBlueprintId: string): Promise
 
   for (const goal of goals.filter((following) => readFocusTestRecord(following)?.summary)) {
     // oxlint-disable-next-line no-await-in-loop -- Each learner's lock is its own transaction; a popular notice must not exhaust the pool.
-    const recounted = await writeLearnerChange({ userId: goal.userId }, async (tx) =>
+    await writeLearnerChange({ userId: goal.userId }, async (tx) =>
       (await refreshTestSummary({ goalId: goal.id, tx })) ? true : unchanged(false),
     );
-
-    if (recounted) {
-      revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
-    }
   }
 }
 

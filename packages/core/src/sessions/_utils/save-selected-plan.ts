@@ -1,7 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { keepSummaryCurrent } from "../../learner/placement/_utils/test-sitting";
-import { readFocusTestRecord } from "../../learner/placement/focus-test-state";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
 import { preparePhaseDatesProposal } from "../../plans/_utils/phase-dates-proposal";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
@@ -12,7 +11,7 @@ import { type PlanChangeRecord } from "../../plans/_utils/replan";
 import { getSettledPlanChange } from "../../plans/_utils/settled-change";
 import { type PlanWrite, saveProposalPreviews, writePlan } from "../../plans/_utils/write-plan";
 import { PHASE_DATES_SOURCE } from "../../plans/plan-change-contract";
-import { type PlanGraph, type PlanState } from "../../plans/planner/plan-state";
+import { type PlanState } from "../../plans/planner/plan-state";
 import { type SelectedDayPlan } from "./selected-day-plan";
 
 function getSelectedPlanChange(selection: SelectedDayPlan): PlanChangeRecord | null {
@@ -129,34 +128,9 @@ export async function prepareSelectedPlanSave({
 }
 
 /**
- * Opening the day is when a summary another write left behind catches up. The caller's
- * `isSelectedPlanCurrent` matched `context` to the stored goal and plan in this transaction.
+ * Callers check `isSelectedPlanCurrent` first, so `context` is the stored goal and plan. Opening the
+ * day is when a Focus test summary that a write left out of date catches up.
  */
-async function keepOpenedSummary({
-  context: { goal, state },
-  graph,
-  tx,
-}: {
-  context: PlanContext;
-  graph: PlanGraph;
-  tx: TransactionClient;
-}): Promise<void> {
-  if (!readFocusTestRecord(goal)?.summary) {
-    return;
-  }
-
-  const examBlueprint = goal.examBlueprintId
-    ? await tx.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
-    : null;
-
-  await keepSummaryCurrent({
-    goal: { ...goal, examBlueprint },
-    graph,
-    settings: state.settings,
-    tx,
-  });
-}
-
 export async function saveSelectedPlan({
   context,
   prepared,
@@ -167,7 +141,7 @@ export async function saveSelectedPlan({
   tx: TransactionClient;
 }): Promise<number> {
   if (prepared.kind === "skip") {
-    await keepOpenedSummary({ context, graph: context.state.graph, tx });
+    await keepSummaryCurrent({ goal: context.goal, plan: context.state, tx });
     return context.plan.version;
   }
 
@@ -176,7 +150,12 @@ export async function saveSelectedPlan({
       await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
     }
 
-    await keepOpenedSummary({ context, graph: prepared.data?.graph ?? context.state.graph, tx });
+    await keepSummaryCurrent({
+      goal: context.goal,
+      plan: { ...context.state, graph: prepared.data?.graph ?? context.state.graph },
+      tx,
+    });
+
     await saveProposalPreviews({ previews: prepared.previews, tx });
 
     await prepared.proposals?.(tx);

@@ -42,12 +42,11 @@ function listGoalSubjects({
   });
 }
 
-function keySubjects({
-  goal,
-  graph,
-  settings,
-  subjects,
-}: SummaryInputs & { subjects: TestSubject[] }): string {
+/** What a Focus test summary is counted from besides the answers, as one comparable key. */
+export function summaryInputsKey({ goal, graph, settings }: SummaryInputs): string {
+  const blueprint = goal.examBlueprint;
+  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+
   const inputs = {
     areas: [...mapSkillAreas(graph)].toSorted(([first], [second]) => first.localeCompare(second)),
     dated: goal.targetDate !== null,
@@ -55,19 +54,11 @@ function keySubjects({
     knownAreas: getKnownSubjects(goal),
     level: getOwnLevel({ goal }),
     measured: isLevelMeasured(goal),
-    ownMaterial: isOwnMaterialTest(goal.examBlueprint),
-    subjects,
+    ownMaterial: isOwnMaterialTest(blueprint),
+    subjects: listGoalSubjects({ goal, graph, settings, structure }),
   };
 
   return createHash("sha256").update(JSON.stringify(inputs)).digest("hex");
-}
-
-/** What a Focus test summary is counted from besides the answers, as one comparable key. */
-export function summaryInputsKey(inputs: SummaryInputs): string {
-  const blueprint = inputs.goal.examBlueprint;
-  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
-
-  return keySubjects({ ...inputs, subjects: listGoalSubjects({ ...inputs, structure }) });
 }
 
 /** Only an exam goal's placement is a Focus test. */
@@ -88,15 +79,13 @@ export function toTestSetup({
     return null;
   }
 
-  const subjects = listGoalSubjects({ goal, graph, settings, structure });
-
   return {
     areaOf: mapSkillAreas(graph),
     goal,
-    inputsKey: keySubjects({ goal, graph, settings, subjects }),
+    inputsKey: summaryInputsKey({ goal, graph, settings }),
     plan: { coveredShare: plan.coveredShare, focusAreas: settings.focusAreas, id: plan.id },
     record: readFocusTestRecord(goal),
-    subjects,
+    subjects: listGoalSubjects({ goal, graph, settings, structure }),
   };
 }
 
