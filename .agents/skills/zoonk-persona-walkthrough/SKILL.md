@@ -1,15 +1,15 @@
 ---
 name: zoonk-persona-walkthrough
-description: Use the running product as realistic learner personas, including their bad days, before calling a user-facing change done. Pick personas from the change's risks, put them in a realistic state cheaply, walk with fresh eyes, fix or push back, give a reproducible problem a regression test when zoonk-testing's bar calls for one, and report the evidence.
+description: Use the running product as realistic learner personas, including their bad days, before calling a user-facing change done. Pick personas from the change's risks and what they don't know, put them in a realistic state cheaply, show each changed screen to an agent that sees only the screenshot, walk with fresh eyes, fix or push back, give a reproducible problem a regression test when zoonk-testing's bar calls for one, and report the evidence.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Persona walkthrough
 
-Automated tests prove what they exercise, and the person who built a feature fills gaps with knowledge a learner doesn't have. This walkthrough checks what a real learner gets: whether the experience is clear, simple, honest and recoverable, on the first day and on the days after it.
+Automated tests prove what they exercise, and the person who built a feature fills gaps with knowledge a learner doesn't have. This walkthrough checks what a real learner gets: whether each screen is clear at a glance, in words they know, with nothing they wouldn't miss, and whether the experience is simple, true and recoverable, on the first day and on the days after it.
 
 Use it for any change a learner can see or feel: screens, flows, copy, plan behavior, AI output they read, waits, limits and errors. For a change no learner can notice, say why you skipped it.
 
@@ -30,19 +30,20 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 
 - Walk the production build `pnpm start` serves, not a dev server: it's what learners get, and a dev server adds compile waits and loading states they never see ([development guide](../../guides/development.md)).
 - A builder can't unknow the implementation. For substantial changes, have a separate agent walk with only the persona brief, the journeys to cover and the app URL, without the diff, and report back; the builder fixes. When you walk your own work, write down what the persona knows before each screen and judge only from what the screen shows.
+- Start with zoonk-design's [first-glance test](../zoonk-design/SKILL.md#the-first-glance-test) on every new or changed screen: an agent that has seen neither the code, the spec nor the brief gets one phone-size screenshot and says what the screen is for, what it would tap, and which words or lines it doesn't understand or wouldn't miss. Do it before the walk, so the walker's first read is still a first read.
 - Enter through the normal UI, reach the outcome, then come back: the next day, after a gap, on another device.
 - Cover the unhappy paths in [journeys](references/journeys.md) for every surface the change reaches, not only the screen you edited.
 - At each screen, ask as the persona:
   - What do I think this is, and what do I do next?
   - What do I expect to happen when I tap it, and does it?
-  - Is anything here unnecessary, repeated, confusing, slow or dishonest?
+  - Which line here would I not miss? Which word don't I know?
+  - Is anything repeated, slow or untrue?
   - Could fewer steps, choices or words do the same job?
   - Would I come back tomorrow?
-- At the end of each journey, answer zoonk-design's [regular-person questions](../zoonk-design/SKILL.md#use-it-as-a-regular-person) as the persona.
 
 ## 4. Fix, push back, and lock it in
 
-- Fix friction within scope. When the better experience conflicts with the request or a repository rule, explain the conflict concretely and propose the alternative instead of building the worse version silently.
+- Fix friction within scope. Fix confusion by the fix order in zoonk-design's [Words](../zoonk-design/SKILL.md#words): remove, rename, show, move; a new sentence is the last resort, and it takes another one out. When the better experience conflicts with the request or a repository rule, explain the conflict concretely and propose the alternative instead of building the worse version silently.
 - Give a reproducible problem a regression test when [zoonk-testing](../zoonk-testing/SKILL.md)'s bar says one is worth it, at the cheapest layer that reproduces it: a core test for a rule or a plan's behavior, an eval case for AI output, a player browser test for lesson interactions, and an E2E journey (seeded persona copies through `asPersona`) only for a high-risk flow nothing cheaper catches. Wording, layout and other low-risk fixes are checked by walking the journey again, not by a permanent test.
 - Walk the affected journey again after the fix.
 
@@ -52,7 +53,8 @@ For each persona, report:
 
 - their starting state and the journeys walked
 - the screens seen, with screenshot paths
-- what was confusing, broken or slow, and what you changed
+- each screen's first-glance answers, and what they changed
+- what was confusing, unneeded, broken or slow, and what you changed or removed
 - the tests you added
 - what remains unverified
 
