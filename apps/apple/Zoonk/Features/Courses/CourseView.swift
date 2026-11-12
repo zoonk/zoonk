@@ -211,7 +211,8 @@ private struct ContentCountryFacts: View {
   }
 
   private var facts: [String] {
-    [contentCountryLine(country.name)] + [country.lessonVariety.map(lessonLanguageLine)].compactMap(\.self)
+    [contentCountryLine(country.name)]
+      + [country.lessonVariety.map(lessonLanguageLine)].compactMap(\.self)
   }
 }
 
