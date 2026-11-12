@@ -116,7 +116,7 @@ export function SessionHeader({
           </WaitTopBarBack>
         </TaskHeaderSide>
 
-        <TaskHeaderTitle title={t("Today's session")} />
+        <TaskHeaderTitle title={t("Today")} />
 
         <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
       </TaskHeaderBar>

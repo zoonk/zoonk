@@ -248,7 +248,7 @@ function useMissionStep() {
     }
 
     if (kind === "review") {
-      return reviewTitle(mission.minutes ?? 0);
+      return reviewTitle();
     }
 
     if (kind === "somethingNew") {

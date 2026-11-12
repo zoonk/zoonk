@@ -22,27 +22,33 @@ type BlockCopyInput = Pick<
   | "weakest"
 >;
 
+/** A challenge's row has one name, from what the learner does in it. */
 function useCheckpointTitle() {
   const t = useExtracted();
 
-  return (checkpoint: NonNullable<StudyBlock["checkpoint"]>): string => {
-    if (checkpoint.kind === "weekly") {
-      if (checkpoint.mock) {
-        return t("Mock exam");
-      }
+  return ({ checkpoint, questions }: Pick<BlockCopyInput, "checkpoint" | "questions">): string => {
+    if (checkpoint?.mock) {
+      return t("Mock exam");
+    }
 
+    if (checkpoint?.kind === "weekly") {
       return t("Weekly challenge");
     }
 
-    if (checkpoint.kind === "finalBoss") {
-      return t("Final challenge");
+    // A language plan's challenge is a live call, with no questions.
+    if (questions === 0) {
+      return t({
+        description: "The name of a study step: a live voice call in the language being learned.",
+        message: "Call",
+      });
     }
 
-    if (checkpoint.rematch) {
-      return t("Challenge, second try");
-    }
-
-    return t("Phase challenge");
+    return checkpoint?.rematch
+      ? t({
+          description: "The name of a study step: a second go at the Trickster's questions.",
+          message: "Rematch",
+        })
+      : t("The Trickster");
   };
 }
 
@@ -70,7 +76,7 @@ export function useBlockTitle() {
 
   return (block: BlockCopyInput): string => {
     if (block.checkpoint) {
-      return checkpointTitle(block.checkpoint);
+      return checkpointTitle(block);
     }
 
     // The first week's warm-up is only placement's questions: it checks, it doesn't review.
@@ -78,8 +84,8 @@ export function useBlockTitle() {
       return t("What you already know");
     }
 
-    if (block.kind === "review") {
-      return reviewTitle(block.estimatedMinutes);
+    if (block.kind === "review" || block.fullReview) {
+      return reviewTitle();
     }
 
     if (block.kind === "learn") {
@@ -88,10 +94,6 @@ export function useBlockTitle() {
 
     if (block.kind === "produce") {
       return block.title ?? t("Writing practice");
-    }
-
-    if (block.fullReview) {
-      return t("Full review");
     }
 
     if (block.mistakesOnly) {
@@ -124,65 +126,40 @@ export function useBlockDetail() {
   const t = useExtracted();
   const shortList = useShortList();
 
-  return (block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null => {
-    // Nothing was due, so the day reviews the weakest topics: never called due.
+  function describe(block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null {
     if (hasCapsules(block) && block.weakest) {
       return t(
-        "No reviews due today · {count, plural, one {# question} other {# questions}} on your weakest topics",
+        "{count, plural, one {# question on what's been hardest for you} other {# questions on what's been hardest for you}}",
         { count: block.questions },
       );
     }
 
     if (hasCapsules(block)) {
-      const titles = shortList(
-        block.capsules.map((capsule) => capsule.title),
-        "topics",
-      );
-
-      const reviewed = block.capsules.reduce((sum, capsule) => sum + capsule.questions, 0);
-
-      return block.questions > reviewed
-        ? t(
-            "{count, plural, one {# question} other {# questions}} · {titles}, plus what you already know",
-            { count: block.questions, titles },
-          )
-        : t("{count, plural, one {# question} other {# questions}} · {titles}", {
-            count: block.questions,
-            titles,
-          });
+      return t("{count, plural, one {# question} other {# questions}} · {titles}", {
+        count: block.questions,
+        titles: shortList(
+          block.capsules.map((capsule) => capsule.title),
+          "topics",
+        ),
+      });
     }
 
     if (block.kind === "learn") {
       return block.reinforcement ? t("Short lesson before the rematch") : block.canDo;
     }
 
-    const phase = getChallengePhase(block);
-
-    // A language unit's challenge is a live call, with no questions.
-    if (block.checkpoint && !block.checkpoint.mock && block.questions === 0) {
-      return phase ? t("{phase} · a live call", { phase }) : t("A live call");
-    }
-
-    if (phase) {
-      return t("{phase} · {count, plural, one {# question} other {# questions}}, no hints", {
-        count: block.questions,
-        phase,
-      });
-    }
-
-    if (block.checkpoint) {
-      return t("{count, plural, one {# question} other {# questions}}, no hints", {
-        count: block.questions,
-      });
-    }
-
     if (block.kind === "produce") {
       return block.canDo;
     }
 
+    // A call has no questions to count, and its name says what it is.
+    if (block.questions === 0) {
+      return null;
+    }
+
     if (block.fullReview) {
       return t(
-        "{count, plural, one {# question} other {# questions}} on every topic, your weakest first",
+        "{count, plural, one {# question on every topic} other {# questions on every topic}}",
         { count: block.questions },
       );
     }
@@ -195,5 +172,7 @@ export function useBlockDetail() {
     }
 
     return t("{count, plural, one {# question} other {# questions}}", { count: block.questions });
-  };
+  }
+
+  return describe;
 }

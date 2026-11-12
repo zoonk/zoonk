@@ -58,7 +58,7 @@ export function useSessionQueueAside({ left, rows }: SessionQueueView): TaskFram
 
   return {
     children: <SessionQueue rows={rows} />,
-    label: t("Today's session"),
+    label: t("Today"),
     meta: left > 0 ? t("{time} left", { time: formatDuration(left) }) : undefined,
     title: t("Today"),
   };
