@@ -35,7 +35,7 @@ export function TodayExamAccess() {
   }
 
   return (
-    <Suggestion label={t("Exam prep on the free plan")} mark={<SparklesIcon />}>
+    <Suggestion label={t("Exam prep without Plus")} mark={<SparklesIcon />}>
       <SuggestionLine>
         <SuggestionSummary>{copy.title}</SuggestionSummary>
         <SuggestionLinkAction className="shrink-0" href={actions.plusHref} variant="outline">

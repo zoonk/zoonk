@@ -133,8 +133,8 @@ export function HeldSegment({ minutes }: { minutes: number }) {
   const title = t("Your next lessons");
   const time = formatDuration(minutes);
 
-  const writing = writingStalled ? t("Taking longer than usual") : t("Being written for you…");
-  const note = today.session.lessonsToPrepare ? t("Not written yet.") : writing;
+  const coming = writingStalled ? t("Taking longer than usual") : t("Getting ready…");
+  const note = today.session.lessonsToPrepare ? t("Not ready yet") : coming;
 
   return (
     <Popover>

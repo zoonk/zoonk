@@ -19,16 +19,13 @@ export const ROW_OPEN_CLASS =
 export function RowOpen({
   block,
   children,
-  countsTowardMission,
   isNext,
 }: {
   block: DayStep;
   children: React.ReactNode;
-  countsTowardMission: boolean;
   isNext: boolean;
 }) {
   const { actions } = useTodayScreen();
-  const t = useExtracted();
   const title = useBlockTitle();
   const [pending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
@@ -47,7 +44,7 @@ export function RowOpen({
   if (href) {
     return (
       <LearnLink
-        aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+        aria-label={title(block)}
         className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
         data-slot="today-row-open"
         href={href}
@@ -65,7 +62,7 @@ export function RowOpen({
         <button
           aria-busy={pending || undefined}
           aria-disabled={pending || undefined}
-          aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+          aria-label={title(block)}
           className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
           data-slot="today-row-open"
           type={pending ? "button" : "submit"}

@@ -65,14 +65,18 @@ function getPlanChangeStatus({
   return planChange.behind ? "proposed" : planChange.status;
 }
 
-export function showsFreshStart(today: Pick<NoticeTodayView, "session" | "studiedToday">): boolean {
+/** A return after days away, until the learner starts: the day's own welcome leads it. */
+export function showsWelcomeBack(
+  today: Pick<NoticeTodayView, "session" | "studiedToday">,
+): boolean {
   const started = today.session.blocks.some((block) => block.status !== "pending");
-  return today.session.freshStart !== null && !today.studiedToday && !started;
+  return today.session.freshStart === "welcomeBack" && !today.studiedToday && !started;
 }
 
 /**
  * One notice at most, the most pressing first. A free exam plan's ended week goes before anything
- * that asks more of the plan, and a fresh start is the session's own words, never a notice.
+ * that asks more of the plan. While the day welcomes the learner back, only the exam's own days
+ * and that ended week show: everything else waits until they start.
  */
 export function pickTodayNotice({
   host,
@@ -85,21 +89,27 @@ export function pickTodayNotice({
   const insightChange = getInsightChange(insight);
   const planChange = getPlanChangeStatus(today);
 
-  const candidates: [TodayNoticeKind, boolean][] = [
+  const pressing: [TodayNoticeKind, boolean][] = [
     ["exam", isExamDay(exam)],
     ["examAccess", session.examAccess.trialEnded],
-    ["planChange", planChange === "proposed"],
-    ["insight", insightChange === "proposed"],
-    ["sourceChange", host.sourceChange],
-    ["exam", exam?.stage === "finalStretch"],
-    ["uploadRequest", host.uploadRequest],
-    ["examChoice", today.examChoice !== null],
-    ["planChange", planChange === "applied"],
-    ["insight", insight !== null],
-    ["practice", host.practice],
-    ["focusTest", today.focusTest !== null],
-    ["suggestedGoal", today.suggestedGoal !== null && !showsFreshStart(today)],
   ];
+
+  const candidates: [TodayNoticeKind, boolean][] = showsWelcomeBack(today)
+    ? pressing
+    : [
+        ...pressing,
+        ["planChange", planChange === "proposed"],
+        ["insight", insightChange === "proposed"],
+        ["sourceChange", host.sourceChange],
+        ["exam", exam?.stage === "finalStretch"],
+        ["uploadRequest", host.uploadRequest],
+        ["examChoice", today.examChoice !== null],
+        ["planChange", planChange === "applied"],
+        ["insight", insight !== null],
+        ["practice", host.practice],
+        ["focusTest", today.focusTest !== null],
+        ["suggestedGoal", today.suggestedGoal !== null],
+      ];
 
   return candidates.find(([, available]) => available)?.[0] ?? null;
 }

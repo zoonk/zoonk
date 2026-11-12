@@ -39,21 +39,6 @@ export function TodayStatusSentence({ children }: { children: React.ReactNode })
   );
 }
 
-export function TodayStatusClause({
-  children,
-  mono = false,
-}: {
-  children: React.ReactNode;
-  mono?: boolean;
-}) {
-  return (
-    <span
-      className={cn(
-        "text-muted-foreground",
-        mono && "font-mono text-[0.8125rem] whitespace-nowrap tabular-nums",
-      )}
-    >
-      {children}
-    </span>
-  );
+export function TodayStatusClause({ children }: { children: React.ReactNode }) {
+  return <span className="text-muted-foreground">{children}</span>;
 }

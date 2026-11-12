@@ -15,8 +15,8 @@ import {
 import { PlusMark } from "../_components/plus-lock";
 import { MarkedText } from "../_components/title-row";
 import { useBuddyName } from "../buddies/use-buddy-name";
-import { CatchUpLater } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
+import { EarlierLessons } from "./today-earlier-lessons";
 import { TodayExtraTime } from "./today-extra-time";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
@@ -24,7 +24,6 @@ import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-cop
 const SECONDARY_CLASS = "max-sm:h-11 max-sm:w-full max-sm:rounded-lg max-sm:text-sm sm:self-start";
 
 function MoreTime() {
-  const t = useExtracted();
   const { actions, today } = useTodayScreen();
   const { extraTime } = today.session;
 
@@ -36,12 +35,8 @@ function MoreTime() {
     <TodayExtraTime
       action={actions.addExtraTime}
       className={SECONDARY_CLASS}
-      label={
-        today.studiedToday
-          ? undefined
-          : t("Study for {minutes} minutes", { minutes: String(extraTime.minutes) })
-      }
       minutes={extraTime.minutes}
+      more={today.studiedToday}
     />
   );
 }
@@ -114,7 +109,7 @@ export function TodayMore({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col gap-3 empty:hidden", className)} data-slot="today-more">
       {(state === "done" || state === "rest") && <MoreTime />}
-      {(state === "underway" || state === "done") && <CatchUpLater />}
+      {(state === "underway" || state === "done") && <EarlierLessons />}
     </div>
   );
 }

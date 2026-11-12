@@ -2,13 +2,8 @@
 
 import { type Mission } from "@zoonk/core/sessions/missions";
 import { useExtracted } from "next-intl";
-import { useFormatDuration } from "../_utils/time-format";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
-import { type DayStep } from "../session/session-types";
-import { useBlockTitle } from "../session/use-block-copy";
-import { useReviewTitle } from "../session/use-review-title";
 import { type MissionView } from "./mission-links";
-import { ProgressCount } from "./mission-list";
 
 type MissionOpens = NonNullable<MissionView["opens"]>;
 type MissionKind = Mission["kind"];
@@ -25,7 +20,7 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
       : t("Finish the chapter");
 
   const challenge = (detail: MissionDetail) =>
-    detail?.rematch ? t("Rematch the Trickster") : t("Take on the Trickster");
+    detail?.rematch ? t("Rematch the Trickster") : t("Beat the Trickster");
 
   const area = (detail: MissionDetail) =>
     detail?.areaTitle ? t("Practice {area}", { area: detail.areaTitle }) : t("Practice");
@@ -43,7 +38,7 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
       case "weeklyChallenge":
         return t("Weekly challenge");
       case "mock":
-        return t("Take the mock");
+        return t("Take the mock exam");
       case "essay":
         return t({ description: "A mission to practice an essay.", message: "Practice writing" });
       case "practice":
@@ -53,7 +48,7 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
       case "pattern":
         return t("Practice a pattern");
       case "pronunciation":
-        return t("Pronunciation");
+        return t("Practice pronunciation");
       case "call":
         return t("Have a call");
       case "askBuddy":
@@ -128,7 +123,7 @@ export function useMissionStateLabel(buddy: LearnBuddy | null) {
     }
 
     if (state.waitReason) {
-      return t(", after this phase's lessons");
+      return t(", after today's lessons");
     }
 
     return state.opens ? opensLabel(state) : undefined;
@@ -140,157 +135,14 @@ export function renderSentenceNumber(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
-/** Only a phase challenge waits, for the lessons before it, which are its phase's. */
+/** Only a challenge waits, for the lessons before it in the day. */
 export function useWaitLine() {
   const t = useExtracted();
-  return (): string => t("After this phase's lessons");
+  return (): string => t("After today's lessons");
 }
 
-const ESTIMATED_KINDS: ReadonlySet<MissionKind> = new Set([
-  "askBuddy",
-  "call",
-  "fixMistake",
-  "pattern",
-  "pronunciation",
-]);
-
-function useOutsideStep() {
-  const t = useExtracted();
-
-  return function outsideStep({
-    detail,
-    kind,
-  }: Pick<MissionView, "detail" | "kind">): string | null {
-    switch (kind) {
-      case "fixMistake":
-        return t("From your mistakes notebook");
-      case "pattern":
-        return detail?.patternTitle ?? null;
-      case "pronunciation":
-        return t("Due today");
-      case "call":
-        return detail?.chapterTitle
-          ? t("Quick call · {unit}", { unit: detail.chapterTitle })
-          : t("A quick call");
-      case "askBuddy":
-        return t("Anything about today's lessons");
-      case "review":
-      case "somethingNew":
-      case "finishChapter":
-      case "challenge":
-      case "weeklyChallenge":
-      case "mock":
-      case "essay":
-      case "practice":
-      case "weakSpot":
-        return null;
-      default:
-        return kind satisfies never;
-    }
-  };
-}
-
-function useChapterStep() {
-  const t = useExtracted();
-
-  return function chapterStep({
-    detail,
-    done,
-    total,
-  }: Pick<MissionView, "detail" | "done" | "total">): string {
-    const more = total - done - 1;
-
-    if (!detail?.title) {
-      return t(
-        "{count, plural, one {The last lesson is in today's plan} other {The last # lessons are in today's plan}}",
-        { count: total - done },
-      );
-    }
-
-    return more > 0
-      ? t("{title} (+{count, plural, one {# lesson} other {# lessons}})", {
-          count: more,
-          title: detail.title,
-        })
-      : detail.title;
-  };
-}
-
-function useMissionStep() {
-  const t = useExtracted();
+/** A mission is its name; only one that waits says why it can't be opened yet. */
+export function MissionStepLine({ mission }: { mission: Pick<MissionView, "waitReason"> }) {
   const waitLine = useWaitLine();
-  const outsideStep = useOutsideStep();
-  const chapterStep = useChapterStep();
-  const reviewTitle = useReviewTitle();
-  const blockTitle = useBlockTitle();
-
-  return function missionStep(mission: MissionView, block?: DayStep): string | null {
-    const { detail, kind, waitReason } = mission;
-
-    if (waitReason) {
-      return waitLine();
-    }
-
-    if (ESTIMATED_KINDS.has(kind)) {
-      return outsideStep(mission);
-    }
-
-    if (kind === "finishChapter") {
-      return chapterStep(mission);
-    }
-
-    if (detail?.title) {
-      return detail.title;
-    }
-
-    if (block && kind !== "weeklyChallenge" && kind !== "mock") {
-      return blockTitle(block);
-    }
-
-    if (kind === "review") {
-      return reviewTitle(mission.minutes ?? 0);
-    }
-
-    if (kind === "somethingNew") {
-      return t("Finish today's new lesson");
-    }
-
-    return kind === "weakSpot"
-      ? t({
-          description: "A mission to practice the area where the learner can improve the most.",
-          message: "Most room to grow",
-        })
-      : null;
-  };
-}
-
-function MissionMinutes({ kind, minutes }: { kind?: MissionKind; minutes: number }) {
-  const formatDuration = useFormatDuration();
-  const estimate = kind === undefined || ESTIMATED_KINDS.has(kind);
-
-  return (
-    <span className="font-mono tabular-nums">
-      {estimate ? `~${formatDuration(minutes)}` : formatDuration(minutes)}
-    </span>
-  );
-}
-
-export function MissionStepLine({ block, mission }: { block?: DayStep; mission: MissionView }) {
-  const step = useMissionStep()(mission, block);
-  const minutes = mission.minutes ?? 0;
-  const count = mission.total > 1 && <ProgressCount done={mission.done} total={mission.total} />;
-
-  return (
-    <span className="flex min-w-0 whitespace-pre">
-      {count && <span className="shrink-0 font-mono tabular-nums">{count}</span>}
-      {count && step && " · "}
-      {step && <span className="truncate">{step}</span>}
-      {minutes > 0 && (
-        <span className="shrink-0">
-          {step || count ? " · " : ""}
-          <MissionMinutes kind={mission.kind} minutes={minutes} />
-        </span>
-      )}
-    </span>
-  );
+  return mission.waitReason ? waitLine() : null;
 }

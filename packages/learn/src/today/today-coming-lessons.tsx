@@ -4,7 +4,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { ChangeSaveError } from "../_components/save-error";
-import { useSentenceSpace } from "../_utils/locale";
 import { useSessionAction } from "../session/use-session-action";
 import { getRowClass } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
@@ -13,18 +12,12 @@ function PrepareLessonsLine() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const { failed, isPending, run } = useSessionAction({ action: actions.prepareLessons });
-  const space = useSentenceSpace();
 
   return (
     <>
-      <form action={() => void run()} className="text-muted-foreground text-xs leading-4">
-        {t("Not written yet.")}
-        {space}
+      <form action={() => void run()} className="text-xs leading-4">
         <Button busy={isPending} type="submit" variant="link">
-          {t({
-            description: "Button that has Zoonk write today's lessons.",
-            message: "Get today's lessons",
-          })}
+          {t("Get them now")}
         </Button>
       </form>
 
@@ -34,8 +27,8 @@ function PrepareLessonsLine() {
 }
 
 /**
- * Holds the place of the day's lessons that aren't written yet: Today reads again until they land
- * while they're outlined, and asks the learner for them while nobody is.
+ * Holds the place of the day's lessons that aren't ready yet: Today reads again until they land
+ * while they're on the way, and asks the learner for them while nobody is.
  */
 export function ComingLessonsRow() {
   const t = useExtracted();
@@ -57,7 +50,7 @@ export function ComingLessonsRow() {
           <PrepareLessonsLine />
         ) : (
           <span className="text-muted-foreground truncate text-xs leading-4">
-            {writingStalled ? t("Taking longer than usual") : t("Being written for you…")}
+            {writingStalled ? t("Taking longer than usual") : t("Getting ready…")}
           </span>
         )}
       </div>

@@ -39,7 +39,7 @@ export function useChallengeDayName() {
 
   return (challenge: Challenge): string => {
     if (isFullReview(challenge)) {
-      return t("full review");
+      return t("review");
     }
 
     return challenge.kind === "mock" ? t("mock exam") : t("weekly challenge");
@@ -70,8 +70,8 @@ function FullReviewRow({ date }: { date: Date }) {
         <KindDot kind="review" />
       </ListRowLeading>
       <ChallengeLine
-        facts={[weekdayLabel(date), t("every topic, your weakest first")].join(" · ")}
-        name={t("Full review")}
+        facts={[weekdayLabel(date), t("every topic")].join(" · ")}
+        name={t("Review")}
       />
     </ListRow>
   );

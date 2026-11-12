@@ -22,7 +22,6 @@ import {
   type TodayViewResult,
   getTodayView,
 } from "@zoonk/core/view-models/today/get";
-import { type TodaySyllabus } from "@zoonk/learn/today";
 
 /** Worked out here with core's rules, so the browser carries them with the step instead of building refs. */
 type TodayStep = { ref: DayBlockRef; screen: DayBlockScreen };
@@ -31,12 +30,12 @@ export type TodayScreenData = {
   brainPower: number | null;
   buddy: LearnerBuddy;
   completedLessons: boolean;
+  knownLessons: number;
   language: LanguageTodayView | null;
   mistakes: MistakeAvailability;
   mocks: MockOptionsView | null;
   planEnd: string | null;
   steps: TodayStep[];
-  syllabus: TodaySyllabus | null;
   today: TodayView;
 };
 
@@ -82,31 +81,10 @@ async function loadTodayMocks(goal: TodayView["goal"]) {
   return view && (view.running || view.options.length > 0) ? view : null;
 }
 
-/** Only what the rows draw goes to the browser, never every topic and chapter. */
-async function loadSyllabus(goalId: string): Promise<TodaySyllabus | null> {
+/** Lessons the plan skipped because the learner already knew them, for Today's progress cells. */
+async function loadKnownLessons(goalId: string): Promise<number> {
   const result = await getSyllabusView({ goalId });
-
-  if (result.status !== "ready") {
-    return null;
-  }
-
-  const { goal, kind, lessons, subjects } = result.syllabus;
-
-  return {
-    goal,
-    kind,
-    lessons,
-    subjects: subjects.map((subject) => ({
-      key: subject.key,
-      lessonsDone: subject.lessonsDone,
-      lessonsKnown: subject.lessonsKnown,
-      lessonsTotal: subject.lessonsTotal,
-      name: subject.name,
-      notPlannedReason: subject.notPlannedReason,
-      preparation: subject.preparation,
-      shortName: subject.shortName,
-    })),
-  };
+  return result.status === "ready" ? result.syllabus.lessons.known : 0;
 }
 
 async function countOpenMistakes(goalId: string): Promise<MistakeAvailability> {
@@ -124,7 +102,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
 
   const { today } = result;
 
-  const [buddy, planEnd, readAt, mocks, mistakes, completedLessons, language, syllabus, belt] =
+  const [buddy, planEnd, readAt, mocks, mistakes, completedLessons, language, knownLessons, belt] =
     await Promise.all([
       getLearnerBuddy(),
       loadPlanEnd(today),
@@ -133,7 +111,7 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       countOpenMistakes(today.goal.id),
       hasCompletedLessons(today.goal.id),
       loadLanguageToday(today.goal),
-      loadSyllabus(today.goal.id),
+      loadKnownLessons(today.goal.id),
       getBeltLevel(),
     ]);
 
@@ -147,12 +125,12 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       brainPower: belt?.totalBrainPower ?? 0,
       buddy,
       completedLessons,
+      knownLessons,
       language,
       mistakes,
       mocks,
       planEnd,
       steps,
-      syllabus,
       today,
     },
     day: getTodayDayKey(today),

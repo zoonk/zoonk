@@ -61,7 +61,7 @@ test.describe("Pronunciation reviews", () => {
 
       const mission = page
         .getByRole("region", { name: "Today's missions" })
-        .getByRole("link", { name: /^Pronunciation/u });
+        .getByRole("link", { name: /^Practice pronunciation/u });
 
       await expect(mission).toHaveAttribute("href", `/pronunciation?goal=${user.goalId}`);
       await mission.click();

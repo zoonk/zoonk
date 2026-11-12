@@ -2,17 +2,13 @@
 
 import { countDoneMissions, isFullMeal } from "@zoonk/core/sessions/missions";
 import { cn } from "@zoonk/ui/lib/utils";
-import { TargetIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
-import { FactSegments } from "../_components/task-meta";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { useFormatDuration } from "../_utils/time-format";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { type DayStep } from "../session/session-types";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
@@ -31,29 +27,22 @@ function MissionsStatus({
 }) {
   const t = useExtracted();
   const format = useFormatter();
-  const formatDuration = useFormatDuration();
-  const left = missions.filter((mission) => mission.status !== "done");
-  const minutes = left.reduce((sum, mission) => sum + (mission.minutes ?? 0), 0);
+  const left = missions.filter((mission) => mission.status !== "done").length;
 
-  if (left.length === 0) {
+  if (left === 0) {
     return t("You earned +{points} Brain Power.", { points: format.number(points) });
   }
 
-  const count =
-    left.length === missions.length
-      ? t("{count, plural, one {# mission} other {# missions}}", { count: left.length })
-      : t("{count, plural, one {# left} other {# left}}", { count: left.length });
-
-  return <FactSegments facts={minutes > 0 ? [count, `~${formatDuration(minutes)}`] : [count]} />;
+  return left === missions.length
+    ? t("{count, plural, one {Do # mission} other {Do all #}}", { count: left })
+    : t("{count, plural, one {# left} other {# left}}", { count: left });
 }
 
 function MissionRow({
-  block,
   buddy,
   links,
   mission,
 }: {
-  block?: DayStep;
   buddy: LearnBuddy | null;
   links: MissionLinks;
   mission: MissionView;
@@ -66,8 +55,8 @@ function MissionRow({
 
   return (
     <MissionListRow
-      detail={done ? null : <MissionStepLine block={block} mission={mission} />}
-      mark={<MissionMark block={block} buddy={buddy} done={done} kind={mission.kind} />}
+      detail={done ? null : <MissionStepLine mission={mission} />}
+      mark={<MissionMark buddy={buddy} done={done} kind={mission.kind} />}
       muted={done || Boolean(mission.waitReason)}
       name={missionName(mission)}
       stateLabel={stateLabel({
@@ -78,17 +67,8 @@ function MissionRow({
         waitReason: mission.waitReason,
       })}
       target={target}
-      trailing={!done && <MissionRowEnd mission={mission} />}
     />
   );
-}
-
-function MissionRowEnd({ mission }: { mission: MissionView }) {
-  if (mission.opens?.kind !== "block" || mission.waitReason) {
-    return null;
-  }
-
-  return <TargetIcon aria-hidden="true" className="text-brain size-3.5" />;
 }
 
 function MissionsHeading({
@@ -131,24 +111,24 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
   );
 }
 
+/**
+ * One list with one look wherever it shows: every mission is a row, named by what to do, and the
+ * reward says what doing them all earns.
+ */
 export function MissionsCard({
-  blockOf,
   brainPower,
   buddy,
   className,
   showBuddy = true,
   collapseWhenDone = false,
   links,
-  rowsInQueue = false,
   today,
 }: {
-  blockOf?: (mission: MissionView) => DayStep | undefined;
   brainPower: number | null;
   buddy: LearnBuddy | null;
   className?: string;
   collapseWhenDone?: boolean;
   links: MissionLinks;
-  rowsInQueue?: boolean;
   showBuddy?: boolean;
   today: MissionsDay | null;
 }) {
@@ -156,20 +136,11 @@ export function MissionsCard({
   const missionName = useMissionName(buddy);
   const titleId = useId();
 
-  if (!today) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        {t("Today's missions start with today's session.")}
-      </p>
-    );
-  }
-
-  const { missions } = today;
-
-  if (missions.length === 0) {
+  if (!today || today.missions.length === 0) {
     return null;
   }
 
+  const { missions } = today;
   const points = today.fullMeal.bonus;
   const allDone = isFullMeal(missions);
   const won = allDone && today.fullMeal.earned;
@@ -192,12 +163,7 @@ export function MissionsCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(
-        SURFACE_CLASS,
-        "flex flex-col px-4 pt-3.5 pb-1",
-        rowsInQueue && "max-[72rem]:pb-3.5",
-        className,
-      )}
+      className={cn(SURFACE_CLASS, "flex flex-col px-4 pt-3.5 pb-1", className)}
       data-slot="missions-card"
     >
       <div className="flex items-start gap-2.5">
@@ -211,16 +177,11 @@ export function MissionsCard({
 
       <MissionTrack className="mt-3.5" missions={missions} />
 
-      <ListGroup className={cn("mt-1.5", rowsInQueue && "max-[72rem]:hidden")}>
+      <ListGroup className="mt-1.5">
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>
-              <MissionRow
-                block={blockOf?.(mission)}
-                buddy={buddy}
-                links={links}
-                mission={mission}
-              />
+              <MissionRow buddy={buddy} links={links} mission={mission} />
             </li>
           ))}
         </ul>

@@ -3,28 +3,19 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { DoneMark } from "../_components/status-mark";
-import { useFormatDuration } from "../_utils/time-format";
 import { SESSION_LIST_ID } from "./today-ids";
 
-/**
- * Only time still ahead says its minutes: a done row's are the plan's estimate, not the time it
- * took.
- */
 export function FoldRow({
   done,
   label,
-  minutes,
   onToggle,
   open,
 }: {
   done: boolean;
   label: string;
-  minutes?: number;
   onToggle: () => void;
   open: boolean;
 }) {
-  const formatDuration = useFormatDuration();
-
   return (
     <button
       aria-controls={SESSION_LIST_ID}
@@ -43,9 +34,6 @@ export function FoldRow({
           className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-180")}
         />
       </span>
-      {minutes ? (
-        <span className="shrink-0 font-mono text-xs tabular-nums">{formatDuration(minutes)}</span>
-      ) : null}
     </button>
   );
 }

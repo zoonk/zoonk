@@ -57,10 +57,7 @@ export function BrainPowerReward({
         <PopoverHeader>
           <PopoverTitle>{t("Brain Power")}</PopoverTitle>
           <PopoverDescription>
-            {t(
-              "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +{points}.",
-              { points: format.number(points) },
-            )}
+            {t("Points for what you learn. They raise your belt and grow your buddy.")}
           </PopoverDescription>
         </PopoverHeader>
 

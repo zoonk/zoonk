@@ -125,10 +125,11 @@ function DayLetter({ day }: { day: WeekDay }) {
 function useDayStatus() {
   const t = useExtracted();
   const localDate = useWeekDate();
+  const { today } = useTodayScreen();
 
   return (day: WeekDay): string => {
     if (day.hitGoal) {
-      return t("daily time met");
+      return t("done");
     }
 
     if (day.studied) {
@@ -140,7 +141,7 @@ function useDayStatus() {
     }
 
     if (day.kind === "deadline") {
-      return t("your goal's date");
+      return t("end date");
     }
 
     if (day.kind === "beforeStart") {
@@ -148,7 +149,7 @@ function useDayStatus() {
     }
 
     if (day.kind === "afterEnd") {
-      return t("after your date");
+      return today.goal.kind === "exam" ? t("after your exam") : t("after your end date");
     }
 
     if (day.kind === "rest") {

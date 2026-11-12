@@ -9,13 +9,14 @@ import { useSessionAction } from "../session/use-session-action";
 export function TodayExtraTime({
   action,
   className,
-  label,
   minutes,
+  more,
 }: {
   action: () => Promise<boolean>;
   className?: string;
-  label?: string;
   minutes: number;
+  /** The learner already studied today, so this is on top of it. */
+  more: boolean;
 }) {
   const t = useExtracted();
   const { failed, isPending, run } = useSessionAction({ action });
@@ -31,7 +32,9 @@ export function TodayExtraTime({
           type="submit"
           variant="outline"
         >
-          {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
+          {more
+            ? t("Practice {minutes} more min", { minutes: String(minutes) })
+            : t("Practice {minutes} min", { minutes: String(minutes) })}
         </Button>
       </form>
 

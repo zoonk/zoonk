@@ -4,41 +4,31 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { CalendarClockIcon, ClockIcon, MoonIcon, SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
-import { useSentenceSpace } from "../_utils/locale";
-import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { usePastDateText } from "../plan/plan-status-label";
 import { useTodayScreen } from "./today-context";
-import { useStudiedToday } from "./today-day-progress";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 function DoneStatus({ className }: { className?: string }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const studied = useStudiedToday();
   const { actions, today } = useTodayScreen();
   const keepLearning = useUpNextLessons().length > 0;
   const restDay = today.session.minutes.dailyGoal === 0;
-  const space = useSentenceSpace();
 
   return (
     <TodayStatusLine className={className} icon={<DoneMark />}>
       <TodayStatusSentence>
-        {restDay ? t("You studied on your day off.") : t("Today's session is complete.")}
+        {restDay ? t("You studied on your day off.") : t("You're done for today.")}
       </TodayStatusSentence>
-      {studied > 0 && <TodayStatusClause mono>{formatDuration(studied)}</TodayStatusClause>}
       {keepLearning && (
-        <>
-          {studied > 0 ? " " : space}
-          <LearnLink
-            className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
-            href={actions.summaryHref}
-            prefetch={false}
-          >
-            {t("See today's summary")}
-          </LearnLink>
-        </>
+        <LearnLink
+          className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
+          href={actions.summaryHref}
+          prefetch={false}
+        >
+          {t("See today's summary")}
+        </LearnLink>
       )}
     </TodayStatusLine>
   );
@@ -46,22 +36,15 @@ function DoneStatus({ className }: { className?: string }) {
 
 function RestStatus({ className }: { className?: string }) {
   const t = useExtracted();
-  const { today } = useTodayScreen();
-  const welcomeBack = today.session.freshStart === "welcomeBack";
   const keepLearning = useUpNextLessons().length > 0;
 
   return (
     <TodayStatusLine className={className} icon={<MoonIcon />}>
       <TodayStatusSentence>{t("No study planned today.")}</TodayStatusSentence>
       <TodayStatusClause>
-        {keepLearning &&
-          welcomeBack &&
-          t("Welcome back! Your next lessons are here if you'd like to study.")}
-        {keepLearning && !welcomeBack && t("Your next lessons are here if you'd like to study.")}
-        {!keepLearning &&
-          welcomeBack &&
-          t("Welcome back! Today is a rest day in your plan, so enjoy it.")}
-        {!keepLearning && !welcomeBack && t("Enjoy your day off!")}
+        {keepLearning
+          ? t("Your next lessons are below if you want to study.")
+          : t("Enjoy your day off!")}
       </TodayStatusClause>
     </TodayStatusLine>
   );
@@ -85,7 +68,6 @@ function WaitingStatus({ className }: { className?: string }) {
   return (
     <TodayStatusLine className={className} icon={<Spinner />}>
       <TodayStatusSentence>{t("Getting today's lessons ready…")}</TodayStatusSentence>
-      <TodayStatusClause>{t("They show up here on their own.")}</TodayStatusClause>
     </TodayStatusLine>
   );
 }
@@ -94,7 +76,6 @@ function WaitingStatus({ className }: { className?: string }) {
  * Never a rest day or "nothing new" past the goal's date: the lessons left are still the plan's.
  */
 function PastDateStatus({ className, lessons }: { className?: string; lessons: number }) {
-  const t = useExtracted();
   const pastDateText = usePastDateText();
   const { today } = useTodayScreen();
 
@@ -103,7 +84,6 @@ function PastDateStatus({ className, lessons }: { className?: string; lessons: n
       <TodayStatusSentence>
         {pastDateText({ isExam: today.goal.kind === "exam", lessons }).sentence}
       </TodayStatusSentence>
-      <TodayStatusClause>{t("Adjust your plan to keep going.")}</TodayStatusClause>
     </TodayStatusLine>
   );
 }
@@ -126,7 +106,7 @@ export function TodayDayStatus({ className }: { className?: string }) {
     case "prepare":
       return (
         <TodayStatusLine className={className} icon={<ClockIcon />}>
-          <TodayStatusSentence>{t("Today's lessons aren't written yet.")}</TodayStatusSentence>
+          <TodayStatusSentence>{t("Today's lessons aren't ready yet.")}</TodayStatusSentence>
         </TodayStatusLine>
       );
     case "rest":
@@ -144,10 +124,11 @@ export function TodayDayStatus({ className }: { className?: string }) {
 
       return (
         <TodayStatusLine className={className} icon={<SparklesIcon />}>
-          <TodayStatusSentence>{t("Nothing new for today.")}</TodayStatusSentence>
-          <TodayStatusClause>
-            {t("You've done every lesson in your plan, or already know it.")}
-          </TodayStatusClause>
+          <TodayStatusSentence>
+            {today.progress?.status?.kind === "finished"
+              ? t("You finished your plan.")
+              : t("You're all caught up.")}
+          </TodayStatusSentence>
         </TodayStatusLine>
       );
     case "underway":

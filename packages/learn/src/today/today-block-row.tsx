@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { Loader2Icon, TargetIcon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
@@ -9,27 +9,15 @@ import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
-import { useWaitLine } from "../missions/mission-copy";
-import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
-import { getChallengePhase, useBlockDetail, useBlockTitle } from "../session/use-block-copy";
+import { useBlockTitle } from "../session/use-block-copy";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { getLessonAgainId, isFinished } from "./today-queue";
 import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
-import { useRowLabel } from "./use-row-label";
-import { useLessonBeingWritten } from "./use-today-copy";
-
-function useWaitLabel() {
-  const t = useExtracted();
-  const waitLine = useWaitLine();
-
-  return (block: DayStep): string => {
-    const phase = getChallengePhase(block);
-    return phase ? t("{phase} · after this phase's lessons", { phase }) : waitLine();
-  };
-}
+import { useStepLabel } from "./use-row-label";
+import { useLessonGettingReady } from "./use-today-copy";
 
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
@@ -86,22 +74,13 @@ const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs 
 function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
-  const detail = useBlockDetail();
-  const isBeingWritten = useLessonBeingWritten();
-  const rowLabel = useRowLabel();
-  const waitLabel = useWaitLabel();
-  const reviewDetail = block.weakest || block.fullReview ? detail(block) : null;
-
-  const label = isBeingWritten(block) ? t("Being written for you…") : rowLabel(block);
-  const line = block.waitReason ? waitLabel(block) : label;
+  const isGettingReady = useLessonGettingReady();
+  const stepLabel = useStepLabel();
+  const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
 
   return (
     <>
       {line && <span className={ROW_LINE_CLASS}>{line}</span>}
-
-      {reviewDetail && (
-        <span className="text-muted-foreground text-xs leading-4">{reviewDetail}</span>
-      )}
 
       {isNext && block.canTestOut && block.chapterId && (
         <div className="relative">
@@ -115,38 +94,13 @@ function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
   );
 }
 
-export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
-  if (opens?.kind !== "block") {
-    return false;
-  }
-
-  return "blockId" in opens
-    ? "id" in step && opens.blockId === step.id
-    : opens.ref.position === step.position;
-}
-
-function useCountsTowardMission() {
-  const { missions } = useTodayScreen();
-
-  return (step: DayStep): boolean =>
-    Boolean(
-      !missions?.fullMeal.earned &&
-      missions?.missions.some(
-        (mission) =>
-          mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
-      ),
-    );
-}
-
 function RowTarget({
   block,
-  countsTowardMission,
   isNext,
   lessonAgainId,
   opens,
 }: {
   block: DayStep;
-  countsTowardMission: boolean;
   isNext: boolean;
   lessonAgainId: string | null;
   opens: boolean;
@@ -166,7 +120,7 @@ function RowTarget({
   }
 
   return (
-    <RowOpen block={block} countsTowardMission={countsTowardMission} isNext={isNext}>
+    <RowOpen block={block} isNext={isNext}>
       {name}
     </RowOpen>
   );
@@ -186,7 +140,6 @@ export function BlockRow({
   opens?: boolean;
 }) {
   const finished = isFinished(block);
-  const countsTowardMission = useCountsTowardMission()(block);
   const lessonAgainId = getLessonAgainId(block);
 
   return (
@@ -204,26 +157,13 @@ export function BlockRow({
 
       <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", isNext && "items-start")}>
         <div className="flex flex-col gap-px">
-          <RowTarget
-            block={block}
-            countsTowardMission={countsTowardMission}
-            isNext={isNext}
-            lessonAgainId={lessonAgainId}
-            opens={opens}
-          />
+          <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
           {!finished && <RowLines block={block} isNext={isNext} />}
         </div>
 
         {!finished && (
-          <span className="text-muted-foreground flex h-5 items-center gap-1.5 font-mono text-xs tabular-nums">
-            {countsTowardMission && (
-              <TargetIcon
-                aria-hidden="true"
-                className="text-brain size-3.5"
-                data-slot="mission-row-mark"
-              />
-            )}
+          <span className="text-muted-foreground flex h-5 items-center font-mono text-xs tabular-nums">
             <RowTime minutes={block.estimatedMinutes} />
           </span>
         )}

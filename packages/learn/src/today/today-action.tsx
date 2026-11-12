@@ -78,7 +78,7 @@ export function useKeepLearning(): KeepLearningAction {
   return useTodayContinue().keep;
 }
 
-export function useTodayContinueSpeaking(): boolean {
+function useTodayContinueSpeaking(): boolean {
   const { failed, wait } = useTodayContinue();
   return failed || wait !== "none";
 }
@@ -117,7 +117,7 @@ function ContinueLink({ href }: { href: string }) {
       ref={ref}
     >
       <BusyContent icon={<PlayIcon aria-hidden="true" />}>
-        {started ? t("Continue session") : t("Start session")}
+        {started ? t("Continue") : t("Start")}
         <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
       </BusyContent>
     </LearnLink>
@@ -146,7 +146,7 @@ function ContinueButton() {
           size="lg"
           type="submit"
         >
-          {started ? t("Continue session") : t("Start session")}
+          {started ? t("Continue") : t("Start")}
           <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
         </Button>
       </form>
@@ -214,7 +214,7 @@ function PracticeTime() {
 
   return (
     <SaveAction action={actions.addExtraTime} icon={<PlayIcon aria-hidden="true" />}>
-      {t("Practice for {minutes} minutes", { minutes: String(extraTime.minutes) })}
+      {t("Practice {minutes} min", { minutes: String(extraTime.minutes) })}
     </SaveAction>
   );
 }
@@ -226,7 +226,7 @@ function PrepareLessons() {
   return (
     <SaveAction action={actions.prepareLessons} icon={<ListPlusIcon aria-hidden="true" />}>
       {t({
-        description: "Button that has Zoonk write today's lessons.",
+        description: "Button that asks for today's lessons to be made ready.",
         message: "Get today's lessons",
       })}
     </SaveAction>
