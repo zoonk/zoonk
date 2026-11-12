@@ -3,14 +3,13 @@ import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
 import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
-import { readStepVariantGenerationSummary } from "@zoonk/core/library/variants/generation";
 import { prisma } from "@zoonk/db";
+import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { challengePlanFixture } from "../../../../../packages/ai/src/tasks/challenge/challenge-plan-fixture";
 import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { prepareFieldChallenge } from "../sessions/prepare-field-challenge";
@@ -189,15 +188,11 @@ describe("challenge prepublication review", () => {
       expect.stringContaining(finding.error),
     ]);
 
-    const summary = await readStepVariantGenerationSummary({
-      key: "nursing",
-      kind: "field",
-      stepId,
-    });
+    const generation = await prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId } });
 
-    expect(summary?.claimedRunIds).toHaveLength(2);
-    expect(summary?.heldBackDrafts).toHaveLength(1);
-    expect(summary?.variant).not.toBeNull();
+    expect(generation.claimedRunIds).toHaveLength(2);
+    expect(generation.heldBackDrafts).toHaveLength(1);
+    await expect(prisma.stepVariant.count({ where: { stepId } })).resolves.toBe(1);
   });
 
   it("spends a field reservation but records no content rejection when the reviewer is unavailable", async () => {
@@ -222,15 +217,11 @@ describe("challenge prepublication review", () => {
       }),
     ).rejects.toThrow("Review unavailable");
 
-    const summary = await readStepVariantGenerationSummary({
-      key: "nursing",
-      kind: "field",
-      stepId,
-    });
+    const generation = await prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId } });
 
-    expect(summary?.claimedRunIds).toHaveLength(1);
-    expect(summary?.heldBackDrafts).toStrictEqual([]);
-    expect(summary?.variant).toBeNull();
+    expect(generation.claimedRunIds).toHaveLength(1);
+    expect(generation.heldBackDrafts).toStrictEqual([]);
+    await expect(prisma.stepVariant.count({ where: { stepId } })).resolves.toBe(0);
   });
 
   it("uses the private scope model on both calls without a reviewer", async () => {

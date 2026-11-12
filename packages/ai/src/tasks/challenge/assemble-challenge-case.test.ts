@@ -1,6 +1,6 @@
+import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { describe, expect, it } from "vitest";
 import { assembleChallengeCase, draftEmptyScript } from "./assemble-challenge-case";
-import { challengePlanFixture } from "./challenge-plan-fixture";
 
 describe(assembleChallengeCase, () => {
   it("joins the script to the plan by id and keeps the plan's graph", () => {

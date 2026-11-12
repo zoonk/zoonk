@@ -19,6 +19,7 @@ import {
   createPlanGenerationManifest,
 } from "@zoonk/core/lookahead/speculative-lessons";
 import { prisma } from "@zoonk/db";
+import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
   chapterSkillFixture,
@@ -34,7 +35,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
-import { challengePlanFixture } from "../../../../../packages/ai/src/tasks/challenge/challenge-plan-fixture";
 import { languageLessonDraft } from "../../../../../packages/core/src/library/language/_test-utils/language-lesson-draft";
 import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
 import { mockHookConflict } from "../../../mocks/workflow";

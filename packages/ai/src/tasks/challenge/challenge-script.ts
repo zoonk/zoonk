@@ -17,7 +17,7 @@ function idEnum(ids: readonly string[]) {
 }
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what's said before a pick comes before the choices and what follows them. */
-export function buildChallengeScriptSchema(plan: ChallengePlan) {
+function buildChallengeScriptSchema(plan: ChallengePlan) {
   const from = idEnum(plan.team.map((slot) => slot.id)) ?? z.string();
   const meter = idEnum(plan.meters.map((item) => item.id)) ?? z.string();
   const skill = idEnum(plan.skills.map((item) => item.id)) ?? z.string();

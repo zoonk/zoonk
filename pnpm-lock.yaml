@@ -1029,6 +1029,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig

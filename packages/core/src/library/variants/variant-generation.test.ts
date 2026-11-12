@@ -4,16 +4,17 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import {
-  holdBackStepVariantDraft,
-  readStepVariantGenerationSummary,
-  reserveStepVariantGeneration,
-} from "./variant-generation";
+import { parseHeldBackDrafts } from "../generation/held-back-drafts";
+import { holdBackStepVariantDraft, reserveStepVariantGeneration } from "./variant-generation";
 
 async function target(ownerId: string | null = null) {
   const lesson = await libraryLessonFixture({ ownerId });
   const step = await libraryStepFixture({ lessonId: lesson.id });
   return { key: "Google Sheets", kind: "tool" as const, stepId: step.id };
+}
+
+function readGeneration({ stepId }: { stepId: string }) {
+  return prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId } });
 }
 
 const problem = { model: "test", problems: [{ problem: "Wrong answer", screen: null }] };
@@ -29,14 +30,13 @@ describe("variant generation admission", () => {
 
     expect(results.filter((result) => result.status === "reserved")).toHaveLength(8);
     expect(results.filter((result) => result.status === "exhausted")).toHaveLength(4);
-    const summary = await readStepVariantGenerationSummary(input);
+    const generation = await readGeneration(input);
 
-    expect(summary?.claimedRunIds.toSorted()).toStrictEqual(
+    expect(generation.claimedRunIds.toSorted()).toStrictEqual(
       runs.filter((_, index) => results[index]?.status === "reserved").toSorted(),
     );
 
-    expect(summary?.exhausted).toBe(true);
-    expect(summary?.heldBackDrafts).toStrictEqual([]);
+    expect(generation.heldBackDrafts).toStrictEqual([]);
   });
 
   it("reuses a reservation across concurrent replays and infrastructure retries", async () => {
@@ -48,7 +48,7 @@ describe("variant generation admission", () => {
 
     expect(results.every((result) => result.status === "reserved")).toBe(true);
 
-    await expect(readStepVariantGenerationSummary(input)).resolves.toMatchObject({
+    await expect(readGeneration(input)).resolves.toMatchObject({
       claimedRunIds: [input.workflowRunId],
       heldBackDrafts: [],
     });
@@ -68,11 +68,13 @@ describe("variant generation admission", () => {
       ),
     );
 
-    const summary = await readStepVariantGenerationSummary(input);
+    const { heldBackDrafts } = await readGeneration(input);
 
-    expect(summary?.heldBackDrafts.map((draft) => draft.runId).toSorted()).toStrictEqual(
-      runs.toSorted(),
-    );
+    expect(
+      parseHeldBackDrafts(heldBackDrafts)
+        .map((draft) => draft.runId)
+        .toSorted(),
+    ).toStrictEqual(runs.toSorted());
   });
 
   it("normalizes keys while keeping independent kinds and keys", async () => {
@@ -117,8 +119,8 @@ describe("variant generation admission", () => {
         reserveStepVariantGeneration({ ...input, workflowRunId: "run-0" }),
       ).resolves.toMatchObject({ draft: { runId: "run-0" }, status: "heldBack" });
 
-      const summary = await readStepVariantGenerationSummary(input);
-      expect(summary?.heldBackDrafts).toHaveLength(limit);
+      const { heldBackDrafts } = await readGeneration(input);
+      expect(heldBackDrafts).toHaveLength(limit);
     },
   );
 
@@ -130,7 +132,10 @@ describe("variant generation admission", () => {
       reserveStepVariantGeneration({ ...input, workflowRunId: randomUUID() }),
     ).resolves.toStrictEqual({ status: "ready", variant });
 
-    const summary = await readStepVariantGenerationSummary(input);
-    expect(summary?.claimedRunIds).toStrictEqual([]);
+    const generation = await prisma.stepVariantGeneration.findFirst({
+      where: { stepId: input.stepId },
+    });
+
+    expect(generation?.claimedRunIds ?? []).toStrictEqual([]);
   });
 });

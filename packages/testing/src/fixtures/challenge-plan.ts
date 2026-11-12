@@ -1,6 +1,5 @@
-import { type ChallengePlan } from "./challenge-plan";
-
-export function challengePlanFixture(): ChallengePlan {
+/** A small valid plan for `ChallengePlan` from `@zoonk/ai/tasks/challenge/plan`, which this package can't import. */
+export function challengePlanFixture() {
   return {
     deadline: "Meeting at 3 pm",
     decisions: [
@@ -13,7 +12,7 @@ export function challengePlanFixture(): ChallengePlan {
             id: "check",
             move: "Ask the AI to test the gap",
             next: "report",
-            quality: "strong",
+            quality: "strong" as const,
             timePasses: "One hour later",
           },
           {
@@ -23,7 +22,7 @@ export function challengePlanFixture(): ChallengePlan {
             id: "skip",
             move: "Take the gap as it is",
             next: "report",
-            quality: "weak",
+            quality: "weak" as const,
             timePasses: null,
           },
         ],
@@ -42,7 +41,7 @@ export function challengePlanFixture(): ChallengePlan {
             id: "plain",
             move: "Say what the numbers support",
             next: "sent",
-            quality: "strong",
+            quality: "strong" as const,
             timePasses: null,
           },
           {
@@ -52,7 +51,7 @@ export function challengePlanFixture(): ChallengePlan {
             id: "short",
             move: "Send the two rates",
             next: "unclear",
-            quality: "fair",
+            quality: "fair" as const,
             timePasses: null,
           },
         ],
@@ -68,10 +67,15 @@ export function challengePlanFixture(): ChallengePlan {
       { id: "unclear", restsOn: [], result: "The manager launches on a hunch." },
     ],
     facts: [
-      { derivation: "given", fact: "1,200 visits per version", id: "visits", known: "start" },
-      { derivation: "given", fact: "The test finds p = 0.21", id: "test", known: "later" },
+      {
+        derivation: "given",
+        fact: "1,200 visits per version",
+        id: "visits",
+        known: "start" as const,
+      },
+      { derivation: "given", fact: "The test finds p = 0.21", id: "test", known: "later" as const },
     ],
-    meters: [{ goodWhen: "low", id: "risk", label: "Risk of a wrong call", start: 50 }],
+    meters: [{ goodWhen: "low" as const, id: "risk", label: "Risk of a wrong call", start: 50 }],
     mission: "Decide whether **version B** is ready.",
     panels: [
       { metrics: [{ label: "Visits", note: null, value: "1,200" }], note: null, title: null },

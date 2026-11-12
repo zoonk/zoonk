@@ -9,6 +9,7 @@ import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality
 import { generateStepVariant } from "@zoonk/ai/tasks/variants/step-variant";
 import { requestClaimQuestionsFor } from "@zoonk/core/lookahead/claim-questions";
 import { prisma } from "@zoonk/db";
+import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -32,7 +33,6 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { start } from "workflow/api";
-import { challengePlanFixture } from "../../../../../packages/ai/src/tasks/challenge/challenge-plan-fixture";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { callContentWorkflow } from "../calls/call-content-workflow";

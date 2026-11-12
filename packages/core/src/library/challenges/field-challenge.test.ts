@@ -1,12 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { assembleChallengeCase, draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
 import { prisma } from "@zoonk/db";
+import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { describe, expect, it } from "vitest";
-import { challengePlanFixture } from "../../../../ai/src/tasks/challenge/challenge-plan-fixture";
-import { readStepVariantGenerationSummary } from "../variants/variant-generation";
 import { checkWrittenChallenge } from "./challenge-case-content";
 import { loadChallengeLessonDraft } from "./challenge-lesson-draft";
 import { finishFieldChallengeDraft, prepareFieldChallengeDraft } from "./field-challenge";
@@ -141,13 +140,8 @@ describe("field challenge admission", () => {
       prepareFieldChallengeDraft({ ...input, workflowRunId: randomUUID() }),
     ).resolves.toMatchObject({ status: "exhausted" });
 
-    const summary = await readStepVariantGenerationSummary({
-      key: "retail",
-      kind: "field",
-      stepId,
-    });
-
-    expect(summary?.heldBackDrafts).toHaveLength(3);
-    expect(summary?.variant).toBeNull();
+    const generation = await prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId } });
+    expect(generation.heldBackDrafts).toHaveLength(3);
+    await expect(prisma.stepVariant.count({ where: { stepId } })).resolves.toBe(0);
   });
 });

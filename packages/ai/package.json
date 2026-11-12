@@ -212,6 +212,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "tsx": "catalog:",
     "typescript": "catalog:",

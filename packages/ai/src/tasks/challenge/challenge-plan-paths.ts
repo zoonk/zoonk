@@ -2,14 +2,14 @@ import { type ChallengePlan } from "./challenge-plan";
 
 const MAX_PATH_STEPS = 5;
 
-export type PlanArrival = {
+type PlanArrival = {
   id: string;
   from: string[];
   knownOnEveryPath: string[];
   knownOnSomePaths: string[];
 };
 
-export function getPlanArrivals(plan: ChallengePlan): PlanArrival[] {
+function getPlanArrivals(plan: ChallengePlan): PlanArrival[] {
   const decisions = new Map(plan.decisions.map((decision) => [decision.id, decision]));
   const arrivals = new Map<string, { from: Set<string>; known: Set<string>[] }>();
 

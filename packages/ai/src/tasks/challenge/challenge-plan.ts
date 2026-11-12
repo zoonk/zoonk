@@ -59,7 +59,7 @@ const jobPlanSchema = z.object({
 
 const whatIfPlanSchema = jobPlanSchema.omit({ deadline: true });
 
-export function getChallengePlanSchema(variant: ChallengeCaseParams["variant"]) {
+function getChallengePlanSchema(variant: ChallengeCaseParams["variant"]) {
   return variant === "work" ? jobPlanSchema : whatIfPlanSchema;
 }
 

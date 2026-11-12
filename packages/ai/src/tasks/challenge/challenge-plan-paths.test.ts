@@ -1,44 +1,6 @@
+import { challengePlanFixture } from "@zoonk/testing/fixtures/challenge-plan";
 import { describe, expect, it } from "vitest";
-import { challengePlanFixture } from "./challenge-plan-fixture";
-import {
-  describePlanForScript,
-  getPlanArrivals,
-  getPlanFactProblems,
-} from "./challenge-plan-paths";
-
-describe(getPlanArrivals, () => {
-  it("counts a fact as known at a decision only when every path into it established it", () => {
-    const arrivals = getPlanArrivals(challengePlanFixture());
-
-    expect(arrivals.find((arrival) => arrival.id === "report")).toStrictEqual({
-      from: ["start.check", "start.skip"],
-      id: "report",
-      knownOnEveryPath: [],
-      knownOnSomePaths: ["test"],
-    });
-
-    expect(arrivals.find((arrival) => arrival.id === "start")).toStrictEqual({
-      from: [],
-      id: "start",
-      knownOnEveryPath: [],
-      knownOnSomePaths: [],
-    });
-  });
-
-  it("stops on a plan that loops", () => {
-    const plan = challengePlanFixture();
-
-    const looping = {
-      ...plan,
-      decisions: plan.decisions.map((decision) => ({
-        ...decision,
-        choices: decision.choices.map((choice) => ({ ...choice, next: "start" })),
-      })),
-    };
-
-    expect(getPlanArrivals(looping).map((arrival) => arrival.id)).toStrictEqual(["start"]);
-  });
-});
+import { describePlanForScript, getPlanFactProblems } from "./challenge-plan-paths";
 
 describe(getPlanFactProblems, () => {
   it("accepts an ending that rests on start facts and on a fact every path into it established", () => {
@@ -150,5 +112,25 @@ describe(describePlanForScript, () => {
         "  later facts known on only some paths: test",
       ].join("\n"),
     );
+  });
+
+  it("names the first decision and stops on a plan that loops", () => {
+    const plan = challengePlanFixture();
+
+    expect(describePlanForScript(plan)).toContain("- start: the first decision");
+
+    const looping = {
+      ...plan,
+      decisions: plan.decisions.map((decision) => ({
+        ...decision,
+        choices: decision.choices.map((choice) => ({ ...choice, next: "start" })),
+      })),
+    };
+
+    const paths = describePlanForScript(looping).split("PATHS:\n")[1]?.split("\n") ?? [];
+
+    expect(paths.filter((line) => line.startsWith("- "))).toStrictEqual([
+      "- start: reached by start.check, start.skip",
+    ]);
   });
 });

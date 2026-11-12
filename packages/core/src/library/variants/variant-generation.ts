@@ -12,7 +12,7 @@ import {
 } from "../generation/held-back-drafts";
 import { toVariantKey } from "./variant-keys";
 
-export const MAX_VARIANT_RESERVATIONS = 8;
+const MAX_VARIANT_RESERVATIONS = 8;
 
 type VariantIdentity = { stepId: string; kind: StepVariantKind; key: string };
 type VariantAttempt = VariantIdentity & { workflowRunId: string };
@@ -45,33 +45,6 @@ async function lockGeneration(tx: TransactionClient, input: VariantIdentity) {
   `;
 
   return tx.stepVariantGeneration.findUniqueOrThrow({ where: { stepVariantGenerationKey: input } });
-}
-
-/** Internal workflow capability; callers authorize the step and coordinate expensive field runs. */
-export async function readStepVariantGenerationSummary(input: VariantIdentity) {
-  const key = identity(input);
-
-  const step = await prisma.step.findUnique({
-    select: {
-      lesson: { select: { ownerId: true } },
-      variantGenerations: { where: { key: key.key, kind: key.kind } },
-      variants: { where: { key: key.key, kind: key.kind } },
-    },
-    where: { id: key.stepId },
-  });
-
-  if (!step) {
-    return null;
-  }
-
-  const [generation] = step.variantGenerations;
-
-  return {
-    claimedRunIds: generation?.claimedRunIds ?? [],
-    exhausted: isVariantGenerationExhausted({ generation, ownerId: step.lesson.ownerId }),
-    heldBackDrafts: parseHeldBackDrafts(generation?.heldBackDrafts),
-    variant: step.variants[0] ?? null,
-  };
 }
 
 /** A replay without a saved outcome may retry provider work using its original reservation. */

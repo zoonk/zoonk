@@ -48,7 +48,7 @@ export const challengeReviewTask: Task<
         ? `The reviewer must identify these confirmed errors with a concrete location, path and evidence: ${saved.errors.join("; ")}. Score missed errors down. Do not reward stylistic findings or claims unsupported by the case. Other findings count only if demonstrably correct.`
         : "This case is a hand-checked clean control. Return an empty findings array. Style, missing detail, hypothetical risk and defensible choices are not errors.",
     id: saved.id,
-    language: /[ãõç]/u.test(saved.written.title) ? "pt" : "en",
+    language: saved.language,
     userInput: {
       field: saved.field,
       language: saved.language,
