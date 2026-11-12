@@ -174,7 +174,7 @@ export const mockResultSchema = z
       .optional()
       .meta({
         description:
-          "Lead the result with `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
+          "The result in points, `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
       }),
     preparation: z.object({ after: z.number(), before: z.number() }).nullable(),
     previous: z.number().nullable(),

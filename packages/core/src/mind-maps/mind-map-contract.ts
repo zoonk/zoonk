@@ -220,7 +220,7 @@ const mindMapCreateOfferSchema = z
       .nullable()
       .meta({
         description:
-          "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A chapter offers to create its map only while this is null, or when its map failed (the retry is free)",
+          "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A new map can start only while this is null, or when the chapter's map failed (the retry is free)",
       }),
   })
   .meta({ id: "MindMapCreateOffer" });

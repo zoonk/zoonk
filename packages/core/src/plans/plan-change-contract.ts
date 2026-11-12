@@ -34,7 +34,7 @@ export const planChangeSchema = z
       .nullable()
       .meta({
         description:
-          "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
+          "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). The learner's ways out are more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything), keeping the time and covering less, or choosing where to focus (canFocus). Null when the date isn't at risk",
       }),
     canApply: z
       .boolean()
@@ -51,7 +51,7 @@ export const planChangeSchema = z
       .nullable()
       .meta({
         description:
-          "A proposal on Today is previewed against the current plan before Apply is offered, and Today carries none whose preview would change nothing. Null when the plan is not ready or its operations cannot apply; never offer Apply without an effect",
+          "What applying the change does, previewed against the current plan; Today carries no proposal whose preview would change nothing. Null when the plan is not ready or its operations cannot apply, and then the change can't be applied",
       }),
     examDocument: examDocumentSchema,
     id: uuidSchema(),
@@ -59,7 +59,7 @@ export const planChangeSchema = z
       .string()
       .meta({
         description:
-          "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one; say the count change and that the plan now allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
+          "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
       }),
     lessonsSkipped: z
       .int()
@@ -79,7 +79,7 @@ export const planChangeSchema = z
       .nullable()
       .meta({
         description:
-          "The exam day the notice officially sets, when the change moves the goal's date off it. Say it with the change and label applying it as keeping the learner's own date anyway. Null otherwise",
+          "The exam day the notice officially sets, when the change moves the goal's date off it, so applying it keeps the learner's own date instead of the official one. Null otherwise",
       }),
     operations: z.array(anyPlanOperationSchema),
     reason: z
@@ -87,11 +87,9 @@ export const planChangeSchema = z
       .nullable()
       .meta({
         description:
-          "The sentence to show as written when an AI or a proposal wrote it; null when the client says it from kind, operations and effect, as for every change read from the learner's words (`source: planEdit`, the buddy's or the plan page's), so its card says what it does, never what was asked",
+          "Why the change is proposed or was made, written by an AI or a proposal in the learner's language. Null for every change read from the learner's words (`source: planEdit`, the buddy's or the plan page's), which `kind`, `operations` and `effect` describe in full",
       }),
-    seen: z
-      .boolean()
-      .meta({ description: 'The learner said "Got it" to it, so the plan no longer shows it' }),
+    seen: z.boolean().meta({ description: "True once the learner marked it as seen" }),
     source: z
       .string()
       .meta({ description: "learner, planEdit, tutor, system, or the part that proposed it" }),
