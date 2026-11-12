@@ -2480,7 +2480,7 @@ msgid "Next"
 msgstr "Devam et"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Onayla"
@@ -4194,6 +4194,59 @@ msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "Cevapları kontrol ediyoruz…"
 
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
+msgctxt "VLjmPG"
+msgid "Writing your challenge"
+msgstr "Meydan okumanı hazırlıyoruz"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "mpnHDw"
+msgid "Planning the challenge"
+msgstr "Meydan okumayı planlama"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "OvsNse"
+msgid "Picking the situation…"
+msgstr "Durumu seçiyoruz…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "VNxpbu"
+msgid "Mapping the choices you'll face…"
+msgstr "Karşına çıkacak seçenekleri belirliyoruz…"
+
+#. A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "V6oGV2"
+msgid "Fixing what the check found"
+msgstr "Kontrolde bulunan sorunu düzeltme"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "Sp4VI3"
+msgid "Planning the challenge again…"
+msgstr "Meydan okumayı yeniden planlıyoruz…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "411Jv_"
+msgid "Rewriting the parts that didn't add up…"
+msgstr "Tutarsız kısımları yeniden hazırlıyoruz…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "wFWjvX"
+msgid "Writing the challenge"
+msgstr "Meydan okumayı hazırlama"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "ZM7ACn"
+msgid "Writing what each choice leads to…"
+msgstr "Her seçimin sonuçlarını hazırlıyoruz…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "IxN_H4"
+msgid "Checking every path…"
+msgstr "Her yolu kontrol ediyoruz…"
+
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
@@ -4449,11 +4502,6 @@ msgstr "Her branş için sorular hazırlıyoruz"
 msgctxt "bLGs-q"
 msgid "Picking what to ask in each subject…"
 msgstr "Her branşta ne soracağımızı seçiyoruz…"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "VLjmPG"
-msgid "Writing your challenge"
-msgstr "Meydan okumanı hazırlıyoruz"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"
@@ -10049,14 +10097,14 @@ msgid "Your answer, in your own words"
 msgstr "Cevabını kendi cümlelerinle yaz"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "Burada bitir ve planını gör"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "Soru {number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "Burada bitir ve planını gör"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"

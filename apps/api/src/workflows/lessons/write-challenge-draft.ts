@@ -17,7 +17,8 @@ export async function writeChallengeDraft({
   input: WriteInput;
   stage: ChallengeDraftStage;
 }): Promise<LessonWriteOutcome> {
-  const planned = await planChallengeStep(stage);
+  const { lessonId } = input;
+  const planned = await planChallengeStep({ lessonId, stage });
 
   if (planned.problems.length > 0) {
     return finishChallengeDraftStep({
@@ -28,12 +29,12 @@ export async function writeChallengeDraft({
     });
   }
 
-  const scripted = await scriptChallengeStep({ planned, stage });
+  const scripted = await scriptChallengeStep({ lessonId, planned, stage });
 
   const problems =
     scripted.problems.length > 0 || !stage.review
       ? scripted.problems
-      : await reviewChallengeStep({ scripted, stage });
+      : await reviewChallengeStep({ lessonId, scripted, stage });
 
   return finishChallengeDraftStep({
     input,

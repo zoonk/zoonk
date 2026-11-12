@@ -2480,7 +2480,7 @@ msgid "Next"
 msgstr "Weiter"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/onboarding/steps/placement-question.tsx
+#: src/session/question-block/question-actions.tsx
 msgctxt "N2IrpM"
 msgid "Confirm"
 msgstr "Bestätigen"
@@ -4194,6 +4194,59 @@ msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "Wir prüfen die Antworten…"
 
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
+msgctxt "VLjmPG"
+msgid "Writing your challenge"
+msgstr "Wir erstellen deine Herausforderung"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "mpnHDw"
+msgid "Planning the challenge"
+msgstr "Wir planen die Herausforderung"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "OvsNse"
+msgid "Picking the situation…"
+msgstr "Wir wählen die Situation aus…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "VNxpbu"
+msgid "Mapping the choices you'll face…"
+msgstr "Wir legen die Entscheidungsmöglichkeiten fest…"
+
+#. A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk writes the challenge again.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "V6oGV2"
+msgid "Fixing what the check found"
+msgstr "Wir beheben die gefundenen Probleme"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "Sp4VI3"
+msgid "Planning the challenge again…"
+msgstr "Wir planen die Herausforderung noch einmal…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "411Jv_"
+msgid "Rewriting the parts that didn't add up…"
+msgstr "Wir überarbeiten die unstimmigen Stellen…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "wFWjvX"
+msgid "Writing the challenge"
+msgstr "Wir erstellen die Herausforderung"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "ZM7ACn"
+msgid "Writing what each choice leads to…"
+msgstr "Wir erstellen die Texte zu den Folgen jeder Entscheidung…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "IxN_H4"
+msgid "Checking every path…"
+msgstr "Wir prüfen jeden Entscheidungsweg…"
+
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
@@ -4449,11 +4502,6 @@ msgstr "Wir erstellen Fragen zu jedem Fach"
 msgctxt "bLGs-q"
 msgid "Picking what to ask in each subject…"
 msgstr "Wir wählen die Fragen für jedes Fach aus…"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "VLjmPG"
-msgid "Writing your challenge"
-msgstr "Wir erstellen deine Herausforderung"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"
@@ -10049,14 +10097,14 @@ msgid "Your answer, in your own words"
 msgstr "Deine Antwort in eigenen Worten"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "76_ax9"
-msgid "Stop here and see my plan"
-msgstr "Hier aufhören und meinen Plan ansehen"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "bbw_YT"
 msgid "Question {number, number}"
 msgstr "Frage {number, number}"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "Hier aufhören und meinen Plan ansehen"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"

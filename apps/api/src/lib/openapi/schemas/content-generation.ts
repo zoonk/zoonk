@@ -43,6 +43,12 @@ export const lessonReadinessSchema = z
           "Something ready to do instead of waiting: the plan's next written lesson, or due reviews. Null when the lesson is ready or nothing else is",
       }),
     generationId: generationIdSchema.nullable(),
+    kind: z
+      .enum(["challenge", "lesson"])
+      .meta({
+        description:
+          "Which steps the run writing it reports, so the wait shows them: a `challenge`'s case is planned, written and checked, then written again when its check holds it back; a `lesson` is planned, written, highlighted and drawn",
+      }),
     setAside: z
       .boolean()
       .meta({

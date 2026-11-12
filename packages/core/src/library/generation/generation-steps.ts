@@ -4,6 +4,10 @@ const LESSON_CONTENT_STEPS = [
   "writeLesson",
   "markLesson",
   "drawPictures",
+  "planChallenge",
+  "writeChallenge",
+  "reviewChallenge",
+  "redraftChallenge",
   "lessonReady",
 ] as const;
 

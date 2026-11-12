@@ -38,7 +38,7 @@ export async function prepareFieldChallenge({
     return stage.status;
   }
 
-  const planned = await planChallengeStep(stage);
+  const planned = await planChallengeStep({ stage });
 
   if (planned.problems.length > 0) {
     const result = await finishFieldChallengeDraftStep({

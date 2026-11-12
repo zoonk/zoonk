@@ -11,6 +11,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { challengePlanFixture } from "../../../../../packages/ai/src/tasks/challenge/challenge-plan-fixture";
+import { getStreamedEvents } from "../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { prepareFieldChallenge } from "../sessions/prepare-field-challenge";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
@@ -110,6 +111,37 @@ describe("challenge prepublication review", () => {
 
     expect(vi.mocked(generateChallengePlan).mock.calls[1]?.[0].problems).toStrictEqual([
       expect.stringContaining(finding.error),
+    ]);
+  });
+
+  it("keeps its wait on the redraft until the next draft is published", async () => {
+    const target = await lesson();
+    vi.mocked(checkChallengeQuality).mockResolvedValueOnce(taskResult({ findings: [finding] }));
+
+    await expect(lessonContentWorkflow({ lessonId: target.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    expect(
+      getStreamedEvents().map((event) => `${String(event.step)}:${String(event.status)}`),
+    ).toStrictEqual([
+      "writeLesson:started",
+      "planChallenge:started",
+      "planChallenge:completed",
+      "writeChallenge:started",
+      "writeChallenge:completed",
+      "reviewChallenge:started",
+      "reviewChallenge:completed",
+      "redraftChallenge:started",
+      "writeLesson:started",
+      "planChallenge:started",
+      "planChallenge:completed",
+      "writeChallenge:started",
+      "writeChallenge:completed",
+      "reviewChallenge:started",
+      "reviewChallenge:completed",
+      "writeLesson:completed",
+      "lessonReady:completed",
     ]);
   });
 

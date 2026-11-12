@@ -192,8 +192,6 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
     return written;
   }
 
-  await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
-
   if (written.status !== "heldBack") {
     return written;
   }
@@ -230,10 +228,9 @@ export async function checkLessonContentStep({
     return checked;
   }
 
-  await using stream = createStepStream<LessonStreamStep>();
-  await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
-
   if (checked.status === "published") {
+    await using stream = createStepStream<LessonStreamStep>();
+    await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
     return { check: checked.check, imageScope, owesSentenceOrders: false, status: "published" };
   }
 
