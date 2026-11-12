@@ -139,6 +139,11 @@ class KeyedResources<K, T : Any> internal constructor(
         return resource
     }
 
+    /** Marks stale every kept read whose key [matches], as [Resource.invalidate] does, for a write that changed each of them. */
+    fun invalidate(matches: (K) -> Boolean) {
+        entries.filterKeys(matches).values.forEach { it.invalidate() }
+    }
+
     internal fun releaseInactive() {
         entries.values.removeAll { !it.isShown }
     }

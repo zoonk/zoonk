@@ -232,11 +232,15 @@ class MindMapStore(
 
     /**
      * Starts every chapter map the goal's offer counts: a model call, so only from a learner's tap.
-     * The list, read again, says what came of it; null when the session changed meanwhile.
+     * The list, read again, says what came of it, and so does each of the goal's chapters read
+     * earlier, once it shows again; null when the session changed meanwhile.
      */
     suspend fun createAll(goalId: UUID): Boolean? =
         when (cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.createAll(it, goalId) }) {
-            is MutationResult.Done -> list[goalId].reread()
+            is MutationResult.Done -> {
+                chapter.invalidate { it.goalId == goalId }
+                list[goalId].reread()
+            }
             is MutationResult.Failed -> false
             MutationResult.Obsolete -> null
         }
