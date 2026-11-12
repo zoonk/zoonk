@@ -76,12 +76,12 @@ export default function IconsPage() {
       >
         <Specimen className="flex flex-col gap-3">
           {STATUSES.map(({ label, status }) => (
-            <span className="flex items-center gap-2.5 text-sm" key={status}>
+            <span className="flex items-center gap-2 text-sm" key={status}>
               <StatusMark status={status} />
               {label}
             </span>
           ))}
-          <span className="flex items-center gap-2.5 text-sm">
+          <span className="flex items-center gap-2 text-sm">
             <DoneMark />
             DoneMark on its own
           </span>

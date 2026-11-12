@@ -119,7 +119,7 @@ export function SwatchTable({
   return (
     <div className="flex flex-col" ref={table} role="table">
       <div
-        className="text-faint hidden gap-3 pb-2 text-xs lg:grid lg:grid-cols-[minmax(0,1.3fr)_repeat(4,minmax(0,1fr))]"
+        className="text-faint hidden gap-x-6 pb-2 text-xs lg:grid lg:grid-cols-[14rem_repeat(4,minmax(0,1fr))]"
         role="row"
       >
         <span role="columnheader">Token</span>
@@ -132,7 +132,7 @@ export function SwatchTable({
 
       {tokens.map((token) => (
         <div
-          className="border-border grid gap-3 border-t py-3 lg:grid-cols-[minmax(0,1.3fr)_repeat(4,minmax(0,1fr))]"
+          className="border-border grid gap-x-6 gap-y-3 border-t py-3 lg:grid-cols-[14rem_repeat(4,minmax(0,1fr))]"
           key={token.name}
           role="row"
         >
@@ -151,7 +151,7 @@ export function SwatchTable({
             <div
               className={cn(
                 modeClass(mode.id),
-                "ring-border flex min-h-16 items-center gap-3 rounded-lg px-3 py-2 ring-1",
+                "ring-border flex min-h-16 items-center gap-3 self-start rounded-lg px-3 py-2 ring-1",
               )}
               data-mode={mode.id}
               data-subject={subject}

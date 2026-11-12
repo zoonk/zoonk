@@ -18,7 +18,7 @@ export function ToggleNav({
             <Link aria-current={option.isActive ? "page" : undefined} href={option.href} prefetch />
           }
           size="sm"
-          variant={option.isActive ? "default" : "outline"}
+          variant={option.isActive ? "secondary" : "ghost"}
         >
           {option.label}
         </Button>

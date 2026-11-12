@@ -1,9 +1,16 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 
+/** The site's prose is 14 to 15 px, so the 40rem reading column would run past 90 characters. */
+const DOC_MEASURE = "max-w-lg";
+
+/** Every table on the site starts its second column on the same line. */
+export const DOC_TABLE_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
+export const DOC_TABLE_HEAD = "text-faint hidden gap-x-6 pb-2 text-xs lg:grid";
+
 export function DocHeader({ children, title }: React.PropsWithChildren<{ title: string }>) {
   return (
-    <header className="max-w-column flex flex-col gap-2 pb-8">
+    <header className={cn(DOC_MEASURE, "flex flex-col gap-2 pb-8")}>
       <h1 className="text-title">{title}</h1>
       <div className="text-muted-foreground text-[0.9375rem] leading-6 text-pretty">
         {typeof children === "string" ? renderCode(children) : children}
@@ -21,7 +28,7 @@ export function DocSection({
 }: React.PropsWithChildren<{ className?: string; id?: string; intro?: string; title: string }>) {
   return (
     <section className={cn("flex flex-col gap-4 pb-12", className)} id={id}>
-      <div className="max-w-column flex flex-col gap-1">
+      <div className={cn(DOC_MEASURE, "flex flex-col gap-1")}>
         <h2 className="text-section">{title}</h2>
         {intro && (
           <p className="text-muted-foreground text-sm leading-6 text-pretty">{renderCode(intro)}</p>
@@ -34,7 +41,7 @@ export function DocSection({
 
 export function DocRules({ rules }: { rules: readonly string[] }) {
   return (
-    <ul className="max-w-column flex list-disc flex-col gap-1.5 pl-5 text-sm leading-6">
+    <ul className={cn(DOC_MEASURE, "flex list-disc flex-col gap-1.5 pl-5 text-sm leading-6")}>
       {rules.map((rule) => (
         <li key={rule}>{renderCode(rule)}</li>
       ))}
@@ -96,11 +103,13 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
   );
 }
 
+const CODE_CHIP = "bg-muted rounded px-1 py-0.5 font-mono text-[0.85em] leading-none";
+
 export function renderCode(text: string): React.ReactNode {
   return text.split(/(?<code>`[^`]+`)/u).map((part, index) =>
     part.startsWith("`") ? (
       // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this text
-      <code className="bg-muted rounded px-1 py-0.5 font-mono text-[0.85em]" key={index}>
+      <code className={CODE_CHIP} key={index}>
         {part.slice(1, -1)}
       </code>
     ) : (
