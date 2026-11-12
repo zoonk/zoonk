@@ -90,6 +90,7 @@ async function StudyBody({ searchParams }: Pick<Props, "searchParams">) {
       deck={deck}
       goalId={goal.id}
       lessons={opening && lessons ? { [opening.chapterId]: lessons } : {}}
+      saved={result.mindMaps.saved.map(({ kind, targetId }) => ({ kind, targetId }))}
       start={start}
       view={view}
     />

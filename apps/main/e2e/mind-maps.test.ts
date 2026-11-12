@@ -203,6 +203,53 @@ test.describe("Mind maps", () => {
     }
   });
 
+  test("a map removed from Saved opens in Study as not saved, so one press saves it again", async ({
+    browser,
+  }) => {
+    const { first, goal, second, user } = await createLearner();
+
+    await Promise.all([
+      drawMap(first.chapter.id),
+      drawMap(second.chapter.id),
+      saveChapterMap({ chapter: second.chapter, goalId: goal.id, userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const tabs = page.getByRole("navigation", { name: "Mind maps" });
+    const tab = (name: string) => tabs.getByRole("link", { name: new RegExp(`^${name}`, "u") });
+    const studyLink = page.getByRole("link", { name: new RegExp(second.chapter.title, "u") });
+    const heading = page.getByRole("heading", { level: 1, name: second.chapter.title });
+    const savedCount = () => prisma.savedMindMap.count({ where: { userId: user.id } });
+
+    try {
+      await page.goto("/mind-maps");
+      await studyLink.click();
+      await expect(heading).toBeVisible();
+      await expect(page.getByRole("button", { exact: true, name: "Saved" })).toBeVisible();
+      await page.getByRole("link", { name: "Leave" }).click();
+
+      await tab("Saved").click();
+
+      await page
+        .getByRole("list", { name: "Saved maps" })
+        .getByRole("button", { name: "Saved" })
+        .click();
+
+      await expect.poll(savedCount).toBe(0);
+
+      await tab("Chapters").click();
+      await studyLink.click();
+      await expect(heading).toBeVisible();
+
+      const save = page.getByRole("button", { exact: true, name: "Save" });
+      await expect(save).toBeVisible();
+      await save.click();
+      await expect.poll(savedCount).toBe(1);
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("maps the learner starts stay on their way across tabs, and the page shows each as it turns ready", async ({
     browser,
   }) => {

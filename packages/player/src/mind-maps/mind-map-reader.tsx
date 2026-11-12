@@ -95,6 +95,7 @@ function Reader({
   goalId,
   hrefs,
   lessons: loaded,
+  saved,
   slide,
   start,
   view,
@@ -106,8 +107,8 @@ function Reader({
   const chapters = useChapterLessons({ deck, index: at.index, load: actions.lessonMaps, loaded });
 
   const saves = useMindMapSaves({
-    onSaved: (target, saved) =>
-      setStored((current) => new Map(current).set(toSavedMapKey(target), saved)),
+    onSaved: (target, isSaved) =>
+      setStored((current) => new Map(current).set(toSavedMapKey(target), isSaved)),
     save: actions.save,
   });
 
@@ -129,9 +130,12 @@ function Reader({
       ? { kind: "chapter", targetId: shown.chapterId }
       : lesson && { kind: "lesson", targetId: lesson.lessonId };
 
-  const servedSaved = shown.kind === "chapter" ? shown.saved : (lesson?.saved ?? false);
+  const savedKeys = new Set(saved.map((map) => toSavedMapKey(map)));
 
-  const savedState = target && { saved: stored.get(toSavedMapKey(target)) ?? servedSaved, target };
+  const savedState = target && {
+    saved: stored.get(toSavedMapKey(target)) ?? savedKeys.has(toSavedMapKey(target)),
+    target,
+  };
 
   const save: MindMapSave | null = savedState && {
     onToggle: () => saves.toggle(savedState),
@@ -246,6 +250,8 @@ type MindMapReaderProps = {
   hrefs: MindMapReaderHrefs;
   /** The lesson maps the server already read, by chapter: those of the map the deck opens on. */
   lessons: ChapterLessons;
+  /** Unlike the deck, follows each copy the server sends, so a newer one corrects an older one's. */
+  saved: readonly SavedMapTarget[];
   start: number;
   view: MindMapTab;
 };

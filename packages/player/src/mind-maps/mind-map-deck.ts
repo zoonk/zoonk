@@ -14,7 +14,6 @@ export type ChapterSlide = {
   image: MindMapImage | null;
   kind: "chapter";
   outline: MindMapOutline;
-  saved: boolean;
   title: string;
 };
 
@@ -39,7 +38,6 @@ function toChapterSlide(chapter: GoalMindMapView): ChapterSlide[] {
       image: chapter.image,
       kind: "chapter",
       outline: chapter.outline,
-      saved: chapter.saved,
       title: chapter.title,
     },
   ];
