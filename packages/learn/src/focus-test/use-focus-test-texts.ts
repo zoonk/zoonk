@@ -53,36 +53,83 @@ export function useSubjectStateText() {
   };
 }
 
-export function useSessionQuestionsNote(): string {
+/** The test's invitation: also its row's line on the Plan while it hasn't started. */
+export function useFocusTestTitle() {
   const t = useExtracted();
 
-  return t({
-    description:
-      "“Test questions” are the Focus test's questions. Use the same words for them as in “Pause test questions”.",
-    message: "Your next sessions ask a few more test questions.",
-  });
+  return (suggestsFocus: boolean): string =>
+    suggestsFocus
+      ? t({
+          description:
+            "Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.",
+          message: "Find out where to focus",
+        })
+      : t({
+          description:
+            "The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.",
+          message: "Find out where to start",
+        });
 }
 
-export function useSittingFacts() {
+export function useSittingTime() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
   return {
     about: (minutes: number): string => t("About {time}", { time: formatDuration(minutes) }),
+    aboutLeft: (minutes: number): string =>
+      t({
+        description:
+          "{time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.",
+        message: "About {time} left",
+        values: { time: formatDuration(minutes) },
+      }),
   };
 }
 
-export function useFocusTestStateFacts() {
+export function useSeeResultLabel(): string {
   const t = useExtracted();
-  const { about } = useSittingFacts();
 
-  return ({ offer, state }: FocusTestSummary): string[] => {
-    const time = offer ? [about(offer.minutes)] : [];
+  return t({
+    description:
+      "Button that ends the Focus test with the answers given so far and shows its result.",
+    message: "See my result",
+  });
+}
 
+export function useFocusTestRowFacts() {
+  const t = useExtracted();
+  const title = useFocusTestTitle();
+  const { about, aboutLeft } = useSittingTime();
+
+  return ({ offer, sessionQuestions, state, suggestsFocus }: FocusTestSummary): string[] => {
     if (state === "notStarted") {
-      return [t("Not started"), ...time];
+      return [title(suggestsFocus), ...(offer ? [about(offer.minutes)] : [])];
     }
 
-    return state === "sitting" ? [t("Continue"), ...time] : [t("Your answers are in your plan")];
+    if (state === "sitting") {
+      return [
+        t({
+          description:
+            "Under “Focus test” in a list: the learner started the test and has not finished it.",
+          message: "In progress",
+        }),
+        ...(offer ? [aboutLeft(offer.minutes)] : []),
+      ];
+    }
+
+    return [
+      sessionQuestions === "paused"
+        ? t({
+            description:
+              "Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.",
+            message: "Paused in your sessions",
+          })
+        : t({
+            description:
+              "Under “Focus test” in a list, once the learner took the test: opens its result.",
+            message: "See your result",
+          }),
+    ];
   };
 }

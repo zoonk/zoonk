@@ -16,7 +16,7 @@ import {
 } from "../plan/plan-context";
 import { PlanEditor } from "../plan/plan-editor";
 import { type PlanEditorSection } from "../plan/plan-editor-sections";
-import { PlanFocusTest, type SetTestQuestions } from "../plan/plan-focus-test";
+import { PlanFocusTest } from "../plan/plan-focus-test";
 import { PlanProperties } from "../plan/plan-properties";
 import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
@@ -85,7 +85,6 @@ function JourneyBody({
   end,
   goalStatus,
   links,
-  onSetTestQuestions,
   openAdjust,
   standing,
   syllabus,
@@ -94,7 +93,6 @@ function JourneyBody({
   end: PlanEnd;
   goalStatus: GoalStatusControl | null;
   links: JourneyLinks;
-  onSetTestQuestions?: SetTestQuestions;
   openAdjust: boolean | PlanEditorSection;
   standing: JourneyStanding | null;
   syllabus: SyllabusSectionView | null;
@@ -108,7 +106,7 @@ function JourneyBody({
   const courseHref = course && links.course(course);
   const structure = hasSyllabusSection(syllabus) ? syllabus : null;
   const paused = goalStatus?.status === "paused";
-  const focusTest = <PlanFocusTest onSetTestQuestions={onSetTestQuestions} />;
+  const focusTest = <PlanFocusTest />;
 
   const numbers = (variant: "stats" | "tiles", className: string) =>
     standing && (
@@ -200,7 +198,6 @@ export function JourneyScreen({
   goal,
   goalStatus = null,
   links,
-  onSetTestQuestions,
   openAdjust = false,
   openFocus = false,
   openFullCourse = false,
@@ -217,7 +214,6 @@ export function JourneyScreen({
   goal: PlanGoal;
   goalStatus?: GoalStatusControl | null;
   links: JourneyLinks;
-  onSetTestQuestions?: SetTestQuestions;
   openAdjust?: boolean | PlanEditorSection;
   openFocus?: boolean;
   openFullCourse?: boolean;
@@ -245,7 +241,6 @@ export function JourneyScreen({
           end={end}
           goalStatus={goalStatus}
           links={links}
-          onSetTestQuestions={onSetTestQuestions}
           openAdjust={openAdjust}
           standing={standing}
           syllabus={syllabus}

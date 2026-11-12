@@ -29,14 +29,23 @@ function countFailure({
     : current;
 }
 
-function useTestState({ actions, run }: { actions: FocusTestActions; run: GenerationRun | null }) {
+function useTestState({
+  actions,
+  run,
+  started,
+}: {
+  actions: FocusTestActions;
+  run: GenerationRun | null;
+  started: boolean;
+}) {
   const [phase, setPhase] = useState<FocusTestPhase>({ kind: "loading" });
   const [buildFailed, setBuildFailed] = useState(false);
   // Questions that arrived while the learner waited show once the wait moves on.
   const [arrived, setArrived] = useState<PlacementOutcome | null>(null);
 
   const reopen = useReadOnOpen({
-    onRead: (outcome) => setPhase(toFocusTestPhase({ opening: true, outcome: outcome ?? FAILED })),
+    onRead: (outcome) =>
+      setPhase(toFocusTestPhase({ opening: true, outcome: outcome ?? FAILED, started })),
     read: actions.get,
   });
 
@@ -70,14 +79,17 @@ export function useFocusTest({
   actions,
   onDone,
   run,
+  started,
 }: {
   actions: FocusTestActions;
   onDone: () => Promise<boolean>;
   run: GenerationRun | null;
+  started: boolean;
 }) {
   const { arrived, buildFailed, phase, poll, reopen, setArrived, setPhase } = useTestState({
     actions,
     run,
+    started,
   });
 
   const [failed, setFailed] = useState(false);

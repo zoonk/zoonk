@@ -21,7 +21,8 @@ export type FocusTestPhase =
   /** `answered`: the learner has test answers, so leaving the wait uses them. */
   | { answered: boolean; kind: "waiting" }
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
-  | { kind: "resume"; question: QuestionPhase }
+  /** `answered`: every answer the learner has saved, earlier sittings included. */
+  | { answered: number; kind: "resume"; question: QuestionPhase }
   | { focusTest: FocusTestView; kind: "checkpoint" };
 
 /** Null when there's no result to show and nothing to offer. */
@@ -35,15 +36,18 @@ function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
 
 /**
  * `opening` is a page load, which never drops the learner into a question: a sitting with answers
- * shows its resume screen, and one without is offered again. A test with no result and nothing to
- * ask is `unavailable`, and a read that failed is `loadFailed`.
+ * shows its resume screen, and one without is offered again, unless the learner `started` it on the
+ * screen that led here. A test with no result and nothing to ask is `unavailable`, and a read that
+ * failed is `loadFailed`.
  */
 export function toFocusTestPhase({
   opening,
   outcome,
+  started = false,
 }: {
   opening: boolean;
   outcome: PlacementOutcome;
+  started?: boolean;
 }): FocusTestPhase {
   if (outcome.status === "failed") {
     return { kind: "loadFailed" };
@@ -87,7 +91,9 @@ export function toFocusTestPhase({
     return question;
   }
 
-  return sitting.answered > 0
-    ? { kind: "resume", question }
-    : (toRestingPhase(focusTest) ?? question);
+  if (sitting.answered > 0) {
+    return { answered: outcome.answered, kind: "resume", question };
+  }
+
+  return started ? question : (toRestingPhase(focusTest) ?? question);
 }

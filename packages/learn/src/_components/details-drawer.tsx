@@ -14,7 +14,8 @@ import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
-const TRIGGER: Record<"option" | "secondary", React.ReactElement> = {
+const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
+  link: <Button className="self-start" variant="link" />,
   option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
 };
@@ -39,7 +40,7 @@ export function DetailsDrawer({
   children: React.ReactNode;
   label: string;
   title: string;
-  trigger?: "option" | "secondary";
+  trigger?: "link" | "option" | "secondary";
 }) {
   return (
     <Drawer>

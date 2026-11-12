@@ -13,13 +13,13 @@ import {
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
-  SuggestionLinkAction,
   SuggestionOpen,
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useCheckFocusLabel } from "../plan/plan-focus-test";
+import { useFormatDuration } from "../_utils/time-format";
+import { useFocusTestTitle } from "../focus-test/use-focus-test-texts";
 import { useTodayScreen } from "./today-context";
 
 function FocusTestNotice({
@@ -31,10 +31,24 @@ function FocusTestNotice({
 }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
-  const checkFocusLabel = useCheckFocusLabel();
+  const title = useFocusTestTitle();
+  const formatDuration = useFormatDuration();
   const [state, setState] = useState<"dismissed" | "failed" | null>(null);
+  // Stays busy after the start is saved, until the test's page replaces this one.
+  const [starting, setStarting] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const busy = isPending || starting;
   const result = state === "dismissed" ? t("Noted. You can take the test from your plan.") : null;
+
+  const start = () => {
+    setStarting(true);
+
+    startTransition(async () => {
+      const { data: started } = await safeAsync(() => actions.startFocusTest());
+      setStarting(Boolean(started));
+      setState(started ? null : "failed");
+    });
+  };
 
   const dismiss = () => {
     onDismiss(offer);
@@ -57,7 +71,11 @@ function FocusTestNotice({
         ) : (
           <>
             <SuggestionSummary>
-              {t("A quick test can suggest where your study time should go.")}
+              {t({
+                description:
+                  "One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.",
+                message: "The Focus test shows what to study most.",
+              })}
             </SuggestionSummary>
             <SuggestionOpen />
           </>
@@ -65,24 +83,28 @@ function FocusTestNotice({
       </SuggestionLine>
 
       <SuggestionContent>
-        <SuggestionHeader>{t("Find where your study time should go")}</SuggestionHeader>
+        <SuggestionHeader>{title(true)}</SuggestionHeader>
 
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
             <SuggestionDescription>
-              {t(
-                "Your study time can't cover everything before your exam. Quick questions on your subjects suggest where to focus.",
-              )}
+              {t({
+                description:
+                  "{time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.",
+                message:
+                  "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most.",
+                values: { time: formatDuration(offer.minutes) },
+              })}
             </SuggestionDescription>
 
             <SuggestionActions>
-              <SuggestionLinkAction href={actions.focusTestHref}>
-                {checkFocusLabel(offer.minutes)}
-              </SuggestionLinkAction>
+              <SuggestionAction action={start} busy={starting} disabled={busy}>
+                {t("Start the test")}
+              </SuggestionAction>
 
-              <SuggestionAction action={dismiss} disabled={isPending} variant="outline">
+              <SuggestionAction action={dismiss} disabled={busy} variant="outline">
                 {t("Not now")}
               </SuggestionAction>
             </SuggestionActions>

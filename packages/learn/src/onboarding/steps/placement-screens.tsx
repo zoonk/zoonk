@@ -66,12 +66,15 @@ export function PlacementIntro({
 }
 
 function PlacementOutcome({
+  action,
   children,
   done,
   failed = false,
   onContinue,
   pending,
 }: {
+  /** Names the next screen when it isn't the plan. */
+  action?: string;
   children: React.ReactNode;
   done?: string;
   failed?: boolean;
@@ -89,7 +92,7 @@ function PlacementOutcome({
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
         <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-          {t("See my plan")}
+          {action ?? t("See my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>
     </OnboardingColumn>
@@ -134,10 +137,12 @@ export function PlacementDone({
 }
 
 export function PlacementUnavailable({
+  action,
   failed,
   onContinue,
   pending,
 }: {
+  action?: string;
   failed?: boolean;
   onContinue: () => void;
   pending: boolean;
@@ -145,7 +150,7 @@ export function PlacementUnavailable({
   const t = useExtracted();
 
   return (
-    <PlacementOutcome failed={failed} onContinue={onContinue} pending={pending}>
+    <PlacementOutcome action={action} failed={failed} onContinue={onContinue} pending={pending}>
       <OnboardingTitle>{t("Let's skip the questions")}</OnboardingTitle>
       <OnboardingDescription>
         {t(

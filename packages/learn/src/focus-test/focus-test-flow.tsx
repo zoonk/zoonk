@@ -10,21 +10,17 @@ import { StepLoadFailed, StepLoading } from "../onboarding/steps/step-parts";
 import { type FocusTestActions } from "./focus-test-actions";
 import { type QuestionPhase } from "./focus-test-phase";
 import { type FocusTestPlanActions } from "./focus-test-proposal";
-import {
-  FocusTestCheckpoint,
-  FocusTestEnded,
-  type FocusTestHost,
-  FocusTestInvitation,
-  FocusTestResume,
-} from "./focus-test-screens";
+import { FocusTestCheckpoint, type FocusTestHost } from "./focus-test-result";
+import { FocusTestEnded, FocusTestInvitation, FocusTestResume } from "./focus-test-screens";
 import { useFocusTest } from "./use-focus-test";
-import { getSubjectName } from "./use-focus-test-texts";
+import { getSubjectName, useSeeResultLabel } from "./use-focus-test-texts";
 
 function useWaitSkip({ answered, host }: { answered: boolean; host: FocusTestHost }) {
   const t = useExtracted();
+  const seeResult = useSeeResultLabel();
 
   if (answered) {
-    return { label: t("Use my answers"), note: null };
+    return { label: seeResult, note: null };
   }
 
   return host === "onboarding"
@@ -79,6 +75,7 @@ export function FocusTestFlow({
   plan = null,
   readWarmUp,
   run,
+  started = false,
   subject,
 }: {
   actions: FocusTestActions;
@@ -88,10 +85,13 @@ export function FocusTestFlow({
   plan?: FocusTestPlanActions | null;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
-  /** The goal's name, over every screen but a question, which names its own subject. */
+  /** The learner pressed "Start the test" on the screen that led here, so it isn't offered again. */
+  started?: boolean;
+  /** The goal's name, over a question whose subject isn't known. */
   subject: string;
 }) {
-  const test = useFocusTest({ actions, onDone, run });
+  const t = useExtracted();
+  const test = useFocusTest({ actions, onDone, run, started });
   const { failed, phase, pressed } = test;
   const waitSkip = useWaitSkip({ answered: phase.kind === "waiting" && phase.answered, host });
   // Only onboarding has a skip to save: a plan that's already there just goes back to itself.
@@ -118,29 +118,35 @@ export function FocusTestFlow({
         />
       );
     case "unavailable":
-      return <PlacementUnavailable failed={failed} onContinue={skip} pending={test.isPending} />;
+      return (
+        <PlacementUnavailable
+          action={t("Continue")}
+          failed={failed}
+          onContinue={skip}
+          pending={test.isPending}
+        />
+      );
     case "invitation":
       return (
         <FocusTestInvitation
           failed={failed}
-          focusTest={phase.focusTest}
           host={host}
           next={phase.next}
           onSkip={skip}
           onStart={test.onStart}
           pressed={pressed}
-          subject={subject}
+          suggestsFocus={phase.focusTest.suggestsFocus}
         />
       );
     case "resume":
       return (
         <FocusTestResume
+          answered={phase.answered}
           failed={failed}
           onContinue={() => test.resume(phase.question)}
-          onUseAnswers={() => test.onLeave(true)}
+          onSeeResult={() => test.onLeave(true)}
           pressed={pressed}
           sitting={phase.question.sitting}
-          subject={subject}
         />
       );
     case "question":
@@ -155,14 +161,7 @@ export function FocusTestFlow({
         />
       );
     case "ended":
-      return (
-        <FocusTestEnded
-          failed={failed}
-          onFinish={test.onFinish}
-          pending={test.isPending}
-          subject={subject}
-        />
-      );
+      return <FocusTestEnded failed={failed} onFinish={test.onFinish} pending={test.isPending} />;
     case "checkpoint":
       return (
         <FocusTestCheckpoint
@@ -173,7 +172,6 @@ export function FocusTestFlow({
           onDone={test.onDone}
           plan={plan}
           pressed={pressed}
-          subject={subject}
         />
       );
     default:

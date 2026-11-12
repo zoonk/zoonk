@@ -63,7 +63,11 @@ function PlacementProgress({
 
   const description = readsMaterial
     ? t("They come from the material you added. Reading it takes a few minutes.")
-    : t("They come from the skills your goal needs. It usually takes a minute or two.");
+    : t({
+        description:
+          "Shown while the learner waits for their first questions to be prepared. “This” is the wait.",
+        message: "This usually takes a minute or two.",
+      });
 
   return (
     <GenerationWait

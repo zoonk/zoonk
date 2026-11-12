@@ -19,7 +19,7 @@ import {
   usePlanCoverage,
 } from "../../plan/plan-coverage";
 import { useCanChooseFocus, useChooseFocus } from "../../plan/plan-focus";
-import { useCheckFocusLabel, useFocusTestOffer } from "../../plan/plan-focus-test";
+import { useFocusTestOfferHref, useTakeFocusTestLabel } from "../../plan/plan-focus-test";
 import { useFullCourse, useFullCourseText } from "../../plan/plan-full-course";
 import { PassMarks } from "../../syllabus/syllabus-notes";
 import { hasSyllabusSection } from "../../syllabus/syllabus-section";
@@ -137,8 +137,8 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
   const shown = hasSyllabusSection(syllabus) ? syllabus : null;
   const covered = moved && !coverage;
   const tradeOff = useFocusTradeOff();
-  const testOffer = useFocusTestOffer();
-  const checkFocusLabel = useCheckFocusLabel();
+  const testOfferHref = useFocusTestOfferHref();
+  const takeFocusTest = useTakeFocusTestLabel();
 
   useEffect(() => {
     if (covered) {
@@ -184,12 +184,12 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
         )}
       </p>
 
-      {(shown || testOffer) && (
+      {(shown || testOfferHref) && (
         <p className={LINKS_CLASS}>
           {shown && <SyllabusTopicsSheet syllabus={shown} />}
-          {testOffer && (
-            <LearnLink className={buttonVariants({ variant: "link" })} href={testOffer.href}>
-              {checkFocusLabel(testOffer.minutes)}
+          {testOfferHref && (
+            <LearnLink className={buttonVariants({ variant: "link" })} href={testOfferHref}>
+              {takeFocusTest}
             </LearnLink>
           )}
         </p>

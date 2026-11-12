@@ -179,7 +179,7 @@ test.describe("An exam's Focus test in onboarding", () => {
 
     await page.reload();
     await expect(page.getByRole("heading", { name: "Continue your test" })).toBeVisible();
-    await expect(page.getByText(/^1 answer saved/u)).toBeVisible();
+    await expect(page.getByText("Your 1 answer is saved.")).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(question(page, 2)).toBeVisible();
 
@@ -188,14 +188,8 @@ test.describe("An exam's Focus test in onboarding", () => {
     await expect(question(page, 3)).toBeVisible();
 
     await page.getByRole("button", { name: "Stop and use my answers" }).click();
-    await expect(page.getByRole("heading", { name: "Your starting plan" })).toBeVisible();
-
-    await page.getByRole("button", { name: "View all subjects" }).click();
-    await expect(page.getByText("Not known yet")).toBeVisible();
-    await expect(page.getByText("1 of 1 right")).toBeVisible();
-    await page.keyboard.press("Escape");
-
-    await page.getByRole("button", { name: "Continue to daily time" }).click();
+    await expect(page.getByText("Answers saved")).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(
       page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -238,29 +232,24 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await page.getByRole("button", { name: "I don't know yet" }).click();
   await expect(question(page, 2)).toBeVisible();
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
-  await expect(page.getByRole("heading", { name: "Your starting plan" })).toBeVisible();
 
   const update = page.getByRole("button", { name: "Update my plan" });
-  const done = page.getByRole("button", { exact: true, name: "Done" });
-  const intro = page.getByText(/Your plan can give these more time\./u);
-
-  await expect(update).toBeVisible();
-  await expect(intro).toBeVisible();
-  await expect(done).not.toHaveAttribute("aria-keyshortcuts", "Enter");
+  await expect(page.getByRole("heading", { name: "Give these subjects more time?" })).toBeVisible();
 
   await update.click();
-  await expect(page.getByText("Done. Your plan now gives these more time.")).toBeVisible();
-  await expect(intro).toBeHidden();
-  await expect(done).toHaveAttribute("aria-keyshortcuts", "Enter");
+  await expect(page.getByText("Your plan now gives these subjects more time.")).toBeVisible();
   expect(await readProposalStatus(goal.id)).toBe("applied");
+
+  await page.getByRole("button", { name: "See all subjects" }).click();
+  await expect(page.getByText("Not known yet")).toBeVisible();
+  await page.keyboard.press("Escape");
 
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByText("Undone. Your plan is back as it was.")).toBeVisible();
-  await expect(intro).toBeHidden();
   expect(await readProposalStatus(goal.id)).toBe("undone");
 
   await page.reload();
-  await expect(page.getByText("You kept your plan as it is.")).toBeVisible();
+  await expect(page.getByText(/^You kept your plan as it is\./u)).toBeVisible();
   await expect(update).toBeHidden();
 });
 

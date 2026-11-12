@@ -45,9 +45,10 @@ function testWith(focusTest: Partial<FocusTestView> = {}): FocusTestView {
 function ready(
   focusTest: FocusTestView | null,
   next: PlacementQuestion | null = null,
+  answered = 0,
 ): PlacementOutcome {
   return {
-    answered: 0,
+    answered,
     complete: false,
     dayBudgetSpent: 0,
     dayBudgetUsed: false,
@@ -104,6 +105,16 @@ describe(toFocusTestPhase, () => {
     });
   });
 
+  it("counts every saved answer on the resume screen, earlier sittings included", () => {
+    const sitting = sittingWith({ answered: 1, minutes: 9 });
+    const outcome = ready(testWith({ checkpoint: CHECKPOINT, sitting }), QUESTION, 7);
+
+    expect(toFocusTestPhase({ opening: true, outcome })).toMatchObject({
+      answered: 7,
+      kind: "resume",
+    });
+  });
+
   it("invites again when a sitting was left before its first answer", () => {
     const focusTest = testWith({ offer: OFFER, sitting: sittingWith() });
 
@@ -111,6 +122,22 @@ describe(toFocusTestPhase, () => {
       focusTest,
       kind: "invitation",
       next: OFFER,
+    });
+  });
+
+  it("opens on the first question when the learner started the test on the screen before", () => {
+    const sitting = sittingWith();
+    const outcome = ready(testWith({ offer: OFFER, sitting }), QUESTION);
+
+    expect(toFocusTestPhase({ opening: true, outcome, started: true })).toMatchObject({
+      kind: "question",
+      question: QUESTION,
+    });
+
+    const left = ready(testWith({ sitting: sittingWith({ answered: 2 }) }), QUESTION);
+
+    expect(toFocusTestPhase({ opening: true, outcome: left, started: true })).toMatchObject({
+      kind: "resume",
     });
   });
 
