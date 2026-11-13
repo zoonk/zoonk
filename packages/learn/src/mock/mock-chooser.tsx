@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
-import { PageSectionLabel } from "../_components/page";
+import { PageSectionTitle } from "../_components/page";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import {
   ChooserBottomBar,
@@ -67,7 +67,7 @@ function MockOptionLists({
     <div className="flex flex-col gap-6">
       <section aria-labelledby="mock-exam-title" className="flex flex-col gap-1">
         {subjectChoices.length > 0 && (
-          <PageSectionLabel id="mock-exam-title">{examTitle}</PageSectionLabel>
+          <PageSectionTitle id="mock-exam-title">{examTitle}</PageSectionTitle>
         )}
         <ChoiceRows
           choices={examChoices}
@@ -79,7 +79,7 @@ function MockOptionLists({
 
       {subjectChoices.length > 0 && (
         <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-1">
-          <PageSectionLabel id="mock-subjects-title">{t("One subject")}</PageSectionLabel>
+          <PageSectionTitle id="mock-subjects-title">{t("One subject")}</PageSectionTitle>
           <ChoiceRows
             choices={subjectChoices}
             label={t("One subject")}

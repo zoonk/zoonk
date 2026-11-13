@@ -3,6 +3,7 @@
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { cn } from "@zoonk/ui/lib/utils";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { SendIcon, SkipForwardIcon } from "lucide-react";
@@ -23,7 +24,7 @@ import {
   useEssayScreen,
 } from "./essay-context";
 import { EssayGradeSteps } from "./essay-feedback";
-import { useWritingName } from "./essay-labels";
+import { ESSAY_FIELD_CLASS, useWritingName } from "./essay-labels";
 import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./essay-prompt";
 import { RewriteGuide } from "./essay-rewrite-guide";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "./essay-status-line";
@@ -119,7 +120,7 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
         {drafts.length > 0 ? t("Rewrite what needs work") : writingName(essay.rubric)}
       </label>
       <Textarea
-        className="min-h-72 flex-1 text-base leading-relaxed md:text-base lg:field-sizing-fixed lg:min-h-36"
+        className={cn(ESSAY_FIELD_CLASS, "flex-1 lg:field-sizing-fixed lg:min-h-36")}
         aria-describedby={`${textId}-count`}
         id={textId}
         onChange={(event) => writer.write(event.target.value)}

@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { type ComponentType, createContext, use, useEffect, useId, useState } from "react";
 import {
   LIST_ROW_CLASS,
+  LIST_ROW_FIRST_LINE_CLASS,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -52,7 +53,7 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
 
   return (
     <div className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
-      <ListRowContent>
+      <ListRowContent className="justify-start">
         <ListRowTitle>{title}</ListRowTitle>
         <ListRowDescription>
           {t("We couldn't reach the server. Check your connection.")}
@@ -68,10 +69,10 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
 function RowSkeleton({ title }: { title: string }) {
   return (
     <div aria-busy="true" className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
-      <ListRowLeading>
+      <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
         <Skeleton className="size-4 rounded-sm" />
       </ListRowLeading>
-      <ListRowContent>
+      <ListRowContent className="justify-start">
         <ListRowTitle>{title}</ListRowTitle>
         <span className="flex h-4 items-center">
           <Skeleton className="h-3 w-28 rounded-sm" />

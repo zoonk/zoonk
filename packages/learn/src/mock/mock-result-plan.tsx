@@ -257,7 +257,7 @@ export function MockPlanStep({
   return (
     <StepCard>
       <StepHeader>
-        {preparation && <StepEyebrow>{t("Your preparation")}</StepEyebrow>}
+        <StepEyebrow>{preparation ? t("Your preparation") : t("Your plan")}</StepEyebrow>
         <StepTitle className={preparation ? "flex flex-col items-start gap-1.5" : undefined}>
           {preparation ? (
             <PreparationReadout change={preparation} />

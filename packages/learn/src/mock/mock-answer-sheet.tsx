@@ -65,7 +65,7 @@ function QuestionCell({
         CELL_SIZE[size].cell,
         isDraftAnswered(draft) &&
           "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent",
-        draft?.flagged && "text-warning-text ring-warning ring-[1.5px]",
+        draft?.flagged && "text-warning-text ring-warning ring-2",
         isCurrent && "text-foreground ring-success ring-2",
       )}
       disabled={!runner.moves.canOpen(index)}

@@ -20,7 +20,7 @@ import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground flex min-h-11 items-start gap-2 py-3 text-sm">
+    <p className="text-muted-foreground flex min-h-11 items-start gap-3 py-3 text-sm">
       <LineMarker aria-hidden="true">{icon}</LineMarker>
       <span className="text-pretty">{children}</span>
     </p>

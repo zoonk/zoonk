@@ -32,7 +32,7 @@ function Calibration() {
 
   return (
     <>
-      <ListRowDescription className="text-foreground pt-1">
+      <ListRowDescription className="text-foreground">
         {t(
           "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged.",
           {

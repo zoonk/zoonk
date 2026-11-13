@@ -11,6 +11,7 @@ import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindIcon } from "../_components/kind-tile";
 import {
   LIST_ROW_CLASS,
+  LIST_ROW_FIRST_LINE_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
   ListRowDescription,
@@ -55,7 +56,7 @@ function RowText({ input, titleId }: { input: MindMapCopyInput; titleId: string 
   const { place, view } = input;
 
   return (
-    <ListRowContent aria-live="polite">
+    <ListRowContent aria-live="polite" className={cn(place === "finish" && "justify-start")}>
       <ListRowTitle className="wrap-break-word" id={titleId}>
         {place === "chapter" ? t("Mind map") : view.title}
       </ListRowTitle>
@@ -156,7 +157,7 @@ export function MindMapRowView({
   const body = (
     <>
       {alone ? (
-        <ListRowLeading>
+        <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
           <SlotMark shown={shown} />
         </ListRowLeading>
       ) : (
