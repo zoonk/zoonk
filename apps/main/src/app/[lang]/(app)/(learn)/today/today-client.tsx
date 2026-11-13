@@ -1,5 +1,6 @@
 "use client";
 
+import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import {
   changePlanAction,
   chooseExamOptionAction,
@@ -248,6 +249,15 @@ export function TodayClient({
         adjustTimeHref: "/plan?focus=time",
         answerInsight: answerMemoryInsightAction,
         answerSuggestedGoal,
+        archiveGoal: async () => {
+          const outcome = await setGoalStatusAction(today.goal.id, "archived");
+
+          if (outcome === "saved") {
+            refresh();
+          }
+
+          return outcome === "saved";
+        },
         buddyHref: "/buddy",
         catchUp: taps.catchUp,
         challengeHref: (planItemId) => `/challenge/${planItemId}`,

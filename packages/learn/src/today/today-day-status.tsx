@@ -103,7 +103,11 @@ function PastDateStatus({ className, lessons }: { className?: string; lessons: n
       <TodayStatusSentence>
         {pastDateText({ isExam: today.goal.kind === "exam", lessons }).sentence}
       </TodayStatusSentence>
-      <TodayStatusClause>{t("Adjust your plan to keep going.")}</TodayStatusClause>
+      <TodayStatusClause>
+        {today.goal.kind === "exam"
+          ? t("Keep studying them, or archive this goal?")
+          : t("Adjust your plan to keep going.")}
+      </TodayStatusClause>
     </TodayStatusLine>
   );
 }

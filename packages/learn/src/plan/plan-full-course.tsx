@@ -72,11 +72,12 @@ export function FullCourseSwitch() {
   const label = useKeepStudyingLabel();
   const { change, failed, isPending } = usePlanChange();
 
-  if (!course?.isExam) {
+  // What follows the exam is asked when its date passes; a plan that already goes on can stop here.
+  if (!course?.isExam || !course.on) {
     return null;
   }
 
-  const finish = course.on ? text.finish(course) : null;
+  const finish = text.finish(course);
 
   return (
     <div className="flex flex-col gap-2" id={FULL_COURSE_SWITCH_ID}>

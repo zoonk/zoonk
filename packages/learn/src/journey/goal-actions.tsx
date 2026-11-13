@@ -229,7 +229,7 @@ function ResumeGoalDialog({
   );
 }
 
-function ArchiveGoalDialog({
+export function ArchiveGoalDialog({
   goalTitle,
   onArchive,
   onOpenChange,

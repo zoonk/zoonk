@@ -18,6 +18,8 @@ import { type DayStep } from "../session/session-types";
  */
 export type TodayActions = {
   addExtraTime: () => Promise<boolean>;
+  /** Today reads itself again once the goal is archived, and shows the learner's next goal. */
+  archiveGoal: () => Promise<boolean>;
   answerInsight: (input: {
     insightId: string;
     status: "accepted" | "dismissed";

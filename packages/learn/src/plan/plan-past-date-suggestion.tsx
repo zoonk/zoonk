@@ -15,6 +15,7 @@ import {
   SuggestionActions,
   SuggestionDescription,
 } from "../_components/suggestion";
+import { ArchiveGoal } from "../journey/archive-goal";
 import { usePlanScreen } from "./plan-context";
 import {
   CheckingChange,
@@ -154,8 +155,10 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
     }
 
     const doesText = isExam
-      ? t("Every topic, even after the exam, at your own pace.")
+      ? t("Keep studying them, or archive this goal?")
       : t("Move your date so your time covers what's left.");
+
+    const mainLabel = isExam ? t("Keep studying") : t("Preview");
 
     const retryText = search === "building" ? texts.building : t("We couldn't check what changes.");
 
@@ -166,9 +169,20 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
         </SuggestionDescription>
         <SuggestionActions>
           <SuggestionAction action={() => void showChange()} key="preview">
-            {retry ? t("Try again") : t("Preview")}
+            {retry ? t("Try again") : mainLabel}
           </SuggestionAction>
-          <OtherOptions item={item} />
+
+          {isExam && host.goalStatus ? (
+            <ArchiveGoal goalTitle={goal.displayName} onSetStatus={host.goalStatus.onSetStatus}>
+              {(archive) => (
+                <SuggestionAction busy={archive.pending} onClick={archive.ask} variant="outline">
+                  {t("Archive goal")}
+                </SuggestionAction>
+              )}
+            </ArchiveGoal>
+          ) : (
+            <OtherOptions item={item} />
+          )}
         </SuggestionActions>
       </>
     );

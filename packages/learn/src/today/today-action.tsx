@@ -14,6 +14,7 @@ import { useLearnRoutes } from "../learn-context";
 import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 import { useTodayScreen } from "./today-context";
+import { TodayExamOver } from "./today-exam-over";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
 import { useContinueSession } from "./use-continue-session";
@@ -273,6 +274,7 @@ function SeePlanLink() {
 }
 
 export function TodayAction({ className }: { className?: string }) {
+  const { today } = useTodayScreen();
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
@@ -280,7 +282,7 @@ export function TodayAction({ className }: { className?: string }) {
   if (pastDate) {
     return (
       <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <SeePlanLink />
+        {today.goal.kind === "exam" ? <TodayExamOver /> : <SeePlanLink />}
       </div>
     );
   }
