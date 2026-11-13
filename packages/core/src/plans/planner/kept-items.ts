@@ -64,11 +64,7 @@ export function splitExistingItems({
   const written = (skillId: string) =>
     (bySkill.get(skillId) ?? []).flatMap((unit) => (unit.lessonId ? [unit.lessonId] : []));
 
-  const availableLessons = new Set(input.lessons.map((lesson) => lesson.lessonId));
-
-  const thisWeek = listThisWeekItems({ input, keepsRest }).filter(
-    (item) => item.lessonId === null || availableLessons.has(item.lessonId),
-  );
+  const thisWeek = listThisWeekItems({ input, keepsRest });
 
   const landed = thisWeek.filter(
     (item) =>

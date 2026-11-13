@@ -9,9 +9,15 @@ import { idSchema } from "./fix-handler";
 const rules =
   "Every child exists, is public with no owner and shares the language and target language; positions come from the order. No identity, address or learner history changes. Plans refresh at the next planning write.";
 
-const chaptersSchema = z.array(
-  z.strictObject({ area: z.string().nullable(), chapterId: idSchema, level: z.enum(CourseLevel) }),
-);
+const chaptersSchema = z
+  .array(
+    z.strictObject({
+      area: z.string().nullable(),
+      chapterId: idSchema,
+      level: z.enum(CourseLevel),
+    }),
+  )
+  .min(1);
 
 export const courseChapters = collectionHandler({
   load: async (db, id, value) => {
@@ -93,13 +99,25 @@ export const chapterLessons = collectionHandler({
       db.lesson.findMany({ where: { id: { in: after } } }),
     ]);
 
+    const orphan =
+      row &&
+      (await db.lesson.findFirst({
+        where: {
+          chapters: { none: { chapterId: { not: id } } },
+          id: { in: row.lessons.map((lesson) => lesson.lessonId), notIn: after },
+          skills: { some: {} },
+        },
+      }));
+
     return (
       row && {
         before: row.lessons.map((lesson) => lesson.lessonId),
         effects: row.lessons
           .filter((lesson) => !after.includes(lesson.lessonId))
           .map((lesson) => ({ id: lesson.lessonId, kind: "structureAddressKept" as const })),
-        problem: sharedProblem(row, lessons, after),
+        problem: orphan
+          ? `Lesson ${orphan.id} still teaches skills and has no other chapter. Use Lesson.setSkills before removing it.`
+          : sharedProblem(row, lessons, after),
         roots: {
           chapterIds: [id],
           lessonIds: [...new Set([...after, ...row.lessons.map((lesson) => lesson.lessonId)])],
@@ -110,7 +128,7 @@ export const chapterLessons = collectionHandler({
   },
   model: "Chapter",
   op: "setLessons",
-  rules: `setLessons: [lessonId, …], the chapter's final lessons in order. ${rules} A chapter keeps at least one lesson. A move sets both chapters in one fix. A lesson leaving its home chapter keeps its address.`,
+  rules: `setLessons: [lessonId, …], the chapter's final lessons in order. ${rules} A chapter keeps at least one lesson. A move adds the lesson to its new chapter before proposing its removal. A lesson leaving its home chapter keeps its address.`,
   schema: collectionIds.min(1),
   table: sql`library_chapters`,
   write: (tx, id, value) =>
