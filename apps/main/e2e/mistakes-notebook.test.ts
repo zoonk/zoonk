@@ -81,7 +81,7 @@ test.describe("Mistakes notebook", () => {
       .poll(() => prisma.mistake.findUnique({ select: { status: true }, where: { id: other.id } }))
       .toStrictEqual({ status: "open" });
 
-    await page.getByRole("button", { name: "End practice. What you answered counts." }).click();
+    await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
     await page.getByRole("link", { name: /^Back(?! to)/u }).click();
     await expect(page.getByText("1 ready to practice")).toBeVisible();
@@ -105,7 +105,7 @@ test.describe("Mistakes notebook", () => {
       page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!"),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "End practice. What you answered counts." }).click();
+    await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
 
     const done = page.getByRole("status").filter({ hasText: "Practice done" });
     await expect(done.getByRole("heading", { level: 2, name: "Practice done" })).toBeVisible();
@@ -155,7 +155,7 @@ test.describe("Mistakes notebook", () => {
       page.getByRole("region", { name: "Answer feedback" }).getByText("Not quite"),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "End practice. What you answered counts." }).click();
+    await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
 
     const done = page.getByRole("status").filter({ hasText: "Practice done" });
 

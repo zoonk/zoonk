@@ -6,7 +6,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon, SendIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
@@ -145,7 +145,6 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
             busy={handingIn}
             disabled={runner.pending || waiting}
             enter="off"
-            icon={<SendIcon aria-hidden="true" />}
             onPress={next}
           >
             {nextLabel}

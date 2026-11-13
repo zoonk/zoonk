@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { type ReactNode } from "react";
 import { EnterLink } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
@@ -80,13 +79,7 @@ export function WaitBackToQuiz({ children }: { children: ReactNode }) {
 /** A written lesson the wait offers, its main action: Enter opens it as it does a button. */
 export function WaitLinkAction({ children, href }: { children: ReactNode; href: string }) {
   return (
-    <EnterLink
-      className="w-full lg:w-auto lg:min-w-40"
-      href={href}
-      icon={<PlayIcon aria-hidden="true" />}
-      lessonWritten
-      size="lg"
-    >
+    <EnterLink className="w-full lg:w-auto lg:min-w-40" href={href} lessonWritten size="lg">
       {children}
     </EnterLink>
   );

@@ -1318,11 +1318,6 @@ msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "내 계획 만들기"
 
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "내 공부 짝꿍"
-
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
 msgid "Brain with legs"

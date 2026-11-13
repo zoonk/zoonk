@@ -53,7 +53,7 @@ export function SeePlanAction({ reveal }: { reveal: PlanReveal }) {
   return (
     <TaskActionBar>
       <TaskActions>
-        <EnterLink href={routes.seePlan(reveal.goalId)} icon={null} link={LinkComponent}>
+        <EnterLink href={routes.seePlan(reveal.goalId)} link={LinkComponent}>
           <TaskActionLabel>{t("See your plan")}</TaskActionLabel>
         </EnterLink>
       </TaskActions>
