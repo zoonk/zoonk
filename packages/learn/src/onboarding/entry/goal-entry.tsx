@@ -7,9 +7,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { EnterButton } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
 import { type GoalError } from "../goal-errors";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
@@ -27,11 +29,23 @@ import {
 import { GoalErrorAlert } from "./goal-outcomes";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
-function SubmitButton() {
+/** In a section the box holds its own button; on its own page the button is the page's main action. */
+function SubmitButton({ form }: { form?: string }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLButtonElement>();
 
-  return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
+  if (!form) {
+    return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
+  }
+
+  return (
+    <OnboardingActions>
+      {/* Enter in the goal's field submits its form, so the key is the field's. */}
+      <EnterButton enter="host" form={form} ref={ref} type="submit">
+        {t("Build my plan")}
+      </EnterButton>
+    </OnboardingActions>
+  );
 }
 
 export function GoalEntry({
@@ -61,6 +75,7 @@ export function GoalEntry({
   const section = useOnboardingSection();
   const example = useLocalGoalExample();
   const inputId = useId();
+  const formId = useId();
   const goal = useGoalFieldAction({ canSendEmpty: canSubmitEmpty, onSend: onSubmit });
 
   return (
@@ -80,7 +95,11 @@ export function GoalEntry({
         </OnboardingHeading>
       )}
 
-      <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
+      <GoalField
+        action={goal.action}
+        className="@container grid grid-cols-[minmax(0,1fr)_auto]"
+        id={formId}
+      >
         <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
           <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
@@ -100,7 +119,7 @@ export function GoalEntry({
           />
         </div>
 
-        <div className="col-span-2 flex items-center justify-end gap-1 @xl:col-span-1">
+        <div className="col-span-2 flex items-center justify-end gap-1 empty:hidden @xl:col-span-1">
           {onAttach && (
             <Button
               aria-expanded={attachOpen}
@@ -117,7 +136,7 @@ export function GoalEntry({
             </Button>
           )}
 
-          <SubmitButton />
+          {section && <SubmitButton />}
         </div>
       </GoalField>
 
@@ -126,6 +145,8 @@ export function GoalEntry({
       <GoalErrorAlert error={error} signUpHref={signUpHref} />
 
       <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
+
+      {!section && <SubmitButton form={formId} />}
     </OnboardingColumn>
   );
 }
