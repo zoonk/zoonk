@@ -6,12 +6,12 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFormatWeekday } from "../_utils/use-format-weekday";
 import { type GoalDateKind } from "./goal-date-kind";
-import { useActivityName } from "./plan-activities";
+import { useActivityNames, useAreaNames } from "./use-operation-names";
 import { useShortList } from "./use-short-list";
 
 function useAreaQuestion() {
   const t = useExtracted();
-  const format = useFormatter();
+  const areaNames = useAreaNames();
   const shortList = useShortList();
 
   return function areaQuestion(operation: PlanOperation): string | null {
@@ -28,12 +28,7 @@ function useAreaQuestion() {
       return null;
     }
 
-    const parts = operation.kind === "focusAreas" ? (operation.parts ?? []) : [];
-
-    const subjects = format.list(
-      operation.areas.map((area) => parts.find((part) => part.area === area)?.name ?? area),
-      { type: "conjunction" },
-    );
+    const subjects = areaNames(operation);
 
     switch (operation.kind) {
       case "focusAreas":
@@ -140,15 +135,11 @@ function useDifficultyQuestion() {
 
 function useLessonsQuestion() {
   const t = useExtracted();
-  const format = useFormatter();
-  const activityName = useActivityName();
+  const activityNames = useActivityNames();
 
   return function lessonsQuestion(operation: PlanOperation): string | null {
     if (operation.kind === "skipActivities" || operation.kind === "restoreActivities") {
-      const activities = format.list(
-        operation.activities.map((activity) => activityName(activity)),
-        { type: "conjunction" },
-      );
+      const activities = activityNames(operation);
 
       return operation.kind === "skipActivities"
         ? t("Take {activities} out of your lessons?", { activities })

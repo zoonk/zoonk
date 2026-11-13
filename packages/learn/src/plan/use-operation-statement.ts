@@ -9,7 +9,7 @@ import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFormatWeekday } from "../_utils/use-format-weekday";
 import { type GoalDateKind } from "./goal-date-kind";
-import { useActivityName } from "./plan-activities";
+import { useActivityNames, useAreaNames } from "./use-operation-names";
 import { useShortList } from "./use-short-list";
 import { useToolSentence } from "./use-tool-sentence";
 import { useWrittenCadenceWords } from "./written-cadence";
@@ -45,7 +45,7 @@ export function useFollowsGuideSentence() {
 
 function useAreaStatement() {
   const t = useExtracted();
-  const format = useFormatter();
+  const areaNames = useAreaNames();
   const shortList = useShortList();
 
   return function areaStatement(operation: PlanOperation): string | null {
@@ -66,13 +66,9 @@ function useAreaStatement() {
       return null;
     }
 
-    const parts = operation.kind === "focusAreas" ? (operation.parts ?? []) : [];
     const count = operation.areas.length;
 
-    const subjects = format.list(
-      operation.areas.map((area) => parts.find((part) => part.area === area)?.name ?? area),
-      { type: "conjunction" },
-    );
+    const subjects = areaNames(operation);
 
     switch (operation.kind) {
       case "focusAreas":
@@ -199,16 +195,12 @@ function useDateStatement() {
 
 function useLessonsStatement() {
   const t = useExtracted();
-  const format = useFormatter();
-  const activityName = useActivityName();
+  const activityNames = useActivityNames();
   const difficultySentence = useDifficultySentence();
 
   return function lessonsStatement(operation: PlanOperation): string | null {
     if (operation.kind === "skipActivities" || operation.kind === "restoreActivities") {
-      const activities = format.list(
-        operation.activities.map((activity) => activityName(activity)),
-        { type: "conjunction" },
-      );
+      const activities = activityNames(operation);
 
       return operation.kind === "skipActivities"
         ? t("Your lessons no longer have {activities}.", { activities })
