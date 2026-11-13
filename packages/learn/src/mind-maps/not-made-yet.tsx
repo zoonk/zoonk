@@ -182,15 +182,17 @@ export function NotMadeYet({
         <NotMadeLine chapters={later} library={library} tier={tier} />
       </StatusRegion>
 
-      <ListGroup>
-        <Disclosure
-          aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
-          icon={null}
-          title={t("Other chapters")}
-        >
-          <NotMadeRows chapters={later} library={library} plus={plus} />
-        </Disclosure>
-      </ListGroup>
+      {later.length > 0 && (
+        <ListGroup>
+          <Disclosure
+            aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
+            icon={null}
+            title={t("Other chapters")}
+          >
+            <NotMadeRows chapters={later} library={library} plus={plus} />
+          </Disclosure>
+        </ListGroup>
+      )}
     </PageSection>
   );
 }
