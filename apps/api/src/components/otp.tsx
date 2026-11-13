@@ -26,7 +26,7 @@ export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn(
-        "text-2xl leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-3xl",
+        "text-2xl leading-[1.1] font-semibold tracking-[-0.035em] text-balance sm:text-3xl",
         className,
       )}
     >
@@ -151,7 +151,7 @@ export function OTPSubmit({
     <Button
       aria-keyshortcuts="Enter"
       busy={isLoading ?? false}
-      className={cn("w-full font-[560]", className)}
+      className={cn("w-full", className)}
       disabled={disabled}
       focusableWhenDisabled
       size="lg"

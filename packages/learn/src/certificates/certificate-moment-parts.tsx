@@ -78,7 +78,7 @@ export function MomentSheets({
 }
 
 function NameStrong(chunks: React.ReactNode) {
-  return <span className="text-foreground font-[550]">{chunks}</span>;
+  return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
 export function NameRow({ name, onChange }: { name: string; onChange: () => void }) {
@@ -87,7 +87,7 @@ export function NameRow({ name, onChange }: { name: string; onChange: () => void
   return (
     <p className="text-muted-foreground text-sm">
       {t.rich("On your certificate: <strong>{name}</strong>", { name, strong: NameStrong })}
-      <Button className="ml-2 font-[550]" onClick={onChange} variant="link">
+      <Button className="ml-2 font-medium" onClick={onChange} variant="link">
         {t("Change")}
       </Button>
     </p>

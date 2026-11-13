@@ -25,7 +25,7 @@ export function LoginTitle({ children, className }: React.ComponentProps<"h1">) 
   return (
     <h1
       className={cn(
-        "text-2xl leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-3xl",
+        "text-2xl leading-[1.1] font-semibold tracking-[-0.035em] text-balance sm:text-3xl",
         className,
       )}
     >
@@ -148,7 +148,7 @@ export function LoginEmailInput({ ...props }: React.ComponentProps<"input">) {
 
 export function LoginSubmit({ children, ...props }: React.ComponentProps<"button">) {
   return (
-    <SubmitButton className="h-11 font-[560]" full {...FORWARD_ICON} {...props}>
+    <SubmitButton full size="lg" {...FORWARD_ICON} {...props}>
       {children}
     </SubmitButton>
   );

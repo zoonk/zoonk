@@ -275,7 +275,7 @@ export function OnboardingPrimaryButton({
   return (
     <Button
       aria-keyshortcuts="Enter"
-      className={cn("w-full font-[560]", className)}
+      className={cn("w-full", className)}
       focusableWhenDisabled
       size="lg"
       {...props}

@@ -2,7 +2,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ItemStem } from "../questions/item-text";
 
 const QUESTION_TITLE_CLASS =
-  "text-foreground in-data-[phase=feedback]:text-muted-foreground text-xl leading-[1.35] font-[560] tracking-[-0.02em] text-pretty outline-none";
+  "text-foreground in-data-[phase=feedback]:text-muted-foreground text-xl leading-[1.35] font-semibold tracking-[-0.02em] text-pretty outline-none";
 
 /**
  * A question's title, one size everywhere a question is asked. `text` is the question as written,

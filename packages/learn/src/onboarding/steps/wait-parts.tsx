@@ -86,7 +86,7 @@ export function WaitLinkAction({ children, href }: { children: ReactNode; href: 
 
   return (
     <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full font-[560] lg:w-auto lg:min-w-40")}
+      className={cn(buttonVariants({ size: "lg" }), "w-full lg:w-auto lg:min-w-40")}
       href={href}
       lessonWritten
       ref={ref}

@@ -82,7 +82,7 @@ function OwnerNameRow({ facts, owner }: { facts: CertificateFacts; owner: Certif
       })}
     >
       {facts.recipientName}
-      <Button className="ml-2 font-[550]" onClick={() => setOpen(true)} variant="link">
+      <Button className="ml-2 font-medium" onClick={() => setOpen(true)} variant="link">
         {t("Change")}
       </Button>
       <CertificateNameDialog
@@ -104,7 +104,7 @@ function OwnerLinkRow({ links }: { links: CertificateLinks }) {
     <DetailRow label={t("Link")} mono>
       <span className="break-all">{shown}</span>
       <Button
-        className="ml-2 font-sans font-[550]"
+        className="ml-2 font-sans font-medium"
         onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
         variant="link"
       >

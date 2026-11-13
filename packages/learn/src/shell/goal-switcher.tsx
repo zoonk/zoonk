@@ -109,7 +109,7 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
   return <span className="text-muted-foreground text-2xs font-mono tabular-nums">{line}</span>;
 }
 
-const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-2xs font-[550]";
+const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-2xs font-medium";
 
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (

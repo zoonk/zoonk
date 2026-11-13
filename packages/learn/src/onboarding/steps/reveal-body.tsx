@@ -104,7 +104,7 @@ function RevealActions({
           <Button
             aria-keyshortcuts="Enter"
             busy={pending}
-            className="flex-2 font-[560] lg:flex-none"
+            className="flex-2 lg:flex-none"
             icon={<PlayIcon aria-hidden="true" />}
             ref={startRef}
             size="lg"

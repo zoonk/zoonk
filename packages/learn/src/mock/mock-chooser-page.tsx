@@ -159,7 +159,7 @@ export function ChooserStartButton({
     <Button
       aria-keyshortcuts="Enter"
       busy={busy}
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
+      className={DETAIL_PRIMARY_CLASS}
       disabled={isDisabled}
       focusableWhenDisabled
       icon={<PlayIcon aria-hidden="true" />}
@@ -178,12 +178,7 @@ export function ChooserPlusLink({ href }: { href: string }) {
   const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
-      aria-keyshortcuts="Enter"
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
-      href={href}
-      ref={ref}
-    >
+    <LearnLink aria-keyshortcuts="Enter" className={DETAIL_PRIMARY_CLASS} href={href} ref={ref}>
       {t("See Plus")}
       <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </LearnLink>
