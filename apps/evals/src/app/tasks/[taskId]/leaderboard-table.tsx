@@ -75,7 +75,7 @@ function ColumnHead<Entry>({
 
   if (!sortKey) {
     return (
-      <TableHead className={cn(isNumber && NUMBER_HEAD_CLASS)} title={title}>
+      <TableHead className={cn("nth-last-2:pr-0", isNumber && NUMBER_HEAD_CLASS)} title={title}>
         {label}
       </TableHead>
     );
@@ -87,7 +87,7 @@ function ColumnHead<Entry>({
   return (
     <TableHead
       aria-sort={isSorted ? `${direction}ending` : undefined}
-      className={cn(isNumber && NUMBER_HEAD_CLASS)}
+      className={cn("nth-last-2:pr-0", isNumber && NUMBER_HEAD_CLASS)}
       title={title}
     >
       <button

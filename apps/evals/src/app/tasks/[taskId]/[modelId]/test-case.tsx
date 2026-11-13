@@ -2,6 +2,7 @@
 
 import { getScoreClassName } from "@/lib/score";
 import { calculateScore } from "@/lib/score-calculation";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import {
   type CategoryScore,
   type EvalResult,
@@ -12,8 +13,12 @@ import {
 } from "@/lib/types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { Check, Copy } from "lucide-react";
+
+const COPY_LABELS = ["Copy", "Copied"];
 
 function formatValue(value: unknown): string {
   if (typeof value === "string") {
@@ -46,7 +51,7 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
           const isMultiline = formatted.includes("\n");
 
           return (
-            <div className="text-sm font-medium" key={key}>
+            <div className={cn("text-sm font-medium", PROSE_MEASURE_CLASS)} key={key}>
               <span className="text-muted-foreground">{key}:</span>{" "}
               {isMultiline ? (
                 <pre className="bg-muted mt-1 overflow-auto rounded p-2 text-xs">{formatted}</pre>
@@ -90,18 +95,14 @@ function OutputSection({ output }: { output: string }) {
     <div>
       <div className="mb-2 flex items-center justify-between">
         <p className="text-muted-foreground text-sm">Output</p>
-        <Button className="gap-2" onClick={() => copy(output)} size="sm" variant="ghost">
-          {isCopied ? (
-            <>
-              <Check className="size-4" />
-              Copied
-            </>
-          ) : (
-            <>
-              <Copy className="size-4" />
-              Copy
-            </>
-          )}
+        <Button
+          edge="end"
+          icon={isCopied ? <Check /> : <Copy />}
+          onClick={() => copy(output)}
+          size="sm"
+          variant="ghost"
+        >
+          <SwapLabel current={isCopied ? "Copied" : "Copy"} labels={COPY_LABELS} />
         </Button>
       </div>
 

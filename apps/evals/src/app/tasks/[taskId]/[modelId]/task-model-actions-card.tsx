@@ -37,8 +37,8 @@ export function TaskModelActionsCard({
   const needsEval = hasEveryOutput && summary.scored < outputStatus.totalOutputs;
 
   return (
-    <div className="flex flex-wrap items-end gap-x-3 gap-y-4 border-b pb-6">
-      <form action={generateOutputsAction} className="flex flex-wrap items-end gap-3">
+    <div className="flex flex-wrap items-end gap-x-2 gap-y-4 border-b pb-6">
+      <form action={generateOutputsAction} className="flex flex-wrap items-end gap-2">
         <input name="taskId" type="hidden" value={taskId} />
         <input name="modelId" type="hidden" value={modelId} />
 
@@ -65,7 +65,7 @@ export function TaskModelActionsCard({
         </SubmitButton>
       </form>
 
-      <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
+      <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
         <OutputsExport entries={exportEntries} failedRuns={failedRuns} summary={summary} />
 
         <ReviewPdfExport

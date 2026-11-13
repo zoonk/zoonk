@@ -1,6 +1,8 @@
 "use client";
 
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { Input } from "@zoonk/ui/components/input";
+import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -56,7 +58,9 @@ function TaskRow({ showDescription, task }: { showDescription: boolean; task: Ta
         <span className="flex min-w-0 flex-col gap-0.5">
           <span className="font-medium">{task.name}</span>
           {showDescription && (
-            <span className="text-muted-foreground max-w-column">{task.description}</span>
+            <span className={cn("text-muted-foreground", PROSE_MEASURE_CLASS)}>
+              {task.description}
+            </span>
           )}
         </span>
 
@@ -112,7 +116,7 @@ export function TaskFinder({ groups }: { groups: TaskFinderGroup[] }) {
       {!isSearching &&
         groups.map((group) => (
           <section className="flex flex-col gap-1" key={group.name}>
-            <h2 className="text-sm font-semibold">{group.name}</h2>
+            <h2 className="text-muted-foreground text-xs font-medium">{group.name}</h2>
 
             <ul className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
               {group.tasks.map((task) => (

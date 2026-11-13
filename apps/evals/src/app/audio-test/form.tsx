@@ -97,13 +97,13 @@ export function AudioTestForm() {
         <Button busy={isPending} className="self-start" size="lg" type="submit">
           Generate audio
         </Button>
-      </form>
 
-      {result?.error && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {result.error}
-        </p>
-      )}
+        {result?.error && (
+          <p className="text-destructive-text text-sm" role="alert">
+            {result.error}
+          </p>
+        )}
+      </form>
 
       {result?.audioUrl && (
         <div className="flex flex-col gap-4">

@@ -67,6 +67,7 @@ function getColumns({
     {
       cell: (entry) => <CasesScored entry={entry} totalRuns={totalRuns} />,
       id: "casesScored",
+      isNumber: true,
       label: "Cases scored",
       title: HISTORICAL_ATTEMPTS_NOTE,
     },
@@ -155,6 +156,7 @@ function getMoreColumns(entries: LeaderboardEntry[], taskId: string): Column[] {
       cell: (entry) =>
         formatLanguageResults(entry.languages).find((result) => result.language === language)?.text,
       id: `language-${language}`,
+      isNumber: true,
       label: language.toUpperCase(),
     })),
     { ...caseCount("attempted", "Attempted"), title: HISTORICAL_ATTEMPTS_NOTE },

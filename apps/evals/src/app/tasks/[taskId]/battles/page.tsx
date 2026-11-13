@@ -6,6 +6,7 @@ import {
   TaskLinkBreadcrumb,
 } from "@/components/breadcrumb";
 import { getBattleMatchups } from "@/lib/battle-loader";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import {
   ContainerBody,
@@ -60,7 +61,7 @@ export default function BattlesPage({ params }: BattlesRouteProps) {
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>Judge comments</ContainerTitle>
-          <ContainerDescription className="max-w-column">
+          <ContainerDescription className={PROSE_MEASURE_CLASS}>
             Each judge&apos;s average score for a model, out of 10, and what it wrote about every
             test case. A judge never scores its own model family.
           </ContainerDescription>

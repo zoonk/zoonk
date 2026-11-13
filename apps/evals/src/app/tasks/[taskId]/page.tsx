@@ -8,6 +8,7 @@ import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
 import { formatLatencyBudget } from "@/lib/format";
 import { getLeaderboardEntries } from "@/lib/leaderboard";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { supportsJudgeMode } from "@/lib/types";
 import { getModelsToRun, getModelsWithResults } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
@@ -88,7 +89,9 @@ async function TaskHeader({ params }: TaskRouteProps) {
     <ContainerHeader className="flex-col items-start sm:flex-row sm:items-end">
       <ContainerHeaderGroup>
         <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription className="max-w-column">{task.description}.</ContainerDescription>
+        <ContainerDescription className={PROSE_MEASURE_CLASS}>
+          {task.description}.
+        </ContainerDescription>
         <p className="text-muted-foreground font-mono text-xs">
           {formatTestCases(task.testCases.length)}
           {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
