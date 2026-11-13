@@ -16,7 +16,7 @@ export function Page({ className, ...props }: React.ComponentProps<"div">) {
     <div
       className={cn(
         PAGE_COLUMN_CLASS,
-        "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1",
+        "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1 [&>[data-slot=bottom-bar]]:mt-auto",
         className,
       )}
       data-slot="page"
