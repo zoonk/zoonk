@@ -26,7 +26,12 @@ import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";
-type InsightState = { answer: InsightAnswer } | { failed: true } | null;
+
+type InsightState =
+  | { answer: InsightAnswer }
+  | { failed: true }
+  | { repriced: MemoryInsightView }
+  | null;
 
 function insightMark(insight: MemoryInsightView): React.ReactNode {
   if (insight.kind === "tip") {
@@ -96,7 +101,17 @@ function useInsightAnswer(insight: MemoryInsightView) {
         actions.answerInsight({ insightId: insight.id, status }),
       );
 
-      setState(saved ? { answer: status } : { failed: true });
+      if (!saved) {
+        setState({ failed: true });
+        return;
+      }
+
+      // Accepted, and still waiting: its plan change's numbers moved, so it asks again.
+      setState(
+        status === "accepted" && saved.status === "pending"
+          ? { repriced: saved }
+          : { answer: status },
+      );
     });
   };
 
@@ -143,11 +158,13 @@ function InsightActions({
   );
 }
 
-function InsightNotice({ insight }: { insight: MemoryInsightView }) {
+function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
   const t = useExtracted();
   const dateKind = useTodayDateKind();
+  const { answer, isPending, state } = useInsightAnswer(opened);
+  const repriced = state !== null && "repriced" in state;
+  const insight = repriced ? state.repriced : opened;
   const answeredText = useAnsweredText(insight);
-  const { answer, isPending, state } = useInsightAnswer(insight);
   const result = state && "answer" in state ? answeredText(state.answer) : null;
 
   return (
@@ -171,7 +188,11 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
         <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
         <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
         {insight.planChange?.status === "proposed" && (
-          <PlanEffectDiff dateKind={dateKind} effect={insight.planChange.effect} />
+          <PlanEffectDiff
+            dateKind={dateKind}
+            effect={insight.planChange.effect}
+            repriced={repriced}
+          />
         )}
 
         {result ? (

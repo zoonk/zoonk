@@ -78,12 +78,15 @@ export function OfferPreview({
   onRetry,
   pending,
   preview,
+  repriced = false,
 }: {
   goalDate?: GoalDateMove;
   onApply: () => void;
   onRetry: () => void;
   pending: boolean;
   preview: SlotPreview;
+  /** The card showed other numbers before this check. */
+  repriced?: boolean;
 }) {
   const t = useExtracted();
   const dateKind = usePlanDateKind();
@@ -129,6 +132,7 @@ export function OfferPreview({
           dateKind={dateKind}
           effect={effect}
           goalDate={goalDate}
+          repriced={repriced}
         />
       )}
 

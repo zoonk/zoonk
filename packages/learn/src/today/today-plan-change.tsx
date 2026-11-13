@@ -100,6 +100,7 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
   const [restored, setRestored] = useState<Change | null>(null);
   const [failed, setFailed] = useState(false);
   const [superseded, setSuperseded] = useState<Change | null>(null);
+  const [repriced, setRepriced] = useState(false);
   const [isPending, startTransition] = useTransition();
   const change = restored ?? opened;
 
@@ -129,6 +130,9 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
         return;
       }
 
+      // Accepted, and still waiting: its numbers moved, so it asks again with today's.
+      setRepriced(status === "applied" && saved.status === "proposed");
+
       if (saved.status === "proposed") {
         setRestored(saved);
         setAnswered(null);
@@ -138,7 +142,14 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
     });
   };
 
-  return { answer, answered, change, failed, isPending: isPending || superseded === change };
+  return {
+    answer,
+    answered,
+    change,
+    failed,
+    isPending: isPending || superseded === change,
+    repriced,
+  };
 }
 
 function AfterAnswer({
@@ -190,7 +201,7 @@ function PlanChangeNotice({
   onNext: (() => void) | null;
 }) {
   const t = useExtracted();
-  const { answer, answered, change, failed, isPending } = useAnswer(opened, onHold);
+  const { answer, answered, change, failed, isPending, repriced } = useAnswer(opened, onHold);
   const words = useTodayChangeWords()(change);
   const answeredText = useAnsweredText();
   const officialDate = useOfficialDateLine()(change);
@@ -222,7 +233,12 @@ function PlanChangeNotice({
       <SuggestionContent>
         <SuggestionHeader>{words.title}</SuggestionHeader>
         {words.why && <SuggestionDescription>{words.why}</SuggestionDescription>}
-        <PlanEffectDiff byDate={byDate} dateKind={dateKind} effect={change.effect} />
+        <PlanEffectDiff
+          byDate={byDate}
+          dateKind={dateKind}
+          effect={change.effect}
+          repriced={repriced}
+        />
         {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
 
         {result ? (

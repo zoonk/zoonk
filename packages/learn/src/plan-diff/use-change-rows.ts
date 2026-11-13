@@ -213,7 +213,13 @@ function useEventRows() {
           ]
         : []),
       ...(addedTopicsStart
-        ? [{ after: formatDate(addedTopicsStart), key: "addedStart", label: t("New lessons start") }]
+        ? [
+            {
+              after: formatDate(addedTopicsStart),
+              key: "addedStart",
+              label: t("New lessons start"),
+            },
+          ]
         : []),
     ];
   };
@@ -225,9 +231,11 @@ export function usePlanChangeRows() {
   const dateRows = useDateRows();
   const eventRows = useEventRows();
 
-  return (effect: PlanEffect | null, { byDate = true, goalDate }: ChangeOptions = {}): ChangeRow[] =>
+  return (
+    effect: PlanEffect | null,
+    { byDate = true, goalDate }: ChangeOptions = {},
+  ): ChangeRow[] =>
     effect
       ? [...lessonRows(effect, byDate), ...dateRows(effect, goalDate), ...eventRows(effect)]
       : [];
 }
-

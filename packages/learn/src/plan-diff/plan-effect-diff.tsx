@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { type GoalDateKind } from "../plan/goal-date-kind";
-import { type GoalDateMove, type PlanEffect } from "./change-names";
+import { type ChangeOptions, type GoalDateMove, type PlanEffect } from "./change-names";
 import { usePlanChangeConsequence } from "./use-change-consequence";
 import { type ChangeRow, usePlanChangeRows } from "./use-change-rows";
 
@@ -69,6 +69,41 @@ function namesAdded(effect: PlanEffect | null): boolean {
   return (effect?.topicsAdded?.length ?? 0) + (effect?.outcomesAdded?.length ?? 0) > 0;
 }
 
+function useShownEffect({
+  effect,
+  options,
+  said,
+  summary,
+}: {
+  effect: PlanEffect | null;
+  options: ChangeOptions;
+  said?: "lessonsAdded";
+  summary: boolean;
+}) {
+  const found = usePlanChangeConsequence()(effect, options);
+  const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded(effect);
+  const rows = usePlanChangeRows()(effect, options);
+  const stated = summary ? found : null;
+  const onlyRow = rows.length === 1 && rows[0]?.key === stated?.key;
+
+  return {
+    consequence: summary && !repeatsTitle ? found : null,
+    hasMore: rows.length > 0 && !(onlyRow && stated?.whole),
+    rows,
+  };
+}
+
+/** The learner accepted other numbers: the ones under this line are today's, to answer again. */
+function RepricedLine({ changes }: { changes: boolean }) {
+  const t = useExtracted();
+
+  return (
+    <p className="text-sm font-medium text-pretty" role="status">
+      {changes ? t("The numbers are different today.") : t("Your plan stays as it is.")}
+    </p>
+  );
+}
+
 /**
  * What a plan change does: the one consequence a learner would notice, and every other change
  * behind "See all changes".
@@ -79,6 +114,7 @@ export function PlanEffectDiff({
   dateKind,
   effect,
   goalDate,
+  repriced = false,
   said,
   summary = true,
 }: {
@@ -87,26 +123,29 @@ export function PlanEffectDiff({
   dateKind?: GoalDateKind;
   effect: PlanEffect | null;
   goalDate?: GoalDateMove;
+  repriced?: boolean;
   /** What the screen's title already states, so the same count isn't said twice under it. */
   said?: "lessonsAdded";
   /** False where the screen's own sentence already says what matters most. */
   summary?: boolean;
 }) {
   const t = useExtracted();
-  const found = usePlanChangeConsequence()(effect, { byDate, dateKind, goalDate });
-  const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded(effect);
-  const consequence = summary && !repeatsTitle ? found : null;
-  const rows = usePlanChangeRows()(effect, { byDate, goalDate });
-  const stated = summary ? found : null;
-  const onlyRow = rows.length === 1 && rows[0]?.key === stated?.key;
-  const hasMore = rows.length > 0 && !(onlyRow && stated?.whole);
 
-  if (!consequence && !hasMore) {
+  const { consequence, hasMore, rows } = useShownEffect({
+    effect,
+    options: { byDate, dateKind, goalDate },
+    said,
+    summary,
+  });
+
+  if (!consequence && !hasMore && !repriced) {
     return null;
   }
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)} data-slot="plan-change-effect">
+      {repriced && <RepricedLine changes={effect !== null} />}
+
       {consequence && (
         <p className="text-sm text-pretty" data-slot="plan-change-consequence">
           {consequence.text}

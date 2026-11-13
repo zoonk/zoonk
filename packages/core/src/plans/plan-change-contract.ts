@@ -38,7 +38,10 @@ export const planChangeSchema = z
       }),
     canApply: z
       .boolean()
-      .describe("Whether this saved quote can be applied on the current planning day."),
+      .meta({
+        description:
+          "True for a proposed change that has an `effect`, on any day. Accepting it works the change out against today's plan: when that differs from `effect`, nothing is applied and the answer is the change still `proposed`, with today's `effect`",
+      }),
     canUndo: z
       .boolean()
       .meta({ description: "True while the plan is still as the change left it" }),

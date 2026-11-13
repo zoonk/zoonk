@@ -2,6 +2,7 @@
 
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
+import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -58,7 +59,7 @@ type SlotValue = {
   showNext: () => void;
   preview: SlotPreview;
   result: SlotResult | null;
-  requestPreview: (operations: LearnerPlanOperation[]) => Promise<void>;
+  requestPreview: (operations: LearnerPlanOperation[]) => Promise<PlanChangePreview | null>;
   setPreview: () => void;
   setResult: (result: SlotResult | null) => void;
 };

@@ -59,7 +59,7 @@ export async function toLessonQuestionResource(
     createdAt: question.createdAt.toISOString(),
     id: question.id,
     planChange: planChange
-      ? await toPlanChangeView({
+      ? toPlanChangeView({
           change: planChange,
           goal: planChange.plan.goal,
           planVersion: planChange.plan.version,

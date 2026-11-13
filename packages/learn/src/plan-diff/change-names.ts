@@ -16,6 +16,19 @@ export type ChangeOptions = {
   goalDate?: GoalDateMove;
 };
 
+function toStableJson(value: unknown): string {
+  return JSON.stringify(value, (_key, part: unknown) =>
+    part && typeof part === "object" && !Array.isArray(part)
+      ? Object.fromEntries(Object.entries(part).toSorted(([a], [b]) => a.localeCompare(b)))
+      : part,
+  );
+}
+
+/** Whether two worked-out changes say the same thing, however their fields are ordered. */
+export function isSameEffect(a: PlanEffect | null, b: PlanEffect | null): boolean {
+  return toStableJson(a) === toStableJson(b);
+}
+
 export function getTopicNames(areas: PlanEffect["topicsLeftOut"]): string[] {
   return (areas ?? []).flatMap((area) => area.topics.map((topic) => toTopicWords(topic)));
 }

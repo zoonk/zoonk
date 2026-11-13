@@ -14,7 +14,14 @@ const planOfferSchema = z.object({
 });
 
 export const planFitOfferSchema = planOfferSchema
-  .extend({ canApply: z.boolean() })
+  .extend({
+    canApply: z
+      .boolean()
+      .meta({
+        description:
+          "True when `effect` was worked out for today's plan. When false the offer still stands: ask POST /v1/goals/{goalId}/plan/change-previews for today's effect before applying it",
+      }),
+  })
   .nullable()
   .meta({
     description:

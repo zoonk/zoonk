@@ -15,8 +15,7 @@ export function useSystemChangeSentence() {
       case "missedDays":
         return t("Your plan moved to fit the days you missed.");
       case "estimateUpdated":
-        return change.effect &&
-          change.effect.lessonsAdded !== change.effect.lessonsRemoved
+        return change.effect && change.effect.lessonsAdded !== change.effect.lessonsRemoved
           ? t("Your plan changed to match the time your lessons take.")
           : null;
       case "testedOut":

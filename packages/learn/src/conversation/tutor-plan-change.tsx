@@ -56,6 +56,7 @@ function useAnswer({
 }) {
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
+  const [repriced, setRepriced] = useState(false);
 
   const answer = (status: Decision) => {
     setFailed(false);
@@ -68,13 +69,15 @@ function useAnswer({
         return;
       }
 
+      // Accepted, and still waiting: its numbers moved, so it asks again with today's.
+      setRepriced(status === "applied" && answered.status === "proposed");
       onAnswered(answered);
       // The buttons leave with the answer, so focus stays on the card that says how it went.
       cardRef.current?.focus();
     });
   };
 
-  return { answer, failed, isPending };
+  return { answer, failed, isPending, repriced };
 }
 
 function ChangeActions({
@@ -161,7 +164,14 @@ export function TutorPlanChange({
   const words = useChangeWords()(change);
   const officialDate = useOfficialDateLine()(change);
   const statusLine = useStatusLine(change);
-  const { answer, failed, isPending } = useAnswer({ cardRef, change, decide, onAnswered });
+
+  const { answer, failed, isPending, repriced } = useAnswer({
+    cardRef,
+    change,
+    decide,
+    onAnswered,
+  });
+
   const proposed = change.status === "proposed";
 
   return (
@@ -183,7 +193,7 @@ export function TutorPlanChange({
 
         {words.why && <p className="text-muted-foreground text-sm leading-snug">{words.why}</p>}
       </div>
-      {proposed && <PlanEffectDiff effect={change.effect} />}
+      {proposed && <PlanEffectDiff effect={change.effect} repriced={repriced} />}
       {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
       <StatusRegion className="text-muted-foreground text-sm">{statusLine}</StatusRegion>
