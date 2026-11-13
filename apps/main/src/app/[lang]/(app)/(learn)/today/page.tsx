@@ -3,16 +3,23 @@ import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view"
 import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { Link } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { getUnfinishedOnboardingDraft } from "@zoonk/core/view-models/onboarding/unfinished-draft";
+import {
+  CURRENT_ROW_CLASS,
+  ListGroup,
+  ListRowContent,
+  ListRowDescription,
+  ListRowIcon,
+  ListRowLeading,
+  ListRowLink,
+  ListRowTitle,
+} from "@zoonk/learn/list";
 import { Page } from "@zoonk/learn/page";
 import { TodayPageHeader } from "@zoonk/learn/today/at-rest";
 import { TodayShell } from "@zoonk/learn/today/shell";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
@@ -46,27 +53,29 @@ async function WelcomeBack({ suggestion }: { suggestion: SuggestedGoalView }) {
 
 type Explanation = { id: string; title: string };
 
+/**
+ * One row the learner taps to pick the explanation up, highlighted like Today's next row: the goal
+ * box under it keeps the page's one filled button.
+ */
 async function ExplanationContinue({ explanation }: { explanation: Explanation }) {
   const t = await getExtracted();
 
   return (
-    <section aria-label={t("Your quick explanation")} className="flex flex-col gap-4">
-      <div className="bg-muted -mx-2.5 flex items-start gap-3 rounded-lg px-2.5 py-2.75">
-        <PlayIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-        <span className="flex min-w-0 flex-col gap-px">
-          <span className="text-sm leading-5 font-medium text-pretty">{explanation.title}</span>
-          <span className="text-muted-foreground text-xs leading-4">{t("Quick explanation")}</span>
-        </span>
-      </div>
-
+    <section aria-label={t("Your quick explanation")}>
       <LessonPlayerPreload />
-      <Link
-        className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto sm:self-start")}
-        href={`/explain/${explanation.id}`}
-        prefetch
-      >
-        {t("Continue")}
-      </Link>
+      <ListGroup>
+        <ListRowLink className={CURRENT_ROW_CLASS} href={`/explain/${explanation.id}`} prefetch>
+          <ListRowLeading>
+            <ListRowIcon>
+              <PlayIcon />
+            </ListRowIcon>
+          </ListRowLeading>
+          <ListRowContent>
+            <ListRowTitle>{explanation.title}</ListRowTitle>
+            <ListRowDescription>{t("Quick explanation")}</ListRowDescription>
+          </ListRowContent>
+        </ListRowLink>
+      </ListGroup>
     </section>
   );
 }
