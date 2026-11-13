@@ -121,14 +121,14 @@ export function MockResultBreakdown({ result }: { result: MockResult }) {
 
   if (result.areas.length <= 1) {
     return (
-      <ResultSection title={t("By topic")}>
+      <ResultSection rows title={t("By topic")}>
         <TopicRows topics={result.topics} />
       </ResultSection>
     );
   }
 
   return (
-    <ResultSection title={t("By subject")}>
+    <ResultSection rows title={t("By subject")}>
       <StepRows>
         {result.areas.map((area) => (
           <AreaRow

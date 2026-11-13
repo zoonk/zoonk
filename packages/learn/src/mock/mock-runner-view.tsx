@@ -11,12 +11,7 @@ import { useState } from "react";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
-import {
-  MockAnswerSheet,
-  MockQuestionMap,
-  SheetLegend,
-  useMockSheetAside,
-} from "./mock-answer-sheet";
+import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
@@ -139,6 +134,8 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   return (
     <>
       <MockStepStatus />
+      {/* In the bar, so the numbers stay in one place whatever a question's length. */}
+      <MockQuestionMap className="with-aside:hidden w-full" />
       <QuestionActions>
         <FlagButton />
         {isLastQuestion ? (
@@ -181,12 +178,8 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
     >
       <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
-      <div className="flex flex-col gap-2.5">
-        <MockQuestionMap className="with-aside:hidden" />
-        <div className="text-muted-foreground flex flex-col gap-1 text-xs">
-          <SheetLegend className="with-aside:hidden" />
-          <MovesNote />
-        </div>
+      <div className="text-muted-foreground text-xs empty:hidden">
+        <MovesNote />
       </div>
       <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
     </MockFrame>

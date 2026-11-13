@@ -226,7 +226,7 @@ export function MockResultPoints({ points }: { points: MockPoints }) {
   const rows = toTestRows(points);
 
   return (
-    <ResultSection title={t("By test")}>
+    <ResultSection rows title={t("By test")}>
       <div className="flex flex-col gap-3">
         {rows.length > 0 && (
           <StepRows>

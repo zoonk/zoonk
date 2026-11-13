@@ -293,7 +293,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
         size="xl"
         variant="outline"
       >
-        {t("Skip the rewrite")}
+        {t("Skip")}
       </Button>
     </>
   );

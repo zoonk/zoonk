@@ -135,7 +135,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
   );
 }
 
-export function SheetLegend({ className }: { className?: string }) {
+function SheetLegend({ className }: { className?: string }) {
   const t = useExtracted();
   const { flagged } = useSectionCounts();
 
