@@ -1483,6 +1483,7 @@ msgstr "Zu"
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
+#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -8690,11 +8691,6 @@ msgstr "{topics} 문제를 모두 맞혔어요."
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "이미 아는 레슨 {count, plural, other {#개}}를 건너뛸까요?"
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "uFDpFL"
-msgid "Keep my plan"
-msgstr "내 계획 유지하기"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "b4G-y7"
