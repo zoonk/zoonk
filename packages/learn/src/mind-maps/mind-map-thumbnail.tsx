@@ -1,10 +1,12 @@
 "use client";
 
-import { type MindMapImage, type MindMapOutline as Outline } from "@zoonk/core/mind-maps/contract";
+import {
+  MIND_MAP_THUMBNAIL_WIDTH,
+  type MindMapImage,
+  type MindMapOutline as Outline,
+} from "@zoonk/core/mind-maps/contract";
 import { toMindMapSrc } from "./_utils/mind-map-urls";
 import { useMindMapAlt } from "./mind-map-description";
-
-const THUMBNAIL_WIDTH = 640;
 
 /** A map's picture where it's read small: the stored thumbnail until the place is wider than it. */
 export function MindMapThumbnail({
@@ -31,7 +33,7 @@ export function MindMapThumbnail({
       height={image.height}
       sizes={sizes}
       src={toMindMapSrc(image.url)}
-      srcSet={`${toMindMapSrc(image.thumbnailUrl)} ${THUMBNAIL_WIDTH}w, ${toMindMapSrc(image.url)} ${image.width}w`}
+      srcSet={`${toMindMapSrc(image.thumbnailUrl)} ${MIND_MAP_THUMBNAIL_WIDTH}w, ${toMindMapSrc(image.url)} ${image.width}w`}
       width={image.width}
     />
   );

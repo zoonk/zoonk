@@ -8,7 +8,7 @@ import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
 import { getMock } from "@zoonk/core/exams/mocks/get";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
+import { QuestionSkeleton, TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -38,14 +38,7 @@ function MockSkeleton() {
       title={<Skeleton className="h-6 w-24" />}
     >
       <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-7 w-5/6" />
-      <div className="flex flex-col gap-2.5">
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-      </div>
+      <QuestionSkeleton options={5} />
     </TaskSkeleton>
   );
 }

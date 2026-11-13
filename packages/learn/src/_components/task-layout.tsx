@@ -227,6 +227,22 @@ export function TaskAsideSection({
   );
 }
 
+const USUAL_OPTIONS = 4;
+
+/** A question while it loads: its title and its options, on the gaps the real ones keep. */
+export function QuestionSkeleton({ options = USUAL_OPTIONS }: { options?: number }) {
+  return (
+    <>
+      <Skeleton className="h-7 w-5/6" />
+      <div className="flex flex-col gap-2.5">
+        {Array.from({ length: options }, (_, index) => (
+          <Skeleton className="h-12 w-full rounded-xl" key={index} />
+        ))}
+      </div>
+    </>
+  );
+}
+
 export function TaskSkeleton({
   actions,
   aside,

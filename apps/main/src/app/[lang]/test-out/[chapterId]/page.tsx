@@ -13,7 +13,7 @@ import {
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
 import { getRecordedTestOut } from "@zoonk/core/learner/test-out/recorded";
 import { getGoalPlan } from "@zoonk/core/plans/get";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
+import { QuestionSkeleton, TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -176,13 +176,7 @@ function TestOutSkeleton() {
         <Skeleton className="h-4 w-2/3 lg:hidden" />
         <Skeleton className="ml-auto h-3 w-10" />
       </div>
-      <Skeleton className="h-7 w-5/6" />
-      <div className="flex flex-col gap-2.5">
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-        <Skeleton className="h-12 w-full rounded-xl" />
-      </div>
+      <QuestionSkeleton />
     </TaskSkeleton>
   );
 }
