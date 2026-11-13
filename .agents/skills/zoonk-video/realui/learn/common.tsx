@@ -89,15 +89,12 @@ import {
   LearnBottomNavigation,
   type LearnTab,
 } from "@repo/packages/learn/src/shell/learn-navigation.tsx";
-import {
-  LearnShellEnd,
-  LearnShellHeader,
-  LearnShellStart,
-} from "@repo/packages/learn/src/shell/learn-shell.tsx";
+import { FRAME_COLUMN_CLASS } from "@repo/packages/learn/src/shell/learn-shell.tsx";
 import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.tsx";
 import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
-import { SidebarSearch } from "@repo/packages/ui/src/components/sidebar-toggle.tsx";
-import { User } from "lucide-react";
+import { Button } from "@repo/packages/ui/src/components/button.tsx";
+import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
+import { SearchIcon, User } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 export const CAREER_GOAL_ID = "goal-career";
@@ -128,52 +125,54 @@ function TopBar({ goal }: { goal: ShellGoal }) {
   );
 
   return (
-    <LearnShellHeader className="lg:hidden">
-      <LearnShellStart>
-        <GoalSwitcher
-          activeGoalId={goal.id}
-          explanationHref="/explain"
-          exploreHref="/courses"
-          goals={[
-            {
-              dailyMinutes: goal.dailyMinutes,
-              id: goal.id,
-              kind: goal.kind as any,
-              status: "active",
-              targetDate: goal.targetDate,
-              targetLanguage: null,
-              title: goal.title,
-            },
-          ]}
-          newGoalHref="/start"
-          onSelect={async () => {}}
-          onStartWaiting={async () => {}}
-          waitingGoals={[]}
-        />
-      </LearnShellStart>
-      <LearnShellEnd>
-        <a
-          className="text-muted-foreground hit-area relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums"
-          href="/stats"
-        >
-          <BeltIndicator aria-hidden="true" className="size-2.5" color="white" label={belt} />
-          <span aria-hidden="true">3</span>
-        </a>
-        <span className="hit-area relative size-7 shrink-0 rounded-full">
-          <Avatar className="size-full">
-            <AvatarFallback>
-              <User size={16} />
-            </AvatarFallback>
-          </Avatar>
-        </span>
-      </LearnShellEnd>
-      <SidebarSearch
-        className="col-span-2 mt-1.5"
-        label={t("Search or ask…")}
-        onClick={() => {}}
-        placement="bar"
+    <div className={FRAME_COLUMN_CLASS}>
+      <PageTopBar
+        actions={
+          <>
+            <Button className="text-muted-foreground" size="icon-bar" variant="ghost">
+              <SearchIcon aria-hidden="true" />
+              <span className="sr-only">{t("Search")}</span>
+            </Button>
+            <a
+              className="text-muted-foreground hit-area relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums"
+              href="/stats"
+            >
+              <BeltIndicator aria-hidden="true" className="size-2.5" color="white" label={belt} />
+              <span aria-hidden="true">3</span>
+            </a>
+            <span className="hit-area relative size-7 shrink-0 rounded-full">
+              <Avatar className="size-full">
+                <AvatarFallback>
+                  <User size={16} />
+                </AvatarFallback>
+              </Avatar>
+            </span>
+          </>
+        }
+        back={
+          <GoalSwitcher
+            activeGoalId={goal.id}
+            explanationHref="/explain"
+            exploreHref="/courses"
+            goals={[
+              {
+                dailyMinutes: goal.dailyMinutes,
+                id: goal.id,
+                kind: goal.kind as any,
+                status: "active",
+                targetDate: goal.targetDate,
+                targetLanguage: null,
+                title: goal.title,
+              },
+            ]}
+            newGoalHref="/start"
+            onSelect={async () => {}}
+            onStartWaiting={async () => {}}
+            waitingGoals={[]}
+          />
+        }
       />
-    </LearnShellHeader>
+    </div>
   );
 }
 

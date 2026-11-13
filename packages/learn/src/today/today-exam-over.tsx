@@ -7,12 +7,11 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { ChangeSaveError } from "../_components/save-error";
+import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { ArchiveGoal } from "../journey/archive-goal";
 import { STUDY_AFTER_EXAM } from "../plan/plan-full-course";
+import { TodayBar } from "./today-bar";
 import { useTodayScreen } from "./today-context";
-import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
-
-const BUTTON_CLASS = "w-full text-reading sm:w-auto";
 
 /**
  * An exam whose date passed with lessons left: the learner studies them or archives the goal.
@@ -40,37 +39,31 @@ export function TodayExamOver() {
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-        <ArchiveGoal
-          goalTitle={today.goal.displayName}
-          onSetStatus={async () => ((await actions.archiveGoal()) ? "saved" : "failed")}
-        >
-          {(archive) => (
-            <Button
-              busy={archive.pending}
-              className={BUTTON_CLASS}
-              disabled={isPending}
-              icon={<ArchiveIcon aria-hidden="true" />}
-              onClick={archive.ask}
-              size="lg"
-              variant="outline"
-            >
-              {t("Archive goal")}
-            </Button>
-          )}
-        </ArchiveGoal>
+    <TodayBar note={failed && <ChangeSaveError />}>
+      <ArchiveGoal
+        goalTitle={today.goal.displayName}
+        onSetStatus={async () => ((await actions.archiveGoal()) ? "saved" : "failed")}
+      >
+        {(archive) => (
+          <Button
+            busy={archive.pending}
+            className={TASK_WRAPPING_ACTION_CLASS}
+            disabled={isPending}
+            icon={<ArchiveIcon aria-hidden="true" />}
+            onClick={archive.ask}
+            size="xl"
+            variant="outline"
+          >
+            {t("Archive goal")}
+          </Button>
+        )}
+      </ArchiveGoal>
 
-        <form action={keepStudying} className="contents">
-          <EnterButton busy={isPending} className={BUTTON_CLASS} size="lg" type="submit">
-            {t("Keep studying")}
-          </EnterButton>
-        </form>
-      </div>
-
-      <span className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
-        {failed && <ChangeSaveError />}
-      </span>
-    </>
+      <form action={keepStudying} className="contents">
+        <EnterButton busy={isPending} type="submit">
+          {t("Keep studying")}
+        </EnterButton>
+      </form>
+    </TodayBar>
   );
 }

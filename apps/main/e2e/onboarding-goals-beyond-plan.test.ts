@@ -246,7 +246,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await switcher.click();
 
     await expect(
-      page.getByRole("menuitem", { name: `${STATISTICS.subject} Pause a goal or get Plus` }),
+      page.getByRole("menuitem", { name: `${STATISTICS.subject} Pause a goal to start it` }),
     ).toBeVisible();
 
     await prisma.subscription.create({
@@ -282,12 +282,12 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await switcher.click();
 
     await page
-      .getByRole("menuitem", { name: `${STATISTICS.subject} Pause a goal or get Plus` })
+      .getByRole("menuitem", { name: `${STATISTICS.subject} Pause a goal to start it` })
       .click();
 
     const sheet = page.getByRole("dialog", { name: `Make room for ${STATISTICS.subject}` });
 
-    await expect(sheet.getByRole("link", { name: "See Plus" })).toHaveAttribute(
+    await expect(sheet.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
       "href",
       /\/subscription$/u,
     );
