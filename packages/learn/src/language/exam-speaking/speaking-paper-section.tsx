@@ -143,7 +143,7 @@ export function SpeakingPaperSection({
       )}
 
       <PageSectionFooter>
-        <a href={paper.source} rel="noreferrer" target="_blank">
+        <a className="hit-area relative" href={paper.source} rel="noreferrer" target="_blank">
           {t("Official format")}
         </a>
       </PageSectionFooter>

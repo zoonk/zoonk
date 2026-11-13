@@ -6,6 +6,7 @@ import {
   getDailySpendBudgetMicros,
   getUsageRule,
 } from "../limits";
+import { getLessonAvailableAt } from "./lesson-start-usage";
 import { type UsageCounts } from "./usage-counts";
 
 const MS_PER_SECOND = 1000;
@@ -19,7 +20,9 @@ type UsageClaim = {
   tier: EntitlementTier;
 };
 
-type LimitCheck = Omit<AllowanceLimit, "tier"> & { used: number };
+type LimitCheck = Omit<Exclude<AllowanceLimit, { period: "rolling30Days" }>, "tier"> & {
+  used: number;
+};
 
 function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitCheck[] {
   const rule = getUsageRule({ kind, tier });
@@ -107,6 +110,25 @@ function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit |
 }
 
 function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
+  const rollingLimit = getUsageRule(claim).rolling30Days;
+
+  const availableAt =
+    rollingLimit === undefined ? null : getLessonAvailableAt(claim.counts.lessonStarts);
+
+  if (
+    rollingLimit !== undefined &&
+    claim.counts.lessonStarts.count >= rollingLimit &&
+    availableAt
+  ) {
+    return {
+      availableAt,
+      limit: rollingLimit,
+      period: "rolling30Days",
+      resource: claim.kind,
+      tier: claim.tier,
+    };
+  }
+
   const reached = getLimitChecks(claim).find((check) => check.used >= check.limit);
 
   if (reached) {

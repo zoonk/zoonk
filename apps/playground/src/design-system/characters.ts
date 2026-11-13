@@ -25,6 +25,7 @@ export const CHARACTER_SIZE_RULES: readonly string[] = [
   "Each view's picture holds everything that view draws, in every expression, stage and Energy, so a change of state moves nothing.",
   "The learner's own buddy is `BuddyArt` wherever it shows. Another buddy (a picker's options, a ceremony's new belt) is `Buddy` with the same `view`, and the Trickster is `Trickster` with the same two views.",
   "A face is square. A body is 6 wide by 7 tall, so give it a height.",
+  'A body that stands alone and has to sit in the middle of its place (an empty state, a ceremony) is drawn in its own outline (`fit="ink"`) at the same scale: it takes its size from `--buddy-height`, the height its 6 by 7 box would have.',
 ];
 
 export type CharacterSize = { className: string; size: string; view: "body" | "face" };

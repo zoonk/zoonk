@@ -30,12 +30,14 @@ export async function openUsageLedgerInWrite({
 }): Promise<UsageLedger> {
   await lockUsageForViewer({ transaction, userId: viewer.userId });
 
+  const claimedAt = claims.some((claim) => claim.kind === "lessonStart") ? new Date() : now;
+
   const [totals, claimed] = await Promise.all([
-    loadUsageTotals({ client: transaction, now, userId: viewer.userId }),
+    loadUsageTotals({ client: transaction, now: claimedAt, userId: viewer.userId }),
     findClaimedTargets({ claims, client: transaction, userId: viewer.userId }),
   ]);
 
-  return { claimed, now, totals, viewer };
+  return { claimed, now: claimedAt, totals, viewer };
 }
 
 /** GET-only: what the claims would meet now, to tell the learner before they ask. */

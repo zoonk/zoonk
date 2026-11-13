@@ -2,13 +2,7 @@
 
 import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { KindMark } from "@zoonk/learn/kind-tile";
-import {
-  CURRENT_ROW_CLASS,
-  ListRowContent,
-  ListRowLeading,
-  ListRowLink,
-  ListRowTitle,
-} from "@zoonk/learn/list";
+import { ListRowContent, ListRowLeading, ListRowLink, ListRowTitle } from "@zoonk/learn/list";
 import { PageSection, PageSectionTitle } from "@zoonk/learn/page";
 import { useExtracted } from "next-intl";
 
@@ -30,10 +24,7 @@ export function ReadyLesson({ alternative }: { alternative: ReadyAlternative }) 
         })}
       </PageSectionTitle>
 
-      <ListRowLink
-        className={CURRENT_ROW_CLASS}
-        href={isLesson ? `/learn/${alternative.lessonId}` : "/today"}
-      >
+      <ListRowLink href={isLesson ? `/learn/${alternative.lessonId}` : "/today"}>
         <ListRowLeading className="size-4 justify-center">
           <KindMark kind={isLesson ? "lesson" : "review"} />
         </ListRowLeading>
