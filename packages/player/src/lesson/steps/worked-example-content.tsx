@@ -1,13 +1,13 @@
 "use client";
 
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
 import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { LESSON_BODY_CLASS, useTermHighlighter } from "../_components/lesson-step-text";
+import { useTermHighlighter } from "../_components/lesson-step-text";
 import { MarkedText } from "../_components/marked-text";
 import { type StepOf } from "./lesson-step-view-props";
 

@@ -8,6 +8,7 @@ import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { type AdminPrompt, getPrompt } from "@/data/prompts/get-prompt";
 import { formatDateTime } from "@/lib/format";
+import { languageName } from "@/lib/language-filter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -22,9 +23,9 @@ import {
 import { PromptGoals } from "./prompt-goals";
 import { PromptReading } from "./prompt-reading";
 
-export const metadata: Metadata = { title: "Prompt" };
+export const metadata: Metadata = { title: "Goal request" };
 
-const PROMPT_PARENTS = [{ href: "/prompts", label: "Prompts" }];
+const PROMPT_PARENTS = [{ href: "/prompts", label: "Goal requests" }];
 
 export default function PromptDetailPage({ params }: PageProps<"/prompts/[id]">) {
   return (
@@ -43,14 +44,24 @@ function PromptDetails({ prompt }: { prompt: AdminPrompt }) {
   return (
     <DetailFields>
       <DetailField label="Learner">
-        <Link className="hover:underline" href={`/users/${user.id}`} prefetch>
+        <Link
+          className="hit-area relative underline underline-offset-3"
+          href={`/users/${user.id}`}
+          prefetch
+        >
           {getPromptLearnerLabel(user)}
         </Link>
         {email && <span className="text-muted-foreground block">{email}</span>}
       </DetailField>
-      <DetailField label="Time zone">{prompt.timeZone}</DetailField>
-      <DetailField label="Run">{prompt.runId ?? "—"}</DetailField>
-      <DetailField label="Updated">{formatDateTime(prompt.updatedAt)}</DetailField>
+      <DetailField label="Time zone" mono={false}>
+        {prompt.timeZone}
+      </DetailField>
+      <DetailField label="Run" mono>
+        {prompt.runId}
+      </DetailField>
+      <DetailField label="Updated" mono={false}>
+        {formatDateTime(prompt.updatedAt)}
+      </DetailField>
     </DetailFields>
   );
 }
@@ -82,21 +93,21 @@ async function PromptDetail({ id }: { id: string }) {
         alert={failed ? promptOutcomeLabels.failed : null}
         facts={[
           !failed && promptOutcomeLabels[prompt.outcome],
-          prompt.language,
+          languageName(prompt.language),
           `Typed ${formatDateTime(prompt.createdAt)}`,
         ]}
         parents={PROMPT_PARENTS}
-        title={`Prompt from ${getPromptLearnerLabel(prompt.user)}`}
+        title={`Goal request from ${getPromptLearnerLabel(prompt.user)}`}
       />
 
       <AdminDetailBody>
-        <AdminSection title="Prompt">
+        <AdminSection title="They typed">
           <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{prompt.prompt}</p>
         </AdminSection>
 
         <AdminSection
           description="What Zoonk read in the words, with any fixes the learner made to the card."
-          title="Read as"
+          title="Zoonk read it as"
         >
           <PromptReading prompt={prompt} />
         </AdminSection>

@@ -17,8 +17,8 @@ export function PostList() {
 
               return (
                 <li key={post.id}>
-                  <Link href={href} className="group flex items-baseline py-2 text-sm">
-                    <span className="group-hover:bg-muted -mx-1.5 grow rounded-lg px-1.5 py-0.5 transition-colors">
+                  <Link href={href} className="group flex items-baseline gap-4 py-3 text-sm">
+                    <span className="group-hover:bg-muted -mx-1.5 grow rounded-lg px-1.5 py-0.5 text-pretty transition-colors">
                       {post.title}
                     </span>
 

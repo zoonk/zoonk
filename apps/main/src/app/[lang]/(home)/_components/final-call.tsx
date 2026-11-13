@@ -1,7 +1,6 @@
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { FINAL_GOAL_ID } from "./home-ids";
 import { LandingGoalBox } from "./landing-goal-box";
 
 const TITLE_ID = "final-call-title";
@@ -21,16 +20,13 @@ export async function FinalCall({ startPath }: { startPath: string }) {
           "flex flex-col items-center py-26 text-center lg:py-34",
         )}
       >
-        <h2
-          className="text-[clamp(2.5rem,7vw,5.25rem)] leading-[0.98] font-semibold tracking-tighter text-balance"
-          id={TITLE_ID}
-        >
+        <h2 className="text-display" id={TITLE_ID}>
           {t({
             description: "In Brazilian Portuguese: “Qual é o seu objetivo?”",
             message: "What's your goal?",
           })}
         </h2>
-        <p className="text-lead mt-4.5 max-w-[28em]">
+        <p className="text-lead mt-4.5 max-w-[28em] text-balance">
           {t({
             description:
               "In Brazilian Portuguese: “Conte do seu jeito e responda umas perguntas rápidas. Depois, é só seguir o plano de cada dia.”",
@@ -40,7 +36,12 @@ export async function FinalCall({ startPath }: { startPath: string }) {
         </p>
 
         <div className="max-w-column mt-9 w-full text-left">
-          <LandingGoalBox action={startPath} example="language" id={FINAL_GOAL_ID} />
+          <LandingGoalBox
+            action={startPath}
+            example="language"
+            id="goal-again"
+            noteClassName="text-center"
+          />
         </div>
       </div>
     </section>

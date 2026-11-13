@@ -24,21 +24,13 @@ export async function getIsoDayFormatter(): Promise<(isoDate: string) => string>
     });
 }
 
-export async function getTotalDurationFormatter(): Promise<(totalMinutes: number) => string> {
-  const formatMinutes = await getMinutesFormatter();
-
-  return (totalMinutes) => {
-    const duration = getTotalDuration(Math.round(totalMinutes));
-
-    return "minutes" in duration
-      ? formatMinutes(duration.minutes)
-      : `~${formatMinutes(duration.hours * MINUTES_PER_HOUR)}`;
-  };
-}
-
 export async function getTotalDurationLabel(totalMinutes: number): Promise<string> {
-  const durationText = await getTotalDurationFormatter();
-  return durationText(totalMinutes);
+  const formatMinutes = await getMinutesFormatter();
+  const duration = getTotalDuration(Math.round(totalMinutes));
+
+  return "minutes" in duration
+    ? formatMinutes(duration.minutes)
+    : `~${formatMinutes(duration.hours * MINUTES_PER_HOUR)}`;
 }
 
 /** Read once: looking each up on its own would run the translations inside `Promise.all`. */

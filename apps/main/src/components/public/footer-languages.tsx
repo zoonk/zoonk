@@ -23,27 +23,31 @@ function LanguageLinks({ pathname }: { pathname: string }) {
   const current = useAppLocale();
 
   return (
-    <nav aria-label={t("Language")} className="flex flex-wrap items-center gap-x-5">
-      <GlobeIcon aria-hidden="true" className="size-4 shrink-0" />
+    <nav aria-label={t("Language")} className="col-span-2 grid grid-cols-subgrid">
+      <span className="flex h-11 items-center justify-center">
+        <GlobeIcon aria-hidden="true" className="size-4" />
+      </span>
 
-      {SUPPORTED_LOCALES.map((locale) => (
-        <a
-          aria-current={locale === current ? "true" : undefined}
-          className={cn(LANGUAGE_LINK_CLASS)}
-          href={getPathname({ forcePrefix: true, href: pathname, locale })}
-          hrefLang={locale}
-          key={locale}
-          lang={locale}
-          onAuxClick={(event) => {
-            if (event.button === MIDDLE_BUTTON) {
-              rememberLocale(locale);
-            }
-          }}
-          onClick={() => rememberLocale(locale)}
-        >
-          {LOCALE_LABELS[locale]}
-        </a>
-      ))}
+      <span className="flex flex-wrap items-center gap-x-6">
+        {SUPPORTED_LOCALES.map((locale) => (
+          <a
+            aria-current={locale === current ? "true" : undefined}
+            className={cn(LANGUAGE_LINK_CLASS)}
+            href={getPathname({ forcePrefix: true, href: pathname, locale })}
+            hrefLang={locale}
+            key={locale}
+            lang={locale}
+            onAuxClick={(event) => {
+              if (event.button === MIDDLE_BUTTON) {
+                rememberLocale(locale);
+              }
+            }}
+            onClick={() => rememberLocale(locale)}
+          >
+            {LOCALE_LABELS[locale]}
+          </a>
+        ))}
+      </span>
     </nav>
   );
 }
