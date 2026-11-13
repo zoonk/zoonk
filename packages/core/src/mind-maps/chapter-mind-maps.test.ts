@@ -670,6 +670,73 @@ describe("chapter mind maps", () => {
     ).resolves.toBe(true);
   });
 
+  it("puts the old outline and its picture back when a map fix is reverted, owing no redraw", async () => {
+    const { finished, map } = await drawnSharedMap();
+    const fix = await applyTitleFix(map.id);
+
+    await signInProposer();
+    const revert = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    if (revert.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${revert.status}`);
+    }
+
+    const approver = await signInApprover();
+    const decided = await approve({ fixId: revert.fix.id, key: approver.key });
+
+    expect({
+      decided: "fix" in decided ? decided.fix?.status : decided.status,
+      effects: revert.fix.effects,
+      owed: await listOwedMindMapRedraws(),
+      row: await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+    }).toMatchObject({
+      decided: "applied",
+      effects: [],
+      owed: expect.not.arrayContaining([finished]),
+      row: {
+        imageHeight: map.imageHeight,
+        imageModel: map.imageModel,
+        imageUrl: map.imageUrl,
+        imageWidth: map.imageWidth,
+        redrawOwedAt: null,
+        status: "completed",
+        structure,
+        thumbnailUrl: map.thumbnailUrl,
+      },
+    });
+  });
+
+  it("goes stale when the map's picture changed after its revert was proposed", async () => {
+    const { map } = await drawnSharedMap();
+    const fix = await applyTitleFix(map.id);
+
+    await signInProposer();
+    const revert = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    if (revert.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${revert.status}`);
+    }
+
+    await prisma.chapterMindMap.update({
+      data: { imageUrl: "https://blob.test/redrawn.webp" },
+      where: { id: map.id },
+    });
+
+    const approver = await signInApprover();
+    const decided = await approve({ fixId: revert.fix.id, key: approver.key });
+
+    expect({
+      decided: "fix" in decided ? decided.fix?.status : decided.status,
+      row: await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+    }).toMatchObject({
+      decided: "stale",
+      row: {
+        imageUrl: "https://blob.test/redrawn.webp",
+        structure: { ...structure, title: "Corrected outline" },
+      },
+    });
+  });
+
   it("does not publish a slow run's old drawing after a staff fix changes the outline", async () => {
     const { finished, goal } = await finishedChapter();
     const analytics = runAnalytics();

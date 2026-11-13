@@ -11,7 +11,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { diffWordsWithSpace } from "diff";
 import Link from "next/link";
 import { connection } from "next/server";
-import { RestoredClip } from "./content-fix-voice";
+import { Restored } from "./content-fix-restored";
 
 const MODEL_LABELS: Record<StoredChange["model"], string> = {
   AnswerExplanation: "Answer explanation",
@@ -263,7 +263,7 @@ function OperationChange({
           {change.fields.map((field) => (
             <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />
           ))}
-          <RestoredClip change={change} />
+          <Restored change={change} />
         </>
       );
     case "replace":
@@ -292,7 +292,7 @@ function OperationChange({
     case "revoice":
       return <p className="text-sm">Records a new clip of “{change.text}”.</p>;
     case "restoreClip":
-      return <RestoredClip change={change} />;
+      return <Restored change={change} />;
     case "detachPicture":
       return (
         <p className="text-sm">
