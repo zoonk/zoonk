@@ -3005,24 +3005,14 @@ msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Erstelle ein Konto, um diese Seite zu nutzen"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Dein Plan und dein Fortschritt werden in deinem Konto gespeichert und sind auf jedem Gerät sicher."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Deine Sitzung ist abgelaufen"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Melde dich an, um fortzufahren"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Erstelle ein Konto, um diese Seite zu nutzen"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3030,9 +3020,19 @@ msgid "Log in to pick up your plan."
 msgstr "Melde dich an, um mit deinem Plan weiterzumachen."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Deine Sitzung ist abgelaufen"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Melde dich an, um dort weiterzumachen, wo du aufgehört hast, oder starte kostenlos."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Melde dich an, um fortzufahren"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"

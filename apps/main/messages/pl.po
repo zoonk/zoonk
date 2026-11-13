@@ -3005,24 +3005,14 @@ msgid "Page not found"
 msgstr "Nie znaleziono strony"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Utwórz konto, aby korzystać z tej strony"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Twój plan i postępy trafią na twoje konto i będą bezpieczne na każdym urządzeniu."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Twoja sesja się zakończyła"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Zaloguj się, aby kontynuować"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Utwórz konto, aby korzystać z tej strony"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3030,9 +3020,19 @@ msgid "Log in to pick up your plan."
 msgstr "Zaloguj się, aby wrócić do swojego planu."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Twoja sesja się zakończyła"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Zaloguj się, aby kontynuować naukę od miejsca przerwania, lub zacznij za darmo."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Zaloguj się, aby kontynuować"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"
