@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDayTime, getFoldMinutes, getHeldMinutes } from "./today-time";
+import { getDayTime, getHeldMinutes } from "./today-time";
 
 function step(estimatedMinutes: number, status: "active" | "completed" | "pending" | "skipped") {
   return { estimatedMinutes, status };
@@ -77,30 +77,6 @@ describe(getHeldMinutes, () => {
         lessonsToPrepare: false,
         minutes: { left: 24 },
       }),
-    ).toBe(0);
-  });
-});
-
-describe(getFoldMinutes, () => {
-  it.each([240, 35.3])("omits time when only Plus lessons are folded (left: %s)", (left) => {
-    expect(
-      getFoldMinutes({
-        hasHiddenRows: false,
-        left,
-        shown: Array.from({ length: 5 }, () => step(7, "pending")),
-      }),
-    ).toBeUndefined();
-  });
-
-  it("puts the held time inside the fold, past the rows shown above it", () => {
-    expect(
-      getFoldMinutes({ hasHiddenRows: true, left: 240, shown: SIXTEEN_LESSONS.slice(0, 7) }),
-    ).toBe(211);
-  });
-
-  it("never goes below zero", () => {
-    expect(
-      getFoldMinutes({ hasHiddenRows: true, left: 10, shown: SIXTEEN_LESSONS.slice(0, 7) }),
     ).toBe(0);
   });
 });

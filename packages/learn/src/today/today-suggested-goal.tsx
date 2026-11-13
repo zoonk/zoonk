@@ -19,8 +19,8 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useSentenceSpace } from "../_utils/locale";
 import { useTodayScreen } from "./today-context";
+import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 
 type SuggestedGoalAnswer = "accepted" | "dismissed";
 
@@ -63,7 +63,7 @@ function SuggestedGoalCard({
 
         <SuggestionActions>
           <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
-            {t("Build my plan")}
+            {t("Start")}
           </SuggestionAction>
 
           <SuggestionAction
@@ -89,20 +89,15 @@ export function SuggestedGoalOffer({
 }) {
   const t = useExtracted();
   const { answer, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
-  const space = useSentenceSpace();
 
   return (
     <section aria-label={t("Suggested goal")} className="flex flex-col gap-4">
-      <div className="flex items-start gap-3 border-y py-3">
-        <CompassIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-        <p className="text-sm leading-5 text-pretty">
-          <span className="font-medium">
-            {t("Continue {course}?", { course: suggestion.title })}
-          </span>
-          {space}
-          <span className="text-muted-foreground">{t("Build a plan in 1 minute.")}</span>
-        </p>
-      </div>
+      <TodayStatusLine icon={<CompassIcon />}>
+        <TodayStatusSentence>
+          {t("Continue {course}?", { course: suggestion.title })}
+        </TodayStatusSentence>
+        <TodayStatusClause>{t("Build a plan in 1 minute.")}</TodayStatusClause>
+      </TodayStatusLine>
 
       <form className="flex gap-2 [&>*:first-child]:flex-1 sm:[&>*:first-child]:flex-none">
         <Button
@@ -112,7 +107,7 @@ export function SuggestedGoalOffer({
           size="lg"
           type="submit"
         >
-          {t("Build my plan")}
+          {t("Start")}
         </Button>
         <Button
           disabled={isPending}

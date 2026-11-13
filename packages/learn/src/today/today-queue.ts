@@ -37,14 +37,3 @@ export function splitTodayQueue<Block extends Pick<DayStep, "position" | "status
 }
 
 export const UPCOMING_ROWS = 4;
-
-/** The blocks "+N more" holds while the queue is folded. */
-export function getFoldedBlocks<Block extends Pick<DayStep, "position" | "status">>({
-  blocks,
-  nextPosition,
-}: {
-  blocks: readonly Block[];
-  nextPosition: number | null;
-}): Block[] {
-  return splitTodayQueue({ blocks, nextPosition }).after.slice(UPCOMING_ROWS);
-}

@@ -167,7 +167,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await page.goto("/today");
 
-    const offer = page.getByRole("region", { name: "What you wrote" });
+    const offer = page.getByRole("region", { name: "A goal you started" });
     await expect(offer.getByText(words)).toBeVisible();
     await offer.getByRole("link", { name: "Continue" }).click();
 
@@ -287,7 +287,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     const sheet = page.getByRole("dialog", { name: `Make room for ${STATISTICS.subject}` });
 
-    await expect(sheet.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
+    await expect(sheet.getByRole("link", { name: "See Plus" })).toHaveAttribute(
       "href",
       /\/subscription$/u,
     );
