@@ -273,7 +273,7 @@ export function ChallengeWonSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
       <div className="max-w-column flex flex-col items-start gap-6">
-        <TricksterArt beaten reacts />
+        <TricksterArt cracks={2} outcome="won" reacts />
         <div className="flex flex-col items-start gap-3">
           <p className="text-title">You beat the Trickster!</p>
           <MomentReadouts brainPower={0} score={{ answered: 6, correct: 5 }} />

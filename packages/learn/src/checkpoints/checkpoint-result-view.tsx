@@ -1,6 +1,5 @@
 "use client";
 
-import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
@@ -20,7 +19,7 @@ import {
   CheckpointReviewSection,
   useReviewedAnswers,
 } from "./checkpoint-review";
-import { TricksterArt } from "./trickster-art";
+import { TricksterArt, getShieldCracks } from "./trickster-art";
 import {
   useCheckpointOutcome,
   useEarnedBrainPower,
@@ -71,18 +70,21 @@ function ScoreLine() {
   );
 }
 
+/** Still: the deciding answer already played how the duel ended. */
 function ResultArt() {
-  const { checkpoint, duel } = useCheckpointScreen();
+  const { checkpoint } = useCheckpointScreen();
+  const outcome = useCheckpointOutcome();
   const won = useIsWon();
 
-  if (checkpoint.kind === "weekly") {
+  if (checkpoint.kind === "weekly" || !outcome) {
     return null;
   }
 
   return (
-    <CelebrationScope play={duel.state.completion !== null}>
-      <TricksterArt beaten={won} reacts />
-    </CelebrationScope>
+    <TricksterArt
+      cracks={getShieldCracks({ broken: outcome.correct, segments: checkpoint.passMark })}
+      outcome={won ? "won" : "lost"}
+    />
   );
 }
 

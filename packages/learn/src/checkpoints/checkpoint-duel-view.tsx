@@ -20,7 +20,7 @@ import { NoVerdictStep } from "./checkpoint-empty";
 import { CheckpointError, CheckpointFrame } from "./checkpoint-frame";
 import { useChallengeName } from "./checkpoint-labels";
 import { CheckpointOptions } from "./checkpoint-options";
-import { TricksterArt } from "./trickster-art";
+import { TricksterArt, getShieldCracks } from "./trickster-art";
 import { TricksterShield, TricksterShieldPlates } from "./trickster-shield";
 import { useVerdictReactions } from "./use-verdict-reactions";
 
@@ -210,7 +210,12 @@ function TricksterPanel() {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <TricksterArt className="size-26 sm:size-26" ref={trickster} />
+        <TricksterArt
+          breaks={score.decision === "won"}
+          className="size-26 sm:size-26"
+          cracks={getShieldCracks({ broken, segments: checkpoint.passMark })}
+          ref={trickster}
+        />
 
         <section className="flex flex-col gap-3">
           <h3 className="text-reading font-semibold">{t("The Trickster's shield")}</h3>

@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
+import { TricksterArt, getShieldCracks } from "./trickster-art";
 
 function DecisionLine({ decision }: { decision: DuelDecision }) {
   const t = useExtracted();
@@ -12,6 +13,26 @@ function DecisionLine({ decision }: { decision: DuelDecision }) {
   return decision === "won"
     ? t("His shield is broken. You won!")
     : t("The Trickster won this time.");
+}
+
+/**
+ * How the duel ended, drawn where the learner just answered. A computer plays it on the Trickster
+ * in its side panel instead.
+ */
+function DuelEnding({ decision }: { decision: DuelDecision }) {
+  const { checkpoint, duel } = useCheckpointScreen();
+  const { correct } = getDuelScore({ checkpoint, state: duel.state });
+
+  return (
+    <div className="with-aside:hidden flex">
+      <TricksterArt
+        className="size-36 sm:size-36"
+        cracks={getShieldCracks({ broken: correct, segments: checkpoint.passMark })}
+        outcome={decision}
+        reacts
+      />
+    </div>
+  );
 }
 
 export function Verdict({
@@ -40,6 +61,8 @@ export function Verdict({
           <DecisionLine decision={decision} />
         </FeedbackExplanation>
       )}
+
+      {decision && <DuelEnding decision={decision} />}
     </FeedbackPanel>
   );
 }

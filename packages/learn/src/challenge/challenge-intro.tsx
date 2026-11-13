@@ -71,7 +71,7 @@ function WonIntro() {
 
   return (
     <StepCard>
-      <TricksterArt beaten />
+      <TricksterArt cracks={2} outcome="won" />
       <IntroHeading title={t("You beat the Trickster!")} />
 
       {result && (
