@@ -19,7 +19,7 @@ function decisionRequest(body: unknown) {
 }
 
 describe("POST /v1/content-fix-batches/{batchId}/decisions", () => {
-  it("refuses a CLI login, which can propose fixes but never approve them", async () => {
+  it("refuses a CLI login, which can propose fixes but never decide them", async () => {
     const admin = await userFixture({ role: "admin" });
 
     const { accessToken } = await cliTokenFixture({
@@ -30,6 +30,7 @@ describe("POST /v1/content-fix-batches/{batchId}/decisions", () => {
     sendStaffAuthorization(`Bearer ${accessToken}`);
 
     await expect(decisionRequest({ decision: "resume" })).resolves.toHaveProperty("status", 401);
+    await expect(decisionRequest({ decision: "reject" })).resolves.toHaveProperty("status", 401);
   });
 
   it("refuses an approval without a passkey assertion", async () => {

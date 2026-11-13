@@ -16,13 +16,13 @@ import {
   type ContentFixDecision,
   approveContentFixes,
   getContentFixApprovalOptions,
-  rejectContentFix,
 } from "../decide-content-fix";
 import {
   proposeContentFix,
   proposeContentFixRevert,
   proposeContentFixRevertInAdmin,
 } from "../propose-content-fix";
+import { rejectContentFix } from "../reject-content-fix";
 
 export const PROPOSE_SCOPES = [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE, "offline_access"];
 

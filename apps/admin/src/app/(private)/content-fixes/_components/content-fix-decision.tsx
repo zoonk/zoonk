@@ -12,6 +12,7 @@ import {
   type ApprovalOutcome,
   approveContentFixesAction,
   rejectContentFixAction,
+  rejectContentFixBatchAction,
   resumeContentFixesAction,
   revertContentFixAction,
   startContentFixApprovalAction,
@@ -93,6 +94,48 @@ export function RejectForm({ fixId }: { fixId: string }) {
         {state.error}
       </span>
     </>
+  );
+}
+
+function rejectedNotice(rejected: number | null): string | null {
+  if (rejected === null) {
+    return null;
+  }
+
+  if (rejected === 0) {
+    return "Nothing was left to reject.";
+  }
+
+  return rejected === 1 ? "Rejected 1 fix." : `Rejected ${String(rejected)} fixes.`;
+}
+
+/**
+ * Rejects every fix of the batch still waiting for review; one that's approved, applied or stale
+ * keeps where it stands. It stays on the page once nothing waits, so its count stays readable.
+ */
+export function RejectBatchForm({ batchId, label }: { batchId: string; label: string | null }) {
+  const [state, formAction] = useAdminActionState({
+    action: rejectContentFixBatchAction,
+    initialState: { ...INITIAL_STATE, rejected: null },
+  });
+
+  const notice = rejectedNotice(state.rejected);
+
+  return (
+    <div className="flex flex-col gap-2">
+      {label && (
+        <form action={formAction}>
+          <input name="batchId" type="hidden" value={batchId} />
+          <AdminActionSubmitButton icon={<XIcon />} size="lg">
+            {label}
+          </AdminActionSubmitButton>
+        </form>
+      )}
+
+      <p aria-live="polite" className="text-sm empty:hidden" key={state.submissionId}>
+        {state.error ? <span className="text-destructive-text">{state.error}</span> : notice}
+      </p>
+    </div>
   );
 }
 

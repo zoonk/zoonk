@@ -4,6 +4,8 @@ enum ContentFixStatus {
   applied
   rejected
   stale
+  /// Its proposer took it back before anyone approved it.
+  withdrawn
 }
 
 enum ContentFixUnit {
@@ -53,7 +55,8 @@ model ContentFix {
   proposerClientId  String           @map("proposer_client_id")
   deciderId         String?          @map("decider_id") @db.Uuid
   decider           User?            @relation("ContentFixDecider", fields: [deciderId], references: [id], onDelete: SetNull)
-  /// When it applied, went stale or was rejected; an approved fix waiting to apply has none.
+  /// When it applied, went stale, was rejected or was withdrawn; an approved fix waiting to apply
+  /// has none.
   decidedAt         DateTime?        @map("decided_at")
   /// Why approving found the content no longer as the fix described it.
   staleReason       String?          @map("stale_reason")

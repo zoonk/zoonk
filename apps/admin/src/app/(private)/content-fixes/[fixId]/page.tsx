@@ -155,7 +155,10 @@ function Why({ fix }: { fix: ContentFixDetail }) {
 
 function Outcome({ fix, viewerId }: { fix: ContentFixDetail; viewerId: string | null }) {
   const decided = [fix.decider?.name, formatDateTime(fix.decidedAt)].filter(Boolean).join(" · ");
-  const reverts = fix.revertedBy.filter((revert) => revert.status !== "rejected");
+
+  const reverts = fix.revertedBy.filter(
+    (revert) => revert.status !== "rejected" && revert.status !== "withdrawn",
+  );
 
   const state = contentFixState(fix);
 
@@ -165,6 +168,7 @@ function Outcome({ fix, viewerId }: { fix: ContentFixDetail; viewerId: string | 
     rejected: "Rejected. Nothing changed.",
     reverted: "Applied, then reverted. Learners get the content from before this fix.",
     stale: `Stale. Nothing changed. ${fix.staleReason ?? ""}`,
+    withdrawn: "Withdrawn by whoever proposed it. Nothing changed.",
   };
 
   if (state === "proposed") {

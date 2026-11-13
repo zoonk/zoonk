@@ -27,7 +27,7 @@ export type ContentFixView = ReturnType<typeof toContentFixView>;
 
 /** One line per proposal or decision: who, which fix and what happened, never the content itself. */
 export function logContentFix(entry: {
-  action: "apply" | "approve" | "propose" | "reject" | "resume" | "revert";
+  action: "apply" | "approve" | "propose" | "reject" | "resume" | "revert" | "withdraw";
   actorUserId: string | null;
   batchId?: string | null;
   clientId?: string | null;

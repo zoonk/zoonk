@@ -47,7 +47,7 @@ export const contentFixPaths = {
   "/content-fix-batches/{batchId}/decisions": {
     post: {
       description:
-        "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
+        "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. `reject` rejects the fixes still waiting for review, without a passkey, since it changes no content. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
       operationId: "createContentFixBatchDecision",
       requestBody: {
         content: { "application/json": { schema: contentFixBatchDecisionRequestSchema } },
@@ -61,7 +61,7 @@ export const contentFixPaths = {
         ...errorResponses,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Approve content fixes (staff)",
+      summary: "Approve or reject a batch of content fixes (staff)",
       tags: ["Content fixes"],
     },
   },

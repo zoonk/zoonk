@@ -16,7 +16,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ContentFixChanges } from "../../_components/content-fix-changes";
-import { RejectForm, ResumeApplying, ReviewDecision } from "../../_components/content-fix-decision";
+import {
+  RejectBatchForm,
+  RejectForm,
+  ResumeApplying,
+  ReviewDecision,
+} from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
 import { ContentFixVoice } from "../../_components/content-fix-voice";
 import {
@@ -163,6 +168,22 @@ function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason:
   );
 }
 
+function rejectLabel({
+  fixes,
+  waiting,
+}: {
+  fixes: readonly BatchFix[];
+  waiting: readonly BatchFix[];
+}): string | null {
+  if (waiting.length === 0 || fixes.length === 1) {
+    return null;
+  }
+
+  return waiting.length === fixes.length
+    ? `Reject all ${String(waiting.length)}`
+    : `Reject the remaining ${String(waiting.length)}`;
+}
+
 async function Decision({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[] }) {
   const passkey = await getStaffPasskeyStatus();
   const viewerId = passkey.status === "ready" ? passkey.userId : null;
@@ -198,6 +219,8 @@ async function Decision({ batchId, fixes }: { batchId: string; fixes: readonly B
         />
       )}
 
+      <RejectBatchForm batchId={batchId} label={rejectLabel({ fixes, waiting })} />
+
       {waiting.length === 0 && mine.length === 0 && (
         <p className="text-muted-foreground text-sm">Every fix in this batch is decided.</p>
       )}
@@ -221,7 +244,7 @@ async function BatchContent({ params }: Pick<Props, "params">) {
         <Why fixes={fixes} reason={reason} />
 
         <AdminSection
-          description="Each fix applies on its own. Reject any you don't want, then approve the rest at once."
+          description="Each fix applies on its own. Reject any you don't want, then approve the rest at once, or reject them all below."
           title="Fixes"
         >
           <ol className="flex flex-col gap-4">

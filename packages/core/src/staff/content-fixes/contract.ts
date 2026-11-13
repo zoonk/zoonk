@@ -62,16 +62,30 @@ export const contentFixProposalSchema = z
   })
   .meta({ id: "ContentFixProposal" });
 
+function isOneTarget(target: { batchId?: string; fixId?: string }): boolean {
+  return (target.batchId === undefined) !== (target.fixId === undefined);
+}
+
+const ONE_TARGET = { message: "Name one fixId or one batchId." };
+
 export const contentFixRevertSchema = z
   .strictObject({
     batchId: idSchema.optional().meta({ description: "Revert every applied fix of this batch" }),
     fixId: idSchema.optional(),
     reason: reasonSchema,
   })
-  .refine((revert) => (revert.batchId === undefined) !== (revert.fixId === undefined), {
-    message: "Name one fixId or one batchId.",
-  })
+  .refine(isOneTarget, ONE_TARGET)
   .meta({ id: "ContentFixRevert" });
+
+export const contentFixWithdrawalSchema = z
+  .strictObject({
+    batchId: idSchema
+      .optional()
+      .meta({ description: "Withdraw every fix of this batch that still waits for review" }),
+    fixId: idSchema.optional(),
+  })
+  .refine(isOneTarget, ONE_TARGET)
+  .meta({ id: "ContentFixWithdrawal" });
 
 const storedChangeSchema = z.union(FIX_HANDLERS.map((handler) => handler.stored));
 

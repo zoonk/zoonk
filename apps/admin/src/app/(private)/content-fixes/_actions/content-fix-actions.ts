@@ -7,11 +7,9 @@ import {
   type PasskeyApprovalOptions,
   passkeyAssertionSchema,
 } from "@zoonk/auth/passkey-approval-contract";
-import {
-  getContentFixApprovalOptions,
-  rejectContentFix,
-} from "@zoonk/core/staff/content-fixes/decide";
+import { getContentFixApprovalOptions } from "@zoonk/core/staff/content-fixes/decide";
 import { proposeContentFixRevertInAdmin } from "@zoonk/core/staff/content-fixes/propose";
+import { rejectContentFix, rejectContentFixBatch } from "@zoonk/core/staff/content-fixes/reject";
 import { parseFormField } from "@zoonk/utils/form";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidatePath } from "next/cache";
@@ -126,6 +124,28 @@ export async function rejectContentFixAction(
 
   showDecision();
   return { error: null, submissionId };
+}
+
+export type BatchRejectState = AdminActionState & { rejected: number | null };
+
+export async function rejectContentFixBatchAction(
+  previousState: BatchRejectState,
+  formData: FormData,
+): Promise<BatchRejectState> {
+  await assertAdmin();
+  const submissionId = previousState.submissionId + 1;
+  const result = await rejectContentFixBatch(parseFormField(formData, "batchId") ?? "");
+
+  if (result.status !== "decided") {
+    return {
+      error: "Couldn't reject these fixes. Reload the page and try again.",
+      rejected: null,
+      submissionId,
+    };
+  }
+
+  showDecision();
+  return { error: null, rejected: result.rejected, submissionId };
 }
 
 export async function revertContentFixAction(
