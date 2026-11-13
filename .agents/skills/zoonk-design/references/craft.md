@@ -211,6 +211,8 @@ Two texts with different jobs differ by size (at least 1.15 times), by weight or
 
 Geist for words, Geist Mono for data, a math face only in a formula. Weights are 400 (`font-normal`), 500 (`font-medium`) and 600 (`font-semibold`), by name: no code writes a weight as a number, and the type roles set 600 for a title and 500 for a label. A button's label is 500 at every size, filled or not; the fill is what makes the main action lead. Nothing under 11px.
 
+Two titles keep their own weight, by the founder's call: the landing page's headline (680, its line height 1, 0.98 on a computer) and a blog post's title (the prose default, 800).
+
 - **Check.** No serif or system font, in frames and emails too; nothing bold or light.
 - **Usual break.** HTML in a frame or an email with no font set, drawn in the browser's serif. `font-[560]` on one button to make it "a little firmer".
 
