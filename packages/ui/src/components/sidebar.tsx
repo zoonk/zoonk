@@ -108,8 +108,9 @@ export function SidebarSection({
 export const SIDEBAR_ICON_ONLY_CLASS =
   "sidebar-collapsed:justify-center sidebar-collapsed:*:not-first:sr-only";
 
+/** Under `lg` the sidebar is hidden, so an item there is a row of a phone's menu sheet: 44px to press. */
 export const SIDEBAR_ITEM_CLASS = cn(
-  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press text-compact relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0",
+  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press text-compact relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 font-medium outline-none focus-visible:ring-[3px] max-lg:h-11 [&>svg]:size-4 [&>svg]:shrink-0",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 
