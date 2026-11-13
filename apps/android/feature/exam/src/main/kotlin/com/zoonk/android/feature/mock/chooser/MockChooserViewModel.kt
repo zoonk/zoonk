@@ -85,13 +85,13 @@ class MockChooserViewModel(
         shape: MockShape,
         key: String,
     ) {
-        begin(shape, key, acceptFewer = false)
+        begin(shape, key, MockStartAsk.First)
     }
 
     /** The learner agreed, in the confirmation, to start the shorter mock exam. */
     fun startShort() {
         val short = mutableStatus.value as? ChooserStatus.Short ?: return
-        begin(short.shape, short.key, acceptFewer = true)
+        begin(short.shape, short.key, MockStartAsk.AcceptFewer)
     }
 
     /** "Pick another" closes the confirmation; the pick stays. */
@@ -102,7 +102,7 @@ class MockChooserViewModel(
     private fun begin(
         shape: MockShape,
         key: String,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ) {
         if (mutableBusy.value || mutableStatus.value == ChooserStatus.Writing) return
         owner = sessions.current
@@ -114,7 +114,7 @@ class MockChooserViewModel(
                 mutableBusy.value = false
                 return@launch
             }
-            when (val result = starter.start(goalId, shape, acceptFewer)) {
+            when (val result = starter.start(goalId, shape, ask)) {
                 is MutationResult.Done -> {
                     if (result.value == MockStartOutcome.NeedsQuestions) write(shape, key) else show(result.value, shape, key)
                 }
@@ -197,7 +197,7 @@ class MockChooserViewModel(
         shape: MockShape,
         key: String,
     ) {
-        when (val result = starter.start(goalId, shape, acceptFewer = true)) {
+        when (val result = starter.start(goalId, shape, MockStartAsk.AfterWriting)) {
             is MutationResult.Done -> show(result.value, shape, key)
             is MutationResult.Failed -> mutableStatus.value = ChooserStatus.Failed(notEnoughQuestions = false)
             MutationResult.Obsolete -> mutableStatus.value = ChooserStatus.Choosing

@@ -50,16 +50,16 @@ internal fun usageLimit() =
 internal class FakeMockStartApi : MockStartApi {
     var starts: List<() -> AnytimeMock> = listOf { started() }
     var writes: List<() -> MockQuestionsGeneration> = listOf { writing(MockQuestionsGeneration.Status.READY) }
-    val started = mutableListOf<Pair<MockShape, Boolean>>()
+    val started = mutableListOf<Pair<MockShape, MockStartAsk>>()
     val asked = mutableListOf<MockShape>()
 
     override suspend fun start(
         session: AuthenticatedSession,
         goalId: UUID,
         shape: MockShape,
-        acceptFewer: Boolean,
+        ask: MockStartAsk,
     ): AnytimeMock {
-        started += shape to acceptFewer
+        started += shape to ask
         return starts[minOf(started.size, starts.size) - 1]()
     }
 
