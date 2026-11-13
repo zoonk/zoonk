@@ -88,7 +88,8 @@ function FlagButton() {
       aria-pressed={flagged}
       className={cn(
         "shrink-0",
-        flagged && "border-warning text-warning-text hover:text-warning-text",
+        flagged &&
+          "border-warning bg-warning/10 text-warning-text hover:bg-warning/15 hover:text-warning-text",
       )}
       onClick={runner.toggleFlag}
       size="xl"

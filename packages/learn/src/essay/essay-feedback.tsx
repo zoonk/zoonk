@@ -10,7 +10,6 @@ import { PageSectionTitle } from "../_components/page";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
@@ -114,8 +113,10 @@ function NothingLeftComment() {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("Next step")}</StepEyebrow>
-        <StepTitle>{t("Nothing left to work on")}</StepTitle>
+        <StepTitle className="flex flex-col items-start gap-1.5">
+          <StepTitleLabel>{t("Next step")}</StepTitleLabel>
+          {t("Nothing left to work on")}
+        </StepTitle>
         <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
       </StepHeader>
     </StepCard>
@@ -136,8 +137,10 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepEyebrow>{t("Next step")}</StepEyebrow>
-        <StepTitle>{criterion ? criterionName(criterion) : t("What to rewrite")}</StepTitle>
+        <StepTitle className="flex flex-col items-start gap-1.5">
+          <StepTitleLabel>{t("Next step")}</StepTitleLabel>
+          {criterion ? criterionName(criterion) : t("What to rewrite")}
+        </StepTitle>
       </StepHeader>
 
       {criterion?.quote && (

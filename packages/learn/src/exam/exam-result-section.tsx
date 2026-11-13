@@ -123,7 +123,7 @@ export function ExamResultSection() {
       {status === "saved" || (exam.result && status === "idle") ? <ReportedResult /> : null}
 
       <form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-4 md:max-w-md"
         onSubmit={(event) => {
           event.preventDefault();
           void submit();

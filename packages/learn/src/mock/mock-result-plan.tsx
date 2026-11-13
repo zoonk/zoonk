@@ -8,7 +8,7 @@ import { useExtracted, useFormatter } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { Meter, MeterFill } from "../_components/meter";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
-import { StepCard, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { StepCard, StepHeader, StepTitle, StepTitleLabel } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
 
@@ -257,8 +257,8 @@ export function MockPlanStep({
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{preparation ? t("Your preparation") : t("Your plan")}</StepEyebrow>
-        <StepTitle className={preparation ? "flex flex-col items-start gap-1.5" : undefined}>
+        <StepTitle className="flex flex-col items-start gap-1.5">
+          <StepTitleLabel>{preparation ? t("Your preparation") : t("Your plan")}</StepTitleLabel>
           {preparation ? (
             <PreparationReadout change={preparation} />
           ) : (
