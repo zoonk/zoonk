@@ -20,12 +20,22 @@ export const CHARACTER_RULES: readonly string[] = [
   "With reduced motion an act draws its expression at once (the face, and the Trickster's pose), and nothing moves.",
 ];
 
-export const CHARACTER_PICTURE_RULES: readonly string[] = [
-  'One piece draws a character, in one of two views: the whole body, or the head alone (`view="face"`) where the body would be under about 64px. A screen picks a view and a size, and never crops, offsets or negatively margins a character.',
-  "Each view's picture is measured to hold everything that view can draw (every buddy, stage, face, pair of glasses and Energy) with 2 units to spare, so its own edge never cuts the character and a change of state moves nothing.",
-  'The body has two boxes. `fit="frame"` (the default) is one 6:7 box for every buddy and stage, so switching between them moves nothing: a picker, a row of buddies. `fit="ink"` is the buddy\'s own drawn outline at the same scale, for a buddy that stands alone and has to sit in the middle of its place (an empty state, a ceremony); it takes its size from `--buddy-height`, the height the frame would have.',
-  "The head view leaves out what hangs outside the head: the body, the napping buddy's Zz, the monocle's chain and the glow's growth. A baby's head and an adult's are the same mark.",
-  "The boxes are measured from the drawings, so a new buddy, a stage or anything worn means measuring again.",
+export const CHARACTER_SIZE_RULES: readonly string[] = [
+  'A character is never cut by its own picture. Under about 64px it is drawn as its face (`view="face"`), above that as its whole body (`view="body"`): no crop and no negative margin.',
+  "Each view's picture holds everything that view draws, in every expression, stage and Energy, so a change of state moves nothing.",
+  "The learner's own buddy is `BuddyArt` wherever it shows. Another buddy (a picker's options, a ceremony's new belt) is `Buddy` with the same `view`, and the Trickster is `Trickster` with the same two views.",
+  "A face is square. A body is 6 wide by 7 tall, so give it a height.",
+];
+
+export type CharacterSize = { className: string; size: string; view: "body" | "face" };
+
+export const CHARACTER_SIZES: readonly CharacterSize[] = [
+  { className: "size-4", size: "16px", view: "face" },
+  { className: "size-6", size: "24px", view: "face" },
+  { className: "size-8", size: "32px", view: "face" },
+  { className: "size-12", size: "48px", view: "face" },
+  { className: "h-23", size: "92px tall", view: "body" },
+  { className: "h-35", size: "140px tall", view: "body" },
 ];
 
 export type CharacterMoment = { act: string; beat: string; character: string; moment: string };
