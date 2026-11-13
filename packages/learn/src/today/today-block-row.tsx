@@ -198,7 +198,7 @@ export function BlockRow({
       )}
       data-slot={isNext ? "today-next" : undefined}
     >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <BlockMark block={block} />
       </span>
 
@@ -261,7 +261,7 @@ export function PlanLessonRow({
         isNext && disabled && !busy && "opacity-50",
       )}
     >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />
       </span>
 
@@ -303,7 +303,7 @@ export function PlusLessonRow({ title }: { title: string }) {
         "has-[a:hover]:before:bg-muted/70",
       )}
     >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />
       </span>
 

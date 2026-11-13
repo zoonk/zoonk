@@ -5,9 +5,10 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, FlagIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
 import { ListRowChevron } from "../_components/list-group";
@@ -138,15 +139,13 @@ function ChaptersPhase({
       {/* The key remounts the phase when the plan goes on elsewhere, so one opened or shut by
           hand keeps it until then. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
-        <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70 group/phase")}>
+        <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70")}>
           {header}
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground/60 size-4 shrink-0 transition-transform group-data-panel-open/phase:rotate-180 motion-reduce:transition-none"
-          />
+          <FoldChevron />
         </CollapsibleTrigger>
 
-        <CollapsibleContent className="-mx-2.5 h-(--collapsible-panel-height) overflow-hidden px-2.5 transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+        {/* The panel clips what it folds, so it reaches as far as an open row's highlight does. */}
+        <CollapsibleContent className="-mx-2.5 px-2.5">
           <div className={NESTED_CLASS}>
             <JourneyChapters
               chapters={phase.chapters}

@@ -6,6 +6,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import {
   Drawer,
@@ -15,7 +16,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { PageSectionLabel } from "../_components/page";
@@ -188,14 +188,11 @@ function SummarySubject({ subject }: { subject: SyllabusSubject }) {
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className="group/subject hover:bg-muted/60 focus-visible:ring-ring/50 -mx-2 flex min-h-12 w-[calc(100%+1rem)] items-center gap-3 rounded-xl px-2 py-2 text-left outline-none focus-visible:ring-[3px]">
+      <CollapsibleTrigger className="hover:bg-muted/60 focus-visible:ring-ring/50 -mx-2 flex min-h-12 w-[calc(100%+1rem)] items-center gap-3 rounded-xl px-2 py-2 text-left outline-none focus-visible:ring-[3px]">
         {header}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground size-4 shrink-0 transition-transform group-data-panel-open/subject:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <SummaryTopics topics={subject.topics} />
       </CollapsibleContent>
     </Collapsible>
