@@ -72,27 +72,6 @@ export function BuddyGlassesName({ glasses }: { glasses: BuddyGlasses }) {
   }
 }
 
-export function BuddyGlassesWorn({ glasses }: { glasses: BuddyGlasses }) {
-  const t = useExtracted();
-
-  switch (glasses) {
-    case "star":
-      return t("Star glasses");
-    case "aviator":
-      return t("Aviator glasses");
-    case "catEye":
-      return t("Cat-eye glasses");
-    case "retro":
-      return t("Retro glasses");
-    case "monocle":
-      return t("A monocle");
-    case "round":
-      return t("Round glasses");
-    default:
-      return t("Round glasses");
-  }
-}
-
 export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
   const t = useExtracted();
 
