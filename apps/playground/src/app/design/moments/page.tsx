@@ -40,10 +40,10 @@ function BuddyInRing({ done }: { done: number }) {
       <Buddy
         beltColor="yellow"
         className="size-12"
-        crop="face"
         energy={80}
         kind="zu"
         studiedToday
+        view="face"
       />
     </MissionsRing>
   );

@@ -1,12 +1,11 @@
 "use client";
 
-import { Buddy } from "@zoonk/ui/components/buddy";
 import { Trickster } from "@zoonk/ui/components/trickster";
-import { cn } from "@zoonk/ui/lib/utils";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { DoneMark } from "../_components/status-mark";
+import { BuddyArt } from "../buddies/buddy-art";
 import { type BuddyMission } from "../buddies/buddy-status-view";
-import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
 
@@ -29,23 +28,7 @@ const MISSION_MARKS = {
   weeklyChallenge: "challenge",
 } as const satisfies Readonly<Record<MissionKind, LearnKind | "buddy" | "trickster">>;
 
-const FACE_SIZES = { buddy: "size-4", done: "size-3.5", trickster: "-m-1 size-5" } as const;
-
-export function BuddyFace({ buddy, className }: { buddy: LearnBuddy | null; className?: string }) {
-  const face = resolveLearnBuddy(buddy);
-
-  return (
-    <Buddy
-      beltColor={face.beltColor}
-      className={cn("shrink-0", className)}
-      crop="face"
-      energy={face.energy}
-      glasses={face.glasses}
-      kind={face.kind}
-      studiedToday={face.studiedToday}
-    />
-  );
-}
+const MARK_SIZES = { character: "size-4", done: "size-3.5" } as const;
 
 export function MissionMark({
   block,
@@ -61,7 +44,7 @@ export function MissionMark({
   const mark = MISSION_MARKS[kind];
 
   if (done) {
-    return <DoneMark className={FACE_SIZES.done} />;
+    return <DoneMark className={MARK_SIZES.done} />;
   }
 
   if (block) {
@@ -69,11 +52,11 @@ export function MissionMark({
   }
 
   if (mark === "trickster") {
-    return <Trickster className={FACE_SIZES.trickster} />;
+    return <Trickster className={MARK_SIZES.character} view="face" />;
   }
 
   if (mark === "buddy") {
-    return <BuddyFace buddy={buddy} className={FACE_SIZES.buddy} />;
+    return <BuddyArt buddy={buddy} className={MARK_SIZES.character} view="face" />;
   }
 
   return <KindMark kind={mark} />;
