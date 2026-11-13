@@ -6,7 +6,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { cn } from "@zoonk/ui/lib/utils";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { SendIcon, SkipForwardIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { AnswersSaveError } from "../_components/save-error";
@@ -27,6 +27,7 @@ import { EssayGradeSteps } from "./essay-feedback";
 import { ESSAY_FIELD_CLASS, useWritingName } from "./essay-labels";
 import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./essay-prompt";
 import { RewriteGuide } from "./essay-rewrite-guide";
+import { EssaySkipButton } from "./essay-skip-button";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "./essay-status-line";
 import { EssayWordCount } from "./essay-word-count";
 import { clearUnsentText, keepUnsentText, readUnsentText } from "./unsent-text";
@@ -144,18 +145,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
         <AnswersSaveError failures={finishing.failures} onRetry={() => void finishing.finish()} />
       )}
       <TaskActions>
-        {drafts.length > 0 && (
-          <Button
-            busy={finishing.pending}
-            className="shrink-0"
-            icon={<SkipForwardIcon aria-hidden="true" />}
-            onClick={() => void finishing.finish()}
-            size="xl"
-            variant="outline"
-          >
-            {t("Skip")}
-          </Button>
-        )}
+        {drafts.length > 0 && <EssaySkipButton finishing={finishing} />}
         <Button
           busy={pending}
           className={TASK_MAIN_ACTION_CLASS}

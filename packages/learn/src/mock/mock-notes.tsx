@@ -7,7 +7,7 @@ import {
   type MockSizeSource,
 } from "@zoonk/core/exams/mocks/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
-import { getSourceHost } from "../_utils/source-host";
+import { QuestionsSourceText } from "../_components/questions-source-text";
 import { useFormatDuration } from "../_utils/time-format";
 
 type AboutView = Pick<
@@ -134,31 +134,9 @@ function useSizeLine(view: AboutView): string | null {
 }
 
 function PastEditionLine({ source }: { source: NonNullable<MockSizeSource["pastEdition"]> }) {
-  const t = useExtracted();
-  const publisher = getSourceHost(source.url);
-
-  const link = (chunks: React.ReactNode) => (
-    <a
-      className="hover:text-foreground underline underline-offset-2"
-      href={source.url}
-      rel="noreferrer"
-      target="_blank"
-    >
-      {chunks}
-    </a>
-  );
-
   return (
     <p>
-      {source.edition
-        ? t.rich(
-            "Questions per subject in the {edition}, as counted by <link>{publisher}</link>.",
-            { edition: source.edition, link, publisher },
-          )
-        : t.rich(
-            "Questions per subject in the latest exam, as counted by <link>{publisher}</link>.",
-            { link, publisher },
-          )}
+      <QuestionsSourceText source={source} />
     </p>
   );
 }

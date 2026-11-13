@@ -1,9 +1,9 @@
 "use client";
 
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
-import { BACK_ICON, Button } from "@zoonk/ui/components/button";
+import { BACK_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
+import { CheckIcon, CircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { PageSectionTitle } from "../_components/page";
@@ -29,6 +29,7 @@ import {
   useInterventionElementName,
   useWritingName,
 } from "./essay-labels";
+import { EssaySkipButton } from "./essay-skip-button";
 import { useFinishEssay } from "./use-finish-essay";
 
 type Grade = EssayDraft["grade"];
@@ -238,16 +239,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
           {t("That didn't go through. Try again in a moment.")}
         </p>
       )}
-      <Button
-        busy={finishing.pending}
-        className="shrink-0"
-        icon={<SkipForwardIcon aria-hidden="true" />}
-        onClick={() => void finishing.finish()}
-        size="xl"
-        variant="outline"
-      >
-        {t("Skip")}
-      </Button>
+      <EssaySkipButton finishing={finishing} />
     </>
   );
 

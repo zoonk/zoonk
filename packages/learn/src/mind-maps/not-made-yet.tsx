@@ -41,7 +41,7 @@ function NotMadeLine({
   const routes = useLearnRoutes();
   const mountedAt = useMountTime();
   const { bulk, follower, page } = library;
-  const { eligible, needLessons, startable, stop } = page.createOffer;
+  const { eligible, startable, stop } = page.createOffer;
   const shownStop = bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null);
   const { failed, onTheWay } = countChapterMaps(chapters);
 
@@ -105,10 +105,6 @@ function NotMadeLine({
     );
   }
 
-  if (needLessons > 0) {
-    return null;
-  }
-
   return null;
 }
 
@@ -117,6 +113,31 @@ export function canMakeNow(chapter: MindMapsPageChapter): boolean {
   return (
     chapter.lessonsToWrite === 0 &&
     (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
+  );
+}
+
+function NotMadeRows({
+  chapters,
+  library,
+  plus,
+}: {
+  chapters: readonly MindMapsPageChapter[];
+  library: MindMapsLibrary;
+  plus: boolean;
+}) {
+  return (
+    <ul className={LIST_GROUP_CLASS}>
+      {chapters.map((chapter) => (
+        <li key={chapter.chapterId}>
+          <MindMapRowView
+            place="library"
+            plus={plus}
+            request={library.row(chapter)}
+            view={{ ...chapter, image: null, outline: null }}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -142,20 +163,7 @@ export function NotMadeYet({
 
   return (
     <PageSection aria-label={t("Other chapters")} data-slot="maps-not-made">
-      {now.length > 0 && (
-        <ul className={LIST_GROUP_CLASS}>
-          {now.map((chapter) => (
-            <li key={chapter.chapterId}>
-              <MindMapRowView
-                place="library"
-                plus={plus}
-                request={library.row(chapter)}
-                view={{ ...chapter, image: null, outline: null }}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
+      {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
 
       {startable > 1 && (
         <Button
@@ -180,18 +188,7 @@ export function NotMadeYet({
           icon={null}
           title={t("Other chapters")}
         >
-          <ul className={LIST_GROUP_CLASS}>
-            {later.map((chapter) => (
-              <li key={chapter.chapterId}>
-                <MindMapRowView
-                  place="library"
-                  plus={plus}
-                  request={library.row(chapter)}
-                  view={{ ...chapter, image: null, outline: null }}
-                />
-              </li>
-            ))}
-          </ul>
+          <NotMadeRows chapters={later} library={library} plus={plus} />
         </Disclosure>
       </ListGroup>
     </PageSection>
