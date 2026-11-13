@@ -147,6 +147,9 @@ const TRIGGER_CLASS = {
     "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
 
+/** Each trigger's start padding above, so its menu opens on the trigger's mark rather than its fill. */
+const MENU_ALIGN_OFFSET = { bar: 10, sidebar: 8 } as const;
+
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
 
 function NoGoalLink({
@@ -240,7 +243,11 @@ export function GoalSwitcher({
           <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)] p-1.5" collisionPadding={16}>
+        <DropdownMenuContent
+          alignOffset={MENU_ALIGN_OFFSET[placement]}
+          className="w-72 max-w-[calc(100vw-2rem)] p-1.5"
+          collisionPadding={16}
+        >
           {selected && (
             <DropdownMenuGroup>
               <DropdownMenuLabel className={MENU_LABEL_CLASS}>{t("Your goals")}</DropdownMenuLabel>
