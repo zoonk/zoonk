@@ -94,7 +94,7 @@ export async function AuthGate({
 
 export function AuthGateScreen({ next }: { next: string }) {
   return (
-    <ColumnScreen>
+    <ColumnScreen width="message">
       <AuthGate heading="h1" next={next} />
     </ColumnScreen>
   );

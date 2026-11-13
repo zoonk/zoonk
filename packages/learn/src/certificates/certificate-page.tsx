@@ -85,7 +85,7 @@ export function CertificateGate({ facts, href }: { facts: CertificateFacts; href
     <div className="flex flex-col items-start" data-slot="certificate-gate">
       <BackLink href={href} title={title} />
       <h1 className="text-headline max-w-4xl">{title}</h1>
-      <EnterLink className="mt-6 w-full sm:w-auto" href={routes.upgrade} icon={null} size="lg">
+      <EnterLink className="mt-6 w-full sm:w-auto" href={routes.upgrade} size="lg">
         {t("Subscribe")}
       </EnterLink>
       <BlankCertificateSheet className="mt-8 max-w-150 rounded-xl" facts={facts} />

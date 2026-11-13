@@ -27,25 +27,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
 import { DevOnlySpecimen, DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { ActionsSpecimen, BottomBarSpecimen, PageTopSpecimen } from "./frame-specimens";
 
 export const metadata: Metadata = { title: "Components and patterns" };
-
-function ActionsSpecimen() {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button size="lg">Continue session</Button>
-      <Button size="lg" variant="outline">
-        Adjust plan
-      </Button>
-      <Button size="lg" variant="ghost">
-        Not now
-      </Button>
-      <p className="text-muted-foreground text-sm">
-        Already know this? <Button variant="link">Take the test</Button>
-      </p>
-    </div>
-  );
-}
 
 function AnswersSpecimen() {
   return (
@@ -277,7 +261,9 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   actions: ActionsSpecimen,
   answers: AnswersSpecimen,
   bands: BandsSpecimen,
+  "bottom-bar": BottomBarSpecimen,
   kinds: KindsSpecimen,
+  "page-top": PageTopSpecimen,
   readouts: ReadoutsSpecimen,
   route: RouteSpecimen,
   status: StatusSpecimen,

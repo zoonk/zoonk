@@ -29,7 +29,7 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
       <TodayAtRest
         banner={banner}
         actions={
-          <EnterLink href="/start" icon={null} size="lg">
+          <EnterLink href="/start" size="lg">
             {t("Start a new goal")}
           </EnterLink>
         }

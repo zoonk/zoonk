@@ -47,13 +47,22 @@ function keepDigits(text: string) {
 
 export const OTP_LENGTH = 6;
 
+function OTPGroupSkeleton() {
+  return (
+    <div className="flex flex-1 gap-2">
+      <Skeleton className="h-14 flex-1 rounded-lg" />
+      <Skeleton className="h-14 flex-1 rounded-lg" />
+      <Skeleton className="h-14 flex-1 rounded-lg" />
+    </div>
+  );
+}
+
 export function OTPFormSkeleton() {
   return (
     <div aria-hidden="true" className="flex w-full flex-col items-center gap-2">
-      <div className="flex w-full gap-2">
-        {Array.from({ length: OTP_LENGTH }, (_, index) => (
-          <Skeleton className="h-11 flex-1 rounded-lg" key={index} />
-        ))}
+      <div className="flex w-full gap-3">
+        <OTPGroupSkeleton />
+        <OTPGroupSkeleton />
       </div>
 
       <div className="mb-2 h-5" />
@@ -78,9 +87,14 @@ export function OTPInput({
       {...props}
     >
       <InputOTPGroup>
-        {Array.from({ length: OTP_LENGTH }, (_, index) => (
-          <InputOTPSlot aria-invalid={invalid} index={index} key={index} />
-        ))}
+        <InputOTPSlot aria-invalid={invalid} index={0} />
+        <InputOTPSlot aria-invalid={invalid} index={1} />
+        <InputOTPSlot aria-invalid={invalid} index={2} />
+      </InputOTPGroup>
+      <InputOTPGroup>
+        <InputOTPSlot aria-invalid={invalid} index={3} />
+        <InputOTPSlot aria-invalid={invalid} index={4} />
+        <InputOTPSlot aria-invalid={invalid} index={5} />
       </InputOTPGroup>
     </InputOTP>
   );

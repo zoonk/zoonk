@@ -2,7 +2,6 @@
 
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
@@ -39,9 +38,7 @@ function ProblemWithBack({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
-            {t("Back")}
-          </TaskMainLink>
+          <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
         </TaskActions>
       }
       headerTitle={title}

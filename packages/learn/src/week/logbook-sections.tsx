@@ -10,18 +10,12 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import { GoalRing } from "../_components/goal-ring";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { DoneMark } from "../_components/status-mark";
-import {
-  StepDetail,
-  StepEyebrow,
-  StepHeader,
-  StepRow,
-  StepRows,
-  StepTitle,
-} from "../_components/step-card";
+import { StepDetail, StepHeader, StepRow, StepRows, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";
@@ -99,7 +93,7 @@ export function WeekHeader({ range }: { range: string }) {
 
   return (
     <StepHeader>
-      <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
+      <Eyebrow>{t("Weekly summary · {range}", { range })}</Eyebrow>
 
       {studied && (
         <StepTitle className="wrap-anywhere">

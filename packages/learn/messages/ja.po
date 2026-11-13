@@ -150,6 +150,7 @@ msgid "Time a day"
 msgstr "1日の学習時間"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment-parts.tsx
@@ -162,7 +163,6 @@ msgstr "1日の学習時間"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
@@ -176,7 +176,6 @@ msgstr "1日の学習時間"
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
 #: src/session/question-block/block-body.tsx
-#: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
 msgctxt "acrOoz"
@@ -184,6 +183,7 @@ msgid "Continue"
 msgstr "続ける"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/level-test/level-test-screens.tsx
@@ -200,20 +200,6 @@ msgstr "始める"
 msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent}%完了"
-
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "閉じる"
 
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
@@ -415,6 +401,7 @@ msgstr "{done, number}/{total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -490,6 +477,58 @@ msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "うまくいきませんでした。少し待ってから、もう一度お試しください。"
 
+#: src/_components/question-actions.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "答え合わせ"
+
+#: src/_components/question-actions.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "確定する"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/block-finish-ready.tsx
+#: src/session/summary/summary-actions.tsx
+msgctxt "2O2sfp"
+msgid "Finish"
+msgstr "終了する"
+
+#: src/_components/question-actions.tsx
+#: src/plan/plan-suggestion-context.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "次へ"
+
+#: src/_components/question-actions.tsx
+msgctxt "BkQAJw"
+msgid "Show the next step"
+msgstr "次のステップを表示"
+
+#: src/_components/question-actions.tsx
+msgctxt "ZLtyTD"
+msgid "See the answer"
+msgstr "答えを見る"
+
+#: src/_components/question-actions.tsx
+#: src/challenge/challenge-footer.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mock/mock-screen.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "結果を見る"
+
+#: src/_components/question-actions.tsx
+msgctxt "QriCsD"
+msgid "Previous screen"
+msgstr "前の画面へ"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/question-feedback.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "まだわからない"
+
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
@@ -512,6 +551,21 @@ msgstr "送信できませんでした。回答はそのまま残っています
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "保存できませんでした。もう一度お試しください。"
+
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "閉じる"
 
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
@@ -557,6 +611,7 @@ msgstr "このステップを開けませんでした。もう一度お試しく
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -567,15 +622,27 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "見る"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "中断する"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "サイドバーを折りたたむ"
+
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "サイドバーを展開する"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "サイドバーを折りたたむ"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "画面のオプション"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1247,11 +1314,6 @@ msgstr "学びたいこと"
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "学習計画を作成する"
-
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "学習の相棒"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
@@ -2128,14 +2190,6 @@ msgid "Mock exams come with Plus: whenever you want, and every week in your plan
 msgstr "Plusならいつでも模試を受けられ、学習計画にも毎週組み込まれます。"
 
 #: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "結果を見る"
-
-#: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "a2N2Lk"
 msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
@@ -2317,7 +2371,6 @@ msgstr "この{duration}の模試は、{date}の学習計画に入りきりま�
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "「今日」に戻る"
@@ -2484,20 +2537,6 @@ msgstr "理由は最後にわかります。"
 msgctxt "e-k3Hd"
 msgid "Every question is answered."
 msgstr "すべての問題に答えました。"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/plan/plan-suggestion-context.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "次へ"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "確定する"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "v5U-vD"
@@ -3360,13 +3399,6 @@ msgstr "採点に送る"
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "書き続ける"
-
-#: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "中断する"
 
 #: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
@@ -7008,12 +7040,6 @@ msgid "Mistake pattern"
 msgstr "ミスの傾向"
 
 #: src/language/pattern/language-pattern-screen.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "画面のオプション"
-
-#: src/language/pattern/language-pattern-screen.tsx
 msgctxt "ZZjlNy"
 msgid "See the rule"
 msgstr "ルールを見る"
@@ -7028,17 +7054,6 @@ msgstr "練習する · {time}"
 msgctxt "uhjTvw"
 msgid "The rule"
 msgstr "ルール"
-
-#: src/language/pattern/language-pattern-screen.tsx
-msgctxt "q56JGx"
-msgid "See how you did"
-msgstr "結果を見る"
-
-#: src/language/pattern/language-pattern-screen.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "答え合わせ"
 
 #: src/language/pattern/pattern-drill.tsx
 msgctxt "27c7dl"
@@ -8311,11 +8326,6 @@ msgctxt "AmTEu0"
 msgid "The trap:"
 msgstr "ひっかけ："
 
-#: src/mistakes/drill/drill-controls.tsx
-msgctxt "XUx7zX"
-msgid "I'm not sure"
-msgstr "自信がない"
-
 #: src/mistakes/drill/drill-countdown.tsx
 msgctxt "XYckgX"
 msgid "{seconds, plural, one {# second left} other {# seconds left}}"
@@ -8393,14 +8403,9 @@ msgid "Open the lesson"
 msgstr "レッスンを開く"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "間違いノートに戻る"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "練習を終える。ここまでの回答は反映されます。"
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr "中断する。ここまでの回答は反映されます。"
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8518,13 +8523,10 @@ msgid "The rest are still ready to practice."
 msgstr "残りの問題は引き続き練習できます。"
 
 #: src/mistakes/practice-step.tsx
-#: src/onboarding/steps/placement-question.tsx
-#: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "まだわからない"
+msgctxt "XUx7zX"
+msgid "I'm not sure"
+msgstr "自信がない"
 
 #. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
@@ -8792,11 +8794,6 @@ msgstr "大半の問題が未回答のため、採点されず、準備状況に
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "まだ保存できていません · もう一度保存しています"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "もう一度試す"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9513,6 +9510,21 @@ msgstr "模試を提出する"
 msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "このセクションを提出する"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr "模試を続ける"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr "回答は保存されています。中断中も残り時間は減り続けます。"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr "模試を中断しますか？"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -13462,13 +13474,6 @@ msgctxt "-HTKTB"
 msgid "{current, number} of {total, number}"
 msgstr "{current, number}/{total, number}"
 
-#: src/questions/choice-questions-run.tsx
-#: src/session/question-block/block-finish-ready.tsx
-#: src/session/summary/summary-actions.tsx
-msgctxt "2O2sfp"
-msgid "Finish"
-msgstr "終了する"
-
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
 msgid "Question {position, number} of {count, number} on this recording"
@@ -14008,9 +14013,14 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "何問か間違いが続いています。ひと休みすると、集中しやすくなります。今日取り組んだ分は、すべて学習の積み重ねになっています。"
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "学習計画を調整しています。ここで間違えても、間違いノートには保存されません。"
+msgctxt "l8gWNH"
+msgid "Fine-tuning your plan"
+msgstr "学習計画を調整しています"
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "yHidq9"
+msgid "A miss here is never saved as a mistake."
+msgstr "ここで間違えても、間違いノートには保存されません。"
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14018,9 +14028,9 @@ msgid "Not today"
 msgstr "今日はスキップする"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "閉じる。解答は保存されています。"
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr "中断する。回答は保存されています。"
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14509,11 +14519,6 @@ msgstr "{goal}を始めるには"
 msgctxt "goalSwitcher.92OYJm"
 msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
 msgstr "無料プランで同時に進められる目標数の上限に達しています。{goal}を始めるには、目標を1つ一時停止してください。一時停止した目標は、あとで再開できます。"
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "閉じる"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.0I_Rwu"
