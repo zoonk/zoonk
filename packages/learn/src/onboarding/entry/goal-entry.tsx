@@ -125,7 +125,7 @@ export function GoalEntry({
           />
         </div>
 
-        <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
+        <div className="col-span-2 flex items-center justify-end gap-1 @xl:col-span-1">
           {onAttach && !limited && (
             <Button
               aria-expanded={attachOpen}

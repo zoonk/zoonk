@@ -172,7 +172,7 @@ export function GoalFieldSubmit({
 }: Omit<React.ComponentProps<typeof EnterButton>, "type">) {
   return (
     <EnterButton
-      className={cn("shrink-0 grow-0 basis-auto", className)}
+      className={cn("shrink-0 grow-0 basis-auto rounded-md", className)}
       type="submit"
       {...FORWARD_ICON}
       {...props}
