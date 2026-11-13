@@ -73,7 +73,7 @@ function size({ across, down, taller, wider }: ReturnType<typeof moved>) {
  * they're for. The boxes holding the field or choice grow with what appeared in them, which their
  * moved neighbors already show.
  */
-export function jumps({ action, comparison }: Step): Moved[] {
+function jumps({ action, comparison }: Step): Moved[] {
   const { target } = comparison;
   const pushesDown = (action.kind === "fold" || action.kind === "search") && target !== null;
 

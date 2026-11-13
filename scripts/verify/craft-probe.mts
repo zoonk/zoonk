@@ -1,5 +1,5 @@
 /* oxlint-disable max-lines, max-lines-per-function, max-statements, complexity, unicorn/consistent-function-scoping -- `readCraft` is sent to the page as one function, so its helpers live inside it (`probe.mts`). */
-export type InkKind = "box" | "icon" | "picture" | "text";
+type InkKind = "box" | "icon" | "picture" | "text";
 
 /**
  * What a person sees, in page coordinates: text by its own line boxes, an icon by its drawn shape,

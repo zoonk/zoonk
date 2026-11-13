@@ -12,7 +12,7 @@ export const WORD_BUDGET = {
   stringWords: 20,
 };
 
-export type PagePlace = {
+type PagePlace = {
   /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
   /** From the bottom of the nearest thing drawn above the title to the title's top. */

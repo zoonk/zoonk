@@ -17,7 +17,7 @@ export type Moved = {
 };
 
 /** A search field is a field whose list below it changes as a person types. */
-export type ActionKind = "control" | "field" | "fold" | "overlay" | "pick" | "search";
+type ActionKind = "control" | "field" | "fold" | "overlay" | "pick" | "search";
 
 export type Action = { id: string; kind: ActionKind; label: string };
 
