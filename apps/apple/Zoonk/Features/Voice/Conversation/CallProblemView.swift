@@ -131,7 +131,7 @@ struct DroppedCallView: View {
     case .microphone:
       why(CallMicrophoneOff.title, CallMicrophoneOff.text(name: name))
     case .plusRequired:
-      why(CallStartFooter.plusRequiredTitle, CallStartFooter.plusRequired)
+      why(CallStartFooter.lockedTitle, CallStartFooter.lockedLine)
     case .callInProgress:
       refused(.callInProgress)
     case .callsPaused:

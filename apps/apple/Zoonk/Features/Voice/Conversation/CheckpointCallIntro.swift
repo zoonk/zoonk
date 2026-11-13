@@ -33,13 +33,15 @@ struct CheckpointCallIntro: View {
   private var content: some View {
     switch call.state {
     case .loaded(.notStarted(let preview)):
-      ConversationIntro(intro: CallIntro(preview.intro)) {
+      ConversationIntro(intro: CallIntro(preview.intro), isLocked: needsPlus) {
         if needsPlus {
           CallStartFooter(isLocked: true, callee: nil) {}
         } else {
           startButton(writesFirst: false, callee: preview.intro.character.name)
         }
       }
+    case .loaded(.preparing) where needsPlus, .loaded(.plusRequired):
+      lockedCall
     case .loaded(.preparing(let preparing)):
       ContentUnavailableView {
         Label(preparing.unitTitle, systemImage: "phone")
@@ -48,9 +50,7 @@ struct CheckpointCallIntro: View {
           "A short voice call with an AI character, about this unit.",
           tableName: "Voice", comment: "A language checkpoint's call that isn't written yet")
       } actions: {
-        if needsPlus {
-          CallStartFooter(isLocked: true, callee: nil) {}
-        } else if isWriting {
+        if isWriting {
           WritingWait(
             title: Text(
               "Getting your call ready", tableName: "Voice",
@@ -63,13 +63,6 @@ struct CheckpointCallIntro: View {
         }
       }
       .lonePage()
-    case .loaded(.plusRequired):
-      VStack(spacing: 12) {
-        CallStartFooter(isLocked: true, callee: nil) {}
-      }
-      .scenePadding()
-      .frame(maxHeight: .infinity)
-      .lonePage()
     case .empty, .failed(.notFound), .loaded(.notLanguage):
       NotFoundView()
     case .failed(let error) where error != .unauthorized:
@@ -80,6 +73,23 @@ struct CheckpointCallIntro: View {
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+  }
+
+  /// The screen form of the gate: what stopped, why the plan doesn't need it, and "Subscribe".
+  private var lockedCall: some View {
+    ContentUnavailableView {
+      Label {
+        CallStartFooter.lockedTitle
+      } icon: {
+        Image(systemName: "phone")
+      }
+    } description: {
+      CallStartFooter.lockedLine
+    }
+    .bottomBar {
+      CallStartFooter(isLocked: true, callee: nil) {}
+    }
+    .lonePage()
   }
 
   /// Writing the call first calls no one, so only the button that calls has the phone.

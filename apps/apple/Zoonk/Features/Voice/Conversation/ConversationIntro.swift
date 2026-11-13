@@ -60,6 +60,8 @@ struct CallIntro {
 
 struct ConversationIntro<Footer: View>: View {
   let intro: CallIntro
+  /// The call needs a subscription: the gate's words take the sound note's place.
+  var isLocked = false
   @ViewBuilder let footer: Footer
 
   var body: some View {
@@ -135,9 +137,7 @@ struct ConversationIntro<Footer: View>: View {
             "Task \(examTask.number) of \(examTask.taskCount)", tableName: "Voice",
             comment: "Which task of the exam's speaking paper this is"))
       } footer: {
-        SectionFooter {
-          SoundNote()
-        }
+        note
       }
     } else {
       Section {
@@ -156,9 +156,18 @@ struct ConversationIntro<Footer: View>: View {
             "What to get across", tableName: "Voice", comment: "The call's goals, before it starts")
         )
       } footer: {
-        SectionFooter {
-          SoundNote()
-        }
+        note
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var note: some View {
+    SectionFooter {
+      if isLocked {
+        GateWords(title: CallStartFooter.lockedTitle, line: CallStartFooter.lockedLine)
+      } else {
+        SoundNote()
       }
     }
   }
@@ -178,13 +187,13 @@ struct CallStartFooter: View {
   let callee: String?
   let onStart: () -> Void
 
-  static var plusRequiredTitle: Text {
+  static var lockedTitle: Text {
     Text(
       "This call needs a subscription", tableName: "Voice",
       comment: "A free learner tried a language plan's challenge call")
   }
 
-  static var plusRequired: Text {
+  static var lockedLine: Text {
     Text(
       "Your plan goes on without it.", tableName: "Voice",
       comment: "Under a challenge call that needs a subscription")
@@ -192,12 +201,10 @@ struct CallStartFooter: View {
 
   var body: some View {
     if isLocked {
-      GateWords(title: Self.plusRequiredTitle, line: Self.plusRequired)
-
       SubscribeButton()
-        .frame(maxWidth: .infinity)
         .buttonStyle(.mainAction)
         .controlSize(.large)
+        .buttonSizing(.flexible)
     } else {
       Button(action: onStart) {
         Label {
