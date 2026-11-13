@@ -54,7 +54,7 @@ const BUSY_HIDDEN_WITHOUT_KEYS =
   "not-pointer-fine:group-aria-busy/busy:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
 
 const BUSY_CONTENT_CLASS =
-  "[display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
+  "[display:inherit] min-w-0 [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
 
 function BusySpinner({ className, iconClassName }: { className?: string; iconClassName?: string }) {
   return (
