@@ -32,7 +32,7 @@ export const BAR_PADDING_CLASS = "pt-4 pb-[max(1rem,env(safe-area-inset-bottom))
 
 /** The kit's bottom bar on a task's column. */
 export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
-  return <BottomBar className={TASK_BAR_ROW_CLASS} data-slot="task-action-bar" {...props} />;
+  return <BottomBar className={TASK_BAR_ROW_CLASS} {...props} />;
 }
 
 export { BottomBarActions as TaskActions } from "@zoonk/ui/components/bottom-bar";
