@@ -193,9 +193,9 @@ export function MissionsCard({
       )}
       data-slot="missions-card"
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-center gap-3">
         {/* Hangs 4px out each side, so it centers on the rows' marks and the title starts with their names. */}
-        {showBuddy && <BuddyArt buddy={buddy} className="-mx-1 mt-0.5 size-6" view="face" />}
+        {showBuddy && <BuddyArt buddy={buddy} className="-mx-1 size-6" view="face" />}
 
         <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 items-start gap-y-1")}>
           <MissionsHeading
