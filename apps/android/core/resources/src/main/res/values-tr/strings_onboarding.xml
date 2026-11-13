@@ -291,8 +291,6 @@
   "onboarding_reveal_estimated_notice_areas": "695db662afb59a437179d7bbe72354b8e71865f5d47afc21d411c46da273f712",
   "onboarding_reveal_estimated_percent": "e84e11a74eb3992f3ad1060930933e48ee76dbc39bf43deb7150f6ca64da279b",
   "onboarding_reveal_first_week": "157a44f90ea6c818471802af60a79bc25cf432279c2520bd64f7f953cbe0a130",
-  "onboarding_reveal_free_week_over_body": "cce41d725634ecebe8afdc1df567f5904aef7d6bd083216ccbbb8a808cc28311",
-  "onboarding_reveal_free_week_over_title": "34e734f7fe454872509bf85a01b704e852d9561433a98e3187521dcde3380798",
   "onboarding_reveal_full_course": "d3c73daf5a5209ac1f260cee40d3d607b690db2c572f3597527d30f59e250cef",
   "onboarding_reveal_full_course_finish": "d0e5ac8c9a0c409c5877b0933c8d421c9d3e45a3df015c7a4c7a1aa72872dc06",
   "onboarding_reveal_full_course_finish_month": "9046301b592e14c86cf495d15929dd7cc7a52031d43b478749a14427647a0f0b",
@@ -807,9 +805,6 @@
     <string name="onboarding_reveal_notice_day_guide">Sınavın resmî takviminde tarih %1$s olarak belirtiliyor.</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s için sınav tarihi yok</string>
-    <string name="onboarding_reveal_free_week_over_title">Ücretsiz sınava hazırlık haftan bitti</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">Tekrar yapmak ve yanlışlarını düzeltmek her zaman ücretsiz. Plus ile yeni derslere, planının geri kalanına ve deneme sınavlarına erişebilirsin.</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">Günde %1$s çalışmak, hedefine ulaşmak için yeterli değil.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Günde %1$s ayırarak sınavın tüm konularını, en çok sorulanları ise daha ayrıntılı çalışırsın.</string>

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { goBackToApp, markAppEntry } from "./app-history";
+import { appBackName, goBackToApp, markAppEntry, nameAppEntry } from "./app-history";
 
 /** Only the browser boundary is faked: Next's replace clears an entry's Navigation API state. */
 function browserHistory() {
@@ -95,5 +95,30 @@ describe("app history", () => {
 
     expect(goBackToApp()).toBe(true);
     expect(history.traverseTo).toHaveBeenCalledWith(plan.key);
+  });
+
+  it("names the page leaving Settings returns to, whichever marks it first", () => {
+    const history = browserHistory();
+    history.open("/today");
+    nameAppEntry("Today");
+    markAppEntry();
+    history.open("/plan");
+    nameAppEntry("Plan");
+    markAppEntry();
+    history.open("/settings");
+    markAppEntry("(settings)");
+    nameAppEntry("Settings");
+    history.open("/settings/appearance");
+    markAppEntry("(settings)");
+
+    expect(appBackName()).toBe("Plan");
+  });
+
+  it("has no name to give when nothing in the app came before", () => {
+    const history = browserHistory();
+    history.open("/settings");
+    markAppEntry("(settings)");
+
+    expect(appBackName()).toBeNull();
   });
 });

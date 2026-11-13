@@ -298,6 +298,7 @@ export function TodayClient({
       brainPower={data.brainPower}
       buddy={data.buddy}
       completedLessons={data.completedLessons}
+      knownLessons={data.knownLessons}
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
       mistakes={data.mistakes}
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
@@ -308,7 +309,6 @@ export function TodayClient({
           <SpeakingPracticeRow entry={data.language.speaking} href="/speaking" />
         )
       }
-      syllabus={data.syllabus}
       today={today}
       unfinishedGoal={unfinishedGoal}
     />

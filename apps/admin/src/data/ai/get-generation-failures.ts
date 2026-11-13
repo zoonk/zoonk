@@ -4,7 +4,7 @@ import { prisma, sql } from "@zoonk/db";
 
 export const STUCK_RUNNING_MINUTES = 60;
 
-const LATEST_FAILURES_PER_WORKFLOW = 5;
+export const LATEST_FAILURES_PER_WORKFLOW = 50;
 
 export type GenerationWorkflow =
   | "lessonContent"
@@ -81,15 +81,21 @@ function listLatestFailures() {
   `;
 }
 
+export const countGenerationFailures = cacheAdminData(async () => {
+  const counts = await countFailures();
+
+  return counts.map((row) => ({
+    failed: Number(row.failed),
+    stuck: Number(row.stuck),
+    workflow: row.workflow,
+  }));
+});
+
 export const getGenerationFailures = cacheAdminData(async () => {
-  const [counts, latest] = await Promise.all([countFailures(), listLatestFailures()]);
+  const [counts, latest] = await Promise.all([countGenerationFailures(), listLatestFailures()]);
 
   return {
-    counts: counts.map((row) => ({
-      failed: Number(row.failed),
-      stuck: Number(row.stuck),
-      workflow: row.workflow,
-    })),
+    counts,
     latest: latest.toSorted((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
   };
 });

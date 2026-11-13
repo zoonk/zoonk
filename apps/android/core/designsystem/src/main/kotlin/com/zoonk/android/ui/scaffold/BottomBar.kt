@@ -29,6 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarAnchors
@@ -40,7 +43,7 @@ import com.zoonk.android.ui.components.LocalButtonSize
  * keeps the page's margin ([pageMargin]) on all four sides of its buttons, clear of the system bars and
  * the keyboard, with its lines 8dp apart and its buttons [ButtonSize.Large]; [columnWidth] keeps them
  * under a page's column. A [note] (an error, a status) shows over the screen just above the bar, so the
- * bar and its buttons never move. The window's snackbars show above it. Across an unfolded book's fold,
+ * bar and its buttons never move; its slot stays in place as a polite live region, so a new note is read out. The window's snackbars show above it. Across an unfolded book's fold,
  * or a spread's split on a wide window ([screenSplit]), it sits on the page after it, off the fold.
  */
 @Composable
@@ -86,8 +89,10 @@ fun BottomBar(
                 }
             }
         }
-        note?.let {
-            Surface(Modifier.aboveBar().fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
+        Box(Modifier.aboveBar().fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
+            note?.let {
+                Surface(Modifier.fillMaxWidth()) { Box(Modifier.padding(horizontal = margin, vertical = 8.dp)) { it() } }
+            }
         }
     }
 }

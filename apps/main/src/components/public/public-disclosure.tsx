@@ -1,13 +1,23 @@
+import { Link } from "@/i18n/navigation";
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 
 export const DISCLOSURE_ANSWER_CLASS =
-  "text-muted-foreground text-reading leading-relaxed text-pretty sm:text-base";
+  "text-muted-foreground max-w-column text-reading leading-relaxed text-pretty sm:text-base";
 
 export const DISCLOSURE_LINK_CLASS =
   "text-foreground hit-area relative font-medium underline underline-offset-4";
+
+/** Where "Ask us" and "Write to us" lead on a public page: Help's form, never an email address. */
+export function renderHelpLink(chunks: ReactNode) {
+  return (
+    <Link className={DISCLOSURE_LINK_CLASS} href="/support">
+      {chunks}
+    </Link>
+  );
+}
 
 /** A native `<details>`, so what it holds stays in the HTML for search engines and works before scripts. */
 export function PublicDisclosure({
@@ -30,7 +40,7 @@ export function PublicDisclosure({
           <span className="text-pretty">{summary}</span>
 
           {aside && (
-            <span className="text-muted-foreground text-compact flex-none font-normal tabular-nums sm:text-sm">
+            <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">
               {aside}
             </span>
           )}

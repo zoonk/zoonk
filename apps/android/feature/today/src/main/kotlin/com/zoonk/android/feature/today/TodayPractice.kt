@@ -16,7 +16,6 @@ import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -125,7 +124,6 @@ private fun MockRow(
         kind = LearnKind.Mock,
         title = stringResource(R.string.today_take_mock),
         description = stringResource(if (bySubject) R.string.today_take_mock_detail_by_subject else R.string.today_take_mock_detail),
-        trailing = { if (mocks.access == MockOptions.Access.PLUS_REQUIRED) PlusMark() },
     ) { navigate(AppRoute.MockChooser) }
 }
 
@@ -138,7 +136,6 @@ private fun SpeakingRow(
         kind = LearnKind.Conversation,
         title = stringResource(R.string.today_exam_speaking),
         description = stringResource(R.string.today_exam_speaking_detail, speaking.title),
-        trailing = { if (speaking.access == LanguageTodaySpeaking.Access.PLUS_REQUIRED) PlusMark() },
     ) { navigate(AppRoute.Speaking()) }
 }
 

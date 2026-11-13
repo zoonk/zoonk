@@ -1,84 +1,135 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { StateMark } from "@/components/state-mark";
 import {
   type CourseCurriculumChapter,
   getCourseCurriculum,
 } from "@/data/courses/get-course-curriculum";
+import { formatCount } from "@/lib/format";
 import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
-import { Badge } from "@zoonk/ui/components/badge";
+import { Meter, MeterFill } from "@zoonk/learn/meter";
 import Link from "next/link";
 
-type ChapterLessons = CourseCurriculumChapter["chapter"]["lessons"];
+type Chapter = CourseCurriculumChapter["chapter"];
 
-function ChapterHomeLabel({
-  chapter,
-  courseId,
-}: {
-  chapter: CourseCurriculumChapter["chapter"];
-  courseId: string;
-}) {
-  const otherCourses = chapter._count.courses - 1;
-  const usage = otherCourses > 0 ? ` · also in ${otherCourses} other courses` : "";
+function countWritten(chapters: Chapter[]) {
+  const lessons = chapters.flatMap((chapter) => chapter.lessons);
 
-  if (chapter.homeCourse?.id === courseId) {
-    return <span className="text-muted-foreground text-xs">Home chapter{usage}</span>;
-  }
-
-  return (
-    <span className="text-xs">
-      <Badge variant="outline">Shared</Badge>{" "}
-      <span className="text-muted-foreground">
-        home: {chapter.homeCourse?.title ?? "none"}
-        {usage}
-      </span>
-    </span>
-  );
+  return {
+    total: lessons.length,
+    written: lessons.filter(({ lesson }) => lesson.contentStatus === "completed").length,
+  };
 }
 
-function ChapterLessonList({ chapterId, lessons }: { chapterId: string; lessons: ChapterLessons }) {
-  if (lessons.length === 0) {
-    return <p className="text-muted-foreground ml-6 text-xs">No lesson outlines yet.</p>;
+/** Where a chapter that isn't this course's own comes from, and who else uses it. */
+function chapterNote({ chapter, courseId }: { chapter: Chapter; courseId: string }): string {
+  const others = chapter._count.courses - 1;
+  const usage = others > 0 ? `also in ${formatCount(others, "other course")}` : "";
+
+  if (chapter.homeCourse?.id === courseId) {
+    return usage;
+  }
+
+  const home = `Shared from ${chapter.homeCourse?.title ?? "a deleted course"}`;
+  return usage ? `${home}, ${usage}` : home;
+}
+
+function ChapterLessons({ chapter }: { chapter: Chapter }) {
+  if (chapter.lessons.length === 0) {
+    return <p className="text-muted-foreground text-compact">No lessons planned yet.</p>;
   }
 
   return (
-    <ol className="ml-6 flex flex-col gap-1 text-sm">
-      {lessons.map(({ lesson, position }) => {
-        const isShared = lesson.homeChapterId !== chapterId || lesson._count.chapters > 1;
-
-        return (
-          <li className="flex min-h-11 flex-wrap items-center gap-2" key={lesson.id}>
-            <span className="text-muted-foreground w-6 tabular-nums">{position + 1}.</span>
-            <Link className="hit-area relative hover:underline" href={`/lessons/${lesson.id}`}>
+    <ul className="flex flex-col">
+      {chapter.lessons.map(({ lesson }) => (
+        <li className="flex min-h-11 items-center justify-between gap-4 text-sm" key={lesson.id}>
+          <span className="flex min-w-0 items-baseline gap-2">
+            <Link
+              className="hit-area relative truncate hover:underline"
+              href={`/lessons/${lesson.id}`}
+            >
               {lesson.title}
             </Link>
-            {isShared ? <Badge variant="outline">Shared lesson</Badge> : null}
-            <span className="text-muted-foreground text-xs">
-              {libraryLessonStatusLabels[lesson.contentStatus]}
-            </span>
-          </li>
-        );
-      })}
-    </ol>
+            {lesson.homeChapterId !== chapter.id || lesson._count.chapters > 1 ? (
+              <span className="text-muted-foreground shrink-0 text-xs">Shared lesson</span>
+            ) : null}
+          </span>
+          <StateMark
+            className="text-muted-foreground shrink-0 text-xs"
+            state={lesson.contentStatus}
+          >
+            {libraryLessonStatusLabels[lesson.contentStatus]}
+          </StateMark>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 function CurriculumChapter({
   courseId,
+  number,
   placement,
 }: {
   courseId: string;
+  number: number;
   placement: CourseCurriculumChapter;
 }) {
-  const { chapter, position } = placement;
+  const { chapter } = placement;
+  const { total, written } = countWritten([chapter]);
+  const note = chapterNote({ chapter, courseId });
 
   return (
-    <li className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-muted-foreground w-6 tabular-nums">{position + 1}.</span>
-        <span className="font-medium">{chapter.title}</span>
-        <ChapterHomeLabel chapter={chapter} courseId={courseId} />
+    <li className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-2 py-4">
+      <span className="text-muted-foreground font-mono text-xs leading-5 tabular-nums">
+        {number}
+      </span>
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-4 text-sm">
+          <span className="min-w-0">
+            <span className="font-medium">{chapter.title}</span>
+            {note ? <span className="text-muted-foreground block text-xs">{note}</span> : null}
+          </span>
+          <span className="text-muted-foreground shrink-0 text-xs">
+            {written} of {total} written
+          </span>
+        </div>
+        <ChapterLessons chapter={chapter} />
       </div>
-      <ChapterLessonList chapterId={chapter.id} lessons={chapter.lessons} />
     </li>
+  );
+}
+
+/** A level of the course: how much of it is written, then its chapters and their lessons. */
+function CurriculumLevel({
+  courseId,
+  level,
+  placements,
+}: {
+  courseId: string;
+  level: string;
+  placements: CourseCurriculumChapter[];
+}) {
+  const { total, written } = countWritten(placements.map((placement) => placement.chapter));
+
+  return (
+    <AdminSection
+      description={`${written} of ${formatCount(total, "lesson")} written in ${formatCount(placements.length, "chapter")}`}
+      title={`Curriculum: ${level}`}
+    >
+      <Meter>
+        <MeterFill share={total > 0 ? written / total : 0} />
+      </Meter>
+      <ol className="divide-y">
+        {placements.map((placement, index) => (
+          <CurriculumChapter
+            courseId={courseId}
+            key={placement.chapter.id}
+            number={index + 1}
+            placement={placement}
+          />
+        ))}
+      </ol>
+    </AdminSection>
   );
 }
 
@@ -88,33 +139,15 @@ export async function CourseCurriculum({ courseId }: { courseId: string }) {
   const placements = await getCourseCurriculum(courseId);
   const levels = Map.groupBy(placements, (placement) => placement.level);
 
-  return (
-    <AdminSection
-      description="Chapters in level bands, with their home course and shared lessons."
-      title="Curriculum"
-    >
-      {placements.length === 0 ? (
-        <AdminSectionEmpty>This course has no Library chapters yet.</AdminSectionEmpty>
-      ) : (
-        <div className="flex flex-col gap-6">
-          {[...levels].map(([level, chapters]) => (
-            <section className="flex flex-col gap-3" key={level}>
-              <h3 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-                {level}
-              </h3>
-              <ol className="flex flex-col gap-4">
-                {chapters.map((placement) => (
-                  <CurriculumChapter
-                    courseId={courseId}
-                    key={placement.chapter.id}
-                    placement={placement}
-                  />
-                ))}
-              </ol>
-            </section>
-          ))}
-        </div>
-      )}
-    </AdminSection>
-  );
+  if (placements.length === 0) {
+    return (
+      <AdminSection title="Curriculum">
+        <AdminSectionEmpty>This course has no chapters yet.</AdminSectionEmpty>
+      </AdminSection>
+    );
+  }
+
+  return [...levels].map(([level, chapters]) => (
+    <CurriculumLevel courseId={courseId} key={level} level={level} placements={chapters} />
+  ));
 }

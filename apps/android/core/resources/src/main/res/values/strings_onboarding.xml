@@ -351,9 +351,6 @@
     <string name="onboarding_reveal_notice_day_guide">The exam\'s official calendar says %1$s.</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">No exam date in %1$s</string>
-    <string name="onboarding_reveal_free_week_over_title">Your free week of exam prep is over</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s a day isn\'t enough time to cover your goal.</string>
     <string name="onboarding_reveal_covers_exam_deeper">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>

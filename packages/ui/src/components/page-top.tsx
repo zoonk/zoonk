@@ -6,6 +6,7 @@ import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { buttonVariants } from "./button";
+import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 const BACK_LINK_CLASS = cn(
   buttonVariants({ edge: "start", size: "sm", variant: "ghost" }),
@@ -48,7 +49,7 @@ function PageTopBar({
   back,
   ref,
 }: {
-  /** The page's own actions, at the bar's end. */
+  /** The page's own actions, at the bar's end, 8px apart: `Button size="bar"`, or `"icon-bar"` for a glyph alone. */
   actions?: React.ReactNode;
   /** A `BackLink` to the parent page; a page with no parent has none. */
   back?: React.ReactNode;
@@ -70,19 +71,13 @@ function PageTopBar({
           {back}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-1" data-slot="page-top-end">
+        <div className="flex shrink-0 items-center justify-end gap-2" data-slot="page-top-end">
           {actions}
         </div>
       </div>
     </div>
   );
 }
-
-/**
- * The block that holds a page's title, right under the bar. A page adds no padding or margin over
- * its title: this is all of it.
- */
-const PAGE_HEADER_CLASS = "flex min-w-0 flex-col gap-1 pt-1";
 
 /**
  * A page's whole top, for a page that draws both parts itself. Where a layout draws the bar and
@@ -126,4 +121,4 @@ function PageTitle({
   );
 }
 
-export { BackLink, PAGE_HEADER_CLASS, PageTitle, PageTop, PageTopBar };
+export { BackLink, PageTitle, PageTop, PageTopBar };

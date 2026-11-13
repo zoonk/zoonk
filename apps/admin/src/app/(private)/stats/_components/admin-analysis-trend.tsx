@@ -38,8 +38,8 @@ function AnalysisChange({
   }).format(percentageChange);
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm tabular-nums", className)}>
-      <Icon aria-hidden className="size-4" />
+    <div className={cn("flex items-baseline gap-1 text-sm tabular-nums", className)}>
+      <Icon aria-hidden className="size-4 self-center" />
       <span>
         {formattedChange}% {comparisonLabel}
       </span>
@@ -61,13 +61,13 @@ export function AdminAnalysisTrend({
   return (
     <section className="flex min-h-136 flex-1 flex-col gap-8 py-4 sm:gap-10">
       <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
           <p className="text-5xl leading-none font-semibold tracking-tight tabular-nums sm:text-6xl">
             {value}
           </p>
           {comparison ? <AnalysisChange {...comparison} /> : null}
         </div>
-        <p className="text-muted-foreground max-w-2xl text-sm">{description}</p>
+        <p className="text-muted-foreground max-w-column text-sm">{description}</p>
       </header>
 
       {children}

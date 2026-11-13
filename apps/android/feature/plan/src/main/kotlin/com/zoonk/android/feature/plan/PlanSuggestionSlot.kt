@@ -102,10 +102,6 @@ internal sealed interface SlotItem {
     ) : SlotItem {
         override val key get() = if (tooTight) "tooTight" else "behind"
     }
-
-    data object FreeWeekOver : SlotItem {
-        override val key = "freeWeekOver"
-    }
 }
 
 /** [finished] once what to study next is known, [courseComplete] while a finished unit's certificate isn't written; [fix] is the pace's sentence. */
@@ -118,7 +114,7 @@ internal fun slotItems(
     val plan = page.plan
     val pace = plan.status?.pace
     val pastDate = pace as? Pace.PastDate
-    val open = !plan.access.freeWeekOver && pastDate == null
+    val open = pastDate == null
     val time =
         listOfNotNull(
             SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
@@ -139,7 +135,6 @@ internal fun slotItems(
         if (pace is Pace.NeedsAdjusting && fix != null) add(SlotItem.Pace(tooTight = true, fix.text))
         if (pace is Pace.Behind && fix != null) add(SlotItem.Pace(tooTight = false, fix.text))
         if (!finished) addAll(time)
-        if (plan.access.freeWeekOver) add(SlotItem.FreeWeekOver)
     }
 }
 
@@ -434,10 +429,6 @@ private fun SlotSuggestion(
         is SlotItem.Pace -> {
             PaceSuggestion(item, layout, links, onAdjust)
         }
-
-        SlotItem.FreeWeekOver -> {
-            FreeWeekSuggestion(layout, links)
-        }
     }
 }
 
@@ -624,31 +615,6 @@ private fun PaceSuggestion(
                     links.today()
                 })
             }
-        }
-    }
-}
-
-@Composable
-private fun FreeWeekSuggestion(
-    layout: SuggestionLayout,
-    links: PlanLinks,
-) {
-    val title = stringResource(R.string.subscription_free_week_over_title)
-
-    Suggestion(
-        label = title,
-        summary = title,
-        layout = layout,
-        mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = links::plus) },
-    ) {
-        SuggestionHeader(title)
-        SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
-        SuggestionActions {
-            SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = {
-                close()
-                links.plus()
-            })
         }
     }
 }

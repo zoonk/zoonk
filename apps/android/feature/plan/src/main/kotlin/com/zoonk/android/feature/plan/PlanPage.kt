@@ -105,8 +105,6 @@ class PlanLinks(
 
     fun today() = open(AppRoute.Today)
 
-    fun plus() = open(AppRoute.Subscription)
-
     fun speaking() = open(AppRoute.Speaking())
 
     fun focusTest() = open(AppRoute.FocusTest(page.goal.id.toString()))

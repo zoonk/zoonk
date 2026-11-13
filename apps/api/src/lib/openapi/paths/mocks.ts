@@ -41,7 +41,7 @@ export const mockPaths = {
   "/goals/{goalId}/mocks": {
     get: {
       description:
-        "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of the day in turn and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
+        "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
       operationId: "listMocks",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -58,7 +58,7 @@ export const mockPaths = {
     },
     post: {
       description:
-        "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `acceptFewer`. A mock still well short of its questions with nothing to write now answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): start it with `acceptFewer` if the learner wants. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): ask the learner, and start it with `acceptFewer` only if they agree, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
       operationId: "startAnytimeMock",
       requestBody: {
         content: { "application/json": { schema: anytimeMockInputSchema } },

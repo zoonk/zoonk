@@ -12,10 +12,24 @@ export const HERO_LEAD_CLASS = "text-lead mt-4";
 
 export const LESSON_LEAD_CLASS = "text-lead mt-3";
 
-const PLAN_LINE_CLASS = "text-muted-foreground mt-4 flex gap-2 text-reading leading-snug";
+const PLAN_LINE_CLASS = "text-muted-foreground mt-4 flex gap-3 text-reading leading-snug";
 
-export async function PlanLine({ startsHere = false }: { startsHere?: boolean }) {
+type PlanStart = "chapter" | "exam" | "known";
+
+export async function PlanLine({ start = "known" }: { start?: PlanStart }) {
   const t = await getExtracted();
+
+  const lines: Record<PlanStart, string> = {
+    chapter: t(
+      "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter.",
+    ),
+    exam: t(
+      "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
+    ),
+    known: t(
+      "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know.",
+    ),
+  };
 
   return (
     <p className={PLAN_LINE_CLASS}>
@@ -23,11 +37,7 @@ export async function PlanLine({ startsHere = false }: { startsHere?: boolean })
         <MapIcon aria-hidden="true" className="size-4" />
       </LineMarker>
 
-      <span className="text-pretty">
-        {startsHere
-          ? t("With Zoonk, your plan starts at this chapter and fits your schedule.")
-          : t("With Zoonk, your plan starts at your level and fits your schedule.")}
-      </span>
+      <span className="text-pretty">{lines[start]}</span>
     </p>
   );
 }

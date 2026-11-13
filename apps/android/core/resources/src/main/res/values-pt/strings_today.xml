@@ -31,7 +31,6 @@
   "today_done": "2284463c42ec765f3f80e70ec1c041982f73a14d16b32ea352503db6044c6de7",
   "today_done_count": "77739ca31a44b4066daac64d201a6d05fc64c01e8f65282c3a2f0841af1c000b",
   "today_done_day_off": "947362f77c84d95608a4d7e104714f610b0983b2593241450ba9949be60afd61",
-  "today_earlier_work": "c6b278ef40ff2f30173c191c3d4f668ae393259b98c7b5d53e94db65b255c64c",
   "today_exam_choice_choose": "5bf76a08297b29f5482a62ed9760977b002feeda8dcda4f65a03f9115b83597f",
   "today_exam_choice_question": "2135e744ec0650ebd7c48d2813790e5ff422a47e7f2fbe57f2811ca5d6162148",
   "today_exam_choice_question_several": "eb603dc06764da0a5ebeefa3190d4c63a183d61b36ebd96339a2f172d3b0f021",
@@ -40,10 +39,6 @@
   "today_exam_speaking_detail": "54e79bd2693f75fb19bc29572a7557da31987ae090fae98d30e4de6d5618ddf3",
   "today_finished_detail": "46204b926514effdd3f2d3b6ad8906ecbc9aa6abdec16f99bf739e0b9863b699",
   "today_finished_goal": "41298a94ec8b4493addb1d7752e6d77505ddbec6b62a3a8ab3a82ea05459cc65",
-  "today_fresh_start_new_phase": "4fa5884c8ed96c926856df2ff539be11940d0e63606f4ca0f0c62518b6c5b2ba",
-  "today_fresh_start_new_week": "37e555c8c921bb8f42ddea524c1d36efb94e4ec066767a44e81293be5d825d7d",
-  "today_fresh_start_welcome_back": "461e3d52a2f5aa6b6d5ddc5fb88651e19a9ca0913db50bf1d47cdabd92992d7b",
-  "today_fresh_start_welcome_back_trial_ended": "47670c611b0d15db7d4b3aae3cdb7acd2815182be12c1baa7dc4b226a72e4d37",
   "today_get_lessons": "b62d36a4b2102cffd8e99a219618eb130d79c48d2b7451a723f6640af081a873",
   "today_insight_add_it": "2cfce9928a0be221a462eea611d6906c531e8383f76b3b1ea5ba43d9e45d76ae",
   "today_insight_got_it": "64cf662ce7eae98cddfd248dab7a2dab433c284452cbe9015d313184852c56dd",
@@ -72,9 +67,7 @@
   "today_noted": "c4dfc8e44e307dfb9cff8467795dd9644f5272d6d53552d3f83322f5c2ef6ff9",
   "today_nothing_new": "d9c9cb0b330b35d71e2fd4e404533f8fb429a0c646046a633fdbff0700012d09",
   "today_nothing_new_detail": "ff962888c4085dc11f8b5034f054469b67f1d4a9c3c22ebc644646f5c32721cd",
-  "today_nothing_to_review": "5e6195204da2d9a83ee64d07e450f44fd95e8983226984a1a8654b13e8ade8ef",
   "today_notice_exam": "23d7de0f6aef005d48ccedc6659cdbdd0035c65322d545ff0c7fcf41fb24b40a",
-  "today_notice_exam_access": "0ae3cabd2086374cc221b3f3f687001122c82e465169bbd08561e477431d4fd5",
   "today_notice_exam_choice": "42fa30325a784338d51a451db4118af412bed4c697fa1361609d5ce9444eb111",
   "today_notice_falling_behind": "fe0116764ca351a0c1a0ceebf0f1edfaa36dbec062d383c5544f22eadf628c27",
   "today_notice_plan_change": "c1c9a3b17f3cb355ef0bd1726c8e83b103c941db74447c0b240e5883e2571868",
@@ -218,11 +211,6 @@
     <string name="today_time_studied">%1$s de estudo</string>
     <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">Concluídas: %1$s de %2$s</string>
-    <!-- %1$s is a duration, such as "55 min". -->
-    <string name="today_fresh_start_welcome_back">Que bom ter você de volta! Hoje está mais leve, cerca de %1$s, para você retomar aos poucos.</string>
-    <string name="today_fresh_start_welcome_back_trial_ended">Que bom ter você de volta! Hoje leva cerca de %1$s, para você retomar aos poucos.</string>
-    <string name="today_fresh_start_new_phase">Uma nova fase começa hoje, com um aquecimento leve para começar.</string>
-    <string name="today_fresh_start_new_week">Uma nova semana. Hoje começa com um aquecimento leve.</string>
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
         <item quantity="one">%d concluído</item>
@@ -280,7 +268,6 @@
         <item quantity="other">Sua data chegou e ainda faltavam %d aulas.</item>
     </plurals>
     <string name="today_past_date_detail">Ajuste seu plano para continuar.</string>
-    <string name="today_nothing_to_review">Nada para revisar hoje.</string>
     <string name="today_nothing_new">Nada de novo para hoje.</string>
     <string name="today_nothing_new_detail">Você concluiu todas as aulas do seu plano ou já sabia o conteúdo.</string>
     <string name="today_up_next">A seguir no seu plano</string>
@@ -368,8 +355,6 @@
     <string name="today_practice_with_buddy">Praticar com %1$s</string>
     <string name="today_already_know_this">Já sabe isso?</string>
     <string name="today_take_the_test">Fazer o teste</string>
-    <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
-    <string name="today_earlier_work">Aulas pendentes de dias anteriores · %1$s</string>
     <string name="today_practice_anytime">Pratique quando quiser</string>
     <string name="today_mistakes_notebook">Caderno de erros</string>
     <string name="today_mistakes_redo">Refaça o que você errou</string>
@@ -396,7 +381,6 @@
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tarefas em uma conversa</string>
     <string name="today_notice_exam">Sua prova</string>
-    <string name="today_notice_exam_access">Preparo para provas no plano Grátis</string>
     <string name="today_notice_suggested_goal">Objetivo sugerido</string>
     <string name="today_insight_label">Com base nas suas respostas recentes</string>
     <string name="today_insight_add_it">Adicionar</string>

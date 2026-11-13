@@ -1,40 +1,22 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BackLink, PageTopBar } from "@zoonk/ui/components/page-top";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { useScrolled } from "@zoonk/ui/hooks/scrolled";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { PAGE_COLUMN_CLASS } from "../_components/page";
+import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { cameFromApp, goBackTo, goBackToApp, subscribeToHistory } from "./app-history";
-import { BAR_ROW_CLASS } from "./learn-shell";
+import {
+  appBackName,
+  cameFromApp,
+  goBackTo,
+  goBackToApp,
+  nameAppEntry,
+  subscribeToHistory,
+} from "./app-history";
 
-const BAR_HEIGHT_PX = 64;
-
-const BAR_SURFACE_CLASS =
-  "bg-background/95 supports-backdrop-filter:bg-background/80 border-b backdrop-blur transition-colors motion-reduce:transition-none";
-
-export function PageBarSurface({ children, className, ...props }: React.ComponentProps<"div">) {
-  const scrolled = useScrolled();
-
-  return (
-    <div
-      className={cn(
-        BAR_SURFACE_CLASS,
-        "sticky top-0 z-30 -mx-4 -mt-2 sm:-mx-8 sm:-mt-6 lg:-mx-10 lg:-mt-8",
-        scrolled ? "border-border" : "border-transparent",
-        className,
-      )}
-      data-slot="learn-page-bar"
-      {...props}
-    >
-      <div className="w-full px-4 pt-3 pb-2 sm:px-8 lg:px-10 lg:py-3">{children}</div>
-    </div>
-  );
-}
+/** `PageTopBar`'s height: a title above this line is under the bar. */
+const BAR_HEIGHT_PX = 65;
 
 function useTitleScrolledAway(bar: React.RefObject<HTMLElement | null>) {
   const [away, setAway] = useState(false);
@@ -61,53 +43,60 @@ function useTitleScrolledAway(bar: React.RefObject<HTMLElement | null>) {
   return away;
 }
 
-const BAR_ICON_LINK_CLASS = buttonVariants({ edge: "start", size: "icon-bar", variant: "ghost" });
-
-/** The bar's icon link on a phone; from `lg` the chevron and the parent page's name, as a crumb. */
-export const CRUMB_LINK_CLASS = cn(
-  BAR_ICON_LINK_CLASS,
-  "lg:text-muted-foreground lg:text-compact lg:h-8 lg:w-auto lg:gap-0.5 lg:border-0 lg:pr-1 lg:font-normal lg:[--control-size:initial] lg:[--icon-size:--spacing(4)] lg:hover:bg-transparent",
-);
-
-/**
- * The chevron and the page's name as one link, the name right after the chevron as in a crumb. Its
- * box is the glyph and the 1px border each side, which is what the edge pulls back.
- */
-const NAMED_BACK_LINK_CLASS = cn(
-  BAR_ICON_LINK_CLASS,
-  "h-11 w-auto min-w-0 shrink gap-0.5 pr-2 [--control-size:calc(var(--icon-size)+2px)] lg:h-10 lg:[--control-size:calc(var(--icon-size)+2px)]",
-);
-
-function BackLinkName({ label }: { label?: string }) {
-  const t = useExtracted();
-  return label ? t("Back to {page}", { page: label }) : t("Back");
+function useCameFromApp(): boolean {
+  // Read after hydration: the server has no history, and its render goes to the hub.
+  return useSyncExternalStore(subscribeToHistory, cameFromApp, () => false);
 }
 
-function getBackLinkClass({ crumb, named }: { crumb: boolean; named: boolean }) {
-  if (named) {
-    return NAMED_BACK_LINK_CLASS;
+function useAppBackName(): string | null {
+  return useSyncExternalStore(subscribeToHistory, appBackName, () => null);
+}
+
+/** Names this page's history entry, so a back link that returns here says where it goes. */
+function useNameAppEntry(name?: string) {
+  useEffect(() => {
+    if (name) {
+      nameAppEntry(name);
+    }
+  }, [name]);
+}
+
+/** A tab's name when `href` is the tab's page. */
+function useTabName(href: string): string | undefined {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+
+  if (href === routes.today) {
+    return t("Today");
   }
 
-  return crumb ? CRUMB_LINK_CLASS : BAR_ICON_LINK_CLASS;
+  if (href === routes.journey) {
+    return t("Plan");
+  }
+
+  return undefined;
 }
 
-export function LearnBackLink({
+/**
+ * `label` names the page at `href`; a tab's page needs none. With `toApp` the link returns to
+ * whatever app page came before, and names that page once the browser's history says which it was.
+ */
+function LearnBackLink({
   className,
-  crumb = false,
   href,
   label,
-  named = false,
   toApp = false,
 }: {
   className?: string;
-  crumb?: boolean;
   href: string;
   label?: string;
-  /** Shows `label` beside the chevron at every width. */
-  named?: boolean;
   toApp?: boolean;
 }) {
+  const t = useExtracted();
   const ref = useEscapeClick<HTMLAnchorElement>();
+  const appName = useAppBackName();
+  const tabName = useTabName(href);
+  const name = (toApp && appName) || label || tabName || t("Back");
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const isPlainClick =
@@ -125,84 +114,19 @@ export function LearnBackLink({
   };
 
   return (
-    <LearnLink
-      className={cn(getBackLinkClass({ crumb, named }), className)}
-      href={href}
-      onClick={onClick}
-      ref={ref}
+    <BackLink
+      aria-label={t("Back to {page}", { page: name })}
+      render={<LearnLink className={className} href={href} onClick={onClick} ref={ref} />}
     >
-      <ChevronLeftIcon aria-hidden="true" />
-      <span className="sr-only">
-        <BackLinkName label={label} />
-      </span>
-      {crumb && label && (
-        <span aria-hidden="true" className="hidden lg:inline">
-          {label}
-        </span>
-      )}
-      {named && label && (
-        <span aria-hidden="true" className="min-w-0 truncate">
-          {label}
-        </span>
-      )}
-    </LearnLink>
+      {name}
+    </BackLink>
   );
 }
 
-function useCameFromApp(): boolean {
-  // Read after hydration: the server has no history, and its render goes to the hub.
-  return useSyncExternalStore(subscribeToHistory, cameFromApp, () => false);
-}
-
-function PageBarStart({
-  back,
-  root = false,
-  section = false,
-  title,
-  titleAway,
-}: {
-  back: { href: string; label?: string };
-  root?: boolean;
-  section?: boolean;
-  title?: string;
-  titleAway: boolean;
-}) {
-  const fromApp = useCameFromApp() && section;
-  const label = fromApp ? undefined : back.label;
-
-  return (
-    <div className="@container/page-bar-start col-start-1 row-start-1 flex min-w-11 items-center gap-3 lg:gap-1.5">
-      {root ? (
-        <LearnBackLink className="lg:hidden" href={back.href} toApp />
-      ) : (
-        <LearnBackLink crumb href={back.href} label={label} toApp={fromApp} />
-      )}
-
-      {title && !root && (
-        <span
-          aria-hidden="true"
-          className="text-compact hidden min-w-0 items-center gap-1.5 lg:flex"
-        >
-          {label && <span className="text-faint before:content-['/']" />}
-          <span className="truncate font-medium">{title}</span>
-        </span>
-      )}
-
-      {/* Beside the back button only with about 3.5rem to spare, so it shows words, not a couple
-          of letters. */}
-      {title && titleAway && (
-        <span
-          aria-hidden="true"
-          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden @max-[7rem]/page-bar-start:hidden"
-        >
-          {title}
-        </span>
-      )}
-    </div>
-  );
-}
-
-/** In a `section`, back returns to the page the learner came from outside it, as in `LearnSectionBar`. */
+/**
+ * A `root` page is one the sidebar lists, so from `lg` its bar has no way back. In a `section`,
+ * back returns to the page the learner came from outside it, as in `LearnSectionBar`.
+ */
 export function LearnPageBar({
   back,
   children,
@@ -218,102 +142,83 @@ export function LearnPageBar({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const titleAway = useTitleScrolledAway(ref);
+  const fromApp = useCameFromApp();
+  const toApp = root || (fromApp && section);
+
+  useNameAppEntry(title);
 
   return (
-    <PageBarSurface className={cn(root && !children && "lg:hidden")} ref={ref}>
-      {/* As tall as an action's button even without one, so every page's bar, and its skeleton,
-          share one height. */}
-      {/* Actions get only the room the back button leaves. `data-title-away`
-          (`group-data-title-away/page-bar`) lets one give way to the page's name on a phone, and
-          the `page-bar` container lets one shorten in a narrow row, as Ask (its face alone) and
-          a visitor's Pricing (hidden) do. */}
-      <div
-        className={cn(
-          PAGE_COLUMN_CLASS,
-          "group/page-bar @container/page-bar grid min-h-11 grid-cols-[1fr_minmax(0,auto)] items-center gap-x-3 lg:min-h-10",
-        )}
-        data-title-away={(title && titleAway) || undefined}
-      >
-        <PageBarStart
-          back={back}
-          root={root}
-          section={section}
-          title={title}
-          titleAway={titleAway}
-        />
+    <PageTopBar
+      // `data-title-away` (`group-data-title-away/page-bar`) lets an action give way to the page's
+      // name on a phone, as Ask (its face alone) and a visitor's links (hidden) do.
+      actions={
+        children && (
+          <div
+            className="group/page-bar contents"
+            data-title-away={(title && titleAway) || undefined}
+          >
+            {children}
+          </div>
+        )
+      }
+      back={
+        <>
+          <LearnBackLink
+            className={root ? "lg:hidden" : undefined}
+            href={back.href}
+            label={back.label}
+            toApp={toApp}
+          />
 
-        <div className="col-start-2 row-start-1 flex items-center justify-end-safe gap-1">
-          {children}
-        </div>
-      </div>
-    </PageBarSurface>
+          {title && titleAway && (
+            <span
+              aria-hidden="true"
+              className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty"
+            >
+              {title}
+            </span>
+          )}
+        </>
+      }
+      ref={ref}
+    />
   );
 }
 
+/**
+ * The bar over a section's pages (settings, statistics, the catalog). A page under `parent` goes
+ * back to it; the others leave the section for the app page the learner came from, or `back`.
+ */
 export function LearnSectionBar({
-  backHref,
-  className,
+  back,
   end,
   parent,
+  root = false,
   title,
 }: {
-  backHref: string;
-  className?: string;
+  back: { href: string; label?: string };
   end?: React.ReactNode;
   parent?: { href: string; label: string };
-  title?: string;
-}) {
-  const scrolled = useScrolled();
-
-  return (
-    <header
-      className={cn(
-        BAR_SURFACE_CLASS,
-        "sticky top-0 z-30",
-        scrolled ? "border-border" : "border-transparent",
-        className,
-      )}
-      data-slot="learn-section-bar"
-    >
-      <div className={cn("flex items-center justify-between gap-3", BAR_ROW_CLASS)}>
-        <div className="flex min-w-0 items-center gap-3">
-          <SectionBarStart backHref={backHref} parent={parent} title={title} />
-        </div>
-
-        <div className="flex items-center justify-end gap-2">{end}</div>
-      </div>
-    </header>
-  );
-}
-
-function SectionBarStart({
-  backHref,
-  parent,
-  title,
-}: {
-  backHref: string;
-  parent?: { href: string; label: string };
+  root?: boolean;
   title?: string;
 }) {
   const fromApp = useCameFromApp();
+  const className = root ? "lg:hidden" : undefined;
 
-  if (!parent || fromApp) {
-    return (
-      <>
-        <LearnBackLink href={backHref} toApp />
-        {title && (
-          <span
-            aria-hidden="true"
-            className="hidden min-w-0 truncate text-sm font-medium lg:inline"
-          >
-            {title}
-          </span>
-        )}
-      </>
-    );
-  }
+  useNameAppEntry(title);
 
-  return <LearnBackLink href={parent.href} label={parent.label} named />;
+  return (
+    <PageTopBar
+      actions={end}
+      back={
+        !parent || fromApp ? (
+          <LearnBackLink className={className} href={back.href} label={back.label} toApp />
+        ) : (
+          <LearnBackLink className={className} href={parent.href} label={parent.label} />
+        )
+      }
+    />
+  );
 }
 
-export { markAppEntry } from "./app-history";
+export { markAppEntry, nameAppEntry } from "./app-history";

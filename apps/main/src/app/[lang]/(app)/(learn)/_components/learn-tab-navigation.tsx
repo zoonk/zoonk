@@ -1,11 +1,12 @@
 "use client";
 
 import { useFrameLearner } from "@/components/learner/learner-seed-provider";
+import { VisitorLook } from "@/components/learner/visitor-look";
 import { usePathname } from "@/i18n/navigation";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
-import { markAppEntry } from "@zoonk/learn/bar";
-import { type LearnBuddy } from "@zoonk/learn/buddy-name";
+import { markAppEntry, nameAppEntry } from "@zoonk/learn/bar";
+import { type LearnBuddy, useBuddyName } from "@zoonk/learn/buddy-name";
 import { useGoalSwitchPending } from "@zoonk/learn/goal-switcher";
 import {
   LearnBottomNavigation,
@@ -14,11 +15,11 @@ import {
   type LearnTabMissions,
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
-import { SIDEBAR_COUNT_CLASS } from "@zoonk/ui/components/sidebar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
+import { VisitorSideLinks } from "./learn-sidebar-learner";
 
 const TAB_PATHS: Record<string, LearnTab> = {
   buddy: "buddy",
@@ -74,35 +75,12 @@ function useFrameTabs(learner: LearnerSummaryState): TabsProps {
 
 const UNREAD: LearnerSummaryState = { status: "not-loaded" };
 
-function TodayCount({ learner }: { learner: LearnerSummaryState }) {
-  const t = useExtracted();
-  const blocksLeft = learner.status === "ready" ? (learner.summary.today?.blocksLeft ?? 0) : 0;
-
-  if (!blocksLeft) {
-    return null;
-  }
-
-  return (
-    <span className={SIDEBAR_COUNT_CLASS}>
-      <span aria-hidden="true">{blocksLeft}</span>
-      <span className="sr-only">
-        {t("{count, plural, one {# activity left} other {# activities left}}", {
-          count: blocksLeft,
-        })}
-      </span>
-    </span>
-  );
-}
-
-type SideTabsProps = TabsProps & { todayCount: React.ReactNode };
-
-function CurrentSideTabs({ buddy, missions, todayCount }: SideTabsProps) {
+function CurrentSideTabs({ buddy, missions }: TabsProps) {
   return (
     <LearnSideNavigation
       activeTab={useActiveTab({ sidebar: true })}
       buddy={buddy}
       missions={missions}
-      todayCount={todayCount}
     />
   );
 }
@@ -123,24 +101,40 @@ const ONBOARDING_FIRST_PAINT_CLASS =
   "contents [[data-slot=learn-shell-content]:has([data-onboarding-bar])_&]:hidden";
 
 /** A page with its own id has a path only known once it's open, so the tabs are unmarked until then. */
-function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+function LearnerSideTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
-  const todayCount = <TodayCount learner={learner} />;
 
   return (
-    <Suspense
-      fallback={
-        <LearnSideNavigation
-          activeTab={null}
-          buddy={buddy}
-          missions={missions}
-          todayCount={todayCount}
-        />
-      }
-    >
-      <CurrentSideTabs buddy={buddy} missions={missions} todayCount={todayCount} />
+    <Suspense fallback={<LearnSideNavigation activeTab={null} buddy={buddy} missions={missions} />}>
+      <CurrentSideTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
+}
+
+/**
+ * The tabs are a learner's own pages: for someone without a session each would only open a log-in
+ * wall, so they get the catalog and the prices instead. Until the learner is read, the page's
+ * signed-in mark picks which to draw.
+ */
+function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+  if (learner.status === "visitor") {
+    return <VisitorSideLinks />;
+  }
+
+  if (learner.status !== "ready") {
+    return (
+      <>
+        <VisitorLook>
+          <VisitorSideLinks />
+        </VisitorLook>
+        <div className="signed-in:contents hidden">
+          <LearnerSideTabs learner={learner} />
+        </div>
+      </>
+    );
+  }
+
+  return <LearnerSideTabs learner={learner} />;
 }
 
 function FrameSideTabs() {
@@ -155,7 +149,7 @@ export function LearnSideTabs() {
   );
 }
 
-function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+function LearnerBottomTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
 
   return (
@@ -169,6 +163,23 @@ function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
       <CurrentBottomTabs buddy={buddy} missions={missions} />
     </Suspense>
   );
+}
+
+/** No tab bar for someone without a session: the top bar holds what they can use. */
+function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+  if (learner.status === "visitor") {
+    return null;
+  }
+
+  if (learner.status !== "ready") {
+    return (
+      <div className="signed-in:contents hidden">
+        <LearnerBottomTabs learner={learner} />
+      </div>
+    );
+  }
+
+  return <LearnerBottomTabs learner={learner} />;
 }
 
 function FrameBottomTabs() {
@@ -193,7 +204,7 @@ function TabRootContent({ children }: { children: React.ReactNode }) {
 }
 
 const OWN_BAR_FIRST_PAINT_CLASS =
-  "[[data-slot=learn-shell-content]:has([data-slot=learn-page-bar],[data-slot=learn-section-bar])_&]:hidden";
+  "[[data-slot=learn-shell-content]:has([data-slot=learn-shell-main]_[data-slot=page-top-bar])_&]:hidden";
 
 /**
  * The path is read after the first paint, so the bar is drawn until then and a tab's own page never
@@ -211,15 +222,35 @@ export function TabRootOnly({ children }: { children: React.ReactNode }) {
 /** Sections leave as a whole; onboarding's way out skips its own screens, which would only lead back into it. */
 const APP_SECTIONS = new Set(["(settings)", "(stats)", "(catalog)", "(onboarding)"]);
 
+/** A tab's own page has the frame's bar, so the frame names it for a way back to it. */
+function useTabRootName(): string | undefined {
+  const t = useExtracted();
+  const [, first = "", ...rest] = usePathname().split("/");
+  const learner = useFrameLearner();
+  const buddyName = useBuddyName(learner.status === "ready" ? learner.summary.buddy : null);
+
+  if (rest.length > 0) {
+    return undefined;
+  }
+
+  const names: Record<string, string> = { buddy: buddyName, plan: t("Plan"), today: t("Today") };
+  return names[first];
+}
+
 function MarkAppEntry() {
   const pathname = usePathname();
   const section = useSelectedLayoutSegments().find((segment) => APP_SECTIONS.has(segment));
+  const tabName = useTabRootName();
 
   // In the commit that writes the page's history entry, so no tap finds the entry unmarked.
   useLayoutEffect(() => {
     markAppEntry(section);
+
+    if (tabName) {
+      nameAppEntry(tabName);
+    }
     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Each page is a new history entry to mark.
-  }, [pathname, section]);
+  }, [pathname, section, tabName]);
 
   return null;
 }

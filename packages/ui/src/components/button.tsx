@@ -13,19 +13,19 @@ const buttonVariants = cva(
       size: {
         adaptive:
           "size-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 sm:h-9 sm:w-auto",
-        bar: "text-reading h-11 gap-1.5 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(3)+1px)] has-data-[icon=inline-start]:pl-3 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(3)+1px)] lg:h-10 lg:text-sm",
+        bar: "text-reading h-11 gap-1.5 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(3.5)+1px)] has-data-[icon=inline-start]:pl-3.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(3.5)+1px)] lg:h-10 lg:text-sm",
         default:
           "h-9 gap-1.5 px-3 [--edge-text:calc(--spacing(3)+1px)] has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(2.5)+1px)] has-data-[icon=inline-start]:pl-2.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(2.5)+1px)]",
         icon: "size-(--control-size) [--control-size:--spacing(9)]",
         "icon-bar":
           "size-(--control-size) [--control-size:--spacing(11)] [--edge-under:1.875rem] [--icon-size:--spacing(5)] lg:[--control-size:--spacing(10)]",
-        "icon-lg": "size-(--control-size) [--control-size:--spacing(10)]",
+        "icon-lg": "size-(--control-size) [--control-size:--spacing(11)]",
         "icon-sm": "size-(--control-size) rounded-md [--control-size:--spacing(7.5)]",
         "icon-xs":
           "size-(--control-size) rounded-md [--control-size:--spacing(6)] [--icon-size:--spacing(3)]",
-        lg: "text-reading h-11 gap-2 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(3)+1px)] has-data-[icon=inline-start]:pl-3 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(3)+1px)]",
+        lg: "text-reading h-11 gap-2 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(3.5)+1px)] has-data-[icon=inline-start]:pl-3.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(3.5)+1px)]",
         sm: "text-compact h-7.5 gap-1 rounded-md px-2.5 [--edge-text:calc(--spacing(2.5)+1px)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(2)+1px)] has-data-[icon=inline-start]:pl-2 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(2)+1px)]",
-        xl: "text-reading h-11 gap-2 px-5 [--edge-text:calc(--spacing(5)+1px)] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(4)+1px)] has-data-[icon=inline-start]:pl-4 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(4)+1px)]",
+        xl: "text-reading h-11 gap-2 px-5 [--edge-text:calc(--spacing(5)+1px)] has-data-[icon=inline-end]:pr-4.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(4.5)+1px)] has-data-[icon=inline-start]:pl-4.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(4.5)+1px)]",
         xs: "h-6 gap-1 rounded-md px-2.5 text-xs [--edge-text:calc(--spacing(2.5)+1px)] [--icon-size:--spacing(3)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(2)+1px)] has-data-[icon=inline-start]:pl-2 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(2)+1px)]",
       },
       variant: {
@@ -54,7 +54,7 @@ const BUSY_HIDDEN_WITHOUT_KEYS =
   "not-pointer-fine:group-aria-busy/busy:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
 
 const BUSY_CONTENT_CLASS =
-  "[display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
+  "[display:inherit] min-w-0 [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
 
 function BusySpinner({ className, iconClassName }: { className?: string; iconClassName?: string }) {
   return (

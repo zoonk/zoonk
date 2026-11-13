@@ -13,7 +13,7 @@ import {
   type LearnerSummaryPlaces,
 } from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
-import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
+import { SIDEBAR_ACCOUNT_CLASS, SidebarSection } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
@@ -30,28 +30,85 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
         label={t("Mistakes notebook")}
         menu="mistakes"
       />
+      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
+      {places?.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
+      {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
+      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
       {places?.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
-      {places?.certificates && <LearnSidebarLink label={t("Certificates")} menu="certificates" />}
-      {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
-      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
-      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
-      <LearnSidebarLink label={t("Statistics")} menu="stats" />
     </>
   );
 }
 
-function FrameStudyLinks() {
-  const learner = useFrameLearner();
-  return <StudyLinksView places={learner.status === "ready" ? learner.summary.places : null} />;
+/** Every number on these pages covers all of the learner's goals, so the group never changes with the goal. */
+function StatsLinks() {
+  const t = useExtracted();
+
+  return (
+    <SidebarSection aria-label={t("Stats")} label={t("Stats")}>
+      <LearnSidebarLink label={t("Level")} menu="level" />
+      <LearnSidebarLink label={t("Energy")} menu="energy" />
+      <LearnSidebarLink label={t("Patterns")} menu="patterns" />
+      <LearnSidebarLink label={t("Score")} menu="score" />
+      <LearnSidebarLink label={t("Activity")} menu="activity" />
+    </SidebarSection>
+  );
 }
 
-export function StudyLinks() {
+function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
+  const t = useExtracted();
+
   return (
-    <Suspense fallback={<StudyLinksView places={null} />}>
-      <FrameStudyLinks />
+    <>
+      <SidebarSection aria-label={t("Study")} label={t("Study")}>
+        <StudyLinksView places={places} />
+      </SidebarSection>
+      <StatsLinks />
+    </>
+  );
+}
+
+function PendingStudySection() {
+  return (
+    <div className="signed-in:contents hidden">
+      <StudySectionView places={null} />
+    </div>
+  );
+}
+
+/** Every link here opens a learner's own page, so someone without a session gets none of them. */
+function FrameStudySection() {
+  const learner = useFrameLearner();
+
+  if (learner.status === "visitor") {
+    return null;
+  }
+
+  if (learner.status !== "ready") {
+    return <PendingStudySection />;
+  }
+
+  return <StudySectionView places={learner.summary.places} />;
+}
+
+export function LearnerSections() {
+  return (
+    <Suspense fallback={<PendingStudySection />}>
+      <FrameStudySection />
     </Suspense>
+  );
+}
+
+/** What someone without a session can use: the catalog and the prices. */
+export function VisitorSideLinks() {
+  const t = useExtracted();
+
+  return (
+    <SidebarSection aria-label={t("Menu")}>
+      <LearnSidebarLink label={t("Courses")} menu="courses" />
+      <LearnSidebarLink label={t("Pricing")} menu="pricing" />
+    </SidebarSection>
   );
 }
 
@@ -105,7 +162,7 @@ function AccountTriggerWithLevel({
 
   return (
     <AccountTrigger name={name} said={said}>
-      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 pr-1 font-mono text-xs font-normal tabular-nums">
+      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 font-mono text-xs font-normal tabular-nums">
         <BeltLevel belt={belt} color={level.color} level={levelNumber} />
       </span>
     </AccountTrigger>
