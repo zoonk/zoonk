@@ -44,7 +44,10 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
           const isMultiline = formatted.includes("\n");
 
           return (
-            <div className={cn("text-sm font-medium", PROSE_MEASURE_CLASS)} key={key}>
+            <div
+              className={cn("text-sm font-medium", !isMultiline && PROSE_MEASURE_CLASS)}
+              key={key}
+            >
               <span className="text-muted-foreground">{key}:</span>{" "}
               {isMultiline ? (
                 <pre className="bg-muted mt-1 max-h-80 overflow-y-auto rounded-xl p-4 text-xs wrap-break-word whitespace-pre-wrap">

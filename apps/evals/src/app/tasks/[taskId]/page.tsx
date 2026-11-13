@@ -86,19 +86,21 @@ async function TaskHeader({ params }: TaskRouteProps) {
   const judgeModeSupported = supportsJudgeMode(task);
 
   return (
-    <ContainerHeader className="flex-col items-start sm:flex-row sm:items-end">
-      <ContainerHeaderGroup>
+    <ContainerHeader>
+      <ContainerHeaderGroup className="w-full">
         <ContainerTitle>{task.name}</ContainerTitle>
         <ContainerDescription className={PROSE_MEASURE_CLASS}>
           {task.description}.
         </ContainerDescription>
-        <p className="text-muted-foreground font-mono text-xs">
-          {formatTestCases(task.testCases.length)}
-          {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
-        </p>
-      </ContainerHeaderGroup>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-muted-foreground font-mono text-xs">
+            {formatTestCases(task.testCases.length)}
+            {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
+          </p>
 
-      {judgeModeSupported && <TaskHeaderActions params={params} />}
+          {judgeModeSupported && <TaskHeaderActions params={params} />}
+        </div>
+      </ContainerHeaderGroup>
     </ContainerHeader>
   );
 }
