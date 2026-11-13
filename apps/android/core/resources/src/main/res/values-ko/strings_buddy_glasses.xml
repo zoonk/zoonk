@@ -6,10 +6,10 @@
   "buddy_glasses_cat_eye": "ea48dc1dc103304a916b0de5a9a30cf0625d96f80973326cf16aefb99ef0eea4",
   "buddy_glasses_earn_aviator": "943e51966265fdbe673faac707dadca2f0bcd2458ed31a4cbb8d5af351d449c3",
   "buddy_glasses_earn_cat_eye": "07b121e6715f5a3f478a60c55ba39e810ba454661a1a086380f82134babdd008",
-  "buddy_glasses_earn_monocle": "ef0943cef8c64984a18fee6b12d8c2991c991154c269f5c31337ab897ea709c9",
+  "buddy_glasses_earn_monocle": "4d8ec4e401e58132a34cec532051c5c2117b034ef8771d053614feb668096a96",
   "buddy_glasses_earn_retro": "29b3bdf29e7451c9c765317860664d31d18005416ad28e236d3686392ea9bf2f",
   "buddy_glasses_earn_round": "2c28b2af4de783c937437e41f04656acc407dc6bfa322ff428133f454ed8ea09",
-  "buddy_glasses_earn_star": "62a7b35db8c7d9877fbaafa01be0fee41610775d266c2bd2cfb453127ab68cf9",
+  "buddy_glasses_earn_star": "3f6db58c1327218e31d1984b02c4400f9a1165c97fe7da83d9948723a0b6f952",
   "buddy_glasses_monocle": "720b512ca721d77f7eec32259a3ec0497577f90e2082c2c971774fc194060a4c",
   "buddy_glasses_retro": "e163ba6211dcc8a6c9bf5f630ad7d6489776899aa32675fbac7d494987457603",
   "buddy_glasses_round": "61485d9540541d21ed98bed033f433333e3fa2d1e6c7f481da90fffe79b21918",
@@ -40,11 +40,11 @@
     <string name="buddy_glasses_worn_retro">복고풍 안경</string>
     <string name="buddy_glasses_worn_monocle">외알 안경</string>
     <string name="buddy_glasses_earn_round">짝꿍이 처음부터 갖고 있어요</string>
-    <string name="buddy_glasses_earn_star">첫 단계 챌린지에서 승리하기</string>
+    <string name="buddy_glasses_earn_star">첫 챌린지에서 이기기</string>
     <string name="buddy_glasses_earn_aviator">첫 주간 챌린지 끝내기</string>
     <string name="buddy_glasses_earn_cat_eye">모든 미션을 끝낸 날 7일 채우기</string>
     <string name="buddy_glasses_earn_retro">복습 50회 끝내기</string>
-    <string name="buddy_glasses_earn_monocle">마지막 챌린지에서 승리하기</string>
+    <string name="buddy_glasses_earn_monocle">계획의 마지막 챌린지에서 이기기</string>
     <string name="buddy_stage_baby">아기</string>
     <string name="buddy_stage_young">어린이</string>
     <string name="buddy_stage_adult">어른</string>

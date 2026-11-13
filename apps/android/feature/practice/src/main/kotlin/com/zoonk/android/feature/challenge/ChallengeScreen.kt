@@ -814,7 +814,7 @@ private fun StartActions(
             refused,
             LimitSubject.Help,
             onCreateAccount = actions::createAccount,
-            onSeePlus = actions::seePlus,
+            onSubscribe = actions::seePlus,
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
         return

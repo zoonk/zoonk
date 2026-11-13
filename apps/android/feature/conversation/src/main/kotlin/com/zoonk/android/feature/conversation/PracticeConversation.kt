@@ -39,10 +39,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
-import com.zoonk.android.feature.subscription.PlusMark
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.data.TrackShown
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
@@ -249,17 +250,15 @@ private fun CallSetup(
                     LimitPeriod.entries.first { it.name.equals(limit.period.value, ignoreCase = true) },
                 ),
                 onCreateAccount = { open(AppRoute.Login) },
-                onSeePlus = { open(AppRoute.Subscription) },
+                onSubscribe = { open(AppRoute.Subscription) },
             )
         }
 
         else -> {
             LengthChoices(call, minutes, onChange = { state.minutes = it })
             if (minutes in call.plusMinutes) {
-                PlusNotice(
-                    onSeePlus = { open(AppRoute.Subscription) },
-                    description = stringResource(R.string.conversation_longer_calls_plus),
-                )
+                TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                SubscribeGate(stringResource(R.string.conversation_longer_calls_gate), onSubscribe = { open(AppRoute.Subscription) })
             } else {
                 StartCallButton(
                     starting = model.state == CallStartModel.State.Starting,
@@ -298,7 +297,7 @@ private fun LengthChoices(
     onChange: (Long) -> Unit,
 ) {
     val locale = currentLocale()
-    val choices = (call.minutes.map { it to false } + call.plusMinutes.map { it to true }).sortedBy { it.first }
+    val choices = (call.minutes + call.plusMinutes).sorted()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.conversation_call_length), style = MaterialTheme.typography.titleSmall)
         FlowRow(
@@ -306,7 +305,7 @@ private fun LengthChoices(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            choices.forEach { (minutes, locked) ->
+            choices.forEach { minutes ->
                 FilterChip(
                     selected = minutes == selected,
                     onClick = { onChange(minutes) },
@@ -324,7 +323,6 @@ private fun LengthChoices(
                             null
                         },
                     modifier = Modifier.semantics { role = Role.RadioButton },
-                    trailingIcon = if (locked) ({ PlusMark() }) else null,
                 )
             }
         }

@@ -14,7 +14,7 @@
   "audio_open_settings": "254d1e1928829c039ff9d74a1077a1b6447f53c19457421aa1e950d51eed3677",
   "audio_record": "e5e63c7b203b5ffb642aa74f3aab779ae4aab1e8d3375505d85bcffb87c1483e",
   "audio_record_stop": "7816575b06d1910b02636e2ea15967cd543e5d433854723fad77ca7eae90fd2e",
-  "audio_say_it": "c9c35f34188f528e7e7c70b5c5d5e3e8b1efaeb2b5b90aeb6aee5f4db19b738c",
+  "audio_say_it": "c986a007cec6a863a1c00a5872c42d63d2753f758ba8af535d9f592020c6731c",
   "audio_stop": "cc8ccf05f451de2348bf05c85d5fb4138c8127e8934c54dc5634b80869958b43",
   "audio_try_again": "a6c3df419b992d78cfbc3cb8d83a46b58dab24f37a2a11511c3f2533f97ef874",
   "audio_try_again_label": "239b186981b64b8ce4f39a4ca49982a426a2d7d90bda85cb6e5c57e7b10ca1bf"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">Nadal sprawdzamy. Trwa to dłużej niż zwykle.</string>
     <string name="audio_no_speech">Nie usłyszeliśmy żadnych słów. Spróbuj ponownie.</string>
     <string name="audio_check_failed">Tym razem nie udało nam się sprawdzić twojej odpowiedzi. Spróbuj ponownie.</string>
-    <string name="audio_say_it">Naciśnij przycisk i powiedz to na głos</string>
+    <string name="audio_say_it">Stuknij „Nagraj” i powiedz to na głos</string>
     <string name="audio_microphone_off_title">Mikrofon jest wyłączony</string>
     <string name="audio_microphone_off_answer">Włącz dostęp do mikrofonu dla Zoonka w ustawieniach, aby odpowiadać na głos.</string>
     <string name="audio_open_settings">Otwórz ustawienia</string>

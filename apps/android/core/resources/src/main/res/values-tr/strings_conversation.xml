@@ -9,7 +9,7 @@
   "conversation_below_level": "df6085ab98d57072b5c863a25ff1e92f1931757b6e99db753660907aaed523f8",
   "conversation_better": "9478d390cb22def63a50fad9e5d2393b7317876b20a182041478973f906ef120",
   "conversation_brain_power": "5242adc7b4fbf59e162235ff66607a72582b7a1fbd41eb7dd38714fa374a7907",
-  "conversation_brief_note": "8b1a1059f882f05f030072d72b539954d8d5daf2fdd11d299bfb4207a985a2bc",
+  "conversation_brief_note": "333e1e0edd1c4a2fd15263a3f3e805f86774a7894d4d2686fee8b7cdda0f408f",
   "conversation_by_criterion": "15f5a2a58abb3c82d421f02056a9f8915d3876dccc74cd6cbd61daa7e5f17b58",
   "conversation_call": "baab600f7ca62e174150a4edc026d1489c7c8b8480a430e139c521139a2ae91f",
   "conversation_call_again": "df66222e3136e54551157a85a7181f53ece57d002690dfed03c5ff9c399fbb15",
@@ -19,8 +19,9 @@
   "conversation_calling": "06c15624128961e66a285cfa30555c30b640602bbb6da8d0f67fbf12682b92f7",
   "conversation_calls_need_account": "3e0f27f8cf7f5d2c2f702b6420688846fd39cb3c2cc7973407c7f9e699d21b86",
   "conversation_cancel": "ae35e1445eb24dde06cb0744ae6ecbc289e14e4c267c6a6cc485959a7797b766",
+  "conversation_challenge_gate_line": "2a96330a8c90cfd17efad81d21dc647e5f0b4ae342d701ad378c67aefd66bd6b",
+  "conversation_challenge_gate_title": "2490822e9a323d68f57a3bd67597156cbb5e3d7227f477c980e5fd8a7e073c1e",
   "conversation_challenge_passed": "fbf9465700ee41029818cb958ff9779b89fe29fc560b5ec149aa3dee8c28fb3a",
-  "conversation_challenge_plus": "e3e76cc57bc71f087ba126c33c0810b8bb1a85649bfc2840a166c9cd31112a9f",
   "conversation_character_detail": "76f7ffbf241e81b6b847a3b840efe71990e875549216081e276d18d9a02e19e6",
   "conversation_character_said": "8e0c90a070c89bcc7dec7b71cabfad954bb983cb4ba3a8c5519b037c710c27d6",
   "conversation_criterion_accuracy": "d9eda3b18378bbf0c8b09ddd1bbaf598defe262c70caacf0b310592936a106a0",
@@ -48,37 +49,30 @@
   "conversation_end_title": "dbe84d254914a02c0cd460aaff861348726a0e2c7770d0301c0efdfc6ce5da24",
   "conversation_ended": "12eb3f67f2af51c0d67f26e255d67d85e65b32999a01d817531801a8e2d856ca",
   "conversation_ended_title": "fdd933f1370882a836ba4faaf4c54764b2a647a6de5ae3d13f6ecd46fa045b09",
-  "conversation_ends_after": "c8bc7e0a987cf7e342b8bedbf740c513df22462e1229194ba4cc30cda086d623",
-  "conversation_estimate": "24b66b630fdfd6724ffcdf4c11a77d6281efc9e7b60d2e080140ff1f64111d9c",
-  "conversation_estimate_sound": "755f320089412134b98a5c1c94f1e3d24e6d1cefac6df4e62e2336abbca7a1e8",
+  "conversation_estimate": "8ffcce38bcd8537f87ceacac88ab4e483b2dcad805ce2a00e678b295a27dac0a",
   "conversation_every_criterion": "fb8d9657b35bb130633e427ede4982083ba41dcf62654745f3973209f4b2e251",
   "conversation_exam_task_title": "a49e4b8b97a0d70feb3daeb550eb5ac4a168403112ba4ca7776a10c623b4aa8f",
   "conversation_focus": "ae63eefb9e9cef8c145e19bdad698d8a881e6b702343290a05f41ec66b494eb1",
   "conversation_get_across": "4666731528aa12893bb418d511ab702f1b774387cfc1b6760e8f4e88556bcf28",
-  "conversation_get_ready": "7fdb2bafd46c406a7749a4fa817ec19760aecd6c04c1e345cdd217afb0b4d0bb",
-  "conversation_get_ready_description": "998cdf9551198b9b15d24e550db4ff77fc8ed5cde95ae5ef621f0b56cd06dd4d",
+  "conversation_get_ready": "ef5159c01f27d999d51fe1c4aa6b61ddbf4a5150b7624e50355fff5f57a02682",
+  "conversation_get_ready_description": "cf3352ef953d2e80a80dc29ccff53843982a21a554292477246c9939f1a05a92",
   "conversation_getting_ready": "00db70a4f547e5bd08a0f2c96c970b76e7f19e4be744f21afe89e9de26dfbf1c",
-  "conversation_go_to_task": "8bfd94653741c3910efc88cea14dfe3f2fd95b01d2addbaddc67933f79c7529f",
   "conversation_goal_done": "c604c2caaba4ed3b131c8608797c7bd3d9f1494f552f1b33c61102c256dd0e7d",
   "conversation_goal_not_yet": "74f403bda1ad5305a72829e41b444b7bf61ff4d08094080928ea737850f3d47b",
   "conversation_goals": "833f23a4ed1b6d054a5394f62a07ed4a5f6b053ca61b806b46a64b4f7249538c",
   "conversation_goals_met": "179ebcb3dad8c5c8c72a8d8ea8d2fedf93ebb342ec5fcfce57507834b5abf5c9",
   "conversation_goals_tile": "4a8db1434863b375299a4128a9c0ce1eb7304a58f84576886686bf6d02df5b80",
   "conversation_help": "e0a7ef86d86b284f387de5e16a291579130f352924d4847f046ef83d5c202d8d",
-  "conversation_how_answers_first": "6fb60fbfb16b06f1ac6027f2c63e89aebfcc7e974cbb03cd68ce03a308268042",
-  "conversation_how_it_ends": "e869a61d3e174aed779021b3e4dfff0d4b56ca097ee8d9e8c1c56d870862deeb",
-  "conversation_how_it_works": "d998fab6007401eca34c2c67e73869aa7cfcc678b4095ecac077cb304bd3dc36",
-  "conversation_how_your_turn": "57cbce30ce9d69543b84f7c347f937186944d4aa91743eedc5785eda323a31d3",
   "conversation_ielts_mock": "f1c63c4c6b9b0060597711bc5345994301d7251cd7de5efbc436e36ca2aa8a8b",
-  "conversation_in_progress": "ecb0408e960c05fee08269ff3664de2179a4ecab8ff5b6e27ecbc16e5fc87316",
-  "conversation_in_progress_title": "4f9c59d1bf36328e689375c7702c7c525a88c617a1bc2c22ba1240cda56ae18c",
-  "conversation_intro_meta": "4a6a4115437ea3ecf2ec149605cba4dd891b2fd8aaedcd7987e807adb4f75bfd",
+  "conversation_in_progress": "3c7b6dc69b1b7de534530d8a79d6092d1c459703c74cc4b088b9140f741b3e30",
+  "conversation_in_progress_title": "6ba9a21cd9becfb6aa1b40fe7083ca3912b078be41f3cec37998ec66d11fe53a",
+  "conversation_intro_meta": "38bd678fa0af1220121d6c5fa95872465e2d3617292c0ce085770005a7c69248",
   "conversation_keep_talking": "e24d8573688331336bdfbbe1c238a7be7cef8ea61758d37c238cedc882620cd0",
   "conversation_level_line": "703be964e7d9c7ab555af45e5c6595fc8fe99390644906051dae3f7038cb1cf2",
   "conversation_listen_then_answer": "13c186258fd42672355b7c6e47224aaa24df394b5ea0d05cb67b10a7b775858d",
   "conversation_listen_to": "5261251e5e9a8228d164d3e08b944b31f044c17693878933cd316c47705ee608",
   "conversation_listening": "2693696c8cba8cba167a1b384561887cbca94e30abb617c938d80e8c0e42614a",
-  "conversation_longer_calls_plus": "a8fdce42a9ca4bea56cd4ef50dfedf240c2cf82716f7d90d2c27fbafb6857229",
+  "conversation_longer_calls_gate": "f3df0592d6f061b53bc699852863aca5f7699bddc110f6e0d1b6c4522dc0aa31",
   "conversation_mic_off": "94a5eb876aedd17d4d60591e9ed2f427ce8dead71dfaa532a50db2baec041452",
   "conversation_minutes_range": "177271f5541f4a42b102124e592604ee8ac32b370042882550f54fab8e9d2661",
   "conversation_mock_band_ielts": "a9eb70c4db2bbddad402d2e58d101ccda72370c5d75abae98d6e9cb93c96f619",
@@ -92,9 +86,9 @@
   "conversation_muted": "e0357246ba411bf60d056634ffecf3476d05ec63c6419928181c060f2c66c687",
   "conversation_muted_detail": "4964f42e74e69e586312b4bd7026ca529e85eae5d4c44eff420e82b3b6020f07",
   "conversation_near_level": "10720aeb5386e847e8731a75f8208c11aaaf9f03cbfeb7ebb81a4cbe48e231f0",
+  "conversation_next_task": "f6845076ac0bc9c4ea27b191a6d51e8c501a5d4ab229aef585b6420011857459",
   "conversation_no_calls_month": "6a9d72bf0983fb7dcf7123c7b218c87a8bde66c280bcdc6aa598e7e4d0940626",
   "conversation_no_calls_today": "ab466a24019f8b1f94926ea335ca769bdefa6b417e58c6edcd78c56920e2c5ba",
-  "conversation_no_estimate": "4209dfd9bebcde08b3a1f33c1358c76b4f9e998ee8f941fda53b49ccbb760b35",
   "conversation_no_estimate_title": "fc9b6a0ea6af2c2f15cc3bee62b446a5f0c7b880863ed69d4976464b74426070",
   "conversation_no_score": "69391bc3cf607dfd2ff7995a36917b8d4166d0a6d1a92c80877580f2467f8f07",
   "conversation_no_score_title": "395e89ac3fd3dbe29419b58ed41e2f49503f532f8d834279830deafe414c32b7",
@@ -102,38 +96,31 @@
   "conversation_not_connected_title": "9ab39d2c058336171ba274d38ebeb5b847f6d35d5d7b52aa99e7d23dcc8ef3e9",
   "conversation_not_rated": "25e07a8a5837b77f563081da373dad50953b0ea9d0e7b62ac6821020fe2c11ab",
   "conversation_not_this_time": "56aa468d1359f4b23ab2c53f4371460ce5ed646ed0e639cd64dff46c580f286f",
-  "conversation_opens_and_card": "2c83022ccba4e52a2f7366df509c052902cab83406c3b4aadc416feff70c3fc3",
-  "conversation_opens_here": "d8d4bfcac900d7c63cda199e7778896276df8053f7cd98f28419d4f40355e948",
+  "conversation_opens_here": "2e70142eb226121a3776a81e1c24df11173c9d7cdd6855f8bb14b0ee25b5ff0c",
   "conversation_opens_when_ready": "ca2a2198e837c55e7b44812dfad0041386384aae4aaeacbbdab232dbe672dc63",
   "conversation_paused": "9a8b2c80767705bbb549f11b54052e190a18b2f1f226bc1ed4a3f60a0c0c6a25",
   "conversation_paused_title": "92b769e489033eee9a8af0b9987d251065f7540d9d93ce4fb8c4b22ecbf0131c",
   "conversation_phrases": "38ee3229224d9d06d05d982cd4372e24d71af64f1211a0cef4228ac00a8dfab1",
   "conversation_practice": "71134e430d3190ac3f350b90768cd355f18b13c2bfa6bfb57b826be5e5202f10",
   "conversation_practice_call": "f7eb43da3377636f485b1261edb0425e10b68ccc8d660fca4a6f6167b7950b16",
-  "conversation_practice_estimate": "cda0a1c2c57a52a4e51791a3e97fb7785960ede0f5e2bd25d66b8a885f047737",
   "conversation_practice_with": "10c813d320ec6d876a343fd804990ffdc6d867a93b959c7515516b2bc8b890fd",
-  "conversation_prep": "a56dad306718ddee86b600001ee3b14210c5b6d34d68148e3101e2805bc9ccdb",
+  "conversation_prep": "fdf8e7fd6310681cd3580e80615b424c178038d62c19e32271f721572f2dfcc1",
   "conversation_prep_again": "6329b90233d2b615c292f492bfe42117d0ece939db63759a37efd19b5ed229dc",
-  "conversation_prep_over": "d37007193ab641b4cf6d5d38bba908a4b08276321c97c2146596cd2fbe605eaa",
-  "conversation_prep_shared": "116a9849ed39ef46d6cc1d85730a585dc9a5ecdbc0e8ddb752ddbdc9fdf138b6",
+  "conversation_prep_over": "651453e1f7935de8ebb211f75b7ac5be8e9ad89f46025d3d30de6e21114e0d33",
   "conversation_preparation": "ba2649fe8a76059785a33f0348664a483c8206574696da4d149c3e25b0fda72a",
-  "conversation_rated_on": "77dbdd983e9e444004f033c335face2da6572abcc6cbb70e3ebbbdf2abc7b43c",
   "conversation_rating": "c53c0e22cf0b13d0c8e31d8b6297ea27e71b330c6085cdb363892d9e5317a0f5",
   "conversation_rating_slow": "3f3f4519d7782c142084b53a241eb3d9c842672c45ad69fd6c94367231f87b16",
   "conversation_reconnecting": "a02613e9a9e9ee04a2200f1aca6bfb82506dc2e304884f58a3866f7dd326c738",
-  "conversation_role_examiner": "3f75a6dc4e5a5900f7dfb1505a01aa1eab89f5280344fae54637fe4c4b1abf4d",
+  "conversation_role_examiner": "cad6a33e66a259dfd09386bd7bb2976fee977b92ea13a0b3ab8d8c7b8eaf4436",
   "conversation_role_examiner_label": "9ed8ce9cc8b18e96bb9ea7f9271b09f9bbec8bb33386bce9ef11901b20c115b9",
-  "conversation_role_partner": "00b6a448c8de49e0e40cdeb2963c9c1556322d0df09242f533d7682f68fe0a25",
+  "conversation_role_partner": "ae0923ee11e1438bb622e89f91470acb975cc7991c33fbe468c81874327a468f",
   "conversation_role_partner_label": "882f298d1cbe961a93cdd0ca8d8888e1653aacdbeefa01aba3fe9a1d058b15d4",
   "conversation_said_well": "72737098be5e23974c58229a9be49b01c9c26b98a297d1996eeb20c1365ee771",
   "conversation_save_failed": "df216bc153f626740ae7ff84f2178530323e413dc3346927293c980ba61d5b95",
   "conversation_saying_goodbye": "75433b1f56e4033f71ca07e685130bbc973961c0b59be128bc939125a56097b3",
   "conversation_scroll_to_latest": "1eb8275f82e2631e0a35012d6db31cb7327e4a26bcfdde9256c0f9754440b64f",
   "conversation_send": "455b05871ffe41d4370c9387a968131356d1864005bf2e583dfe2c239109ce79",
-  "conversation_sound_note": "b619a2a8dc1d8d4116b2c3dea34b63e4afca2530cd1f2dd482724aa741081c1b",
-  "conversation_speak_answers": "8f212b6fe7783e69d3359633259a9413f50025824d6d06ff345228049557fd92",
-  "conversation_stand_in_examiner": "46f6d19e2350366e63ad82d2287d1157c073dd89bed3b59c780fd17207a6e0e7",
-  "conversation_stand_in_partner": "aea03d355fb1e4a73f3c89dbb2fed10f8ce4a57fc5105526f2d3ea011db3fd6c",
+  "conversation_sound_note": "fedbb4b81e85d3cde45156884b6c28863e76ffc1f4d6e96db3d6b99975ecc9c1",
   "conversation_stars": "a554fbed8c65f644ca9f8b168d587d247b8eb64851530828f3154045a4a229a4",
   "conversation_stars_rule": "a4d44cce1e390d2a07bc50e8777bb7b47ba03a107f18b336e30c06c6708959f4",
   "conversation_start": "926334a0aa9588dbd99ee6a28a1368c3df7b5e3012ac422ef0d58c223131e5a3",
@@ -141,7 +128,7 @@
   "conversation_start_preparing": "4d418029c9ee93a9f09817f59860696b370350f278d757cc7125d15ba359605c",
   "conversation_still_closing": "d4341a1996f2055df26d9b1e51f6100f224ccb5f59915b6d80264eacf6e51c2c",
   "conversation_still_to_get_across": "e7515811d2c6469f5b708f58d63611e052b1e5dcdf284e2f500152781aafd3b1",
-  "conversation_take_over": "0fef444bb3dfe64d7fd5f0d5f2a046278cab50e4bc05bba76b0c1db4972b8cd5",
+  "conversation_take_over": "d46a6da50710b3c0dd901f88f3f7719e099989afd5a210579c6e91017193f7d5",
   "conversation_take_your_time": "f9c538ef19e9c6009815fcf6b188ce017965057748e02cf0d0b120292eaf783b",
   "conversation_taken_over": "582e54c33f5b59139fb1a0532eb660b95ed0b2c08a52ebd73a698cccfaa97f43",
   "conversation_talking": "0d9f48be85ac58407464fe0753bb4a8de2abbb90ec481c4a7df3d597b1db2aa5",
@@ -149,9 +136,8 @@
   "conversation_to_improve": "d6650a87e38113b15214d64cf39a3bdea7b9fdde7823819f5f92e550b187ab7e",
   "conversation_toefl_mock": "03cc9ef9f9163eab3b5e47cdceb38012e78700dd930967c9f25a099a94a0bec2",
   "conversation_try_again": "1919433f2fe25b9edc8a07246e614a5447c0b86c2e1a1592a8383b4b08d85214",
-  "conversation_try_again_later": "f179974c237ec30d426f2399ae0442626a7e46d42f4cc9553165b6f12183d1b7",
+  "conversation_try_again_later": "020fd37773d5aade5e561332de378e8f3630575d907eb27f0099576e5443efe3",
   "conversation_try_another_mock": "a233ee73ca32186cd16f432e77265346a325845c3b2acf0aa76d4292d2d3c200",
-  "conversation_try_new_card": "d7037950a43bf0ec17c61aaf3de06e03269dfa3c47f58de57ad179ed1e1b40b9",
   "conversation_type_below": "f5883e9d7279f689bd24f0fb0051d65a160c9d8f4a713862b44a03512fd7eb22",
   "conversation_type_instead": "8f04dee3e5d6f6505ef0bd305fa26fc6fa1bbee2a770f25aa704f53c382b4941",
   "conversation_type_reply": "93134171f4a493af3c81d228c94144be6bc424ccf4d03d3ce8c8427497729e86",
@@ -189,25 +175,18 @@
     <string name="conversation_unit_challenge">Ünite meydan okuması</string>
     <string name="conversation_ielts_mock">IELTS konuşma deneme sınavı</string>
     <string name="conversation_toefl_mock">TOEFL konuşma deneme sınavı</string>
-    <!-- About how long the call lasts and its language level, such as "About 5 min · Level A2". -->
-    <string name="conversation_intro_meta">Yaklaşık %1$s · Seviye %2$s</string>
+    <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
+    <string name="conversation_intro_meta">%1$s · Seviye %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
     <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">Anlatman gerekenler</string>
-    <string name="conversation_how_it_works">Sohbet nasıl ilerler</string>
-    <!-- The first step of how the call works; the character's name. -->
-    <string name="conversation_how_answers_first">%1$s cevap verir ve ilk sözü alır.</string>
-    <string name="conversation_how_your_turn">Sonra sıra sende: sesli cevap ver ya da konuşamıyorsan yaz.</string>
-    <!-- The last step of how the call works: about how long it lasts (such as "2 min"), then the character's name. -->
-    <string name="conversation_how_it_ends">Her şeyi tamamladığında ya da yaklaşık %1$s sonra %2$s vedalaşır ve sohbet sona erer.</string>
-    <string name="conversation_sound_note">Cihazının sesini aç. Mikrofon yalnızca sohbet sırasında açık olur.</string>
-    <!-- About how long an exam's call lasts before it ends by itself, such as "2 min". -->
-    <string name="conversation_ends_after">Yaklaşık %1$s sonra kendiliğinden sona erer.</string>
+    <string name="conversation_sound_note">Cihazının sesini aç.</string>
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">%1$s ile sohbet et</string>
     <string name="conversation_start">Sohbeti başlat</string>
     <string name="conversation_start_failed">Sohbet başlamadı. Biraz sonra tekrar dene.</string>
-    <string name="conversation_challenge_plus">Meydan okuma sohbetleri Plus’a dahil. Planın bu sohbetler olmadan da devam ediyor.</string>
+    <string name="conversation_challenge_gate_title">Bu sohbet için abonelik gerekiyor</string>
+    <string name="conversation_challenge_gate_line">Planın bu sohbet olmadan da devam eder.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">%1$s ile konuşmak için Ayarlar’dan mikrofon izni ver ya da sohbete yazarak katıl.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
@@ -268,9 +247,9 @@
     <string name="conversation_ended">Pratik yapmaya devam etmek için yeni bir sohbet başlat.</string>
     <string name="conversation_paused_title">Sohbetlere ara verildi</string>
     <string name="conversation_paused">Şu an herkes aynı durumda. Daha sonra tekrar dene.</string>
-    <string name="conversation_in_progress_title">Zaten bir sohbettesin</string>
-    <string name="conversation_in_progress">Sohbet başka bir cihazda ya da tarayıcında açık. Buradan bitirirsen geri bildirim alamazsın.</string>
-    <string name="conversation_take_over">Diğer sohbeti bitir ve bunu başlat</string>
+    <string name="conversation_in_progress_title">Başka bir sohbetin açık</string>
+    <string name="conversation_in_progress">Başka bir cihazda ya da tarayıcında açık. Bu sohbeti başlatırsan diğeri biter ve o sohbet için geri bildirim alamazsın.</string>
+    <string name="conversation_take_over">Bu sohbeti başlat</string>
     <string name="conversation_dropped_title">Sohbet bağlantısı kesildi</string>
     <string name="conversation_dropped">Tekrar bağlan veya söylediklerin hakkında geri bildirim almak için sohbeti bitir.</string>
     <string name="conversation_end_call">Sohbeti bitir</string>
@@ -292,7 +271,7 @@
     <string name="conversation_not_this_time">Bu kez olmadı</string>
     <string name="conversation_goals_tile">Hedefler</string>
     <string name="conversation_brain_power">Beyin Gücü</string>
-    <string name="conversation_try_again_later">Hiçbir şey kaybetmedin: tekrar deneyebilmen için sohbet yeniden karşına çıkacak.</string>
+    <string name="conversation_try_again_later">Tekrar deneyebilmen için sohbet yeniden karşına çıkar.</string>
     <string name="conversation_stars_rule">Bitirmek, her şeyi anlatmak ve Yardım kullanmamak birer yıldız kazandırır.</string>
     <string name="conversation_went_well">İyi gidenler</string>
     <string name="conversation_said_well">İyi kullandığın ifadeler</string>
@@ -308,12 +287,12 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">%1$s ile · %2$s</string>
     <string name="conversation_call_length">Sohbet süresi</string>
-    <string name="conversation_longer_calls_plus">Plus ile daha uzun sohbetler yapabilirsin.</string>
+    <string name="conversation_longer_calls_gate">Daha uzun sohbetler için abonelik gerekiyor</string>
     <string name="conversation_opens_when_ready">Sohbetin hazır olur olmaz açılır.</string>
-    <string name="conversation_get_ready">Sohbeti hazırla</string>
-    <string name="conversation_get_ready_description">Bu meydan okuma, üniteyle ilgili kısa bir sohbet. Önce konuşma seviyene göre hazırlıyoruz; bu da yarım dakikaya kadar sürebilir.</string>
+    <string name="conversation_get_ready">Başla</string>
+    <string name="conversation_get_ready_description">Bu ünite hakkında bir yapay zekâ karakteriyle kısa bir sesli sohbet.</string>
     <string name="conversation_getting_ready">Sohbetini hazırlıyoruz</string>
-    <string name="conversation_opens_here">Hazır olur olmaz burada açılacak.</string>
+    <string name="conversation_opens_here">Yaklaşık yarım dakika sürer.</string>
     <string name="conversation_writing_call">Sohbetini hazırlıyoruz</string>
     <string name="conversation_writing_call_phase">Seviyene uygun bir sohbet hazırlıyoruz</string>
     <string name="conversation_writing_call_line_1">Kiminle konuşacağını seçiyoruz…</string>
@@ -323,28 +302,20 @@
     <!-- Exam speaking tasks: an official exam's speaking task practiced on a call, with an AI in the examiner's place. -->
     <!-- The exam and the task's place in its paper, such as "DELE B2 · Task 2 of 4". -->
     <string name="conversation_exam_task_title">%1$s · Bölüm %2$s / %3$s</string>
-    <string name="conversation_opens_and_card">%1$s sohbeti başlatır, kartın ekranda kalır.</string>
-    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="conversation_rated_on">%1$s ölçütlerine göre değerlendirilir.</string>
-    <string name="conversation_stand_in_partner">%1$s, gerçek bir adayın yerine diğer aday rolünü üstlenen bir yapay zekâ.</string>
-    <string name="conversation_stand_in_examiner">%1$s, gerçek bir değerlendiricinin yerini alan bir yapay zekâ.</string>
-    <string name="conversation_practice_estimate">Bu bir alıştırma: sonunda verilen tahmini sonuç resmî puan yerine geçmez.</string>
-    <string name="conversation_speak_answers">Cevaplarını sesli söyle: yazılı cevaplarda konuşma becerin değerlendirilmez. Mikrofon yalnızca sohbet sırasında kullanılır.</string>
     <string name="conversation_your_card">Kartın</string>
     <string name="conversation_preparation">Hazırlık</string>
-    <!-- The exam's shared preparation time, the tasks it covers, then this task's share. -->
-    <string name="conversation_prep_shared">Sınavda %1$s, %2$s numaralı bölümlere birlikte hazırlanman için verilir; bu bölüme yaklaşık %3$s düşer.</string>
-    <string name="conversation_prep">Sınavda kartı inceleyip hazırlanmak için %1$s süren var.</string>
+    <!-- How long the exam gives to prepare, such as "1 min". -->
+    <string name="conversation_prep">%1$s, sınavdaki gibi</string>
     <string name="conversation_start_preparing">Hazırlığa başla</string>
-    <string name="conversation_prep_over">Hazırlık süresi bitti. Hazır olduğunda sohbeti başlat.</string>
+    <string name="conversation_prep_over">Hazırlık süresi bitti.</string>
     <string name="conversation_prep_again">Yeniden başla</string>
     <!-- A task's length when the exam gives a range, such as "3–4 min". -->
     <string name="conversation_minutes_range">%1$s–%2$s dk.</string>
     <string name="conversation_role_partner_label">Diğer adayla (yapay zekâ)</string>
     <string name="conversation_role_examiner_label">Değerlendiriciyle (yapay zekâ)</string>
-    <!-- Who the AI plays in a task, after its name: "Ana · other candidate". -->
-    <string name="conversation_role_partner">diğer aday</string>
-    <string name="conversation_role_examiner">değerlendirici</string>
+    <!-- Who the AI plays in a task, after its name: "Ana · other candidate (AI)". -->
+    <string name="conversation_role_partner">diğer aday (yapay zekâ)</string>
+    <string name="conversation_role_examiner">değerlendirici (yapay zekâ)</string>
     <string name="conversation_criterion_accuracy">Doğruluk</string>
     <string name="conversation_criterion_coherence">Tutarlılık</string>
     <string name="conversation_criterion_discourse">Anlatım düzeni</string>
@@ -372,16 +343,13 @@
     <string name="conversation_below_level">%1$s seviyesinin altında</string>
     <string name="conversation_level_line">Bu ölçeklerde %1$s, %2$s düzeyine karşılık gelir.</string>
     <string name="conversation_typed_note">Yanıtlarını yazdığın için bu tahminde nasıl konuştuğun değerlendirilmedi.</string>
-    <string name="conversation_brief_note">Bu bölümde konuşman kısa olduğu için değerlendirme sınırlı kaldı. Daha uzun konuşursan daha doğru bir tahmin yapabiliriz.</string>
+    <string name="conversation_brief_note">Az konuştuğun için bu tahmin pek kesin değil.</string>
     <string name="conversation_focus">Odak</string>
     <string name="conversation_not_rated">Değerlendirilmedi</string>
-    <string name="conversation_estimate_sound">Tek bir alıştırma bölümüne dayanan bir tahmindir, resmî bir puan değildir. Konuşman aksanına göre değil, ne kadar kolay anlaşıldığına göre değerlendirilir.</string>
-    <string name="conversation_estimate">Tek bir alıştırma bölümüne dayanan bir tahmindir, resmî bir puan değildir.</string>
+    <string name="conversation_estimate">Bu bir tahmin, resmî puan değil.</string>
     <string name="conversation_work_on_first">Önce bunun üzerinde çalış</string>
     <string name="conversation_no_estimate_title">Bu bölüm için tahmin yok</string>
-    <string name="conversation_no_estimate">Hazır olduğunda bölümü tekrar dene.</string>
-    <string name="conversation_try_new_card">Bu bölümü yeni bir kartla dene</string>
-    <string name="conversation_go_to_task">%1$s. bölüme git</string>
+    <string name="conversation_next_task">Sonraki bölüme geç</string>
     <string name="conversation_every_criterion">Tüm ölçütleri gör</string>
     <string name="conversation_by_criterion">Ölçütlere göre</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->

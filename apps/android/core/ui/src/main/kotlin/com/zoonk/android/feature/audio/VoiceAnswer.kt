@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.audio
 
 import android.Manifest
-import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -11,7 +10,6 @@ import android.text.format.DateUtils
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +28,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,10 +48,10 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitActions
+import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.theme.GeistMono
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -72,6 +70,9 @@ class VoiceAnswerModel(
     /** The learner turned the microphone off for the app. */
     var microphoneOff by mutableStateOf(false)
         internal set
+
+    /** The learner refused the microphone on a screen that then answers another way. */
+    var blocked by mutableStateOf(false)
 
     internal fun <T> record(
         grade: suspend (VoiceRecording) -> GradeOutcome<T>,
@@ -115,6 +116,13 @@ sealed interface VoiceIssue {
     ) : VoiceIssue
 }
 
+/** The take for [key], shared by its [VoiceAnswerButton] and its [VoiceAnswerLine] wherever each is drawn. */
+@Composable
+fun voiceAnswerModel(key: String): VoiceAnswerModel {
+    val context = LocalContext.current
+    return viewModel(key = key) { VoiceAnswerModel(context) }
+}
+
 /**
  * Record, then [grade] in the screen's ViewModel scope; [onGraded] may run after a rotation, so it
  * should only call a ViewModel or store. With [onBlocked], a denied microphone hands over to the
@@ -132,11 +140,29 @@ fun <T> VoiceAnswerRecorder(
     asksToSpeak: Boolean = true,
     onBlocked: (() -> Unit)? = null,
 ) {
-    val context = LocalContext.current
-    val model = viewModel(key = key) { VoiceAnswerModel(context) }
+    if (voiceAnswerModel(key).microphoneOff && onBlocked == null) {
+        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), modifier)
+        return
+    }
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        VoiceAnswerButton(grade, onGraded, key = key, onBlocked = onBlocked)
+        VoiceAnswerLine(navigator, key = key, asksToSpeak = asksToSpeak)
+    }
+}
+
+/** The take's Record and Stop, for a screen that puts it in its bottom bar; [VoiceAnswerLine] says how it went. */
+@Composable
+fun <T> VoiceAnswerButton(
+    grade: suspend (VoiceRecording) -> GradeOutcome<T>,
+    onGraded: (T) -> Unit,
+    key: String,
+    modifier: Modifier = Modifier,
+    onBlocked: (() -> Unit)? = null,
+) {
+    val model = voiceAnswerModel(key)
     val currentGrade by rememberUpdatedState(grade)
     val currentOnGraded by rememberUpdatedState(onGraded)
-    val record = { model.record({ currentGrade(it) }, { currentOnGraded(it) }) }
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
@@ -147,16 +173,23 @@ fun <T> VoiceAnswerRecorder(
                     lasting -> model.microphoneOff = true
                 }
             },
-            record = record,
+            record = { model.record({ currentGrade(it) }, { currentOnGraded(it) }) },
         )
-
-    if (model.microphoneOff && onBlocked == null) {
-        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), modifier)
-        return
-    }
-
     val status by model.recorder.state.collectAsStateWithLifecycle()
-    val level by model.recorder.level.collectAsStateWithLifecycle()
+
+    RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = modifier, enabled = !model.checking)
+}
+
+/** What the take for [key] is doing: listening, checking, what went wrong, or a limit with its way on. */
+@Composable
+fun VoiceAnswerLine(
+    navigator: AppNavigator,
+    key: String,
+    modifier: Modifier = Modifier,
+    asksToSpeak: Boolean = true,
+) {
+    val model = voiceAnswerModel(key)
+    val status by model.recorder.state.collectAsStateWithLifecycle()
     val recording = status is VoiceRecorder.Status.Recording
     val slow by produceState(false, model.checking) {
         value = false
@@ -171,34 +204,31 @@ fun <T> VoiceAnswerRecorder(
             recording -> stringResource(R.string.audio_listening)
             model.checking && slow -> stringResource(R.string.audio_checking_slow)
             model.checking -> stringResource(R.string.audio_checking)
-            issue is VoiceIssue.Limited -> limitMessage(issue.limit, LimitSubject.Help)
+            issue is VoiceIssue.Limited -> null
             issue == VoiceIssue.NoSpeech -> stringResource(R.string.audio_no_speech)
             issue == VoiceIssue.Failed -> stringResource(R.string.audio_check_failed)
             asksToSpeak -> stringResource(R.string.audio_say_it)
             else -> null
         }
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        RecordButton(
-            status = status,
-            level = { level },
-            onStop = model.recorder::stop,
-            enabled = !model.checking,
-            onStart = tapRecord,
+
+    if (issue is VoiceIssue.Limited) {
+        LimitNotice(
+            issue.limit,
+            LimitSubject.Help,
+            onCreateAccount = { navigator.open(AppRoute.Login) },
+            onSubscribe = { navigator.open(AppRoute.Subscription) },
+            modifier = modifier,
         )
-        hint?.let {
-            Text(
-                text = it,
-                // Announcing the take's start would speak into the microphone.
-                modifier = Modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
-                color = if (issue == VoiceIssue.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        if (issue is VoiceIssue.Limited) {
-            LimitActions(issue.limit, onCreateAccount = {
-                navigator.open(AppRoute.Login)
-            }, onSeePlus = { navigator.open(AppRoute.Subscription) })
-        }
+        return
+    }
+    hint?.let {
+        Text(
+            text = it,
+            // Announcing the take's start would speak into the microphone.
+            modifier = modifier.semantics { if (!recording) liveRegion = LiveRegionMode.Polite },
+            color = if (issue == VoiceIssue.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -238,13 +268,12 @@ fun rememberRecordTap(
 }
 
 /**
- * Record while idle; Stop with the take's clock and [level] (0 to 1) while recording. It stays one
- * button through both, so TalkBack keeps its focus.
+ * Record while idle; Stop with the take's clock while recording, in the same filled button. It
+ * stays one button through both, so TalkBack keeps its focus.
  */
 @Composable
 fun RecordButton(
     status: VoiceRecorder.Status,
-    level: () -> Float,
     onStart: () -> Unit,
     onStop: () -> Unit,
     modifier: Modifier = Modifier,
@@ -255,30 +284,14 @@ fun RecordButton(
         onClick = if (recording != null) onStop else onStart,
         modifier = modifier,
         enabled = enabled || recording != null,
-        colors = if (recording != null) ButtonDefaults.filledTonalButtonColors() else ButtonDefaults.buttonColors(),
     ) {
-        val icon = Modifier.size(buttonIconSize())
         if (recording == null) {
-            Icon(painterResource(R.drawable.ic_mic), contentDescription = null, modifier = icon)
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text(stringResource(R.string.audio_record))
             return@Button
         }
-        Icon(painterResource(R.drawable.ic_stop_filled), contentDescription = null, modifier = icon)
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         Text(stringResource(R.string.audio_record_stop))
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         RecordingClock(recording.startedAt)
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Icon(
-            painterResource(R.drawable.ic_graphic_eq),
-            contentDescription = null,
-            modifier =
-                icon.graphicsLayer {
-                    // Held still when animations are off.
-                    alpha = if (ValueAnimator.areAnimatorsEnabled()) QUIET_LEVEL + (1 - QUIET_LEVEL) * level() else 1f
-                },
-        )
     }
 }
 
@@ -294,8 +307,8 @@ private fun RecordingClock(startedAt: Long) {
     Text(
         text = DateUtils.formatElapsedTime(seconds),
         modifier = Modifier.clearAndSetSemantics {},
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
+        color = LocalContentColor.current.copy(alpha = CLOCK_ALPHA),
+        style = MaterialTheme.typography.labelLarge.copy(fontFamily = GeistMono),
     )
 }
 
@@ -304,8 +317,7 @@ private const val CLOCK_TICK_MS = 250L
 /** Main's spoken answers say so after 15 seconds. */
 private const val SLOW_CHECK_MS = 15_000L
 
-/** Silence still shows the meter, faintly. */
-private const val QUIET_LEVEL = 0.38f
+private const val CLOCK_ALPHA = 0.7f
 
 /** Inline, beside the step it belongs to; [description] says what the microphone is for here. */
 @Composable

@@ -9,7 +9,7 @@
   "conversation_below_level": "af55ba208e9792e7a259901c5966a47381ad31dca9df61d467540cff6b2f3258",
   "conversation_better": "4d611379abe65f9285135d162816ea5cb76778a29ee19d8e9d7e841a91a6c554",
   "conversation_brain_power": "7f40edf482a0c9d7610de87d204478a0a95bf9a8e1b88d1873a74ffeececac6b",
-  "conversation_brief_note": "f7d89ee647ac4e1f2ed442ef74dd63495cd4d499dc041eb0e34e98a5a15d88b6",
+  "conversation_brief_note": "8e074457a828daec28617e3425ed081a00c3b17bf3633133860cc321d4d4e245",
   "conversation_by_criterion": "cc2f56c61d34d15faf91870905afa47290dec4ab3a680e40e59beebf6cc98de2",
   "conversation_call": "614fcb2be031dfe09943a35ed19e701a9348a51ec9a3b018f94c55e3a87f2f46",
   "conversation_call_again": "5b0400453037656d25657bdcd0478de966a2f74096a9f3a6b393b7884e6e45ed",
@@ -19,8 +19,9 @@
   "conversation_calling": "8653b7b99ba7905a348911df347913f039d16caa2e94c5aa21e72ec078526e78",
   "conversation_calls_need_account": "19e8cca2dc29f97a60eb4353dd69af2e9b1b24fdd46c21da347f4c329dc79ae2",
   "conversation_cancel": "13b0ae0affca9fcc60f6cc7d91b671ff9938045a708d009255a2ae39acacb1a9",
+  "conversation_challenge_gate_line": "03901a0dc0ffbd05da14012184824e4f7b03b66e0ad6845968f4e42d1eb01864",
+  "conversation_challenge_gate_title": "a48e467ff91a68e834bb154e13ac112490b04f55d9a5d1cb7db6b6e057949134",
   "conversation_challenge_passed": "cda489cb3315d7e50998fb908fb23cf025e82c90080e54d2f5a0081bb64fbba5",
-  "conversation_challenge_plus": "c73a948098572ba743cf1f1a33079648556bfaeba7d6a084e1d79acf6129f025",
   "conversation_character_detail": "30b35c9fabed058b45ce7560515b887d9911747f61277acacdf0b0b3d6a4107c",
   "conversation_character_said": "25ac743252f51f560b64f7e3cb454806ee027aa0c9d389b42d63e97dbee38ff7",
   "conversation_criterion_accuracy": "99fb0d976c98d4694a58d32eb018ec8f7105f4cf8584e153e927d7145d7965de",
@@ -48,37 +49,30 @@
   "conversation_end_title": "82a61528825b7429cfe346c8864375e66060512c48918da4c2f8328ff253667e",
   "conversation_ended": "b8b70719ed70e7da5acd0ba456b65daac1af3aef494a5079e3cd99c2911aea60",
   "conversation_ended_title": "28bd01102cd89c571439f270dc29f2725acf9a720c5447a0509e704b3ae4cd76",
-  "conversation_ends_after": "7c771a3a364ec5d49707af0aee01b891076868e0dd289bf6a27a797ab773dd8b",
-  "conversation_estimate": "dd8963cf60d5397f4e83652cf5ea6f459f9f819769537fd9a2604dfa41fef2f2",
-  "conversation_estimate_sound": "487382388bad1d3a9313a95cd446b39370c811b272c6bc70a79d2f790fe35d01",
+  "conversation_estimate": "6551636ecf5ec3910cb2722fc9b79fd7a4d345e061b1d9f8fea66f2d0ddcffd0",
   "conversation_every_criterion": "170eca5eae1dfe49c4cfb46c97804cef3c4fd57190bd30c59adece3c2f0d7062",
   "conversation_exam_task_title": "7cab3d34a4bf56292b2652e559ebacd06a51b0c2053a250221e572d8c86cc6af",
   "conversation_focus": "ac3ed349e833e6983d86f659c4712989056c51aedc2573d58a611cbd9247c04f",
   "conversation_get_across": "9246c9b2038858a13e33d61b8b4f2e28938d119847ec2b12eaf3bb77d14c0064",
-  "conversation_get_ready": "7bcf20a6c27a1e41457871b5ba4bb94e99725daf71e272d6bf05958d5384cb93",
-  "conversation_get_ready_description": "c93fed7e248de8c1e84087660519fe676ebc38df90763d434d44ed5baa56f4d6",
+  "conversation_get_ready": "1e254f83a90ff53ddc70cb52f947bf5fe19e9b5a2c0c6165b55b71ec1f588c7a",
+  "conversation_get_ready_description": "3949cfff43ffd4fd590afdc494647ad4337a456077db59d432e95b829f1682b7",
   "conversation_getting_ready": "55b6d78fec14499db377255d2bdced0ff6d00535b1144c5997dbf0e7861400ba",
-  "conversation_go_to_task": "abae0457886b123bfc05c6616e5a3ce1687b48ca42c8a465de3c78189caf3524",
   "conversation_goal_done": "eb89004df5f6822ee0a57b8c2ae19655e1547604e001d64c7b2a3a15f45d6133",
   "conversation_goal_not_yet": "5af3fff0f14accae2be14869b96d567b275459627917147070a27f2635c982aa",
   "conversation_goals": "19ce2e66e62fca77c6964c017ebff347c367f2ba000f95cc70eded765312f8f6",
   "conversation_goals_met": "7d05bc7a5d313dcc97bfb0e1908403f4614385fe252d55028dfbd84b8bbcedb8",
   "conversation_goals_tile": "7b96bcd42265770a0afcb068ed3d873e056fbf5db8722b3d96876b5925391a04",
   "conversation_help": "f959f39c5a317f0a079d11d8592052e2c1aee90f467c355bc20df8a3e8666ea3",
-  "conversation_how_answers_first": "76c177cd6cce7bf8481ed8950e2cfa2d151a53761a154501a253c88504384a37",
-  "conversation_how_it_ends": "07782bc33d1f21e2303e3bdf16ba99e34e67a8d4841d168a6e4cba756b3b6d1a",
-  "conversation_how_it_works": "9a31960458dec76e0ad90bd57e31cb8483ca90c5495e7f5bd4f33c0c12f9951c",
-  "conversation_how_your_turn": "dbd6cda8809fffd8b42960a81f751361c4c4a83623010e549544c46d66991b20",
   "conversation_ielts_mock": "f54caacdc8bb5e1e86cd35577e6c5d2f6390c3b25682def90292a5176b0be6f7",
-  "conversation_in_progress": "c2390bba5068654b22c5e532a1d15bb5d14b52dac5986c193de3a4dd5fb728e2",
-  "conversation_in_progress_title": "373ab54bdd130ad004098e413331eadba308fb5b282760d651026b20d1b0a9af",
-  "conversation_intro_meta": "30f803077c5d6ccfec2ab95397a10f844c5176537814643ff45b3e65184a64ea",
+  "conversation_in_progress": "e251b3ae877c0f00f86d8d89281ea129e549f8f7ff0bb6673c695d1f9fd2edf8",
+  "conversation_in_progress_title": "90d255053baa53043b3f146a8c0c21d3efd71fa679834261538992fcbc1a1d94",
+  "conversation_intro_meta": "15370bd82f4f34c5aa579ebb183f3fad6a7a736ae164954ed17d6244553da589",
   "conversation_keep_talking": "39ba3655f6c032abaf321e4e43130291a08909ef496fdfc06a39045ecc956b70",
   "conversation_level_line": "eb1e9bebd8bee50ed8e2bd0631d115dcf38faea4ad0ee5212931d3d938c5ffaf",
   "conversation_listen_then_answer": "6cc0ccd46a9ff3aa93fd4f53e1d3ce3ccd04153e3571112af4c1d559ca62df0c",
   "conversation_listen_to": "862f02e53b19e8d83eb3041994470d225551edbd1928bbaaf7fa479ec1a330b1",
   "conversation_listening": "798758ab15151423f161734043e676d997a377ed900c9be986a97e1a9cf133f5",
-  "conversation_longer_calls_plus": "e8dd34235b4da5fb83887eaa6154e5e29b1a11c14cd9572b6ec97dff8bb9869c",
+  "conversation_longer_calls_gate": "878ada975ffa5342ea2a664e2cb742395bd9578506ed1a1c265a9e8b35c6f845",
   "conversation_mic_off": "eae9561f0987df0bc0dba765d112d2f9a914ec4dc6b30946fcafa585519dc393",
   "conversation_minutes_range": "1f3f6a419306f9e1f3ce24c286927665c532c3c090c700e63b2a1a5a20f6c27d",
   "conversation_mock_band_ielts": "a1a46b3b353f69a004d918dbd64837655b9b9c797c4f8b5756c74be091f3f47e",
@@ -92,9 +86,9 @@
   "conversation_muted": "84bceb6f2d944f6971baccfa2a3e975b485a48c397619a9c63dcd5d981942f36",
   "conversation_muted_detail": "c2c6049a34a48c9235178390d9104ce51709369a8cccbd522cbb05216f5b3629",
   "conversation_near_level": "4a1c880574b8991fe9f507255211391b852d078088a7a51191bcd9c7c25a096d",
+  "conversation_next_task": "d350540b31dd5056524b6492b34b492a4b994a4760b6f14cd1fee3dc36c74fd0",
   "conversation_no_calls_month": "2ee3fe0b9cf6e5817aa7706b7ee31231fa09eec4092c340db287116515335e82",
   "conversation_no_calls_today": "890a9c99f8536bb817d8944124fd7cda15842b22941307ac9603c048808d2753",
-  "conversation_no_estimate": "9ac038f0b97733632bbe67b1fa64b907033f8641c87ceeb7d94e1057a0ef79c5",
   "conversation_no_estimate_title": "e4c6ee9884006a827fea0f5010d1d1fa2e3ebf6042f13a2f60e6c4429c5471f7",
   "conversation_no_score": "3a66ca07892d002cbb1f74f6b36b92bd9e8db70e3e91c842b84095eb6227a1fa",
   "conversation_no_score_title": "6eb9a5063257e6c038a5bf71e43eb212d4642ff3deeb463a2aab2265daa5457e",
@@ -102,38 +96,31 @@
   "conversation_not_connected_title": "fe41b5dc552e48f953c93c4d0033025ce5361417988a55af1b6f2abe8030f929",
   "conversation_not_rated": "2af1db42b26c5f02a2f03afe1d9eb70ac4fd229786a8f5744bfceb002f2d1021",
   "conversation_not_this_time": "81e4fb4b8e351c924c9d279356904ec1db5109985d581be9e4bfbaaf06981b09",
-  "conversation_opens_and_card": "6c5a9cfab0e52a83f4fdea0883c6ef5fb2caa326d5e38787faad9449c0776d39",
-  "conversation_opens_here": "668b5e1899ae28e4f07a768be67723dcb1ab3f394d624bdaaf4d40ae33b40723",
+  "conversation_opens_here": "e7767a6bdc5930ec8e6794bbcfaa9aac4f387b4af1119afab75f0aa2f52e331f",
   "conversation_opens_when_ready": "6502c56b57cda9553bb1cc25d97eb92b8475599a099f086295dcacdcbf7cd3b1",
   "conversation_paused": "ae3733e95a5c295be59820d04b7de1504bb49a73b8117b685cf65905a5ef6202",
   "conversation_paused_title": "4a5a5081bb0d18f093d55bd8905bf84b8f1fb8c9faf1d5cceeec005809d91408",
   "conversation_phrases": "ddbf9b6f097d6ee3c3bda3b66f7c1ab17e3935434257a94fc4133f7be8b1d74f",
   "conversation_practice": "8a40f9cefaceadde1d65eb6a1cec8895c92bf0b405973b38ca96a4357bd84e41",
   "conversation_practice_call": "4dfac4e2c4e9b5a64018f5500b1db3abe36d5c6f940354fa7265366df1bdd40b",
-  "conversation_practice_estimate": "e7d4c31af50a43f3d46771b7def7564adbadfecb5116aba000c3aea44a503e3e",
   "conversation_practice_with": "e6e74990da3b4c273530dac4d7fdf15b2daccbefc77a02d0b759220ccbba568c",
-  "conversation_prep": "7867c3edc05acc424d098948a7f45de1261c4d04829d70f9a8a7a90a3b9f0d3e",
+  "conversation_prep": "8f2a679be5e262ada12da6d6d52d99c5b7eaa220691761ecabb241b9347bde04",
   "conversation_prep_again": "051d0a6407985b26ca77ed19dc25cb8f51001d330bb12b59079cc0f0a671772c",
-  "conversation_prep_over": "6d5785d2f78a1d028ce557682b83433b3149a52e7d2db1eb5f024c15a6978d62",
-  "conversation_prep_shared": "fd5879fc344c4a8b68757c2d2630fef13e47b590f5f46fe1ceee2832de61084c",
+  "conversation_prep_over": "b05af023b24c3af1f8df738260359fa50766a90880385955d65fd48a1ea08973",
   "conversation_preparation": "887eb9db89d1ea9f761ad82cbdefe36420e6ab0504e2f9e2167cc361d48a9209",
-  "conversation_rated_on": "30f0f7200d91fde8783aeb614129419cefa848d04763f4c31da3a9a96fc03df2",
   "conversation_rating": "3bde501493feb3c2d096c7ab78ce6541bb3778e176bf0418511f653c904e123f",
   "conversation_rating_slow": "fbb2696c0944d3ce4b91ddd65e8cdde396b4796f61663052ba9d4cd3113c0e54",
   "conversation_reconnecting": "35631ffb07e79ab226e7a7122daf588e24dba36e2f2a83db5bcb8a799fba4dc0",
-  "conversation_role_examiner": "a7628f3d70411362102b326116613cf4088cfecf648b1071ae1cd130b45faf28",
+  "conversation_role_examiner": "2bfcb1f21021aea85e80cb21f32d197ebf68b42faf24a9271ea7f0235c546ffc",
   "conversation_role_examiner_label": "44298cef51df0b94fbcf88a50c27f6c44e37344ebd1ffb5288166fbb6074ff7d",
-  "conversation_role_partner": "08a790d3f14202a73de144fb4cc072d1ca45013f4157948641341b89096aa0be",
+  "conversation_role_partner": "54cb4566ec86a25d7a632b966e97bfdf3292b277dbee764a816dde64ea798451",
   "conversation_role_partner_label": "4b76426c3c91b9f93f015190e4e4f64322ec0852a41ed46381873db2c6fdb905",
   "conversation_said_well": "0ba8d76488ce9eda5e8a13a2b09562a1295298b6053a7f3e80ab14d5babd0df6",
   "conversation_save_failed": "27a0c7a2dc4470c0b043c81946b588614f5d67b80d02495333fb551ef09baac1",
   "conversation_saying_goodbye": "21f1cb20305ab2abf590ecd6e767c0e9b75322b64e7c03bb38a77d7a62a3708c",
   "conversation_scroll_to_latest": "90bfb911151ee978987aaf9712a02c65be30b9e000b733e51299815595485d0e",
   "conversation_send": "2f138c8176ffaad15b0aa9f9ecc98c738d334ac1dfd2e91e9a02ec4984acb8e2",
-  "conversation_sound_note": "52bb66f8171feae92d49fe0e5209a1ea31d7ec649ced96644c4f011e074a6a34",
-  "conversation_speak_answers": "40fd1ca844afb8af5d7db2eec40c934a34bb022e2a3c8abfbe6f518bb7c7acc8",
-  "conversation_stand_in_examiner": "bd1b8ac6398e7d6476dcd40579d8c77b7c9400ec99f415b0effd7bec4c36c6a3",
-  "conversation_stand_in_partner": "afdbf288ab4e0ec8eba02f0358a548284f271c335dfccf18e436b0924149c3e7",
+  "conversation_sound_note": "df76823556c3f91f48a472f40b94c25c1dbb84ac82ec65876a85689bf5c6dada",
   "conversation_stars": "df88215f9b14fafcaad9856b9b26cb3bb6c09d3eeeafc8b47b951b563da8251b",
   "conversation_stars_rule": "3904bdb49a34703d2854c2db482aa994baf8dd1e3cca628c4b2ae0a52cbb5fe5",
   "conversation_start": "a77ca56a5388d13fd437c4b394ef16cc4f73554338a763c1438ae2fc173b23b9",
@@ -141,7 +128,7 @@
   "conversation_start_preparing": "06daed1770416273515317d3cae894ab153b7d42ccd1cbb1a9899c968a003737",
   "conversation_still_closing": "273752f549ceeb91137ce806a71ab1c8fabca7996a449cdf148f542bd413c14b",
   "conversation_still_to_get_across": "bdab040420d137407153f92b227cac9bd2cd91f4a1c0810919eec59062ff0a15",
-  "conversation_take_over": "f683f29b7e1857f17d7dce65e328303749a040a9fa83b2490dc0798529dd8d0e",
+  "conversation_take_over": "a1e730d1f61312c5064e66ca8b4094537577c813cb1751551109122a7e0496a0",
   "conversation_take_your_time": "c4b922da26f3775d14ce0c4264e33e43d35affca6ee010d2b71d6407fac4f06c",
   "conversation_taken_over": "41ed3612c3e2d9b8a8c9684da01a69e10ce2d86e6d7958fb9af2ce1d0f57e760",
   "conversation_talking": "4e22448f97e3c342fd0a1685b114bcf570689a4661e7d8228b029f911ed74661",
@@ -149,9 +136,8 @@
   "conversation_to_improve": "a1f298c11370ce2a50c48065e74e875bc1f787e381089b25107230de9341088b",
   "conversation_toefl_mock": "a86776e8532976537ec777d14660679538720d5d2d27988859221b3235df0f0b",
   "conversation_try_again": "a8b5beeddf383a7cf99449e3223698951412ef02fa22be50e87d5458acd4dffb",
-  "conversation_try_again_later": "6743cbad7661e3fdadc561ac1d92618daacc8352687e939c160557709409fee5",
+  "conversation_try_again_later": "8de18bba8d275d5539d8ce39dcda2c7ae5f10548e47a842c0fca4702229e4b24",
   "conversation_try_another_mock": "8b0a50f0b74b669f83554a321738b96a3d825756a15f11a48a5bbc5b109c2ebc",
-  "conversation_try_new_card": "3a723796ea48f1243d9881be6541d20c8e1b9a09814350e8218469a8e2be360f",
   "conversation_type_below": "4d14b678fe58f6091d24b67b6c2fc1e228af30c99a2f74df713d56d9f22d1574",
   "conversation_type_instead": "8d01b22b1074a3447abb14f08079f33d4af9e1480810bf98a9a7955525765b1c",
   "conversation_type_reply": "b0445377a87ea545baf3fb3a45dfcf86590ef425960e1cbcd89d0f89d9d31133",
@@ -189,25 +175,18 @@
     <string name="conversation_unit_challenge">단원 챌린지</string>
     <string name="conversation_ielts_mock">IELTS 말하기 모의고사</string>
     <string name="conversation_toefl_mock">TOEFL 말하기 모의고사</string>
-    <!-- About how long the call lasts and its language level, such as "About 5 min · Level A2". -->
-    <string name="conversation_intro_meta">약 %1$s · 레벨 %2$s</string>
+    <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
+    <string name="conversation_intro_meta">%1$s · 레벨 %2$s</string>
     <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
     <string name="conversation_character_detail">%1$s · %2$s</string>
     <string name="conversation_get_across">전달할 내용</string>
-    <string name="conversation_how_it_works">대화 진행 방식</string>
-    <!-- The first step of how the call works; the character's name. -->
-    <string name="conversation_how_answers_first">연결되면 %1$s(이)가 먼저 말을 시작해요.</string>
-    <string name="conversation_how_your_turn">그다음은 답할 차례예요. 소리 내어 답하거나, 말하기 어려우면 글로 답하세요.</string>
-    <!-- The last step of how the call works: about how long it lasts (such as "2 min"), then the character's name. -->
-    <string name="conversation_how_it_ends">할 일을 모두 마치거나 약 %1$s 동안 대화하면 %2$s(이)가 작별 인사를 하고 대화가 끝나요.</string>
-    <string name="conversation_sound_note">소리를 켜세요. 마이크는 대화 중에만 켜져요.</string>
-    <!-- About how long an exam's call lasts before it ends by itself, such as "2 min". -->
-    <string name="conversation_ends_after">약 %1$s 후에 자동으로 끝나요.</string>
+    <string name="conversation_sound_note">소리를 켜 주세요.</string>
     <!-- Starts a phone call with the character, whose name follows. -->
     <string name="conversation_call">%1$s와(과) 대화하기</string>
     <string name="conversation_start">대화 시작하기</string>
     <string name="conversation_start_failed">대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
-    <string name="conversation_challenge_plus">챌린지 대화는 Plus에서 이용할 수 있어요. 대화 없이도 계획은 계속 진행돼요.</string>
+    <string name="conversation_challenge_gate_title">이 대화에는 구독이 필요해요</string>
+    <string name="conversation_challenge_gate_line">이 대화 없이도 계획은 계속돼요.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">설정에서 마이크 사용을 허용하면 %1$s와(과) 말로 대화할 수 있어요. 글로 답해도 돼요.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
@@ -268,9 +247,9 @@
     <string name="conversation_ended">새 대화를 시작해서 계속 연습해 보세요.</string>
     <string name="conversation_paused_title">대화가 일시 중지됐어요</string>
     <string name="conversation_paused">지금은 모두 대화를 이용할 수 없어요. 나중에 다시 시도해 보세요.</string>
-    <string name="conversation_in_progress_title">이미 대화 중이에요</string>
-    <string name="conversation_in_progress">다른 기기나 브라우저에서 열려 있어요. 여기서 끝내면 피드백을 받을 수 없어요.</string>
-    <string name="conversation_take_over">진행 중인 대화 끝내고 새 대화 시작하기</string>
+    <string name="conversation_in_progress_title">다른 대화가 진행 중이에요</string>
+    <string name="conversation_in_progress">다른 기기나 브라우저에서 열려 있어요. 이 대화를 시작하면 진행 중인 대화는 피드백 없이 끝나요.</string>
+    <string name="conversation_take_over">이 대화 시작하기</string>
     <string name="conversation_dropped_title">대화 연결이 끊겼어요</string>
     <string name="conversation_dropped">다시 연결하거나 대화를 끝내고 지금까지 말한 내용에 대한 피드백을 받아 보세요.</string>
     <string name="conversation_end_call">대화 끝내기</string>
@@ -291,7 +270,7 @@
     <string name="conversation_not_this_time">이번엔 아쉬워요</string>
     <string name="conversation_goals_tile">목표</string>
     <string name="conversation_brain_power">두뇌력</string>
-    <string name="conversation_try_again_later">잃는 건 없어요. 대화가 다시 열리니 또 도전할 수 있어요.</string>
+    <string name="conversation_try_again_later">다시 시도할 수 있게 대화가 다시 열려요.</string>
     <string name="conversation_stars_rule">대화를 마치면 별 1개, 할 말을 모두 전하면 1개, 도움 없이 해내면 1개를 받아요.</string>
     <string name="conversation_went_well">잘한 점</string>
     <string name="conversation_said_well">잘 사용한 표현</string>
@@ -307,12 +286,12 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">%1$s와(과) 함께 · %2$s</string>
     <string name="conversation_call_length">대화 시간</string>
-    <string name="conversation_longer_calls_plus">Plus에서 더 오래 대화할 수 있어요.</string>
+    <string name="conversation_longer_calls_gate">더 긴 대화에는 구독이 필요해요</string>
     <string name="conversation_opens_when_ready">준비가 끝나면 대화 화면이 바로 열려요.</string>
-    <string name="conversation_get_ready">대화 준비하기</string>
-    <string name="conversation_get_ready_description">이 챌린지는 단원 내용을 바탕으로 짧게 대화하는 활동이에요. 먼저 말하기 수준에 맞춰 내용을 만드는 데 최대 30초가 걸려요.</string>
+    <string name="conversation_get_ready">시작하기</string>
+    <string name="conversation_get_ready_description">이 단원에 대해 AI 캐릭터와 짧게 음성으로 대화해요.</string>
     <string name="conversation_getting_ready">대화를 준비하고 있어요</string>
-    <string name="conversation_opens_here">준비가 끝나면 여기서 바로 열려요.</string>
+    <string name="conversation_opens_here">약 30초가 걸려요.</string>
     <string name="conversation_writing_call">대화를 만들고 있어요</string>
     <string name="conversation_writing_call_phase">수준에 맞는 대화를 만들고 있어요</string>
     <string name="conversation_writing_call_line_1">대화 상대를 고르고 있어요…</string>
@@ -322,28 +301,20 @@
     <!-- Exam speaking tasks: an official exam's speaking task practiced on a call, with an AI in the examiner's place. -->
     <!-- The exam and the task's place in its paper, such as "DELE B2 · Task 2 of 4". -->
     <string name="conversation_exam_task_title">%1$s · 과제 %2$s/%3$s</string>
-    <string name="conversation_opens_and_card">%1$s(이)가 대화를 시작하고, 카드는 화면에 계속 표시돼요.</string>
-    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="conversation_rated_on">%1$s 기준으로 평가해요.</string>
-    <string name="conversation_stand_in_partner">%1$s은(는) 실제 사람 대신 다른 응시자 역할을 맡은 AI예요.</string>
-    <string name="conversation_stand_in_examiner">%1$s은(는) 실제 면접관을 대신하는 AI예요.</string>
-    <string name="conversation_practice_estimate">연습이므로, 마친 뒤 나오는 예상 결과는 공식 점수가 아니에요.</string>
-    <string name="conversation_speak_answers">말로 답변해 주세요. 글로 입력한 답변은 음성 평가에 반영되지 않아요. 마이크는 대화 중에만 사용해요.</string>
     <string name="conversation_your_card">내 카드</string>
     <string name="conversation_preparation">준비도</string>
-    <!-- The exam's shared preparation time, the tasks it covers, then this task's share. -->
-    <string name="conversation_prep_shared">준비 시간 %1$s 동안 과제 %2$s 전체를 준비해요. 이 과제에는 %3$s 정도를 쓸 수 있어요.</string>
-    <string name="conversation_prep">시험에서는 %1$s 동안 카드를 보고 준비할 수 있어요.</string>
+    <!-- How long the exam gives to prepare, such as "1 min". -->
+    <string name="conversation_prep">실제 시험과 같은 %1$s</string>
     <string name="conversation_start_preparing">준비 시작하기</string>
-    <string name="conversation_prep_over">준비 시간이 끝났어요. 준비되면 대화를 시작하세요.</string>
+    <string name="conversation_prep_over">준비 시간이 끝났어요.</string>
     <string name="conversation_prep_again">다시 시작하기</string>
     <!-- A task's length when the exam gives a range, such as "3–4 min". -->
     <string name="conversation_minutes_range">%1$s–%2$s분</string>
     <string name="conversation_role_partner_label">다른 응시자(AI)와 함께</string>
     <string name="conversation_role_examiner_label">면접관(AI)과 함께</string>
-    <!-- Who the AI plays in a task, after its name: "Ana · other candidate". -->
-    <string name="conversation_role_partner">다른 응시자</string>
-    <string name="conversation_role_examiner">면접관</string>
+    <!-- Who the AI plays in a task, after its name: "Ana · other candidate (AI)". -->
+    <string name="conversation_role_partner">다른 응시자(AI)</string>
+    <string name="conversation_role_examiner">면접관(AI)</string>
     <string name="conversation_criterion_accuracy">정확성</string>
     <string name="conversation_criterion_coherence">일관성</string>
     <string name="conversation_criterion_discourse">말할 내용 구성</string>
@@ -371,16 +342,13 @@
     <string name="conversation_below_level">%1$s 미만</string>
     <string name="conversation_level_line">이 평가 기준에서 %1$s의 수준은 %2$s에 해당해요.</string>
     <string name="conversation_typed_note">답변을 글로 입력해서 실제로 어떻게 말하는지는 이 예상 점수에 반영되지 않았어요.</string>
-    <string name="conversation_brief_note">이번 과제에서는 답변이 짧아 평가할 내용이 많지 않았어요. 조금 더 길게 말해 보면 더 정확한 예상 점수를 받을 수 있어요.</string>
+    <string name="conversation_brief_note">말한 내용이 적어서 대략적으로 추정했어요.</string>
     <string name="conversation_focus">집중할 점</string>
     <string name="conversation_not_rated">평가하지 않음</string>
-    <string name="conversation_estimate_sound">한 번의 연습 과제를 바탕으로 한 예상 점수이며, 공식 점수는 아니에요. 발음은 억양에 상관없이 얼마나 알아듣기 쉬운지로 평가해요.</string>
-    <string name="conversation_estimate">한 번의 연습 과제를 바탕으로 한 예상 점수이며, 공식 점수는 아니에요.</string>
+    <string name="conversation_estimate">공식 점수가 아닌 예상 점수예요.</string>
     <string name="conversation_work_on_first">먼저 연습할 부분</string>
     <string name="conversation_no_estimate_title">이 과제는 예상 점수가 없어요</string>
-    <string name="conversation_no_estimate">준비되면 과제에 다시 도전해 보세요.</string>
-    <string name="conversation_try_new_card">새 카드로 이 과제 다시 하기</string>
-    <string name="conversation_go_to_task">%1$s번 과제로 이동</string>
+    <string name="conversation_next_task">다음 과제</string>
     <string name="conversation_every_criterion">모든 평가 기준 보기</string>
     <string name="conversation_by_criterion">평가 기준별 결과</string>
     <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->

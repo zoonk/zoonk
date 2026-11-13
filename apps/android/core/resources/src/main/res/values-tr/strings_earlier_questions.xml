@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "earlier_questions_description": "5ccf8d71c79bf429014d6845dcac77e2e49774f4857e5781506a9a8b4a96506a",
+  "earlier_questions_description": "8d7fb782e5677e6c8fc36b4c636dce9d323dd023c42e71ad7f99fa291be8d650",
   "earlier_questions_empty": "7ed4fba0a195091a8815de6f6c8fd0501da53a8775e0e14ae9e20f55144faf53",
   "earlier_questions_from": "a9efb263309e93f9c2e427d97c2c56b6ebd088c3fd568653448c1511e4626ff1",
   "earlier_questions_from_course": "f0082552ea46418a403239a05f597cff307457cb30704cd07cb4bd48f37165b2",
@@ -16,8 +16,7 @@
 <resources>
     <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
     <string name="earlier_questions_title">Önceki sorular</string>
-    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
-    <string name="earlier_questions_description">Kurslarını yeniden hazırlamadan önce sorduğun sorular. Dersler değişti, bu yüzden sorularını yeniden okuyabilmen için burada saklıyoruz.</string>
+    <string name="earlier_questions_description">Sonradan değişen derslerde sorduğun sorular.</string>
     <string name="earlier_questions_empty">Daha önce sorduğun bir soru yok.</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
     <string name="earlier_questions_from_course_lesson">%1$s kursunun önceki sürümünden · %2$s</string>

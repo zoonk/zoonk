@@ -50,9 +50,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallLimitMessage
@@ -65,8 +67,7 @@ import com.zoonk.android.feature.conversation.inLanguage
 import com.zoonk.android.feature.conversation.spokenList
 import com.zoonk.android.feature.conversation.taskMinutes
 import com.zoonk.android.feature.conversation.taskRoleLabel
-import com.zoonk.android.feature.subscription.PlusMark
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -87,9 +88,9 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
@@ -179,9 +180,9 @@ private fun Paper(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 24.dp),
+            contentPadding = pagePadding(),
         ) {
-            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(top = 8.dp, bottom = 24.dp)) { hero() } }
+            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(bottom = 24.dp)) { hero() } }
             item(key = "paper") {
                 SpeakingPaperSection(
                     paper = paper,
@@ -201,7 +202,6 @@ private fun Paper(
 @Composable
 private fun PaperHero(paper: SpeakingPaper) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.speaking_eyebrow))
         Text(paper.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         Text(
             pluralStringResource(
@@ -213,16 +213,10 @@ private fun PaperHero(paper: SpeakingPaper) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge,
         )
-        Text(
-            stringResource(R.string.speaking_official, paper.title),
-            Modifier.padding(top = 8.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
-private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth()
 
 private val PAGE_WIDTH = 720.dp
 
@@ -261,7 +255,6 @@ fun SpeakingPaperSection(
     Column(modifier) {
         Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionHeader(title ?: stringResource(R.string.speaking_section), detail = if (title == null) paper.title else null)
-            if (locked) PlusNotice(onSeePlus = { open(AppRoute.Subscription) }, description = stringResource(R.string.speaking_plus))
             if (paused || model.state == CallStartModel.State.Paused) CallsPaused()
         }
         paper.tasks.forEachIndexed { index, task ->
@@ -271,21 +264,19 @@ fun SpeakingPaperSection(
                 index = index,
                 paper = paper,
                 openAtFirst = task.key == openTask,
-                locked = locked || paused,
+                locked = locked,
+                paused = paused,
                 busy = busy,
                 starting = model.state == CallStartModel.State.Starting && started == task.key,
                 onStart = { startTask(task.key) },
+                onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
             )
         }
         StartState(model, writing != null, actions)
-        val partner = paper.tasks.any { it.role == SpeakingPaperTask.Role.PARTNER }
-        val footer = stringResource(if (partner) R.string.speaking_footer_partner else R.string.speaking_footer)
         val official = stringResource(R.string.speaking_official_format)
         Text(
             buildAnnotatedString {
-                append(footer)
-                append(spaceAfterSentence(footer))
                 withLink(
                     LinkAnnotation.Clickable(
                         tag = "official-format",
@@ -334,7 +325,7 @@ private fun StartState(
             CallLimitMessage(
                 limit,
                 onCreateAccount = { actions.open(AppRoute.Login) },
-                onSeePlus = { actions.open(AppRoute.Subscription) },
+                onSubscribe = { actions.open(AppRoute.Subscription) },
                 title =
                     stringResource(
                         if (limit.period ==
@@ -366,13 +357,16 @@ private fun TaskRow(
     paper: SpeakingPaper,
     openAtFirst: Boolean,
     locked: Boolean,
+    paused: Boolean,
     busy: Boolean,
     starting: Boolean,
     onStart: () -> Unit,
+    onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
+    var gated by rememberSaveable(task.key) { mutableStateOf(false) }
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value
@@ -433,14 +427,25 @@ private fun TaskRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (!locked) {
-                    Button(busy = starting, onClick = onStart, enabled = !busy) {
-                        Text(stringResource(R.string.speaking_start_task))
+            if (gated) {
+                TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                SubscribeGate(stringResource(R.string.speaking_gate), onSubscribe)
+            } else {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (!paused) {
+                        Button(
+                            busy = starting,
+                            onClick = { if (locked) gated = true else onStart() },
+                            enabled = !busy,
+                        ) {
+                            Text(stringResource(R.string.speaking_start_task))
+                        }
                     }
-                }
-                task.lastTry?.let { last ->
-                    OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) }
+                    task.lastTry?.let { last ->
+                        OutlinedButton(
+                            onClick = { onLastResult(last.conversationId) },
+                        ) { Text(stringResource(R.string.speaking_last_result)) }
+                    }
                 }
             }
         }
@@ -451,7 +456,6 @@ private fun TaskRow(
 @Composable
 fun SpeakingPracticeRow(
     title: String,
-    plusRequired: Boolean,
     onOpen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -461,6 +465,5 @@ fun SpeakingPracticeRow(
         onClick = onOpen,
         leading = { KindDot(LearnKind.Conversation) },
         supporting = { Text(stringResource(R.string.speaking_row, title)) },
-        meta = if (plusRequired) ({ PlusMark() }) else null,
     )
 }
