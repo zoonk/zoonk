@@ -46,8 +46,10 @@ struct ExamMomentSection<Action: View>: View {
               )
               .typeStyle(.data)
             }
-            Text(copy.body)
-              .foregroundStyle(.mutedForeground)
+            if let body = copy.body {
+              Text(body)
+                .foregroundStyle(.mutedForeground)
+            }
           }
         } icon: {
           Image(systemName: icon)
@@ -113,7 +115,7 @@ struct ExamMomentSection<Action: View>: View {
     }
   }
 
-  private var copy: (title: String, body: String)? {
+  private var copy: (title: String, body: String?)? {
     switch moment.stage {
     case .finalStretch:
       (
@@ -148,20 +150,32 @@ struct ExamMomentSection<Action: View>: View {
   }
 
   /// Today's list shows today's work, so the day before and exam day say only what was done.
-  private var work: String {
-    let done =
-      moment.mocksTaken == 0
-      ? String(
-        localized: "\(moment.sessionsDone) days of study done.", table: "Exam",
-        comment: "Days the learner studied before the exam")
-      : String(
-        localized: "\(moment.sessionsDone) days of study and \(moment.mocksTaken) mock exams done.",
-        table: "Exam", comment: "Days studied and mock exams taken before the exam")
+  private var work: String? {
+    let parts = [
+      moment.sessionsDone > 0
+        ? String(
+          localized: "\(moment.sessionsDone) days of study", table: "Exam",
+          comment: "Days the learner studied before the exam, in \"… done.\"")
+        : nil,
+      moment.mocksTaken > 0
+        ? String(
+          localized: "\(moment.mocksTaken) mock exams", table: "Exam",
+          comment: "Mock exams the learner took before the exam, in \"… done.\"")
+        : nil,
+    ].compactMap(\.self)
 
-    return moment.prepared
-      ? [String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared"), done]
-        .joinedSentences()
-      : done
+    let done =
+      parts.isEmpty
+      ? nil
+      : String(
+        localized: "\(parts.formatted(.list(type: .and))) done.", table: "Exam",
+        comment: "What the learner did before the exam: days of study, mock exams or both")
+    let prepared =
+      moment.prepared
+      ? String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared") : nil
+    let sentences = [prepared, done].compactMap(\.self)
+
+    return sentences.isEmpty ? nil : sentences.joinedSentences()
   }
 
   private func checklistLabel(_ item: ExamView.ChecklistItem) -> String {
