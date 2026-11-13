@@ -3,6 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
@@ -61,9 +62,9 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
         )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("Go back")}</AlertDialogCancel>
-          <Button busy={pending} onClick={cancel}>
+          <AlertDialogAction busy={pending} onClick={cancel}>
             {t("Cancel Plus")}
-          </Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

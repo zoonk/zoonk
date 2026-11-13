@@ -93,7 +93,7 @@ export function CourseEditButton({ course }: { course: EditedCourse }) {
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerTrigger
         render={
-          <Button size="sm" variant="outline">
+          <Button size="bar" variant="outline">
             <PencilIcon aria-hidden="true" />
             Edit
           </Button>
@@ -122,7 +122,13 @@ export function CourseEditButton({ course }: { course: EditedCourse }) {
           </DrawerContent>
 
           <DrawerFooter>
-            <DrawerClose render={<Button variant="outline">Cancel</Button>} />
+            <DrawerClose
+              render={
+                <Button size="lg" variant="outline">
+                  Cancel
+                </Button>
+              }
+            />
             <SaveButton />
           </DrawerFooter>
         </form>

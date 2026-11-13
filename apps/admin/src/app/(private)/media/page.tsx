@@ -30,7 +30,7 @@ export default function MediaPage({ searchParams }: PageProps<"/media">) {
           <Button
             icon={<MicOffIcon aria-hidden="true" />}
             render={<Link href="/media/missing-audio" prefetch />}
-            size="sm"
+            size="bar"
             variant="outline"
           >
             Missing audio
