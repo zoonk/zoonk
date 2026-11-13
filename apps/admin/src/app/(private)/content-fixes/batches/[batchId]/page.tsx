@@ -119,7 +119,11 @@ function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason:
     <li className="flex flex-col gap-4 rounded-xl border p-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="text-muted-foreground font-mono text-xs">{index + 1}</span>
-        <Link className="font-medium hover:underline" href={`/content-fixes/${fix.id}`} prefetch>
+        <Link
+          className="hit-area relative font-medium hover:underline"
+          href={`/content-fixes/${fix.id}`}
+          prefetch
+        >
           {fix.location.trail.join(" › ") || "Deleted content"}
         </Link>
         <ContentFixStatusBadge status={fix.status} />
