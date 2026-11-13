@@ -16,3 +16,7 @@ const heldBackDraftsSchema = z.array(heldBackDraftSchema);
 export function parseHeldBackDrafts(value: unknown): HeldBackDraft[] {
   return heldBackDraftsSchema.safeParse(value).data ?? [];
 }
+
+export function getLessonDraftLimit(ownerId: string | null): number {
+  return ownerId ? 1 : MAX_LESSON_DRAFTS;
+}

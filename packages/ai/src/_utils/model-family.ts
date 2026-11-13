@@ -10,15 +10,23 @@ export function getModelFamily(model: string): string {
 export function pickReviewers({
   reviewers,
   writerModel,
+  writerModels = [],
 }: {
   reviewers: readonly [string, ...string[]];
-  writerModel: string;
+  writerModel?: string;
+  writerModels?: readonly string[];
 }): { fallbackModels: string[]; model: string } {
-  const writerFamily = getModelFamily(writerModel);
-
-  const [model = reviewers[0], ...fallbackModels] = reviewers.filter(
-    (candidate) => getModelFamily(candidate) !== writerFamily,
+  const writerFamilies = new Set(
+    [...(writerModel ? [writerModel] : []), ...writerModels].map((model) => getModelFamily(model)),
   );
+
+  const [model, ...fallbackModels] = reviewers.filter(
+    (candidate) => !writerFamilies.has(getModelFamily(candidate)),
+  );
+
+  if (!model) {
+    throw new Error("No reviewer outside the writer families is available");
+  }
 
   return { fallbackModels, model };
 }
