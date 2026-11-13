@@ -51,7 +51,7 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
 
   return (
     <section aria-label={t("Your quick explanation")} className="flex flex-col gap-3">
-      <div className="bg-muted -mx-2.5 flex items-start gap-3 rounded-[0.625rem] px-2.5 py-2.75">
+      <div className="bg-muted -mx-2.5 flex items-start gap-3 rounded-lg px-2.5 py-2.75">
         <PlayIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
         <span className="flex min-w-0 flex-col gap-px">
           <span className="text-sm leading-5 font-medium text-pretty">{explanation.title}</span>

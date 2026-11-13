@@ -74,14 +74,14 @@ export async function PlanSkeleton() {
         </PageHeaderContent>
 
         <div className="flex flex-col gap-2 sm:hidden">
-          <Skeleton className="h-1 w-full rounded-[2px]" />
+          <Skeleton className="h-1 w-full rounded-xs" />
           <Skeleton className="h-4 w-40 rounded-sm" />
         </div>
         <Skeleton className="hidden h-21 w-full rounded-md sm:block" />
 
         <div className="grid grid-cols-2 gap-2 min-[72rem]:hidden">
-          <Skeleton className="rounded-option h-22" />
-          <Skeleton className="rounded-option h-22" />
+          <Skeleton className="h-22 rounded-xl" />
+          <Skeleton className="h-22 rounded-xl" />
         </div>
 
         <SectionSkeleton count={6} />

@@ -19,9 +19,11 @@ function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
 }
 
+/** Drawn for a nested overlay too, which Base UI skips, so whatever it opened from dims under it. */
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   return (
     <SheetPrimitive.Backdrop
+      forceRender
       className={cn(
         "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 z-50 bg-black/80 duration-100 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
         className,
@@ -60,7 +62,14 @@ function SheetContent({
         {closeLabel && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
-            render={<Button className="absolute top-4 right-4" size="icon-sm" variant="ghost" />}
+            render={
+              <Button
+                className="absolute top-5 right-6 [--icon-size:--spacing(5)]"
+                edge="end"
+                size="icon-sm"
+                variant="ghost"
+              />
+            }
           >
             <XIcon />
             <span className="sr-only">{closeLabel}</span>
@@ -84,7 +93,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   return (
     <SheetPrimitive.Title
-      className={cn("text-foreground text-base font-medium", className)}
+      className={cn("text-foreground text-lg leading-tight font-semibold", className)}
       data-slot="sheet-title"
       {...props}
     />

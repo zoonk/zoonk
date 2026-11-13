@@ -3,6 +3,7 @@
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import {
   DetailActions,
   DetailFacts,
@@ -10,11 +11,8 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import {
@@ -23,6 +21,7 @@ import {
   DetailContent,
   DetailLayout,
 } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListGroup,
@@ -93,7 +92,6 @@ function NotebookHero({
   notebook: Notebook;
 }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: notebook.availability.ready > 0 });
   const { availability, counts } = notebook;
 
   return (
@@ -113,16 +111,15 @@ function NotebookHero({
 
       {availability.ready > 0 && (
         <DetailActions>
-          <LearnLink
+          <EnterLink
             className={DETAIL_PRIMARY_CLASS}
             href={hrefs.practice}
             // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
             prefetch={false}
-            ref={ref}
+            size="lg"
           >
             {t("Practice mistakes")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </LearnLink>
+          </EnterLink>
         </DetailActions>
       )}
     </DetailHero>
@@ -213,10 +210,7 @@ function MistakesInbox({
                 </ListRowContent>
                 <ListRowTrailing>{group.length}</ListRowTrailing>
               </ListRowBody>
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"
-              />
+              <FoldChevron className="lg:hidden" />
             </button>
 
             <section

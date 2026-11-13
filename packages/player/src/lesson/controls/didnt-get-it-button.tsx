@@ -29,7 +29,10 @@ export function DidntGetItButton() {
 
   return (
     <Button
-      className={cn(COLUMN_GHOST_ACTION_CLASS, "text-muted-foreground pl-1.5")}
+      className={cn(
+        COLUMN_GHOST_ACTION_CLASS,
+        "text-muted-foreground pl-1.5 [--edge-text-start:calc(--spacing(1.5)+1px)]",
+      )}
       data-slot="didnt-get-it"
       onClick={() => buddy.openAndAsk("simpler")}
       size="sm"

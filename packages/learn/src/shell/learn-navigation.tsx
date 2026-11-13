@@ -1,14 +1,14 @@
 "use client";
 
-import { Buddy } from "@zoonk/ui/components/buddy";
 import { SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon, SunIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { BuddyArt } from "../buddies/buddy-art";
 import { BuddyTabName } from "../buddies/buddy-labels";
 import { type MissionsCount, MissionsRing } from "../buddies/missions-ring";
-import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { LEARN_TABS, type LearnTab } from "./learn-tabs";
@@ -97,17 +97,11 @@ function TabIcon({
     return <MapIcon aria-hidden="true" className={sizes.icon} />;
   }
 
-  const resolved = resolveLearnBuddy(buddy ?? null);
-
   const face = (
-    <Buddy
-      beltColor={resolved.beltColor}
+    <BuddyArt
+      buddy={buddy ?? null}
       className={cn(faceClass, buddy === undefined && LOADING_BUDDY_CLASS)}
-      crop="face"
-      energy={resolved.energy}
-      glasses={resolved.glasses}
-      kind={resolved.kind}
-      studiedToday={resolved.studiedToday}
+      view="face"
     />
   );
 
@@ -221,7 +215,7 @@ export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavig
               aria-current={tab === activeTab ? "page" : undefined}
               className={cn(
                 TAB_ITEM_CLASS,
-                "flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-[0.625rem] px-1 text-[0.6875rem]",
+                "text-2xs flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
               )}
               href={routes[tab]}
             >

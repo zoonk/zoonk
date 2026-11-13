@@ -7,7 +7,7 @@ export function PlayerContentFrame({ className, ...props }: React.ComponentProps
   );
 }
 
-export const COLUMN_GHOST_ACTION_CLASS = "-ml-2.75 w-fit";
+export const COLUMN_GHOST_ACTION_CLASS = "edge -ms-(--edge-start) w-fit";
 
 /** Below `lg` the word bank waits above the action bar, so it holds still under the thumb while the answer grows. */
 const FILL_FOR_WORD_BANK_CLASS = "max-lg:has-data-[slot=word-bank]:flex-1";

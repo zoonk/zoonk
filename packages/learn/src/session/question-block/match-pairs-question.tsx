@@ -6,9 +6,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { ANSWER_TONE } from "../../_components/answer-tone";
+import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemLine } from "../../questions/item-text";
-import { useFocusCheckWhenComplete } from "./question-actions";
 
 type Matches = number[];
 
@@ -33,7 +33,7 @@ function EntryText({ text }: { text: string }) {
 }
 
 const entryClass =
-  "rounded-option ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset select-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
+  "rounded-xl ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset select-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
 
 /** The host gets the pairs once all are matched, null before. */
 export function MatchPairsQuestion({
@@ -52,7 +52,7 @@ export function MatchPairsQuestion({
   const [selected, setSelected] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  useFocusCheckWhenComplete({
+  useFocusMainActionWhenComplete({
     complete: matches.every((match) => match !== UNMATCHED),
     containerRef: listRef,
   });

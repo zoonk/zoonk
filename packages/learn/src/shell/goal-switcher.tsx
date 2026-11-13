@@ -22,7 +22,7 @@ import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "r
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
-import { GoalCountryName, GoalMark } from "./goal-mark";
+import { GoalCountryName, GoalMark, NoGoalMark } from "./goal-mark";
 import {
   GOAL_ROW_CLASS,
   type GoalKind,
@@ -106,12 +106,10 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
 
   const line = { active, completed: t("Finished"), paused: t("Paused") }[goal.status];
 
-  return (
-    <span className="text-muted-foreground font-mono text-[0.71875rem] tabular-nums">{line}</span>
-  );
+  return <span className="text-muted-foreground text-2xs font-mono tabular-nums">{line}</span>;
 }
 
-const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-[0.71875rem] font-[550]";
+const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-2xs font-medium";
 
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
@@ -142,12 +140,15 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
   );
 }
 
-/** The bar's trigger hangs 8px into the gutter (`-ml-2`), so it may be that much wider than its slot. */
+/** The bar's trigger hangs 10px into the gutter like a highlighted row, so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
-  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2 flex h-9 max-w-[calc(100%+0.5rem)] min-w-0 items-center gap-2 rounded-lg px-2 text-[0.9375rem] font-semibold outline-none focus-visible:ring-[3px]",
+  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2.5 flex h-9 max-w-[calc(100%+0.625rem)] min-w-0 items-center gap-3 rounded-lg px-2.5 text-reading font-semibold outline-none focus-visible:ring-[3px]",
   sidebar:
-    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-1.5 text-[0.84375rem] font-semibold outline-none focus-visible:ring-[3px]",
+    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
+
+/** Each trigger's start padding above, so its menu opens on the trigger's mark rather than its fill. */
+const MENU_ALIGN_OFFSET = { bar: 10, sidebar: 8 } as const;
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
 
@@ -162,7 +163,7 @@ function NoGoalLink({
 
   return (
     <LearnLink className={TRIGGER_CLASS[placement]} href={newGoalHref}>
-      <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
+      <NoGoalMark />
       <span className="truncate">{t("Start a goal")}</span>
     </LearnLink>
   );
@@ -232,11 +233,7 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {selected ? (
-            <GoalMark goal={selected} />
-          ) : (
-            <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
-          )}
+          {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
           <span className="min-w-0 flex-1 truncate text-left">
             {selected?.displayName ?? t("Start a goal")}
           </span>
@@ -247,9 +244,9 @@ export function GoalSwitcher({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
+          alignOffset={MENU_ALIGN_OFFSET[placement]}
           className="w-72 max-w-[calc(100vw-2rem)] p-1.5"
           collisionPadding={16}
-          sideOffset={6}
         >
           {selected && (
             <DropdownMenuGroup>

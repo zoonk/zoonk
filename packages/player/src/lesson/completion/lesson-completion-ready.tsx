@@ -1,22 +1,13 @@
 "use client";
 
+import { EnterButton } from "@zoonk/learn/enter-button";
 import { FinishReady } from "@zoonk/learn/finish-ready";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActionLabel,
-  TaskActions,
-  TaskBody,
-} from "@zoonk/learn/task-layout";
-import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { TaskActionBar, TaskActionLabel, TaskActions, TaskBody } from "@zoonk/learn/task-layout";
 import { useExtracted } from "next-intl";
 
 /** Saved answers can resume at the end, but finishing may start memory work and needs a new tap. */
 export function LessonCompletionReady({ onFinish }: { onFinish: () => void }) {
   const t = useExtracted();
-  const finishRef = useEnterClick<HTMLButtonElement>();
 
   return (
     <>
@@ -25,16 +16,9 @@ export function LessonCompletionReady({ onFinish }: { onFinish: () => void }) {
       </TaskBody>
       <TaskActionBar>
         <TaskActions>
-          <Button
-            aria-keyshortcuts="Enter"
-            className={TASK_MAIN_ACTION_CLASS}
-            onClick={onFinish}
-            ref={finishRef}
-            size="xl"
-          >
+          <EnterButton onClick={onFinish}>
             <TaskActionLabel>{t("Finish")}</TaskActionLabel>
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </Button>
+          </EnterButton>
         </TaskActions>
       </TaskActionBar>
     </>

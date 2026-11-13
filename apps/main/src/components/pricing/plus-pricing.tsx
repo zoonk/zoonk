@@ -131,7 +131,7 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
       )}
     >
       <h2
-        className="max-w-[14em] text-[32px] leading-[1.08] font-semibold tracking-[-0.04em] text-balance lg:text-5xl"
+        className="max-w-[14em] text-3xl leading-[1.08] font-semibold tracking-[-0.04em] text-balance lg:text-5xl"
         id="pricing-close"
       >
         {t("Start free, no account needed.")}

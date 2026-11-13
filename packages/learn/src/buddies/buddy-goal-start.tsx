@@ -75,7 +75,7 @@ export function BuddyGoalStart({
 
   return (
     <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-goal-start">
-      <BuddyHeader buddy={buddy} name={identity.name} stage={status.stage} />
+      <BuddyHeader buddy={buddy} name={identity.name} />
 
       <TutorMessage identity={identity} page>
         <p>{greeting}</p>
