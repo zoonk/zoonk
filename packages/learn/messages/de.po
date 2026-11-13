@@ -229,12 +229,12 @@ msgstr "Morgen gibt es mehr."
 #: src/_components/help-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
-msgstr "Nächsten Monat gibt es mehr. Mit einem Abo geht es sofort weiter."
+msgstr "Nächsten Monat gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "wwdPGH"
 msgid "More tomorrow, or subscribe to keep going."
-msgstr "Morgen gibt es mehr. Mit einem Abo geht es sofort weiter."
+msgstr "Morgen gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -274,12 +274,12 @@ msgstr "Heute keine Erklärungen mehr"
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
 msgid "You've reached this month's limit"
-msgstr "Du hast dein Limit für diesen Monat erreicht"
+msgstr "Du hast dein Monatslimit erreicht"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
-msgstr "Du hast dein Limit für heute erreicht"
+msgstr "Du hast dein Tageslimit erreicht"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
@@ -289,7 +289,7 @@ msgstr "Heute keine neuen Lektionen mehr"
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
-msgstr "Ohne Konto keine weiteren Lektionen"
+msgstr "Für weitere Lektionen brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2XtwRD"
@@ -309,7 +309,7 @@ msgstr "Heute keine neuen Mindmaps mehr"
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
 msgid "No more mind maps without an account"
-msgstr "Ohne Konto keine weiteren Mindmaps"
+msgstr "Für weitere Mindmaps brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6ootiC"
@@ -324,7 +324,7 @@ msgstr "Heute keine Vorschauen mehr"
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
 msgid "No more previews without an account"
-msgstr "Ohne Konto keine weiteren Vorschauen"
+msgstr "Für weitere Vorschauen brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
@@ -395,7 +395,7 @@ msgstr "Diese Lektion ist nicht verfügbar"
 #: src/language/conversation/challenge-call-gate.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr "Dein Plan geht auch so weiter."
+msgstr "Dein Plan läuft auch ohne diesen Teil weiter."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -1157,12 +1157,12 @@ msgstr "Ausgewachsen"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "EcDZVd"
 msgid "Grows when you reach {belt}"
-msgstr "Wächst beim Erreichen von {belt}"
+msgstr "Wächst, wenn du diesen Gürtel erreichst: {belt}"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
 msgid "{buddy} is napping. Study to wake it up."
-msgstr "{buddy} macht ein Nickerchen und wacht auf, wenn du lernst."
+msgstr "Schlafpause für {buddy}. Lern etwas, dann ist sie vorbei."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
@@ -1224,7 +1224,7 @@ msgstr "{current} von {target} Wiederholungen"
 #: src/buddies/buddy-glasses-sheet.tsx
 msgctxt "lw-2jH"
 msgid "Pick a pair you've earned."
-msgstr "Wähl eine Brille aus, die du dir verdient hast."
+msgstr "Such dir eine Brille aus, die du dir verdient hast."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -1247,7 +1247,7 @@ msgstr "Beispiele"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr "Hi! Ich bin {name}, dein KI-Lernkumpel. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
+msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -2776,7 +2776,7 @@ msgstr "Mehr anzeigen"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "zf_3aa"
 msgid "Ask anything"
-msgstr "Frag, was du möchtest"
+msgstr "Frag mich, was du möchtest"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
@@ -2808,7 +2808,7 @@ msgstr "Ich möchte diese Woche weniger lernen"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "Hi! Ich bin {name}, dein KI-Lernkumpel. Frag mich, was du möchtest, oder sag mir, was ich an deinem Plan ändern soll."
+msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Frag mich, was du möchtest, oder sag mir, was sich an deinem Plan ändern soll."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2961,7 +2961,7 @@ msgstr "Dein Tarif und seine Abrechnung."
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_xThLm"
 msgid "What it includes and its price."
-msgstr "Was Plus bietet und wie viel es kostet."
+msgstr "Was enthalten ist und was es kostet."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "R_6nsx"
@@ -6200,7 +6200,7 @@ msgstr "Wir konnten das Gespräch nicht speichern."
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "0QT9qQ"
 msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr "Es läuft in einem anderen Tab oder auf einem anderen Gerät. Wenn du dieses Gespräch startest, endet das andere ohne Feedback."
+msgstr "Es läuft in einem anderen Tab oder auf einem anderen Gerät. Wenn du dieses Gespräch startest, endet das andere ohne Rückmeldung."
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
@@ -6260,7 +6260,7 @@ msgstr "Brain Power"
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
-msgstr "Das Gespräch wird wieder angeboten, damit du es noch einmal versuchen kannst."
+msgstr "Das Gespräch wird dir wieder angeboten, damit du es noch einmal versuchen kannst."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
@@ -6653,7 +6653,7 @@ msgstr "Auf diesen Skalen entspricht {band} dem Level {level}."
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "2UvMo7"
 msgid "You said little, so this estimate is rough."
-msgstr "Du hast wenig gesagt, daher ist das nur eine grobe Einschätzung."
+msgstr "Du hast wenig gesprochen, daher ist das nur eine grobe Einschätzung."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/mock/mock-result-speaking.tsx
@@ -6769,7 +6769,7 @@ msgstr "Letzter Versuch: keine Einschätzung"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "PMoeDJ"
 msgid "Last try: at {level} on {count} of {rated} criteria"
-msgstr "Letzter Versuch: {level} bei {count} von {rated} Kriterien erreicht"
+msgstr "Letzter Versuch: {level} bei {count} von {rated} Kriterien"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "FD6ztN"
@@ -7068,12 +7068,12 @@ msgstr "Seit dem Einstufungstest gesunken"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "4DuYAS"
 msgid "{skills} went up"
-msgstr "{skills} haben sich verbessert"
+msgstr "Du hast dich beim {skills} verbessert"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "gShZPM"
 msgid "Your level shows here once you practice."
-msgstr "Sobald du übst, siehst du hier dein Level."
+msgstr "Dein Level erscheint hier, sobald du übst."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
@@ -9596,7 +9596,7 @@ msgstr "Wie funktioniert Inflation?"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
-msgstr "Diesen Monat keine neuen Ziele mehr"
+msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
@@ -9606,7 +9606,7 @@ msgstr "Zu deinem Plan"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr "Du kannst keine weiteren Ziele gleichzeitig verfolgen"
+msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "1oUkSm"
@@ -9859,12 +9859,12 @@ msgstr "{exam, select, abitur {Abitur bestehen} bac {Bac bestehen} enem {ENEM be
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.a9a9_d"
 msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "Du kannst keine weiteren Ziele gleichzeitig verfolgen. Pausier ein Ziel oder schließ ein Abo ab, um mehr Ziele zu verfolgen."
+msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein Ziel oder schließ ein Abo ab, um mehr Ziele zu verfolgen."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.GZnNXl"
 msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "Heute gibt es keine kurzen Erklärungen mehr. Morgen geht es weiter, mit einem Abo auch schon jetzt."
+msgstr "Heute gibt es keine Kurzerklärungen mehr. Morgen gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.JsRkia"
@@ -9874,17 +9874,17 @@ msgstr "Heute kannst du keine neuen Ziele mehr starten. Morgen geht es weiter."
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
 msgid "Without an account, you study one goal. Create a free account to start another."
-msgstr "Ohne Konto kannst du nur ein Ziel verfolgen. Erstell ein kostenloses Konto, um ein weiteres zu starten."
+msgstr "Ohne Konto kannst du ein Ziel verfolgen. Erstell ein kostenloses Konto, um ein weiteres zu starten."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.B_qpn8"
 msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "Diesen Monat gibt es keine kurzen Erklärungen mehr. Nächsten Monat geht es weiter, mit einem Abo auch schon jetzt."
+msgstr "Diesen Monat gibt es keine Kurzerklärungen mehr. Nächsten Monat gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.wjsNnL"
 msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten. Nächsten Monat geht es weiter, mit einem Abo auch schon jetzt."
+msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten. Nächsten Monat geht es weiter. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9904,7 +9904,7 @@ msgstr "Ohne Konto kannst du heute keine neuen Ziele mehr starten."
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.NIiMiz"
 msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "Heute kannst du keine neuen Ziele mehr starten. Morgen geht es weiter, mit einem Abo auch schon jetzt."
+msgstr "Heute kannst du keine neuen Ziele mehr starten. Morgen geht es weiter. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -11006,7 +11006,7 @@ msgstr "Für mehr Ziele gleichzeitig brauchst du ein Abo"
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "0f32R8"
 msgid "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}"
-msgstr "{count, plural, one {Pausier ein anderes Ziel, um dieses zu starten.} other {Pausier ein anderes Ziel, um diese zu starten.}}"
+msgstr "{count, plural, one {Pausier ein anderes Ziel, um dieses Ziel zu starten.} other {Pausier ein anderes Ziel, um diese Ziele zu starten.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "XR04oI"

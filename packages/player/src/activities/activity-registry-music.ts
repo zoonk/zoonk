@@ -7,7 +7,7 @@ export const musicRenderers: ActivityRendererMap<
   "keyboardFretboard" | "notationPlayer" | "rhythmTapper"
 > = {
   keyboardFretboard: defineActivityRenderer({
-    badge: ({ fields }) => (fields.byEar ? "earTraining" : "playIt"),
+    badge: ({ fields }) => (fields.byEar ? "earTraining" : null),
     load: () =>
       import("./keyboard-fretboard/keyboard-fretboard-activity").then(
         (module) => module.KeyboardFretboardActivity,
@@ -15,7 +15,6 @@ export const musicRenderers: ActivityRendererMap<
     template: "keyboardFretboard",
   }),
   notationPlayer: defineActivityRenderer({
-    badge: "readAndListen",
     load: () =>
       import("./notation-player/notation-player-activity").then(
         (module) => module.NotationPlayerActivity,

@@ -877,7 +877,7 @@ msgstr "저장된 답변이 없어요."
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "aqjWQg"
 msgid "Questions you asked in lessons that have since changed."
-msgstr "내용이 바뀌기 전 레슨에서 했던 질문이에요."
+msgstr "레슨 내용이 바뀌기 전에 했던 질문이에요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2771,7 +2771,7 @@ msgstr "레슨을 열고 있어요"
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "9VWjJv"
 msgid "Ready to start now"
-msgstr "지금 바로 시작할 수 있어요"
+msgstr "지금 시작할 수 있어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "P0sSfc"
@@ -2806,7 +2806,7 @@ msgstr "이 레슨을 준비하지 못했어요"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
-msgstr "몇 분 정도 걸려요. 화면을 나가도 계속 준비돼요."
+msgstr "준비하는 데 몇 분 정도 걸리고, 화면을 나가도 계속 진행돼요."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"

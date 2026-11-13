@@ -877,7 +877,7 @@ msgstr "Aucune réponse n’a été enregistrée."
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "aqjWQg"
 msgid "Questions you asked in lessons that have since changed."
-msgstr "Questions que tu as posées dans des leçons qui ont changé depuis."
+msgstr "Les questions que tu as posées dans des leçons qui ont été modifiées depuis."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2771,7 +2771,7 @@ msgstr "Ouverture de ta leçon"
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "9VWjJv"
 msgid "Ready to start now"
-msgstr "Tu peux commencer maintenant"
+msgstr "Disponible dès maintenant"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "P0sSfc"

@@ -219,22 +219,22 @@ msgstr "Concludi per vedere com’è andata."
 #: src/_components/help-limit-notice.tsx
 msgctxt "C84LQr"
 msgid "More next month."
-msgstr "Potrai continuare il mese prossimo."
+msgstr "Ne avrai ancora il mese prossimo."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "i1JCVp"
 msgid "More tomorrow."
-msgstr "Potrai continuare domani."
+msgstr "Ne avrai ancora domani."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
-msgstr "Puoi continuare il mese prossimo o abbonarti per farlo subito."
+msgstr "Ne avrai ancora il mese prossimo, oppure abbonati per continuare."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "wwdPGH"
 msgid "More tomorrow, or subscribe to keep going."
-msgstr "Puoi continuare domani o abbonarti per farlo subito."
+msgstr "Ne avrai ancora domani, oppure abbonati per continuare."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -249,27 +249,27 @@ msgstr "Serve un account gratuito"
 #: src/_components/help-limit-notice.tsx
 msgctxt "TSBvtn"
 msgid "That's all you can try without an account"
-msgstr "Hai esaurito le prove disponibili senza account"
+msgstr "Per continuare a provare serve un account"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Jqv4S8"
 msgid "No more messages this month"
-msgstr "Hai esaurito i messaggi per questo mese"
+msgstr "Hai esaurito i messaggi di questo mese"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
-msgstr "Hai esaurito i messaggi per oggi"
+msgstr "Hai esaurito i messaggi di oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "z4UYJE"
 msgid "No more explanations this month"
-msgstr "Hai esaurito le spiegazioni per questo mese"
+msgstr "Hai esaurito le spiegazioni di questo mese"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
 msgid "No more explanations today"
-msgstr "Hai esaurito le spiegazioni per oggi"
+msgstr "Hai esaurito le spiegazioni di oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
@@ -284,52 +284,52 @@ msgstr "Hai raggiunto il limite di oggi"
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
-msgstr "Hai esaurito le nuove lezioni per oggi"
+msgstr "Hai raggiunto il limite di nuove lezioni per oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
-msgstr "Hai esaurito le lezioni disponibili senza account"
+msgstr "Per altre lezioni serve un account"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2XtwRD"
 msgid "You've used this month's free lessons"
-msgstr "Hai esaurito le lezioni gratuite di questo mese"
+msgstr "Hai usato tutte le lezioni gratuite di questo mese"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
 msgid "No more new lessons this month"
-msgstr "Hai esaurito le nuove lezioni per questo mese"
+msgstr "Hai raggiunto il limite di nuove lezioni per questo mese"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
 msgid "No more new mind maps today"
-msgstr "Hai esaurito le nuove mappe mentali per oggi"
+msgstr "Hai raggiunto il limite di nuove mappe mentali per oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
 msgid "No more mind maps without an account"
-msgstr "Hai esaurito le mappe mentali disponibili senza account"
+msgstr "Per altre mappe mentali serve un account"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6ootiC"
 msgid "No more new mind maps this month"
-msgstr "Hai esaurito le nuove mappe mentali per questo mese"
+msgstr "Hai raggiunto il limite di nuove mappe mentali per questo mese"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
 msgid "No more previews today"
-msgstr "Hai esaurito le anteprime per oggi"
+msgstr "Hai esaurito le anteprime di oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
 msgid "No more previews without an account"
-msgstr "Hai esaurito le anteprime disponibili senza account"
+msgstr "Per altre anteprime serve un account"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
 msgid "No more previews this month"
-msgstr "Hai esaurito le anteprime per questo mese"
+msgstr "Hai esaurito le anteprime di questo mese"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -395,7 +395,7 @@ msgstr "Questa lezione non è disponibile"
 #: src/language/conversation/challenge-call-gate.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr "Il tuo piano prosegue anche senza questa attività."
+msgstr "Il tuo piano va avanti anche senza."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -1162,7 +1162,7 @@ msgstr "Cresce quando raggiungi la {belt}"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
 msgid "{buddy} is napping. Study to wake it up."
-msgstr "{buddy} fa un pisolino. Se studi, si sveglia."
+msgstr "{buddy} sta facendo un pisolino. Se studi, si sveglia."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
@@ -1177,7 +1177,7 @@ msgstr "Energia di {buddy}"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
-msgstr "Si attiva con la tua prima lezione."
+msgstr "L’energia arriva con la tua prima lezione."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1224,7 +1224,7 @@ msgstr "{current} su {target} ripassi"
 #: src/buddies/buddy-glasses-sheet.tsx
 msgctxt "lw-2jH"
 msgid "Pick a pair you've earned."
-msgstr "Scegli un paio di occhiali che hai ottenuto."
+msgstr "Scegli un paio tra quelli che hai conquistato."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -2776,7 +2776,7 @@ msgstr "Mostra altro"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "zf_3aa"
 msgid "Ask anything"
-msgstr "Chiedimi quello che vuoi"
+msgstr "Chiedi quello che vuoi"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
@@ -3621,7 +3621,7 @@ msgstr "{count, plural, one {# svolta} other {# svolte}}"
 #: src/mock/mock-chooser-parts.tsx
 msgctxt "dza30U"
 msgid "Mock exams come with Plus"
-msgstr "Le simulazioni d’esame sono incluse in Plus"
+msgstr "Le simulazioni sono incluse in Plus"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
@@ -3986,12 +3986,12 @@ msgstr "1 domanda veloce alla fine"
 #: src/explain/explain-waiting.tsx
 msgctxt "zfh8W-"
 msgid "Learn more about this"
-msgstr "Approfondisci l’argomento"
+msgstr "Approfondisci questo argomento"
 
 #: src/explain/explain-waiting.tsx
 msgctxt "EQ-8cJ"
 msgid "Still getting your explanation ready."
-msgstr "Stiamo ancora preparando la tua spiegazione."
+msgstr "Stiamo ancora preparando la spiegazione."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
@@ -6200,7 +6200,7 @@ msgstr "Non siamo riusciti a salvare la conversazione."
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "0QT9qQ"
 msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr "È aperta in un’altra scheda o su un altro dispositivo. Se inizi questa, l’altra si chiude e non riceverai i commenti."
+msgstr "È aperta in un’altra scheda o su un altro dispositivo. Se inizi questa, l’altra termina e non ricevi i commenti."
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
@@ -6774,7 +6774,7 @@ msgstr "Ultimo tentativo: al livello {level} in {count} dei {rated} criteri"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "FD6ztN"
 msgid "Last try: near {level} on {count} of {rated} criteria"
-msgstr "Ultimo tentativo: quasi al livello {level} in {count} dei {rated} criteri"
+msgstr "Ultimo tentativo: vicino al livello {level} in {count} dei {rated} criteri"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "KYNzwA"
@@ -7047,7 +7047,7 @@ msgstr "Il livello di lettura è salito a {level}"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "rkXFzw"
 msgid "Speaking went up to {level}"
-msgstr "Il livello nella parte orale è salito a {level}"
+msgstr "Il livello nella prova orale è salito a {level}"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "NRJ7bO"
@@ -7068,12 +7068,12 @@ msgstr "in calo rispetto al test di livello"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "4DuYAS"
 msgid "{skills} went up"
-msgstr "Hai raggiunto un livello più alto in {skills}"
+msgstr "Sono saliti i livelli di {skills}"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "gShZPM"
 msgid "Your level shows here once you practice."
-msgstr "Il tuo livello comparirà qui quando farai pratica."
+msgstr "Il tuo livello comparirà qui quando ti eserciterai."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
@@ -9606,7 +9606,7 @@ msgstr "Vai al tuo Piano"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr "Hai raggiunto il limite di obiettivi che puoi seguire insieme"
+msgstr "Hai raggiunto il limite di obiettivi da seguire insieme"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "1oUkSm"
@@ -9859,7 +9859,7 @@ msgstr "{exam, select, abitur {Superare l’Abitur} bac {Superare il bac} enem {
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.a9a9_d"
 msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "Hai raggiunto il limite di obiettivi che puoi seguire insieme. Mettine uno in pausa, oppure abbonati per seguirne di più."
+msgstr "Hai raggiunto il limite di obiettivi da seguire insieme. Mettine uno in pausa, oppure abbonati per seguirne di più."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.GZnNXl"

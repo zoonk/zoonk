@@ -877,7 +877,7 @@ msgstr "Es wurde keine Antwort gespeichert."
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "aqjWQg"
 msgid "Questions you asked in lessons that have since changed."
-msgstr "Deine Fragen aus Lektionen, die inzwischen geändert wurden."
+msgstr "Deine Fragen aus Lektionen, die sich inzwischen geändert haben."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2806,7 +2806,7 @@ msgstr "Wir konnten diese Lektion nicht vorbereiten"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
-msgstr "Wir brauchen ein paar Minuten und machen auch weiter, wenn du die Seite verlässt."
+msgstr "Das dauert ein paar Minuten und läuft auch weiter, wenn du die Seite verlässt."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"

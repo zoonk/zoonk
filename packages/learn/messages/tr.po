@@ -229,12 +229,12 @@ msgstr "Hakların yarın yenilenir."
 #: src/_components/help-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
-msgstr "Hakların gelecek ay yenilenir. İstersen abone olup devam edebilirsin."
+msgstr "Hakların gelecek ay yenilenir; devam etmek için abone ol."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "wwdPGH"
 msgid "More tomorrow, or subscribe to keep going."
-msgstr "Hakların yarın yenilenir. İstersen abone olup devam edebilirsin."
+msgstr "Hakların yarın yenilenir; devam etmek için abone ol."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -244,12 +244,12 @@ msgstr "Kısa bir ara ver, sonra tekrar dene."
 #: src/_components/help-limit-notice.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
-msgstr "Bunun için ücretsiz bir hesap gerekli"
+msgstr "Bunun için ücretsiz bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "TSBvtn"
 msgid "That's all you can try without an account"
-msgstr "Hesap açmadan deneyebileceklerin bu kadar"
+msgstr "Hesap olmadan deneyebileceklerin bu kadar"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Jqv4S8"
@@ -274,12 +274,12 @@ msgstr "Bugün açıklama hakkın kalmadı"
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
 msgid "You've reached this month's limit"
-msgstr "Bu ayki limitine ulaştın"
+msgstr "Bu ayki kullanım sınırına ulaştın"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
-msgstr "Bugünkü limitine ulaştın"
+msgstr "Bugünkü kullanım sınırına ulaştın"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
@@ -289,12 +289,12 @@ msgstr "Bugün yeni ders hakkın kalmadı"
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
-msgstr "Daha fazla ders için bir hesap gerekli"
+msgstr "Daha fazla ders için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2XtwRD"
 msgid "You've used this month's free lessons"
-msgstr "Bu ayki ücretsiz ders hakkın bitti"
+msgstr "Bu ayki ücretsiz ders haklarını kullandın"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
@@ -309,7 +309,7 @@ msgstr "Bugün yeni zihin haritası hakkın kalmadı"
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
 msgid "No more mind maps without an account"
-msgstr "Daha fazla zihin haritası için bir hesap gerekli"
+msgstr "Daha fazla zihin haritası için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6ootiC"
@@ -324,7 +324,7 @@ msgstr "Bugün ön izleme hakkın kalmadı"
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
 msgid "No more previews without an account"
-msgstr "Daha fazla ön izleme için bir hesap gerekli"
+msgstr "Daha fazla ön izleme için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
@@ -1157,12 +1157,12 @@ msgstr "Büyümesini tamamladı"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "EcDZVd"
 msgid "Grows when you reach {belt}"
-msgstr "{belt} seviyesine ulaşınca büyür"
+msgstr "{belt} seviyesine ulaştığında büyür"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
 msgid "{buddy} is napping. Study to wake it up."
-msgstr "{buddy} şekerleme yapıyor. Uyandırmak için ders çalış."
+msgstr "{buddy} uyukluyor. Onu uyandırmak için ders çalış."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
@@ -1172,7 +1172,7 @@ msgstr "Enerjisini korumak için bugün ders çalış."
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "RquZa1"
 msgid "{buddy}'s Energy"
-msgstr "{buddy}: Enerji"
+msgstr "{buddy} için Enerji"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "Q88QPu"
@@ -1390,7 +1390,7 @@ msgstr "50 tekrar tamamla"
 #: src/buddies/buddy-labels.tsx
 msgctxt "erG0QJ"
 msgid "Win your plan's last challenge"
-msgstr "Planının son meydan okumasını kazan"
+msgstr "Planındaki son meydan okumayı kazan"
 
 #. How the learner gets the round glasses: every buddy has them.
 #: src/buddies/buddy-labels.tsx
@@ -2185,7 +2185,7 @@ msgstr "Pazartesiye taşı"
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
-msgstr "Deneme sınavları için abonelik gerekli"
+msgstr "Deneme sınavları için abonelik gerekiyor"
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
@@ -2808,7 +2808,7 @@ msgstr "Bu hafta daha az çalışmak istiyorum"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "Merhaba! Ben {name}, yapay zekâ destekli ders arkadaşın. Bana istediğini sor ya da planında neleri değiştirmemi istediğini söyle."
+msgstr "Merhaba! Ben {name}, yapay zekâ destekli ders arkadaşın. Bana istediğini sor ya da planında neyi değiştirmemi istediğini söyle."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2834,7 +2834,7 @@ msgstr "Uygulandığında planın bu ülkeye göre yeniden hazırlanır. Bitirdi
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "BcB9ZH"
 msgid "Saved. Your new plan is getting ready, and you can keep studying."
-msgstr "Kaydedildi. Yeni planını hazırlıyoruz. Çalışmaya devam edebilirsin."
+msgstr "Kaydedildi. Yeni planını hazırlıyoruz, çalışmaya devam edebilirsin."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
@@ -2871,7 +2871,7 @@ msgstr "Yeni bir hedefe başla"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "cNbAST"
 msgid "Another goal now needs a subscription"
-msgstr "Başka bir hedefe başlamak için artık abonelik gerekiyor"
+msgstr "Şu an başka bir hedefe başlamak için abonelik gerekiyor"
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -2946,7 +2946,7 @@ msgstr "Bellek"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "p1281P"
 msgid "Energy, belt, right answers and when you study best."
-msgstr "Enerji, kuşak, doğru cevaplar ve en iyi çalıştığın zamanlar."
+msgstr "Enerjin, kuşağın, doğru cevapların ve en iyi çalıştığın zamanlar."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "H3eDAS"
@@ -3991,7 +3991,7 @@ msgstr "Bu konuda daha fazla bilgi edin"
 #: src/explain/explain-waiting.tsx
 msgctxt "EQ-8cJ"
 msgid "Still getting your explanation ready."
-msgstr "Açıklamanı hazırlamaya devam ediyoruz."
+msgstr "Açıklamanı hâlâ hazırlıyoruz."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
@@ -6200,7 +6200,7 @@ msgstr "Sohbeti kaydedemedik."
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "0QT9qQ"
 msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr "Başka bir sekmede veya cihazda açık. Bu sohbeti başlatırsan diğeri biter ve o sohbet için geri bildirim alamazsın."
+msgstr "Diğer sohbetin başka bir sekmede veya cihazda açık. Bu sohbeti başlatırsan diğeri geri bildirim verilmeden sona erer."
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
@@ -6260,7 +6260,7 @@ msgstr "Beyin Gücü"
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
-msgstr "Tekrar deneyebilmen için sohbet yeniden karşına çıkar."
+msgstr "Tekrar deneyebilmen için bu sohbet yeniden karşına çıkar."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
@@ -6280,7 +6280,7 @@ msgstr "Sohbetini hazırlıyoruz"
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "tXuVy9"
 msgid "This takes about half a minute."
-msgstr "Yaklaşık yarım dakika sürer."
+msgstr "Bu yaklaşık yarım dakika sürer."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "Qm5B78"
@@ -6404,7 +6404,7 @@ msgstr "{text} ifadesini dinle"
 #: src/language/conversation/conversation-parts.tsx
 msgctxt "R_ySCr"
 msgid "Turn your sound on."
-msgstr "Sesi aç."
+msgstr "Cihazının sesini aç."
 
 #: src/language/conversation/conversation-result.tsx
 msgctxt "emrMOH"
@@ -6769,12 +6769,12 @@ msgstr "Son deneme: tahmin yok"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "PMoeDJ"
 msgid "Last try: at {level} on {count} of {rated} criteria"
-msgstr "Son deneme: {level} düzeyinde {count} / {rated} ölçüt"
+msgstr "Son deneme: {level} düzeyinde ({count} / {rated} ölçüt)"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "FD6ztN"
 msgid "Last try: near {level} on {count} of {rated} criteria"
-msgstr "Son deneme: {level} düzeyine yakın {count} / {rated} ölçüt"
+msgstr "Son deneme: {level} düzeyine yakın ({count} / {rated} ölçüt)"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "KYNzwA"
@@ -6789,7 +6789,7 @@ msgstr "{criteria} ölçütlerine göre değerlendirilir."
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "DMe1t1"
 msgid "Speaking practice needs a subscription"
-msgstr "Konuşma çalışması için abonelik gerekiyor"
+msgstr "Konuşma pratiği için abonelik gerekiyor"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "h0uuWx"
@@ -7229,7 +7229,7 @@ msgstr "Sohbetin hazır olur olmaz açılır."
 #: src/language/unit/practice-conversation.tsx
 msgctxt "uIeu_F"
 msgid "Longer calls need a subscription"
-msgstr "Daha uzun sohbetler için abonelik gerekir"
+msgstr "Daha uzun sohbetler için abonelik gerekiyor"
 
 #: src/language/unit/practice-conversation.tsx
 msgctxt "ktIybS"
@@ -9596,7 +9596,7 @@ msgstr "Enflasyon nasıl işler?"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
-msgstr "Bu ay yeni hedef sınırına ulaştın"
+msgstr "Bu ayki yeni hedef sınırına ulaştın"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
@@ -9606,12 +9606,12 @@ msgstr "Planına git"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr "Aynı anda en fazla bu kadar hedef üzerinde çalışabilirsin"
+msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "1oUkSm"
 msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Planında bir hedefi duraklat ya da aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
+msgstr "Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9859,37 +9859,37 @@ msgstr "{exam, select, abitur {Abitur’u geçmek} bac {bac’ı geçmek} enem {
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.a9a9_d"
 msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "Aynı anda en fazla bu kadar hedef üzerinde çalışabilirsin. Birini duraklat ya da daha fazla hedef üzerinde çalışmak için abone ol."
+msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın. Birini duraklat veya daha fazla hedef üzerinde çalışmak için abone ol."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.GZnNXl"
 msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "Bugünkü kısa açıklama sınırına ulaştın. Yarın yenilerini alabilir ya da abone olup devam edebilirsin."
+msgstr "Bugünkü hızlı açıklama sınırına ulaştın. Yarın tekrar kullanabilir veya abone olup devam edebilirsin."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.JsRkia"
 msgid "No more new goals today. More tomorrow."
-msgstr "Bugün yeni hedef sınırına ulaştın. Yarın yeni hedeflere başlayabilirsin."
+msgstr "Bugünkü yeni hedef sınırına ulaştın. Yarın yenilerini ekleyebilirsin."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
 msgid "Without an account, you study one goal. Create a free account to start another."
-msgstr "Hesabın yoksa tek bir hedef üzerinde çalışabilirsin. Başka bir hedefe başlamak için ücretsiz bir hesap aç."
+msgstr "Hesap açmadan tek bir hedef üzerinde çalışabilirsin. Başka bir hedefe başlamak için ücretsiz hesap aç."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.B_qpn8"
 msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "Bu ayki kısa açıklama sınırına ulaştın. Gelecek ay yenilerini alabilir ya da abone olup devam edebilirsin."
+msgstr "Bu ayki hızlı açıklama sınırına ulaştın. Gelecek ay tekrar kullanabilir veya abone olup devam edebilirsin."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.wjsNnL"
 msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "Bu ay yeni hedef sınırına ulaştın. Gelecek ay yeni hedeflere başlayabilir ya da abone olup devam edebilirsin."
+msgstr "Bu ayki yeni hedef sınırına ulaştın. Gelecek ay yenilerini ekleyebilir veya abone olup devam edebilirsin."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
 msgid "This needs a free account."
-msgstr "Bunun için ücretsiz bir hesap gerekir."
+msgstr "Bunun için ücretsiz hesap gerekiyor."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.8iLlgO"
@@ -9899,12 +9899,12 @@ msgstr "Peş peşe hedefler başlatıyorsun. Birkaç dakika sonra tekrar dene."
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
-msgstr "Bugün hesap açmadan yeni bir hedefe daha başlayamazsın."
+msgstr "Hesap açmadan bugün başka bir hedefe başlayamazsın."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.NIiMiz"
 msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "Bugün yeni hedef sınırına ulaştın. Yarın yeni hedeflere başlayabilir ya da abone olup devam edebilirsin."
+msgstr "Bugünkü yeni hedef sınırına ulaştın. Yarın yenilerini ekleyebilir veya abone olup devam edebilirsin."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -11001,7 +11001,7 @@ msgstr "Sınavın genelde yapıldığı tarihlere göre tahmin edildi. Resmî ta
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
-msgstr "Aynı anda daha fazla hedef için abonelik gerekir"
+msgstr "Aynı anda daha fazla hedef üzerinde çalışmak için abonelik gerekiyor"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "0f32R8"

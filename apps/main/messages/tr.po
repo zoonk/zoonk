@@ -2771,7 +2771,7 @@ msgstr "Dersini açıyoruz"
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "9VWjJv"
 msgid "Ready to start now"
-msgstr "Hemen başlamaya hazır"
+msgstr "Hemen başlayabilirsin"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "P0sSfc"
@@ -2806,7 +2806,7 @@ msgstr "Bu dersi hazırlayamadık"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
-msgstr "Hazırlamamız birkaç dakika sürer, ayrılsan da devam ederiz."
+msgstr "Birkaç dakika sürer, buradan ayrılsan da devam ederiz."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"

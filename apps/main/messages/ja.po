@@ -877,7 +877,7 @@ msgstr "回答は保存されていません。"
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "aqjWQg"
 msgid "Questions you asked in lessons that have since changed."
-msgstr "内容が変わる前のレッスンでの質問です。"
+msgstr "レッスンの内容が変わる前にした質問です。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2801,17 +2801,17 @@ msgstr "このレッスンはまだ準備ができていません"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
-msgstr "このレッスンの準備ができませんでした"
+msgstr "このレッスンを準備できませんでした"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
-msgstr "準備には数分かかります。この画面を離れても続きます。"
+msgstr "数分かかります。この画面を閉じても準備は続きます。"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"
 msgid "Get it ready"
-msgstr "準備する"
+msgstr "レッスンを準備する"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"

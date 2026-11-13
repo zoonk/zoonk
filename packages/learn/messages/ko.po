@@ -219,22 +219,22 @@ msgstr "마치고 결과를 확인해 보세요."
 #: src/_components/help-limit-notice.tsx
 msgctxt "C84LQr"
 msgid "More next month."
-msgstr "다음 달에 다시 이용할 수 있어요."
+msgstr "다음 달에 더 이용할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "i1JCVp"
 msgid "More tomorrow."
-msgstr "내일 다시 이용할 수 있어요."
+msgstr "내일 더 이용할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
-msgstr "다음 달에 다시 이용할 수 있어요. 구독하면 지금 계속 이용할 수 있어요."
+msgstr "다음 달에 더 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "wwdPGH"
 msgid "More tomorrow, or subscribe to keep going."
-msgstr "내일 다시 이용할 수 있어요. 구독하면 지금 계속 이용할 수 있어요."
+msgstr "내일 더 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -249,57 +249,57 @@ msgstr "무료 계정이 필요해요"
 #: src/_components/help-limit-notice.tsx
 msgctxt "TSBvtn"
 msgid "That's all you can try without an account"
-msgstr "계정 없이 체험할 수 있는 한도에 도달했어요"
+msgstr "계정 없이 체험할 수 있는 건 여기까지예요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Jqv4S8"
 msgid "No more messages this month"
-msgstr "이번 달에는 메시지를 더 보낼 수 없어요"
+msgstr "이번 달 메시지 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
-msgstr "오늘은 메시지를 더 보낼 수 없어요"
+msgstr "오늘 메시지 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "z4UYJE"
 msgid "No more explanations this month"
-msgstr "이번 달에는 설명을 더 요청할 수 없어요"
+msgstr "이번 달 설명 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
 msgid "No more explanations today"
-msgstr "오늘은 설명을 더 요청할 수 없어요"
+msgstr "오늘 설명 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
 msgid "You've reached this month's limit"
-msgstr "이번 달 이용 한도에 도달했어요"
+msgstr "이번 달 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
-msgstr "오늘 이용 한도에 도달했어요"
+msgstr "오늘 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
-msgstr "오늘은 새 레슨을 더 시작할 수 없어요"
+msgstr "오늘은 새 레슨을 더 볼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
-msgstr "레슨을 더 시작하려면 계정이 필요해요"
+msgstr "레슨을 더 보려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2XtwRD"
 msgid "You've used this month's free lessons"
-msgstr "이번 달 무료 레슨을 모두 이용했어요"
+msgstr "이번 달 무료 레슨을 다 이용했어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
 msgid "No more new lessons this month"
-msgstr "이번 달에는 새 레슨을 더 시작할 수 없어요"
+msgstr "이번 달에는 새 레슨을 더 볼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -319,7 +319,7 @@ msgstr "이번 달에는 새 마인드맵을 더 만들 수 없어요"
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
 msgid "No more previews today"
-msgstr "오늘은 미리보기를 더 이용할 수 없어요"
+msgstr "오늘 미리보기 횟수를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -329,7 +329,7 @@ msgstr "미리보기를 더 이용하려면 계정이 필요해요"
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
 msgid "No more previews this month"
-msgstr "이번 달에는 미리보기를 더 이용할 수 없어요"
+msgstr "이번 달 미리보기 횟수를 다 썼어요"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -395,7 +395,7 @@ msgstr "이 레슨은 이용할 수 없어요"
 #: src/language/conversation/challenge-call-gate.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr "이 활동 없이도 계획은 계속 진행돼요."
+msgstr "이 부분 없이도 계획은 계속 진행돼요."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -1167,7 +1167,7 @@ msgstr "{buddy}(이)가 낮잠을 자고 있어요. 공부해서 깨워 주세�
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
 msgid "Study today to keep it up."
-msgstr "오늘 공부해서 에너지를 유지하세요."
+msgstr "오늘 공부해서 에너지를 유지해 주세요."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "RquZa1"
@@ -1247,7 +1247,7 @@ msgstr "예시"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배우고 싶은 걸 알려 주시면 계획을 만들어 드릴게요."
+msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배우고 싶은 걸 알려 주시면 계획을 세워 드릴게요."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1370,7 +1370,7 @@ msgstr "동그란 안경"
 #: src/buddies/buddy-labels.tsx
 msgctxt "0Ys5Rm"
 msgid "Win your first challenge"
-msgstr "첫 챌린지에서 승리하기"
+msgstr "첫 챌린지에서 이기기"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "gltJSr"
@@ -1390,7 +1390,7 @@ msgstr "복습 50회 끝내기"
 #: src/buddies/buddy-labels.tsx
 msgctxt "erG0QJ"
 msgid "Win your plan's last challenge"
-msgstr "계획의 마지막 챌린지에서 승리하기"
+msgstr "계획의 마지막 챌린지에서 이기기"
 
 #. How the learner gets the round glasses: every buddy has them.
 #: src/buddies/buddy-labels.tsx
@@ -2808,7 +2808,7 @@ msgstr "이번 주에는 공부량을 줄이고 싶어요"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 무엇이든 물어보거나 계획에서 바꾸고 싶은 걸 알려 주세요."
+msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 무엇이든 물어보거나 계획에서 바꾸고 싶은 점을 알려 주세요."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2961,7 +2961,7 @@ msgstr "요금제와 결제 정보를 확인해요."
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_xThLm"
 msgid "What it includes and its price."
-msgstr "이용 혜택과 가격."
+msgstr "포함된 혜택과 가격."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "R_6nsx"
@@ -3986,7 +3986,7 @@ msgstr "마지막에 간단한 문제 1개"
 #: src/explain/explain-waiting.tsx
 msgctxt "zfh8W-"
 msgid "Learn more about this"
-msgstr "이 내용 자세히 알아보기"
+msgstr "이 내용 더 알아보기"
 
 #: src/explain/explain-waiting.tsx
 msgctxt "EQ-8cJ"
@@ -6200,7 +6200,7 @@ msgstr "대화를 저장하지 못했어요."
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "0QT9qQ"
 msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr "다른 탭이나 기기에서 대화가 진행 중이에요. 이 대화를 시작하면 기존 대화는 피드백 없이 끝나요."
+msgstr "다른 탭이나 기기에서 대화 중이에요. 이 대화를 시작하면 기존 대화는 피드백 없이 끝나요."
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
@@ -6260,7 +6260,7 @@ msgstr "두뇌력"
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
-msgstr "이 대화가 다시 열리니 한 번 더 도전해 볼 수 있어요."
+msgstr "이 대화가 다시 나와서 한 번 더 도전할 수 있어요."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
@@ -6270,7 +6270,7 @@ msgstr "대화를 마치면 별 1개, 할 말을 모두 전하면 1개, 도움 �
 #: src/language/conversation/challenge-call-gate.tsx
 msgctxt "QJJTto"
 msgid "This call needs a subscription"
-msgstr "이 대화에는 구독이 필요해요"
+msgstr "이 대화를 하려면 구독이 필요해요"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "rMZfgB"
@@ -6280,12 +6280,12 @@ msgstr "대화를 준비하고 있어요"
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "tXuVy9"
 msgid "This takes about half a minute."
-msgstr "약 30초 걸려요."
+msgstr "약 30초가 걸려요."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "Qm5B78"
 msgid "A short voice call with an AI character, about this unit."
-msgstr "이 단원의 내용을 주제로 AI 캐릭터와 나누는 짧은 음성 대화예요."
+msgstr "이 단원을 주제로 AI 캐릭터와 짧은 음성 대화를 나눠요."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
@@ -6613,12 +6613,12 @@ msgstr "면접관(AI)과 함께"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "2-4KNJ"
 msgid "other candidate (AI)"
-msgstr "다른 응시자(AI)"
+msgstr "다른 응시자 (AI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "pNM8cw"
 msgid "examiner (AI)"
-msgstr "면접관(AI)"
+msgstr "면접관 (AI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "OO7BQP"
@@ -6794,7 +6794,7 @@ msgstr "말하기 연습에는 구독이 필요해요"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "h0uuWx"
 msgid "Last result"
-msgstr "지난 결과 보기"
+msgstr "이전 결과"
 
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
@@ -7037,22 +7037,22 @@ msgstr "쓰기 수준 추정치: {level}"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "-OF3zL"
 msgid "Listening went up to {level}"
-msgstr "듣기 실력이 {level}까지 올랐어요"
+msgstr "듣기 레벨이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "msgwoN"
 msgid "Reading went up to {level}"
-msgstr "읽기 실력이 {level}까지 올랐어요"
+msgstr "읽기 레벨이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "rkXFzw"
 msgid "Speaking went up to {level}"
-msgstr "말하기 실력이 {level}까지 올랐어요"
+msgstr "말하기 레벨이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "NRJ7bO"
 msgid "Writing went up to {level}"
-msgstr "쓰기 실력이 {level}까지 올랐어요"
+msgstr "쓰기 레벨이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
@@ -7068,7 +7068,7 @@ msgstr "레벨 테스트 이후 하락"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "4DuYAS"
 msgid "{skills} went up"
-msgstr "{skills} 실력이 올랐어요"
+msgstr "{skills} 레벨이 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "gShZPM"
@@ -9596,7 +9596,7 @@ msgstr "인플레이션은 어떤 원리로 일어나나요?"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
-msgstr "이번 달에는 새 목표를 더 시작할 수 없어요"
+msgstr "이번 달에는 새 목표를 더 추가할 수 없어요"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
@@ -9606,12 +9606,12 @@ msgstr "내 계획으로 이동"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr "동시에 공부할 수 있는 목표 수를 다 채웠어요"
+msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "1oUkSm"
 msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "계획에서 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 동시에 공부해 보세요."
+msgstr "계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9859,32 +9859,32 @@ msgstr "{exam, select, abitur {Abitur 합격하기} bac {bac 합격하기} enem 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.a9a9_d"
 msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "동시에 공부할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 공부해 보세요."
+msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습해 보세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.GZnNXl"
 msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "오늘은 간단한 설명을 더 볼 수 없어요. 내일 다시 볼 수 있어요. 구독하면 지금도 계속 볼 수 있어요."
+msgstr "오늘은 간단한 설명을 더 볼 수 없어요. 내일 다시 보거나 구독해서 계속 이용해 보세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.JsRkia"
 msgid "No more new goals today. More tomorrow."
-msgstr "오늘은 새 목표를 더 시작할 수 없어요. 내일 다시 시작할 수 있어요."
+msgstr "오늘은 새 목표를 더 추가할 수 없어요. 내일 다시 추가할 수 있어요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
 msgid "Without an account, you study one goal. Create a free account to start another."
-msgstr "계정이 없으면 목표 하나만 공부할 수 있어요. 다른 목표를 시작하려면 무료 계정을 만드세요."
+msgstr "계정 없이 학습할 수 있는 목표는 하나예요. 다른 목표를 시작하려면 무료 계정을 만드세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.B_qpn8"
 msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "이번 달에는 간단한 설명을 더 볼 수 없어요. 다음 달에 다시 볼 수 있어요. 구독하면 지금도 계속 볼 수 있어요."
+msgstr "이번 달에는 간단한 설명을 더 볼 수 없어요. 다음 달에 다시 보거나 구독해서 계속 이용해 보세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.wjsNnL"
 msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "이번 달에는 새 목표를 더 시작할 수 없어요. 다음 달에 다시 시작할 수 있어요. 구독하면 지금도 시작할 수 있어요."
+msgstr "이번 달에는 새 목표를 더 추가할 수 없어요. 다음 달에 다시 추가하거나 구독해서 계속 이용해 보세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9899,12 +9899,12 @@ msgstr "짧은 시간에 여러 목표를 시작했어요. 몇 분 후에 다시
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
-msgstr "계정이 없으면 오늘은 새 목표를 더 시작할 수 없어요."
+msgstr "계정이 없으면 오늘은 새 목표를 더 추가할 수 없어요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.NIiMiz"
 msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "오늘은 새 목표를 더 시작할 수 없어요. 내일 다시 시작할 수 있어요. 구독하면 지금도 시작할 수 있어요."
+msgstr "오늘은 새 목표를 더 추가할 수 없어요. 내일 다시 추가하거나 구독해서 계속 이용해 보세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -11001,17 +11001,17 @@ msgstr "예년 일정을 바탕으로 예상했어요. 공식 일정이 나오�
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
-msgstr "더 많은 목표를 동시에 공부하려면 구독이 필요해요"
+msgstr "더 많은 목표를 동시에 학습하려면 구독이 필요해요"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "0f32R8"
 msgid "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}"
-msgstr "{count, plural, other {이 목표를 시작하려면 다른 목표를 일시 중지하세요.}}"
+msgstr "{count, plural, other {새 목표를 시작하려면 다른 목표를 일시 중지하세요.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "XR04oI"
 msgid "More goals at once come with a free account"
-msgstr "무료 계정을 만들면 더 많은 목표를 동시에 공부할 수 있어요"
+msgstr "무료 계정을 만들면 더 많은 목표를 동시에 학습할 수 있어요"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"

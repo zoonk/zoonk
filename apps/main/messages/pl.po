@@ -877,7 +877,7 @@ msgstr "Nie zapisano odpowiedzi."
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "aqjWQg"
 msgid "Questions you asked in lessons that have since changed."
-msgstr "Twoje pytania z lekcji, które od tego czasu się zmieniły."
+msgstr "Twoje pytania z lekcji, które później się zmieniły."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2771,7 +2771,7 @@ msgstr "Otwieramy twoją lekcję"
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "9VWjJv"
 msgid "Ready to start now"
-msgstr "Możesz zacząć teraz"
+msgstr "Możesz zacząć już teraz"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "P0sSfc"
@@ -2806,7 +2806,7 @@ msgstr "Nie udało nam się przygotować tej lekcji"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
-msgstr "Zajmie nam to kilka minut. Będziemy pracować dalej, nawet jeśli opuścisz stronę."
+msgstr "To zajmuje kilka minut. Pracujemy dalej, nawet jeśli wyjdziesz."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"

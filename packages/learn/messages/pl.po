@@ -229,12 +229,12 @@ msgstr "Więcej jutro."
 #: src/_components/help-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
-msgstr "Więcej w przyszłym miesiącu lub po wykupieniu subskrypcji."
+msgstr "Więcej w przyszłym miesiącu. Wykup subskrypcję, by korzystać dalej."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "wwdPGH"
 msgid "More tomorrow, or subscribe to keep going."
-msgstr "Więcej jutro lub po wykupieniu subskrypcji."
+msgstr "Więcej jutro. Wykup subskrypcję, by korzystać dalej."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -244,7 +244,7 @@ msgstr "Zrób krótką przerwę i spróbuj ponownie."
 #: src/_components/help-limit-notice.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
-msgstr "Do tego potrzebujesz bezpłatnego konta"
+msgstr "Potrzebujesz bezpłatnego konta"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "TSBvtn"
@@ -254,37 +254,37 @@ msgstr "To już wszystko, co możesz wypróbować bez konta"
 #: src/_components/help-limit-notice.tsx
 msgctxt "Jqv4S8"
 msgid "No more messages this month"
-msgstr "Wykorzystano miesięczny limit wiadomości"
+msgstr "To już wszystkie wiadomości na ten miesiąc"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
-msgstr "Wykorzystano dzisiejszy limit wiadomości"
+msgstr "To już wszystkie wiadomości na dziś"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "z4UYJE"
 msgid "No more explanations this month"
-msgstr "Wykorzystano miesięczny limit wyjaśnień"
+msgstr "To już wszystkie wyjaśnienia na ten miesiąc"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
 msgid "No more explanations today"
-msgstr "Wykorzystano dzisiejszy limit wyjaśnień"
+msgstr "To już wszystkie wyjaśnienia na dziś"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
 msgid "You've reached this month's limit"
-msgstr "Wykorzystano miesięczny limit"
+msgstr "Miesięczny limit wykorzystany"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
-msgstr "Wykorzystano dzisiejszy limit"
+msgstr "Dzisiejszy limit wykorzystany"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
-msgstr "Wykorzystano dzisiejszy limit nowych lekcji"
+msgstr "To już wszystkie nowe lekcje na dziś"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -294,17 +294,17 @@ msgstr "Do kolejnych lekcji potrzebujesz konta"
 #: src/_components/help-limit-notice.tsx
 msgctxt "2XtwRD"
 msgid "You've used this month's free lessons"
-msgstr "Wykorzystano wszystkie bezpłatne lekcje na ten miesiąc"
+msgstr "To już wszystkie bezpłatne lekcje na ten miesiąc"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
 msgid "No more new lessons this month"
-msgstr "Wykorzystano miesięczny limit nowych lekcji"
+msgstr "To już wszystkie nowe lekcje na ten miesiąc"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
 msgid "No more new mind maps today"
-msgstr "Wykorzystano dzisiejszy limit nowych map myśli"
+msgstr "To już wszystkie nowe mapy myśli na dziś"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -314,12 +314,12 @@ msgstr "Do kolejnych map myśli potrzebujesz konta"
 #: src/_components/help-limit-notice.tsx
 msgctxt "6ootiC"
 msgid "No more new mind maps this month"
-msgstr "Wykorzystano miesięczny limit nowych map myśli"
+msgstr "To już wszystkie nowe mapy myśli na ten miesiąc"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
 msgid "No more previews today"
-msgstr "Wykorzystano dzisiejszy limit podglądów"
+msgstr "To już wszystkie podglądy na dziś"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -329,7 +329,7 @@ msgstr "Do kolejnych podglądów potrzebujesz konta"
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
 msgid "No more previews this month"
-msgstr "Wykorzystano miesięczny limit podglądów"
+msgstr "To już wszystkie podglądy na ten miesiąc"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -395,7 +395,7 @@ msgstr "Ta lekcja jest niedostępna"
 #: src/language/conversation/challenge-call-gate.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr "Możesz kontynuować swój plan bez niej."
+msgstr "Możesz kontynuować plan bez niej."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -1162,12 +1162,12 @@ msgstr "Rośnie, gdy osiągniesz poziom: {belt}"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
 msgid "{buddy} is napping. Study to wake it up."
-msgstr "{buddy} drzemie. Obudzi się, gdy zaczniesz naukę."
+msgstr "{buddy} drzemie. Zacznij naukę, a się obudzi."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
 msgid "Study today to keep it up."
-msgstr "Poucz się dziś, by utrzymać poziom energii."
+msgstr "Poucz się dziś, by utrzymać jej poziom."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "RquZa1"
@@ -1177,7 +1177,7 @@ msgstr "Energia: {buddy}"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
-msgstr "Energia pojawi się po pierwszej lekcji."
+msgstr "Energia pojawi się wraz z twoją pierwszą lekcją."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1247,7 +1247,7 @@ msgstr "Przykłady"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr "Cześć! Tu {name}, twój kumpel do nauki z AI. Powiedz mi, czego chcesz się nauczyć, a ułożę twój plan."
+msgstr "Cześć! Mam na imię {name} i jestem twoim kumplem do nauki z AI. Powiedz mi, czego chcesz się nauczyć, a ułożę ci plan."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1370,7 +1370,7 @@ msgstr "Okrągłe okulary"
 #: src/buddies/buddy-labels.tsx
 msgctxt "0Ys5Rm"
 msgid "Win your first challenge"
-msgstr "Wygraj swoje pierwsze wyzwanie"
+msgstr "Wygraj pierwsze wyzwanie"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "gltJSr"
@@ -2808,7 +2808,7 @@ msgstr "Chcę się mniej uczyć w tym tygodniu"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "Cześć! Tu {name}, twój kumpel do nauki z AI. Zapytaj o cokolwiek lub powiedz mi, co zmienić w twoim planie."
+msgstr "Cześć! Mam na imię {name} i jestem twoim kumplem do nauki z AI. Zapytaj mnie o cokolwiek albo powiedz, co zmienić w twoim planie."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2834,7 +2834,7 @@ msgstr "Po zastosowaniu tej zmiany układamy twój plan od nowa dla tego kraju. 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "BcB9ZH"
 msgid "Saved. Your new plan is getting ready, and you can keep studying."
-msgstr "Zapisano. Przygotowujemy twój nowy plan, a ty możesz dalej się uczyć."
+msgstr "Zapisano. Przygotowujemy twój nowy plan, a ty możesz uczyć się dalej."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
@@ -2871,7 +2871,7 @@ msgstr "Wyznacz nowy cel"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "cNbAST"
 msgid "Another goal now needs a subscription"
-msgstr "Rozpoczęcie kolejnego celu wymaga teraz subskrypcji"
+msgstr "Aby dodać teraz kolejny cel, potrzebujesz subskrypcji"
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -2946,7 +2946,7 @@ msgstr "Pamięć"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "p1281P"
 msgid "Energy, belt, right answers and when you study best."
-msgstr "Energia, pas, poprawne odpowiedzi i to, kiedy najlepiej ci się uczy."
+msgstr "Energia, pas, poprawne odpowiedzi i najlepsza pora na naukę."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "H3eDAS"
@@ -2961,7 +2961,7 @@ msgstr "Twój pakiet i rozliczenia."
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_xThLm"
 msgid "What it includes and its price."
-msgstr "Co obejmuje i ile kosztuje."
+msgstr "Co obejmuje pakiet i ile kosztuje."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "R_6nsx"
@@ -3621,7 +3621,7 @@ msgstr "{count, plural, one {# ukończony} few {# ukończone} other {# ukończon
 #: src/mock/mock-chooser-parts.tsx
 msgctxt "dza30U"
 msgid "Mock exams come with Plus"
-msgstr "Egzaminy próbne są dostępne w pakiecie Plus"
+msgstr "Egzaminy próbne są w pakiecie Plus"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
@@ -6260,7 +6260,7 @@ msgstr "Moc Umysłu"
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
-msgstr "Rozmowa wróci, więc będzie można spróbować ponownie."
+msgstr "Rozmowa wróci i będzie można spróbować ponownie."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
@@ -6280,12 +6280,12 @@ msgstr "Przygotowujemy twoją rozmowę"
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "tXuVy9"
 msgid "This takes about half a minute."
-msgstr "To potrwa około pół minuty."
+msgstr "Zajmuje nam to około pół minuty."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "Qm5B78"
 msgid "A short voice call with an AI character, about this unit."
-msgstr "Krótka rozmowa głosowa z postacią AI o tematach z tego działu."
+msgstr "Krótka rozmowa głosowa z postacią AI na temat tego działu."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
@@ -6696,7 +6696,7 @@ msgstr "Czas na przygotowanie minął."
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "q-Y54s"
 msgid "{time}, as in the exam"
-msgstr "{time}, jak na egzaminie"
+msgstr "{time}, tak jak na egzaminie"
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "rDyxKu"
@@ -9596,7 +9596,7 @@ msgstr "Jak działa inflacja?"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
-msgstr "W tym miesiącu nie możesz już dodawać nowych celów"
+msgstr "W tym miesiącu nie dodasz już nowych celów"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
@@ -9606,12 +9606,12 @@ msgstr "Przejdź do swojego planu"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr "Nie możesz realizować więcej celów naraz"
+msgstr "Masz już maksymalną liczbę aktywnych celów"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "1oUkSm"
 msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Wstrzymaj jeden z celów w Planie lub wykup subskrypcję, by realizować więcej celów naraz."
+msgstr "Wstrzymaj jeden z nich w Planie lub wykup subskrypcję, by realizować więcej celów naraz."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9859,32 +9859,32 @@ msgstr "{exam, select, abitur {Zdać Abitur} bac {Zdać bac} enem {Zdać ENEM} e
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.a9a9_d"
 msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "Nie możesz realizować więcej celów naraz. Wstrzymaj jeden z nich lub wykup subskrypcję, by realizować więcej."
+msgstr "Masz już maksymalną liczbę aktywnych celów. Wstrzymaj jeden z nich lub wykup subskrypcję, by realizować więcej."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.GZnNXl"
 msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "Dziś nie możesz już korzystać z szybkich wyjaśnień. Wróć jutro lub wykup subskrypcję, by korzystać z nich dalej."
+msgstr "Wykorzystano dzisiejszy limit szybkich wyjaśnień. Wróć jutro lub wykup subskrypcję, by korzystać dalej."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.JsRkia"
 msgid "No more new goals today. More tomorrow."
-msgstr "Dziś nie możesz już dodawać nowych celów. Kolejne dodasz jutro."
+msgstr "Dziś nie dodasz już nowych celów. Kolejne możesz dodać jutro."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
 msgid "Without an account, you study one goal. Create a free account to start another."
-msgstr "Bez konta możesz realizować tylko jeden cel. Utwórz bezpłatne konto, by dodać kolejny."
+msgstr "Bez konta możesz realizować jeden cel. Załóż bezpłatne konto, by dodać kolejny."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.B_qpn8"
 msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "W tym miesiącu nie możesz już korzystać z szybkich wyjaśnień. Wróć w przyszłym miesiącu lub wykup subskrypcję, by korzystać z nich dalej."
+msgstr "Wykorzystano limit szybkich wyjaśnień na ten miesiąc. Wróć w przyszłym miesiącu lub wykup subskrypcję, by korzystać dalej."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.wjsNnL"
 msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "W tym miesiącu nie możesz już dodawać nowych celów. Wróć w przyszłym miesiącu lub wykup subskrypcję, by dodawać kolejne."
+msgstr "W tym miesiącu nie dodasz już nowych celów. Kolejne dodasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9899,12 +9899,12 @@ msgstr "Rozpoczynasz wiele celów w krótkim czasie. Spróbuj ponownie za kilka 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
-msgstr "Bez konta nie możesz już dziś dodawać nowych celów."
+msgstr "Bez konta nie dodasz dziś już nowych celów."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.NIiMiz"
 msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "Dziś nie możesz już dodawać nowych celów. Wróć jutro lub wykup subskrypcję, by dodawać kolejne."
+msgstr "Dziś nie dodasz już nowych celów. Kolejne dodasz jutro lub po wykupieniu subskrypcji."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"

@@ -229,12 +229,12 @@ msgstr "明日また利用できます。"
 #: src/_components/help-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
-msgstr "来月また利用できます。サブスクリプションに登録すると、このまま続けられます。"
+msgstr "来月また利用できます。サブスクリプションに登録すれば、今すぐ続けられます。"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "wwdPGH"
 msgid "More tomorrow, or subscribe to keep going."
-msgstr "明日また利用できます。サブスクリプションに登録すると、このまま続けられます。"
+msgstr "明日また利用できます。サブスクリプションに登録すれば、今すぐ続けられます。"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -254,22 +254,22 @@ msgstr "アカウントなしで試せるのはここまでです"
 #: src/_components/help-limit-notice.tsx
 msgctxt "Jqv4S8"
 msgid "No more messages this month"
-msgstr "今月のメッセージの上限に達しました"
+msgstr "今月のメッセージ数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
-msgstr "今日のメッセージの上限に達しました"
+msgstr "今日のメッセージ数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "z4UYJE"
 msgid "No more explanations this month"
-msgstr "今月の解説の上限に達しました"
+msgstr "今月の解説の利用回数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
 msgid "No more explanations today"
-msgstr "今日の解説の上限に達しました"
+msgstr "今日の解説の利用回数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
@@ -284,52 +284,52 @@ msgstr "今日の利用上限に達しました"
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
-msgstr "今日始められるレッスンの上限に達しました"
+msgstr "今日はこれ以上新しいレッスンを始められません"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
-msgstr "レッスンを続けるにはアカウントが必要です"
+msgstr "アカウントなしで受けられるレッスンはここまでです"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2XtwRD"
 msgid "You've used this month's free lessons"
-msgstr "今月分の無料レッスンを使い切りました"
+msgstr "今月分の無料レッスンをすべて利用しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
 msgid "No more new lessons this month"
-msgstr "今月始められるレッスンの上限に達しました"
+msgstr "今月はこれ以上新しいレッスンを始められません"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
 msgid "No more new mind maps today"
-msgstr "今日作成できるマインドマップの上限に達しました"
+msgstr "今日はこれ以上新しいマインドマップを作れません"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
 msgid "No more mind maps without an account"
-msgstr "さらにマインドマップを作成するにはアカウントが必要です"
+msgstr "アカウントなしで作れるマインドマップはここまでです"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6ootiC"
 msgid "No more new mind maps this month"
-msgstr "今月作成できるマインドマップの上限に達しました"
+msgstr "今月はこれ以上新しいマインドマップを作れません"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
 msgid "No more previews today"
-msgstr "今日のプレビューの上限に達しました"
+msgstr "今日のプレビューの利用回数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
 msgid "No more previews without an account"
-msgstr "さらにプレビューするにはアカウントが必要です"
+msgstr "アカウントなしで見られるプレビューはここまでです"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
 msgid "No more previews this month"
-msgstr "今月のプレビューの上限に達しました"
+msgstr "今月のプレビューの利用回数が上限に達しました"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -395,7 +395,7 @@ msgstr "このレッスンは利用できません"
 #: src/language/conversation/challenge-call-gate.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr "これがなくても、学習計画は進められます。"
+msgstr "これがなくても学習計画を進められます。"
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -1162,7 +1162,7 @@ msgstr "{belt}になると成長します"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
 msgid "{buddy} is napping. Study to wake it up."
-msgstr "{buddy}はお昼寝中です。学習すると目を覚まします。"
+msgstr "{buddy}は昼寝中です。学習して起こしましょう。"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
@@ -1247,7 +1247,7 @@ msgstr "例"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr "こんにちは！わたしは学習の相棒、AIの{name}です。学びたいことを教えてください。学習計画を作成します。"
+msgstr "こんにちは！学習の相棒としてお手伝いするAIの{name}です。学びたいことを教えてください。わたしが学習計画を作ります。"
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -2776,7 +2776,7 @@ msgstr "もっと見る"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "zf_3aa"
 msgid "Ask anything"
-msgstr "何でも聞いてください"
+msgstr "何でも質問してください"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
@@ -2808,7 +2808,7 @@ msgstr "今週は学習量を減らしたい"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr "こんにちは！わたしは学習の相棒、AIの{name}です。何でも聞いてください。学習計画で変えたいことも教えてください。"
+msgstr "こんにちは！学習の相棒としてお手伝いするAIの{name}です。何でも質問してください。学習計画で変えたいことも教えてください。"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2834,7 +2834,7 @@ msgstr "適用すると、この国に合わせて学習計画を作り直しま
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "BcB9ZH"
 msgid "Saved. Your new plan is getting ready, and you can keep studying."
-msgstr "保存しました。新しい学習計画を準備しています。このまま学習を続けられます。"
+msgstr "保存しました。新しい学習計画を準備しています。学習はそのまま続けられます。"
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
@@ -2946,7 +2946,7 @@ msgstr "メモリ"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "p1281P"
 msgid "Energy, belt, right answers and when you study best."
-msgstr "エネルギー、帯、正解数、学習が一番はかどる時間帯がわかります。"
+msgstr "エネルギーや帯、正解数、学習がはかどる時間帯がわかります。"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "H3eDAS"
@@ -2961,7 +2961,7 @@ msgstr "契約中のプランとお支払いを確認できます。"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_xThLm"
 msgid "What it includes and its price."
-msgstr "使える機能と料金がわかります。"
+msgstr "プランの内容と料金を確認できます。"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "R_6nsx"
@@ -3621,7 +3621,7 @@ msgstr "{count, plural, other {#回受験済み}}"
 #: src/mock/mock-chooser-parts.tsx
 msgctxt "dza30U"
 msgid "Mock exams come with Plus"
-msgstr "模試はPlusで利用できます"
+msgstr "Plusで模試を受けられます"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
@@ -3986,12 +3986,12 @@ msgstr "最後に短い問題を1問"
 #: src/explain/explain-waiting.tsx
 msgctxt "zfh8W-"
 msgid "Learn more about this"
-msgstr "この内容をもっと詳しく学ぶ"
+msgstr "もっと詳しく学ぶ"
 
 #: src/explain/explain-waiting.tsx
 msgctxt "EQ-8cJ"
 msgid "Still getting your explanation ready."
-msgstr "引き続き解説を作成しています。"
+msgstr "まだ解説を準備しています。"
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
@@ -6200,7 +6200,7 @@ msgstr "会話を保存できませんでした。"
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "0QT9qQ"
 msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr "別のタブかデバイスで会話中です。この会話を始めると、そちらの会話はフィードバックなしで終了します。"
+msgstr "別のタブか端末で会話中です。この会話を始めると、そちらの会話はフィードバックなしで終了します。"
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
@@ -6260,7 +6260,7 @@ msgstr "脳力"
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
-msgstr "あとでまたこの会話に挑戦できます。"
+msgstr "この会話はまた出てくるので、もう一度挑戦できます。"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
@@ -6285,7 +6285,7 @@ msgstr "30秒ほどかかります。"
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "Qm5B78"
 msgid "A short voice call with an AI character, about this unit."
-msgstr "このユニットについて、AIキャラクターと音声で少し話します。"
+msgstr "このユニットの内容について、AIキャラクターと音声で短い会話をします。"
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
@@ -6404,7 +6404,7 @@ msgstr "「{text}」を聞く"
 #: src/language/conversation/conversation-parts.tsx
 msgctxt "R_ySCr"
 msgid "Turn your sound on."
-msgstr "音をオンにしてください。"
+msgstr "音声をオンにしてください。"
 
 #: src/language/conversation/conversation-result.tsx
 msgctxt "emrMOH"
@@ -6653,7 +6653,7 @@ msgstr "この評価基準では、{band}は{level}レベルに相当します�
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "2UvMo7"
 msgid "You said little, so this estimate is rough."
-msgstr "話した量が少ないため、推定結果はおおよその目安です。"
+msgstr "発言が少なかったため、推定結果は大まかな目安です。"
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/mock/mock-result-speaking.tsx
@@ -6696,7 +6696,7 @@ msgstr "準備時間が終わりました。"
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "q-Y54s"
 msgid "{time}, as in the exam"
-msgstr "本番の試験と同じ{time}"
+msgstr "{time}（本番と同じ）"
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "rDyxKu"
@@ -6769,12 +6769,12 @@ msgstr "前回：推定スコアなし"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "PMoeDJ"
 msgid "Last try: at {level} on {count} of {rated} criteria"
-msgstr "前回：{level}に達したのは{count}項目（全{rated}項目）"
+msgstr "前回：{level}に達した評価項目は{count}項目（全{rated}項目）"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "FD6ztN"
 msgid "Last try: near {level} on {count} of {rated} criteria"
-msgstr "前回：{level}に近かったのは{count}項目（全{rated}項目）"
+msgstr "前回：{level}に近い評価項目は{count}項目（全{rated}項目）"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "KYNzwA"
@@ -7037,22 +7037,22 @@ msgstr "ライティングの推定レベル：{level}"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "-OF3zL"
 msgid "Listening went up to {level}"
-msgstr "リスニングが{level}に上がりました"
+msgstr "リスニングのレベルが{level}に上がりました"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "msgwoN"
 msgid "Reading went up to {level}"
-msgstr "リーディングが{level}に上がりました"
+msgstr "リーディングのレベルが{level}に上がりました"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "rkXFzw"
 msgid "Speaking went up to {level}"
-msgstr "スピーキングが{level}に上がりました"
+msgstr "スピーキングのレベルが{level}に上がりました"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "NRJ7bO"
 msgid "Writing went up to {level}"
-msgstr "ライティングが{level}に上がりました"
+msgstr "ライティングのレベルが{level}に上がりました"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
@@ -7229,7 +7229,7 @@ msgstr "準備ができ次第、会話画面が開きます。"
 #: src/language/unit/practice-conversation.tsx
 msgctxt "uIeu_F"
 msgid "Longer calls need a subscription"
-msgstr "長く会話するにはサブスクリプションが必要です"
+msgstr "長めの会話練習にはサブスクリプションが必要です"
 
 #: src/language/unit/practice-conversation.tsx
 msgctxt "ktIybS"
@@ -9606,12 +9606,12 @@ msgstr "学習計画を見る"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr "同時に学習できる目標の上限に達しました"
+msgstr "同時に取り組める目標の上限に達しました"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "1oUkSm"
 msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に学習できる目標を増やしてください。"
+msgstr "学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に取り組める目標を増やしてください。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9859,12 +9859,12 @@ msgstr "{exam, select, abitur {Abiturに合格する} bac {bacに合格する} e
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.a9a9_d"
 msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "同時に学習できる目標の上限に達しました。目標を1つ一時停止するか、サブスクリプションに登録して学習できる目標を増やしてください。"
+msgstr "同時に取り組める目標の上限に達しました。どれかの目標を一時停止するか、サブスクリプションに登録して取り組める目標を増やしてください。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.GZnNXl"
 msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "今日はこれ以上クイック解説を利用できません。明日また利用できますが、サブスクリプションに登録すれば今すぐ続けられます。"
+msgstr "今日はこれ以上、クイック解説を利用できません。明日また利用できます。サブスクリプションに登録すれば、このまま続けられます。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.JsRkia"
@@ -9874,22 +9874,22 @@ msgstr "今日はこれ以上、新しい目標を始められません。明日
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
 msgid "Without an account, you study one goal. Create a free account to start another."
-msgstr "アカウントなしで学習できる目標は1つです。別の目標を始めるには、無料アカウントを作成してください。"
+msgstr "アカウントなしで取り組める目標は1つです。別の目標を始めるには、無料アカウントを作成してください。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.B_qpn8"
 msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "今月はこれ以上クイック解説を利用できません。来月また利用できますが、サブスクリプションに登録すれば今すぐ続けられます。"
+msgstr "今月はこれ以上、クイック解説を利用できません。来月また利用できます。サブスクリプションに登録すれば、このまま続けられます。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.wjsNnL"
 msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "今月はこれ以上、新しい目標を始められません。来月また始められますが、サブスクリプションに登録すれば今すぐ続けられます。"
+msgstr "今月はこれ以上、新しい目標を始められません。来月また始められます。サブスクリプションに登録すれば、このまま続けられます。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
 msgid "This needs a free account."
-msgstr "利用するには無料アカウントが必要です。"
+msgstr "無料アカウントが必要です。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.8iLlgO"
@@ -9899,12 +9899,12 @@ msgstr "短時間にいくつも目標を始めています。数分後にもう
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
-msgstr "アカウントなしでは、今日はこれ以上新しい目標を始められません。"
+msgstr "アカウントなしでは、今日はこれ以上、新しい目標を始められません。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.NIiMiz"
 msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "今日はこれ以上、新しい目標を始められません。明日また始められますが、サブスクリプションに登録すれば今すぐ続けられます。"
+msgstr "今日はこれ以上、新しい目標を始められません。明日また始められます。サブスクリプションに登録すれば、このまま続けられます。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -11001,7 +11001,7 @@ msgstr "例年の日程から予想しています。正式な日程が発表さ
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "6hngG4"
 msgid "More goals at once need a subscription"
-msgstr "同時に学習する目標を増やすにはサブスクリプションが必要です"
+msgstr "同時に取り組む目標を増やすにはサブスクリプションが必要です"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "0f32R8"
@@ -11011,7 +11011,7 @@ msgstr "{count, plural, other {新しい目標を始めるには、ほかの目�
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "XR04oI"
 msgid "More goals at once come with a free account"
-msgstr "無料アカウントを作成すると、同時に学習できる目標が増えます"
+msgstr "無料アカウントを作ると、同時に取り組める目標が増えます"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
