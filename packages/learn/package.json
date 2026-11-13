@@ -18,6 +18,7 @@
     "./avatar-belt": "./src/shell/learn-avatar-belt.tsx",
     "./bar": "./src/shell/learn-bar.tsx",
     "./buddy": "./src/buddies/buddy-screen.tsx",
+    "./buddy-identity-row": "./src/buddies/buddy-identity-row.tsx",
     "./buddy-name": "./src/buddies/use-buddy-name.ts",
     "./ceremony": "./src/ceremonies/milestone-ceremony.tsx",
     "./certificates/details": "./src/certificates/certificate-details.tsx",

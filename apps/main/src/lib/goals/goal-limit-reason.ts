@@ -1,4 +1,4 @@
-import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
+import { type AllowanceLimit, toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { z } from "zod";
@@ -14,7 +14,7 @@ export function getGoalLimitReason(
     return "activeGoals";
   }
 
-  const monthly = limit.period === "month";
+  const monthly = toCalendarPeriod(limit.period) === "month";
 
   if (limit.resource === "explanation") {
     return monthly ? "monthlyExplanations" : "dailyExplanations";

@@ -325,8 +325,11 @@ describe("chapter mind maps", () => {
 
     await chapterLessonFixture({ chapterId: current, lessonId: setAside.id, position: 2 });
 
+    const claimedAt = new Date();
+
     await prisma.usageRecord.createMany({
       data: Array.from({ length: 19 }, () => ({
+        createdAt: claimedAt,
         generated: true,
         kind: "lessonStart" as const,
         targetId: randomUUID(),
@@ -338,7 +341,13 @@ describe("chapter mind maps", () => {
       requestChapterMindMap({ chapterId: current, goalId: goal.id }),
     ).resolves.toStrictEqual({
       decision: {
-        limit: { limit: 20, period: "month", resource: "lessonStart", tier: "free" },
+        limit: {
+          availableAt: new Date(claimedAt.getTime() + 30 * 24 * 60 * 60 * 1000),
+          limit: 20,
+          period: "rolling30Days",
+          resource: "lessonStart",
+          tier: "free",
+        },
         status: "limitReached",
       },
       status: "refused",

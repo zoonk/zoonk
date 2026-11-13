@@ -1,3 +1,4 @@
+import { toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
@@ -9,7 +10,7 @@ const DEFAULT_RETRY_SECONDS = 60;
 const REFUSED_STATUSES = new Set([HTTP_PAYMENT_REQUIRED, HTTP_FORBIDDEN, HTTP_TOO_MANY_REQUESTS]);
 
 const TIERS = ["free", "guest", "plus"] as const;
-const PERIODS = ["day", "month", "total"] as const;
+const PERIODS = ["day", "month", "rolling30Days", "total"] as const;
 
 function pick<Value extends string>(value: string | null, values: readonly Value[]) {
   return values.find((candidate) => candidate === value) ?? null;
@@ -56,7 +57,7 @@ export function readRefusedLimit({
   }
 
   return {
-    period: pick(getString(limit, "period"), PERIODS) ?? "day",
+    period: toCalendarPeriod(pick(getString(limit, "period"), PERIODS) ?? "day"),
     status: "limitReached",
     tier: readTier({ limit, status }),
   };

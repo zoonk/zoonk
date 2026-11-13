@@ -30,7 +30,7 @@ export async function claimUsageForViewer({
     const claim = await claimUsageInTransaction({
       generated,
       kind,
-      now,
+      now: kind === "lessonStart" ? new Date() : now,
       seconds,
       targetId,
       transaction,
