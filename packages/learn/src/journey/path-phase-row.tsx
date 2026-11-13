@@ -255,8 +255,8 @@ export function PhaseName({
       <span className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}>
         {byPlace ? (
           <>
-            <span className="group-data-panel-open/phase:hidden">{name}</span>
-            <span className="hidden group-data-panel-open/phase:inline">
+            <span className="in-data-panel-open:hidden">{name}</span>
+            <span className="hidden in-data-panel-open:inline">
               {phaseName(phase, { byPlace })}
             </span>
           </>
