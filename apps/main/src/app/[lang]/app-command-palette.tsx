@@ -30,7 +30,7 @@ export function CommandPaletteScope() {
 }
 
 /** Anyone with a session has the palette everywhere; a visitor has it only in the app's frame. */
-function canOpenPalette(): boolean {
+export function canOpenPalette(): boolean {
   return frameScopes.count > 0 || hasSessionHint() || getLearnerSummaryState().status === "ready";
 }
 
@@ -44,7 +44,7 @@ function subscribeToPaletteScope(listener: () => void): () => void {
   };
 }
 
-function usePaletteAllowed(): boolean {
+export function usePaletteAllowed(): boolean {
   return useSyncExternalStore(subscribeToPaletteScope, canOpenPalette, () => false);
 }
 

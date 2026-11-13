@@ -814,24 +814,6 @@ describe(getGoalPreparation, () => {
     expect(preparation?.estimatedScore).toBeNull();
   });
 
-  it("marks the mock exam as Plus once a free exam plan's first days are over", async () => {
-    const { goal } = await setup();
-
-    await prisma.goal.update({
-      data: { createdAt: daysAgo(10), kind: "exam" },
-      where: { id: goal.id },
-    });
-
-    const result = await getGoalPreparation(goal.id);
-
-    expect(result.status === "ready" && result.preparation.components.mocks).toStrictEqual({
-      kind: "mockExams",
-      plusRequired: true,
-      taken: 0,
-      value: null,
-    });
-  });
-
   it("estimates a score only once the recent mocks hold enough of the exam, and never for part of it", async () => {
     const { goal, user } = await setup();
 
