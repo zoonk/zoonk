@@ -3,7 +3,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 
 const START_CTA = {
   href: "https://www.zoonk.com/start",
-  link: "Start free",
+  link: "Build my plan",
   note: "No account needed.",
   text: "Tell us in your own words and answer a few quick questions. You'll see your whole plan before you pay.",
   title: "What's your goal?",
