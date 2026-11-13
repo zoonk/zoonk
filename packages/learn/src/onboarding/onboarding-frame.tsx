@@ -291,11 +291,7 @@ export function OnboardingPrimaryButton({
   children,
   ...props
 }: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size">) {
-  return (
-    <EnterButton {...props}>
-      {children}
-    </EnterButton>
-  );
+  return <EnterButton {...props}>{children}</EnterButton>;
 }
 
 /** Alone, or after the row's other actions, it fills a phone's line as a main action would. */
