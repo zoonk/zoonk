@@ -16,7 +16,7 @@ async function BackLink({ appUrl }: { appUrl: string | Promise<string> }) {
           'The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.',
         message: "Back to Zoonk",
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 edge absolute top-3 left-2 -ms-(--edge-pull) inline-flex min-h-11 items-center gap-0.5 rounded-lg px-2 text-sm font-medium outline-none focus-visible:ring-[3px] sm:top-5 sm:left-5"
+      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 edge absolute top-3 left-2 -ms-(--edge-start) inline-flex min-h-11 items-center gap-0.5 rounded-lg px-2 text-sm font-medium outline-none focus-visible:ring-[3px] sm:top-5 sm:left-5"
       href={href}
     >
       <ChevronLeftIcon aria-hidden="true" className="size-4" />

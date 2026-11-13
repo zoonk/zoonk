@@ -15,6 +15,12 @@ export type Ink = {
   context: number;
   /** For a box, the context its own contents are in. */
   inner?: number;
+  /**
+   * For a text, where its first and last letters are drawn: letters start and end a little inside
+   * their box, and a glyph beside a text is compared with the letters (E2).
+   */
+  inkLeft?: number;
+  inkRight?: number;
   kind: InkKind;
   label: string;
   left: number;
@@ -367,6 +373,31 @@ export function readCraft(): CraftPage {
     );
   }
 
+  const pen = document.createElement("canvas").getContext("2d");
+
+  /** How far inside its box a text's first and last letters are drawn. */
+  function bearings(element: Element, style: CSSStyleDeclaration) {
+    const words = ownText(element)
+      .map((node) => node.textContent?.trim() ?? "")
+      .join("");
+
+    const cased = style.textTransform === "uppercase" ? words.toUpperCase() : words;
+    const [first, last] = [cased.at(0), cased.at(-1)];
+
+    if (!pen || !first || !last) {
+      return { end: 0, start: 0 };
+    }
+
+    pen.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    pen.letterSpacing = style.letterSpacing === "normal" ? "0px" : style.letterSpacing;
+    const lastLetter = pen.measureText(last);
+
+    return {
+      end: lastLetter.width - lastLetter.actualBoundingBoxRight,
+      start: -pen.measureText(first).actualBoundingBoxLeft,
+    };
+  }
+
   const written = all.flatMap((element) => {
     const rects = ownText(element).flatMap((node) => {
       const range = document.createRange();
@@ -385,12 +416,15 @@ export function readCraft(): CraftPage {
     const end = ["end", "right"].includes(style.textAlign);
     const lines = new Set(rects.map((rect) => Math.round(rect.top))).size;
     const holder = blocks.findLast((candidate) => candidate.contains(element));
+    const letters = bearings(element, style);
 
     return [
       {
         ink: {
           ...place(box),
           context: contextOf(element, element),
+          inkLeft: round(box.left + scrollX + letters.start),
+          inkRight: round(box.right + scrollX - letters.end),
           kind: "text" as const,
           label: label(element),
           leftCounts: !middle && !end && Math.abs(box.left - flow.left) <= 1,
