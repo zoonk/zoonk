@@ -1,6 +1,6 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { toAudioData } from "../../../library/language/_utils/language-audio";
+import { toAudioData } from "../../../library/language/_utils/audio-data";
 import { type StoredChange } from "../contract";
 import { contentFixVoiceSchema } from "../voice-schema";
 
