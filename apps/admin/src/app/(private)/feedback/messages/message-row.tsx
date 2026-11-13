@@ -22,7 +22,7 @@ export function MessageRow({
 
   return (
     <AdminTableRow>
-      <TableCell className="max-w-64">
+      <TableCell>
         <AdminTableRowLink className="block" href={`/feedback/messages/${message.id}`} prefetch>
           <span className="block truncate font-medium">
             {user ? getFeedbackLearnerLabel(user) : (email ?? "Unknown sender")}
@@ -34,7 +34,12 @@ export function MessageRow({
           ) : null}
         </AdminTableRowLink>
       </TableCell>
-      <TableCell className="max-w-72">
+      {showState ? (
+        <TableCell className={message.status === "new" ? "font-medium" : "text-muted-foreground"}>
+          {feedbackStatusLabels[message.status]}
+        </TableCell>
+      ) : null}
+      <TableCell>
         <span className="block truncate">{subject}</span>
         {context.screen && context.screen !== subject ? (
           <span className="text-muted-foreground block truncate text-xs">
@@ -44,11 +49,6 @@ export function MessageRow({
       </TableCell>
       <TableCell className="text-muted-foreground">{getFeedbackPlatform(context) ?? "—"}</TableCell>
       <TableCell className="text-muted-foreground">{formatDate(message.createdAt)}</TableCell>
-      {showState ? (
-        <TableCell className={message.status === "new" ? "font-medium" : "text-muted-foreground"}>
-          {feedbackStatusLabels[message.status]}
-        </TableCell>
-      ) : null}
     </AdminTableRow>
   );
 }

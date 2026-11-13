@@ -11,8 +11,8 @@ import { MarkAnalyticsRemovedForm } from "./mark-analytics-removed-form";
 
 const COLUMNS: AdminTableColumn[] = [
   { label: "PostHog distinct id" },
-  { label: "Account deleted" },
-  { align: "right", label: "" },
+  { label: "Account deleted", size: "text" },
+  { align: "right", label: "", size: "wide" },
 ];
 
 export async function AccountDeletionList() {

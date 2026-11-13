@@ -13,7 +13,7 @@ const COLUMNS = [
   { label: "Skill" },
   { label: "Level" },
   { align: "right" as const, label: "Lessons" },
-  { align: "right" as const, label: "Practice questions" },
+  { align: "right" as const, label: "Practice questions", size: "wide" as const },
   { align: "right" as const, label: "Learners" },
 ];
 

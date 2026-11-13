@@ -23,6 +23,7 @@ export async function ItemExplanations({ itemId }: { itemId: string }) {
   return (
     <AdminSection title={`Answer explanations (${explanations.length})`}>
       <AdminTableColumns
+        unsized
         columns={EXPLANATION_COLUMNS}
         emptyLabel="No wrong answer has been explained yet."
         isEmpty={explanations.length === 0}

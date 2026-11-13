@@ -30,7 +30,7 @@ const BY = {
   goal: {
     columns: [
       { label: "Goal" },
-      { label: "Learner" },
+      { label: "Learner", size: "text" as const },
       { align: RIGHT, label: "Calls" },
       { align: RIGHT, label: "Cost" },
     ],
@@ -45,7 +45,7 @@ const BY = {
   },
   learner: {
     columns: [
-      { label: "Learner" },
+      { label: "Learner", size: "text" as const },
       { align: RIGHT, label: "Calls" },
       { align: RIGHT, label: "Cost" },
     ],
@@ -62,7 +62,7 @@ const BY = {
   },
   model: {
     columns: [
-      { label: "Model" },
+      { label: "Model", size: "wide" as const },
       { align: RIGHT, label: "Calls" },
       { align: RIGHT, label: "Input" },
       { align: RIGHT, label: "Output" },
@@ -188,9 +188,9 @@ function Failed() {
       <MockRows
         columns={[
           { label: "What was being written" },
-          { label: "Kind" },
-          { label: "State" },
-          { label: "Updated" },
+          { label: "Kind", size: "wide" as const },
+          { label: "State", size: "wide" as const },
+          { label: "Updated", size: "wide" as const },
         ]}
         rows={runs.slice(0, 10).map((row) => [
           <span className="text-foreground" key="what">
@@ -223,7 +223,7 @@ function Plus() {
       <AdminSection title="Plus learners this month">
         <MockRows
           columns={[
-            { label: "Plan" },
+            { label: "Plan", size: "wide" as const },
             { align: RIGHT, label: "Learners" },
             { align: RIGHT, label: "Pays a month" },
             { align: RIGHT, label: "Cost" },
@@ -242,9 +242,9 @@ function Plus() {
       <AdminSection title="Plus learners by cost">
         <MockRows
           columns={[
-            { label: "Learner" },
-            { label: "Plan" },
-            { label: "Goals" },
+            { label: "Learner", size: "text" as const },
+            { label: "Plan", size: "wide" as const },
+            { label: "Goals", size: "long" as const },
             { align: RIGHT, label: "Calls" },
             { align: RIGHT, label: "Cost" },
             { align: RIGHT, label: "Pays a month" },
@@ -255,7 +255,7 @@ function Plus() {
               <span className="text-muted-foreground block text-xs">{parts(row[0])[1]}</span>
             </span>,
             row[1]?.text.replace("Granted", "Given by Zoonk"),
-            <span className="block max-w-xs" key="goal">
+            <span className="block whitespace-normal" key="goal">
               {row[2]?.text}
             </span>,
             row[3]?.text,
@@ -276,8 +276,8 @@ function WrittenBy() {
       <MockRows
         columns={[
           { label: "What" },
-          { label: "Model" },
-          { label: "Prompt version" },
+          { label: "Model", size: "wide" as const },
+          { label: "Prompt version", size: "wide" as const },
           { align: RIGHT, label: "How many" },
         ]}
         rows={rows

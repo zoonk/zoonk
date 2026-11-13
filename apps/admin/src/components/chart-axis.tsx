@@ -20,6 +20,9 @@ export function getEvenTicks(maximumValue: number): number[] {
   return Array.from({ length: count + 1 }, (_, index) => index * step);
 }
 
+/** The smallest text size (`text-2xs`), which an SVG label can't take from a class. */
+export const CHART_TICK_FONT_SIZE = 11.5;
+
 /**
  * A value axis's label, starting on the chart's left edge so it lines up with the text above and
  * below the chart. Recharts ends its labels on the plot instead, which indents them by their width.
@@ -38,7 +41,14 @@ export function ChartValueTick({
   }
 
   return (
-    <text dy="0.32em" fill="var(--muted-foreground)" fontSize={11} textAnchor="start" x={0} y={y}>
+    <text
+      dy="0.32em"
+      fill="var(--muted-foreground)"
+      fontSize={CHART_TICK_FONT_SIZE}
+      textAnchor="start"
+      x={0}
+      y={y}
+    >
       {format(payload.value)}
     </text>
   );

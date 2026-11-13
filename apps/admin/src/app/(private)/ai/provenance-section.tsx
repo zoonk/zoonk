@@ -19,6 +19,7 @@ async function ProvenanceTable({ days }: { days: number }) {
 
   return (
     <AdminTableColumns
+      unsized
       columns={columns}
       emptyLabel={`No AI-written rows in the last ${days} days.`}
       isEmpty={rows.length === 0}

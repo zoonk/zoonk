@@ -1,6 +1,5 @@
 import { AdminTableRowLink } from "@/components/admin-table-row";
 import { TableCell } from "@zoonk/ui/components/table";
-import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 
 type Person = {
@@ -39,7 +38,7 @@ export function AdminUserCell({
   const UserLink = opensRow ? AdminTableRowLink : Link;
 
   return (
-    <TableCell className={cn("max-w-64", className)}>
+    <TableCell className={className}>
       <UserLink className="block" href={`/users/${userId}`} prefetch>
         <span className="block truncate font-medium">
           {personName(user)}

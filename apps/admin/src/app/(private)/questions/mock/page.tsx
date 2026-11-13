@@ -1,7 +1,12 @@
 import dump from "@/app/(private)/_mock/data/questions.json";
 import { type Dump, MockList, MockSearch, day, parts } from "@/app/(private)/_mock/kit";
 
-const COLUMNS = [{ label: "Question" }, { label: "Who" }, { label: "Where" }, { label: "Asked" }];
+const COLUMNS = [
+  { label: "Question" },
+  { label: "Who" },
+  { label: "Where", size: "long" as const },
+  { label: "Asked" },
+];
 
 export default function BuddyQuestionsMockPage() {
   const rows = ((dump as Dump).tables[0]?.rows ?? []).slice(0, 10);

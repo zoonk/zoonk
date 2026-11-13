@@ -67,6 +67,7 @@ export async function SkillUsage({ skillId }: { skillId: string }) {
 function SkillLessonsTable({ lessons }: { lessons: SkillUsageRows["lessons"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={LESSON_COLUMNS}
       emptyLabel="No lesson teaches this skill."
       isEmpty={lessons.length === 0}
@@ -90,6 +91,7 @@ function SkillLessonsTable({ lessons }: { lessons: SkillUsageRows["lessons"] }) 
 function SkillChaptersTable({ chapters }: { chapters: SkillUsageRows["chapters"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={CHAPTER_COLUMNS}
       emptyLabel="No chapter was tagged with this skill."
       isEmpty={chapters.length === 0}
@@ -108,6 +110,7 @@ function SkillChaptersTable({ chapters }: { chapters: SkillUsageRows["chapters"]
 function SkillItemsTable({ items }: { items: SkillUsageRows["items"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={ITEM_COLUMNS}
       emptyLabel="No item practices this skill."
       isEmpty={items.length === 0}

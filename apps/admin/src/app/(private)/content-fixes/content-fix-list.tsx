@@ -55,6 +55,7 @@ export async function ContentFixList() {
     <>
       <AdminSection title="Waiting for review">
         <AdminTableColumns
+          unsized
           columns={PENDING_COLUMNS}
           emptyLabel="No fix is waiting for review."
           isEmpty={pending.length === 0}
@@ -67,6 +68,7 @@ export async function ContentFixList() {
 
       <AdminSection title="Decided">
         <AdminTableColumns
+          unsized
           columns={DECIDED_COLUMNS}
           emptyLabel="No fix has been decided yet."
           isEmpty={decided.length === 0}
@@ -84,10 +86,10 @@ export function ContentFixListSkeleton() {
   return (
     <>
       <AdminSectionSkeleton>
-        <AdminTableColumnsSkeleton columns={PENDING_COLUMNS} />
+        <AdminTableColumnsSkeleton unsized columns={PENDING_COLUMNS} />
       </AdminSectionSkeleton>
       <AdminSectionSkeleton>
-        <AdminTableColumnsSkeleton columns={DECIDED_COLUMNS} />
+        <AdminTableColumnsSkeleton unsized columns={DECIDED_COLUMNS} />
       </AdminSectionSkeleton>
     </>
   );

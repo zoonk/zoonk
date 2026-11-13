@@ -13,7 +13,7 @@ import { AudioLinesIcon } from "lucide-react";
 
 const COLUMNS = [
   { label: "Picture or clip" },
-  { label: "Kind" },
+  { label: "Kind", size: "wide" as const },
   { label: "Used in" },
   { label: "Made" },
 ];

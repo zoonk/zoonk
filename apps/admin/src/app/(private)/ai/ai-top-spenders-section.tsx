@@ -24,6 +24,7 @@ type TopSpenders = Awaited<ReturnType<typeof listTopAiSpenders>>;
 function GoalSpenders({ goals }: { goals: TopSpenders["goals"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={goalColumns}
       emptyLabel="No goal spent anything."
       isEmpty={goals.length === 0}
@@ -55,6 +56,7 @@ function GoalSpenders({ goals }: { goals: TopSpenders["goals"] }) {
 function LearnerSpenders({ learners }: { learners: TopSpenders["learners"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={learnerColumns}
       emptyLabel="No learner spent anything."
       isEmpty={learners.length === 0}

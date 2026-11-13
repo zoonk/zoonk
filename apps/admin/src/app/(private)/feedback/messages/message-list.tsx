@@ -32,12 +32,14 @@ const EMPTY_LABELS: Record<FeedbackFilter, string> = {
 };
 
 function messageColumns(filter: FeedbackFilter): AdminTableColumn[] {
+  // State comes right after the first column, which gives it its room: the columns after it
+  // stay where they are when the view changes.
   return [
     { label: "From" },
-    { label: "About" },
-    { label: "App" },
-    { label: "Sent" },
     ...(filter === "all" ? [{ label: "State" }] : []),
+    { label: "About", size: "text" },
+    { label: "App", size: "wide" },
+    { label: "Sent" },
   ];
 }
 

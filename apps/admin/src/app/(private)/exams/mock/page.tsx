@@ -121,7 +121,7 @@ function Blueprint() {
         <MockRows
           columns={[
             { label: "Day" },
-            { label: "Part" },
+            { label: "Part", size: "long" as const },
             { align: "right", label: "Questions" },
             { align: "right", label: "Minutes" },
           ]}
@@ -137,7 +137,7 @@ function Blueprint() {
       <AdminSection title={`Subjects (${structure.subjects.length})`}>
         <MockRows
           columns={[
-            { label: "Subject" },
+            { label: "Subject", size: "wide" as const },
             { align: "right", label: "Questions" },
             { label: "Topics" },
           ]}
@@ -153,15 +153,15 @@ function Blueprint() {
         <MockRows
           columns={[
             { label: "Topic" },
-            { label: "Subject" },
+            { label: "Subject", size: "wide" as const },
             { label: "How often" },
-            { label: "Why" },
+            { label: "Why", size: "long" as const },
           ]}
           rows={topicFrequency.map((topic) => [
             topic.topic,
             topic.subject,
             FREQUENCY[topic.level] ?? topic.level,
-            <span className="block max-w-md" key="why">
+            <span className="block whitespace-normal" key="why">
               {topic.basis}
             </span>,
           ])}
@@ -179,7 +179,7 @@ function SkillGraph() {
       <MockRows
         columns={[
           { label: "Skill" },
-          { label: "Area" },
+          { label: "Area", size: "wide" as const },
           { align: "right", label: "Weight" },
           { align: "right", label: "Lessons" },
         ]}

@@ -12,9 +12,9 @@ import {
 
 const COLUMNS = [
   { label: "They typed" },
-  { label: "Zoonk read it as" },
-  { label: "Outcome" },
-  { label: "Who" },
+  { label: "Zoonk read it as", size: "long" as const },
+  { label: "Outcome", size: "wide" as const },
+  { label: "Who", size: "text" as const },
   { label: "Date" },
 ];
 

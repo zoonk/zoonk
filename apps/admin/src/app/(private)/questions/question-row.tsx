@@ -41,7 +41,7 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
           {question.answer ? markdownToPlainText(question.answer) : "No answer yet"}
         </span>
       </TableCell>
-      <AdminUserCell className="max-w-48 min-w-40" opensRow={false} user={user} userId={user.id} />
+      <AdminUserCell opensRow={false} user={user} userId={user.id} />
       <TableCell className="max-w-56 min-w-48 whitespace-normal">
         <QuestionLessonCell question={question} />
       </TableCell>

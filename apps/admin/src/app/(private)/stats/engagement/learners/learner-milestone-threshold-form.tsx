@@ -32,7 +32,7 @@ export function LearnerMilestoneThresholdForm({
         />
       </div>
 
-      <Button type="submit" variant="outline">
+      <Button size="lg" type="submit" variant="outline">
         Apply
       </Button>
     </Form>

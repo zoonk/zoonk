@@ -103,7 +103,13 @@ function UsedIn() {
         <TableFrom dump={skill} omit={["Visibility"]} section="Chapters" />
       </AdminSection>
       <AdminSection title="Practice questions (4)">
-        <TableFrom dump={skill} omit={["Field"]} rename={{ Item: "Question" }} section="Items" />
+        <TableFrom
+          dump={skill}
+          omit={["Field"]}
+          rename={{ Item: "Question" }}
+          section="Items"
+          sizes={{ Format: "wide" }}
+        />
       </AdminSection>
     </>
   );

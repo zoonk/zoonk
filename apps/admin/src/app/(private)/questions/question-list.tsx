@@ -46,6 +46,7 @@ async function CachedQuestionList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={QUESTION_COLUMNS}
         emptyLabel="No questions found."
         isEmpty={questions.length === 0}
@@ -67,5 +68,5 @@ async function CachedQuestionList({
 }
 
 export function QuestionListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={QUESTION_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={QUESTION_COLUMNS} />;
 }

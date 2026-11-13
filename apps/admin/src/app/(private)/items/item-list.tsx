@@ -67,6 +67,7 @@ async function CachedItemList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={ITEM_COLUMNS}
         emptyLabel="No items found."
         isEmpty={items.length === 0}
@@ -93,5 +94,5 @@ async function CachedItemList({
 }
 
 export function ItemListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={ITEM_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={ITEM_COLUMNS} />;
 }

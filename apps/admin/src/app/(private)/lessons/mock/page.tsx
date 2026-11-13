@@ -243,7 +243,7 @@ function Details() {
 
 function WrittenBy() {
   return (
-    <div className="grid gap-8 md:grid-cols-2">
+    <div className="flex flex-col gap-8">
       <AdminSection title="Outline">
         <FactsFrom dump={lesson} section="Outline" />
         <span className="flex gap-4">
@@ -256,7 +256,7 @@ function WrittenBy() {
         </span>
       </AdminSection>
       <AdminSection title="Versions">
-        <TableFrom dump={lesson} section="Versions" />
+        <TableFrom dump={lesson} section="Versions" sizes={{ Model: "wide" }} />
       </AdminSection>
     </div>
   );

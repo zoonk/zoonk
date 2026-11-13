@@ -1,6 +1,11 @@
 "use client";
 
-import { CHART_CATEGORY_PADDING, ChartValueTick, getEvenTicks } from "@/components/chart-axis";
+import {
+  CHART_CATEGORY_PADDING,
+  CHART_TICK_FONT_SIZE,
+  ChartValueTick,
+  getEvenTicks,
+} from "@/components/chart-axis";
 import { formatUsd } from "@/lib/ai-format";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -44,7 +49,7 @@ export function AiDailySpendChart({ points }: { points: DailySpendPoint[] }) {
           <XAxis
             axisLine={false}
             dataKey="label"
-            fontSize={11}
+            fontSize={CHART_TICK_FONT_SIZE}
             interval={labelEvery - 1}
             padding={CHART_CATEGORY_PADDING}
             stroke="var(--muted-foreground)"

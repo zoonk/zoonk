@@ -62,6 +62,7 @@ async function CachedSourceList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={SOURCE_COLUMNS}
         emptyLabel="No sources found."
         isEmpty={sources.length === 0}
@@ -84,5 +85,5 @@ async function CachedSourceList({
 }
 
 export function SourceListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={SOURCE_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={SOURCE_COLUMNS} />;
 }

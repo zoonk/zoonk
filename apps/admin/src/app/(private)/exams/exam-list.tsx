@@ -44,6 +44,7 @@ async function CachedExamList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={EXAM_COLUMNS}
         emptyLabel="No exam blueprints yet."
         isEmpty={exams.length === 0}
@@ -64,5 +65,5 @@ async function CachedExamList({
 }
 
 export function ExamListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={EXAM_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={EXAM_COLUMNS} />;
 }

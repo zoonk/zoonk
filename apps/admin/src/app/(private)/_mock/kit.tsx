@@ -208,11 +208,14 @@ export function FactsFrom({
   omit = [],
   rename = {},
   section,
+  sizes = {},
 }: {
   dump: Dump;
   omit?: string[];
   rename?: Record<string, string>;
   section: string;
+  /** A column's size by its label, where its facts are longer than a short one's. */
+  sizes?: Record<string, MockColumn["size"]>;
 }) {
   return (
     <Facts
@@ -229,11 +232,14 @@ export function TableFrom({
   omit = [],
   rename = {},
   section,
+  sizes = {},
 }: {
   dump: Dump;
   omit?: string[];
   rename?: Record<string, string>;
   section: string;
+  /** A column's size by its label, where its facts are longer than a short one's. */
+  sizes?: Record<string, MockColumn["size"]>;
 }) {
   const table = dump.tables.find((item) => item.section.startsWith(section));
   const keep = (table?.head ?? [])
@@ -242,7 +248,10 @@ export function TableFrom({
 
   return (
     <MockRows
-      columns={keep.map(({ label }) => ({ label: rename[label] ?? label }))}
+      columns={keep.map(({ label }) => ({
+        label: rename[label] ?? label,
+        size: sizes[rename[label] ?? label],
+      }))}
       rows={(table?.rows ?? []).map((row) =>
         keep.map(({ index }, position) =>
           position === 0 ? (

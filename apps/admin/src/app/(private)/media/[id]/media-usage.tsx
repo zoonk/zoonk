@@ -36,6 +36,7 @@ export async function MediaUsage({ mediaAssetId }: { mediaAssetId: string }) {
 function MediaStepsTable({ steps }: { steps: AdminMediaAsset["steps"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={STEP_COLUMNS}
       emptyLabel="No step shows this asset."
       isEmpty={steps.length === 0}

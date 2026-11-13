@@ -78,7 +78,12 @@ async function SpendByTask({ days }: { days: number }) {
   const rows = await listAiSpendByTask(days);
 
   return (
-    <AdminTableColumns columns={taskColumns} emptyLabel="No AI calls." isEmpty={rows.length === 0}>
+    <AdminTableColumns
+      unsized
+      columns={taskColumns}
+      emptyLabel="No AI calls."
+      isEmpty={rows.length === 0}
+    >
       {rows.map((row) => (
         <AdminTableRow key={row.task}>
           <TableCell className="font-mono text-xs">{row.task}</TableCell>
@@ -111,7 +116,12 @@ async function SpendByModel({ days }: { days: number }) {
   const rows = await listAiSpendByModel(days);
 
   return (
-    <AdminTableColumns columns={modelColumns} emptyLabel="No AI calls." isEmpty={rows.length === 0}>
+    <AdminTableColumns
+      unsized
+      columns={modelColumns}
+      emptyLabel="No AI calls."
+      isEmpty={rows.length === 0}
+    >
       {rows.map((row) => (
         <AdminTableRow key={`${row.model}|${row.serviceTier ?? "standard"}`}>
           <TableCell className="font-mono text-xs">{row.model}</TableCell>

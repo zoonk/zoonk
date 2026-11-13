@@ -15,7 +15,7 @@ import { Label } from "@zoonk/ui/components/label";
 
 const COLUMNS = [
   { label: "Lesson" },
-  { label: "Course and chapter" },
+  { label: "Course and chapter", size: "text" as const },
   { label: "State" },
   { align: "right" as const, label: "Screens" },
   { label: "Updated" },

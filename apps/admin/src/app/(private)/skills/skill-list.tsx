@@ -73,6 +73,7 @@ async function CachedSkillList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={SKILL_COLUMNS}
         emptyLabel="No skills found."
         isEmpty={skills.length === 0}
@@ -95,5 +96,5 @@ async function CachedSkillList({
 }
 
 export function SkillListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={SKILL_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={SKILL_COLUMNS} />;
 }

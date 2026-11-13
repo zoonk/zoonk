@@ -10,7 +10,7 @@ const GOAL_COLUMNS: AdminTableColumn[] = [
   { label: "State" },
   { align: "right", label: "Time a day" },
   { label: "Date" },
-  { align: "right", label: "Plan" },
+  { align: "right", label: "Plan", size: "wide" },
 ];
 
 const PLAN_COLUMNS: AdminTableColumn[] = [

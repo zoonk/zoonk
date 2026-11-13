@@ -1,7 +1,11 @@
 import dump from "@/app/(private)/_mock/data/content-fixes.json";
 import { type Dump, Lead, MockList, MockViews, parts, readView } from "@/app/(private)/_mock/kit";
 
-const COLUMNS = [{ label: "Fix" }, { label: "Where" }, { label: "Proposed by" }];
+const COLUMNS = [
+  { label: "Fix" },
+  { label: "Where", size: "long" as const },
+  { label: "Proposed by", size: "wide" as const },
+];
 
 export default async function ContentFixesMockPage({
   searchParams,
@@ -15,7 +19,7 @@ export default async function ContentFixesMockPage({
       empty="No fix has been decided yet."
       rows={rows.map((row) => [
         <Lead key="lead" title={row[0]?.text} />,
-        <span className="block max-w-xs" key="where">
+        <span className="block whitespace-normal" key="where">
           {row[1]?.text}
         </span>,
         <span className="block" key="who">

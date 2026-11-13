@@ -14,7 +14,7 @@ const COLUMNS: AdminTableColumn[] = [
   { label: "Person" },
   { label: "Logged in on" },
   { label: "Last used" },
-  { align: "right", label: "" },
+  { align: "right", label: "", size: "text" },
 ];
 
 export async function CliLoginList() {

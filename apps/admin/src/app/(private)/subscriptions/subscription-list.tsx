@@ -23,10 +23,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 const COLUMNS: AdminTableColumn[] = [
   { label: "User" },
   { label: "Plan" },
-  { label: "Billed by" },
+  { label: "Billed by", size: "text" },
   { label: "State" },
   { label: "Started" },
-  { label: "Renews or ends" },
+  { label: "Renews or ends", size: "wide" },
 ];
 
 /** States where money stopped or never arrived, which is what staff scan this list for. */

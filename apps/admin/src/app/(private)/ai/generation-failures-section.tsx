@@ -90,13 +90,14 @@ export async function GenerationFailuresSection() {
       title="Generation failures"
     >
       <div className="flex flex-col gap-4">
-        <AdminTableColumns columns={countColumns} emptyLabel="" isEmpty={false}>
+        <AdminTableColumns unsized columns={countColumns} emptyLabel="" isEmpty={false}>
           {counts.map((count) => (
             <FailureCountRow count={count} key={count.workflow} />
           ))}
         </AdminTableColumns>
 
         <AdminTableColumns
+          unsized
           columns={latestColumns}
           emptyLabel="No failed or stuck generations."
           isEmpty={latest.length === 0}

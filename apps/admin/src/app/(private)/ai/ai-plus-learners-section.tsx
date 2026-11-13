@@ -139,6 +139,7 @@ function ByPlan({ learners, prices }: Pick<PlusLearners, "learners" | "prices">)
 
   return (
     <AdminTableColumns
+      unsized
       columns={planColumns}
       emptyLabel="Nobody has Plus."
       isEmpty={plans.length === 0}
@@ -223,6 +224,7 @@ export async function AiPlusLearnersSection() {
         title="Plus learners by cost"
       >
         <AdminTableColumns
+          unsized
           columns={learnerColumns}
           emptyLabel="No Plus learner made an AI call this month."
           isEmpty={spenders.length === 0}

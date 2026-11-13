@@ -9,7 +9,7 @@ import { feedbackStatusLabels, getFeedbackSubject } from "../../feedback/_utils/
 const FEEDBACK_COLUMNS: AdminTableColumn[] = [
   { label: "Sent" },
   { fill: true, label: "About" },
-  { label: "State" },
+  { label: "State", size: "narrow" },
 ];
 
 const QUESTION_COLUMNS: AdminTableColumn[] = [

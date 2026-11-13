@@ -24,10 +24,10 @@ export default async function FeedbackTextMockPage({
     <MockList
       columns={[
         { label: "Message" },
-        { label: "About" },
-        { label: "App" },
-        { label: "Sent" },
         ...(all ? [{ label: "State" }] : []),
+        { label: "About", size: "text" as const },
+        { label: "App", size: "wide" as const },
+        { label: "Sent" },
       ]}
       rows={messages.map((message) => {
         const context = parseFeedbackMessageContext(message.context);
@@ -39,6 +39,7 @@ export default async function FeedbackTextMockPage({
             second={[message.user?.name, message.email].filter(Boolean).join(" · ") || "Unknown sender"}
             title={<span className="line-clamp-1">{message.message}</span>}
           />,
+          ...(all ? [feedbackStatusLabels[message.status]] : []),
           <span className="block" key="about">
             {subject}
             {context.screen && context.screen !== subject ? (
@@ -47,7 +48,6 @@ export default async function FeedbackTextMockPage({
           </span>,
           getFeedbackPlatform(context) ?? "—",
           formatDate(message.createdAt),
-          ...(all ? [feedbackStatusLabels[message.status]] : []),
         ];
       })}
       title="Feedback"

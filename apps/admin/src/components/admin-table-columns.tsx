@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
+import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon } from "lucide-react";
 import Link from "next/link";
@@ -20,20 +21,78 @@ export type AdminTableColumn = {
   label: string;
   /** Makes the header a link that sorts the list by this column, highest or newest first. */
   sort?: { href: string; isActive: boolean };
+  /**
+   * A fact that isn't the width of a date or a count: `narrow` for one short word, `wide` for a
+   * few words, `text` for a name or a date with its time, `long` for a sentence.
+   */
+  size?: "long" | "narrow" | "text" | "wide";
 };
 
 /**
- * One column takes the room that's left and every other is at least one step wide, so a short
- * fact (a date, a count, a state) sits in the same place whatever the rows say, on every table.
+ * Columns have set widths, so nothing moves when the rows load, sort, filter or change page: one
+ * column takes the room that's left and every other is a number of 56 px steps wide, two for a
+ * short fact. A fact longer than its column is cut with an ellipsis, or wraps where its cell says.
  */
-const FILL_COLUMN_CLASS = "w-full";
-const FACT_COLUMN_CLASS = "min-w-28";
+const SIZES = {
+  fact: { className: "w-28", rem: 7 },
+  long: { className: "w-84", rem: 21 },
+  narrow: { className: "w-21", rem: 5.25 },
+  text: { className: "w-56", rem: 14 },
+  wide: { className: "w-42", rem: 10.5 },
+} as const;
 
-function AdminTableColumnHead({ column, fills }: { column: AdminTableColumn; fills: boolean }) {
+// A cell that holds a control keeps its focus ring: it isn't cut. Narrower than its set columns
+// and a first column worth reading (wider on a phone, where it is most of the screen), the table
+// scrolls sideways.
+const FIXED_TABLE_CLASS =
+  "table-fixed min-w-[calc(var(--facts-width)+14rem)] md:min-w-[calc(var(--facts-width)+6rem)] [&_:is(td,th)]:overflow-hidden [&_:is(td,th)]:text-ellipsis [&_td:has(button,input,select)]:overflow-visible";
+
+function fillIndexOf(columns: AdminTableColumn[]) {
+  return Math.max(
+    0,
+    columns.findIndex((column) => column.fill),
+  );
+}
+
+function factsWidth(columns: AdminTableColumn[]) {
+  const fillIndex = fillIndexOf(columns);
+
+  const rem = columns.reduce(
+    (total, column, index) =>
+      index === fillIndex ? total : total + SIZES[column.size ?? "fact"].rem,
+    0,
+  );
+
+  return `${rem}rem`;
+}
+
+function AdminTable({
+  children,
+  columns,
+  unsized = false,
+}: {
+  children: React.ReactNode;
+  columns: AdminTableColumn[];
+  unsized?: boolean;
+}) {
+  const factsStyle: CSSPropertiesWithVariables = { "--facts-width": factsWidth(columns) };
+
+  return (
+    <Table
+      className={unsized ? undefined : FIXED_TABLE_CLASS}
+      style={unsized ? undefined : factsStyle}
+    >
+      <AdminTableColumnsHeader columns={columns} unsized={unsized} />
+      {children}
+    </Table>
+  );
+}
+
+function AdminTableColumnHead({ column, sized }: { column: AdminTableColumn; sized: boolean }) {
   const { align, label, sort } = column;
 
   const className = cn(
-    fills ? FILL_COLUMN_CLASS : FACT_COLUMN_CLASS,
+    sized && SIZES[column.size ?? "fact"].className,
     align === "right" && "text-right",
   );
 
@@ -46,7 +105,7 @@ function AdminTableColumnHead({ column, fills }: { column: AdminTableColumn; fil
       <Link
         aria-current={sort.isActive ? "page" : undefined}
         className={cn(
-          "hover:text-foreground inline-flex min-h-11 w-full items-center gap-1 text-inherit transition-colors",
+          "hover:text-foreground hit-area relative inline-flex w-full items-center gap-1 text-inherit transition-colors",
           align === "right" ? "justify-end" : "justify-start",
         )}
         href={sort.href}
@@ -65,44 +124,55 @@ function AdminTableColumnHead({ column, fills }: { column: AdminTableColumn; fil
   );
 }
 
-function AdminTableColumnsHeader({ columns }: { columns: AdminTableColumn[] }) {
-  const fillIndex = Math.max(
-    0,
-    columns.findIndex((column) => column.fill),
-  );
+function AdminTableColumnsHeader({
+  columns,
+  unsized,
+}: {
+  columns: AdminTableColumn[];
+  unsized: boolean;
+}) {
+  const fillIndex = fillIndexOf(columns);
 
   return (
     <TableHeader>
       <TableRow>
         {columns.map((column, index) => (
-          <AdminTableColumnHead column={column} fills={index === fillIndex} key={column.label} />
+          <AdminTableColumnHead
+            column={column}
+            key={column.label}
+            sized={!unsized && index !== fillIndex}
+          />
         ))}
       </TableRow>
     </TableHeader>
   );
 }
 
-/** Every Admin table: its columns, its rows, and a sentence instead of an empty table. */
+/**
+ * Every Admin table: its columns, its rows, and a sentence instead of an empty table. `unsized`
+ * is only for the pages not rebuilt yet, whose nine or ten columns still size to their text.
+ */
 export function AdminTableColumns({
   children,
   columns,
   emptyLabel,
   isEmpty,
+  unsized,
 }: {
   children: React.ReactNode;
   columns: AdminTableColumn[];
   emptyLabel: string;
   isEmpty: boolean;
+  unsized?: boolean;
 }) {
   if (isEmpty) {
     return <AdminSectionEmpty>{emptyLabel}</AdminSectionEmpty>;
   }
 
   return (
-    <Table>
-      <AdminTableColumnsHeader columns={columns} />
+    <AdminTable columns={columns} unsized={unsized}>
       <TableBody>{children}</TableBody>
-    </Table>
+    </AdminTable>
   );
 }
 
@@ -118,14 +188,19 @@ function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[]
   );
 }
 
-export function AdminTableColumnsSkeleton({ columns }: { columns: AdminTableColumn[] }) {
+export function AdminTableColumnsSkeleton({
+  columns,
+  unsized,
+}: {
+  columns: AdminTableColumn[];
+  unsized?: boolean;
+}) {
   return (
-    <Table>
-      <AdminTableColumnsHeader columns={columns} />
+    <AdminTable columns={columns} unsized={unsized}>
       <AdminTableSkeletonRows>
         <AdminTableColumnsSkeletonRow columns={columns} />
       </AdminTableSkeletonRows>
-    </Table>
+    </AdminTable>
   );
 }
 

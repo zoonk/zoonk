@@ -1,6 +1,11 @@
 "use client";
 
-import { CHART_CATEGORY_PADDING, ChartValueTick, getEvenTicks } from "@/components/chart-axis";
+import {
+  CHART_CATEGORY_PADDING,
+  CHART_TICK_FONT_SIZE,
+  ChartValueTick,
+  getEvenTicks,
+} from "@/components/chart-axis";
 import { formatDuration } from "@/lib/format-duration";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -195,8 +200,8 @@ export function AdminMetricTrendChart({
               <XAxis
                 axisLine={false}
                 dataKey="label"
-                fontSize={11}
-                interval="preserveStartEnd"
+                fontSize={CHART_TICK_FONT_SIZE}
+                interval="equidistantPreserveStart"
                 minTickGap={48}
                 padding={CHART_CATEGORY_PADDING}
                 stroke="var(--muted-foreground)"

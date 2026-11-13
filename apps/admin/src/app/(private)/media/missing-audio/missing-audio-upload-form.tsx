@@ -37,13 +37,13 @@ export function MissingAudioUploadForm({
   });
 
   return (
-    <form action={formAction} className="flex min-w-64 items-center justify-end gap-2">
+    <form action={formAction} className="flex items-center justify-end gap-2">
       <input name="resourceId" type="hidden" value={resourceId} />
       <input name="resourceKind" type="hidden" value={resourceKind} />
       <Input
         accept="audio/mpeg,audio/mp4,audio/m4a,audio/wav,audio/x-wav,audio/ogg,audio/webm"
         aria-label={`Audio file for ${text}`}
-        className="h-7.5 max-w-64 rounded-md px-2 py-0 text-xs file:h-7 file:text-xs md:text-xs"
+        className="h-7.5 max-w-56 rounded-md px-2 py-0 text-xs file:h-7 file:text-xs md:text-xs"
         key={state.submissionId}
         name="audio"
         required

@@ -59,6 +59,7 @@ async function CachedMediaList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={MEDIA_COLUMNS}
         emptyLabel="No media found."
         isEmpty={assets.length === 0}
@@ -80,5 +81,5 @@ async function CachedMediaList({
 }
 
 export function MediaListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={MEDIA_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={MEDIA_COLUMNS} />;
 }

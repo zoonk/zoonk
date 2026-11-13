@@ -49,6 +49,7 @@ export async function LibraryLessonList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={LIBRARY_LESSON_COLUMNS}
         emptyLabel="No lessons found."
         isEmpty={lessons.length === 0}
@@ -71,5 +72,5 @@ export async function LibraryLessonList({
 }
 
 export function LibraryLessonListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={LIBRARY_LESSON_COLUMNS} />;
+  return <AdminTableColumnsSkeleton unsized columns={LIBRARY_LESSON_COLUMNS} />;
 }

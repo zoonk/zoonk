@@ -54,6 +54,7 @@ async function CachedPromptList({
   return (
     <>
       <AdminTableColumns
+        unsized
         columns={columns}
         emptyLabel={outcome || search ? "No prompts match." : "No prompts yet."}
         isEmpty={prompts.length === 0}
@@ -76,5 +77,5 @@ async function CachedPromptList({
 }
 
 export function PromptListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={columns} />;
+  return <AdminTableColumnsSkeleton unsized columns={columns} />;
 }

@@ -10,8 +10,8 @@ const COLUMNS: AdminTableColumn[] = [
   { label: "State" },
   { label: "Next review" },
   { align: "right", label: "Reviews" },
-  { align: "right", label: "Times forgotten" },
-  { align: "right", label: "Remembered for" },
+  { align: "right", label: "Times forgotten", size: "wide" },
+  { align: "right", label: "Remembered for", size: "wide" },
   { label: "Last review" },
 ];
 

@@ -10,6 +10,7 @@ const columns: AdminTableColumn[] = [{ label: "Goal" }, { label: "Status" }, { l
 export function PromptGoals({ prompt }: { prompt: AdminPrompt }) {
   return (
     <AdminTableColumns
+      unsized
       columns={columns}
       emptyLabel="No goal was created from this prompt."
       isEmpty={prompt.goals.length === 0}

@@ -59,6 +59,7 @@ export async function SourceCitations({ sourceId }: { sourceId: string }) {
 function SourceExamsTable({ exams }: { exams: SourceCitationRows["examBlueprints"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={EXAM_COLUMNS}
       emptyLabel="No exam blueprint was read from this source."
       isEmpty={exams.length === 0}
@@ -81,6 +82,7 @@ function SourceExamsTable({ exams }: { exams: SourceCitationRows["examBlueprints
 function SourceItemsTable({ items }: { items: SourceCitationRows["items"] }) {
   return (
     <AdminTableColumns
+      unsized
       columns={ITEM_COLUMNS}
       emptyLabel="No item cites this source."
       isEmpty={items.length === 0}

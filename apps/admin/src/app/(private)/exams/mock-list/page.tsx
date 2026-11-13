@@ -3,10 +3,10 @@ import { type Dump, Lead, MockList, day, language } from "@/app/(private)/_mock/
 
 const COLUMNS = [
   { label: "Exam" },
-  { label: "Country" },
+  { label: "Country", size: "wide" as const },
   { label: "Exam date" },
   { align: "right" as const, label: "Goals" },
-  { label: "Next check" },
+  { label: "Next check", size: "wide" as const },
 ];
 
 const COUNTRIES: Record<string, string> = {

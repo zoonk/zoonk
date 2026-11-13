@@ -11,10 +11,10 @@ import {
 
 const COLUMNS = [
   { label: "Question" },
-  { label: "Skill" },
-  { label: "Format" },
+  { label: "Skill", size: "long" as const },
+  { label: "Format", size: "wide" as const },
   { align: "right" as const, label: "Answers" },
-  { align: "right" as const, label: "Accuracy" },
+  { align: "right" as const, label: "Accuracy", size: "wide" as const },
 ];
 
 // A real question from the same database that today's search by skill name can't find.
