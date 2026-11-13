@@ -19,10 +19,6 @@ const fixSelect = {
   unitId: true,
 } as const;
 
-export const countPendingContentFixes = cacheAdminData(() =>
-  prisma.contentFix.count({ where: { status: "proposed" } }),
-);
-
 /** Every fix waiting for a decision, then the latest decisions. */
 export const listContentFixes = cacheAdminData(async () => {
   const [pending, decided] = await Promise.all([

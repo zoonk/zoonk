@@ -1,5 +1,6 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminTabs } from "@/components/admin-tabs";
 import {
+  DEFAULT_LEADERBOARD_PERIOD,
   type LeaderboardPeriod,
   leaderboardPeriodLabels,
   leaderboardPeriods,
@@ -7,8 +8,8 @@ import {
 
 export function LeaderboardPeriodFilter({ period }: { period: LeaderboardPeriod }) {
   return (
-    <AdminFilterNav
-      label="Leaderboard period filter"
+    <AdminTabs
+      label="Period"
       options={leaderboardPeriods.map((item) => ({
         href: getLeaderboardPeriodHref(item),
         isActive: period === item,
@@ -21,5 +22,5 @@ export function LeaderboardPeriodFilter({ period }: { period: LeaderboardPeriod 
 function getLeaderboardPeriodHref(
   period: LeaderboardPeriod,
 ): "/leaderboard" | `/leaderboard?${string}` {
-  return period === "today" ? "/leaderboard" : `/leaderboard?period=${period}`;
+  return period === DEFAULT_LEADERBOARD_PERIOD ? "/leaderboard" : `/leaderboard?period=${period}`;
 }

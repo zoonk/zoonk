@@ -34,7 +34,7 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
 
   return (
     <ListRow data-highlighted={step.state === "current" || undefined} role="listitem">
-      <ListRowLeading className="w-3.5 justify-center">
+      <ListRowLeading>
         {done ? <DoneMark className="size-3.5" /> : <KindMark kind={step.kind} />}
       </ListRowLeading>
 

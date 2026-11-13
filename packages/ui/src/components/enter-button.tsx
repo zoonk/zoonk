@@ -24,7 +24,8 @@ const ENTER_HINT = <ShortcutKbd shortcut="main" tone="inverse" />;
  * A screen's main action, and the one home of Enter, the ⏎ hint and the busy look: a screen gets
  * all three by drawing it. Its one glyph is the ⏎ keycap, so it takes no icon; on a touch screen
  * it is its label alone. Acting, it shows `busy` (a spinner in the keycap's place, or over the
- * label where there is no keycap) and blocks a second press; it is never only disabled.
+ * label where there is no keycap) and blocks a second press; it is never only disabled. It is a
+ * screen's action, so 44px unless it says otherwise.
  */
 export function EnterButton({
   busy = false,
@@ -32,6 +33,7 @@ export function EnterButton({
   disabled = false,
   enter = "bound",
   ref,
+  size = "lg",
   ...props
 }: Omit<ButtonProps, "icon" | "iconPosition" | "keyHint" | "variant"> &
   NoGlyph & { enter?: Enter }) {
@@ -49,6 +51,7 @@ export function EnterButton({
       focusableWhenDisabled
       keyHint={enter === "off" ? undefined : ENTER_HINT}
       ref={mergeRefs(enterRef, ref)}
+      size={size}
       {...props}
     >
       {children}

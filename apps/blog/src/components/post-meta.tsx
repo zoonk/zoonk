@@ -23,7 +23,7 @@ export function PostMeta({ date, authorId }: PostMetaProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label}
-                className="hover:text-foreground transition-colors"
+                className="hover:text-foreground flex transition-colors"
               >
                 <link.icon size={14} />
               </a>

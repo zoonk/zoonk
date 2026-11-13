@@ -19,7 +19,10 @@ test("a guest can create an account after leaving and returning to the app", asy
   await expect(page).toHaveURL(/\/pricing$/u);
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Start free. Plus when you want everything." }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Follow your study plan all the way to your date.",
+    }),
   ).toBeVisible();
 
   await page.goBack();

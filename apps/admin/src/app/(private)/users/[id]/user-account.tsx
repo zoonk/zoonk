@@ -1,9 +1,17 @@
 import { AdminSection } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
+import { StateMark } from "@/components/state-mark";
 import { getUser } from "@/data/users/get-user";
-import { formatDate } from "@/lib/format";
-import { Avatar, AvatarImage } from "@zoonk/ui/components/avatar";
-import { AnalyticsTrackingForm } from "./analytics-tracking-form";
+import { formatDate, toWords } from "@/lib/format";
+import {
+  AtSignIcon,
+  BookLockIcon,
+  Building2Icon,
+  ChartNoAxesColumnIcon,
+  KeyRoundIcon,
+  LogInIcon,
+  MailIcon,
+} from "lucide-react";
 
 export async function UserAccount({ userId }: { userId: string }) {
   "use cache: private";
@@ -14,49 +22,58 @@ export async function UserAccount({ userId }: { userId: string }) {
     return null;
   }
 
-  const lastLogin = user.sessions[0]?.updatedAt;
-  const providers = user.accounts.map((a) => a.providerId);
+  const lastSignIn = user.sessions[0]?.updatedAt;
+
+  const providers = user.accounts.map((account) =>
+    account.providerId === "credential" ? "Email and password" : toWords(account.providerId),
+  );
 
   return (
-    <AdminSection
-      action={<AnalyticsTrackingForm analyticsDisabled={user.analyticsDisabled} userId={user.id} />}
-      title="Account"
-    >
+    <AdminSection title="Sign-in">
       <DetailFields>
-        {user.image && (
-          <DetailField label="Photo">
-            <Avatar>
-              <AvatarImage alt={user.name} src={user.image} />
-            </Avatar>
+        <DetailField icon={<MailIcon aria-hidden="true" />} label="Email">
+          {user.email}
+          {user.emailVerified ? null : (
+            <>
+              {" "}
+              <StateMark state="unverified" tone="attention">
+                Not verified
+              </StateMark>
+            </>
+          )}
+        </DetailField>
+        <DetailField icon={<AtSignIcon aria-hidden="true" />} label="Username">
+          {user.username ? `@${user.username}` : "—"}
+        </DetailField>
+        <DetailField icon={<KeyRoundIcon aria-hidden="true" />} label="Signs in with">
+          {providers.join(", ") || "—"}
+        </DetailField>
+        <DetailField icon={<LogInIcon aria-hidden="true" />} label="Last sign-in">
+          {formatDate(lastSignIn)}
+        </DetailField>
+        <DetailField icon={<ChartNoAxesColumnIcon aria-hidden="true" />} label="Analytics">
+          {user.analyticsDisabled ? (
+            <StateMark state="excluded" tone="off">
+              Excluded
+            </StateMark>
+          ) : (
+            "Included"
+          )}
+        </DetailField>
+
+        {user.members.length > 0 ? (
+          <DetailField icon={<Building2Icon aria-hidden="true" />} label="Organizations">
+            {user.members
+              .map((member) => `${member.organization.name} (${member.role})`)
+              .join(", ")}
           </DetailField>
-        )}
-        <DetailField label="Email">{user.email}</DetailField>
-        <DetailField label="Email verified">{user.emailVerified ? "Yes" : "No"}</DetailField>
-        <DetailField label="Analytics">
-          {user.analyticsDisabled ? "Excluded" : "Included"}
-        </DetailField>
+        ) : null}
 
-        {user.banned && (
-          <DetailField label="Ban">
-            {user.banExpires ? `Until ${formatDate(user.banExpires)}` : "No end date"}
-            {user.banReason && (
-              <span className="text-muted-foreground block">{user.banReason}</span>
-            )}
+        {user._count.ownedCourses > 0 ? (
+          <DetailField icon={<BookLockIcon aria-hidden="true" />} label="Private courses">
+            {user._count.ownedCourses}
           </DetailField>
-        )}
-
-        <DetailField label="Auth providers">
-          {providers.length > 0 ? <span className="capitalize">{providers.join(", ")}</span> : "—"}
-        </DetailField>
-
-        <DetailField label="Joined">{new Date(user.createdAt).toLocaleDateString()}</DetailField>
-        <DetailField label="Last updated">
-          {new Date(user.updatedAt).toLocaleDateString()}
-        </DetailField>
-
-        <DetailField label="Last login">
-          {lastLogin ? new Date(lastLogin).toLocaleDateString() : "—"}
-        </DetailField>
+        ) : null}
       </DetailFields>
     </AdminSection>
   );

@@ -2,22 +2,26 @@ import { type LibraryChapterRoute } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getLessonHref } from "@/lib/public/public-hrefs";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
+import { CURRENT_ROW_CLASS, LIST_ROW_INTERACTIVE_CLASS } from "@zoonk/learn/list";
 import { ROUTE_CLASS, RouteMark } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 
-const ROW_CLASS =
-  "relative isolate flex items-start gap-3 py-3 pl-(--route-inset) outline-none before:pointer-events-none before:absolute before:inset-y-0.5 before:right-[-0.625rem] before:left-[calc(var(--route-inset)-0.625rem)] before:-z-10 before:rounded-lg before:transition-colors hover:before:bg-muted/70 focus-visible:before:ring-[3px] focus-visible:before:ring-ring/50 focus-visible:before:ring-inset";
-
-const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
+/* The band starts after the route's line, which stays on the page's ground. */
+const ROW_CLASS = cn(
+  LIST_ROW_INTERACTIVE_CLASS,
+  "items-start py-3 pl-(--route-inset) before:left-[calc(var(--route-inset)-0.625rem)]",
+);
 
 const STATION_CLASS = "top-[1.375rem] left-(--route-x)";
 
 export async function ChapterLessonRows({
   chapter,
+  className,
   currentLessonId,
   params,
 }: {
   chapter: LibraryChapterRoute["chapter"];
+  className?: string;
   currentLessonId?: string;
   params: { brandSlug: string; courseSlug: string };
 }) {
@@ -25,7 +29,7 @@ export async function ChapterLessonRows({
   const last = chapter.lessons.length - 1;
 
   return (
-    <ol className={cn(ROUTE_CLASS, "flex flex-col")}>
+    <ol className={cn(ROUTE_CLASS, "flex flex-col", className)}>
       {chapter.lessons.map((lesson, index) => {
         const isCurrent = lesson.id === currentLessonId;
 

@@ -6,32 +6,29 @@ import {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
   CommandItem,
+  CommandKeyHints,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArrowDownIcon, ArrowUpIcon, FileIcon, type LucideIcon } from "lucide-react";
+import { FileIcon, type LucideIcon } from "lucide-react";
 import { type Route } from "next";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { searchAdminAction } from "./_actions/search-admin";
-import { adminNavigation } from "./admin-navigation";
+import { adminPages } from "./admin-navigation";
 
 type PaletteItem = { detail?: string; href: Route; icon?: LucideIcon; label: string };
 type PaletteGroup = { items: PaletteItem[]; label: string };
 
-const PAGES = adminNavigation.flatMap((group) =>
-  group.items.map(({ icon, label, url }) => ({ href: url, icon, label })),
-);
+const PAGES = adminPages.map(({ icon, label, url }) => ({ href: url, icon, label }));
 
 const EMPTY_RESULTS: { error: boolean; groups: PaletteGroup[]; query: string } = {
   error: false,
@@ -85,7 +82,7 @@ function Palette({ currentUrl }: { currentUrl: string }) {
     >
       <CommandDialogTitle>Search admin</CommandDialogTitle>
       <CommandDialogDescription>
-        Go to a page or find a user, course, lesson or skill.
+        Go to a page, or find a user, course, lesson or skill by name.
       </CommandDialogDescription>
       <Command
         autoHighlight="always"
@@ -133,23 +130,7 @@ function Palette({ currentUrl }: { currentUrl: string }) {
           ))}
         </CommandList>
       </Command>
-      <CommandFooter>
-        <span>
-          <Kbd>
-            <ArrowUpIcon />
-          </Kbd>
-          <Kbd>
-            <ArrowDownIcon />
-          </Kbd>{" "}
-          move
-        </span>
-        <span>
-          <Kbd>⏎</Kbd> open
-        </span>
-        <span>
-          <Kbd>Esc</Kbd> close
-        </span>
-      </CommandFooter>
+      <CommandKeyHints close="close" move="move" open="open" />
     </CommandDialog>
   );
 }
