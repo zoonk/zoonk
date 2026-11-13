@@ -6,7 +6,7 @@ import {
   PlanLine,
 } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
-import { CourseExamEyebrow } from "@/components/catalog/course-exam-eyebrow";
+import { CourseExamDate } from "@/components/catalog/course-exam-date";
 import { CourseMark } from "@/components/catalog/course-mark";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseGoalSwitch, CourseProgressScope } from "@/components/catalog/course-progress";
@@ -109,7 +109,7 @@ function CourseHero({
 
       <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
         <CourseSubjectLabel subject={subject} />
-        {exam && <CourseExamEyebrow exam={exam} />}
+        {exam && <CourseExamDate exam={exam} />}
       </div>
 
       <h1 className={cn(COURSE_TITLE_CLASS, "relative mt-3")} id={titleId}>

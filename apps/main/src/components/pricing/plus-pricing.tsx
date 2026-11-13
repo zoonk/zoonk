@@ -1,12 +1,9 @@
-import {
-  EYEBROW_CLASS,
-  PUBLIC_BAND_CLASS,
-  PUBLIC_CONTAINER_CLASS,
-} from "@/components/public/landing-styles";
+import { PUBLIC_BAND_CLASS, PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PageStartMark } from "@/components/public/page-start";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -42,9 +39,9 @@ export async function PricingHero() {
       aria-labelledby="pricing-title"
       className={cn(PUBLIC_CONTAINER_CLASS, "flex flex-col pt-12 lg:pt-24")}
     >
-      <p className={EYEBROW_CLASS}>{t("Pricing")}</p>
+      <Eyebrow>{t("Pricing")}</Eyebrow>
 
-      <h1 className="text-headline mt-4 max-w-[16em]" id="pricing-title">
+      <h1 className="text-headline mt-3 max-w-[16em]" id="pricing-title">
         {t({
           description:
             "The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.",

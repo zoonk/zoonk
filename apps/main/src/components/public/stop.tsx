@@ -1,5 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { EYEBROW_CLASS, PUBLIC_BAND_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
+import { PUBLIC_BAND_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 
 const RAIL_LINE_CLASS = cn(
   "min-[88rem]:before:bg-border min-[88rem]:before:absolute min-[88rem]:before:inset-y-0 min-[88rem]:before:left-[calc((100%-84rem)/2-0.75rem)] min-[88rem]:before:w-px",
@@ -41,17 +41,7 @@ export function Stop({
 
 export function StopHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex flex-col gap-4", className)} data-slot="stop-header" {...props} />
-  );
-}
-
-export function StopEyebrow({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("relative flex items-center gap-2.5", EYEBROW_CLASS, className)}
-      data-slot="stop-eyebrow"
-      {...props}
-    />
+    <div className={cn("flex flex-col gap-3", className)} data-slot="stop-header" {...props} />
   );
 }
 

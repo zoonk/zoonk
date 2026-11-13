@@ -1,7 +1,8 @@
 import { ProductWindow } from "@/components/public/product-window";
-import { Stop, StopBody, StopEyebrow, StopHeader, StopTitle } from "@/components/public/stop";
+import { Stop, StopBody, StopHeader, StopTitle } from "@/components/public/stop";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -78,12 +79,12 @@ export async function PlusAdds() {
   return (
     <Stop aria-labelledby={PLUS_ADDS_TITLE_ID} band>
       <StopHeader>
-        <StopEyebrow>
+        <Eyebrow>
           {t({
             description: "Small label over a section that shows what a subscription adds.",
             message: "What Plus adds",
           })}
-        </StopEyebrow>
+        </Eyebrow>
 
         <StopTitle id={PLUS_ADDS_TITLE_ID}>
           {t(

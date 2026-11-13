@@ -34,8 +34,6 @@ export async function LessonChapterAside({
       data-subject={getSubject(course.categories)}
     >
       <div className="flex flex-col gap-1">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">{facts.join(" · ")}</p>
-
         <h2 className="text-reading leading-snug font-semibold text-pretty" id={titleId}>
           <Link
             className="focus-visible:ring-ring/50 hit-area relative rounded-md outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
@@ -45,6 +43,8 @@ export async function LessonChapterAside({
             {chapter.title}
           </Link>
         </h2>
+
+        <p className="text-muted-foreground font-mono text-xs tabular-nums">{facts.join(" · ")}</p>
       </div>
 
       <ChapterLessonRows chapter={chapter} currentLessonId={lesson.id} params={params} />

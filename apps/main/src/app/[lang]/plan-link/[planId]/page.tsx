@@ -11,6 +11,7 @@ import { getPlanLinkStartHref } from "@/lib/public/public-hrefs";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { getPlanLink } from "@zoonk/core/plans/link";
 import { getSession } from "@zoonk/core/users/session";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { PlanPhaseName } from "@zoonk/learn/plan/phase-name";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
@@ -74,11 +75,9 @@ async function PlanLinkBody({ params }: Props) {
         <PlanLinkTracker planId={planId} />
 
         <div className="min-w-0">
-          <p className="text-muted-foreground sm:text-reading text-sm font-medium">
-            {t("Someone shared their study plan with you")}
-          </p>
+          <Eyebrow>{t("Someone shared their study plan with you")}</Eyebrow>
 
-          <h1 className="text-headline mt-3 sm:mt-4" id="plan-link-title">
+          <h1 className="text-headline mt-3" id="plan-link-title">
             {outline.subject?.title ?? t("A study plan")}
           </h1>
 

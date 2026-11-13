@@ -45,7 +45,7 @@ type FirstQuestionProps = {
   screen: FirstChoiceScreen;
 };
 
-/** Inside "Try a lesson" the card's title already says how long the lesson is. */
+/** Inside "Try a lesson" the card's own chip says what this is and how long the lesson takes. */
 async function QuestionScreen({
   lessonId,
   minutes,
@@ -59,15 +59,17 @@ async function QuestionScreen({
 
   return (
     <>
-      <Eyebrow icon={<SparklesIcon aria-hidden="true" />}>
-        {screen.guess
-          ? t({
-              description:
-                "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
-              message: "Just a guess, it doesn't count",
-            })
-          : t("Quick question")}
-      </Eyebrow>
+      {timed && (
+        <Eyebrow icon={<SparklesIcon aria-hidden="true" />}>
+          {screen.guess
+            ? t({
+                description:
+                  "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
+                message: "Just a guess, it doesn't count",
+              })
+            : t("Quick question")}
+        </Eyebrow>
+      )}
 
       {screen.context && (
         <RichTextBlocks
