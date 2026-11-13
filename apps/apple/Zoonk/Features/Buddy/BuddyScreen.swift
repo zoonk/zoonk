@@ -116,9 +116,6 @@ private struct BuddyContent: View {
       thread(opensDay: true)
     }
     .navigationTitle(Text(name))
-    .navigationSubtitle(
-      Text("Your study buddy", tableName: "Buddy", comment: "What the buddy is, under its name")
-    )
     .taskOptions(
       label: Text(
         "More about \(name)", tableName: "Buddy",

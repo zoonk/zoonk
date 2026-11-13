@@ -1,54 +1,28 @@
 import SwiftUI
 
-struct LessonWaysOut: View {
+struct ExplainFirstButton: View {
   let state: LessonPlayerState
   let store: LessonPlayerStore
-  let step: LessonStep
 
   var body: some View {
-    let isLocked = state.phase != .playing
-    let isWriting = step.isWriting
-
-    VStack(alignment: .leading, spacing: 4) {
-      if state.canExplainFirst {
-        Button {
-          store.explainFirst()
-        } label: {
-          Label {
-            Text(
-              "Explain first", tableName: "Player",
-              comment:
-                "Asks Zoonk to show the explanation before the learner answers; the learner doesn't explain"
-            )
-          } icon: {
-            Image(systemName: "book")
-          }
+    if state.canExplainFirst {
+      Button {
+        store.explainFirst()
+      } label: {
+        Label {
+          Text(
+            "Explain first", tableName: "Player",
+            comment:
+              "Asks Zoonk to show the explanation before the learner answers; the learner doesn't explain"
+          )
+        } icon: {
+          Image(systemName: "book")
         }
       }
-
-      if isWriting, !isLocked {
-        if !state.canExplainFirst {
-          Button {
-            store.dontKnow()
-          } label: {
-            Label {
-              Text(Self.dontKnowTitle)
-            } icon: {
-              Image(systemName: "questionmark.circle")
-            }
-          }
-        }
-      }
+      .buttonStyle(.borderless)
+      .typeStyle(.body)
     }
-    .buttonStyle(.borderless)
-    .typeStyle(.body)
   }
-
-  static let dontKnowTitle = LocalizedStringResource(
-    "I don't know yet", table: "Player",
-    comment:
-      "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
-  )
 }
 
 struct LessonExampleLine: View {

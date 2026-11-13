@@ -201,7 +201,7 @@ struct LessonPictureView: View {
   }
 
   private var alignment: Alignment {
-    horizontalSizeClass == .regular ? .leading : .center
+    horizontalSizeClass == .regular && !asks ? .leading : .center
   }
 
   private func picture(url: URL, image: LessonStepImage) -> some View {

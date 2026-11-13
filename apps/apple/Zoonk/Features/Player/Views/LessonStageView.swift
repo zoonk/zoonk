@@ -440,7 +440,11 @@ struct LessonActionBar: View {
         Button {
           store.dontKnow()
         } label: {
-          Text(LessonWaysOut.dontKnowTitle)
+          Text(
+            "I don't know yet", tableName: "Player",
+            comment:
+              "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+          )
         }
         .buttonStyle(.outline)
       }

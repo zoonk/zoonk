@@ -120,7 +120,7 @@ private struct LessonPlayerContent: View {
           }
         }
         .taskOptions(
-          isShown: store.screen == .playing && store.state != nil,
+          isShown: store.screen == .playing && store.state != nil && !isRefused,
           label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
         ) {
           if let state = store.state {
@@ -433,15 +433,16 @@ private struct LessonPlayerContent: View {
   }
 
   private var segments: [TaskSegment]? {
-    guard let state = store.state, store.screen == .playing, state.phase != .completed else {
-      return nil
-    }
-
-    if case .refused = state.run {
+    guard let state = store.state, store.screen == .playing, state.phase != .completed, !isRefused
+    else {
       return nil
     }
 
     return state.segments
+  }
+
+  private var isRefused: Bool {
+    if case .refused = store.state?.run { true } else { false }
   }
 
   /// Words on the screen stay protected until their check saves; every other answer is already kept.

@@ -671,7 +671,7 @@ struct LessonWaitingView: View {
           ready: holding.map { holding in
             WaitReady(
               label: Text(
-                "Start", tableName: "Player",
+                "Start this lesson", tableName: "Player",
                 comment: "Opens a goal's first lesson, made while the learner played on its wait"),
               action: holding.moveOn)
           }

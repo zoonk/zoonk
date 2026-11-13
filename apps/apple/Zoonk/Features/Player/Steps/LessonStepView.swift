@@ -38,7 +38,7 @@ struct LessonStepView: View {
         team: store.challengeTeam, waitForRun: { await store.ensureRun() },
         studySessionId: { store.studySessionId })
       if part == .turn, step.kind == .check || step.kind == .typedAnswer {
-        LessonWaysOut(state: state, store: store, step: step)
+        ExplainFirstButton(state: state, store: store)
       }
     case .summary(let content):
       if part == .screen { SummaryStepView(content: content) }
