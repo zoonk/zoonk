@@ -10,8 +10,9 @@ import {
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
+import { BackLink } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, EllipsisIcon } from "lucide-react";
+import { EllipsisIcon } from "lucide-react";
 import { Specimen } from "../_components/doc";
 
 const EDGE_GUIDE =
@@ -39,9 +40,9 @@ export function EdgesSpecimen() {
         <span aria-hidden="true" className={cn(EDGE_GUIDE, "right-0")} />
 
         <div className="flex items-center justify-between">
-          <Button aria-label="Back" edge="start" size="icon-bar" variant="ghost">
-            <ChevronLeftIcon />
-          </Button>
+          <BackLink aria-label="Back to Profile" href="#edges">
+            Profile
+          </BackLink>
           <Button aria-label="More" edge="end" size="icon-bar" variant="ghost">
             <EllipsisIcon />
           </Button>
