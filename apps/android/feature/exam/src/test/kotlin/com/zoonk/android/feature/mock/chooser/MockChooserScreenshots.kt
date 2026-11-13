@@ -122,7 +122,6 @@ class MockChooserScreenshots {
             ZoonkTheme {
                 Surface {
                     MockWriting(
-                        eyebrow = "ENEM",
                         run =
                             GenerationRun(
                                 status = GenerationRun.Status.Following,

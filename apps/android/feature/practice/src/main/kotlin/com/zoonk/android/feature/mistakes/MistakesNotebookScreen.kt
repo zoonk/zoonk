@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -76,8 +77,8 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -85,9 +86,9 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.pagePadding
@@ -160,42 +161,57 @@ internal fun Notebook(
     val toFix = rememberListMemory()
     val fixedOnes = rememberListMemory()
     var span by remember { mutableStateOf<PageSpan?>(null) }
+    val ready =
+        store.notebooks[NotebookKey(goalId, false)]
+            .collectShown()
+            .value.value
+            ?.availability
+            ?.ready ?: 0L
 
-    BoxWithConstraints(Modifier.onPageSpan { span = it }) {
-        val fold = spreadFold(maxWidth, span)
-        val beforeFold = pageFold(maxWidth, span)?.start
-        val wide = beforeFold == null && maxWidth >= INBOX_WIDTH
-        val first = if (fold == null && fixed) fixedOnes else toFix
+    Column {
+        BoxWithConstraints(Modifier.weight(1f).onPageSpan { span = it }) {
+            val fold = spreadFold(maxWidth, span)
+            val beforeFold = pageFold(maxWidth, span)?.start
+            val wide = beforeFold == null && maxWidth >= INBOX_WIDTH
+            val first = if (fold == null && fixed) fixedOnes else toFix
 
-        // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
-        Row(Modifier.fillMaxSize()) {
-            NotebookList(
-                goalId = goalId,
-                goalTitle = goalTitle,
-                fixed = fixed && fold == null,
-                store = store,
-                navigator = navigator,
-                memory = first,
-                nextChangeAt = nextChangeAt,
-                hero = true,
-                onTab = if (fold == null) ({ fixed = it }) else null,
-                wide = wide,
-                modifier = beforeFold?.let { Modifier.width(it) } ?: Modifier.weight(1f),
-            )
-            if (fold != null) {
+            // The first list keeps its place either way, so what's open in it stays as the book opens or closes.
+            Row(Modifier.fillMaxSize()) {
                 NotebookList(
                     goalId = goalId,
                     goalTitle = goalTitle,
-                    fixed = true,
+                    fixed = fixed && fold == null,
                     store = store,
                     navigator = navigator,
-                    memory = fixedOnes,
+                    memory = first,
                     nextChangeAt = nextChangeAt,
-                    hero = false,
-                    onTab = null,
-                    wide = false,
-                    modifier = Modifier.weight(1f).padding(start = fold.end - fold.start),
+                    hero = true,
+                    onTab = if (fold == null) ({ fixed = it }) else null,
+                    wide = wide,
+                    modifier = beforeFold?.let { Modifier.width(it) } ?: Modifier.weight(1f),
                 )
+                if (fold != null) {
+                    NotebookList(
+                        goalId = goalId,
+                        goalTitle = goalTitle,
+                        fixed = true,
+                        store = store,
+                        navigator = navigator,
+                        memory = fixedOnes,
+                        nextChangeAt = nextChangeAt,
+                        hero = false,
+                        onTab = null,
+                        wide = false,
+                        modifier = Modifier.weight(1f).padding(start = fold.end - fold.start),
+                    )
+                }
+            }
+        }
+        if (ready > 0) {
+            BottomBar {
+                Button(onClick = { navigator.open(AppRoute.MistakePractice()) }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.mistakes_practice))
+                }
             }
         }
     }
@@ -266,7 +282,6 @@ private fun NotebookList(
                 memory.collapsed = !open
             },
             onRetry = { scope.launch { store.notebooks[key].refresh() } },
-            onPractice = { navigator.open(AppRoute.MistakePractice()) },
             onPattern = { navigator.open(AppRoute.Pattern(it.toString())) },
             onPracticeSkill = { navigator.open(AppRoute.MistakePractice(it.toString())) },
             onLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
@@ -338,7 +353,6 @@ private class NotebookActions(
     val onTab: (Boolean) -> Unit,
     val onPick: (groupKey: String, open: Boolean) -> Unit,
     val onRetry: () -> Unit,
-    val onPractice: () -> Unit,
     val onPattern: (UUID) -> Unit,
     val onPracticeSkill: (UUID) -> Unit,
     val onLesson: (UUID) -> Unit,
@@ -455,7 +469,7 @@ private fun LazyListScope.notebookHead(
 ) {
     // The same items with or without the hero, so a list's scroll keeps its place as the book opens or closes. Each
     // item brings its own gap: a list's spacing would also follow the hero's empty slot.
-    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { NotebookHero(page, actions.onPractice) } }
+    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { NotebookHero(page) } }
     item { if (lead.tabs) NotebookTabs(page, actions.onTab) else NotebookListTitle(page) }
     page.pattern?.let { pattern ->
         item {
@@ -490,29 +504,14 @@ private fun LazyListScope.notebookMore(
 }
 
 @Composable
-private fun NotebookHero(
-    page: NotebookPage,
-    onPractice: () -> Unit,
-) {
+private fun NotebookHero(page: NotebookPage) {
     val availability = page.head.availability
-    val ready = availability.ready.toInt()
-    val tomorrow = availability.tomorrow.toInt()
+    val opensTomorrow = availability.ready == 0L && availability.tomorrow > 0
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            PageTitleRow(stringResource(R.string.mistakes_notebook_title))
-            Text(
-                factsLine(page.goalTitle, stringResource(R.string.mistakes_opens_tomorrow).takeIf { ready == 0 && tomorrow > 0 }),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        if (ready > 0) {
-            Button(onClick = onPractice, modifier = Modifier.padding(top = 8.dp).mainActionWidth()) {
-                Text(stringResource(R.string.mistakes_practice))
-            }
-        }
-    }
+    PageHeader(
+        stringResource(R.string.mistakes_notebook_title),
+        supporting = factsLine(page.goalTitle, stringResource(R.string.mistakes_opens_tomorrow).takeIf { opensTomorrow }),
+    )
 }
 
 /** Main's small "To fix / Fixed" toggle: Material's segmented buttons, the current one on `muted` in ink. */

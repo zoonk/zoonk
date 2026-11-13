@@ -28,9 +28,8 @@
   "exam_date_tag_estimated_detail": "d0cc01350c395576c083257fb1556eb3ea50a3c9f252bf80ffdcc4eb59e9e722",
   "exam_day_time": "23a2aeb28391966196e81bbd289b8d8bdd9f42ddb4785fc9e2118242d19f80a7",
   "exam_days": "e520e6e8f47dce5b00f2a390a068ce0c0e621416b2dbd388f5f3d72c0fd5e843",
+  "exam_days_left": "bf40613680398b98fcd1321a45e402e4c8b59b06de6b65c08a257830bcbfcfbc",
   "exam_did_you_pass": "b08c0b74f17fa2f714140d4779cc875a303d95f76b7e604df5632ac52e6fd15f",
-  "exam_eyebrow": "e0c733276956ae0a1f27265d7885d618c276cc738d0043af004b920bfeb12de6",
-  "exam_eyebrow_days_left": "b0044b747f562082af41353cb13ed996e8aafec3543e52708622ee45593c38e5",
   "exam_final_stretch": "167a53fca215d85381233ec5efd1f44747ce4b3c7a11e2a7be64129c35249598",
   "exam_final_stretch_detail": "a39f909781ea4cdfceb37f3056ba2d1f6f0c5bb44becadd9f1393c02f492b2f8",
   "exam_format_day": "0d951be16af8812a6b7332babb9f4500b65a00bc313aa96f1624391af000e20c",
@@ -135,9 +134,9 @@
     <string name="exam_tools_title">사용 가능한 도구</string>
     <string name="exam_see_exam">시험 정보 보기</string>
     <string name="exam_add_result">결과 입력하기</string>
-    <string name="exam_eyebrow">시험</string>
-    <plurals name="exam_eyebrow_days_left">
-        <item quantity="other">시험 · %d일 남음</item>
+    <!-- Beside the exam's dates under its title: "Nov 8 and Nov 15 · 24 days left". -->
+    <plurals name="exam_days_left">
+        <item quantity="other">%d일 남음</item>
     </plurals>
     <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
     <string name="exam_date_tag_estimated">예상 일정</string>

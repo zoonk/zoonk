@@ -2,16 +2,11 @@ package com.zoonk.android.feature.mock
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
@@ -19,10 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.bleed
@@ -114,17 +107,12 @@ fun MockEntryButton(
     options: MockOptions,
     onOpen: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
-    size: ButtonSize = LocalButtonSize.current,
 ) {
     val route = mockEntryRoute(options) ?: return
     val running = options.running != null
 
-    Button(onClick = { onOpen(route) }, modifier = modifier, size = size, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-        Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-        Text(
-            text = stringResource(if (running) R.string.mock_continue else R.string.mock_take),
-            modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
-        )
+    Button(onClick = { onOpen(route) }, modifier = modifier) {
+        Text(stringResource(if (running) R.string.mock_continue else R.string.mock_take))
     }
 }
 

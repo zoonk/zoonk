@@ -52,7 +52,6 @@ import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.plan.noticeDayText
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.SuggestionSaveError
@@ -73,11 +72,11 @@ import java.time.LocalTime
 import java.util.Locale
 import kotlin.math.floor
 
+/** How many days are left, beside the exam's dates. The day before, the card under the title says "tomorrow", so it's left out. */
 @Composable
-internal fun ExamEyebrow(exam: ExamView) {
-    // The day before, the card under the title says "tomorrow": the count would say it twice.
-    val days = exam.daysLeft?.takeIf { it > 0 && exam.stage != ExamView.Stage.DAY_BEFORE }?.toInt()
-    Eyebrow(days?.let { pluralStringResource(R.plurals.exam_eyebrow_days_left, it, it) } ?: stringResource(R.string.exam_eyebrow))
+internal fun daysLeft(exam: ExamView): String? {
+    val days = exam.daysLeft?.takeIf { it > 0 && exam.stage != ExamView.Stage.DAY_BEFORE }?.toInt() ?: return null
+    return pluralStringResource(R.plurals.exam_days_left, days, days)
 }
 
 /** Main's `useExamDays`: the exam's days with their start time. */

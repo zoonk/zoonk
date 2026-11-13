@@ -50,7 +50,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
@@ -58,6 +57,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
@@ -67,7 +67,6 @@ import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pagePadding
-import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
@@ -240,12 +239,21 @@ internal fun MindMapsPage(
             toggleNotMade = { notMadeOpen = !notMadeOpen },
         )
 
-    PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
+    val study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }
+
+    PageScaffold(
+        onBack = actions.back,
+        title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        bottomBar =
+            study?.let {
+                { Button(onClick = it, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.mindmaps_study)) } }
+            },
+    ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, pagePadding()) {
                     item(key = "hero", contentType = "hero") {
-                        MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 })
+                        PageHeader(title, supporting = mindMaps.goal.displayName, modifier = Modifier.padding(bottom = 16.dp))
                     }
                     stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
 
@@ -296,21 +304,6 @@ internal class TabActions(
         target: MindMapTarget,
         server: Boolean,
     ) = state.saves[target] ?: server
-}
-
-/** The goal over the title, then Study when the tab has maps to study. */
-@Composable
-private fun MindMapsHeader(
-    mindMaps: GoalMindMaps,
-    study: (() -> Unit)?,
-) {
-    Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(mindMaps.goal.displayName)
-        Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-        if (study != null) {
-            Button(onClick = study, modifier = Modifier.padding(top = 12.dp)) { Text(stringResource(R.string.mindmaps_study)) }
-        }
-    }
 }
 
 /** Material's tabs, each with how many maps Study would open there. */

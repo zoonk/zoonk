@@ -50,29 +50,29 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
-import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.pagePadding
-import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
@@ -99,26 +99,40 @@ internal fun PracticeChooser(
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
 
+    // A free learner meets the subscription when they press Start: the bar's button becomes Subscribe.
+    var gated by rememberSaveable { mutableStateOf(false) }
     val start = {
         option?.let {
             onStart()
-            // A free learner meets the subscription when they try to start one.
-            if (open) viewModel.start(it.shape, it.key) else navigator.open(AppRoute.Subscription)
+            if (open) viewModel.start(it.shape, it.key) else gated = true
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
-        Button(
-            busy = busy,
-            onClick = { start() },
-            modifier = modifier.focus(replacementFocus),
-            enabled = option != null,
-        ) { Text(stringResource(R.string.mock_chooser_start)) }
+        if (gated) {
+            Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier.focus(replacementFocus)) {
+                Text(stringResource(R.string.subscription_subscribe))
+            }
+        } else {
+            Button(
+                busy = busy,
+                onClick = { start() },
+                modifier = modifier.focus(replacementFocus),
+                enabled = option != null,
+            ) { Text(stringResource(R.string.mock_chooser_start)) }
+        }
     }
 
     ChooserPage(
         listState = listState,
         onEnter = { start() },
-        bar = { StartBar(shown, navigator, action) },
+        note =
+            when {
+                gated -> ({ MockGate() })
+                shown is ChooserStatus.Refused -> ({ Refusal(shown, navigator) })
+                shown is ChooserStatus.Failed -> ({ StartFailed(shown) })
+                else -> null
+            },
+        bar = { action(Modifier.fillMaxWidth()) },
         aside = {
             // What a pick shows comes last, so picking moves nothing above it.
             view.lastMock?.let { last ->
@@ -139,15 +153,8 @@ internal fun PracticeChooser(
         },
     ) { asideBeside ->
         item(key = "hero", contentType = "hero") {
-            ChooserHero(
-                eyebrow = view.examName,
-                title = stringResource(R.string.mock_chooser_title),
-                line = stringResource(R.string.mock_chooser_line),
-                status = if (asideBeside) ChooserStatus.Choosing else shown,
-                action = action.takeUnless { asideBeside },
-            )
+            PageHeader(stringResource(R.string.mock_chooser_title), supporting = stringResource(R.string.mock_chooser_line))
         }
-        if (!asideBeside) refusal(shown, navigator)
         // One pick across both lists, as on main: the subjects are a titled group of the same choice.
         item(key = "choices", contentType = "choices") {
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -205,7 +212,6 @@ private fun ShortDialog(
 @Composable
 internal fun MockWriting(
     run: GenerationRun,
-    eyebrow: String,
     onRetry: () -> Unit,
     titleFocus: FocusRequester? = null,
 ) {
@@ -217,8 +223,6 @@ internal fun MockWriting(
                 onRetry = onRetry,
                 modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
             ) {
-                // The exam's name stays over the title, so the title doesn't jump when Start is pressed.
-                Eyebrow(eyebrow)
                 Text(
                     stringResource(R.string.mock_chooser_preparing),
                     (titleFocus?.let { Modifier.focusRequester(it).focusable() } ?: Modifier).semantics { heading() },
@@ -235,91 +239,60 @@ internal fun MockWriting(
 }
 
 /**
- * The page's column, with the picked mock beside it where there's room, as main's aside, and [bar]
- * pinned under the picked mock there, as on every open book: the start bar sits under what Start
- * starts.
+ * The page's column, with the picked mock beside it where there's room, as main's aside, over the
+ * bottom bar that holds Start at every width, with what the last Start found as its [note].
  */
 @Composable
 private fun ChooserPage(
     listState: LazyListState,
     onEnter: () -> Unit,
-    bar: @Composable () -> Unit,
+    note: (@Composable () -> Unit)?,
+    bar: @Composable ColumnScope.() -> Unit,
     aside: @Composable ColumnScope.() -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    DetailPage(
-        aside = aside,
-        asideBar = bar,
-        asideLabel = stringResource(R.string.mock_chooser_picked),
+    Column(
         // Enter takes the page's main action, as main's Start does; the arrows move the pick.
-        modifier =
-            Modifier.onPreviewKeyEvent { event ->
-                val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
-                if (enter && event.type == KeyEventType.KeyDown) onEnter()
-                enter
-            },
-        listState = listState,
-        content = content,
+        Modifier.onPreviewKeyEvent { event ->
+            val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
+            if (enter && event.type == KeyEventType.KeyDown) onEnter()
+            enter
+        },
+    ) {
+        DetailPage(
+            aside = aside,
+            asideLabel = stringResource(R.string.mock_chooser_picked),
+            modifier = Modifier.weight(1f),
+            listState = listState,
+            content = content,
+        )
+        BottomBar(note = note, content = bar)
+    }
+}
+
+/** The gate a free learner meets on Start, over the bar that now says Subscribe. */
+@Composable
+private fun MockGate() {
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    Text(
+        stringResource(R.string.challenge_mock_gate),
+        Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        style = MaterialTheme.typography.titleSmall,
     )
 }
 
+/** Why the last Start failed, over the bar where Start was pressed, read out as it appears (main's `role="status"`). */
 @Composable
-private fun ChooserHero(
-    eyebrow: String,
-    title: String,
-    line: String,
-    status: ChooserStatus,
-    action: (@Composable (Modifier) -> Unit)?,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(eyebrow)
-        Text(title, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium.copy(lineBreak = LineBreak.Heading))
-        StatusLine(status, line)
-        action?.let { Box(Modifier.padding(top = 12.dp).mainActionWidth()) { it(Modifier.mainActionWidth()) } }
-    }
-}
-
-@Composable
-private fun StartBar(
-    status: ChooserStatus,
-    navigator: AppNavigator,
-    action: @Composable (Modifier) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (status is ChooserStatus.Refused) Refusal(status, navigator) else StatusLine(status, line = null)
-        action(Modifier.fillMaxWidth())
-    }
-}
-
-/** What the last Start found, in place of the page's one line, as main's `role="status"` line. */
-@Composable
-private fun StatusLine(
-    status: ChooserStatus,
-    line: String?,
-) {
-    val failed = status as? ChooserStatus.Failed
-    val text =
-        failed?.let { stringResource(if (it.notEnoughQuestions) R.string.mock_chooser_not_enough else R.string.mock_chooser_failed) }
-            ?: line
-            ?: return
-
+private fun StartFailed(failed: ChooserStatus.Failed) {
     Text(
-        text,
+        stringResource(if (failed.notEnoughQuestions) R.string.mock_chooser_not_enough else R.string.mock_chooser_failed),
         Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = if (failed != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
 }
 
 private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
-
-private fun LazyListScope.refusal(
-    status: ChooserStatus,
-    navigator: AppNavigator,
-) {
-    if (status !is ChooserStatus.Refused) return
-    item(key = "refusal", contentType = "refusal") { Refusal(status, navigator) }
-}
 
 /** Fair use for new questions ran out: main's help limit notice with its way on. */
 @Composable

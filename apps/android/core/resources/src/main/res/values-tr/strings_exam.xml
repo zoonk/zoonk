@@ -28,9 +28,8 @@
   "exam_date_tag_estimated_detail": "ab310859365634c1556ebde98d9c9d857e14ed45eb087a567b9c82f6252e8a98",
   "exam_day_time": "d837a667cc6cd56abdfbdbc25ab6846eaa5eb32ba5301a4081858e10d5bcbb2b",
   "exam_days": "3674b507e88e844fe86b1583296c4d91320de761c8e49c63ec3dee97e74d8140",
+  "exam_days_left": "31bb5db85739b420458e454302eb87b9171877d9d6b6ad2e688b2ac863c936c1",
   "exam_did_you_pass": "d2e8d17e887a74004edae3099ede903d567ae152571e28907a735d4d274aeac5",
-  "exam_eyebrow": "72998284f965c4a7f4e0a3ec01aaab518077e2a843c56a061ad97cb72e951873",
-  "exam_eyebrow_days_left": "727bf82bd55821a5d238f7b18b37c14c3b0d5b9eb09a25882dfba3c93e14caf1",
   "exam_final_stretch": "8bf8c79f484166e213957d14370f369fceb789836644f2b3ebaebd6963a68021",
   "exam_final_stretch_detail": "e63f4691a0ab17830e348b81a4fb5133e1eade851591de8aad5012275198468e",
   "exam_format_day": "601b2b9df2522f75ec55cfc26512306b59cb1392f91bb1514ed8b7ffa52d1d02",
@@ -138,10 +137,10 @@
     <string name="exam_tools_title">Kullanabileceklerin</string>
     <string name="exam_see_exam">Sınavını gör</string>
     <string name="exam_add_result">Sonucunu ekle</string>
-    <string name="exam_eyebrow">Sınav</string>
-    <plurals name="exam_eyebrow_days_left">
-        <item quantity="one">Sınav · %d gün kaldı</item>
-        <item quantity="other">Sınav · %d gün kaldı</item>
+    <!-- Beside the exam's dates under its title: "Nov 8 and Nov 15 · 24 days left". -->
+    <plurals name="exam_days_left">
+        <item quantity="one">%d gün kaldı</item>
+        <item quantity="other">%d gün kaldı</item>
     </plurals>
     <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
     <string name="exam_date_tag_estimated">Tahmini tarihler</string>

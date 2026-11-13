@@ -28,9 +28,8 @@
   "exam_date_tag_estimated_detail": "8ff7d36c4b0783920722118e15ad373e93f17217ef8e3dd8238e49156c2c8932",
   "exam_day_time": "5a7635462de98daaac42455dbc33c1a0678b06e83fdfaa239d9718794b631b06",
   "exam_days": "cc7bf0124398d42bd0d76357fcdb24e4ab4d3ae86a40d53956ad506c5911a74f",
+  "exam_days_left": "3313a34c403e715ea557e93e85533b35ebb244e00838a679ee420592eedd70fc",
   "exam_did_you_pass": "591a28f0727d2aa57a034b8823c1ec6ccb818e6710be6a2271ed1ed00fb7865c",
-  "exam_eyebrow": "1ff922140b523131fa05c6408080005cc7f168802ef29f330150d62be8e67e8f",
-  "exam_eyebrow_days_left": "396b77e98b5dc9a2d4fa42cd65ace210f0011a2cf5319c411ae883fa2e4f094a",
   "exam_final_stretch": "58d4b8514a82a76d3a1dd5f79042bc9c2179d948deea74fd7f81aafcfa58ea56",
   "exam_final_stretch_detail": "145000c6452758bd32f5bd1645f901e124d01586167cdfe7ed7adb6143885d36",
   "exam_format_day": "15c8fda7523f6e35aa36a3f01084f9e5c923a5ce498979105e124d6e1a06687f",
@@ -141,11 +140,11 @@
     <string name="exam_tools_title">Cosa puoi usare</string>
     <string name="exam_see_exam">Vedi il tuo esame</string>
     <string name="exam_add_result">Aggiungi il tuo risultato</string>
-    <string name="exam_eyebrow">Esame</string>
-    <plurals name="exam_eyebrow_days_left">
-        <item quantity="one">Esame · Manca %d giorno</item>
-        <item quantity="many">Esame · Mancano %d giorni</item>
-        <item quantity="other">Esame · Mancano %d giorni</item>
+    <!-- Beside the exam's dates under its title: "Nov 8 and Nov 15 · 24 days left". -->
+    <plurals name="exam_days_left">
+        <item quantity="one">Manca %d giorno</item>
+        <item quantity="many">Mancano %d giorni</item>
+        <item quantity="other">Mancano %d giorni</item>
     </plurals>
     <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
     <string name="exam_date_tag_estimated">Date stimate</string>

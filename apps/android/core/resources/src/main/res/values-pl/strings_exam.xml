@@ -28,9 +28,8 @@
   "exam_date_tag_estimated_detail": "ca0cd123696d387a48a744fcd2f96e870eb7b0acbf0b517c6e18d3ed74fee0f8",
   "exam_day_time": "aaa0bce1a42dc7e34048d186384eb7823abb303c07e641038dcc3e60d77d81e4",
   "exam_days": "4982296402af964bba976436d1f398219981602d2bef21121bfcf61754db6838",
+  "exam_days_left": "f07c3e875bab194b9f5d3d790912aa71460ae6124fc6b9e877e2e1e139db99c1",
   "exam_did_you_pass": "8a2013b13213f7e555cfc0579eedf59a814919a3299c1d903669c88c7e3ac9d0",
-  "exam_eyebrow": "357de53a78976f97d616f6e1069bc593b2587fd3f2676c0cb9544b873f80fa1f",
-  "exam_eyebrow_days_left": "c1933ae5a34d6ae92d92dabd0c6110ac1ce0b37f1023f8bd83bf41e725746b05",
   "exam_final_stretch": "13c19a3eaa2a7f9dfbe10cbe4def7dfbc54d1b617eaa4a451502792d07a2b1b3",
   "exam_final_stretch_detail": "27aa47c750477dc795d9f50783191dcea05d4d9a6a2f8f3abc0221b117a2462a",
   "exam_format_day": "daf05f5924a7c2c5a5611a1fbe41db8b6c4fa9c13db2766fb323e6e156c683c4",
@@ -144,12 +143,12 @@
     <string name="exam_tools_title">Z czego możesz korzystać</string>
     <string name="exam_see_exam">Zobacz swój egzamin</string>
     <string name="exam_add_result">Dodaj swój wynik</string>
-    <string name="exam_eyebrow">Egzamin</string>
-    <plurals name="exam_eyebrow_days_left">
-        <item quantity="one">Egzamin · pozostał %d dzień</item>
-        <item quantity="few">Egzamin · pozostały %d dni</item>
-        <item quantity="many">Egzamin · pozostało %d dni</item>
-        <item quantity="other">Egzamin · pozostało %d dnia</item>
+    <!-- Beside the exam's dates under its title: "Nov 8 and Nov 15 · 24 days left". -->
+    <plurals name="exam_days_left">
+        <item quantity="one">Pozostał %d dzień</item>
+        <item quantity="few">Pozostały %d dni</item>
+        <item quantity="many">Pozostało %d dni</item>
+        <item quantity="other">Pozostało %d dnia</item>
     </plurals>
     <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
     <string name="exam_date_tag_estimated">Przewidywane terminy</string>

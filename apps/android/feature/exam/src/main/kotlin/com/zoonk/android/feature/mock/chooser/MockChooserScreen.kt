@@ -120,7 +120,7 @@ internal fun MockChooser(
         when {
             loaded == null && state is LoadState.Failed -> LoadFailedMessage(onRetry = { scope.launch { options.refresh() } })
             loaded == null -> PageLoading()
-            writing -> MockWriting(run, eyebrow = loaded.examName, onRetry = retry, titleFocus = focus.requester)
+            writing -> MockWriting(run, onRetry = retry, titleFocus = focus.requester)
             else -> PracticeChooser(loaded, viewModel, navigator, listState, focus.requester, focus::press)
         }
     }

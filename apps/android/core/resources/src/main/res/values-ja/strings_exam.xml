@@ -28,9 +28,8 @@
   "exam_date_tag_estimated_detail": "91f314bb3728285ee18fd33d85148e549f25dba8a7b3725d8b57191ff737eb66",
   "exam_day_time": "f4106f9b23443ec2423545f58e3f7145061e5d82958827c45cb19cb24ab6be23",
   "exam_days": "c8d186a3f4f5b66304bd919072dc848d5601bd361c05e08e1e4aee450599ae18",
+  "exam_days_left": "0145403b548cb48765d30d4cc9b124c2b78b2e060e2bf11b63f1d014067a32ad",
   "exam_did_you_pass": "87f9c7fcc2b418481dd1cd20021637db3bf96f7ddb228554f1cd8e0cad18ac37",
-  "exam_eyebrow": "4994f985d03aee361988f14d72f735111c0e31e89c7c1596ec9492e74a7dc08d",
-  "exam_eyebrow_days_left": "577c5775ec658d703102072f52d76dfcd12791ea0b39692f814ac4a4e7a17578",
   "exam_final_stretch": "6db8a4aa51a4b2ed08ab0526efdbe440b4b944795f150dcdb81be4db824cdd63",
   "exam_final_stretch_detail": "6c90d96407853a631a652f6b65719ebd8b3db61ff454068e10e5fddc7b451b33",
   "exam_format_day": "8327ae9359266af08689ec5f2682c52eade04e7303f12d1d6493c58074a551a7",
@@ -135,9 +134,9 @@
     <string name="exam_tools_title">使用できるもの</string>
     <string name="exam_see_exam">試験を確認する</string>
     <string name="exam_add_result">結果を入力する</string>
-    <string name="exam_eyebrow">試験</string>
-    <plurals name="exam_eyebrow_days_left">
-        <item quantity="other">試験 · あと%d日</item>
+    <!-- Beside the exam's dates under its title: "Nov 8 and Nov 15 · 24 days left". -->
+    <plurals name="exam_days_left">
+        <item quantity="other">あと%d日</item>
     </plurals>
     <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
     <string name="exam_date_tag_estimated">予想日程</string>

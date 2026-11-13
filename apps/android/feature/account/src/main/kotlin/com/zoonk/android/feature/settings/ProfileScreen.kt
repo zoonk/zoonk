@@ -46,8 +46,30 @@ fun ProfileScreen(
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
+    val form =
+        signedIn?.takeUnless { it.isGuest }?.let {
+            viewModel(key = "profile-form:${it.session.localId}") {
+                ProfileFormViewModel(app.account, it.account.user, createSavedStateHandle())
+            }
+        }
 
-    PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_profile)) }) { padding ->
+    PageScaffold(
+        onBack = { navigator.back() },
+        title = { Text(stringResource(R.string.settings_profile)) },
+        bottomBar =
+            form?.let {
+                {
+                    Button(
+                        onClick = it::save,
+                        enabled = it.canSave && it.isChanged,
+                        busy = it.isSaving,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.settings_save))
+                    }
+                }
+            },
+    ) { padding ->
         Box(
             modifier =
                 Modifier
@@ -84,9 +106,11 @@ fun ProfileScreen(
                         }
                     }
 
-                    else -> {
-                        Profile(app, signedIn)
+                    form != null -> {
+                        Profile(app, form)
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -96,13 +120,8 @@ fun ProfileScreen(
 @Composable
 private fun Profile(
     app: AppContainer,
-    signedIn: SessionState.SignedIn,
+    form: ProfileFormViewModel,
 ) {
-    val form =
-        viewModel(key = "profile-form:${signedIn.session.localId}") {
-            ProfileFormViewModel(app.account, signedIn.account.user, createSavedStateHandle())
-        }
-
     // A save's answer is a snackbar, so Save and the rows under it stay where they are.
     LaunchedEffect(form.isSaved) {
         if (form.isSaved) app.scope.launch { app.snackbars.show(R.string.settings_saved) }
@@ -111,13 +130,5 @@ private fun Profile(
     Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ProfileFields(form)
         ProfileSaveFailure(form)
-        Button(
-            onClick = form::save,
-            enabled = form.canSave && form.isChanged,
-            busy = form.isSaving,
-            modifier = Modifier.align(Alignment.End),
-        ) {
-            Text(stringResource(R.string.settings_save))
-        }
     }
 }

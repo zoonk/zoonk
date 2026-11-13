@@ -38,10 +38,10 @@
     <string name="exam_tools_title">What you may use</string>
     <string name="exam_see_exam">See your exam</string>
     <string name="exam_add_result">Add your result</string>
-    <string name="exam_eyebrow">Exam</string>
-    <plurals name="exam_eyebrow_days_left">
-        <item quantity="one">Exam · %d day left</item>
-        <item quantity="other">Exam · %d days left</item>
+    <!-- Beside the exam's dates under its title: "Nov 8 and Nov 15 · 24 days left". -->
+    <plurals name="exam_days_left">
+        <item quantity="one">%d day left</item>
+        <item quantity="other">%d days left</item>
     </plurals>
     <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
     <string name="exam_date_tag_estimated">Estimated dates</string>

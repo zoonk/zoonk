@@ -3,8 +3,10 @@ package com.zoonk.android.feature.exam
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -20,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -39,6 +40,7 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mock.MockEntryButton
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.mock.mockEntryRoute
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.speaking.SpeakingMockCard
@@ -54,7 +56,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.api.models.ExamView
 import com.zoonk.api.models.MockOptions
@@ -105,7 +106,14 @@ internal fun GoalExam(
     val refresh: () -> Unit = { listOf(exam, mocks).forEach { scope.launch { it.refresh() } } }
     val loaded = state.value
 
-    ExamFrame(navigator = navigator, title = loaded?.examName) {
+    val main = loaded?.let { exam -> options.value?.takeUnless { exam.isLastDays }?.takeIf { mockEntryRoute(it) != null } }
+
+    ExamFrame(
+        navigator = navigator,
+        title = loaded?.examName,
+        actions = { if (loaded != null) ReportProblemMenu(app, FeedbackTarget("exam")) },
+        bottomBar = main?.let { { MockEntryButton(it, onOpen = navigator::open, modifier = Modifier.fillMaxWidth()) } },
+    ) {
         PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.fillMaxSize()) {
             val current = state
             when {
@@ -135,11 +143,15 @@ internal fun GoalExam(
 private fun ExamFrame(
     navigator: AppNavigator,
     title: String?,
+    actions: @Composable RowScope.() -> Unit = {},
+    bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     PageScaffold(
         onBack = { navigator.back() },
         title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        actions = actions,
+        bottomBar = bottomBar,
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) { content() }
     }
@@ -166,7 +178,7 @@ private fun ExamPage(
         listState = listState,
     ) { aboutBeside ->
         item(key = "hero", contentType = "hero") {
-            ExamHero(exam, options, navigator) { ReportProblemMenu(app, FeedbackTarget("exam"), inPage = true) }
+            ExamHero(exam)
         }
         examSections(exam, options, viewModel, app, navigator)
         if (!aboutBeside) {
@@ -239,34 +251,15 @@ private fun LazyListScope.examSections(
     }
 }
 
-/** Main's hero: the eyebrow, the exam, its days, and the main action with the page's [menu]. */
+/** Main's hero: the exam, then its days and how many are left. Its main action is in the bottom bar. */
 @Composable
-private fun ExamHero(
-    exam: ExamView,
-    options: MockOptions?,
-    navigator: AppNavigator,
-    menu: @Composable () -> Unit,
-) {
-    val facts = examFacts(exam)
+private fun ExamHero(exam: ExamView) {
+    val facts = examFacts(exam) + listOfNotNull(daysLeft(exam))
 
-    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            ExamEyebrow(exam)
-            Text(exam.examName, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-            if (facts.isNotEmpty()) Facts(facts)
-            ExamDateTag(exam)
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            options?.takeUnless { exam.isLastDays }?.let {
-                MockEntryButton(
-                    it,
-                    onOpen = navigator::open,
-                    modifier = Modifier.weight(1f, fill = false).mainActionWidth(),
-                    size = ButtonSize.Large,
-                )
-            }
-            menu()
-        }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(exam.examName, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+        if (facts.isNotEmpty()) Facts(facts)
+        ExamDateTag(exam)
     }
 }
 
