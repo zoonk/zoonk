@@ -79,10 +79,11 @@ type SpokenStep = NonNullable<Awaited<ReturnType<typeof findSpokenStep>>>;
 
 type RecordingGrade = NonNullable<Awaited<ReturnType<typeof gradeSpokenRecording>>>;
 
+/** Apps built before `checked` require an attempt id, so the unsaved take gets one nothing saved. */
 function notScored(grade: RecordingGrade): SpokenAnswerGrade {
   return {
     ...grade,
-    attemptId: null,
+    attemptId: crypto.randomUUID(),
     checked: false,
     explanation: null,
     words: [],

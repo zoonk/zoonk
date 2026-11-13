@@ -291,6 +291,6 @@ fun SpokenAnswerGrade.toStepResult(targetText: String): StepResult =
         correctAnswer = targetText.takeUnless { isCorrect || checked == false },
         feedback = explanation,
         score = score,
-        attemptId = attemptId?.toString(),
+        attemptId = attemptId.toString(),
         heard = SpokenHeard(transcript, words, wordsToPractice),
     )

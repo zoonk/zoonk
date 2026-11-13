@@ -25,6 +25,8 @@ import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied
 import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
 
+const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/u;
+
 function sentTips() {
   return vi
     .mocked(trackServerEvent)
@@ -199,7 +201,7 @@ describe(gradeSpokenAnswer, () => {
 
     expect(result).toMatchObject({
       grade: {
-        attemptId: null,
+        attemptId: expect.stringMatching(UUID),
         checked: false,
         explanation: null,
         isCorrect: false,
@@ -248,7 +250,7 @@ describe(gradeSpokenAnswer, () => {
 
     await expect(
       gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step?.id ?? "" }),
-    ).resolves.toMatchObject({ grade: { attemptId: null, checked: false }, status: "graded" });
+    ).resolves.toMatchObject({ grade: { checked: false }, status: "graded" });
 
     await expect(prisma.attempt.count({ where: { stepId: step?.id } })).resolves.toBe(0);
   });
@@ -279,9 +281,7 @@ describe(gradeSpokenAnswer, () => {
 
     expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
 
-    const attempt = await prisma.attempt.findUniqueOrThrow({
-      where: { id: grade?.attemptId ?? undefined },
-    });
+    const attempt = await prisma.attempt.findUniqueOrThrow({ where: { id: grade?.attemptId } });
 
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", transcript: "How much is the rent" },
@@ -772,7 +772,7 @@ describe(gradeSpokenAnswer, () => {
       where: {
         id: {
           in: [own, foreign].flatMap((result) =>
-            result.status === "graded" ? [result.grade.attemptId ?? []].flat() : [],
+            result.status === "graded" ? [result.grade.attemptId] : [],
           ),
         },
       },
