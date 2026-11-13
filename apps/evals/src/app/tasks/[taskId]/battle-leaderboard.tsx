@@ -22,6 +22,7 @@ function getColumns(entries: BattleLeaderboardEntry[], taskId: string) {
   const codeChecks: Column = {
     cell: (entry) => <CodeChecks checks={entry.codeChecks} />,
     id: "codeChecks",
+    isNumber: true,
     label: "Parts passing code checks",
   };
 

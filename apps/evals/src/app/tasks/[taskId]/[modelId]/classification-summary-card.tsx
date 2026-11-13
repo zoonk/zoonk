@@ -1,6 +1,6 @@
 import { type ClassificationSummary } from "@/lib/classification-metrics";
 import { formatPercent } from "@/lib/format";
-import { NUMBER_CELL_CLASS, NUMBER_HEAD_CLASS } from "@/lib/table-classes";
+import { CELL_CLASS, NUMBER_CELL_CLASS, NUMBER_HEAD_CLASS } from "@/lib/table-classes";
 import {
   Table,
   TableBody,
@@ -31,7 +31,7 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
       <TableBody>
         {summary.perLabel.map((item) => (
           <TableRow key={item.label}>
-            <TableCell className="font-medium">{item.label}</TableCell>
+            <TableCell className={cn(CELL_CLASS, "font-medium")}>{item.label}</TableCell>
             <TableCell className={NUMBER_CELL}>
               {item.correct}/{item.total}
             </TableCell>
@@ -68,7 +68,7 @@ function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
       <TableBody>
         {summary.perLabel.map(({ label: expected }) => (
           <TableRow key={expected}>
-            <TableCell className="font-medium">{expected}</TableCell>
+            <TableCell className={cn(CELL_CLASS, "font-medium")}>{expected}</TableCell>
             {summary.labels.map((predicted) => (
               <TableCell
                 className={cn(NUMBER_CELL, predicted === expected && "font-semibold")}
