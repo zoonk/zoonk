@@ -150,7 +150,7 @@ function SignInCode({ code }: { code: string }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-muted-foreground text-sm">{copy.signInCode}</p>
+      <p className="text-muted-foreground text-xs">{copy.signInCode}</p>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <p className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">{code}</p>
