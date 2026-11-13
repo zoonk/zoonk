@@ -164,7 +164,7 @@ function LatestMock({ progress }: { progress: Progress }) {
 
   // One mock exam has nothing to compare: the subject rows below are its result.
   if (latest.change === null) {
-    return <p className="text-muted-foreground text-[0.8125rem]">{latest.measure}</p>;
+    return <p className="text-muted-foreground text-compact">{latest.measure}</p>;
   }
 
   return (
@@ -197,7 +197,7 @@ function ProgressCard({ progress }: { progress: Progress }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {line && <p className="text-[0.9375rem] font-medium text-pretty">{line}</p>}
+      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
 
       <LatestMock progress={progress} />
 

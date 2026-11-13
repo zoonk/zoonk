@@ -66,9 +66,7 @@ function RoadBandFace({ band }: { band: RoadBand }) {
   return (
     <span className={cn(BAND_CLASS, BAND_LOOK[band.state])}>
       <span className={BAND_NAME_CLASS}>
-        {band.state === "done" && (
-          <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
-        )}
+        {band.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />}
         {band.name}
       </span>
       {band.todayShare !== undefined && <TodayTicks share={band.todayShare} />}

@@ -260,7 +260,7 @@ export function PlacementQuestionScreen({
           <ItemSupport context={question.context} image={question.image} visual={question.visual} />
 
           <div
-            className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty outline-none"
+            className="text-xl leading-[1.35] font-[560] tracking-[-0.02em] text-pretty outline-none"
             ref={title}
             tabIndex={-1}
           >

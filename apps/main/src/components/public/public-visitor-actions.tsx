@@ -9,7 +9,7 @@ export async function PublicVisitorActions() {
 
   return (
     <>
-      <LoginBarLink />
+      <LoginBarLink className="max-sm:edge max-sm:-me-(--edge-pull)" />
       <Link className={cn(buttonVariants({ size: "bar" }), "hidden sm:inline-flex")} href="/start">
         {t("Start free")}
       </Link>

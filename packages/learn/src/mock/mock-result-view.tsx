@@ -161,7 +161,7 @@ function ScoreStep({ result }: { result: MockResult }) {
         </StepHeader>
 
         {!missed && verdict && (
-          <p className="text-[0.9375rem] font-medium text-pretty" data-slot="mock-verdict">
+          <p className="text-reading font-medium text-pretty" data-slot="mock-verdict">
             {verdict}
           </p>
         )}

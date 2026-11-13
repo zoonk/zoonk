@@ -80,7 +80,7 @@ export function OnboardingPageBar({
           "grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2 lg:min-h-10",
         )}
       >
-        <div className="justify-self-start max-lg:-ml-3">
+        <div className="justify-self-start">
           {bar.onBack ? (
             <BackButton onBack={bar.onBack} />
           ) : (

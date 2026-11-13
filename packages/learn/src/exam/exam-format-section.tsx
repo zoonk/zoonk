@@ -93,7 +93,7 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   return (
     <li className="py-2.5">
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-[0.8125rem] font-medium">{dayTitle({ day, numbered })}</span>
+        <span className="text-compact font-medium">{dayTitle({ day, numbered })}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>

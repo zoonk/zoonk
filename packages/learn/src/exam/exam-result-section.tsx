@@ -111,7 +111,7 @@ export function ExamResultSection() {
   return (
     <section aria-labelledby="exam-result-title" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-[0.9375rem] font-medium" id="exam-result-title">
+        <h2 className="text-reading font-medium" id="exam-result-title">
           {t("How did it go?")}
         </h2>
         <p className="text-muted-foreground text-sm">

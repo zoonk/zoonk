@@ -73,7 +73,7 @@ export function MistakeAnswer({
   return (
     <p
       className={cn(
-        "rounded-option w-full px-3.5 py-3 text-[0.9375rem] leading-6 font-medium wrap-break-word",
+        "text-reading w-full rounded-xl px-3.5 py-3 leading-6 font-medium wrap-break-word",
         right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
       )}
       data-slot="mistake-answer"
@@ -198,7 +198,7 @@ export function MistakeEntryCard({
 
       <MistakeStimulus continued={continued} snapshot={snapshot} />
 
-      <div className="text-[0.9375rem] leading-snug font-medium lg:text-[1.1875rem] lg:leading-snug">
+      <div className="text-reading leading-snug font-medium lg:text-xl lg:leading-snug">
         <ItemStem text={snapshot.question} />
       </div>
 

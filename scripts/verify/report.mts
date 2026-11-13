@@ -1,5 +1,6 @@
 import { relative } from "node:path";
 import { CLS_DIGITS, type Finding, cumulativeLayoutShift } from "./checks.mts";
+import { isCraftLead } from "./craft-rules.mts";
 import { type LoadReport } from "./measure.mts";
 import { type NavigationReport } from "./navigations.mts";
 import { classifyRequest } from "./requests.mts";
@@ -10,13 +11,20 @@ type Group = Finding & { values: number[]; where: Place[] };
 
 const KILOBYTE = 1024;
 const PERCENT = 100;
+const TENTH = 10;
 
 function format(value: number | null, unit = " ms"): string {
   return value === null ? "–" : `${Math.round(value)}${unit}`;
 }
 
+/** Craft's pixels keep their tenth: 13.5 px text is off the type scale where 14 px isn't. */
 function formatValue(value: number, unit: string | undefined): string {
-  return unit === "CLS" ? value.toFixed(CLS_DIGITS) : `${Math.round(value)} ${unit ?? ""}`.trim();
+  if (unit === "CLS") {
+    return value.toFixed(CLS_DIGITS);
+  }
+
+  const shown = unit === "px" ? Math.round(value * TENTH) / TENTH : Math.round(value);
+  return `${shown} ${unit ?? ""}`.trim();
 }
 
 function groupFindings(entries: { findings: Finding[]; place: Place }[]): Group[] {
@@ -81,8 +89,8 @@ function list(title: string, groups: Group[], screensPerPage: Map<string, number
 
 function loadRows(loads: LoadReport[], out: string): string[] {
   return [
-    "| Page | Screen | TTFB | FCP | Shell words | Content | Blank at | LCP | Links live | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | RSC KB | Prefetches | Skeleton shown | Paints (last) | Words | Before the action | Longest button | Screenshots |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Page | Screen | TTFB | FCP | Shell words | Content | Blank at | LCP | Links live | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | RSC KB | Prefetches | Skeleton shown | Paints (last) | Words | Before the action | Longest button | Craft | Screenshots |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...loads.map((load) => {
       const kilobytes = [load.bytes.html, load.bytes.scripts, load.bytes.total].map((bytes) =>
         Math.round(bytes / KILOBYTE),
@@ -115,6 +123,7 @@ function loadRows(loads: LoadReport[], out: string): string[] {
           ? "– (no main action)"
           : `${load.words.aboveAction} (to "${load.words.action}")`,
         load.words.longestButton === null ? "–" : `"${load.words.longestButton}"`,
+        `${load.craft.radii}/${load.craft.heights}/${load.craft.sizes}/${load.craft.icons}`,
         load.screenshots.map((screenshot) => relative(out, screenshot)).join(", "),
       ].join(" | ")} |`;
     }),
@@ -183,14 +192,15 @@ export function renderReport({
   ]);
 
   const failures = groups.filter((group) => group.level === "fail");
-  const warnings = groups.filter((group) => group.level === "warn");
+  const warnings = groups.filter((group) => group.level === "warn" && !isCraftLead(group.check));
+  const craft = groups.filter((group) => isCraftLead(group.check));
 
   const markdown = [
     "# Page verification",
     "",
     ...header.map((line) => `- ${line}`),
     "",
-    `## ${failures.length} failing and ${warnings.length} to look at`,
+    `## ${failures.length} failing, ${warnings.length} to look at and ${craft.length} craft leads`,
     "",
     `Each is listed once with every screen it showed on, across ${loads.length} loads${navigations.length > 0 ? ` and ${navigations.length} navigations` : ""}.`,
     "",
@@ -200,6 +210,7 @@ export function renderReport({
     "",
     ...list("Failing", failures, screensPerPage),
     ...list("Look at", warnings, screensPerPage),
+    ...list("Craft leads", craft, screensPerPage),
     "## Loads",
     "",
     ...loadRows(loads, out),
@@ -207,6 +218,8 @@ export function renderReport({
     ...navigationRows(navigations),
     ...sections,
     `**Words** are the main region's. **Before the action** counts text elements (an element with its own text, not inside another counted one) between the title (the main region's first \`h1\`, or its start) and the main action (the first button with the primary fill after it). A button is drawn with \`buttonVariants\` and doesn't look like a link. They're leads from zoonk-design's Words budget, not failures: over ${WORD_BUDGET.aboveAction} text elements before the action, over ${WORD_BUDGET.decisionWords} words on a page with a main action, a label over ${WORD_BUDGET.buttonWords} words, and with a baseline words up by more than ${WORD_BUDGET.growth * PERCENT}%. The budget is for the product's own screens: long-form pages (a lesson, the legal pages) skip the word and text-element leads, and marketing pages (the landing page, the catalog, pricing, shared links, the blog) skip all three; their counts still show, and with a baseline so does the change.`,
+    "",
+    "**Craft** counts what the screen draws with: control corner radii / control heights / text sizes / icon sizes. Each craft lead carries its rule's id and name from zoonk-design's craft reference (`references/craft.md`), the element and its numbers: open the screenshot at that element, then fix it or say which deliberate choice it is. Craft is measured once per screen, at rest after load, in the first color scheme.",
     "",
     "Paints are the screencast's frames after the navigation started, in the first color scheme, saved beside the screenshots in each screen's `-frames` folder and named by their time. More than a couple after the first paint, or a late last one, means the page changed after it appeared: a flash, a swap, a late image or an animation. Open them to see which.",
   ].join("\n");

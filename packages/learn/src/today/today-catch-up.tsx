@@ -36,7 +36,7 @@ export function CatchUpLater() {
 
   if (!later.offered) {
     return (
-      <p className="text-muted-foreground text-[0.8125rem] leading-snug" data-slot="today-catch-up">
+      <p className="text-muted-foreground text-compact leading-snug" data-slot="today-catch-up">
         {t(
           "{lessons, plural, one {Your next days start with the # lesson left to catch up.} other {Your next days start with the # lessons left to catch up.}}",
           { lessons: later.lessons },
@@ -53,7 +53,7 @@ export function CatchUpLater() {
 
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2" data-slot="today-catch-up">
-      <p className="text-muted-foreground text-[0.8125rem] leading-snug">
+      <p className="text-muted-foreground text-compact leading-snug">
         {examTomorrow
           ? t(
               "{lessons, plural, one {You can still catch up on # lesson today, if you have time.} other {You can still catch up on # lessons today, if you have time.}}",

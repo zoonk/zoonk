@@ -1,7 +1,6 @@
 "use client";
 
 import { LearnLink } from "@zoonk/learn/link";
-import { TASK_HEADER_ICON_CLASS } from "@zoonk/learn/task-header";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -9,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenIcon, EllipsisIcon, ListIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
@@ -33,13 +31,7 @@ export function MindMapReaderMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={
-          <Button
-            className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
-            size="icon"
-            variant="ghost"
-          />
-        }
+        render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{t("More options")}</span>

@@ -180,6 +180,7 @@ export function SavedMapRow({
       </LearnLink>
 
       <MindMapSaveButton
+        edge="end"
         labelled={false}
         onToggle={onRemove}
         saved

@@ -79,7 +79,7 @@ function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
   }
 
   return (
-    <span className="text-muted-foreground text-[0.71875rem]" data-slot="bars-meaning">
+    <span className="text-muted-foreground text-2xs" data-slot="bars-meaning">
       {t("Preparation")}
     </span>
   );

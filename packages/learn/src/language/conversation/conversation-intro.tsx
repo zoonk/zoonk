@@ -149,12 +149,12 @@ function HowTheCallWorks({ conversation }: { conversation: LanguageConversationI
       <ol className="flex flex-col gap-2">
         {steps.map((step, index) => (
           <li
-            className="flex items-baseline gap-3 text-[0.9375rem] leading-snug text-pretty"
+            className="text-reading flex items-baseline gap-3 leading-snug text-pretty"
             key={step}
           >
             <span
               aria-hidden="true"
-              className="text-muted-foreground w-3 shrink-0 font-mono text-[0.8125rem] tabular-nums"
+              className="text-muted-foreground text-compact w-3 shrink-0 font-mono tabular-nums"
             >
               {index + 1}
             </span>

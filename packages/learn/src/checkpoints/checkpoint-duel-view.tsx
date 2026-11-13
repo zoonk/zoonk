@@ -228,7 +228,7 @@ function TricksterPanel() {
         <TricksterArt className="size-26 sm:size-26" ref={trickster} />
 
         <section className="flex flex-col gap-3">
-          <h3 className="text-[0.9375rem] font-[560]">{t("The Trickster's shield")}</h3>
+          <h3 className="text-reading font-[560]">{t("The Trickster's shield")}</h3>
           <TricksterShieldPlates broken={score.correct} segments={checkpoint.passMark} />
           <TaskMeta
             facts={[
@@ -247,7 +247,7 @@ function TricksterPanel() {
           />
         </section>
 
-        <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
+        <p className="text-muted-foreground text-compact leading-5 text-pretty">
           {t(
             "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set.",
           )}
@@ -264,7 +264,7 @@ function WeeklyPanel() {
 
   return (
     <>
-      <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
+      <p className="text-muted-foreground text-compact leading-5 text-pretty">
         {t("No hints. You'll see right or wrong after each answer, and why at the end.")}
       </p>
 

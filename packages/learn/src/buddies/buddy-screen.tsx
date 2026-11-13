@@ -145,7 +145,7 @@ function BuddyMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button className="text-muted-foreground shrink-0" size="icon-sm" variant="ghost" />
+          <Button className="text-muted-foreground" edge="end" size="icon-sm" variant="ghost" />
         }
       >
         <EllipsisIcon aria-hidden="true" />

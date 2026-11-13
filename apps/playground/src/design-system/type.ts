@@ -52,6 +52,30 @@ export const TYPE_ROLES: readonly TypeRole[] = [
     use: "Running text in the app (14px); public pages use 15px.",
   },
   {
+    className: "text-xl",
+    name: "Question",
+    sample: "Which of these is a prime number?",
+    use: "A question's stem on every task (20px), firmer than the body.",
+  },
+  {
+    className: "text-reading",
+    name: "Reading",
+    sample: "A photon is the smallest amount of light there can be.",
+    use: "What a learner reads to answer or reply: an answer option, feedback, a chat message, a public page's body (15px).",
+  },
+  {
+    className: "text-compact",
+    name: "Compact",
+    sample: "Adjust plan",
+    use: "Small controls and navigation: a 30px button, the sidebar, a tab, a crumb, an aside's rows (13px).",
+  },
+  {
+    className: "text-2xs",
+    name: "Small",
+    sample: "3 of 12",
+    use: "The smallest text: a chip, a chart's axis, a count in a mark (11.5px). Nothing is smaller.",
+  },
+  {
     className: "text-label",
     name: "Label",
     sample: "Try a lesson · free",

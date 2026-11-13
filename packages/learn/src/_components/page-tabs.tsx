@@ -1,9 +1,8 @@
 "use client";
 
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tabs";
+import { cn } from "@zoonk/ui/lib/utils";
 import { LearnLink } from "../learn-link";
-
-const TAB_CLASS =
-  "focus-visible:ring-ring/50 hit-area relative flex min-h-7.5 items-center gap-1.5 rounded-md px-2.5 py-1 text-[0.8125rem] font-medium outline-none transition-colors focus-visible:ring-[3px] aria-[current=page]:bg-muted aria-[current=page]:text-foreground text-muted-foreground hover:text-foreground hover:bg-muted/70";
 
 /** A page's views as links, each with how many things it lists. */
 export function PageTabs({
@@ -13,7 +12,7 @@ export function PageTabs({
 }: Omit<React.ComponentProps<"nav">, "aria-label"> & { label: string }) {
   return (
     <nav aria-label={label} {...props}>
-      <ul className="-mx-2.5 flex flex-wrap items-center gap-1">{children}</ul>
+      <ul className={cn(TAB_LIST_CLASS, "-mx-2.5 flex-wrap")}>{children}</ul>
     </nav>
   );
 }

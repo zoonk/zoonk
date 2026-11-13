@@ -1,6 +1,6 @@
 "use client";
 
-import { TASK_HEADER_ICON_CLASS, useTaskAsideShown } from "@zoonk/learn/task-header";
+import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon, NetworkIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -71,13 +70,7 @@ export function LessonScreenMenu() {
     <>
       <DropdownMenu onOpenChange={mapSheet.onMenuOpenChange}>
         <DropdownMenuTrigger
-          render={
-            <Button
-              className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
-              size="icon"
-              variant="ghost"
-            />
-          }
+          render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
         >
           <EllipsisIcon aria-hidden="true" />
           <span className="sr-only">{t("Screen options")}</span>
