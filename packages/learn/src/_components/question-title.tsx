@@ -55,7 +55,7 @@ export function QuestionEyebrow({
   return (
     <p
       className={cn(
-        "text-muted-foreground text-compact flex items-start gap-1.5 font-medium text-pretty [&_svg]:size-3.5",
+        "text-muted-foreground text-compact flex items-start gap-1.5 font-medium text-pretty [&_svg]:size-4",
         className,
       )}
       data-slot="question-eyebrow"
