@@ -157,4 +157,40 @@ describe("rolling lesson admission", () => {
     await expect(lessonAllowance()).resolves.toMatchObject({ usedLast30Days: 20 });
     await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(21);
   });
+
+  it("counts a predecessor's claim after waiting for the learner lock", async () => {
+    const user = await learner();
+    await usageRecordsFixture({ count: 19, createdAt: NOW, userId: user.id });
+
+    const held = holdLearnerLock({
+      beforeCommit: (tx) =>
+        tx.usageRecord.create({
+          data: {
+            createdAt: new Date(NOW.getTime() + 1000),
+            kind: "lessonStart",
+            targetId: randomUUID(),
+            userId: user.id,
+          },
+        }),
+      userId: user.id,
+    });
+
+    const pid = await held.pid;
+    const pending = start();
+
+    try {
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
+      vi.setSystemTime(new Date(NOW.getTime() + 2000));
+    } finally {
+      held.release();
+      await held.done;
+    }
+
+    await expect(pending).resolves.toMatchObject({
+      limit: { period: "rolling30Days" },
+      status: "limitReached",
+    });
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(20);
+  });
 });
