@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
 import { isExplaining } from "../_utils/lesson-struggle";
