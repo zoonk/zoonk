@@ -41,7 +41,7 @@ export type Finding = {
 };
 
 /** What moved, and how far in CSS pixels: `down` and `right` are negative going up and left. */
-export type ShiftSource = { down: number; node: string; right: number };
+type ShiftSource = { down: number; node: string; right: number };
 
 export type LayoutShift = { at: number; sources: ShiftSource[]; value: number };
 

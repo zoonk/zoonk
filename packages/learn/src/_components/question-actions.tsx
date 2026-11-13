@@ -12,7 +12,7 @@ import { EnterButton } from "./enter-button";
 import { useFocusOnRemovedControl } from "./suggestion-focus";
 import { TASK_BACK_ACTION_CLASS, TaskActionLabel, TaskActions } from "./task-layout";
 
-export const QUESTION_MAIN_ACTION_ID = "question-main-action";
+const QUESTION_MAIN_ACTION_ID = "question-main-action";
 
 export type QuestionAction =
   | "check"

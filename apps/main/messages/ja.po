@@ -87,6 +87,18 @@ msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "フィードバックを送る"
 
+#. Words people type to find Keyboard shortcuts in the search, never shown. Add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zK0l0A"
+msgid "keys, hotkeys, keyboard"
+msgstr "キー, ホットキー, キーボード, ショートカット, ショートカットキー"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "vzYPVX"
+msgid "Keyboard shortcuts"
+msgstr "キーボードショートカット"
+
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "tv5FG3"
 msgid "Blog"
@@ -375,6 +387,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "目標を切り替えられませんでした。もう一度試してください。"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "検索・質問"
@@ -1320,6 +1333,7 @@ msgid "Passkey"
 msgstr "パスキー"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "閉じる"
@@ -2620,6 +2634,71 @@ msgstr "無料で始める"
 msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "アカウントを削除しました。"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "e6UnhT"
+msgid "Play or pause the audio"
+msgstr "音声を再生・一時停止する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "PpAjCi"
+msgid "Flag a question in a mock exam"
+msgstr "模試の問題に見直しの印を付ける"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "uY3Caj"
+msgid "Close or leave"
+msgstr "閉じる・終了する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ofKpWV"
+msgid "Press the main button"
+msgstr "メインボタンを押す"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "次へ"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "fMeAJ8"
+msgid "Pick an answer"
+msgstr "答えを選ぶ"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "戻る"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "eUyM74"
+msgid "Save a mind map"
+msgstr "マインドマップを保存する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "odxPY5"
+msgid "Show this list"
+msgstr "この一覧を表示する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "KYN6t2"
+msgid "Show or hide the sidebar"
+msgstr "サイドバーの表示を切り替える"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "GvB3Jb"
+msgid "Tap the beat"
+msgstr "リズムに合わせてタップする"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "FVLl2T"
+msgid "Anywhere"
+msgstr "どの画面でも"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ugxven"
+msgid "While you study"
+msgstr "学習中"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx

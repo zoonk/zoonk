@@ -78,7 +78,7 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     },
     explanation: { day: 5, month: 20 },
     goal: { day: 3, month: 10 },
-    lessonStart: { day: 20, month: 40 },
+    lessonStart: { month: 20 },
     mindMap: { day: 3, month: 10 },
     mockQuestions: { total: 0 },
     outline: { day: 3, month: 10 },
@@ -160,8 +160,8 @@ const EXAM_PREP_ACCESS: Record<
   EntitlementTier,
   { includesMockExams: boolean; studyDays: number | null }
 > = {
-  free: { includesMockExams: false, studyDays: 7 },
-  guest: { includesMockExams: false, studyDays: 7 },
+  free: { includesMockExams: false, studyDays: null },
+  guest: { includesMockExams: false, studyDays: null },
   plus: { includesMockExams: true, studyDays: null },
 };
 

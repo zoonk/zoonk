@@ -221,7 +221,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/catch-up-blocks": {
     post: {
       description:
-        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`); past a free exam plan's first week its new lessons come with Plus, these too.",
+        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`).",
       operationId: "createStudyCatchUpBlocks",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
@@ -230,7 +230,7 @@ export const studySessionPaths = {
         ...readErrors,
         "402": {
           ...paymentRequiredResponse,
-          description: `A free exam plan past its first week: its new lessons come with Plus (\`examAccess.trialEnded\`). Error code: ${studySessionErrorCodes.plusRequired}.`,
+          description: "Reserved for subscription-only activities",
         },
         "422": {
           ...unprocessableEntityResponse,
@@ -245,7 +245,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
-        "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
+        "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power.",
       operationId: "createStudyExtraBlock",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },

@@ -123,7 +123,6 @@ export function WorkBody(
         ...(props.declineAsSkip ? [] : [{ label: exclusiveLabels.ratherNot, value: "ratherNot" }]),
       ]}
       label={props.label}
-      numberKeys={false}
       onChange={(value) =>
         props.onChange(
           value === "ratherNot"
