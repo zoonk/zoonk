@@ -47,7 +47,7 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
             <div className={cn("text-sm font-medium", PROSE_MEASURE_CLASS)} key={key}>
               <span className="text-muted-foreground">{key}:</span>{" "}
               {isMultiline ? (
-                <pre className="bg-muted mt-1 overflow-auto rounded p-2 text-xs">{formatted}</pre>
+                <pre className="bg-muted mt-1 max-h-80 overflow-auto rounded-xl p-4 text-xs">{formatted}</pre>
               ) : (
                 formatted
               )}
