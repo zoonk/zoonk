@@ -22,7 +22,15 @@ export function AdminDisclosure({
   );
 }
 
-export function AdminJson({ label, value }: { label: string; value: unknown }) {
+export function AdminJson({
+  label,
+  open,
+  value,
+}: {
+  label: string;
+  open?: boolean;
+  value: unknown;
+}) {
   if (value === null || value === undefined) {
     return (
       <p className="text-muted-foreground flex min-h-11 items-center text-xs">{label}: none</p>
@@ -30,7 +38,7 @@ export function AdminJson({ label, value }: { label: string; value: unknown }) {
   }
 
   return (
-    <AdminDisclosure label={label}>
+    <AdminDisclosure label={label} open={open}>
       <pre className="bg-muted/50 mb-2 max-h-96 overflow-auto rounded-lg p-3 font-mono text-xs wrap-break-word whitespace-pre-wrap">
         {JSON.stringify(value, null, JSON_INDENT)}
       </pre>

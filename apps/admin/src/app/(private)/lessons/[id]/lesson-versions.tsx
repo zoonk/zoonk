@@ -1,7 +1,16 @@
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
-import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
+
+const columns: AdminTableColumn[] = [
+  { label: "What" },
+  { label: "Model", size: "text" },
+  { label: "Prompt version", size: "wide" },
+  { align: "right", label: "Screen format", size: "wide" },
+  { align: "right", label: "How many" },
+];
 
 type VersionRow = {
   contractVersion: number;
@@ -48,30 +57,19 @@ export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
       {versions.length === 0 ? (
         <AdminSectionEmpty>No screens written yet.</AdminSectionEmpty>
       ) : (
-        <Table>
-          <TableHeader>
-            <AdminTableRow>
-              <TableHead>Written</TableHead>
-              <TableHead>Model</TableHead>
-              <TableHead>Prompt version</TableHead>
-              <TableHead numeric>Step contract</TableHead>
-              <TableHead numeric>Rows</TableHead>
+        <AdminTableColumns columns={columns} emptyLabel="" isEmpty={false}>
+          {versions.map((version) => (
+            <AdminTableRow key={versionKey(version)}>
+              <TableCell className="text-foreground font-medium">
+                {version.kind === "screen" ? "Screens" : "Versions of screens"}
+              </TableCell>
+              <TableCell>{version.model}</TableCell>
+              <TableCell className="text-compact font-mono">{version.promptVersion}</TableCell>
+              <TableCell numeric>v{version.contractVersion}</TableCell>
+              <TableCell numeric>{version.rows}</TableCell>
             </AdminTableRow>
-          </TableHeader>
-          <TableBody>
-            {versions.map((version) => (
-              <AdminTableRow key={versionKey(version)}>
-                <TableCell>
-                  {version.kind === "screen" ? "Screens" : "Versions of screens"}
-                </TableCell>
-                <TableCell className="font-mono text-xs">{version.model}</TableCell>
-                <TableCell className="font-mono text-xs">{version.promptVersion}</TableCell>
-                <TableCell numeric>v{version.contractVersion}</TableCell>
-                <TableCell numeric>{version.rows}</TableCell>
-              </AdminTableRow>
-            ))}
-          </TableBody>
-        </Table>
+          ))}
+        </AdminTableColumns>
       )}
     </AdminSection>
   );

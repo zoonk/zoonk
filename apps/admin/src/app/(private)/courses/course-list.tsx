@@ -1,11 +1,47 @@
+import { AdminNameCell } from "@/components/admin-name-cell";
+import {
+  type AdminTableColumn,
+  AdminTableColumns,
+  AdminTableColumnsSkeleton,
+  emptyListLabel,
+} from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
-import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { AdminPagination } from "@/components/pagination";
-import { listCourses } from "@/data/courses/list-courses";
+import { StateMark } from "@/components/state-mark";
+import { type ListedCourse, listCourses } from "@/data/courses/list-courses";
+import { languageName } from "@/lib/language-filter";
 import { parseSearchParams } from "@/lib/parse-search-params";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
-import { CourseRow } from "./course-row";
+import { TableCell } from "@zoonk/ui/components/table";
+
+const columns: AdminTableColumn[] = [
+  { label: "Course", twoLines: true },
+  { label: "Language" },
+  { align: "right", label: "Chapters" },
+  { align: "right", label: "Lessons written", size: "wide" },
+  { label: "Learners see it", size: "wide" },
+];
+
+function CourseRow({ course }: { course: ListedCourse }) {
+  return (
+    <AdminTableRow>
+      <AdminNameCell
+        href={`/courses/${course.id}`}
+        note={course.organization?.name ?? course.slug}
+        title={course.title}
+      />
+      <TableCell>{languageName(course.language)}</TableCell>
+      <TableCell numeric>{course.chapterCount.toLocaleString("en")}</TableCell>
+      <TableCell numeric>{course.writtenLessonCount.toLocaleString("en")}</TableCell>
+      <TableCell>
+        {course.isPublished ? (
+          <StateMark state="completed">Published</StateMark>
+        ) : (
+          <StateMark state="archived">Hidden</StateMark>
+        )}
+      </TableCell>
+    </AdminTableRow>
+  );
+}
 
 export async function CourseList({
   searchParams,
@@ -32,83 +68,30 @@ async function CachedCourseList({
   "use cache: private";
 
   const { courses, total } = await listCourses({ limit, offset, search });
-  const totalPages = Math.ceil(total / limit);
 
   return (
     <>
-      <Table>
-        <CourseTableHeader />
-
-        <TableBody>
-          {courses.map((course) => (
-            <CourseRow course={course} key={course.id} />
-          ))}
-        </TableBody>
-      </Table>
+      <AdminTableColumns
+        columns={columns}
+        emptyLabel={emptyListLabel({ noun: "courses", search })}
+        isEmpty={courses.length === 0}
+      >
+        {courses.map((course) => (
+          <CourseRow course={course} key={course.id} />
+        ))}
+      </AdminTableColumns>
 
       <AdminPagination
         basePath="/courses"
         limit={limit}
         page={page}
         search={search}
-        totalPages={totalPages}
+        totalPages={Math.ceil(total / limit)}
       />
     </>
   );
 }
 
 export function CourseListSkeleton() {
-  return (
-    <Table>
-      <CourseTableHeader />
-
-      <AdminTableSkeletonRows>
-        <CourseSkeletonRow />
-      </AdminTableSkeletonRows>
-    </Table>
-  );
-}
-
-function CourseTableHeader() {
-  return (
-    <TableHeader>
-      <AdminTableRow>
-        <TableHead>Title</TableHead>
-        <TableHead>Organization</TableHead>
-        <TableHead>Language</TableHead>
-        <TableHead numeric>Chapters</TableHead>
-        <TableHead numeric>Written lessons</TableHead>
-        <TableHead>Published</TableHead>
-        <TableHead>Created</TableHead>
-      </AdminTableRow>
-    </TableHeader>
-  );
-}
-
-function CourseSkeletonRow() {
-  return (
-    <AdminTableRow>
-      <TableCell>
-        <Skeleton className="h-4 w-48" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-32" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-10" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="ml-auto h-4 w-10" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="ml-auto h-4 w-10" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-5" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-24" />
-      </TableCell>
-    </AdminTableRow>
-  );
+  return <AdminTableColumnsSkeleton columns={columns} />;
 }
