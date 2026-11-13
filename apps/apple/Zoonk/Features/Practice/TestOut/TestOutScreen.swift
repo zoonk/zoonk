@@ -68,8 +68,6 @@ struct TestOutScreen: View {
                 comment: "Why a test-out has nothing to skip.")
             }
             .lonePage()
-          case .loaded(.plusRequired):
-            preparing(failure: PracticeAPIError.plusRequired)
           case .loaded(.test(let test)) where test.questions.isEmpty:
             preparing(failure: writeFailure)
           case .loaded(.test(let test)):
@@ -107,7 +105,7 @@ struct TestOutScreen: View {
       title: LocalizedStringResource(
         "Already know this?", table: "Practice", comment: "Title of a chapter test-out's start."),
       detail: LocalizedStringResource(
-        "A few questions on this chapter. Do well, and your plan skips what you already know.",
+        "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know.",
         table: "Practice",
         comment: "What a chapter test-out does."),
       writingDetail: LocalizedStringResource(
@@ -120,9 +118,8 @@ struct TestOutScreen: View {
 
   private func rule(_ passMark: Double) -> String {
     String(
-      localized:
-        "\(Int((passMark * 100).rounded()))% right skips the chapter. No feedback until the end.",
-      table: "Practice", comment: "A chapter test-out's rule above each question.")
+      localized: "\(Int((passMark * 100).rounded()))% right skips the chapter", table: "Practice",
+      comment: "A chapter test's rule, a label over its first question")
   }
 
   private func resultView(_ result: Components.Schemas.ChapterTestOutResult) -> some View {
@@ -296,8 +293,6 @@ struct TestOutScreen: View {
       submitFailures = 0
       PracticeAnswerDraft.clear(key: draftKey)
       if let graded { result = graded } else { load = .loaded(.nothingToSkip) }
-    case .refused(.plusRequired):
-      load = .loaded(.plusRequired)
     case .refused, .failed:
       submitFailures += 1
     case .obsolete:

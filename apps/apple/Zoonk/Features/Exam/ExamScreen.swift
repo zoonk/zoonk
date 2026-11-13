@@ -168,7 +168,7 @@ private struct ExamHero: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 0) {
-        PageHeader(Text(exam.examName), eyebrow: eyebrow)
+        PageHeader(Text(exam.examName))
 
         // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
@@ -316,15 +316,18 @@ private struct ExamHero: View {
     }
   }
 
-  private var eyebrow: Text {
-    guard let days = exam.daysLeft, days > 0 else {
-      return Text("Exam", tableName: "Exam", comment: "Eyebrow over the exam's name")
+  /// The day before, on the day and after, the moment card says where the learner is instead.
+  private var daysLeft: String? {
+    guard let days = exam.daysLeft, days > 0, !exam.isLastDays else {
+      return nil
     }
 
     return exam.daysEstimated
-      ? Text(
-        "Exam\u{00A0}· About \(days) days left", tableName: "Exam", comment: "Estimated days left")
-      : Text("Exam\u{00A0}· \(days) days left", tableName: "Exam", comment: "Days left to the exam")
+      ? String(
+        localized: "about \(days) days left", table: "Exam",
+        comment: "Last fact under an exam's name when its dates are estimated")
+      : String(
+        localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
   private var facts: [String] {
@@ -332,6 +335,7 @@ private struct ExamHero: View {
 
     if exam.namedMonth {
       return dates.map { $0.1.formatted(.studyDay.month(.wide).year()) }
+        + [daysLeft].compactMap(\.self)
     }
 
     let times = Set(exam.days.map(\.startTime))
@@ -350,7 +354,7 @@ private struct ExamHero: View {
       facts.append(time)
     }
 
-    return facts
+    return facts + [daysLeft].compactMap(\.self)
   }
 
   private func useDate(_ date: String) async {
@@ -737,7 +741,9 @@ private struct ExamProgressSection: View {
     ].compactMap { $0 }.joinedFacts()
 
     return exam.scoring.method == .net
-      ? String(localized: "Net score in \(name)", table: "Exam", comment: "The latest net score")
+      ? String(
+        localized: "Score in \(name)", table: "Exam",
+        comment: "The latest score, where a wrong answer takes a point off")
       : String(
         localized: "Right answers in \(name)", table: "Exam", comment: "The latest right answers")
   }

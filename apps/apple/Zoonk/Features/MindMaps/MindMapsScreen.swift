@@ -102,7 +102,7 @@ struct MindMapsScreen: View {
 
   /// Study opens what the tab counts, where this device last was in it.
   private func header(_ maps: GoalMindMaps, goal: LearnerGoal, tab: GoalMindMaps.Tab) -> some View {
-    PageHeader(title, eyebrow: Text(goal.displayName)) {
+    PageHeader(title, supporting: Text(verbatim: goal.displayName)) {
       if count(tab, maps: maps) > 0 {
         Button {
           router.open(.mindMapStudy(goalId: goal.id, tab: tab))

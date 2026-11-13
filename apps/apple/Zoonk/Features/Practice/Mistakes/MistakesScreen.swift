@@ -44,7 +44,7 @@ struct MistakesScreen: View {
         }
 
         Section {
-          PageHeader(title, eyebrow: goalName.map { Text(verbatim: $0) })
+          PageHeader(title, supporting: subtitle(shown.value).map { Text(verbatim: $0) })
           header(shown.value)
         }
 
@@ -72,6 +72,22 @@ struct MistakesScreen: View {
 
   private var title: Text {
     Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
+  }
+
+  private func subtitle(_ list: Components.Schemas.MistakeList?) -> String? {
+    let opensTomorrow =
+      list.map { $0.availability.ready == 0 && $0.availability.tomorrow > 0 } ?? false
+    let facts = [
+      goalName,
+      opensTomorrow
+        ? String(
+          localized: "Practice opens tomorrow", table: "Practice",
+          comment:
+            "Under the notebook's title, after the goal's name, when no mistake is ready today and some are tomorrow"
+        ) : nil,
+    ].compactMap(\.self)
+
+    return facts.isEmpty ? nil : facts.joinedFacts()
   }
 
   private func header(_ list: Components.Schemas.MistakeList?) -> some View {
@@ -274,14 +290,6 @@ private struct NotebookHeader: View {
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)
-        } else if list.availability.tomorrow > 0 {
-          Text(
-            "Practice opens tomorrow", tableName: "Practice",
-            comment:
-              "Under the notebook's title when no mistake is ready today and some are tomorrow"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
         }
       }
     }
