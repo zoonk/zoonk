@@ -1,5 +1,4 @@
 import { globSync, readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { join } from "node:path";
 
 const ROOT_FONT_PX = 16;
@@ -93,11 +92,9 @@ export function typeScale({
 
 /** The type scale as the checkout being measured defines it, so a prototype's new role counts. */
 export function readTypeScale(root: string): number[] {
-  const require = createRequire(join(root, "packages/ui/package.json"));
-
   return typeScale({
     css: readFileSync(join(root, GLOBALS), "utf8"),
     sources: globSync(SOURCES, { cwd: root }).map((path) => readFileSync(join(root, path), "utf8")),
-    theme: readFileSync(require.resolve("tailwindcss/theme.css"), "utf8"),
+    theme: readFileSync(join(root, "packages/ui/node_modules/tailwindcss/theme.css"), "utf8"),
   });
 }

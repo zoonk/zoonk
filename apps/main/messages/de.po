@@ -2701,11 +2701,6 @@ msgid "Opening your lesson"
 msgstr "Wir öffnen deine Lektion"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Zurück"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Über diese Lektion"
