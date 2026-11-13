@@ -83,12 +83,14 @@ export function TestOutStartLink({
 
   return (
     <div className="flex flex-col items-start gap-2">
-      <form action={start} className={cn("text-muted-foreground text-sm", className)}>
-        {t("Already know this?")}
-        {space}
-        <Button busy={opening} type="submit" variant="link">
-          {t("Take the test and skip the chapter")}
-        </Button>
+      <form action={start}>
+        <p className={cn("text-muted-foreground text-sm", className)}>
+          {t("Already know this?")}
+          {space}
+          <Button busy={opening} type="submit" variant="link">
+            {t("Take the test and skip the chapter")}
+          </Button>
+        </p>
       </form>
 
       <TestOutStartStatus isPending={isPending} result={result} />

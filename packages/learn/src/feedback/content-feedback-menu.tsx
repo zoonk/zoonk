@@ -58,10 +58,12 @@ export function ContentFeedbackMenu({
 
 /** `place="bar"` is the page bar's borderless icon; the default is the bordered one beside a page's main button. */
 export function ReportProblemMenu({
+  className,
   label,
   place = "detail",
   screen,
 }: {
+  className?: string;
   label: string;
   place?: "bar" | "detail";
   screen: string;
@@ -76,7 +78,7 @@ export function ReportProblemMenu({
     return (
       <DropdownMenu>
         <DropdownMenuTrigger
-          render={<Button className="shrink-0" size="icon-bar" variant="ghost" />}
+          render={<Button className="shrink-0" edge="end" size="icon-bar" variant="ghost" />}
         >
           <EllipsisIcon aria-hidden="true" />
           <span className="sr-only">{label}</span>
@@ -90,7 +92,7 @@ export function ReportProblemMenu({
   }
 
   return (
-    <DetailMenu label={label}>
+    <DetailMenu className={className} label={label}>
       <ReportProblemItem screen={screen} />
     </DetailMenu>
   );

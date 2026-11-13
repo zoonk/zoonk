@@ -18,4 +18,3 @@ export type MockChooserStatus =
   | MockShortStatus
   | { kind: "failed"; reason: "failed" | "notEnoughQuestions" }
   | { kind: "refused"; limit: HelpLimit };
-

@@ -142,11 +142,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
   });
 
   if (rows.length === 0) {
-    return (
-      <EmptyTab>
-        {t("No lesson maps yet. Every lesson ends with one.")}
-      </EmptyTab>
-    );
+    return <EmptyTab>{t("No lesson maps yet. Every lesson ends with one.")}</EmptyTab>;
   }
 
   const groups = groupBySubject(rows).map((group) => ({

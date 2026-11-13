@@ -146,11 +146,13 @@ function TestOutResult({
   return (
     <Steps
       exitHref={closeHref}
-      finalAction={<TaskMainLink href={closeHref}>{t("Continue")}</TaskMainLink>}
-      finalOptions={
-        changeId && undo !== "done" ? (
-          <UndoButton failed={undo === "failed"} onUndo={runUndo} pending={isPending} />
-        ) : null
+      finalAction={
+        <>
+          {changeId && undo !== "done" && (
+            <UndoButton failed={undo === "failed"} onUndo={runUndo} pending={isPending} />
+          )}
+          <TaskMainLink href={closeHref}>{t("Continue")}</TaskMainLink>
+        </>
       }
       items={[
         {

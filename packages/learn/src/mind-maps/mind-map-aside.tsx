@@ -17,15 +17,14 @@ import { StatusRegion } from "../_components/status-region";
 import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { toMindMapSrc } from "./_utils/mind-map-urls";
 import { useStateLines } from "./mind-map-copy";
-import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
+import { MindMapDescription } from "./mind-map-description";
 import { MindMapOutline } from "./mind-map-outline";
 import { type MindMapSave } from "./mind-map-save-button";
+import { MindMapThumbnail } from "./mind-map-thumbnail";
 import { MindMapDownloadLink, MindMapViewer } from "./mind-map-viewer";
 import { type MindMapRequest } from "./use-mind-map-request";
 
-const THUMBNAIL_WIDTH = 640;
 const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
 function MindMapPicture({
@@ -42,7 +41,6 @@ function MindMapPicture({
   const t = useExtracted();
   const [open, setOpen] = useState(false);
   const descriptionId = useId();
-  const alt = useMindMapAlt({ outline, title });
   const action = buttonVariants({ size: "sm", variant: "ghost" });
 
   return (
@@ -54,16 +52,12 @@ function MindMapPicture({
         onClick={() => setOpen(true)}
         type="button"
       >
-        {/* oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; maps are stored, optimized webp files. */}
-        <img
-          alt={alt}
+        <MindMapThumbnail
           className="aspect-square h-auto w-full object-cover"
-          decoding="async"
-          height={image.height}
+          image={image}
+          outline={outline}
           sizes="20rem"
-          src={toMindMapSrc(image.url)}
-          srcSet={`${toMindMapSrc(image.thumbnailUrl)} ${THUMBNAIL_WIDTH}w, ${toMindMapSrc(image.url)} ${image.width}w`}
-          width={image.width}
+          title={title}
         />
       </button>
 

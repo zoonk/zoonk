@@ -19,7 +19,7 @@ import { getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockNumber, useMockTitle } from "./mock-labels";
-import { MockResultActions, MockResultOptions } from "./mock-result-actions";
+import { MockResultActions, MockResultSkip } from "./mock-result-actions";
 import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-breakdown";
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
@@ -284,11 +284,10 @@ function MockResultSteps({ result }: { result: MockResult }) {
       exitHref={hrefs.exit}
       finalAction={
         <>
-          <MockResultOptions placement="row" />
+          <MockResultSkip />
           <MockResultActions />
         </>
       }
-      finalOptions={<MockResultOptions placement="under" />}
       items={items}
     />
   );

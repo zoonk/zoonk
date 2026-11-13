@@ -30,7 +30,11 @@ export function MockResultActions() {
   );
 }
 
-export function MockResultOptions({ placement }: { placement: "row" | "under" }) {
+/**
+ * The way on without reviewing: the bar's second action, outlined beside the main one. On a phone
+ * it takes the line above, since a translated pair doesn't fit one row with the way back.
+ */
+export function MockResultSkip() {
   const t = useExtracted();
   const { hrefs, runner } = useMockScreen();
   const mistakes = useMistakeCount();
@@ -42,8 +46,8 @@ export function MockResultOptions({ placement }: { placement: "row" | "under" })
   return (
     <LearnLink
       className={cn(
-        buttonVariants({ size: "xl", variant: placement === "row" ? "outline" : "ghost" }),
-        placement === "row" ? "shrink-0 max-lg:hidden" : "w-full lg:hidden",
+        buttonVariants({ size: "xl", variant: "outline" }),
+        "shrink-0 max-lg:order-first max-lg:basis-full",
       )}
       href={hrefs.continue}
     >

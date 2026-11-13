@@ -63,7 +63,6 @@ export function ExamMocks({ entry = false, offered }: { entry?: boolean; offered
           {t("Take a mock exam")}
         </LearnLink>
       )}
-
     </PageSection>
   );
 }

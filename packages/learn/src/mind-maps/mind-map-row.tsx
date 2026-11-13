@@ -31,6 +31,9 @@ import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use
 
 const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
 
+/** Room for a title and two lines, so the row a lesson's end reads in late moves nothing under it. */
+export const FINISH_ROW_CLASS = "min-h-16";
+
 function SlotMark({ shown }: { shown: MindMapShown }) {
   if (shown === "drawing" || shown === "writingLessons") {
     return <Spinner className="text-muted-foreground size-4" role="presentation" />;
@@ -144,13 +147,23 @@ export function MindMapRowView({
 
   const locked = shown === "plusRequired";
 
+  // A lesson's end shows one row over "Up next", so it takes that row's mark and text edge.
+  const alone = place === "finish";
+  const rowClass = alone ? FINISH_ROW_CLASS : undefined;
+
   const body = (
     <>
-      <ListRowLeading className="py-2">
-        <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
+      {alone ? (
+        <ListRowLeading>
           <SlotMark shown={shown} />
-        </MindMapSlot>
-      </ListRowLeading>
+        </ListRowLeading>
+      ) : (
+        <ListRowLeading className="py-2">
+          <MindMapSlot thumbnailUrl={shown === "ready" ? (view.image?.thumbnailUrl ?? null) : null}>
+            <SlotMark shown={shown} />
+          </MindMapSlot>
+        </ListRowLeading>
+      )}
       <RowText input={input} titleId={titleId} />
     </>
   );
@@ -158,14 +171,18 @@ export function MindMapRowView({
   return (
     <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
       {ready && (
-        <button className={LIST_ROW_INTERACTIVE_CLASS} onClick={() => setOpen(true)} type="button">
+        <button
+          className={cn(LIST_ROW_INTERACTIVE_CLASS, rowClass)}
+          onClick={() => setOpen(true)}
+          type="button"
+        >
           {body}
           <span className={cn(ACTION_CLASS, "self-center")}>{t("Open")}</span>
         </button>
       )}
 
       {locked && (
-        <ListRowLink href={routes.upgrade}>
+        <ListRowLink className={rowClass} href={routes.upgrade}>
           {body}
           <ListRowTrailing>
             <PlusMark className="font-sans" />
@@ -174,7 +191,7 @@ export function MindMapRowView({
       )}
 
       {!ready && !locked && (
-        <div className={LIST_ROW_CLASS}>
+        <div className={cn(LIST_ROW_CLASS, rowClass)}>
           {body}
           <span className="flex shrink-0 items-center empty:hidden">
             <RowAction

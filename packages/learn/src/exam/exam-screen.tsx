@@ -206,9 +206,7 @@ function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
 
         <DetailActions className={cn(!main && "max-lg:hidden")}>
           {main}
-          <div className="contents max-lg:hidden">
-            <ReportProblemMenu label={t("Exam options")} screen="exam" />
-          </div>
+          <ReportProblemMenu className="max-lg:hidden" label={t("Exam options")} screen="exam" />
         </DetailActions>
       </DetailHero>
 
