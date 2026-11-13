@@ -8,13 +8,12 @@ import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { getSession } from "@zoonk/core/users/session";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { MistakePracticeClient } from "./practice-client";
+import { PracticeSkeleton } from "./practice-skeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -76,17 +75,6 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
         tutor={tutor}
       />
     </PracticeMain>
-  );
-}
-
-function PracticeSkeleton() {
-  return (
-    <TaskSkeleton aside menu progress title={<Skeleton className="h-4 w-32" />}>
-      <Skeleton className="mb-3.5 h-5 w-full" />
-      <Skeleton className="mb-3.5 h-7 w-2/3" />
-      <Skeleton className="h-12 w-full rounded-xl" />
-      <Skeleton className="h-12 w-full rounded-xl" />
-    </TaskSkeleton>
   );
 }
 

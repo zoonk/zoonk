@@ -15,10 +15,10 @@ import {
 } from "../_components/list-group";
 import {
   INBOX_PAGE_CLASS,
-  PageEyebrow,
   PageSection,
   PageSectionHeader,
   PageSectionTitle,
+  PageSubtitle,
 } from "../_components/page";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -127,8 +127,8 @@ export function CompletedLessonsScreen({
     >
       <DetailHero>
         <DetailHeroText>
-          <PageEyebrow>{goalTitle}</PageEyebrow>
           <DetailTitle>{t("Completed lessons")}</DetailTitle>
+          <PageSubtitle>{goalTitle}</PageSubtitle>
         </DetailHeroText>
       </DetailHero>
 

@@ -245,13 +245,3 @@ export function Sparkline({ values }: { values: readonly number[] }) {
     </span>
   );
 }
-
-export function SampleProgressChart({ values }: { values: readonly number[] }) {
-  return (
-    <div aria-hidden="true" className={cn("relative h-20", MOCK_MARK_CLASS)}>
-      <span className="bg-viz-grid absolute inset-x-0 top-0 h-px" />
-      <span className="bg-viz-grid absolute inset-x-0 bottom-0 h-px" />
-      <ChartLine floor={0} values={values} wash />
-    </div>
-  );
-}

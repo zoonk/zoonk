@@ -5,6 +5,7 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { Eyebrow } from "../_components/eyebrow";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
@@ -22,7 +23,9 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
 
   return (
     <>
-      {yours === null && <p className="text-muted-foreground text-sm">{t("You left it blank.")}</p>}
+      {yours === null && (
+        <p className="text-muted-foreground text-reading">{t("You left it blank.")}</p>
+      )}
 
       <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
         {yours !== null && (
@@ -46,11 +49,11 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
   return (
     <li className="border-border flex flex-col gap-3 border-b py-5 first:pt-0 last:border-b-0">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">
+        <Eyebrow>
           {entry.area
             ? t("Question {number} · {area}", { area: entry.area, number: String(entry.number) })
             : t("Question {number}", { number: String(entry.number) })}
-        </p>
+        </Eyebrow>
         <ContentFeedbackMenu
           label={t("Question options")}
           screen="mock-review"
@@ -58,17 +61,19 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
         />
       </div>
       {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}
-      {entry.context && <ItemText className="text-muted-foreground text-sm" text={entry.context} />}
-      <div className="font-medium">
+      {entry.context && (
+        <ItemText className="text-muted-foreground text-reading" text={entry.context} />
+      )}
+      <div className="text-reading font-semibold">
         <ItemStem text={entry.question} />
       </div>
       {entry.outcome === "partial" && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-reading">
           {t("Partly right: it earned part of its points.")}
         </p>
       )}
       <ReviewAnswers entry={entry} />
-      {entry.explanation && <ItemText className="text-sm" text={entry.explanation} />}
+      {entry.explanation && <ItemText className="text-reading" text={entry.explanation} />}
       {entry.citation && (
         <ItemCitationNote citation={entry.citation} className="text-muted-foreground" />
       )}
@@ -102,7 +107,7 @@ export function MockReviewSection() {
   }
 
   return (
-    <ResultSection title={t("Questions to review")}>
+    <ResultSection rows title={t("Questions to review")}>
       <MockReviewList />
     </ResultSection>
   );
@@ -118,12 +123,7 @@ export function MockReviewDrawer() {
   }
 
   return (
-    <DetailsDrawer
-      label={t("{count, plural, one {See the question} other {See the # questions}}", {
-        count: review.length,
-      })}
-      title={t("Questions to review")}
-    >
+    <DetailsDrawer label={t("See answers")} title={t("Questions to review")} trigger="small">
       <MockReviewList />
     </DetailsDrawer>
   );

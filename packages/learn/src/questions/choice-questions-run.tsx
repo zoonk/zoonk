@@ -118,7 +118,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   aside?: TaskFrameAside | null;
   draftKey?: string;
   header: QuestionsHeader;
-  hint?: (question: Question) => string;
+  hint?: (question: Question) => string | null;
   onFinish: (answers: ChoiceQuestionAnswer[]) => void;
   pending: boolean;
   questions: readonly Question[];
@@ -135,6 +135,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const question = questions[index];
   const total = questions.length;
   const itemId = question?.itemId ?? null;
+  const hintText = question && hint ? hint(question) : null;
   const questionIds = useMemo(() => questions.map((entry) => entry.itemId), [questions]);
 
   const resume = useCallback((saved: ChoiceQuestionAnswer[]) => {
@@ -225,10 +226,8 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       {question && (
         <div className="flex flex-col gap-4" ref={questionRef}>
           <div className="text-muted-foreground flex items-center justify-between gap-3">
-            {hint && (
-              <Eyebrow className={cn("min-w-0", aside && "with-aside:hidden")}>
-                {hint(question)}
-              </Eyebrow>
+            {hintText && (
+              <Eyebrow className={cn("min-w-0", aside && "with-aside:hidden")}>{hintText}</Eyebrow>
             )}
             <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
               {t("{current, number} of {total, number}", { current, total })}
