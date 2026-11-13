@@ -1,7 +1,8 @@
 "use client";
 
+import { SectionPageHeader } from "@/components/learn/section-page";
 import { useRouter } from "@/i18n/navigation";
-import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { Page, PageSection, PageSectionTitle, PageSubtitle } from "@zoonk/learn/page";
 import { usePoll } from "@zoonk/learn/poll";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
@@ -39,19 +40,21 @@ function ConfirmationAttempt({ restart }: { restart: () => void }) {
 
   return (
     <Page className="max-w-form">
-      <PageHeader>
-        <PageHeaderContent>
-          <PageTitle className="md:text-xl md:leading-tight">
+      <SectionPageHeader title={t("Subscription")} />
+
+      <PageSection>
+        <div className="flex flex-col gap-1">
+          <PageSectionTitle>
             {waiting ? t("Turning on Plus") : t("Still working on it")}
-          </PageTitle>
+          </PageSectionTitle>
 
           <PageSubtitle>
             {waiting
               ? t("This takes a few seconds.")
               : t("Plus will show up here once your payment is confirmed.")}
           </PageSubtitle>
-        </PageHeaderContent>
-      </PageHeader>
+        </div>
+      </PageSection>
 
       {/* One row's height for both, so the slow state moves nothing. */}
       <div className="flex min-h-7.5 items-center">

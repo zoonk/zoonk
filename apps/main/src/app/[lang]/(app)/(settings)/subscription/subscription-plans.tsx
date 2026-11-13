@@ -6,7 +6,7 @@ import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
 import { getRequestBillingCurrency } from "@/data/subscriptions/get-request-billing-currency";
 import { getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
 import { getSession } from "@zoonk/core/users/session";
-import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { Page, PageSection, PageSectionTitle, PageSubtitle } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { CurrentPlan } from "./current-plan";
@@ -58,12 +58,14 @@ export async function SubscriptionPlans({
   if (webSubscription?.status === "ready" && webSubscription.state === "unpaid") {
     return (
       <Page className="max-w-form">
-        <PageHeader>
-          <PageHeaderContent>
-            <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
+        <SectionPageHeader title={t("Subscription")} />
+
+        <PageSection>
+          <div className="flex flex-col gap-1">
+            <PageSectionTitle>{t("Plus")}</PageSectionTitle>
             <PageSubtitle>{t("Your last renewal payment failed.")}</PageSubtitle>
-          </PageHeaderContent>
-        </PageHeader>
+          </div>
+        </PageSection>
         <CancelPlusButton endsNow />
       </Page>
     );

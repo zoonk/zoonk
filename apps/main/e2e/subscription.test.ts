@@ -108,7 +108,7 @@ test.describe("Subscription Page - With Plus Subscription", () => {
       .getByRole("link", { name: /^Subscription/u })
       .click();
 
-    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Plus" })).toBeVisible();
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
 
@@ -229,7 +229,7 @@ test.describe("Subscription Page - Back From Checkout", () => {
     await page.clock.install();
     await page.goto("/subscription?stripe_checkout=complete");
 
-    await expect(page.getByRole("heading", { level: 1, name: "Turning on Plus" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Turning on Plus" })).toBeVisible();
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
     // Its answer coming in is the signal: Playwright doesn't always see a streamed answer finish.
@@ -257,7 +257,7 @@ test.describe("Subscription Page - Back From Checkout", () => {
     await confirm();
     await Promise.all(heldChecks.map((route) => route.continue()));
 
-    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Plus" })).toBeVisible();
     await context.close();
   });
 });

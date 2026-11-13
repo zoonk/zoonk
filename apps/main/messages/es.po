@@ -394,6 +394,8 @@ msgstr "Memoria"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "R_6nsx"
 msgid "Subscription"

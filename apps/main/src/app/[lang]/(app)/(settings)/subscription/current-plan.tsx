@@ -1,16 +1,14 @@
+import { SectionPageHeader } from "@/components/learn/section-page";
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
 import { type getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
 import { type Subscription } from "@zoonk/db";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import {
   Page,
-  PageHeader,
-  PageHeaderContent,
   PageSection,
   PageSectionHeader,
   PageSectionTitle,
   PageSubtitle,
-  PageTitle,
 } from "@zoonk/learn/page";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
@@ -122,10 +120,12 @@ export async function CurrentPlan({
 
   return (
     <Page className="max-w-form">
-      <PageHeader>
-        <PageHeaderContent>
+      <SectionPageHeader title={t("Subscription")} />
+
+      <PageSection>
+        <div className="flex flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
-            <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
+            <PageSectionTitle>{t("Plus")}</PageSectionTitle>
             {/* A status, not a result: quiet, as the Plus mark is, never blue. */}
             <span className={CHIP_CLASS}>{isEnding ? t("Ending") : t("Active")}</span>
           </div>
@@ -136,8 +136,8 @@ export async function CurrentPlan({
               <span>{dateLine}</span>
             </PageSubtitle>
           )}
-        </PageHeaderContent>
-      </PageHeader>
+        </div>
+      </PageSection>
 
       <PageSection aria-label={t("What's included")}>
         <PlusBenefits />
