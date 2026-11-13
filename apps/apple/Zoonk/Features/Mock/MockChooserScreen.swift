@@ -94,8 +94,9 @@ private struct MockChooser: View {
 
   private var isOpen: Bool { view.access == .open }
   private var severalDays: Bool { view.options.filter { $0.kind == .full }.count > 1 }
+  /// Nothing is picked when the page opens, so one tap on Start never begins a five-hour exam.
   private var pickedOption: MockOption? {
-    view.options.first { $0.id == (picked ?? view.options.first?.id) }
+    view.options.first { $0.id == picked }
   }
 
   /// Main's choice rows put the size under the words on a phone.
@@ -105,7 +106,7 @@ private struct MockChooser: View {
     PaneSplit {
       ZoonkList {
         intro
-        choices(notesUnder: false)
+        choices
         plusSection
       }
     } secondary: {
@@ -116,10 +117,31 @@ private struct MockChooser: View {
     } single: {
       ZoonkList {
         intro
-        choices(notesUnder: true)
+        choices
         plusSection
         lastMockSection
       }
+    }
+    .alert(
+      Text(
+        "Start a shorter mock exam?", tableName: "Mock",
+        comment: "Title of the shorter mock exam dialog"),
+      isPresented: Binding(get: { shortNote != nil }, set: { if !$0 { status = .choosing } }),
+      presenting: shortNote
+    ) { _ in
+      Button(role: .cancel) {
+        status = .choosing
+      } label: {
+        Text("Pick another", tableName: "Mock", comment: "Closes the shorter mock exam dialog")
+      }
+
+      Button {
+        Task { await start(acceptingFewer: true) }
+      } label: {
+        Text("Start", tableName: "Mock", comment: "Starts the picked mock")
+      }
+    } message: { note in
+      Text(note)
     }
     .onAppear { isOnScreen = true }
     .onDisappear { isOnScreen = false }
@@ -163,9 +185,6 @@ private struct MockChooser: View {
           Label {
             VStack(alignment: .leading, spacing: 2) {
               Text("Continue your mock exam", tableName: "Mock", comment: "A running mock")
-              Text("It's where you left it", tableName: "Mock", comment: "Under a running mock")
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
             }
           } icon: {
             KindDot(kind: .mock)
@@ -177,18 +196,12 @@ private struct MockChooser: View {
   }
 
   @ViewBuilder
-  private func choices(notesUnder: Bool) -> some View {
+  private var choices: some View {
     let examOptions = view.options.filter { $0.kind != .area }
     let subjects = view.options.filter { $0.kind == .area }
 
     Section {
       ForEach(examOptions) { optionRow($0) }
-    } footer: {
-      SectionFooter {
-        if notesUnder {
-          pickedNotes
-        }
-      }
     }
 
     if !subjects.isEmpty {
@@ -250,21 +263,39 @@ private struct MockChooser: View {
   }
 
   private var detail: Text {
-    isOpen
-      ? Text(
-        "Your result only shows at the end, like on exam day.", tableName: "Mock",
-        comment: "The mock's one rule")
-      : Text("Pick how much of the exam to take now.", tableName: "Mock", comment: "Without Plus")
+    Text(
+      "Timed like the real exam. You see your result at the end.", tableName: "Mock",
+      comment: "Under the mock exam chooser's title")
   }
 
   private var startLabel: Text {
-    if case .short(let optionId, _, _, _, let questions) = status, optionId == pickedOption?.id {
-      return Text(
-        "Start with \(questions) questions", tableName: "Mock",
-        comment: "Starts a mock with fewer questions")
-    }
+    Text("Start", tableName: "Mock", comment: "Starts the picked mock")
+  }
 
-    return Text("Start", tableName: "Mock", comment: "Starts the picked mock")
+  /// What the dialog says before a mock exam with fewer questions than it should starts.
+  private var shortNote: String? {
+    guard case .short(_, let examQuestions, let limit, let minutes, let questions)? = shownStatus
+    else { return nil }
+
+    let time = MockLabels.duration(minutes: minutes)
+
+    return switch limit {
+    case .day:
+      String(
+        localized:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one tomorrow.",
+        table: "Mock", comment: "A mock exam shorter today, when today's writing is used up")
+    case .month:
+      String(
+        localized:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one next month.",
+        table: "Mock", comment: "A mock exam shorter today, when this month's writing is used up")
+    case .total, nil:
+      String(
+        localized:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time).",
+        table: "Mock", comment: "A mock exam shorter today")
+    }
   }
 
   /// A short bank's note is about the mock it was asked for: another pick starts another mock.
@@ -282,10 +313,6 @@ private struct MockChooser: View {
       return Text(failure).foregroundStyle(.destructiveText)
     }
 
-    if case .short? = shownStatus {
-      return Text(verbatim: outcome.joinedSentences())
-    }
-
     return detail
   }
 
@@ -294,12 +321,12 @@ private struct MockChooser: View {
     switch shownStatus {
     case .notEnoughQuestions?:
       String(
-        localized:
-          "There aren't enough questions for this mock yet. Try the full exam or another subject.",
-        table: "Mock", comment: "Too few questions for a mock")
+        localized: "Not enough questions for this one yet. Pick another.", table: "Mock",
+        comment: "Too few questions for a mock exam")
     case .failed?:
       String(
-        localized: "We couldn't start the mock. Try again.", table: "Mock", comment: "Start failed")
+        localized: "We couldn't start the mock exam. Try again.", table: "Mock",
+        comment: "Start failed")
     default:
       nil
     }
@@ -308,11 +335,13 @@ private struct MockChooser: View {
   private var writing: some View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
-        Text("Preparing your mock exam", tableName: "Mock", comment: "Questions being written")
-          .typeStyle(.body.weight(.semibold))
         Text(
-          "We're writing questions like the exam's for you. It starts here as soon as they're ready.",
-          tableName: "Mock", comment: "While a mock's questions are written"
+          "Getting your mock exam ready…", tableName: "Mock", comment: "Questions being written"
+        )
+        .typeStyle(.body.weight(.semibold))
+        Text(
+          "It starts here when it's ready.", tableName: "Mock",
+          comment: "While a mock's questions are written"
         )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -326,33 +355,9 @@ private struct MockChooser: View {
   /// read out as an alert (`failure`).
   private var outcome: [String] {
     switch status {
-    case .short(_, let examQuestions, let limit, let minutes, let questions):
-      let more =
-        switch limit {
-        case .day:
-          String(
-            localized: "More can be written for your mocks tomorrow.", table: "Mock",
-            comment: "Daily question limit")
-        case .month:
-          String(
-            localized: "More can be written for your mocks next month.", table: "Mock",
-            comment: "Monthly question limit")
-        case .total, nil:
-          String(
-            localized: "The question bank doesn't have more new ones for it yet.", table: "Mock",
-            comment: "No more questions")
-        }
-
-      return [
-        String(
-          localized:
-            "\(questions) of the \(examQuestions) questions are ready now, so this mock takes about \(MockLabels.duration(minutes: minutes)).",
-          table: "Mock", comment: "A mock that can ask only part of its questions"),
-        more,
-      ]
     case .refused(let limit):
       return [limit.message]
-    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed:
+    case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short:
       return []
     }
   }
@@ -364,7 +369,7 @@ private struct MockChooser: View {
       pickedSize(
         title: MockLabels.optionName(option, severalDays: severalDays),
         questions: option.questions, minutes: option.minutes,
-        estimatedMinutes: option.estimatedMinutes, notes: true)
+        estimatedMinutes: option.estimatedMinutes)
       pickedAsks(
         option.covers ?? option.areas,
         title: option.covers == nil
@@ -375,7 +380,7 @@ private struct MockChooser: View {
   }
 
   private func pickedSize(
-    title: String, questions: Int, minutes: Int, estimatedMinutes: Int, notes: Bool = false
+    title: String, questions: Int, minutes: Int, estimatedMinutes: Int
   ) -> some View {
     Section {
       LabeledContent {
@@ -399,12 +404,6 @@ private struct MockChooser: View {
       }
     } header: {
       SectionTitle(Text(title))
-    } footer: {
-      SectionFooter {
-        if notes {
-          pickedNotes
-        }
-      }
     }
     .monospacedDigit()
   }
@@ -429,21 +428,6 @@ private struct MockChooser: View {
     }
   }
 
-  @ViewBuilder
-  private var pickedNotes: some View {
-    if let pickedOption {
-      VStack(alignment: .leading, spacing: 4) {
-        MockSizeNote(
-          document: view.examDocument, minutes: pickedOption.minutes,
-          questions: pickedOption.questions, source: view.sizeSource)
-        ForEach(
-          pickedOption.leftOut.filter { $0.part != .writtenInFull }.map(MockLabels.leftOut),
-          id: \.self
-        ) { Text($0) }
-      }
-    }
-  }
-
   private func optionRow(_ option: MockOption) -> some View {
     choiceRow(
       isPicked: option.id == pickedOption?.id,
@@ -451,14 +435,8 @@ private struct MockChooser: View {
       detail: optionDetail(option),
       trailing: String(
         localized:
-          "\(option.questions) q\u{00A0}· ~\(MockLabels.duration(minutes: option.estimatedMinutes))",
-        table: "Mock",
-        comment:
-          "A mock's number of questions (q is short for questions) and about how long it takes"),
-      spokenTrailing: String(
-        localized:
-          "\(option.questions) questions, about \(MockLabels.duration(minutes: option.estimatedMinutes))",
-        table: "Mock", comment: "Spoken: a mock's questions and time")
+          "\(option.questions) questions\u{00A0}· \(MockLabels.duration(minutes: option.estimatedMinutes))",
+        table: "Mock", comment: "A mock exam's number of questions and how long it takes")
     ) {
       picked = option.id
     }
@@ -468,12 +446,11 @@ private struct MockChooser: View {
   /// and a check on the pick.
   private func choiceRow(
     isPicked: Bool, title: String, detail: String?, trailing: String,
-    spokenTrailing: String, action: @escaping () -> Void
+    action: @escaping () -> Void
   ) -> some View {
     let size = Text(trailing)
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
-      .accessibilityLabel(spokenTrailing)
 
     return Button(action: action) {
       HStack(spacing: 12) {
@@ -514,26 +491,21 @@ private struct MockChooser: View {
     let subjects =
       severalDays && option.kind != .area && !option.areas.isEmpty
       ? option.areas.formatted(.list(type: .and)) : nil
-    let written = option.written.isEmpty ? nil : "+ \(option.written.formatted(.list(type: .and)))"
+    let asks = (covers.map { [$0] } ?? subjects.map { [$0] } ?? []) + option.written
     let objective =
       option.objectiveOnly && covers == nil
       ? String(
-        localized: "objective part only", table: "Mock",
-        comment:
-          "A mock with only the exam's objective questions, without its written part like the essay"
-      ) : nil
+        localized: "No written part", table: "Mock",
+        comment: "A mock exam with only the exam's objective questions, without its essay")
+      : nil
 
-    return [covers, subjects, written, objective].compactMap { $0 }.joinedFacts()
+    return [asks.isEmpty ? nil : asks.formatted(.list(type: .and)), objective]
+      .compactMap { $0 }.joinedFacts()
   }
 
-  private func start() async {
+  /// `acceptingFewer` only after the learner pressed Start in the shorter mock exam's dialog.
+  private func start(acceptingFewer acceptFewer: Bool = false) async {
     guard let pickedOption else { return }
-
-    // Start again on a mock the screen said is short takes it as it is.
-    var acceptFewer = false
-    if case .short(let optionId, _, _, _, _) = status, optionId == pickedOption.id {
-      acceptFewer = true
-    }
 
     busy = true
     status = .choosing
@@ -581,8 +553,11 @@ struct MockSummaryRow: View {
       ListRow(
         Text(MockLabels.title(number: mock.number)),
         description: Text(
-          [shape, mock.finishedAt.formatted(.dateTime.month(.abbreviated).day())]
-            .compactMap { $0 }.joinedFacts())
+          [
+            mock.finishedAt.formatted(.dateTime.month(.abbreviated).day()),
+            mock.shape?.kind == .area ? mock.shape?.area : nil,
+          ]
+          .compactMap { $0 }.joinedFacts())
       ) {
         StatusMark(status: .done)
       } trailing: {
@@ -592,24 +567,12 @@ struct MockSummaryRow: View {
     }
   }
 
-  private var shape: String? {
-    let label = MockLabels.shape(purpose: mock.purpose, shape: mock.shape)
-
-    guard let examQuestions = mock.examQuestions, let label else {
-      return label
-    }
-
-    return String(
-      localized: "\(label), \(mock.total) of \(examQuestions) questions", table: "Mock",
-      comment: "A mock that asked fewer questions than the exam")
-  }
-
   private var score: String {
     switch mock.scoring {
     case .net:
       String(
-        localized: "Net \(MockLabels.number(mock.measure)) of \(mock.total)", table: "Mock",
-        comment: "A net score")
+        localized: "\(MockLabels.number(mock.measure)) of \(mock.total)", table: "Mock",
+        comment: "A net score: the score of the most it could be, like 34 of 120")
     // An IRT score is only an estimate, shown as a range on the Plan, so a past mock shows its
     // right answers.
     case .irt, .raw:

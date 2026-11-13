@@ -250,7 +250,7 @@ private struct MockTimeUpView: View {
       title: Text("Time's up", tableName: "Mock", comment: "A mock section's time ran out"),
       detail: run.queue.status == .saved
         ? Text(
-          "Your answers so far are saved.", tableName: "Mock",
+          "Your answers are saved.", tableName: "Mock",
           comment: "Under time's up, once every answer is stored") : nil
     )
     .navigationTitle(MockLabels.title(number: view.number))
@@ -260,7 +260,7 @@ private struct MockTimeUpView: View {
           Task { await run.submitSection() }
         } label: {
           if view.isLastSectionCurrent {
-            Text("See how it went", tableName: "Mock", comment: "Hands in the mock's last section")
+            Text("See result", tableName: "Mock", comment: "Hands in the mock's last section")
           } else {
             Text("Continue", tableName: "Mock", comment: "Hands in a section after its time")
           }
@@ -288,7 +288,7 @@ private struct MockGradingView: View {
         BusyButton(isBusy: run.busy == .finish, icon: .forward) {
           Task { await run.finish() }
         } label: {
-          Text("See how it went", tableName: "Mock", comment: "Grades a handed-in mock")
+          Text("See result", tableName: "Mock", comment: "Grades a handed-in mock")
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
@@ -311,7 +311,7 @@ private struct MockExpiredView: View {
       title: Text(
         "Time ran out while you were away", tableName: "Mock", comment: "An abandoned mock"),
       detail: Text(
-        "With most of it unanswered, it isn't scored and doesn't change your preparation.",
+        "This one doesn't count.",
         tableName: "Mock", comment: "Why an abandoned mock has no result")
     )
     .safeAreaBar(edge: .bottom) {
@@ -323,7 +323,7 @@ private struct MockExpiredView: View {
           router.open(.mockChooser)
         }
       } label: {
-        Text("Take a new mock exam", tableName: "Mock", comment: "Starts over after expiring")
+        Text("Take another", tableName: "Mock", comment: "Starts over after expiring")
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
@@ -388,7 +388,7 @@ private struct MockBreakView: View {
         BusyButton(isBusy: run.busy == .endBreak, icon: .play) {
           Task { await run.endBreak() }
         } label: {
-          Text("Start the next section", tableName: "Mock", comment: "Ends a mock's break early")
+          Text("Start now", tableName: "Mock", comment: "Ends a mock's break early")
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
@@ -437,8 +437,8 @@ private struct MockSpeakingView: View {
           if view.speaking != nil {
             if left > 0 {
               Text(
-                "Do the tasks in order. Each one is a call, and you come back here after it. \(left) tasks left.",
-                tableName: "Mock", comment: "Mock speaking tasks still to do")
+                "Do the tasks in order. Each one is a call.", tableName: "Mock",
+                comment: "Mock speaking tasks still to do")
             } else {
               Text(
                 "Every task is done. Hand in this section to go on.", tableName: "Mock",
@@ -467,7 +467,7 @@ private struct MockSpeakingView: View {
             BusyButton(isBusy: run.busy == .startSpeaking, icon: .play) {
               Task { await run.startSpeaking() }
             } label: {
-              Text("Start the speaking part", tableName: "Mock", comment: "Starts mock speaking")
+              Text("Start", tableName: "Mock", comment: "Starts mock speaking")
             }
             .buttonStyle(.mainAction)
             .controlSize(.large)
@@ -503,7 +503,7 @@ private struct MockSpeakingView: View {
           tableName: "Mock", comment: "Handing in speaking with tasks left")
       } else {
         Text(
-          "Every task is done. After this, you can't do them again in this mock.",
+          "Every task is done. After this, you can't do them again in this mock exam.",
           tableName: "Mock", comment: "Handing in speaking with every task done")
       }
     }
@@ -544,8 +544,8 @@ private struct MockSpeakingView: View {
 
   private var handInLabel: Text {
     view.isLastSectionCurrent
-      ? Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")
-      : Text("Hand in this section", tableName: "Mock", comment: "Hands in a section")
+      ? Text("Hand in", tableName: "Mock", comment: "Hands in the last section")
+      : Text("Hand in section", tableName: "Mock", comment: "Hands in a section")
   }
 
   private var handInTitle: Text {

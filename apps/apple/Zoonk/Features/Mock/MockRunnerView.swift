@@ -186,9 +186,9 @@ struct MockRunnerView: View {
       if !isLastQuestion {
         Text("Next", tableName: "Mock", comment: "The next question")
       } else if view.isLastSectionCurrent {
-        Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")
+        Text("Hand in", tableName: "Mock", comment: "Hands in the last section")
       } else {
-        Text("Hand in this section", tableName: "Mock", comment: "Hands in a section")
+        Text("Hand in section", tableName: "Mock", comment: "Hands in a section")
       }
     }
     .buttonStyle(.mainAction)
