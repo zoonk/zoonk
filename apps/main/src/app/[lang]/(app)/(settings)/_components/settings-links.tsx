@@ -29,10 +29,9 @@ function toPage(
 }
 
 function useSettingsPages({
-  plus,
   showProfile,
   withProfile,
-}: SettingsPagesShown & { withProfile: boolean }) {
+}: Pick<SettingsPagesShown, "showProfile"> & { withProfile: boolean }) {
   const t = useExtracted();
 
   const yours = [
@@ -51,10 +50,7 @@ function useSettingsPages({
     toPage("privacy", t("Privacy")),
   ].filter((item) => item !== false);
 
-  const plan = [
-    toPage("subscription", t("Subscription"), plus ? t("Plus") : undefined),
-    toPage("support", t("Help")),
-  ];
+  const plan = [toPage("subscription", t("Subscription")), toPage("support", t("Help"))];
 
   return { label: t("Settings"), plan, yours };
 }
@@ -130,18 +126,24 @@ export function SettingsHubLists({
   reminders,
   ...shown
 }: SettingsPagesShown & { reminders?: HubReminders | null }) {
+  const t = useExtracted();
   const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: false });
   const remindersSummary = useRemindersSummary(reminders);
   const remindersUrl = getMenu("reminders").url;
+  const subscriptionUrl = getMenu("subscription").url;
 
   const summaries = yours.map((item) =>
     item.url === remindersUrl ? { ...item, trail: remindersSummary } : item,
   );
 
+  const plans = plan.map((item) =>
+    item.url === subscriptionUrl && shown.plus ? { ...item, trail: t("Plus") } : item,
+  );
+
   return (
     <nav aria-label={label} className="flex flex-col gap-6">
       <SettingsGroup items={summaries} />
-      <SettingsGroup items={plan} />
+      <SettingsGroup items={plans} />
       {shown.showLogout && <LogoutGroup />}
     </nav>
   );

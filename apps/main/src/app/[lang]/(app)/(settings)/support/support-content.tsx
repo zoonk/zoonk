@@ -29,7 +29,7 @@ async function FollowUs() {
         <PageSectionTitle id={FOLLOW_US_ID}>{t("Follow us")}</PageSectionTitle>
       </PageSectionHeader>
 
-      <ul className="-ml-1.5 flex flex-wrap gap-x-3 gap-y-2">
+      <ul className="-ml-1.5 grid grid-cols-5 gap-y-2 sm:flex sm:gap-x-3">
         {socials.map((social) => (
           <li key={social.name}>
             {/* oxlint-disable-next-line next/no-html-link-for-pages -- external links */}
