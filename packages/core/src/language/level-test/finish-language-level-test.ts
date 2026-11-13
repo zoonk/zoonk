@@ -13,9 +13,14 @@ import { readGoalDetails } from "../_utils/language-goal";
 import { getOverallLevel } from "../levels/skill-level-rules";
 import { announceLevelTestPlacement, placeLevelTestResult } from "./_utils/level-test-placement";
 import { loadLevelTestContext, readLevelTestProgress } from "./_utils/level-test-state";
-import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
+import {
+  type LevelTestBank,
+  type LevelTestProgress,
+  type LevelTestQuestion,
+} from "./level-test-contract";
 import {
   type LevelTestScores,
+  getAnswerVerdict,
   getLevelTestScores,
   listLevelTestLevels,
   toLevelLabels,
@@ -62,6 +67,16 @@ async function saveSkillLevels(
   }
 }
 
+function isAnsweredRight({
+  answer,
+  question,
+}: {
+  answer: LevelTestProgress["answers"][number];
+  question?: LevelTestQuestion;
+}): boolean | null {
+  return question ? getAnswerVerdict({ answer, question }) === true : null;
+}
+
 async function recordTestActivity({
   bank,
   goalId,
@@ -79,7 +94,7 @@ async function recordTestActivity({
   transaction: TransactionClient;
   userId: string;
 }) {
-  const asked = new Set(bank.questions.map((question) => question.id));
+  const asked = new Map(bank.questions.map((question) => [question.id, question]));
   const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
 
   if (fresh.length === 0) {
@@ -89,7 +104,7 @@ async function recordTestActivity({
   await settleAnsweredActivity(transaction, {
     answers: fresh.map((answer) => ({
       durationMs: answer.durationMs,
-      isCorrect: asked.has(answer.id) ? answer.correct === true : null,
+      isCorrect: isAnsweredRight({ answer, question: asked.get(answer.id) }),
     })),
     contentIds: {},
     goalId,

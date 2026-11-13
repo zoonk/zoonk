@@ -210,7 +210,7 @@ function takeTest({
   random: () => number;
 }): RecordedLevelTest {
   const test = recorded(learner.start, {});
-  const progress = { answers: [] as { correct: boolean; id: string }[], speaking: null };
+  const progress = { answers: test.answers, speaking: null };
   let step = getNextLevelTestStep({ bank, progress, start: learner.start });
 
   while (step.kind === "question") {
@@ -224,7 +224,6 @@ function takeTest({
     });
 
     test.answers.push({ answerIndex, durationMs: 0, id: question.id });
-    progress.answers.push({ correct: answerIndex === question.answerIndex, id: question.id });
     step = getNextLevelTestStep({ bank, progress, start: learner.start });
   }
 

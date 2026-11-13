@@ -8,7 +8,10 @@ import {
 } from "./level-test-contract";
 
 type TestAnswers = {
-  answers: readonly Pick<LevelTestProgress["answers"][number], "correct" | "id" | "skipped">[];
+  answers: readonly Pick<
+    LevelTestProgress["answers"][number],
+    "answerIndex" | "correct" | "id" | "skipped"
+  >[];
   placement?: LevelTestProgress["placement"];
   speaking: LevelTestProgress["speaking"];
 };
@@ -109,6 +112,20 @@ function countAsked({
   ).length;
 }
 
+export function getAnswerVerdict({
+  answer,
+  question,
+}: {
+  answer: Pick<LevelTestProgress["answers"][number], "answerIndex" | "correct">;
+  question: Pick<LevelTestQuestion, "answerIndex">;
+}): boolean | null {
+  if (answer.correct !== undefined) {
+    return answer.correct;
+  }
+
+  return answer.answerIndex === null ? null : answer.answerIndex === question.answerIndex;
+}
+
 /** A skipped question uses up its turn without moving the level. Without a skill, both count. */
 function scoreAnswers({
   answers,
@@ -128,7 +145,7 @@ function scoreAnswers({
       return [];
     }
 
-    return [{ band: getBand(question.level), correct: answer.correct }];
+    return [{ band: getBand(question.level), correct: getAnswerVerdict({ answer, question }) }];
   });
 }
 

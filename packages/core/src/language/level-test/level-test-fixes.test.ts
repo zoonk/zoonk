@@ -198,6 +198,37 @@ describe("level test answers saved before a fix", () => {
 
     await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ levels });
   });
+
+  it("grades answers saved without a verdict by the bank's key", async () => {
+    const { goalId } = await learnerWithBank();
+    const answered = await nextQuestionId(goalId);
+    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: answered } });
+
+    const before = await getLanguageLevelTest(goalId);
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+    const details = readGoalDetails(goal);
+    const progress = details.levelTest as { answers: { correct?: boolean | null }[] };
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          ...details,
+          levelTest: {
+            ...progress,
+            answers: progress.answers.map(({ correct: _verdict, ...answer }) => answer),
+          },
+        },
+      },
+      where: { id: goalId },
+    });
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toStrictEqual(before);
+    await finishLanguageLevelTest(goalId);
+
+    await expect(
+      prisma.learningEvent.findFirst({ where: { goalId, lessonKind: "levelTest" } }),
+    ).resolves.toMatchObject({ correctAnswers: 1, incorrectAnswers: 0 });
+  });
 });
 
 describe("level test sentence fixed during the test", () => {
