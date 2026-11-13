@@ -58,7 +58,7 @@ export async function getExampleDailyTime(minutes: number): Promise<string> {
   });
 }
 
-export async function ExampleDay({ detail, steps }: { detail?: string; steps: DayListStep[] }) {
+async function ExampleDay({ steps }: { steps: DayListStep[] }) {
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
   const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
@@ -72,12 +72,32 @@ export async function ExampleDay({ detail, steps }: { detail?: string; steps: Da
         </span>
       </p>
 
-      {detail && (
-        <p className="text-muted-foreground text-compact mt-0.5">{`${t("Example")} · ${detail}`}</p>
-      )}
-
       <DaySegments className="mt-3 mb-1" steps={steps} />
       <DayList className={EXAMPLE_ROWS_CLASS} minutesText={minutesText} steps={steps} />
     </div>
+  );
+}
+
+export async function ExampleDayCard({
+  className,
+  steps,
+  title,
+}: {
+  className?: string;
+  steps: DayListStep[];
+  title: string;
+}) {
+  const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
+
+  return (
+    <ProductWindow className={className}>
+      <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
+        <ExampleCardHead detail={await getExampleDailyTime(minutes)} title={title} />
+      </div>
+
+      <div className="border-t px-5 pt-4 pb-1.5 sm:px-6">
+        <ExampleDay steps={steps} />
+      </div>
+    </ProductWindow>
   );
 }

@@ -1,9 +1,8 @@
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
-import { ProductWindow } from "@/components/public/product-window";
 import { getAppLocale } from "@/i18n/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { ExampleCardHead, ExampleDay, getExampleDailyTime } from "./example-card";
+import { ExampleDayCard } from "./example-card";
 import { toExampleSteps } from "./example-steps";
 import { getHomeHeadline } from "./home-headline";
 import { HERO_GOAL_ID } from "./home-ids";
@@ -22,19 +21,13 @@ function renderMore(chunks: React.ReactNode) {
 
 async function ExamPlan() {
   const { exam } = await getExampleSet();
-  const steps = toExampleSteps(exam.day);
-  const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <ProductWindow className="mt-18 lg:mt-0">
-      <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
-        <ExampleCardHead detail={await getExampleDailyTime(minutes)} title={exam.headline} />
-      </div>
-
-      <div className="border-t px-5 pt-4 pb-1.5 sm:px-6">
-        <ExampleDay steps={steps} />
-      </div>
-    </ProductWindow>
+    <ExampleDayCard
+      className="mt-18 lg:mt-0"
+      steps={toExampleSteps(exam.day)}
+      title={exam.headline}
+    />
   );
 }
 
