@@ -230,10 +230,10 @@ Running text is 45 to 90 characters a line and never wider than `max-w-column`. 
 
 ### T6. Titles, not labels
 
-A page's parts are named by sentence-case titles. Uppercase is the label role inside a panel or a sheet, and the mono eyebrow.
+A page's parts are named by sentence-case titles. Uppercase is the label role inside a panel or a sheet. The small line over a title is one chip, `Eyebrow`, on every task, card, sheet and question: a label in sentence case, never mono, uppercase or a bare gray line, 12px over its title. A page with the app's header has no line over its title.
 
 - **Check.** No section of the page is headed by small capitals.
-- **Usual break.** An uppercase label heading one section among sentence-case titles.
+- **Usual break.** An uppercase label heading one section among sentence-case titles. A line typed by hand over a title (gray text, a mono line, a second chip look) where another screen draws the chip.
 
 ## Icons
 
@@ -436,7 +436,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - Onboarding, the player and the buddy's conversation center one column; pages that are worked in never do.
 - Content is flat: no shadows, few boxes. Body text is 14px in the app.
 - Colored marks and words are soft until the device asks for more contrast. The main action is the text color.
-- Eyebrows and facts lines are mono, uppercase where the role says so.
+- Facts lines are mono, uppercase where the role says so. The line over a title is the `Eyebrow` chip in the text face.
 - A switch is a pill; meters are 6px with 3px corners.
 - A caption directly under a full-width button is centered.
 - Characters and flags are pictures with their own shapes and blank margins.

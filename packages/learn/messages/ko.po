@@ -501,12 +501,12 @@ msgstr "다음"
 #: src/_components/question-actions.tsx
 msgctxt "BkQAJw"
 msgid "Show the next step"
-msgstr ""
+msgstr "다음 풀이 과정 보기"
 
 #: src/_components/question-actions.tsx
 msgctxt "ZLtyTD"
 msgid "See the answer"
-msgstr ""
+msgstr "정답 보기"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
@@ -519,7 +519,7 @@ msgstr "결과 보기"
 #: src/_components/question-actions.tsx
 msgctxt "QriCsD"
 msgid "Previous screen"
-msgstr ""
+msgstr "이전 화면"
 
 #: src/_components/question-actions.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -8453,7 +8453,7 @@ msgstr "레슨 열기"
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
-msgstr ""
+msgstr "나가기. 지금까지 푼 문제는 반영돼요."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -9562,17 +9562,17 @@ msgstr "이 파트 제출하기"
 #: src/mock/mock-runner-view.tsx
 msgctxt "r5QD8t"
 msgid "Stay"
-msgstr ""
+msgstr "계속 풀기"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "jOu95u"
 msgid "Your answers are saved. The clock keeps running while you're away."
-msgstr ""
+msgstr "답한 내용은 저장되어 있어요. 나가 있는 동안에도 남은 시간은 계속 줄어들어요."
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
-msgstr ""
+msgstr "모의고사에서 나갈까요?"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -14072,9 +14072,14 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될 때가 많아요. 오늘 한 공부는 모두 의미가 있어요."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요."
+msgctxt "l8gWNH"
+msgid "Fine-tuning your plan"
+msgstr "계획을 다듬고 있어요"
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "yHidq9"
+msgid "A miss here is never saved as a mistake."
+msgstr "여기서 틀린 문제는 오답 노트에 저장되지 않아요."
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14084,7 +14089,7 @@ msgstr "오늘은 건너뛰기"
 #: src/session/question-block/question-block-header.tsx
 msgctxt "2vhowQ"
 msgid "Leave. Your answers are saved."
-msgstr ""
+msgstr "나가기. 답한 내용은 저장되어 있어요."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"

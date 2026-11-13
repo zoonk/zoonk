@@ -2,8 +2,8 @@
 
 import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SuccessEyebrow } from "../../_components/eyebrow";
 import { ChangeSaveError } from "../../_components/save-error";
-import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import {
   OnboardingColumn,
   OnboardingDescription,

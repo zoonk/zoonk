@@ -4,6 +4,7 @@ import {
   type ReadingPromptWord,
   type SerializedStep,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import {
   Popover,
   PopoverContent,
@@ -18,7 +19,6 @@ import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { QuestionText } from "./question-text";
-import { ScreenChip } from "./screen-chip";
 
 function PromptWord({
   promptWord,
@@ -113,7 +113,7 @@ export function ReadingStep({
       wordBankOptions={step.wordBankOptions}
     >
       <div className="flex flex-col gap-2">
-        <ScreenChip>{t("Translate")}</ScreenChip>
+        <Eyebrow>{t("Translate")}</Eyebrow>
         <QuestionText>
           <ReadingPromptText
             promptWords={step.readingPromptWords}
