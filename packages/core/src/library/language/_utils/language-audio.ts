@@ -52,7 +52,7 @@ async function fillWordAudio({
   if (clip) {
     await prisma.word.updateMany({
       data: toAudioData(clip),
-      where: { audioUrl: null, id: word.id },
+      where: { audioUrl: null, id: word.id, word: word.text },
     });
   }
 }
@@ -71,7 +71,7 @@ async function fillSentenceAudio({
   if (clip) {
     await prisma.sentence.updateMany({
       data: toAudioData(clip),
-      where: { audioUrl: null, id: sentence.id },
+      where: { audioUrl: null, id: sentence.id, sentence: sentence.text },
     });
   }
 }

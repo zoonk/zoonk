@@ -34,5 +34,8 @@ export async function voiceWord({
     throw error;
   }
 
-  await prisma.word.updateMany({ data: toAudioData(data), where: { audioUrl: null, id: wordId } });
+  await prisma.word.updateMany({
+    data: toAudioData(data),
+    where: { audioUrl: null, id: wordId, word: word.word },
+  });
 }
