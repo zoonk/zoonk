@@ -58,7 +58,6 @@ export function ChapterHeader() {
   );
 }
 
-/** The chapter's main action, pinned under the page: the next lesson to study. */
 export function ChapterBottomBar() {
   const { chapter, hrefs } = useChapterScreen();
   const { lessons } = chapter;

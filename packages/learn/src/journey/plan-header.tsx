@@ -7,7 +7,6 @@ import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
 
-/** Whose plan this is and how long it has, for the line under the page's title. */
 export function PlanGoalLine() {
   const t = useExtracted();
   const { goal, plan, today } = usePlanScreen();

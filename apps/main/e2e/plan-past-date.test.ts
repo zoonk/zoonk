@@ -81,7 +81,6 @@ test.describe("A plan whose date came with lessons left", () => {
       const findDate = slot.getByRole("button", { exact: true, name: "Find a date" });
       await expectHydrated(findDate);
       await findDate.click();
-      // Disabled while the new date's changes are worked out.
       await slot.getByRole("button", { exact: true, name: "Change my plan" }).click();
 
       await expect(slot.getByText("Plan updated", { exact: true })).toBeVisible();

@@ -258,7 +258,6 @@ function useSettingStatement() {
   };
 }
 
-/** What a change did, once it's in the plan. */
 export function useOperationStatement() {
   const t = useExtracted();
   const areaStatement = useAreaStatement();
