@@ -5,6 +5,8 @@ import { SWITCHED_ON } from "./rules/catalog.mts";
 import { auditStrings } from "./strings.mts";
 
 const WEB = "apps/main/messages/en.po";
+/** Apple's catalogs are large JSON files, and CI shares its runner. */
+const TREE_TIMEOUT_MS = 60_000;
 
 function po(entries: string[][]): string {
   return ['msgid ""', 'msgstr ""', "", ...entries.flatMap((entry) => [...entry, ""])].join("\n");
@@ -98,12 +100,14 @@ describe("the founder's catalog rules", () => {
     );
   });
 
-  it("holds every switched-on rule on the whole tree", () => {
-    assert.deepEqual(
-      catalogOffenders(treeCatalogs()).filter((offender) =>
-        SWITCHED_ON.some((rule) => rule === offender.rule),
-      ),
-      [],
-    );
+  it("holds every switched-on rule on the whole tree", { timeout: TREE_TIMEOUT_MS }, () => {
+    const broken =
+      SWITCHED_ON.length > 0
+        ? catalogOffenders(treeCatalogs()).filter((offender) =>
+            SWITCHED_ON.some((rule) => rule === offender.rule),
+          )
+        : [];
+
+    assert.deepEqual(broken, []);
   });
 });
