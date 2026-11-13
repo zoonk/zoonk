@@ -1,7 +1,7 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { PageSectionLabel } from "@zoonk/learn/page";
-import { QuestionEyebrow } from "@zoonk/learn/question-title";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ClockIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -62,11 +62,11 @@ export function ChallengeIntro({
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flex flex-col gap-3">
-        <QuestionEyebrow icon={<TargetIcon aria-hidden="true" />}>
+        <Eyebrow icon={<TargetIcon aria-hidden="true" />}>
           {content.variant === "whatIf"
             ? t("What if · {setting}", { setting: fill(content.setting) })
             : t("Challenge · {setting}", { setting: fill(content.setting) })}
-        </QuestionEyebrow>
+        </Eyebrow>
         <LessonQuestion>{fill(content.title)}</LessonQuestion>
       </div>
 

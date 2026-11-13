@@ -50,7 +50,7 @@ function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
   CHOICE_PICKED_ROW_CLASS,
-  "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px]",
+  "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px] has-focus-visible:before:ring-inset",
 );
 
 /**

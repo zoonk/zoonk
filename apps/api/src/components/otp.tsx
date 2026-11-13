@@ -1,4 +1,3 @@
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { InputError } from "@zoonk/ui/components/input";
 import {
@@ -82,9 +81,9 @@ export const OTP_LENGTH = 6;
 function OTPGroupSkeleton() {
   return (
     <div className="flex flex-1 gap-2">
-      <Skeleton className="h-11 flex-1 rounded-lg" />
-      <Skeleton className="h-11 flex-1 rounded-lg" />
-      <Skeleton className="h-11 flex-1 rounded-lg" />
+      <Skeleton className="h-14 flex-1 rounded-lg" />
+      <Skeleton className="h-14 flex-1 rounded-lg" />
+      <Skeleton className="h-14 flex-1 rounded-lg" />
     </div>
   );
 }
@@ -92,7 +91,7 @@ function OTPGroupSkeleton() {
 export function OTPFormSkeleton() {
   return (
     <div aria-hidden="true" className="flex w-full flex-col items-center gap-4">
-      <div className="flex w-full gap-2">
+      <div className="flex w-full gap-3">
         <OTPGroupSkeleton />
         <OTPGroupSkeleton />
       </div>
@@ -155,7 +154,6 @@ export function OTPSubmit({
       enter="host"
       size="lg"
       type="submit"
-      {...FORWARD_ICON}
       {...props}
     >
       {children}

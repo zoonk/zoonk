@@ -10,7 +10,6 @@ import {
   LightbulbIcon,
   MessageCircleQuestionIcon,
   MusicIcon,
-  PlayIcon,
   UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -147,11 +146,7 @@ export function ExplainGoal({
       </OnboardingHeading>
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<LightbulbIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
+        <OnboardingPrimaryButton busy={isStarting} onClick={onStart}>
           {t("Explain it")}
         </OnboardingPrimaryButton>
       </GoalFooter>
@@ -310,11 +305,7 @@ export function InstrumentGoal({
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStartMusicianship}
-        >
+        <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
           {t("Start musicianship")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton

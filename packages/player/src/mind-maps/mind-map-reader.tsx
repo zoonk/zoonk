@@ -10,9 +10,7 @@ import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "@zoonk/learn/task-frame";
 import { TaskHeaderTitle } from "@zoonk/learn/task-header";
 import { TaskActions } from "@zoonk/learn/task-layout";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { type ScreenTurn } from "../components/screen-turn";
@@ -69,7 +67,7 @@ function EmptyDeck({ exit }: { exit: string }) {
       exitToApp
       footer={
         <TaskActions>
-          <TaskMainLink href={exit} icon={<CheckIcon aria-hidden="true" />} toApp>
+          <TaskMainLink href={exit} toApp>
             {t("Done")}
           </TaskMainLink>
         </TaskActions>
@@ -166,13 +164,11 @@ function Reader({
           {!isFirst && <QuestionBack label={t("Previous map")} onClick={previous} />}
 
           {isLast ? (
-            <TaskMainLink href={hrefs.exit} icon={<CheckIcon aria-hidden="true" />} toApp>
+            <TaskMainLink href={hrefs.exit} toApp>
               {t("Done")}
             </TaskMainLink>
           ) : (
-            <TaskMainButton {...FORWARD_ICON} onClick={next}>
-              {t("Next")}
-            </TaskMainButton>
+            <TaskMainButton onClick={next}>{t("Next")}</TaskMainButton>
           )}
         </TaskActions>
       }

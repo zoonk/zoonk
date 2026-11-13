@@ -28,26 +28,10 @@ import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
 import { CurrentSpecimen } from "./current-specimen";
+import { ActionsSpecimen, BottomBarSpecimen, PageTopSpecimen } from "./frame-specimens";
 import { WordsSpecimen } from "./words-specimen";
 
 export const metadata: Metadata = { title: "Components and patterns" };
-
-function ActionsSpecimen() {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button size="lg">Continue session</Button>
-      <Button size="lg" variant="outline">
-        Adjust plan
-      </Button>
-      <Button size="lg" variant="ghost">
-        Not now
-      </Button>
-      <p className="text-muted-foreground text-sm">
-        Already know this? <Button variant="link">Take the test</Button>
-      </p>
-    </div>
-  );
-}
 
 function AnswersSpecimen() {
   return (
@@ -274,8 +258,10 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   actions: ActionsSpecimen,
   answers: AnswersSpecimen,
   bands: BandsSpecimen,
+  "bottom-bar": BottomBarSpecimen,
   current: CurrentSpecimen,
   kinds: KindsSpecimen,
+  "page-top": PageTopSpecimen,
   readouts: ReadoutsSpecimen,
   route: RouteSpecimen,
   status: StatusSpecimen,

@@ -34,13 +34,13 @@ export const PATTERNS: readonly Pattern[] = [
       "A colored button.",
       "Two primaries in one area.",
       "An underlined word for a screen's main or secondary action.",
+      "An icon beside the ⏎ keycap, or an arrow in a button.",
     ],
     follow: [
       "One main action per area, inverted (`Button`); secondary actions outline, tertiary ghost.",
-      "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it.",
-      "A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
-      "The main action shows its key as a keycap on pointer devices (`ShortcutKbd`).",
-      "Buttons side by side are one height, 8px apart (see Control heights under Spacing and shape).",
+      "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it. A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
+      "A button shows its label and at most one glyph. The main action that Enter presses (`EnterButton`) shows the ⏎ keycap where there is a keyboard and its label alone on a touch screen. While it works the spinner takes the glyph's place, or covers the label, so nothing changes size.",
+      "A forward glyph is a chevron (`FORWARD_ICON`), on the label's center line.",
     ],
     id: "actions",
     summary: "The main action is the text color, the strongest thing on the screen.",
@@ -61,6 +61,38 @@ export const PATTERNS: readonly Pattern[] = [
     id: "current",
     summary: "Where you are and what you picked, each drawn one way in every app.",
     title: "Current and picked",
+  },
+  {
+    avoid: [
+      "A page that pads or pushes its own title down.",
+      "A bare chevron with no name, or a second back link drawn by hand.",
+      "An arrow for back.",
+    ],
+    follow: [
+      "`PageTop` (or `PageTopBar` in a layout with `PAGE_HEADER_CLASS` in the page): 12px, the 44px bar, 12px, then the title, the same on a phone and a computer, whether or not the bar holds anything.",
+      "`BackLink`: a chevron and the name of the page it goes back to, the mirror of a See all row, so both keep one gap between words and chevron.",
+      "The link's chevron lines up with the title's first letter; the pull follows the title's type role, so no page sets it.",
+      "A full-screen task keeps ✕ instead.",
+    ],
+    id: "page-top",
+    summary: "Every page starts the same way: the way back, then the title close to the top.",
+    title: "Page top",
+  },
+  {
+    avoid: [
+      "A main action at the top of a page, or under the content where it scrolls away.",
+      "An error line inside the bar that makes it taller and moves its buttons.",
+      "A second pinned bar built from classes.",
+    ],
+    follow: [
+      "`BottomBar` holds a screen's one main action, pinned at the bottom on a phone and a computer; `BottomBarActions` is its row, buttons 8px apart, the main action last.",
+      "What the last action couldn't do goes in `note`: it shows over the screen above the bar, and the buttons stay where they were.",
+      "The frame tells the bar its padding and what is docked under it (`--page-gutter`, `--page-bottom`, `--page-dock`), so the same piece works in the app's shell and in a task.",
+      "The buttons have the frame's gutter on all four sides: the bar sets the room over and under them from `--page-gutter`, never a screen.",
+    ],
+    id: "bottom-bar",
+    summary: "The main action has one home: the bar at the bottom of the screen.",
+    title: "Bottom bar",
   },
   {
     avoid: [

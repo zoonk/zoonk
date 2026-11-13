@@ -1,7 +1,7 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { ArrowRightIcon, Loader2Icon } from "lucide-react";
+import { ChevronRightIcon, Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
@@ -50,17 +50,26 @@ const buttonVariants = cva(
 
 const BUSY_HIDDEN = "group-aria-busy/busy:opacity-0 group-has-data-busy/busy:opacity-0";
 
-function BusySpinner({ className }: { className?: string }) {
+const BUSY_HIDDEN_WITHOUT_KEYS =
+  "not-pointer-fine:group-aria-busy/busy:opacity-0 not-pointer-fine:group-has-data-busy/busy:opacity-0";
+
+const BUSY_CONTENT_CLASS =
+  "[display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]";
+
+function BusySpinner({ className, iconClassName }: { className?: string; iconClassName?: string }) {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 group-aria-busy/busy:opacity-100"
+      className={cn(
+        "pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 group-has-data-busy/busy:opacity-100 group-aria-busy/busy:opacity-100",
+        className,
+      )}
       data-slot="busy-spinner"
     >
       <Loader2Icon
         className={cn(
           "group-has-data-busy/busy:animate-spin group-aria-busy/busy:animate-spin",
-          className,
+          iconClassName,
         )}
       />
     </span>
@@ -72,30 +81,61 @@ function BusyIcon({ children, className, ...props }: React.ComponentProps<"span"
   return (
     <span className={cn("relative inline-flex", className)} {...props}>
       <span className={cn("inline-flex", BUSY_HIDDEN)}>{children}</span>
-      <BusySpinner className="size-full" />
+      <BusySpinner iconClassName="size-full" />
     </span>
   );
 }
 
-type IconProps = { icon?: React.ReactNode; iconPosition?: "end" | "start" };
+/**
+ * A button shows its label and at most one glyph: an `icon`, or the `keyHint` of the key that
+ * presses it, never both.
+ */
+type GlyphProps = {
+  icon?: React.ReactNode;
+  iconPosition?: "end" | "start";
+  /**
+   * The keycap of the key that presses it, after the label, where there is a keyboard. Without
+   * one (a touch screen) the button is its label alone.
+   */
+  keyHint?: React.ReactNode;
+};
 
-/** The one icon that trails its label: go forward (next, continue, see the result). ⏎ still comes last. */
+/** The one glyph that trails a label that goes forward (next, continue, see the result). */
 const FORWARD_ICON = {
-  icon: <ArrowRightIcon aria-hidden="true" />,
+  icon: <ChevronRightIcon aria-hidden="true" />,
   iconPosition: "end",
-} as const satisfies IconProps;
+} as const satisfies GlyphProps;
 
 /**
  * For a control that carries `group/busy relative` and is busy while it's `aria-busy` or holds a
  * `data-busy` mark (a link that learns it's pending inside, as main's `LearningLink` does). CSS
- * draws it, so it works before the page hydrates. The spinner takes the `icon`'s place; without
- * one, the content turns invisible under a centered spinner, keeping its place and still read.
+ * draws it, so it works before the page hydrates. The spinner takes the glyph's place (the `icon`,
+ * or the `keyHint` where it shows); with no glyph on screen, the content turns invisible under a
+ * centered spinner, keeping its place and still read. Either way nothing changes size.
  */
 function BusyContent({
   children,
   icon,
   iconPosition = "start",
-}: IconProps & { children: React.ReactNode }) {
+  keyHint,
+}: GlyphProps & { children: React.ReactNode }) {
+  if (keyHint) {
+    return (
+      <>
+        <span className={cn(BUSY_CONTENT_CLASS, BUSY_HIDDEN_WITHOUT_KEYS)} data-slot="busy-content">
+          {children}
+        </span>
+
+        <span className="relative hidden pointer-fine:inline-flex" data-slot="key-hint">
+          <span className={cn("inline-flex", BUSY_HIDDEN)}>{keyHint}</span>
+          <BusySpinner />
+        </span>
+
+        <BusySpinner className="pointer-fine:hidden" />
+      </>
+    );
+  }
+
   if (icon) {
     const busyIcon = (
       <BusyIcon data-icon={children ? `inline-${iconPosition}` : undefined}>{icon}</BusyIcon>
@@ -116,13 +156,7 @@ function BusyContent({
 
   return (
     <>
-      <span
-        className={cn(
-          "[display:inherit] min-w-0 grow [flex-direction:inherit] [flex-wrap:inherit] [place-content:inherit] [place-items:inherit] gap-[inherit]",
-          BUSY_HIDDEN,
-        )}
-        data-slot="busy-content"
-      >
+      <span className={cn(BUSY_CONTENT_CLASS, BUSY_HIDDEN)} data-slot="busy-content">
         {children}
       </span>
 
@@ -133,7 +167,7 @@ function BusyContent({
 
 /**
  * `busy` while its own action runs: from the press it ignores presses and keeps focus and its look,
- * and a spinner takes its `icon`'s place, or covers its content when it has none.
+ * and a spinner takes its glyph's place, or covers its label when it shows none.
  *
  * `edge` is for a bare (ghost) button that is the first or last thing in a bar, a header or a row:
  * it puts the glyph's or the label's ink, not the button's box, on that edge.
@@ -147,10 +181,11 @@ function Button({
   focusableWhenDisabled,
   icon,
   iconPosition,
+  keyHint,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & IconProps & { busy?: boolean }) {
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & GlyphProps & { busy?: boolean }) {
   const canBeBusy = busy !== undefined;
 
   return (
@@ -162,8 +197,8 @@ function Button({
       focusableWhenDisabled={busy || focusableWhenDisabled}
       {...props}
     >
-      {canBeBusy || icon ? (
-        <BusyContent icon={icon} iconPosition={iconPosition}>
+      {canBeBusy || icon || keyHint ? (
+        <BusyContent icon={icon} iconPosition={iconPosition} keyHint={keyHint}>
           {children}
         </BusyContent>
       ) : (

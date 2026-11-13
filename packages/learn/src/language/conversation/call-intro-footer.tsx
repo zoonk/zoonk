@@ -3,7 +3,6 @@
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StatusRegion } from "../../_components/status-region";
@@ -219,7 +218,7 @@ function CallIntroActions({
         onPointerDown={preloadLiveCall}
         onPointerEnter={preloadLiveCall}
       >
-        <TaskMainButton busy={starting} icon={<PhoneIcon aria-hidden="true" />} onClick={onStart}>
+        <TaskMainButton busy={starting} onClick={onStart}>
           {isCall ? t("Call {name}", { name }) : t("Start the call")}
         </TaskMainButton>
       </TaskActions>
