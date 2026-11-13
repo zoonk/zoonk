@@ -46,10 +46,7 @@ export function ModelList({
 
               {pricing && (
                 <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                  {formatPrice(pricing.input)} /{" "}
-                  <span className="inline-block min-w-[7ch] text-right">
-                    {formatPrice(pricing.output)}
-                  </span>
+                  {formatPrice(pricing.input)} / {formatPrice(pricing.output)}
                 </span>
               )}
             </Link>
