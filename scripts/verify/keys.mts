@@ -80,7 +80,7 @@ export type PanelFacts = NonNullable<ReturnType<typeof readPanel>> & { focusBack
 const PRESS_SETTLE_MS = 150;
 const SIDEBAR_SETTLE_MS = 400;
 
-/** IX's walk assertions fail the run where they already hold on every page (A1, A3, A4). */
+/** Sidebar, Escape and panel failures stop the run; other key mismatches remain leads. */
 function behavior(id: string, message: string, fails = false): Finding {
   return { check: `Behavior: ${id}`, level: fails ? "fail" : "warn", message };
 }
@@ -94,26 +94,21 @@ function enterFindings({ bound, pressed, unbuilt }: KeyFacts["enter"]): Finding[
 
   return [
     ...(pressed && !isMainAction(pressed)
-      ? [
-          behavior(
-            "A2 Enter",
-            `Enter clicked ${pressed.label}, which isn't a main action showing ⏎`,
-          ),
-        ]
+      ? [behavior("Enter", `Enter clicked ${pressed.label}, which isn't a main action showing ⏎`)]
       : []),
     ...(bound.length === 1 && pressed?.id !== only?.id
-      ? [behavior("A2 Enter", `Enter didn't press ${only?.label ?? ""}, the screen's main action`)]
+      ? [behavior("Enter", `Enter didn't press ${only?.label ?? ""}, the screen's main action`)]
       : []),
     ...(bound.length > 1
       ? [
           behavior(
-            "A2 Enter",
+            "Enter",
             `two main actions answer Enter: ${bound.map((control) => control.label).join(", ")}`,
           ),
         ]
       : []),
     ...unbuilt.map((label) =>
-      behavior("A2 Enter", `${label} is a main action drawn without the piece that binds Enter`),
+      behavior("Enter", `${label} is a main action drawn without the piece that binds Enter`),
     ),
   ];
 }
@@ -124,7 +119,7 @@ function keycapFindings(keycap: Keycap): Finding[] {
       ? []
       : [
           behavior(
-            "A6 keycaps",
+            "keycaps",
             `the ${keycap.name} key didn't press ${keycap.label}, which shows it`,
           ),
         ]),
@@ -132,7 +127,7 @@ function keycapFindings(keycap: Keycap): Finding[] {
       ? []
       : [
           behavior(
-            "A6 keycaps",
+            "keycaps",
             `${keycap.label} announces "${keycap.announced ?? ""}" where its key is "${keycap.expected}"`,
           ),
         ]),
@@ -147,30 +142,30 @@ export function keyFindings(facts: KeyFacts): Finding[] {
       .filter((side) => !side.answered || !side.restored)
       .map((side) =>
         behavior(
-          "A1 sidebar key",
+          "sidebar key",
           `⌘B ${side.answered ? "didn't bring back" : "didn't fold"} the ${side.side} sidebar`,
           true,
         ),
       ),
     ...facts.sidebarsWithoutToggle.map((side) =>
-      behavior("A1 sidebar key", `the ${side} sidebar is drawn with no toggle for it`, true),
+      behavior("sidebar key", `the ${side} sidebar is drawn with no toggle for it`, true),
     ),
     ...enterFindings(facts.enter),
     ...(escape.pressed && !escape.pressed.drawn
-      ? [behavior("A3 Esc", `Esc clicked ${escape.pressed.label}, which isn't on screen`, true)]
+      ? [behavior("Escape", `Esc clicked ${escape.pressed.label}, which isn't on screen`, true)]
       : []),
     ...(escape.task && escape.taskClose && !escape.pressed?.taskClose
-      ? [behavior("A3 Esc", "Esc didn't press the task's ✕", true)]
+      ? [behavior("Escape", "Esc didn't press the task's ✕", true)]
       : []),
     ...facts.groups.flatMap((group) => [
       ...(group.moved
         ? []
-        : [behavior("A5 arrows", `↓ didn't move to the next option in ${group.label}`)]),
+        : [behavior("radio arrows", `↓ didn't move to the next option in ${group.label}`)]),
       ...(group.tabStops === 1
         ? []
         : [
             behavior(
-              "A5 arrows",
+              "radio arrows",
               `${group.label} has ${group.tabStops} Tab stops, where a group has one`,
             ),
           ]),
@@ -179,29 +174,23 @@ export function keyFindings(facts: KeyFacts): Finding[] {
   ];
 }
 
-/** IX's A4 and the founder's rule 5 for one panel the walk opened and closed with Esc. */
+/** Focus, closing behavior and responsive placement for a panel opened by the walk. */
 export function panelFindings(panel: PanelFacts): Finding[] {
   return [
     ...(panel.focusInside
       ? []
-      : [behavior("A4 panels", `${panel.label} opened without taking focus`, true)]),
+      : [behavior("panels", `${panel.label} opened without taking focus`, true)]),
     ...(panel.needsClose && !panel.closeDrawn
-      ? [behavior("A4 panels", `${panel.label} has no ✕ and no button to leave by`, true)]
+      ? [behavior("panels", `${panel.label} has no ✕ and no button to leave by`, true)]
       : []),
     ...(panel.centered === false
-      ? [
-          behavior(
-            "A4 panels",
-            `${panel.label} isn't centered on a laptop, or shows its handle`,
-            true,
-          ),
-        ]
+      ? [behavior("panels", `${panel.label} isn't centered on a laptop, or shows its handle`, true)]
       : []),
     ...(panel.focusBack
       ? []
       : [
           behavior(
-            "A4 panels",
+            "panels",
             `${panel.label} didn't close on Esc and give focus back to what opened it`,
             true,
           ),
@@ -209,7 +198,7 @@ export function panelFindings(panel: PanelFacts): Finding[] {
     ...(panel.sheet === false
       ? [
           behavior(
-            "Rule 5 sheets",
+            "B4 phone sheets",
             `${panel.label} opens away from the bottom on a phone, where what opens over a page is a sheet`,
           ),
         ]
