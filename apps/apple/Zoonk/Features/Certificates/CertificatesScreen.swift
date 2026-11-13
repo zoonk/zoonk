@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Every certificate the learner earned, newest first, in one list. Without Plus, one notice says
-/// what Plus does for them, and the locked ones carry its mark.
+/// Every certificate the learner earned, newest first, in one list. One earned without a
+/// subscription looks like any other.
 struct CertificatesScreen: View {
   @Environment(CertificatesStore.self) private var store
   @ScaledMetric(relativeTo: .body) private var pictureWidth = 72.0
@@ -14,7 +14,6 @@ struct CertificatesScreen: View {
       case .loaded(let certificates):
         ZoonkList {
           CertificatesHeader(count: certificates.count)
-          CertificatesPlusSection()
 
           Section {
             ForEach(certificates) { certificate in
@@ -44,7 +43,7 @@ struct CertificatesScreen: View {
       open(certificate.id)
     } label: {
       ListRow(
-        Text(certificate.facts.name), description: Text(certificate.facts.summary),
+        Text(certificate.facts.rowName), description: Text(certificate.facts.rowLine),
         alignment: .center
       ) {
         Group {
@@ -58,9 +57,7 @@ struct CertificatesScreen: View {
         .frame(width: pictureWidth)
         .accessibilityHidden(true)
       } trailing: {
-        if certificate.facts.locked {
-          PlusMark()
-        }
+        EmptyView()
       }
       .disclosureChevron()
     }
@@ -105,19 +102,6 @@ private struct CertificatesHeader: View {
   }
 }
 
-/// While the learner isn't on Plus, in the empty state too.
-private struct CertificatesPlusSection: View {
-  @Environment(LearnerSummaryStore.self) private var learner
-
-  var body: some View {
-    if let tier = learner.summary.value?.tier, tier != .plus {
-      Section {
-        CertificatePlusNotice(isList: true)
-      }
-    }
-  }
-}
-
 /// Main's empty page: a placeholder certificate, how certificates are earned, then each goal that
 /// can still earn one. The goals arrive after the page, so they join its list below what's there.
 private struct EmptyCertificates: View {
@@ -127,7 +111,6 @@ private struct EmptyCertificates: View {
   var body: some View {
     ZoonkList {
       CertificatesHeader()
-      CertificatesPlusSection()
 
       Section {
         VStack(alignment: .leading, spacing: 6) {
@@ -142,13 +125,6 @@ private struct EmptyCertificates: View {
           .typeStyle(.reading.weight(.semibold))
           .foregroundStyle(Color(.foreground))
           .accessibilityAddTraits(.isHeader)
-
-          Text(
-            "Your certificates show up here when you finish a level or a plan.",
-            tableName: "Certificates", comment: "How the learner earns certificates"
-          )
-          .typeStyle(.body)
-          .foregroundStyle(.mutedForeground)
 
           Button {
             router.sheet = nil
@@ -173,7 +149,7 @@ private struct EmptyCertificates: View {
         } header: {
           SectionTitle(
             Text(
-              "Up next", tableName: "Certificates",
+              "Your next certificate", tableName: "Certificates",
               comment: "Heading over the learner's goals that can still earn a certificate"))
         }
       }
@@ -228,7 +204,7 @@ private struct UpNextRow: View {
   @ScaledMetric(relativeTo: .caption) private var meterWidth = 64.0
 
   var body: some View {
-    ListRow(title, description: description) {
+    ListRow(title) {
       GoalMark(title: goal.displayName, flag: goal.languageFlag.flatMap(flagEmoji))
     } trailing: {
       if let progress = goal.progress {
@@ -262,15 +238,5 @@ private struct UpNextRow: View {
           comment:
             "Read by VoiceOver right after a goal's name: the language and country the learner chose, such as Spanish (Argentina)"
         ))
-  }
-
-  private var description: Text {
-    goal.progress == nil
-      ? Text(
-        "Comes when you finish a level, studying at least half of it", tableName: "Certificates",
-        comment: "Under a language goal on the empty certificates page: when it earns one")
-      : Text(
-        "Your certificate comes when you finish the plan", tableName: "Certificates",
-        comment: "Under a course goal on the empty certificates page: when it earns one")
   }
 }

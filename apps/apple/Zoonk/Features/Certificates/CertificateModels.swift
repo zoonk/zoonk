@@ -139,16 +139,21 @@ extension CertificateFacts {
     )
   }
 
-  var kindName: String {
-    String(
-      localized: "Certificate of completion", table: "Certificates",
-      comment: "The kind of certificate earned by finishing a course or a language level")
+  /// Main's row name: a course level's row is the course, with its level on the line under it.
+  var rowName: String {
+    courseLevel == nil ? name : title ?? name
   }
 
-  /// "Certificate of completion · Nov 3, 2026".
-  /// A wrapped line breaks before the date, never inside it.
-  var summary: String {
-    [kindName, completedOnDay.replacingOccurrences(of: " ", with: "\u{00A0}")].joinedFacts()
+  /// "Beginner · Nov 3, 2026", or only the date when the name holds the level. A wrapped line
+  /// breaks before the date, never inside it.
+  var rowLine: String {
+    let date = completedOnDay.replacingOccurrences(of: " ", with: "\u{00A0}")
+
+    guard title != nil, let courseLevel else {
+      return date
+    }
+
+    return [String(localized: courseLevel.localizedTitle), date].joinedFacts()
   }
 
   /// "Nov 3, 2026".

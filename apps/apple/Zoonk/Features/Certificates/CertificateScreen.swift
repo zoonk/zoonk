@@ -275,7 +275,7 @@ private struct CertificateDetail: View {
 
   private var linkNote: Text {
     Text(
-      "Anyone with the link can see this certificate. Its page doesn't show up in search.",
+      "Anyone with the link can see this certificate.",
       tableName: "Certificates", comment: "Who can see a certificate's page")
   }
 
@@ -502,16 +502,13 @@ private struct CertificateMeaning: View {
 
   private var paragraphs: [String] {
     let nameNote = String(
-      localized:
-        "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs.",
-      table: "Certificates",
+      localized: "Names aren't checked against an ID.", table: "Certificates",
       comment: "Ends a certificate's explanation: the name on it is the one the learner gave")
 
     if facts.kind == .languageLevel {
       return [
         String(
-          localized:
-            "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons.",
+          localized: "For finishing this level, studying at least half of its lessons.",
           table: "Certificates", comment: "How a language level certificate is earned"),
         String(
           localized:
@@ -525,18 +522,16 @@ private struct CertificateMeaning: View {
     let issued =
       facts.courseLevel == nil
       ? String(
-        localized:
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
+        localized: "For finishing every lesson and challenge of this plan.",
         table: "Certificates", comment: "How a certificate for a course's whole plan is earned")
       : String(
-        localized:
-          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
+        localized: "For finishing every lesson and challenge of this level.",
         table: "Certificates", comment: "How a certificate for a course's level is earned")
 
     return [
       issued,
       String(
-        localized: "It's a record of completion on Zoonk, not academic credit.",
+        localized: "A record of completion on Zoonk, not academic credit.",
         table: "Certificates",
         comment: "What a course certificate is, before the note about its name")
         + " " + nameNote,
