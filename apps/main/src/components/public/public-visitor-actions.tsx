@@ -12,18 +12,12 @@ export type PageStart = { againIds?: string[]; id: string };
  * a start control of its own, shows once that has scrolled away, so the action is never on screen
  * twice.
  */
-export async function PublicVisitorActions({
-  ownStart,
-  start,
-}: {
-  ownStart?: PageStart;
-  start?: string;
-}) {
+export async function PublicVisitorActions({ ownStart }: { ownStart?: PageStart }) {
   const t = await getExtracted();
 
   const startLink = (
     <Link className={buttonVariants({ size: "bar" })} href="/start">
-      {start ?? t("Start free")}
+      {t("Build my plan")}
     </Link>
   );
 

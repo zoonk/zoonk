@@ -63,7 +63,7 @@ export async function PlusLoginLink({
   if (!hasChoice) {
     return (
       <PendingLink className={className} href={getHref()} {...FORWARD_ICON}>
-        {t("Get Plus")}
+        {t("Subscribe")}
       </PendingLink>
     );
   }
@@ -71,7 +71,7 @@ export async function PlusLoginLink({
   return PERIODS.map((period) => (
     <Variant as="span" className="contents" key={period} name={billingSwitch} value={period}>
       <PendingLink className={className} href={getHref(period)} {...FORWARD_ICON}>
-        {t("Get Plus")}
+        {t("Subscribe")}
       </PendingLink>
     </Variant>
   ));

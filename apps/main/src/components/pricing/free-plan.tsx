@@ -34,7 +34,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
         href="/start"
         id={FREE_PLAN_START_ID}
       >
-        {t("Start free")}
+        {t("Build my plan")}
       </Link>
     );
   }
@@ -116,13 +116,6 @@ export async function FreePlan({
         <PlanIncludes
           items={[
             { id: "plan", text: t("A plan for your goal and your date") },
-            {
-              id: "exam",
-              text: t(
-                "For an exam: your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}",
-                { days: limits.examPrepDays ?? 0 },
-              ),
-            },
             {
               id: "buddy",
               text: t(

@@ -141,7 +141,7 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
 
       <div className="mt-7 flex flex-wrap justify-center gap-2">
         <Link className={getStartControlClassName()} href="/start">
-          {t("Start free")}
+          {t("Build my plan")}
         </Link>
         <PlusLoginLink
           billingSwitch={PRICING_BILLING_SWITCH}

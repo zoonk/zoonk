@@ -51,16 +51,11 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     t("{count, plural, one {# goal} other {# goals}} at a time", {
       count: limits.activeGoals ?? 0,
     }),
-    t("{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day", {
-      day: limits.lessonsPerDay ?? 0,
+    t("{month, plural, one {# lesson} other {# lessons}} a month, across all your goals", {
       month: limits.lessonsPerMonth ?? 0,
     }),
     t(
-      "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep",
-      { days: limits.examPrepDays ?? 0 },
-    ),
-    t(
-      "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day",
+      "An AI study buddy: {tutor, plural, one {# message} other {# messages}} and {uploads, plural, one {# upload} other {# uploads}} a day",
       { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
     ),
     t("Speaking practice calls, fewer than with Plus (exam speaking tasks come with Plus)"),
