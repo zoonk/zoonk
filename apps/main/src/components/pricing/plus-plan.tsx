@@ -4,7 +4,6 @@ import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
-import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { type PriceInfo } from "@zoonk/utils/currency";
@@ -30,6 +29,16 @@ export type PlusViewerState =
   | { status: "visitor" };
 
 const PERIODS = ["monthly", "yearly"] as const;
+
+/**
+ * Not the tab piece: two choices in one tinted track, the chosen one a raised segment, so the other
+ * plainly reads as something to press.
+ */
+const BILLING_SWITCH_CLASS = "bg-muted flex rounded-lg p-0.5";
+
+const BILLING_OPTION_CLASS =
+  "text-compact has-checked:bg-background has-checked:ring-border dark:has-checked:bg-input/60 has-focus-visible:ring-ring/50 hit-area flex h-8 items-center gap-1.5 rounded-md px-3 font-medium whitespace-nowrap transition-colors not-has-checked:hover:bg-background/60 has-checked:ring-1 has-focus-visible:ring-[3px]";
+
 const DEFAULT_PERIOD = "monthly";
 const PLUS_PLAN_ID = "plus-plan";
 
@@ -198,13 +207,13 @@ export async function PlusPlan({
         {hasChoice && (
           <VariantSwitch
             aria-label={t("Billing period")}
-            className={cn(TAB_LIST_CLASS, "-me-2.5")}
+            className={BILLING_SWITCH_CLASS}
             defaultValue={defaultPeriod}
             name={billingSwitch}
             values={PERIODS}
           >
             <VariantSwitchOption
-              className={TAB_CLASS}
+              className={BILLING_OPTION_CLASS}
               defaultValue={defaultPeriod}
               name={billingSwitch}
               value="monthly"
@@ -213,7 +222,7 @@ export async function PlusPlan({
             </VariantSwitchOption>
 
             <VariantSwitchOption
-              className={TAB_CLASS}
+              className={BILLING_OPTION_CLASS}
               defaultValue={defaultPeriod}
               name={billingSwitch}
               value="yearly"

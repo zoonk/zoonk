@@ -4,11 +4,9 @@ import {
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
 } from "@/components/public/public-disclosure";
-import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ForViewer } from "./for-viewer";
@@ -23,6 +21,14 @@ function keepNumbersWithWords(text: string) {
 function renderFairUseLink(chunks: ReactNode) {
   return (
     <Link className={DISCLOSURE_LINK_CLASS} href="/terms#fair-use">
+      {chunks}
+    </Link>
+  );
+}
+
+function renderHelpLink(chunks: ReactNode) {
+  return (
+    <Link className={DISCLOSURE_LINK_CLASS} href="/support">
       {chunks}
     </Link>
   );
@@ -87,9 +93,6 @@ export async function PlusQuestions({
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
-  const space = getSentenceSpace(await getAppLocale());
-  // The address is a message of its own: each language writes to its own inbox (pt: contato@).
-  const email = t("hello@zoonk.com");
 
   return (
     <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
@@ -98,11 +101,7 @@ export async function PlusQuestions({
           {t("Common questions")}
         </h2>
         <p className="text-muted-foreground text-sm">
-          {t("Still unsure?")}
-          {space}
-          <a className={DISCLOSURE_LINK_CLASS} href={`mailto:${email}`}>
-            {email}
-          </a>
+          {t.rich("Still unsure? <link>Ask us</link>.", { link: renderHelpLink })}
         </p>
       </div>
 
@@ -133,9 +132,9 @@ export async function PlusQuestions({
 
         <PublicDisclosure summary={t("Can I get a refund?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t(
-              "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
-              { email },
+            {t.rich(
+              "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
+              { link: renderHelpLink },
             )}
           </p>
         </PublicDisclosure>
