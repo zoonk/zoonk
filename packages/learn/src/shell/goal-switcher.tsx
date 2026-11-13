@@ -22,7 +22,7 @@ import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "r
 import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
-import { GoalCountryName, GoalMark } from "./goal-mark";
+import { GoalCountryName, GoalMark, NoGoalMark } from "./goal-mark";
 import {
   GOAL_ROW_CLASS,
   type GoalKind,
@@ -160,7 +160,7 @@ function NoGoalLink({
 
   return (
     <LearnLink className={TRIGGER_CLASS[placement]} href={newGoalHref}>
-      <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
+      <NoGoalMark />
       <span className="truncate">{t("Start a goal")}</span>
     </LearnLink>
   );
@@ -230,11 +230,7 @@ export function GoalSwitcher({
           className={TRIGGER_CLASS[placement]}
           title={selected?.displayName}
         >
-          {selected ? (
-            <GoalMark goal={selected} />
-          ) : (
-            <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
-          )}
+          {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
           <span className="min-w-0 flex-1 truncate text-left">
             {selected?.displayName ?? t("Start a goal")}
           </span>
