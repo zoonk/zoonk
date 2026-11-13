@@ -2,17 +2,13 @@
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { type ExamTaskView } from "@zoonk/core/language/exam-speaking/contract";
-import { InfoIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef } from "react";
-import { Callout } from "../../_components/callout";
-import { PageEyebrow } from "../../_components/page";
+import { Eyebrow } from "../../_components/eyebrow";
 import { TaskAsideContent } from "../../_components/task-layout";
-import { useSentenceSpace } from "../../_utils/locale";
-import { useFormatDuration } from "../../_utils/time-format";
 import { TaskFrame } from "../../shell/task-frame";
-import { CharacterRow, MicNote } from "../conversation/conversation-parts";
-import { useCriterionGloss, useTaskRoleNoun } from "./exam-speaking-labels";
+import { CharacterRow, SoundNote } from "../conversation/conversation-parts";
+import { useTaskRoleNoun } from "./exam-speaking-labels";
 import { PrepTimer } from "./prep-timer";
 import { SpeakingCard } from "./speaking-card";
 import { useTaskMinutes } from "./speaking-task-row";
@@ -26,24 +22,6 @@ export function useExamTaskTitle() {
       exam: examTask.title,
       number: String(examTask.number),
     });
-}
-
-function StandInNote({ examTask, name }: { examTask: ExamTaskView; name: string }) {
-  const t = useExtracted();
-  const space = useSentenceSpace();
-
-  return (
-    <Callout>
-      <InfoIcon aria-hidden="true" />
-      <p>
-        {examTask.task.role === "partner"
-          ? t("{name} is an AI playing the other candidate, in place of a real one.", { name })
-          : t("{name} is an AI standing in for a human examiner.", { name })}
-        {space}
-        {t("It's practice: the estimate after it isn't an official score.")}
-      </p>
-    </Callout>
-  );
 }
 
 export function ExamTaskIntro({
@@ -61,10 +39,6 @@ export function ExamTaskIntro({
   const title = useExamTaskTitle();
   const minutes = useTaskMinutes();
   const roleNoun = useTaskRoleNoun();
-  const gloss = useCriterionGloss();
-  const space = useSentenceSpace();
-  const format = useFormatter();
-  const formatDuration = useFormatDuration();
   const heading = useRef<HTMLHeadingElement>(null);
   const { character } = conversation;
 
@@ -75,13 +49,12 @@ export function ExamTaskIntro({
   return (
     <TaskFrame
       aside={{ label: t("Your card") }}
-      closeOnEscape
       exitHref={exitHref}
       footer={footer}
       headerTitle={title(examTask)}
     >
       <header className="flex flex-col gap-2">
-        <PageEyebrow>{minutes(examTask.task.minutes)}</PageEyebrow>
+        <Eyebrow className="mb-1">{minutes(examTask.task.minutes)}</Eyebrow>
         <h1
           className="text-title text-balance outline-none"
           lang={conversation.targetLanguage}
@@ -91,25 +64,9 @@ export function ExamTaskIntro({
           {examTask.task.name}
         </h1>
         <p className="text-pretty">{examTask.card.summary}</p>
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("{name} opens the call, and your card stays on screen.", { name: character.name })}
-          {space}
-          {t("It ends on its own after about {time}.", {
-            time: formatDuration(conversation.minutes),
-          })}
-          {space}
-          {t("Rated on {criteria}.", {
-            criteria: format.list(
-              examTask.criteria.map((criterion) => gloss(criterion)),
-              { type: "conjunction" },
-            ),
-          })}
-        </p>
       </header>
 
       <CharacterRow detail={roleNoun(examTask.task.role)} name={character.name} />
-
-      <StandInNote examTask={examTask} name={character.name} />
 
       {examTask.task.prepMinutes > 0 && <PrepTimer cardId={conversation.id} task={examTask.task} />}
 
@@ -117,11 +74,7 @@ export function ExamTaskIntro({
         <SpeakingCard card={examTask.card} language={conversation.targetLanguage} />
       </TaskAsideContent>
 
-      <MicNote>
-        {t(
-          "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
-        )}
-      </MicNote>
+      <SoundNote />
     </TaskFrame>
   );
 }

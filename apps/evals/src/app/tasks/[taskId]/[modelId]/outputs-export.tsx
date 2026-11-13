@@ -1,5 +1,6 @@
 "use client";
 
+import { BAR_GLYPH_ACTION, BarActionLabel } from "@/components/bar-action";
 import { type EvalSummary, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { type FailedRun, type KeyFlaw } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
@@ -63,12 +64,13 @@ export function OutputsExport({
   return (
     <Button
       disabled={summary.attempted === 0}
+      {...BAR_GLYPH_ACTION}
       onClick={exportOutputs}
       type="button"
       variant="outline"
     >
       <DownloadIcon />
-      Export Outputs
+      <BarActionLabel>Export outputs</BarActionLabel>
     </Button>
   );
 }

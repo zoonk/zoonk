@@ -1,8 +1,9 @@
 "use client";
 
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import { PageEyebrow } from "../_components/page";
-import { StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { toLabelCase } from "../_utils/label-case";
 import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { useChallengeScreen } from "./challenge-context";
@@ -20,7 +21,7 @@ export function IntroHeading({
 }) {
   return (
     <StepHeader>
-      {eyebrow && <StepEyebrow>{toLabelCase(eyebrow)}</StepEyebrow>}
+      {eyebrow && <Eyebrow>{toLabelCase(eyebrow)}</Eyebrow>}
       {when && <PageEyebrow>{when}</PageEyebrow>}
       <StepTitle>{title}</StepTitle>
       {detail && <StepDetail>{detail}</StepDetail>}

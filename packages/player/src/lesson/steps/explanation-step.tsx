@@ -1,5 +1,6 @@
 "use client";
 
+import { LESSON_BODY_CLASS } from "@zoonk/learn/rich-text";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
 import { LessonVisual } from "@zoonk/learn/visual";
@@ -9,7 +10,7 @@ import { ActivityExplore } from "../../activities/activity-explore";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonStepPicture, useIsExploredPictureLost } from "../_components/lesson-pictures";
 import { LessonRichText } from "../_components/lesson-rich-text";
-import { LESSON_BODY_CLASS, useTermHighlighter } from "../_components/lesson-step-text";
+import { useTermHighlighter } from "../_components/lesson-step-text";
 import { CornerIcon, MarkedText, hasExampleFrame } from "../_components/marked-text";
 import { ExplainingScreenHelp } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
@@ -29,7 +30,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
       <div className="flow-root w-full lg:max-w-xl" data-slot="lesson-text">
         {cornerIcon && <CornerIcon className="-me-2 -mt-1 mb-2" icon={cornerIcon} />}
         {content.title && (
-          <h2 className="text-foreground mb-2 text-[0.9375rem] leading-snug font-semibold sm:mb-3">
+          <h2 className="text-foreground text-reading mb-2 leading-snug font-semibold sm:mb-3">
             <SpokenMath>
               <LessonRichText text={content.title} />
             </SpokenMath>

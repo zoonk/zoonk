@@ -6,7 +6,7 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { CircleCheckIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
+import { CircleCheckIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
@@ -97,12 +97,7 @@ export function TestIntro({
       )}
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton
-          busy={starting}
-          disabled={pending}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
+        <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
           {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton
@@ -147,7 +142,7 @@ export function TestDone({
       <LevelBars levels={levels} />
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
+        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onContinue}>
           {t("Build my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>

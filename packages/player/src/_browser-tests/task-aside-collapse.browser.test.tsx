@@ -2,7 +2,7 @@ import { EssayScreen } from "@zoonk/learn/essay";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { SessionSummary } from "@zoonk/learn/session/summary";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
+import { SIDEBAR_STATE } from "@zoonk/ui/components/sidebar";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
@@ -123,8 +123,8 @@ function shownStreaks(): number {
 
 describe("collapsing a task's sidebar", () => {
   afterEach(() => {
-    document.documentElement.removeAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
-    localStorage.removeItem(ASIDE_COLLAPSED_KEY);
+    document.documentElement.removeAttribute(SIDEBAR_STATE.end.attribute);
+    localStorage.removeItem(SIDEBAR_STATE.end.key);
   });
 
   it("moves what it holds into the lesson and remembers the choice", async () => {
@@ -141,7 +141,7 @@ describe("collapsing a task's sidebar", () => {
     await expect.poll(() => aside().query()).toBeNull();
     await expect.poll(showsRecapRow).toBe(true);
     await expect.element(page.getByRole("button", { name: "Ask Pip" })).toBeVisible();
-    expect(localStorage.getItem(ASIDE_COLLAPSED_KEY)).toBe("true");
+    expect(localStorage.getItem(SIDEBAR_STATE.end.key)).toBe("true");
 
     await page.getByRole("button", { name: "Ask Pip" }).click();
     await expect.element(page.getByRole("dialog")).toBeVisible();
@@ -151,7 +151,7 @@ describe("collapsing a task's sidebar", () => {
 
     await expect.element(aside()).toBeVisible();
     await expect.poll(showsRecapRow).toBe(false);
-    expect(localStorage.getItem(ASIDE_COLLAPSED_KEY)).toBe("false");
+    expect(localStorage.getItem(SIDEBAR_STATE.end.key)).toBe("false");
   });
 
   it("offers the lesson map from the menu at the lesson's end while the sidebar is collapsed", async () => {

@@ -1,4 +1,5 @@
 import { type UsageKind } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type EntitlementTier } from "./contract";
 
 /** Hard caps block until reset; fair use spaces new requests without blocking the period. */
@@ -9,6 +10,7 @@ type UsageRule = {
   generatedTotal?: number;
   month?: number;
   monthSeconds?: number;
+  rolling30Days?: number;
   total?: number;
 };
 
@@ -69,6 +71,9 @@ export function getLiveCallReservationMicros(talkSeconds: number): number {
   );
 }
 
+export const FREE_LESSON_LIMIT = 20;
+export const FREE_LESSON_WINDOW_MS = 30 * MS_PER_DAY;
+
 const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   free: {
     assist: { day: 100, month: 500 },
@@ -78,7 +83,7 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     },
     explanation: { day: 5, month: 20 },
     goal: { day: 3, month: 10 },
-    lessonStart: { day: 20, month: 40 },
+    lessonStart: { rolling30Days: FREE_LESSON_LIMIT },
     mindMap: { day: 3, month: 10 },
     mockQuestions: { total: 0 },
     outline: { day: 3, month: 10 },
@@ -160,8 +165,8 @@ const EXAM_PREP_ACCESS: Record<
   EntitlementTier,
   { includesMockExams: boolean; studyDays: number | null }
 > = {
-  free: { includesMockExams: false, studyDays: 7 },
-  guest: { includesMockExams: false, studyDays: 7 },
+  free: { includesMockExams: false, studyDays: null },
+  guest: { includesMockExams: false, studyDays: null },
   plus: { includesMockExams: true, studyDays: null },
 };
 

@@ -5,6 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Trash, Undo2 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_BOX_CLASS, ACTIVITY_PRESS_CLASS } from "../_components/activity-canvas";
 import { elementStyle } from "./element-style";
 import { useElementName } from "./use-element-name";
 
@@ -52,7 +53,11 @@ export function MoleculeElements({
     <div className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2">
       {elements.map((element) => (
         <button
-          className="bg-background hover:bg-accent focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-2 rounded-xl border px-2 outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
+          className={cn(
+            ACTIVITY_BOX_CLASS,
+            ACTIVITY_PRESS_CLASS,
+            "hover:bg-accent flex items-center justify-center gap-2 px-2 disabled:opacity-50",
+          )}
           disabled={!canAdd}
           key={element}
           onClick={() => onAdd(element)}
@@ -67,7 +72,7 @@ export function MoleculeElements({
               : t("Add {element}", { element: nameOf(element) })}
           </span>
           <ElementSwatch element={element} />
-          <span className="text-muted-foreground text-[13px] whitespace-nowrap">
+          <span className="text-muted-foreground text-compact whitespace-nowrap">
             {t("{count, plural, one {# bond} other {# bonds}}", { count: valenceOf(element) })}
           </span>
         </button>
@@ -93,7 +98,7 @@ export function MoleculeTools({
     <div className="flex shrink-0 gap-2">
       <Button
         aria-label={t("Undo")}
-        className="size-11 rounded-xl"
+        className="rounded-xl"
         disabled={!canUndo}
         onClick={onUndo}
         size="icon-lg"
@@ -106,7 +111,7 @@ export function MoleculeTools({
         aria-label={
           selectedName ? t("Remove {atom}", { atom: selectedName }) : t("Remove the selected atom")
         }
-        className="size-11 rounded-xl"
+        className="rounded-xl"
         disabled={!selectedName}
         onClick={onRemove}
         size="icon-lg"

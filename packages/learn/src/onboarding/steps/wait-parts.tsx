@@ -1,13 +1,9 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { type ReactNode } from "react";
+import { EnterLink } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
-import { LearnLink } from "../../learn-link";
 import { useWaitBack, useWaitPlace } from "../../wait/wait-screen";
 import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
 import {
@@ -82,18 +78,9 @@ export function WaitBackToQuiz({ children }: { children: ReactNode }) {
 
 /** A written lesson the wait offers, its main action: Enter opens it as it does a button. */
 export function WaitLinkAction({ children, href }: { children: ReactNode; href: string }) {
-  const ref = useEnterClick<HTMLAnchorElement>();
-
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full font-[560] lg:w-auto lg:min-w-40")}
-      href={href}
-      lessonWritten
-      ref={ref}
-    >
-      <PlayIcon aria-hidden="true" data-icon="inline-start" />
+    <EnterLink className="w-full lg:w-auto lg:min-w-40" href={href} lessonWritten size="lg">
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
+    </EnterLink>
   );
 }

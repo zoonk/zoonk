@@ -78,12 +78,14 @@ const dailyTimesSchema = z
 export const planResponseSchema = z
   .object({
     access: z.object({
-      freeUntil: isoDateSchema.nullable().meta({ description: "Last day a free exam plan covers" }),
+      freeUntil: isoDateSchema
+        .nullable()
+        .meta({ description: "Always null. Exam goals have no time-based expiry" }),
       freeWeekOver: z
         .boolean()
         .meta({
           description:
-            "A free exam plan past its first week: its new lessons, practice, challenges and mocks come with Plus, while reviews and fixing mistakes stay free",
+            "Always false. Exam plans do not expire; new lessons use the shared rolling 30-day allowance",
         }),
       mocksRequirePlus: z.boolean(),
     }),

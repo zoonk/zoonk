@@ -8,8 +8,6 @@ import { RhythmTapPad } from "./rhythm-tap-pad";
 import { type CalibrationPhase, useDelayCalibration } from "./use-delay-calibration";
 import { useSpaceToTap } from "./use-space-to-tap";
 
-const ON_TIME_MS = 20;
-
 function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
   const t = useExtracted();
 
@@ -29,17 +27,12 @@ function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
   }
 
   if (phase.kind === "done" && phase.delayMs !== null) {
-    return phase.delayMs < ON_TIME_MS
-      ? t("Sound on this device arrives on time.")
-      : t("Sound on this device arrives about {ms} ms late. Rhythms here take that out.", {
-          ms: String(phase.delayMs),
-        });
+    return t("All set.");
   }
 
-  return t(
-    "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly.",
-    { count: String(CALIBRATION_CLICKS) },
-  );
+  return t("Tap along with {count} clicks, so your taps are timed right.", {
+    count: String(CALIBRATION_CLICKS),
+  });
 }
 
 export function RhythmDelayCalibration({
@@ -85,7 +78,7 @@ export function RhythmDelayCalibration({
         <div className="flex flex-wrap gap-2">
           {reading === null ? (
             <Button onClick={() => void start()} size="lg" type="button">
-              {phase.kind === "done" ? t("Try again") : t("Start the sound check")}
+              {phase.kind === "done" ? t("Try again") : t("Start")}
             </Button>
           ) : (
             <Button onClick={() => onDone(reading)} size="lg" type="button">

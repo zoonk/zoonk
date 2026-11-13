@@ -12,8 +12,7 @@ const chapterLessonSchema = z
     plusRequired: z
       .boolean()
       .meta({
-        description:
-          "A free exam plan past its first week opens this new lesson with Plus only: show it marked Plus; starting it answers 402",
+        description: "Always false. New lessons use the shared rolling 30-day lesson allowance",
       }),
     skillIds: z
       .array(uuidSchema())
@@ -83,10 +82,7 @@ export const chapterViewSchema = z
         }),
       plusRequired: z
         .boolean()
-        .meta({
-          description:
-            "A free exam plan past its first week takes the chapter's test-out with Plus only: show it marked Plus; its endpoints answer 402",
-        }),
+        .meta({ description: "Always false. Chapter test-out does not require a subscription" }),
     }),
   })
   .meta({ id: "GoalChapter" });

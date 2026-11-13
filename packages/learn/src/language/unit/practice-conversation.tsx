@@ -6,14 +6,12 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { DrawerCloseButton } from "../../_components/details-drawer";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowButton,
@@ -22,58 +20,48 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../../_components/list-group";
-import { PlusMark, PlusNotice } from "../../_components/plus-lock";
+import { SheetHeader } from "../../_components/sheet-header";
+import { SubscribeGate } from "../../_components/subscribe-gate";
 import { useFormatDuration } from "../../_utils/time-format";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitMessage } from "../conversation/call-limit-message";
-import { CallOffMessage } from "../conversation/conversation-parts";
+import { CallLimitReason } from "../conversation/call-limit-message";
+import { CallReason } from "../conversation/conversation-parts";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
-
-type LengthChoice = { locked: boolean; minutes: number };
-
-function toLengthChoices(conversation: LanguageUnitView["conversation"]): LengthChoice[] {
-  return [
-    ...conversation.minutes.map((minutes) => ({ locked: false, minutes })),
-    ...conversation.plusMinutes.map((minutes) => ({ locked: true, minutes })),
-  ].toSorted((first, second) => first.minutes - second.minutes);
-}
 
 function MinuteChips({
   choices,
   onChange,
   selected,
 }: {
-  choices: LengthChoice[];
+  choices: number[];
   onChange: (minutes: number) => void;
   selected: number;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const name = useId();
-  const hasLocked = choices.some((choice) => choice.locked);
 
   return (
-    <fieldset className={cn("grid gap-1.5", hasLocked ? "grid-cols-2" : "grid-cols-4")}>
+    <fieldset className="grid grid-cols-[repeat(auto-fit,minmax(4.5rem,1fr))] gap-1.5">
       <legend className="mb-2 text-sm font-medium">{t("Call length")}</legend>
-      {choices.map((choice) => (
+      {choices.map((minutes) => (
         <label
           className={cn(
-            "border-input rounded-option flex min-h-11 cursor-pointer items-center justify-center gap-2 border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
+            "border-input flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
             "hover:bg-muted/50 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
             "has-checked:border-foreground has-checked:bg-muted",
           )}
-          key={choice.minutes}
+          key={minutes}
         >
           <input
-            checked={selected === choice.minutes}
+            checked={selected === minutes}
             className="sr-only"
             name={name}
-            onChange={() => onChange(choice.minutes)}
+            onChange={() => onChange(minutes)}
             type="radio"
-            value={choice.minutes}
+            value={minutes}
           />
-          <span className="font-mono tabular-nums">{formatDuration(choice.minutes)}</span>
-          {choice.locked && <PlusMark />}
+          <span className="font-mono tabular-nums">{formatDuration(minutes)}</span>
         </label>
       ))}
     </fieldset>
@@ -84,7 +72,7 @@ function CallsPausedMessage({ className }: { className: string }) {
   const t = useExtracted();
 
   return (
-    <CallOffMessage className={className} title={t("Calls are paused")}>
+    <CallReason className={className} role="alert" title={t("Calls are paused")}>
       <p className="text-muted-foreground text-sm text-pretty">
         {t({
           description:
@@ -92,7 +80,7 @@ function CallsPausedMessage({ className }: { className: string }) {
           message: "It's the same for everyone right now. Try again later.",
         })}
       </p>
-    </CallOffMessage>
+    </CallReason>
   );
 }
 
@@ -108,7 +96,7 @@ function CallSetup({
   const call = useCallStart({ onStart: () => onStart(minutes) });
 
   if (conversation.paused) {
-    return <CallsPausedMessage className="py-4" />;
+    return <CallsPausedMessage className="pt-4" />;
   }
 
   if (call.writing) {
@@ -122,7 +110,7 @@ function CallSetup({
   }
 
   if (conversation.limit) {
-    return <CallLimitMessage className="py-4" limit={conversation.limit} />;
+    return <CallLimitReason className="pt-4" limit={conversation.limit} />;
   }
 
   const isLocked = conversation.plusMinutes.includes(minutes);
@@ -130,12 +118,14 @@ function CallSetup({
   return (
     <div className="flex flex-col gap-5">
       <MinuteChips
-        choices={toLengthChoices(conversation)}
+        choices={[...conversation.minutes, ...conversation.plusMinutes].toSorted(
+          (first, second) => first - second,
+        )}
         onChange={setMinutes}
         selected={minutes}
       />
       {isLocked ? (
-        <PlusNotice inset>{t("Longer calls come with Plus.")}</PlusNotice>
+        <SubscribeGate title={t("Longer calls need a subscription")} />
       ) : (
         // It opens the call's intro, whose button is the one that calls.
         <Button
@@ -186,19 +176,16 @@ export function PracticeCallSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <DrawerTitle className="text-xl font-semibold">
-              {t("Practice a conversation")}
-            </DrawerTitle>
+            <DrawerTitle>{t("Practice a conversation")}</DrawerTitle>
             {character && (
               <DrawerDescription>
                 {t("with {name} · {role}", { name: character.name, role: character.role })}
               </DrawerDescription>
             )}
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
         <DrawerContent className="pt-3">
           {open && <CallSetup conversation={conversation} onStart={start} />}
         </DrawerContent>

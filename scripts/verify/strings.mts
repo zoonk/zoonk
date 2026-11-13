@@ -1,4 +1,5 @@
 import { type ChangedFile, type Flag } from "./diff-audit.mts";
+import { catalogRulesBroken } from "./rules/catalog.mts";
 import { type Rule } from "./rules/shared.mts";
 import { WORD_BUDGET, countWords } from "./words.mts";
 
@@ -191,7 +192,7 @@ function androidStrings(content: string): CatalogString[] {
   });
 }
 
-function isCatalog(path: string): boolean {
+export function isCatalog(path: string): boolean {
   return WEB_CATALOG.test(path) || path.endsWith(".xcstrings") || ANDROID_CATALOG.test(path);
 }
 
@@ -234,7 +235,7 @@ function termIn(text: string, terms: string[]): string | undefined {
 
 function judgeString(
   string: CatalogString,
-  { read, terms }: { read: (path: string) => string; terms: string[] },
+  { path, read, terms }: { path: string; read: (path: string) => string; terms: string[] },
 ): { rule: Rule; sample: string }[] {
   const term = termIn(string.text, terms);
   const words = countWords(string.text.replaceAll(ARGUMENT, "x"));
@@ -254,6 +255,7 @@ function judgeString(
     ...(HEDGE.test(string.text) ? [{ rule: RULES.hedge, sample: string.text }] : []),
     ...(term ? [{ rule: RULES.term, sample: `${term}: ${string.text}` }] : []),
     ...(DEFINING_NOTE.test(string.note) ? [{ rule: RULES.note, sample: string.note }] : []),
+    ...catalogRulesBroken(path, string).map((rule) => ({ rule, sample: string.text })),
   ];
 }
 
@@ -277,7 +279,7 @@ export function auditStrings(
       return readCatalog(file.path, read(file.path))
         .filter((string) => !before.has(stringKey(string)))
         .flatMap((string) =>
-          judgeString(string, { read, terms }).map(({ rule, sample }) => ({
+          judgeString(string, { path: file.path, read, terms }).map(({ rule, sample }) => ({
             lines: string.line > 0 ? [string.line] : [],
             path: file.path,
             rule,

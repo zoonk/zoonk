@@ -24,7 +24,7 @@ const TOAST_CLASS =
 
 /** A margin, not `bottom`, lifts toasts above a bottom tab bar, since it adds to `bottom` at every width. */
 const TOAST_VIEWPORT_CLASS =
-  "pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-full max-lg:in-[body:has([data-bottom-bar])]:mb-[calc(4rem+env(safe-area-inset-bottom))]";
+  "pointer-events-none fixed inset-x-4 bottom-4 z-60 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-full max-lg:in-[body:has([data-bottom-bar])]:mb-[calc(4rem+env(safe-area-inset-bottom))]";
 
 function showSuccessToast(title: ReactNode) {
   return toast.add({ title, type: "success" });
@@ -62,7 +62,7 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
   return (
     <ToastPrimitive.Content
       className={cn(
-        "flex h-full items-start gap-1.5 overflow-hidden p-4 text-[13px] leading-5 transition-opacity duration-250 ease-out data-behind:opacity-0 data-expanded:opacity-100",
+        "text-compact flex h-full items-start gap-1.5 overflow-hidden p-4 leading-5 transition-opacity duration-250 ease-out data-behind:opacity-0 data-expanded:opacity-100",
         className,
       )}
       data-slot="toast-content"
@@ -78,7 +78,7 @@ function ToastTitle({
 }: ToastPrimitive.Title.Props) {
   return (
     <ToastPrimitive.Title
-      className={cn("text-[13px] leading-5 font-medium", className)}
+      className={cn("text-compact leading-5 font-medium", className)}
       data-slot="toast-title"
       render={render}
       {...props}
@@ -89,7 +89,7 @@ function ToastTitle({
 function ToastDescription({ className, ...props }: ToastPrimitive.Description.Props) {
   return (
     <ToastPrimitive.Description
-      className={cn("text-muted-foreground text-[13px] leading-[1.4]", className)}
+      className={cn("text-muted-foreground text-compact leading-[1.4]", className)}
       data-slot="toast-description"
       {...props}
     />
@@ -121,7 +121,7 @@ function ToastClose({
     <ToastPrimitive.Close
       aria-label="Close toast"
       className={cn(
-        "text-muted-foreground hover:text-foreground -mr-1 size-5 shrink-0 after:absolute after:-inset-2 after:content-['']",
+        "text-muted-foreground hover:text-foreground edge -me-(--edge-pull) shrink-0 [--control-size:--spacing(5)] after:absolute after:-inset-2 after:content-['']",
         className,
       )}
       data-slot="toast-close"

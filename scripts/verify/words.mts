@@ -1,4 +1,5 @@
 import { type Finding } from "./checks.mts";
+import { type PageTopClasses } from "./page-top.mts";
 
 /** Zoonk-design's Words budget, as leads for a designer: none of them fails a run. */
 export const WORD_BUDGET = {
@@ -12,15 +13,21 @@ export const WORD_BUDGET = {
   stringWords: 20,
 };
 
-export type PageText = {
+type PagePlace = {
+  /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
+  actionPinned: boolean | null;
+  /** Null outside the app shell and inside task or onboarding frames. */
+  titleTop: { actual: number; expected: number } | null;
+};
+
+export type PageText = PagePlace & {
   aboveAction: number | null;
   action: string | null;
   buttons: string[];
   text: string;
 };
 
-export type PageWords = {
-  /** Text elements between the title and the main action; null when there's no main action. */
+export type PageWords = PagePlace & {
   aboveAction: number | null;
   action: string | null;
   kind: PageKind;
@@ -35,7 +42,7 @@ export type PageWords = {
  * the first button with the primary fill after it. A text element has its own text and isn't
  * inside another one counted.
  */
-export function readWords(): PageText {
+export function readWords(pageTop: PageTopClasses | null): PageText {
   const main = document.querySelector("main") ?? document.body;
   const all = [...document.body.querySelectorAll("*")];
 
@@ -68,6 +75,54 @@ export function readWords(): PageText {
       (button) => button.classList.contains("bg-primary") && all.indexOf(button) > start,
     ) ?? null;
 
+  const filled = buttons.filter((button) => button.classList.contains("bg-primary"));
+  const titleBox = title?.getBoundingClientRect();
+
+  const frame = title?.closest("[data-slot=learn-shell-content]");
+  const inTask = title?.closest("[data-slot=task-frame], [data-slot=onboarding-frame]");
+
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
+  function expectedTop(classes: PageTopClasses) {
+    const sample = document.createElement("div");
+    sample.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;top:0;left:0";
+    const bar = document.createElement("div");
+    bar.className = classes.bar;
+    const row = document.createElement("div");
+    row.className = classes.row;
+    bar.append(row);
+    const header = document.createElement("div");
+    header.className = classes.header;
+    sample.append(bar, header);
+    document.body.append(sample);
+
+    try {
+      const style = getComputedStyle(header);
+
+      return (
+        bar.getBoundingClientRect().height +
+        Number(style.paddingTop.replace(/px$/u, "")) +
+        Number(style.borderTopWidth.replace(/px$/u, ""))
+      );
+    } finally {
+      sample.remove();
+    }
+  }
+
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
+  function pinned(element: Element) {
+    if (element.getBoundingClientRect().bottom <= innerHeight / 2) {
+      return false;
+    }
+
+    for (let current: Element | null = element; current; current = current.parentElement) {
+      if (["fixed", "sticky"].includes(getComputedStyle(current).position)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   const between = action
     ? all
         .slice(start + 1, all.indexOf(action))
@@ -82,6 +137,8 @@ export function readWords(): PageText {
         )
     : [];
 
+  const [only] = filled;
+
   return {
     aboveAction: action
       ? between.filter(
@@ -89,9 +146,17 @@ export function readWords(): PageText {
         ).length
       : null,
     action: action ? label(action) : null,
+    actionPinned: filled.length === 1 && only ? pinned(only) : null,
     buttons: buttons.map((button) => label(button)).filter(Boolean),
     // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips hidden text (`display: none`), which `textContent` would count.
     text: main.innerText,
+    titleTop:
+      frame && titleBox && pageTop && !inTask
+        ? {
+            actual: titleBox.top - frame.getBoundingClientRect().top,
+            expected: expectedTop(pageTop),
+          }
+        : null,
   };
 }
 
@@ -132,10 +197,50 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
   return {
     aboveAction: page.aboveAction,
     action: page.action,
+    actionPinned: page.actionPinned,
     kind,
     longestButton,
+    titleTop: page.titleTop,
     words: countWords(page.text),
   };
+}
+
+/**
+ * R2 on one load: a screen's one main action is pinned in the bottom bar. A
+ * screen that keeps it elsewhere says why in its decisions, so this is a lead.
+ */
+export function placeFindings(page: PageWords): Finding[] {
+  return page.kind === "app" && page.actionPinned === false
+    ? [
+        {
+          check: "R2 main action pinned",
+          level: "warn",
+          message: `"${page.action ?? ""}" is the screen's one main action and isn't pinned in the bottom bar`,
+        },
+      ]
+    : [];
+}
+
+/** E8 applies only to app-shell titles; other surfaces have their own tops. */
+export function titleTopFindings(page: PageWords): Finding[] {
+  if (page.kind !== "app" || !page.titleTop) {
+    return [];
+  }
+
+  const { actual, expected } = page.titleTop;
+  const rounding = 1;
+
+  return Math.abs(actual - expected) > rounding
+    ? [
+        {
+          check: "E8 page top",
+          level: "warn",
+          message: `the title starts ${actual} px below the app frame's top; PageTop expects ${expected} px`,
+          unit: "px",
+          value: actual - expected,
+        },
+      ]
+    : [];
 }
 
 export function wordFindings(page: PageWords): Finding[] {

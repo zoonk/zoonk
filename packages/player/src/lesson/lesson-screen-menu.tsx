@@ -1,21 +1,17 @@
 "use client";
 
-import { TASK_HEADER_ICON_CLASS, useTaskAsideShown } from "@zoonk/learn/task-header";
-import { Button } from "@zoonk/ui/components/button";
+import { TaskHeaderMenu, useTaskAsideShown } from "@zoonk/learn/task-header";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon, NetworkIcon, SparklesIcon, ZapIcon } from "lucide-react";
+import { NetworkIcon, PenOffIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { getLessonFocusTarget } from "./_utils/lesson-focus";
+import { focusLessonAfterTurn, getLessonFocusTarget } from "./_utils/lesson-focus";
+import { isNumberAnswer } from "./_utils/number-answer";
 import { LessonMapSheet } from "./controls/lesson-map-sheet";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
@@ -50,10 +46,38 @@ function useMapSheet(isDone: boolean) {
   return { change, onMenuOpenChange, open };
 }
 
+function AiNote() {
+  const t = useExtracted();
+
+  return (
+    <DropdownMenuLabel className="flex items-start gap-2.5" data-slot="lesson-ai-note">
+      <span className="flex h-lh w-4 shrink-0 items-center justify-center">
+        <SparklesIcon aria-hidden="true" className="size-3.5" />
+      </span>
+      {t("Made with AI. It may contain mistakes.")}
+    </DropdownMenuLabel>
+  );
+}
+
+/** A written answer still open can be left out, with every other writing question of the day. */
+function useCanSkipWriting(): boolean {
+  const { showWritingAlternatives = true } = useLessonPlayerConfig();
+  const { screen, state } = useLessonPlayer();
+  const { step } = screen;
+
+  return (
+    step?.kind === "typedAnswer" &&
+    state.phase === "playing" &&
+    showWritingAlternatives &&
+    !isNumberAnswer(step.content.acceptedAnswers)
+  );
+}
+
 export function LessonScreenMenu() {
   const t = useExtracted();
   const { lesson, slots } = useLessonPlayerConfig();
   const { actions, screen, state } = useLessonPlayer();
+  const canSkipWriting = useCanSkipWriting();
   const isDone = state.phase === "completed";
   const mapSheet = useMapSheet(isDone);
   const asideShown = useTaskAsideShown();
@@ -69,47 +93,47 @@ export function LessonScreenMenu() {
 
   return (
     <>
-      <DropdownMenu onOpenChange={mapSheet.onMenuOpenChange}>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
-              size="icon"
-              variant="ghost"
-            />
-          }
-        >
-          <EllipsisIcon aria-hidden="true" />
-          <span className="sr-only">{t("Screen options")}</span>
-        </DropdownMenuTrigger>
+      <TaskHeaderMenu
+        onOpenChange={mapSheet.onMenuOpenChange}
+        className="w-64"
+        finalFocus={getLessonFocusTarget}
+      >
+        <DropdownMenuGroup>
+          <AiNote />
+        </DropdownMenuGroup>
 
-        <DropdownMenuContent align="end" className="w-64" finalFocus={getLessonFocusTarget}>
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className="flex items-start gap-2" data-slot="lesson-ai-note">
-              <SparklesIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-              {t("Made with AI. It may contain mistakes.")}
-            </DropdownMenuLabel>
-          </DropdownMenuGroup>
+        {(canSkipWriting || screen.canKnowThis || showsMap || reportItem) && (
+          <DropdownMenuSeparator />
+        )}
 
-          {(screen.canKnowThis || showsMap || reportItem) && <DropdownMenuSeparator />}
+        {canSkipWriting && (
+          <DropdownMenuItem
+            onClick={() => {
+              actions.skipWriting();
+              focusLessonAfterTurn();
+            }}
+          >
+            <PenOffIcon aria-hidden="true" />
+            {t("Skip writing questions today")}
+          </DropdownMenuItem>
+        )}
 
-          {screen.canKnowThis && (
-            <DropdownMenuItem onClick={actions.knowThis}>
-              <ZapIcon aria-hidden="true" />
-              {t("I already know this")}
-            </DropdownMenuItem>
-          )}
+        {screen.canKnowThis && (
+          <DropdownMenuItem onClick={actions.knowThis}>
+            <ZapIcon aria-hidden="true" />
+            {t("I already know this")}
+          </DropdownMenuItem>
+        )}
 
-          {showsMap && (
-            <DropdownMenuItem onClick={() => mapSheet.change(true)}>
-              <NetworkIcon aria-hidden="true" />
-              {t("Lesson map")}
-            </DropdownMenuItem>
-          )}
+        {showsMap && (
+          <DropdownMenuItem onClick={() => mapSheet.change(true)}>
+            <NetworkIcon aria-hidden="true" />
+            {t("Lesson map")}
+          </DropdownMenuItem>
+        )}
 
-          {reportItem}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        {reportItem}
+      </TaskHeaderMenu>
 
       {lesson.summary && (
         <LessonMapSheet

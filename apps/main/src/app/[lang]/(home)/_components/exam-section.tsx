@@ -1,5 +1,3 @@
-import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { getExtracted, getFormatter } from "next-intl/server";
@@ -33,17 +31,7 @@ async function MockResult() {
   return (
     <ExampleCard>
       <ExampleCardHead
-        aside={
-          <span className={CHIP_CLASS}>
-            <span aria-hidden="true">{t("Plus")}</span>
-            <span className="sr-only">{t("Available with Plus")}</span>
-          </span>
-        }
-        detail={
-          mock.details && (
-            <span className={NUMERIC_CLASS}>{keepNumbersWithUnits(mock.details)}</span>
-          )
-        }
+        detail={mock.details && keepNumbersWithUnits(mock.details)}
         title={t("Mock exam {number, number} · {name}", { name: mock.name, number: 2 })}
       />
 
@@ -53,8 +41,8 @@ async function MockResult() {
 
           return (
             <div className="flex min-w-0 flex-col" key={score.label}>
-              <p className="text-muted-foreground text-[0.8125rem]">{score.label}</p>
-              <p className="text-readout mt-1.5 text-[clamp(1.75rem,10.5cqi,3.75rem)] whitespace-nowrap">
+              <p className="text-muted-foreground text-compact">{score.label}</p>
+              <p className="text-readout mt-1.5 text-3xl whitespace-nowrap @sm:text-[2.5rem] @lg:text-[3.5rem]">
                 {number}
                 {unit && (
                   <span className="text-muted-foreground text-[max(0.3em,0.9375rem)] font-medium tracking-normal">
@@ -62,7 +50,7 @@ async function MockResult() {
                   </span>
                 )}
               </p>
-              <p className="text-muted-foreground mt-2 text-xs">
+              <p className="text-muted-foreground text-compact mt-2">
                 {t({
                   description:
                     "Exams report a score, a grade or a band (13–15/20, 2–3등급): use the word that fits your country's exam.",
@@ -74,10 +62,17 @@ async function MockResult() {
         })}
       </div>
 
-      <ul className="divided-rows mt-6 border-t text-[0.9375rem] leading-snug">
+      <ul className="divided-rows text-reading mt-6 border-t leading-snug">
         <li className="flex min-h-12 items-center gap-3 py-2.5">
           <DoneMark />
-          <span>{t.rich("<b>Solid:</b> {topics}", { b: bold, topics: list(mock.firm) })}</span>
+          <span>
+            {t.rich({
+              description:
+                "Before the topics a mock exam's answers were mostly right on. In Brazilian Portuguese: “<b>Indo bem:</b> {topics}”.",
+              message: "<b>Going well:</b> {topics}",
+              values: { b: bold, topics: list(mock.firm) },
+            })}
+          </span>
         </li>
         <li className="flex min-h-12 items-center gap-3 py-2.5">
           <KindMark className="size-4" kind="review" />
@@ -90,20 +85,14 @@ async function MockResult() {
           <span>
             {t.rich({
               description:
-                "In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.",
+                "In Brazilian Portuguese: “<b>7 erros</b> guardados para você praticar”.",
               message:
-                "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook",
+                "<b>{count, plural, one {# mistake} other {# mistakes}}</b> saved for you to practice",
               values: { b: bold, count: mock.mistakes },
             })}
           </span>
         </li>
       </ul>
-
-      <p className="text-muted-foreground mt-3 text-[0.8125rem] leading-normal text-pretty">
-        {t(
-          "The score is only an estimate, made from your answers. Mock exams are available with Plus.",
-        )}
-      </p>
     </ExampleCard>
   );
 }

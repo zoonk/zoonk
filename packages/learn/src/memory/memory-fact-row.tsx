@@ -133,8 +133,8 @@ export function MemoryFactRow({
   return (
     <li className="flex items-start gap-3 py-2.75" data-slot="memory-fact">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p className="text-[0.9375rem] leading-snug">{fact.statement}</p>
-        <p className="text-muted-foreground text-[0.8125rem] leading-snug">
+        <p className="text-reading leading-snug">{fact.statement}</p>
+        <p className="text-muted-foreground text-compact leading-snug">
           <MemoryFactSource fact={fact} />
         </p>
       </div>
@@ -144,7 +144,8 @@ export function MemoryFactRow({
           render={
             <Button
               aria-label={t("Options for “{fact}”", { fact: fact.statement })}
-              className="text-muted-foreground -my-2.75 -mr-2 size-11 shrink-0"
+              className="text-muted-foreground -my-2 shrink-0"
+              edge="end"
               size="icon"
               variant="ghost"
             />

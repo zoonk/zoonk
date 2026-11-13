@@ -43,9 +43,7 @@ function visibleText(button: HTMLElement) {
 }
 
 function cutOffLabels() {
-  const bar = document.querySelector(
-    "[data-slot='lesson-action-bar'], [data-slot='task-action-bar']",
-  );
+  const bar = document.querySelector("[data-slot='task-action-bar']");
 
   const buttons = [...(bar?.querySelectorAll<HTMLElement>("a, button") ?? [])];
   const cutOff: string[] = [];

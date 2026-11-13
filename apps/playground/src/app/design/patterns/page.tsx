@@ -25,49 +25,33 @@ import { SubjectGlyph, SubjectLabel } from "@zoonk/learn/subject-label";
 import { Surface } from "@zoonk/learn/surface";
 import { Button } from "@zoonk/ui/components/button";
 import { type Metadata } from "next";
-import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
-import { DevOnlySpecimen, DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { NextIntlClientProvider } from "next-intl";
+import { DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { CurrentSpecimen } from "./current-specimen";
+import { ActionsSpecimen, BottomBarSpecimen, PageTopSpecimen } from "./frame-specimens";
+import { WordsSpecimen } from "./words-specimen";
 
 export const metadata: Metadata = { title: "Components and patterns" };
 
-function ActionsSpecimen() {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button size="lg">Continue session</Button>
-      <Button size="lg" variant="outline">
-        Adjust plan
-      </Button>
-      <Button size="lg" variant="ghost">
-        Not now
-      </Button>
-      <p className="text-muted-foreground text-sm">
-        Already know this? <Button variant="link">Take the test</Button>
-      </p>
-    </div>
-  );
-}
-
 function AnswersSpecimen() {
   return (
-    <DevOnlySpecimen>
-      <AnswerOptionGroup className="max-w-column">
-        <AnswerOption marker={1} picked={false}>
-          At rest
-        </AnswerOption>
-        <AnswerOption marker={2} picked>
-          Picked, before it&apos;s checked
-        </AnswerOption>
-        <AnswerOption marker={3} picked result="right">
-          Checked right
-        </AnswerOption>
-        <AnswerOption marker={4} picked result="wrong">
-          Checked wrong
-        </AnswerOption>
-        <AnswerOption marker={5} picked={false} result="right">
-          The right answer the learner didn&apos;t pick
-        </AnswerOption>
-      </AnswerOptionGroup>
-    </DevOnlySpecimen>
+    <AnswerOptionGroup className="max-w-column">
+      <AnswerOption marker={1} picked={false}>
+        At rest
+      </AnswerOption>
+      <AnswerOption marker={2} picked>
+        Picked, before it&apos;s checked
+      </AnswerOption>
+      <AnswerOption marker={3} picked result="right">
+        Checked right
+      </AnswerOption>
+      <AnswerOption marker={4} picked result="wrong">
+        Checked wrong
+      </AnswerOption>
+      <AnswerOption marker={5} picked={false} result="right">
+        The right answer the learner didn&apos;t pick
+      </AnswerOption>
+    </AnswerOptionGroup>
   );
 }
 
@@ -142,10 +126,7 @@ function KindsSpecimen() {
 function ReadoutsSpecimen() {
   return (
     <div className="max-w-column flex flex-col gap-3">
-      <div className="flex items-baseline justify-between gap-4">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">1 of 12 done</p>
-        <BigQuantity className="text-2xl">43 min left</BigQuantity>
-      </div>
+      <BigQuantity className="text-2xl">43 min left</BigQuantity>
       <MeterParts>
         <MeterPart className="bg-success" weight={2} />
         <MeterPart className="ring-success bg-transparent ring-[1.5px] ring-inset" weight={5} />
@@ -163,12 +144,12 @@ function SubjectsSpecimen() {
     <div className="grid gap-4 sm:grid-cols-2">
       <Surface className="flex flex-col gap-2 p-4">
         <SubjectLabel subject="science">Science</SubjectLabel>
-        <p className="text-[0.9375rem] font-semibold">Quantum physics from scratch</p>
+        <p className="text-reading font-semibold">Quantum physics from scratch</p>
         <p className="text-muted-foreground font-mono text-xs">301 lessons · about 20 hr</p>
       </Surface>
       <ul className="flex flex-col gap-2 text-sm">
         {(["economics", "languages", "science", "society"] as const).map((subject) => (
-          <li className="flex items-center gap-2.5" key={subject}>
+          <li className="flex items-center gap-2" key={subject}>
             <SubjectGlyph subject={subject} />
             {subject.charAt(0).toUpperCase() + subject.slice(1)}
           </li>
@@ -194,7 +175,7 @@ function StructureSpecimen() {
 
 function BandsSpecimen() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-lg">
+    <div className="flex flex-col overflow-hidden rounded-xl">
       <div className="bg-ground flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-section">Quantum physics from scratch</p>
@@ -203,7 +184,7 @@ function BandsSpecimen() {
         <Surface className="p-4 text-sm">The one white sheet on it.</Surface>
       </div>
       <div className="p-6 text-sm">The next part, on the page.</div>
-      <div className="bg-foreground text-background dark:bg-card dark:text-foreground dark:ring-border flex items-center justify-between gap-4 rounded-b-lg p-6 dark:ring-1 dark:ring-inset">
+      <div className="bg-foreground text-background dark:bg-card dark:text-foreground dark:ring-border flex items-center justify-between gap-4 rounded-b-xl p-6 dark:ring-1 dark:ring-inset">
         <p className="text-section">Start today, at your level</p>
         <Button
           className="bg-background text-foreground hover:bg-background/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
@@ -277,18 +258,22 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   actions: ActionsSpecimen,
   answers: AnswersSpecimen,
   bands: BandsSpecimen,
+  "bottom-bar": BottomBarSpecimen,
+  current: CurrentSpecimen,
   kinds: KindsSpecimen,
+  "page-top": PageTopSpecimen,
   readouts: ReadoutsSpecimen,
   route: RouteSpecimen,
   status: StatusSpecimen,
   structure: StructureSpecimen,
   subjects: SubjectsSpecimen,
   titles: TitlesSpecimen,
+  words: WordsSpecimen,
 };
 
 export default function PatternsPage() {
   return (
-    <PreviewIntlProvider>
+    <NextIntlClientProvider>
       <DocHeader title="Components and patterns">
         One way to draw each thing, from the shared components. Specimens are the real components,
         in this device&apos;s mode.
@@ -313,6 +298,6 @@ export default function PatternsPage() {
           </DocSection>
         );
       })}
-    </PreviewIntlProvider>
+    </NextIntlClientProvider>
   );
 }

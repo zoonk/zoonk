@@ -39,14 +39,14 @@ function BuddyOption({
       <RadioGroupItem className="absolute top-3 right-3" value={kind} />
       <Buddy
         beltColor={look.beltColor}
-        className="size-20"
+        className="h-23"
         energy={look.energy}
         expression="happy"
         glasses={choice.kind === kind ? choice.glasses : "round"}
         kind={kind}
         studiedToday={look.studiedToday}
       />
-      <span className="text-base font-semibold">{name}</span>
+      <span className="text-sm font-semibold">{name}</span>
       <span className="text-muted-foreground text-xs">
         <BuddyTagline kind={kind} />
       </span>

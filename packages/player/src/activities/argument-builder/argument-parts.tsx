@@ -1,9 +1,15 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, GripVertical, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_EMPTY_CLASS,
+  ACTIVITY_PRESS_CLASS,
+} from "../_components/activity-canvas";
 import { useActivityDraggable, useActivityDropTarget } from "../_components/activity-drag-drop";
 
 export type ArgumentPart = "evidence" | "reasoning";
@@ -19,7 +25,7 @@ export function ArgumentText({ citation, text }: { citation?: string; text: stri
 
   return (
     <span className="flex flex-col gap-1">
-      <q className="text-[15px] leading-snug sm:text-base">
+      <q className="text-reading leading-snug sm:text-base">
         <LessonRichText text={text} />
       </q>
       <span className="text-muted-foreground text-xs">{citation}</span>
@@ -57,7 +63,9 @@ export function ArgumentCandidate({
       {...dragProps}
       aria-label={label}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full touch-manipulation items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left outline-none select-none focus-visible:ring-[3px]",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_PRESS_CLASS,
+        "focus-visible:border-ring hover:bg-accent flex w-full touch-manipulation items-start gap-2.5",
         !disabled && "cursor-grab active:cursor-grabbing",
         isDragging && "relative z-20 shadow-lg",
       )}
@@ -105,7 +113,9 @@ export function ArgumentSlot({
     <section
       aria-label={label}
       className={cn(
-        "flex flex-col gap-1.5 rounded-xl border-2 border-dashed px-3.5 py-2.5",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_EMPTY_CLASS,
+        "flex flex-col gap-1.5",
         isOpen && "border-viz-accent/60 bg-viz-accent-soft/40",
         isOver && "border-viz-accent bg-viz-accent-soft",
         isFilled && "bg-background border-solid",
@@ -140,14 +150,17 @@ export function ArgumentSlot({
         )}
 
         {onClear && (
-          <button
+          <Button
             aria-label={clearLabel}
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -my-2 -mr-2 flex size-11 items-center justify-center rounded-full outline-none focus-visible:ring-[3px]"
+            className="text-muted-foreground -my-1"
+            edge="end"
             onClick={onClear}
+            size="icon"
             type="button"
+            variant="ghost"
           >
-            <X aria-hidden="true" className="size-4" />
-          </button>
+            <X aria-hidden="true" />
+          </Button>
         )}
       </div>
 

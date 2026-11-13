@@ -9,10 +9,11 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, PlayIcon } from "lucide-react";
+import { PlayIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { useState } from "react";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
@@ -21,6 +22,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../../_components/list-group";
+import { SubscribeGate } from "../../_components/subscribe-gate";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { useCriterionGloss, useTaskRoleLabel } from "./exam-speaking-labels";
@@ -87,7 +89,7 @@ function useLastTryText() {
     }
 
     if (atLevel > 0) {
-      return t("Last try: {count} of {rated} at {level}", {
+      return t("Last try: at {level} on {count} of {rated} criteria", {
         count: String(atLevel),
         level,
         rated: String(rated),
@@ -95,7 +97,7 @@ function useLastTryText() {
     }
 
     return nearLevel > 0
-      ? t("Last try: {count} of {rated} near {level}", {
+      ? t("Last try: near {level} on {count} of {rated} criteria", {
           count: String(nearLevel),
           level,
           rated: String(rated),
@@ -110,7 +112,7 @@ export function TaskRow({
   index,
   language,
   level,
-  locked,
+  needsSubscription,
   onStart,
   paused,
   resultHref,
@@ -122,7 +124,8 @@ export function TaskRow({
   index: number;
   language: string;
   level: string;
-  locked: boolean;
+  /** The tasks look as they do for a subscriber; "Start" then shows the gate in its place. */
+  needsSubscription: boolean;
   onStart: () => void;
   paused: boolean;
   resultHref: (conversationId: string) => string;
@@ -134,13 +137,11 @@ export function TaskRow({
   const facts = useTaskFacts();
   const gloss = useCriterionGloss();
   const lastTryText = useLastTryText();
+  const [gated, setGated] = useState(false);
 
   return (
     <Collapsible data-slot="speaking-task" defaultOpen={defaultOpen}>
-      <CollapsibleTrigger
-        className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/task")}
-        id={getTaskRowId(task.key)}
-      >
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS} id={getTaskRowId(task.key)}>
         <ListRowLeading>
           <ListRowIcon className="font-mono text-xs tabular-nums">{index + 1}</ListRowIcon>
         </ListRowLeading>
@@ -151,14 +152,11 @@ export function TaskRow({
             <ListRowDescription>{lastTryText(task.lastTry, level)}</ListRowDescription>
           )}
         </ListRowContent>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/task:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <div className="flex flex-col items-start gap-3 ps-7 pt-1 pb-4">
-          <p className="text-muted-foreground text-sm text-pretty">
+          <p className="text-muted-foreground max-w-column text-sm text-pretty">
             {t("Rated on {criteria}.", {
               criteria: format.list(
                 task.criteria.map((criterion) => gloss(criterion)),
@@ -166,18 +164,19 @@ export function TaskRow({
               ),
             })}
           </p>
+          {gated && <SubscribeGate title={t("Speaking practice needs a subscription")} />}
           <div className="flex flex-wrap gap-2">
             {paused && <p className="text-muted-foreground text-sm">{t("Calls are paused")}</p>}
-            {!locked && (
+            {!paused && !gated && (
               <Button
                 busy={starting}
                 disabled={busy}
                 focusableWhenDisabled
                 icon={<PlayIcon aria-hidden="true" />}
-                onClick={onStart}
+                onClick={needsSubscription ? () => setGated(true) : onStart}
                 size="sm"
               >
-                {t("Start this task")}
+                {t("Start")}
               </Button>
             )}
             {task.lastTry && (
@@ -185,7 +184,7 @@ export function TaskRow({
                 className={buttonVariants({ size: "sm", variant: "outline" })}
                 href={resultHref(task.lastTry.conversationId)}
               >
-                {t("See your last result")}
+                {t("Last result")}
               </LearnLink>
             )}
           </div>

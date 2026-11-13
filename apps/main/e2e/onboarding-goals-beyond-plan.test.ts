@@ -20,9 +20,9 @@ const ENGLISH = {
 
 const STATISTICS = { kind: "learn", subject: "Statistics", title: "Learn statistics" };
 
-const LOCKED_NOTE = /Following more goals at once comes with Plus/u;
+const LOCKED_NOTE = /More goals at once need a subscription/u;
 
-const FULL = "You're following as many goals as the free plan allows.";
+const FULL = "That's all the goals you can study at once. Pause one, or subscribe to study more.";
 
 async function createLearnerFollowing(count: number) {
   const user = await createE2EUser(getBaseURL());
@@ -153,7 +153,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     ).toBeVisible();
 
     await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
-    await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
     await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
 
@@ -167,7 +167,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await page.goto("/today");
 
-    const offer = page.getByRole("region", { name: "What you wrote" });
+    const offer = page.getByRole("region", { name: "A goal you started" });
     await expect(offer.getByText(words)).toBeVisible();
     await offer.getByRole("link", { name: "Continue" }).click();
 
@@ -229,7 +229,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await expect(page.getByRole("link", { name: "Create a free account" })).toBeVisible();
     await expect(page.getByRole("alert").filter({ hasText: FULL })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Subscribe" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
   });
 
@@ -287,7 +287,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     const sheet = page.getByRole("dialog", { name: `Make room for ${STATISTICS.subject}` });
 
-    await expect(sheet.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
+    await expect(sheet.getByRole("link", { name: "See Plus" })).toHaveAttribute(
       "href",
       /\/subscription$/u,
     );

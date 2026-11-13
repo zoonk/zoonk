@@ -36,15 +36,23 @@ export async function LandingGoalBox({
   action,
   example,
   id,
+  noteClassName,
 }: {
   action: string;
   example: "exam" | "language";
   id: string;
+  noteClassName?: string;
 }) {
   const t = await getExtracted();
   const words = example === "exam" ? await getExamGoal() : await getLanguageGoal();
 
   return (
-    <GoalForm action={action} example={words} id={id} note={t("Start free, no account needed.")} />
+    <GoalForm
+      action={action}
+      example={words}
+      id={id}
+      note={t("Start free, no account needed.")}
+      noteClassName={noteClassName}
+    />
   );
 }

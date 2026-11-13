@@ -12,26 +12,6 @@ msgid "Before and after"
 msgstr "전후 비교"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "-KqWLm"
-msgid "Build an argument"
-msgstr "논리 세우기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "n9MRd4"
-msgid "Build it"
-msgstr "만들기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "InC3wm"
-msgid "Build the sentence"
-msgstr "문장 만들기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "0lfSFT"
-msgid "Compare sources"
-msgstr "자료 비교하기"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "khPfjz"
 msgid "Drag a corner"
 msgstr "꼭짓점 끌기"
@@ -47,125 +27,14 @@ msgid "Estimate first"
 msgstr "먼저 어림하기"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "7JlauX"
-msgid "Explore"
-msgstr "탐색하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "iSynlE"
-msgid "Explore the map"
-msgstr "지도 살펴보기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "J5ozVw"
-msgid "Fill the square"
-msgstr "칸 채우기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Xl9ymg"
-msgid "Find the error"
-msgstr "오류 찾기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "XsJOM5"
-msgid "Hands on"
-msgstr "직접 해 보기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "UJRCcU"
-msgid "Label it"
-msgstr "이름 붙이기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eGo7pb"
-msgid "Link causes"
-msgstr "원인 연결하기"
-
-#: src/activities/_components/activity-badge.tsx
-#: src/lesson/feedback/lesson-spoken-words.tsx
-msgctxt "zhvWvI"
-msgid "Listen"
-msgstr "듣기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "SQ_uG1"
-msgid "Match pairs"
-msgstr "짝 맞추기"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "wIskGV"
 msgid "Move a curve"
 msgstr "곡선 움직이기"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "JZiAEC"
-msgid "Place in time"
-msgstr "연표에 놓기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "zgfs1R"
-msgid "Place it"
-msgstr "배치하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Pofn38"
-msgid "Play it"
-msgstr "연주하기"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
 msgid "Predict first"
 msgstr "먼저 예측하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "OghajY"
-msgid "Put in order"
-msgstr "순서대로 놓기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "epbkrE"
-msgid "Query the data"
-msgstr "데이터 조회하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eF6aGp"
-msgid "Read and listen"
-msgstr "읽고 듣기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "ApZCMI"
-msgid "Read the chart"
-msgstr "차트 읽기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9HU8vw"
-msgid "Reply"
-msgstr "대답하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "JRCKkF"
-msgid "Run the code"
-msgstr "코드 실행하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eZSeUm"
-msgid "Simulate"
-msgstr "시뮬레이션"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9yzaMX"
-msgid "Sort into groups"
-msgstr "그룹으로 나누기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "6XjjqC"
-msgid "Split it"
-msgstr "나누기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "sLJxwK"
-msgid "Spot the pattern"
-msgstr "규칙 찾기"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "kUkIDR"
@@ -183,24 +52,9 @@ msgid "Tap along"
 msgstr "박자에 맞춰 누르기"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "XUcSce"
-msgid "Test a pattern"
-msgstr "규칙 확인하기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "YrB0ys"
-msgid "Try it"
-msgstr "해 보기"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "82b3Fd"
 msgid "Turn it"
 msgstr "돌리기"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Mpyk9t"
-msgid "What if"
-msgstr "조건 바꿔 보기"
 
 #: src/activities/_components/activity-data-note.tsx
 msgctxt "9we_u3"
@@ -1783,6 +1637,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "존 스노의 1854년 지도를 바탕으로 간략하게 그린 거리 지도예요."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {짝이 없는 카드 #장}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "두 카드는 짝이 아니에요."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "{left}와(과) {right}의 짝을 맞췄어요. {matched, plural, other {#쌍을 맞췄어요(총 {total}쌍).}}"
@@ -1808,24 +1677,9 @@ msgid "{text}, no match"
 msgstr "{text}, 짝 없음"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {짝이 없는 카드 #장}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "짝을 맞출 카드"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "두 카드는 짝이 아니에요."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
@@ -2079,7 +1933,6 @@ msgid "The music couldn't load. Check your connection and try again."
 msgstr "음악을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요."
 
 #: src/activities/notation-player/notation-player-activity.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "중지"
@@ -2515,19 +2368,14 @@ msgid "We couldn't match enough taps to the clicks. Try again, tapping with each
 msgstr "클릭 소리에 맞춘 탭을 충분히 감지하지 못했어요. 소리가 날 때마다 탭하며 다시 시도해 보세요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JUoCnO"
-msgid "Sound on this device arrives on time."
-msgstr "이 기기는 소리가 제때 나와요."
+msgctxt "NNlvmb"
+msgid "All set."
+msgstr "준비됐어요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "hIMvUw"
-msgid "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
-msgstr "이 기기는 소리가 약 {ms}ms 늦게 나와요. 리듬 활동에서는 이 차이를 보정해요."
-
-#: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "ukg6sv"
-msgid "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
-msgstr "헤드폰을 쓰면 소리가 조금 늦게 나올 수 있어요. 소리에 맞춰 {count}번 눌러 보세요. 이 과정을 한 번 거치면 이 기기의 소리 지연을 감안해 박자를 판정해요."
+msgctxt "Jk0E1p"
+msgid "Tap along with {count} clicks, so your taps are timed right."
+msgstr "터치 타이밍을 맞추려면 클릭 소리에 맞춰 {count}번 터치하세요."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2535,13 +2383,12 @@ msgid "Set up your sound"
 msgstr "소리 설정"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JrS_qa"
-msgid "Start the sound check"
-msgstr "소리 확인 시작하기"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "시작하기"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/lesson-action-bar.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "계속하기"
@@ -3056,45 +2903,21 @@ msgid "Tap an idea to see what it covers"
 msgstr "개념을 눌러 어떤 내용을 다루는지 확인해 보세요"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "P0MjYO"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "배운 내용을 복습하고 틀린 문제를 다시 풀 수 있어요. 새 레슨은 다음 달에 다시 열려요. 지금 계속 학습하려면 Plus를 구독하세요."
+msgctxt "q5JxBr"
+msgid "You can still review and practice your mistakes."
+msgstr "복습과 틀린 문제 연습은 계속할 수 있어요."
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "SDARaX"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "배운 내용을 복습하고 틀린 문제를 다시 풀 수 있어요. 새 레슨은 내일 다시 열려요. 지금 계속 학습하려면 Plus를 구독하세요."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "o_xO7j"
-msgid "That's all the new lessons for this month"
-msgstr "이번 달 새 레슨은 여기까지예요"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "PXe9T_"
-msgid "That's all the new lessons for today"
-msgstr "오늘 새 레슨은 여기까지예요"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Plus 알아보기"
+#: src/questions/lesson-question-errors.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "구독하기"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "뒤로"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "q-Zgbe"
-msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
-msgstr "계정 없이 체험할 수 있는 레슨을 모두 마쳤어요. 무료 계정을 만들고 계속 학습하세요. 지금까지의 학습 기록도 그대로 이어져요."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "gojCcS"
-msgid "Save your progress to keep going"
-msgstr "계속 학습하려면 진도를 저장하세요"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3104,19 +2927,9 @@ msgid "Create a free account"
 msgstr "무료 계정 만들기"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "nkKtmz"
-msgid "You've reached today's limit. New lessons open again tomorrow."
-msgstr "오늘 학습 한도를 다 채웠어요. 새 레슨은 내일 다시 열려요."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "8aKab6"
-msgid "That's a lot of learning today"
-msgstr "오늘 정말 많이 배웠어요"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "jdlHSh"
-msgid "Try again in a moment. Nothing you did was lost."
-msgstr "잠시 후에 다시 시도해 보세요. 지금까지 진행한 내용은 모두 남아 있어요."
+msgctxt "KFO_vV"
+msgid "Everything you learned comes with you."
+msgstr "지금까지 배운 내용은 모두 그대로 남아요."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3124,35 +2937,25 @@ msgid "We couldn't open this lesson"
 msgstr "이 레슨을 열지 못했어요"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "hp9pnq"
-msgid "Sign in to keep learning."
-msgstr "계속 학습하려면 로그인하세요."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "QvYlF0"
-msgid "This lesson isn't available anymore."
-msgstr "이 레슨은 더 이상 이용할 수 없어요."
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "szo7Rq"
-msgid "Sign in to continue"
-msgstr "계속하려면 로그인하세요"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "A_VPtF"
-msgid "Lesson not available"
-msgstr "레슨을 이용할 수 없어요"
-
-#: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
-msgctxt "SQJto2"
-msgid "Sign in"
+msgctxt "odXlk8"
+msgid "Log in"
 msgstr "로그인"
 
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "로그아웃됐어요"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "t12Boe"
+msgid "This lesson isn't available"
+msgstr "이 레슨은 이용할 수 없어요"
+
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "fKzrQy"
-msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "짧은 시간에 많은 레슨을 시작했어요. 이 레슨은 {seconds, plural, =0 {#초} other {#초}} 후에 열려요."
+msgctxt "z7s-vx"
+msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "짧은 시간에 여러 레슨을 열었어요. 이 레슨은 {seconds, plural, =0 {#초} other {#초}} 후에 자동으로 열려요."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3330,6 +3133,11 @@ msgid "sounds like {respelling}"
 msgstr "{respelling}처럼 들려요"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
+msgctxt "zhvWvI"
+msgid "Listen"
+msgstr "듣기"
+
+#: src/lesson/feedback/lesson-spoken-words.tsx
 msgctxt "BvZ66J"
 msgid "Slowly"
 msgstr "천천히 듣기"
@@ -3346,9 +3154,9 @@ msgid "Also correct:"
 msgstr "이 문장도 맞아요:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "57Nd7h"
-msgid "Each question is checked a few times a day. Compare your answer with this one:"
-msgstr "문제마다 하루에 몇 번씩 답을 확인해요. 아래 답과 작성한 답을 비교해 보세요:"
+msgctxt "WGhDaL"
+msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
+msgstr "오늘 이미 여러 번 확인한 문제라 이번 답은 반영되지 않아요. 아래 답과 비교해 보세요:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"
@@ -3359,56 +3167,6 @@ msgstr "철자:"
 msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "정답"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "정답 확인"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "확인"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "아직 모르겠어요"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "다음"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "다음 풀이 과정 보기"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "정답 보기"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "결과 보기"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "시작하기"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "QriCsD"
-msgid "Previous screen"
-msgstr "이전 화면"
 
 #: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
@@ -3448,30 +3206,25 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "이 화면 도움말"
 
-#: src/lesson/lesson-leave.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "잠시 나갈까요?"
-
-#: src/lesson/lesson-leave.tsx
-msgctxt "evHhXy"
-msgid "Your answer hasn't been checked, so it won't be kept."
-msgstr "아직 답안을 확인하지 않아서 저장되지 않아요."
-
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "계속 쓰기"
 
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "나가기"
 
 #: src/lesson/lesson-player-header.tsx
-msgctxt "fp5tEg"
-msgid "Close lesson"
-msgstr "레슨 닫기"
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "아직 답안을 확인하지 않아서 저장되지 않아요."
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "잠시 나갈까요?"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "0WZ-rc"
@@ -3494,14 +3247,14 @@ msgid "Lesson content"
 msgstr "레슨 내용"
 
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "화면 옵션"
-
-#: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
 msgid "Made with AI. It may contain mistakes."
 msgstr "AI로 만든 내용이에요. 틀린 내용이 있을 수 있어요."
+
+#: src/lesson/lesson-screen-menu.tsx
+msgctxt "GscVFm"
+msgid "Skip writing questions today"
+msgstr "오늘 쓰기 문제 건너뛰기"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
@@ -3509,9 +3262,9 @@ msgid "I already know this"
 msgstr "이미 알고 있어요"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "qzpeai"
-msgid "Write again"
-msgstr "다시 만들기"
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "다시 켜기"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3534,9 +3287,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "I67vt5"
-msgid "No more writing today."
-msgstr "오늘 쓰기는 여기까지예요."
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "오늘은 쓰기 문제를 건너뛰어요."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "N9yMCQ"
@@ -3579,9 +3332,9 @@ msgid "Challenge complete"
 msgstr "챌린지 완료"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "ttLWcq"
-msgid "Skills practiced"
-msgstr "연습한 스킬"
+msgctxt "3SY66E"
+msgid "What you practiced"
+msgstr "연습한 내용"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3607,16 +3360,6 @@ msgstr "챌린지 · {setting}"
 msgctxt "KV-6ml"
 msgid "Your mission"
 msgstr "내 미션"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "r5v2r8"
-msgid "You can ask the team or the AI for help. Your decisions change the outcome."
-msgstr "팀원이나 AI에게 도움을 요청할 수 있어요. 결정에 따라 결과가 달라져요."
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "cjl8Gf"
-msgid "You can ask the team for help. Your decisions change the outcome."
-msgstr "팀원에게 도움을 요청할 수 있어요. 결정에 따라 결과가 달라져요."
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "eppyrx"
@@ -3674,15 +3417,11 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "답을 써 주세요"
 
+#. “Record” is the label of the button that starts the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "7Y6Yvq"
-msgid "Record"
-msgstr "녹음"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "누르고 소리 내어 말하세요"
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "녹음 버튼을 누르고 소리 내어 말하세요"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3721,11 +3460,6 @@ msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to t
 msgstr "{count, plural, other {이 레슨에서 기억할 핵심 #가지}}"
 
 #: src/lesson/steps/typed-answer-step.tsx
-msgctxt "DPTzG-"
-msgid "Can't write now"
-msgstr "지금은 쓸 수 없어요"
-
-#: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "내 말로 설명하기"
@@ -3762,11 +3496,6 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "고른 답: <strong>{answer}</strong> · 문제: “<question></question>”"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "옵션 더 보기"
-
-#: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
 msgid "Start from the first map"
 msgstr "첫 마인드맵부터 시작하기"
@@ -3800,6 +3529,11 @@ msgstr "여기에는 아직 학습할 마인드맵이 없어요."
 msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "이전 마인드맵"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "다음"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
@@ -3933,14 +3667,14 @@ msgid "⏎ send · ⇧⏎ new line"
 msgstr "⏎ 보내기 · ⇧⏎ 줄바꿈"
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "2P8sqa"
-msgid "Your session expired. Sign in again."
-msgstr "로그인 세션이 만료됐어요. 다시 로그인해 주세요."
+msgctxt "NYRAZH"
+msgid "You've been logged out."
+msgstr "로그아웃됐어요."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "iVOq9B"
-msgid "Subscribe to ask questions"
-msgstr "구독하면 질문할 수 있어요"
+msgctxt "JGZkd5"
+msgid "Asking questions needs a subscription"
+msgstr "질문하려면 구독이 필요해요"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3961,11 +3695,6 @@ msgstr "잠시 쉬었다가 다시 질문해 보세요."
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "문제가 생겼어요. 다시 시도해 보세요."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "EaucLA"
-msgid "View plans"
-msgstr "요금제 보기"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"

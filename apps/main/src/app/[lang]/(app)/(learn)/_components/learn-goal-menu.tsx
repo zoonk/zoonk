@@ -68,12 +68,33 @@ function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
   });
 }
 
-function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
+/** In the sidebar the 24px logo centers on the items' icons, like the account's picture. */
+function SidebarHomeLink() {
+  return (
+    <span className="flex px-1">
+      <PublicHomeLink />
+    </span>
+  );
+}
+
+type GoalMenuProps = {
+  placement?: Placement;
+  /** What someone without a session gets in the menu's place; the logo when left out. */
+  visitor?: React.ReactNode;
+};
+
+function getVisitorStart({ placement, visitor }: GoalMenuProps): React.ReactNode {
+  if (visitor) {
+    return visitor;
+  }
+
+  return placement === "sidebar" ? <SidebarHomeLink /> : <PublicHomeLink />;
+}
+
+function PendingGoalMenu({ placement = "bar", visitor }: GoalMenuProps) {
   return (
     <>
-      <VisitorLook>
-        <PublicHomeLink />
-      </VisitorLook>
+      <VisitorLook>{getVisitorStart({ placement, visitor })}</VisitorLook>
       <div
         aria-hidden="true"
         className={cn("signed-in:block hidden", placement === "sidebar" ? "h-8 w-full" : "h-9")}
@@ -82,16 +103,16 @@ function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
   );
 }
 
-function GoalMenu({ placement }: { placement?: Placement }) {
+function GoalMenu({ placement, visitor }: GoalMenuProps) {
   const learner = useFrameLearner();
   const navigation = useOnboardingNavigation();
 
   if (learner.status === "visitor") {
-    return <PublicHomeLink />;
+    return getVisitorStart({ placement, visitor });
   }
 
   if (learner.status !== "ready") {
-    return <PendingGoalMenu placement={placement} />;
+    return <PendingGoalMenu placement={placement} visitor={visitor} />;
   }
 
   const { waitingGoals } = learner.summary;
@@ -138,10 +159,10 @@ function GoalMenu({ placement }: { placement?: Placement }) {
 }
 
 /** An explanation read to the end leaves the switcher: search finds it again. */
-export function LearnGoalMenu({ placement }: { placement?: Placement }) {
+export function LearnGoalMenu(props: GoalMenuProps) {
   return (
-    <Suspense fallback={<PendingGoalMenu placement={placement} />}>
-      <GoalMenu placement={placement} />
+    <Suspense fallback={<PendingGoalMenu {...props} />}>
+      <GoalMenu {...props} />
     </Suspense>
   );
 }

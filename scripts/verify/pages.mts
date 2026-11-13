@@ -12,10 +12,13 @@ import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
 import { readTypeScale } from "./craft-scale.mts";
 import { checkExposure } from "./exposure.mts";
+import { readShortcuts } from "./keys.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
+import { readPageTopClasses } from "./page-top.mts";
+import { PAGE_OPTIONS } from "./pages-usage.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -26,6 +29,7 @@ import {
 } from "./queries.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
+import { type RoleCapture, captureRoles, renderRoleSheets } from "./roles.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
@@ -33,32 +37,12 @@ import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
 
 /**
- * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
- * explains when to run it and how to read it.
+ * `pnpm verify:pages [path...]`, started by `verify-pages.mts`, which also prints its usage. The
+ * verify skill explains when to run it and how to read it.
  */
 const repository = resolve(import.meta.dirname, "../..");
 
-const { positionals, values } = parseArgs({
-  allowPositionals: true,
-  options: {
-    app: { default: "main", type: "string" },
-    baseline: { type: "string" },
-    checkout: { type: "string" },
-    early: { default: false, type: "boolean" },
-    email: { type: "string" },
-    intruder: { type: "string" },
-    "local-storage": { multiple: true, type: "string" },
-    nav: { default: false, type: "boolean" },
-    "no-prefetch": { default: false, type: "boolean" },
-    out: { type: "string" },
-    queries: { type: "string" },
-    schemes: { default: SCHEMES.join(","), type: "string" },
-    soak: { type: "string" },
-    throttle: { default: false, type: "boolean" },
-    url: { type: "string" },
-    viewports: { default: VIEWPORT_NAMES.join(","), type: "string" },
-  },
-});
+const { positionals, values } = parseArgs({ allowPositionals: true, options: PAGE_OPTIONS });
 
 const served = resolve(values.checkout ?? repository);
 
@@ -124,8 +108,10 @@ const target = {
   baseUrl,
   browser,
   out,
+  pageTop: readPageTopClasses(served),
   queries,
   serverPid,
+  shortcuts: await readShortcuts(served),
   storageState,
   throttle: values.throttle,
   typeScale: readTypeScale(served),
@@ -144,6 +130,7 @@ const mode = navigationMode();
 const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
+const roles: RoleCapture[] = [];
 let soak: SoakReport | null = null;
 const renders: RenderReport[] = [];
 
@@ -160,7 +147,17 @@ try {
 
       // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
       if (navigationViewports.includes(viewport)) {
-        load.findings.push(...(await walkStates(target, { path, viewport })));
+        load.findings.push(
+          ...(await walkStates(target, {
+            capture: values.roles
+              ? async (page, state) => {
+                  roles.push(...(await captureRoles(page, { out, path, state, viewport })));
+                }
+              : undefined,
+            path,
+            viewport,
+          })),
+        );
       }
 
       const failing = load.findings.filter((finding) => finding.level === "fail").length;
@@ -168,6 +165,10 @@ try {
       console.log(
         `${path} ${viewport}: ${failing} failing, ${load.findings.length - failing} to look at`,
       );
+
+      for (const finding of load.findings.filter((item) => item.level === "fail")) {
+        console.log(`  ${finding.check}: ${finding.message}`);
+      }
 
       loads.push(load);
     }
@@ -203,6 +204,14 @@ try {
   sheets.push(
     ...(await renderSheets(browser, { baseline: baseline?.loads ?? [], loads })),
     ...(await renderNavigationSheet(browser, { navigations, out })),
+    ...(values.roles
+      ? await renderRoleSheets(browser, {
+          captures: roles,
+          out,
+          paths,
+          viewports: navigationViewports,
+        })
+      : []),
   );
 } finally {
   await browser.close();

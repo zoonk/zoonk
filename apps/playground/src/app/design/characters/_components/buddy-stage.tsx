@@ -53,7 +53,7 @@ export function BuddyStage({
     >
       <BuddyActor
         beltColor={beltColor}
-        className="size-48"
+        className="h-56"
         energy={energy}
         expression={start}
         key={take?.id ?? 0}

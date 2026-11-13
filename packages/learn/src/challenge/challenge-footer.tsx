@@ -3,20 +3,20 @@
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarCheckIcon, CalendarClockIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
+import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
-import { PlusNotice } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
+import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
+import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { MoveFailed } from "./challenge-move-failed";
-import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
@@ -114,7 +114,6 @@ function StartButton() {
         <TaskMainButton
           busy={start.busy}
           disabled={move.pending}
-          icon={<PlayIcon aria-hidden="true" />}
           onClick={() => void start.start()}
         >
           {challenge.mock ? t("Start the mock exam") : t("Start")}
@@ -147,7 +146,6 @@ function MoveToMondayButton({ className, main = false }: { className?: string; m
       <TaskMainButton
         busy={move.pending}
         disabled={start.busy}
-        icon={<CalendarCheckIcon aria-hidden="true" />}
         onClick={() => void move.moveToMonday()}
       >
         {t("Move to Monday")}
@@ -177,11 +175,7 @@ function ResumeButton() {
 
   return (
     <TaskActions>
-      <TaskMainButton
-        busy={start.busy}
-        icon={<PlayIcon aria-hidden="true" />}
-        onClick={() => void start.start()}
-      >
+      <TaskMainButton busy={start.busy} onClick={() => void start.start()}>
         {t("Continue")}
       </TaskMainButton>
     </TaskActions>
@@ -203,15 +197,11 @@ function PlusRequiredNotice() {
   const { challenge } = useChallengeScreen();
 
   if (challenge.mock) {
-    return (
-      <PlusNotice cta={false}>
-        {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-      </PlusNotice>
-    );
+    return <GateWords title={t("Mock exams need a subscription")} />;
   }
 
   if (challenge.call) {
-    return <ChallengeCallPlusNotice />;
+    return <ChallengeCallGate form="words" />;
   }
 
   return <FreeWeekOverNotice cta={false} />;
@@ -223,7 +213,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   const { challenge, start, writing } = useChallengeScreen();
 
   if (start.problem === "plusRequired") {
-    return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
+    return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
   }
 
   switch (challenge.status) {
@@ -259,7 +249,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "done":
       return { actions: <OpenLink>{t("See how it went")}</OpenLink>, line: null };
     case "plusRequired":
-      return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
+      return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
     case "waiting":
       return { actions: null, line: <WaitingLine /> };
     case "queued":

@@ -1,18 +1,31 @@
 import {
   AdminDetailBody,
+  AdminDetailColumns,
   AdminDetailHeader,
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
+import { STAT_TILES_CLASS, StatTileSkeleton } from "@/components/stat-tile";
 import { getExam } from "@/data/exams/get-exam";
+import { countryName } from "@/lib/country-name";
+import { languageName } from "@/lib/language-filter";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { FreshnessCommandForm } from "../../sources/freshness-command-form";
+import { ExamActions } from "./exam-actions";
+import { ExamBlueprint } from "./exam-blueprint";
 import { ExamEditionHistory } from "./exam-edition-history";
-import { ExamOverview } from "./exam-overview";
+import {
+  ExamChecking,
+  ExamDetails,
+  ExamEditionDates,
+  ExamTotals,
+  ExamWrittenBy,
+} from "./exam-overview";
+import { ExamSkillGraph } from "./exam-skill-graph";
 
 export async function generateMetadata({ params }: PageProps<"/exams/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -32,18 +45,25 @@ export async function generateMetadata({ params }: PageProps<"/exams/[id]">): Pr
 
 const EXAM_PARENTS = [{ href: "/exams", label: "Exams" }];
 
-export default function ExamDetailPage({ params }: PageProps<"/exams/[id]">) {
+const EXAM_TABS = [
+  { label: "Overview", value: "overview" },
+  { label: "Blueprint", value: "blueprint" },
+  { label: "Skill graph", value: "graph" },
+  { label: "Details", value: "details" },
+] as const;
+
+export default function ExamDetailPage({ params, searchParams }: PageProps<"/exams/[id]">) {
   return (
     <AdminDetailPage>
       <Suspense fallback={<ExamDetailSkeleton />}>
-        <ExamDetailContent params={params} />
+        <ExamDetailContent params={params} searchParams={searchParams} />
       </Suspense>
     </AdminDetailPage>
   );
 }
 
-async function ExamDetailContent({ params }: Pick<PageProps<"/exams/[id]">, "params">) {
-  const { id } = await params;
+async function ExamDetailContent({ params, searchParams }: PageProps<"/exams/[id]">) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   if (!isUuid(id)) {
     notFound();
@@ -55,21 +75,49 @@ async function ExamDetailContent({ params }: Pick<PageProps<"/exams/[id]">, "par
     notFound();
   }
 
+  const tab = readAdminTab({ tabs: EXAM_TABS, value: query.tab });
+
   return (
     <>
       <AdminDetailHeader
-        actions={<FreshnessCommandForm targetId={exam.id} targetKind="exam" />}
-        facts={[exam.board, exam.role, exam.country, exam.language.toUpperCase()]}
+        actions={
+          <ExamActions
+            examId={exam.id}
+            examName={exam.name}
+            hasNotice={Boolean(exam.source)}
+            hasSkillGraph={Boolean(exam.skillGraph)}
+          />
+        }
+        facts={[exam.board, exam.role, countryName(exam.country), languageName(exam.language)]}
         parents={EXAM_PARENTS}
         title={exam.name}
       />
 
       <AdminDetailBody>
-        <ExamOverview exam={exam} />
+        <AdminRecordTabs current={tab} label="Exam" path={`/exams/${exam.id}`} tabs={EXAM_TABS} />
 
-        <Suspense fallback={<AdminSectionSkeleton description />}>
-          <ExamEditionHistory examBlueprintId={exam.id} />
-        </Suspense>
+        {tab === "overview" ? (
+          <>
+            <ExamTotals exam={exam} />
+
+            <AdminDetailColumns aside={<ExamChecking exam={exam} />}>
+              <ExamEditionDates exam={exam} />
+
+              <Suspense fallback={<AdminSectionSkeleton description />}>
+                <ExamEditionHistory examBlueprintId={exam.id} />
+              </Suspense>
+            </AdminDetailColumns>
+          </>
+        ) : null}
+
+        {tab === "blueprint" ? <ExamBlueprint exam={exam} /> : null}
+        {tab === "graph" ? <ExamSkillGraph exam={exam} showAll={query.all === "1"} /> : null}
+
+        {tab === "details" ? (
+          <AdminDetailColumns aside={<ExamWrittenBy exam={exam} />}>
+            <ExamDetails exam={exam} />
+          </AdminDetailColumns>
+        ) : null}
       </AdminDetailBody>
     </>
   );
@@ -81,7 +129,11 @@ function ExamDetailSkeleton() {
       <AdminDetailHeaderSkeleton actions="buttons" parents={EXAM_PARENTS} />
 
       <AdminDetailBody>
-        <AdminSectionSkeleton rows={10} />
+        <div className={STAT_TILES_CLASS}>
+          {Array.from({ length: 4 }, (_, index) => (
+            <StatTileSkeleton key={index} />
+          ))}
+        </div>
         <AdminSectionSkeleton />
       </AdminDetailBody>
     </>

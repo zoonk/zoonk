@@ -11,10 +11,10 @@ import { getPlanLinkStartHref } from "@/lib/public/public-hrefs";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { getPlanLink } from "@zoonk/core/plans/link";
 import { getSession } from "@zoonk/core/users/session";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { PlanPhaseName } from "@zoonk/learn/plan/phase-name";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
-import { ArrowRightIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -65,29 +65,19 @@ async function PlanLinkBody({ params }: Props) {
 
   const { outline } = result;
 
-  // A phase too small to measure shows no size, so nothing ever reads "~0 min".
-  const phaseSize = (hours: number) => {
-    const minutes = approximateMinutes(hours);
-    return minutes > 0 ? t("~{time}", { time: duration(minutes) }) : null;
-  };
-
-  const counts = { phases: outline.phases.length, skills: outline.skillCount };
-
   const makeItYours = t(
-    "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
+    "You get your own plan for the same subject. It starts from what you already know.",
   );
 
   return (
-    <PublicPage>
+    <PublicPage ownStart>
       <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
         <PlanLinkTracker planId={planId} />
 
         <div className="min-w-0">
-          <p className="text-muted-foreground text-sm font-medium sm:text-[15px]">
-            {t("A study plan someone shared with you")}
-          </p>
+          <Eyebrow>{t("Someone shared their study plan with you")}</Eyebrow>
 
-          <h1 className="text-headline mt-3 sm:mt-4" id="plan-link-title">
+          <h1 className="text-headline mt-3" id="plan-link-title">
             {outline.subject?.title ?? t("A study plan")}
           </h1>
 
@@ -100,41 +90,46 @@ async function PlanLinkBody({ params }: Props) {
               <ClientMessagesProvider scope="learn">
                 <StartPlanForm action={startPlanAction.bind(null, planId)} />
               </ClientMessagesProvider>
-              <p className="text-muted-foreground text-[13px] sm:text-sm">{makeItYours}</p>
+              <p className="text-muted-foreground text-compact sm:text-sm">{makeItYours}</p>
             </div>
           ) : (
-            <StartBlock note={makeItYours}>
+            <StartBlock
+              note={t(
+                "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed.",
+              )}
+            >
               <Link
                 className={getStartControlClassName()}
                 href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
               >
-                {t("Start from this plan")}
-                <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
+                {t({
+                  description:
+                    "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
+                  message: "Start my own plan",
+                })}
               </Link>
             </StartBlock>
           )}
         </div>
 
-        <div className="lg:mt-3">
-          <CatalogAsideBlock
-            facts={t(
-              "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}",
-              { ...counts, time: duration(Math.max(1, approximateMinutes(outline.hours))) },
-            )}
-            id="plan-link-phases"
-            title={t("A study plan")}
-          >
-            <NumberedRows
-              rows={outline.phases.map((phase, index) => ({
-                description: phase.milestone ?? undefined,
-                id: String(index),
-                title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
-                trailing: phaseSize(phase.hours) ?? undefined,
-              }))}
-              startId="0"
-            />
-          </CatalogAsideBlock>
-        </div>
+        <CatalogAsideBlock
+          facts={t("~{time} of study", {
+            time: duration(Math.max(1, approximateMinutes(outline.hours))),
+          })}
+          id="plan-link-phases"
+          title={t({
+            description: "Heading over the list of a shared study plan's parts. “it” is the plan.",
+            message: "What's in it",
+          })}
+        >
+          <NumberedRows
+            rows={outline.phases.map((phase, index) => ({
+              description: phase.milestone ?? undefined,
+              id: String(index),
+              title: <PlanPhaseName phase={{ index, kind: "learn", name: phase.name }} />,
+            }))}
+          />
+        </CatalogAsideBlock>
       </section>
     </PublicPage>
   );

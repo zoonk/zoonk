@@ -108,7 +108,7 @@ describe(toMockStructure, () => {
   it("sits as many questions as the notice's edition states, never a length of its own", () => {
     const cold = { ...STATED, mock: null };
     const structure = toMockStructure({ noticeQuestions: 60, ownerId: null, structure: cold });
-    const [full] = listMockOptions({ dayInTurn: null, goalAreas: ["Direito Civil"], structure });
+    const [full] = listMockOptions({ goalAreas: ["Direito Civil"], structure });
 
     expect(full).toMatchObject({ kind: "full", questions: 60 });
   });
@@ -122,7 +122,7 @@ describe(toMockStructure, () => {
     };
 
     const structure = toMockStructure({ noticeQuestions: null, ownerId: null, structure: cold });
-    const [full] = listMockOptions({ dayInTurn: null, goalAreas: ["Direito Civil"], structure });
+    const [full] = listMockOptions({ goalAreas: ["Direito Civil"], structure });
 
     expect(full).toMatchObject({ kind: "full", questions: 12 });
   });

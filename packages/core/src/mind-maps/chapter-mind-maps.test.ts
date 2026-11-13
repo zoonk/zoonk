@@ -12,7 +12,6 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
 import { mockSession } from "../_test-utils/mock-session";
@@ -326,8 +325,11 @@ describe("chapter mind maps", () => {
 
     await chapterLessonFixture({ chapterId: current, lessonId: setAside.id, position: 2 });
 
+    const claimedAt = new Date();
+
     await prisma.usageRecord.createMany({
       data: Array.from({ length: 19 }, () => ({
+        createdAt: claimedAt,
         generated: true,
         kind: "lessonStart" as const,
         targetId: randomUUID(),
@@ -339,7 +341,13 @@ describe("chapter mind maps", () => {
       requestChapterMindMap({ chapterId: current, goalId: goal.id }),
     ).resolves.toStrictEqual({
       decision: {
-        limit: { limit: 20, period: "day", resource: "lessonStart", tier: "free" },
+        limit: {
+          availableAt: new Date(claimedAt.getTime() + 30 * 24 * 60 * 60 * 1000),
+          limit: 20,
+          period: "rolling30Days",
+          resource: "lessonStart",
+          tier: "free",
+        },
         status: "limitReached",
       },
       status: "refused",
@@ -390,39 +398,6 @@ describe("chapter mind maps", () => {
     await expect(
       requestChapterMindMap({ chapterId: current, goalId: goal.id }),
     ).resolves.toStrictEqual({ generationId: null, status: "writingLessons" });
-  });
-
-  it("keeps a chapter whose lessons are Plus-only behind Plus, even with a map made", async () => {
-    const { current, finished, goal, user } = await finishedChapter();
-
-    await Promise.all([
-      prisma.goal.update({
-        data: { createdAt: new Date(Date.now() - 30 * MS_PER_DAY), kind: "exam" },
-        where: { id: goal.id },
-      }),
-      prisma.chapterMindMap.create({
-        data: { chapterId: current, language: "en", status: "completed", structure },
-      }),
-    ]);
-
-    await expect(getChapterMindMap({ chapterId: current })).resolves.toMatchObject({
-      mindMap: { image: null, outline: null, status: "plusRequired" },
-    });
-
-    await expect(listGoalMindMaps()).resolves.toMatchObject({
-      mindMaps: {
-        chapters: [
-          { chapterId: finished, status: "available" },
-          { chapterId: current, status: "plusRequired" },
-        ],
-      },
-    });
-
-    await expect(
-      requestChapterMindMap({ chapterId: current, goalId: goal.id }),
-    ).resolves.toStrictEqual({ status: "plusRequired" });
-
-    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
   it("asks for an owed map with the learner's own admission, and leaves it when refused", async () => {

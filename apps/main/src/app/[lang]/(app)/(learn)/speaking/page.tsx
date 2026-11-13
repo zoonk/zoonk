@@ -59,7 +59,6 @@ function SpeakingSkeleton() {
     <div aria-busy="true" className="flex flex-col gap-8">
       <SpeakingBar />
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-32 rounded-md" />
         <Skeleton className="h-8 w-48 rounded-lg" />
       </div>
       <Skeleton className="h-64 w-full" />

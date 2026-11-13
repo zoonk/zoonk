@@ -14,21 +14,18 @@ import { useTodayScreen } from "./today-context";
  * Its `::after` stretches over the whole row, so the row is one target with its focus ring there.
  */
 export const ROW_OPEN_CLASS =
-  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 aria-disabled:cursor-default";
+  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-lg focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 aria-disabled:cursor-default";
 
 export function RowOpen({
   block,
   children,
-  countsTowardMission,
   isNext,
 }: {
   block: DayStep;
   children: React.ReactNode;
-  countsTowardMission: boolean;
   isNext: boolean;
 }) {
   const { actions } = useTodayScreen();
-  const t = useExtracted();
   const title = useBlockTitle();
   const [pending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
@@ -47,7 +44,7 @@ export function RowOpen({
   if (href) {
     return (
       <LearnLink
-        aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+        aria-label={title(block)}
         className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
         data-slot="today-row-open"
         href={href}
@@ -65,7 +62,7 @@ export function RowOpen({
         <button
           aria-busy={pending || undefined}
           aria-disabled={pending || undefined}
-          aria-label={`${title(block)}${countsTowardMission ? t(", counts toward a mission") : ""}`}
+          aria-label={title(block)}
           className={cn(ROW_OPEN_CLASS, isNext ? "after:inset-x-0" : "after:-inset-x-2.5")}
           data-slot="today-row-open"
           type={pending ? "button" : "submit"}

@@ -143,8 +143,12 @@ async function describePersona({ email, goalId }: { email: string; goalId: strin
     `${goal.user.name}: ${goal.title} (${goal.kind}), ${plus > 0 ? "Plus" : "Free"}, ${timeZone}, ${goal.language}`,
     `Today is day ${daysSince(goal.createdAt, timeZone) + 1} of the plan; ${describeLastStudy(lastStudy?.endedAt, timeZone)}.`,
     "",
-    `Sign in: open ${getMainPageUrl({ locale: goal.language, path: "/login" })}, enter ${email} and type the code sent to it (newest message in the dev mailbox${mailbox ? `, ${mailbox}` : ""}).`,
+    "Sign in",
+    `  Open   ${getMainPageUrl({ locale: goal.language, path: "/login" })}`,
+    `  Email  ${email}`,
+    `  Code   the newest message in the dev mailbox${mailbox ? `, ${mailbox}` : ""}`,
     `Then open ${getMainPageUrl({ locale: goal.language, path: "" })}`,
+    "",
     "Remove it with every other test learner: pnpm dev:remove-test-learners --yes",
   ].join("\n");
 }

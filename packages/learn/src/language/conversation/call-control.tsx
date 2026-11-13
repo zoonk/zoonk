@@ -14,14 +14,12 @@ import {
 import { useExtracted } from "next-intl";
 import { useSentenceSpace } from "../../_utils/locale";
 import { SavingLine } from "./call-problem";
-import { CharacterAvatar } from "./conversation-parts";
+import { CALL_MARK_CLASS, CharacterAvatar, callTurnClass } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
-
-const MARK_CLASS = "grid size-8 shrink-0 place-items-center rounded-full [&>svg]:size-4";
 
 function CallingMark() {
   return (
-    <span aria-hidden="true" className={cn(MARK_CLASS, "bg-secondary relative")}>
+    <span aria-hidden="true" className={cn(CALL_MARK_CLASS, "bg-secondary relative")}>
       <PhoneIcon />
       <span className="border-foreground/15 border-t-foreground/60 absolute inset-0 animate-spin rounded-full border-[1.5px] motion-reduce:animate-none" />
     </span>
@@ -33,9 +31,9 @@ function MicMark({ listening }: { listening: boolean }) {
     <span
       aria-hidden="true"
       className={cn(
-        MARK_CLASS,
-        "bg-primary text-primary-foreground ring-offset-background ring-[1.5px] ring-transparent ring-offset-2 transition-shadow duration-150 motion-reduce:transition-none",
-        listening && "ring-foreground/40",
+        CALL_MARK_CLASS,
+        "bg-primary text-primary-foreground",
+        callTurnClass(listening),
       )}
     >
       <MicIcon />
@@ -45,7 +43,10 @@ function MicMark({ listening }: { listening: boolean }) {
 
 function QuietMark({ icon }: { icon: React.ReactNode }) {
   return (
-    <span aria-hidden="true" className={cn(MARK_CLASS, "bg-secondary text-secondary-foreground")}>
+    <span
+      aria-hidden="true"
+      className={cn(CALL_MARK_CLASS, "bg-secondary text-secondary-foreground")}
+    >
       {icon}
     </span>
   );
@@ -183,7 +184,7 @@ export function CallTurn({
       <p className="flex min-w-0 flex-col text-pretty">
         <span className="text-sm leading-5 font-medium">{state.title}</span>
         {detail && (
-          <span className="text-muted-foreground text-[0.8125rem] leading-snug">{detail}</span>
+          <span className="text-muted-foreground text-compact leading-snug">{detail}</span>
         )}
       </p>
     </div>

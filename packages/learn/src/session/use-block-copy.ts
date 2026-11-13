@@ -46,7 +46,7 @@ function useCheckpointTitle() {
   };
 }
 
-export function getChallengePhase(block: Pick<StudyBlock, "checkpoint" | "title">): string | null {
+function getChallengePhase(block: Pick<StudyBlock, "checkpoint" | "title">): string | null {
   return block.checkpoint && block.checkpoint.kind !== "weekly" && block.title ? block.title : null;
 }
 

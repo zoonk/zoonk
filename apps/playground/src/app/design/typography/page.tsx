@@ -23,7 +23,7 @@ export default function TypographyPage() {
         <div className="flex flex-col">
           {TYPE_ROLES.map((role) => (
             <div
-              className="border-border grid gap-4 border-t py-5 lg:grid-cols-[14rem_minmax(0,1fr)]"
+              className="border-border grid gap-x-6 gap-y-4 border-t py-5 lg:grid-cols-[14rem_minmax(0,1fr)]"
               key={role.name}
             >
               <div className="flex flex-col gap-1">
@@ -31,7 +31,7 @@ export default function TypographyPage() {
                 <code className="text-muted-foreground font-mono text-xs wrap-break-word">
                   {role.component ? `<${role.component}>` : role.className}
                 </code>
-                <p className="text-muted-foreground text-xs leading-relaxed">
+                <p className="text-muted-foreground text-xs leading-normal">
                   {renderCode(role.use)}
                 </p>
               </div>
@@ -49,11 +49,11 @@ export default function TypographyPage() {
         intro="A readout leads with the number in the text face; its unit follows small and muted. Data in rows and eyebrows stays mono."
         title="Numerals"
       >
-        <Specimen className="flex flex-wrap items-end gap-x-12 gap-y-6">
+        <Specimen className="flex flex-wrap items-baseline gap-x-12 gap-y-6">
           <BigQuantity className="text-[2.5rem]">43 min left</BigQuantity>
           <BigQuantity className="text-[3.5rem]">~38 weeks</BigQuantity>
           <p className="text-muted-foreground font-mono text-xs tabular-nums">
-            MON, OCT 26 · 1 of 12 done
+            MON, OCT 26 · 15 MIN
           </p>
         </Specimen>
       </DocSection>

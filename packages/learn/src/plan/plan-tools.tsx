@@ -2,14 +2,8 @@
 
 import { type PlanToolView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  CalculatorIcon,
-  ChevronDownIcon,
-  CodeIcon,
-  SheetIcon,
-  TerminalIcon,
-  WrenchIcon,
-} from "lucide-react";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
+import { CalculatorIcon, CodeIcon, SheetIcon, TerminalIcon, WrenchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
@@ -172,10 +166,7 @@ function LaterTools({
             .map((tool) => CHOICES_PATTERN.exec(tool.name)?.groups?.tool ?? tool.name)
             .join(", "),
         })}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="size-4 shrink-0 transition-transform group-open:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron inline />
       </summary>
 
       <ul className="divide-border flex flex-col divide-y">

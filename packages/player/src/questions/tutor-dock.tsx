@@ -1,11 +1,7 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import {
-  TASK_ASIDE_PLACE_CLASS,
-  TASK_WRAPPING_ACTION_CLASS,
-  TaskActionLabel,
-} from "@zoonk/learn/task-layout";
+import { BAR_PADDING_CLASS, TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -89,7 +85,7 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <a
-      className="bg-card ring-input rounded-option text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 px-2.5 text-sm ring-1 transition-colors ring-inset"
+      className="bg-card ring-input text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 rounded-xl px-2.5 text-sm ring-1 transition-colors ring-inset"
       href={loginHref}
     >
       <span
@@ -115,7 +111,7 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <TutorSuggestions
-      className="bg-background px-5 pb-3"
+      className="bg-background px-6 pb-3"
       onSelect={(suggestion) => buddy.ask(suggestion)}
       suggestions={suggestions}
     />
@@ -139,14 +135,15 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
       )}
       data-slot="tutor-docked-conversation"
     >
-      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
+      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-6 xl:h-15">
         <Button
-          className="text-muted-foreground -ml-1 px-2"
+          className="text-muted-foreground"
+          edge="start"
           onClick={back}
           size="sm"
           variant="ghost"
         >
-          <ChevronLeftIcon aria-hidden="true" />
+          <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
           {buddy.context.kind === "item"
             ? t("Back")
             : t({
@@ -192,7 +189,7 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
       >
         {suggests && <DockSuggestions buddy={buddy} />}
 
-        <div className="bg-background px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className={cn("bg-background px-6", BAR_PADDING_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
         </div>
       </div>
@@ -219,7 +216,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         count,
         name: buddy.identity.name,
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid"
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area edge relative -me-(--edge-pull) inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none [--edge-text-end:--spacing(1)] [--icon-size:--spacing(3.5)] focus-visible:outline-2 focus-visible:outline-solid"
       onClick={() => buddy.open()}
       type="button"
     >
@@ -240,7 +237,8 @@ export function TutorConversationLink({ fallback }: { fallback: React.ReactNode 
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }
 
-export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
+/** One size in every state, so a miss never resizes the main action beside it. */
+export function TutorAskButton() {
   const t = useExtracted();
   const buddy = useTutorBuddy();
 
@@ -249,21 +247,6 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
   }
 
   const label = t("Ask {name}", { name: buddy.identity.name });
-
-  if (buddy.missed && !quiet) {
-    return (
-      <Button
-        className={cn(TASK_WRAPPING_ACTION_CLASS, "with-aside:hidden ml-auto lg:ml-0")}
-        onClick={() => buddy.open()}
-        size="lg"
-        type="button"
-        variant="outline"
-      >
-        <MessageCircleQuestionIcon aria-hidden="true" />
-        <TaskActionLabel>{label}</TaskActionLabel>
-      </Button>
-    );
-  }
 
   return (
     <Tooltip>
@@ -279,7 +262,13 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
           />
         }
       >
-        <MessageCircleQuestionIcon aria-hidden="true" />
+        {buddy.identity.avatar ? (
+          <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
+            {buddy.identity.avatar}
+          </span>
+        ) : (
+          <MessageCircleQuestionIcon aria-hidden="true" />
+        )}
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

@@ -1,12 +1,11 @@
 "use client";
 
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { EnterLink } from "../_components/enter-button";
+import { SuccessEyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRowContent,
@@ -17,18 +16,9 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
-import { PageSectionTitle } from "../_components/page";
-import { SectionLabel } from "../_components/section-label";
-import { SuccessEyebrow } from "../_components/success-eyebrow";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActions,
-  TaskAsideContent,
-  TaskBody,
-} from "../_components/task-layout";
+import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
+import { TaskActionBar, TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { LearnLink } from "../learn-link";
 import { DayMoment } from "../session/day-moment";
 import { type LessonCelebration } from "../session/lesson-celebration";
 import { MomentHeader, MomentSaving, PendingMainAction } from "../session/moment-header";
@@ -38,23 +28,12 @@ type ExplainResult = { answered: number; celebration: LessonCelebration | null; 
 
 function DoneLink({ href, saving }: { href: string; saving: boolean }) {
   const t = useExtracted();
-  const doneRef = useEnterClick<HTMLAnchorElement>();
 
   if (saving) {
     return <PendingMainAction>{t("Done")}</PendingMainAction>;
   }
 
-  return (
-    <LearnLink
-      aria-keyshortcuts="Enter"
-      className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
-      href={href}
-      ref={doneRef}
-    >
-      {t("Done")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
-  );
+  return <EnterLink href={href}>{t("Done")}</EnterLink>;
 }
 
 function QuestionRow({ href, question }: { href: string; question: string }) {
@@ -89,14 +68,19 @@ function ExplainRecap({
   }
 
   return (
-    <TaskAsideContent className={cn("with-aside:top-0", className)}>
+    <TaskAsideContent
+      className={cn("with-aside:top-0 with-aside:group-data-aside/task:pt-0", className)}
+    >
       <section aria-labelledby="explain-recap" className="with-aside:gap-0 flex flex-col gap-1">
-        <SectionLabel
-          className="with-aside:flex with-aside:h-13 with-aside:shrink-0 with-aside:items-center with-aside:xl:h-15"
+        <h2
+          className={cn(
+            PAGE_SECTION_TITLE_CLASS,
+            "with-aside:text-label with-aside:flex with-aside:h-13 with-aside:shrink-0 with-aside:items-center with-aside:xl:h-15",
+          )}
           id="explain-recap"
         >
           {t("In {count, plural, one {# sentence} other {# sentences}}", { count: recap.length })}
-        </SectionLabel>
+        </h2>
         <ol className="flex flex-col [&>li+li]:border-t">
           {recap.map((sentence, index) => (
             <li className="with-aside:first:pt-0 flex items-baseline gap-3 py-3" key={sentence}>

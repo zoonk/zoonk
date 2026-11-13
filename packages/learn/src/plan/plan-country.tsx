@@ -2,6 +2,7 @@
 
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -42,7 +43,7 @@ function ChangeCountryDialog({
       }}
       open={country !== null}
     >
-      <AlertDialogContent overNested>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("Change the content country?")}</AlertDialogTitle>
           <AlertDialogDescription className="max-h-[50dvh] overflow-y-auto">
@@ -59,9 +60,9 @@ function ChangeCountryDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={saving}>{t("Cancel")}</AlertDialogCancel>
           <form action={onConfirm} className="contents">
-            <Button busy={saving} type="submit">
+            <AlertDialogAction busy={saving} type="submit">
               {t("Rebuild plan")}
-            </Button>
+            </AlertDialogAction>
           </form>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -136,7 +137,6 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
         onOpenChange={setOpen}
         onPick={pick}
         open={open}
-        overNested
         suggested={country.suggested}
         title={t("Country")}
         value={country.code}

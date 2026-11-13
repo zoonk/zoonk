@@ -1,11 +1,13 @@
 import {
-  EYEBROW_CLASS,
-  LEAD_CLASS,
+  FIRST_SCREEN_TOP_CLASS,
+  PUBLIC_BAND_CLASS,
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
+import { PageStartMark } from "@/components/public/page-start";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -25,14 +27,12 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free.",
+      "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime.",
+      { lessons: getFreePlanLimits().lessonsPer30Days ?? 0 },
     ),
-    title: t("Zoonk Plus: plans and pricing"),
+    // Absolute: the name is already in it.
+    title: { absolute: t("Zoonk pricing: free and Plus plans") },
   };
-}
-
-function renderRest(chunks: ReactNode) {
-  return <span className="text-muted-foreground">{chunks}</span>;
 }
 
 export async function PricingHero() {
@@ -41,21 +41,23 @@ export async function PricingHero() {
   return (
     <section
       aria-labelledby="pricing-title"
-      className={cn(PUBLIC_CONTAINER_CLASS, "flex flex-col pt-12 lg:pt-24")}
+      className={cn(PUBLIC_CONTAINER_CLASS, FIRST_SCREEN_TOP_CLASS.pricing, "flex flex-col")}
     >
-      <p className={EYEBROW_CLASS}>{t("Pricing")}</p>
+      <Eyebrow>{t("Pricing")}</Eyebrow>
 
-      <h1 className="text-headline mt-4 max-w-[16em]" id="pricing-title">
-        {t.rich("Start free. <rest>Plus when you want everything.</rest>", { rest: renderRest })}
-      </h1>
-
-      <p className={cn(LEAD_CLASS, "mt-4.5")}>
+      <h1 className="text-headline mt-3 max-w-[16em]" id="pricing-title">
         {t({
           description:
-            "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.",
+            "The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.",
+          message: "Follow your study plan all the way to your date.",
+        })}
+      </h1>
+
+      <p className="text-lead mt-4 max-w-152">
+        {t({
+          description: "“Plus” is the name of the subscription.",
           message:
-            "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day.",
-          values: { goals: getFreePlanLimits().activeGoals ?? 0 },
+            "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job.",
         })}
       </p>
     </section>
@@ -64,7 +66,10 @@ export async function PricingHero() {
 
 const PRICING_BILLING_SWITCH = "pricing-billing";
 
-const PLANS_GRID_CLASS = "grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5";
+const PRICING_CLOSE_ID = "pricing-close";
+
+/** Side by side once each card fits its name and the billing switch on one row (`@3xl` in `plan-includes`). */
+const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
 
 export function PricingPlans({
   monthlyPrice,
@@ -76,8 +81,8 @@ export function PricingPlans({
   const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
 
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12 pb-14 sm:pb-20 lg:pb-24")}>
-      <div className={PLANS_GRID_CLASS}>
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "@container pt-12 pb-14 sm:pb-20 lg:pb-24")}>
+      <div className={cn(PLAN_CARDS_CLASS, "lg:gap-5")}>
         <FreePlan currency={currency} />
 
         <PlusPlan
@@ -91,9 +96,6 @@ export function PricingPlans({
 }
 
 const PLUS_PRICING_CLASS = "@container flex max-w-5xl flex-col gap-7";
-
-/** Side by side once each card fits its name and the billing switch on one row. */
-const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
 
 function PlanCardSkeleton() {
   return (
@@ -113,8 +115,11 @@ function PlanCardSkeleton() {
 
 export function PricingQuestions() {
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
-      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12" />
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-14 sm:pt-20 lg:pt-24")}>
+      <PlusQuestions
+        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-baseline lg:gap-12"
+        titleClassName="text-section"
+      />
     </div>
   );
 }
@@ -124,22 +129,21 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
 
   return (
     <section
-      aria-labelledby="pricing-close"
+      aria-labelledby={PRICING_CLOSE_ID}
       className={cn(
         PUBLIC_CONTAINER_CLASS,
-        "flex flex-col items-center pt-28 pb-24 text-center lg:pt-40 lg:pb-36",
+        PUBLIC_BAND_CLASS,
+        "flex flex-col items-center text-center",
       )}
     >
-      <h2
-        className="max-w-[14em] text-[32px] leading-[1.08] font-semibold tracking-[-0.04em] text-balance lg:text-5xl"
-        id="pricing-close"
-      >
+      <h2 className="text-headline max-w-[14em]" id={PRICING_CLOSE_ID}>
         {t("Start free, no account needed.")}
       </h2>
 
-      <div className="mt-7 flex flex-wrap justify-center gap-3">
+      <div className="mt-7 flex flex-wrap justify-center gap-2">
+        <PageStartMark />
         <Link className={getStartControlClassName()} href="/start">
-          {t("Start free")}
+          {t("Build my plan")}
         </Link>
         <PlusLoginLink
           billingSwitch={PRICING_BILLING_SWITCH}
@@ -188,7 +192,10 @@ export function PlusPricing({
         <FreePlan currency={currency} usedToday={usedToday} viewerState={viewerState} />
       </div>
 
-      <PlusQuestions className="@3xl:grid @3xl:grid-cols-2 @3xl:gap-4" viewerState={viewerState} />
+      <PlusQuestions
+        className="@3xl:grid @3xl:grid-cols-2 @3xl:items-baseline @3xl:gap-4"
+        viewerState={viewerState}
+      />
     </div>
   );
 }

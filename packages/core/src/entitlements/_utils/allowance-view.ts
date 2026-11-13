@@ -1,12 +1,19 @@
 import { UsageKind } from "@zoonk/db";
 import { type Allowance, type AllowanceItem, type EntitlementTier } from "../contract";
 import { getActiveGoalLimit, getExamPrepAccess, getUsageRule } from "../limits";
+import { getLessonAvailableAt } from "./lesson-start-usage";
 import { type UsageTotals } from "./usage-counts";
 import { getUsageResets } from "./usage-periods";
 
 type Usage = { day: number; month: number; total: number };
 
-function getRemaining({ item, usage }: { item: Omit<AllowanceItem, "remaining">; usage: Usage }) {
+function getRemaining({
+  item,
+  usage,
+}: {
+  item: { dailyLimit: number | null; monthlyLimit: number | null; totalLimit: number | null };
+  usage: Usage;
+}) {
   const left = [
     item.dailyLimit === null ? null : item.dailyLimit - usage.day,
     item.monthlyLimit === null ? null : item.monthlyLimit - usage.month,
@@ -29,18 +36,37 @@ function toAllowanceItem({
   const used = totals.kinds.get(kind);
   const usage = { day: used?.day ?? 0, month: used?.month ?? 0, total: used?.total ?? 0 };
 
-  const item = {
+  const common = {
     dailyLimit: rule.day ?? null,
     fairUseDailyLimit: rule.fairUseDay ?? null,
-    kind,
-    monthlyLimit: rule.month ?? null,
     totalLimit: rule.total ?? null,
-    usedThisMonth: usage.month,
     usedToday: usage.day,
     usedTotal: usage.total,
   };
 
-  return { ...item, remaining: getRemaining({ item, usage }) };
+  const remaining = getRemaining({ item: { ...common, monthlyLimit: rule.month ?? null }, usage });
+
+  if (kind === "lessonStart") {
+    const rollingLimit = rule.rolling30Days ?? null;
+
+    return {
+      ...common,
+      availableAt: rollingLimit === null ? null : getLessonAvailableAt(totals.lessonStarts),
+      kind,
+      remaining:
+        rollingLimit === null ? remaining : Math.max(0, rollingLimit - totals.lessonStarts.count),
+      rollingLimit,
+      usedLast30Days: totals.lessonStarts.count,
+    };
+  }
+
+  return {
+    ...common,
+    kind,
+    monthlyLimit: rule.month ?? null,
+    remaining,
+    usedThisMonth: usage.month,
+  };
 }
 
 export function toAllowance({

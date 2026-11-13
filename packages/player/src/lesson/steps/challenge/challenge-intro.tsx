@@ -1,12 +1,13 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { PageSectionLabel } from "@zoonk/learn/page";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ClockIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { LessonRichText } from "../../_components/lesson-rich-text";
-import { LessonEyebrow, LessonQuestion } from "../../_components/lesson-step-text";
+import { LessonQuestion } from "../../_components/lesson-step-text";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeAvatar, ChallengeLabel, ChallengePanelView } from "./challenge-parts";
 import { type ChallengeNames } from "./use-challenge-names";
@@ -31,7 +32,7 @@ function ChallengeTeamList({
           const name = names.names[slot.id] ?? slot.role;
 
           return (
-            <li className="flex items-center gap-2.5" key={slot.id}>
+            <li className="flex items-center gap-3" key={slot.id}>
               <ChallengeAvatar name={name} slot={slot} />
               <span className="flex flex-col">
                 <span className="text-foreground text-sm font-semibold">{name}</span>
@@ -56,16 +57,15 @@ export function ChallengeIntro({
 }) {
   const t = useExtracted();
   const { fill } = names;
-  const hasAi = content.team.some((slot) => slot.ai);
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flex flex-col gap-3">
-        <LessonEyebrow icon={<TargetIcon aria-hidden="true" />}>
+        <Eyebrow icon={<TargetIcon aria-hidden="true" />}>
           {content.variant === "whatIf"
             ? t("What if · {setting}", { setting: fill(content.setting) })
             : t("Challenge · {setting}", { setting: fill(content.setting) })}
-        </LessonEyebrow>
+        </Eyebrow>
         <LessonQuestion>{fill(content.title)}</LessonQuestion>
       </div>
 
@@ -96,12 +96,6 @@ export function ChallengeIntro({
       })}
 
       <ChallengeTeamList content={content} names={names} />
-
-      <p className="text-muted-foreground text-sm">
-        {hasAi
-          ? t("You can ask the team or the AI for help. Your decisions change the outcome.")
-          : t("You can ask the team for help. Your decisions change the outcome.")}
-      </p>
     </PlayerReadScene>
   );
 }

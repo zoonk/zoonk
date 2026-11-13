@@ -47,7 +47,7 @@ export function buildPlanPath({ access, challengeResults, context, today, ...inp
 
   return buildPhaseViews({
     ...input,
-    challengesOpen: input.phaseChallengesRequired !== false && !access.freeWeekOver,
+    challengesOpen: input.phaseChallengesRequired !== false,
     goalKind: goal.kind,
     items,
     mocksRequirePlus: access.mocksRequirePlus,

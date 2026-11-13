@@ -1,5 +1,6 @@
 "use client";
 
+import { MainActionSlotProvider } from "@zoonk/learn/main-action-slot";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
@@ -17,7 +18,6 @@ import { LessonCompletionReady } from "./completion/lesson-completion-ready";
 import { useCompletionProps } from "./completion/use-completion-props";
 import { LessonActionBar } from "./lesson-action-bar";
 import { LessonAside } from "./lesson-aside";
-import { LessonLeaveProvider } from "./lesson-leave";
 import { LessonMapScreen } from "./lesson-map-screen";
 import {
   LessonPlayerRuntimeContext,
@@ -128,10 +128,12 @@ function LessonScreen({
     <Activity mode={isShown ? "visible" : "hidden"}>
       <LessonPlayerRuntimeContext value={isShown ? runtime : left}>
         <PlayerAudioProvider audioUrl={getPromptAudioUrl(step)}>
-          <div className="flex flex-1 flex-col">
-            <LessonStage isShown={isShown} step={step} turn={turn} />
-          </div>
-          {isShown && <LessonActionBar />}
+          <MainActionSlotProvider>
+            <div className="flex flex-1 flex-col">
+              <LessonStage isShown={isShown} step={step} turn={turn} />
+            </div>
+            {isShown && <LessonActionBar />}
+          </MainActionSlotProvider>
         </PlayerAudioProvider>
       </LessonPlayerRuntimeContext>
     </Activity>
@@ -139,11 +141,7 @@ function LessonScreen({
 }
 
 export function LessonPlayerShell() {
-  return (
-    <LessonLeaveProvider>
-      <LessonPlayerFrame />
-    </LessonLeaveProvider>
-  );
+  return <LessonPlayerFrame />;
 }
 
 /** Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for their answers. */
@@ -166,7 +164,7 @@ function LessonPlayerFrame() {
   const { actions, state } = useLessonPlayer();
   const dotPaper = useDotPaper();
   const mainRef = useRef<HTMLElement>(null);
-  const asideRoot = getTaskAsideRootProps();
+  const asideRoot = state.run.status === "refused" ? undefined : getTaskAsideRootProps();
 
   const turns = useScreenTurns();
 
@@ -178,9 +176,9 @@ function LessonPlayerFrame() {
     <div
       className={cn(
         "ph-no-rageclick bg-background flex h-dvh flex-col overflow-hidden",
-        asideRoot.className,
+        asideRoot?.className,
       )}
-      data-aside={asideRoot["data-aside"]}
+      data-aside={asideRoot?.["data-aside"]}
       data-phase={state.phase}
       data-slot="lesson-player"
       onClickCapture={actions.engage}
@@ -205,7 +203,7 @@ function LessonPlayerFrame() {
         </div>
       </main>
 
-      <LessonAside />
+      {asideRoot && <LessonAside />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { type HelpLimit, HelpLimitNotice, useHelpLimitMessage } from "@zoonk/learn/help-limit";
+import { type HelpLimit, HelpLimitNotice, useHelpLimitWords } from "@zoonk/learn/help-limit";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -39,6 +39,7 @@ export function QuestionLimitNotice({
   return (
     <HelpLimitNotice
       className={className}
+      kind="messages"
       limit={limit}
       linkComponent={linkComponent}
       routes={{ signUp: loginHref, upgrade: subscriptionHref }}
@@ -50,11 +51,11 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
   const t = useExtracted();
 
   if (error?.kind === "authentication") {
-    return <>{t("Your session expired. Sign in again.")}</>;
+    return <>{t("You've been logged out.")}</>;
   }
 
   if (error?.kind === "subscription") {
-    return <>{t("Subscribe to ask questions")}</>;
+    return <>{t("Asking questions needs a subscription")}</>;
   }
 
   if (error?.kind === "unavailable") {
@@ -79,7 +80,8 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
 }
 
 function HelpLimitMessage({ limit }: { limit: HelpLimit }) {
-  return <>{useHelpLimitMessage(limit)}</>;
+  const { line, title } = useHelpLimitWords(limit, "messages");
+  return title ?? line;
 }
 
 export function QuestionErrorAction({
@@ -100,7 +102,7 @@ export function QuestionErrorAction({
   if (error?.kind === "authentication") {
     return (
       <a className={buttonVariants({ className, variant: "outline" })} href={loginHref}>
-        {t("Sign in")}
+        {t("Log in")}
       </a>
     );
   }
@@ -108,7 +110,7 @@ export function QuestionErrorAction({
   if (error?.kind === "subscription") {
     return (
       <Link className={buttonVariants({ className, variant: "outline" })} href={subscriptionHref}>
-        {t("View plans")}
+        {t("Subscribe")}
       </Link>
     );
   }

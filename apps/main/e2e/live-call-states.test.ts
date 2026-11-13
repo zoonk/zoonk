@@ -459,7 +459,7 @@ test.describe("Live call server states", () => {
       const callId = await openUnitCall({ learner, page });
       const actions = observeActions({ conversationId: callId, page });
       await page.getByRole("button", { name: "Call Linda" }).click();
-      await page.getByRole("button", { name: "End that call and start this one" }).click();
+      await page.getByRole("button", { name: "Start this call" }).click();
 
       await expect
         .poll(() => hangupRequested({ request, sessionId: original.providerSessionId }))

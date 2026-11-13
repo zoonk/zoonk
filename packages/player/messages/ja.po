@@ -12,26 +12,6 @@ msgid "Before and after"
 msgstr "変化の前後"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "-KqWLm"
-msgid "Build an argument"
-msgstr "主張を組み立てる"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "n9MRd4"
-msgid "Build it"
-msgstr "組み立てる"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "InC3wm"
-msgid "Build the sentence"
-msgstr "文を作る"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "0lfSFT"
-msgid "Compare sources"
-msgstr "資料を比べる"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "khPfjz"
 msgid "Drag a corner"
 msgstr "角をドラッグする"
@@ -47,125 +27,14 @@ msgid "Estimate first"
 msgstr "まず予想する"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "7JlauX"
-msgid "Explore"
-msgstr "探索する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "iSynlE"
-msgid "Explore the map"
-msgstr "地図を探索する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "J5ozVw"
-msgid "Fill the square"
-msgstr "マスを埋める"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Xl9ymg"
-msgid "Find the error"
-msgstr "間違いを見つける"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "XsJOM5"
-msgid "Hands on"
-msgstr "実際にやってみる"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "UJRCcU"
-msgid "Label it"
-msgstr "ラベルを付ける"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eGo7pb"
-msgid "Link causes"
-msgstr "原因をつなぐ"
-
-#: src/activities/_components/activity-badge.tsx
-#: src/lesson/feedback/lesson-spoken-words.tsx
-msgctxt "zhvWvI"
-msgid "Listen"
-msgstr "聞く"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "SQ_uG1"
-msgid "Match pairs"
-msgstr "ペアを作る"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "wIskGV"
 msgid "Move a curve"
 msgstr "曲線を動かす"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "JZiAEC"
-msgid "Place in time"
-msgstr "時間軸に置く"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "zgfs1R"
-msgid "Place it"
-msgstr "配置する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Pofn38"
-msgid "Play it"
-msgstr "演奏する"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
 msgid "Predict first"
 msgstr "まず予想する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "OghajY"
-msgid "Put in order"
-msgstr "順番に並べる"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "epbkrE"
-msgid "Query the data"
-msgstr "データを検索する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eF6aGp"
-msgid "Read and listen"
-msgstr "読んで聞く"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "ApZCMI"
-msgid "Read the chart"
-msgstr "グラフを読み取る"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9HU8vw"
-msgid "Reply"
-msgstr "返答する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "JRCKkF"
-msgid "Run the code"
-msgstr "コードを実行する"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eZSeUm"
-msgid "Simulate"
-msgstr "シミュレーションする"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9yzaMX"
-msgid "Sort into groups"
-msgstr "グループに分ける"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "6XjjqC"
-msgid "Split it"
-msgstr "分ける"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "sLJxwK"
-msgid "Spot the pattern"
-msgstr "規則性を見つける"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "kUkIDR"
@@ -183,24 +52,9 @@ msgid "Tap along"
 msgstr "リズムに合わせてタップする"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "XUcSce"
-msgid "Test a pattern"
-msgstr "規則性を確かめる"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "YrB0ys"
-msgid "Try it"
-msgstr "試す"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "82b3Fd"
 msgid "Turn it"
 msgstr "回す"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Mpyk9t"
-msgid "What if"
-msgstr "もしも"
 
 #: src/activities/_components/activity-data-note.tsx
 msgctxt "9we_u3"
@@ -1783,6 +1637,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "ジョン・スノウの1854年の地図をもとに簡略化した街路図です。"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {#枚のカードにはペアがありません}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "この2枚はペアではありません。"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "{left}と{right}がペアになりました。{matched, plural, other {#組のペアができました（全{total}組）。}}"
@@ -1808,24 +1677,9 @@ msgid "{text}, no match"
 msgstr "{text}、ペアなし"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {#枚のカードにはペアがありません}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "ペアにするカード"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "この2枚はペアではありません。"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
@@ -2079,7 +1933,6 @@ msgid "The music couldn't load. Check your connection and try again."
 msgstr "曲を読み込めませんでした。接続を確認して、もう一度お試しください。"
 
 #: src/activities/notation-player/notation-player-activity.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "停止"
@@ -2515,19 +2368,14 @@ msgid "We couldn't match enough taps to the clicks. Try again, tapping with each
 msgstr "クリック音とタップのタイミングを十分に確認できませんでした。もう一度、音が鳴るたびにタップしてみてください。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JUoCnO"
-msgid "Sound on this device arrives on time."
-msgstr "この端末では音が遅れずに聞こえます。"
+msgctxt "NNlvmb"
+msgid "All set."
+msgstr "準備ができました。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "hIMvUw"
-msgid "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
-msgstr "この端末では音が約{ms}ミリ秒遅れて聞こえます。リズム練習ではこの遅れを補正します。"
-
-#: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "ukg6sv"
-msgid "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
-msgstr "ヘッドホンでは音が少し遅れて聞こえることがあります。一度、{count}回のクリック音に合わせてタップすると、この端末で音の遅れに左右されずにリズムを判定できます。"
+msgctxt "Jk0E1p"
+msgid "Tap along with {count} clicks, so your taps are timed right."
+msgstr "タップのタイミングを調整するため、クリック音に合わせて{count}回タップしてください。"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2535,13 +2383,12 @@ msgid "Set up your sound"
 msgstr "音の調整"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "JrS_qa"
-msgid "Start the sound check"
-msgstr "音の確認を始める"
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "始める"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/lesson-action-bar.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "続ける"
@@ -3056,45 +2903,21 @@ msgid "Tap an idea to see what it covers"
 msgstr "ポイントをタップすると学ぶ内容がわかります"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "P0MjYO"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "学んだ内容の復習や、間違えた問題の練習は引き続きできます。新しいレッスンは来月からまた受けられます。Plusに登録すると、今すぐ続けられます。"
+msgctxt "q5JxBr"
+msgid "You can still review and practice your mistakes."
+msgstr "復習や間違えた問題の練習は引き続きできます。"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "SDARaX"
-msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "学んだ内容の復習や、間違えた問題の練習は引き続きできます。新しいレッスンは明日からまた受けられます。Plusに登録すると、今すぐ続けられます。"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "o_xO7j"
-msgid "That's all the new lessons for this month"
-msgstr "今月の新しいレッスンはここまでです"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "PXe9T_"
-msgid "That's all the new lessons for today"
-msgstr "今日の新しいレッスンはここまでです"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Plusの詳細を見る"
+#: src/questions/lesson-question-errors.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "登録する"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "戻る"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "q-Zgbe"
-msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
-msgstr "アカウントなしで試せるレッスンをすべて終えました。無料アカウントを作成すると、これまでの学習をすべて引き継いで続けられます。"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "gojCcS"
-msgid "Save your progress to keep going"
-msgstr "学習状況を保存して続けましょう"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3104,19 +2927,9 @@ msgid "Create a free account"
 msgstr "無料アカウントを作成する"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "nkKtmz"
-msgid "You've reached today's limit. New lessons open again tomorrow."
-msgstr "今日の上限に達しました。新しいレッスンは明日また始められます。"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "8aKab6"
-msgid "That's a lot of learning today"
-msgstr "今日はたくさん学びましたね"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "jdlHSh"
-msgid "Try again in a moment. Nothing you did was lost."
-msgstr "少し待ってから、もう一度試してください。学習の記録はすべて残っています。"
+msgctxt "KFO_vV"
+msgid "Everything you learned comes with you."
+msgstr "これまでの学習内容はすべて引き継がれます。"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3124,35 +2937,25 @@ msgid "We couldn't open this lesson"
 msgstr "このレッスンを開けませんでした"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "hp9pnq"
-msgid "Sign in to keep learning."
-msgstr "学習を続けるにはログインしてください。"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "QvYlF0"
-msgid "This lesson isn't available anymore."
-msgstr "このレッスンはもう利用できません。"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "szo7Rq"
-msgid "Sign in to continue"
-msgstr "ログインして続ける"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "A_VPtF"
-msgid "Lesson not available"
-msgstr "レッスンを利用できません"
-
-#: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
-msgctxt "SQJto2"
-msgid "Sign in"
-msgstr "ログインする"
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "ログイン"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "ログアウトしました"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "t12Boe"
+msgid "This lesson isn't available"
+msgstr "このレッスンは利用できません"
 
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "fKzrQy"
-msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "短時間にたくさんのレッスンを始めました。このレッスンは{seconds, plural, =0 {#秒後に} other {#秒後に}}始められます。"
+msgctxt "z7s-vx"
+msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "短時間に多くのレッスンを開いたため、このレッスンは{seconds, plural, =0 {#秒} other {#秒}}後に自動で開きます。"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3330,6 +3133,11 @@ msgid "sounds like {respelling}"
 msgstr "{respelling}に近い発音"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
+msgctxt "zhvWvI"
+msgid "Listen"
+msgstr "聞く"
+
+#: src/lesson/feedback/lesson-spoken-words.tsx
 msgctxt "BvZ66J"
 msgid "Slowly"
 msgstr "ゆっくり聞く"
@@ -3346,9 +3154,9 @@ msgid "Also correct:"
 msgstr "こちらも正解です："
 
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "57Nd7h"
-msgid "Each question is checked a few times a day. Compare your answer with this one:"
-msgstr "各問題で答え合わせができるのは1日に数回です。次の解答例と自分の答えを比べてみてください："
+msgctxt "WGhDaL"
+msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
+msgstr "この問題は今日すでに何度か答え合わせをしているため、今回の回答は採点されません。次の解答例と比べてみてください："
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"
@@ -3359,56 +3167,6 @@ msgstr "つづり："
 msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "正解"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "答え合わせ"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "確定する"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "まだわからない"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "次へ"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "次の手順を見る"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "答えを見る"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "結果を見る"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "始める"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "QriCsD"
-msgid "Previous screen"
-msgstr "前の画面へ"
 
 #: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
@@ -3448,30 +3206,25 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "この画面のヘルプ"
 
-#: src/lesson/lesson-leave.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "いったん中断しますか？"
-
-#: src/lesson/lesson-leave.tsx
-msgctxt "evHhXy"
-msgid "Your answer hasn't been checked, so it won't be kept."
-msgstr "まだ答え合わせをしていないため、回答は保存されません。"
-
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "書き続ける"
 
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "中断する"
 
 #: src/lesson/lesson-player-header.tsx
-msgctxt "fp5tEg"
-msgid "Close lesson"
-msgstr "レッスンを閉じる"
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "まだ答え合わせをしていないため、回答は保存されません。"
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "いったん中断しますか？"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "0WZ-rc"
@@ -3494,14 +3247,14 @@ msgid "Lesson content"
 msgstr "レッスンの内容"
 
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "画面のオプション"
-
-#: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
 msgid "Made with AI. It may contain mistakes."
 msgstr "AIで作成しました。間違いが含まれることがあります。"
+
+#: src/lesson/lesson-screen-menu.tsx
+msgctxt "GscVFm"
+msgid "Skip writing questions today"
+msgstr "今日は記述式の問題をスキップする"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
@@ -3509,9 +3262,9 @@ msgid "I already know this"
 msgstr "これはもう知っている"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "qzpeai"
-msgid "Write again"
-msgstr "もう一度作成する"
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "記述式の問題を再開する"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3534,9 +3287,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "画像の準備ができました。この問題に答えてレッスンを完了してください。"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "I67vt5"
-msgid "No more writing today."
-msgstr "今日の記述問題はこれで終わりです。"
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "今日は記述式の問題を出しません。"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "N9yMCQ"
@@ -3579,9 +3332,9 @@ msgid "Challenge complete"
 msgstr "チャレンジ完了"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "ttLWcq"
-msgid "Skills practiced"
-msgstr "練習したスキル"
+msgctxt "3SY66E"
+msgid "What you practiced"
+msgstr "練習した内容"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3607,16 +3360,6 @@ msgstr "チャレンジ · {setting}"
 msgctxt "KV-6ml"
 msgid "Your mission"
 msgstr "ミッション"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "r5v2r8"
-msgid "You can ask the team or the AI for help. Your decisions change the outcome."
-msgstr "チームやAIに相談できます。選択によって結果が変わります。"
-
-#: src/lesson/steps/challenge/challenge-intro.tsx
-msgctxt "cjl8Gf"
-msgid "You can ask the team for help. Your decisions change the outcome."
-msgstr "チームに相談できます。選択によって結果が変わります。"
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "eppyrx"
@@ -3674,15 +3417,11 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "答えを書いてください"
 
+#. “Record” is the label of the button that starts the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "7Y6Yvq"
-msgid "Record"
-msgstr "録音する"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "タップして声に出して言ってください"
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "「録音」をタップして、声に出して言ってください"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3721,11 +3460,6 @@ msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to t
 msgstr "{count, plural, other {このレッスンで覚えておきたい#個のポイント}}"
 
 #: src/lesson/steps/typed-answer-step.tsx
-msgctxt "DPTzG-"
-msgid "Can't write now"
-msgstr "今は書けない"
-
-#: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "自分の言葉で"
@@ -3762,11 +3496,6 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "<strong>{answer}</strong>を選んで「<question></question>」に答えました"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "その他のオプション"
-
-#: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
 msgid "Start from the first map"
 msgstr "最初のマップから始める"
@@ -3800,6 +3529,11 @@ msgstr "ここにはまだ学習できるマップがありません。"
 msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "前のマップ"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "次へ"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
@@ -3933,14 +3667,14 @@ msgid "⏎ send · ⇧⏎ new line"
 msgstr "⏎ 送信 · ⇧⏎ 改行"
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "2P8sqa"
-msgid "Your session expired. Sign in again."
-msgstr "セッションの有効期限が切れました。もう一度ログインしてください。"
+msgctxt "NYRAZH"
+msgid "You've been logged out."
+msgstr "ログアウトしました。"
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "iVOq9B"
-msgid "Subscribe to ask questions"
-msgstr "質問するにはプランへの登録が必要です"
+msgctxt "JGZkd5"
+msgid "Asking questions needs a subscription"
+msgstr "質問するにはサブスクリプションへの登録が必要です"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3961,11 +3695,6 @@ msgstr "少し時間をおいてから、もう一度質問してください。
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "問題が発生しました。もう一度お試しください。"
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "EaucLA"
-msgid "View plans"
-msgstr "プランを見る"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"

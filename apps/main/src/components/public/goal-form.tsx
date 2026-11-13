@@ -13,6 +13,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useId, useRef, useState, useTransition } from "react";
+import { PageStartMark } from "./page-start";
 import { useSendGoal } from "./use-send-goal";
 
 const FIELD_TEXT_CLASS = cn(GOAL_FIELD_TEXT_CLASS, "col-start-1 row-start-1");
@@ -27,11 +28,13 @@ export function GoalForm({
   example,
   id,
   note,
+  noteClassName,
 }: {
   action: string;
   example: ReactNode;
   id: string;
   note?: ReactNode;
+  noteClassName?: string;
 }) {
   const t = useExtracted();
   const router = useRouter();
@@ -47,6 +50,7 @@ export function GoalForm({
 
   return (
     <div className="flex w-full flex-col gap-4" key={reset.key}>
+      <PageStartMark />
       <GoalField
         action={action}
         aria-busy={sending}
@@ -112,9 +116,10 @@ export function GoalForm({
         aria-live="polite"
         id={lineId}
         className={cn(
-          "text-muted-foreground -mt-1 text-[13px]",
+          "text-muted-foreground text-compact -mt-1",
           hinted && "text-foreground",
           !line && "sr-only",
+          noteClassName,
         )}
       >
         {line}

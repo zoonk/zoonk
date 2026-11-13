@@ -4,20 +4,25 @@ import {
   type PageWords,
   countWords,
   pageKind,
+  placeFindings,
   summarizeWords,
+  titleTopFindings,
   wordFindings,
   wordGrowth,
 } from "./words.mts";
 
 const MARKED_WORDS = 5;
 const GROWTH_PERCENT = 22;
+const EXTRA_TOP = 32;
 
 function page(overrides: Partial<PageWords> = {}): PageWords {
   return {
     aboveAction: 2,
     action: "Start",
+    actionPinned: null,
     kind: "app",
     longestButton: "Start",
+    titleTop: null,
     words: 40,
     ...overrides,
   };
@@ -39,8 +44,10 @@ describe("counting a page's words", () => {
       {
         aboveAction: 1,
         action: "Continue",
+        actionPinned: true,
         buttons: ["Continue", "Continue to daily time", "Skip"],
         text: "Pick a time",
+        titleTop: null,
       },
       "app",
     );
@@ -100,5 +107,40 @@ describe("judging a page's words", () => {
     assert.deepEqual(wordGrowth(page({ words: 50 }), page({ words: 60 })), []);
     assert.equal(wordGrowth(page({ words: 50 }), page({ words: 61 }))[0]?.value, GROWTH_PERCENT);
     assert.deepEqual(wordGrowth(undefined, page({ words: 61 })), []);
+  });
+});
+
+describe("where the title and the main action sit (E8 and R2)", () => {
+  it("leads to an app screen's one main action that isn't pinned", () => {
+    assert.deepEqual(
+      [
+        page({ actionPinned: false }),
+        page({ actionPinned: true }),
+        page({ actionPinned: null }),
+        page({ actionPinned: false, kind: "marketing" }),
+      ].map((each) => placeFindings(each).length),
+      [1, 0, 0, 0],
+    );
+  });
+
+  it("catches the same 101 px title offset on both screen sizes", () => {
+    const phone = page({ titleTop: { actual: 101, expected: 69 } });
+    const laptop = page({ titleTop: { actual: 101, expected: 69 } });
+
+    assert.deepEqual(
+      [phone, laptop].map((each) => titleTopFindings(each)[0]?.value),
+      [EXTRA_TOP, EXTRA_TOP],
+    );
+
+    assert.deepEqual(titleTopFindings(page({ titleTop: { actual: 69, expected: 69 } })), []);
+  });
+
+  it("leaves other surfaces and absent app-shell titles alone", () => {
+    assert.deepEqual(titleTopFindings(page()), []);
+
+    assert.deepEqual(
+      titleTopFindings(page({ kind: "marketing", titleTop: { actual: 101, expected: 69 } })),
+      [],
+    );
   });
 });

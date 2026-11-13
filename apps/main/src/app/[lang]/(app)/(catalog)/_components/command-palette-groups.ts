@@ -8,7 +8,7 @@ import {
   createAskPaletteItem,
   createChapterPaletteItem,
   createCoursePaletteItem,
-  createFeedbackPaletteItem,
+  createHelpPaletteItem,
   createLogoutPaletteItem,
   createMockPaletteItem,
   createNavigationPaletteItem,
@@ -80,22 +80,39 @@ export function usePaletteGroups({
   // A learner reaches their account and help pages from the avatar's menu: here they're found by name.
   const showsAccount = searching || !learner;
 
-  const sendFeedback = createFeedbackPaletteItem({
+  const sendFeedback = createHelpPaletteItem({
     keywords: t({
       description:
         "Words people type to find Send feedback in the search, never shown. Keep “bug” and add the words people use in this language.",
       message: "bug, problem, report, idea, suggestion, feature request, contact",
     }),
+    kind: "feedback",
     label: t("Send feedback"),
   });
+
+  // Found by name: a phone has no keys to list, so it isn't offered before the learner types.
+  const shortcuts = searching
+    ? [
+        createHelpPaletteItem({
+          keywords: t({
+            description:
+              "Words people type to find Keyboard shortcuts in the search, never shown. Add the words people use in this language.",
+            message: "keys, hotkeys, keyboard",
+          }),
+          kind: "shortcuts",
+          label: t("Keyboard shortcuts"),
+        }),
+      ]
+    : [];
 
   const helpItems = showsAccount
     ? [
         createNavigationPaletteItem({ id: "blog", label: t("Blog"), menu: getMenu("blog") }),
         sendFeedback,
         createNavigationPaletteItem({ id: "support", label: t("Help"), menu: getMenu("support") }),
+        ...shortcuts,
       ]
-    : [sendFeedback];
+    : [sendFeedback, ...shortcuts];
 
   const plan: PaletteGroup = {
     id: "plan",

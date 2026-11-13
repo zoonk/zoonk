@@ -5,6 +5,7 @@ import {
   type SerializedStep,
   type WordBankOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
@@ -14,7 +15,7 @@ import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-st
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { removeKeepingFocus } from "./_utils/word-bank-focus";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
-import { QUESTION_TEXT_CLASS, QuestionText } from "./question-text";
+import { QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -103,17 +104,24 @@ function TemplateText({
   hasResult,
   onRemoveWord,
   template,
+  titled,
 }: {
   answers: string[];
   blanks: (string | null)[];
   hasResult: boolean;
   onRemoveWord: (blankIndex: number) => void;
   template: string;
+  /** Under the screen's own question, the sentence is what the learner works on, not a second title. */
+  titled: boolean;
 }) {
   const segments = template.split("[BLANK]");
 
   return (
-    <p className={cn(QUESTION_TEXT_CLASS, "leading-10")} data-slot="word-answer">
+    <QuestionTitle
+      className={cn("leading-10", titled && "font-normal")}
+      data-slot="word-answer"
+      heading={false}
+    >
       {segments.map((segment, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Template segments from split() can repeat, no unique ID
         <span key={`seg-${segment}-${index}`}>
@@ -129,7 +137,7 @@ function TemplateText({
           )}
         </span>
       ))}
-    </p>
+    </QuestionTitle>
   );
 }
 
@@ -220,6 +228,7 @@ export function FillBlankStep({
         answers={content.answers}
         blanks={blanks}
         hasResult={hasResult}
+        titled={Boolean(content.question)}
         onRemoveWord={handleRemoveWord}
         template={content.template}
       />

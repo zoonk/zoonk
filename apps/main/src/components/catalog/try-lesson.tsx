@@ -1,6 +1,7 @@
 import { getLessonPlayerPath } from "@/lib/public/public-hrefs";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { type TryLessonPick } from "@zoonk/core/catalog/try-lesson";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
@@ -38,16 +39,9 @@ export async function TryLesson({
     >
       <ScrollToAnchor id={id} />
 
-      <h2 className="text-label" id={titleId}>
+      <Eyebrow id={titleId}>
         {t("Try a lesson · free · {time}", { time: minutesText(pick.minutes) })}
-      </h2>
-
-      <p className="text-muted-foreground mt-1.5 mb-5 text-[13px] leading-snug text-pretty">
-        {t("{chapter} · lesson {number, number}", {
-          chapter: pick.chapterTitle,
-          number: pick.number,
-        })}
-      </p>
+      </Eyebrow>
 
       <FirstQuestion
         lessonId={pick.lessonId}

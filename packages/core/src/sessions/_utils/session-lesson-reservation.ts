@@ -42,7 +42,6 @@ export function getSessionLessonCandidates({
         items: plan.items,
         today: localDate,
       }),
-      trialEnded: access.trialEnded,
     }) ||
     isMockOnlyDay({
       goal,

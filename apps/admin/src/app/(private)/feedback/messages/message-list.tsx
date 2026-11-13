@@ -1,4 +1,4 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminTabs } from "@/components/admin-tabs";
 import {
   type AdminTableColumn,
   AdminTableColumns,
@@ -6,44 +6,67 @@ import {
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
 import { listFeedbackMessages } from "@/data/feedback/list-feedback-messages";
+import { getInbox } from "@/data/inbox/get-inbox";
 import { buildAdminHref } from "@/lib/admin-href";
-import { buildEnumFilterOptions } from "@/lib/enum-filter-options";
 import { parseSearchParams } from "@/lib/parse-search-params";
-import { type FeedbackStatus } from "@zoonk/db";
-import { parseFeedbackStatus } from "../_utils/feedback-filters";
-import { feedbackStatusLabels } from "../_utils/feedback-labels";
+import {
+  FEEDBACK_FILTERS,
+  type FeedbackFilter,
+  parseFeedbackFilter,
+  toFeedbackStatus,
+} from "../_utils/feedback-filters";
 import { MessageRow } from "./message-row";
 
-const columns: AdminTableColumn[] = [
-  { label: "Date" },
-  { label: "Status" },
-  { label: "Sender" },
-  { label: "Page" },
-  { label: "Platform / version" },
-  { label: "Content" },
-];
+const FILTER_LABELS: Record<FeedbackFilter, string> = {
+  all: "All",
+  new: "New",
+  read: "Read",
+  replied: "Replied",
+};
 
-export async function MessageStatusFilter({
+const EMPTY_LABELS: Record<FeedbackFilter, string> = {
+  all: "No messages yet.",
+  new: "No new messages.",
+  read: "No read messages.",
+  replied: "No replied messages.",
+};
+
+function messageColumns(filter: FeedbackFilter): AdminTableColumn[] {
+  // State comes right after the first column, which gives it its room: the columns after it
+  // stay where they are when the view changes.
+  return [
+    { label: "Message", twoLines: true },
+    ...(filter === "all" ? [{ label: "State" }] : []),
+    { label: "About", size: "text" },
+    { label: "App", size: "wide" },
+    { label: "Sent" },
+  ];
+}
+
+function filterHref(filter: FeedbackFilter) {
+  return buildAdminHref({
+    params: { status: filter === "new" ? undefined : filter },
+    path: "/feedback/messages",
+  });
+}
+
+export async function MessageFilter({
   searchParams,
 }: {
   searchParams: PageProps<"/feedback/messages">["searchParams"];
 }) {
-  const status = parseFeedbackStatus(await searchParams);
+  const [params, inbox] = await Promise.all([searchParams, getInbox()]);
+  const current = parseFeedbackFilter(params);
 
   return (
-    <AdminFilterNav
-      label="Status filter"
-      options={buildEnumFilterOptions<FeedbackStatus>({
-        allLabel: "All",
-        buildHref: (value) =>
-          buildAdminHref({ params: { status: value }, path: "/feedback/messages" }),
-        current: status,
-        options: [
-          { label: feedbackStatusLabels.new, value: "new" },
-          { label: feedbackStatusLabels.read, value: "read" },
-          { label: feedbackStatusLabels.replied, value: "replied" },
-        ],
-      })}
+    <AdminTabs
+      label="Messages"
+      options={FEEDBACK_FILTERS.map((filter) => ({
+        count: filter === "new" ? inbox.feedback.count : undefined,
+        href: filterHref(filter),
+        isActive: filter === current,
+        label: FILTER_LABELS[filter],
+      }))}
     />
   );
 }
@@ -55,41 +78,23 @@ export async function MessageList({
 }) {
   const params = await searchParams;
   const { limit, offset, page } = parseSearchParams(params);
+  const filter = parseFeedbackFilter(params);
 
-  return (
-    <CachedMessageList
-      limit={limit}
-      offset={offset}
-      page={page}
-      status={parseFeedbackStatus(params)}
-    />
-  );
-}
-
-async function CachedMessageList({
-  limit,
-  offset,
-  page,
-  status,
-}: {
-  limit: number;
-  offset: number;
-  page: number;
-  status?: FeedbackStatus;
-}) {
-  "use cache: private";
-
-  const { messages, total } = await listFeedbackMessages({ limit, offset, status });
+  const { messages, total } = await listFeedbackMessages({
+    limit,
+    offset,
+    status: toFeedbackStatus(filter),
+  });
 
   return (
     <>
       <AdminTableColumns
-        columns={columns}
-        emptyLabel={status ? "No messages with this status." : "No messages yet."}
+        columns={messageColumns(filter)}
+        emptyLabel={EMPTY_LABELS[filter]}
         isEmpty={messages.length === 0}
       >
         {messages.map((message) => (
-          <MessageRow key={message.id} message={message} />
+          <MessageRow key={message.id} message={message} showState={filter === "all"} />
         ))}
       </AdminTableColumns>
 
@@ -97,7 +102,7 @@ async function CachedMessageList({
         basePath="/feedback/messages"
         limit={limit}
         page={page}
-        queryParams={{ status }}
+        queryParams={{ status: filter === "new" ? undefined : filter }}
         totalPages={Math.ceil(total / limit)}
       />
     </>
@@ -105,5 +110,5 @@ async function CachedMessageList({
 }
 
 export function MessageListSkeleton() {
-  return <AdminTableColumnsSkeleton columns={columns} />;
+  return <AdminTableColumnsSkeleton columns={messageColumns("new")} />;
 }

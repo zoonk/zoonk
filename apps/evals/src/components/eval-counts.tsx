@@ -16,8 +16,10 @@ export function CaseCount({
   }
 
   return (
-    <details className="min-w-11">
-      <summary className="min-h-11 cursor-pointer content-center">{text ?? count}</summary>
+    <details>
+      <summary className="hit-area relative inline-block cursor-pointer list-none underline decoration-dotted underline-offset-4 [&::-webkit-details-marker]:hidden">
+        {text ?? count}
+      </summary>
       <ul className="mt-1 space-y-1 text-sm font-normal">
         {caseIds.map((caseId) => (
           <li key={caseId}>
@@ -43,10 +45,16 @@ export function FailureCounts({
   summary: EvalSummary;
   model?: { modelId: string; taskId: string };
 }) {
+  const reasons = FAILURE_REASONS.filter((reason) => summary.failures[reason].count > 0);
+
+  if (reasons.length === 0) {
+    return <span>None</span>;
+  }
+
   return (
     <div className="flex flex-col gap-1 text-sm">
-      {FAILURE_REASONS.map((reason) => (
-        <div className="flex gap-2" key={reason}>
+      {reasons.map((reason) => (
+        <div className="flex items-baseline gap-2" key={reason}>
           <span>{reason}:</span>
           <CaseCount {...summary.failures[reason]} model={model} />
         </div>

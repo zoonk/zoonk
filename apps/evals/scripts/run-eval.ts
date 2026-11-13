@@ -294,20 +294,20 @@ function formatRow({
   return [
     model ? getModelDisplayName(model) : row.modelId,
     model?.kind ?? "",
+    row.summary.averageScore?.toFixed(2) ?? "unscored",
+    accuracy,
+    formatKeyFlaws(row.summary),
+    formatDollars(row.stats.costPer1000Runs),
+    formatSeconds(row.stats.latencyP50),
+    formatSeconds(row.stats.latencyP95),
+    ...(hasBudget ? [formatLatencyVerdict(row.meetsBudget)] : []),
     `${row.summary.scored}/${row.sampled}`,
     row.summary.attempted,
     row.summary.generated,
     formatFailureCounts(row.summary),
-    formatKeyFlaws(row.summary),
-    row.summary.averageScore?.toFixed(2) ?? "unscored",
-    accuracy,
     formatPerLabel(row.stats) || "—",
     ...formatLanguageResults(row.languages).map((result) => result.text),
-    formatSeconds(row.stats.latencyP50),
-    formatSeconds(row.stats.latencyP95),
-    ...(hasBudget ? [formatLatencyVerdict(row.meetsBudget)] : []),
     formatDollars(row.spent),
-    formatDollars(row.stats.costPer1000Runs),
     row.summary.caseIds.attempted
       .map((caseId) => `[${caseId}](${getCaseHref({ caseId, modelId: row.modelId, taskId })})`)
       .join(", ") || "—",
@@ -315,23 +315,24 @@ function formatRow({
 }
 
 function formatReport({ rows, task }: { rows: ReportRow[]; task: RegisteredTask }): string {
+  // The columns that decide between models come first; how complete the run was follows.
   const headers = [
     "Model",
     "Kind",
+    "Avg score (scored outputs)",
+    "Accuracy",
+    "Judge-flagged key flaws",
+    "Cost / 1k runs",
+    "p50",
+    "p95",
+    ...(task.latencyBudget ? ["Budget"] : []),
     "Scored / sampled",
     "Attempted (recorded)",
     "Generated",
     "Generation failures",
-    "Judge-flagged key flaws",
-    "Avg score (scored outputs)",
-    "Accuracy",
     "Per label (correct/total)",
     ...REQUIRED_LANGUAGES.map((language) => language.toUpperCase()),
-    "p50",
-    "p95",
-    ...(task.latencyBudget ? ["Budget"] : []),
     "Spent",
-    "Cost / 1k runs",
     "Case links",
   ];
 

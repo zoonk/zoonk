@@ -2,6 +2,7 @@ import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { waitForUserActivation } from "@/lib/lessons/wait-for-user-activation";
 import { type LessonOpening } from "@/lib/session/lesson-opening";
 import { stayingHere } from "@/lib/session/tap-answer";
+import { type CalendarPeriod, toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import { libraryLessonRunSchema } from "@zoonk/core/lesson-player/contract";
 import {
   type StudyBlockOpening,
@@ -18,9 +19,12 @@ function readTier(value: unknown): "free" | "guest" | "plus" {
   return tier === "free" || tier === "plus" ? tier : "guest";
 }
 
-function readPeriod(value: unknown): "day" | "month" | "total" {
+function readPeriod(value: unknown): CalendarPeriod {
   const period = isJsonObject(value) ? getString(value.limit, "period") : null;
-  return period === "month" || period === "total" ? period : "day";
+
+  return period === "month" || period === "rolling30Days" || period === "total"
+    ? toCalendarPeriod(period)
+    : "day";
 }
 
 function toStartOutcome({
@@ -59,7 +63,7 @@ function toStartOutcome({
     return { period: readPeriod(body), reason: "limitReached", tier: readTier(body) };
   }
 
-  return status === "unauthorized" || status === "notFound" || status === "plusRequired"
+  return status === "unauthorized" || status === "notFound"
     ? { reason: status }
     : { reason: "failed" };
 }

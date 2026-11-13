@@ -50,7 +50,7 @@ function EmptyMedia({
 function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-[0.9375rem] leading-snug font-[560] tracking-[-0.01em]", className)}
+      className={cn("text-reading leading-snug font-semibold tracking-[-0.01em]", className)}
       data-slot="empty-title"
       {...props}
     />
@@ -61,7 +61,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <div
       className={cn(
-        "text-muted-foreground [&>a:hover]:text-foreground text-[0.8125rem] leading-snug text-pretty [&>a]:underline [&>a]:underline-offset-4",
+        "text-muted-foreground [&>a:hover]:text-foreground text-compact leading-snug text-pretty [&>a]:underline [&>a]:underline-offset-4",
         className,
       )}
       data-slot="empty-description"
