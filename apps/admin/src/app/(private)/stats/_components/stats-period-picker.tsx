@@ -101,7 +101,8 @@ export function StatsPeriodPicker({
           <Button
             aria-label={`Choose period. Current: ${statsPeriod.periodLabel}`}
             className="max-w-full justify-between sm:max-w-64"
-            variant="ghost"
+            size="sm"
+            variant="outline"
           />
         }
       >
@@ -182,14 +183,15 @@ export function StatsPeriodPicker({
               />
             </div>
           </div>
+          <Button type="submit" variant="outline">
+            Apply custom range
+          </Button>
+          {/* Last, so it moves nothing when it appears. */}
           {customRangeError ? (
             <p className="text-destructive-text text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
               {customRangeError}
             </p>
           ) : null}
-          <Button type="submit" variant="outline">
-            Apply custom range
-          </Button>
         </form>
       </PopoverContent>
     </Popover>

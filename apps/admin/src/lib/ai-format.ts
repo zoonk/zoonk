@@ -15,6 +15,11 @@ export function formatUsd(value: number): string {
   });
 }
 
+/** A total to the cent, where the fractions a single call costs would be noise. */
+export function formatDollars(value: number): string {
+  return value.toLocaleString("en", { currency: "USD", style: "currency" });
+}
+
 export function formatLatency(seconds: number | null): string {
   return seconds === null ? "—" : `${seconds.toFixed(LATENCY_DIGITS)}s`;
 }

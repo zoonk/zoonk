@@ -11,14 +11,13 @@ export async function ChapterLessons({
   params: { brandSlug: string; courseSlug: string };
   route: LibraryChapterRoute;
 }) {
-  const { chapter, number, total } = route;
+  const { chapter } = route;
   const minutes = chapter.lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0);
 
   const t = await getExtracted();
   const durationLabel = await getTotalDurationLabel(minutes);
 
   const facts = [
-    t("Chapter {number} of {total}", { number: String(number), total: String(total) }),
     t("{count, plural, one {# short lesson} other {# short lessons}}", {
       count: chapter.lessons.length,
     }),
@@ -38,7 +37,7 @@ export async function ChapterLessons({
         </span>
       </div>
 
-      <ChapterLessonRows chapter={chapter} params={params} />
+      <ChapterLessonRows chapter={chapter} className="-mb-3" params={params} />
     </PageSection>
   );
 }

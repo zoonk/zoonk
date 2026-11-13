@@ -1,16 +1,11 @@
-import { cn } from "@zoonk/ui/lib/utils";
+import { ListGroup, ListRow } from "@zoonk/learn/list";
 
-type NumberedRow = { description?: string; id: string; title: React.ReactNode; trailing?: string };
-
-const ROW_CLASS =
-  "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors";
-
-const HIGHLIGHTED_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
+type NumberedRow = { description?: string; id: string; title: React.ReactNode };
 
 function NumberedRowContent({ number, row }: { number: number; row: NumberedRow }) {
   return (
     <>
-      <span className="text-faint w-5 shrink-0 font-mono text-xs leading-5 tabular-nums">
+      <span className="text-faint w-4 shrink-0 font-mono text-xs leading-5 tabular-nums">
         {number}
       </span>
 
@@ -22,30 +17,22 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
           </span>
         )}
       </span>
-
-      {row.trailing && (
-        <span className="text-muted-foreground shrink-0 font-mono text-xs leading-5 whitespace-nowrap tabular-nums">
-          {row.trailing}
-        </span>
-      )}
     </>
   );
 }
 
-export function NumberedRows({ rows, startId }: { rows: NumberedRow[]; startId: string }) {
+export function NumberedRows({ rows }: { rows: NumberedRow[] }) {
   return (
-    <ol className="divided-rows flex flex-col">
-      {rows.map((row, index) => {
-        const highlighted = row.id === startId;
-
-        return (
-          <li data-highlighted={highlighted || undefined} key={row.id}>
-            <div className={cn(ROW_CLASS, highlighted && HIGHLIGHTED_ROW_CLASS)}>
+    <ListGroup>
+      <ol>
+        {rows.map((row, index) => (
+          <li key={row.id}>
+            <ListRow className="items-start py-3">
               <NumberedRowContent number={index + 1} row={row} />
-            </div>
+            </ListRow>
           </li>
-        );
-      })}
-    </ol>
+        ))}
+      </ol>
+    </ListGroup>
   );
 }

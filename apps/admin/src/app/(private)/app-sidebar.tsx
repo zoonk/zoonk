@@ -1,12 +1,12 @@
 "use client";
 
+import { type InboxQueueName } from "@/data/inbox/get-inbox";
 import { SidePanel, SidePanelContent, SidePanelTitle } from "@zoonk/ui/components/side-panel";
 import {
   SIDEBAR_ITEM_CLASS,
   Sidebar,
   SidebarFooter,
   SidebarHeader,
-  SidebarHeaderRow,
   SidebarSection,
 } from "@zoonk/ui/components/sidebar";
 import { SidebarSearch, SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
@@ -24,39 +24,45 @@ function isActive(pathname: string, url: string) {
   return pathname.startsWith(url);
 }
 
-type AdminNavUrl = (typeof adminNavigation)[number]["items"][number]["url"];
-
-/** What follows an item's label, such as how many content fixes wait for review. */
-export type AdminNavCounts = Partial<Record<AdminNavUrl, React.ReactNode>>;
+/** How many wait in each Inbox queue, drawn after its label. */
+export type AdminNavCounts = Record<InboxQueueName, React.ReactNode>;
 
 function AdminNav({ counts, onNavigate }: { counts: AdminNavCounts; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return adminNavigation.map((group) => (
-    <SidebarSection aria-label={group.label} key={group.label} label={group.label}>
-      {group.items.map(({ icon: Icon, label, url }) => (
-        <SidebarTooltip
-          key={label}
-          label={
-            <>
-              {label}
-              {counts[url]}
-            </>
-          }
-        >
-          <Link
-            aria-current={isActive(pathname, url) ? "page" : undefined}
-            className={SIDEBAR_ITEM_CLASS}
-            href={url}
-            onNavigate={onNavigate}
-            prefetch
+    <SidebarSection
+      aria-label={group.label ?? "Home"}
+      key={group.label ?? "home"}
+      label={group.label}
+    >
+      {group.items.map(({ icon: Icon, label, queue, url }) => {
+        const count = queue ? counts[queue] : null;
+
+        return (
+          <SidebarTooltip
+            key={label}
+            label={
+              <>
+                {label}
+                {count}
+              </>
+            }
           >
-            <Icon aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate">{label}</span>
-            {counts[url]}
-          </Link>
-        </SidebarTooltip>
-      ))}
+            <Link
+              aria-current={isActive(pathname, url) ? "page" : undefined}
+              className={SIDEBAR_ITEM_CLASS}
+              href={url}
+              onNavigate={onNavigate}
+              prefetch
+            >
+              <Icon aria-hidden="true" />
+              <span className="min-w-0 flex-1 truncate">{label}</span>
+              {count}
+            </Link>
+          </SidebarTooltip>
+        );
+      })}
     </SidebarSection>
   ));
 }
@@ -72,7 +78,8 @@ function AdminSidebarContent({
     <>
       <AdminNav counts={counts} onNavigate={onNavigate} />
 
-      <SidebarFooter>
+      {/* Pinned: on a short window the navigation scrolls under it. */}
+      <SidebarFooter className="bg-background sticky bottom-0 -mb-3 pb-3">
         <AdminAccountMenu account={account} />
       </SidebarFooter>
     </>
@@ -81,12 +88,11 @@ function AdminSidebarContent({
 
 export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
-    <Sidebar aria-label="Sidebar" className="gap-4">
-      <SidebarHeader className="gap-4">
-        <SidebarHeaderRow>
-          <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
-        </SidebarHeaderRow>
+    <Sidebar aria-label="Sidebar" className="gap-3">
+      {/* One row, so the whole navigation fits a laptop's height; collapsed, the toggle sits over the search. */}
+      <SidebarHeader className="sidebar-collapsed:flex-col-reverse sidebar-collapsed:gap-4 flex-row items-center gap-1">
         <SidebarSearch label="Search…" onClick={openCommandPalette} />
+        <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
       </SidebarHeader>
 
       <AdminSidebarContent account={account} counts={counts} />
