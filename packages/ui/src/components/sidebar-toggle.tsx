@@ -134,11 +134,15 @@ export function SidebarToggle({
     return () => globalThis.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  // Ends the header row, so its glyph's ink ends on the sidebar's edge; collapsed, it is the row.
   return (
     <TooltipPrimitive.Root>
       <TooltipTrigger
         aria-keyshortcuts="Meta+B Control+B"
-        className={cn(SIDEBAR_ITEM_CLASS, "w-8 shrink-0 justify-center px-0")}
+        className={cn(
+          SIDEBAR_ITEM_CLASS,
+          "edge sidebar-collapsed:me-0 -me-(--edge-pull) w-8 shrink-0 justify-center px-0 [--control-size:--spacing(8)] [--glyph-blank:2] [--icon-size:--spacing(4)]",
+        )}
         onClick={toggleSidebar}
         type="button"
       >
