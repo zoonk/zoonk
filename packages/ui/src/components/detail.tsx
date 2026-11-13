@@ -7,11 +7,13 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
 
+/** A menu with no action beside it ends the title's block on every width, never a row of its own. */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
       className={cn(
         "flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
+        "has-[[data-slot=detail-actions]>[data-detail-menu]:only-child]:flex-row has-[[data-slot=detail-actions]>[data-detail-menu]:only-child]:items-end has-[[data-slot=detail-actions]>[data-detail-menu]:only-child]:justify-between",
         className,
       )}
       data-slot="detail-hero"
@@ -65,16 +67,26 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
   );
 }
 
-/** As tall as the action beside it; alone beside the title, a small button's 30px. */
-export const DETAIL_MENU_TRIGGER_CLASS =
-  "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
+/**
+ * A page's "…": as tall as the action beside it; alone, a small button's 30px at the end of the
+ * title's block (`DetailHero` finds it by `data-detail-menu`).
+ */
+export function DetailMenuButton(props: Omit<React.ComponentProps<typeof Button>, "size">) {
+  return (
+    <Button
+      className="[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]"
+      data-detail-menu=""
+      size="icon"
+      variant="outline"
+      {...props}
+    />
+  );
+}
 
 export function DetailMenu({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
-      >
+      <DropdownMenuTrigger render={<DetailMenuButton />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label}</span>
       </DropdownMenuTrigger>

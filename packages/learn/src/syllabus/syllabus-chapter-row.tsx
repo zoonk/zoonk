@@ -78,6 +78,7 @@ export function SyllabusChapterRow({
       <ListRowBody>
         <ListRowContent>
           <ListRowNumberedTitle
+            description={<ChapterLine chapter={chapter} />}
             number={chapter.position}
             textClassName={cn(
               "line-clamp-2",
@@ -86,7 +87,6 @@ export function SyllabusChapterRow({
           >
             {chapter.title}
           </ListRowNumberedTitle>
-          <ChapterLine chapter={chapter} />
         </ListRowContent>
         <ListRowTrailing>
           <ChapterMeta chapter={chapter} />

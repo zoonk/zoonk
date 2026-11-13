@@ -191,24 +191,30 @@ export function ListRowTitle({ className, ...props }: React.ComponentProps<"span
   );
 }
 
+/** The number hangs before the title, and a `description` starts under the title's words, not the number. */
 export function ListRowNumberedTitle({
   children,
   className,
+  description,
   number,
   textClassName,
 }: {
   children: React.ReactNode;
   className?: string;
+  description?: React.ReactNode;
   number: number;
   textClassName?: string;
 }) {
   return (
-    <ListRowTitle className={cn("flex items-baseline gap-1.5", className)}>
-      <span className="text-muted-foreground shrink-0 font-mono text-xs font-normal tabular-nums">
+    <span className={cn("grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-1.5", className)}>
+      <span className="text-muted-foreground font-mono text-xs leading-snug tabular-nums">
         {`${number}.`}
       </span>
-      <span className={cn("min-w-0", textClassName)}>{children}</span>
-    </ListRowTitle>
+      <ListRowTitle className={textClassName}>{children}</ListRowTitle>
+      {description && (
+        <span className="col-start-2 flex flex-col pt-px empty:hidden">{description}</span>
+      )}
+    </span>
   );
 }
 

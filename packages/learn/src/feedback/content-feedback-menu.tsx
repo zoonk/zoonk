@@ -2,7 +2,7 @@
 
 import { type FeedbackTarget } from "@zoonk/core/feedback/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { DETAIL_MENU_TRIGGER_CLASS, DetailMenu } from "@zoonk/ui/components/detail";
+import { DetailMenu, DetailMenuButton } from "@zoonk/ui/components/detail";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +39,7 @@ export function ContentFeedbackMenu({
       <DropdownMenuTrigger
         render={
           size === "detail" ? (
-            <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
+            <DetailMenuButton />
           ) : (
             <Button className="shrink-0" edge="end" size={size} variant="ghost" />
           )
