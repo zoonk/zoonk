@@ -129,7 +129,6 @@ export function readSidebar(side: string) {
   ].join(" ");
 }
 
-/** What the panel that just opened shows: focus, a way out, where it sits. */
 export function readPanel(phone: boolean) {
   const LABEL_LENGTH = 40;
 

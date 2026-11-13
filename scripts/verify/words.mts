@@ -12,7 +12,6 @@ export const WORD_BUDGET = {
   stringWords: 20,
 };
 
-/** Where the title and the main action sit, for the founder's rules 3 and 4 (`placeFindings`). */
 export type PagePlace = {
   /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
@@ -28,7 +27,6 @@ export type PageText = PagePlace & {
 };
 
 export type PageWords = PagePlace & {
-  /** Text elements between the title and the main action; null when there's no main action. */
   aboveAction: number | null;
   action: string | null;
   kind: PageKind;

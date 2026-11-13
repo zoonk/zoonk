@@ -3,7 +3,6 @@
 /** Where an element sits in the layout and how big it is, in CSS pixels, transforms left out. */
 export type Place = { height: number; left: number; top: number; width: number };
 
-/** An element that moved or changed size between two snapshots of the same page. */
 export type Moved = {
   after: Place;
   before: Place;
@@ -160,7 +159,6 @@ export function snapshotLayout() {
 
 export type Comparison = { moved: Moved[]; target: Place | null };
 
-/** What moved or changed size since `snapshotLayout`, among elements on screen both times. */
 export function compareLayout(targetId: string): Comparison {
   const LABEL_LENGTH = 40;
   const before = globalThis.zoonkLayout ?? [];

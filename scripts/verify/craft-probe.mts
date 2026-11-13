@@ -57,7 +57,6 @@ export type TextStyle = {
   size: number;
 };
 
-/** Siblings of one kind (same tag and classes) in a stack or a row, with the gaps between them. */
 export type GapGroup = {
   /** The layout spreads them (`justify-content: space-*`), so nobody chose their gaps. */
   distributed: boolean;
@@ -70,7 +69,6 @@ export type CraftPage = {
   gaps: GapGroup[];
   icons: Icon[];
   ink: Ink[];
-  /** The page's `--radius`, which the design system's corners step from. */
   radius: number;
   texts: TextStyle[];
 };
@@ -196,7 +194,6 @@ export function readCraft(): CraftPage {
     );
   }
 
-  /** A panel or a control: something that draws its own edges, not a full-width bar or a hairline. */
   function drawn(element: Element) {
     const box = element.getBoundingClientRect();
 
@@ -254,7 +251,6 @@ export function readCraft(): CraftPage {
     };
   }
 
-  /** The nearest box the layout places: an inline element's text flows in its block. */
   function laidOut(element: Element) {
     let current: Element | null = element;
 

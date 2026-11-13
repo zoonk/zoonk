@@ -281,17 +281,3 @@ export function craftFindings(page: CraftPage, typeScale: number[]): Finding[] {
     ).values(),
   ];
 }
-
-/** How many of each a screen uses, for the loads table: fewer reads calmer. */
-export type CraftCounts = { heights: number; icons: number; radii: number; sizes: number };
-
-export function countCraft(page: CraftPage): CraftCounts {
-  const controls = page.controls.filter((control) => control.kind !== "panel");
-
-  return {
-    heights: new Set(controls.map((control) => Math.round(control.height))).size,
-    icons: new Set(page.icons.map((icon) => Math.round(icon.size))).size,
-    radii: new Set(controls.map((control) => control.radius)).size,
-    sizes: new Set(page.texts.map((text) => text.size)).size,
-  };
-}

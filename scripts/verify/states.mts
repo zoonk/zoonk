@@ -134,7 +134,6 @@ async function settle(page: Page, ms: number) {
   );
 }
 
-/** Waits for the layout to hold still, so a late arrival isn't blamed on the first step. */
 async function holdStill(page: Page) {
   for (let tries = 0; tries < STILL_TRIES; tries += 1) {
     await page.evaluate(snapshotLayout);

@@ -14,7 +14,7 @@ import {
 import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from "./checks.mts";
 import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
-import { type CraftCounts, countCraft, craftFindings } from "./craft.mts";
+import { craftFindings } from "./craft.mts";
 import { type Shortcuts } from "./keys.mts";
 import {
   findOverflow,
@@ -62,7 +62,6 @@ export type Target = {
 
 export type LoadReport = LoadMeasurement & {
   bytes: { html: number; scripts: number; total: number };
-  craft: CraftCounts;
   mainThreadMs: number;
   database: { count: number; ms: number } | null;
   findings: Finding[];
@@ -207,7 +206,6 @@ export async function measureLoad(
     return {
       ...measurement,
       bytes,
-      craft: countCraft(craft),
       database: statements && {
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
