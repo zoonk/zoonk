@@ -78,7 +78,7 @@ function ChallengeDecision({
   const { node } = progress.walk;
 
   return (
-    <div className="flex flex-col gap-6" data-slot="challenge-decision">
+    <div className="flex flex-col gap-4" data-slot="challenge-decision">
       <div id={`challenge-prompt-${node.id}`}>
         <QuestionTitle text={names.fill(node.prompt)} />
       </div>

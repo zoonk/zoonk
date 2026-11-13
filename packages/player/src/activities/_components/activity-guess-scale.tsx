@@ -109,7 +109,7 @@ export function ActivityGuessScale({
       )}
 
       <ScaleChip
-        className="bg-background ring-foreground/10 ring-1"
+        className="bg-background text-muted-foreground"
         isLower={actualShare !== null}
         share={share}
         trackWidth={trackWidth}
