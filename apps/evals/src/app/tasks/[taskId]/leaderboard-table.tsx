@@ -7,7 +7,7 @@ import {
   getDefaultSortDirection,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard-sort";
-import { CELL_CLASS, NUMBER_CELL_CLASS, NUMBER_HEAD_CLASS } from "@/lib/table-classes";
+import { CELL_CLASS } from "@/lib/table-classes";
 import { Button } from "@zoonk/ui/components/button";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import {
@@ -69,7 +69,7 @@ function ColumnHead<Entry>({
 
   if (!sortKey) {
     return (
-      <TableHead className={cn("last:pr-0", isNumber && NUMBER_HEAD_CLASS)} title={title}>
+      <TableHead numeric={isNumber} title={title}>
         {label}
       </TableHead>
     );
@@ -81,7 +81,7 @@ function ColumnHead<Entry>({
   return (
     <TableHead
       aria-sort={isSorted ? `${direction}ending` : undefined}
-      className={cn("last:pr-0", isNumber && NUMBER_HEAD_CLASS)}
+      numeric={isNumber}
       title={title}
     >
       <button
@@ -178,12 +178,9 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
             <TableRow key={entry.modelId}>
               {shownColumns.map((column) => (
                 <TableCell
-                  className={cn(
-                    CELL_CLASS,
-                    column.isNumber && NUMBER_CELL_CLASS,
-                    column.cellClassName?.(entry),
-                  )}
+                  className={cn(CELL_CLASS, column.cellClassName?.(entry))}
                   key={column.id}
+                  numeric={column.isNumber}
                 >
                   {column.cell(entry, index)}
                 </TableCell>

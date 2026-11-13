@@ -1,13 +1,11 @@
 "use client";
 
-import { BusyContent, buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
+import { EnterLink } from "./enter-button";
 import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
 export function DetailLayout({
@@ -80,21 +78,18 @@ export function DetailContinueLink({
   started: boolean;
 }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
+    <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={href}
+      icon={<PlayIcon aria-hidden="true" />}
       lessonWritten={lessonWritten}
       prefetch={lessonWritten === false ? "auto" : true}
-      ref={ref}
+      size="lg"
     >
-      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
-        {started ? t("Continue") : t("Start")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+      {started ? t("Continue") : t("Start")}
+    </EnterLink>
   );
 }
 

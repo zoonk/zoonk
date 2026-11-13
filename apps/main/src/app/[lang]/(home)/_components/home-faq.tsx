@@ -121,7 +121,7 @@ export async function HomeFaq() {
       >
         <div>
           <h2
-            className="text-[clamp(2rem,4.2vw,3.125rem)] leading-[1.04] font-[670] tracking-[-0.045em] text-balance"
+            className="text-[clamp(2rem,4.2vw,3.125rem)] leading-[1.04] font-semibold tracking-[-0.045em] text-balance"
             id={TITLE_ID}
           >
             {t("Frequently asked questions")}

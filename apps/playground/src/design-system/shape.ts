@@ -73,6 +73,7 @@ export const SHAPE_RULES: readonly string[] = [
   "Content is flat: no shadows. A panel reads by its tone and one hairline; only overlays (menus, the palette, sheets) cast one soft shadow.",
   "Meters are 6px in the app and 8px on public pages, parts 2px apart with 3px corners (`MeterParts`); a task header's segments are 4px.",
   "Public bands keep 96px above and below on a laptop and 48px on a phone; an app page has no bands.",
+  "Each button height has one label size: 44px with 15px (`lg`), 36px with 14px, 30px with 13px (`sm`), 24px with 12px (`xs`). No call site sets a button's height or its label's size.",
   "Nothing is a pill except avatars, dots and rings.",
 ];
 

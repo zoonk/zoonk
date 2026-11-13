@@ -1,6 +1,6 @@
 "use client";
 
-import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tabs";
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 

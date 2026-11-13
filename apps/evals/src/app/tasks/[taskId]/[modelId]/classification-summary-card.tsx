@@ -1,6 +1,6 @@
 import { type ClassificationSummary } from "@/lib/classification-metrics";
 import { formatPercent } from "@/lib/format";
-import { CELL_CLASS, NUMBER_CELL_CLASS, NUMBER_HEAD_CLASS } from "@/lib/table-classes";
+import { CELL_CLASS } from "@/lib/table-classes";
 import {
   Table,
   TableBody,
@@ -14,8 +14,8 @@ import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 
 /** Both tables share these widths, so their columns start and end on the same lines. */
 const LABEL_COLUMN = "w-64";
-const NUMBER_HEAD = cn(NUMBER_HEAD_CLASS, "w-32 px-0");
-const NUMBER_CELL = cn(NUMBER_CELL_CLASS, "w-32 px-0");
+const NUMBER_COLUMN = "w-32 px-0";
+const NUMBER_CELL = cn(CELL_CLASS, NUMBER_COLUMN);
 
 function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
   return (
@@ -23,8 +23,12 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
       <TableHeader>
         <TableRow>
           <TableHead className={LABEL_COLUMN}>Expected label</TableHead>
-          <TableHead className={NUMBER_HEAD}>Correct</TableHead>
-          <TableHead className={NUMBER_HEAD}>Accuracy</TableHead>
+          <TableHead className={NUMBER_COLUMN} numeric>
+            Correct
+          </TableHead>
+          <TableHead className={NUMBER_COLUMN} numeric>
+            Accuracy
+          </TableHead>
         </TableRow>
       </TableHeader>
 
@@ -32,10 +36,12 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
         {summary.perLabel.map((item) => (
           <TableRow key={item.label}>
             <TableCell className={cn(CELL_CLASS, "font-medium")}>{item.label}</TableCell>
-            <TableCell className={NUMBER_CELL}>
+            <TableCell className={NUMBER_CELL} numeric>
               {item.correct}/{item.total}
             </TableCell>
-            <TableCell className={NUMBER_CELL}>{formatPercent(item.accuracy)}</TableCell>
+            <TableCell className={NUMBER_CELL} numeric>
+              {formatPercent(item.accuracy)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -58,7 +64,7 @@ function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
             </span>
           </TableHead>
           {summary.labels.map((label) => (
-            <TableHead className={NUMBER_HEAD} key={label}>
+            <TableHead className={NUMBER_COLUMN} key={label} numeric>
               {label}
             </TableHead>
           ))}
@@ -73,6 +79,7 @@ function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
               <TableCell
                 className={cn(NUMBER_CELL, predicted === expected && "font-semibold")}
                 key={predicted}
+                numeric
               >
                 {summary.counts[expected]?.[predicted] ?? 0}
               </TableCell>
