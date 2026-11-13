@@ -31,14 +31,16 @@ struct AdjustPlanSheet: View {
     self.goal = goal
     self.plan = plan
     self.section = section
-    _editor = State(initialValue: PlanEditor(goalId: goal.id, store: store))
+    _editor = State(
+      initialValue: PlanEditor(
+        goalId: goal.id, store: store, dateKind: GoalDateKind(isExam: goal.kind == .exam)))
   }
 
   var body: some View {
     NavigationStack {
       ScrollViewReader { proxy in
         ZoonkList {
-          PlanEditorLatestSection(editor: editor, plan: plan)
+          PlanEditorLatestSection(editor: editor, plan: plan, dateKind: dateKind)
 
           PlanDateSection(
             editor: editor, goal: goal, plan: plan, asksStudyEverything: section == .everything
@@ -54,11 +56,8 @@ struct AdjustPlanSheet: View {
               }
           }
 
-          PlanTimeSection(
-            editor: editor, goal: goal, plan: plan, weekendOn: weekendOn,
-            asksStudyEverything: section == .everything
-          )
-          .id(Section.time)
+          PlanTimeSection(editor: editor, goal: goal, plan: plan, weekendOn: weekendOn)
+            .id(Section.time)
 
           daysSection
             .id(Section.days)
@@ -67,14 +66,21 @@ struct AdjustPlanSheet: View {
             weekendSection
           }
 
+          if goal.kind == .exam, plan.feasibility?.deadline != nil {
+            PlanFullCourseSection(editor: editor, plan: plan, asks: section == .everything)
+              .id(Section.everything)
+          }
+
           AdjustPlanSections(editor: editor, goal: goal, plan: plan)
         }
         .disabled(editor.isSaving)
-        .announcesStatus(PlanEditorLatestSection.announcement(of: editor.latest, plan: plan))
+        .announcesStatus(
+          PlanEditorLatestSection.announcement(of: editor.latest, plan: plan, dateKind: dateKind)
+        )
         .onAppear {
           if section == .everything {
             // An exam studies everything after it from its time; any other goal drops its date.
-            proxy.scrollTo(goal.kind == .exam ? Section.time : Section.date, anchor: .top)
+            proxy.scrollTo(goal.kind == .exam ? Section.everything : Section.date, anchor: .top)
           } else if section != .top {
             proxy.scrollTo(section, anchor: .top)
           }
@@ -112,56 +118,44 @@ struct AdjustPlanSheet: View {
   private func aimSection(_ languageAim: LanguageAimView) -> some View {
     SwiftUI.Section {
       ForEach(languageAim.choices, id: \.aim) { choice in
-        Button {
-          guard choice.aim != languageAim.aim else {
-            return
-          }
-
-          Task {
-            await editor.change(
-              [.aim(choice.aim)],
-              sentence: String(
-                localized: "Your course now goes up to \(choice.aim).", table: "Plan",
-                comment: "Says a language course's aim changed; the argument is a level like B1"))
-          }
-        } label: {
-          VStack(alignment: .leading, spacing: 2) {
-            AimName(aim: choice.aim)
-              .typeStyle(.rowTitle)
-              .foregroundStyle(Color(.foreground))
-
-            Text(
-              aimChoiceDetail(
-                hours: choice.hours,
-                end: aimEnds[choice.aim])
-            )
-            .typeStyle(.meta)
-            .foregroundStyle(.mutedForeground)
-          }
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .contentShape(.rect)
-        }
-        .pickedRow(choice.aim == languageAim.aim)
-        .accessibilityAddTraits(choice.aim == languageAim.aim ? .isSelected : [])
+        aimRow(choice, isPicked: choice.aim == languageAim.aim)
       }
     } header: {
-      VStack(alignment: .leading, spacing: 4) {
-        SectionTitle(
-          Text(
-            "Your aim", tableName: "Plan",
-            comment:
-              "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
-          ))
-
+      SectionTitle(
         Text(
-          "How far your course goes, which sets how long your plan is.", tableName: "Plan",
-          comment: "Under the levels a language course can aim for"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .textCase(nil)
-      }
+          "Your aim", tableName: "Plan",
+          comment:
+            "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
+        ))
     }
+  }
+
+  private func aimRow(_ choice: LanguageAimView.Choice, isPicked: Bool) -> some View {
+    let detail = aimChoiceDetail(end: aimEnds[choice.aim])
+
+    return Button {
+      guard !isPicked else {
+        return
+      }
+
+      Task { await editor.change([.aim(choice.aim)]) }
+    } label: {
+      VStack(alignment: .leading, spacing: 2) {
+        AimName(aim: choice.aim)
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
+
+        if let detail {
+          Text(detail)
+            .typeStyle(.meta)
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .contentShape(.rect)
+    }
+    .pickedRow(isPicked)
+    .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 
   private var daysSection: some View {
@@ -180,18 +174,7 @@ struct AdjustPlanSheet: View {
             set: { on in
               let minutes = on ? plan.schedule.shape.minutes(for: weekday) : 0
 
-              Task {
-                await editor.change(
-                  [.weekdayMinutes(minutes, weekdays: [weekday])],
-                  sentence: on
-                    ? String(
-                      localized:
-                        "\(symbols[weekday]): \(planDurationText(minutes: Double(minutes))) a day.",
-                      table: "Plan", comment: "Says a weekday became a study day with its time")
-                    : String(
-                      localized: "\(symbols[weekday]): rest day.", table: "Plan",
-                      comment: "Says a weekday became a rest day"))
-              }
+              Task { await editor.change([.weekdayMinutes(minutes, weekdays: [weekday])]) }
             })
         )
         // A plan needs at least one study day.
@@ -258,38 +241,38 @@ struct AdjustPlanSheet: View {
   }
 
   private func setWeekend(_ minutes: Int) async {
-    await editor.change(
-      [.weekdayMinutes(minutes, weekdays: plan.schedule.shape.weekendDays)],
-      sentence: String(
-        localized: "Weekend time changed to \(planDurationText(minutes: Double(minutes))).",
-        table: "Plan", comment: "Says the plan's time on Saturday and Sunday changed"))
+    await editor.change([.weekdayMinutes(minutes, weekdays: plan.schedule.shape.weekendDays)])
   }
+
+  private var dateKind: GoalDateKind { GoalDateKind(isExam: goal.kind == .exam) }
 
   private static let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
 }
 
-/// Undo shows only while the change is the plan's latest.
+/// Main's editor note: what the change did, its consequence and "See all changes", how it applies,
+/// and Undo while the change is the plan's latest.
 struct PlanEditorLatestSection: View {
   let editor: PlanEditor
   let plan: GoalPlan
+  let dateKind: GoalDateKind
 
   var body: some View {
     if let latest = editor.latest {
       Section {
         if case .applied(let change, let sentence) = latest {
-          VStack(alignment: .leading, spacing: 4) {
+          VStack(alignment: .leading, spacing: 6) {
             Text(sentence)
               .typeStyle(.body.weight(.semibold))
 
-            if let effect = planEffectText(change.effect, plan: plan) {
-              Text(effect)
-                .foregroundStyle(.mutedForeground)
-            }
+            PlanEffectDiff(
+              effect: change.effect, today: plan.today,
+              options: PlanChangeOptions(
+                byDate: plan.schedule.targetDate != nil, dateKind: dateKind))
 
-            Text(Self.appliedLine(change))
+            Text(PlanChangeWords.appliedLine(todaySession: change.todaySession))
+              .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
           }
-          .typeStyle(.note)
 
           if change.canUndo {
             Button {
@@ -305,13 +288,22 @@ struct PlanEditorLatestSection: View {
     }
   }
 
-  static func announcement(of latest: PlanEditor.Latest?, plan: GoalPlan) -> String? {
+  static func announcement(of latest: PlanEditor.Latest?, plan: GoalPlan, dateKind: GoalDateKind)
+    -> String?
+  {
     guard case .applied(let change, let sentence) = latest else {
       return latest.flatMap(line)
     }
 
-    return [sentence, planEffectText(change.effect, plan: plan), appliedLine(change)]
-      .compactMap(\.self).joinedSentences()
+    let consequence = PlanChangeEffect.consequence(
+      change.effect,
+      PlanChangeOptions(byDate: plan.schedule.targetDate != nil, dateKind: dateKind),
+      today: plan.today)
+
+    return [
+      sentence, consequence?.text, PlanChangeWords.appliedLine(todaySession: change.todaySession),
+    ]
+    .compactMap(\.self).joinedSentences()
   }
 
   private static func line(of latest: PlanEditor.Latest) -> String? {
@@ -332,212 +324,4 @@ struct PlanEditorLatestSection: View {
       nil
     }
   }
-
-  private static func appliedLine(_ change: AppliedPlanChange) -> String {
-    switch change.todaySession {
-    case "changed":
-      String(
-        localized: "It's in your plan, and today's session follows it.", table: "Plan",
-        comment: "Says a change applies to today's session too")
-    case "unchanged":
-      String(
-        localized:
-          "It's in your plan from your next study day. Today's session stays as it is.",
-        table: "Plan", comment: "Says a change starts on the next study day")
-    default:
-      String(
-        localized: "Your plan follows it from now on.", table: "Plan",
-        comment: "Says a change applies")
-    }
-  }
-}
-
-func planEffectText(_ effect: PlanEffect?, plan: GoalPlan) -> String? {
-  planEffectText(
-    effect, today: plan.today,
-    isEstimated: plan.schedule.targetDate == nil || plan.schedule.targetDateEstimated)
-}
-
-func planEffectText(_ effect: PlanEffect?, today: String, isEstimated: Bool) -> String? {
-  guard let after = effect?.endDateAfter, let before = effect?.endDateBefore, after != before else {
-    return nil
-  }
-
-  let afterText = PlanDate.text(after, today: today)
-  let beforeText = PlanDate.text(before, today: today)
-
-  return isEstimated
-    ? String(
-      localized: "Ends around \(afterText) instead of \(beforeText).", table: "Plan",
-      comment: "How a change moves the plan's estimated end; the arguments are dates like 'May 5'")
-    : String(
-      localized: "Ends \(afterText) instead of \(beforeText).", table: "Plan",
-      comment: "How a change moves the plan's end; the arguments are dates like 'May 5'")
-}
-
-/// Main's `useAreaEndTexts`: when each subject whose end moves finishes, and what it gains or loses.
-func planAreaEndTexts(_ effect: PlanEffect?, today: String) -> [String] {
-  let estimated = effect?.lessonsAddedEstimated ?? false
-
-  return (effect?.areaEnds ?? []).map { end in
-    let area = end.area
-    let after = PlanDate.text(end.after, today: today)
-    let before = PlanDate.text(end.before, today: today)
-    let gained = end.lessonsGained ?? 0
-
-    if end.after == end.before {
-      return String(
-        localized:
-          "You still finish \(area) around \(after), with all its lessons: everything fits by your date.",
-        table: "Plan", comment: "A subject a change doesn't move; the date is a day like 'May 5'")
-    }
-
-    if gained > 0 && end.after > end.before {
-      return estimated
-        ? String(
-          localized:
-            "\(area) gets about \(gained) more lessons, so you finish it around \(after) instead of \(before).",
-          table: "Plan",
-          comment:
-            "A subject a change gives more lessons, some not written yet; the dates are days like 'May 5'"
-        )
-        : String(
-          localized:
-            "\(area) gets \(gained) more lessons, so you finish it around \(after) instead of \(before).",
-          table: "Plan",
-          comment: "A subject a change gives more lessons; the dates are days like 'May 5'")
-    }
-
-    if gained < 0 && end.after < end.before {
-      return String(
-        localized:
-          "\(area) has \(-gained) lessons fewer to go, so you finish it around \(after) instead of \(before).",
-        table: "Plan",
-        comment: "A subject a change leaves fewer lessons to do; the dates are days like 'May 5'")
-    }
-
-    return String(
-      localized: "You finish \(area) around \(after) instead of \(before).", table: "Plan",
-      comment: "When a change moves a subject's end; the dates are days like 'May 5'")
-  }
-}
-
-/// A proposal's effect beside its buttons; a focus leads with what each subject gains.
-func planProposalEffectText(_ effect: PlanEffect?, setsFocus: Bool, today: String) -> String? {
-  let sentences =
-    (setsFocus ? planAreaEndTexts(effect, today: today) : [])
-    + [planLessonsEffectText(effect)].compactMap(\.self)
-
-  return sentences.isEmpty ? nil : sentences.joinedSentences()
-}
-
-/// Mirrors main's `useLessonsEffectText` for a plan with a date: what a change adds and leaves out,
-/// naming a few of the lessons it leaves out and the topics not written yet.
-func planLessonsEffectText(_ effect: PlanEffect?) -> String? {
-  guard let effect else {
-    return nil
-  }
-
-  let leftOut = effect.lessonsLeftOut ?? []
-  let removed = effect.lessonsRemoved
-  let someOf = leftOut.count != removed
-  let names = leftOut.isEmpty ? nil : someOf ? lessonExamples(leftOut) : lessonList(leftOut)
-
-  let counts = lessonCountsText(
-    added: effect.lessonsAdded, about: effect.lessonsAddedEstimated ?? false, removed: removed,
-    names: names, someOf: someOf)
-  // A lesson swapped within its own topic still needs its name.
-  let netted =
-    removed == 0 && !leftOut.isEmpty
-    ? leftOutText(removed: leftOut.count, names: lessonList(leftOut), someOf: false) : nil
-  let unwritten = (effect.unwrittenLeftOut ?? []).map {
-    String(
-      localized: "\($0.skill) (about \($0.lessons))", table: "Plan",
-      comment: "A topic whose lessons aren't written yet, with about how many it has")
-  }
-  let unwrittenText =
-    unwritten.isEmpty
-    ? nil
-    : String(
-      localized: "Lessons not written yet: \(unwritten.formatted(.list(type: .and))).",
-      table: "Plan", comment: "Topics a change leaves out before their lessons are written")
-  let sentences = [counts, netted, unwrittenText].compactMap(\.self)
-
-  return sentences.isEmpty ? nil : sentences.joinedSentences()
-}
-
-private func lessonCountsText(added: Int, about: Bool, removed: Int, names: String?, someOf: Bool)
-  -> String?
-{
-  if added > 0 && removed > 0 {
-    switch (names, someOf, about) {
-    case (let names?, true, true):
-      return String(
-        localized: "Adds about \(added) lessons and leaves out \(removed), such as \(names).",
-        table: "Plan", comment: "A change's lessons added and left out, naming a few")
-    case (let names?, true, false):
-      return String(
-        localized: "Adds \(added) lessons and leaves out \(removed), such as \(names).",
-        table: "Plan", comment: "A change's lessons added and left out, naming a few")
-    case (let names?, false, true):
-      return String(
-        localized: "Adds about \(added) lessons and leaves out \(removed): \(names).",
-        table: "Plan", comment: "A change's lessons added and left out, naming them all")
-    case (let names?, false, false):
-      return String(
-        localized: "Adds \(added) lessons and leaves out \(removed): \(names).", table: "Plan",
-        comment: "A change's lessons added and left out, naming them all")
-    case (nil, _, true):
-      return String(
-        localized: "Adds about \(added) lessons and leaves out \(removed).", table: "Plan",
-        comment: "A change's lessons added and left out")
-    case (nil, _, false):
-      return String(
-        localized: "Adds \(added) lessons and leaves out \(removed).", table: "Plan",
-        comment: "A change's lessons added and left out")
-    }
-  }
-
-  if added > 0 {
-    return about
-      ? String(
-        localized: "Adds about \(added) lessons.", table: "Plan",
-        comment: "A change's lessons added, estimated")
-      : String(
-        localized: "Adds \(added) lessons.", table: "Plan", comment: "A change's lessons added")
-  }
-
-  return removed > 0 ? leftOutText(removed: removed, names: names, someOf: someOf) : nil
-}
-
-private func leftOutText(removed: Int, names: String?, someOf: Bool) -> String {
-  guard let names else {
-    return String(
-      localized: "Leaves out \(removed) lessons.", table: "Plan",
-      comment: "A change's lessons left out")
-  }
-
-  return someOf
-    ? String(
-      localized: "Leaves out \(removed) lessons, such as \(names).", table: "Plan",
-      comment: "A change's lessons left out, naming a few")
-    : String(
-      localized: "Leaves out \(removed) lessons: \(names).", table: "Plan",
-      comment: "A change's lessons left out, naming them all")
-}
-
-/// Main's `useExamples`: the first three, as a list.
-private func lessonExamples(_ names: [String]) -> String {
-  names.prefix(3).formatted(.list(type: .and))
-}
-
-/// Main's `useShortList` for lessons: three names, then how many more.
-private func lessonList(_ names: [String]) -> String {
-  guard names.count > 3 else {
-    return names.formatted(.list(type: .and))
-  }
-
-  return String(
-    localized: "\(names.prefix(3).joined(separator: ", ")) and \(names.count - 3) more",
-    table: "Plan", comment: "A few lesson names and how many more")
 }

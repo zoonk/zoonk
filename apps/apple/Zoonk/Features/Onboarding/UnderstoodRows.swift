@@ -199,8 +199,8 @@ enum UnderstoodRows {
           "Exam country", table: "Plan",
           comment: "Row with the country an exam belongs to, such as Argentina")
         : LocalizedStringResource(
-          "Content country", table: "Plan",
-          comment: "Setting: the country a goal's lessons are about, such as Portugal"),
+          "Country", table: "Onboarding",
+          comment: "Row with the country a goal's lessons are about, such as Portugal"),
       value: country.name,
       badge: badge,
       note: country.lessonVariety.map(lessonLanguageLine),
@@ -340,8 +340,10 @@ enum UnderstoodRows {
           id: "targetScore",
           label: facts.kind == "language"
             ? LocalizedStringResource(
-              "Level you're aiming for", table: "Onboarding",
-              comment: "Row with the language level a goal aims for")
+              "Level to reach", table: "Onboarding",
+              comment:
+                "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
+            )
             : LocalizedStringResource(
               "Target score", table: "Onboarding", comment: "Row with the score an exam aims for"),
           value: target, field: .targetScore, editValue: target))
@@ -430,7 +432,7 @@ enum UnderstoodRows {
         label: facts.kind == "exam"
           ? examDateLabel
           : LocalizedStringResource(
-            "Deadline", table: "Onboarding", comment: "Row with the date a goal aims for"),
+            "End date", table: "Onboarding", comment: "Row with the date a goal aims for"),
         value: date.formatted(.dateTime.day().month(.wide).year()),
         note: official.flatMap { day($0.date) }.map { daysLeft(until: $0, today: today) }
           ?? suggested.map { noticeDayText($0.date, isGuide: isGuide) },

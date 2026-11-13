@@ -456,6 +456,59 @@
         }
       }
     },
+    "~%@ of study · %lld phases · %lld topics" : {
+      "comment" : "A shared plan's size: its study time, phases and topics",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "~%1$@ of study · %#@phases@ · %#@topics@"
+          },
+          "substitutions" : {
+            "phases" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg phase"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg phases"
+                    }
+                  }
+                }
+              }
+            },
+            "topics" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg topic"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg topics"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "A plan for %@" : {
       "comment" : "Names a shared plan's screen; the argument is its subject",
       "localizations" : {
@@ -697,6 +750,9 @@
           }
         }
       }
+    },
+    "Shared with you" : {
+      "comment" : "Chip over a study plan someone shared with the learner"
     },
     "Start from this plan" : {
       "comment" : "Starts the learner's own plan from a shared one",

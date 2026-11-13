@@ -66,6 +66,17 @@
         }
       }
     },
+    "%@ · %@" : {
+      "comment" : "A prerequisite option and the time it takes, like \"Every lesson · 12 hr\"\nThe learner's phase under the roadmap: its number of the phases, then its name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
     "%@ · Building your plan" : {
       "comment" : "Eyebrow of the Plan while the goal's plan is being built",
       "localizations" : {
@@ -320,6 +331,17 @@
         }
       }
     },
+    "%@ → %@" : {
+      "comment" : "A row of a plan change's details: the value before the change, then after it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@"
+          }
+        }
+      }
+    },
     "%@ a day" : {
       "comment" : "The plan's time a day, under the pace",
       "localizations" : {
@@ -378,6 +400,31 @@
           }
         }
       }
+    },
+    "%@ a day covers about %@ of your exam topics" : {
+      "comment" : "The share of an exam's topics a time a day covers; the first argument is a duration",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day covers about %2$@ of your exam topics"
+          }
+        }
+      }
+    },
+    "%@ a day covers about %@ of your goal" : {
+      "comment" : "The share of a goal a time a day covers; the first argument is a duration",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day covers about %2$@ of your goal"
+          }
+        }
+      }
+    },
+    "%@ a day covers everything" : {
+      "comment" : "The time a day that covers the whole goal; the argument is a duration"
     },
     "%@ a day doesn't reach every part of your goal: what comes last in your path is left out." : {
       "comment" : "What the time a day leaves out of a goal",
@@ -791,6 +838,9 @@
           }
         }
       }
+    },
+    "%@ added to your plan." : {
+      "comment" : "Says one topic or subject joined the plan"
     },
     "%@ and %lld more" : {
       "comment" : "A few lesson names and how many more",
@@ -1308,6 +1358,12 @@
         }
       }
     },
+    "%@ and more" : {
+      "comment" : "A few of the lessons a plan change affects, as examples; the full count is shown beside them"
+    },
+    "%@ aren't in your plan." : {
+      "comment" : "Says several subjects left the plan"
+    },
     "%@ back in your lessons." : {
       "comment" : "Says a practice activity is back in the lessons",
       "localizations" : {
@@ -1484,6 +1540,9 @@
           }
         }
       }
+    },
+    "%@ ends" : {
+      "comment" : "A row of a plan change's details: the day a phase or subject ends"
     },
     "%@ for now. Pick the day when you know it." : {
       "comment" : "A month the learner named stands until they pick the day; the argument is the month the learner named, like 'May 2027'",
@@ -2363,6 +2422,12 @@
         }
       }
     },
+    "%@ is a day you don't study." : {
+      "comment" : "Why moving a phase's end; the argument is a weekday"
+    },
+    "%@ isn't in your plan." : {
+      "comment" : "Says one subject left the plan"
+    },
     "%@ left out of your lessons." : {
       "comment" : "Says a practice activity left the lessons",
       "localizations" : {
@@ -2723,6 +2788,15 @@
         }
       }
     },
+    "%@ start from the basics." : {
+      "comment" : "Says several subjects start from their basics"
+    },
+    "%@ starts" : {
+      "comment" : "A row of a plan change's details: the day a subject starts"
+    },
+    "%@ starts from the basics." : {
+      "comment" : "Says one subject starts from its basics"
+    },
     "%@ until %@" : {
       "comment" : "A line of a change's diff: the day a phase or subject ends",
       "localizations" : {
@@ -2787,6 +2861,23 @@
           }
         }
       }
+    },
+    "%@ will be added to your plan." : {
+      "comment" : "A plan change's consequence: one topic joins the plan"
+    },
+    "%@ will end on %@ instead of %@." : {
+      "comment" : "A plan change's consequence: a phase's end moves; the first argument is the phase's name, the others days like \"May 5\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ will end on %2$@ instead of %3$@."
+          }
+        }
+      }
+    },
+    "%@ won't be in your plan." : {
+      "comment" : "A plan change's consequence: one topic leaves the plan"
     },
     "%@, %@" : {
       "comment" : "The chapters done, then the ones skipped, on the line they fold under",
@@ -2912,6 +3003,17 @@
         }
       }
     },
+    "%@: %@" : {
+      "comment" : "An exam's choice, such as its foreign language, then the options the learner's plan studies, listed as the exam's notice names them",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
     "%@: %@ a day." : {
       "comment" : "Says a weekday became a study day with its time",
       "localizations" : {
@@ -2973,6 +3075,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@: günde %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@." : {
+      "comment" : "Says which options the plan studies for an exam's choice: the choice, like its foreign language, then the options",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@."
           }
         }
       }
@@ -3658,6 +3771,29 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld meydan okuma kaldı"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld challenges to go" : {
+      "comment" : "State of a plan with every lesson done and challenges left",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld challenge to go"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld challenges to go"
                 }
               }
             }
@@ -4870,6 +5006,29 @@
         }
       }
     },
+    "%lld fewer" : {
+      "comment" : "A row of a plan change's details: lessons fewer",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld fewer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld fewer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld lessons" : {
       "comment" : "How many lessons a chapter has",
       "localizations" : {
@@ -5316,6 +5475,95 @@
         }
       }
     },
+    "%lld lessons · starts %@" : {
+      "comment" : "A topic not ready yet: its lessons and the day they start, like 'May 5'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@count@ · starts %2$@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons · starts in %@" : {
+      "comment" : "A topic not ready yet: its lessons and the month they start, like 'Jan'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@count@ · starts in %2$@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons behind" : {
+      "comment" : "State of a plan the learner is behind, in lessons from earlier days",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson behind"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons behind"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld lessons from earlier days come first: once you've done them, you're keeping pace again." : {
       "comment" : "How a learner behind by some lessons catches up",
       "localizations" : {
@@ -5662,6 +5910,52 @@
         }
       }
     },
+    "%lld lessons not studied" : {
+      "comment" : "A phase the date passed with lessons not studied",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson not studied"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons not studied"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons skipped" : {
+      "comment" : "Lessons of a subject the learner skipped because they already knew them",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson skipped"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons skipped"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld lessons studied" : {
       "comment" : "Under the plan's progress percent, in a small tile: the lessons studied",
       "localizations" : {
@@ -6001,6 +6295,29 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Telafi edilecek %lld ders"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons to go" : {
+      "comment" : "A row of a plan change's details: a subject's lessons still to do",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson to go"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons to go"
                 }
               }
             }
@@ -6520,6 +6837,29 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld modül"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld more" : {
+      "comment" : "A row of a plan change's details: lessons more; also the button that brings up the next of the Plan's suggestions",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more"
                 }
               }
             }
@@ -8337,6 +8677,161 @@
         }
       }
     },
+    "%lld prerequisites · every lesson · %@" : {
+      "comment" : "The plan's prerequisites, all studied with every lesson, and the time they take",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@count@ · every lesson · %2$@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisite"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisites"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld prerequisites · first lessons only · %@" : {
+      "comment" : "The plan's prerequisites, all studied with their first lessons only, and the time",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@count@ · first lessons only · %2$@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisite"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisites"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld prerequisites · one short lesson each · %@" : {
+      "comment" : "The plan's prerequisites, each studied with one short lesson, and the time",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@count@ · one short lesson each · %2$@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisite"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisites"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld prerequisites · skipped" : {
+      "comment" : "The plan's prerequisites, all skipped",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld prerequisite · skipped"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld prerequisites · skipped"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld prerequisites · your choices · %@" : {
+      "comment" : "The plan's prerequisites with different choices, and the time they take",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@count@ · your choices · %2$@"
+          },
+          "substitutions" : {
+            "count" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisite"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg prerequisites"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld questions" : {
       "comment" : "Eyebrow: how many of the exam's questions a subject has",
       "localizations" : {
@@ -8670,6 +9165,29 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Zaten bildiğin %lld beceri"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld skipped" : {
+      "comment" : "Part of the prerequisites statement: how many are skipped",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld skipped"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld skipped"
                 }
               }
             }
@@ -9831,6 +10349,98 @@
         }
       }
     },
+    "%lld topics you already know" : {
+      "comment" : "A row of topics placement showed the learner knows",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld topic you already know"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld topics you already know"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld with every lesson" : {
+      "comment" : "Part of the prerequisites statement: how many are studied with every lesson",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld with every lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld with every lesson"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld with one short lesson" : {
+      "comment" : "Part of the prerequisites statement: how many are studied with one short lesson",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld with one short lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld with one short lesson"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld with the first lessons only" : {
+      "comment" : "Part of the prerequisites statement: how many are studied with their first lessons only",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld with the first lessons only"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld with the first lessons only"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld words" : {
       "comment" : "Section of a unit's words, with how many it teaches",
       "localizations" : {
@@ -10301,6 +10911,9 @@
         }
       }
     },
+    "0 lessons to go" : {
+      "comment" : "A row of a plan change's details: a subject with no lessons left to do"
+    },
     "A lesson to set up %@ on %@ comes before you need it." : {
       "comment" : "Says a setup lesson comes first",
       "localizations" : {
@@ -10365,6 +10978,9 @@
           }
         }
       }
+    },
+    "A lighter week from %@, at half the time." : {
+      "comment" : "Says a week at half the time starts; the argument is a day"
     },
     "A little to catch up" : {
       "comment" : "Title of the Plan's notice when behind",
@@ -10785,6 +11401,27 @@
           }
         }
       }
+    },
+    "Add %@ back to your plan?" : {
+      "comment" : "Asks to bring subjects the learner took out back into the plan"
+    },
+    "Add %@ to your plan?" : {
+      "comment" : "Asks to add topics to the plan; the argument lists them"
+    },
+    "Add it back" : {
+      "comment" : "Puts a skipped subject back in the plan"
+    },
+    "Add the lessons your time fits?" : {
+      "comment" : "Asks to bring in the lessons the learner's time fits"
+    },
+    "Add time a day or pick a later date." : {
+      "comment" : "Under the Plan's notice when the plan has more lessons than days left"
+    },
+    "Add to my plan" : {
+      "comment" : "Brings into the plan the lessons the learner's time fits"
+    },
+    "Added to your plan" : {
+      "comment" : "A row of a plan change's details: what joins the plan"
     },
     "Adding a setup lesson" : {
       "comment" : "A tool's setup lesson is being written",
@@ -14179,6 +14816,9 @@
         }
       }
     },
+    "Archive goal" : {
+      "comment" : "Archives the goal, after asking"
+    },
     "Archive this goal" : {
       "comment" : "Archives the goal, after asking",
       "localizations" : {
@@ -14296,6 +14936,12 @@
           }
         }
       }
+    },
+    "Asked a lot" : {
+      "comment" : "A topic past exams asked often"
+    },
+    "Back to the usual difficulty?" : {
+      "comment" : "Asks to go back to lessons at the usual difficulty"
     },
     "Beginner" : {
       "comment" : "A course level",
@@ -14474,6 +15120,9 @@
         }
       }
     },
+    "Bring %@ back to your lessons?" : {
+      "comment" : "Asks to bring practice activities back to the lessons, such as Listening"
+    },
     "Bring it back" : {
       "comment" : "Puts a skipped subject back in the plan",
       "localizations" : {
@@ -14532,6 +15181,9 @@
           }
         }
       }
+    },
+    "By subject" : {
+      "comment" : "Section of the preparation of each subject"
     },
     "By the end of this unit" : {
       "comment" : "Section of what a unit teaches",
@@ -14898,6 +15550,9 @@
           }
         }
       }
+    },
+    "Call" : {
+      "comment" : "The live call that closes a language phase"
     },
     "Call length" : {
       "comment" : "Picks the practice call's length",
@@ -15318,6 +15973,9 @@
         }
       }
     },
+    "Change my plan" : {
+      "comment" : "Applies a proposed plan change"
+    },
     "Change the content country?" : {
       "comment" : "Title of the question before a goal's plan is rebuilt for another country",
       "localizations" : {
@@ -15494,6 +16152,12 @@
           }
         }
       }
+    },
+    "Change your plan?" : {
+      "comment" : "Title of a plan change that makes several changes at once"
+    },
+    "Change your prerequisites?" : {
+      "comment" : "Asks to change how much of the prerequisites the plan studies"
     },
     "Chapter %lld" : {
       "comment" : "A chapter's number",
@@ -16091,6 +16755,9 @@
         }
       }
     },
+    "Choose where to focus" : {
+      "comment" : "Opens the choice of the subjects that get more time"
+    },
     "Chromebook" : {
       "comment" : "A device's system",
       "localizations" : {
@@ -16149,6 +16816,9 @@
           }
         }
       }
+    },
+    "Collapsed" : {
+      "comment" : "Spoken state of a closed disclosure"
     },
     "Coming up" : {
       "comment" : "Spoken state of a later lesson",
@@ -17094,6 +17764,9 @@
         }
       }
     },
+    "Country: %@" : {
+      "comment" : "A line naming the country a course or a goal's lessons are about; the argument is a country's name, such as Portugal"
+    },
     "Course complete" : {
       "comment" : "A Plan suggestion's title once every lesson and challenge of the course is done, while the exam's practice tests are still ahead",
       "localizations" : {
@@ -17152,6 +17825,9 @@
           }
         }
       }
+    },
+    "Covering everything takes about %@ a day." : {
+      "comment" : "The time a day that would cover everything; the argument is a duration"
     },
     "Daily time changed to %@." : {
       "comment" : "Says the plan's time a day changed",
@@ -17270,6 +17946,9 @@
           }
         }
       }
+    },
+    "Date passed" : {
+      "comment" : "State of a plan whose date passed"
     },
     "Date set to %@." : {
       "comment" : "Says the goal's date",
@@ -17684,6 +18363,24 @@
         }
       }
     },
+    "Done." : {
+      "comment" : "A plan change was applied"
+    },
+    "Done. It starts on your next study day." : {
+      "comment" : "A plan change was applied from the next study day"
+    },
+    "Done. Today's lessons changed too." : {
+      "comment" : "A plan change was applied, and today's lessons follow it"
+    },
+    "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam." : {
+      "comment" : "How the exam preparation number is worked out"
+    },
+    "Easier lessons from now on." : {
+      "comment" : "Says the lessons are easier"
+    },
+    "Easier lessons?" : {
+      "comment" : "Asks for easier lessons"
+    },
     "Easier material from now on." : {
       "comment" : "What easier lessons do",
       "localizations" : {
@@ -17742,6 +18439,15 @@
           }
         }
       }
+    },
+    "End date" : {
+      "comment" : "A row of a plan change's details: the goal's end date\nSetting: the goal's end date"
+    },
+    "End date: %@." : {
+      "comment" : "Says the goal's end date changed; the argument is a day like \"May 5\""
+    },
+    "End your plan at the exam?" : {
+      "comment" : "Asks to stop the plan at the exam"
     },
     "Ends %@ instead of %@." : {
       "comment" : "How a change moves the plan's end; the arguments are dates like 'May 5'",
@@ -18227,6 +18933,9 @@
         }
       }
     },
+    "Every lesson" : {
+      "comment" : "Prerequisite option: all its lessons"
+    },
     "Every lesson is done: win the challenges to finish your plan." : {
       "comment" : "What's left once every lesson is done",
       "localizations" : {
@@ -18285,6 +18994,12 @@
           }
         }
       }
+    },
+    "Every lesson is done. Win the challenge to finish your plan." : {
+      "comment" : "What's left once every lesson is done: one challenge"
+    },
+    "Every lesson is done. Win the challenges to finish your plan." : {
+      "comment" : "What's left once every lesson is done: several challenges"
     },
     "Every other week" : {
       "comment" : "Written practice cadence",
@@ -18403,6 +19118,9 @@
           }
         }
       }
+    },
+    "Every part of your goal, with no end date." : {
+      "comment" : "What dropping the goal's end date does"
     },
     "Every topic, even after the exam, at your own pace." : {
       "comment" : "What studying everything does",
@@ -18699,6 +19417,9 @@
         }
       }
     },
+    "Exam date: %@." : {
+      "comment" : "Says the exam's date changed; the argument is a day like \"May 5\""
+    },
     "Examples only" : {
       "comment" : "A tool learned with examples",
       "localizations" : {
@@ -18757,6 +19478,9 @@
           }
         }
       }
+    },
+    "Expanded" : {
+      "comment" : "Spoken state of an open disclosure"
     },
     "Fading" : {
       "comment" : "A skill the learner is forgetting",
@@ -18935,6 +19659,12 @@
         }
       }
     },
+    "Find a date" : {
+      "comment" : "Works out the later end date that fits the lessons left"
+    },
+    "Finding the time that covers everything…" : {
+      "comment" : "While the time a day that covers everything is worked out"
+    },
     "Finished" : {
       "comment" : "Pace of a finished plan",
       "localizations" : {
@@ -19053,6 +19783,9 @@
         }
       }
     },
+    "First lessons only" : {
+      "comment" : "Prerequisite option: the first third of its lessons"
+    },
     "Fitting the plan into your days" : {
       "comment" : "A phase of building the plan",
       "localizations" : {
@@ -19111,6 +19844,9 @@
           }
         }
       }
+    },
+    "Focus on %@?" : {
+      "comment" : "Asks to give these subjects more time"
     },
     "Focus on these" : {
       "comment" : "Saves the subjects to focus on",
@@ -19289,6 +20025,12 @@
         }
       }
     },
+    "From what you've studied and how well you answer." : {
+      "comment" : "What the exam preparation number is made of"
+    },
+    "Get them ready" : {
+      "comment" : "Writes the lessons of a topic that aren't ready yet"
+    },
     "Get your certificate" : {
       "comment" : "Writes the certificate of the finished plan's course and shows it",
       "localizations" : {
@@ -19347,6 +20089,15 @@
           }
         }
       }
+    },
+    "Getting these lessons ready takes about half a minute." : {
+      "comment" : "Explains a topic whose lessons aren't ready yet"
+    },
+    "Getting your lessons ready…" : {
+      "comment" : "A topic's lessons being made ready"
+    },
+    "Getting your new plan ready" : {
+      "comment" : "Title of the notice while a goal's plan is made again for its new country"
     },
     "Go to Today" : {
       "comment" : "Opens Today, which puts what's behind first",
@@ -19643,6 +20394,12 @@
         }
       }
     },
+    "Harder lessons from now on." : {
+      "comment" : "Says the lessons are harder"
+    },
+    "Harder lessons?" : {
+      "comment" : "Asks for harder lessons"
+    },
     "Here's what to study next." : {
       "comment" : "Leads to what to study next",
       "localizations" : {
@@ -19819,6 +20576,9 @@
           }
         }
       }
+    },
+    "How it's calculated" : {
+      "comment" : "Shows how a plan's number is worked out"
     },
     "How ready you are for the exam, from what you studied and how you answered." : {
       "comment" : "Explains the exam preparation number",
@@ -20881,6 +21641,18 @@
           }
         }
       }
+    },
+    "Keep studying" : {
+      "comment" : "Keeps studying the lessons left after the exam's date passed\nKeeps studying what's left after the exam"
+    },
+    "Keep studying after the exam" : {
+      "comment" : "Opens studying what's left after the exam\nSetting and question: keep studying what's left after the exam"
+    },
+    "Keep studying after the exam?" : {
+      "comment" : "Asks to keep studying what's left after the exam"
+    },
+    "Keep studying this one until then." : {
+      "comment" : "Under the notice while a goal's plan is made again for its new country"
     },
     "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done." : {
       "comment" : "Under the notice while a goal's plan is rebuilt for its new content country",
@@ -22246,6 +23018,12 @@
         }
       }
     },
+    "Less time for %@?" : {
+      "comment" : "Asks to give these subjects less time"
+    },
+    "Less time for %@." : {
+      "comment" : "Says the plan gives these subjects less time"
+    },
     "Lesson examples" : {
       "comment" : "Row with the country a general course's examples come from, when the learner lives elsewhere",
       "localizations" : {
@@ -22481,6 +23259,9 @@
           }
         }
       }
+    },
+    "Lessons added to your plan." : {
+      "comment" : "Says the lessons the learner's time fits joined the plan"
     },
     "Lessons at the usual difficulty from now on." : {
       "comment" : "Says the difficulty went back to the default",
@@ -22960,6 +23741,9 @@
         }
       }
     },
+    "Lessons you've studied or already knew, out of your plan's." : {
+      "comment" : "What the goal's progress number is made of"
+    },
     "Level" : {
       "comment" : "Label of a language goal's level",
       "localizations" : {
@@ -23018,6 +23802,9 @@
           }
         }
       }
+    },
+    "Level to reach: %@." : {
+      "comment" : "Says a language course's level to reach changed; the argument is a level like B1"
     },
     "Linux" : {
       "comment" : "A device's system",
@@ -23137,6 +23924,9 @@
         }
       }
     },
+    "Longer calls come with a subscription." : {
+      "comment" : "Says longer practice calls need a subscription"
+    },
     "Longer calls come with Plus." : {
       "comment" : "Says longer practice calls need Plus",
       "localizations" : {
@@ -23254,6 +24044,12 @@
           }
         }
       }
+    },
+    "Make %@ a rest day?" : {
+      "comment" : "Asks to make one weekday a rest day"
+    },
+    "Make %@ rest days?" : {
+      "comment" : "Asks to make several weekdays rest days"
     },
     "Mapping the skills it takes" : {
       "comment" : "A phase of building the plan",
@@ -23491,6 +24287,9 @@
         }
       }
     },
+    "Mixed" : {
+      "comment" : "Prerequisites with different choices"
+    },
     "Mock exam" : {
       "comment" : "The next mock exam on the path",
       "localizations" : {
@@ -23549,6 +24348,9 @@
           }
         }
       }
+    },
+    "Mock exams" : {
+      "comment" : "A row of a plan change's details: the weekday of the weekly mock exams"
     },
     "Mock exams on %@" : {
       "comment" : "A line of a change's diff: the weekday of the weekly mock exams",
@@ -23904,6 +24706,9 @@
         }
       }
     },
+    "More explanation?" : {
+      "comment" : "Asks for more explanation"
+    },
     "More later: %@" : {
       "comment" : "Tools only later phases use",
       "localizations" : {
@@ -24199,6 +25004,12 @@
         }
       }
     },
+    "More lessons than days left" : {
+      "comment" : "Title of the Plan's notice when the plan has more lessons than days left"
+    },
+    "More on an earlier topic" : {
+      "comment" : "A chapter that goes further into an earlier one"
+    },
     "More practice" : {
       "comment" : "Steering: more practice",
       "localizations" : {
@@ -24317,6 +25128,9 @@
         }
       }
     },
+    "More practice?" : {
+      "comment" : "Asks for more practice"
+    },
     "More time for %@." : {
       "comment" : "Says the plan gives more time to these subjects",
       "localizations" : {
@@ -24376,6 +25190,53 @@
         }
       }
     },
+    "Move the end of %@ %lld days later?" : {
+      "comment" : "Asks to move a phase's end later; the first argument is the phase's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the end of %1$@ %#@days@ later?"
+          },
+          "substitutions" : {
+            "days" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg day"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg days"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Move the end of %@ off %@?" : {
+      "comment" : "Asks to move a phase's end off a weekday; the second argument is a weekday",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the end of %1$@ off %2$@?"
+          }
+        }
+      }
+    },
+    "Move this week's challenge to %@?" : {
+      "comment" : "Asks to move the week's challenge; the argument is a day like \"May 5\""
+    },
     "Move your date to %@" : {
       "comment" : "Moves the goal's date to the day its time covers everything; the argument is a date like 'May 5'",
       "localizations" : {
@@ -24434,6 +25295,27 @@
           }
         }
       }
+    },
+    "Move your date to %@?" : {
+      "comment" : "Asks to move the goal's date; the argument is a day like \"May 5\""
+    },
+    "Move your date to cover everything" : {
+      "comment" : "Opens the goal's date to move it later"
+    },
+    "Move your end date to %@?" : {
+      "comment" : "Asks to move the goal's end date; the argument is a day like \"May 5\""
+    },
+    "Move your exam date to %@?" : {
+      "comment" : "Asks to move the exam's date; the argument is a day like \"May 5\""
+    },
+    "Move your phase dates later?" : {
+      "comment" : "Asks to move several phases' ends later"
+    },
+    "Move your phase dates off rest days?" : {
+      "comment" : "Asks to move phases' ends off days the learner doesn't study"
+    },
+    "Move your phase dates?" : {
+      "comment" : "Asks to move the phases' ends"
     },
     "Name" : {
       "comment" : "Field holding the goal's name",
@@ -24730,6 +25612,9 @@
         }
       }
     },
+    "New lessons start" : {
+      "comment" : "A row of a plan change's details: the day the topics added start"
+    },
     "New words" : {
       "comment" : "Practice activity",
       "localizations" : {
@@ -24906,6 +25791,9 @@
           }
         }
       }
+    },
+    "Next mock exam" : {
+      "comment" : "A row of a plan change's details: the next mock exam's day"
     },
     "Next on your path" : {
       "comment" : "Section of what comes next on the plan",
@@ -25142,6 +26030,9 @@
           }
         }
       }
+    },
+    "No date fits all your lessons." : {
+      "comment" : "No later end date fits the lessons left"
     },
     "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then." : {
       "comment" : "A goal without a deadline, and what a deadline would do",
@@ -25438,6 +26329,9 @@
         }
       }
     },
+    "No time a day covers everything by %@." : {
+      "comment" : "No time a day covers the whole goal by its date; the argument is a day like \"May 5\""
+    },
     "No time for this phase's challenge before your date" : {
       "comment" : "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date",
       "localizations" : {
@@ -25674,6 +26568,9 @@
         }
       }
     },
+    "Not enough time" : {
+      "comment" : "State of a plan with more lessons than days left"
+    },
     "Not in your plan" : {
       "comment" : "A phase the plan holds nothing of\nA subject the plan leaves out",
       "localizations" : {
@@ -25733,6 +26630,12 @@
         }
       }
     },
+    "Not in your plan · you took this subject out" : {
+      "comment" : "A topic the plan leaves out: the learner took its subject out"
+    },
+    "Not in your plan · your time doesn't cover it" : {
+      "comment" : "A topic the plan leaves out: no time for it by the date"
+    },
     "Not now" : {
       "comment" : "Puts a suggestion off",
       "localizations" : {
@@ -25791,6 +26694,9 @@
           }
         }
       }
+    },
+    "Not ready yet" : {
+      "comment" : "A topic whose lessons aren't ready"
     },
     "not studied" : {
       "comment" : "Spoken state of a study day missed",
@@ -26205,6 +27111,9 @@
         }
       }
     },
+    "One short lesson each" : {
+      "comment" : "Prerequisite option: one short lesson"
+    },
     "Only the final weeks" : {
       "comment" : "Written practice cadence",
       "localizations" : {
@@ -26381,6 +27290,9 @@
           }
         }
       }
+    },
+    "Other options" : {
+      "comment" : "Opens a suggestion's other answers"
     },
     "Overview" : {
       "comment" : "A course level",
@@ -26795,6 +27707,17 @@
         }
       }
     },
+    "Phase %lld of %lld" : {
+      "comment" : "The learner's phase of the plan's phases, under the roadmap",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Phase %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "Phase challenge" : {
       "comment" : "The challenge that closes a phase",
       "localizations" : {
@@ -26972,6 +27895,9 @@
         }
       }
     },
+    "Pick one so your plan includes it." : {
+      "comment" : "Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options."
+    },
     "Pick up to %lld." : {
       "comment" : "Over the options of an exam's choice whose candidates take several of them, like two of a course's modules",
       "localizations" : {
@@ -27089,6 +28015,9 @@
           }
         }
       }
+    },
+    "Plan ends" : {
+      "comment" : "A row of a plan change's details: the day the plan ends"
     },
     "Plan ends %@" : {
       "comment" : "A line of a change's diff: the day the plan ends",
@@ -27322,6 +28251,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plan güncellendi"
+          }
+        }
+      }
+    },
+    "planChangeSeveralAdded" : {
+      "comment" : "Says several topics or subjects joined the plan, named as a list",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ added to your plan."
+          }
+        }
+      }
+    },
+    "planChangeTopicsJoin" : {
+      "comment" : "A plan change's consequence: several topics join the plan, named as a list such as \"Statistics, Geometry and 3 more topics\"",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ will be added to your plan."
+          }
+        }
+      }
+    },
+    "planChangeTopicsLeave" : {
+      "comment" : "A plan change's consequence: several topics leave the plan, named as a list such as \"Statistics, Geometry and 3 more topics\"",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ won't be in your plan."
           }
         }
       }
@@ -28034,6 +28999,9 @@
         }
       }
     },
+    "Prerequisites: %@." : {
+      "comment" : "Says how the plan studies its prerequisites; the argument lists the choices"
+    },
     "Previous" : {
       "comment" : "Goes back to the previous of the Plan's suggestions",
       "localizations" : {
@@ -28565,6 +29533,9 @@
         }
       }
     },
+    "Recommended" : {
+      "comment" : "Marks the recommended prerequisite option"
+    },
     "Recommended: a little every week, which improves writing the most." : {
       "comment" : "What practicing every week does",
       "localizations" : {
@@ -28682,6 +29653,9 @@
           }
         }
       }
+    },
+    "Remove your focus?" : {
+      "comment" : "Asks to stop giving any subject more time"
     },
     "Rename goal" : {
       "comment" : "Opens the dialog that renames the goal\nTitle of the dialog that renames the goal",
@@ -29037,6 +30011,12 @@
         }
       }
     },
+    "Review on %@" : {
+      "comment" : "A row of a plan change's details: a review day; the argument is a day like \"May 5\""
+    },
+    "Right answers" : {
+      "comment" : "Label of a subject's right answers"
+    },
     "Save" : {
       "comment" : "Saves the goal's date\nSaves the options picked for an exam's choice\nSaves the tool choice",
       "localizations" : {
@@ -29328,6 +30308,9 @@
         }
       }
     },
+    "Schedule" : {
+      "comment" : "Label of the tile with the plan's state, such as \"Up to date\""
+    },
     "Search countries" : {
       "comment" : "Placeholder of the country search field",
       "localizations" : {
@@ -29386,6 +30369,9 @@
           }
         }
       }
+    },
+    "See all changes" : {
+      "comment" : "Shows every change a plan change makes"
     },
     "See the full course" : {
       "comment" : "Opens the Library course the plan is built from",
@@ -29504,6 +30490,9 @@
           }
         }
       }
+    },
+    "See what changes" : {
+      "comment" : "Works out the time that covers everything and shows what it changes"
     },
     "Setup lesson first" : {
       "comment" : "A setup lesson comes first",
@@ -29865,6 +30854,15 @@
         }
       }
     },
+    "Skip the basics of %@?" : {
+      "comment" : "Asks to start these subjects past their basics"
+    },
+    "Skipped" : {
+      "comment" : "Label of a subject's lessons the learner already knew"
+    },
+    "Skipped · you already know it" : {
+      "comment" : "A chapter the learner tested out of"
+    },
     "Skipped because you already know it" : {
       "comment" : "A chapter the learner tested out of",
       "localizations" : {
@@ -30160,6 +31158,9 @@
         }
       }
     },
+    "Start %@ from the basics?" : {
+      "comment" : "Asks to start these subjects from their basics"
+    },
     "Start the call" : {
       "comment" : "Starts the practice call",
       "localizations" : {
@@ -30219,6 +31220,9 @@
         }
       }
     },
+    "Starts with %@" : {
+      "comment" : "A row of a plan change's details: the subjects a review asks first"
+    },
     "Studied" : {
       "comment" : "A prerequisite already studied",
       "localizations" : {
@@ -30274,6 +31278,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çalışıldı"
+          }
+        }
+      }
+    },
+    "Study %@ a day?" : {
+      "comment" : "Asks to change the time a day; the argument is a duration like \"30 min\""
+    },
+    "Study %@ on %@?" : {
+      "comment" : "Asks to change some weekdays' time; the first argument is a duration, the second weekdays",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Study %1$@ on %2$@?"
+          }
+        }
+      }
+    },
+    "Study %lld more min a day for %lld days to be up to date." : {
+      "comment" : "How much more time a day catches up with the plan; the first number is minutes, the second days",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Study %1$lld more min a day for %#@days@ to be up to date."
+          },
+          "substitutions" : {
+            "days" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg day"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg days"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -30454,6 +31505,12 @@
           }
         }
       }
+    },
+    "Study up to %@?" : {
+      "comment" : "Asks to change the level a language course goes up to; the argument is a level like B1"
+    },
+    "Study without an end date?" : {
+      "comment" : "Asks to drop the goal's date"
     },
     "Subject" : {
       "comment" : "Eyebrow of an exam subject's page",
@@ -30696,6 +31753,21 @@
           }
         }
       }
+    },
+    "Switch" : {
+      "comment" : "Confirms a new country, which makes the goal a new plan"
+    },
+    "Switch to %@?" : {
+      "comment" : "Title of the question before a goal's plan is made again for another country; the argument is a country's name, such as Portugal"
+    },
+    "Take %@ out of your lessons?" : {
+      "comment" : "Asks to leave practice activities out of the lessons, such as Listening"
+    },
+    "Take %@ out of your plan?" : {
+      "comment" : "Asks to leave these subjects out of the plan"
+    },
+    "Take a lighter week from %@, at half the time?" : {
+      "comment" : "Asks to study half the time for a week; the argument is a day like \"May 5\""
     },
     "Take the test and skip the chapter" : {
       "comment" : "What the chapter's test-out does",
@@ -31051,6 +32123,12 @@
         }
       }
     },
+    "That gives you time to finish each phase's lessons." : {
+      "comment" : "Why moving several phases' ends later"
+    },
+    "That gives you time to finish its lessons." : {
+      "comment" : "Why moving a phase's end later"
+    },
     "The call didn't start. Try again in a moment." : {
       "comment" : "Says the practice call didn't start",
       "localizations" : {
@@ -31110,6 +32188,9 @@
         }
       }
     },
+    "The call isn't in your plan" : {
+      "comment" : "A language phase whose closing call has no day in the plan"
+    },
     "The day is here" : {
       "comment" : "Plan subtitle on the goal's day",
       "localizations" : {
@@ -31168,6 +32249,9 @@
           }
         }
       }
+    },
+    "The exam is on %@." : {
+      "comment" : "The exam's day its notice or official calendar gives; the argument is a date like 'May 5, 2027'"
     },
     "The exam notice says %@." : {
       "comment" : "The exam's day its notice gives; the argument is a date like 'May 5, 2027'",
@@ -31405,6 +32489,20 @@
         }
       }
     },
+    "The most any time covers is about %@, at %@ a day." : {
+      "comment" : "No time a day covers everything: the most any covers, and at what time a day",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The most any time covers is about %1$@, at %2$@ a day."
+          }
+        }
+      }
+    },
+    "The numbers are different today." : {
+      "comment" : "Over a plan change the learner accepted: its numbers changed since it was worked out, so it asks again with today's"
+    },
     "The same practice in alternate weeks: less spread out, more at a time." : {
       "comment" : "What practicing every other week does",
       "localizations" : {
@@ -31464,6 +32562,9 @@
         }
       }
     },
+    "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them." : {
+      "comment" : "How the goal's progress number is worked out"
+    },
     "The subjects you pick come first and get more depth." : {
       "comment" : "What focusing on subjects does",
       "localizations" : {
@@ -31522,6 +32623,15 @@
           }
         }
       }
+    },
+    "The subjects you pick get more of your time." : {
+      "comment" : "What focusing on subjects does"
+    },
+    "The Trickster" : {
+      "comment" : "The challenge that closes a phase, named after its character, the Trickster"
+    },
+    "The Trickster isn't in your plan" : {
+      "comment" : "A phase whose closing challenge has no day in the plan. The Trickster is the name of the challenge's character"
     },
     "There's nothing left to prepare for this topic." : {
       "comment" : "A far topic with nothing to outline",
@@ -31641,6 +32751,12 @@
         }
       }
     },
+    "These lessons aren't ready yet. Try again later." : {
+      "comment" : "A topic whose lessons can't be made ready now"
+    },
+    "They come first on Today." : {
+      "comment" : "Where the lessons from earlier days a learner is behind on are"
+    },
     "This chapter isn't in your plan" : {
       "comment" : "Shown for a chapter that isn't in the learner's plan",
       "localizations" : {
@@ -31759,6 +32875,12 @@
         }
       }
     },
+    "This subject isn't in your plan yet." : {
+      "comment" : "Why a subject isn't in the plan: no lesson teaches it yet"
+    },
+    "This subject isn't in your plan: not enough time before your exam." : {
+      "comment" : "Why a subject isn't in the plan: no time for it by the date"
+    },
     "This unit isn't in your plan" : {
       "comment" : "Shown for a unit that isn't in the learner's plan",
       "localizations" : {
@@ -31876,6 +32998,9 @@
           }
         }
       }
+    },
+    "This week's challenge moved to %@." : {
+      "comment" : "Says the week's challenge moved; the argument is a day"
     },
     "Time a day" : {
       "comment" : "Setting: study time a day",
@@ -32525,6 +33650,9 @@
           }
         }
       }
+    },
+    "Topics on the exam" : {
+      "comment" : "Section of a subject's topics, from the exam's official notice or guide"
     },
     "Topics shared with %@ count for both exams, so you study them once." : {
       "comment" : "On one exam's plan. The name is the learner's other exam that tests some of the same topics",
@@ -33984,6 +35112,9 @@
         }
       }
     },
+    "Up to date" : {
+      "comment" : "State of a plan the learner keeps up with"
+    },
     "Use this date" : {
       "comment" : "Takes the notice's day as the date",
       "localizations" : {
@@ -34397,6 +35528,9 @@
         }
       }
     },
+    "We couldn't work out the time needed." : {
+      "comment" : "The time a day that covers everything couldn't be worked out"
+    },
     "We noticed a pattern" : {
       "comment" : "A rule the learner keeps getting wrong, noticed in the unit's mistakes",
       "localizations" : {
@@ -34455,6 +35589,12 @@
           }
         }
       }
+    },
+    "We recommend every lesson. Your time covers them." : {
+      "comment" : "The app's recommendation for the prerequisites"
+    },
+    "We recommend one short lesson each, so there's time for the rest." : {
+      "comment" : "The app's recommendation for the prerequisites"
     },
     "We recommend the essentials, so the topics that build on them make sense." : {
       "comment" : "The app's recommendation for prerequisites",
@@ -34515,6 +35655,15 @@
         }
       }
     },
+    "We recommend the first lessons only." : {
+      "comment" : "The app's recommendation for the prerequisites"
+    },
+    "We suggest %@ a day" : {
+      "comment" : "The time a day worth most, when none covers everything; the argument is a duration"
+    },
+    "We'll make a new plan for %@. Finished lessons stay done." : {
+      "comment" : "Body of the question before a goal's plan is rebuilt for another country; the argument is a country's name, such as Portugal"
+    },
     "Weekend time changed to %@." : {
       "comment" : "Says the plan's time on Saturday and Sunday changed",
       "localizations" : {
@@ -34573,6 +35722,9 @@
           }
         }
       }
+    },
+    "Weekly challenge" : {
+      "comment" : "A row of a plan change's details: the weekday of the weekly challenge"
     },
     "Weekly challenges on %@" : {
       "comment" : "A line of a change's diff: the weekday of the weekly challenges",
@@ -35766,6 +36918,9 @@
         }
       }
     },
+    "You finish in %@." : {
+      "comment" : "When a plan that goes on after the exam finishes, as a month and year"
+    },
     "You finished your plan" : {
       "comment" : "Title once the plan is over",
       "localizations" : {
@@ -35884,6 +37039,52 @@
         }
       }
     },
+    "You have %lld lessons left. A later end date fits them." : {
+      "comment" : "Lessons left once the goal's end date passed",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You have %lld lesson left. A later end date fits it."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You have %lld lessons left. A later end date fits them."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You have %lld lessons left. Keep studying them, or archive this goal?" : {
+      "comment" : "Lessons left once the exam's date passed, and the question",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You have %lld lesson left. Keep studying it, or archive this goal?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You have %lld lessons left. Keep studying them, or archive this goal?"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "You have it" : {
       "comment" : "Status of a tool the course uses, like a program, that the learner already has",
       "localizations" : {
@@ -35942,6 +37143,35 @@
           }
         }
       }
+    },
+    "You have more lessons than days left. Add time a day or pick a later date." : {
+      "comment" : "A plan with more lessons than days left before its date"
+    },
+    "You have time for %lld more lessons" : {
+      "comment" : "Title of the offer that brings into the plan more lessons the learner's time fits",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You have time for %lld more lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You have time for %lld more lessons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You now study %@ a day." : {
+      "comment" : "Says the time a day changed; the argument is a duration like \"30 min\""
     },
     "You still finish %@ around %@, with all its lessons: everything fits by your date." : {
       "comment" : "A subject a change doesn't move; the date is a day like 'May 5'",
@@ -36007,6 +37237,9 @@
           }
         }
       }
+    },
+    "You study every topic. What doesn't fit before the exam comes after it." : {
+      "comment" : "What studying after the exam does"
     },
     "You took this subject out of your plan." : {
       "comment" : "Why a subject isn't in the plan: the learner skipped it",
@@ -36122,6 +37355,144 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kendi cihazında pratik yapacaksın."
+          }
+        }
+      }
+    },
+    "You'll study %lld fewer lessons before your end date." : {
+      "comment" : "A plan change's consequence: lessons that leave a plan with an end date",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld fewer lesson before your end date."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld fewer lessons before your end date."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You'll study %lld fewer lessons before your exam." : {
+      "comment" : "A plan change's consequence: lessons that leave a plan with an exam date",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld fewer lesson before your exam."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld fewer lessons before your exam."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You'll study %lld fewer lessons." : {
+      "comment" : "A plan change's consequence: lessons that leave the plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld fewer lesson."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld fewer lessons."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You'll study %lld more lessons before your end date." : {
+      "comment" : "A plan change's consequence: lessons that join a plan with an end date",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld more lesson before your end date."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld more lessons before your end date."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You'll study %lld more lessons before your exam." : {
+      "comment" : "A plan change's consequence: lessons that join a plan with an exam date",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld more lesson before your exam."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld more lessons before your exam."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "You'll study %lld more lessons." : {
+      "comment" : "A plan change's consequence: lessons that join the plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld more lesson."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "You'll study %lld more lessons."
+                }
+              }
+            }
           }
         }
       }
@@ -36243,6 +37614,9 @@
           }
         }
       }
+    },
+    "You're following as many goals as the free plan allows. Pause another goal to resume this one, or subscribe to follow more." : {
+      "comment" : "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress"
     },
     "Your %@ deadline comes off your plan. You can set one again anytime." : {
       "comment" : "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'",
@@ -37013,6 +38387,64 @@
         }
       }
     },
+    "Your end date has passed" : {
+      "comment" : "Title of the Plan's notice once the goal's end date passed with lessons left"
+    },
+    "Your end date has passed with %lld lessons left." : {
+      "comment" : "Lessons left once the goal's end date passed",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your end date has passed with %lld lesson left."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your end date has passed with %lld lessons left."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your exam date has passed" : {
+      "comment" : "Title of the Plan's notice once the exam's date passed with lessons left"
+    },
+    "Your exam date has passed with %lld lessons left." : {
+      "comment" : "Lessons left once the exam's date passed",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your exam date has passed with %lld lesson left."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your exam date has passed with %lld lessons left."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your focus: %@." : {
+      "comment" : "Says the plan gives these subjects more time"
+    },
+    "Your lessons no longer have %@." : {
+      "comment" : "Says practice activities left the lessons, such as Listening"
+    },
     "Your level" : {
       "comment" : "Title of the language level sheet",
       "localizations" : {
@@ -37130,6 +38562,12 @@
           }
         }
       }
+    },
+    "Your mock exams will be on %@." : {
+      "comment" : "A plan change's consequence: the weekly mock exams move; the argument is a weekday"
+    },
+    "Your new plan couldn't be made" : {
+      "comment" : "Title of the notice when making a goal's new plan failed"
     },
     "Your new plan couldn't be prepared" : {
       "comment" : "Title of the notice when rebuilding a goal's plan failed",
@@ -37249,6 +38687,9 @@
         }
       }
     },
+    "Your next mock exam will be on %@." : {
+      "comment" : "A plan change's consequence: the next mock exam moves; the argument is a weekday and day like \"Monday, May 5\""
+    },
     "Your pace" : {
       "comment" : "Title of the pace sheet",
       "localizations" : {
@@ -37367,6 +38808,9 @@
         }
       }
     },
+    "Your phase dates moved." : {
+      "comment" : "Says the phases' ends moved"
+    },
     "Your plan" : {
       "comment" : "Section of the plan's settings",
       "localizations" : {
@@ -37484,6 +38928,12 @@
           }
         }
       }
+    },
+    "Your plan changed to match the time your lessons take." : {
+      "comment" : "A plan change the plan made because lessons take more or less time than planned"
+    },
+    "Your plan changed." : {
+      "comment" : "A plan change, applied"
     },
     "Your plan changes from today. Less time spreads your lessons over more days." : {
       "comment" : "Explains what changing the time a day does",
@@ -37721,6 +39171,9 @@
         }
       }
     },
+    "Your plan ends at the exam." : {
+      "comment" : "Says the plan stops at the exam"
+    },
     "Your plan follows it from now on." : {
       "comment" : "Says a change applies",
       "localizations" : {
@@ -37779,6 +39232,12 @@
           }
         }
       }
+    },
+    "Your plan goes on after the exam." : {
+      "comment" : "Says the plan keeps studying after the exam"
+    },
+    "Your plan has no end date." : {
+      "comment" : "Says the goal no longer has a date"
     },
     "Your plan has no focus." : {
       "comment" : "Says the plan no longer gives any subject more time",
@@ -37839,6 +39298,9 @@
         }
       }
     },
+    "Your plan is as it was." : {
+      "comment" : "Under the notice that a goal's new plan couldn't be made"
+    },
     "Your plan is still being built. Try again in a moment." : {
       "comment" : "Advice asked while the plan was being built",
       "localizations" : {
@@ -37897,6 +39359,9 @@
           }
         }
       }
+    },
+    "Your plan moved to fit the days you missed." : {
+      "comment" : "A plan change the plan made after missed study days"
     },
     "Your plan no longer fits" : {
       "comment" : "Title of the Plan's notice when the plan no longer fits",
@@ -38133,6 +39598,9 @@
           }
         }
       }
+    },
+    "Your plan skips the basics of %@." : {
+      "comment" : "Says the plan starts these subjects past their basics"
     },
     "Your plan stays as it is." : {
       "comment" : "A preview with no change",
@@ -38435,6 +39903,17 @@
         }
       }
     },
+    "Your plan will end on %@ instead of %@." : {
+      "comment" : "A plan change's consequence: the plan's end moves; the arguments are days like \"May 5\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your plan will end on %1$@ instead of %2$@."
+          }
+        }
+      }
+    },
     "Your preparation" : {
       "comment" : "Title of the exam preparation sheet",
       "localizations" : {
@@ -38671,6 +40150,12 @@
         }
       }
     },
+    "Your schedule" : {
+      "comment" : "Title of the sheet about the plan's state"
+    },
+    "Your test answers changed your plan." : {
+      "comment" : "A plan change the learner's test answers made"
+    },
     "Your time covers everything by %@" : {
       "comment" : "The learner's own time a day covers the whole goal; the argument is a date like 'May 5'",
       "localizations" : {
@@ -38847,6 +40332,9 @@
           }
         }
       }
+    },
+    "Your weekly challenge will be on %@." : {
+      "comment" : "A plan change's consequence: the weekly challenge moves; the argument is a weekday"
     }
   },
   "version" : "1.0"

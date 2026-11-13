@@ -122,7 +122,22 @@ struct PlanEffect: Decodable, Equatable, Sendable {
   struct NamedMove: Decodable, Equatable, Sendable {
     let after: String
     let before: String
+    /// For moving the phase dates: the phase's challenge would come before its lessons.
+    var lessonsFirst: Bool?
     let name: String
+    /// For moving the phase dates: the phase's challenge falls on a rest day.
+    var restDay: Bool?
+  }
+
+  struct AreaStart: Decodable, Equatable, Sendable {
+    let after: String?
+    let area: String
+    let before: String?
+  }
+
+  struct ReviewFirst: Decodable, Equatable, Sendable {
+    let areas: [String]
+    let date: String
   }
 
   struct AreaMove<Value: Decodable & Equatable & Sendable>: Decodable, Equatable, Sendable {
@@ -156,16 +171,24 @@ struct PlanEffect: Decodable, Equatable, Sendable {
     let kind: String
   }
 
+  /// The day the topics a learner adds start.
+  var addedTopicsStart: String?
   let areaEnds: [AreaEnd]?
   let areaLessons: [AreaMove<Int>]?
+  var areaStarts: [AreaStart]?
   let endDateAfter: String?
   let endDateBefore: String?
+  /// For `coverageChanged`: the learner's placement answers made it.
+  var fromPlacement: Bool?
   let lessonsAdded: Int
   let lessonsAddedEstimated: Bool?
   let lessonsLeftOut: [String]?
   let lessonsRemoved: Int
   let nextMock: Move<String>?
+  /// For moving the phase dates: outcome skills that moving them fits in, by name.
+  var outcomesAdded: [String]?
   let phaseEnds: [NamedMove]?
+  var reviewFirst: ReviewFirst?
   let topicsAdded: [Topics]?
   let topicsLeftOut: [Topics]?
   let unwrittenLeftOut: [UnwrittenLeftOut]?

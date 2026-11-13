@@ -60,6 +60,9 @@
         }
       }
     },
+    "%@ left" : {
+      "comment" : "How long the rest of an open Focus test takes, such as \"9 min left\""
+    },
     "%lld of %lld right" : {
       "comment" : "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted",
       "localizations" : {
@@ -124,6 +127,9 @@
           }
         }
       }
+    },
+    "A %@ test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
+      "comment" : "What the Focus test is and why; the argument is how long it takes, such as \"15 min\""
     },
     "A few more in your first week" : {
       "comment" : "A row of the Focus test's How it works sheet",
@@ -419,6 +425,9 @@
           }
         }
       }
+    },
+    "Ask a few more as I study" : {
+      "comment" : "Switch on the Focus test's result: \"a few more\" are test questions, asked while the learner studies their lessons"
     },
     "Ask a few more in my sessions" : {
       "comment" : "Switch on the Focus test's result: sessions ask a few of its questions",
@@ -1010,6 +1019,12 @@
         }
       }
     },
+    "Find what to study most" : {
+      "comment" : "What the Focus test does, for an exam with a date and more than one subject"
+    },
+    "Focus on these %lld subjects" : {
+      "comment" : "Title of the Focus test's result: the subjects to give more time"
+    },
     "Focus test" : {
       "comment" : "Title of an exam goal's Focus test",
       "localizations" : {
@@ -1482,6 +1497,9 @@
         }
       }
     },
+    "Listening: not in this test" : {
+      "comment" : "A listening part of the exam that the Focus test can't ask about"
+    },
     "Not asked yet" : {
       "comment" : "A subject the Focus test hasn't asked a question about yet",
       "localizations" : {
@@ -1835,6 +1853,9 @@
           }
         }
       }
+    },
+    "Practical part: not in this test" : {
+      "comment" : "A practical part of the exam that the Focus test can't ask about"
     },
     "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most." : {
       "comment" : "What the Focus test is and why it helps, for an exam with a date",
@@ -2190,6 +2211,9 @@
         }
       }
     },
+    "Skip what you already know" : {
+      "comment" : "What the Focus test does, for an exam without a date or with one subject"
+    },
     "Speaking: not checked here" : {
       "comment" : "A speaking part of the exam that the Focus test can't check",
       "localizations" : {
@@ -2248,6 +2272,12 @@
           }
         }
       }
+    },
+    "Speaking: not in this test" : {
+      "comment" : "A speaking part of the exam that the Focus test can't ask about"
+    },
+    "Start" : {
+      "comment" : "Starts the Focus test"
     },
     "Start the test" : {
       "comment" : "Starts the Focus test",
@@ -2721,6 +2751,9 @@
         }
       }
     },
+    "The test suggests these %lld subjects" : {
+      "comment" : "Title of the Focus test's result when the plan doesn't follow it: the learner chose their own focus or said Not now"
+    },
     "There's no grade" : {
       "comment" : "A row of the Focus test's How it works sheet",
       "localizations" : {
@@ -2779,6 +2812,12 @@
           }
         }
       }
+    },
+    "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
+      "comment" : "What the Focus test is and why, for an exam with a date and more than one subject"
+    },
+    "This test shows what you already know, so your plan can skip it." : {
+      "comment" : "What the Focus test is and why, for an exam without a date or with one subject"
     },
     "Undo" : {
       "comment" : "Undoes the focus the learner just applied from the Focus test",
@@ -3074,6 +3113,9 @@
           }
         }
       }
+    },
+    "Writing: not in this test" : {
+      "comment" : "A written part of the exam, such as the essay, that the Focus test can't ask about"
     },
     "You can take the test later, from your plan." : {
       "comment" : "Under Skip for now while the Focus test's questions are written",
@@ -3657,6 +3699,9 @@
         }
       }
     },
+    "Your plan keeps the focus you chose." : {
+      "comment" : "Under the Focus test's result beside a focus the learner chose"
+    },
     "Your plan keeps the focus you chose. This is what the test suggests." : {
       "comment" : "Under the Focus test's result beside a focus the learner chose",
       "localizations" : {
@@ -3774,6 +3819,9 @@
           }
         }
       }
+    },
+    "Your plan skips %lld lessons you already know" : {
+      "comment" : "Title of the Focus test's result with no subjects to focus on"
     },
     "Your plan skips %lld lessons you already know." : {
       "comment" : "Where the plan starts after the Focus test",
@@ -4006,6 +4054,12 @@
           }
         }
       }
+    },
+    "Your plan starts from the basics" : {
+      "comment" : "Title of the Focus test's result with no subjects to focus on and nothing to skip"
+    },
+    "Your plan stays as it is." : {
+      "comment" : "Under the Focus test's result after the learner said Not now to it, or undid it"
     },
     "Your plan stays as it was." : {
       "comment" : "After declining the focus the Focus test proposed",

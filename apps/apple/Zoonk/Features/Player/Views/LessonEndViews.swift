@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LessonCompletionView: View {
   @Environment(AppRouter.self) private var router
+  @Environment(StudySessionStore.self) private var sessions
   @State private var showsSaveReport = false
   let completion: LessonPlayerState.Completion
   let correct: Int
@@ -14,13 +15,14 @@ struct LessonCompletionView: View {
   let close: () -> Void
 
   @State private var reminderOffer: ReminderOfferState?
+  @State private var isStopping = false
+  @State private var stopFailed = false
 
   var body: some View {
     PaneSplit {
       page {
         moment
         dayMoment
-        finishedChapter
 
         if let lesson, let summary = lesson.summary {
           LessonMapSection(title: lesson.title, summary: summary)
@@ -32,17 +34,16 @@ struct LessonCompletionView: View {
         reminderOfferCard
         guestEndingView
       }
-      .bottomBar { actionBar }
+      .bottomBar(note: stopFailure) { actionBar }
     } single: {
       page {
         moment
         dayMoment
-        finishedChapter
         planRevealRow
         reminderOfferCard
         guestEndingView
       }
-      .bottomBar { actionBar }
+      .bottomBar(note: stopFailure) { actionBar }
     }
     .onChange(of: offer, initial: true) {
       if let offer, reminderOffer == nil {
@@ -161,8 +162,8 @@ struct LessonCompletionView: View {
 
   @ViewBuilder
   private var dayMoment: some View {
-    if let day, !day.isEmpty {
-      DayMomentSections(result: day)
+    if let day {
+      DayMomentSections(result: day, chapter: completion.summary?.finishedChapter)
     }
   }
 
@@ -237,13 +238,6 @@ struct LessonCompletionView: View {
   }
 
   @ViewBuilder
-  private var finishedChapter: some View {
-    if completion.status == .saved, let chapter = completion.summary?.finishedChapter {
-      FinishedChapterSection(chapter: chapter)
-    }
-  }
-
-  @ViewBuilder
   private var guestEndingView: some View {
     if completion.status == .saved, let guestEnding {
       LessonGuestEndingView(ending: guestEnding)
@@ -279,6 +273,18 @@ struct LessonCompletionView: View {
             )
           }
         case .saving, .saved:
+          // Inside a day the learner can end it here; the day's last block only goes on.
+          if let moment = completion.summary?.block, !moment.sessionCompleted {
+            BusyButton(isBusy: isStopping) {
+              stopForToday(sessionID: moment.sessionId)
+            } label: {
+              Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+            }
+            .buttonStyle(.outline)
+            // Enter stays Continue's.
+            .keyboardShortcut(nil)
+          }
+
           Button {
             if let moment = completion.summary?.block, let next = moment.next,
               next.opensInPlayer, let lessonID = next.block.lessonId, let blockID = next.block.id
@@ -294,7 +300,7 @@ struct LessonCompletionView: View {
           } label: {
             Text("Continue", tableName: "Player", comment: "Leaves the finished lesson")
           }
-          .disabled(completion.status == .saving)
+          .disabled(completion.status == .saving || isStopping)
         }
       }
       .buttonStyle(.mainAction)
@@ -302,40 +308,45 @@ struct LessonCompletionView: View {
     }
   }
 
-  private func readouts(_ summary: LessonCompletionSummary) -> some View {
-    // With nothing answered (an explanation read again, a lesson without checks), no score shows.
-    let answered = summary.correctCount + summary.incorrectCount
+  private var stopFailure: BarNote? {
+    stopFailed
+      ? BarNote(
+        LocalizedStringResource(
+          "We couldn't stop for today. Try again.", table: "Session",
+          comment: "Stopping for today failed"))
+      : nil
+  }
 
-    // Main's `MomentReadouts`: each number with its words beside it, on one baseline.
-    return VStack(alignment: .leading, spacing: 12) {
-      FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
-        if answered > 0 {
-          MomentReadout {
-            Text("\(summary.correctCount)/\(answered)")
-          } words: {
-            Text("Right", tableName: "Player", comment: "Label under the lesson's score")
-          }
-        }
+  /// The session's screen under the lesson then shows the day's summary.
+  private func stopForToday(sessionID: String) {
+    isStopping = true
+    stopFailed = false
 
-        if summary.brainPower > 0 {
-          MomentReadout(tint: .brainText) {
-            EarnedNumber(value: summary.brainPower)
-          } words: {
-            Text(
-              "Brain Power", tableName: "Player",
-              comment: "Label under the Brain Power a lesson earned")
-          }
-        }
+    Task {
+      switch await sessions.stop(sessionID: sessionID, in: router.playback) {
+      case .done:
+        close()
+      case .failed:
+        stopFailed = true
+      case .obsolete:
+        break
       }
 
-      if let studied = studied(summary.seconds) {
+      isStopping = false
+    }
+  }
+
+  /// What it earned; a lesson opened outside a day also says its time (B2's R1).
+  private func readouts(_ summary: LessonCompletionSummary) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      if summary.brainPower > 0 {
+        EarnedBrainPower(points: summary.brainPower)
+      }
+
+      if summary.block == nil, let studied = studied(summary.seconds) {
         Text(studied)
           .typeStyle(.note.monospacedDigit())
           .foregroundStyle(.mutedForeground)
-      }
-
-      if let catchUp = summary.block?.dayProgress.catchUp {
-        CatchUpLine(catchUp: catchUp)
       }
     }
   }

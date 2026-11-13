@@ -224,14 +224,18 @@ private struct PlanContent: View {
         PlanSuggestionSection(context: context, answer: $slotAnswer)
         structureSections(context: context, structure: structure, namesChoices: true)
 
-        // Main's tablet column: what's next beside the other places.
+        // Main's tablet column: what's next beside the other places. On a phone only an exam's
+        // page lists it: a path already shows those rows above.
         if horizontalSizeClass == .regular {
           BlockGridSection {
             NextOnPathSection(context: context)
             PlanMoreSection(goal: goal)
           }
         } else {
-          NextOnPathSection(context: context)
+          if goal.kind == .exam {
+            NextOnPathSection(context: context)
+          }
+
           PlanMoreSection(goal: goal)
         }
 
@@ -275,12 +279,12 @@ private struct PlanContent: View {
     switch goal.contentCountry?.rebuild {
     case .preparing:
       String(
-        localized: "Preparing your new plan", table: "Plan",
-        comment: "Title of the notice while a goal's plan is rebuilt for its new content country")
+        localized: "Getting your new plan ready", table: "Plan",
+        comment: "Title of the notice while a goal's plan is made again for its new country")
     case .failed:
       String(
-        localized: "Your new plan couldn't be prepared", table: "Plan",
-        comment: "Title of the notice when rebuilding a goal's plan failed")
+        localized: "Your new plan couldn't be made", table: "Plan",
+        comment: "Title of the notice when making a goal's new plan failed")
     case .some(.none), nil:
       rebuildReady
         ? String(
@@ -435,22 +439,21 @@ private struct PlanRebuildNotice: View {
   private var title: Text {
     failed
       ? Text(
-        "Your new plan couldn't be prepared", tableName: "Plan",
-        comment: "Title of the notice when rebuilding a goal's plan failed")
+        "Your new plan couldn't be made", tableName: "Plan",
+        comment: "Title of the notice when making a goal's new plan failed")
       : Text(
-        "Preparing your new plan", tableName: "Plan",
-        comment: "Title of the notice while a goal's plan is rebuilt for its new content country")
+        "Getting your new plan ready", tableName: "Plan",
+        comment: "Title of the notice while a goal's plan is made again for its new country")
   }
 
   private var description: Text {
     failed
       ? Text(
-        "Your plan still has the lessons it had before.", tableName: "Plan",
-        comment: "Under the notice that a goal's new plan couldn't be prepared")
+        "Your plan is as it was.", tableName: "Plan",
+        comment: "Under the notice that a goal's new plan couldn't be made")
       : Text(
-        "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done.",
-        tableName: "Plan",
-        comment: "Under the notice while a goal's plan is rebuilt for its new content country")
+        "Keep studying this one until then.", tableName: "Plan",
+        comment: "Under the notice while a goal's plan is made again for its new country")
   }
 
   private func retry() {

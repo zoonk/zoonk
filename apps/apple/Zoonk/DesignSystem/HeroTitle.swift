@@ -34,20 +34,13 @@ private struct BarTitleAfterHero: ViewModifier {
   @State private var isHeroShown = true
 
   func body(content: Content) -> some View {
+    // The system's own title, taken out of the bar while the header shows it. A stand-in item in
+    // the title's place, even an invisible one, takes the room the system Back uses for the
+    // previous page's name.
     content
       .navigationTitle(title)
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        // The principal item stands in for the title, which `toolbar(removing: .title)` would take
-        // with it.
-        ToolbarItem(placement: .principal) {
-          Text(title)
-            .typeStyle(.body.weight(.semibold))
-            .lineLimit(1)
-            .opacity(isHeroShown ? 0 : 1)
-            .accessibilityHidden(isHeroShown)
-        }
-      }
+      .toolbar(removing: isHeroShown ? .title : nil)
       .environment(\.isHeroTitleShown, $isHeroShown)
   }
 }

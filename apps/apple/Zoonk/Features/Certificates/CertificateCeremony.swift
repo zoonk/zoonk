@@ -117,7 +117,7 @@ struct CertificateCeremony: View {
         .multilineTextAlignment(.center)
         .accessibilityAddTraits(.isHeader)
 
-      // The Plus notice says how to get a locked one.
+      // A locked one's gate says what it needs instead.
       if !top.locked {
         Text(line)
           .typeStyle(.reading)
@@ -131,8 +131,23 @@ struct CertificateCeremony: View {
   @ViewBuilder
   private func learnerPart(_ certificate: Certificate?) -> some View {
     if top.locked {
-      CertificatePlusNotice(seePlus: onSeePlus)
-        .padding(.top, 18)
+      // The gate itself, since the learner opened the certificate: no card about a paid plan.
+      VStack(spacing: 14) {
+        Text(
+          "Certificates need a subscription", tableName: "Certificates",
+          comment: "On a certificate a learner earned without a subscription"
+        )
+        .typeStyle(.reading)
+        .foregroundStyle(.mutedForeground)
+        .multilineTextAlignment(.center)
+
+        Button(action: onSeePlus) {
+          Text("Subscribe", tableName: "Certificates", comment: "Opens the subscription page")
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+      }
+      .padding(.top, 18)
     } else if name.isEmpty || isEditingName {
       CertificateNameEditor(name: $nameDraft, current: name) {
         isEditingName = false

@@ -5128,6 +5128,9 @@
         }
       }
     },
+    "Get it ready" : {
+      "comment" : "Opens a goal's first lesson, written while the learner played on its wait"
+    },
     "Good guess!" : {
       "comment" : "A hook's guess was right",
       "localizations" : {

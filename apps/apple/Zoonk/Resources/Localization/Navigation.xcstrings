@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ %lld. Statistics" : {
+      "comment" : "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld. Statistics"
+          }
+        }
+      }
+    },
     "%@ a day" : {
       "comment" : "How long the learner studies a goal each day, such as 45 min a day",
       "localizations" : {
@@ -1484,6 +1495,12 @@
         }
       }
     },
+    "Mock exam" : {
+      "comment" : "Study place that opens the choice of a mock exam to take"
+    },
+    "New goal" : {
+      "comment" : "Goal switcher option that starts another goal"
+    },
     "Pause" : {
       "comment" : "Pauses the goal in its row to start the waiting goal",
       "localizations" : {
@@ -1601,6 +1618,9 @@
           }
         }
       }
+    },
+    "Pause a goal to start it" : {
+      "comment" : "Under a goal in the goal switcher that waits for room: another goal must be paused first"
     },
     "Paused" : {
       "comment" : "A goal the learner paused",
@@ -2428,6 +2448,9 @@
         }
       }
     },
+    "Stats" : {
+      "comment" : "Sidebar section with a page for each of the learner's statistics"
+    },
     "Study" : {
       "comment" : "Sidebar section with the study places",
       "localizations" : {
@@ -2487,6 +2510,9 @@
         }
       }
     },
+    "Subscribe" : {
+      "comment" : "Opens the subscription"
+    },
     "Tell us what you want to learn, and we'll plan every day until you get there." : {
       "comment" : "Explains what starting a goal does, on a page that needs one",
       "localizations" : {
@@ -2545,6 +2571,9 @@
           }
         }
       }
+    },
+    "That's as many goals as you can study at once. Pause one to start this one." : {
+      "comment" : "In the sheet that makes room for a goal waiting to start, above the learner's goals"
     },
     "The day is here" : {
       "comment" : "A goal whose target date is today",

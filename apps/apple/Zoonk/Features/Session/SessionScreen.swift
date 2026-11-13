@@ -80,7 +80,7 @@ struct SessionScreen: View {
             }
           }
           .navigationTitle(
-            Text("Today's session", tableName: "Session", comment: "Session's title")
+            Text("Today", tableName: "Session", comment: "Session's title: today's study")
           )
           .navigationBarTitleDisplayMode(.inline)
           .toolbar {
@@ -212,13 +212,14 @@ private struct NextStopView: View {
   @State private var isOpening = false
   @State private var isStopping = false
   @State private var failed = false
+  @State private var stopFailed = false
   @State private var lessonStatus: String?
   @State private var lessonKind = GenerationWait.Kind.lesson
   /// The block whose lesson this screen showed being written.
   @State private var waitedFor: String?
   /// The goal's warm-up deck, while the lesson written is its first.
   @State private var warmUp: FirstLessonWarmUp?
-  @State private var isReviewIntroOpen: Bool
+  @State private var isReviewIntroOpen = false
   @AccessibilityFocusState private var isStartFocused: Bool
 
   init(day: StudyDay, sessionID: String?, goalID: String?, moment: BlockMoment?) {
@@ -226,7 +227,6 @@ private struct NextStopView: View {
     self.sessionID = sessionID
     self.goalID = goalID
     self.moment = moment
-    _isReviewIntroOpen = State(initialValue: ReviewIntro.opensAtFirst(goalID: goalID))
   }
 
   /// The step a tap on another screen asked for, until it's done; else the day's next.
@@ -286,7 +286,7 @@ private struct NextStopView: View {
     return NextStopWait(
       kind: lessonKind, deckID: deckID, goalID: day.goalId, held: held,
       isWritten: lessonStatus == "ready",
-      isWaiting: isLessonWorkRunning || held != nil
+      isWaiting: isLessonWorkRunning || held != nil, note: failureNote
     ) {
       daySoFar
     } upNext: {
@@ -319,11 +319,7 @@ private struct NextStopView: View {
           .celebratesOnce(id: moment)
       }
 
-      DayMomentSections(result: moment.day)
-
-      if let chapter = moment.finishedChapter {
-        FinishedChapterSection(chapter: chapter)
-      }
+      DayMomentSections(result: moment.day, chapter: moment.finishedChapter)
     } else {
       Section {
         VStack(alignment: .leading, spacing: 8) {
@@ -345,7 +341,9 @@ private struct NextStopView: View {
     if let next {
       Section {
         BlockRow(
-          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
+          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true,
+          lineOverride: next.kind == .review && !next.capsules.isEmpty
+            && ReviewIntro.isEarly(goalID: goalID) ? ReviewIntro.earlyLine : nil)
 
         if let lessonLine {
           lessonLine
@@ -355,7 +353,7 @@ private struct NextStopView: View {
           ReviewIntro(block: next, isOpen: $isReviewIntroOpen)
         }
       } header: {
-        SectionTitle(Text("Up next", tableName: "Session", comment: "The session's next block"))
+        Chip(Text("Up next", tableName: "Session", comment: "Over the session's next block"))
       }
 
       if case .refused(let refusal) = writing {
@@ -380,56 +378,56 @@ private struct NextStopView: View {
     }
   }
 
-  /// A held wait pins its own way to the lesson instead of the main button.
+  /// The bottom bar's buttons: "Stop for today", then the main action. A held wait pins its own way
+  /// to the lesson instead of the main button.
+  @ViewBuilder
   private func actions(isHeld: Bool) -> some View {
-    Section {
-      VStack(spacing: 12) {
-        if moment?.sessionCompleted == true {
-          BusyButton(isBusy: false, icon: .forward) {
-            router.playback.seeSummary()
-          } label: {
-            Text(
-              "See today's summary", tableName: "Session",
-              comment: "Moves on from the block that completed today's session")
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .buttonSizing(.flexible)
-        } else {
-          if let alternative, isLessonWorkRunning || isLessonUnavailable {
-            mainButton(alternativeTitle(alternative), block: alternative)
-          } else if let next, !isLessonUnavailable, !isHeld {
-            mainButton(continueTitle, block: next)
-              .disabled(isLessonWorkRunning)
-              .accessibilityFocused($isStartFocused)
-          }
-
-          // Main's `canStop`: a day with nothing done has nothing to stop.
-          if let sessionID, day.blocks.contains(where: \.isFinished) {
-            BusyButton(isBusy: isStopping, icon: .stop) {
-              stop(sessionID: sessionID)
-            } label: {
-              Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
-            }
-            .buttonStyle(.outline)
-            .controlSize(.large)
-            .buttonSizing(.flexible)
-            .disabled(isOpening)
-          }
-
-          if failed {
-            FailureLine(
-              message: LocalizedStringResource(
-                "We couldn't open the next step. Try again.", table: "Session",
-                comment: "Opening or stopping failed")
-            )
-            .typeStyle(.note)
-          }
+    if moment?.sessionCompleted == true {
+      BusyButton(isBusy: false) {
+        router.playback.seeSummary()
+      } label: {
+        Text(
+          "Continue", tableName: "Session",
+          comment: "Moves on from the block that completed today's session to its summary")
+      }
+      .buttonStyle(.mainAction)
+    } else {
+      // Main's `canStop`: a day with nothing done has nothing to stop.
+      if let sessionID, day.blocks.contains(where: \.isFinished) {
+        BusyButton(isBusy: isStopping) {
+          stop(sessionID: sessionID)
+        } label: {
+          Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
         }
+        .buttonStyle(.outline)
+        .disabled(isOpening)
+      }
+
+      if let alternative, isLessonWorkRunning || isLessonUnavailable {
+        mainButton(alternativeTitle(alternative), block: alternative)
+      } else if let next, !isLessonUnavailable, !isHeld {
+        mainButton(continueTitle, block: next)
+          .disabled(isLessonWorkRunning)
+          .accessibilityFocused($isStartFocused)
       }
     }
-    .listRowBackground(Color.clear)
-    .listRowInsets(.vertical, 0)
+  }
+
+  /// What a tap couldn't do, over the bar's buttons.
+  private var failureNote: BarNote? {
+    if stopFailed {
+      return BarNote(
+        LocalizedStringResource(
+          "We couldn't stop for today. Try again.", table: "Session",
+          comment: "Stopping for today failed"))
+    }
+
+    return failed
+      ? BarNote(
+        LocalizedStringResource(
+          "We couldn't open the next step. Try again.", table: "Session",
+          comment: "Opening the next step failed"))
+      : nil
   }
 
   private func title(of moment: BlockMoment) -> String {
@@ -466,7 +464,7 @@ private struct NextStopView: View {
     comment: "A lesson its quality checks set aside")
 
   private static let setAsideReason = String(
-    localized: "It didn't pass our quality checks, so your plan goes on without it.",
+    localized: "Your plan goes on without it.",
     table: "Session", comment: "A lesson its quality checks set aside")
 
   private var isLessonUnavailable: Bool {
@@ -488,14 +486,20 @@ private struct NextStopView: View {
         "Start", tableName: "Session", comment: "Opens the session's next block, not begun yet")
   }
 
+  /// Named by what it starts, the same while a lesson is written and when it can't be.
   private func alternativeTitle(_ block: StudyBlock) -> Text {
-    isLessonUnavailable
-      ? Text(
-        "Instead: \(block.displayTitle)", tableName: "Session",
-        comment: "A ready block to do when the lesson can't be written now")
-      : Text(
-        "While you wait: \(block.displayTitle)", tableName: "Session",
-        comment: "A ready block to do while the lesson is written")
+    switch block.kind {
+    case .review:
+      Text("Review now", tableName: "Session", comment: "Starts the day's review instead")
+    case .practice:
+      Text("Practice now", tableName: "Session", comment: "Starts the day's practice instead")
+    case .learn:
+      Text("Next lesson", tableName: "Session", comment: "Starts the day's next lesson instead")
+    default:
+      Text(
+        "Start \(block.displayTitle)", tableName: "Session",
+        comment: "Starts another of the day's steps instead; the argument is its name")
+    }
   }
 
   private var lessonLine: AnyView? {
@@ -539,14 +543,12 @@ private struct NextStopView: View {
   }
 
   private func mainButton(_ title: Text, block: StudyBlock) -> some View {
-    BusyButton(isBusy: isOpening, icon: .play) {
+    BusyButton(isBusy: isOpening) {
       open(block)
     } label: {
       title
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
-    .buttonSizing(.flexible)
     .disabled(isStopping)
   }
 
@@ -554,6 +556,7 @@ private struct NextStopView: View {
     ReviewIntro.noteStart(of: block, goalID: goalID)
     isOpening = true
     failed = false
+    stopFailed = false
 
     action = Task {
       let result = await opening(block)
@@ -606,10 +609,11 @@ private struct NextStopView: View {
   private func stop(sessionID: String) {
     isStopping = true
     failed = false
+    stopFailed = false
 
     action = Task {
       if case .failed = await store.stop(sessionID: sessionID, in: router.playback) {
-        failed = true
+        stopFailed = true
       }
 
       isStopping = false
@@ -685,6 +689,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   let isWritten: Bool
   /// The lesson is written, or written and held for a learner who played.
   let isWaiting: Bool
+  let note: BarNote?
   @ViewBuilder let daySoFar: () -> DaySoFar
   @ViewBuilder let upNext: () -> UpNext
   @ViewBuilder let actions: () -> Actions
@@ -698,7 +703,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
     let ready = held.map { held in
       WaitReady(
         label: Text(
-          "Start this lesson", tableName: "Player",
+          "Get it ready", tableName: "Player",
           comment: "Opens a goal's first lesson, written while the learner played on its wait"),
         icon: .play, action: held.moveOn)
     }
@@ -711,17 +716,17 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
       ZoonkList {
         upNext()
         wait(deal)
-        actions()
       }
       .waitBar(bar(.page, deal, ready: ready))
+      .bottomBar(note: note) { actions() }
     } single: {
       ZoonkList {
         daySoFar()
         upNext()
         wait(deal)
-        actions()
       }
       .waitBar(bar(.page, deal, ready: ready))
+      .bottomBar(note: note) { actions() }
     }
     .waitProgress(deal, title: title, progress: { progress }, bar: bar(.pushed, deal, ready: ready))
     .measuresWait(surface: "nextStop", contentKind: "lesson", isActive: isWaiting, goalID: goalID)
@@ -815,10 +820,6 @@ private struct MomentSummary: View {
         .foregroundStyle(.mutedForeground)
       }
 
-      if let catchUp = moment.dayProgress.catchUp {
-        CatchUpLine(catchUp: catchUp)
-          .padding(.top, 8)
-      }
     }
   }
 }
@@ -829,12 +830,11 @@ extension GenerationWait.Kind {
     switch self {
     case .challenge:
       LocalizedStringResource(
-        "This challenge is being written for you. It's usually ready in a few minutes.",
-        table: "Session", comment: "A challenge being written")
+        "It starts here when it's ready.", table: "Session",
+        comment: "A challenge whose questions are being made")
     default:
       LocalizedStringResource(
-        "This lesson is being written for you. It's usually ready in a few minutes.",
-        table: "Session", comment: "A lesson being written")
+        "It takes a few minutes.", table: "Session", comment: "A lesson being written")
     }
   }
 }

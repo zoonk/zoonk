@@ -929,6 +929,9 @@
         }
       }
     },
+    "E.g., Coldplay, TED Talks Daily" : {
+      "comment" : "Example artists and podcasts, known in every country"
+    },
     "E.g., Dune, The Economist" : {
       "comment" : "Example books and sites",
       "localizations" : {
@@ -1282,6 +1285,9 @@
           }
         }
       }
+    },
+    "E.g., Star Trek, Formula 1" : {
+      "comment" : "Example shows and sports, known in every country"
     },
     "Favorite artists or podcasts (optional)" : {
       "comment" : "Box for favorites to listen to",
@@ -2345,6 +2351,9 @@
         }
       }
     },
+    "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings." : {
+      "comment" : "Under the conditions question"
+    },
     "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings." : {
       "comment" : "Under the conditions question",
       "localizations" : {
@@ -2521,6 +2530,12 @@
           }
         }
       }
+    },
+    "Past or present, finished or not. Pick up to 3." : {
+      "comment" : "Under What have you studied?"
+    },
+    "Pick anything that helps." : {
+      "comment" : "Under What helps you learn?"
     },
     "Pick anything that helps. No label or diagnosis needed." : {
       "comment" : "Under What helps you learn?",
@@ -3407,6 +3422,9 @@
         }
       }
     },
+    "We use this to pick examples you'll care about." : {
+      "comment" : "Under What do you do now?"
+    },
     "We'll remember this for your buddy. You can delete it in Memory." : {
       "comment" : "Under the box for what helps the learner learn",
       "localizations" : {
@@ -3465,6 +3483,12 @@
           }
         }
       }
+    },
+    "We'll remember this. You can delete it anytime in Settings." : {
+      "comment" : "Under the box for what helps the learner learn"
+    },
+    "We'll talk to you this way." : {
+      "comment" : "Under How should we address you?"
     },
     "We'll use situations from your day in your examples." : {
       "comment" : "Under What do you do now?",

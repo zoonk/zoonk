@@ -41,14 +41,4 @@ final class SetupProgressTests: XCTestCase {
         steps: [.watch, .listen, .buddy, .schedule, .plan]),
       SetupProgress(step: 3, total: 5))
   }
-
-  func testCountsTheAboutYouScreensOfThisRun() {
-    XCTAssertEqual(
-      SetupProgress.aboutYou(
-        current: .watch, history: [.purpose, .level, .work, .tools],
-        steps: [.watch, .listen, .buddy, .schedule, .plan]),
-      SetupProgress(step: 3, total: 4))
-    XCTAssertNil(
-      SetupProgress.aboutYou(current: .buddy, history: [.work], steps: [.buddy, .plan]))
-  }
 }

@@ -2739,6 +2739,9 @@
         }
       }
     },
+    "Move it" : {
+      "comment" : "Accepts a schedule idea: moves the time of day the learner studies to the time the sentence above names"
+    },
     "Move my study time to %@" : {
       "comment" : "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00",
       "localizations" : {

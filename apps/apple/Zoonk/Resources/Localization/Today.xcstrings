@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "**Get them now**" : {
+      "comment" : "Under Your next lessons: asks for the day's next lessons, which nobody has asked for yet"
+    },
     "%@ · %lld questions, no hints" : {
       "comment" : "A phase challenge's phase and questions",
       "localizations" : {
@@ -457,6 +460,9 @@
         }
       }
     },
+    "%@ · every topic" : {
+      "comment" : "When a review of every topic is; the argument is a weekday"
+    },
     "%@ · every topic, your weakest first" : {
       "comment" : "When a free plan's full review is and what it asks",
       "localizations" : {
@@ -848,6 +854,28 @@
         }
       }
     },
+    "%@ a day now covers %@ of the exam, down from %@." : {
+      "comment" : "Missed days left an exam plan covering less",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day now covers %2$@ of the exam, down from %3$@."
+          }
+        }
+      }
+    },
+    "%@ a day now covers %@ of your goal, down from %@." : {
+      "comment" : "Missed days left a plan covering less of its goal",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ a day now covers %2$@ of your goal, down from %3$@."
+          }
+        }
+      }
+    },
     "%@ and %lld more" : {
       "comment" : "A short list of topics and how many more",
       "localizations" : {
@@ -1093,6 +1121,17 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%@ in %lld days" : {
+      "comment" : "Under Today's title in an exam's last weeks: the exam's name, like ENEM, and the days until it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ in %2$lld days"
           }
         }
       }
@@ -2748,6 +2787,9 @@
         }
       }
     },
+    "%lld lessons from earlier days" : {
+      "comment" : "Lessons earlier days left, which can be added to today"
+    },
     "%lld lessons studied" : {
       "comment" : "Lessons studied, under the goal's progress",
       "localizations" : {
@@ -4330,6 +4372,9 @@
         }
       }
     },
+    "%lld questions on every topic" : {
+      "comment" : "A review of every topic: the count is its questions"
+    },
     "%lld questions on every topic, your weakest first" : {
       "comment" : "A full review's questions: the count is the total, drawn from every topic",
       "localizations" : {
@@ -4502,6 +4547,9 @@
           }
         }
       }
+    },
+    "%lld questions on what's been hardest for you" : {
+      "comment" : "A review of the weakest topics, on a day with nothing due to review"
     },
     "%lld questions, no hints" : {
       "comment" : "A challenge's questions",
@@ -5318,6 +5366,9 @@
         }
       }
     },
+    "A %@ test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
+      "comment" : "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
+    },
     "A fresh week. Today starts with an easy warm-up." : {
       "comment" : "A day starting a new week",
       "localizations" : {
@@ -5613,6 +5664,15 @@
         }
       }
     },
+    "A shorter day" : {
+      "comment" : "Title of the note on why today is short"
+    },
+    "Add time" : {
+      "comment" : "Opens the plan's time a day after missed days"
+    },
+    "Add to today" : {
+      "comment" : "Adds the lessons earlier days left to today"
+    },
     "Add your class material" : {
       "comment" : "Asks for a class's material, since the teacher's test isn't published",
       "localizations" : {
@@ -5730,6 +5790,9 @@
           }
         }
       }
+    },
+    "Adjust your plan" : {
+      "comment" : "Opens the Plan to fit its lessons"
     },
     "Adjust your plan to keep going." : {
       "comment" : "The goal's date passed",
@@ -5849,6 +5912,9 @@
         }
       }
     },
+    "After today's lessons" : {
+      "comment" : "A challenge that opens once the lessons before it are done"
+    },
     "after your date" : {
       "comment" : "A day's status",
       "localizations" : {
@@ -5907,6 +5973,12 @@
           }
         }
       }
+    },
+    "after your end date" : {
+      "comment" : "A day's status"
+    },
+    "after your exam" : {
+      "comment" : "A day's status"
     },
     "Already know this? **Take the test**" : {
       "comment" : "Skips the next lesson's chapter with its test",
@@ -6149,6 +6221,9 @@
           }
         }
       }
+    },
+    "Archive goal" : {
+      "comment" : "Archives the goal whose exam is over"
     },
     "Ask %@ something" : {
       "comment" : "Mission: ask the buddy",
@@ -6397,6 +6472,9 @@
           }
         }
       }
+    },
+    "Beat the Trickster" : {
+      "comment" : "Mission: a phase challenge"
     },
     "before your plan" : {
       "comment" : "A day's status",
@@ -7047,6 +7125,9 @@
         }
       }
     },
+    "Call" : {
+      "comment" : "A language plan's challenge: a live call"
+    },
     "Catch up today · +%@" : {
       "comment" : "Adds the lessons earlier days left to today",
       "localizations" : {
@@ -7282,6 +7363,9 @@
           }
         }
       }
+    },
+    "Change my plan" : {
+      "comment" : "Applies a proposed plan change"
     },
     "Check your connection and try again." : {
       "comment" : "Today failed to load",
@@ -8233,6 +8317,9 @@
         }
       }
     },
+    "done" : {
+      "comment" : "A day's status: the day's study time was met"
+    },
     "Due today" : {
       "comment" : "Pronunciation mission",
       "localizations" : {
@@ -8410,6 +8497,9 @@
         }
       }
     },
+    "end date" : {
+      "comment" : "A day's status"
+    },
     "Enjoy your day off!" : {
       "comment" : "A rest day",
       "localizations" : {
@@ -8468,6 +8558,9 @@
           }
         }
       }
+    },
+    "Every topic" : {
+      "comment" : "A review that covers every topic"
     },
     "exam day" : {
       "comment" : "A day's status",
@@ -9250,6 +9343,9 @@
         }
       }
     },
+    "Getting ready…" : {
+      "comment" : "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
+    },
     "Getting today's lessons ready…" : {
       "comment" : "The day's lessons are being outlined",
       "localizations" : {
@@ -9426,6 +9522,12 @@
           }
         }
       }
+    },
+    "Hidden" : {
+      "comment" : "The missions' list is closed"
+    },
+    "It takes a minute or two. Your first day opens here as soon as it's ready." : {
+      "comment" : "While a goal's plan is being built"
     },
     "It's built from what you tell us." : {
       "comment" : "Why the goal's questions matter; \"It\" is the learner's plan",
@@ -9987,6 +10089,18 @@
           }
         }
       }
+    },
+    "Keep official date" : {
+      "comment" : "Declines a change and keeps the exam's official date"
+    },
+    "Keep studying" : {
+      "comment" : "After an exam's date: keeps studying the lessons left"
+    },
+    "Keep studying after the exam" : {
+      "comment" : "Opens studying every topic, past the exam's date"
+    },
+    "Keep studying them, or archive this goal?" : {
+      "comment" : "After an exam's date: asks whether to study the lessons left or archive the goal"
     },
     "Keep the notice's date" : {
       "comment" : "Declines a change and keeps the date the exam notice sets",
@@ -10648,6 +10762,9 @@
           }
         }
       }
+    },
+    "More options" : {
+      "comment" : "Opens the other answers to missed days"
     },
     "More time a day" : {
       "comment" : "Opens the plan's daily time",
@@ -11477,6 +11594,9 @@
         }
       }
     },
+    "Not enough time left for all your lessons." : {
+      "comment" : "Under Today's title when the plan has more lessons than its days can hold"
+    },
     "Not now" : {
       "comment" : "Declines a proposed plan change\nDismisses the ask for a document\nDismisses the suggested goal",
       "localizations" : {
@@ -11535,6 +11655,9 @@
           }
         }
       }
+    },
+    "Not ready yet" : {
+      "comment" : "The day's next lessons, which nobody has asked for yet"
     },
     "not studied" : {
       "comment" : "A day's status",
@@ -12067,6 +12190,9 @@
         }
       }
     },
+    "Okay. Your time stays the same." : {
+      "comment" : "The learner kept their time a day after missed days"
+    },
     "Open" : {
       "comment" : "Opens the noticed typos",
       "localizations" : {
@@ -12427,6 +12553,9 @@
         }
       }
     },
+    "Points for what you learn. They raise your belt and grow your buddy." : {
+      "comment" : "What Brain Power is"
+    },
     "Practice" : {
       "comment" : "Mission: practice",
       "localizations" : {
@@ -12544,6 +12673,12 @@
           }
         }
       }
+    },
+    "Practice %lld min" : {
+      "comment" : "Adds practice on a day with nothing new; the number is minutes"
+    },
+    "Practice %lld more min" : {
+      "comment" : "Adds study time once the day is done; the number is minutes"
     },
     "Practice a pattern" : {
       "comment" : "Mission: a pattern\nOpens a noticed pattern",
@@ -12959,6 +13094,9 @@
           }
         }
       }
+    },
+    "Practice pronunciation" : {
+      "comment" : "Mission: pronunciation"
     },
     "Practice with %@" : {
       "comment" : "Opens the buddy's quiz",
@@ -13550,6 +13688,9 @@
         }
       }
     },
+    "Rematch" : {
+      "comment" : "A second go at the Trickster, the character a phase's challenge is against"
+    },
     "Rematch the Trickster" : {
       "comment" : "Mission: a rematch",
       "localizations" : {
@@ -13668,6 +13809,9 @@
         }
       }
     },
+    "Resume" : {
+      "comment" : "Resumes the paused goal"
+    },
     "Resume %@" : {
       "comment" : "Resumes the paused goal",
       "localizations" : {
@@ -13785,6 +13929,9 @@
           }
         }
       }
+    },
+    "review" : {
+      "comment" : "A day's challenge in a spoken day label: a review of every topic"
     },
     "Reviews" : {
       "comment" : "A review block longer than 5 min",
@@ -14732,6 +14879,9 @@
         }
       }
     },
+    "Shown" : {
+      "comment" : "The missions' list is open"
+    },
     "Skipped" : {
       "comment" : "A skipped block",
       "localizations" : {
@@ -14790,6 +14940,9 @@
           }
         }
       }
+    },
+    "Start" : {
+      "comment" : "Accepts the suggested goal\nStarts the Focus test\nStarts today's session"
     },
     "Start a new goal, or pick another one above." : {
       "comment" : "Today for a finished goal",
@@ -15609,6 +15762,9 @@
         }
       }
     },
+    "Take the mock exam" : {
+      "comment" : "Mission: a mock exam"
+    },
     "Taking longer than usual" : {
       "comment" : "The day's next lessons are taking long to outline",
       "localizations" : {
@@ -15785,6 +15941,9 @@
           }
         }
       }
+    },
+    "That's as many goals as you can study at once. Pause another goal to resume this one." : {
+      "comment" : "Why resuming the goal failed: the learner studies as many goals at once as they can; it's about goals studied at the same time, not new goals started per day or month"
     },
     "The day is here" : {
       "comment" : "The goal's date",
@@ -16213,6 +16372,12 @@
         }
       }
     },
+    "The official exam date is %@." : {
+      "comment" : "Under a change that moves the exam off its official date; the argument is a day"
+    },
+    "The Trickster" : {
+      "comment" : "A phase's challenge, named by the character it's against"
+    },
     "They show up here on their own." : {
       "comment" : "The day's lessons are being outlined",
       "localizations" : {
@@ -16625,6 +16790,9 @@
           }
         }
       }
+    },
+    "Today's lessons aren't ready yet." : {
+      "comment" : "The day's lessons wait for the learner to ask for them"
     },
     "Today's lessons aren't written yet." : {
       "comment" : "The day's lessons wait for the learner to ask for them",
@@ -17522,6 +17690,9 @@
           }
         }
       }
+    },
+    "Use my date" : {
+      "comment" : "Applies a change that moves the exam off its official date"
     },
     "Use my date anyway" : {
       "comment" : "Applies a change that moves the exam off the notice's date",
@@ -18538,6 +18709,9 @@
         }
       }
     },
+    "Welcome back. Today is short, so it's easy to start again." : {
+      "comment" : "Under Today's title on a return after days away, until the learner starts"
+    },
     "What changed" : {
       "comment" : "A change to the goal's sources",
       "localizations" : {
@@ -19022,6 +19196,12 @@
         }
       }
     },
+    "You can take the test from your plan." : {
+      "comment" : "After the learner dismissed Today's suggestion of the Focus test"
+    },
+    "You didn't finish setting this up." : {
+      "comment" : "Under a goal the learner typed and didn't confirm"
+    },
     "You finished your %@ goal." : {
       "comment" : "Today for a finished goal",
       "localizations" : {
@@ -19080,6 +19260,12 @@
           }
         }
       }
+    },
+    "You finished your plan." : {
+      "comment" : "The plan is finished"
+    },
+    "You missed a few days" : {
+      "comment" : "Title after missed study days"
     },
     "You put what you learned into your own words." : {
       "comment" : "What a writing block in the day's session is for",
@@ -19198,6 +19384,12 @@
           }
         }
       }
+    },
+    "You're all caught up." : {
+      "comment" : "Nothing new today"
+    },
+    "You're done for today." : {
+      "comment" : "Day done"
     },
     "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more." : {
       "comment" : "Why resuming the goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\"",
@@ -19494,6 +19686,12 @@
         }
       }
     },
+    "Your end date has passed with %lld lessons left." : {
+      "comment" : "A goal's end date passed with lessons left; the number is the lessons"
+    },
+    "Your exam date has passed with %lld lessons left." : {
+      "comment" : "An exam's date passed with lessons left; the number is the lessons"
+    },
     "Your Focus test suggests more time for %@." : {
       "comment" : "A focus the learner's Focus test answers propose; then subjects",
       "localizations" : {
@@ -19730,6 +19928,9 @@
         }
       }
     },
+    "Your next lessons are below if you want to study." : {
+      "comment" : "A rest day, over the plan's next lessons"
+    },
     "Your next lessons are here if you'd like to study." : {
       "comment" : "A rest day",
       "localizations" : {
@@ -19912,6 +20113,9 @@
           }
         }
       }
+    },
+    "Your plan keeps time for the mock exam on %@." : {
+      "comment" : "Why today is short; the argument is the mock exam's date, like 'May 5'"
     },
     "Your plan picks up from today, starting with the lessons planned for the days you paused." : {
       "comment" : "What resuming the paused goal moves",

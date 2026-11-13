@@ -382,6 +382,17 @@
         }
       }
     },
+    "%@ %lld" : {
+      "comment" : "A belt and its step from 1 to 10, such as \"White belt 3\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld"
+          }
+        }
+      }
+    },
     "%@ → %@" : {
       "comment" : "A skill's state before and after the session, such as Learning → Solid",
       "localizations" : {
@@ -508,6 +519,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ → %2$@ doğru cevap"
+          }
+        }
+      }
+    },
+    "%@ comes after %@ %lld" : {
+      "comment" : "Under the belt's number: the next belt, then this belt and its last step, such as \"Yellow belt comes after White belt 10\"",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ comes after %2$@ %3$lld"
           }
         }
       }
@@ -688,6 +710,9 @@
           }
         }
       }
+    },
+    "%@ is fully grown, thanks to your Brain Power." : {
+      "comment" : "The buddy's last stage"
     },
     "%@ is glowing as bright as it gets." : {
       "comment" : "Energy at its top",
@@ -1215,6 +1240,9 @@
           }
         }
       }
+    },
+    "%@ today" : {
+      "comment" : "Time studied today, under a summary stopped early"
     },
     "%@, level %lld" : {
       "comment" : "The belt and level reached",
@@ -2721,6 +2749,9 @@
         }
       }
     },
+    "+%lld" : {
+      "comment" : "How many steps on the belt the day added, such as +1"
+    },
     "+%lld Brain Power" : {
       "comment" : "Earned",
       "localizations" : {
@@ -3253,6 +3284,9 @@
           }
         }
       }
+    },
+    "A short test, so your plan skips what you know." : {
+      "comment" : "Under the first week's warm-up, which checks what the learner knows"
     },
     "All %lld done" : {
       "comment" : "Every one of the day's missions is done",
@@ -4849,6 +4883,9 @@
         }
       }
     },
+    "For winning your first challenge." : {
+      "comment" : "What earned the glasses"
+    },
     "For winning your first phase challenge." : {
       "comment" : "What earned the glasses",
       "localizations" : {
@@ -4907,6 +4944,9 @@
           }
         }
       }
+    },
+    "For winning your plan's last challenge." : {
+      "comment" : "What earned the glasses"
     },
     "Get it right and it returns in days, then weeks, then months. Miss it and it's back sooner." : {
       "comment" : "How reviews work: how answers move an idea's next review",
@@ -5320,6 +5360,12 @@
           }
         }
       }
+    },
+    "It starts here when it's ready." : {
+      "comment" : "A challenge whose questions are being made"
+    },
+    "It takes a few minutes." : {
+      "comment" : "A lesson being written"
     },
     "Just before you forget" : {
       "comment" : "How reviews work: when an idea comes back",
@@ -5740,6 +5786,9 @@
         }
       }
     },
+    "Mission done!" : {
+      "comment" : "One mission this work completed"
+    },
     "Mistakes fixed" : {
       "comment" : "Mistakes fixed this week",
       "localizations" : {
@@ -6040,6 +6089,9 @@
           }
         }
       }
+    },
+    "Next lesson" : {
+      "comment" : "Starts the day's next lesson instead"
     },
     "Next week" : {
       "comment" : "The plan's next week",
@@ -6519,6 +6571,15 @@
         }
       }
     },
+    "Points for what you learn." : {
+      "comment" : "Under a learner's first Brain Power on a device: what it is"
+    },
+    "Practice %lld more min" : {
+      "comment" : "Adds practice once the day is done; the number is minutes"
+    },
+    "Practice now" : {
+      "comment" : "Starts the day's practice instead"
+    },
     "Preparation" : {
       "comment" : "An exam's preparation",
       "localizations" : {
@@ -6767,6 +6828,9 @@
         }
       }
     },
+    "Questions on what you studied before, so it stays with you." : {
+      "comment" : "Under a goal's first reviews on the session's next step: what a review is"
+    },
     "Red belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -6884,6 +6948,9 @@
           }
         }
       }
+    },
+    "Review now" : {
+      "comment" : "Starts the day's review instead"
     },
     "Reviews" : {
       "comment" : "Reviews done this week",
@@ -7675,6 +7742,9 @@
           }
         }
       }
+    },
+    "Start %@" : {
+      "comment" : "Starts another of the day's steps instead; the argument is its name"
     },
     "Start today's session from Today." : {
       "comment" : "The session screen with no day opened",
@@ -8622,6 +8692,9 @@
         }
       }
     },
+    "Today" : {
+      "comment" : "Session's title: today's study"
+    },
     "Today's missions" : {
       "comment" : "The missions' header",
       "localizations" : {
@@ -9093,6 +9166,9 @@
           }
         }
       }
+    },
+    "We couldn't stop for today. Try again." : {
+      "comment" : "Stopping for today failed"
     },
     "We couldn't write this lesson." : {
       "comment" : "Writing a lesson failed",
@@ -9743,6 +9819,9 @@
         }
       }
     },
+    "Your Brain Power helped %@ grow." : {
+      "comment" : "The buddy's next stage"
+    },
     "Your first summary comes on Sunday" : {
       "comment" : "No weekly summary yet",
       "localizations" : {
@@ -9919,6 +9998,9 @@
           }
         }
       }
+    },
+    "Your plan goes on without it." : {
+      "comment" : "A lesson its quality checks set aside"
     }
   },
   "version" : "1.0"

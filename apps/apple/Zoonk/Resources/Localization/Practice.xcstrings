@@ -787,6 +787,9 @@
         }
       }
     },
+    "%lld more to win" : {
+      "comment" : "Right answers still needed to break the Trickster's shield"
+    },
     "%lld of %lld" : {
       "comment" : "Where a test is: question n of total.",
       "localizations" : {
@@ -1459,6 +1462,28 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld questions on recordings, played as in the exam. Get %lld right to win." : {
+      "comment" : "What a listening Trickster duel asks; then how many right answers win it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld questions on recordings, played as in the exam. Get %2$lld right to win."
+          }
+        }
+      }
+    },
+    "%lld questions on what you just learned. Get %lld right to win." : {
+      "comment" : "What a Trickster duel asks; then how many right answers win it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld questions on what you just learned. Get %2$lld right to win."
           }
         }
       }
@@ -3873,6 +3898,9 @@
         }
       }
     },
+    "Beat the Trickster" : {
+      "comment" : "Title of a Trickster duel's intro."
+    },
     "Bonus practice" : {
       "comment" : "Title of an extra practice block.",
       "localizations" : {
@@ -6117,6 +6145,9 @@
         }
       }
     },
+    "He won" : {
+      "comment" : "The Trickster won the duel"
+    },
     "His shield held this time." : {
       "comment" : "Under the verdict that loses a phase challenge, before when it comes back.",
       "localizations" : {
@@ -6584,6 +6615,9 @@
           }
         }
       }
+    },
+    "It starts here when it's ready." : {
+      "comment" : "A challenge waits for its questions."
     },
     "Just typos" : {
       "comment" : "Title when recent mistakes were only typos.",
@@ -7764,6 +7798,9 @@
           }
         }
       }
+    },
+    "Mock exams need a subscription" : {
+      "comment" : "A mock exam's gate"
     },
     "Move to Monday" : {
       "comment" : "Moves the weekly challenge to next Monday.",
@@ -8993,6 +9030,9 @@
           }
         }
       }
+    },
+    "Opens when you finish the lessons before it" : {
+      "comment" : "A challenge waiting for the lessons before it."
     },
     "Other questions" : {
       "comment" : "Notebook group of mistakes without a skill.",
@@ -10499,6 +10539,9 @@
         }
       }
     },
+    "Questions on recordings, played as in the exam." : {
+      "comment" : "What a listening Trickster duel asks, before its count is known."
+    },
     "Questions on this recording (%lld)" : {
       "comment" : "Folds the list of every question about a recording, to read before it plays.",
       "localizations" : {
@@ -10665,6 +10708,12 @@
           }
         }
       }
+    },
+    "Questions on what you just learned." : {
+      "comment" : "What a Trickster duel asks, before its count is known."
+    },
+    "Questions on what you studied this week." : {
+      "comment" : "What the weekly challenge asks."
     },
     "Quick review" : {
       "comment" : "Title of a short review block.",
@@ -10842,6 +10891,15 @@
           }
         }
       }
+    },
+    "Rematch" : {
+      "comment" : "Over a challenge's second go\nTitle of a second go at the Trickster."
+    },
+    "Rematch tomorrow, after %lld short lessons." : {
+      "comment" : "A lost Trickster duel comes back after short lessons."
+    },
+    "Rematch tomorrow." : {
+      "comment" : "A lost Trickster duel comes back."
     },
     "Review done" : {
       "comment" : "End of a review block.",
@@ -12308,6 +12366,9 @@
         }
       }
     },
+    "Subscribe" : {
+      "comment" : "Opens the subscription page."
+    },
     "Tap the steps in order." : {
       "comment" : "Instruction above an ordering question.",
       "localizations" : {
@@ -13311,6 +13372,9 @@
         }
       }
     },
+    "The Trickster won this time." : {
+      "comment" : "Under the verdict that loses a Trickster duel."
+    },
     "The Trickster's shield" : {
       "comment" : "Label of the phase challenge's shield gauge.",
       "localizations" : {
@@ -13487,6 +13551,9 @@
           }
         }
       }
+    },
+    "This call needs a subscription" : {
+      "comment" : "A challenge call's gate"
     },
     "This didn't load" : {
       "comment" : "Title when a practice screen can't load.",
@@ -15618,6 +15685,9 @@
         }
       }
     },
+    "You can still review and practice your mistakes, or subscribe to keep going." : {
+      "comment" : "A Trickster duel's gate once the free plan's lessons are used"
+    },
     "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost." : {
       "comment" : "Why a checkpoint without questions isn't scored.",
       "localizations" : {
@@ -15853,6 +15923,9 @@
           }
         }
       }
+    },
+    "You won" : {
+      "comment" : "The learner won the duel"
     },
     "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day." : {
       "comment" : "How a phase challenge gives feedback, and that a loss brings a rematch, on its intro.",
@@ -16208,6 +16281,9 @@
         }
       }
     },
+    "You've used your free lessons" : {
+      "comment" : "A Trickster duel's gate once the free plan's lessons are used"
+    },
     "Your answer" : {
       "comment" : "Mark beside the learner's wrong pick once a question is graded.\nPlaceholder of an answer field.",
       "localizations" : {
@@ -16561,6 +16637,9 @@
           }
         }
       }
+    },
+    "Your plan goes on without it." : {
+      "comment" : "A challenge call's gate"
     },
     "Your plan moved later lessons to make room for it." : {
       "comment" : "After moving a weekly challenge to another day",

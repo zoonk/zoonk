@@ -77,6 +77,7 @@ private struct ZoonkButton: View {
   @Environment(\.controlSize) private var controlSize
   @Environment(\.buttonSizing) private var sizing
   @Environment(\.mainActionFillsRow) private var fillsRow
+  @Environment(\.mainActionMinWidth) private var mainMinWidth
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -95,7 +96,7 @@ private struct ZoonkButton: View {
       .foregroundStyle(label)
       .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
       .padding(.vertical, isIcon ? 0 : 6)
-      .frame(minWidth: isIcon ? height : nil, minHeight: height)
+      .frame(minWidth: isIcon ? height : variant == .main ? mainMinWidth : nil, minHeight: height)
       .frame(maxWidth: fills && !isIcon ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {

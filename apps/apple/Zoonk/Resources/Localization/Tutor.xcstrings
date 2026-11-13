@@ -2742,6 +2742,9 @@
         }
       }
     },
+    "Change my plan" : {
+      "comment" : "Applies a plan change the buddy proposed"
+    },
     "Change to your plan" : {
       "comment" : "Title of a plan change the buddy proposed",
       "localizations" : {
@@ -3568,65 +3571,6 @@
         }
       }
     },
-    "For new goals and your examples. It doesn't change the plans you already have." : {
-      "comment" : "What the country the learner lives in changes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gilt für neue Ziele und deine Beispiele. Deine bestehenden Pläne ändern sich dadurch nicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tus nuevos objetivos y ejemplos. No cambia los planes que ya tienes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour tes nouveaux objectifs et tes exemples. Ce choix ne change pas tes plans actuels."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per i nuovi obiettivi e gli esempi delle lezioni. Non modifica i piani che hai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい目標や学習で使う例に反映されます。現在の学習計画は変わりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 목표와 예시에 적용돼요. 기존 계획은 바뀌지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dotyczy nowych celów i przykładów w lekcjach. Nie zmienia twoich obecnych planów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vale para novos objetivos e para os seus exemplos. Não muda os planos que você já tem."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni hedeflerin ve sana verilen örnekler için kullanılır. Mevcut planlarını değiştirmez."
-          }
-        }
-      }
-    },
     "Find which subjects should get more of your study time." : {
       "comment" : "What choosing the plan's focus does",
       "localizations" : {
@@ -3682,6 +3626,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hangi branşlara daha çok zaman ayırman gerektiğini bul."
+          }
+        }
+      }
+    },
+    "For new goals and your examples. It doesn't change the plans you already have." : {
+      "comment" : "What the country the learner lives in changes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gilt für neue Ziele und deine Beispiele. Deine bestehenden Pläne ändern sich dadurch nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para tus nuevos objetivos y ejemplos. No cambia los planes que ya tienes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour tes nouveaux objectifs et tes exemples. Ce choix ne change pas tes plans actuels."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per i nuovi obiettivi e gli esempi delle lezioni. Non modifica i piani che hai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい目標や学習で使う例に反映されます。現在の学習計画は変わりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 목표와 예시에 적용돼요. 기존 계획은 바뀌지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dotyczy nowych celów i przykładów w lekcjach. Nie zmienia twoich obecnych planów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vale para novos objetivos e para os seus exemplos. Não muda os planos que você já tem."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni hedeflerin ve sana verilen örnekler için kullanılır. Mevcut planlarını değiştirmez."
           }
         }
       }
@@ -3862,6 +3865,9 @@
           }
         }
       }
+    },
+    "Keep official date" : {
+      "comment" : "Declines a change and keeps the exam's official date"
     },
     "Load earlier messages" : {
       "comment" : "Shows the conversation's earlier messages",
@@ -6510,6 +6516,9 @@
         }
       }
     },
+    "The official exam date is %@." : {
+      "comment" : "Under a change that moves the exam off its official date; the argument is a day like \"May 5\""
+    },
     "Thinking…" : {
       "comment" : "The buddy is writing its answer",
       "localizations" : {
@@ -7046,6 +7055,9 @@
           }
         }
       }
+    },
+    "Use my date" : {
+      "comment" : "Applies a change that moves the exam off its official date"
     },
     "Walk me through this answer" : {
       "comment" : "A question to the buddy about a checked answer, sent with one tap",
@@ -8636,6 +8648,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın artık buna göre ilerliyor."
+          }
+        }
+      }
+    },
+    "Your plan stays as it was." : {
+      "comment" : "A plan change was declined",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan bleibt wie bisher."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan se queda como estaba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan reste tel quel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano resta com’era."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画はこれまでのままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획은 그대로 유지돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan pozostaje bez zmian."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano continua como estava."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın olduğu gibi kalıyor."
           }
         }
       }

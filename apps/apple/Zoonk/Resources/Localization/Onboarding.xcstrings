@@ -3712,6 +3712,12 @@
         }
       }
     },
+    "A short test finds the lessons you don't need." : {
+      "comment" : "What the short test is"
+    },
+    "About %@" : {
+      "comment" : "Level choice detail: how long the short test takes, such as \"4 min\""
+    },
     "About %@ h more" : {
       "comment" : "Under a language level to aim for: the hours of study still needed to reach it",
       "localizations" : {
@@ -4239,6 +4245,9 @@
         }
       }
     },
+    "Add time" : {
+      "comment" : "Opens the plan's time a day, beside the line saying it doesn't cover the goal"
+    },
     "Add your material" : {
       "comment" : "Opens the ways to add a file, text or a link to a goal",
       "localizations" : {
@@ -4710,6 +4719,9 @@
           }
         }
       }
+    },
+    "Around %@" : {
+      "comment" : "Under a language level to aim for: when the learner reaches it; the argument is a month and year, like 'Nov 2027'"
     },
     "Ask" : {
       "comment" : "Sends a question about the material",
@@ -5324,6 +5336,9 @@
           }
         }
       }
+    },
+    "Back to the level you had, after a short test" : {
+      "comment" : "Purpose choice detail"
     },
     "Back to the quiz" : {
       "comment" : "Leaves the build's progress for the quiz under it. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.",
@@ -5974,6 +5989,12 @@
         }
       }
     },
+    "Change end date" : {
+      "comment" : "Opens the date question from the daily time question, for a goal with an end date"
+    },
+    "Change exam date" : {
+      "comment" : "Opens the date question from the daily time question, for an exam"
+    },
     "Change focus" : {
       "comment" : "Opens the choice of the subjects the plan gives more time",
       "localizations" : {
@@ -6510,6 +6531,9 @@
           }
         }
       }
+    },
+    "Choose an end date" : {
+      "comment" : "Opens the date question from the daily time question, for a goal without an end date"
     },
     "Choose at least %@ a day for your %lld goals." : {
       "comment" : "The day's time is shorter than the goals typed together need",
@@ -7262,6 +7286,9 @@
         }
       }
     },
+    "Country" : {
+      "comment" : "Row with the country a goal's lessons are about, such as Portugal"
+    },
     "Course" : {
       "comment" : "Row with the course an exam aims for",
       "localizations" : {
@@ -7581,6 +7608,28 @@
         }
       }
     },
+    "Covers about %@ of your exam topics by %@." : {
+      "comment" : "The share of an exam a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your exam topics by %2$@."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your exam topics by the start of %@." : {
+      "comment" : "The share of an exam a time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your exam topics by the start of %2$@."
+          }
+        }
+      }
+    },
     "Covers about %@ of your exam topics in depth by %@, starting with what comes up most." : {
       "comment" : "The share of an exam a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
       "localizations" : {
@@ -7707,6 +7756,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En sık çıkan konulardan başlayarak sınav konularının yaklaşık %1$@ kadarını %2$@ ayının başına kadar derinlemesine çalışmanı sağlar."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your goal by %@." : {
+      "comment" : "The share of a goal a time a day covers by its date; the second argument is a date like 'May 5, 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your goal by %2$@."
+          }
+        }
+      }
+    },
+    "Covers about %@ of your goal by the start of %@." : {
+      "comment" : "The share of a goal a time a day covers by its date; the second argument is the month the learner named, like 'May 2027'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Covers about %1$@ of your goal by the start of %2$@."
           }
         }
       }
@@ -9729,6 +9800,9 @@
         }
       }
     },
+    "End date" : {
+      "comment" : "Row with the date a goal aims for"
+    },
     "estimated finish" : {
       "comment" : "Under the month a plan without a date ends at this pace",
       "localizations" : {
@@ -10200,6 +10274,9 @@
           }
         }
       }
+    },
+    "Find your level in %@" : {
+      "comment" : "Title of a language goal's level test"
     },
     "Finding lessons in the Library…" : {
       "comment" : "What the wait is doing while a plan is built",
@@ -12632,6 +12709,9 @@
         }
       }
     },
+    "I'm new to all of them" : {
+      "comment" : "Says the learner knows none of the exam's subjects yet"
+    },
     "I'm starting from scratch" : {
       "comment" : "Says the learner knows none of the exam yet",
       "localizations" : {
@@ -14382,6 +14462,12 @@
         }
       }
     },
+    "Level test" : {
+      "comment" : "Over the level test's result"
+    },
+    "Level to reach" : {
+      "comment" : "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
+    },
     "Level you're aiming for" : {
       "comment" : "Row with the language level a goal aims for",
       "localizations" : {
@@ -15509,6 +15595,9 @@
         }
       }
     },
+    "New to its alphabet? Skip the test. Your first lesson teaches you to read it." : {
+      "comment" : "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
+    },
     "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it." : {
       "comment" : "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it",
       "localizations" : {
@@ -16039,6 +16128,9 @@
           }
         }
       }
+    },
+    "Not sure, give me a short test" : {
+      "comment" : "Level choice"
     },
     "Nothing, I'm just starting" : {
       "comment" : "Level choice",
@@ -20536,6 +20628,9 @@
         }
       }
     },
+    "Skip what you already know" : {
+      "comment" : "Title of the short test's start"
+    },
     "Something else" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -21740,6 +21835,9 @@
         }
       }
     },
+    "Stop and use my answers" : {
+      "comment" : "Ends a test early; the answers given so far count at once"
+    },
     "Stop here and see my plan" : {
       "comment" : "Ends placement early",
       "localizations" : {
@@ -22919,6 +23017,9 @@
           }
         }
       }
+    },
+    "The big ideas, in short" : {
+      "comment" : "Purpose choice detail"
     },
     "The exam has %lld choices to make. Your plan and mocks follow your picks, and you can change them in your plan." : {
       "comment" : "Under the exam choice question, for several choices",
@@ -24217,6 +24318,9 @@
         }
       }
     },
+    "There's no test for this goal yet. Your first few days show us what you already know." : {
+      "comment" : "Under \"We'll find your level as you study\""
+    },
     "These goals share your daily time. You can change all of this later." : {
       "comment" : "Under several understood goals",
       "localizations" : {
@@ -25291,6 +25395,9 @@
         }
       }
     },
+    "Understand it well" : {
+      "comment" : "Purpose choice"
+    },
     "Understand my material: %@" : {
       "comment" : "A goal to understand the learner's material: its titles",
       "localizations" : {
@@ -25999,6 +26106,12 @@
         }
       }
     },
+    "Use %@ to cover everything" : {
+      "comment" : "Picks the time a day that covers the whole goal by its date; the argument is a time like '45 min'. Say \"cover everything\", not \"study everything\": studying after an exam is a different choice."
+    },
+    "Use %@ to cover more" : {
+      "comment" : "Picks the longer time a day that covers as much of the goal as any time can, when part of it never fits; the argument is a time like '8 h'"
+    },
     "Use it at work" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -26116,6 +26229,9 @@
           }
         }
       }
+    },
+    "Use the suggested %@" : {
+      "comment" : "Picks the time a day the plan suggests, at most 4 hours; the argument is a time like '4 h'"
     },
     "Use the suggested %@ a day" : {
       "comment" : "Picks the time a day the plan suggests, at most 4 hours, which covers what's worth most first",
@@ -26352,6 +26468,9 @@
           }
         }
       }
+    },
+    "We can't estimate an end date. Try more time or more study days." : {
+      "comment" : "No finish date fits the time and days picked"
     },
     "We can't help with this goal" : {
       "comment" : "A goal the app declines",
@@ -27178,6 +27297,9 @@
           }
         }
       }
+    },
+    "We'll find your level as you study" : {
+      "comment" : "Title when no test could be made for a goal; nothing is wrong"
     },
     "We'll read it again. To fix one detail, use its pencil below." : {
       "comment" : "Under the typed words while they're being changed",
@@ -28777,6 +28899,9 @@
           }
         }
       }
+    },
+    "Which certificate?" : {
+      "comment" : "Box for the certificate a language learner wants to pass"
     },
     "Which country should your lessons be about?" : {
       "comment" : "Onboarding question for a goal whose content changes from country to country",
@@ -32200,6 +32325,9 @@
         }
       }
     },
+    "Your answers are saved" : {
+      "comment" : "Title once the short test is over and its answers wait to be saved"
+    },
     "Your answers are saved." : {
       "comment" : "Shown when a goal's plan stopped building, over the way to try again",
       "localizations" : {
@@ -33503,6 +33631,9 @@
           }
         }
       }
+    },
+    "Your plan skips their basics." : {
+      "comment" : "Under the known subjects question: the plan skips the basics of the subjects picked"
     },
     "Your plan so far" : {
       "comment" : "Heading over what the learner's answers have set for their plan",

@@ -1557,6 +1557,9 @@
         }
       }
     },
+    "Certificates need a subscription" : {
+      "comment" : "On a certificate a learner earned without a subscription"
+    },
     "Change" : {
       "comment" : "Changes the name on the certificates",
       "localizations" : {
@@ -4422,6 +4425,9 @@
           }
         }
       }
+    },
+    "Subscribe" : {
+      "comment" : "Opens the subscription page"
     },
     "That didn't work. Try again in a moment." : {
       "comment" : "Loading a certificate to print failed",
