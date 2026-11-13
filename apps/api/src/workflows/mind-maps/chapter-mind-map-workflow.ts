@@ -7,6 +7,7 @@ import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { type ChapterMindMapInput } from "./chapter-mind-map-input";
 import {
   checkMindMapStep,
+  claimMindMapRedrawStep,
   drawMindMapStep,
   failMindMapStep,
   finishMindMapRedrawStep,
@@ -108,7 +109,11 @@ export async function chapterMindMapWorkflow({
       await writeLessons({ analytics, chapterId, lessons, runId: workflowRunId });
     }
 
-    if (!(await writeMindMapStructureStep({ ...run, redraw }))) {
+    const claimed = redraw
+      ? await claimMindMapRedrawStep({ chapterId, runId: workflowRunId })
+      : await writeMindMapStructureStep(run);
+
+    if (!claimed) {
       return { hasImage: false };
     }
 

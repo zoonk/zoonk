@@ -3,7 +3,6 @@ import { type TransactionClient, sql } from "@zoonk/db";
 import { after as afterResponse } from "next/server";
 import { z } from "zod";
 import { startMindMapRedraw } from "../../../follow-ups/follow-up-starter";
-import { isMindMapRunActive } from "../../../mind-maps/_utils/mind-map-view";
 import {
   type Json,
   PRIVATE_CONTENT,
@@ -87,7 +86,7 @@ async function loadMap(db: TransactionClient, id: string) {
     return { problem: PRIVATE_CONTENT };
   }
 
-  if (row.status === "running" && isMindMapRunActive({ now: new Date(), row })) {
+  if (row.status === "running") {
     return { problem: "Wait for the current mind-map run before fixing its text." };
   }
 

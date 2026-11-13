@@ -25,12 +25,15 @@ import {
   signInApprover,
   signInProposer,
 } from "../staff/content-fixes/_test-utils/content-fix-steps";
+import { proposeContentFix } from "../staff/content-fixes/propose-content-fix";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { getChapterView } from "../view-models/chapter/get-chapter-view";
 import {
   checkChapterMindMapImage,
+  claimChapterMindMapRedraw,
   drawChapterMindMap,
   failChapterMindMap,
+  finishChapterMindMapRedraw,
   listOwedMindMapRedraws,
   removeChapterMindMapImage,
   showChapterMindMap,
@@ -126,6 +129,12 @@ function runAnalytics() {
   return { runId: `run-${randomUUID()}` };
 }
 
+function runsAlive(...runIds: string[]) {
+  const alive = new Set(runIds);
+
+  return { alive, isRunActive: async (runId: string) => alive.has(runId) };
+}
+
 async function drawnSharedMap() {
   const { finished, goal } = await finishedChapter();
   const analytics = runAnalytics();
@@ -137,10 +146,8 @@ async function drawnSharedMap() {
   return { analytics, finished, map };
 }
 
-async function applyTitleFix(mapId: string) {
-  await signInProposer();
-
-  const fix = await proposeFix({
+function titleFix(mapId: string) {
+  return {
     changes: [
       {
         id: mapId,
@@ -149,7 +156,12 @@ async function applyTitleFix(mapId: string) {
       },
     ],
     reason: "Fix the map title.",
-  });
+  };
+}
+
+async function applyTitleFix(mapId: string) {
+  await signInProposer();
+  const fix = await proposeFix(titleFix(mapId));
 
   const approver = await signInApprover();
   await approve({ fixId: fix.id, key: approver.key });
@@ -545,17 +557,15 @@ describe("chapter mind maps", () => {
     const usedAfter = await prisma.usageRecord.count({ where: { userId: user.id } });
     const rowAfterTap = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
 
+    const { isRunActive } = runsAlive("redraw-run", "other-run");
+
     await expect(
-      writeChapterMindMapStructure({
-        analytics: { runId: "redraw-run" },
-        chapterId: finished,
-        redraw: true,
-      }),
+      claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId: "redraw-run" }),
     ).resolves.toBe(true);
 
     const owners = await Promise.all(
       ["redraw-run", "other-run"].map((runId) =>
-        writeChapterMindMapStructure({ analytics: { runId }, chapterId: finished, redraw: true }),
+        claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId }),
       ),
     );
 
@@ -599,48 +609,63 @@ describe("chapter mind maps", () => {
     });
   });
 
-  it("keeps a map fixable and its redraw owed after the redraw's run dies", async () => {
+  it("takes over an owed redraw only once the run that owns it ended, and keeps staff waiting until then", async () => {
     const { finished, map } = await drawnSharedMap();
     const fix = await applyTitleFix(map.id);
+    const { alive, isRunActive } = runsAlive("dead-run", "retry-run");
 
-    await writeChapterMindMapStructure({
-      analytics: { runId: "dead-run" },
+    await claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId: "dead-run" });
+
+    await prisma.chapterMindMap.update({
+      data: { updatedAt: new Date(Date.now() - MS_PER_DAY) },
+      where: { id: map.id },
+    });
+
+    const whileLive = await claimChapterMindMapRedraw({
       chapterId: finished,
-      redraw: true,
-    });
-
-    await prisma.chapterMindMap.update({
-      data: { updatedAt: new Date(Date.now() - MS_PER_DAY) },
-      where: { id: map.id },
-    });
-
-    await expect(listOwedMindMapRedraws()).resolves.toContain(finished);
-
-    await expect(
-      writeChapterMindMapStructure({
-        analytics: { runId: "retry-run" },
-        chapterId: finished,
-        redraw: true,
-      }),
-    ).resolves.toBe(true);
-
-    await expect(
-      writeChapterMindMapStructure({
-        analytics: { runId: "other-run" },
-        chapterId: finished,
-        redraw: true,
-      }),
-    ).resolves.toBe(false);
-
-    await prisma.chapterMindMap.update({
-      data: { updatedAt: new Date(Date.now() - MS_PER_DAY) },
-      where: { id: map.id },
+      isRunActive,
+      runId: "retry-run",
     });
 
     await signInProposer();
-    const reverted = await revertFix({ fixId: fix.id, reason: "Put it back." });
+    const revertWhileLive = await revertFix({ fixId: fix.id, reason: "Put it back." });
 
-    expect(reverted.status).toBe("proposed");
+    alive.delete("dead-run");
+    const owed = await listOwedMindMapRedraws();
+
+    const afterEnd = await claimChapterMindMapRedraw({
+      chapterId: finished,
+      isRunActive,
+      runId: "retry-run",
+    });
+
+    const other = await claimChapterMindMapRedraw({
+      chapterId: finished,
+      isRunActive,
+      runId: "other-run",
+    });
+
+    await finishChapterMindMapRedraw({ chapterId: finished, runId: "retry-run" });
+    const revertAfterEnd = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    expect({
+      afterEnd,
+      other,
+      owed,
+      revertAfterEnd: revertAfterEnd.status,
+      revertWhileLive,
+      whileLive,
+    }).toStrictEqual({
+      afterEnd: true,
+      other: false,
+      owed: expect.arrayContaining([finished]),
+      revertAfterEnd: "proposed",
+      revertWhileLive: {
+        message: expect.stringContaining("Wait for the current mind-map run"),
+        status: "invalid",
+      },
+      whileLive: false,
+    });
   });
 
   it("keeps the redraw owed when a fix lands while the learner's run checks its picture", async () => {
@@ -662,10 +687,10 @@ describe("chapter mind maps", () => {
     ).resolves.toMatchObject({ status: "completed" });
 
     await expect(
-      writeChapterMindMapStructure({
-        analytics: { runId: "redraw-run" },
+      claimChapterMindMapRedraw({
         chapterId: finished,
-        redraw: true,
+        isRunActive: runsAlive(analytics.runId).isRunActive,
+        runId: "redraw-run",
       }),
     ).resolves.toBe(true);
   });
@@ -737,12 +762,11 @@ describe("chapter mind maps", () => {
     });
   });
 
-  it("does not publish a slow run's old drawing after a staff fix changes the outline", async () => {
+  it("keeps staff waiting while a slow run draws the map, however long it goes without writing it", async () => {
     const { finished, goal } = await finishedChapter();
     const analytics = runAnalytics();
     await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
     await writeChapterMindMapStructure({ analytics, chapterId: finished });
-    const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
     const map = await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } });
 
     await prisma.chapterMindMap.update({
@@ -750,16 +774,31 @@ describe("chapter mind maps", () => {
       where: { id: map.id },
     });
 
+    await signInProposer();
+    const whileDrawing = await proposeContentFix(titleFix(map.id));
+
+    const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
+    await showChapterMindMap({ chapterId: finished, drawn, runId: analytics.runId });
+    const shown = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+
     await applyTitleFix(map.id);
 
-    await showChapterMindMap({ chapterId: finished, drawn, runId: analytics.runId });
-
-    await expect(
-      prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } }),
-    ).resolves.toMatchObject({
-      imageUrl: null,
-      status: "completed",
-      structure: { ...structure, title: "Corrected outline" },
+    expect({
+      fixed: await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+      shown: { imageUrl: shown.imageUrl, status: shown.status },
+      whileDrawing,
+    }).toMatchObject({
+      fixed: {
+        imageUrl: null,
+        redrawOwedAt: expect.any(Date),
+        status: "completed",
+        structure: { ...structure, title: "Corrected outline" },
+      },
+      shown: { imageUrl: expect.any(String), status: "completed" },
+      whileDrawing: {
+        message: expect.stringContaining("Wait for the current mind-map run"),
+        status: "invalid",
+      },
     });
   });
 

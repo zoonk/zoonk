@@ -150,6 +150,46 @@ describe(chapterMindMapWorkflow, () => {
     },
   );
 
+  it("takes over an owed redraw only once the run that owns it ended, however long it went quiet", async () => {
+    const chapter = await claimedChapter();
+    const ownerStatuses = ["running", "failed"];
+
+    await prisma.chapterMindMap.update({
+      data: {
+        redrawOwedAt: new Date(),
+        runId: "owner-run",
+        status: "running",
+        structure,
+        updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+      where: { chapterId: chapter.id },
+    });
+
+    vi.mocked(getRun).mockImplementation(
+      () =>
+        ({
+          exists: Promise.resolve(true),
+          status: Promise.resolve(ownerStatuses.shift() ?? "completed"),
+        }) as never,
+    );
+
+    const whileLive = await chapterMindMapWorkflow({ chapterId: chapter.id, redraw: true });
+    const drawsWhileLive = vi.mocked(generateMindMapImage).mock.calls.length;
+    const afterEnd = await chapterMindMapWorkflow({ chapterId: chapter.id, redraw: true });
+
+    expect({
+      afterEnd,
+      drawsWhileLive,
+      row: await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
+      whileLive,
+    }).toMatchObject({
+      afterEnd: { hasImage: true },
+      drawsWhileLive: 0,
+      row: { imageUrl: expect.any(String), redrawOwedAt: null, status: "completed" },
+      whileLive: { hasImage: false },
+    });
+  });
+
   it("writes the chapter's lessons through their own runs first, keeping the map on its way", async () => {
     const chapter = await claimedChapter();
     const unwritten = await libraryLessonFixture({ title: "Inside a cell" });

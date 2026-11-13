@@ -8,7 +8,6 @@ import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { readStoredImage } from "../images/read-stored-image";
 import { loadMindMapSource } from "./_utils/load-mind-map-source";
-import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
 import { saveMindMapImage } from "./_utils/save-mind-map-image";
 
 export type MindMapAnalytics = Pick<AiGenerationContext, "distinctId" | "goalId"> & {
@@ -51,29 +50,56 @@ export async function holdChapterMindMap({
   });
 }
 
-/** A redraw nobody runs: owed and never tried, or tried by a run that stopped writing to the map. */
-function unclaimedRedraw(now: Date) {
-  return {
-    OR: [
-      { redrawAttemptedAt: null, status: "completed" as const },
-      {
-        status: "running" as const,
-        updatedAt: { lt: new Date(now.getTime() - MIND_MAP_STALE_AFTER_MS) },
-      },
-    ],
-    redrawOwedAt: { not: null },
-  };
+/** Workflow bridge, not authorization: claims an owed redraw for runId unless another live run owns the map. */
+export async function claimChapterMindMapRedraw({
+  chapterId,
+  isRunActive,
+  runId,
+}: {
+  chapterId: string;
+  isRunActive: (runId: string) => Promise<boolean>;
+  runId: string;
+}): Promise<boolean> {
+  const map = await prisma.chapterMindMap.findUnique({
+    select: { redrawOwedAt: true, runId: true, status: true },
+    where: { chapterId },
+  });
+
+  if (!map?.redrawOwedAt) {
+    return false;
+  }
+
+  const running = map.status === "running";
+
+  if (running && map.runId === runId) {
+    return true;
+  }
+
+  if (running && map.runId && (await isRunActive(map.runId))) {
+    return false;
+  }
+
+  const claimed = await prisma.chapterMindMap.updateMany({
+    data: { redrawAttemptedAt: new Date(), runId, status: "running" },
+    where: {
+      chapterId,
+      redrawOwedAt: { not: null },
+      ...(running
+        ? { runId: map.runId, status: "running" }
+        : { redrawAttemptedAt: null, status: "completed" }),
+    },
+  });
+
+  return claimed.count > 0;
 }
 
 /** Workflow bridge, not authorization; requires a learner-claimed run and preserves existing text on retries. */
 export async function writeChapterMindMapStructure({
   analytics,
   chapterId,
-  redraw = false,
 }: {
   analytics: MindMapAnalytics;
   chapterId: string;
-  redraw?: boolean;
 }): Promise<boolean> {
   const map = await findMindMap(chapterId);
 
@@ -81,24 +107,9 @@ export async function writeChapterMindMapStructure({
     throw new Error(`Chapter ${chapterId} has no mind map to write.`);
   }
 
-  const now = new Date();
-
   const claimed = await prisma.chapterMindMap.updateMany({
-    data: {
-      runId: analytics.runId,
-      ...(redraw ? { redrawAttemptedAt: now, status: "running", updatedAt: now } : {}),
-    },
-    where: {
-      chapterId,
-      ...(redraw
-        ? {
-            OR: [
-              unclaimedRedraw(now),
-              { redrawOwedAt: { not: null }, runId: analytics.runId, status: "running" },
-            ],
-          }
-        : { OR: [{ runId: null }, { runId: analytics.runId }], status: "running" }),
-    },
+    data: { runId: analytics.runId },
+    where: { OR: [{ runId: null }, { runId: analytics.runId }], chapterId, status: "running" },
   });
 
   if (claimed.count === 0) {
@@ -303,11 +314,15 @@ export async function finishChapterMindMapRedraw({
   });
 }
 
+/** Includes maps a live run still redraws, which a start under the map's run token joins. */
 export async function listOwedMindMapRedraws(): Promise<string[]> {
   const rows = await prisma.chapterMindMap.findMany({
     orderBy: { redrawOwedAt: "asc" },
     take: 100,
-    where: unclaimedRedraw(new Date()),
+    where: {
+      OR: [{ redrawAttemptedAt: null, status: "completed" }, { status: "running" }],
+      redrawOwedAt: { not: null },
+    },
   });
 
   return rows.map((row) => row.chapterId);
