@@ -11,6 +11,7 @@ export function DetailLayout({
   aside,
   asideLabel = "",
   bar,
+  bottomBar,
   children,
   className,
   ...props
@@ -18,6 +19,8 @@ export function DetailLayout({
   aside?: React.ReactNode;
   asideLabel?: string;
   bar?: React.ReactNode;
+  /** The page's `BottomBar`: last in the page's own column, so the aside never covers it. */
+  bottomBar?: React.ReactNode;
 }) {
   const page = (
     <article className="flex min-w-0 flex-col" {...props}>
@@ -28,6 +31,7 @@ export function DetailLayout({
       >
         {children}
       </div>
+      {bottomBar}
     </article>
   );
 

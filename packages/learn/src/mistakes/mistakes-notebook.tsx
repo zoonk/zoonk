@@ -263,54 +263,52 @@ export function MistakesNotebook({
   const groups = groupBySkill(mistakes);
 
   return (
-    <>
-      <DetailLayout
-        bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
-        className={INBOX_PAGE_CLASS}
-        data-slot="mistakes-notebook"
-      >
-        <DetailAside>
-          <NotebookHero goalTitle={goalTitle} notebook={notebook} />
-        </DetailAside>
+    <DetailLayout
+      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
+      bottomBar={<PracticeBar hrefs={hrefs} notebook={notebook} />}
+      className={INBOX_PAGE_CLASS}
+      data-slot="mistakes-notebook"
+    >
+      <DetailAside>
+        <NotebookHero goalTitle={goalTitle} notebook={notebook} />
+      </DetailAside>
 
-        <PageTabsGroup>
-          <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
+      <PageTabsGroup>
+        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
 
-          <DetailContent>
-            {pattern && !showingFixed && (
-              <ListGroup>
-                <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
-              </ListGroup>
-            )}
+        <DetailContent>
+          {pattern && !showingFixed && (
+            <ListGroup>
+              <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
+            </ListGroup>
+          )}
 
-            {groups.length > 0 ? (
-              <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
-                <MistakesInbox
-                  groups={groups}
-                  hrefs={hrefs}
-                  trueFalseLabels={notebook.trueFalseLabels}
-                />
-              </section>
-            ) : (
-              <EmptyNotebook showingFixed={showingFixed} />
-            )}
+          {groups.length > 0 ? (
+            <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
+              <MistakesInbox
+                groups={groups}
+                hrefs={hrefs}
+                trueFalseLabels={notebook.trueFalseLabels}
+              />
+            </section>
+          ) : (
+            <EmptyNotebook showingFixed={showingFixed} />
+          )}
 
-            {filters.nextOffset !== null && (
-              <LearnLink
-                className={buttonVariants({ className: "self-start", variant: "outline" })}
-                href={buildNotebookHref({
-                  ...filters,
-                  notebook: hrefs.notebook,
-                  offset: filters.nextOffset,
-                })}
-              >
-                {t("Show more")}
-              </LearnLink>
-            )}
-          </DetailContent>
-        </PageTabsGroup>
-      </DetailLayout>
-      <PracticeBar hrefs={hrefs} notebook={notebook} />
-    </>
+          {filters.nextOffset !== null && (
+            <LearnLink
+              className={buttonVariants({ className: "self-start", variant: "outline" })}
+              href={buildNotebookHref({
+                ...filters,
+                notebook: hrefs.notebook,
+                offset: filters.nextOffset,
+              })}
+            >
+              {t("Show more")}
+            </LearnLink>
+          )}
+        </DetailContent>
+      </PageTabsGroup>
+    </DetailLayout>
   );
 }

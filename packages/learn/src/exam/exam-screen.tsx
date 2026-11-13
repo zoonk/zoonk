@@ -267,6 +267,14 @@ export function ExamScreen({
         }
         asideLabel={t("About the exam")}
         bar={<ExamBar />}
+        bottomBar={
+          !lastDays &&
+          mockAction && (
+            <BottomBar>
+              <BottomBarActions>{mockAction}</BottomBarActions>
+            </BottomBar>
+          )
+        }
         data-slot="exam-screen"
       >
         <DetailAside>
@@ -283,12 +291,6 @@ export function ExamScreen({
           <ExamSpeaking />
         </DetailContent>
       </DetailLayout>
-
-      {!lastDays && mockAction && (
-        <BottomBar>
-          <BottomBarActions>{mockAction}</BottomBarActions>
-        </BottomBar>
-      )}
     </ExamScreenProvider>
   );
 }
