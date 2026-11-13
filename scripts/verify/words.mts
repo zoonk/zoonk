@@ -14,7 +14,7 @@ export const WORD_BUDGET = {
 
 /** Where the title and the main action sit, for the founder's rules 3 and 4 (`placeFindings`). */
 export type PagePlace = {
-  /** Whether the one main action is pinned (fixed or sticky); null without exactly one. */
+  /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
   /** From the bottom of the nearest thing drawn above the title to the title's top. */
   titleGap: number | null;
@@ -94,6 +94,10 @@ export function readWords(): PageText {
 
   // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
   function pinned(element: Element) {
+    if (element.getBoundingClientRect().bottom <= innerHeight / 2) {
+      return false;
+    }
+
     for (let current: Element | null = element; current; current = current.parentElement) {
       if (["fixed", "sticky"].includes(getComputedStyle(current).position)) {
         return true;
