@@ -17,6 +17,7 @@ import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
+import { readPageTopClasses } from "./page-top.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -33,7 +34,6 @@ import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
-import { titleGapFindings } from "./words.mts";
 
 /**
  * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
@@ -128,6 +128,7 @@ const target = {
   baseUrl,
   browser,
   out,
+  pageTop: readPageTopClasses(served),
   queries,
   serverPid,
   shortcuts: await readShortcuts(served),
@@ -191,16 +192,6 @@ try {
 
       loads.push(load);
     }
-
-    const phone = loads.find(
-      (load) => load.path === redactQuery(path) && load.viewport === "phone",
-    );
-
-    const laptop = loads.find(
-      (load) => load.path === redactQuery(path) && load.viewport === "laptop",
-    );
-
-    laptop?.findings.push(...(phone ? titleGapFindings(phone.words, laptop.words) : []));
   }
 
   if (values.nav && paths.length > 1) {
