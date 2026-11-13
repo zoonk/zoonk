@@ -915,7 +915,7 @@ private fun ReviewItem(
                 modifier = Modifier.size(20.dp),
                 tint = if (answer.isCorrect) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
             )
-            Text(question.question, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+            ItemText(question.question, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             ReportProblemMenu(app, FeedbackTarget("checkpoint-review", FeedbackSubmissionContext.ContentKind.ITEM, answer.itemId))
         }
         Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
