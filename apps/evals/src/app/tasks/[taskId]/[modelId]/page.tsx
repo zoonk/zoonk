@@ -15,7 +15,7 @@ import { redirect } from "next/navigation";
 import { Suspense, cache } from "react";
 import { getTaskRoute } from "../_utils/task-route";
 import { EvalResults } from "./eval-results";
-import { TaskModelActionsCard } from "./task-model-actions-card";
+import { TaskModelFileActions, TaskModelReasoning, TaskModelRunBar } from "./task-model-actions";
 
 type TaskModelRouteParams = PageProps<"/tasks/[taskId]/[modelId]">["params"];
 type TaskModelRouteProps = { params: TaskModelRouteParams };
@@ -44,25 +44,6 @@ export async function generateMetadata({ params }: TaskModelRouteProps): Promise
   return { title: `${getModelDisplayName(model)} on ${task.name}` };
 }
 
-async function TaskModelHeader({ params }: TaskModelRouteProps) {
-  const { model, outputStatus, results, taskId, taskName } =
-    await getTaskModelContentFromParams(params);
-
-  const scored = results?.results.length ?? 0;
-
-  return (
-    <EvalPageTop
-      parent={{ href: `/tasks/${taskId}`, label: taskName }}
-      title={`${getModelDisplayName(model)} on ${taskName}`}
-    >
-      <p className="text-muted-foreground font-mono text-xs">
-        {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written · {scored}{" "}
-        scored
-      </p>
-    </EvalPageTop>
-  );
-}
-
 const getTaskModelContent = cache(async (taskId: string, rawModelId: string) => {
   const { model, modelId, task } = await getTaskModelRoute(taskId, rawModelId);
 
@@ -88,36 +69,76 @@ async function getTaskModelContentFromParams(params: TaskModelRouteParams) {
   return getTaskModelContent(taskId, modelId);
 }
 
-async function TaskModelActions({ params }: TaskModelRouteProps) {
-  const { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName } =
-    await getTaskModelContentFromParams(params);
+function getExportEntries({
+  generatedOutputs,
+  results,
+}: Awaited<ReturnType<typeof getTaskModelContent>>) {
+  return (
+    generatedOutputs?.outputs.map((output) => {
+      const result = results?.results.find((entry) => entry.testCase.id === output.testCaseId);
+
+      return {
+        input: output.testCase.userInput,
+        itemsScored: result?.itemsScored,
+        keyFlaws: result?.keyFlaws,
+        output: output.output,
+        testCaseId: output.testCaseId,
+      };
+    }) ?? []
+  );
+}
+
+async function TaskModelHeader({ params }: TaskModelRouteProps) {
+  const content = await getTaskModelContentFromParams(params);
+  const { generatedOutputs, model, modelId, outputStatus, results, taskId, taskName } = content;
 
   return (
-    <TaskModelActionsCard
-      exportEntries={
-        generatedOutputs?.outputs.map((output) => {
-          const result = results?.results.find((entry) => entry.testCase.id === output.testCaseId);
-
-          return {
-            input: output.testCase.userInput,
-            itemsScored: result?.itemsScored,
-            keyFlaws: result?.keyFlaws,
-            output: output.output,
-            testCaseId: output.testCaseId,
-          };
-        }) ?? []
+    <EvalPageTop
+      actions={
+        <TaskModelFileActions
+          exportEntries={getExportEntries(content)}
+          failedRuns={results?.failedRuns ?? []}
+          modelId={modelId}
+          reviewEntries={createReviewExportEntries({
+            outputs: generatedOutputs?.outputs ?? [],
+            results: results?.results ?? [],
+          })}
+          summary={getSummary(content)}
+          taskId={taskId}
+          taskName={taskName}
+        />
       }
-      summary={aggregateEvalResults(results ?? { outputs: [], results: [] })}
-      failedRuns={results?.failedRuns ?? []}
-      model={model}
-      modelId={modelId}
-      outputStatus={outputStatus}
-      reviewEntries={createReviewExportEntries({
-        outputs: generatedOutputs?.outputs ?? [],
-        results: results?.results ?? [],
-      })}
-      taskId={taskId}
-      taskName={taskName}
+      parent={{ href: `/tasks/${taskId}`, label: taskName }}
+      title={`${getModelDisplayName(model)} on ${taskName}`}
+    >
+      <p className="text-muted-foreground font-mono text-xs">
+        {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written ·{" "}
+        {results?.results.length ?? 0} scored
+      </p>
+    </EvalPageTop>
+  );
+}
+
+function getSummary({ results }: Awaited<ReturnType<typeof getTaskModelContent>>) {
+  return aggregateEvalResults(results ?? { outputs: [], results: [] });
+}
+
+async function TaskModelSettings({ params }: TaskModelRouteProps) {
+  const { model } = await getTaskModelContentFromParams(params);
+
+  return <TaskModelReasoning model={model} />;
+}
+
+async function TaskModelRun({ params }: TaskModelRouteProps) {
+  const content = await getTaskModelContentFromParams(params);
+
+  return (
+    <TaskModelRunBar
+      model={content.model}
+      modelId={content.modelId}
+      outputStatus={content.outputStatus}
+      summary={getSummary(content)}
+      taskId={content.taskId}
     />
   );
 }
@@ -134,14 +155,17 @@ async function TaskModelResults({ params }: TaskModelRouteProps) {
 
 export default function TaskModelPage({ params }: TaskModelRouteProps) {
   return (
-    <main className="flex flex-col gap-4">
+    <main className="flex min-h-dvh flex-col gap-4">
       {/* One boundary: every part reads the same results, so they arrive together and none pushes another. */}
       <Suspense fallback={<EvalPageTopSkeleton />}>
         <TaskModelHeader params={params} />
 
-        <ContainerBody>
-          <TaskModelActions params={params} />
-          <TaskModelResults params={params} />
+        <ContainerBody className="sm:flex-1">
+          <div className="flex flex-1 flex-col gap-4">
+            <TaskModelSettings params={params} />
+            <TaskModelResults params={params} />
+          </div>
+          <TaskModelRun params={params} />
         </ContainerBody>
       </Suspense>
     </main>

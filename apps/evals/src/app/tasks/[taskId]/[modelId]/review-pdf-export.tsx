@@ -82,10 +82,12 @@ export function ReviewPdfExport({
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger
-        render={<Button disabled={summary.attempted === 0} type="button" variant="outline" />}
+        render={
+          <Button disabled={summary.attempted === 0} size="sm" type="button" variant="outline" />
+        }
       >
         <FileTextIcon />
-        Export review PDF
+        <span className="sr-only sm:not-sr-only">Export review PDF</span>
       </DialogTrigger>
 
       <DialogContent closeLabel="Close">

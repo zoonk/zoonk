@@ -18,6 +18,7 @@ type SelectOption = { label: string; value: string };
 export function LabeledSelect({
   defaultValue,
   disabled,
+  form,
   id,
   label,
   name,
@@ -27,6 +28,8 @@ export function LabeledSelect({
 }: {
   defaultValue: string;
   disabled?: boolean;
+  /** The form it belongs to, when it sits outside it. */
+  form?: string;
   id: string;
   label: string;
   name: string;
@@ -37,7 +40,13 @@ export function LabeledSelect({
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
-      <Select defaultValue={defaultValue} disabled={disabled} items={options} name={name}>
+      <Select
+        defaultValue={defaultValue}
+        disabled={disabled}
+        form={form}
+        items={options}
+        name={name}
+      >
         <SelectTrigger className={triggerClassName} id={id} size={size}>
           <SelectValue />
         </SelectTrigger>

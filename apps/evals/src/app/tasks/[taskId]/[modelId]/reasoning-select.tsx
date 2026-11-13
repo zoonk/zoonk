@@ -2,10 +2,11 @@ import { LabeledSelect } from "@/components/labeled-select";
 import { DEFAULT_REASONING, REASONING_OPTIONS } from "@/lib/models";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 
-export function ReasoningSelect({ reasoning }: { reasoning?: Reasoning }) {
+export function ReasoningSelect({ form, reasoning }: { form?: string; reasoning?: Reasoning }) {
   return (
     <LabeledSelect
       defaultValue={reasoning ?? DEFAULT_REASONING}
+      form={form}
       id="reasoning-level"
       label="Reasoning"
       name="reasoning"

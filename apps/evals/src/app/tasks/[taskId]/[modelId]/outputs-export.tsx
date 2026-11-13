@@ -64,11 +64,12 @@ export function OutputsExport({
     <Button
       disabled={summary.attempted === 0}
       onClick={exportOutputs}
+      size="sm"
       type="button"
       variant="outline"
     >
       <DownloadIcon />
-      Export outputs
+      <span className="sr-only sm:not-sr-only">Export outputs</span>
     </Button>
   );
 }
