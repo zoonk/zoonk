@@ -248,7 +248,7 @@ export function PlacementQuestionScreen({
             </OnboardingSubject>
           )}
 
-          <div className="flex flex-col gap-5 py-4 empty:hidden">
+          <div className="flex flex-col gap-5 pb-4 not-first:pt-4 empty:hidden">
             {media}
             <ItemSupport
               context={question.context}

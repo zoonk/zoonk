@@ -5,6 +5,7 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { PageSectionTitle } from "../../_components/page";
 import { CheckList, ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 import { useAdvanceOnPick } from "./use-advance-on-pick";
@@ -73,8 +74,8 @@ export function ExamChoiceStep({
         }));
 
         return (
-          <section className="flex flex-col gap-2" key={choice.group}>
-            <h2 className="text-sm font-medium">{choice.group}</h2>
+          <section className="flex flex-col gap-1" key={choice.group}>
+            <PageSectionTitle>{choice.group}</PageSectionTitle>
 
             {choice.take > 1 ? (
               <>

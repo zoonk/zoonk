@@ -9,6 +9,7 @@ import {
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { CalendarIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
@@ -49,6 +50,7 @@ function ExamDateStep({
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}
       onSkip={onOtherDate}
       pending={pending}
+      skipIcon={<CalendarIcon aria-hidden="true" />}
       skipLabel={t("Another date")}
       subject={subject}
       title={

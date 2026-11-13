@@ -67,7 +67,7 @@ export function WaitStatus({
           <span className="sr-only">{`, ${formatShare(done ? 1 : value / 100)}`}</span>
         </span>
 
-        <span className="col-start-3 row-start-1 flex self-center">
+        <span className="col-start-3 row-start-1 flex justify-end self-center">
           <ListRowChevron />
         </span>
 
