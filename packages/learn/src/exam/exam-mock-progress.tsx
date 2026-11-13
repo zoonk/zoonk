@@ -154,6 +154,17 @@ function useLatestMock(progress: Progress) {
   };
 }
 
+/** With one mock exam, what the rows measure is the section's own line, under its title. */
+function OneMockMeasure({ progress }: { progress: Progress }) {
+  const latest = useLatestMock(progress);
+
+  if (!latest || latest.change !== null) {
+    return null;
+  }
+
+  return <p className="text-muted-foreground text-compact">{latest.measure}</p>;
+}
+
 function LatestMock({ progress }: { progress: Progress }) {
   const t = useExtracted();
   const latest = useLatestMock(progress);
@@ -164,7 +175,7 @@ function LatestMock({ progress }: { progress: Progress }) {
 
   // One mock exam has nothing to compare: the subject rows below are its result.
   if (latest.change === null) {
-    return <p className="text-muted-foreground text-compact">{latest.measure}</p>;
+    return null;
   }
 
   return (
@@ -238,10 +249,13 @@ export function ExamMockProgress() {
 
   return (
     <PageSection aria-labelledby={TITLE_ID}>
-      <PageSectionHeader>
-        <PageSectionTitle id={TITLE_ID}>{t("Your progress")}</PageSectionTitle>
-        {!exam.progress && <PlusMark />}
-      </PageSectionHeader>
+      <div className="flex flex-col gap-1">
+        <PageSectionHeader>
+          <PageSectionTitle id={TITLE_ID}>{t("Your progress")}</PageSectionTitle>
+          {!exam.progress && <PlusMark />}
+        </PageSectionHeader>
+        {exam.progress && <OneMockMeasure progress={exam.progress} />}
+      </div>
       {exam.progress ? (
         <ProgressCard progress={exam.progress} />
       ) : (
