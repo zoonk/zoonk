@@ -3480,11 +3480,6 @@ msgid "The {count, number} days"
 msgstr "The {count, number} days"
 
 #: src/exam/exam-format-section.tsx
-msgctxt "smoagB"
-msgid "{parts} · {count, plural, one {# question} other {# questions}}"
-msgstr "{parts} · {count, plural, one {# question} other {# questions}}"
-
-#: src/exam/exam-format-section.tsx
 msgctxt "Yym2vP"
 msgid "Day {number, number}"
 msgstr "Day {number, number}"

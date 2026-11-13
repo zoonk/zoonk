@@ -3480,11 +3480,6 @@ msgid "The {count, number} days"
 msgstr "{count, number}일간의 시험"
 
 #: src/exam/exam-format-section.tsx
-msgctxt "smoagB"
-msgid "{parts} · {count, plural, one {# question} other {# questions}}"
-msgstr "{parts} · {count, plural, other {#문제}}"
-
-#: src/exam/exam-format-section.tsx
 msgctxt "Yym2vP"
 msgid "Day {number, number}"
 msgstr "{number, number}일차"
