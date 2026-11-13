@@ -16,13 +16,12 @@ import { getDaySections } from "../mock-day-sections";
 import { getMockFormatMix } from "../mock-format-mix";
 import { type MockTypedPart } from "../mock-left-out";
 import { type MockOption, findMockOption, listMockOptions } from "../mock-options";
-import { type MockCandidate, getMockDays } from "../mock-plan";
+import { type MockCandidate } from "../mock-plan";
 import { type MockSizeSource } from "../mock-view-contract";
 import { type MockEssayCandidate } from "../written-parts";
 import { loadSkillAreas } from "./mock-candidates";
 import { loadMockEssays } from "./mock-essays";
 import { loadListeningCandidates } from "./mock-listening";
-import { countFinishedMocksBefore } from "./mock-number";
 import { loadMockPace } from "./mock-pace";
 import { loadBankTypedParts } from "./mock-typed-parts";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
@@ -65,7 +64,6 @@ async function canBuildMock({
 
 type AnytimeMockPage = {
   essays: Promise<MockEssayCandidate[]>;
-  finishedMocks: Promise<number>;
   plan: Promise<SavedPlan | null>;
   typed: Promise<MockTypedPart[]>;
 };
@@ -77,12 +75,11 @@ export async function loadAnytimeMockSetup(
 ): Promise<AnytimeMockSetup> {
   const plan = page ? await page.plan : undefined;
 
-  const [blueprint, areas, finished, pace, essays, picks, typed, speaking] = await Promise.all([
+  const [blueprint, areas, pace, essays, picks, typed, speaking] = await Promise.all([
     knownBlueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : (knownBlueprint ?? null),
     loadSkillAreas(goal.id, plan ?? undefined),
-    page?.finishedMocks ?? countFinishedMocksBefore({ goalId: goal.id }),
     loadMockPace(goal.examBlueprintId),
     page?.essays ?? loadMockEssays({ goal, userId: goal.userId }),
     plan === undefined ? loadExamPicks(goal.id) : readExamPicks(plan?.settings),
@@ -100,7 +97,6 @@ export async function loadAnytimeMockSetup(
     userId: goal.userId,
   });
 
-  const days = getMockDays(structure);
   const goalAreas = [...new Set(areas.values())];
 
   return {
@@ -111,7 +107,6 @@ export async function loadAnytimeMockSetup(
     listening: recordings,
     options: buildable
       ? listMockOptions({
-          dayInTurn: days[finished % days.length] ?? null,
           essays,
           goalAreas,
           listening: new Set([...recordings.keys(), ...unvoiced]),
