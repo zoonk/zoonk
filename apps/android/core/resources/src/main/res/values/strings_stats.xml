@@ -64,12 +64,11 @@
     <string name="stats_energy_amount">%1$s Energy</string>
     <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today</string>
 
-    <!-- The Score page's one tile: the days its number counts back from today, as in "Last 90 days". -->
-    <plurals name="stats_last_days">
-        <item quantity="one">Last %1$s day</item>
-        <item quantity="other">Last %1$s days</item>
+    <!-- The Score page's one tile, under the percentage: "153 of 197 right in the last 90 days". %3$s is the number of days. -->
+    <plurals name="stats_right_in_last_days">
+        <item quantity="one">%1$s of %2$s right in the last %3$s day</item>
+        <item quantity="other">%1$s of %2$s right in the last %3$s days</item>
     </plurals>
-    <string name="stats_correct_of_total">%1$s of %2$s</string>
     <string name="stats_score_trend">Weekly score trend: %1$s. %2$s</string>
     <plurals name="stats_score_across">
         <item quantity="one">%1$s across %2$s answer</item>

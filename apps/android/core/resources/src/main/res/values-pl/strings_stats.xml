@@ -21,7 +21,6 @@
   "stats_brain_power_to": "600661d1f2b2e072449ca5d120c83c2028bc2f44eaa4c551bab3676989ba0e3b",
   "stats_calendar_activity_summary": "37891a32d2b4666301363bc33d9d4bea8762ecebf43bfc8b64a090b95bcae472",
   "stats_calendar_energy_summary": "e35dd3c63ff79a9e4a0215b8f2bd40b72c69db17fb7b71b2b7745b924f3b8eb5",
-  "stats_correct_of_total": "d9e292f6ef9256f2992d65a45efd7bcf9e5cd4dfdf423ae12284849abeb29ad6",
   "stats_days_at_full": "b44455a771869674cdeb5d62041db1d83602ca92cd3d33385325da5948a054f5",
   "stats_days_same": "f94dc41533838232884350d736ace3cf056dcd91517146bef425d1366a8137a1",
   "stats_days_studied": "3dd834c33661135bffb12659081e3e0da72cd8fbab2ddf816d20ca01af3877af",
@@ -34,7 +33,6 @@
   "stats_every_belt": "bf9405fdafcfb7f2702ea6c3840297f995a581f0263d7ddddd33df4ca2917a02",
   "stats_go_to_today": "3b3a5a7bcd0faf9361bbb63f7b82ded3cddaed4bdc16ca09e6a81619649996b0",
   "stats_high": "850e60784ac3f63bf9f88df06cd949567628fde5d9cfa93be16918c47f7ddb3b",
-  "stats_last_days": "1c0d583ad1f6f79034b38e83894688015458f089e80fede60929b2805a17adb2",
   "stats_less": "3edd6deeb383769fd3873b7fcf348610c2b360aeafb35fa5259663dad33331a2",
   "stats_lesson_count": "ca7fcd6cbcacc2ff31ec10e9092c5bb73ec01b6b2bdd1b036ed334968c0d117b",
   "stats_lessons": "a1d94be840d8a9b89987b5749470a2c843cf990fe83df707eb808f6093b16dd6",
@@ -54,6 +52,7 @@
   "stats_patterns": "194654efb1d90ab7572a4af45246f96c9ec9a2787eaca392eaeb7b49848e97e6",
   "stats_patterns_90": "52ef677ca29866dc2775d2cd32f2f662631324fe32ff0d946f1da5330c2f84c0",
   "stats_patterns_intro": "32bc7e62341b9aa17a78f408330c77a95294e5942be2d08be4ca7d170099ed53",
+  "stats_right_in_last_days": "4f434fc9c67c6e2eb04955db2b3b3d638b201fae5b3ff10c5d3c2ea76c5d5906",
   "stats_score": "518162513f2d59184bdab291724d737fe57dcb3971ec1bf96fbf3e71b77cd278",
   "stats_score_90": "bd6a815027505da4f09efe922183d7b4b769befb3f4e2b1c913f63d01c64afa6",
   "stats_score_across": "3732b8db7aec83090a3dc8952375f10e647dfd56777fb6c534a1f4c7a5b99ddd",
@@ -133,14 +132,13 @@
     <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
     <string name="stats_energy_amount">%1$s Energii</string>
     <string name="stats_calendar_energy_summary">Energia w ostatnich 12 miesiącach: dziś %1$s</string>
-    <!-- The Score page's one tile: the days its number counts back from today, as in "Last 90 days". -->
-    <plurals name="stats_last_days">
-        <item quantity="one">Ostatni %1$s dzień</item>
-        <item quantity="few">Ostatnie %1$s dni</item>
-        <item quantity="many">Ostatnie %1$s dni</item>
-        <item quantity="other">Ostatnie %1$s dni</item>
+    <!-- The Score page's one tile, under the percentage: "153 of 197 right in the last 90 days". %3$s is the number of days. -->
+    <plurals name="stats_right_in_last_days">
+        <item quantity="one">%1$s z %2$s poprawnie w ciągu ostatniego %3$s dnia</item>
+        <item quantity="few">%1$s z %2$s poprawnie w ciągu ostatnich %3$s dni</item>
+        <item quantity="many">%1$s z %2$s poprawnie w ciągu ostatnich %3$s dni</item>
+        <item quantity="other">%1$s z %2$s poprawnie w ciągu ostatnich %3$s dni</item>
     </plurals>
-    <string name="stats_correct_of_total">%1$s z %2$s</string>
     <string name="stats_score_trend">Zmiany wyniku z tygodnia na tydzień: %1$s. %2$s</string>
     <plurals name="stats_score_across">
         <item quantity="one">%1$s na podstawie %2$s odpowiedzi</item>
