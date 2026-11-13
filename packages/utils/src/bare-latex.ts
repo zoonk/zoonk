@@ -4,11 +4,12 @@ import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans"
 import { type TextLayout } from "./text-flaws";
 
 /**
- * A caret between two characters, a braced script, or one letter with a subscript (`C_A0`, `E_a`,
- * `F_Y(y)`) is math a writer left outside `$…$`. A longer base (`user_id`, `CH_4`, `UTF_8`) is as
- * often a name.
+ * A caret between two characters, a braced script, or one letter with a subscript (`C_A0=2`,
+ * `E_a/RT`, `F_Y(y)`) is math a writer left outside `$…$`. A longer base (`user_id`, `CH_4`,
+ * `UTF_8`) is as often a name, and a letter after a slash or backslash, or a subscript before a dot
+ * or `@`, is part of a path, link or email.
  */
-const RAW_SCRIPT = /\S\^\S|[\^_]\{|^\p{L}_[\p{L}\p{N}]+(?:\([^()]*\))?$/u;
+const RAW_SCRIPT = /\S\^\S|[\^_]\{|(?<![\p{L}\p{N}_./\\@])\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_.@])/u;
 
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;

@@ -62,12 +62,26 @@ describe(findBareLatex, () => {
     expect(wrap(text)).toBe(text);
   });
 
+  it("finds a one-letter subscript written against operators, brackets or punctuation", () => {
+    const text = "Use C_A0=2, then E_a/RT, x_1+x_2 and (k_B·T).";
+
+    expect(find(text)).toStrictEqual([
+      problem("C_A0=2"),
+      problem("E_a/RT"),
+      problem("x_1+x_2"),
+      problem("k_B·T"),
+    ]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
   it("leaves italics, names, code, math, links and emails that hold an underscore", () => {
     const texts = [
       "Read _carefully_ and _a_ word, then _the whole phrase_.",
       "Store it in user_id or max_value, and call `x_1 = load()`.",
       String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
       "See https://example.com/a_b/x_1 or write to j_doe@example.com.",
+      "Open data/x_train.csv, set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
