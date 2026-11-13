@@ -127,12 +127,12 @@ function EmailListMessage({
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
         <span className="truncate text-sm font-semibold tracking-[-0.01em]">{email.subject}</span>
         <time
-          className="text-muted-foreground text-2xs justify-self-end font-mono"
+          className="text-muted-foreground justify-self-end text-xs tabular-nums"
           dateTime={email.receivedAt}
         >
           {timeFormatter.format(new Date(email.receivedAt))}
         </time>
-        <span className="text-muted-foreground text-2xs truncate font-mono leading-5">
+        <span className="text-muted-foreground truncate text-xs leading-5">
           {`${copy.to} ${email.to}`}
         </span>
         {code && (
@@ -150,7 +150,7 @@ function SignInCode({ code }: { code: string }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-muted-foreground text-2xs font-mono">{copy.signInCode}</p>
+      <p className="text-muted-foreground text-sm">{copy.signInCode}</p>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <p className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">{code}</p>
@@ -179,7 +179,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
 
         <div className="flex flex-col gap-1">
           <h2 className="text-base font-semibold">{email.subject}</h2>
-          <p className="text-muted-foreground text-2xs font-mono">
+          <p className="text-muted-foreground text-xs">
             {`${copy.to} ${email.to}`}
             {email.replyTo ? ` · ${copy.replyTo} ${email.replyTo}` : ""}
             {" · "}
@@ -234,7 +234,7 @@ function getStatusLabel(status: EmailInboxStatus): string {
 function getStatusDotClassName(status: EmailInboxStatus): string {
   return cn(
     "size-1.75 rounded-full",
-    status === "ready" && "bg-success ring-success/15 ring-3",
+    status === "ready" && "bg-success",
     status === "loading" && "bg-warning",
     status === "unavailable" && "bg-destructive",
   );
