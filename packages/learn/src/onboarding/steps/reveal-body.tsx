@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
-import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -12,7 +11,8 @@ import { useState, useTransition } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { StepOpenFailed } from "../../_components/step-open-failed";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
-import { type LearnBuddy, resolveLearnBuddy } from "../../buddies/use-buddy-name";
+import { BuddyArt } from "../../buddies/buddy-art";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { PlanChoiceLines } from "../../plan/plan-choice-lines";
 import { PlanChoices } from "../../plan/plan-choices";
 import { usePlanScreen } from "../../plan/plan-context";
@@ -37,17 +37,11 @@ import { RevealReadouts } from "./reveal-readouts";
 
 /** Zu cheers on the moment's last beat, after the check and "Start here". */
 function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
-  const resolved = resolveLearnBuddy(buddy);
-
   return (
-    <BuddyActor
-      beltColor={resolved.beltColor}
-      className="size-20 shrink-0 lg:size-24"
-      energy={resolved.energy}
+    <BuddyArt
+      buddy={buddy}
+      className="h-23 lg:h-28"
       expression="happy"
-      glasses={resolved.glasses}
-      kind={resolved.kind}
-      label=""
       reaction={{ act: "cheer", delayMs: 3 * BEAT_MS }}
       studiedToday
     />

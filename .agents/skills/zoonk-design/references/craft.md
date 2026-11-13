@@ -12,10 +12,10 @@ The [deliberate choices](#deliberate-choices) at the end are neither.
 ## Terms
 
 - **Column.** The box content lines up in: a page's column (`Page`), a task's (`max-w-column`), an aside, a sheet's or a panel's content box. Its **start edge** is that box's left (right in right-to-left), its **end edge** the other side.
-- **Ink.** What is drawn, not its box: a line of text from its first glyph to its last, an icon's shape inside its canvas. A Lucide glyph starts inside its box by about a third of the icon's width for a chevron, a fifth for ✕ and an eighth for an ellipsis.
+- **Ink.** What is drawn, not its box: a line of text from its first glyph to its last, an icon's shape inside its canvas. A Lucide glyph starts inside its box by about a third of the icon's width for a chevron, a fifth for ✕ and an eighth for an ellipsis. Letters start inside their box too: in Geist an "S" by 0.053 of the text's size (1.6px in a 30px title), a stem ("P") by 0.08, a diagonal ("A") by 0.02, and they end about 0.04 short of it.
 - **Visible box.** The shape the eye sees as a control: its border or ring when it has one, otherwise its fill. Never its 44px hit area.
 - **Bezel.** A visible fill or border around a control. A ghost button at rest has none.
-- **Within.** 1px for text and boxes, 2px for a glyph's ink, unless a rule says otherwise. Check at 390 and 1440, at rest. The numbers are the web's; [iOS and Android](../SKILL.md#ios-and-android) says what holds there.
+- **Within.** 1px for text and boxes. A glyph's ink never passes its column's edge, by any part of a pixel; beside text it sits with that text's letters, at most 1px past them toward the edge and 2px short of them (one pull serves every first letter). Check at 390 and 1440, at rest, and a glyph's edge in the pixels of 1x, 2x and 3x screens. The numbers are the web's; [iOS and Android](../SKILL.md#ios-and-android) says what holds there.
 
 ## Edges and alignment
 
@@ -28,10 +28,15 @@ In a column, every block starts on the column's start edge or on the one inner e
 
 ### E2. A bare glyph sits on the edge by its ink
 
-An icon button with no bezel that is the first or last thing in a bar, a header or a row lines up by its glyph's ink with the edge its neighbors use (the page title's start, the column's end). A control with a bezel lines up by its bezel. A bare one takes `Button`'s `edge` (`start` or `end`; `buttonVariants({ edge })` on a link), which pulls it out by its padding and its glyph's blank side, never a margin of its own. Its hit area stays 44px.
+An icon button with no bezel that is the first or last thing in a bar, a header or a row lines up by its glyph's ink, and the eye compares ink with ink: the arrow with the first letter of the title under it, a row's chevron with the hairline it ends. Two things hold:
 
-- **Check.** Is the back arrow's leftmost ink over the title's first letter, and the "…" or chevron's rightmost ink over the content's right edge? Glyph ink to that edge: 2px or less.
-- **Usual break.** A 44px ghost icon button dropped at the start of a bar: its padding moves a 20px chevron 12px in and the chevron's blank side adds 7.
+- **Nothing of the glyph crosses the edge.** No pixel of the arrow, the "…", the ✕ or a chevron, anti-aliased ones included, lies outside the column's edge on its side.
+- **Where text is on that edge, the glyph sits with its letters.** Letters start inside their box, so a glyph that starts a column stops short of the box by 0.053 of the size of the text under it: with a title's "S", a hair outside a stem, a little inside a diagonal. Where only hairlines and boxes are on the edge, as at a row's end, the box is the line.
+
+A control with a bezel lines up by its bezel. A bare one takes `Button`'s `edge` (`start` or `end`; `buttonVariants({ edge })` on a link, `edge -me-(--edge-pull)` or `edge -ms-(--edge-start)` on a bare icon), which pulls it out by its padding and its glyph's blank side in whole pixels, never a margin of its own. Its hit area stays 44px.
+
+- **Check.** Enlarge the corner: does the back arrow start in the same column of pixels as the title's first letter, and does the "…" or chevron end on the hairline's end without passing it? In numbers: no ink outside the edge; the glyph within 1px past the letters and 2px short of them, or within 1px short of a box.
+- **Usual break.** A 44px ghost icon button dropped at the start of a bar: its padding moves a 20px chevron 12px in and the chevron's blank side adds 7. Lining the glyph up with the text's box, which leaves the arrow 1.6px left of the "S" under it. A pull that isn't a whole pixel, which the browser snaps so the glyph lands a third of a pixel outside.
 
 ### E3. One end edge
 
@@ -325,7 +330,7 @@ Hover, focus, selected, busy and disabled never change a control's size or shift
 The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at:
 
 1. **Left edge.** How many places do text and boxes start, and where? (E1, E4)
-2. **Top bar.** Is the back arrow's or the close's ink over the title's first letter, and the right-hand "…" or avatar over the content's right edge? (E2)
+2. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
 3. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
 4. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
 5. **Pairs.** Things side by side: same top, same bottom, same baseline? (E6, H4)
@@ -348,7 +353,7 @@ Then one line: would a principal designer find anything to pick at here, and wha
   "picture": "settings/phone-light.png",
   "where": "top bar, left: the back chevron over the title",
   "rule": "E2",
-  "what": "The chevron's ink starts at 34.7px and the title's at 17.7px: 17px apart, 2px allowed.",
+  "what": "The chevron's ink starts at 34.7px and the title's first letter at 17.6px: 17px short of it, 2px allowed.",
   "departs": "system",
   "kind": "systemic",
   "component": "packages/learn/src/shell/learn-bar.tsx",

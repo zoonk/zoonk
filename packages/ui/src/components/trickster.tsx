@@ -1,7 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
 import { buddyDefId, buddyDefUrl } from "./_buddy/buddy-parts";
-import { Part, type PartPose } from "./_character/part";
+import { type CharacterView, Part, type PartPose } from "./_character/part";
 
 const INK = "#2a1260";
 const PUPIL = "#16123a";
@@ -364,7 +364,12 @@ export type TricksterProps = Omit<React.ComponentProps<"svg">, "children"> & {
   expression?: TricksterExpression;
   label?: string;
   pose?: "hero" | "sly";
+  view?: CharacterView;
 };
+
+/** As the buddy's: a view's picture holds everything that view draws, in every expression. */
+const BODY_BOX = "0 0 160 160";
+const FACE_BOX = "25.5 51.5 93 93";
 
 export function TricksterFigure({
   className,
@@ -372,10 +377,12 @@ export function TricksterFigure({
   label,
   pose = "sly",
   swapFaces = NO_SWAPS,
+  view = "body",
   ...props
 }: TricksterProps & { swapFaces?: readonly TricksterExpression[] }) {
   const uid = useId().replaceAll(/[^\w-]/gu, "");
   const parts = TRICKSTER_POSES[expression];
+  const whole = view === "body";
 
   return (
     <svg
@@ -385,38 +392,46 @@ export function TricksterFigure({
       data-slot="trickster"
       focusable="false"
       role={label ? "img" : undefined}
-      viewBox="0 0 160 160"
+      viewBox={whole ? BODY_BOX : FACE_BOX}
       {...props}
     >
       <TricksterDefs uid={uid} />
-      <Part name="shadow" pivot={[72, 150]}>
-        <ellipse cx="72" cy="150" fill="#000" opacity=".22" rx="26" ry="4" />
-      </Part>
+      {whole && (
+        <Part name="shadow" pivot={[72, 150]}>
+          <ellipse cx="72" cy="150" fill="#000" opacity=".22" rx="26" ry="4" />
+        </Part>
+      )}
       <Part name="body" pivot={[72, 142]} pose={parts.body}>
-        <Part name="arm-left" pivot={[46, 116]} pose={parts["arm-left"]}>
-          <ellipse
-            cx="38"
-            cy="124"
-            fill="#7c3aed"
-            rx="6.5"
-            ry="8.5"
-            transform="rotate(38 38 124)"
-          />
-        </Part>
-        <Part name="arm-right" pivot={[98, 116]} pose={parts["arm-right"]}>
-          <ellipse
-            cx="106"
-            cy="124"
-            fill="#7c3aed"
-            rx="6.5"
-            ry="8.5"
-            transform="rotate(-38 106 124)"
-          />
-        </Part>
+        {whole && (
+          <>
+            <Part name="arm-left" pivot={[46, 116]} pose={parts["arm-left"]}>
+              <ellipse
+                cx="38"
+                cy="124"
+                fill="#7c3aed"
+                rx="6.5"
+                ry="8.5"
+                transform="rotate(38 38 124)"
+              />
+            </Part>
+            <Part name="arm-right" pivot={[98, 116]} pose={parts["arm-right"]}>
+              <ellipse
+                cx="106"
+                cy="124"
+                fill="#7c3aed"
+                rx="6.5"
+                ry="8.5"
+                transform="rotate(-38 106 124)"
+              />
+            </Part>
+          </>
+        )}
         <Part name="head" pivot={[72, 140]}>
-          <Part name="tail" pivot={[86, 88]} pose={parts.tail}>
-            <Tail uid={uid} />
-          </Part>
+          {whole && (
+            <Part name="tail" pivot={[86, 88]} pose={parts.tail}>
+              <Tail uid={uid} />
+            </Part>
+          )}
           <circle cx="72" cy="106" fill={buddyDefUrl(uid, "skin")} r="36" />
           <ellipse
             cx="58"
@@ -428,7 +443,7 @@ export function TricksterFigure({
             transform="rotate(-28 58 84)"
           />
           <circle cx="93" cy="92" fill="#fff" opacity=".35" r="2" />
-          {pose === "hero" && <QuestionSign />}
+          {whole && pose === "hero" && <QuestionSign />}
           <Part name="face" pivot={[70, 104]}>
             <TricksterFace expression={expression} uid={uid} />
             {swapFaces

@@ -43,7 +43,7 @@ export function BuddyHeader({
 }) {
   return (
     <header className="flex items-center gap-2.5">
-      <BuddyArt buddy={buddy} className="size-8" ref={faceRef} />
+      <BuddyArt buddy={buddy} className="size-8" ref={faceRef} view="face" />
       <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 gap-x-2.5 gap-y-1")}>
         <div className="flex flex-col">
           <h1 className={cn(TRUNCATED_TITLE_CLASS, "text-sm leading-snug font-semibold")}>
