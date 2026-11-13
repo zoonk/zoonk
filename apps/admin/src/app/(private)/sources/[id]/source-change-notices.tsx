@@ -17,14 +17,10 @@ export async function SourceChangeNotices({ sourceId }: { sourceId: string }) {
 
   return (
     <AdminSection
-      description="What learners were told after a new fetch changed this source."
-      title="Change notices"
+      description="What learners were told each time a check found the source changed."
+      title="What changed"
     >
-      <ChangeNoticeTable
-        emptyLabel="No fetch has changed this source yet."
-        notices={notices}
-        showExam
-      />
+      <ChangeNoticeTable emptyLabel="No check has found a change yet." notices={notices} showExam />
     </AdminSection>
   );
 }

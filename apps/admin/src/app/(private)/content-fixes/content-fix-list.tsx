@@ -1,94 +1,115 @@
-import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminNameCell } from "@/components/admin-name-cell";
 import {
   type AdminTableColumn,
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminTabs } from "@/components/admin-tabs";
+import { StateMark } from "@/components/state-mark";
 import { type ContentFixListItem, listContentFixes } from "@/data/content-fixes/list-content-fixes";
-import { formatDateTime } from "@/lib/format";
+import { formatDate } from "@/lib/format";
+import { readQueryParam } from "@/lib/query-param";
 import { TableCell } from "@zoonk/ui/components/table";
-import { ContentFixStatusBadge } from "./content-fix-status";
+import { contentFixStatusLabels, contentFixStatusTones } from "./content-fix-status";
 
-const PENDING_COLUMNS: AdminTableColumn[] = [
-  { label: "Fix" },
-  { label: "Where" },
+type SearchParams = PageProps<"/content-fixes">["searchParams"];
+
+const WAITING_COLUMNS: AdminTableColumn[] = [
+  { label: "Fix", twoLines: true },
+  { label: "Proposed by", size: "wide" },
   { label: "Proposed" },
 ];
 
-const DECIDED_COLUMNS: AdminTableColumn[] = [...PENDING_COLUMNS, { label: "Decision" }];
+const DECIDED_COLUMNS: AdminTableColumn[] = [
+  { label: "Fix", twoLines: true },
+  { label: "Decision", size: "wide" },
+  { label: "Decided by", size: "wide" },
+  { label: "Decided" },
+];
 
-function ContentFixRow({ fix, withDecision }: { fix: ContentFixListItem; withDecision: boolean }) {
+async function readView(searchParams: SearchParams): Promise<"decided" | "waiting"> {
+  const params = await searchParams;
+  return readQueryParam(params.view) === "decided" ? "decided" : "waiting";
+}
+
+/** The queue first, with how many wait; what was decided is the other view. */
+export async function ContentFixViews({ searchParams }: { searchParams: SearchParams }) {
+  const [view, { pending }] = await Promise.all([readView(searchParams), listContentFixes()]);
+
   return (
-    <AdminTableRow>
-      <TableCell className="max-w-96 min-w-56 whitespace-normal">
-        <AdminTableRowLink className="block font-medium" href={`/content-fixes/${fix.id}`} prefetch>
-          <span className="line-clamp-2">
-            {fix.revertsId ? "Revert: " : ""}
-            {fix.reason}
-          </span>
-        </AdminTableRowLink>
-      </TableCell>
-      <TableCell className="max-w-80 min-w-48 text-xs whitespace-normal">
-        {fix.location.trail.join(" › ") || "Deleted content"}
-      </TableCell>
-      <TableCell className="text-xs">
-        <div>{formatDateTime(fix.createdAt)}</div>
-        <div className="text-muted-foreground">{fix.proposer?.name ?? "Deleted account"}</div>
-      </TableCell>
-      {withDecision && (
-        <TableCell className="text-xs">
-          <ContentFixStatusBadge status={fix.status} />
-          <div className="text-muted-foreground mt-1">
-            {[formatDateTime(fix.decidedAt), fix.decider?.name].filter(Boolean).join(" · ")}
-          </div>
-        </TableCell>
-      )}
-    </AdminTableRow>
+    <AdminTabs
+      label="Fixes"
+      options={[
+        {
+          count: pending.length,
+          href: "/content-fixes",
+          isActive: view === "waiting",
+          label: "Waiting",
+        },
+        { href: "/content-fixes?view=decided", isActive: view === "decided", label: "Decided" },
+      ]}
+    />
   );
 }
 
-export async function ContentFixList() {
-  const { decided, pending } = await listContentFixes();
+/** What the fix says is wrong, over where it is. */
+function FixCell({ fix }: { fix: ContentFixListItem }) {
+  return (
+    <AdminNameCell
+      href={`/content-fixes/${fix.id}`}
+      note={fix.location.trail.join(" › ") || "Content that was deleted"}
+      title={fix.revertsId ? `Undo: ${fix.reason}` : fix.reason}
+    />
+  );
+}
+
+export async function ContentFixList({ searchParams }: { searchParams: SearchParams }) {
+  const [view, { decided, pending }] = await Promise.all([
+    readView(searchParams),
+    listContentFixes(),
+  ]);
+
+  if (view === "decided") {
+    return (
+      <AdminTableColumns
+        columns={DECIDED_COLUMNS}
+        emptyLabel="No fix has been decided yet."
+        isEmpty={decided.length === 0}
+      >
+        {decided.map((fix) => (
+          <AdminTableRow key={fix.id}>
+            <FixCell fix={fix} />
+            <TableCell>
+              <StateMark state={fix.status} tone={contentFixStatusTones[fix.status]}>
+                {contentFixStatusLabels[fix.status]}
+              </StateMark>
+            </TableCell>
+            <TableCell>{fix.decider?.name}</TableCell>
+            <TableCell>{fix.decidedAt ? formatDate(fix.decidedAt) : null}</TableCell>
+          </AdminTableRow>
+        ))}
+      </AdminTableColumns>
+    );
+  }
 
   return (
-    <>
-      <AdminSection title="Waiting for review">
-        <AdminTableColumns
-          columns={PENDING_COLUMNS}
-          emptyLabel="No fix is waiting for review."
-          isEmpty={pending.length === 0}
-        >
-          {pending.map((fix) => (
-            <ContentFixRow fix={fix} key={fix.id} withDecision={false} />
-          ))}
-        </AdminTableColumns>
-      </AdminSection>
-
-      <AdminSection title="Decided">
-        <AdminTableColumns
-          columns={DECIDED_COLUMNS}
-          emptyLabel="No fix has been decided yet."
-          isEmpty={decided.length === 0}
-        >
-          {decided.map((fix) => (
-            <ContentFixRow fix={fix} key={fix.id} withDecision />
-          ))}
-        </AdminTableColumns>
-      </AdminSection>
-    </>
+    <AdminTableColumns
+      columns={WAITING_COLUMNS}
+      emptyLabel="No fix is waiting for review."
+      isEmpty={pending.length === 0}
+    >
+      {pending.map((fix) => (
+        <AdminTableRow key={fix.id}>
+          <FixCell fix={fix} />
+          <TableCell>{fix.proposer?.name ?? "Deleted account"}</TableCell>
+          <TableCell>{formatDate(fix.createdAt)}</TableCell>
+        </AdminTableRow>
+      ))}
+    </AdminTableColumns>
   );
 }
 
 export function ContentFixListSkeleton() {
-  return (
-    <>
-      <AdminSectionSkeleton>
-        <AdminTableColumnsSkeleton columns={PENDING_COLUMNS} />
-      </AdminSectionSkeleton>
-      <AdminSectionSkeleton>
-        <AdminTableColumnsSkeleton columns={DECIDED_COLUMNS} />
-      </AdminSectionSkeleton>
-    </>
-  );
+  return <AdminTableColumnsSkeleton columns={WAITING_COLUMNS} />;
 }

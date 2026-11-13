@@ -1,107 +1,29 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { getMinutesFormatter, getTotalDurationFormatter } from "@/lib/public/public-labels";
-import {
-  type CoursePlanExample,
-  type DatedEstimate,
-  type UndatedEstimate,
-  getStudyMinutes,
-  isDatedEstimate,
-} from "@zoonk/core/catalog/course-plan-example-contract";
+import { getMinutesFormatter } from "@/lib/public/public-labels";
+import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
-import { RouteTitle } from "@zoonk/learn/route-line";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { RouteMark, RouteTitle } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon } from "lucide-react";
-import { getExtracted, getFormatter } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
-import { PlanWorkload } from "./plan-workload";
 
-const TODAY_ROWS = 3;
-
-const NEAR_ESTIMATE_DAYS = 42;
-const MS_PER_DAY = 86_400_000;
+const DAY_ROWS = 3;
 
 const PLAN_BODY_CLASS =
-  "grid grid-cols-1 gap-10 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @3xl:gap-x-16";
+  "grid grid-cols-1 gap-9 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @3xl:gap-x-16";
 
 function renderBig(chunks: ReactNode) {
   const parts: unknown[] = Array.isArray(chunks) ? chunks : [chunks];
   const text = parts.filter((part) => typeof part === "string").join("");
-  return <BigQuantity className="text-foreground text-5xl sm:text-[3.5rem]">{text}</BigQuantity>;
-}
-
-function renderStrong(chunks: ReactNode) {
-  return <strong className="font-semibold">{chunks}</strong>;
-}
-
-const BIG_LINE_CLASS =
-  "text-muted-foreground flex flex-wrap items-baseline gap-x-2 text-lg font-medium tracking-[-0.01em]";
-
-const RESULT_LINE_CLASS =
-  "text-muted-foreground max-w-[30rem] text-reading leading-relaxed text-pretty";
-
-async function getEndMonthText({ endDate, fromDate }: { endDate: string; fromDate: string }) {
-  const format = await getFormatter();
-  const end = new Date(`${endDate}T00:00:00Z`);
-  const days = (end.getTime() - new Date(`${fromDate}T00:00:00Z`).getTime()) / MS_PER_DAY;
-
-  return days > NEAR_ESTIMATE_DAYS
-    ? format.dateTime(end, { month: "long", timeZone: "UTC", year: "numeric" })
-    : null;
-}
-
-async function UndatedHeadline({
-  estimate,
-  minutes,
-}: {
-  estimate: UndatedEstimate;
-  minutes: number;
-}) {
-  const t = await getExtracted();
-
-  const endMonth =
-    estimate.endDate &&
-    (await getEndMonthText({
-      endDate: estimate.endDate,
-      fromDate: estimate.numbers.context.fromDate,
-    }));
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className={BIG_LINE_CLASS}>
-        {t.rich("{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}", {
-          big: renderBig,
-          weeks: estimate.weeks,
-        })}
-      </p>
-
-      <p className={RESULT_LINE_CLASS}>
-        {t(
-          "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch.",
-          { minutes },
-        )}
-      </p>
-
-      {endMonth && (
-        <p className="text-reading flex gap-2 leading-relaxed text-pretty">
-          <LineMarker>
-            <FlagIcon aria-hidden="true" className="text-muted-foreground size-4" />
-          </LineMarker>
-          <span>
-            {t.rich("Starting today, you'd finish around <strong>{month}</strong>.", {
-              month: endMonth,
-              strong: renderStrong,
-            })}
-          </span>
-        </p>
-      )}
-    </div>
+    <BigQuantity className="text-foreground text-[2.5rem] sm:text-[3.5rem]">{text}</BigQuantity>
   );
 }
 
 /** Minutes stay exact until they're written, so the totals are the day's own time, never a sum of rounded rows. */
-async function UndatedToday({
+async function FirstDay({
   chapterTitles,
   estimate,
 }: {
@@ -120,15 +42,21 @@ async function UndatedToday({
     title: lesson.title,
   }));
 
-  const shown = steps.slice(0, TODAY_ROWS);
-  const folded = steps.slice(TODAY_ROWS);
+  const shown = steps.slice(0, DAY_ROWS);
+  const folded = steps.slice(DAY_ROWS);
   const dayMinutes = steps.reduce((sum, step) => sum + step.minutes, 0);
   const foldedMinutes = folded.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="flex items-baseline justify-between gap-3">
-        <span className="text-reading font-semibold">{t("Today")}</span>
+    <div className="flex min-w-0 flex-col">
+      <p className="mb-2 flex items-baseline justify-between gap-3">
+        <span className="text-reading font-semibold">
+          {t({
+            description:
+              "Heading over the lessons a new learner would study on the first day of this course.",
+            message: "Your first day",
+          })}
+        </span>
         <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
           {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
           {" · "}
@@ -152,114 +80,30 @@ async function UndatedToday({
 }
 
 /**
- * Never only the lessons' time, which undercounts a plan that also reviews and practices. Never how
- * much fits: that share assumes a start from scratch, so onboarding says it at the visitor's level.
+ * One number and one real day. What a plan leaves out, what isn't ready and how its hours split are
+ * a learner's own plan's to say, at their level and their time.
  */
-async function DatedHeadline({
-  date,
-  estimate,
-  minutes,
-}: {
-  date: string;
-  estimate: DatedEstimate;
-  minutes: number;
-}) {
-  const t = await getExtracted();
-  const minutesText = await getMinutesFormatter();
-  const durationText = await getTotalDurationFormatter();
-  const studyTime = durationText(getStudyMinutes(estimate));
-
-  const hasQuickLessons = estimate.areas.some((area) => area.quickLessons > 0);
-  const writesLessons = estimate.workload.unwrittenLessonMinutes > 0;
-  const coverage = estimate.numbers.coverage;
-
-  const holds = () => {
-    if (writesLessons) {
-      return t(
-        "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, plural, =0 {lessons} one {# lesson} other {# lessons}} already in the course, and more written as you reach them.",
-        { count: estimate.fittingLessons, date, time: minutesText(minutes) },
-      );
-    }
-
-    if (hasQuickLessons || estimate.fittingLessons === 0) {
-      return t(
-        "by {date}, at {time} a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time.",
-        { date, time: minutesText(minutes) },
-      );
-    }
-
-    return t(
-      "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}.",
-      {
-        count: estimate.fittingLessons,
-        date,
-        time: minutesText(minutes),
-        total: estimate.publishedContent.lessons,
-      },
-    );
-  };
-
-  const fitText = ({ coveredShare, measure }: NonNullable<typeof coverage>) => {
-    if (coveredShare < 1) {
-      return t(
-        "Not all of it fits by then. Before you start, you see how much fits at your level and your time.",
-      );
-    }
-
-    return measure === "goal"
-      ? t("That's every topic in the course, in depth.")
-      : t("That's every exam topic in the course, in depth.");
-  };
-
-  return (
-    <div className="flex flex-col gap-3">
-      <p className={BIG_LINE_CLASS}>
-        {t.rich("<big>{time}</big> of study", { big: renderBig, time: studyTime })}
-      </p>
-
-      <p className={RESULT_LINE_CLASS}>{holds()}</p>
-
-      {coverage && <p className={RESULT_LINE_CLASS}>{fitText(coverage)}</p>}
-    </div>
-  );
-}
-
 export async function CoursePlanWindow({
   chapterTitles,
   className,
-  examDate,
-  isExam,
+  estimate,
+  minutes,
   onRoute = false,
-  plan,
   titleId,
 }: {
   chapterTitles: Map<string, string>;
   className?: string;
-  isExam: boolean;
-  examDate: string | null;
+  estimate: UndatedEstimate;
+  minutes: number;
   onRoute?: boolean;
-  plan: CoursePlanExample;
   titleId: string;
 }) {
   const t = await getExtracted();
-  const { pace } = plan;
 
-  if (!pace) {
-    return null;
-  }
-
-  const { estimate } = pace;
-  const workload = <PlanWorkload exam={isExam} numbers={estimate.numbers} />;
-
-  const today = !isDatedEstimate(estimate) && estimate.firstDay.length > 0 && (
-    <UndatedToday chapterTitles={chapterTitles} estimate={estimate} />
-  );
-
-  const caption = (
-    <p className="text-muted-foreground text-compact leading-relaxed text-pretty">
-      {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
-    </p>
-  );
+  const title = t({
+    description: "Heading on a course's page: how long the whole course takes to finish.",
+    message: "How long it takes",
+  });
 
   return (
     <div
@@ -268,29 +112,38 @@ export async function CoursePlanWindow({
     >
       {onRoute ? (
         <RouteTitle down id={titleId}>
-          {t("Example plan")}
+          {title}
         </RouteTitle>
       ) : (
-        <h2 className="text-section" id={titleId}>
-          {t("Example plan")}
+        <h2 className="text-section relative" id={titleId}>
+          <RouteMark className="xl:hidden" down up />
+          {title}
         </h2>
       )}
 
       <div className={PLAN_BODY_CLASS}>
-        <div className="flex min-w-0 flex-col gap-9">
-          {isDatedEstimate(estimate) ? (
-            <DatedHeadline date={examDate ?? ""} estimate={estimate} minutes={pace.minutes} />
-          ) : (
-            <UndatedHeadline estimate={estimate} minutes={pace.minutes} />
-          )}
+        <div className="flex min-w-0 flex-col gap-3">
+          <p className="text-muted-foreground flex flex-wrap items-baseline gap-x-2 text-lg font-medium tracking-[-0.01em]">
+            {t.rich("{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}", {
+              big: renderBig,
+              weeks: estimate.weeks,
+            })}
+          </p>
 
-          {today && workload}
+          <p className="text-muted-foreground text-reading max-w-120 leading-relaxed text-pretty">
+            {t({
+              description:
+                "Under a big number of weeks (“~32 weeks”): how long the course takes when studying this many minutes a day.",
+              message:
+                "Studying {minutes, plural, one {# minute} other {# minutes}} a day. Your plan skips what you already know, so it can take less.",
+              values: { minutes },
+            })}
+          </p>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-5">
-          {today || workload}
-          {caption}
-        </div>
+        {estimate.firstDay.length > 0 && (
+          <FirstDay chapterTitles={chapterTitles} estimate={estimate} />
+        )}
       </div>
     </div>
   );

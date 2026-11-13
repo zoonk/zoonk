@@ -1,3 +1,4 @@
+import { AdminSectionEmpty } from "@/components/admin-section";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
 import { type ContentFixEffect } from "@zoonk/core/staff/content-fixes/contract";
 import { TriangleAlertIcon } from "lucide-react";
@@ -35,7 +36,7 @@ function describeEffect({
 
 export function ContentFixEffects({ fix }: { fix: ContentFixDetail }) {
   if (fix.effects.length === 0) {
-    return <p className="text-muted-foreground text-sm">Nothing else changes.</p>;
+    return <AdminSectionEmpty>Nothing else changes.</AdminSectionEmpty>;
   }
 
   return (
