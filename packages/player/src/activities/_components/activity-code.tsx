@@ -283,7 +283,7 @@ export function ActivitySnippetBar({
   return (
     <div
       aria-label={label}
-      className="scroll-fade-x flex gap-1.5 overflow-x-auto pb-1"
+      className="scroll-fade-x flex gap-2 overflow-x-auto pb-1"
       data-slot="activity-snippet-bar"
       role="toolbar"
     >

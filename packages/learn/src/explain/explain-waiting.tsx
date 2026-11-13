@@ -49,7 +49,7 @@ function Outline({ titles }: { titles: string[] }) {
     <ol aria-label={t("What's coming")} className="flex flex-col text-sm [&>li+li]:border-t">
       {rows.map((row) => (
         <li className="flex min-h-11 items-center gap-3 py-2" key={row.id}>
-          <span className="text-faint w-4 shrink-0 font-mono text-xs tabular-nums">
+          <span className="text-faint w-4 shrink-0 text-center font-mono text-xs tabular-nums">
             {row.number}
           </span>
           {row.title ?? (

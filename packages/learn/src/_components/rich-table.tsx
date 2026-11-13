@@ -5,7 +5,7 @@ import { SURFACE_CLASS } from "./surface";
 
 function getCellClass(align: MarkdownTableAlign | undefined) {
   return cn(
-    "p-2 align-top first:ps-3 last:pe-3",
+    "p-2 align-top first:ps-4 last:pe-4",
     align === "right" && "text-right tabular-nums",
     align === "center" && "text-center tabular-nums",
     (align === "left" || !align) && "text-left",

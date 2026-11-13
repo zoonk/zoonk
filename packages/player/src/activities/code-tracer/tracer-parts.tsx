@@ -92,7 +92,7 @@ export function TracerControls({
         {label}
       </p>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         <Button
           aria-label={t("Step back")}
           disabled={!canGoBack}

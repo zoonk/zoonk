@@ -36,7 +36,7 @@ export function ViewToggle({
       {views.map((option) => (
         <label
           className={cn(
-            "relative flex h-11 min-w-11 cursor-pointer items-center justify-center rounded-md px-3.5 text-sm font-medium",
+            "relative flex h-10 min-w-11 cursor-pointer items-center justify-center rounded-md px-3.5 text-sm font-medium",
             "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
             view === option.value
               ? "bg-background text-foreground shadow-xs"

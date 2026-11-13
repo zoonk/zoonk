@@ -65,7 +65,11 @@ const TEXTAREA_MAX_CLASS: Record<ComposerVariant, string> = {
   page: "max-h-40",
 };
 
-const TEXTAREA_CLASS = cn("min-h-11 py-3 pl-3 text-base md:text-sm", ONE_LINE_PLACEHOLDER_CLASS);
+/** 44px at every width: 16px text on a phone, so it doesn't zoom, takes 2px less padding. */
+const TEXTAREA_CLASS = cn(
+  "min-h-11 py-2.5 pl-3 text-base md:py-3 md:text-sm",
+  ONE_LINE_PLACEHOLDER_CLASS,
+);
 
 function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
   const t = useExtracted();

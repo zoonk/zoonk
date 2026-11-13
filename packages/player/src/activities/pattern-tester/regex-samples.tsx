@@ -104,7 +104,7 @@ export function RegexSampleList({
         )}
       </div>
 
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {results
           ? keyedByPosition(results, (result) => result.sample).map(({ item, key }) => (
               <SampleRow key={key} result={item} shouldMatch={shouldMatch} />
