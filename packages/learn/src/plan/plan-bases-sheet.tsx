@@ -14,8 +14,9 @@ import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { QUIET_ACTION_CLASS } from "../_components/quiet-disclosure";
 import { ChangeSaveError } from "../_components/save-error";
-import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
   AllBasesChoice,
@@ -94,7 +95,6 @@ function BasesFooter({
 }) {
   const t = useExtracted();
   const saveButton = useRef<HTMLButtonElement>(null);
-  const loading = preview.status === "idle" || preview.status === "loading";
 
   // Try again gives way to the check: the keyboard waits on Save, which opens once it's done.
   const retry = () => {
@@ -104,29 +104,36 @@ function BasesFooter({
 
   const changes = preview.status === "ready" && !preview.preview.unchanged ? preview.preview : null;
 
+  // The note's room is there before a pick, so picking, checking and the answer move nothing.
+  const note = () => {
+    if (changed.length === 0 || (preview.status === "ready" && preview.preview.unchanged)) {
+      return <PlanEffectNote>{t("Your plan stays as it is.")}</PlanEffectNote>;
+    }
+
+    if (preview.status === "failed") {
+      return (
+        <PlanEffectNote
+          action={
+            <button className={QUIET_ACTION_CLASS} onClick={retry} type="button">
+              {t("Try again")}
+            </button>
+          }
+        >
+          {t("We couldn't check what changes.")}
+        </PlanEffectNote>
+      );
+    }
+
+    return changes ? (
+      <PlanEffectDiff effect={changes.effect} />
+    ) : (
+      <PlanEffectNote busy>{t("Checking what changes…")}</PlanEffectNote>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">
-      {changed.length > 0 && (
-        <div
-          aria-busy={loading}
-          aria-live="polite"
-          className="text-muted-foreground flex flex-col gap-2 text-sm text-pretty aria-busy:opacity-60"
-        >
-          {loading && <p>{t("Checking what changes…")}</p>}
-          {preview.status === "failed" && (
-            <>
-              <p>{t("We couldn't check what changes.")}</p>
-              <Button className="self-start" onClick={retry} size="sm" variant="outline">
-                {t("Try again")}
-              </Button>
-            </>
-          )}
-          {preview.status === "ready" && preview.preview.unchanged && (
-            <p>{t("Your plan stays as it is.")}</p>
-          )}
-          {changes && <PlanEffectDiff effect={changes.effect} />}
-        </div>
-      )}
+      <div aria-live="polite">{note()}</div>
 
       <Button
         disabled={isPending || changed.length === 0 || preview.status !== "ready"}

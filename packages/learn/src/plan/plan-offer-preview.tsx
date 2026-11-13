@@ -10,17 +10,13 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  SuggestionAction,
-  SuggestionActions,
-  SuggestionDescription,
-} from "../_components/suggestion";
+import { SuggestionAction, SuggestionActions } from "../_components/suggestion";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { getLongerTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GoalDateMove } from "../plan-diff/change-names";
-import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useFullCourseText } from "./plan-full-course";
@@ -43,6 +39,12 @@ export function getGoalDateMove({
     ? { after: operation.targetDate, before: targetDate }
     : undefined;
 }
+
+/**
+ * In the aside's narrow card a consequence often takes two lines, so the card keeps that room
+ * through the check: its buttons stay where the pointer is when the changes arrive.
+ */
+const EFFECT_ROOM_CLASS = "in-data-[slot=suggestion-panel]:min-h-16";
 
 export function useApplyPreview(item: SlotItem) {
   const t = useExtracted();
@@ -92,22 +94,15 @@ export function OfferPreview({
   const { setPreview } = usePlanSuggestionSlot();
 
   if (preview.status === "loading") {
-    return (
-      <>
-        <SuggestionDescription aria-busy="true" role="status">
-          {t("Checking what changes…")}
-        </SuggestionDescription>
-        <CheckingActions onCancel={() => setPreview()} />
-      </>
-    );
+    return <CheckingChange onCancel={() => setPreview()} />;
   }
 
   if (preview.status === "failed") {
     return (
       <>
-        <SuggestionDescription role="status">
+        <PlanEffectNote className={EFFECT_ROOM_CLASS}>
           {t("We couldn't check what changes.")}
-        </SuggestionDescription>
+        </PlanEffectNote>
         <SuggestionActions>
           <SuggestionAction key="retry" onClick={onRetry}>
             {t("Try again")}
@@ -129,9 +124,11 @@ export function OfferPreview({
   return (
     <>
       {unchanged ? (
-        <SuggestionDescription>{t("Your plan stays as it is.")}</SuggestionDescription>
+        <PlanEffectNote className={EFFECT_ROOM_CLASS}>
+          {t("Your plan stays as it is.")}
+        </PlanEffectNote>
       ) : (
-        <PlanEffectDiff effect={effect} goalDate={goalDate} />
+        <PlanEffectDiff className={EFFECT_ROOM_CLASS} effect={effect} goalDate={goalDate} />
       )}
 
       <SuggestionActions>
@@ -173,9 +170,9 @@ export function CheckingChange({ onCancel }: { onCancel: () => void }) {
 
   return (
     <>
-      <SuggestionDescription aria-busy="true" role="status">
+      <PlanEffectNote busy className={EFFECT_ROOM_CLASS}>
         {t("Checking what changes…")}
-      </SuggestionDescription>
+      </PlanEffectNote>
       <CheckingActions onCancel={onCancel} />
     </>
   );

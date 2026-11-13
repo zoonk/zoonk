@@ -34,6 +34,36 @@ function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
   );
 }
 
+/**
+ * A line in the consequence's place while a change is worked out, when it can't be, or when there
+ * is none. It keeps the room of "See all changes" under it, where an `action` such as "Try again"
+ * goes, so what follows holds still when the changes arrive.
+ */
+export function PlanEffectNote({
+  action,
+  busy = false,
+  children,
+  className,
+}: {
+  action?: React.ReactNode;
+  busy?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)} data-slot="plan-change-effect">
+      <p
+        aria-busy={busy || undefined}
+        className="text-muted-foreground text-sm text-pretty"
+        role="status"
+      >
+        {children}
+      </p>
+      <div className="text-compact flex h-lh leading-snug">{action}</div>
+    </div>
+  );
+}
+
 function namesAdded(effect: PlanEffect | null): boolean {
   return (effect?.topicsAdded?.length ?? 0) + (effect?.outcomesAdded?.length ?? 0) > 0;
 }
