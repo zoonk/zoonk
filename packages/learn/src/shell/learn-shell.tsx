@@ -87,13 +87,14 @@ export function LearnSkipLink({ children }: { children: React.ReactNode }) {
 
 /**
  * Its padding never depends on the page inside: pages the router keeps hidden stay in the document,
- * so a page with an aside reaches past the padding itself.
+ * so a page with an aside reaches past the padding itself. Its top padding is also where a page's
+ * header starts under the bar, so a bar that sits inside it pulls up by the same amount.
  */
 export function LearnShellMain({ children, className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       className={cn(
-        "flex w-full flex-1 flex-col px-4 pt-4 pb-12 outline-none sm:mx-auto sm:max-w-3xl sm:px-8 sm:pt-6 lg:mx-0 lg:max-w-none lg:px-10 lg:pt-8 lg:pb-16",
+        "flex w-full flex-1 flex-col px-4 pt-2 pb-12 outline-none sm:mx-auto sm:max-w-3xl sm:px-8 sm:pt-6 lg:mx-0 lg:max-w-none lg:px-10 lg:pt-8 lg:pb-16",
         className,
       )}
       data-slot="learn-shell-main"
@@ -124,7 +125,7 @@ export function PageWithAside({
 }) {
   return (
     <div
-      className="flex w-full flex-1 flex-col gap-10 min-[72rem]:-mx-10 min-[72rem]:-mt-8 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
+      className="flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mt-8 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
       <div
@@ -140,7 +141,7 @@ export function PageWithAside({
         <aside
           aria-label={asideLabel}
           className={cn(
-            "flex min-w-0 flex-col gap-8 outline-none",
+            "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-8",
             "min-[72rem]:border-border min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:py-8 xl:w-80",
             asideClassName,
           )}

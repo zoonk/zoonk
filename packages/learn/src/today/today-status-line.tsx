@@ -19,7 +19,7 @@ export function TodayStatusLine({
     >
       <span
         aria-hidden="true"
-        className="text-muted-foreground flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:size-4"
+        className="text-muted-foreground flex h-5 w-4 shrink-0 items-center justify-center [&>svg]:size-4"
       >
         {icon}
       </span>
