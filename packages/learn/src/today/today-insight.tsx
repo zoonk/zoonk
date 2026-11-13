@@ -51,15 +51,7 @@ function useInsightChoices(insight: MemoryInsightView) {
   }
 
   if (insight.kind === "scheduleIdea") {
-    return {
-      accept: t({
-        description:
-          'Study time is the time of day the learner studies. {time} is a time of day, like "20:00".',
-        message: "Move my study time to {time}",
-        values: { time: insight.studyTime ?? "" },
-      }),
-      dismiss: t("Not now"),
-    };
+    return { accept: t("Move it"), dismiss: t("Not now") };
   }
 
   return { accept: t("Got it"), dismiss: null };

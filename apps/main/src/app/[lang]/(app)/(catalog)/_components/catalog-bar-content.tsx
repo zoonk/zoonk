@@ -4,34 +4,47 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnSectionBar } from "@zoonk/learn/bar";
+import { useExtracted } from "next-intl";
 import { PendingAccountAvatar } from "./user-avatar";
 import { UserAvatarMenu } from "./user-avatar-menu";
 
-const CATALOG_BAR_CLASS = "-mx-4 -mt-2 mb-2 sm:-mx-8 sm:-mt-6 sm:mb-6 lg:hidden";
+/** From `lg` the sidebar holds the way in and the account, so the bar's end is a phone's. */
+function PhoneEnd({ children }: { children: React.ReactNode }) {
+  return <div className="contents lg:hidden">{children}</div>;
+}
 
 export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
+  const t = useExtracted();
   const learner = useLearnerSummary();
 
   if (learner.status === "visitor") {
-    return <LearnSectionBar backHref="/" className={CATALOG_BAR_CLASS} end={visitor} />;
+    return (
+      <LearnSectionBar
+        back={{ href: "/", label: t("Home") }}
+        end={<PhoneEnd>{visitor}</PhoneEnd>}
+        root
+      />
+    );
   }
 
   return (
     <LearnSectionBar
-      backHref="/today"
-      className={CATALOG_BAR_CLASS}
+      back={{ href: "/today", label: t("Today") }}
       end={
-        learner.status === "ready" ? (
-          <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-            <UserAvatarMenu includeSearch />
-          </LearnAvatarBelt>
-        ) : (
-          <>
-            <VisitorLook>{visitor}</VisitorLook>
-            <PendingAccountAvatar className="size-7" />
-          </>
-        )
+        <PhoneEnd>
+          {learner.status === "ready" ? (
+            <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
+              <UserAvatarMenu includeSearch />
+            </LearnAvatarBelt>
+          ) : (
+            <>
+              <VisitorLook>{visitor}</VisitorLook>
+              <PendingAccountAvatar className="size-7" />
+            </>
+          )}
+        </PhoneEnd>
       }
+      root
     />
   );
 }

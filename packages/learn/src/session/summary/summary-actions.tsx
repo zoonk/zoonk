@@ -98,12 +98,13 @@ export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
   return (
     <>
       {!stopped && extraTime.available && (
-        <ExtraTimeButton
-          action={actions.addExtraTime}
-          className={cn("lg:w-auto lg:self-end", !lastStep && "without-aside:hidden")}
-          label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
-          minutes={extraTime.minutes}
-        />
+        <div className={cn("flex flex-col lg:items-end", !lastStep && "without-aside:hidden")}>
+          <ExtraTimeButton
+            action={actions.addExtraTime}
+            label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
+            minutes={extraTime.minutes}
+          />
+        </div>
       )}
 
       {signUpHref && <SavePlanNote signUpHref={signUpHref} />}
