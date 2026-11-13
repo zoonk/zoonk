@@ -14,7 +14,6 @@ const cachedListFeedbackMessages = cacheAdminData(
             select: { email: true, id: true, isAnonymous: true, name: true, username: true },
           },
         },
-        omit: { message: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         skip: offset,
         take: limit,

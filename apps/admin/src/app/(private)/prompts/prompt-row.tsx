@@ -1,79 +1,76 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminNameCell } from "@/components/admin-name-cell";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
+import { GoalKindIcon } from "@/components/goal-kind-icon";
+import { StateMark } from "@/components/state-mark";
 import { type ListedPrompt } from "@/data/prompts/list-prompts";
-import { formatDate } from "@/lib/format";
-import { Badge } from "@zoonk/ui/components/badge";
+import { formatDate, toWords } from "@/lib/format";
+import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
-import Link from "next/link";
 import {
-  getPromptLearnerEmail,
-  getPromptLearnerLabel,
-  getPromptOutcomeVariant,
   getReadingSummary,
   parsePromptReading,
   promptOutcomeLabels,
+  promptOutcomeTones,
 } from "./_utils/prompt-labels";
 
+/** What Zoonk made of the words: the goal's name over its kind, with the kind's icon. */
 function PromptReadingCell({ prompt }: { prompt: ListedPrompt }) {
   const summary = getReadingSummary(parsePromptReading(prompt.understanding));
 
   if (!summary) {
-    return <span className="text-muted-foreground">—</span>;
+    return null;
   }
 
   return (
+    <span className="flex min-w-0 items-start gap-2.5">
+      {summary.kind ? (
+        <span className="flex h-5 shrink-0 items-center">
+          <GoalKindIcon kind={summary.kind} />
+        </span>
+      ) : null}
+      <span className="min-w-0">
+        <span className="text-foreground block truncate">{summary.text}</span>
+        <span className="block truncate text-xs">{summary.label}</span>
+      </span>
+    </span>
+  );
+}
+
+/** A goal that was created and then archived or deleted says so under the outcome. */
+function PromptOutcomeCell({ prompt }: { prompt: ListedPrompt }) {
+  const inactive = prompt.goals.flatMap((goal) => (goal.status === "active" ? [] : [goal.status]));
+
+  return (
     <>
-      <span className="line-clamp-2">{summary.text}</span>
-      <span className="text-muted-foreground block text-xs capitalize">{summary.label}</span>
+      <StateMark state={prompt.outcome} tone={promptOutcomeTones[prompt.outcome]}>
+        {promptOutcomeLabels[prompt.outcome]}
+      </StateMark>
+      {inactive.length > 0 ? (
+        <span className="block text-xs">
+          Now {inactive.map((status) => toWords(status).toLowerCase()).join(", ")}
+        </span>
+      ) : null}
     </>
   );
 }
 
-function PromptOutcomeCell({ prompt }: { prompt: ListedPrompt }) {
-  const inactiveStatuses = prompt.goals.flatMap((goal) =>
-    goal.status === "active" ? [] : [goal.status],
-  );
-
-  return (
-    <div className="flex flex-col items-start gap-1">
-      <Badge variant={getPromptOutcomeVariant(prompt.outcome)}>
-        {promptOutcomeLabels[prompt.outcome]}
-      </Badge>
-      {inactiveStatuses.length > 0 && (
-        <span className="text-muted-foreground text-xs capitalize">
-          {inactiveStatuses.join(", ")}
-        </span>
-      )}
-    </div>
-  );
-}
-
 export function PromptRow({ prompt }: { prompt: ListedPrompt }) {
-  const { user } = prompt;
-  const email = getPromptLearnerEmail(user);
-
   return (
     <AdminTableRow>
-      <TableCell className="max-w-80 min-w-64 whitespace-normal">
-        <AdminTableRowLink className="font-medium" href={`/prompts/${prompt.id}`} prefetch>
-          <span className="line-clamp-2">{prompt.prompt}</span>
-        </AdminTableRowLink>
-      </TableCell>
-      <TableCell className="max-w-56 min-w-36 whitespace-normal">
-        <PromptOutcomeCell prompt={prompt} />
-      </TableCell>
-      <TableCell className="max-w-72 min-w-56 whitespace-normal">
+      <AdminNameCell
+        href={`/prompts/${prompt.id}`}
+        note={languageName(prompt.language)}
+        title={prompt.prompt}
+      />
+      <TableCell>
         <PromptReadingCell prompt={prompt} />
       </TableCell>
-      <TableCell className="max-w-48 min-w-40">
-        <Link className="block hover:underline" href={`/users/${user.id}`}>
-          <span className="block truncate font-medium">{getPromptLearnerLabel(user)}</span>
-          {email && <span className="text-muted-foreground block truncate text-xs">{email}</span>}
-        </Link>
+      <TableCell>
+        <PromptOutcomeCell prompt={prompt} />
       </TableCell>
-      <TableCell className="text-muted-foreground">{prompt.language}</TableCell>
-      <TableCell className="text-muted-foreground">
-        <time dateTime={prompt.createdAt.toISOString()}>{formatDate(prompt.createdAt)}</time>
-      </TableCell>
+      <AdminUserCell opensRow={false} user={prompt.user} userId={prompt.user.id} />
+      <TableCell>{formatDate(prompt.createdAt)}</TableCell>
     </AdminTableRow>
   );
 }

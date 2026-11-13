@@ -14,18 +14,30 @@ export function SourcePrivateDetails({ source }: { source: AdminPrivateSource })
       <DetailFields>
         <DetailField label="Owner">
           {source.owner ? (
-            <Link className="hover:underline" href={`/users/${source.owner.id}`} prefetch>
+            <Link
+              className="hit-area relative underline underline-offset-3"
+              href={`/users/${source.owner.id}`}
+              prefetch
+            >
               {source.owner.name || source.owner.email}
             </Link>
-          ) : (
-            "—"
-          )}
+          ) : null}
         </DetailField>
-        <DetailField label="Uploaded">{formatDateTime(source.fetchedAt)}</DetailField>
-        <DetailField label="Updated">{formatDateTime(source.updatedAt)}</DetailField>
-        <DetailField label="Learners">{source._count.learnerSources}</DetailField>
-        <DetailField label="Exams read from it">{source._count.examBlueprints}</DetailField>
-        <DetailField label="Items citing it">{source._count.items}</DetailField>
+        <DetailField label="Uploaded" mono={false}>
+          {source.fetchedAt ? formatDateTime(source.fetchedAt) : null}
+        </DetailField>
+        <DetailField label="Updated" mono={false}>
+          {formatDateTime(source.updatedAt)}
+        </DetailField>
+        <DetailField label="Learners">
+          {source._count.learnerSources.toLocaleString("en")}
+        </DetailField>
+        <DetailField label="Exams read from it">
+          {source._count.examBlueprints.toLocaleString("en")}
+        </DetailField>
+        <DetailField label="Practice questions citing it">
+          {source._count.items.toLocaleString("en")}
+        </DetailField>
       </DetailFields>
     </AdminSection>
   );

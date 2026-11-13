@@ -1,12 +1,12 @@
 "use client";
 
 import { logout } from "@zoonk/auth/client";
-import { Button } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/ui/components/enter-button";
 
 export function LogoutButton() {
   return (
-    <Button onClick={() => logout()} type="button">
-      Logout
-    </Button>
+    <EnterButton onClick={() => logout()} size="lg" type="button">
+      Use another account
+    </EnterButton>
   );
 }

@@ -1,12 +1,14 @@
-import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
+import { type Metadata } from "next";
+import { Suspense } from "react";
+import { LoginScreen } from "./login-screen";
+
+export const metadata: Metadata = { title: "Sign in" };
 
 export default function LoginPage() {
   return (
-    <>
-      <OneTimeTokenLoginRedirect callbackPath="/auth/callback" locale={DEFAULT_LOCALE} />
-      <FullPageLoading />
-    </>
+    <Suspense fallback={<FullPageLoading />}>
+      <LoginScreen />
+    </Suspense>
   );
 }

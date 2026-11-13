@@ -5,7 +5,7 @@ export function Screens({ children }: { children: React.ReactNode }) {
   return (
     <div
       aria-label="Screenshots"
-      className="not-prose bg-ground -mx-6 my-10 flex snap-x snap-mandatory scroll-px-6 justify-center-safe gap-4 overflow-x-auto p-6 *:w-[min(72%,15.5rem)] md:rounded-2xl lg:-mx-28 lg:gap-5 lg:p-8 lg:*:w-76 lg:has-[>:nth-child(3)]:*:w-62"
+      className="not-prose bg-ground -mx-4 my-10 flex snap-x snap-mandatory scroll-px-4 justify-center-safe gap-4 overflow-x-auto p-4 *:w-[min(72%,15.5rem)] sm:-mx-6 sm:scroll-px-6 sm:p-6 md:rounded-xl lg:-mx-28 lg:gap-5 lg:p-8 lg:*:w-76 lg:has-[>:nth-child(3)]:*:w-62"
       role="group"
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A row that scrolls must take keyboard focus to scroll with the arrow keys.
       tabIndex={0}

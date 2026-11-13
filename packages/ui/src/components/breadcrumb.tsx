@@ -1,7 +1,6 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
@@ -37,7 +36,7 @@ function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProp
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
-      { className: cn("hover:text-foreground hit-area relative transition-colors", className) },
+      { className: cn("hover:text-foreground transition-colors", className) },
       props,
     ),
     render,
@@ -56,16 +55,17 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
+/** A slash, as in the learner app's bar: a chevron is the way back or forward, never a divider. */
 function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      className={cn("text-faint", className)}
       data-slot="breadcrumb-separator"
       role="presentation"
       {...props}
     >
-      {children ?? <ChevronRightIcon />}
+      {children ?? "/"}
     </li>
   );
 }

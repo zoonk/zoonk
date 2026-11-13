@@ -1,6 +1,6 @@
 import { CourseContinueLink, CourseGoalSwitch } from "@/components/catalog/course-progress";
-import { NoAccountStartNote } from "@/components/public/no-account-note";
 import { StartBlock, getSecondaryStartControlClassName } from "@/components/public/public-start";
+import { StartFreeNote } from "@/components/public/start-free-note";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -20,11 +20,13 @@ export async function CourseStart({
   className,
   courseId,
   pace,
+  pricing = false,
   tryId = null,
 }: {
   className?: string;
   courseId: string;
   pace: number | null;
+  pricing?: boolean;
   tryId?: string | null;
 }) {
   const t = await getExtracted();
@@ -35,7 +37,7 @@ export async function CourseStart({
         tryId && "sm:flex-col sm:items-start sm:gap-3 xl:flex-row xl:items-center xl:gap-5",
         className,
       )}
-      note={<NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>}
+      note={<StartFreeNote pricing={pricing} />}
     >
       {tryId ? (
         <div className="flex flex-col gap-3 sm:flex-row">

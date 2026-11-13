@@ -13,7 +13,7 @@ export const TYPE_ROLES: readonly TypeRole[] = [
     className: "text-display",
     name: "Display",
     sample: "Learn anything, at your level",
-    use: "The landing's one promise. 40px on a phone, 64px from `sm`.",
+    use: "The landing's one promise and its closing question. 40px on a phone, 64px from `sm`, 84px from `xl`.",
   },
   {
     className: "text-headline",
