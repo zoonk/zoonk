@@ -1,7 +1,6 @@
 "use client";
 
 import { type Mission } from "@zoonk/core/sessions/missions";
-import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Burst } from "@zoonk/ui/components/burst";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS, STAGGER_MS } from "@zoonk/ui/lib/motion";
@@ -11,6 +10,7 @@ import { useId } from "react";
 import { ListGroup } from "../_components/list-group";
 import { BrainPowerReadout } from "../_components/moment-readouts";
 import { DoneMark } from "../_components/status-mark";
+import { BuddyArt } from "../buddies/buddy-art";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { MissionListRow } from "./mission-list";
@@ -61,22 +61,17 @@ function StampedMark({ celebrate, order }: { celebrate: boolean; order: number }
 }
 
 function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolean }) {
-  const resolved = resolveLearnBuddy(buddy);
-
   return (
     <span className="flex shrink-0" data-slot="moment-buddy">
-      <BuddyActor
-        beltColor={resolved.beltColor}
-        className={whole ? "size-24" : "size-12"}
-        crop={whole ? undefined : "face"}
-        energy={resolved.energy}
+      <BuddyArt
+        buddy={buddy}
+        className={whole ? "h-28" : "size-12"}
         expression={whole ? "happy" : "neutral"}
-        glasses={resolved.glasses}
-        kind={resolved.kind}
         reaction={
           whole ? { act: "cheer", delayMs: 2 * BEAT_MS } : { act: "smile", delayMs: BEAT_MS }
         }
         studiedToday
+        view={whole ? "body" : "face"}
       />
     </span>
   );

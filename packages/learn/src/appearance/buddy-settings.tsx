@@ -103,6 +103,7 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
           glasses={buddy.glasses}
           kind={buddy.kind}
           studiedToday={look.studiedToday}
+          view="face"
         />
       </ListRowLeading>
       <ListRowContent>

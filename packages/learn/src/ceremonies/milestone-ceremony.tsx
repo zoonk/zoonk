@@ -112,7 +112,7 @@ function CeremonyArt({
       )}
       <BuddyActor
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-        className="relative size-40 sm:size-48"
+        className="relative h-47 sm:h-56"
         energy={buddy.energy}
         expression="happy"
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
