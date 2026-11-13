@@ -7,6 +7,7 @@ import { PageWithAside } from "../shell/learn-shell";
 import { EnterLink } from "./enter-button";
 import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
+/** `bottomBar` is the page's `BottomBar`: with an aside it pins over the main column only. */
 export function DetailLayout({
   aside,
   asideLabel = "",
@@ -19,11 +20,10 @@ export function DetailLayout({
   aside?: React.ReactNode;
   asideLabel?: string;
   bar?: React.ReactNode;
-  /** The page's `BottomBar`, placed by `PageWithAside` beside an aside. */
   bottomBar?: React.ReactNode;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-col" {...props}>
+    <article className="flex min-w-0 flex-1 flex-col" {...props}>
       {bar}
       <div
         className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}

@@ -7,8 +7,8 @@ export function getFreePlanLimits() {
     activeGoals: getActiveGoalLimit("free"),
     examPrepDays: getExamPrepAccess("free").studyDays,
     guestLessons: getUsageRule({ kind: "lessonStart", tier: "guest" }).total ?? null,
+    lessonsPer30Days: lessons.rolling30Days ?? null,
     lessonsPerDay: lessons.day ?? null,
-    lessonsPerMonth: lessons.month ?? null,
     tutorMessagesPerDay: getUsageRule({ kind: "tutorMessage", tier: "free" }).day ?? null,
     uploadsPerDay: getUsageRule({ kind: "upload", tier: "free" }).day ?? null,
   };

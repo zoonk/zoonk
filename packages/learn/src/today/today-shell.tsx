@@ -1,11 +1,12 @@
 "use client";
 
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { METER_PARTS_CLASS } from "../_components/meter";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
 import { PageWithAside } from "../shell/learn-shell";
-import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
+import { TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 
 const SHELL_ROWS = 5;
 
@@ -34,25 +35,28 @@ export function TodayShell() {
       aside={<div aria-hidden="true" />}
       asideClassName={TODAY_ASIDE_CLASS}
       asideLabel={t("Your week")}
+      bottomBar={
+        <BottomBar>
+          <BottomBarActions>
+            <Skeleton className="h-11 w-full rounded-lg lg:w-40" />
+          </BottomBarActions>
+        </BottomBar>
+      }
     >
       <Page>
         <div className={TODAY_MAIN_CLASS}>
-          <PageHeader className="[grid-area:head]">
+          <PageHeader>
             <PageHeaderContent className="w-full">
               <PageTitle>{t("Today")}</PageTitle>
             </PageHeaderContent>
           </PageHeader>
 
-          <div className="mt-5 flex flex-col [grid-area:session]">
+          <div className="mt-5 flex flex-col">
             <div className={METER_PARTS_CLASS}>
               <Skeleton className="h-full w-full rounded-full" />
             </div>
 
             <DayRowsSkeleton />
-          </div>
-
-          <div className={TODAY_ACTION_CLASS}>
-            <Skeleton className="h-11 w-full rounded-lg sm:w-40" />
           </div>
         </div>
       </Page>

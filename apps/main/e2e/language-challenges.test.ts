@@ -40,7 +40,7 @@ test("a Free learner can open the next lesson while the earlier call challenge s
   await page.goto("/today");
   const today = page.getByRole("region", { name: "Today's lessons" });
   await expect(today.getByRole("link", { exact: true, name: nextLesson?.title })).toBeVisible();
-  await today.getByRole("link", { name: /^Start\b/u }).click();
+  await page.getByRole("link", { name: /^Start$/u }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${nextLesson?.id}\\?session=`, "u"));
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
 

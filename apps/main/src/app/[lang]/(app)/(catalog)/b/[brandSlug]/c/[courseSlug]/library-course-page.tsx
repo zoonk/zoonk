@@ -255,7 +255,6 @@ export async function LibraryCoursePage({
             <ContentFeedbackMenu
               label={t("Course options")}
               screen="course"
-              size="icon-bar"
               target={{ contentId: course.id, contentKind: "course" }}
             />
           }

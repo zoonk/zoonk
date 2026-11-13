@@ -12,17 +12,18 @@ export function TodayPageHeader({ title }: { title: string }) {
 }
 
 /** Pausing a goal never swaps the page for another. */
+/** `bottomBar` is the state's `BottomBar`, with its one way on. */
 export function TodayAtRest({
-  actions,
   banner = null,
+  bottomBar,
   clause,
   detail,
   icon,
   sentence,
   title,
 }: {
-  actions: React.ReactNode;
   banner?: React.ReactNode;
+  bottomBar: React.ReactNode;
   clause?: string;
   detail?: React.ReactNode;
   icon: React.ReactNode;
@@ -41,11 +42,9 @@ export function TodayAtRest({
         </TodayStatusLine>
 
         {detail}
-
-        <div className="flex items-start gap-2 [&>*:first-child]:flex-1 sm:[&>*:first-child]:flex-none">
-          {actions}
-        </div>
       </div>
+
+      {bottomBar}
     </Page>
   );
 }

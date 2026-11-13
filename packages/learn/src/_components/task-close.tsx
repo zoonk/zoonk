@@ -30,7 +30,7 @@ function isPlainClick(event: React.MouseEvent): boolean {
 }
 
 /** A bar's bare glyph is 20px (craft I2). */
-const CLOSE_CLASS = "shrink-0 [--icon-size:--spacing(5)]";
+const CLOSE_CLASS = "shrink-0";
 
 /**
  * A full-screen task's ✕, and Esc with it: the key presses the ✕, so both ask the same question
@@ -49,7 +49,6 @@ export function TaskClose({
   link: Link = LearnLink,
   onPress,
   prefetch,
-  size = "icon",
   toApp = false,
 }: {
   /** A promise for work still being saved, which leaving waits for; null when nothing is in flight. */
@@ -69,7 +68,6 @@ export function TaskClose({
   /** Ends the task itself instead of going to a page. */
   onPress?: () => void;
   prefetch?: boolean;
-  size?: "icon" | "icon-bar";
   /** Goes back to the app page the learner came from, wherever that was. */
   toApp?: boolean;
 }) {
@@ -170,7 +168,7 @@ export function TaskClose({
             focusableWhenDisabled
             onClick={onButtonClick}
             ref={buttonRef}
-            size={size}
+            size="icon-bar"
             variant="ghost"
           >
             {content}
@@ -182,7 +180,7 @@ export function TaskClose({
   }
 
   if (!href) {
-    return <span aria-hidden="true" className="size-9 shrink-0" />;
+    return <span aria-hidden="true" className="size-11 shrink-0 lg:size-10" />;
   }
 
   return (
@@ -191,7 +189,7 @@ export function TaskClose({
         <Link
           {...shared}
           className={cn(
-            buttonVariants({ edge: "start", size, variant: "ghost" }),
+            buttonVariants({ edge: "start", size: "icon-bar", variant: "ghost" }),
             CLOSE_CLASS,
             className,
           )}
