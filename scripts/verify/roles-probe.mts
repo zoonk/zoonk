@@ -37,7 +37,15 @@ export function readRoles(): RoleSample[] {
 
   return Object.entries(selectors).flatMap(([role, selector]) =>
     [...document.querySelectorAll<HTMLElement>(selector)]
-      .filter((node) => shown(node))
+      .filter(
+        (node) =>
+          shown(node) &&
+          !(
+            role === "page-top" &&
+            node.matches("[data-slot=page-top]") &&
+            node.querySelector("[data-slot=page-header]")
+          ),
+      )
       .flatMap((node, index) => {
         const rows =
           role === "list-tail"
