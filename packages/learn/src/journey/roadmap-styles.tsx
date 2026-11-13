@@ -12,12 +12,29 @@ export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
   upcoming: "bg-muted text-muted-foreground",
 };
 
+/** One cell: the name and anything that only sizes the band (`BAND_SIZER_CLASS`) share it. */
 export const BAND_CLASS =
-  "relative flex min-h-8 min-w-min items-center gap-1 rounded-md px-2.5 py-1 text-left text-xs font-medium";
+  "relative grid min-h-8 min-w-min items-center rounded-md px-2.5 py-1 text-left text-xs font-medium";
 
-/** Only a long word is split, so a short phase's band grows to its words instead of cutting them. */
-export const BAND_NAME_CLASS =
-  "min-w-0 leading-4 text-balance hyphens-auto [hyphenate-limit-chars:12_5_5]";
+const BAND_CELL_CLASS = "col-start-1 row-start-1";
+
+const BAND_NAME_CLASS = cn(
+  BAND_CELL_CLASS,
+  "leading-4 text-balance hyphens-auto [hyphenate-limit-chars:12_5_5]",
+);
+
+const ONE_LINE_NAME_LENGTH = 16;
+
+/**
+ * A short name keeps one line and its band grows to it, so a short phase reads like the others.
+ * A longer one breaks between words, and only a long word is split.
+ */
+export function getBandNameClass(name: string): string {
+  return cn(BAND_NAME_CLASS, name.length <= ONE_LINE_NAME_LENGTH && "whitespace-nowrap");
+}
+
+/** Invisible text in the band's cell: the band is never narrower than it. */
+export const BAND_SIZER_CLASS = cn(BAND_CELL_CLASS, "invisible h-0 whitespace-nowrap");
 
 /** Inline in the name, so a narrow band's lines get its whole width. */
 export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";

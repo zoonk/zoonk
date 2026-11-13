@@ -218,7 +218,7 @@ function RoadmapReveal() {
                 aria-current={phase.state === "current" ? "step" : undefined}
                 className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
               >
-                <BandFace phase={phase} />
+                <BandFace isLast={position === phases.length - 1} phase={phase} />
               </span>
 
               {dated && phase.startDate && (

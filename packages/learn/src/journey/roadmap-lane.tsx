@@ -9,7 +9,13 @@ import { KindDot } from "../_components/kind-tile";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
-import { AXIS_CLASS, AXIS_TEXT_CLASS, AxisLabel, getPointSide } from "./roadmap-styles";
+import {
+  AXIS_CLASS,
+  AXIS_TEXT_CLASS,
+  AxisLabel,
+  BAND_SIZER_CLASS,
+  getPointSide,
+} from "./roadmap-styles";
 import { useRoadmapFinish, useRoadmapOverrun } from "./use-roadmap";
 
 const PERCENT = 100;
@@ -108,6 +114,26 @@ function GoalDate() {
       </span>
       <span className="hidden @max-[8rem]/phase:inline">{date}</span>
     </>
+  );
+}
+
+/** In the last phase's band, so that phase is never narrower than the date under it. */
+export function EndDateSizer() {
+  const finish = useRoadmapFinish();
+
+  if (!finish) {
+    return null;
+  }
+
+  return (
+    <span aria-hidden="true" className={BAND_SIZER_CLASS}>
+      <PlanDateText
+        className="text-2xs"
+        estimate={finish.estimate}
+        isoDate={finish.isoDate}
+        month={finish.month}
+      />
+    </span>
   );
 }
 

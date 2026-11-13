@@ -51,11 +51,13 @@ function TodayTicks({ share }: { share: number }) {
 
 function PhaseBand({
   focusable,
+  isLast,
   links,
   phase,
   todayShare,
 }: {
   focusable: boolean;
+  isLast: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
   todayShare: number | null;
@@ -80,7 +82,7 @@ function PhaseBand({
           />
         }
       >
-        <BandFace phase={phase} />
+        <BandFace isLast={isLast} phase={phase} />
         {todayShare !== null && <TodayTicks share={todayShare} />}
       </PopoverTrigger>
 
@@ -112,7 +114,13 @@ function PhaseColumn({
 }) {
   return (
     <li className={BAND_COLUMN_CLASS}>
-      <PhaseBand focusable={focusable} links={links} phase={phase} todayShare={todayShare} />
+      <PhaseBand
+        focusable={focusable}
+        isLast={isLast}
+        links={links}
+        phase={phase}
+        todayShare={todayShare}
+      />
 
       <PhaseLane isLast={isLast} phase={phase} />
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} todayShare={todayShare} />
