@@ -1,5 +1,5 @@
-import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { DetailField, DetailFields } from "@/components/detail-field";
+import { AdminSection } from "@/components/admin-section";
+import { StateMark } from "@/components/state-mark";
 import { getUser } from "@/data/users/get-user";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
 import { formatDate } from "@/lib/format";
@@ -10,12 +10,14 @@ import {
   getSubscriptionStatusLabel,
   getSubscriptionStore,
 } from "@/lib/subscription";
+import { CreditCardIcon } from "lucide-react";
 import { ChangePlanButton } from "./change-plan-button";
 
 type UserSubscriptions = Awaited<ReturnType<typeof getUserSubscriptions>>;
+type ActiveSubscription = NonNullable<UserSubscriptions["active"]>;
 
 /** Better Auth schedules a cancellation by timestamp or at the period end, so both count. */
-function getCancellationDate(subscription: NonNullable<UserSubscriptions["active"]>) {
+function getCancellationDate(subscription: ActiveSubscription) {
   if (!subscription.cancelAt && !subscription.cancelAtPeriodEnd) {
     return null;
   }
@@ -23,46 +25,35 @@ function getCancellationDate(subscription: NonNullable<UserSubscriptions["active
   return subscription.cancelAt ?? subscription.periodEnd;
 }
 
-function ActiveSubscriptionFields({
-  subscription,
-}: {
-  subscription: NonNullable<UserSubscriptions["active"]>;
-}) {
+function ActiveFacts({ subscription }: { subscription: ActiveSubscription }) {
   const cancels = getCancellationDate(subscription);
+  const store = getSubscriptionStore(subscription.provider);
+
+  const facts = [
+    getSubscriptionBilledBy(subscription),
+    subscription.periodStart && `Since ${formatDate(subscription.periodStart)}`,
+    !cancels &&
+      subscription.periodEnd &&
+      `${store ? "Renews" : "Ends"} ${formatDate(subscription.periodEnd)}`,
+  ];
 
   return (
     <>
-      <DetailField label="Billed by">{getSubscriptionBilledBy(subscription)}</DetailField>
-
-      {subscription.status === "active" ? null : (
-        <DetailField label="State">{getSubscriptionStatusLabel(subscription.status)}</DetailField>
-      )}
-
-      {subscription.periodStart ? (
-        <DetailField label="Since">{formatDate(subscription.periodStart)}</DetailField>
-      ) : null}
-
+      <span>{facts.filter(Boolean).join(" · ")}</span>
       {cancels ? (
-        <DetailField label="Cancels on">
-          <span className="text-warning-text">{formatDate(cancels)}</span>
-        </DetailField>
+        <StateMark state="canceled" tone="attention">
+          Cancels {formatDate(cancels)}
+        </StateMark>
       ) : null}
-
-      {!cancels && subscription.periodEnd ? (
-        <DetailField label={getSubscriptionStore(subscription.provider) ? "Renews on" : "Ends on"}>
-          {formatDate(subscription.periodEnd)}
-        </DetailField>
-      ) : null}
-
+      {store ? <span>Change it in {store.where}.</span> : null}
       {subscription.stripeCustomerId ? (
-        <DetailField label="Stripe customer">
-          <span className="font-mono text-xs">{subscription.stripeCustomerId}</span>
-        </DetailField>
+        <span className="font-mono text-xs">{subscription.stripeCustomerId}</span>
       ) : null}
     </>
   );
 }
 
+/** What they pay for, in a few lines: the plan, who bills it and until when. */
 export async function UserSubscription({ userId }: { userId: string }) {
   "use cache: private";
 
@@ -88,31 +79,39 @@ export async function UserSubscription({ userId }: { userId: string }) {
           />
         )
       }
-      description={store ? `Billed by ${store.name}. Change it in ${store.where}.` : undefined}
       title="Subscription"
     >
-      {active || canceled || incomplete ? (
-        <DetailFields>
-          <DetailField label="Plan">{getPlanLabel(active?.plan)}</DetailField>
+      <div className="flex items-start gap-2.5">
+        <CreditCardIcon
+          aria-hidden="true"
+          className="text-muted-foreground mt-0.5 size-4 shrink-0"
+        />
+        <div className="text-muted-foreground text-compact flex min-w-0 flex-col gap-1">
+          <span className="text-foreground flex flex-wrap items-center gap-x-3 text-sm font-medium">
+            {getPlanLabel(active?.plan)}
+            {active && active.status !== "active" ? (
+              <StateMark className="font-normal" state={active.status ?? "incomplete"}>
+                {getSubscriptionStatusLabel(active.status)}
+              </StateMark>
+            ) : null}
+          </span>
 
-          {active ? <ActiveSubscriptionFields subscription={active} /> : null}
+          {active ? <ActiveFacts subscription={active} /> : null}
 
           {incomplete ? (
-            <DetailField label="Unfinished checkout">
-              {getPlanLabel(incomplete.plan)}, started and not paid
-            </DetailField>
+            <span>Unfinished checkout: {getPlanLabel(incomplete.plan)}, started and not paid</span>
           ) : null}
 
           {canceled ? (
-            <DetailField label="Last canceled">
-              {getPlanLabel(canceled.plan)}
+            <span>
+              Last canceled: {getPlanLabel(canceled.plan)}
               {canceled.canceledAt ? `, ${formatDate(canceled.canceledAt)}` : ""}
-            </DetailField>
+            </span>
           ) : null}
-        </DetailFields>
-      ) : (
-        <AdminSectionEmpty>Free. They never had a subscription.</AdminSectionEmpty>
-      )}
+
+          {active || canceled || incomplete ? null : <span>They never had a subscription.</span>}
+        </div>
+      </div>
     </AdminSection>
   );
 }

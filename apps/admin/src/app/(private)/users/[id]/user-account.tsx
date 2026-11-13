@@ -1,8 +1,17 @@
 import { AdminSection } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
+import { StateMark } from "@/components/state-mark";
 import { getUser } from "@/data/users/get-user";
 import { formatDate, toWords } from "@/lib/format";
-import { Avatar, AvatarImage } from "@zoonk/ui/components/avatar";
+import {
+  AtSignIcon,
+  BookLockIcon,
+  Building2Icon,
+  ChartNoAxesColumnIcon,
+  KeyRoundIcon,
+  LogInIcon,
+  MailIcon,
+} from "lucide-react";
 
 export async function UserAccount({ userId }: { userId: string }) {
   "use cache: private";
@@ -20,28 +29,40 @@ export async function UserAccount({ userId }: { userId: string }) {
   );
 
   return (
-    <AdminSection title="Account">
+    <AdminSection title="Sign-in">
       <DetailFields>
-        {user.image && (
-          <DetailField label="Photo">
-            <Avatar>
-              <AvatarImage alt={user.name} src={user.image} />
-            </Avatar>
-          </DetailField>
-        )}
-        <DetailField label="Email">
+        <DetailField icon={<MailIcon aria-hidden="true" />} label="Email">
           {user.email}
-          {user.emailVerified ? null : <span className="text-warning-text"> · not verified</span>}
+          {user.emailVerified ? null : (
+            <>
+              {" "}
+              <StateMark state="unverified" tone="attention">
+                Not verified
+              </StateMark>
+            </>
+          )}
         </DetailField>
-        <DetailField label="Username">{user.username ? `@${user.username}` : "—"}</DetailField>
-        <DetailField label="Signs in with">{providers.join(", ") || "—"}</DetailField>
-        <DetailField label="Last sign-in">{formatDate(lastSignIn)}</DetailField>
-        <DetailField label="Analytics">
-          {user.analyticsDisabled ? "Excluded" : "Included"}
+        <DetailField icon={<AtSignIcon aria-hidden="true" />} label="Username">
+          {user.username ? `@${user.username}` : "—"}
+        </DetailField>
+        <DetailField icon={<KeyRoundIcon aria-hidden="true" />} label="Signs in with">
+          {providers.join(", ") || "—"}
+        </DetailField>
+        <DetailField icon={<LogInIcon aria-hidden="true" />} label="Last sign-in">
+          {formatDate(lastSignIn)}
+        </DetailField>
+        <DetailField icon={<ChartNoAxesColumnIcon aria-hidden="true" />} label="Analytics">
+          {user.analyticsDisabled ? (
+            <StateMark state="excluded" tone="off">
+              Excluded
+            </StateMark>
+          ) : (
+            "Included"
+          )}
         </DetailField>
 
         {user.members.length > 0 ? (
-          <DetailField label="Organizations">
+          <DetailField icon={<Building2Icon aria-hidden="true" />} label="Organizations">
             {user.members
               .map((member) => `${member.organization.name} (${member.role})`)
               .join(", ")}
@@ -49,7 +70,9 @@ export async function UserAccount({ userId }: { userId: string }) {
         ) : null}
 
         {user._count.ownedCourses > 0 ? (
-          <DetailField label="Private courses">{user._count.ownedCourses}</DetailField>
+          <DetailField icon={<BookLockIcon aria-hidden="true" />} label="Private courses">
+            {user._count.ownedCourses}
+          </DetailField>
         ) : null}
       </DetailFields>
     </AdminSection>

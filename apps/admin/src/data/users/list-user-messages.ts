@@ -5,11 +5,10 @@ import { prisma } from "@zoonk/db";
 
 const RECENT = 5;
 
-/** What a person wrote to us and asked their buddy, newest first. Feedback text stays on its own page. */
+/** What a person wrote to us and asked their buddy, newest first. */
 export const listUserMessages = cacheAdminData(async (userId: string) => {
   const [feedback, questions] = await Promise.all([
     prisma.feedback.findMany({
-      omit: { message: true },
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: RECENT,
       where: { userId },
