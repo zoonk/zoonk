@@ -2,27 +2,10 @@
 
 import { type LeaderboardEntry } from "@/lib/leaderboard";
 import { type BattleLeaderboardEntry } from "@/lib/types";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@zoonk/ui/components/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BattleLeaderboard } from "./battle-leaderboard";
 import { Leaderboard } from "./leaderboard";
-
-const LEADERBOARD_SKELETON_ROWS = ["leaderboard-row-1", "leaderboard-row-2", "leaderboard-row-3"];
-
-export function LeaderboardTabsSkeleton() {
-  return (
-    <div aria-hidden="true" className="flex flex-col divide-y">
-      {LEADERBOARD_SKELETON_ROWS.map((rowId) => (
-        <div className="flex h-11 items-center gap-6 px-2" key={rowId}>
-          <Skeleton className="h-5 flex-1 rounded" />
-          <Skeleton className="h-5 w-24 rounded" />
-          <Skeleton className="h-5 w-20 rounded" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export function LeaderboardTabs({
   taskId,

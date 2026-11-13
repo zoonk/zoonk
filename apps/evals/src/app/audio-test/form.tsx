@@ -94,7 +94,7 @@ export function AudioTestForm() {
           </Select>
         </div>
 
-        <Button busy={isPending} className="self-start" type="submit">
+        <Button busy={isPending} className="self-start" size="lg" type="submit">
           Generate audio
         </Button>
       </form>

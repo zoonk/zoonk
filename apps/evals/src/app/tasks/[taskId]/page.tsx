@@ -13,7 +13,7 @@ import { getModelsToRun, getModelsWithResults } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
-import { ButtonSkeleton, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   ContainerBody,
   ContainerDescription,
@@ -29,8 +29,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "./_utils/task-route";
 import { runBattleModeAction } from "./actions";
-import { LeaderboardTabs, LeaderboardTabsSkeleton } from "./leaderboard-tabs";
-import { ModelList, ModelListSkeleton } from "./model-list";
+import { LeaderboardTabs } from "./leaderboard-tabs";
+import { ModelList } from "./model-list";
 
 type TaskRouteProps = { params: TaskRouteParams };
 
@@ -44,21 +44,6 @@ async function TaskBreadcrumb({ params }: TaskRouteProps) {
   const { task } = await getTaskRouteFromParams(params);
 
   return <TaskPageBreadcrumb taskName={task.name} />;
-}
-
-function TaskHeaderActionsSkeleton() {
-  return (
-    <div aria-hidden="true" className="flex items-center gap-2">
-      <ButtonSkeleton variant="outline">
-        <MessageSquareTextIcon />
-        Judge comments
-      </ButtonSkeleton>
-      <ButtonSkeleton>
-        <SwordsIcon />
-        Run battle
-      </ButtonSkeleton>
-    </div>
-  );
 }
 
 async function TaskHeaderActions({ params }: TaskRouteProps) {
@@ -110,11 +95,7 @@ async function TaskHeader({ params }: TaskRouteProps) {
         </p>
       </ContainerHeaderGroup>
 
-      {judgeModeSupported && (
-        <Suspense fallback={<TaskHeaderActionsSkeleton />}>
-          <TaskHeaderActions params={params} />
-        </Suspense>
-      )}
+      {judgeModeSupported && <TaskHeaderActions params={params} />}
     </ContainerHeader>
   );
 }
@@ -170,19 +151,15 @@ export default function TaskPage({ params }: TaskRouteProps) {
         </Suspense>
       </AppBreadcrumb>
 
+      {/* One boundary: the title, the table and the list arrive together, so none pushes another down. */}
       <Suspense fallback={<ContainerHeaderSkeleton />}>
         <TaskHeader params={params} />
-      </Suspense>
 
-      <ContainerBody>
-        <Suspense fallback={<LeaderboardTabsSkeleton />}>
+        <ContainerBody>
           <TaskLeaderboard params={params} />
-        </Suspense>
-
-        <Suspense fallback={<ModelListSkeleton />}>
           <TaskModels params={params} />
-        </Suspense>
-      </ContainerBody>
+        </ContainerBody>
+      </Suspense>
     </main>
   );
 }

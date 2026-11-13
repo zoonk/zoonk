@@ -28,7 +28,7 @@ import { redirect } from "next/navigation";
 import { Suspense, cache } from "react";
 import { getTaskRoute } from "../_utils/task-route";
 import { EvalResults } from "./eval-results";
-import { TaskModelActionsCard, TaskModelActionsCardSkeleton } from "./task-model-actions-card";
+import { TaskModelActionsCard } from "./task-model-actions-card";
 
 type TaskModelRouteParams = PageProps<"/tasks/[taskId]/[modelId]">["params"];
 type TaskModelRouteProps = { params: TaskModelRouteParams };
@@ -178,19 +178,15 @@ export default function TaskModelPage({ params }: TaskModelRouteProps) {
         </Suspense>
       </AppBreadcrumb>
 
+      {/* One boundary: every part reads the same results, so they arrive together and none pushes another. */}
       <Suspense fallback={<ContainerHeaderSkeleton />}>
         <TaskModelHeader params={params} />
-      </Suspense>
 
-      <ContainerBody>
-        <Suspense fallback={<TaskModelActionsCardSkeleton />}>
+        <ContainerBody>
           <TaskModelActions params={params} />
-        </Suspense>
-
-        <Suspense fallback={null}>
           <TaskModelResults params={params} />
-        </Suspense>
-      </ContainerBody>
+        </ContainerBody>
+      </Suspense>
     </main>
   );
 }

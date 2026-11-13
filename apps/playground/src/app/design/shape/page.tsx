@@ -22,6 +22,7 @@ export default function ShapePage() {
       </DocSection>
 
       <DocSection
+        id="edges"
         intro="A column's two edges, and how a control with no outline sits on them."
         title="Edges"
       >
@@ -30,6 +31,7 @@ export default function ShapePage() {
       </DocSection>
 
       <DocSection
+        id="control-heights"
         intro="Four heights, each `Button` size's. A filled and an outlined button of one size are the same size."
         title="Control heights"
       >

@@ -3,10 +3,8 @@ import { DEFAULT_REASONING, type ModelConfig } from "@/lib/models";
 import { type OutputProgress } from "@/lib/output-loader";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { type FailedRun } from "@/lib/types";
-import { ButtonSkeleton } from "@zoonk/ui/components/button";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { DownloadIcon, FileTextIcon, PlayIcon, SparklesIcon, Trash2Icon } from "lucide-react";
+import { PlayIcon, SparklesIcon } from "lucide-react";
 import { generateOutputsAction, runEvalAction } from "./actions";
 import { DeleteModelDataDialog } from "./delete-model-data-dialog";
 import { type OutputExportEntry, OutputsExport } from "./outputs-export";
@@ -84,40 +82,6 @@ export function TaskModelActionsCard({
           modelId={modelId}
           taskId={taskId}
         />
-      </div>
-    </div>
-  );
-}
-
-export function TaskModelActionsCardSkeleton() {
-  return (
-    <div aria-hidden="true" className="flex flex-wrap items-end gap-x-3 gap-y-4 border-b pb-6">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-20 rounded" />
-        <Skeleton className="h-9 w-40 rounded-full" />
-      </div>
-      <ButtonSkeleton>
-        <SparklesIcon />
-        Generate outputs
-      </ButtonSkeleton>
-      <ButtonSkeleton variant="outline">
-        <PlayIcon />
-        Score outputs
-      </ButtonSkeleton>
-
-      <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
-        <ButtonSkeleton variant="outline">
-          <DownloadIcon />
-          Export outputs
-        </ButtonSkeleton>
-        <ButtonSkeleton variant="outline">
-          <FileTextIcon />
-          Export review PDF
-        </ButtonSkeleton>
-        <ButtonSkeleton variant="destructive">
-          <Trash2Icon />
-          Delete results
-        </ButtonSkeleton>
       </div>
     </div>
   );

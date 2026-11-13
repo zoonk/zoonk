@@ -3,7 +3,6 @@ import { StatusBadge } from "@/components/model-status-badge";
 import { type ModelConfig, getModelDisplayName } from "@/lib/models";
 import { type ModelStatus } from "@/lib/utils";
 import { type ModelPricing } from "@zoonk/ai/pricing/gateway-prices";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Link from "next/link";
 
 const TOKENS_PER_MILLION = 1_000_000;
@@ -55,15 +54,5 @@ export function ModelList({
         ))}
       </ul>
     </Fold>
-  );
-}
-
-export function ModelListSkeleton() {
-  return (
-    <div aria-hidden="true" className="border-t pt-2">
-      <div className="flex min-h-11 items-center">
-        <Skeleton className="h-5 w-40 rounded" />
-      </div>
-    </div>
   );
 }
