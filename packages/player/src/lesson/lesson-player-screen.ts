@@ -1,3 +1,4 @@
+import { type QuestionAction } from "@zoonk/learn/question-actions";
 import { type TaskSegment } from "@zoonk/learn/task-header";
 import { getChallengeProgress } from "./_utils/challenge-progress";
 import { canGoBack } from "./_utils/lesson-back";
@@ -14,23 +15,12 @@ import { type ExplainingStep, getStruggleOffer } from "./_utils/lesson-struggle"
 import { type LessonPlayerState, getCurrentStep } from "./lesson-player-state";
 import { type LessonPlayerAnswer, type PlayableLibraryStep } from "./lesson-player-types";
 
-export type LessonPrimaryLabel =
-  | "check"
-  | "confirm"
-  | "continue"
-  | "dontKnowYet"
-  | "next"
-  | "nextStep"
-  | "seeAnswer"
-  | "seeHowItWent"
-  | "start";
-
 /** `reveal`: an opening guess with nothing picked shows its answer, counting for nothing. */
 type LessonPrimaryAction = {
   action: "check" | "continue" | "reveal";
   busy: boolean;
   disabled: boolean;
-  label: LessonPrimaryLabel;
+  label: QuestionAction;
 };
 
 export type LessonScreen = {
@@ -73,7 +63,7 @@ function hasUnsentAnswer(state: LessonPlayerState, step: PlayableLibraryStep | n
   );
 }
 
-function getReadLabel(state: LessonPlayerState, step: PlayableLibraryStep): LessonPrimaryLabel {
+function getReadLabel(state: LessonPlayerState, step: PlayableLibraryStep): QuestionAction {
   if (step.kind === "workedExample" && (state.revealed[step.id] ?? 1) < step.content.steps.length) {
     return "nextStep";
   }
@@ -96,7 +86,7 @@ function getChallengeAction(
   }
 
   if (progress.stage === "ended") {
-    return { action: "check", busy: false, disabled: false, label: "seeHowItWent" };
+    return { action: "check", busy: false, disabled: false, label: "seeResult" };
   }
 
   return { action: "continue", busy: false, disabled: !progress.pendingChoiceId, label: "confirm" };
@@ -112,9 +102,12 @@ function getAnswerAction(state: LessonPlayerState, step: PlayableLibraryStep): L
   }
 
   if (step.kind === "hook") {
-    return state.answers[step.id]
-      ? { action: "check", busy: false, disabled: false, label: "seeAnswer" }
-      : { action: "reveal", busy: false, disabled: false, label: "dontKnowYet" };
+    return {
+      action: state.answers[step.id] ? "check" : "reveal",
+      busy: false,
+      disabled: false,
+      label: "seeAnswer",
+    };
   }
 
   return {

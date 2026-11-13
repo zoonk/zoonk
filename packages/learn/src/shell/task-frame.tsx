@@ -1,6 +1,6 @@
 "use client";
 
-import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
@@ -9,6 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import {
   TaskHeader,
@@ -260,7 +261,7 @@ export function TaskMainButton({
   icon,
   iconPosition,
   onClick,
-}: Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> & {
+}: Pick<React.ComponentProps<typeof EnterButton>, "icon" | "iconPosition"> & {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -274,21 +275,17 @@ export function TaskMainButton({
   useEnterKey(() => (isShown(ref.current) ? onClick() : false), { enabled: !isDisabled });
 
   return (
-    <Button
-      aria-keyshortcuts="Enter"
+    <EnterButton
       busy={busy}
-      className={cn(TASK_MAIN_ACTION_CLASS, className)}
+      className={className}
       disabled={disabled || !mounted}
-      focusableWhenDisabled
       icon={icon}
       iconPosition={iconPosition}
       onClick={onClick}
       ref={ref}
-      size="xl"
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+    </EnterButton>
   );
 }
 
@@ -300,7 +297,7 @@ export function TaskMainLink({
   steadyMs = 0,
   toApp = false,
   ...iconProps
-}: Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> & {
+}: Pick<React.ComponentProps<typeof EnterButton>, "icon" | "iconPosition"> & {
   children: React.ReactNode;
   className?: string;
   href: string;
