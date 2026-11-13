@@ -38,6 +38,7 @@ const STRUCTURE_KEYS = new Set([
 const ANSWER_KEY_KEYS = new Set([
   "acceptedAnswers",
   "answer",
+  "answerIndex",
   "answers",
   "change",
   "effects",

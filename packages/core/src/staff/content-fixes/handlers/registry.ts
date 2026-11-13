@@ -3,6 +3,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type Resolution, refuse } from "../_utils/resolved-change";
 import { type FixHandler } from "./fix-handler";
 import { itemReplace, itemRestore, itemSet } from "./item-content";
+import { levelTestSet } from "./level-test";
 import { stepAttachPicture, stepDetachPicture } from "./pictures";
 import { explanationSet, itemRetire, itemUnretire } from "./practice";
 import { stepSet, variantSet } from "./screens";
@@ -26,6 +27,7 @@ export const FIX_HANDLERS = [
   itemSet,
   itemReplace,
   itemRestore,
+  levelTestSet,
 ] as const;
 
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */

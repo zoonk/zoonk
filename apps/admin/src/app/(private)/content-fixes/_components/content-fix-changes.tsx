@@ -17,6 +17,7 @@ const MODEL_LABELS: Record<StoredChange["model"], string> = {
   Chapter: "Chapter",
   Course: "Course",
   Item: "Practice question",
+  LanguageLevelTest: "Level test",
   Lesson: "Lesson",
   Step: "Screen",
   StepVariant: "Screen version",
@@ -89,7 +90,9 @@ function ValueChange({ change }: { change: ShownChange }) {
 type FieldChange = Extract<StoredChange, { op: "set" }>["fields"][number];
 
 function hasAnswerKey(model: StoredChange["model"]): boolean {
-  return model === "Step" || model === "StepVariant" || model === "Item";
+  return (
+    model === "Step" || model === "StepVariant" || model === "Item" || model === "LanguageLevelTest"
+  );
 }
 
 /**

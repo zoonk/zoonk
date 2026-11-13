@@ -247,7 +247,7 @@ export async function prepareContentFix(
 
   if (!first || units.size !== 1) {
     return refuse(
-      "One fix covers one lesson (with its screens), one chapter, one course or one practice question. Split it into one fix each.",
+      "One fix covers one lesson (with its screens), one chapter, one course, one practice question or one level test. Split it into one fix each.",
     );
   }
 

@@ -65,6 +65,8 @@ export const levelTestProgressSchema = z.object({
     .nullable()
     .default(null),
   start: z.number().min(0).max(MAX_CEFR_SCORE).optional(),
+  /** When the first answer arrived; a fix to the bank after it never costs this test. */
+  startedAt: z.iso.datetime().optional(),
 });
 
 export type LevelTestProgress = z.infer<typeof levelTestProgressSchema> & { start: number };

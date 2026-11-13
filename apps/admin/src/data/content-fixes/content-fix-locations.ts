@@ -145,17 +145,35 @@ async function loadItems(ids: string[]) {
   ]);
 }
 
+async function loadLevelTests(ids: string[]) {
+  const banks = await prisma.languageLevelTest.findMany({
+    select: { id: true, language: true, targetLanguage: true },
+    where: { id: { in: ids } },
+  });
+
+  return banks.map((bank): [string, ContentFixLocation] => [
+    bank.id,
+    {
+      adminHref: null,
+      language: `${bank.language} → ${bank.targetLanguage}`,
+      mainUrl: null,
+      trail: ["Level test"],
+    },
+  ]);
+}
+
 const MISSING: ContentFixLocation = { adminHref: null, language: null, mainUrl: null, trail: [] };
 
 /** Where each fix's content lives now, read fresh: a fix keeps plain ids, so the content may be gone. */
 export async function loadContentFixLocations(units: readonly Unit[]) {
-  const [lessons, chapters, courses, items] = await Promise.all([
+  const [lessons, chapters, courses, items, levelTests] = await Promise.all([
     loadLessons(idsOf(units, "lesson")),
     loadChapters(idsOf(units, "chapter")),
     loadCourses(idsOf(units, "course")),
     loadItems(idsOf(units, "item")),
+    loadLevelTests(idsOf(units, "levelTest")),
   ]);
 
-  const locations = new Map([...lessons, ...chapters, ...courses, ...items]);
+  const locations = new Map([...lessons, ...chapters, ...courses, ...items, ...levelTests]);
   return (unit: Unit): ContentFixLocation => locations.get(unit.unitId) ?? MISSING;
 }

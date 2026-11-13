@@ -116,6 +116,17 @@ const effectSchema = z.discriminatedUnion("kind", [
     }),
   z
     .object({
+      answerKeys: z.array(z.string()),
+      kind: z.literal("levelTestChanged"),
+      questions: z.array(z.string()),
+      speaking: z.array(z.string()),
+    })
+    .meta({
+      description:
+        "The level test questions whose words change, those whose right option changes, and the levels whose sentence to say changes",
+    }),
+  z
+    .object({
       id: idSchema,
       kind: z.literal("slugKept"),
       model: z.enum(["Course", "Chapter", "Lesson"]),

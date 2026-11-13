@@ -1,10 +1,12 @@
 import "server-only";
 import {
+  isFixedDuringTest,
   loadLevelTestContext,
   saveLevelTestProgress,
   toLevelTestView,
 } from "./_utils/level-test-state";
 import { type LanguageLevelTestView, type LevelTestAnswerInput } from "./level-test-contract";
+import { levelTestPart } from "./level-test-parts";
 import { getNextLevelTestStep } from "./level-test-rules";
 
 export type AnswerLanguageLevelTestResult =
@@ -24,9 +26,9 @@ export async function answerLanguageLevelTest({
     return context;
   }
 
-  const { bank, bankRunId, bankWrittenAt, owned, progress } = context;
+  const { bank, bankId, bankRunId, bankWrittenAt, owned, progress } = context;
 
-  if (!bank || !bankRunId) {
+  if (!bank || !bankId || !bankRunId) {
     return { status: "notReady" };
   }
 
@@ -45,15 +47,32 @@ export async function answerLanguageLevelTest({
     return { status: "invalid" };
   }
 
+  // A skip uses the question's turn without moving the level, as a not-right answer to a
+  // question fixed while the learner was on it does.
+  const skipped =
+    input.skipped === true ||
+    (input.answerIndex !== step.question.answerIndex &&
+      (await isFixedDuringTest({
+        bankId,
+        part: levelTestPart({ kind: "question", questionId: step.question.id }),
+        progress,
+      })));
+
   const answer = {
-    answerIndex: input.skipped ? null : input.answerIndex,
+    answerIndex: skipped ? null : input.answerIndex,
     durationMs: input.durationMs ?? 0,
     id: input.questionId,
-    ...(input.skipped && { skipped: true }),
+    ...(skipped && { skipped: true }),
   };
 
   const recordId = progress.recordId ?? crypto.randomUUID();
-  const next = { ...progress, answers: [...progress.answers, answer], recordId };
+
+  const next = {
+    ...progress,
+    answers: [...progress.answers, answer],
+    recordId,
+    startedAt: progress.startedAt ?? new Date().toISOString(),
+  };
 
   const saved = await saveLevelTestProgress({
     from: progress,
@@ -80,7 +99,7 @@ export async function answerLanguageLevelTest({
       bank,
       bankWrittenAt,
       goal: owned.goal,
-      lastCorrect: input.skipped ? null : input.answerIndex === step.question.answerIndex,
+      lastCorrect: skipped ? null : input.answerIndex === step.question.answerIndex,
       progress: next,
     }),
   };

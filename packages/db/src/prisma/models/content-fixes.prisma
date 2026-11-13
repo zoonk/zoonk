@@ -11,6 +11,7 @@ enum ContentFixUnit {
   chapter
   lesson
   item
+  levelTest @map("level_test")
 }
 
 /// A reviewed change to shared Library content. Staff propose it from the CLI, and a staff person

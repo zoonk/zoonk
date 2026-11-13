@@ -9,6 +9,7 @@ import { type SpeechClip } from "../../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../../audio/speech-clip-key";
 import { findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { findRowsFixedSince } from "../../../staff/content-fixes/fixed-since";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
   LEVEL_TEST_PREPARING_SECONDS,
@@ -37,6 +38,7 @@ export type LevelTestGoal = { goal: Goal & { targetLanguage: string }; userId: s
 export type LevelTestContext =
   | {
       bank: LevelTestBank | null;
+      bankId: string | null;
       bankRunId: string | null;
       bankStartedAt: Date | null;
       bankWrittenAt: Date | null;
@@ -129,6 +131,7 @@ export async function loadLevelTestContext(goalId: string): Promise<LevelTestCon
 
   return {
     bank: state.status === "ready" ? state.bank : null,
+    bankId: state.status === "ready" ? state.id : null,
     bankRunId: state.status === "ready" ? state.runId : null,
     bankStartedAt: state.status === "preparing" ? state.startedAt : null,
     bankWrittenAt: state.status === "ready" ? state.writtenAt : null,
@@ -219,4 +222,26 @@ export async function toLevelTestView({
     targetLanguage: goal.targetLanguage,
     total: LEVEL_TEST_TOTAL,
   };
+}
+
+/**
+ * Whether a fix changed this part of the bank after the learner's test began, so an answer to it
+ * may have been given to the old wording and doesn't count. A test's first answer has no start
+ * yet, so it began now.
+ */
+export async function isFixedDuringTest({
+  bankId,
+  part,
+  progress,
+}: {
+  bankId: string;
+  part: string;
+  progress: Pick<LevelTestProgress, "startedAt">;
+}): Promise<boolean> {
+  const fixed = await findRowsFixedSince({
+    rows: [{ id: bankId, model: "LanguageLevelTest", parts: [part] }],
+    startedAt: progress.startedAt ? new Date(progress.startedAt) : new Date(),
+  });
+
+  return fixed.length > 0;
 }

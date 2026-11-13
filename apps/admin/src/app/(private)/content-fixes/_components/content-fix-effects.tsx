@@ -31,6 +31,21 @@ function screenLabel(rowLabels: ReadonlyMap<string, string>, id: string): string
   return rowLabels.get(id) ?? "this screen";
 }
 
+function describeLevelTestChange({
+  answerKeys,
+  questions,
+  speaking,
+}: Extract<ContentFixEffect, { kind: "levelTestChanged" }>): string {
+  return [
+    questions.length > 0 && `Learners read new words in ${questions.join(", ")}.`,
+    answerKeys.length > 0 && `The right option changes in ${answerKeys.join(", ")}.`,
+    speaking.length > 0 && `The sentence to say changes at ${speaking.join(", ")}.`,
+    "Learners already taking the test aren't marked wrong for it.",
+  ]
+    .filter((line) => line !== false)
+    .join(" ");
+}
+
 function describeEffect({
   effect,
   rowLabels,
@@ -63,7 +78,9 @@ function describeEffect({
     case "itemRestored":
       return "New practice can pick the question again.";
     case "itemExplanationsDeleted":
-      return `${String(effect.count)} saved ${effect.count === 1 ? "explanation" : "explanations"} of wrong answers to this question ${effect.count === 1 ? "is" : "are"} deleted. New ones are written from the fixed question.`;
+      return `${countOf({ count: effect.count, many: "saved explanations", one: "saved explanation" })} of wrong answers to this question ${effect.count === 1 ? "is" : "are"} deleted. New ones are written from the fixed question.`;
+    case "levelTestChanged":
+      return describeLevelTestChange(effect);
     case "itemReplaced":
       return "New practice asks the corrected copy instead. Sessions that already hold this question keep grading it, its answers and history stay with it, and its past mistakes no longer replay.";
     case "slugKept":

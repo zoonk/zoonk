@@ -20,6 +20,7 @@ const UNIT_TABLES = {
   course: sql`courses`,
   item: sql`items`,
   lesson: sql`library_lessons`,
+  levelTest: sql`language_level_tests`,
 } as const;
 
 /**
