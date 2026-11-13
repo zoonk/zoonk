@@ -1,6 +1,5 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { batchOf, batchWhere } from "@zoonk/core/staff/content-fixes/batches";
 import {
   type StoredChange,
   contentFixChangesSchema,
@@ -170,7 +169,7 @@ const fixInclude = {
   reverts: { select: { id: true } },
 } as const;
 
-function findFixes(where: { id: string } | ReturnType<typeof batchWhere>) {
+function findFixes(where: { batchId: string } | { id: string }) {
   return prisma.contentFix.findMany({ include: fixInclude, orderBy: { id: "asc" }, where });
 }
 
@@ -187,7 +186,6 @@ async function toDetails(fixes: readonly FixRow[]) {
 
   return fixes.map((fix, index) => ({
     ...fix,
-    batchId: batchOf(fix),
     changes: changes[index] ?? [],
     effects: contentFixEffectsSchema.parse(fix.effects),
     location: locate(fix),
@@ -208,7 +206,7 @@ export const getContentFix = cacheAdminData(async (id: string) => {
 
   const [[detail], batchSize] = await Promise.all([
     toDetails([fix]),
-    prisma.contentFix.count({ where: batchWhere(batchOf(fix)) }),
+    prisma.contentFix.count({ where: { batchId: fix.batchId } }),
   ]);
 
   return detail ? { ...detail, batchSize } : null;
@@ -216,7 +214,7 @@ export const getContentFix = cacheAdminData(async (id: string) => {
 
 /** Every fix proposed together, in the order the proposal listed them. */
 export const getContentFixBatch = cacheAdminData(async (batchId: string) => {
-  const fixes = await findFixes(batchWhere(batchId));
+  const fixes = await findFixes({ batchId });
 
   return fixes.length > 0 ? toDetails(fixes) : null;
 });

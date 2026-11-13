@@ -17,7 +17,7 @@ import {
   targetsOf,
 } from "./_utils/prepare-content-fix";
 import { getStaffSessionUser } from "./_utils/staff-session";
-import { batchWhere, getContentFixBatchReviewUrl } from "./batches";
+import { getContentFixBatchReviewUrl } from "./batches";
 import {
   contentFixChangesSchema,
   contentFixProposalSchema,
@@ -183,7 +183,7 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
       },
       status: true,
     },
-    where: input.fixId ? { id: input.fixId } : batchWhere(input.batchId ?? ""),
+    where: input.fixId ? { id: input.fixId } : { batchId: input.batchId ?? "" },
   });
 
   const name = input.fixId ? `ContentFix with id ${input.fixId}` : `batch ${input.batchId ?? ""}`;

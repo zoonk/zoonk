@@ -3,7 +3,6 @@ import { closeProposed } from "./_utils/close-proposed";
 import { logContentFix } from "./_utils/content-fix-view";
 import { type Decided, type Refused, decideAs, readOutcomes } from "./_utils/decision";
 import { getStaffSessionUser } from "./_utils/staff-session";
-import { batchWhere } from "./batches";
 
 type Target = { batchId: string } | { fixId: string };
 
@@ -23,7 +22,7 @@ async function rejectProposed({
   deciderId: string;
   target: Target;
 }): Promise<Refused | Rejected> {
-  const where = "fixId" in target ? { id: target.fixId } : batchWhere(target.batchId);
+  const where = "fixId" in target ? { id: target.fixId } : { batchId: target.batchId };
   const rejected = await closeProposed({ status: "rejected", userId: deciderId, where });
   const fixes = await readOutcomes(where);
 

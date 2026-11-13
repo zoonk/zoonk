@@ -6,7 +6,7 @@ import { getStaffActor } from "../get-staff-actor";
 import { StaffInputError, parseStaffInput } from "../input";
 import { closeProposed } from "./_utils/close-proposed";
 import { logContentFix } from "./_utils/content-fix-view";
-import { batchOf, batchWhere, getContentFixBatchReviewUrl } from "./batches";
+import { getContentFixBatchReviewUrl } from "./batches";
 import { contentFixWithdrawalSchema } from "./contract";
 
 type Target = { batchId?: string; fixId?: string };
@@ -61,7 +61,7 @@ function nothingWaits({
  * withdrawn succeeds without changing anything.
  */
 async function withdraw({ target, userId }: { target: Target; userId: string }) {
-  const where = target.fixId ? { id: target.fixId } : batchWhere(target.batchId ?? "");
+  const where = target.fixId ? { id: target.fixId } : { batchId: target.batchId };
 
   const withdrawn = await closeProposed({
     status: "withdrawn",
@@ -83,7 +83,7 @@ async function withdraw({ target, userId }: { target: Target; userId: string }) 
 
   if (!fixes.some((fix) => fix.proposerId === userId)) {
     return {
-      message: `Only the staff person who proposed ${targetName(target)} can withdraw it. To turn it down, reject it in Admin: ${getContentFixBatchReviewUrl(batchOf(first))}`,
+      message: `Only the staff person who proposed ${targetName(target)} can withdraw it. To turn it down, reject it in Admin: ${getContentFixBatchReviewUrl(first.batchId)}`,
       status: "notProposer",
     } as const;
   }
@@ -93,7 +93,7 @@ async function withdraw({ target, userId }: { target: Target; userId: string }) 
   }
 
   return {
-    batchId: batchOf(first),
+    batchId: first.batchId,
     fixes: fixes.map((fix) => ({ id: fix.id, status: fix.status })),
     status: "withdrawn",
     withdrawn,

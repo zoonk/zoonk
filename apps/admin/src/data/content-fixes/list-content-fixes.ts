@@ -1,6 +1,5 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { batchOf } from "@zoonk/core/staff/content-fixes/batches";
 import { prisma } from "@zoonk/db";
 import { loadContentFixLocations } from "./content-fix-locations";
 
@@ -33,9 +32,7 @@ async function loadBatchSizes(batchIds: string[]): Promise<Map<string, number>> 
     where: { batchId: { in: [...new Set(batchIds)] } },
   });
 
-  return new Map(
-    groups.flatMap((group) => (group.batchId ? [[group.batchId, group._count.id]] : [])),
-  );
+  return new Map(groups.map((group) => [group.batchId, group._count.id]));
 }
 
 /** Every fix waiting for a decision, then the latest decisions. */
@@ -59,12 +56,12 @@ export const listContentFixes = cacheAdminData(async () => {
 
   const [locate, batchSizes] = await Promise.all([
     loadContentFixLocations(fixes),
-    loadBatchSizes(fixes.map((fix) => batchOf(fix))),
+    loadBatchSizes(fixes.map((fix) => fix.batchId)),
   ]);
 
   const withPlace = (fix: (typeof fixes)[number]) => ({
     ...fix,
-    batch: { id: batchOf(fix), size: batchSizes.get(batchOf(fix)) ?? 1 },
+    batchSize: batchSizes.get(fix.batchId) ?? 1,
     location: locate(fix),
   });
 

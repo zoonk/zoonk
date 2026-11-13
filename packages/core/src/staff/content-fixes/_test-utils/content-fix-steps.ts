@@ -131,7 +131,7 @@ function decisionOf(fixId: string, result: ContentFixDecision) {
 
 async function batchOfFix(fixId: string): Promise<string> {
   const fix = await prisma.contentFix.findUniqueOrThrow({ where: { id: fixId } });
-  return fix.batchId ?? fix.id;
+  return fix.batchId;
 }
 
 export async function optionsFor(fixId: string) {
