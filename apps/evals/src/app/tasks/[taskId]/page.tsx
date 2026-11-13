@@ -53,7 +53,8 @@ async function TaskHeaderActions({ params }: TaskRouteProps) {
   const canRunBattle = modelsReadyForBattle.length >= 2;
 
   return (
-    <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
+    // Hangs over the facts line's row, so the line sits where it does on a task with no buttons.
+    <div className="flex shrink-0 flex-wrap items-center gap-2 sm:-my-2.5 sm:justify-end">
       {!canRunBattle && (
         <p className="text-muted-foreground text-xs">A battle needs 2 models with every output.</p>
       )}
