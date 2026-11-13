@@ -2,7 +2,6 @@
 
 import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -112,7 +111,7 @@ function OutsideSession({
         )}
 
         <TaskActions>
-          <EnterButton busy={isPending} enter="host" onClick={run} {...FORWARD_ICON}>
+          <EnterButton busy={isPending} enter="host" onClick={run}>
             {t("Continue")}
           </EnterButton>
         </TaskActions>

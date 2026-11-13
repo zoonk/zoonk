@@ -4,9 +4,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { QuestionEyebrow } from "../../_components/question-title";
+import { Eyebrow } from "../../_components/eyebrow";
 import { ChangeSaveError } from "../../_components/save-error";
-import { useSentenceSpace } from "../../_utils/locale";
 import { type StudyQuestion } from "../session-types";
 
 /** `onSkipToday` resolves to whether today's test questions were taken out of the session. */
@@ -18,7 +17,6 @@ export function PlacementNote({
   question: StudyQuestion;
 }) {
   const t = useExtracted();
-  const space = useSentenceSpace();
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -34,19 +32,18 @@ export function PlacementNote({
 
   return (
     <div className="flex flex-col gap-1" data-slot="placement-note">
-      <QuestionEyebrow icon={<CompassIcon aria-hidden="true" />}>
-        {t("Checking what you already know.")}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Eyebrow icon={<CompassIcon aria-hidden="true" />}>
+          {t("Checking what you already know")}
+        </Eyebrow>
         {onSkipToday && (
-          <>
-            {space}
-            <Button busy={isPending} onClick={skipToday} variant="link">
-              {t("Not today")}
-            </Button>
-          </>
+          <Button busy={isPending} className="text-compact" onClick={skipToday} variant="link">
+            {t("Not today")}
+          </Button>
         )}
-      </QuestionEyebrow>
+      </div>
 
-      {failed && <ChangeSaveError className="ps-5 text-xs" />}
+      {failed && <ChangeSaveError className="text-xs" />}
     </div>
   );
 }

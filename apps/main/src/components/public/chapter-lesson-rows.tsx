@@ -6,7 +6,7 @@ import { ROUTE_CLASS, RouteMark } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 
 const ROW_CLASS =
-  "relative isolate flex items-start gap-3 py-3 pl-(--route-inset) outline-none before:pointer-events-none before:absolute before:inset-y-0.5 before:right-[-0.625rem] before:left-[calc(var(--route-inset)-0.625rem)] before:-z-10 before:rounded-lg before:transition-colors hover:before:bg-muted/70 focus-visible:before:ring-[3px] focus-visible:before:ring-ring/50";
+  "relative isolate flex items-start gap-3 py-3 pl-(--route-inset) outline-none before:pointer-events-none before:absolute before:inset-y-0.5 before:right-[-0.625rem] before:left-[calc(var(--route-inset)-0.625rem)] before:-z-10 before:rounded-lg before:transition-colors hover:before:bg-muted/70 focus-visible:before:ring-[3px] focus-visible:before:ring-ring/50 focus-visible:before:ring-inset";
 
 const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 

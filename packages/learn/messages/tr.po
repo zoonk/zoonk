@@ -225,7 +225,6 @@ msgstr "Ücretsiz sınava hazırlık haftan bitti"
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/plus-lock.tsx
-#: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
@@ -514,12 +513,12 @@ msgstr "Devam et"
 #: src/_components/question-actions.tsx
 msgctxt "BkQAJw"
 msgid "Show the next step"
-msgstr ""
+msgstr "Sonraki adımı göster"
 
 #: src/_components/question-actions.tsx
 msgctxt "ZLtyTD"
 msgid "See the answer"
-msgstr ""
+msgstr "Cevabı gör"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
@@ -532,7 +531,7 @@ msgstr "Sonuçları gör"
 #: src/_components/question-actions.tsx
 msgctxt "QriCsD"
 msgid "Previous screen"
-msgstr ""
+msgstr "Önceki ekrana dön"
 
 #: src/_components/question-actions.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -1334,11 +1333,6 @@ msgstr "Öğrenmek istediğin şey"
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Planımı oluştur"
-
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "Ders arkadaşın"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
@@ -2228,11 +2222,9 @@ msgid "Move to Monday"
 msgstr "Pazartesiye taşı"
 
 #: src/challenge/challenge-footer.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/mock/mock-chooser-parts.tsx
-msgctxt "zgw8mc"
-msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
-msgstr "Deneme sınavları Plus’a dahil: istediğin zaman ve her hafta planında."
+msgctxt "JUvBan"
+msgid "Mock exams need a subscription"
+msgstr ""
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "L_nv1C"
@@ -2439,9 +2431,19 @@ msgid "Your plan moved later lessons to make room for it."
 msgstr "Meydan okumaya yer açmak için planındaki sonraki dersler kaydırıldı."
 
 #: src/challenge/challenge-plus-lock.tsx
-msgctxt "Q3_ibn"
-msgid "Challenge calls come with Plus. Your plan keeps going without them."
-msgstr "Meydan okuma sohbetleri Plus’a dahil. Planın bu sohbetler olmadan da devam ediyor."
+msgctxt "QJJTto"
+msgid "This call needs a subscription"
+msgstr ""
+
+#: src/challenge/challenge-plus-lock.tsx
+msgctxt "-rTwFN"
+msgid "Your plan goes on without it."
+msgstr ""
+
+#: src/challenge/challenge-plus-lock.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr ""
 
 #: src/challenge/challenge-screen.tsx
 msgctxt "FxoA1t"
@@ -3037,6 +3039,12 @@ msgstr "Seviyene uygun kısa bir sesli sohbet."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "Deneme sınavına gir"
+
+#: src/conversation/tutor-tool-offer.tsx
+#: src/mock/mock-chooser-parts.tsx
+msgctxt "zgw8mc"
+msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
+msgstr "Deneme sınavları Plus’a dahil: istediğin zaman ve her hafta planında."
 
 #: src/conversation/tutor-tool-offer.tsx
 #: src/plan/plan-choice-lines.tsx
@@ -8398,7 +8406,7 @@ msgstr "Dersi aç"
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
-msgstr ""
+msgstr "Çık. Verdiğin cevaplar hesaba katılır."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -9507,17 +9515,17 @@ msgstr "Bu oturumu teslim et"
 #: src/mock/mock-runner-view.tsx
 msgctxt "r5QD8t"
 msgid "Stay"
-msgstr ""
+msgstr "Kal"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "jOu95u"
 msgid "Your answers are saved. The clock keeps running while you're away."
-msgstr ""
+msgstr "Cevapların kaydedildi. Sen yokken de süre işlemeye devam eder."
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
-msgstr ""
+msgstr "Deneme sınavından çıkmak istiyor musun?"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -14007,9 +14015,9 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "Üst üste birkaç yanlış oldu. Kısa bir mola genelde iyi gelir ve bugün yaptığın her şey hesaba katılır."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "j4LBvs"
-msgid "Checking what you already know."
-msgstr "Zaten bildiklerini kontrol ediyoruz."
+msgctxt "LlY4Wv"
+msgid "Checking what you already know"
+msgstr ""
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14019,7 +14027,7 @@ msgstr "Bugün atla"
 #: src/session/question-block/question-block-header.tsx
 msgctxt "2vhowQ"
 msgid "Leave. Your answers are saved."
-msgstr ""
+msgstr "Çık. Cevapların kaydedildi."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14191,12 +14199,6 @@ msgctxt "axcSXX"
 msgid "{time} today"
 msgstr "Bugün {time} ile"
 
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "vrNWq4"
-msgid "Earned today"
-msgstr "Bugün kazandıkların"
-
 #. Image description: the buddy is happy with what the learner studied today.
 #: src/session/summary/summary-rewards.tsx
 msgctxt "okdNHx"
@@ -14217,6 +14219,11 @@ msgstr "+{bonus}"
 msgctxt "Hlc1zt"
 msgid "Getting it ready…"
 msgstr "Hazırlıyoruz…"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "vrNWq4"
+msgid "Earned today"
+msgstr "Bugün kazandıkların"
 
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
@@ -14398,11 +14405,6 @@ msgstr "{goal} için yer aç"
 msgctxt "goalSwitcher.92OYJm"
 msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
 msgstr "Ücretsiz paketteki hedef sınırına ulaştın. {goal} hedefine başlamak için birini duraklat. Duraklattığın hedefe daha sonra devam edebilirsin."
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "Kapat"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.0I_Rwu"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -99,12 +99,7 @@ function MomentActions({
         {continueHref ? (
           <MomentContinueLink href={continueHref} />
         ) : (
-          <EnterButton
-            busy={proceed.isPending}
-            enter="host"
-            onClick={proceed.run}
-            {...FORWARD_ICON}
-          >
+          <EnterButton busy={proceed.isPending} enter="host" onClick={proceed.run}>
             {t("Continue")}
           </EnterButton>
         )}

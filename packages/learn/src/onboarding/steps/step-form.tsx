@@ -1,6 +1,5 @@
 "use client";
 
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -84,7 +83,6 @@ export function StepForm({
             disabled={!canContinue || pending}
             formNoValidate={formNoValidate}
             type="submit"
-            {...FORWARD_ICON}
           >
             {continueLabel ?? t("Continue")}
           </OnboardingPrimaryButton>

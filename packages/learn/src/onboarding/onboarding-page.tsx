@@ -1,10 +1,10 @@
 "use client";
 
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { Page } from "../_components/page";
-import { ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS } from "../_components/task-layout";
 import { PageWithAside } from "../shell/learn-shell";
 import { OnboardingBarRow, OnboardingPageBar } from "./onboarding-bar";
 import { type OnboardingBar, useOnboardingScreen } from "./onboarding-host";
@@ -49,16 +49,6 @@ const WIDE_ASIDE_CLASS =
 
 const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
 
-/**
- * Reaches past the page's own padding (the shell's, or the column's beside an aside), so its
- * hairline runs across the page and it rests on the screen's bottom edge.
- */
-const BOTTOM_BAR_CLASS = cn(
-  ACTION_BAR_SURFACE_CLASS,
-  BAR_PADDING_CLASS,
-  "-mx-4 -mb-12 px-4 empty:hidden sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10",
-);
-
 export function OnboardingScreenPage({
   backHref,
   barEnd,
@@ -91,11 +81,7 @@ export function OnboardingScreenPage({
         {children}
       </Page>
 
-      {bottomBar && (
-        <div className={BOTTOM_BAR_CLASS} data-slot="onboarding-bottom-bar">
-          {bottomBar}
-        </div>
-      )}
+      {bottomBar && <BottomBar data-slot="onboarding-bottom-bar">{bottomBar}</BottomBar>}
     </PageWithAside>
   );
 }

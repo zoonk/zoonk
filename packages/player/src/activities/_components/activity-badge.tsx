@@ -1,5 +1,6 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import {
   ArrowDownUp,
   ArrowLeftRight,
@@ -42,7 +43,6 @@ import {
   Workflow,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { SCREEN_CHIP_CLASS } from "../../lesson/_components/lesson-step-text";
 
 export type ActivityBadgeKind =
   | "beforeAfter"
@@ -183,9 +183,8 @@ export function ActivityBadge({ kind }: { kind: ActivityBadgeKind }) {
   const label = useBadgeLabel(kind);
 
   return (
-    <span className={SCREEN_CHIP_CLASS} data-slot="activity-badge">
-      <Icon aria-hidden="true" />
+    <Eyebrow data-slot="activity-badge" icon={<Icon aria-hidden="true" />}>
       {label}
-    </span>
+    </Eyebrow>
   );
 }

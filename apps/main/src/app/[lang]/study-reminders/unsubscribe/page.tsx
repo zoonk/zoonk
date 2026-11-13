@@ -19,7 +19,7 @@ async function UnsubscribeContent({ searchParams }: Props) {
 
 export default function UnsubscribePage(props: Props) {
   return (
-    <ColumnScreen>
+    <ColumnScreen width="message">
       <Suspense fallback={<Skeleton className="mx-auto h-48 w-full max-w-sm rounded-xl" />}>
         <UnsubscribeContent {...props} />
       </Suspense>

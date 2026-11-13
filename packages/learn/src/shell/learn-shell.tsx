@@ -94,7 +94,7 @@ export function LearnShellMain({ children, className, ...props }: React.Componen
   return (
     <main
       className={cn(
-        "flex w-full flex-1 flex-col px-4 pt-2 pb-12 outline-none sm:mx-auto sm:max-w-3xl sm:px-8 sm:pt-6 lg:mx-0 lg:max-w-none lg:px-10 lg:pt-8 lg:pb-16",
+        "flex w-full flex-1 flex-col px-(--page-gutter) pt-2 pb-(--page-bottom) outline-none [--page-bottom:--spacing(12)] [--page-gutter:--spacing(4)] sm:mx-auto sm:max-w-3xl sm:pt-6 sm:[--page-gutter:--spacing(8)] lg:mx-0 lg:max-w-none lg:pt-8 lg:[--page-bottom:--spacing(16)] lg:[--page-gutter:--spacing(10)]",
         className,
       )}
       data-slot="learn-shell-main"

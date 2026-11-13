@@ -73,8 +73,8 @@ function TableCell({
   return (
     <td
       className={cn(
-        "h-11 px-3 py-1.5 align-middle whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
-        numeric && cn(NUMERIC_CLASS, "text-compact"),
+        "px-3 py-2 align-middle whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
+        numeric && cn(NUMERIC_CLASS, "text-compact leading-5"),
         className,
       )}
       data-slot="table-cell"

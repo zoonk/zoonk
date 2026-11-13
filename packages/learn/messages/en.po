@@ -225,7 +225,6 @@ msgstr "Your free week of exam prep is over"
 #: src/_components/help-limit-notice.tsx
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/plus-lock.tsx
-#: src/challenge/challenge-plus-lock.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
@@ -1335,11 +1334,6 @@ msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Build my plan"
 
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "Your study buddy"
-
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
 msgid "Brain with legs"
@@ -2228,11 +2222,9 @@ msgid "Move to Monday"
 msgstr "Move to Monday"
 
 #: src/challenge/challenge-footer.tsx
-#: src/conversation/tutor-tool-offer.tsx
-#: src/mock/mock-chooser-parts.tsx
-msgctxt "zgw8mc"
-msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
-msgstr "Mock exams come with Plus: whenever you want, and every week in your plan."
+msgctxt "JUvBan"
+msgid "Mock exams need a subscription"
+msgstr "Mock exams need a subscription"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "L_nv1C"
@@ -2439,9 +2431,19 @@ msgid "Your plan moved later lessons to make room for it."
 msgstr "Your plan moved later lessons to make room for it."
 
 #: src/challenge/challenge-plus-lock.tsx
-msgctxt "Q3_ibn"
-msgid "Challenge calls come with Plus. Your plan keeps going without them."
-msgstr "Challenge calls come with Plus. Your plan keeps going without them."
+msgctxt "QJJTto"
+msgid "This call needs a subscription"
+msgstr "This call needs a subscription"
+
+#: src/challenge/challenge-plus-lock.tsx
+msgctxt "-rTwFN"
+msgid "Your plan goes on without it."
+msgstr "Your plan goes on without it."
+
+#: src/challenge/challenge-plus-lock.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Subscribe"
 
 #: src/challenge/challenge-screen.tsx
 msgctxt "FxoA1t"
@@ -3037,6 +3039,12 @@ msgstr "A short call out loud, at your level."
 msgctxt "g5EneG"
 msgid "Take a mock exam"
 msgstr "Take a mock exam"
+
+#: src/conversation/tutor-tool-offer.tsx
+#: src/mock/mock-chooser-parts.tsx
+msgctxt "zgw8mc"
+msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
+msgstr "Mock exams come with Plus: whenever you want, and every week in your plan."
 
 #: src/conversation/tutor-tool-offer.tsx
 #: src/plan/plan-choice-lines.tsx
@@ -14007,9 +14015,9 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "A few misses in a row. A short break often helps, and everything you did today counts."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "j4LBvs"
-msgid "Checking what you already know."
-msgstr "Checking what you already know."
+msgctxt "LlY4Wv"
+msgid "Checking what you already know"
+msgstr "Checking what you already know"
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14191,12 +14199,6 @@ msgctxt "axcSXX"
 msgid "{time} today"
 msgstr "{time} today"
 
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-steps.tsx
-msgctxt "vrNWq4"
-msgid "Earned today"
-msgstr "Earned today"
-
 #. Image description: the buddy is happy with what the learner studied today.
 #: src/session/summary/summary-rewards.tsx
 msgctxt "okdNHx"
@@ -14217,6 +14219,11 @@ msgstr "+{bonus}"
 msgctxt "Hlc1zt"
 msgid "Getting it ready…"
 msgstr "Getting it ready…"
+
+#: src/session/summary/summary-steps.tsx
+msgctxt "vrNWq4"
+msgid "Earned today"
+msgstr "Earned today"
 
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
@@ -14398,11 +14405,6 @@ msgstr "Make room for {goal}"
 msgctxt "goalSwitcher.92OYJm"
 msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
 msgstr "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "Close"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.0I_Rwu"
