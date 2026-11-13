@@ -4,15 +4,15 @@ import { type ProvenanceTable } from "@/data/ai/list-provenance-counts";
 export const provenanceTableLabels: Record<ProvenanceTable, string> = {
   answerExplanations: "Answer explanations",
   chapters: "Chapters",
-  items: "Items",
+  items: "Practice questions",
   lessons: "Lessons",
-  mediaAssets: "Media assets",
+  mediaAssets: "Pictures and clips",
   memoryFacts: "Memory facts",
   planChanges: "Plan changes",
   skills: "Skills",
   sourceChangeNotices: "Source change notices",
-  stepVariants: "Step variants",
-  steps: "Steps",
+  stepVariants: "Lesson screen variants",
+  steps: "Lesson screens",
 };
 
 export const generationWorkflowLabels: Record<GenerationWorkflow, string> = {

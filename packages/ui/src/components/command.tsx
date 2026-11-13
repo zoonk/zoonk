@@ -28,7 +28,7 @@ import {
   ScrollAreaViewport,
 } from "@zoonk/ui/components/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SearchIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, SearchIcon } from "lucide-react";
 import { useRef } from "react";
 import type * as React from "react";
 
@@ -219,6 +219,31 @@ function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** The keys every palette answers, in its footer. The app passes the words in its own language. */
+function CommandKeyHints({ close, move, open }: { close: string; move: string; open: string }) {
+  return (
+    <CommandFooter>
+      <span>
+        <Kbd>
+          <ArrowUpIcon />
+        </Kbd>
+        <Kbd>
+          <ArrowDownIcon />
+        </Kbd>
+        {move}
+      </span>
+      <span>
+        <Kbd>⏎</Kbd>
+        {open}
+      </span>
+      <span>
+        <Kbd>Esc</Kbd>
+        {close}
+      </span>
+    </CommandFooter>
+  );
+}
+
 export {
   COMMAND_GROUP_LABEL_CLASS,
   Command,
@@ -231,5 +256,6 @@ export {
   CommandGroupLabel,
   CommandInput,
   CommandItem,
+  CommandKeyHints,
   CommandList,
 };

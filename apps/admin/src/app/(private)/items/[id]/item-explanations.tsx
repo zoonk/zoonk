@@ -1,16 +1,16 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
-import { ProvenanceLine } from "@/components/provenance";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { getItem } from "@/data/items/get-item";
 import { formatDate } from "@/lib/format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { languageName } from "@/lib/language-filter";
+import { TableCell } from "@zoonk/ui/components/table";
 
-const EXPLANATION_COLUMNS: AdminTableColumn[] = [
-  { label: "Answer" },
-  { label: "Explanation" },
+const columns: AdminTableColumn[] = [
+  { label: "Wrong answer", size: "text" },
+  { fill: true, label: "What we tell the learner" },
   { label: "Language" },
-  { label: "Provenance" },
-  { label: "Created" },
+  { label: "Written" },
 ];
 
 export async function ItemExplanations({ itemId }: { itemId: string }) {
@@ -20,28 +20,21 @@ export async function ItemExplanations({ itemId }: { itemId: string }) {
   const explanations = item?.answerExplanations ?? [];
 
   return (
-    <AdminSection title={`Answer explanations (${explanations.length})`}>
+    <AdminSection title="Wrong answers explained">
       <AdminTableColumns
-        columns={EXPLANATION_COLUMNS}
+        columns={columns}
         emptyLabel="No wrong answer has been explained yet."
         isEmpty={explanations.length === 0}
       >
         {explanations.map((explanation) => (
-          <TableRow key={explanation.id}>
-            <TableCell className="max-w-56 min-w-40 font-mono text-xs whitespace-normal">
+          <AdminTableRow key={explanation.id}>
+            <TableCell className="text-foreground whitespace-normal">
               {explanation.normalizedAnswer}
             </TableCell>
-            <TableCell className="max-w-120 min-w-72 whitespace-normal">
-              {explanation.explanation}
-            </TableCell>
-            <TableCell className="uppercase">{explanation.language}</TableCell>
-            <TableCell>
-              <ProvenanceLine provenance={explanation} />
-            </TableCell>
-            <TableCell className="text-muted-foreground">
-              {formatDate(explanation.createdAt)}
-            </TableCell>
-          </TableRow>
+            <TableCell className="whitespace-normal">{explanation.explanation}</TableCell>
+            <TableCell>{languageName(explanation.language)}</TableCell>
+            <TableCell>{formatDate(explanation.createdAt)}</TableCell>
+          </AdminTableRow>
         ))}
       </AdminTableColumns>
     </AdminSection>
