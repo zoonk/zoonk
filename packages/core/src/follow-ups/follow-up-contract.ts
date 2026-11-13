@@ -24,6 +24,10 @@ const mindMapLaunchSchema = z.object({
 
 export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
+    input: z.object({ chapterId: uuidSchema(), fixId: uuidSchema() }),
+    kind: z.literal("redrawChapterMindMap"),
+  }),
+  z.object({
     input: z.object({ sessionId: uuidSchema(), timeZone: z.string() }),
     kind: z.literal("refreshStudyDay"),
   }),

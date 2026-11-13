@@ -46,6 +46,7 @@ function describeLevelTestChange({
     .join(" ");
 }
 
+// oxlint-disable-next-line complexity -- Each effect describes one distinct approval consequence.
 function describeEffect({
   effect,
   rowLabels,
@@ -54,6 +55,12 @@ function describeEffect({
   rowLabels: ReadonlyMap<string, string>;
 }): string {
   switch (effect.kind) {
+    case "itemSetReplaced":
+      return "Future practice uses a corrected copy of the whole set. Open sessions keep the original passage and questions.";
+    case "itemSetRestored":
+      return "Future practice uses the original set again. Sessions holding the corrected copy keep it.";
+    case "mindMapRedrawOwed":
+      return "The outline changes now. The old picture is unlinked and a redraw is owed durably; open readers keep their copy.";
     case "lessonVersion":
       return "Learners who open the lesson next get the fixed version.";
     case "answerExplanationsDeleted":

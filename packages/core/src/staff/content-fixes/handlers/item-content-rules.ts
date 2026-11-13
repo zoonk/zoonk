@@ -81,10 +81,12 @@ type CheckedContent = { after: Json } | Refusal;
  */
 export function checkItemContent({
   inPlace,
+  allowUnchanged = false,
   item,
   sent,
 }: {
   inPlace: boolean;
+  allowUnchanged?: boolean;
   item: { content: unknown; format: ItemFormat; id: string; language: string };
   sent: Json;
 }): CheckedContent {
@@ -119,7 +121,7 @@ export function checkItemContent({
     return refuse(`content: ${problems.join(" ")}`);
   }
 
-  return isDeepStrictEqual(after.content, before.content)
+  return !allowUnchanged && isDeepStrictEqual(after.content, before.content)
     ? refuse(`Item ${item.id} already has this content.`)
     : { after: toJson(after.content) };
 }

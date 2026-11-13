@@ -470,6 +470,26 @@ describe("chapter mind maps", () => {
     ).resolves.toStrictEqual([{ targetId: finished }]);
   });
 
+  it("does not publish an old drawing after a staff fix changes the outline", async () => {
+    const { finished, goal } = await finishedChapter();
+    const analytics = runAnalytics();
+    await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    await writeChapterMindMapStructure({ analytics, chapterId: finished });
+    const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
+    const corrected = { ...structure, title: "Corrected outline" };
+
+    await prisma.chapterMindMap.update({
+      data: { imageUrl: null, status: "pending", structure: corrected },
+      where: { chapterId: finished },
+    });
+
+    await showChapterMindMap({ chapterId: finished, drawn });
+
+    await expect(
+      prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } }),
+    ).resolves.toMatchObject({ imageUrl: null, status: "pending", structure: corrected });
+  });
+
   it("writes and draws the map once, then every learner of the chapter reads it", async () => {
     const { current, finished, goal } = await finishedChapter();
     const analytics = runAnalytics();

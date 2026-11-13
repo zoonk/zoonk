@@ -66,6 +66,32 @@ async function owedMindMap() {
 }
 
 describe(followUpsWorkflow, () => {
+  it("starts an approved shared-map redraw without charging a learner", async () => {
+    const user = await userFixture({ role: "admin" });
+    const chapter = await libraryChapterFixture();
+    const fixId = randomUUID();
+
+    await prisma.followUp.create({
+      data: {
+        input: { chapterId: chapter.id, fixId },
+        key: fixId,
+        kind: "redrawChapterMindMap",
+        userId: user.id,
+      },
+    });
+
+    await followUpsWorkflow({ userId: user.id });
+
+    expect(getStartMock()).toHaveBeenCalledWith(
+      chapterMindMapWorkflow,
+      [{ chapterId: chapter.id }],
+      { experimental_hook: { token: `mind-map-redraw:${fixId}` } },
+    );
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+    await expect(prisma.followUp.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
   it("makes an owed map through the learner's own admission, as a tap would", async () => {
     const { chapter, goal, user } = await owedMindMap();
 

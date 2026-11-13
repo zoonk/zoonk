@@ -87,6 +87,14 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       return;
     }
+    case "redrawChapterMindMap":
+      await startOnce(
+        chapterMindMapWorkflow,
+        [{ chapterId: followUp.input.chapterId }],
+        `mind-map-redraw:${followUp.input.fixId}`,
+      );
+
+      return;
     case "makeChapterMindMap": {
       const { chapterId, goalId, launch } = followUp.input;
 

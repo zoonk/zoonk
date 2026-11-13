@@ -1,12 +1,23 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Resolution, refuse } from "../_utils/resolved-change";
+import { blueprintSet, cutoffSet, weightsSet } from "./exam-facts";
 import { type FixHandler } from "./fix-handler";
 import { itemReplace, itemRestore, itemSet } from "./item-content";
+import { itemSetReplace, itemSetRestore } from "./item-set";
 import { levelTestSet } from "./level-test";
+import { mindMapSet } from "./mind-map";
 import { stepAttachPicture, stepDetachPicture } from "./pictures";
 import { explanationSet, itemRetire, itemUnretire } from "./practice";
 import { stepSet, variantSet } from "./screens";
+import {
+  lessonSourcesSet,
+  sourceNoticeSet,
+  sourceSet,
+  stepCitationSet,
+  stepSourcesSet,
+} from "./shared-sources";
+import { mediaAltSet, scenarioSet, skillSet, tutorAnswerSet, warmUpSet } from "./shared-text";
 import { chapterSet, courseSet, lessonSet } from "./text-rows";
 
 /**
@@ -14,6 +25,22 @@ import { chapterSet, courseSet, lessonSet } from "./text-rows";
  * proposal schema, `staff models` rules, checks, write, inverse and effects all live in it.
  */
 export const FIX_HANDLERS = [
+  skillSet,
+  warmUpSet,
+  scenarioSet,
+  tutorAnswerSet,
+  mediaAltSet,
+  blueprintSet,
+  cutoffSet,
+  weightsSet,
+  sourceSet,
+  sourceNoticeSet,
+  stepCitationSet,
+  lessonSourcesSet,
+  stepSourcesSet,
+  mindMapSet,
+  itemSetReplace,
+  itemSetRestore,
   courseSet,
   chapterSet,
   lessonSet,

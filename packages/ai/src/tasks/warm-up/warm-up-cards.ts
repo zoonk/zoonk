@@ -89,7 +89,7 @@ function isAnswer(text: string): boolean {
   return LETTER_OR_DIGIT.test(text) ? isWritten(text) : text.length > 0;
 }
 
-function isPlayable(card: RawWarmUpCard): boolean {
+export function isPlayableWarmUpCard(card: RawWarmUpCard): boolean {
   return (
     card.options.length >= MIN_OPTIONS &&
     card.options.length <= MAX_OPTIONS &&
@@ -149,7 +149,7 @@ export function toWarmUpCards(raw: readonly RawWarmUpCard[]): WarmUpCard[] {
   return raw.flatMap((written, index) => {
     const card = repairCard(written);
 
-    if (!isPlayable(card)) {
+    if (!isPlayableWarmUpCard(card)) {
       return [];
     }
 
