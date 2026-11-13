@@ -8,6 +8,7 @@ import { type FixContext } from "../handlers/fix-handler";
 import { deleteWrittenFromScreen, writtenFromScreen } from "../handlers/screens";
 import { type FixUnit } from "./resolved-change";
 import { readVoiceTarget } from "./vocabulary-voice";
+import { findLessonsWithWordTiles } from "./word-tile-lessons";
 
 type VocabularyUnit = { id: string; kind: "sentence" | "word" };
 
@@ -52,7 +53,7 @@ export async function findLessonsShowing(
     db.lessonWord.findMany({ select, where: { wordId: unit.id } }),
     db.step.findMany({ select, where: { wordId: unit.id, ...CURRENT_STEPS } }),
     db.lessonWord.findMany({ select, where: tile }),
-    db.lessonSentence.findMany({ select, where: tile }),
+    word ? findLessonsWithWordTiles(db, word) : [],
   ]);
 
   return uniqueIds(rows.flat());

@@ -1,7 +1,11 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  languageLessonFixture,
+  playableLessonFixture,
+} from "@zoonk/testing/fixtures/playable-lessons";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
@@ -394,6 +398,44 @@ describe("word and sentence fixes", () => {
         reason: "Missing romanization.",
       }),
     ).resolves.toMatchObject({ effects: [], voiceOwed: false });
+  });
+
+  it("updates the lessons whose reading and fill-in-the-blank tiles show a word", async () => {
+    const text = `rent${crypto.randomUUID().replaceAll("-", "")}`;
+    const shown = `R${text.slice(1)}`;
+
+    const [reading, blank, listening] = await Promise.all([
+      languageLessonFixture({ sentenceText: `${shown} is cheap here.` }),
+      playableLessonFixture({
+        lesson: { language: "pt", targetLanguage: "en" },
+        steps: [
+          {
+            content: { ...playableStepContent.fillBlank, answers: [shown], template: "[BLANK]." },
+            kind: "fillBlank",
+          },
+        ],
+      }),
+      languageLessonFixture({ sentenceText: `Is ${text} cheap?` }),
+    ]);
+
+    await prisma.step.deleteMany({ where: { kind: "reading", lessonId: listening.lesson.id } });
+
+    const word = await wordFixture({
+      organizationId: reading.word.organizationId,
+      targetLanguage: "en",
+      word: text,
+    });
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [{ id: word.id, model: "Word", set: { romanization: "rent" } }],
+      reason: "Missing romanization.",
+    });
+
+    expect(fix.effects).toStrictEqual([
+      { kind: "lessonsUpdated", lessonIds: [reading.lesson.id, blank.lesson.id].toSorted() },
+    ]);
   });
 
   it("copies a sentence fix to spoken screens and owes word orders again, and its revert puts both back", async () => {
