@@ -1,7 +1,9 @@
 "use client";
 
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { getScoreClassName } from "@/lib/score";
 import { calculateScore } from "@/lib/score-calculation";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import {
   type CategoryScore,
   type EvalResult,
@@ -12,33 +14,29 @@ import {
 } from "@/lib/types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { Check, Copy } from "lucide-react";
+
+const COPY_LABELS = ["Copy", "Copied"];
 
 function formatValue(value: unknown): string {
   if (typeof value === "string") {
     return value;
   }
 
-  if (Array.isArray(value)) {
-    if (value.length === 0) {
-      return "[]";
-    }
-
-    if (typeof value[0] === "string") {
-      return value.join(", ");
-    }
-
-    return JSON.stringify(value, null, 2);
+  if (Array.isArray(value) && typeof value[0] === "string") {
+    return value.join(", ");
   }
 
-  return JSON.stringify(value);
+  return JSON.stringify(value, null, 2);
 }
 
 function UserInputSection({ userInput }: { userInput: Record<string, unknown> }) {
   return (
     <div>
-      <p className="text-muted-foreground text-sm">User Input</p>
+      <p className="text-muted-foreground text-sm">Input</p>
 
       <div className="flex flex-col gap-1">
         {Object.entries(userInput).map(([key, value]) => {
@@ -46,10 +44,15 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
           const isMultiline = formatted.includes("\n");
 
           return (
-            <div className="text-sm font-medium" key={key}>
+            <div
+              className={cn("text-sm font-medium", !isMultiline && PROSE_MEASURE_CLASS)}
+              key={key}
+            >
               <span className="text-muted-foreground">{key}:</span>{" "}
               {isMultiline ? (
-                <pre className="bg-muted mt-1 overflow-auto rounded p-2 text-xs">{formatted}</pre>
+                <pre className="bg-muted mt-1 max-h-80 overflow-y-auto rounded-xl p-4 text-xs wrap-break-word whitespace-pre-wrap">
+                  {formatted}
+                </pre>
               ) : (
                 formatted
               )}
@@ -57,15 +60,6 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
           );
         })}
       </div>
-    </div>
-  );
-}
-
-function ScoreSection({ score }: { score: number }) {
-  return (
-    <div>
-      <p className="text-muted-foreground text-sm">Score</p>
-      <p className="font-medium">{score.toFixed(2)}</p>
     </div>
   );
 }
@@ -80,12 +74,12 @@ function TokensSection({
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div>
-        <p className="text-muted-foreground text-sm">Input Tokens</p>
+        <p className="text-muted-foreground text-sm">Input tokens</p>
         <p className="font-medium">{inputTokens}</p>
       </div>
 
       <div>
-        <p className="text-muted-foreground text-sm">Output Tokens</p>
+        <p className="text-muted-foreground text-sm">Output tokens</p>
         <p className="font-medium">{outputTokens}</p>
       </div>
     </div>
@@ -99,22 +93,20 @@ function OutputSection({ output }: { output: string }) {
     <div>
       <div className="mb-2 flex items-center justify-between">
         <p className="text-muted-foreground text-sm">Output</p>
-        <Button className="gap-2" onClick={() => copy(output)} size="sm" variant="ghost">
-          {isCopied ? (
-            <>
-              <Check className="size-4" />
-              Copied
-            </>
-          ) : (
-            <>
-              <Copy className="size-4" />
-              Copy
-            </>
-          )}
+        <Button
+          edge="end"
+          icon={isCopied ? <Check /> : <Copy />}
+          onClick={() => copy(output)}
+          size="sm"
+          variant="ghost"
+        >
+          <SwapLabel current={isCopied ? "Copied" : "Copy"} labels={COPY_LABELS} />
         </Button>
       </div>
 
-      <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-sm">{output}</pre>
+      <pre className="bg-muted rounded-xl p-4 text-sm wrap-break-word whitespace-pre-wrap">
+        {output}
+      </pre>
     </div>
   );
 }
@@ -122,10 +114,10 @@ function OutputSection({ output }: { output: string }) {
 function EvaluationStepsSection({ steps }: { steps: ScoreStep[] }) {
   return (
     <div>
-      <p className="text-muted-foreground mb-2 text-sm">Evaluation Steps</p>
+      <p className="text-muted-foreground mb-2 text-sm">Evaluation steps</p>
       <div className="flex flex-col gap-2">
         {steps.map((step) => (
-          <div className="rounded-lg border p-3" key={step.kind}>
+          <div className="rounded-xl border p-3" key={step.kind}>
             <p className="mb-1 text-sm font-medium capitalize">{step.kind.replaceAll("_", " ")}</p>
             <p className="text-muted-foreground text-sm">{step.conclusion}</p>
             <p className="text-muted-foreground mt-1 text-sm">Score: {step.score}</p>
@@ -143,10 +135,10 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
 
   return (
     <div>
-      <p className="text-muted-foreground mb-2 text-sm">Category Scores</p>
+      <p className="text-muted-foreground mb-2 text-sm">Category scores</p>
       <div className="grid gap-2 md:grid-cols-2">
         {categoryScores.map((category) => (
-          <div className="rounded-lg border p-3" key={category.categoryId}>
+          <div className="rounded-xl border p-3" key={category.categoryId}>
             <div className="mb-1 flex items-center justify-between gap-2">
               <p className="text-sm font-medium">{category.label}</p>
               <p className="text-sm font-medium">{category.score.toFixed(1)}</p>
@@ -167,16 +159,14 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
 
   return (
     <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
-      <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="text-base font-medium">
-          {testCaseTitle}: <span className={getScoreClassName(score)}>{scoreDisplay}</span>
-        </span>
+      <AccordionTrigger className="hover:no-underline">
+        <FoldRowTitle title={testCaseTitle}>
+          <span className={getScoreClassName(score)}>{scoreDisplay}</span>
+        </FoldRowTitle>
       </AccordionTrigger>
 
-      <AccordionContent className="flex flex-col gap-4 pt-4">
+      <AccordionContent className="flex flex-col gap-6 pt-4">
         <UserInputSection userInput={result.testCase.userInput} />
-
-        <ScoreSection score={score} />
 
         <TokensSection inputTokens={result.inputTokens} outputTokens={result.outputTokens} />
 
@@ -197,11 +187,13 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
 
   return (
     <AccordionItem id={`case-${output.testCaseId}`} value={`output-test-case-${index}`}>
-      <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-        <span className="text-base font-medium">{testCaseTitle}: Unscored</span>
+      <AccordionTrigger className="hover:no-underline">
+        <FoldRowTitle title={testCaseTitle}>
+          <span className="text-muted-foreground font-sans">Not scored</span>
+        </FoldRowTitle>
       </AccordionTrigger>
 
-      <AccordionContent className="flex flex-col gap-4 pt-4">
+      <AccordionContent className="flex flex-col gap-6 pt-4">
         <UserInputSection userInput={output.testCase.userInput} />
 
         <TokensSection inputTokens={output.inputTokens} outputTokens={output.outputTokens} />
@@ -219,7 +211,7 @@ function KeyFlawsSection({ flaws }: { flaws?: KeyFlaw[] }) {
         Judge-flagged key flaws: {flaws === undefined ? "not recorded" : flaws.length}
       </p>
       {flaws?.map((flaw) => (
-        <div className="mb-2 rounded-lg border p-3 text-sm" key={flaw.itemLocator}>
+        <div className="mb-2 rounded-xl border p-3 text-sm" key={flaw.itemLocator}>
           <p className="font-medium">
             {flaw.itemLocator}: {flaw.kind}
           </p>
@@ -242,7 +234,7 @@ export function FailedTestCase({
 }) {
   return (
     <section
-      className="rounded-lg border p-4 wrap-anywhere"
+      className="rounded-xl border p-4 wrap-anywhere"
       id={anchored ? `case-${caseId}` : undefined}
     >
       <h3 className="font-medium">

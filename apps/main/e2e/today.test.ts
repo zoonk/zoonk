@@ -50,7 +50,11 @@ test.describe("Today without a session to start", () => {
       })
       .toBe(deviceZone);
 
-    await expect(page.getByText("10 days left", { exact: true })).toBeVisible();
+    const weekday = new Intl.DateTimeFormat("en", { timeZone: "UTC", weekday: "long" }).format(
+      deviceDay,
+    );
+
+    await expect(page.getByText(`${weekday}: today`, { exact: true })).toBeAttached();
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
     await context.close();
   });
@@ -92,9 +96,7 @@ test.describe("Today without a session to start", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    const keepLearning = page
-      .getByRole("region", { name: "Today's session" })
-      .getByRole("button", { name: "Keep learning" });
+    const keepLearning = page.getByRole("button", { name: "Keep learning" });
 
     await expectHydrated(keepLearning);
     await keepLearning.click();

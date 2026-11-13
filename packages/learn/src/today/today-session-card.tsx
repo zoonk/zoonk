@@ -7,13 +7,11 @@ import { type DayStep } from "../session/session-types";
 import { BlockRow, PlusLessonRow } from "./today-block-row";
 import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
-import { DayMeta, DayProgress } from "./today-day-progress";
+import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
 import { FoldRow } from "./today-fold-row";
-import { TodayFreshStart } from "./today-fresh-start";
 import { SESSION_LIST_ID } from "./today-ids";
 import { UPCOMING_ROWS, splitTodayQueue } from "./today-queue";
-import { getFoldMinutes } from "./today-time";
 import { TodayUpNext } from "./today-up-next";
 
 const DONE_ROWS = 1;
@@ -64,7 +62,7 @@ function useDoneFoldLabel(done: readonly DayStep[]): string {
 function SessionQueue({ next }: { next: DayStep | null }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, lessonsComing, lessonsToPrepare, minutes, plusLessons } = today.session;
+  const { blocks, lessonsComing, lessonsToPrepare, plusLessons } = today.session;
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const listRef = useRef<HTMLOListElement>(null);
@@ -150,15 +148,6 @@ function SessionQueue({ next }: { next: DayStep | null }) {
               ? t("Show less")
               : t("{count, plural, one {+# more} other {+# more}}", { count: more })
           }
-          minutes={
-            moreOpen
-              ? undefined
-              : getFoldMinutes({
-                  hasHiddenRows: after.length + coming > UPCOMING_ROWS,
-                  left: minutes.left,
-                  shown: [...before, ...(next ? [next] : []), ...after.slice(0, UPCOMING_ROWS)],
-                })
-          }
           onToggle={toggleMore}
           open={moreOpen}
         />
@@ -178,16 +167,15 @@ export function TodaySession({ className }: { className?: string }) {
   const next = useNextBlock();
 
   return (
-    <div className={cn("flex min-w-0 flex-col", className)} data-slot="today-session">
-      <TodayFreshStart className="mb-4" />
+    <div className={cn("relative flex min-w-0 flex-col", className)} data-slot="today-session">
       <DayProgress />
-      <DayMeta className="mt-2" />
 
-      <div className="mt-3 flex flex-col first:mt-0 empty:hidden">
+      <div className="mt-3 flex flex-col first:mt-0 empty:hidden" data-slot="today-list">
         <SessionQueue next={next} />
       </div>
 
-      <TodayDayStatus className="mt-3 first:mt-0" />
+      {/* After the list, the line's top hairline closes the last row; with no list, it opens the day. */}
+      <TodayDayStatus className="mt-3 first:mt-0 [[data-slot=today-list]+&]:mt-0" />
       <TodayUpNext className="mt-6" />
     </div>
   );

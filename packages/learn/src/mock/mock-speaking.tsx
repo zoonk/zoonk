@@ -69,10 +69,7 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm text-pretty">
         {left > 0
-          ? t(
-              "Do the tasks in order. Each one is a call, and you come back here after it. {count, plural, one {# task left.} other {# tasks left.}}",
-              { count: left },
-            )
+          ? t("Do the tasks in order. Each one is a call.")
           : t("Every task is done. Hand in this section to go on.")}
       </p>
 
@@ -89,7 +86,7 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const [confirming, setConfirming] = useState(false);
-  const label = isLast ? t("Hand in the mock exam") : t("Hand in this section");
+  const label = isLast ? t("Hand in") : t("Hand in section");
 
   return (
     <>
@@ -116,7 +113,7 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
                     "{count, plural, one {# task isn't done,} other {# tasks aren't done,}} so this paper gets no estimate. After this, you can't do them in this mock.",
                     { count: left },
                   )
-                : t("Every task is done. After this, you can't do them again in this mock.")}
+                : t("Every task is done. After this, you can't do them again in this mock exam.")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -159,7 +156,7 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
             disabled={runner.pending}
             onClick={() => void runner.startSpeaking()}
           >
-            {t("Start the speaking part")}
+            {t("Start")}
           </TaskMainButton>
         </TaskActions>
       )}

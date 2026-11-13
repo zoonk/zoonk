@@ -104,17 +104,24 @@ function TemplateText({
   hasResult,
   onRemoveWord,
   template,
+  titled,
 }: {
   answers: string[];
   blanks: (string | null)[];
   hasResult: boolean;
   onRemoveWord: (blankIndex: number) => void;
   template: string;
+  /** Under the screen's own question, the sentence is what the learner works on, not a second title. */
+  titled: boolean;
 }) {
   const segments = template.split("[BLANK]");
 
   return (
-    <QuestionTitle className="leading-10" data-slot="word-answer" heading={false}>
+    <QuestionTitle
+      className={cn("leading-10", titled && "font-normal")}
+      data-slot="word-answer"
+      heading={false}
+    >
       {segments.map((segment, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Template segments from split() can repeat, no unique ID
         <span key={`seg-${segment}-${index}`}>
@@ -221,6 +228,7 @@ export function FillBlankStep({
         answers={content.answers}
         blanks={blanks}
         hasResult={hasResult}
+        titled={Boolean(content.question)}
         onRemoveWord={handleRemoveWord}
         template={content.template}
       />

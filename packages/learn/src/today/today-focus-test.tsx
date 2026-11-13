@@ -17,6 +17,7 @@ import {
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { useFormatDuration } from "../_utils/time-format";
 import { useFocusTestTitle } from "../focus-test/use-focus-test-texts";
@@ -30,6 +31,7 @@ function FocusTestNotice({
   onDismiss: (kept: FocusTestOffer | null) => void;
 }) {
   const t = useExtracted();
+  const mainVariant = useMainActionVariant();
   const { actions } = useTodayScreen();
   const title = useFocusTestTitle();
   const formatDuration = useFormatDuration();
@@ -100,7 +102,12 @@ function FocusTestNotice({
             </SuggestionDescription>
 
             <SuggestionActions>
-              <SuggestionAction action={start} busy={starting} disabled={busy}>
+              <SuggestionAction
+                action={start}
+                busy={starting}
+                disabled={busy}
+                variant={mainVariant}
+              >
                 {t("Start the test")}
               </SuggestionAction>
 

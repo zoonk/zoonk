@@ -21,6 +21,7 @@ import {
 } from "../../packages/testing/src/accessibility/target-size.ts";
 import { type LoadMeasurement } from "./checks.mts";
 import { neutralTextOnly } from "./contrast.mts";
+import { isBlockedFrameProbe } from "./frame-console.mts";
 import { installProbe, readProbe } from "./probe.mts";
 import { type RequestRecord } from "./requests.mts";
 import { type Scheme, THROTTLING, VIEWPORTS, type ViewportName } from "./viewports.mts";
@@ -46,6 +47,8 @@ const axeScript = readFileSync(
 );
 
 type Violations = Parameters<typeof describeViolations>[0];
+
+const SANDBOXED_FRAME = 'iframe[sandbox]:not([sandbox~="allow-scripts"])';
 
 function recordTraffic(page: Page, actions: Map<string, string>) {
   const traffic = {
@@ -95,7 +98,13 @@ function recordTraffic(page: Page, actions: Map<string, string>) {
   page.on("console", (message) => {
     const type = message.type();
 
-    if (type === "error" || type === "warning") {
+    const blockedProbe = isBlockedFrameProbe({
+      argumentsCount: message.args().length,
+      text: message.text(),
+      url: message.location().url,
+    });
+
+    if ((type === "error" || type === "warning") && !blockedProbe) {
       traffic.console.push({ text: message.text().slice(0, CONSOLE_TEXT_LENGTH), type });
     }
   });
@@ -198,14 +207,22 @@ async function scanAccessibility(page: Page, where: string) {
 
   // Neutral text meets WCAG AA in the regular look too; colored marks there are soft by design.
   const regular: Violations = await page.evaluate(
-    "axe.run(document, { resultTypes: ['violations'], runOnly: ['color-contrast'] }).then((results) => results.violations)",
+    `axe.run({ exclude: [${JSON.stringify(SANDBOXED_FRAME)}] }, { resultTypes: ['violations'], runOnly: ['color-contrast'] }).then((results) => results.violations)`,
   );
 
   await page.emulateMedia({ contrast: "more" });
 
   const violations: Violations = await page.evaluate(
-    "axe.run(document, { resultTypes: ['violations'] }).then((results) => results.violations)",
+    `axe.run({ exclude: [${JSON.stringify(SANDBOXED_FRAME)}] }, { resultTypes: ['violations'] }).then((results) => results.violations)`,
   );
+
+  // Excluding a frame also excludes its element; check its own rules without entering it.
+  const frameViolations: Violations =
+    (await page.locator(SANDBOXED_FRAME).count()) > 0
+      ? await page.evaluate(
+          `axe.run({ include: [${JSON.stringify(SANDBOXED_FRAME)}] }, { iframes: false, resultTypes: ['violations'], runOnly: axe.getRules().map((rule) => rule.ruleId).filter((id) => id.startsWith('frame-')) }).then((results) => results.violations)`,
+        )
+      : [];
 
   const targets = findSmallTargets(await page.evaluate(sampleTargets, TARGET_SELECTOR));
   await page.evaluate(resumeAnimations);
@@ -213,7 +230,7 @@ async function scanAccessibility(page: Page, where: string) {
 
   return {
     failing: [
-      ...describeViolations(violations, where).failing,
+      ...describeViolations([...violations, ...frameViolations], where).failing,
       ...targets.map((target) => `${where}: [target-size] ${target}`),
     ],
     regular: describeViolations(neutralTextOnly(regular), where).failing,

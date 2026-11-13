@@ -166,21 +166,19 @@ function registerToggle(button: HTMLButtonElement, side: SidebarSide) {
 }
 
 const TOGGLE = {
-  // Each glyph's ink ends on its bar's edge; collapsed, the start toggle is the whole row.
+  // Its glyph's ink ends on the bar's edge.
   end: {
     Icon: PanelRightIcon,
     className: cn(
-      buttonVariants({ edge: "end", size: "icon", variant: "ghost" }),
+      buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" }),
       "shrink-0 [--glyph-blank:2]",
     ),
     tooltipSide: "bottom",
   },
+  // A sidebar item's square: its glyph ends where the items' counts and keycaps end.
   start: {
     Icon: PanelLeftIcon,
-    className: cn(
-      SIDEBAR_ITEM_CLASS,
-      "edge sidebar-collapsed:me-0 -me-(--edge-pull) w-8 shrink-0 justify-center px-0 [--control-size:--spacing(8)] [--glyph-blank:2] [--icon-size:--spacing(4)]",
-    ),
+    className: cn(SIDEBAR_ITEM_CLASS, "w-8 shrink-0 justify-center px-0"),
     tooltipSide: "right",
   },
 } as const;
@@ -234,7 +232,7 @@ export function SidebarToggle({
 const SEARCH_CLASS = {
   bar: "h-11 rounded-lg px-3 text-sm hover:bg-muted/60",
   sidebar: cn(
-    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 text-compact h-8 gap-2.5 rounded-lg px-2",
+    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 text-compact h-9 gap-2.5 rounded-lg px-2",
     SIDEBAR_ICON_ONLY_CLASS,
   ),
 } as const;

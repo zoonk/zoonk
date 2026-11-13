@@ -11,6 +11,7 @@ import {
 } from "../_utils/highlight-code";
 import { type CodeSnippet, insertAtCursor } from "../_utils/insert-at-cursor";
 import { keyedByPosition } from "../_utils/position-keys";
+import { ACTIVITY_FIELD_CLASS } from "./activity-canvas";
 
 const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
   builtin: "text-viz-secondary",
@@ -70,14 +71,15 @@ export function ActivityCodeLine({
   tone = "plain",
   ...props
 }: React.ComponentProps<"div"> & { number: number; tone?: CodeLineTone }) {
+  // The current line's bar is a shadow inside the line, so marking it moves none of its code.
   return (
     <div
       className={cn(
         "flex items-center rounded-lg pr-2 whitespace-pre",
         tone === "current" &&
-          "bg-viz-highlight-soft border-viz-highlight rounded-l-none border-l-[3px]",
+          "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
-          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1",
+          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
         tone === "error" && "bg-destructive/10",
         className,
       )}
@@ -184,13 +186,7 @@ export function ActivityCodeEditor({
   const kept = useKeptTyping({ value });
 
   return (
-    <div
-      className={cn(
-        "bg-background focus-within:border-ring focus-within:ring-ring/50 rounded-xl border focus-within:ring-[3px]",
-        className,
-      )}
-      data-slot="activity-code-editor"
-    >
+    <div className={cn(ACTIVITY_FIELD_CLASS, className)} data-slot="activity-code-editor">
       <div className="scroll-fade-x overflow-x-auto px-4 py-3">
         <div className={cn("grid w-max min-w-full", CODE_TEXT)}>
           <div aria-hidden="true" className="col-start-1 row-start-1 whitespace-pre">
@@ -288,7 +284,7 @@ export function ActivitySnippetBar({
   return (
     <div
       aria-label={label}
-      className="scroll-fade-x flex gap-1.5 overflow-x-auto pb-1"
+      className="scroll-fade-x flex gap-2 overflow-x-auto pb-1"
       data-slot="activity-snippet-bar"
       role="toolbar"
     >
@@ -297,7 +293,7 @@ export function ActivitySnippetBar({
           aria-label={
             snippet.name === snippet.label ? undefined : `${snippet.label}, ${snippet.name}`
           }
-          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring/50 flex h-11 min-w-11 shrink-0 items-center justify-center rounded-xl px-3 font-mono text-sm outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
+          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:ring-ring/50 flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-3 font-mono text-sm outline-none select-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={disabled}
           key={snippet.label}
           onClick={() => onInsert(snippet)}

@@ -224,7 +224,7 @@ describe(requestLessonGeneration, () => {
 
     await expect(requestLessonGeneration({ lessonId: lesson.id })).resolves.toMatchObject({
       decision: {
-        limit: { period: "month", resource: "lessonStart", tier: "free" },
+        limit: { period: "rolling30Days", resource: "lessonStart", tier: "free" },
         status: "limitReached",
       },
       status: "refused",

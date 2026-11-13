@@ -1,16 +1,13 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminHeader } from "@/components/admin-header";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
+import { PageTitle } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type StatsAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { StatsAnalysisPicker } from "./stats-analysis-picker";
-import { StatsBreadcrumb } from "./stats-breadcrumb";
 import { StatsPeriodPicker } from "./stats-period-picker";
+
+const STATS = { href: "/stats", label: "Stats" };
 
 export function StatsExplorerLayout({
   children,
@@ -25,47 +22,26 @@ export function StatsExplorerLayout({
 }) {
   return (
     <Container className="min-h-full gap-2">
-      <ContainerHeader className="items-start" variant="sidebar">
-        <ContainerHeaderGroup className="min-w-0 flex-1 gap-3">
-          <StatsBreadcrumb />
-          <StatsExplorerControls
-            periodQuery={periodQuery}
-            selectedView={selectedView}
-            statsPeriod={statsPeriod}
-          />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+      <AdminHeader
+        actions={
+          selectedView.usesPeriod ? (
+            <StatsPeriodPicker
+              currentQuery={getCurrentStatsQuery({ periodQuery, selectedView })}
+              path={selectedView.path}
+              statsPeriod={statsPeriod}
+            />
+          ) : null
+        }
+        parent={STATS}
+        title={
+          <PageTitle>
+            <StatsAnalysisPicker periodQuery={periodQuery} selectedView={selectedView} />
+          </PageTitle>
+        }
+      />
 
       <ContainerBody className="min-h-0 flex-1 pt-2 sm:pb-6">{children}</ContainerBody>
     </Container>
-  );
-}
-
-function StatsExplorerControls({
-  periodQuery,
-  selectedView,
-  statsPeriod,
-}: {
-  periodQuery: string;
-  selectedView: StatsAnalysisView;
-  statsPeriod: StatsPeriod;
-}) {
-  const currentQuery = getCurrentStatsQuery({ periodQuery, selectedView });
-
-  return (
-    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <ContainerTitle className="min-w-0 flex-1 text-2xl sm:text-3xl">
-        <StatsAnalysisPicker periodQuery={periodQuery} selectedView={selectedView} />
-      </ContainerTitle>
-
-      {selectedView.usesPeriod ? (
-        <StatsPeriodPicker
-          currentQuery={currentQuery}
-          path={selectedView.path}
-          statsPeriod={statsPeriod}
-        />
-      ) : null}
-    </div>
   );
 }
 
@@ -102,15 +78,15 @@ export function StatsExplorerSkeleton() {
 export function StatsExplorerPageSkeleton() {
   return (
     <Container className="min-h-full gap-2">
-      <ContainerHeader className="items-start" variant="sidebar">
-        <ContainerHeaderGroup className="w-full gap-3">
-          <Skeleton className="h-4 w-32" />
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
-            <Skeleton className="h-9 w-56 max-w-full" />
-            <Skeleton className="h-9 w-40 max-w-full" />
-          </div>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+      <AdminHeader
+        actions={<Skeleton className="h-11 w-28 rounded-lg lg:h-10" />}
+        parent={STATS}
+        title={
+          <span aria-hidden="true" className="text-title flex h-lh items-center">
+            <Skeleton className="h-7 w-56 max-w-full" />
+          </span>
+        }
+      />
       <ContainerBody className="pt-2">
         <StatsExplorerSkeleton />
       </ContainerBody>

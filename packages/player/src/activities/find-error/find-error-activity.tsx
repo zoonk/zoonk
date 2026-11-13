@@ -11,6 +11,9 @@ import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { usePlayerInteractionState } from "../../player-context";
 import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_LINE_CLASS,
+  ACTIVITY_PRESS_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -75,11 +78,13 @@ function FindErrorStep({
       aria-keyshortcuts={shortcutKeys("pick", index)}
       aria-label={label}
       className={cn(
-        "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-xl border px-3.5 py-3 text-left text-sm leading-snug outline-none select-none focus-visible:ring-[3px] sm:text-base",
+        ACTIVITY_CARD_CLASS,
+        ACTIVITY_PRESS_CLASS,
+        "focus-visible:border-ring flex w-full items-start gap-3 text-sm leading-snug sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
         !isChecked && isPicked && "border-primary ring-primary/15 ring-[3px]",
-        verdict === "error" && "border-success bg-success/10 border-2",
-        verdict === "picked" && "border-destructive bg-destructive/10 border-2",
+        verdict === "error" && cn(ACTIVITY_LINE_CLASS.right, "bg-success/10"),
+        verdict === "picked" && cn(ACTIVITY_LINE_CLASS.wrong, "bg-destructive/10"),
       )}
       disabled={isChecked}
       onClick={onToggle}

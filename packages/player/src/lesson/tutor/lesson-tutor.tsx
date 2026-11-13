@@ -57,7 +57,6 @@ function LessonBuddy({
     <TutorBuddyProvider
       context={context}
       identity={identity}
-      missed={missed}
       navigation={navigation}
       quote={<TutorQuote />}
       screenSuggestion={asksSimpler ? "simpler" : undefined}

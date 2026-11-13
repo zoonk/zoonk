@@ -212,7 +212,7 @@ export function iconLeads(icons: Icon[]): Finding[] {
 const PANEL_MIN = 44;
 
 /**
- * S4, as the founder ruled it (rule 11): what a panel holds has the same room on every side the
+ * S4: what a panel holds has the same room on every side the
  * layout puts it against. Left and top always count, right only where something is pushed to the
  * end, bottom always; a panel whose content touches an edge (a picture across it) is left alone.
  */

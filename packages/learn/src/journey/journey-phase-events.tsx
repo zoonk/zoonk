@@ -5,9 +5,8 @@ import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
-import { ListRowChevron } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText, TITLE_ROW_CLASS } from "../_components/title-row";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -31,7 +30,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
     return (
       <div className={PATH_ROW_CLASS}>
         {children}
-        <span aria-hidden="true" className="size-4 shrink-0" />
+        <ListRowChevronSpace />
       </div>
     );
   }
@@ -67,12 +66,9 @@ export function CheckpointRow({
         <Trickster className="size-4" view="face" />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <MarkedText
-          className={cn("font-medium", isDone && "text-muted-foreground")}
-          mark={checkpoint.locked && <PlusMark />}
-        >
-          {t("Phase challenge")}
-        </MarkedText>
+        <span className={cn("font-medium", isDone && "text-muted-foreground")}>
+          {goal.kind === "language" ? t("Call") : t("The Trickster")}
+        </span>
 
         <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
           {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
@@ -113,12 +109,13 @@ export function usePhaseMocksLine() {
 
     return nextSitting
       ? t(
-          "{count, plural, one {# mock exam} other {# mock exams}} for the next sitting, on {date}",
+          "{count, plural, one {# mock exam before your next exam date, {date}} other {# mock exams before your next exam date, {date}}}",
           { count, date: formatDate(nextSitting, "day") },
         )
-      : t("{count, plural, one {# mock exam} other {# mock exams}} for the next sitting", {
-          count,
-        });
+      : t(
+          "{count, plural, one {# mock exam before your next exam date} other {# mock exams before your next exam date}}",
+          { count },
+        );
   };
 }
 
@@ -126,14 +123,10 @@ export function MockRow({
   challengeHref,
   date,
   examHref,
-  forNextSitting = false,
-  locked = false,
 }: {
   challengeHref: (planItemId: string) => string;
   date: string;
   examHref: string | null;
-  forNextSitting?: boolean;
-  locked?: boolean;
 }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -149,9 +142,7 @@ export function MockRow({
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="flex flex-col">
-          <MarkedText className="font-medium text-pretty" mark={locked && <PlusMark />}>
-            {forNextSitting ? t("Mock exam for the next sitting") : t("Mock exam")}
-          </MarkedText>
+          <span className="font-medium text-pretty">{t("Mock exam")}</span>
           {funded?.minutes ? (
             <span className="text-muted-foreground font-mono text-xs tabular-nums">
               {formatDuration(funded.minutes)}

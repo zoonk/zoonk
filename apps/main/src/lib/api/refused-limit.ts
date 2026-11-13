@@ -1,5 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
-import { type LessonLimit } from "@zoonk/learn/help-limit";
+import { type CalendarLimit, type LessonLimit } from "@zoonk/learn/help-limit";
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 
 const HTTP_PAYMENT_REQUIRED = 402;
@@ -29,20 +29,24 @@ function readTier({ limit, status }: { limit: unknown; status: number }) {
   return status === HTTP_PAYMENT_REQUIRED ? "free" : "plus";
 }
 
+function readLimitDetails(body: unknown) {
+  const error = isJsonObject(body) ? body.error : null;
+  const details = isJsonObject(error) ? error.details : null;
+  return { details, error, limit: isJsonObject(details) ? details.limit : null };
+}
+
 export function readRefusedLimit({
   body,
   status,
 }: {
   body: unknown;
   status: number;
-}): LessonLimit | null {
+}): CalendarLimit | null {
   if (!REFUSED_STATUSES.has(status)) {
     return null;
   }
 
-  const error = isJsonObject(body) ? body.error : null;
-  const details = isJsonObject(error) ? error.details : null;
-  const limit = isJsonObject(details) ? details.limit : null;
+  const { details, error, limit } = readLimitDetails(body);
 
   if (getString(error, "code") === LESSON_PLAYER_ERROR_CODES.signUpRequired) {
     return { status: "signUpRequired" };
@@ -60,4 +64,26 @@ export function readRefusedLimit({
     status: "limitReached",
     tier: readTier({ limit, status }),
   };
+}
+
+/** Only a new lesson is counted over the free plan's last 30 days, so only its refusal carries the instant. */
+export function readRefusedLessonLimit({
+  body,
+  status,
+}: {
+  body: unknown;
+  status: number;
+}): LessonLimit | null {
+  const { limit } = readLimitDetails(body);
+
+  if (REFUSED_STATUSES.has(status) && getString(limit, "period") === "rolling30Days") {
+    return {
+      availableAt: getString(limit, "availableAt") ?? "",
+      period: "rolling30Days",
+      status: "limitReached",
+      tier: "free",
+    };
+  }
+
+  return readRefusedLimit({ body, status });
 }

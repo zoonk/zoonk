@@ -285,7 +285,7 @@ function GoalStartFlow({
             error={state.error}
             fromSharedPlan={fromSharedPlan}
             intent={intent}
-            notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
+            notice={goalLimit && <GoalLimitNotice reason={goalLimit} />}
             onAttachedChange={setAttached}
             onIntentChange={setIntent}
             onSubmit={submit}

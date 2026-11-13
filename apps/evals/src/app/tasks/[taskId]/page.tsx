@@ -1,104 +1,90 @@
-import {
-  AppBreadcrumb,
-  AppBreadcrumbItemSkeleton,
-  HomeLinkBreadcrumb,
-  TaskPageBreadcrumb,
-} from "@/components/breadcrumb";
+import { EVALS_HOME, EvalPageTop, EvalPageTopSkeleton } from "@/components/eval-page-top";
 import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
 import { formatLatencyBudget } from "@/lib/format";
 import { getLeaderboardEntries } from "@/lib/leaderboard";
-import { EVAL_MODELS } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
+import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { supportsJudgeMode } from "@/lib/types";
-import { getModelsWithResults, getSortedModels } from "@/lib/utils";
+import { getModelsToRun, getModelsWithResults } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
-import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
-import { ButtonSkeleton, buttonVariants } from "@zoonk/ui/components/button";
-import {
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerHeaderSkeleton,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/container";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
+import { type Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "./_utils/task-route";
 import { runBattleModeAction } from "./actions";
-import { LeaderboardTabs, LeaderboardTabsSkeleton } from "./leaderboard-tabs";
-import { ModelCard, ModelCardSkeleton } from "./model-card";
+import { LeaderboardTabs } from "./leaderboard-tabs";
+import { ModelList } from "./model-list";
 
 type TaskRouteProps = { params: TaskRouteParams };
 
-async function TaskBreadcrumb({ params }: TaskRouteProps) {
+export async function generateMetadata({ params }: TaskRouteProps): Promise<Metadata> {
   const { task } = await getTaskRouteFromParams(params);
 
-  return <TaskPageBreadcrumb taskName={task.name} />;
+  return { title: task.name };
 }
 
-function TaskHeaderActionsSkeleton() {
+function TaskHeaderActions({ canRunBattle, taskId }: { canRunBattle: boolean; taskId: string }) {
   return (
-    <div aria-hidden="true" className="flex items-center gap-2">
-      <ButtonSkeleton variant="outline">
-        <MessageSquareTextIcon />
-        View Judge Comments
-      </ButtonSkeleton>
-      <ButtonSkeleton>
-        <SwordsIcon />
-        Run Battle Mode
-      </ButtonSkeleton>
-    </div>
-  );
-}
-
-async function TaskHeaderActions({ params }: TaskRouteProps) {
-  const { task, taskId } = await getTaskRouteFromParams(params);
-  const modelsReadyForBattle = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
-  const canRunBattle = modelsReadyForBattle.length >= 2;
-
-  return (
-    <div className="flex items-center gap-2">
-      <Link className={buttonVariants({ variant: "outline" })} href={`/tasks/${taskId}/battles`}>
-        <MessageSquareTextIcon className="size-4" />
-        View Judge Comments
+    <>
+      <Link
+        className={buttonVariants({ size: "bar", variant: "outline" })}
+        href={`/tasks/${taskId}/battles`}
+      >
+        Judge comments
       </Link>
 
       <form action={runBattleModeAction}>
         <input name="taskId" type="hidden" value={taskId} />
-        <SubmitButton disabled={!canRunBattle} icon={<SwordsIcon />}>
-          Run Battle Mode
+        <SubmitButton disabled={!canRunBattle} size="bar" variant="outline">
+          Run battle
         </SubmitButton>
       </form>
-    </div>
+    </>
   );
 }
 
-async function TaskHeader({ params }: TaskRouteProps) {
-  const { task } = await getTaskRouteFromParams(params);
+function formatTestCases(count: number): string {
+  const cases = `${count} ${count === 1 ? "test case" : "test cases"}`;
+  const runs: number = RUNS_PER_TEST_CASE;
 
+  return runs === 1 ? cases : `${cases}, ${runs} runs each`;
+}
+
+async function TaskHeader({ params }: TaskRouteProps) {
+  const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
 
-  return (
-    <ContainerHeader>
-      <ContainerHeaderGroup>
-        <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription>
-          Choose a model to run evaluations on {task.testCases.length} test cases (
-          {RUNS_PER_TEST_CASE} runs each)
-          {task.latencyBudget && `. Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
-        </ContainerDescription>
-      </ContainerHeaderGroup>
+  const modelsReadyForBattle = judgeModeSupported
+    ? await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task })
+    : [];
 
-      {judgeModeSupported && (
-        <Suspense fallback={<TaskHeaderActionsSkeleton />}>
-          <TaskHeaderActions params={params} />
-        </Suspense>
+  const canRunBattle = modelsReadyForBattle.length >= 2;
+
+  return (
+    <EvalPageTop
+      actions={
+        judgeModeSupported && <TaskHeaderActions canRunBattle={canRunBattle} taskId={taskId} />
+      }
+      parent={EVALS_HOME}
+      title={task.name}
+    >
+      <ContainerDescription className={PROSE_MEASURE_CLASS}>
+        {task.description}.
+      </ContainerDescription>
+      <p className="text-muted-foreground font-mono text-xs">
+        {formatTestCases(task.testCases.length)}
+        {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
+      </p>
+      {judgeModeSupported && !canRunBattle && (
+        <p className="text-muted-foreground text-xs">
+          Run battle needs 2 models with every output.
+        </p>
       )}
-    </ContainerHeader>
+    </EvalPageTop>
   );
 }
 
@@ -119,62 +105,41 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
       entries={getLeaderboardEntries({ prices: GATEWAY_PRICES, results: modelsWithResults, task })}
       supportsJudgeMode={judgeModeSupported}
       taskId={taskId}
+      totalRuns={task.testCases.length * RUNS_PER_TEST_CASE}
     />
   );
 }
 
-async function TaskModelGrid({ params }: TaskRouteProps) {
+async function TaskModels({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
-  const sortedModels = await getSortedModels(task);
+
+  const [models, modelsWithResults] = await Promise.all([
+    getModelsToRun(task),
+    getModelsWithResults(taskId),
+  ]);
+
+  const pricedModels = models.map((item) => ({
+    ...item,
+    pricing: GATEWAY_PRICES.models[item.model.gatewayModelId],
+  }));
 
   return (
-    <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {sortedModels.map((model) => (
-        <ModelCard
-          key={model.id}
-          model={model}
-          pricing={GATEWAY_PRICES.models[model.gatewayModelId]}
-          taskId={taskId}
-        />
-      ))}
-    </section>
-  );
-}
-
-function TaskModelGridSkeleton() {
-  return (
-    <section aria-hidden="true" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {EVAL_MODELS.map((model) => (
-        <ModelCardSkeleton key={model.id} />
-      ))}
-    </section>
+    <ModelList hasResults={modelsWithResults.length > 0} models={pricedModels} taskId={taskId} />
   );
 }
 
 export default function TaskPage({ params }: TaskRouteProps) {
   return (
     <main className="flex flex-col gap-4">
-      <AppBreadcrumb>
-        <HomeLinkBreadcrumb />
-        <BreadcrumbSeparator />
-        <Suspense fallback={<AppBreadcrumbItemSkeleton />}>
-          <TaskBreadcrumb params={params} />
-        </Suspense>
-      </AppBreadcrumb>
-
-      <Suspense fallback={<ContainerHeaderSkeleton />}>
+      {/* One boundary: the title, the table and the list arrive together, so none pushes another down. */}
+      <Suspense fallback={<EvalPageTopSkeleton />}>
         <TaskHeader params={params} />
-      </Suspense>
 
-      <ContainerBody>
-        <Suspense fallback={<LeaderboardTabsSkeleton />}>
+        <ContainerBody>
           <TaskLeaderboard params={params} />
-        </Suspense>
-
-        <Suspense fallback={<TaskModelGridSkeleton />}>
-          <TaskModelGrid params={params} />
-        </Suspense>
-      </ContainerBody>
+          <TaskModels params={params} />
+        </ContainerBody>
+      </Suspense>
     </main>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
-import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { readRefusedLessonLimit } from "@/lib/api/refused-limit";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import {
   type ChapterMindMapView,
@@ -64,7 +64,7 @@ async function requestMindMap(target: {
     return { status: "plusRequired" };
   }
 
-  const limit = readRefusedLimit({ body, status: response.status });
+  const limit = readRefusedLessonLimit({ body, status: response.status });
 
   if (limit) {
     return { limit: { ...limit, resource: readLimitResource(body) }, status: "refused" };

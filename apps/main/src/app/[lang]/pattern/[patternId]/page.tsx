@@ -21,10 +21,7 @@ function PatternSkeleton() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
       <Skeleton className="size-9 rounded-lg" />
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-36 rounded-md" />
-        <Skeleton className="h-8 w-2/3 rounded-lg" />
-      </div>
+      <Skeleton className="h-8 w-2/3 rounded-lg" />
       <Skeleton className="h-16 w-full" />
       <Skeleton className="h-24 w-full" />
       <Skeleton className="mt-auto h-11 w-full rounded-lg" />

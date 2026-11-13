@@ -2,8 +2,8 @@
 
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useId, useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useId, useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { CountryField } from "../language-variety/country-field";
 import { usePlanScreen } from "./plan-context";
 import { useTappedChoice } from "./use-tapped-choice";
@@ -14,7 +14,7 @@ export function PlanLanguage() {
   const selectId = useId();
   const { country } = usePlanScreen().goal;
   const picked = useTappedChoice(country?.region ?? null);
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isSaving, startSaving] = useTransition();
 
   if (!country) {
@@ -22,7 +22,6 @@ export function PlanLanguage() {
   }
 
   const save = (region: string | null) => {
-    setFailed(false);
     const showSaved = picked.pick(region);
 
     startSaving(async () => {
@@ -30,7 +29,10 @@ export function PlanLanguage() {
 
       // Updates after an `await` join the transition only when started in one again.
       startSaving(() => {
-        setFailed(!saved);
+        if (!saved) {
+          saveFailed();
+        }
+
         showSaved();
       });
     });
@@ -50,8 +52,6 @@ export function PlanLanguage() {
         onChange={save}
         value={picked.shown}
       />
-
-      {failed && <ChangeSaveError />}
     </section>
   );
 }

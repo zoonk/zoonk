@@ -1,7 +1,7 @@
 "use client";
 
 import { DRAWN_PICTURE_SIZE, PICTURE_BOX_CLASS, pictureBoxStyle } from "@zoonk/learn/picture-box";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ImageIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -21,6 +21,18 @@ type PictureOption = {
   text: string;
 };
 
+/** A picture 8px inside a 12px option, in every state: drawn, being drawn and described. */
+const OPTION_PICTURE_CLASS = "mx-auto rounded-sm";
+
+/** The room a drawn option takes, held by the two states that have no file. */
+const OPTION_PICTURE_BOX_CLASS = cn(
+  OPTION_PICTURE_CLASS,
+  PICTURE_BOX_CLASS,
+  PICTURE_FRAME_CLASS.question,
+);
+
+const OPTION_PICTURE_BOX_STYLE = pictureBoxStyle(DRAWN_PICTURE_SIZE.option);
+
 function PictureOptionContent({
   isChecked,
   option,
@@ -36,33 +48,39 @@ function PictureOptionContent({
 
   function picture() {
     if (image) {
-      return <LessonStepImage className="mx-auto" frame="question" image={image} kind="option" />;
+      return (
+        <LessonStepImage
+          className={OPTION_PICTURE_CLASS}
+          frame="question"
+          image={image}
+          kind="option"
+        />
+      );
     }
 
     if (pending) {
       return (
-        <div
-          className={cn(
-            "text-muted-foreground relative mx-auto flex items-center justify-center overflow-hidden rounded-lg",
-            PICTURE_BOX_CLASS,
-            PICTURE_FRAME_CLASS.question,
-          )}
-          style={pictureBoxStyle(DRAWN_PICTURE_SIZE.option)}
+        <MediaPending
+          className={OPTION_PICTURE_BOX_CLASS}
+          icon={<ImageIcon aria-hidden="true" className="size-5 shrink-0" />}
+          style={OPTION_PICTURE_BOX_STYLE}
         >
-          <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0" />
-          <div className="relative flex items-center">
-            <ImageIcon aria-hidden="true" className="size-5" />
-            <span className="sr-only" role="status">
-              {t("Drawing the picture…")}
-            </span>
-            <p className="px-3 text-sm leading-snug">{pictureText}</p>
-          </div>
-        </div>
+          <span className="sr-only" role="status">
+            {t("Drawing the picture…")}
+          </span>
+          <p className="leading-snug">{pictureText}</p>
+        </MediaPending>
       );
     }
 
     return (
-      <p className="bg-muted/50 text-muted-foreground flex aspect-square w-full items-center rounded-lg p-3 text-sm leading-snug">
+      <p
+        className={cn(
+          "bg-muted/50 text-muted-foreground flex items-center p-3 text-sm leading-snug",
+          OPTION_PICTURE_BOX_CLASS,
+        )}
+        style={OPTION_PICTURE_BOX_STYLE}
+      >
         {pictureText}
       </p>
     );

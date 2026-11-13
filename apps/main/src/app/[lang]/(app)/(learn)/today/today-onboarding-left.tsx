@@ -2,6 +2,7 @@ import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
 import { EnterLink } from "@zoonk/learn/enter-button";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { ListChecksIcon, MapIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
@@ -40,15 +41,15 @@ export async function TodayOnboardingLeft({
     return (
       <TodayAtRest
         banner={banner}
-        actions={
-          <EnterLink href={href} size="lg">
-            {t("See your plan")}
-          </EnterLink>
+        bottomBar={
+          <BottomBar>
+            <BottomBarActions>
+              <EnterLink href={href}>{t("See your plan")}</EnterLink>
+            </BottomBarActions>
+          </BottomBar>
         }
-        clause={t("Look it over before you start.")}
         icon={<MapIcon />}
         sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
-        state={t("Plan ready")}
         title={t("Today")}
       />
     );
@@ -57,15 +58,15 @@ export async function TodayOnboardingLeft({
   return (
     <TodayAtRest
       banner={banner}
-      actions={
-        <EnterLink href={href} size="lg">
-          {t("Continue setting up")}
-        </EnterLink>
+      bottomBar={
+        <BottomBar>
+          <BottomBarActions>
+            <EnterLink href={href}>{t("Continue")}</EnterLink>
+          </BottomBarActions>
+        </BottomBar>
       }
-      clause={t("It's built from what you tell us.")}
       icon={<ListChecksIcon />}
       sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}
-      state={t("Setting up")}
       title={t("Today")}
     />
   );

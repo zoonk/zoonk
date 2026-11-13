@@ -3,18 +3,35 @@
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MicIcon, Volume2Icon } from "lucide-react";
+import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
+
+export const CALL_MARK_CLASS =
+  "grid size-8 shrink-0 place-items-center rounded-full [&>svg]:size-4";
+
+/**
+ * Whoever has the turn gets a line just inside the mark's edge, with a gap before its fill. It is
+ * drawn inside the mark's 32px, so the mark never grows past its column.
+ */
+export function callTurnClass(hasTurn: boolean) {
+  return cn(
+    "ring-[3.5px] inset-ring-[1.5px] transition-shadow duration-150 ring-inset motion-reduce:transition-none",
+    hasTurn
+      ? "inset-ring-foreground/40 ring-background"
+      : "ring-transparent inset-ring-transparent",
+  );
+}
 
 export function CharacterAvatar({ name, talking }: { name: string; talking: boolean }) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "bg-secondary text-secondary-foreground grid size-8 shrink-0 place-items-center rounded-full text-sm font-medium ring-[1.5px] ring-transparent transition-shadow duration-150 motion-reduce:transition-none",
-        talking && "ring-foreground/40",
+        CALL_MARK_CLASS,
+        "bg-secondary text-secondary-foreground text-sm font-medium",
+        callTurnClass(talking),
       )}
       data-slot="character-avatar"
     >
@@ -44,35 +61,30 @@ export function CharacterRow({
   );
 }
 
-export function CallOffMessage({
-  children,
-  className,
-  title,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  title: string;
-}) {
+/** A whole screen saying a call can't go on. Inside a sheet or under another title, use `CallReason`. */
+export function CallOffMessage({ children, title }: { children: React.ReactNode; title: string }) {
   return (
-    <div className={cn("flex flex-col gap-1.5 py-6", className)} role="alert">
-      <p className="text-xl leading-snug font-semibold tracking-[-0.02em] text-balance">{title}</p>
+    <div className="flex flex-col gap-2" role="alert">
+      <p className="text-title">{title}</p>
       {children}
     </div>
   );
 }
 
-/** Why a call can't go on, under its screen's own title. */
+/** Why a call can't go on, under its screen's or its sheet's own title. */
 export function CallReason({
   children,
   className,
+  role,
   title,
 }: {
   children: React.ReactNode;
   className?: string;
+  role?: "alert";
   title: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn("flex flex-col gap-1", className)} role={role}>
       <p className="font-medium">{title}</p>
       {children}
     </div>
@@ -115,13 +127,15 @@ export function SpeakButton({
   );
 }
 
-export function MicNote({ children }: { children: React.ReactNode }) {
+export function SoundNote() {
+  const t = useExtracted();
+
   return (
-    <p className="text-muted-foreground text-compact flex items-start gap-2 leading-snug text-pretty">
-      <LineMarker>
-        <MicIcon aria-hidden="true" className="size-3.5" />
+    <p className="text-muted-foreground text-compact flex items-start gap-3 leading-snug text-pretty">
+      <LineMarker className="w-4 justify-center">
+        <Volume2Icon aria-hidden="true" className="size-3.5" />
       </LineMarker>
-      {children}
+      {t("Turn your sound on.")}
     </p>
   );
 }

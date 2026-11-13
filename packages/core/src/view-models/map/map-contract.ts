@@ -103,7 +103,9 @@ export const fieldMapViewSchema = z
               courseLevel: z.enum(CourseLevel).nullable(),
               locked: z
                 .boolean()
-                .meta({ description: "Earned without Plus: show it with the Plus mark" }),
+                .meta({
+                  description: "Earned without Plus, so it's locked until the learner subscribes",
+                }),
             }),
           )
           .meta({
@@ -114,7 +116,7 @@ export const fieldMapViewSchema = z
           .array(z.object({ courseLevel: z.enum(CourseLevel).nullable() }))
           .meta({
             description:
-              "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet: offer them with POST /v1/goals/{goalId}/certificates",
+              "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet; POST /v1/goals/{goalId}/certificates issues one",
           }),
       })
       .nullable()

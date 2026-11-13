@@ -17,6 +17,8 @@ import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
+import { readPageTopClasses } from "./page-top.mts";
+import { PAGE_OPTIONS } from "./pages-usage.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -33,36 +35,14 @@ import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
-import { titleGapFindings } from "./words.mts";
 
 /**
- * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
- * explains when to run it and how to read it.
+ * `pnpm verify:pages [path...]`, started by `verify-pages.mts`, which also prints its usage. The
+ * verify skill explains when to run it and how to read it.
  */
 const repository = resolve(import.meta.dirname, "../..");
 
-const { positionals, values } = parseArgs({
-  allowPositionals: true,
-  options: {
-    app: { default: "main", type: "string" },
-    baseline: { type: "string" },
-    checkout: { type: "string" },
-    early: { default: false, type: "boolean" },
-    email: { type: "string" },
-    intruder: { type: "string" },
-    "local-storage": { multiple: true, type: "string" },
-    nav: { default: false, type: "boolean" },
-    "no-prefetch": { default: false, type: "boolean" },
-    out: { type: "string" },
-    queries: { type: "string" },
-    roles: { default: false, type: "boolean" },
-    schemes: { default: SCHEMES.join(","), type: "string" },
-    soak: { type: "string" },
-    throttle: { default: false, type: "boolean" },
-    url: { type: "string" },
-    viewports: { default: VIEWPORT_NAMES.join(","), type: "string" },
-  },
-});
+const { positionals, values } = parseArgs({ allowPositionals: true, options: PAGE_OPTIONS });
 
 const served = resolve(values.checkout ?? repository);
 
@@ -128,6 +108,7 @@ const target = {
   baseUrl,
   browser,
   out,
+  pageTop: readPageTopClasses(served),
   queries,
   serverPid,
   shortcuts: await readShortcuts(served),
@@ -191,16 +172,6 @@ try {
 
       loads.push(load);
     }
-
-    const phone = loads.find(
-      (load) => load.path === redactQuery(path) && load.viewport === "phone",
-    );
-
-    const laptop = loads.find(
-      (load) => load.path === redactQuery(path) && load.viewport === "laptop",
-    );
-
-    laptop?.findings.push(...(phone ? titleGapFindings(phone.words, laptop.words) : []));
   }
 
   if (values.nav && paths.length > 1) {

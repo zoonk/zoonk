@@ -4,15 +4,14 @@ import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal
 import { EnterButton } from "@zoonk/learn/enter-button";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 import { ChangeSaveError } from "@zoonk/learn/save-error";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 
-function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
-  const t = useExtracted();
+type ResumeFailure = Exclude<GoalStatusOutcome, "saved">;
 
-  if (outcome === null || outcome === "saved") {
-    return null;
-  }
+function ResumeError({ outcome }: { outcome: ResumeFailure }) {
+  const t = useExtracted();
 
   if (outcome !== "limitReached") {
     return <ChangeSaveError />;
@@ -20,17 +19,13 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
 
   return (
     <p className="text-destructive-text text-sm text-pretty" role="alert">
-      {t({
-        description:
-          "Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
-        message:
-          "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
-      })}
+      {t("That's as many goals as you can study at once. Pause another goal to resume this one.")}
     </p>
   );
 }
 
-export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
+/** A paused goal's bar: `children` (the other way on), then Resume. */
+export function ResumeGoalBar({ children, goalId }: { children: React.ReactNode; goalId: string }) {
   const t = useExtracted();
   const [outcome, setOutcome] = useState<GoalStatusOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -45,13 +40,13 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
   };
 
   return (
-    <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
-      <form action={() => resume()} className="contents">
-        <EnterButton busy={isPending} disabled={outcome === "saved"} size="lg" type="submit">
-          <span className="truncate">{t("Resume {goal}", { goal: goalTitle })}</span>
+    <BottomBar note={outcome !== null && outcome !== "saved" && <ResumeError outcome={outcome} />}>
+      <BottomBarActions>
+        {children}
+        <EnterButton busy={isPending} disabled={outcome === "saved"} onClick={resume}>
+          {t("Resume")}
         </EnterButton>
-      </form>
-      <ResumeError outcome={outcome} />
-    </div>
+      </BottomBarActions>
+    </BottomBar>
   );
 }

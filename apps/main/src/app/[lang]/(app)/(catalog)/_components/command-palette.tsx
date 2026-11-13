@@ -13,17 +13,15 @@ import {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandFooter,
   CommandInput,
+  CommandKeyHints,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -278,33 +276,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
         </CommandList>
       </Command>
 
-      <PaletteFooter />
+      <CommandKeyHints close={t("close")} move={t("move")} open={t("open")} />
     </CommandDialog>
-  );
-}
-
-function PaletteFooter() {
-  const t = useExtracted();
-
-  return (
-    <CommandFooter>
-      <span>
-        <Kbd>
-          <ArrowUpIcon />
-        </Kbd>
-        <Kbd>
-          <ArrowDownIcon />
-        </Kbd>
-        {t("move")}
-      </span>
-      <span>
-        <Kbd>⏎</Kbd>
-        {t("open")}
-      </span>
-      <span>
-        <Kbd>Esc</Kbd>
-        {t("close")}
-      </span>
-    </CommandFooter>
   );
 }

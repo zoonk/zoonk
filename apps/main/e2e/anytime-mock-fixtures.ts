@@ -22,9 +22,12 @@ function areaOf(index: number): string {
 
 export async function createAnytimeMockLearner({
   plus,
+  questionsPerSkill = QUESTIONS_PER_SKILL,
   written = false,
 }: {
   plus: boolean;
+  /** Fewer than the default leaves the bank short of a full exam. */
+  questionsPerSkill?: number;
   written?: boolean;
 }) {
   // Numeric-only random suffixes are grouped by Markdown, which changes the fixture lookup key.
@@ -74,7 +77,7 @@ export async function createAnytimeMockLearner({
   });
 
   const questions = skills.flatMap((skill, index) =>
-    Array.from({ length: QUESTIONS_PER_SKILL }, (_, copy) => ({
+    Array.from({ length: questionsPerSkill }, (_, copy) => ({
       content: choiceItemContent(`${skill.name}, question ${copy + 1}?`),
       skill,
       skillIndex: index,

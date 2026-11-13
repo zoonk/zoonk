@@ -132,7 +132,7 @@ export const mockPointsSchema = z
       )
       .meta({
         description:
-          "Minimums this mock couldn't check, to list as still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all",
+          "Minimums this mock couldn't check, so they're still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all",
       }),
   })
   .meta({

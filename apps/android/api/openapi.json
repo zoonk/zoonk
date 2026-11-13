@@ -16021,7 +16021,7 @@
     },
     "/goals/{goalId}/plan/changes/{changeId}": {
       "post": {
-        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen (\"Got it\") for an applied change the plan should stop showing. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
+        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal works it out against the plan as it is today first: when that differs from the `effect` it had, nothing is applied and the answer is the change still `proposed`, with the new `effect`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
         "operationId": "decidePlanChange",
         "security": [
           {
@@ -16241,7 +16241,7 @@
     },
     "/goals/{goalId}/plan/tool-choices": {
       "post": {
-        "description": "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
+        "description": "The learner's answer about one or more of the plan's tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
         "operationId": "createPlanToolChoice",
         "security": [
           {
@@ -19477,7 +19477,7 @@
     },
     "/goals/{goalId}/mocks": {
       "get": {
-        "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of the day in turn and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
+        "description": "The mocks the learner can take whenever they want for an exam goal, beside the plan's weekly ones: each exam day in full, half of each exam day and each objective subject, with their questions, the exam's minutes for them and about how long learners really take (a class test's sized to it); whether the learner's plan includes them (every mock exam comes with Plus); the one running, to continue first; and the diagnostic mock onboarding offers instead of the quick placement, in its lengths.",
         "operationId": "listMocks",
         "security": [
           {
@@ -19569,7 +19569,7 @@
         }
       },
       "post": {
-        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `acceptFewer`. A mock still well short of its questions with nothing to write now answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): start it with `acceptFewer` if the learner wants. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): ask the learner, and start it with `acceptFewer` only if they agree, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
         "operationId": "startAnytimeMock",
         "security": [
           {
@@ -29855,7 +29855,7 @@
               "undone",
               "seen"
             ],
-            "description": "Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen (\"Got it\"), so the plan stops showing it"
+            "description": "Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen, which sets its `seen`"
           },
           "surface": {
             "description": "Where the learner answered the change, to preserve the analytics change_kind. Defaults to the proposal source when omitted.",
@@ -30455,7 +30455,11 @@
             ]
           },
           "acceptFewer": {
-            "description": "Start with the questions there are when the bank holds fewer than the option asks; send it after a question-writing run finished",
+            "description": "Start with the questions there are when the bank holds fewer than the option asks; send it only after the learner agreed to the `short` answer's numbers",
+            "type": "boolean"
+          },
+          "afterWriting": {
+            "description": "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
             "type": "boolean"
           }
         },
@@ -35442,7 +35446,7 @@
           },
           "code": {
             "type": "string",
-            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+            "description": "The public verification code, 12 characters, written in groups of four on the certificate (\"K7QF-2M9X-HD4P\")"
           },
           "completedOn": {
             "type": "string",
@@ -35657,7 +35661,7 @@
           },
           "code": {
             "type": "string",
-            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+            "description": "The public verification code, 12 characters, written in groups of four on the certificate (\"K7QF-2M9X-HD4P\")"
           },
           "completedOn": {
             "type": "string",
@@ -35752,7 +35756,7 @@
           },
           "locked": {
             "type": "boolean",
-            "description": "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends"
+            "description": "True when the learner earned it without Plus: it's locked, with no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends"
           },
           "shownAt": {
             "nullable": true,
@@ -36413,7 +36417,7 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "areaEnds": {
-            "description": "For more or less time on some areas (a focus, or less of an area): when each one whose end moves has its last lesson after the change and before it. With every lesson in the plan, more of an area brings its end forward and less of one pushes it back; short on time, more of an area brings more of its lessons in, which can end it later (`lessonsGained` says how many): say it with the change",
+            "description": "For more or less time on some areas (a focus, or less of an area): when each one whose end moves has its last lesson after the change and before it. With every lesson in the plan, more of an area brings its end forward and less of one pushes it back; short on time, more of an area brings more of its lessons in, which can end it later (`lessonsGained` is how many)",
             "type": "array",
             "items": {
               "type": "object",
@@ -36449,7 +36453,7 @@
             }
           },
           "areaLessons": {
-            "description": "For more or less time on some areas: each area the change doesn't name whose lessons still to do move by more than two, with how many before and after. Say it with the change, so no area moves without the learner knowing",
+            "description": "For more or less time on some areas: each area the change doesn't name whose lessons still to do move by more than two, with how many before and after",
             "type": "array",
             "items": {
               "type": "object",
@@ -36523,7 +36527,7 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "fromPlacement": {
-            "description": "For coverageChanged: the learner's placement answers (what they missed, or showed they know) planned it again as placement ended. Say it was their answers: \"Your placement answers changed what fits by your date:\" and the topics",
+            "description": "For coverageChanged: the learner's placement answers (what they missed, or showed they know) planned it again as placement ended",
             "type": "boolean",
             "enum": [
               true
@@ -36535,14 +36539,14 @@
             "maximum": 9007199254740991
           },
           "lessonsAddedEstimated": {
-            "description": "Some of the lessons added aren't written yet: lessonsAdded counts the plan's estimate for their topic, and the written lessons can be more or fewer. Say about how many: \"Adds about 8 lessons\"",
+            "description": "Some of the lessons added aren't written yet: lessonsAdded counts the plan's estimate for their topic, and the written lessons can be more or fewer",
             "type": "boolean",
             "enum": [
               true
             ]
           },
           "lessonsLeftOut": {
-            "description": "The lessons the change leaves out of the plan the learner sees, whole, by title in the plan's order: say them with the change. A topic's lessons not written yet count as one entry, its name",
+            "description": "The lessons the change leaves out of the plan the learner sees, whole, by title in the plan's order. A topic's lessons not written yet count as one entry, its name",
             "type": "array",
             "items": {
               "type": "string"
@@ -36554,14 +36558,14 @@
             "maximum": 9007199254740991
           },
           "listeningPastBasics": {
-            "description": "For testedOut, or coverageChanged with fromPlacement: the exam's listening areas the learner's answers to text questions started past their basics, whose basics leave the plan to confirm. Say why with the change: their answers show they know those basics, and practice with recordings will check them",
+            "description": "For testedOut, or coverageChanged with fromPlacement: the exam's listening areas the learner's answers to text questions started past their basics, whose basics leave the plan because those answers show the learner knows them; practice with recordings checks them later",
             "type": "array",
             "items": {
               "type": "string"
             }
           },
           "nextMock": {
-            "description": "For an exam's plan: the change moves the next mock ahead to another day. Say it with the change: \"Your next mock moves to Sunday, November 1.\"",
+            "description": "For an exam's plan: the day the next mock moves ahead to, and the day it was on",
             "type": "object",
             "properties": {
               "after": {
@@ -36584,14 +36588,14 @@
             "additionalProperties": false
           },
           "outcomesAdded": {
-            "description": "For moving the phase dates (fitPhaseDates): the goal's outcome skills (a career's job search) keeping the dates leaves out by the goal's date and moving them fits in, by name. Say why the move is worth it",
+            "description": "For moving the phase dates (fitPhaseDates): the goal's outcome skills (a career's job search) keeping the dates leaves out by the goal's date and moving them fits in, by name",
             "type": "array",
             "items": {
               "type": "string"
             }
           },
           "phaseEnds": {
-            "description": "For moving the phase dates (fitPhaseDates): each phase that would end on another day. With lessonsAdded, the lessons keeping the dates leaves out by the goal's date and moving them fits in. For missed days (kind missedDays): each phase whose end the settling moved, so its challenge comes after the lessons it tests. One move is a sentence; several read as a list, one row per phase",
+            "description": "For moving the phase dates (fitPhaseDates): each phase that would end on another day. With lessonsAdded, the lessons keeping the dates leaves out by the goal's date and moving them fits in. For missed days (kind missedDays): each phase whose end the settling moved, so its challenge comes after the lessons it tests",
             "type": "array",
             "items": {
               "type": "object",
@@ -36609,7 +36613,7 @@
                   "description": "The day it ends now, as the learner saw"
                 },
                 "lessonsFirst": {
-                  "description": "Lessons its challenge tests are taking longer than planned and would come after the challenge on the day it ends now: moving the dates puts the challenge after them. Say so",
+                  "description": "Lessons its challenge tests are taking longer than planned and would come after the challenge on the day it ends now: moving the dates puts the challenge after them",
                   "type": "boolean",
                   "enum": [
                     true
@@ -36620,7 +36624,7 @@
                   "description": "The phase's name, as the plan shows it"
                 },
                 "restDay": {
-                  "description": "The day it ends now is one the learner rests: its challenge stays there until they move the dates. Say so, naming the day",
+                  "description": "The day it ends now is one the learner rests: its challenge stays there until they move the dates",
                   "type": "boolean",
                   "enum": [
                     true
@@ -36667,14 +36671,14 @@
             }
           },
           "topicsLeftOut": {
-            "description": "The exam's notice topics the change leaves out of the plan, by area: say them before the learner applies it",
+            "description": "The exam's notice topics the change leaves out of the plan, by area",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlanEffectTopics"
             }
           },
           "unwrittenLeftOut": {
-            "description": "Lessons not written yet that the change leaves out of topics it keeps, by topic, about how many: with lessonsLeftOut, every lesson it leaves out. Say them with the change: \"about 4 fewer lessons of Cell biology\"",
+            "description": "Lessons not written yet that the change leaves out of topics it keeps, by topic, about how many: with lessonsLeftOut, every lesson it leaves out",
             "type": "array",
             "items": {
               "type": "object",
@@ -36776,7 +36780,7 @@
                 "properties": {
                   "reason": {
                     "type": "string",
-                    "description": "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study): offer only its choices. Preserve unknown reasons."
+                    "description": "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study). Preserve unknown reasons."
                   },
                   "unfundedMove": {
                     "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved. Ask the learner to pick a later day.",
@@ -37941,7 +37945,7 @@
           "status"
         ],
         "additionalProperties": false,
-        "description": "The call isn't made yet: show its intro, and Start makes it (`POST /v1/language-conversations` with `kind: \"checkpoint\"`)"
+        "description": "The call isn't made yet; `POST /v1/language-conversations` with `kind: \"checkpoint\"` makes it"
       },
       "LanguageConversationIntro": {
         "type": "object",
@@ -38493,7 +38497,7 @@
           "status"
         ],
         "additionalProperties": false,
-        "description": "Earlier lessons of the session come first (`lessons`): go back to Today. `challenge` is retained for older clients and is never returned"
+        "description": "Earlier lessons of the session come first (`lessons`), so the call can't start yet. `challenge` is retained for older clients and is never returned"
       },
       "LanguageCheckpointCallPlusRequired": {
         "type": "object",
@@ -38509,7 +38513,7 @@
           "status"
         ],
         "additionalProperties": false,
-        "description": "The learner's plan leaves phase challenges to Plus: show the challenge's intro (`GET /v1/challenges/{planItemId}`), locked, with what Plus unlocks"
+        "description": "The learner's plan leaves phase challenges to Plus, so the call can't start; the challenge's intro is `GET /v1/challenges/{planItemId}`"
       },
       "LanguageCheckpointCallNotLanguage": {
         "type": "object",
@@ -39354,7 +39358,7 @@
                       "type": "string",
                       "format": "date",
                       "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "The nearest accepted bound, to offer instead"
+                      "description": "The nearest accepted bound"
                     },
                     "message": {
                       "type": "string"
@@ -41184,7 +41188,7 @@
         "properties": {
           "behind": {
             "nullable": true,
-            "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
+            "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). The learner's ways out are more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything), keeping the time and covering less, or choosing where to focus (canFocus). Null when the date isn't at risk",
             "type": "object",
             "properties": {
               "canFocus": {
@@ -41227,7 +41231,7 @@
           },
           "canApply": {
             "type": "boolean",
-            "description": "Whether this saved quote can be applied on the current planning day."
+            "description": "True for a proposed change that has an `effect`, on any day. Accepting it works the change out against today's plan: when that differs from `effect`, nothing is applied and the answer is the change still `proposed`, with today's `effect`"
           },
           "canUndo": {
             "type": "boolean",
@@ -41247,7 +41251,7 @@
           },
           "effect": {
             "nullable": true,
-            "description": "A proposal on Today is previewed against the current plan before Apply is offered, and Today carries none whose preview would change nothing. Null when the plan is not ready or its operations cannot apply; never offer Apply without an effect",
+            "description": "What applying the change does, previewed against the current plan; Today carries no proposal whose preview would change nothing. Null when the plan is not ready or its operations cannot apply, and then the change can't be applied",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PlanEffect"
@@ -41264,7 +41268,7 @@
           },
           "kind": {
             "type": "string",
-            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one; say the count change and that the plan now allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
+            "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one, so the plan allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
           },
           "lessonsSkipped": {
             "type": "integer",
@@ -41274,7 +41278,7 @@
           },
           "officialDate": {
             "nullable": true,
-            "description": "The exam day the notice officially sets, when the change moves the goal's date off it. Say it with the change and label applying it as keeping the learner's own date anyway. Null otherwise",
+            "description": "The exam day the notice officially sets, when the change moves the goal's date off it, so applying it keeps the learner's own date instead of the official one. Null otherwise",
             "type": "object",
             "properties": {
               "date": {
@@ -41511,12 +41515,12 @@
           },
           "reason": {
             "nullable": true,
-            "description": "The sentence to show as written when an AI or a proposal wrote it; null when the client says it from kind, operations and effect, as for every change read from the learner's words (`source: planEdit`, the buddy's or the plan page's), so its card says what it does, never what was asked",
+            "description": "Why the change is proposed or was made, written by an AI or a proposal in the learner's language. Null for every change read from the learner's words (`source: planEdit`, the buddy's or the plan page's), which `kind`, `operations` and `effect` describe in full",
             "type": "string"
           },
           "seen": {
             "type": "boolean",
-            "description": "The learner said \"Got it\" to it, so the plan no longer shows it"
+            "description": "True once the learner marked it as seen"
           },
           "source": {
             "type": "string",
@@ -41705,7 +41709,7 @@
             "items": {
               "$ref": "#/components/schemas/SpokenPracticeWord"
             },
-            "description": "At most two words to highlight, as written in the sentence: tapping one plays it at normal and slow speed with its respelling and tip"
+            "description": "At most two words worth hearing again, as written in the sentence; each has its respelling and tip in `words`"
           }
         },
         "required": [
@@ -41855,7 +41859,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
+            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is neither right nor wrong, with the sample answer in `correctAnswer`. It isn't recorded and saves no mistake. True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -41935,7 +41939,7 @@
           },
           "spelling": {
             "nullable": true,
-            "description": "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
+            "description": "A typed answer that was right apart from a typo: the right spelling. A typo isn't a mistake.",
             "type": "string"
           }
         },
@@ -42780,7 +42784,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The first few, to name on the row"
+                "description": "The first few"
               }
             },
             "required": [
@@ -43367,7 +43371,7 @@
         "properties": {
           "canTestOut": {
             "type": "boolean",
-            "description": "Offer the unit's chapter test while lessons remain, unless it was failed today without a lesson studied in this unit since; available again on the next learner-local day"
+            "description": "True while the unit's chapter test is available: lessons remain, and it wasn't failed today without a lesson studied in this unit since. A failed one is available again on the next learner-local day"
           },
           "conversation": {
             "$ref": "#/components/schemas/LanguagePracticeCall"
@@ -43534,7 +43538,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The first few, to name on the row"
+                "description": "The first few"
               }
             },
             "required": [
@@ -43678,7 +43682,7 @@
           },
           "limit": {
             "nullable": true,
-            "description": "When no call time is left: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
+            "description": "When no call time is left: which call time is used up (today's, this month's, or a guest's plan without calls), which is when calls come back",
             "type": "object",
             "properties": {
               "period": {
@@ -43715,7 +43719,7 @@
           },
           "paused": {
             "type": "boolean",
-            "description": "Calls are currently paused for this learner; show this before choosing a call length"
+            "description": "Calls are currently paused for this learner, whatever the call length"
           },
           "plusMinutes": {
             "type": "array",
@@ -43724,7 +43728,7 @@
               "minimum": -9007199254740991,
               "maximum": 9007199254740991
             },
-            "description": "Longer lengths that come with Plus, shown locked with the Plus mark"
+            "description": "Longer lengths that come with Plus"
           }
         },
         "required": [
@@ -43870,7 +43874,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -44042,7 +44046,7 @@
           },
           "code": {
             "type": "string",
-            "description": "The public verification code, 12 characters; show it in groups of four (\"K7QF-2M9X-HD4P\")"
+            "description": "The public verification code, 12 characters, written in groups of four on the certificate (\"K7QF-2M9X-HD4P\")"
           },
           "completedOn": {
             "type": "string",
@@ -44137,7 +44141,7 @@
           },
           "locked": {
             "type": "boolean",
-            "description": "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends"
+            "description": "True when the learner earned it without Plus: it's locked, with no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends"
           },
           "shownAt": {
             "nullable": true,
@@ -45055,7 +45059,7 @@
         "properties": {
           "brief": {
             "type": "boolean",
-            "description": "The candidate said too little to judge well; the result says so once"
+            "description": "The candidate said too little to judge well"
           },
           "criteria": {
             "type": "array",
@@ -45449,7 +45453,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -45546,7 +45550,7 @@
           },
           "continuesCall": {
             "type": "boolean",
-            "description": "This connection continues the call's talk window after a drop: keep the call so far on screen and send its turns with the SDP offer. False when it opens a new call: start from nothing"
+            "description": "True when this connection continues the call's talk window after a drop: the call so far still stands, and its turns go with the SDP offer. False when it opens a new call"
           },
           "deadlineAt": {
             "type": "string",
@@ -45719,7 +45723,7 @@
             "minimum": 0,
             "exclusiveMinimum": true,
             "maximum": 9007199254740991,
-            "description": "How far into a silence episode the screen says the learner can take their time"
+            "description": "How far into a silence episode it counts as the learner taking their time, not as a drop"
           }
         },
         "required": [
@@ -45921,7 +45925,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -46197,9 +46201,19 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Signed-in free learners share 20 distinct new lessons per UTC calendar month across every goal, including exams. Each lesson ID counts once, including generation ahead of study, whether reused or generated. Continuing or replaying an admitted lesson, practice and reviews do not count again. items[kind=lessonStart] supplies usedThisMonth, monthlyLimit and remaining; resets.month is the next UTC month boundary. A refused new start returns 402 USAGE_LIMIT_REACHED with details.limit resource=lessonStart, period=month, limit=20, tier=free. Other resources and guests retain their separate limits."
+        "description": "Free learners share 20 distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them."
       },
       "AllowanceItem": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/LessonAllowanceItem"
+          },
+          {
+            "$ref": "#/components/schemas/MonthlyAllowanceItem"
+          }
+        ]
+      },
+      "LessonAllowanceItem": {
         "type": "object",
         "properties": {
           "dailyLimit": {
@@ -46212,29 +46226,6 @@
           "fairUseDailyLimit": {
             "nullable": true,
             "description": "Above this many a day, new uses are spaced out instead of blocked",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "lessonStart",
-              "explanation",
-              "goal",
-              "tutorMessage",
-              "upload",
-              "conversation",
-              "assist",
-              "mindMap",
-              "outline",
-              "mockQuestions"
-            ],
-            "description": "What is counted"
-          },
-          "monthlyLimit": {
-            "nullable": true,
-            "description": "Hard cap per UTC month, or null",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -46253,11 +46244,89 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "usedThisMonth": {
+          "usedToday": {
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Uses this UTC month"
+            "description": "Uses this UTC day"
+          },
+          "usedTotal": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Uses ever"
+          },
+          "availableAt": {
+            "nullable": true,
+            "description": "Instant a new lesson becomes available when the rolling cap is reached; null while rolling capacity remains or the tier has no rolling cap. The twentieth-newest claim time plus 30 times 24 hours, including when existing usage exceeds 20",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "lessonStart"
+            ]
+          },
+          "rollingLimit": {
+            "nullable": true,
+            "description": "Hard cap on new lesson claims in the preceding 30 times 24 hours; null for tiers without this cap",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "usedLast30Days": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Lesson claims strictly after now minus 30 times 24 hours, through now"
+          }
+        },
+        "required": [
+          "dailyLimit",
+          "fairUseDailyLimit",
+          "remaining",
+          "totalLimit",
+          "usedToday",
+          "usedTotal",
+          "availableAt",
+          "kind",
+          "rollingLimit",
+          "usedLast30Days"
+        ],
+        "additionalProperties": false
+      },
+      "MonthlyAllowanceItem": {
+        "type": "object",
+        "properties": {
+          "dailyLimit": {
+            "nullable": true,
+            "description": "Hard cap per UTC day, or null",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "fairUseDailyLimit": {
+            "nullable": true,
+            "description": "Above this many a day, new uses are spaced out instead of blocked",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "remaining": {
+            "nullable": true,
+            "description": "Uses left before a hard cap, or null",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "totalLimit": {
+            "nullable": true,
+            "description": "Hard cap for as long as the account exists",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
           },
           "usedToday": {
             "type": "integer",
@@ -46270,18 +46339,45 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
             "description": "Uses ever"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "explanation",
+              "goal",
+              "tutorMessage",
+              "upload",
+              "conversation",
+              "assist",
+              "mindMap",
+              "outline",
+              "mockQuestions"
+            ]
+          },
+          "monthlyLimit": {
+            "nullable": true,
+            "description": "Hard cap per UTC calendar month, or null",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "usedThisMonth": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Uses this UTC calendar month"
           }
         },
         "required": [
           "dailyLimit",
           "fairUseDailyLimit",
-          "kind",
-          "monthlyLimit",
           "remaining",
           "totalLimit",
-          "usedThisMonth",
           "usedToday",
-          "usedTotal"
+          "usedTotal",
+          "kind",
+          "monthlyLimit",
+          "usedThisMonth"
         ],
         "additionalProperties": false
       },
@@ -75961,7 +76057,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -76028,7 +76124,7 @@
           },
           "finishedChapter": {
             "nullable": true,
-            "description": "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Show its map row (GET /goals/{goalId}/chapters/{chapterId}/mind-map). Retries of the same completion return it again; null otherwise",
+            "description": "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Its mind map is at GET /goals/{goalId}/chapters/{chapterId}/mind-map. Retries of the same completion return it again; null otherwise",
             "allOf": [
               {
                 "$ref": "#/components/schemas/FinishedChapter"
@@ -76151,7 +76247,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Lessons moved from the unstarted tail to a later study day by this completion. Persisted with the completion and replayed on retries; show a quiet completion-screen notice only when positive."
+            "description": "Lessons moved from the unstarted tail to a later study day by this completion. Persisted with the completion and replayed on retries. Zero when nothing moved."
           },
           "finishedChapterId": {
             "nullable": true,
@@ -76207,7 +76303,7 @@
           },
           "ceremony": {
             "nullable": true,
-            "description": "The one milestone the learner hasn't been shown yet, usually one this block earned (a new belt, the buddy's next stage, new glasses): show it as a full-screen moment right after the block, then mark it shown; null when there's none",
+            "description": "The one milestone the learner hasn't been shown yet, usually one this block earned (a new belt, the buddy's next stage, new glasses), until it's marked as shown; null when there's none",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -76219,7 +76315,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "checkpoint": {
             "nullable": true,
@@ -76331,7 +76427,7 @@
           },
           "finishedChapter": {
             "nullable": true,
-            "description": "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Show its map row (GET /goals/{goalId}/chapters/{chapterId}/mind-map). Retries of the same completion return it again; null otherwise",
+            "description": "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Its mind map is at GET /goals/{goalId}/chapters/{chapterId}/mind-map. Retries of the same completion return it again; null otherwise",
             "allOf": [
               {
                 "$ref": "#/components/schemas/FinishedChapter"
@@ -76570,7 +76666,7 @@
           },
           "canTestOut": {
             "type": "boolean",
-            "description": "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter"
+            "description": "True while this lesson's chapter test is available: it wasn't failed today without a lesson studied in that chapter since. A failed one is available again on the next learner-local day. False for blocks without a lesson chapter"
           },
           "capsules": {
             "type": "array",
@@ -76674,7 +76770,7 @@
           },
           "mistakesOnly": {
             "type": "boolean",
-            "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice"
+            "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice"
           },
           "netScored": {
             "type": "boolean",
@@ -76740,7 +76836,7 @@
           },
           "subject": {
             "nullable": true,
-            "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
+            "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
             "type": "string"
           },
           "title": {
@@ -76765,7 +76861,7 @@
           },
           "weakest": {
             "type": "boolean",
-            "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due"
+            "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty"
           }
         },
         "required": [
@@ -76932,7 +77028,7 @@
         "properties": {
           "catchUp": {
             "nullable": true,
-            "description": "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind), for a small line under the block's facts. Static: it holds what the completion read, so never count it down on the client. Null when nothing is carried, on a welcome-back session, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
+            "description": "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind). It holds what the completion read and doesn't change after it. Null when nothing is carried, on a welcome-back session, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
             "type": "object",
             "properties": {
               "doneToday": {
@@ -76945,7 +77041,7 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991,
-                "description": "Carried lessons still to do: the number Today shows as lessons to catch up."
+                "description": "Carried lessons still to do, the same number Today counts as lessons to catch up."
               }
             },
             "required": [
@@ -76962,11 +77058,11 @@
               "open",
               "complete"
             ],
-            "description": "Which count leads the day's line: `done` shows `sessionBar.completed` of `sessionBar.total` while the blocks done are no more than the blocks left (the midpoint included); `left` shows the blocks left once past the midpoint, with the done count as its caption; `open` shows only the blocks done, because the day holds time for lessons not on the queue yet and has no honest total; `complete` once the session is complete."
+            "description": "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the session is complete."
           },
           "lessonsComing": {
             "type": "boolean",
-            "description": "On `open`, whether the held lessons are being written now and join the queue on their own, so the line can say more are coming. False when they wait for the learner to ask for them, and outside `open`."
+            "description": "On `open`, whether the held lessons are being written now and join the queue on their own. False when they wait for the learner to ask for them, and outside `open`."
           },
           "percent": {
             "nullable": true,
@@ -76983,7 +77079,7 @@
           "percent"
         ],
         "additionalProperties": false,
-        "description": "Today's session progress for a block's end screen, decided in core so every client says the same thing."
+        "description": "Today's session progress for a block's end screen, decided in core so every client reads the same numbers."
       },
       "StudySessionMinutes": {
         "type": "object",
@@ -77141,7 +77237,7 @@
       },
       "StudyReminderOffer": {
         "nullable": true,
-        "description": "After a plan lesson, while no reminder channel is on and the offer was never shown: offer study reminders at `time` (the saved time, the goal's study time or 19:00). Claim it with POST /me/study-reminder/offer when it's shown. Null otherwise",
+        "description": "After a plan lesson, while no reminder channel is on and the offer was never shown: the one-time offer of study reminders, with the `time` they would start at (the saved time, the goal's study time or 19:00). POST /me/study-reminder/offer claims it. Null otherwise",
         "type": "object",
         "properties": {
           "time": {
@@ -77151,7 +77247,7 @@
           },
           "timeZone": {
             "type": "string",
-            "description": "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way"
+            "description": "The IANA zone reminders follow: the active goal's"
           }
         },
         "required": [
@@ -77416,7 +77512,7 @@
           "sessionId"
         ],
         "additionalProperties": false,
-        "description": "The plan hasn't picked this step's lesson yet. The server is preparing it: show the session waiting on the block and read it again"
+        "description": "The plan hasn't picked this step's lesson yet. The server is preparing it, and a later read has it"
       },
       "StudyBlockOpeningEssay": {
         "type": "object",
@@ -77595,7 +77691,7 @@
           "kind"
         ],
         "additionalProperties": false,
-        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). Read the screen again so they see the change first; a buddy answer, which can't show it, says the step isn't available anymore"
+        "description": "Nothing opened: what the learner saw changed (a mock they didn't see, a mission or buddy answer's block no longer free to start). A new read of the screen has the change; a buddy answer's step isn't available anymore"
       },
       "LibraryLessonRun": {
         "type": "object",
@@ -77607,7 +77703,7 @@
               "properties": {
                 "answer": {
                   "nullable": true,
-                  "description": "What the learner answered, to show on the screen with `result`. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+                  "description": "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
                   "allOf": [
                     {
                       "$ref": "#/components/schemas/LessonStepAnswerOutput"
@@ -77674,7 +77770,7 @@
               "streak"
             ],
             "additionalProperties": false,
-            "description": "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)"
+            "description": "Where Hyperdrive stood when the run started, so it can be followed live with the server's rule (a resumed run replays its `answers` on top)"
           },
           "optionalStepIds": {
             "description": "Questions with late numbered pictures",
@@ -77687,7 +77783,7 @@
           },
           "replay": {
             "type": "boolean",
-            "description": "True when the learner already finished this lesson: its end offers no next lesson"
+            "description": "True when the learner already finished this lesson, so no next lesson follows it"
           },
           "runId": {
             "type": "string",
@@ -77723,7 +77819,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
+            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is neither right nor wrong, with the sample answer in `correctAnswer`. It isn't recorded and saves no mistake. True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -77803,7 +77899,7 @@
           },
           "spelling": {
             "nullable": true,
-            "description": "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
+            "description": "A typed answer that was right apart from a typo: the right spelling. A typo isn't a mistake.",
             "type": "string"
           },
           "answerText": {
@@ -77826,7 +77922,7 @@
           "answerText"
         ],
         "additionalProperties": false,
-        "description": "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
+        "description": "The saved answer's result, built again from what was saved, so the screen opens answered without a new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
       },
       "LibraryLessonRetryable": {
         "type": "object",
@@ -78128,7 +78224,7 @@
                   "open",
                   "plusRequired"
                 ],
-                "description": "plusRequired: shown locked, with what Plus unlocks, instead of its button"
+                "description": "plusRequired: the learner's plan doesn't include it and Plus does, so it can't start"
               },
               "course": {
                 "nullable": true,
@@ -78293,7 +78389,7 @@
                   "open",
                   "plusRequired"
                 ],
-                "description": "plusRequired: shown locked, with what Plus unlocks, instead of its button"
+                "description": "plusRequired: the learner's plan doesn't include it and Plus does, so it can't start"
               },
               "goalId": {
                 "type": "string",
@@ -78332,7 +78428,7 @@
                   "open",
                   "plusRequired"
                 ],
-                "description": "plusRequired: shown locked, with what Plus unlocks, instead of its button"
+                "description": "plusRequired: the learner's plan doesn't include it and Plus does, so it can't start"
               },
               "cadence": {
                 "type": "string",
@@ -80171,16 +80267,16 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "lessonsPerDay": {
+          "lessonsPer30Days": {
             "nullable": true,
-            "description": "Always null. Free lesson admission uses the monthly allowance",
+            "description": "20 distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "lessonsPerMonth": {
+          "lessonsPerDay": {
             "nullable": true,
-            "description": "20 distinct lessons across all goals per UTC calendar month; admitted lessons can be replayed without another charge",
+            "description": "Always null. Free lesson admission uses the rolling 30-day allowance",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -80204,8 +80300,8 @@
           "activeGoals",
           "examPrepDays",
           "guestLessons",
+          "lessonsPer30Days",
           "lessonsPerDay",
-          "lessonsPerMonth",
           "tutorMessagesPerDay",
           "uploadsPerDay"
         ],
@@ -81575,7 +81671,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -81641,7 +81737,7 @@
           },
           "finishedChapter": {
             "nullable": true,
-            "description": "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Show its map row (GET /goals/{goalId}/chapters/{chapterId}/mind-map). Retries of the same completion return it again; null otherwise",
+            "description": "The chapter this completion finished: it marked the chapter's last plan item done or tested out, outside a language. Its mind map is at GET /goals/{goalId}/chapters/{chapterId}/mind-map. Retries of the same completion return it again; null otherwise",
             "allOf": [
               {
                 "$ref": "#/components/schemas/FinishedChapter"
@@ -82017,7 +82113,7 @@
               },
               "shortName": {
                 "nullable": true,
-                "description": "What learners call it; show it when set, else `name`",
+                "description": "What learners call it, when that differs from `name`",
                 "type": "string"
               }
             },
@@ -82104,7 +82200,7 @@
               },
               "shortName": {
                 "nullable": true,
-                "description": "What learners call it; show it when set, else `name`",
+                "description": "What learners call it, when that differs from `name`",
                 "type": "string"
               }
             },
@@ -82138,7 +82234,7 @@
           },
           "shortName": {
             "nullable": true,
-            "description": "What learners call it; show it when set, else `name`",
+            "description": "What learners call it, when that differs from `name`",
             "type": "string"
           },
           "asked": {
@@ -82684,41 +82780,87 @@
         "additionalProperties": false
       },
       "AllowanceLimit": {
-        "type": "object",
-        "properties": {
-          "limit": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "resource": {
+                "type": "string",
+                "description": "What ran out, such as goal or activeGoals"
+              },
+              "tier": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "guest",
+                  "plus"
+                ]
+              },
+              "availableAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "description": "The instant a new lesson is available, computed from the twentieth-newest claim in the rolling window"
+              },
+              "period": {
+                "type": "string",
+                "enum": [
+                  "rolling30Days"
+                ]
+              }
+            },
+            "required": [
+              "limit",
+              "resource",
+              "tier",
+              "availableAt",
+              "period"
+            ],
+            "additionalProperties": false
           },
-          "period": {
-            "type": "string",
-            "enum": [
-              "day",
-              "month",
-              "total"
-            ]
-          },
-          "resource": {
-            "type": "string",
-            "description": "What ran out, such as goal or activeGoals"
-          },
-          "tier": {
-            "type": "string",
-            "enum": [
-              "free",
-              "guest",
-              "plus"
-            ]
+          {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "resource": {
+                "type": "string",
+                "description": "What ran out, such as goal or activeGoals"
+              },
+              "tier": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "guest",
+                  "plus"
+                ]
+              },
+              "period": {
+                "type": "string",
+                "enum": [
+                  "day",
+                  "month",
+                  "total"
+                ]
+              }
+            },
+            "required": [
+              "limit",
+              "resource",
+              "tier",
+              "period"
+            ],
+            "additionalProperties": false
           }
-        },
-        "required": [
-          "limit",
-          "period",
-          "resource",
-          "tier"
-        ],
-        "additionalProperties": false
+        ]
       },
       "GoalUpdateResponse": {
         "type": "object",
@@ -82972,7 +83114,7 @@
             "properties": {
               "available": {
                 "type": "boolean",
-                "description": "Offer the test while the chapter has lessons left, unless it was failed today without a lesson studied in it since; it becomes available again on the next learner-local day"
+                "description": "True while the chapter's test is available: the chapter has lessons left, and the test wasn't failed today without a lesson studied in it since. A failed one becomes available again on the next learner-local day"
               },
               "plusRequired": {
                 "type": "boolean",
@@ -83013,7 +83155,7 @@
           },
           "plusRequired": {
             "type": "boolean",
-            "description": "Always false. New lessons use the shared monthly lesson allowance"
+            "description": "Always false. New lessons use the shared rolling 30-day lesson allowance"
           },
           "skillIds": {
             "type": "array",
@@ -83349,7 +83491,7 @@
                 },
                 "locked": {
                   "type": "boolean",
-                  "description": "Earned without Plus: show it with the Plus mark"
+                  "description": "Earned without Plus, so it's locked until the learner subscribes"
                 }
               },
               "required": [
@@ -83382,7 +83524,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet: offer them with POST /v1/goals/{goalId}/certificates"
+            "description": "Finished levels, or the finished plan (`courseLevel` null), without a certificate yet; POST /v1/goals/{goalId}/certificates issues one"
           }
         },
         "required": [
@@ -83870,7 +84012,7 @@
           },
           "displayWeight": {
             "nullable": true,
-            "description": "Normalized display weight among every notice subject, including written subjects not yet taught. Missing stated shares use the average stated subject. All whole percentages sum to 100; assumed weights must be identified as estimates. Null for plan modules or a notice with no positive weight. Original share and planner weights are unchanged.",
+            "description": "Normalized display weight among every notice subject, including written subjects not yet taught. Missing stated shares use the average stated subject. All whole percentages sum to 100; an assumed weight is an estimate, not a number the notice states. Null for plan modules or a notice with no positive weight. Original share and planner weights are unchanged.",
             "type": "object",
             "properties": {
               "basis": {
@@ -83922,7 +84064,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Its lessons the learner skipped because they showed they know them (tested out); a miss on one of those topics brings them back to study, lowering this, never `lessonsDone`. Show apart: \"25 skipped because you know them\""
+            "description": "Its lessons the learner skipped because they showed they know them (tested out); a miss on one of those topics brings them back to study, lowering this, never `lessonsDone`. Not part of `lessonsDone`"
           },
           "lessonsTotal": {
             "type": "integer",
@@ -83932,7 +84074,7 @@
           },
           "mastery": {
             "nullable": true,
-            "description": "An exam subject's first answers to questions never seen before that say how well it's known, once it has the few its `preparation` needs to count mastery: show as \"6 of 8 right\". Null before, while its preparation counts no mastery yet: say it shows after a few practice questions. Null too whenever `preparation` is null",
+            "description": "An exam subject's first answers to questions never seen before that say how well it's known, once it has the few its `preparation` needs to count mastery: how many were right, of how many. Null before, while its preparation counts no mastery yet, and whenever `preparation` is null",
             "type": "object",
             "properties": {
               "answered": {
@@ -83984,7 +84126,7 @@
           },
           "preparation": {
             "nullable": true,
-            "description": "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. Show it as the subject's number and bar, with `mastery` saying how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too: show the number muted beside why it's out, with no bar. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
+            "description": "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. `mastery` says how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -84010,7 +84152,7 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
-            "description": "The goals in `sharedExams` whose plans also teach some of this subject's skills with the same lessons: show it as also in those exams. Empty when no other exam shares it"
+            "description": "The goals in `sharedExams` whose plans also teach some of this subject's skills with the same lessons. Empty when no other exam shares it"
           },
           "shortName": {
             "type": "string",
@@ -84056,7 +84198,7 @@
           },
           "topicsKnown": {
             "nullable": true,
-            "description": "Topics `known` (the learner showed they know them), shown apart from the ones studied; null when the plan doesn't map topics",
+            "description": "Topics `known` (the learner showed they know them), which aren't among the ones studied; null when the plan doesn't map topics",
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
@@ -84109,11 +84251,11 @@
           },
           "far": {
             "type": "boolean",
-            "description": "A topic whose lessons aren't written yet and start after the two weeks the plan writes ahead: say the lessons the plan teaches it (`plannedLessons`, about that many) and when it starts (`nextDate`), not that they're on the way. False for every other row"
+            "description": "A topic whose lessons aren't written yet and start after the two weeks the plan writes ahead; `plannedLessons` is about how many it will have and `nextDate` when it starts. False for every other row"
           },
           "known": {
             "type": "boolean",
-            "description": "Done only because the learner showed they know it: every lesson tested out, none studied. Say it was skipped, apart from the chapters done"
+            "description": "Done only because the learner showed they know it: every lesson tested out, none studied, so it was skipped, not studied"
           },
           "lessonsDone": {
             "type": "integer",
@@ -84134,7 +84276,7 @@
           },
           "plannedLessons": {
             "nullable": true,
-            "description": "A topic's lessons the plan teaches while they aren't written yet, after its cuts and base choices. Null for a chapter, and for a topic of a plan saved before it stored them (until its next change): say no count then",
+            "description": "A topic's lessons the plan teaches while they aren't written yet, after its cuts and base choices. Null for a chapter, and for a topic of a plan saved before it stored them (until its next change), when the count isn't known",
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991
@@ -84197,7 +84339,7 @@
           },
           "frequency": {
             "nullable": true,
-            "description": "How often past exams asked it, from a reading of past papers or a source that counted them (the subject's `topicFrequencySource` cites the latter): `high` is shown as \"Appears a lot\". Null when nothing says",
+            "description": "How often past exams asked it, from a reading of past papers or a source that counted them (the subject's `topicFrequencySource` cites the latter). Null when nothing says",
             "type": "string",
             "enum": [
               "high",
@@ -84235,7 +84377,7 @@
           },
           "status": {
             "nullable": true,
-            "description": "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): show the topic without a status",
+            "description": "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): the topic has no status then",
             "type": "string",
             "enum": [
               "studied",
@@ -84306,7 +84448,7 @@
               },
               "freeWeekOver": {
                 "type": "boolean",
-                "description": "Always false. Exam plans do not expire; new lessons use the shared monthly allowance"
+                "description": "Always false. Exam plans do not expire; new lessons use the shared rolling 30-day allowance"
               },
               "mocksRequirePlus": {
                 "type": "boolean"
@@ -84337,7 +84479,7 @@
                 },
                 "partOf": {
                   "nullable": true,
-                  "description": "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): show and focus it with that area, never on its own. Null for every other area",
+                  "description": "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): it belongs with that area and is focused with it, never on its own. Null for every other area",
                   "type": "string"
                 },
                 "pastBasics": {
@@ -84538,7 +84680,7 @@
           },
           "fitOffer": {
             "nullable": true,
-            "description": "The lessons the learner's own time fits by the plan's date that the plan doesn't hold, as one change (`fitLessons`) with its effect, so Apply is one tap after its diff: offered once every lesson is done (no system refresh adds lessons then), or once the learner's time covers everything the plan leaves out (a date moved closer, then faster study). Send `operations` to POST /v1/goals/{goalId}/plan/changes as they are. Never offer less daily time as covering more. Null otherwise, and when it would add no lesson",
+            "description": "The lessons the learner's own time fits by the plan's date that the plan doesn't hold, as one change (`fitLessons`) with its effect: present once every lesson is done (no system refresh adds lessons then), or once the learner's time covers everything the plan leaves out (a date moved closer, then faster study). Send `operations` to POST /v1/goals/{goalId}/plan/changes as they are. Null otherwise, and when it would add no lesson",
             "type": "object",
             "properties": {
               "effect": {
@@ -84546,7 +84688,7 @@
               },
               "fits": {
                 "type": "boolean",
-                "description": "The plan with the change covers everything in depth by its date, as the change plans it: say so (\"Your time covers everything by …\") only then"
+                "description": "True when the plan with the change covers everything in depth by its date, as the change plans it"
               },
               "operations": {
                 "minItems": 1,
@@ -84557,7 +84699,8 @@
                 }
               },
               "canApply": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "True when `effect` was worked out for today's plan. When false the offer still stands: ask POST /v1/goals/{goalId}/plan/change-previews for today's effect before applying it"
               }
             },
             "required": [
@@ -84641,11 +84784,11 @@
                 },
                 "title": {
                   "type": "string",
-                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")"
+                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
                 },
                 "writing": {
                   "type": "boolean",
-                  "description": "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name"
+                  "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
                 }
               },
               "required": [
@@ -84844,7 +84987,7 @@
               },
               "targetDateNamedMonth": {
                 "type": "boolean",
-                "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
+                "description": "The date is the start of the month the learner named, and stands for that month, not that day"
               },
               "weekdayMinutes": {
                 "type": "array",
@@ -85074,7 +85217,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Bases placement or a test-out found the learner knows: they're out of the plan already. Say so"
+            "description": "Bases placement or a test-out found the learner knows: they're out of the plan already"
           }
         },
         "required": [
@@ -85112,7 +85255,7 @@
                 "skip"
               ]
             },
-            "description": "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise. Offer only these"
+            "description": "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise"
           },
           "minutes": {
             "type": "object",
@@ -85158,7 +85301,7 @@
           },
           "studied": {
             "type": "boolean",
-            "description": "The learner studied its core, none of its lessons still to do: say \"Studied\", and offer only deep study when choices has it"
+            "description": "The learner studied its core and has none of its lessons still to do; `choices` then holds deep study at most"
           }
         },
         "required": [
@@ -85321,7 +85464,7 @@
         "properties": {
           "challengeLeftOut": {
             "default": false,
-            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
+            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
             "type": "boolean"
           },
           "chapterCount": {
@@ -85342,11 +85485,11 @@
                 },
                 "deeper": {
                   "type": "boolean",
-                  "description": "Its lessons go deeper into topics of an earlier phase: a plan short on time studies every phase's core first and the rest after it, in a later phase's time, so the chapter shows again there. Say so, so it never reads as listed twice"
+                  "description": "Its lessons go deeper into topics of an earlier phase: a plan short on time studies every phase's core first and the rest after it, in a later phase's time, so the same chapter is in both phases, here with the lessons that go deeper"
                 },
                 "far": {
                   "type": "boolean",
-                  "description": "A `writing` row starting after the two weeks the plan writes ahead: say the lessons the plan teaches it (`plannedLessons`, about that many) and when it starts (`nextDate`), not that they're on the way. False for every other row"
+                  "description": "A `writing` row starting after the two weeks the plan writes ahead: its lessons aren't on the way yet, and `plannedLessons` and `nextDate` hold how many the plan teaches (about that many) and when it starts. False for every other row"
                 },
                 "lessonsDone": {
                   "type": "integer",
@@ -85367,7 +85510,7 @@
                 },
                 "plannedLessons": {
                   "nullable": true,
-                  "description": "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change): say no count then",
+                  "description": "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change)",
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 9007199254740991
@@ -85396,14 +85539,14 @@
                 },
                 "testedOut": {
                   "type": "boolean",
-                  "description": "Every lesson in it was tested out (placement or a test-out), so it's done without being studied; say so"
+                  "description": "Every lesson in it was tested out (placement or a test-out), so it's done without being studied"
                 },
                 "title": {
                   "type": "string"
                 },
                 "writing": {
                   "type": "boolean",
-                  "description": "Skills whose lessons aren't written yet (the plan writes them two weeks ahead), grouped under their course's title (empty for the goal's own course: say \"More lessons\"). A `far` row starts after those weeks; any other's lessons are on the way"
+                  "description": "Skills whose lessons aren't written yet (the plan writes them two weeks ahead), grouped under their course's title (empty for the goal's own course). A `far` row starts after those weeks; any other's lessons are on the way"
                 }
               },
               "required": [
@@ -85462,7 +85605,7 @@
                   "nextSession",
                   "queued"
                 ],
-                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked."
+                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked."
               }
             },
             "required": [
@@ -85584,7 +85727,7 @@
               "unfinished",
               "upcoming"
             ],
-            "description": "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done; say the lessons studied of its total (`lessonsDone`, `lessonsTotal`). `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done"
+            "description": "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): it isn't done, and `lessonsDone` of `lessonsTotal` is how far it got. `leftOut`: the plan holds none of its work (a date too near for its topics), and it doesn't count among the phases done"
           }
         },
         "required": [
@@ -85620,7 +85763,7 @@
       },
       "PlanMockSchedule": {
         "nullable": true,
-        "description": "When an exam plan's mock exams still to take fall, from their planned days: say only the pattern given (a weekday, the weeks between them), else the next date. Mocks go on the week's last study day, so study days move them. Null without one ahead",
+        "description": "When an exam plan's mock exams still to take fall, from their planned days: the pattern they keep (a weekday, the weeks between them) where they keep one, and the next date. Mocks go on the week's last study day, so study days move them. Null without one ahead",
         "type": "object",
         "properties": {
           "count": {
@@ -85643,7 +85786,7 @@
           },
           "weekday": {
             "nullable": true,
-            "description": "The weekday every mock ahead falls on (Sunday 0), as in \"Mock exams · Sundays\"; null when they fall on different days or there is one",
+            "description": "The weekday every mock ahead falls on (Sunday 0); null when they fall on different days or there is one",
             "type": "integer",
             "minimum": 0,
             "maximum": 6
@@ -85810,7 +85953,7 @@
           },
           "id": {
             "nullable": true,
-            "description": "null for selected in-memory work until the learner opens the day; show the row without an action link",
+            "description": "null for selected in-memory work until the learner opens the day: it has nothing to open yet",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -85863,11 +86006,11 @@
           },
           "title": {
             "type": "string",
-            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")"
+            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
           },
           "writing": {
             "type": "boolean",
-            "description": "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name"
+            "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
           }
         },
         "required": [
@@ -86204,7 +86347,7 @@
           },
           "targetDateNamedMonth": {
             "type": "boolean",
-            "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
+            "description": "The date is the start of the month the learner named, standing for that whole month, not that day"
           }
         },
         "required": [
@@ -86233,7 +86376,7 @@
           },
           "most": {
             "default": null,
-            "description": "When no daily time covers everything because part of it never fits, whatever the time (a whole day covers no more than half a day): the fewest daily minutes that cover as much as any time does, and that share in whole percents (at most 0.99). Say what those minutes cover rather than everything. Null when a time covers everything, when more time still helps (the date is too close), without a date and while not ready. With studyDays, the day the goals typed together share",
+            "description": "When no daily time covers everything because part of it never fits, whatever the time (a whole day covers no more than half a day): the fewest daily minutes that cover as much as any time does, and that share in whole percents (at most 0.99), since those minutes don't cover everything. Null when a time covers everything, when more time still helps (the date is too close), without a date and while not ready. With studyDays, the day the goals typed together share",
             "nullable": true,
             "type": "object",
             "properties": {
@@ -86277,7 +86420,7 @@
           },
           "suggested": {
             "default": null,
-            "description": "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. Show recommendedMinutes (or most) beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+            "description": "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. It can be shorter than recommendedMinutes (or most), which is what everything takes. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
             "nullable": true,
             "type": "object",
             "properties": {
@@ -86355,7 +86498,7 @@
           },
           "targetDateNamedMonth": {
             "type": "boolean",
-            "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
+            "description": "The date is the start of the month the learner named, standing for that whole month, not that day"
           }
         },
         "required": [
@@ -86694,7 +86837,8 @@
             "type": "object",
             "properties": {
               "canApply": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "True for a proposed change that has an `effect`. Accepting the insight works the change out against today's plan: when that differs from `effect`, nothing is applied and the insight comes back still `pending`, with today's `effect`"
               },
               "effect": {
                 "nullable": true,
@@ -87984,7 +88128,7 @@
           },
           "stop": {
             "nullable": true,
-            "description": "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A chapter offers to create its map only while this is null, or when its map failed (the retry is free)",
+            "description": "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A new map can start only while this is null, or when the chapter's map failed (the retry is free)",
             "allOf": [
               {
                 "$ref": "#/components/schemas/MindMapAllowanceStop"
@@ -88010,6 +88154,7 @@
             "enum": [
               "day",
               "month",
+              "rolling30Days",
               "total"
             ]
           },
@@ -88035,6 +88180,7 @@
             "type": "string",
             "enum": [
               "aiSpend",
+              "lessonStart",
               "mindMap"
             ]
           }
@@ -88750,7 +88896,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -89110,7 +89256,7 @@
             "items": {
               "$ref": "#/components/schemas/MockOption"
             },
-            "description": "Each exam day in full, half of the day in turn, then each objective subject, biggest first"
+            "description": "Each exam day in full, then half of each exam day, then each objective subject, biggest first"
           },
           "running": {
             "nullable": true,
@@ -89380,7 +89526,7 @@
               "needsQuestions",
               "short"
             ],
-            "description": "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again (with `acceptFewer` after the run). `short`: the bank holds well under the questions picked and none can be written now: tell the learner how many it asks of the exam's and in how long, and start it with `acceptFewer` if they want"
+            "description": "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): ask the learner first, saying how many it asks of the exam's and in how long, and start it with `acceptFewer` only if they agree"
           }
         },
         "required": [
@@ -89404,7 +89550,7 @@
               "preparing",
               "generating"
             ],
-            "description": "`ready`: start the mock now with `acceptFewer`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `acceptFewer`"
+            "description": "`ready`: start the mock now with `afterWriting`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has or answers `short` (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `afterWriting`"
           }
         },
         "required": [
@@ -89454,7 +89600,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "checklist": {
             "type": "array",
@@ -90565,7 +90711,7 @@
             "type": "number"
           },
           "points": {
-            "description": "Lead the result with `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
+            "description": "The result in points, `earned` of `asked`; null for an exam not scored in points, such as one scored by item response theory or on a scale",
             "nullable": true,
             "allOf": [
               {
@@ -90794,7 +90940,7 @@
               ],
               "additionalProperties": false
             },
-            "description": "Minimums this mock couldn't check, to list as still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all"
+            "description": "Minimums this mock couldn't check, so they're still ahead: a written test, a test on another exam day, a test none of its questions belong to, or the tests together when it didn't ask them all"
           }
         },
         "required": [
@@ -93250,7 +93396,7 @@
                 },
                 "canTestOut": {
                   "type": "boolean",
-                  "description": "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter"
+                  "description": "True while this lesson's chapter test is available: it wasn't failed today without a lesson studied in that chapter since. A failed one is available again on the next learner-local day. False for blocks without a lesson chapter"
                 },
                 "capsules": {
                   "type": "array",
@@ -93349,7 +93495,7 @@
                 },
                 "mistakesOnly": {
                   "type": "boolean",
-                  "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice"
+                  "description": "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice"
                 },
                 "netScored": {
                   "type": "boolean",
@@ -93415,7 +93561,7 @@
                 },
                 "subject": {
                   "nullable": true,
-                  "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
+                  "description": "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
                   "type": "string"
                 },
                 "title": {
@@ -93440,7 +93586,7 @@
                 },
                 "weakest": {
                   "type": "boolean",
-                  "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due"
+                  "description": "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty"
                 }
               },
               "required": [
@@ -95974,7 +96120,7 @@
           },
           "timeZone": {
             "type": "string",
-            "description": "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way"
+            "description": "The IANA zone reminders follow: the active goal's"
           }
         },
         "required": [
@@ -95992,7 +96138,7 @@
         "properties": {
           "claimed": {
             "type": "boolean",
-            "description": "True only for the call that marked the offer shown. False when it was already shown, here or on another device: don't show it"
+            "description": "True only for the call that marked the offer shown. False when it was already shown, here or on another device"
           }
         },
         "required": [
@@ -96904,7 +97050,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "comesBack": {
             "type": "array",

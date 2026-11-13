@@ -7,20 +7,20 @@ import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-reac
 import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
-import { PlusNotice } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
+import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
+import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { MoveFailed } from "./challenge-move-failed";
-import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground flex min-h-11 items-start gap-2 py-3 text-sm">
+    <p className="text-muted-foreground flex min-h-11 items-start gap-3 py-3 text-sm">
       <LineMarker aria-hidden="true">{icon}</LineMarker>
       <span className="text-pretty">{children}</span>
     </p>
@@ -197,15 +197,11 @@ function PlusRequiredNotice() {
   const { challenge } = useChallengeScreen();
 
   if (challenge.mock) {
-    return (
-      <PlusNotice cta={false}>
-        {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-      </PlusNotice>
-    );
+    return <GateWords title={t("Mock exams need a subscription")} />;
   }
 
   if (challenge.call) {
-    return <ChallengeCallPlusNotice />;
+    return <ChallengeCallGate form="words" />;
   }
 
   return <FreeWeekOverNotice cta={false} />;
@@ -217,7 +213,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   const { challenge, start, writing } = useChallengeScreen();
 
   if (start.problem === "plusRequired") {
-    return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
+    return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
   }
 
   switch (challenge.status) {
@@ -253,7 +249,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "done":
       return { actions: <OpenLink>{t("See how it went")}</OpenLink>, line: null };
     case "plusRequired":
-      return { actions: <SeePlusAction />, line: <PlusRequiredNotice /> };
+      return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
     case "waiting":
       return { actions: null, line: <WaitingLine /> };
     case "queued":
@@ -269,13 +265,27 @@ export function ChallengeFooter() {
   const movable = useMovable();
   const { actions, line } = useStatusFooter();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
+  const moves = !startShows && movable;
+
+  // With nothing else to press, a computer reads the status and the move as one line.
+  if (moves && !actions) {
+    return (
+      <>
+        <MoveFailed />
+        <TaskActions className="max-lg:flex-col max-lg:items-stretch max-lg:gap-0 lg:gap-4">
+          <StatusRegion>{line}</StatusRegion>
+          <MoveToMondayButton />
+        </TaskActions>
+      </>
+    );
+  }
 
   return (
     <>
       <StatusRegion>{line}</StatusRegion>
       {actions}
       {!startShows && <MoveFailed />}
-      {!startShows && movable && (
+      {moves && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />
         </TaskActions>

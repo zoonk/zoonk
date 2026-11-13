@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { CellValue, type GridTraits, Trait } from "./grid-parts";
 
 export function GridPalette({
@@ -48,7 +49,8 @@ export function GridPalette({
           <button
             aria-disabled={isDisabled}
             className={cn(
-              "bg-background focus-visible:ring-ring/50 flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl border outline-none select-none focus-visible:ring-[3px]",
+              ACTIVITY_BOX_CLASS,
+              "focus-visible:ring-ring/50 flex min-h-14 flex-col items-center justify-center gap-0.5 outline-none select-none focus-visible:ring-[3px]",
               isDisabled ? "opacity-60" : "hover:bg-accent",
             )}
             key={option}

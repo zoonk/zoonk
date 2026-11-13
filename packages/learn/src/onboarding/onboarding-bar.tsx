@@ -1,16 +1,14 @@
 "use client";
 
+import { BackLink, PageTopBar } from "@zoonk/ui/components/page-top";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { PAGE_COLUMN_CLASS } from "../_components/page";
 import { TaskClose } from "../_components/task-close";
 import { useAppLocale } from "../_utils/locale";
-import { CRUMB_LINK_CLASS, PageBarSurface } from "../shell/learn-bar";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
@@ -39,10 +37,9 @@ function BackButton({ onBack }: { onBack: () => void }) {
   const ref = useEscapeClick<HTMLButtonElement>();
 
   return (
-    <button className={CRUMB_LINK_CLASS} onClick={onBack} ref={ref} type="button">
-      <ChevronLeftIcon aria-hidden="true" />
-      <span className="max-lg:sr-only">{t("Back")}</span>
-    </button>
+    <BackLink aria-label={t("Back")} render={<button onClick={onBack} ref={ref} type="button" />}>
+      {t("Back")}
+    </BackLink>
   );
 }
 
@@ -70,32 +67,31 @@ export function OnboardingPageBar({
   bar: OnboardingBar;
   barEnd: ReactNode;
 }) {
-  const hasOwn = bar.onBack !== undefined || Boolean(bar.middle) || Boolean(bar.end);
-
   return (
-    // `data-onboarding-bar` keeps the frame's first paint from drawing the tab bar under onboarding.
-    <PageBarSurface className={cn(!hasOwn && "lg:hidden")} data-onboarding-bar="">
-      <div
-        className={cn(
-          PAGE_COLUMN_CLASS,
-          "grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2 lg:min-h-10",
-        )}
-      >
-        <div className="justify-self-start">
+    <PageTopBar
+      actions={
+        <>
+          {bar.end}
+          {barEnd}
+        </>
+      }
+      back={
+        <>
+          {/* `data-onboarding-bar` keeps the frame's first paint from drawing the tab bar under onboarding. */}
+          <span className="contents" data-onboarding-bar="" />
           {bar.onBack ? (
             <BackButton onBack={bar.onBack} />
           ) : (
-            <TaskClose className="lg:hidden" href={backHref} size="icon-bar" toApp />
+            <TaskClose className="lg:hidden" href={backHref} toApp />
           )}
-        </div>
-
-        {bar.middle ?? <span />}
-
-        <div className="flex items-center gap-2 justify-self-end">
-          {bar.end}
-          {barEnd}
-        </div>
-      </div>
-    </PageBarSurface>
+          {/* Centered on the bar's row: 12px over it, half of its 44px. */}
+          {bar.middle && (
+            <div className="absolute top-8.5 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              {bar.middle}
+            </div>
+          )}
+        </>
+      }
+    />
   );
 }

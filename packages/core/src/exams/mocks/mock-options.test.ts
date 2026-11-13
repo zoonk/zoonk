@@ -96,8 +96,8 @@ function candidates(area: string, count: number): MockCandidate[] {
 }
 
 describe(listMockOptions, () => {
-  it("offers each exam day in full, half of the day in turn and each objective subject", () => {
-    const options = listMockOptions({ dayInTurn: 2, goalAreas: GOAL_AREAS, structure: TWO_DAYS });
+  it("offers each exam day in full, half of each day and each objective subject", () => {
+    const options = listMockOptions({ goalAreas: GOAL_AREAS, structure: TWO_DAYS });
 
     expect(
       options.map(({ area, day, kind, minutes, questions }) => ({
@@ -110,6 +110,7 @@ describe(listMockOptions, () => {
     ).toStrictEqual([
       { area: null, day: 1, kind: "full", minutes: 330, questions: 90 },
       { area: null, day: 2, kind: "full", minutes: 300, questions: 90 },
+      { area: null, day: 1, kind: "half", minutes: 165, questions: 45 },
       { area: null, day: 2, kind: "half", minutes: 150, questions: 45 },
       {
         area: "Linguagens, Códigos e suas Tecnologias",
@@ -143,11 +144,7 @@ describe(listMockOptions, () => {
   });
 
   it("names each day's subjects and says when it leaves the written part out", () => {
-    const [first, second] = listMockOptions({
-      dayInTurn: 1,
-      goalAreas: GOAL_AREAS,
-      structure: TWO_DAYS,
-    });
+    const [first, second] = listMockOptions({ goalAreas: GOAL_AREAS, structure: TWO_DAYS });
 
     expect(first).toMatchObject({
       areas: ["Linguagens, Códigos e suas Tecnologias", "Ciências Humanas e suas Tecnologias"],
@@ -167,7 +164,6 @@ describe(listMockOptions, () => {
     };
 
     const options = listMockOptions({
-      dayInTurn: 1,
       goalAreas: official.subjects.map((entry) => entry.name),
       structure: official,
     });
@@ -193,7 +189,6 @@ describe(listMockOptions, () => {
     const essays = [{ area: "Redação", itemId: "redacao" }];
 
     const [first, second, half] = listMockOptions({
-      dayInTurn: 1,
       essays,
       goalAreas: GOAL_AREAS,
       structure: TWO_DAYS,
@@ -230,12 +225,7 @@ describe(listMockOptions, () => {
     const essays = Array.from({ length: 5 }, (_, index) => ({ area: null, itemId: `e${index}` }));
 
     expect(
-      listMockOptions({
-        dayInTurn: null,
-        essays,
-        goalAreas: ["Direito Civil"],
-        structure: writtenOnly,
-      }),
+      listMockOptions({ essays, goalAreas: ["Direito Civil"], structure: writtenOnly }),
     ).toMatchObject([
       {
         kind: "full",
@@ -246,9 +236,9 @@ describe(listMockOptions, () => {
       },
     ]);
 
-    expect(
-      listMockOptions({ dayInTurn: null, goalAreas: ["Direito Civil"], structure: writtenOnly }),
-    ).toStrictEqual([]);
+    expect(listMockOptions({ goalAreas: ["Direito Civil"], structure: writtenOnly })).toStrictEqual(
+      [],
+    );
   });
 
   it("knows the written part a day's section names, when the notice lists it only as a subject", () => {
@@ -259,7 +249,6 @@ describe(listMockOptions, () => {
     const mock = TWO_DAYS.mock && { ...TWO_DAYS.mock, sections };
 
     const [first, second] = listMockOptions({
-      dayInTurn: 1,
       goalAreas: GOAL_AREAS,
       structure: { ...TWO_DAYS, mock },
     });
@@ -270,7 +259,6 @@ describe(listMockOptions, () => {
 
   it("leaves out the subjects the plan doesn't study", () => {
     const options = listMockOptions({
-      dayInTurn: null,
       goalAreas: ["Matemática", "Linguagens"],
       structure: { ...TWO_DAYS, subjects: [...TWO_DAYS.subjects, subject("Linguagens extra", 3)] },
     });
@@ -284,7 +272,7 @@ describe(listMockOptions, () => {
   });
 
   it("offers every subject the plan studies, whatever name the plan gives it", () => {
-    const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: OAB });
+    const options = listMockOptions({ goalAreas: OAB_AREAS, structure: OAB });
 
     expect(
       options.filter((option) => option.kind === "area").map((option) => option.areas),
@@ -299,14 +287,14 @@ describe(listMockOptions, () => {
   });
 
   it("sizes a subject's mock at its even share of the exam when nothing counts the subjects", () => {
-    const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: OAB });
+    const options = listMockOptions({ goalAreas: OAB_AREAS, structure: OAB });
 
     expect(
       options.filter((option) => option.kind === "area").map((option) => option.questions),
     ).toStrictEqual([20, 20, 20, 20]);
 
     const short = { ...OAB, mock: OAB.mock && { ...OAB.mock, sections: [], totalQuestions: 40 } };
-    const fewer = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: short });
+    const fewer = listMockOptions({ goalAreas: OAB_AREAS, structure: short });
 
     expect(fewer.find((option) => option.kind === "area")?.questions).toBe(10);
   });
@@ -327,7 +315,7 @@ describe(listMockOptions, () => {
       },
     };
 
-    const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: counted });
+    const options = listMockOptions({ goalAreas: OAB_AREAS, structure: counted });
 
     expect(
       options
@@ -357,11 +345,7 @@ describe(listMockOptions, () => {
       subjects: [subject("Cell membrane", null)],
     };
 
-    const options = listMockOptions({
-      dayInTurn: null,
-      goalAreas: ["Cell membrane"],
-      structure: classTest,
-    });
+    const options = listMockOptions({ goalAreas: ["Cell membrane"], structure: classTest });
 
     expect(
       options.map(({ kind, minutes, questions }) => ({ kind, minutes, questions })),
@@ -410,14 +394,13 @@ describe("an exam with listening and speaking papers", () => {
   const goalAreas = ["Listening", "Reading", "Writing", "Speaking"];
 
   it("offers no subject mock of written questions for a listening or a speaking paper", () => {
-    const options = listMockOptions({ dayInTurn: null, goalAreas, structure: ielts });
+    const options = listMockOptions({ goalAreas, structure: ielts });
 
     expect(options.filter((option) => option.kind === "area")).toStrictEqual([]);
   });
 
   it("sizes each paper as the mock sits it: a listening section by its recordings, each on the notice's time", () => {
     const [full] = listMockOptions({
-      dayInTurn: null,
       goalAreas,
       listening: new Set(["Listening"]),
       structure: ielts,
@@ -428,7 +411,6 @@ describe("an exam with listening and speaking papers", () => {
 
   it("names the papers a mock covers when it leaves one out that isn't a written part", () => {
     const [full, half] = listMockOptions({
-      dayInTurn: null,
       goalAreas,
       listening: new Set(["Listening"]),
       structure: ielts,
@@ -437,7 +419,7 @@ describe("an exam with listening and speaking papers", () => {
     expect(full?.covers).toStrictEqual(["Listening", "Reading"]);
     expect(half?.covers).toStrictEqual(["Listening", "Reading"]);
 
-    const [unvoiced] = listMockOptions({ dayInTurn: null, goalAreas, structure: ielts });
+    const [unvoiced] = listMockOptions({ goalAreas, structure: ielts });
     expect(unvoiced?.covers).toStrictEqual(["Reading"]);
   });
 
@@ -451,7 +433,6 @@ describe("an exam with listening and speaking papers", () => {
     };
 
     const [full] = listMockOptions({
-      dayInTurn: null,
       goalAreas,
       listening: new Set(["Listening"]),
       structure: objective,
@@ -489,7 +470,7 @@ describe(planOptionMock, () => {
       })),
     );
 
-    const [full] = listMockOptions({ dayInTurn: null, goalAreas: subjects, structure: camara });
+    const [full] = listMockOptions({ goalAreas: subjects, structure: camara });
 
     const plan = full
       ? planOptionMock({ candidates: bank, option: full, structure: camara })
@@ -508,11 +489,7 @@ describe(planOptionMock, () => {
   ];
 
   it("asks a subject's mock only that subject's questions", () => {
-    const options = listMockOptions({
-      dayInTurn: null,
-      goalAreas: GOAL_AREAS,
-      structure: TWO_DAYS,
-    });
+    const options = listMockOptions({ goalAreas: GOAL_AREAS, structure: TWO_DAYS });
 
     const math = options.find((option) => option.areas[0] === "Matemática e suas Tecnologias");
 
@@ -529,7 +506,7 @@ describe(planOptionMock, () => {
   });
 
   it("asks a subject's mock the questions of the plan's area for it, never a similar subject's", () => {
-    const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: OAB });
+    const options = listMockOptions({ goalAreas: OAB_AREAS, structure: OAB });
     const child = options.find((option) => option.area === "Direito da Criança e do Adolescente");
     const civil = options.find((option) => option.area === "Direito Civil");
 
@@ -556,11 +533,7 @@ describe(planOptionMock, () => {
   });
 
   it("asks each of a day's subjects its share, by the plan's full area names, never the essay", () => {
-    const [, dayTwo] = listMockOptions({
-      dayInTurn: null,
-      goalAreas: GOAL_AREAS,
-      structure: TWO_DAYS,
-    });
+    const [, dayTwo] = listMockOptions({ goalAreas: GOAL_AREAS, structure: TWO_DAYS });
 
     if (!dayTwo) {
       throw new Error("Expected day two");
@@ -615,7 +588,6 @@ describe(planOptionMock, () => {
     ];
 
     const [full] = listMockOptions({
-      dayInTurn: null,
       goalAreas: ["Ética Profissional", "Direito Civil", "Direito Penal"],
       structure: oab,
     });
@@ -640,11 +612,7 @@ describe(planOptionMock, () => {
   });
 
   it("asks the day an exam day's mock copies", () => {
-    const [, dayTwo] = listMockOptions({
-      dayInTurn: null,
-      goalAreas: GOAL_AREAS,
-      structure: TWO_DAYS,
-    });
+    const [, dayTwo] = listMockOptions({ goalAreas: GOAL_AREAS, structure: TWO_DAYS });
 
     if (!dayTwo) {
       throw new Error("Expected day two");
@@ -658,11 +626,7 @@ describe(planOptionMock, () => {
 });
 
 describe(getMockQuestionsShortfall, () => {
-  const [, dayTwo] = listMockOptions({
-    dayInTurn: null,
-    goalAreas: GOAL_AREAS,
-    structure: TWO_DAYS,
-  });
+  const [, dayTwo] = listMockOptions({ goalAreas: GOAL_AREAS, structure: TWO_DAYS });
 
   const skillIds = ["Matemática-skill-0", "Matemática-skill-1", "Matemática-skill-2"];
 

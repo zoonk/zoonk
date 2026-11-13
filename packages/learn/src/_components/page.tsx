@@ -1,4 +1,4 @@
-import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-top";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export { PageTitle } from "@zoonk/ui/components/page-top";
@@ -14,7 +14,11 @@ export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column
 export function Page({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-7", className)}
+      className={cn(
+        PAGE_COLUMN_CLASS,
+        "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1 *:data-[slot=bottom-bar]:mt-auto",
+        className,
+      )}
       data-slot="page"
       {...props}
     />

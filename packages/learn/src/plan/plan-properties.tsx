@@ -6,7 +6,6 @@ import { type MockScheduleView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
 import { useVarietyName } from "../language-variety/use-variety-words";
@@ -92,7 +91,7 @@ function CountryRows({ onOpen }: { onOpen: () => void }) {
   const { contentCountry, examplesCountry } = usePlanScreen().goal;
 
   if (examplesCountry) {
-    return <ReadOnlyRow label={t("Lesson examples")}>{examplesCountry.name}</ReadOnlyRow>;
+    return <ReadOnlyRow label={t("Country")}>{examplesCountry.name}</ReadOnlyRow>;
   }
 
   if (!contentCountry) {
@@ -102,13 +101,11 @@ function CountryRows({ onOpen }: { onOpen: () => void }) {
   return (
     <>
       {contentCountry.editable ? (
-        <PropertyRow label={t("Content country")} onOpen={onOpen}>
+        <PropertyRow label={t("Country")} onOpen={onOpen}>
           {contentCountry.name}
         </PropertyRow>
       ) : (
-        <ReadOnlyRow
-          label={contentCountry.kind === "exam" ? t("Exam country") : t("Content country")}
-        >
+        <ReadOnlyRow label={contentCountry.kind === "exam" ? t("Exam country") : t("Country")}>
           {contentCountry.name}
         </ReadOnlyRow>
       )}
@@ -166,11 +163,9 @@ function MockScheduleValue({ mocks }: { mocks: MockScheduleView }) {
 /** Mock exams aren't a setting, so the row opens the exam's page, where they are. */
 function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: MockScheduleView }) {
   const t = useExtracted();
-  const { plan } = usePlanScreen();
 
   const parts = (
     <PropertyRowParts label={t("Mock exams")}>
-      {plan.access.mocksRequirePlus && <PlusMark className="mr-2 align-middle" />}
       <MockScheduleValue mocks={mocks} />
     </PropertyRowParts>
   );

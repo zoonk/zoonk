@@ -9,11 +9,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { LIST_GROUP_CLASS, ListRowChevron } from "../_components/list-group";
+import { LIST_GROUP_CLASS, ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
-import { MarkedText, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
+import { TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -73,7 +72,7 @@ function NextChapterRow({
         <ChapterMark chapter={chapter} isNext />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{chapter.title}</span>
+        <span className="line-clamp-2 font-medium text-pretty">{chapter.title}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums">
           <span aria-hidden="true">
             {t("{done, number} / {total, number}", {
@@ -104,8 +103,13 @@ function FinishRow({ examHref }: { examHref: string | null }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{goal.displayName}</span>
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-medium">{goal.displayName}</span>
+          {!finish && goal.kind === "exam" && (
+            <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
+          )}
+        </span>
         {finish && (
           <PlanDateText
             className="text-muted-foreground text-xs"
@@ -114,15 +118,17 @@ function FinishRow({ examHref }: { examHref: string | null }) {
             month={finish.month}
           />
         )}
-        {!finish && goal.kind === "exam" && (
-          <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
-        )}
       </span>
     </>
   );
 
   if (!examHref) {
-    return <div className={PATH_ROW_CLASS}>{content}</div>;
+    return (
+      <div className={PATH_ROW_CLASS}>
+        {content}
+        <ListRowChevronSpace />
+      </div>
+    );
   }
 
   return (
@@ -147,16 +153,13 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
         <span className="flex flex-col">
           <span className={cn(TRUNCATED_TITLE_CLASS, "font-medium")}>{phaseName(phase)}</span>
           {phase.mocks.count > 0 && (
-            <MarkedText
-              className="text-muted-foreground text-xs"
-              mark={plan.access.mocksRequirePlus && <PlusMark />}
-            >
+            <span className="text-muted-foreground text-xs">
               {mocksLine({
                 count: phase.mocks.count,
                 forNextSitting: true,
                 nextSitting: plan.schedule.nextSitting,
               })}
-            </MarkedText>
+            </span>
           )}
         </span>
         {phase.endDate && (
@@ -211,12 +214,7 @@ export function NextOnPath({ className, links }: { className?: string; links: Jo
       <ul className={LIST_GROUP_CLASS}>
         {mockDate && (
           <li>
-            <MockRow
-              challengeHref={links.challenge}
-              date={mockDate}
-              examHref={links.exam}
-              locked={plan.access.mocksRequirePlus}
-            />
+            <MockRow challengeHref={links.challenge} date={mockDate} examHref={links.exam} />
           </li>
         )}
 

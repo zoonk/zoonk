@@ -79,7 +79,7 @@ function renderConversation({
       draft={draft}
       goalId="01a11014-0000-7000-8000-00000000000a"
       greeting="Hi! I'm Zu."
-      identity={{ avatar: null, name: "Zu" }}
+      identity={{ avatar: null, figure: null, name: "Zu" }}
       initialThread={initialThread}
       onAnswered={onAnswered}
       onAsked={onAsked}

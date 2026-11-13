@@ -97,29 +97,6 @@ export async function hasFinishedLesson({
   return run !== null;
 }
 
-export async function loadStartedLessonIds({
-  lessonIds,
-  userId,
-}: {
-  lessonIds: readonly string[];
-  userId: string;
-}): Promise<Set<string>> {
-  if (lessonIds.length === 0) {
-    return new Set();
-  }
-
-  const runs = await prisma.learningEvent.findMany({
-    select: { contentIds: true },
-    where: {
-      OR: lessonIds.map((lessonId) => ({ contentIds: { equals: lessonId, path: ["lessonId"] } })),
-      kind: { in: [...LESSON_RUN_KINDS] },
-      userId,
-    },
-  });
-
-  return new Set(runs.flatMap((run) => getRunLessonId(run) ?? []));
-}
-
 export function findResumableRun(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },
