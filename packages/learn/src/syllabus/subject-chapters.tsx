@@ -6,9 +6,10 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, NetworkIcon, PlusIcon } from "lucide-react";
+import { NetworkIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -90,19 +91,16 @@ function DoneChapters({
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/done")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         <ListRowLeading>
           <StatusMark status={chapters.every((chapter) => chapter.known) ? "skipped" : "done"} />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle className="text-muted-foreground">{doneLine(chapters)}</ListRowTitle>
         </ListRowContent>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/done:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <ul className="flex flex-col [&>li]:border-t">
           <ChapterRows chapterHref={chapterHref} chapters={chapters} />
         </ul>

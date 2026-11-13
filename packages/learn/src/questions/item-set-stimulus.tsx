@@ -3,8 +3,8 @@
 import { type ItemSetView } from "@zoonk/core/library/items/set-view";
 import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { Button } from "@zoonk/ui/components/button";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import {
@@ -104,10 +104,7 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
           variant="outline"
         >
           {expanded ? t("Show less") : t("Read it all again")}
-          <ChevronDownIcon
-            aria-hidden="true"
-            className={cn("size-4 transition-transform", expanded && "rotate-180")}
-          />
+          <FoldChevron inline />
         </Button>
       )}
 

@@ -1,6 +1,6 @@
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 export const DISCLOSURE_ANSWER_CLASS =
@@ -37,10 +37,7 @@ export function PublicDisclosure({
         </span>
 
         <LineMarker>
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
-          />
+          <FoldChevron />
         </LineMarker>
       </summary>
 
