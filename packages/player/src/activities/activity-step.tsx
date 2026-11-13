@@ -16,10 +16,13 @@ import { BrowserCanvas } from "./browser-canvas";
 
 function ActivityCheckArea({
   answer,
+  className,
   content,
   onAnswerChange,
   phase,
-}: Pick<ActivityStepProps, "answer" | "content" | "onAnswerChange" | "phase">) {
+}: Pick<ActivityStepProps, "answer" | "content" | "onAnswerChange" | "phase"> & {
+  className?: string;
+}) {
   const { check } = content;
 
   if (check.kind === "choice") {
@@ -27,6 +30,7 @@ function ActivityCheckArea({
       <ActivityChoiceCheck
         answer={answer}
         check={check}
+        className={className}
         onAnswerChange={onAnswerChange}
         phase={phase}
       />
@@ -38,6 +42,7 @@ function ActivityCheckArea({
       <ActivityNumericCheck
         answer={answer}
         check={check}
+        className={className}
         onAnswerChange={onAnswerChange}
         phase={phase}
       />
@@ -65,6 +70,7 @@ export function ActivityStep({
   const checkArea = (
     <ActivityCheckArea
       answer={answer}
+      className={isCheckFirst ? undefined : "pt-2"}
       content={content}
       onAnswerChange={onAnswerChange}
       phase={phase}
@@ -98,7 +104,7 @@ export function ActivityStep({
         <ActivityDataNote content={content} />
       </fieldset>
 
-      {!isCheckFirst && <div className="pt-2">{checkArea}</div>}
+      {!isCheckFirst && checkArea}
 
       {phase === "checked" && isCorrect !== null && (
         <ActivityFeedback answer={answer} content={content} isCorrect={isCorrect} />
