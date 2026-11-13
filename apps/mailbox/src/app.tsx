@@ -121,12 +121,12 @@ function EmailListMessage({
       <MailboxMessageButton aria-pressed={isSelected} onClick={() => onSelect(email.id)}>
         <span className="truncate text-sm font-semibold tracking-[-0.01em]">{email.subject}</span>
         <time
-          className="text-muted-foreground justify-self-end font-mono text-2xs"
+          className="text-muted-foreground text-2xs justify-self-end font-mono"
           dateTime={email.receivedAt}
         >
           {timeFormatter.format(new Date(email.receivedAt))}
         </time>
-        <span className="text-muted-foreground truncate font-mono text-2xs">
+        <span className="text-muted-foreground text-2xs truncate font-mono">
           {`${copy.to} ${email.to}`}
         </span>
         {code && (
@@ -144,7 +144,7 @@ function SignInCode({ code }: { code: string }) {
 
   return (
     <div className="flex flex-col gap-1">
-      <p className="text-muted-foreground font-mono text-2xs">{copy.signInCode}</p>
+      <p className="text-muted-foreground text-2xs font-mono">{copy.signInCode}</p>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <p className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">{code}</p>
@@ -166,7 +166,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
 
         <div className="flex flex-col gap-1">
           <h2 className="text-base font-semibold">{email.subject}</h2>
-          <p className="text-muted-foreground font-mono text-2xs">
+          <p className="text-muted-foreground text-2xs font-mono">
             {`${copy.to} ${email.to}`}
             {email.replyTo ? ` · ${copy.replyTo} ${email.replyTo}` : ""}
             {" · "}

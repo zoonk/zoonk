@@ -1,6 +1,7 @@
 import { Logo } from "@/components/logo";
 import { SocialLinks } from "@/components/social-links";
 import { Analytics } from "@vercel/analytics/next";
+import { FONT_VARIABLES } from "@zoonk/ui/fonts";
 import { BLOG_URL } from "@zoonk/utils/url";
 import { type Metadata } from "next";
 import "@zoonk/ui/globals.css";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html className={FONT_VARIABLES} lang="en">
       <body className="font-sans antialiased">
         <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-6 py-8">
           <header className="mb-10 flex items-center justify-between">
