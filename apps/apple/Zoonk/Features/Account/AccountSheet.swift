@@ -299,7 +299,7 @@ struct AccountSheet: View {
         }
       } description: {
         Text(
-          "Zoonk couldn't load your account. Your sign-in is still safely stored.",
+          "You're still logged in. Check your connection and try again.",
           tableName: "Account",
           comment: "Explains that a temporary account load failure did not remove the session")
       } actions: {

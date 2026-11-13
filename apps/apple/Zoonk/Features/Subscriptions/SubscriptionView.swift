@@ -198,7 +198,7 @@ struct SubscriptionView: View {
         comment: "Title shown when an App Store purchase belongs to another Zoonk account")
     case .authenticationRequired:
       Text(
-        "Sign in again",
+        "Log in again",
         tableName: "Account",
         comment: "Title shown when subscription synchronization requires authentication")
     case .invalidPurchase:
@@ -250,22 +250,22 @@ struct SubscriptionView: View {
     switch subscriptions.alert {
     case .accountMismatch:
       Text(
-        "Sign in to the Zoonk account that owns this App Store purchase, or contact support for help.",
+        "Log in to the Zoonk account that bought it, or write to us at hello@zoonk.com.",
         tableName: "Account",
         comment: "Recovery guidance when an App Store purchase belongs to another Zoonk account")
     case .authenticationRequired:
       Text(
-        "Your purchase is safe. Sign in, then restore purchases to add Plus to your Zoonk account.",
+        "Your purchase is safe. Log in, then restore purchases.",
         tableName: "Account",
         comment: "Explains how to recover a purchase after the Zoonk session expires")
     case .invalidPurchase:
       Text(
-        "Check your App Store purchase history, then contact support for help.",
+        "Write to us at hello@zoonk.com and we'll look into it.",
         tableName: "Account",
         comment: "Recovery guidance when Zoonk cannot accept a verified App Store purchase")
     case .noActiveSubscriptionFound:
       Text(
-        "Zoonk checked your App Store purchases, but none currently provide Plus.",
+        "None of your App Store purchases include Plus right now.",
         tableName: "Account",
         comment: "Explains that restored App Store purchases do not grant an active subscription")
     case .noPurchasesFound:
@@ -280,7 +280,7 @@ struct SubscriptionView: View {
         comment: "Recovery guidance after an App Store purchase fails")
     case .purchasesRestored:
       Text(
-        "Your App Store purchases are now available on this Zoonk account.",
+        "Plus is on this account now.",
         tableName: "Account",
         comment: "Confirms restored purchases were synchronized with Zoonk")
     case .restoreFailed:
@@ -290,12 +290,12 @@ struct SubscriptionView: View {
         comment: "Recovery guidance after restoring App Store purchases fails")
     case .synchronizationFailed:
       Text(
-        "Your purchase is safe and hasn't been finished yet. Restore purchases when you're back online.",
+        "Your purchase is safe. Restore purchases when you're back online.",
         tableName: "Account",
         comment: "Explains that a transaction remains available after server synchronization fails")
     case .verificationFailed:
       Text(
-        "Check your App Store purchase history, then contact support if you need help.",
+        "Write to us at hello@zoonk.com and we'll look into it.",
         tableName: "Account",
         comment: "Recovery guidance after StoreKit transaction verification fails")
     case nil:

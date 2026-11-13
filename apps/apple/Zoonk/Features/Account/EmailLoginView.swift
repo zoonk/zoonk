@@ -59,9 +59,8 @@ struct EmailLoginView: View {
         SectionFooter {
           if hasSentCode {
             Text(
-              "We sent a sign-in code to your email. It expires in 5 minutes.",
-              tableName: "Account",
-              comment: "Explains where the email code was sent and when it expires")
+              "Enter the code we sent to \(normalizedEmail).", tableName: "Account",
+              comment: "Under the code field; the argument is the learner's email address")
           }
         }
       }
@@ -69,10 +68,7 @@ struct EmailLoginView: View {
       Section {
         if hasSentCode {
           BusyButton(isBusy: session.isWorking, isRow: true, action: signIn) {
-            Text(
-              "Sign in",
-              tableName: "Account",
-              comment: "Button that verifies an email code")
+            Text("Continue", tableName: "Account", comment: "Button that verifies an email code")
           }
           .disabled(!isCodeValid && !session.isWorking)
 
@@ -82,17 +78,14 @@ struct EmailLoginView: View {
             session.clearFailure()
           } label: {
             Text(
-              "Use a different email",
-              tableName: "Account",
+              "Change email", tableName: "Account",
               comment: "Button that returns to the email entry step")
           }
           .disabled(session.isWorking)
         } else {
           BusyButton(isBusy: session.isWorking, isRow: true, action: sendEmailCode) {
             Text(
-              "Send code",
-              tableName: "Account",
-              comment: "Button that sends an email sign-in code")
+              "Continue", tableName: "Account", comment: "Button that sends an email log in code")
           }
           .disabled(!isEmailValid && !session.isWorking)
         }
@@ -105,7 +98,7 @@ struct EmailLoginView: View {
       }
     }
     .navigationTitle(
-      Text("Email sign-in", tableName: "Account", comment: "Email login navigation title")
+      Text("Log in", tableName: "Account", comment: "Email login navigation title")
     )
     .toolbarTitleDisplayMode(.inline)
     .onChange(of: session.state) { _, state in
