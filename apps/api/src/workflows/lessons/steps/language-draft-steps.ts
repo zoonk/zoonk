@@ -34,11 +34,6 @@ function toReviewContext({ analytics, draft, serviceTier }: LanguageDraftStage) 
   return { analytics, draft, serviceTier };
 }
 
-async function streamWritten(lessonId: string) {
-  await using stream = createStepStream<LessonStreamStep>();
-  await stream.status({ entityId: lessonId, status: "completed", step: "writeLesson" });
-}
-
 export async function reviewLanguageDraftStep(stage: LanguageDraftStage): Promise<LessonProblem[]> {
   "use step";
 
@@ -87,7 +82,8 @@ export async function publishLanguageDraftStep({
 
   const { lessonId, workflowRunId } = input;
   const saved = await publishLanguageLessonDraft({ draft, lessonId, workflowRunId });
-  await streamWritten(lessonId);
+  await using stream = createStepStream<LessonStreamStep>();
+  await stream.status({ entityId: lessonId, status: "completed", step: "writeLesson" });
   return saved ? PUBLISHED : { status: "notWritten" };
 }
 
@@ -104,7 +100,6 @@ export async function holdBackLanguageDraftStep({
 
   const { lessonId, workflowRunId } = input;
   await holdBackLanguageLessonDraft({ draft, lessonId, problems, workflowRunId });
-  await streamWritten(lessonId);
   const state = await getLessonGenerationState(lessonId);
   return { redraft: canRedraftLesson(state), status: "heldBack" };
 }

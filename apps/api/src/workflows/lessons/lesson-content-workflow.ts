@@ -45,6 +45,7 @@ import {
   planLessonSpecStep,
   saveLessonSpecStep,
 } from "./steps/write-lesson-spec-step";
+import { writeChallengeDraft } from "./write-challenge-draft";
 
 export type LessonContentInput = {
   lessonId: string;
@@ -186,6 +187,10 @@ async function reviewLanguageDraft({
 
 async function writeLesson(input: WriteInput): Promise<LessonWriteOutcome> {
   const stage = await writeLessonContentStep(input);
+
+  if (stage.status === "challengeDraft") {
+    return writeChallengeDraft({ input, stage });
+  }
 
   if (stage.status === "drafted") {
     return checkDraft({ input, stage });

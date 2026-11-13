@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { replanWaitingGoal } from "../../library/curriculum/replan-waiting-goals";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
@@ -78,8 +78,6 @@ async function proposal(goalId: string) {
 }
 
 describe("Focus test dismissals after replanning", () => {
-  afterEach(() => vi.useRealTimers());
-
   it.each(["declined", "undone"] as const)("%s, then the next study day", async (status) => {
     const { goal } = await shortPlanExamGoalFixture({
       goal: { ...PLAN_SHOWN, timezone: TIME_ZONE },
@@ -98,7 +96,6 @@ describe("Focus test dismissals after replanning", () => {
     mockNow();
     await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });
 
-    vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(Date.now() + MS_PER_DAY);
     mockNow();
     await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });

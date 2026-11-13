@@ -10,7 +10,7 @@ import {
 } from "./call-generation-copy";
 import { type KindCopy, type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind } from "./generation-kinds";
-import { useLessonCopy } from "./lesson-generation-copy";
+import { useChallengeCopy, useLessonCopy } from "./lesson-generation-copy";
 
 function useQuestionLines() {
   const t = useExtracted();
@@ -262,6 +262,7 @@ export function useGenerationCopy(kind: GenerationKind): {
   phases: Record<string, PhaseCopy>;
 } {
   const copy = {
+    challenge: useChallengeCopy(),
     challengeQuestions: useChallengeQuestionsCopy(),
     conversationCall: useConversationCallCopy(),
     courseOutline: useCourseOutlineCopy(),

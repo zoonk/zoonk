@@ -66,6 +66,7 @@ final class LessonPlayerStore {
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
   private(set) var writingProgress = GenerationWait(kind: .lesson).started
+  private var writingKind = GenerationWait.Kind.lesson
   private var progressRun: String?
   private(set) var warmUp: WarmUp?
   /// What's ready to do while the lesson is written, or instead of it.
@@ -571,6 +572,7 @@ final class LessonPlayerStore {
     }
 
     alternative = lesson?.alternative?.value1
+    writingKind = lesson.map(GenerationWait.Kind.init) ?? .lesson
 
     switch lesson?.status {
     case .generating: waitForWriting(outline)
@@ -648,7 +650,7 @@ final class LessonPlayerStore {
   private func waitForWriting(_ outline: LessonOutline) {
     screen = .waiting(outline, .writing)
     progressRun = nil
-    writingProgress = GenerationWait(kind: .lesson).started
+    writingProgress = GenerationWait(kind: writingKind).started
   }
 
   /// A run that takes over from one that stopped starts the steps over.
@@ -661,7 +663,7 @@ final class LessonPlayerStore {
 
     if run != progressRun {
       progressRun = run
-      writingProgress = GenerationWait(kind: .lesson).started
+      writingProgress = GenerationWait(kind: writingKind).started
     }
 
     writingProgress.apply(event)

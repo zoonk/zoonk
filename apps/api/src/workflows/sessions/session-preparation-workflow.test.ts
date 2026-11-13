@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -51,6 +52,100 @@ describe("session preparation records admission for its children", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it("starts the chapter challenge early at the soon tier under the same manifest", async () => {
+    const { goal, lesson, plan, user } = await sessionWithLesson();
+    const chapter = await libraryChapterFixture();
+    await prisma.lesson.update({ data: { homeChapterId: chapter.id }, where: { id: lesson.id } });
+
+    const challenge = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      identityKey: `challenge:${chapter.id}`,
+    });
+
+    await planItemFixture({
+      lessonId: challenge.id,
+      planId: plan.id,
+      position: 10,
+      scheduledFor: null,
+    });
+
+    await sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id });
+
+    expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
+      expect.objectContaining({
+        lessonId: challenge.id,
+        planManifest: expect.objectContaining({
+          targets: [
+            expect.objectContaining({ lessonId: lesson.id }),
+            expect.objectContaining({ lessonId: challenge.id }),
+          ],
+        }),
+      }),
+    ]);
+  });
+
+  it("does not start or poll a private challenge placement has not admitted", async () => {
+    const { goal, lesson, plan, user } = await sessionWithLesson();
+    const chapter = await libraryChapterFixture();
+
+    await Promise.all([
+      prisma.lesson.update({
+        data: { contentStatus: "completed", homeChapterId: chapter.id },
+        where: { id: lesson.id },
+      }),
+      prisma.goal.update({
+        data: { details: { purpose: "work", role: "ICU nurse" } },
+        where: { id: goal.id },
+      }),
+    ]);
+
+    const challenge = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      identityKey: `challenge:${chapter.id}`,
+      ownerId: user.id,
+      visibility: "private",
+    });
+
+    await planItemFixture({
+      lessonId: challenge.id,
+      planId: plan.id,
+      position: 10,
+      scheduledFor: null,
+    });
+
+    await expect(
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
+    ).resolves.toMatchObject({ lessonIds: [] });
+
+    expect(start).not.toHaveBeenCalledWith(lessonContentWorkflow, expect.anything());
+    expect(sleep).not.toHaveBeenCalled();
+  });
+
+  it("personalizes today's written lessons without waiting for next-day background writing", async () => {
+    const { goal, lesson, plan, user } = await sessionWithLesson();
+    const tomorrow = await libraryLessonFixture();
+
+    await Promise.all([
+      prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lesson.id } }),
+      prisma.goal.update({
+        data: { details: { placementDeclined: true, purpose: "work", role: "ICU nurse" } },
+        where: { id: goal.id },
+      }),
+      planItemFixture({
+        lessonId: tomorrow.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: new Date("2026-10-01T00:00:00Z"),
+      }),
+    ]);
+
+    await expect(
+      sessionPreparationWorkflow({ goalId: goal.id, lessonsAskedAt: null, userId: user.id }),
+    ).resolves.toMatchObject({ laterLessonIds: [tomorrow.id], lessonIds: [], status: "prepared" });
+
+    expect(sleep).not.toHaveBeenCalled();
   });
 
   it("publishes one parent manifest for the selected children without a planner entry", async () => {

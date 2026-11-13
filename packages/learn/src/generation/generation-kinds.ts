@@ -4,13 +4,13 @@ import {
   type ExplanationStepName,
   type GoalContentStepName,
   type GoalUnderstandingStepName,
-  type LessonContentStepName,
   type LevelTestBankStepName,
   type MockQuestionsStepName,
   type SetupLessonStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
 import { type GenerationStepTimes } from "./generation-run";
+import { challenge, lesson } from "./lesson-kinds";
 
 type StepPlace<TPhase extends string> = TPhase | "aside" | "done" | "join";
 
@@ -180,26 +180,6 @@ const explanation = {
   },
 } as const satisfies GenerationKindDefinition<ExplanationStepName, "find" | "read" | "write">;
 
-const lesson = {
-  phases: [
-    { id: "plan", seconds: 40 },
-    { id: "write", seconds: 50 },
-    { id: "mark", seconds: 10 },
-    { alongside: true, id: "draw", seconds: 45 },
-  ],
-  steps: {
-    drawPictures: "draw",
-    joinRunningLesson: "join",
-    lessonReady: "done",
-    markLesson: "mark",
-    planLesson: "plan",
-    writeLesson: "write",
-  },
-} as const satisfies GenerationKindDefinition<
-  LessonContentStepName,
-  "draw" | "mark" | "plan" | "write"
->;
-
 const CALL_STEPS = { callReady: "done", joinRunningCall: "join", writeCall: "write" } as const;
 
 const conversationCall = {
@@ -228,6 +208,7 @@ const setupLesson = {
 } as const satisfies GenerationKindDefinition<SetupLessonStepName, "write">;
 
 const GENERATION_KINDS = {
+  challenge,
   challengeQuestions,
   conversationCall,
   courseOutline,
@@ -247,6 +228,8 @@ const GENERATION_KINDS = {
 };
 
 export type GenerationKind = keyof typeof GENERATION_KINDS;
+
+export type LessonKind = Extract<GenerationKind, "challenge" | "lesson">;
 
 export type GenerationPhase<TKind extends GenerationKind> =
   (typeof GENERATION_KINDS)[TKind]["phases"][number]["id"];

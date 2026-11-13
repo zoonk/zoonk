@@ -4603,6 +4603,54 @@ msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "Wir prüfen die Antworten…"
 
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
+msgctxt "VLjmPG"
+msgid "Writing your challenge"
+msgstr "Wir erstellen deine Herausforderung"
+
+#. A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "V6oGV2"
+msgid "Fixing what the check found"
+msgstr "Wir beheben die gefundenen Probleme"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "411Jv_"
+msgid "Rewriting the parts that didn't add up…"
+msgstr "Wir überarbeiten die unstimmigen Stellen…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "IxN_H4"
+msgid "Checking every path…"
+msgstr "Wir prüfen jeden Entscheidungsweg…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "mpnHDw"
+msgid "Planning the challenge"
+msgstr "Wir planen die Herausforderung"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "OvsNse"
+msgid "Picking the situation…"
+msgstr "Wir wählen die Situation aus…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "VNxpbu"
+msgid "Mapping the choices you'll face…"
+msgstr "Wir legen die Entscheidungsmöglichkeiten fest…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "wFWjvX"
+msgid "Writing the challenge"
+msgstr "Wir erstellen die Herausforderung"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "ZM7ACn"
+msgid "Writing what each choice leads to…"
+msgstr "Wir erstellen die Texte zu den Folgen jeder Entscheidung…"
+
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
@@ -4848,11 +4896,6 @@ msgstr "Wir prüfen die Fakten…"
 msgctxt "84wriC"
 msgid "Writing questions on this chapter"
 msgstr "Wir erstellen Fragen zu diesem Kapitel"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "VLjmPG"
-msgid "Writing your challenge"
-msgstr "Wir erstellen deine Herausforderung"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"

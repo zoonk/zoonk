@@ -247,6 +247,7 @@ model Step {
   generatedAt        DateTime            @default(now()) @map("generated_at")
   createdAt          DateTime            @default(now()) @map("created_at")
   updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
+  variantGenerations StepVariantGeneration[]
   variants           StepVariant[]
   exampleLines       StepExampleLine[]
   optionPictures     StepOptionPicture[]
@@ -311,6 +312,19 @@ model StepOptionPicture {
   @@id([stepId, optionId])
   @@index([mediaAssetId])
   @@map("library_step_option_pictures")
+}
+
+model StepVariantGeneration {
+  id             String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  stepId         String          @map("step_id") @db.Uuid
+  step           Step            @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  kind           StepVariantKind
+  key            String
+  claimedRunIds  String[]        @default([]) @map("claimed_run_ids")
+  heldBackDrafts Json            @default("[]") @map("held_back_drafts")
+
+  @@unique([stepId, kind, key], name: "stepVariantGenerationKey")
+  @@map("step_variant_generations")
 }
 
 /// `key` names the field or tool ("nursing", "excel").

@@ -700,11 +700,17 @@ struct LessonWaitingView: View {
   var body: some View {
     Group {
       if let warmUpID {
-        let title =
-          holding == nil
+        let writingTitle =
+          progress.kind == .challenge
           ? Text(
+            "Writing your challenge", tableName: "Player",
+            comment: "The challenge's status over the quiz while it's written")
+          : Text(
             "Writing your lesson", tableName: "Player",
             comment: "The lesson's status over the quiz while it's written")
+        let title =
+          holding == nil
+          ? writingTitle
           : Text(
             "Your lesson is ready", tableName: "Player",
             comment: "The lesson's status over the quiz once it's written")

@@ -1,12 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
+import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
+import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
+import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { generateLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson";
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
 import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { judgePicture } from "@zoonk/ai/tasks/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/lesson-writer/fix";
+import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
@@ -16,7 +20,6 @@ import {
   createPlanGenerationManifest,
 } from "@zoonk/core/lookahead/speculative-lessons";
 import { prisma } from "@zoonk/db";
-import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
   chapterSkillFixture,
@@ -829,7 +832,13 @@ describe(lessonContentWorkflow, () => {
       specStatus: "completed",
     });
 
-    vi.mocked(generateChallengeCase).mockResolvedValue(taskResult(writtenChallengeCaseFixture()));
+    vi.mocked(generateChallengePlan).mockResolvedValue(taskResult(challengePlanFixture()));
+
+    vi.mocked(generateChallengeScript).mockResolvedValue(
+      taskResult(draftEmptyScript(challengePlanFixture())),
+    );
+
+    vi.mocked(checkChallengeQuality).mockResolvedValue(taskResult({ findings: [] }));
 
     await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
       lessonId: lesson.id,
