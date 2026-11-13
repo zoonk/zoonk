@@ -822,6 +822,11 @@
     font-size: 4rem;
     line-height: 4.25rem;
   }
+
+  @media (width >= 80rem) {
+    font-size: 5.25rem;
+    line-height: 5.25rem;
+  }
 }
 
 @utility text-headline {

@@ -1,5 +1,4 @@
 import {
-  BlueskyBrandIcon,
   FacebookBrandIcon,
   GithubBrandIcon,
   InstagramBrandIcon,
@@ -9,7 +8,7 @@ import {
   TiktokBrandIcon,
   XBrandIcon,
   YoutubeBrandIcon,
-} from "@zoonk/ui/components/brand-icons";
+} from "../components/brand-icons";
 
 /* oxlint-disable-next-line eslint/sort-keys */
 const PROFILES = {
@@ -25,17 +24,23 @@ const PROFILES = {
     label: "LinkedIn",
     pt: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
   },
+  github: {
+    en: { handle: "@zoonk", url: "https://github.com/zoonk" },
+    icon: GithubBrandIcon,
+    label: "GitHub",
+    pt: { handle: "@zoonk", url: "https://github.com/zoonk" },
+  },
   instagram: {
     en: { handle: "@zoonkcom", url: "https://www.instagram.com/zoonkcom" },
     icon: InstagramBrandIcon,
     label: "Instagram",
     pt: { handle: "@zoonkbr", url: "https://www.instagram.com/zoonkbr" },
   },
-  github: {
-    en: { handle: "@zoonk", url: "https://github.com/zoonk" },
-    icon: GithubBrandIcon,
-    label: "GitHub",
-    pt: { handle: "@zoonk", url: "https://github.com/zoonk" },
+  youtube: {
+    en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
+    icon: YoutubeBrandIcon,
+    label: "YouTube",
+    pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },
   },
   threads: {
     en: { handle: "@zoonkcom", url: "https://www.threads.net/@zoonkcom" },
@@ -48,18 +53,6 @@ const PROFILES = {
     icon: RedditBrandIcon,
     label: "Reddit",
     pt: { handle: "r/ZoonkBrasil", url: "https://www.reddit.com/r/ZoonkBrasil" },
-  },
-  bluesky: {
-    en: { handle: "@zoonk", url: "https://bsky.app/profile/zoonk.bsky.social" },
-    icon: BlueskyBrandIcon,
-    label: "Bluesky",
-    pt: { handle: "@zoonkbr", url: "https://bsky.app/profile/zoonkbr.bsky.social" },
-  },
-  youtube: {
-    en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
-    icon: YoutubeBrandIcon,
-    label: "YouTube",
-    pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },
   },
   tiktok: {
     en: { handle: "@zoonkcom", url: "https://www.tiktok.com/@zoonkcom" },
@@ -78,6 +71,7 @@ const PROFILES = {
 // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.keys widens the keys to string[].
 const PROFILE_KEYS = Object.keys(PROFILES) as (keyof typeof PROFILES)[];
 
+/** The one list of where Zoonk posts, for every app that links to them. */
 export function getSocialProfiles(locale: string) {
   return PROFILE_KEYS.map((name) => {
     const profile = PROFILES[name];

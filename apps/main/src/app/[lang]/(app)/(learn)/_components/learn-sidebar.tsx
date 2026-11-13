@@ -1,4 +1,5 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
+import { VisitorStartButton } from "@/components/public/visitor-start";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Sidebar,
@@ -19,17 +20,21 @@ async function VisitorAccount() {
   const t = await getExtracted();
 
   return (
-    <SidebarTooltip label={t("Log in")}>
-      <CurrentPageLoginLink
-        className={cn(
-          buttonVariants({ variant: "outline" }),
-          "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
-        )}
-        icon={<LogInIcon aria-hidden="true" />}
-      >
-        <span className="sidebar-collapsed:sr-only">{t("Log in")}</span>
-      </CurrentPageLoginLink>
-    </SidebarTooltip>
+    <div className="flex flex-col gap-2">
+      <VisitorStartButton />
+
+      <SidebarTooltip label={t("Log in")}>
+        <CurrentPageLoginLink
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
+          )}
+          icon={<LogInIcon aria-hidden="true" />}
+        >
+          <span className="sidebar-collapsed:sr-only">{t("Log in")}</span>
+        </CurrentPageLoginLink>
+      </SidebarTooltip>
+    </div>
   );
 }
 

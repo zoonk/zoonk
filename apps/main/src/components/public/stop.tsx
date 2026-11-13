@@ -1,11 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  EYEBROW_CLASS,
-  LEAD_CLASS,
-  PUBLIC_BAND_CLASS,
-  PUBLIC_CONTAINER_CLASS,
-  STOP_TITLE_CLASS,
-} from "./landing-styles";
+import { PUBLIC_BAND_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 
 const RAIL_LINE_CLASS = cn(
   "min-[88rem]:before:bg-border min-[88rem]:before:absolute min-[88rem]:before:inset-y-0 min-[88rem]:before:left-[calc((100%-84rem)/2-0.75rem)] min-[88rem]:before:w-px",
@@ -47,46 +41,16 @@ export function Stop({
 
 export function StopHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex flex-col gap-4", className)} data-slot="stop-header" {...props} />
-  );
-}
-
-export function StopEyebrow({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("relative flex items-center gap-2.5", EYEBROW_CLASS, className)}
-      data-slot="stop-eyebrow"
-      {...props}
-    />
-  );
-}
-
-/** Decorative: the eyebrow says it. */
-export function StopMark({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "text-foreground flex size-4 shrink-0 items-center justify-center",
-        "min-[88rem]:group-data-rail/stop:absolute min-[88rem]:group-data-rail/stop:-left-13 min-[88rem]:group-data-rail/stop:rounded-full min-[88rem]:group-data-rail/stop:bg-(--stop-surface) min-[88rem]:group-data-rail/stop:ring-6 min-[88rem]:group-data-rail/stop:ring-(--stop-surface)",
-        className,
-      )}
-      data-slot="stop-mark"
-      {...props}
-    />
+    <div className={cn("flex flex-col gap-3", className)} data-slot="stop-header" {...props} />
   );
 }
 
 export function StopTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
-    <h2 className={cn(STOP_TITLE_CLASS, className)} data-slot="stop-title" {...props}>
+    <h2 className={cn("text-section", className)} data-slot="stop-title" {...props}>
       {children}
     </h2>
   );
-}
-
-export function StopLead({ className, ...props }: React.ComponentProps<"p">) {
-  return <p className={cn(LEAD_CLASS, "-mt-1", className)} data-slot="stop-lead" {...props} />;
 }
 
 export function StopBody({ className, ...props }: React.ComponentProps<"div">) {
