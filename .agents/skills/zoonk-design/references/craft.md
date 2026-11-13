@@ -75,10 +75,10 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 
 ### E8. Titles at one height
 
-On pages with the same bar, the page title's top is at the same y ([titles at one height](app-patterns.md#what-every-page-shares)).
+A page's title is close to the top and at the same y on every page, on a phone and a computer: 12px, the 44px bar with the way back and the page's actions, its hairline, then 12px to the title (`PageTop`, or `PageTopBar` in a layout and `PAGE_HEADER_CLASS` in the page). The bar keeps its room when it holds nothing, the frame has no top padding, and no page pads or pushes its own title ([titles at one height](app-patterns.md#what-every-page-shares)). A task keeps its own header with ✕.
 
-- **Check.** The `h1`'s top per page and screen size, grouped by bar (tab root, pushed page, section, task): equal within 1px.
-- **Usual break.** Dropping an empty eyebrow's line, so one page's title rises.
+- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px.
+- **Usual break.** `pt-5` on a header, top padding on the frame, or a bar hidden on a computer, so one page's title sits higher or lower.
 
 ### E9. Start-aligned or centered, never both
 
@@ -186,10 +186,10 @@ Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#wh
 
 ### Z4. Two actions in a bar
 
-In a bar with a main and a second action, both are one height, and on a phone the main one fills what the second leaves. A third action is a quiet option in the column, not a third style in the bar.
+A screen's one main action lives in the bar pinned at its bottom, on a phone and a computer (`BottomBar`, its row `BottomBarActions`); a screen that keeps it elsewhere says why. In a bar with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. The buttons have the same room over and under them as at their sides, the frame's gutter: 16px on a phone, 24px in a task on a computer, 32px in the app's shell from `sm`. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
-- **Check.** Equal visible heights; the bar's one gap; two button styles at most.
-- **Usual break.** An outline, a filled and a gray button in one bar.
+- **Check.** Equal visible heights; the bar's one gap; two button styles at most; the bar's height and its buttons' places the same with and without an error line.
+- **Usual break.** An outline, a filled and a gray button in one bar. A main action at the top of a page on a computer. An error line as a second row in the bar.
 
 ## Type
 
@@ -260,10 +260,12 @@ Lucide's stroke is 2 on its 24-unit canvas, so the line thins and thickens with 
 
 ### I4. One thing, one icon
 
-The way back is `chevron-left`, bare or before the page's name: a bar's back (`LearnBackLink`), a crumb, a task's previous step, the login page's way out. Close is `x`, more `ellipsis`. An arrow belongs to a labeled button: `arrow-right` after the label to go forward (`FORWARD_ICON`), `arrow-left` before it on the button that ends a task by going back ("Back to Today"). A row that opens a page ends in `chevron-right`, one that folds in `chevron-down`. A kind's icon comes from `KIND_MARKS`.
+The way back from a page is `chevron-left` and the name of the page it goes back to (`BackLink`), the mirror of a "See all" row's words and `chevron-right`, so both keep one gap; a task's previous step is the bare chevron. Close is `x`, more `ellipsis`. No button holds an arrow: a forward glyph is `chevron-right` after the label (`FORWARD_ICON`), on the label's center line. A row that opens a page ends in `chevron-right`, one that folds in `chevron-down`. A kind's icon comes from `KIND_MARKS`.
 
-- **Check.** This screen's back, close and more are drawn as the last screen drew them.
-- **Usual break.** An arrow, alone or beside a page's name, for the way back.
+A button shows its label and at most one glyph. The main action that Enter presses (`EnterButton`) has the ⏎ keycap as its glyph where there is a keyboard and is its label alone on a touch screen, so it takes no icon. While a button works, the spinner takes its glyph's place, or covers its label when it shows none, and nothing changes size.
+
+- **Check.** This screen's back, close and more are drawn as the last screen drew them. Count the glyphs in each button: one at most.
+- **Usual break.** An arrow in a button or for the way back. A play or check icon beside the ⏎ keycap. A back chevron with no name.
 
 ### I5. One gap to the text
 
@@ -306,7 +308,7 @@ One filled button in view, outside a dialog. Around it, buttons step down: outli
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, an empty radio's or checkbox's ring, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, an empty radio's or checkbox's ring, a field's or a code box's outline (`border-field`), a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too. An outline button keeps the light line (`border-input`): its words say what it is.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
@@ -438,5 +440,6 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - Colored marks and words are soft until the device asks for more contrast. The main action is the text color.
 - Facts lines are mono, uppercase where the role says so. The line over a title is the `Eyebrow` chip in the text face.
 - A switch is a pill; meters are 6px with 3px corners.
+- A code's boxes are 56px tall, a little taller than wide, in two groups of three that together are as wide as the button under them: a code is drawn as tall boxes everywhere, and at a field's 44px they read as squares.
 - A caption directly under a full-width button is centered.
 - Characters and flags are pictures with their own shapes and blank margins.

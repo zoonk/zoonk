@@ -86,7 +86,7 @@ function CompletionLinks({ pending }: { pending: boolean }) {
             <NextLabel nextLesson={nextLesson} />
           </PendingMainAction>
         ) : (
-          <EnterLink href={nextLessonHref ?? routes.exit} icon={null} link={LinkComponent}>
+          <EnterLink href={nextLessonHref ?? routes.exit} link={LinkComponent}>
             <NextLabel nextLesson={nextLesson} />
           </EnterLink>
         )}

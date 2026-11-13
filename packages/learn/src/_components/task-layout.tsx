@@ -1,3 +1,4 @@
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
@@ -5,7 +6,8 @@ import { PageSectionTitle } from "./page";
 
 export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4";
 
-const TASK_BAR_ROW_CLASS = cn(TASK_COLUMN_CLASS, "lg:max-w-none lg:px-6");
+/** A bar's buttons have the task's gutter on all four sides: 16px, and 24px from `lg`. */
+const TASK_BAR_ROW_CLASS = cn(TASK_COLUMN_CLASS, "lg:max-w-none lg:p-6");
 
 export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -24,31 +26,15 @@ export const TASK_HEADER_SIDE_CLASS = {
   start: "flex min-w-fit flex-1 basis-0 justify-start",
 } as const;
 
-export const BAR_PADDING_CLASS = "pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]";
+/** The bar's room over and under its buttons, for a foot that sits level with it. */
+export const BAR_PADDING_CLASS = "pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:py-6";
 
-export const ACTION_BAR_SURFACE_CLASS = "bg-background border-border sticky bottom-0 z-20 border-t";
-
-export function TaskActionBar({ children, className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn(ACTION_BAR_SURFACE_CLASS, className)} data-slot="task-action-bar" {...props}>
-      <div
-        className={cn(TASK_BAR_ROW_CLASS, "flex flex-col gap-2 lg:items-end", BAR_PADDING_CLASS)}
-      >
-        {children}
-      </div>
-    </div>
-  );
+/** The kit's bottom bar on a task's column. */
+export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
+  return <BottomBar className={TASK_BAR_ROW_CLASS} data-slot="task-action-bar" {...props} />;
 }
 
-export function TaskActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("flex w-full flex-wrap items-center gap-2 lg:justify-end", className)}
-      data-slot="task-actions"
-      {...props}
-    />
-  );
-}
+export { BottomBarActions as TaskActions } from "@zoonk/ui/components/bottom-bar";
 
 export const TASK_WRAPPING_ACTION_CLASS =
   "h-auto min-h-11 max-w-full shrink py-2 text-center text-balance whitespace-normal";
@@ -80,7 +66,7 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 
 /**
  * `--task-bar` is the header row's height (36px buttons in `py-2`, `py-3` from `xl`) and
- * `--task-aside-bottom` the action bar's row (73px), or the buddy's dock when it's taller.
+ * `--task-aside-bottom` the action bar's row (93px), or the buddy's dock when it's taller.
  * Lay out what depends on the aside with the `with-aside` and `without-aside` variants, not `lg`:
  * once the learner collapses it from the header (`TaskHeaderSide`), the task lays out as below `lg`.
  */
@@ -88,7 +74,7 @@ export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAside
   return {
     className: cn(
       "group/task with-aside:pr-(--task-aside)",
-      "lg:[--task-aside-bottom:max(4.5625rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
+      "lg:[--task-aside-bottom:max(5.8125rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,

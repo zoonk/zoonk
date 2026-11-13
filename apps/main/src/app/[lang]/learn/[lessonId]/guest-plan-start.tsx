@@ -5,7 +5,7 @@ import { useCourseStart } from "@/components/public/use-course-start";
 import { Link } from "@/i18n/navigation";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
-import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
@@ -17,7 +17,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
 
   return (
     <>
-      <EnterButton busy={pending} className="w-full" onClick={startCourse} {...FORWARD_ICON}>
+      <EnterButton busy={pending} className="w-full" onClick={startCourse}>
         {t("Build my plan")}
       </EnterButton>
 
@@ -45,7 +45,7 @@ export function GuestPlanStart({ goal, start }: { goal: string; start: CourseSta
   }
 
   return (
-    <EnterLink className="w-full" href={getGoalStartHref(goal)} icon={null} link={Link}>
+    <EnterLink className="w-full" href={getGoalStartHref(goal)} link={Link}>
       {t("Build my plan")}
     </EnterLink>
   );

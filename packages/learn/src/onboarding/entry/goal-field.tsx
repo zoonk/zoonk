@@ -1,6 +1,5 @@
 "use client";
 
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
@@ -177,7 +176,6 @@ export function GoalFieldSubmit({
       enter="host"
       size="lg"
       type="submit"
-      {...FORWARD_ICON}
       {...props}
     >
       {children}

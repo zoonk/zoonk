@@ -7,7 +7,6 @@ import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { EnterButton } from "../../_components/enter-button";
@@ -99,13 +98,7 @@ function RevealActions({
 
         {/* A submit, so a press before the page hydrates starts once it does. */}
         <form action={() => onStart()} className="contents">
-          <EnterButton
-            busy={pending}
-            className="flex-2 lg:flex-none"
-            icon={<PlayIcon aria-hidden="true" />}
-            size="lg"
-            type="submit"
-          >
+          <EnterButton busy={pending} className="flex-2 lg:flex-none" size="lg" type="submit">
             {started ? t("Continue") : t("Start")}
           </EnterButton>
         </form>
