@@ -45,9 +45,7 @@ msgstr "Strona główna"
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 #: src/app/[lang]/(home)/_components/example-card.tsx
-#: src/components/catalog/course-plan-window.tsx
 #: src/components/learn/section-layout.tsx
-#: src/components/pricing/pricing-covers.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Dziś"
@@ -66,14 +64,12 @@ msgstr "Strona główna"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 #: src/components/catalog/catalog-not-found.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Przeglądaj kursy"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
@@ -465,6 +461,11 @@ msgid "Search or ask…"
 msgstr "Szukaj lub zapytaj…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "zamknij"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "3ATcmQ"
 msgid "move"
 msgstr "poruszaj się"
@@ -473,11 +474,6 @@ msgstr "poruszaj się"
 msgctxt "-9qP4Y"
 msgid "open"
 msgstr "otwórz"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-msgctxt "BSij1a"
-msgid "close"
-msgstr "zamknij"
 
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -489,21 +485,14 @@ msgstr "Menu użytkownika"
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/app/[lang]/(home)/_components/exam-section.tsx
+#: src/components/pricing/plus-adds.tsx
 #: src/components/pricing/plus-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
 msgstr "Plus"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
-#: src/components/catalog/chapter-strip.tsx
-msgctxt "BGwIJy"
-msgid "Chapter {number} of {total}"
-msgstr "Rozdział {number} z {total}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "t_2u2K"
 msgid "{count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "{count, plural, one {# krótka lekcja} few {# krótkie lekcje} other {# krótkich lekcji}}"
@@ -512,18 +501,27 @@ msgstr "{count, plural, one {# krótka lekcja} few {# krótkie lekcje} other {# 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-#: src/components/catalog/plan-workload.tsx
 msgctxt "iqLF8D"
 msgid "Lessons"
 msgstr "Lekcje"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "BGwIJy"
+msgid "Chapter {number} of {total}"
+msgstr "Rozdział {number} z {total}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
 #: src/app/[lang]/(home)/_components/career-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "n7xPkB"
 msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, one {# lekcja} few {# lekcje} other {# lekcji}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-course-start.tsx
+msgctxt "Ethu_P"
+msgid "Keep going with {course}"
+msgstr "Ucz się dalej: {course}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 msgctxt "QNnsRX"
@@ -542,15 +540,9 @@ msgid "Start the lesson"
 msgstr "Zacznij lekcję"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Zacznij tę lekcję"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
-msgctxt "h4RNnR"
-msgid "{count, plural, one {# idea} other {# ideas}}"
-msgstr "{count, plural, one {# zagadnienie} few {# zagadnienia} other {# zagadnień}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
@@ -565,51 +557,24 @@ msgid "{count, plural, one {# lesson} other {# lessons}} · {duration}"
 msgstr "{count, plural, one {# lekcja} few {# lekcje} other {# lekcji}} · {duration}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
-msgctxt "qCHG2P"
-msgid "Chapter {number}: {chapter}"
-msgstr "Rozdział {number}: {chapter}"
+msgctxt "DybWe7"
+msgid "Lessons in {chapter}"
+msgstr "Lekcje w rozdziale: {chapter}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
 msgctxt "AvS60l"
 msgid "Go to the chapter"
 msgstr "Przejdź do rozdziału"
 
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-msgctxt "f-_t_p"
-msgid "This lesson is part of the {course} course."
-msgstr "Ta lekcja jest częścią kursu: {course}."
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "TEMmOs"
-msgid "Example plan"
-msgstr "Przykładowy plan"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "JZFs07"
-msgid "An example. Your plan follows your answers, so it can start later and end sooner."
-msgstr "To przykład. Twój plan uwzględnia twoje odpowiedzi, więc może zacząć się od dalszych lekcji i skończyć wcześniej."
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-#: src/components/pricing/plus-pricing.tsx
-msgctxt "npIkqE"
-msgid "Start free, no account needed."
-msgstr "Zacznij za darmo, bez konta."
+msgctxt "gd9eyd"
+msgid "Its lessons get ready when you start."
+msgstr "Przygotujemy lekcje, gdy zaczniesz."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "XUON71"
-msgid "Start here and Zoonk writes its lessons for your level."
-msgstr "Zacznij tutaj, a Zoonk przygotuje lekcje tego rozdziału na twoim poziomie."
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "LxAk-r"
-msgid "Your plan from this chapter"
-msgstr "Twój plan od tego rozdziału"
+msgctxt "lwelz-"
+msgid "Start from this chapter"
+msgstr "Zacznij od tego rozdziału"
 
 #. Heading over the ways to start a plan. “your level” is what the learner already knows.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
@@ -619,9 +584,9 @@ msgid "Start today, at your level"
 msgstr "Zacznij dziś na swoim poziomie"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "H_k_3P"
-msgid "It follows the course from here, at your pace, with reviews before you forget."
-msgstr "Od tego miejsca prowadzi cię przez kurs w twoim tempie, z powtórkami, zanim zapomnisz materiał."
+msgctxt "pnV8VJ"
+msgid "You get a plan for each day, from this chapter to the end of the course."
+msgstr "Dostaniesz plan na każdy dzień, od tego rozdziału do końca kursu."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
@@ -666,16 +631,6 @@ msgctxt "SFqn9B"
 msgid "Try a lesson"
 msgstr "Wypróbuj lekcję"
 
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "VO_HQW"
-msgid "Your plan until {date}, at {time} a day"
-msgstr "Twój plan do {date}, po {time} dziennie"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "ZSMfHW"
-msgid "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch"
-msgstr "Twój plan: {minutes, plural, one {# minuta} many {# minut} other {# minuty}} dziennie, od podstaw"
-
 #. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "rEPdIs"
@@ -691,17 +646,11 @@ msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# rozdział} few {# rozdziały} many {# rozdziałów} other {# rozdziału}}"
 
-#. After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.
+#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk gets the lessons ready, so use a different verb for each.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "5RluHj"
-msgid "{count, plural, one {# lesson written so far} other {# lessons written so far}}"
-msgstr "Przygotowano dotąd {count, plural, one {# lekcję} few {# lekcje} other {# lekcji}}"
-
-#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk writes, so use a different verb for each.
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "bdvt9X"
-msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "Gdy ułożysz plan, Zoonk przygotuje dla ciebie rozdziały i lekcje tego kursu, zaczynając na twoim poziomie."
+msgctxt "yjO9gi"
+msgid "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know."
+msgstr "Gdy ułożysz plan, Zoonk przygotuje lekcje tego kursu, zaczynając od tego, co już wiesz."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -727,22 +676,6 @@ msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Kursy"
 
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-msgctxt "xbvV6c"
-msgid "{count, plural, one {# chapter left out} other {# chapters left out}}"
-msgstr "{count, plural, one {# rozdział się nie zmieścił} few {# rozdziały się nie zmieściły} other {# rozdziałów się nie zmieściło}}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-#: src/components/catalog/area-study.ts
-msgctxt "IldniG"
-msgid "Left out"
-msgstr "Nie mieści się"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-msgctxt "ArogzQ"
-msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
-msgstr "{count, plural, =0 {# z {total, number} lekcji} other {# z {total, number} lekcji}}"
-
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
 msgid "Show fewer chapters"
@@ -753,53 +686,33 @@ msgctxt "IiIBmN"
 msgid "{count, plural, one {Show # more chapter} other {Show # more chapters}}"
 msgstr "{count, plural, one {Pokaż jeszcze # rozdział} few {Pokaż jeszcze # rozdziały} many {Pokaż jeszcze # rozdziałów} other {Pokaż jeszcze # rozdziału}}"
 
-#. Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.
+#. Under the name of a course's level, such as Intermediate, whose chapters aren't listed yet: they are ready by the time a learner reaches that level.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "H7iemn"
-msgid "Not written yet. Zoonk writes its chapters as learners reach it."
-msgstr "Treść nie jest jeszcze gotowa. Zoonk przygotowuje rozdziały tego poziomu, gdy ktoś do niego dociera."
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "wieA_m"
-msgid "week {week, number}"
-msgstr "tydzień {week, number}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "rci8_D"
-msgid "weeks {first, number}–{last, number}"
-msgstr "tygodnie {first, number}–{last, number}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-msgctxt "434gtt"
-msgid "Week {week, number}"
-msgstr "Tydzień {week, number}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-#: src/components/catalog/area-study.ts
-msgctxt "v1x8m2"
-msgid "quick lessons and lessons written as you reach them"
-msgstr "szybkie lekcje i lekcje przygotowywane w miarę twoich postępów"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-msgctxt "YFq7jF"
-msgid "quick lessons"
-msgstr "szybkie lekcje"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-#: src/components/catalog/area-study.ts
-msgctxt "Xa1Q8P"
-msgid "lessons written as you reach them"
-msgstr "lekcje przygotowywane w miarę twoich postępów"
+msgctxt "dQiHV0"
+msgid "Ready when you get there."
+msgstr "Rozdziały będą gotowe, gdy tu dotrzesz."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "6CUqWy"
-msgid "Learn {course} in short lessons, with a plan that starts at your level and fits your schedule. Start free. {description}"
-msgstr "Rozpocznij naukę: {course}. Krótkie lekcje i plan dopasowany do twojego poziomu i rozkładu dnia. Zacznij za darmo. {description}"
+msgctxt "kIwawn"
+msgid "{description} An online course in short lessons, with a study plan for each day that starts from what you already know. Start free."
+msgstr "{description} Kurs online z krótkimi lekcjami i planem nauki na każdy dzień, dopasowanym do tego, co już wiesz. Zacznij bezpłatnie."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "gyGolN"
-msgid "Learn {course}"
-msgstr "Rozpocznij naukę: {course}"
+msgctxt "77gc9A"
+msgid "Learn {course} online in short lessons, with a study plan for each day that starts from what you already know. Start free."
+msgstr "Kurs online: {course}. Krótkie lekcje i plan nauki na każdy dzień, dopasowany do tego, co już wiesz. Zacznij bezpłatnie."
+
+#. A search result's title for an exam's page. {course} is the exam's name, such as “SAT” or “ENEM”. Use the words people in your country type when they look for help studying for an exam.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "t9ye2P"
+msgid "{course} prep: study plan and lessons"
+msgstr "{course}: przygotowanie do egzaminu, plan nauki i lekcje"
+
+#. A search result's title for a course's page. {course} is the course's name. Use the words people in your country type when they look for a course on the internet.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "_qSEiw"
+msgid "Learn {course}: online course"
+msgstr "{course}: kurs online"
 
 #: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
 msgctxt "zQvVDJ"
@@ -822,14 +735,15 @@ msgid "Course categories"
 msgstr "Kategorie kursów"
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "zJxO2f"
-msgid "No courses"
-msgstr "Brak kursów"
+msgctxt "g3A2Pq"
+msgid "No courses here yet"
+msgstr "Nie ma tu jeszcze kursów"
 
+#. Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "Wc7aau"
-msgid "No courses available yet."
-msgstr "Nie ma jeszcze dostępnych kursów."
+msgctxt "ARz6VZ"
+msgid "Write what you want to learn in the box above, and Zoonk builds a plan for it."
+msgstr "Wpisz w polu powyżej, czego chcesz się nauczyć, a Zoonk ułoży ci plan nauki."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
@@ -843,6 +757,7 @@ msgstr "Coś poszło nie tak. Spróbuj ponownie."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -856,9 +771,15 @@ msgid "Start from a course, or tell Zoonk what you're getting ready for."
 msgstr "Zacznij od kursu albo powiedz Zoonkowi, do czego się przygotowujesz."
 
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
-msgctxt "WgPMAP"
-msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
-msgstr "Poznaj wszystkie kursy Zoonka i ucz się, czego chcesz, z pomocą AI. Odkryj interaktywne lekcje z nauk przyrodniczych, matematyki, technologii i wielu innych dziedzin."
+msgctxt "Fw97dy"
+msgid "Online courses to learn with AI: science, math, languages, exam prep and more. Pick one and get a study plan for each day, in short interactive lessons. Start free."
+msgstr "Kursy online z AI: nauki przyrodnicze, matematyka, języki, przygotowanie do egzaminów i nie tylko. Wybierz kurs i otrzymaj plan nauki na każdy dzień z krótkimi, interaktywnymi lekcjami. Zacznij bezpłatnie."
+
+#. A search result's title for the list of every course.
+#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
+msgctxt "OvhCe0"
+msgid "Online courses with a study plan for each day"
+msgstr "Kursy online z planem nauki na każdy dzień"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 msgctxt "yAw6p8"
@@ -883,7 +804,6 @@ msgstr "Powiedz nam, czego chcesz się nauczyć, a zaplanujemy każdy dzień aż
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/mock/[blockId]/page.tsx
-#: src/components/pricing/pricing-covers.tsx
 msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "Egzamin próbny"
@@ -954,9 +874,9 @@ msgid "No answer was saved."
 msgstr "Nie zapisano odpowiedzi."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Twoje pytania z wcześniejszych wersji kursów. Przygotowaliśmy lekcje na nowo, więc pytania zostają tutaj, by można było do nich wrócić."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "Twoje pytania z lekcji, które później się zmieniły."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -1198,9 +1118,14 @@ msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You ca
 msgstr "Na razie {minutes, plural, one {# minuta} many {# minut} other {# minuty}} dziennie. Możesz to zmienić w kolejnych krokach."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/(home)/page.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
+#: src/components/public/public-visitor-actions.tsx
 #: src/components/public/start-plan-link.tsx
+#: src/components/public/visitor-start.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Ułóż mój plan"
@@ -1220,6 +1145,14 @@ msgstr "Rozpocznij kurs: {course}"
 msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "Rozpocznij kurs"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/start-free-note.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "Zacznij za darmo, bez konta."
 
 #: src/app/[lang]/(app)/(onboarding)/start/page.tsx
 msgctxt "j8Jfmw"
@@ -1568,10 +1501,7 @@ msgctxt "wBf7zr"
 msgid "We couldn't cancel Plus. Try again or email {email}."
 msgstr "Nie udało się zrezygnować z Plus. Spróbuj ponownie lub napisz na {email}."
 
-#. Zoonk's support address; your language may have its own.
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-#: src/components/pricing/plus-questions.tsx
 msgctxt "ieflON"
 msgid "hello@zoonk.com"
 msgstr "hello@zoonk.com"
@@ -2247,11 +2177,11 @@ msgctxt "s-aYFw"
 msgid "What's left comes first the next day. If a date changes, your plan tells you."
 msgstr "Następnego dnia zaczynasz od tego, co zostało. Jeśli zmieni się termin, plan da ci znać."
 
-#. In Brazilian Portuguese: “Traz de volta antes de você esquecer”.
+#. In Brazilian Portuguese: “Revisa antes de você esquecer”.
 #: src/app/[lang]/(home)/_components/every-plan.tsx
-msgctxt "oUlIsv"
-msgid "It brings things back before you forget"
-msgstr "Przypomina, zanim zapomnisz"
+msgctxt "Mpxf-A"
+msgid "It reviews before you forget"
+msgstr "Powtórki, zanim zapomnisz"
 
 #. In Brazilian Portuguese: “Revisões rápidas na hora certa, e cada erro volta para você praticar até acertar.”
 #: src/app/[lang]/(home)/_components/every-plan.tsx
@@ -2259,22 +2189,17 @@ msgctxt "iegI6Q"
 msgid "Quick reviews at the right time, and every mistake comes back for you to practice until you get it right."
 msgstr "Krótkie powtórki w odpowiednim momencie. Do każdego błędu wracasz w ćwiczeniach, aż odpowiesz poprawnie."
 
-#. Zu is the study buddy's name. In Brazilian Portuguese: “Travou? Pergunte para Zu”.
+#. In Brazilian Portuguese: “Travou? É só perguntar”.
 #: src/app/[lang]/(home)/_components/every-plan.tsx
-msgctxt "eeEgWZ"
-msgid "Stuck? Ask Zu"
-msgstr "Coś niejasne? Zapytaj Zu"
+msgctxt "yUieOB"
+msgid "Stuck? Just ask"
+msgstr "Nie wiesz, co dalej? Po prostu zapytaj"
 
-#. Zu is the study buddy's name; the question is the one the learner is answering. In Brazilian Portuguese: “Zu, seu parceiro de estudos, explica ali mesmo na questão, do jeito mais simples que você precisar.”
+#. The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na questão, do jeito mais simples que você precisar.”
 #: src/app/[lang]/(home)/_components/every-plan.tsx
-msgctxt "M1vnV7"
-msgid "Zu, your study buddy, explains right there in the question, as simply as you need."
-msgstr "Zu, twój kumpel do nauki, tłumaczy wszystko przy samym pytaniu, tak prosto, jak potrzebujesz."
-
-#: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Dostępne w pakiecie Plus"
+msgctxt "m1tYsa"
+msgid "We explain right there in the question, as simply as you need."
+msgstr "Wyjaśniamy przy samym pytaniu, tak prosto, jak potrzebujesz."
 
 #: src/app/[lang]/(home)/_components/exam-section.tsx
 msgctxt "cpAOYg"
@@ -2287,26 +2212,22 @@ msgctxt "Psgvhk"
 msgid "Estimated score"
 msgstr "Szacowany wynik"
 
+#. Before the topics a mock exam's answers were mostly right on. In Brazilian Portuguese: “<b>Indo bem:</b> {topics}”.
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "RIwxqi"
-msgid "<b>Solid:</b> {topics}"
-msgstr "<b>Utrwalone:</b> {topics}"
+msgctxt "-MT1aQ"
+msgid "<b>Going well:</b> {topics}"
+msgstr "<b>Dobrze ci idzie:</b> {topics}"
 
 #: src/app/[lang]/(home)/_components/exam-section.tsx
 msgctxt "28PXed"
 msgid "<b>To review:</b> {topics}"
 msgstr "<b>Do powtórki:</b> {topics}"
 
-#. In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.
+#. In Brazilian Portuguese: “<b>7 erros</b> guardados para você praticar”.
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "Qfdzfp"
-msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook"
-msgstr "Zapisano <b>{count, plural, one {# błąd} few {# błędy} many {# błędów} other {# błędu}}</b> w twoim zeszycie błędów"
-
-#: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "mM0WGu"
-msgid "The score is only an estimate, made from your answers. Mock exams are available with Plus."
-msgstr "To tylko przybliżony wynik na podstawie twoich odpowiedzi. Egzaminy próbne są dostępne w pakiecie Plus."
+msgctxt "B0EkLo"
+msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> saved for you to practice"
+msgstr "Zapisano <b>{count, plural, one {# błąd} few {# błędy} many {# błędów} other {# błędu}}</b> do przećwiczenia"
 
 #. A section label for goals like school-leaving, entrance and civil service exams. In Brazilian Portuguese: “Provas e concursos”.
 #: src/app/[lang]/(home)/_components/exam-section.tsx
@@ -2350,9 +2271,9 @@ msgid "Tell us in your own words and answer a few quick questions. Then just fol
 msgstr "Opowiedz o nim własnymi słowami i odpowiedz na kilka krótkich pytań. Potem wystarczy trzymać się planu na każdy dzień."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "60PJVp"
-msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
-msgstr "Zaczynasz za darmo, bez konta. Na bezpłatnym koncie realizujesz {goals, plural, one {jeden cel} few {# cele} other {# celów}} jednocześnie, z limitem lekcji i wiadomości do Zu. Jeśli przygotowujesz się do egzaminu, test diagnostyczny, plan i {days, plural, =7 {pierwszy tydzień} one {pierwszy dzień} few {pierwsze # dni} other {pierwszych # dni}} nauki są bezpłatne. Nie potrzebujesz karty płatniczej."
+msgctxt "RsvuP8"
+msgid "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month across all your goals, exams included, with {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed."
+msgstr "Tak. Zaczynasz bezpłatnie, bez konta. Na bezpłatnym koncie dostajesz {lessons, plural, one {# lekcję} few {# lekcje} other {# lekcji}} miesięcznie na wszystkie cele łącznie, w tym egzaminy, i możesz mieć {goals, plural, one {jeden cel} other {do # celów}} naraz. Nie potrzebujesz karty."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "NNtrw6"
@@ -2360,26 +2281,26 @@ msgid "Is Zoonk free?"
 msgstr "Czy Zoonk jest bezpłatny?"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "vD4YoD"
-msgid "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime."
-msgstr "Plus to subskrypcja. Daje dostęp do wszystkich celów i lekcji, pełnego planu aż do dnia egzaminu, egzaminów próbnych z takim samym limitem czasu jak na prawdziwym egzaminie i pomocy Zu zawsze, gdy jej potrzebujesz. Zwiększa też limity rozmów treningowych. Cały plan widzisz przed zapłatą, a z subskrypcji możesz zrezygnować w każdej chwili."
+msgctxt "FeMMSb"
+msgid "Every lesson and every goal, with no monthly limit. For an exam, that's your whole plan up to exam day, with mock exams timed like the real one. You also get help whenever you're stuck and more speaking practice. You see your whole plan before you pay, and you can cancel anytime."
+msgstr "Wszystkie lekcje i cele, bez miesięcznego limitu. Jeśli przygotowujesz się do egzaminu, dostajesz cały plan aż do dnia egzaminu oraz egzaminy próbne z takim samym limitem czasu jak na właściwym egzaminie. Dostajesz też pomoc, gdy utkniesz, i więcej okazji do ćwiczenia mówienia. Cały plan widzisz przed zapłatą i możesz zrezygnować w dowolnej chwili."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/public/start-free-note.tsx
 msgctxt "iES0bT"
 msgid "See prices"
 msgstr "Zobacz ceny"
 
-#. In Brazilian Portuguese: “O que o Plus tem a mais?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "-VOkdd"
-msgid "What does Plus add?"
-msgstr "Co daje Plus?"
+msgctxt "tk_pDR"
+msgid "What do I get if I subscribe?"
+msgstr "Co dostanę w ramach subskrypcji?"
 
-#. “Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "NlHQkl"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”."
-msgstr "Lekcje powstają z pomocą najnowszych modeli AI i są sprawdzane, zanim do ciebie trafią: sprawdzamy ich jakość w różnych testach, a inne modele oceniają treść. Obejmują przedmioty i tematy z twojego egzaminu. Błędy zdarzają się rzadko, ale są możliwe. Widzisz coś nie tak? Wybierz „Zgłoś problem”."
+msgctxt "yyFZMH"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
+msgstr "Tworzymy lekcje z pomocą najnowszych modeli AI i sprawdzamy je, zanim do ciebie trafią: oceniamy ich jakość w kilku testach, a inne modele sprawdzają treść. Obejmują przedmioty i tematy z twojego egzaminu. Błędy zdarzają się rzadko, ale są możliwe. Coś się nie zgadza? Zgłoś to bezpośrednio w lekcji, a my to sprawdzimy."
 
 #. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2399,9 +2320,9 @@ msgid "Is there an app?"
 msgstr "Czy jest aplikacja?"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "Prj5qS"
-msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want."
-msgstr "To, co zostanie, trafia na początek planu na następny dzień. Jeśli zmieni się termin, plan cię o tym poinformuje. Możesz też w każdej chwili zmienić swój dzienny czas nauki."
+msgctxt "sD9IL-"
+msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change how long you study each day whenever you want."
+msgstr "To, co zostanie, będzie pierwsze w planie na następny dzień. Jeśli zmieni się jakaś data, plan cię o tym poinformuje. W każdej chwili możesz też zmienić dzienny czas nauki."
 
 #. In Brazilian Portuguese: “E se eu faltar um dia?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2427,31 +2348,15 @@ msgid "Frequently asked questions"
 msgstr "Najczęściej zadawane pytania"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kxCNVz"
-msgid "Still have questions? Write to <email></email>."
-msgstr "Masz jeszcze pytania? Napisz na <email></email>."
+msgctxt "vtHw2p"
+msgid "Still have questions? <link>Ask us</link>."
+msgstr "Masz jeszcze pytania? <link>Zapytaj nas</link>."
 
 #. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
 msgid "<line>{exam}.</line> <line>{language, select, spanish {Speak Spanish.} other {Speak English.}}</line> <line>Switch careers.</line> <more>Or anything else.</more>"
 msgstr "<line>{exam}.</line> <line>{language, select, spanish {Mówić po hiszpańsku.} other {Mówić po angielsku.}}</line> <line>Zmienić zawód.</line> <more>Albo co zechcesz.</more>"
-
-#: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "planPhases.6RRX7X"
-msgid "Foundations"
-msgstr "Podstawy"
-
-#: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "xIp2Nz"
-msgid "day {number, number}"
-msgstr "dzień {number, number}"
-
-#. Which of the example plan's phases it's in, under a meter of its phases.
-#: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "dQg5Ol"
-msgid "{number, number} of {total, number}"
-msgstr "{number, number} z {total, number}"
 
 #. The landing's subhead, under a headline listing goals. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
@@ -2599,30 +2504,21 @@ msgstr "{subjects}. Napisz, co chcesz zrozumieć, a dostaniesz plan z rozdziała
 
 #. In Brazilian Portuguese: “Por curiosidade, um curso do zero.”
 #: src/app/[lang]/(home)/_components/topic-section.tsx
-msgctxt "90-P9S"
-msgid "Just curious? A course from scratch."
-msgstr "Coś cię ciekawi? Kurs od zera."
+msgctxt "Sb5-4T"
+msgid "Just curious? A course from scratch."
+msgstr "Z ciekawości? Kurs od podstaw."
 
-#. The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”
+#. The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano de estudos para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "ZkT2Hl"
-msgid "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know. Start free, no account needed."
-msgstr "Podaj Zoonkowi swój cel i datę. Ułoży plan na każdy dzień, dopasowany do czasu, jaki masz, zaczynając od tego, co już wiesz. Zacznij za darmo, bez konta."
+msgctxt "1WFn_i"
+msgid "Tell Zoonk your goal and the date. It builds a study plan for each day that fits your time and starts from what you already know. Start free, no account needed."
+msgstr "Podaj Zoonkowi swój cel i termin. Ułoży plan nauki na każdy dzień, dopasowany do tego, ile masz czasu i co już wiesz. Zacznij bezpłatnie, bez konta."
 
-#. The landing's title. In Brazilian Portuguese: “Zoonk: um plano para cada dia até o seu objetivo”.
+#. The landing's title. In Brazilian Portuguese: “Zoonk: um plano de estudos para cada dia até o seu objetivo”.
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "lQh01O"
-msgid "Zoonk: A plan for each day, all the way to your goal"
-msgstr "Zoonk: plan na każdy dzień w drodze do celu"
-
-#: src/app/[lang]/(home)/page.tsx
-#: src/components/auth-gate.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-pricing.tsx
-#: src/components/public/public-visitor-actions.tsx
-msgctxt "i7IHHZ"
-msgid "Start free"
-msgstr "Zacznij za darmo"
+msgctxt "_TPRmU"
+msgid "Zoonk: A study plan for each day, all the way to your goal"
+msgstr "Zoonk: plan nauki na każdy dzień, krok po kroku do celu"
 
 #: src/app/[lang]/account-deleted-toast.tsx
 msgctxt "H30ctc"
@@ -2870,26 +2766,21 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Otwieramy twoją lekcję"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "Możesz zacząć już teraz"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, one {Powtórz # zagadnienie} few {Powtórz # zagadnienia} other {Powtórz # zagadnień}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "O tej lekcji"
-
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "Możesz zacząć coś innego"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "Na czas oczekiwania"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, one {Powtórz # zagadnienie} few {Powtórz # zagadnienia} other {Powtórz # zagadnień}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
@@ -2897,24 +2788,29 @@ msgid "Your lesson is ready"
 msgstr "Twoja lekcja jest gotowa"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Twoja lekcja jest gotowa. Zacznij, kiedy chcesz."
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "Przygotowujemy twoją lekcję"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Zwykle trwa to kilka minut. Lekcja otworzy się tutaj, gdy tylko będzie gotowa."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "Ta lekcja nie jest jeszcze gotowa"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Ta lekcja nie jest jeszcze przygotowana"
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "Nie udało nam się przygotować tej lekcji"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk przygotuje ją, gdy zaczniesz. Zajmuje to kilka minut."
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "To zajmuje kilka minut. Pracujemy dalej, nawet jeśli wyjdziesz."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "Przygotuj lekcję"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"
@@ -2942,30 +2838,37 @@ msgid "A study plan"
 msgstr "Plan nauki"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "TTuJ75"
-msgid "~{time}"
-msgstr "~{time}"
+msgctxt "t9b6Rt"
+msgid "You get your own plan for the same subject. It starts from what you already know."
+msgstr "Dostaniesz własny plan nauki tego samego przedmiotu. Zacznie się od tego, co już wiesz."
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "4zm4MM"
-msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
-msgstr "Dostaniesz własny plan nauki tego samego przedmiotu, dopasowany do twojego tempa. Kilka pytań pozwoli pominąć to, co już znasz."
+msgctxt "wInDqV"
+msgid "Someone shared their study plan with you"
+msgstr "Ktoś udostępnił ci swój plan nauki"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "ql_IXy"
-msgid "A study plan someone shared with you"
-msgstr "Plan nauki, który ktoś ci udostępnił"
+msgctxt "Gi84AL"
+msgid "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed."
+msgstr "Zoonk ułoży dla ciebie plan nauki tego samego przedmiotu, dopasowany do czasu, który masz każdego dnia. Zacznij bezpłatnie, bez konta."
 
+#. Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "8jQqTq"
-msgid "Start from this plan"
-msgstr "Zacznij od tego planu"
+msgctxt "_vV4SU"
+msgid "Start my own plan"
+msgstr "Rozpocznij własny plan"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "7ip5wV"
-msgid "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
-msgstr "~{time} nauki · {phases, plural, one {# etap} few {# etapy} other {# etapów}} · {skills, plural, one {# umiejętność} other {# umiejętności}}"
+msgctxt "S2_N87"
+msgid "~{time} of study"
+msgstr "~{time} nauki"
+
+#. Heading over the list of a shared study plan's parts. “it” is the plan.
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "3g1S8B"
+msgid "What's in it"
+msgstr "Zawartość planu"
 
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "3aNmDX"
@@ -3135,25 +3038,10 @@ msgctxt "77LoTm"
 msgid "Start something new"
 msgstr "Zacznij coś nowego"
 
-#: src/components/catalog/area-study.ts
-msgctxt "ug2Ory"
-msgid "{count, plural, one {# quick lesson} other {# quick lessons}}"
-msgstr "{count, plural, one {# szybka lekcja} few {# szybkie lekcje} many {# szybkich lekcji} other {# szybkiej lekcji}}"
-
-#: src/components/catalog/area-study.ts
-msgctxt "T9NkkS"
-msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
-msgstr "{fitting, plural, =0 {# z {total, number} lekcji mieści się} few {# z {total, number} lekcji mieszczą się} other {Mieści się # z {total, number} lekcji}}"
-
-#: src/components/catalog/area-study.ts
-msgctxt "XP3dEr"
-msgid "{count, plural, one {+ # quick lesson} other {+ # quick lessons}}"
-msgstr "{count, plural, one {+ # szybka lekcja} few {+ # szybkie lekcje} many {+ # szybkich lekcji} other {+ # szybkiej lekcji}}"
-
-#: src/components/catalog/area-study.ts
-msgctxt "pJM3om"
-msgid "{time} of study"
-msgstr "{time} nauki"
+#: src/components/auth-gate.tsx
+msgctxt "i7IHHZ"
+msgid "Start free"
+msgstr "Zacznij za darmo"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"
@@ -3161,89 +3049,68 @@ msgid "Back to top"
 msgstr "Wróć na górę"
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "Q4d9LI"
-msgid "With Zoonk, your plan starts at this chapter and fits your schedule."
-msgstr "W Zoonku zaczynasz od tego rozdziału, a twój plan jest dopasowany do twojego rozkładu dnia."
+msgctxt "rU0EEc"
+msgid "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter."
+msgstr "Zoonk układa ci plan nauki na każdy dzień. Plan uwzględnia to, ile masz czasu, i zaczyna się od tego rozdziału."
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "Deu0Hn"
-msgid "With Zoonk, your plan starts at your level and fits your schedule."
-msgstr "W Zoonku zaczynasz na swoim poziomie, a twój plan jest dopasowany do twojego rozkładu dnia."
+msgctxt "ISy5Wj"
+msgid "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know."
+msgstr "Zoonk układa ci plan nauki na każdy dzień aż do egzaminu. Plan uwzględnia to, ile masz czasu, i zaczyna się od tego, co już wiesz."
 
+#: src/components/catalog/catalog-hero.tsx
+msgctxt "zfy4zA"
+msgid "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know."
+msgstr "Zoonk układa ci plan nauki na każdy dzień. Plan uwzględnia to, ile masz czasu, i zaczyna się od tego, co już wiesz."
+
+#. Heading over a map showing where this chapter sits in its course. {course} is the course's name.
 #: src/components/catalog/chapter-strip.tsx
-msgctxt "ZmNtfT"
-msgid "Where this chapter sits in the course"
-msgstr "Miejsce tego rozdziału w kursie"
+msgctxt "ZUPmG0"
+msgid "Part of {course}"
+msgstr "Część kursu: {course}"
 
 #: src/components/catalog/chapter-strip.tsx
 msgctxt "7-fN2b"
 msgid "After this chapter"
 msgstr "Po tym rozdziale"
 
-#: src/components/catalog/course-exam-eyebrow.tsx
+#: src/components/catalog/course-exam-date.tsx
 msgctxt "U-M99k"
 msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
 msgstr "Egzamin około {dates} · {days, plural, =0 {dziś} one {pozostało około # dnia} other {pozostało około # dni}}"
 
-#: src/components/catalog/course-exam-eyebrow.tsx
+#: src/components/catalog/course-exam-date.tsx
 msgctxt "_of7g2"
 msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
 msgstr "Egzamin {dates} · {days, plural, =0 {dziś} one {pozostał # dzień} few {pozostały # dni} other {pozostało # dni}}"
 
+#. Heading over the lessons a new learner would study on the first day of this course.
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "aaZjUM"
-msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
-msgstr "{weeks, plural, one {<big>~#</big> tydzień} few {<big>~#</big> tygodnie} many {<big>~#</big> tygodni} other {<big>~#</big> tygodnia}}"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "BzWLOy"
-msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
-msgstr "na ukończenie całego kursu od podstaw przy nauce po {minutes, plural, one {# minucie} many {# minut} other {# minuty}} dziennie, od poniedziałku do piątku."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "JR79VT"
-msgid "Starting today, you'd finish around <strong>{month}</strong>."
-msgstr "Jeśli zaczniesz dziś, przewidywany termin ukończenia to <strong>{month}</strong>."
+msgctxt "tRuiZ_"
+msgid "Your first day"
+msgstr "Twój pierwszy dzień"
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "lM5n28"
 msgid "+ {count, plural, one {# more lesson} other {# more lessons}}"
 msgstr "+ {count, plural, one {# dodatkowa lekcja} few {# dodatkowe lekcje} other {# dodatkowych lekcji}}"
 
+#. Heading on a course's page: how long the whole course takes to finish.
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "vEgeBR"
-msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, plural, =0 {lessons} one {# lesson} other {# lessons}} already in the course, and more written as you reach them."
-msgstr "do {date}, przy {time} nauki dziennie od poniedziałku do piątku, zaczynając od najczęstszych zagadnień: {count, plural, =0 {lekcje} one {# lekcja} few {# lekcje} other {# lekcji}} już w kursie, a kolejne przygotowujemy w miarę twoich postępów."
+msgctxt "ZUdvBz"
+msgid "How long it takes"
+msgstr "Ile trwa cały kurs"
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "lhlS-t"
-msgid "by {date}, at {time} a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
-msgstr "do {date}, po {time} dziennie, od poniedziałku do piątku, w szybkich lekcjach o tym, co pojawia się najczęściej. Pełne lekcje pojawią się, gdy będziesz mieć więcej czasu."
+msgctxt "aaZjUM"
+msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
+msgstr "{weeks, plural, one {<big>~#</big> tydzień} few {<big>~#</big> tygodnie} many {<big>~#</big> tygodni} other {<big>~#</big> tygodnia}}"
 
+#. Under a big number of weeks (“~32 weeks”): how long the course takes when studying this many minutes a day.
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "ngWcm1"
-msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}."
-msgstr "do {date}, po {time} dziennie, od poniedziałku do piątku, najpierw to, co pojawia się najczęściej: {count, number} z {total, plural, other {# lekcji}} kursu."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "zC104g"
-msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
-msgstr "Nie wszystko zmieści się w tym terminie. Zanim zaczniesz, zobaczysz, ile materiału obejmie plan dopasowany do twojego poziomu i czasu na naukę."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "Pq4Zco"
-msgid "That's every topic in the course, in depth."
-msgstr "To wszystkie tematy kursu, omówione szczegółowo."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "e1oyF_"
-msgid "That's every exam topic in the course, in depth."
-msgstr "To wszystkie tematy egzaminacyjne z kursu, omówione szczegółowo."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "YTiAat"
-msgid "<big>{time}</big> of study"
-msgstr "<big>{time}</big> nauki"
+msgctxt "WfiCTB"
+msgid "Studying {minutes, plural, one {# minute} other {# minutes}} a day. Your plan skips what you already know, so it can take less."
+msgstr "Przy nauce przez {minutes, plural, one {# minutę} many {# minut} other {# minuty}} dziennie. Twój plan pomija to, co już wiesz, więc kurs może zająć mniej czasu."
 
 #: src/components/catalog/course-progress.tsx
 msgctxt "YdCF9O"
@@ -3272,9 +3139,9 @@ msgid "Your answer starts the {minutes}-minute lesson."
 msgstr "Twoja odpowiedź rozpocznie {minutes}-minutową lekcję."
 
 #: src/components/catalog/first-question.tsx
-msgctxt "E07b8i"
-msgid "Your choice opens the {minutes}-minute lesson. Check your answer there."
-msgstr "Twój wybór otworzy {minutes}-minutową lekcję. Sprawdź w niej swoją odpowiedź."
+msgctxt "_RN6WO"
+msgid "Your answer starts the lesson."
+msgstr "Gdy odpowiesz, rozpocznie się lekcja."
 
 #: src/components/catalog/first-question.tsx
 msgctxt "KUHspv"
@@ -3286,60 +3153,10 @@ msgctxt "7U_QZr"
 msgid "You've started this lesson. It picks up where you left off."
 msgstr "Ta lekcja jest już rozpoczęta. Wznowisz ją od miejsca przerwania."
 
-#: src/components/catalog/plan-workload.tsx
-msgctxt "tc8knM"
-msgid "Lessons not written yet"
-msgstr "Lekcje jeszcze nieprzygotowane"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "7o2WBm"
-msgid "Reviews and practice"
-msgstr "Powtórki i ćwiczenia"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "lH5xFH"
-msgid "Challenges and mock exams"
-msgstr "Wyzwania i egzaminy próbne"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "___zLu"
-msgid "Challenges"
-msgstr "Wyzwania"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "5nUlrS"
-msgid "What fills the time"
-msgstr "Na co przeznaczysz czas"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "wk-8Dt"
-msgid "{time} in all"
-msgstr "{time} łącznie"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "RYqUsZ"
-msgid "What you studied comes back right before you'd forget it."
-msgstr "Materiał z lekcji wraca tuż przed tym, jak go zapomnisz."
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "GDUlmD"
-msgid "Of this, {time} comes after the exam."
-msgstr "Z tego {time} przypada po egzaminie."
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "3MtrI6"
-msgid "Lessons not written yet are written as you reach them."
-msgstr "Lekcje, których jeszcze nie ma, przygotowujemy, gdy do nich dotrzesz."
-
 #: src/components/catalog/try-lesson.tsx
 msgctxt "iHnKCj"
 msgid "Try a lesson · free · {time}"
 msgstr "Wypróbuj lekcję · bezpłatnie · {time}"
-
-#: src/components/catalog/try-lesson.tsx
-msgctxt "tTC5l3"
-msgid "{chapter} · lesson {number, number}"
-msgstr "{chapter} · lekcja {number, number}"
 
 #: src/components/errors/page-error-message.tsx
 msgctxt "R6Dkep"
@@ -3377,13 +3194,20 @@ msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "Utwórz bezpłatne konto"
 
+#. On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.
 #: src/components/pricing/free-plan.tsx
-msgctxt "m5_Dxl"
-msgid "Your current plan"
-msgstr "Twój obecny pakiet"
+msgctxt "RRkxkO"
+msgid "What you have now"
+msgstr "Z tego teraz korzystasz"
+
+#. On the Free card, in the button's place, for a learner who has Plus: everything listed on this card is part of what they already have.
+#: src/components/pricing/free-plan.tsx
+msgctxt "gptbpf"
+msgid "Included in Plus"
+msgstr "W pakiecie Plus"
 
 #: src/components/pricing/free-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
+#: src/components/pricing/plus-adds.tsx
 msgctxt "tf1lIh"
 msgid "Free"
 msgstr "Free"
@@ -3399,24 +3223,57 @@ msgid "A plan for your goal and your date"
 msgstr "Plan dopasowany do twojego celu i terminu"
 
 #: src/components/pricing/free-plan.tsx
-msgctxt "Bj_ci-"
-msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
-msgstr "Przygotowanie do egzaminu: test diagnostyczny, twój plan i {days, plural, =7 {pierwszy tydzień nauki} one {pierwszy dzień nauki} other {pierwsze # dni nauki}}"
-
-#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-questions.tsx
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
 msgstr "Kumpel do nauki z AI: {count, plural, one {# wiadomość} other {# wiadomości}} dziennie"
 
 #: src/components/pricing/free-plan.tsx
-msgctxt "JfcsFI"
-msgid "Speaking practice calls, with lower limits than Plus"
-msgstr "Rozmowy do ćwiczenia mówienia z niższymi limitami niż w pakiecie Plus"
+msgctxt "72Jr7b"
+msgid "Speaking practice calls"
+msgstr "Rozmowy do ćwiczenia mówienia"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, one {# cel} few {# cele} many {# celów} other {# celu}} · {lessons, plural, one {# lekcja} few {# lekcje} other {# lekcji}} miesięcznie"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "RdGReZ"
+msgid "Week {number, number}"
+msgstr "Tydzień {number, number}"
+
+#. Small label over a section that shows what a subscription adds.
+#: src/components/pricing/plus-adds.tsx
+msgctxt "o8LYvC"
+msgid "What Plus adds"
+msgstr "Co daje Plus"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "QtkJr8"
+msgid "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts} other {# lessons last}} {days, plural, =5 {about a week} =10 {about two weeks} one {a day} other {about # days of study}}."
+msgstr "Przy {minutes, number} min nauki dziennie {lessons, plural, one {# lekcja wystarcza} few {# lekcje wystarczają} other {# lekcji wystarcza}} {days, plural, =5 {na około tydzień} =10 {na około dwa tygodnie} one {na dzień} other {na około # dni nauki}}."
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "Czc1c4"
+msgid "A month of a plan"
+msgstr "Miesiąc nauki z planem"
+
+#. Under a picture of a month of study: the example it draws. {time} is a duration such as “15 min”.
+#: src/components/pricing/plus-adds.tsx
+msgctxt "ag_ax6"
+msgid "Example · {time} a day, about {count, plural, one {# short lesson} other {# short lessons}}"
+msgstr "Przykład · {time} dziennie, około {count, plural, one {# krótkiej lekcji} other {# krótkich lekcji}}"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "tbnyhv"
+msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
+msgstr "{lessons, plural, one {# lekcja} few {# lekcje} other {# lekcji}}: {days, plural, =5 {mniej więcej pierwszy tydzień} =10 {mniej więcej pierwsze dwa tygodnie} one {pierwszy dzień} other {pierwsze # dni nauki}}"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "kFIKxT"
+msgid "Every lesson, all month"
+msgstr "Wszystkie lekcje przez cały miesiąc"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "ktRBJl"
@@ -3434,9 +3291,9 @@ msgid "An AI study buddy whenever you're stuck"
 msgstr "Kumpel do nauki z AI zawsze, gdy potrzebujesz pomocy"
 
 #: src/components/pricing/plus-benefits.tsx
-msgctxt "GEER8U"
-msgid "Higher limits for speaking calls"
-msgstr "Wyższe limity rozmów do ćwiczenia mówienia"
+msgctxt "K8v_UD"
+msgid "More speaking practice calls"
+msgstr "Więcej rozmów, by ćwiczyć mówienie"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "udRZBr"
@@ -3449,14 +3306,17 @@ msgid "Every goal · every lesson"
 msgstr "Każdy cel · każda lekcja"
 
 #: src/components/pricing/plus-plan.tsx
-msgctxt "0I_Rwu"
-msgid "Get Plus"
-msgstr "Przejdź na Plus"
+#: src/components/pricing/subscribe-button.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Subskrybuj"
 
+#. Button for a subscriber: opens the page where they change or cancel Plus.
 #: src/components/pricing/plus-plan.tsx
-msgctxt "PFGLfW"
-msgid "Manage your plan"
-msgstr "Zarządzaj swoim pakietem"
+msgctxt "ANGKKx"
+msgid "Manage Plus"
+msgstr "Zarządzaj pakietem Plus"
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "Lxn0Fm"
@@ -3510,35 +3370,36 @@ msgid "Cancel anytime."
 msgstr "Możesz zrezygnować w dowolnej chwili."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "jPlE1k"
-msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Przygotuj się do egzaminu, nowej pracy lub przeprowadzki z Zoonkiem Plus: lekcje i cele bez limitu, pełne przygotowanie do egzaminu z egzaminami próbnymi i twój kumpel do nauki z AI. Zacznij bezpłatnie."
+msgctxt "JtSBO2"
+msgid "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime."
+msgstr "Zoonk oferuje bezpłatnie {lessons, plural, one {# lekcję} few {# lekcje} other {# lekcji}} miesięcznie. Zoonk Plus nie ma miesięcznego limitu i daje dostęp do egzaminów próbnych oraz pomocy kumpla do nauki z AI, gdy utkniesz. Płać co miesiąc lub co rok. Możesz zrezygnować w dowolnej chwili."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "DfjjXa"
-msgid "Zoonk Plus: plans and pricing"
-msgstr "Zoonk Plus: pakiety i ceny"
+msgctxt "ViRhm-"
+msgid "Zoonk pricing: free and Plus plans"
+msgstr "Cennik Zoonka: pakiety Free i Plus"
 
+#. The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "rmN6Kk"
-msgid "Start free. <rest>Plus when you want everything.</rest>"
-msgstr "Zacznij za darmo. <rest>Przejdź na Plus, gdy chcesz mieć wszystko.</rest>"
+msgctxt "hCsrai"
+msgid "Follow your study plan all the way to your date."
+msgstr "Ucz się według swojego planu aż do wielkiego dnia."
 
-#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
+#. “Plus” is the name of the subscription.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "brY8f_"
-msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
-msgstr "Pakiet Free pomaga realizować {goals, plural, one {jeden cel} other {do # celów}} naraz. Plus pomaga realizować każdy cel aż do wielkiego dnia."
+msgctxt "YpTetq"
+msgid "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job."
+msgstr "Plus nie ma miesięcznego limitu lekcji, więc możesz uczyć się tyle, ile masz w planie na dany dzień, aż do egzaminu, przeprowadzki lub rozpoczęcia nowej pracy."
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "1vrigA"
-msgid "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:"
-msgstr "Zacznij od {count, plural, one {# bezpłatnej lekcji} other {# bezpłatnych lekcji}} bez zakładania konta. Z bezpłatnym kontem zyskujesz:"
+msgctxt "Jp-smP"
+msgid "You can try {count, plural, one {# lesson} other {# lessons}} with no account. With a free account, you get:"
+msgstr "Możesz wypróbować {count, plural, one {# lekcję} few {# lekcje} other {# lekcji}} bez konta. Na bezpłatnym koncie dostajesz:"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "PKf2T8"
-msgid "With the free plan, you get:"
-msgstr "W pakiecie Free otrzymujesz:"
+msgctxt "kiG6Kc"
+msgid "Without Plus, you get:"
+msgstr "Bez pakietu Plus masz:"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "Uoc-Co"
@@ -3546,25 +3407,20 @@ msgid "{count, plural, one {# goal} other {# goals}} at a time"
 msgstr "{count, plural, one {# cel} few {# cele} other {# celów}} naraz"
 
 #: src/components/pricing/plus-questions.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "dkfN6h"
-msgid "{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day"
-msgstr "{month, plural, one {# lekcja} few {# lekcje} other {# lekcji}} miesięcznie, do {day, number} dziennie"
+msgctxt "m3zLAp"
+msgid "{month, plural, one {# lesson} other {# lessons}} a month, across all your goals, exams included"
+msgstr "{month, plural, one {# lekcja} few {# lekcje} other {# lekcji}} miesięcznie na wszystkie cele łącznie, w tym egzaminy"
+
+#. What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. {count} is how many a day.
+#: src/components/pricing/plus-questions.tsx
+msgctxt "9xIjV0"
+msgid "Your own study material: {count, plural, one {# file} other {# files}} a day"
+msgstr "Własne materiały do nauki: {count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}} dziennie"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "PVvHeY"
-msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
-msgstr "{days, plural, =7 {Pierwszy tydzień} one {Pierwszy dzień} other {Pierwsze # dni}} przygotowań do egzaminu"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "FZOFIX"
-msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "Dziennie {tutor, plural, one {# wiadomość do kumpla} other {# wiadomości do kumpla}} i możliwość przesłania {uploads, plural, one {# pliku} other {# plików}}"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "QKrdr3"
-msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
-msgstr "Rozmowy do ćwiczenia mówienia z niższymi limitami niż w pakiecie Plus (egzaminacyjne zadania ustne są dostępne w Plus)"
+msgctxt "jug76X"
+msgid "Speaking practice calls, fewer than with Plus"
+msgstr "Rozmowy do ćwiczenia mówienia, ale mniej niż w pakiecie Plus"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "uUjwhB"
@@ -3572,14 +3428,14 @@ msgid "Common questions"
 msgstr "Najczęstsze pytania"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "XPjDwN"
-msgid "Still unsure?"
-msgstr "Masz jeszcze wątpliwości?"
+msgctxt "JlrCSV"
+msgid "Still unsure? <link>Ask us</link>."
+msgstr "Masz jeszcze wątpliwości? <link>Zapytaj nas</link>."
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "jVRlNg"
-msgid "What's in the free plan?"
-msgstr "Co obejmuje pakiet Free?"
+msgctxt "vtGEce"
+msgid "What's free?"
+msgstr "Co jest bezpłatne?"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "zAc0Zf"
@@ -3587,19 +3443,20 @@ msgid "Is Plus really unlimited?"
 msgstr "Czy Plus naprawdę nie ma limitów?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "flRDel"
-msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Prawie. Limity lekcji, celów i rozmów z kumplem służą tylko blokowaniu botów i automatycznych narzędzi, a nie ograniczaniu osób, które się uczą. Rozmowy głosowe mają dzienne i miesięczne limity, wyższe niż w pakiecie Free. <link>Przeczytaj nasze zasady uczciwego korzystania</link>."
+msgctxt "gYe6Af"
+msgid "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>."
+msgstr "Tak, jeśli używasz Zoonka do nauki. Lekcje, cele i kumpel do nauki z AI mają tylko limity chroniące przed botami i automatycznymi narzędziami. Rozmowy do ćwiczenia mówienia mają limity dzienne i miesięczne, wyższe niż bez pakietu Plus. <link>Przeczytaj nasze zasady uczciwego korzystania</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
 msgid "What happens if I cancel?"
 msgstr "Co się stanie, jeśli zrezygnuję?"
 
+#. “Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.
 #: src/components/pricing/plus-questions.tsx
-msgctxt "z1FMPn"
-msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
-msgstr "Korzystasz z pakietu Plus do końca opłaconego okresu. Potem wracasz do pakietu Free, a twoje cele i postępy zostają."
+msgctxt "4DkB8X"
+msgid "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you."
+msgstr "Zachowasz Plus do końca opłaconego okresu. Potem znów będziesz korzystać z Zoonka bezpłatnie, a twoje cele i postępy zostaną z tobą."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "94whIk"
@@ -3607,69 +3464,9 @@ msgid "Can I get a refund?"
 msgstr "Czy mogę otrzymać zwrot pieniędzy?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "Ko-avu"
-msgid "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
-msgstr "Napisz do nas na {email}, a przyjrzymy się sprawie. W przypadku zakupów w App Store lub Google Play obowiązują zasady zwrotów Apple lub Google."
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "4YTeTA"
-msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
-msgstr "{days, plural, =7 {Test diagnostyczny i 1. tydzień} one {Test diagnostyczny i 1. dzień} other {Test diagnostyczny i pierwsze # dni}}"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "NsXWWN"
-msgid "Closing gaps"
-msgstr "Uzupełnianie braków"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "KV-O0y"
-msgid "Practice"
-msgstr "Ćwiczenia"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "Csk9Zg"
-msgid "Final review"
-msgstr "Końcowa powtórka"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "avI1bO"
-msgid "An exam plan"
-msgstr "Plan przygotowań do egzaminu"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "2ZZIpk"
-msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
-msgstr "{days, plural, =7 {Free: test diagnostyczny i 1. tydzień · Plus: każdy kolejny tydzień aż do egzaminu, z egzaminami próbnymi} one {Free: test diagnostyczny i 1. dzień · Plus: każdy kolejny dzień aż do egzaminu, z egzaminami próbnymi} other {Free: test diagnostyczny i pierwsze # dni · Plus: każdy kolejny dzień aż do egzaminu, z egzaminami próbnymi}}"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "Q-aTo1"
-msgid "Exam day"
-msgstr "Dzień egzaminu"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "x-wBHO"
-msgid "Any other goal"
-msgstr "Każdy inny cel"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "KshPEJ"
-msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
-msgstr "{count, plural, one {Około jednej krótkiej lekcji w każdy dzień roboczy.} other {Około # krótkich lekcji w każdy dzień roboczy.}}"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "en1DQp"
-msgid "What free covers"
-msgstr "Co masz za darmo"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "XnAqzA"
-msgid "See your whole plan before you pay."
-msgstr "Zobacz cały plan, zanim zapłacisz."
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "PH2HUb"
-msgid "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way."
-msgstr "Przy przygotowaniach do egzaminu test wstępny, plan i jego pierwszy tydzień są bezpłatne. Plus prowadzi cię aż do dnia egzaminu i obejmuje też egzaminy próbne."
+msgctxt "C0JMHR"
+msgid "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "<link>Napisz do nas</link>, a my to sprawdzimy. Zakupy w App Store lub Google Play podlegają zasadom zwrotów Apple lub Google."
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"
@@ -3692,11 +3489,6 @@ msgid "You already have Plus."
 msgstr "Masz już Plus."
 
 #: src/components/pricing/subscribe-button.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "Subskrybuj"
-
-#: src/components/pricing/subscribe-button.tsx
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "Nie udało się rozpocząć płatności. Napisz do nas na hello@zoonk.com"
@@ -3705,11 +3497,6 @@ msgstr "Nie udało się rozpocząć płatności. Napisz do nas na hello@zoonk.co
 msgctxt "r9koty"
 msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
 msgstr "{count, plural, =0 {# dni} one {# dzień} other {# dni}}"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Zobacz Plus"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "MO6156"
@@ -3859,14 +3646,15 @@ msgid "Technology"
 msgstr "Technologia"
 
 #: src/lib/categories/category.ts
-msgctxt "XL8IWT"
-msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
-msgstr "Kursy w kategorii „{category}”. Najlepsze kursy online w kategorii „{category}” i interaktywne lekcje, które pomogą ci w nauce."
+msgctxt "0KMh43"
+msgid "Online {category} courses with short interactive lessons and a study plan for each day that starts from what you already know. Start free."
+msgstr "Kursy online: {category}. Krótkie, interaktywne lekcje i plan nauki na każdy dzień, dopasowany do tego, co już wiesz. Zacznij bezpłatnie."
 
+#. A search result's title for the courses of one category. {category} is its name, such as “Science” or “Languages”.
 #: src/lib/categories/category.ts
-msgctxt "4HKnmB"
-msgid "{category} Courses"
-msgstr "Kursy: {category}"
+msgctxt "DIfdxJ"
+msgid "{category} courses online"
+msgstr "Kursy online: {category}"
 
 #: src/lib/categories/category.ts
 msgctxt "BBu_dn"

@@ -1,11 +1,4 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { SourceFilters, SourceFiltersSkeleton } from "./source-filters";
@@ -15,18 +8,10 @@ export const metadata: Metadata = { title: "Sources" };
 
 export default function SourcesPage({ searchParams }: PageProps<"/sources">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Sources</ContainerTitle>
-          <ContainerDescription>
-            Official notices, secondary pages and learner uploads. Private uploads show metadata
-            only.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Sources" />
 
-      <ContainerBody>
+      <AdminPageBody>
         <Suspense fallback={<SourceFiltersSkeleton />}>
           <SourceFilters searchParams={searchParams} />
         </Suspense>
@@ -34,7 +19,7 @@ export default function SourcesPage({ searchParams }: PageProps<"/sources">) {
         <Suspense fallback={<SourceListSkeleton />}>
           <SourceList searchParams={searchParams} />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

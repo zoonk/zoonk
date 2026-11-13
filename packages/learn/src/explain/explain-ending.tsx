@@ -16,8 +16,7 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
-import { PageSectionTitle } from "../_components/page";
-import { SectionLabel } from "../_components/section-label";
+import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "../session/day-moment";
@@ -73,12 +72,15 @@ function ExplainRecap({
       className={cn("with-aside:top-0 with-aside:group-data-aside/task:pt-0", className)}
     >
       <section aria-labelledby="explain-recap" className="with-aside:gap-0 flex flex-col gap-1">
-        <SectionLabel
-          className="with-aside:flex with-aside:h-13 with-aside:shrink-0 with-aside:items-center with-aside:xl:h-15"
+        <h2
+          className={cn(
+            PAGE_SECTION_TITLE_CLASS,
+            "with-aside:text-label with-aside:flex with-aside:h-13 with-aside:shrink-0 with-aside:items-center with-aside:xl:h-15",
+          )}
           id="explain-recap"
         >
           {t("In {count, plural, one {# sentence} other {# sentences}}", { count: recap.length })}
-        </SectionLabel>
+        </h2>
         <ol className="flex flex-col [&>li+li]:border-t">
           {recap.map((sentence, index) => (
             <li className="with-aside:first:pt-0 flex items-baseline gap-3 py-3" key={sentence}>

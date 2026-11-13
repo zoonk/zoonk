@@ -1,4 +1,5 @@
 import { type Finding } from "./checks.mts";
+import { type PageTopClasses } from "./page-top.mts";
 
 /** Zoonk-design's Words budget, as leads for a designer: none of them fails a run. */
 export const WORD_BUDGET = {
@@ -15,8 +16,8 @@ export const WORD_BUDGET = {
 type PagePlace = {
   /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
   actionPinned: boolean | null;
-  /** From the bottom of the nearest thing drawn above the title to the title's top. */
-  titleGap: number | null;
+  /** Null outside the app shell and inside task or onboarding frames. */
+  titleTop: { actual: number; expected: number } | null;
 };
 
 export type PageText = PagePlace & {
@@ -41,7 +42,7 @@ export type PageWords = PagePlace & {
  * the first button with the primary fill after it. A text element has its own text and isn't
  * inside another one counted.
  */
-export function readWords(): PageText {
+export function readWords(pageTop: PageTopClasses | null): PageText {
   const main = document.querySelector("main") ?? document.body;
   const all = [...document.body.querySelectorAll("*")];
 
@@ -77,18 +78,35 @@ export function readWords(): PageText {
   const filled = buttons.filter((button) => button.classList.contains("bg-primary"));
   const titleBox = title?.getBoundingClientRect();
 
-  const above = titleBox
-    ? all
-        .filter((element) => !element.contains(title) && shown(element))
-        .map((element) => element.getBoundingClientRect())
-        .filter(
-          (box) =>
-            box.bottom <= titleBox.top + 1 &&
-            box.left < titleBox.right &&
-            box.right > titleBox.left,
-        )
-        .reduce((lowest, box) => Math.max(lowest, box.bottom), 0)
-    : 0;
+  const frame = title?.closest("[data-slot=learn-shell-content]");
+  const inTask = title?.closest("[data-slot=task-frame], [data-slot=onboarding-frame]");
+
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
+  function expectedTop(classes: PageTopClasses) {
+    const sample = document.createElement("div");
+    sample.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;top:0;left:0";
+    const bar = document.createElement("div");
+    bar.className = classes.bar;
+    const row = document.createElement("div");
+    row.className = classes.row;
+    bar.append(row);
+    const header = document.createElement("div");
+    header.className = classes.header;
+    sample.append(bar, header);
+    document.body.append(sample);
+
+    try {
+      const style = getComputedStyle(header);
+
+      return (
+        bar.getBoundingClientRect().height +
+        Number(style.paddingTop.replace(/px$/u, "")) +
+        Number(style.borderTopWidth.replace(/px$/u, ""))
+      );
+    } finally {
+      sample.remove();
+    }
+  }
 
   // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
   function pinned(element: Element) {
@@ -132,7 +150,13 @@ export function readWords(): PageText {
     buttons: buttons.map((button) => label(button)).filter(Boolean),
     // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips hidden text (`display: none`), which `textContent` would count.
     text: main.innerText,
-    titleGap: titleBox ? Math.round(titleBox.top - above) : null,
+    titleTop:
+      frame && titleBox && pageTop && !inTask
+        ? {
+            actual: titleBox.top - frame.getBoundingClientRect().top,
+            expected: expectedTop(pageTop),
+          }
+        : null,
   };
 }
 
@@ -176,16 +200,13 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
     actionPinned: page.actionPinned,
     kind,
     longestButton,
-    titleGap: page.titleGap,
+    titleTop: page.titleTop,
     words: countWords(page.text),
   };
 }
 
-/** Phone and laptop agree on a title's room above it within this; a line box rounds to it. */
-const SAME_GAP = 4;
-
 /**
- * The founder's rule 4 on one load: a screen's one main action is pinned in the bottom bar. A
+ * R2 on one load: a screen's one main action is pinned in the bottom bar. A
  * screen that keeps it elsewhere says why in its decisions, so this is a lead.
  */
 export function placeFindings(page: PageWords): Finding[] {
@@ -200,26 +221,26 @@ export function placeFindings(page: PageWords): Finding[] {
     : [];
 }
 
-/** The founder's rule 3: the title sits as close to the top on a phone as on a computer. */
-export function titleGapFindings(phone: PageWords, laptop: PageWords): Finding[] {
-  if (
-    phone.kind !== "app" ||
-    phone.titleGap === null ||
-    laptop.titleGap === null ||
-    Math.abs(phone.titleGap - laptop.titleGap) <= SAME_GAP
-  ) {
+/** E8 applies only to app-shell titles; other surfaces have their own tops. */
+export function titleTopFindings(page: PageWords): Finding[] {
+  if (page.kind !== "app" || !page.titleTop) {
     return [];
   }
 
-  return [
-    {
-      check: "E8 page top",
-      level: "warn",
-      message: `the title has ${phone.titleGap} px above it on a phone and ${laptop.titleGap} px on a laptop: one page top, the same on both`,
-      unit: "px",
-      value: Math.abs(phone.titleGap - laptop.titleGap),
-    },
-  ];
+  const { actual, expected } = page.titleTop;
+  const rounding = 1;
+
+  return Math.abs(actual - expected) > rounding
+    ? [
+        {
+          check: "E8 page top",
+          level: "warn",
+          message: `the title starts ${actual} px below the app frame's top; PageTop expects ${expected} px`,
+          unit: "px",
+          value: actual - expected,
+        },
+      ]
+    : [];
 }
 
 export function wordFindings(page: PageWords): Finding[] {

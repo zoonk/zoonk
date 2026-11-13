@@ -63,7 +63,7 @@ export async function TopicSection() {
       subject="science"
       title={t({
         description: "In Brazilian Portuguese: “Por curiosidade, um curso do zero.”",
-        message: "Just curious? A course from scratch.",
+        message: "Just curious? A\u00A0course from scratch.",
       })}
       titleId={TITLE_ID}
     >

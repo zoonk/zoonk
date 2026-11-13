@@ -379,7 +379,7 @@ describe(lessonPlayerReducer, () => {
     expect(skipped.skippedWritingStepIds).toStrictEqual(["write"]);
   });
 
-  it("puts the writing back with Write again until the learner moves on", () => {
+  it("puts the writing back with Turn back on until the learner moves on", () => {
     const steps = [explanationStep("tip"), typedAnswerStep("write"), summaryStep("end")];
     const skipped = play(steps, [{ opening: true, type: "skipWriting" }]);
 
@@ -427,7 +427,7 @@ describe(lessonPlayerReducer, () => {
     expect(restored.run).toMatchObject({ runId: "run", status: "started" });
   });
 
-  it("brings the learner back to the screen they left with Can't write now", () => {
+  it("brings the learner back to the screen they left with Skip writing today", () => {
     const steps = [typedAnswerStep("write"), explanationStep("tip")];
     const skipped = play(steps, [{ type: "skipWriting" }]);
     const restored = lessonPlayerReducer(skipped, { type: "writingRestored" });

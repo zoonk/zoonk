@@ -34,7 +34,7 @@ export function ContentCountryOffer({ offer, onApply, saved }: CountryOfferProps
       }
       onApply={onApply}
       saved={saved}
-      savedText={t("Saved. We're getting your new plan ready. You can keep studying meanwhile.")}
+      savedText={t("Saved. Your new plan is getting ready, and you can keep studying.")}
       tile={<FlagTile fallback={<MapPinIcon />} flag={offer.languageFlag} />}
       title={t({
         description:

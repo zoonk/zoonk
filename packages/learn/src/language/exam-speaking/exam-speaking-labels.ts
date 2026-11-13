@@ -56,7 +56,7 @@ export function useTaskRoleNoun() {
   const t = useExtracted();
 
   return (role: SpeakingTaskView["role"]) =>
-    role === "partner" ? t("other candidate") : t("examiner");
+    role === "partner" ? t("other candidate (AI)") : t("examiner (AI)");
 }
 
 export function useEstimateText() {

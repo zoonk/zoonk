@@ -1,93 +1,76 @@
-import { AdminSection } from "@/components/admin-section";
+import { AdminDisclosure } from "@/components/admin-json";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
 import Link from "next/link";
-import {
-  feedbackContentKindLabels,
-  feedbackReportTypeLabels,
-  getFeedbackLearnerLabel,
-} from "../../_utils/feedback-labels";
+import { getFeedbackLearnerLabel, getFeedbackSubject } from "../../_utils/feedback-labels";
 
 export type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
 
-function MessageContent({ message }: { message: FeedbackMessage }) {
-  const { context } = message;
-
-  if (context.reportType) {
-    return feedbackReportTypeLabels[context.reportType];
-  }
-
-  const kindLabel = context.contentKind ? feedbackContentKindLabels[context.contentKind] : null;
-
-  if (!kindLabel) {
-    return "—";
-  }
-
-  if (!message.contentHref) {
-    return kindLabel;
-  }
-
-  return (
-    <Link className="hover:underline" href={message.contentHref} prefetch>
-      {kindLabel}
-    </Link>
-  );
-}
-
-function MessageSenderField({ message }: { message: FeedbackMessage }) {
+function MessageSender({ message }: { message: FeedbackMessage }) {
   if (!message.user) {
     return message.email ?? "Unknown sender";
   }
 
   return (
     <>
-      <Link className="hover:underline" href={`/users/${message.user.id}`} prefetch>
+      <Link className="underline underline-offset-3" href={`/users/${message.user.id}`} prefetch>
         {getFeedbackLearnerLabel(message.user)}
       </Link>
-      <span className="text-muted-foreground block">{message.email ?? "No reply email"}</span>
+      <span className="text-muted-foreground"> · {message.email ?? "no reply email"}</span>
     </>
+  );
+}
+
+function MessageSubject({ message }: { message: FeedbackMessage }) {
+  const subject = getFeedbackSubject(message.context);
+
+  if (!message.contentHref) {
+    return subject;
+  }
+
+  return (
+    <Link className="underline underline-offset-3" href={message.contentHref} prefetch>
+      {subject}
+    </Link>
   );
 }
 
 export function MessageDetail({ message }: { message: FeedbackMessage }) {
   const { context } = message;
+  const subject = getFeedbackSubject(context);
 
   return (
     <>
-      <AdminSection title="Message">
-        <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{message.message}</p>
-      </AdminSection>
+      <p className="max-w-column text-base leading-relaxed wrap-break-word whitespace-pre-wrap">
+        {message.message}
+      </p>
 
-      <AdminSection title="Details">
+      <div className="flex flex-col gap-3">
         <DetailFields>
-          <DetailField label="Sender">
-            <MessageSenderField message={message} />
+          <DetailField label="From">
+            <MessageSender message={message} />
           </DetailField>
-          <DetailField label="Screen">{context.screen ?? "—"}</DetailField>
-          <DetailField label="URL">
-            <span className="break-all">{context.url ?? "—"}</span>
+          <DetailField label="About">
+            <MessageSubject message={message} />
           </DetailField>
-          <DetailField label="Platform">{context.platform ?? "—"}</DetailField>
-          <DetailField label="App version">{context.appVersion ?? "—"}</DetailField>
-          <DetailField label="Content">
-            <MessageContent message={message} />
-          </DetailField>
-          <DetailField label="Content id">
-            {context.contentId ? (
-              <span className="font-mono text-xs">{context.contentId}</span>
-            ) : (
-              "—"
-            )}
-          </DetailField>
+          {context.screen && context.screen !== subject ? (
+            <DetailField label="Sent from">{context.screen}</DetailField>
+          ) : null}
         </DetailFields>
-      </AdminSection>
 
-      {context.provenance ? (
-        <AdminSection title="Content provenance">
-          <ProvenanceFields provenance={context.provenance} />
-        </AdminSection>
-      ) : null}
+        <AdminDisclosure label="Technical details">
+          <div className="divide-y pb-2">
+            <DetailFields>
+              <DetailField label="URL" mono={Boolean(context.url)}>
+                {context.url ?? "—"}
+              </DetailField>
+              <DetailField label="Content id">{context.contentId ?? "—"}</DetailField>
+            </DetailFields>
+            {context.provenance ? <ProvenanceFields provenance={context.provenance} /> : null}
+          </div>
+        </AdminDisclosure>
+      </div>
     </>
   );
 }

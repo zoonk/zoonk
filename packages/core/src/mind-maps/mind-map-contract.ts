@@ -57,6 +57,9 @@ const mindMapStatusSchema = z
       "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `plusRequired`: the chapter's lessons are Plus-only for this learner, so its map is too, even one already made. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)",
   });
 
+/** The width a map's small picture is stored at, which a client names in the picture's `srcset`. */
+export const MIND_MAP_THUMBNAIL_WIDTH = 640;
+
 export const chapterMindMapStatusSchema = z
   .object({ status: mindMapStatusSchema })
   .meta({ id: "ChapterMindMapStatus" });

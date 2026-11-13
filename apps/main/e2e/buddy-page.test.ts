@@ -276,7 +276,7 @@ test.describe("Buddy tab", () => {
       await germany.getByRole("button", { name: "Change country" }).click();
 
       await expect(status).toHaveText(
-        "Saved. We're getting your new plan ready. You can keep studying meanwhile.",
+        "Saved. Your new plan is getting ready, and you can keep studying.",
       );
 
       await expect.poll(readCountry).toBe("DE");

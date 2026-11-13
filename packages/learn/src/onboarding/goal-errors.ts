@@ -20,26 +20,19 @@ export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
   const messages: Record<GoalLimitReason, string> = {
-    activeGoals: t({
-      description:
-        "Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
-      message:
-        "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.",
-    }),
+    activeGoals: t(
+      "That's all the goals you can study at once. Pause one, or subscribe to study more.",
+    ),
     dailyExplanations: t(
-      "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+      "No more quick explanations today. More tomorrow, or subscribe to keep going.",
     ),
-    dailyGoals: t(
-      "You've started as many new goals as your plan allows today. Try again tomorrow.",
-    ),
-    guest: t("Without an account, you can follow one goal. Create a free account to keep going."),
+    dailyGoals: t("No more new goals today. More tomorrow."),
+    guest: t("Without an account, you study one goal. Create a free account to start another."),
     monthlyExplanations: t(
-      "You've asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.",
+      "No more quick explanations this month. More next month, or subscribe to keep going.",
     ),
-    monthlyGoals: t(
-      "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-    ),
-    signUpRequired: t("Create your free account to continue."),
+    monthlyGoals: t("No more new goals this month. More next month, or subscribe to keep going."),
+    signUpRequired: t("This needs a free account."),
     slowDown: t("You're starting goals quickly. Try again in a few minutes."),
   };
 
@@ -57,30 +50,18 @@ function useUnderstandingLimit() {
     tier: EntitlementTier;
   }): GoalError => {
     if (tier === "guest") {
-      return {
-        message: t(
-          "Without an account, you can send a few new goals a day. Create a free account to keep going.",
-        ),
-        needsAccount: true,
-      };
+      return { message: t("No more new goals today without an account."), needsAccount: true };
     }
 
     if (tier === "plus") {
-      return {
-        message: t("You've sent as many new goals as your plan allows today. Try again tomorrow."),
-        needsAccount: false,
-      };
+      return { message: t("No more new goals today. More tomorrow."), needsAccount: false };
     }
 
     return {
       message:
         period === "month"
-          ? t(
-              "You've sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-            )
-          : t(
-              "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
-            ),
+          ? t("No more new goals this month. More next month, or subscribe to keep going.")
+          : t("No more new goals today. More tomorrow, or subscribe to keep going."),
       needsAccount: false,
     };
   };

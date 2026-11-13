@@ -53,7 +53,7 @@ function useAppBackName(): string | null {
 }
 
 /** Names this page's history entry, so a back link that returns here says where it goes. */
-export function useNameAppEntry(name?: string) {
+function useNameAppEntry(name?: string) {
   useEffect(() => {
     if (name) {
       nameAppEntry(name);
@@ -81,7 +81,7 @@ function useTabName(href: string): string | undefined {
  * `label` names the page at `href`; a tab's page needs none. With `toApp` the link returns to
  * whatever app page came before, and names that page once the browser's history says which it was.
  */
-export function LearnBackLink({
+function LearnBackLink({
   className,
   href,
   label,

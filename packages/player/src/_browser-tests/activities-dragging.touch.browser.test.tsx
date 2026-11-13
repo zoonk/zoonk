@@ -82,6 +82,8 @@ describe("dragging activity items with a finger", () => {
   });
 
   it("labeled diagram: a quick swipe over the names scrolls instead of dragging", async () => {
+    // A small phone, so the last spot starts below the fold whatever sits over the title.
+    await page.viewport(375, 667);
     openActivity({ template: "labeledDiagram" });
     const lastSpot = page.getByRole("button", { name: "Spot 5: empty" });
     await expect.element(lastSpot).toBeVisible();
@@ -100,6 +102,7 @@ describe("dragging activity items with a finger", () => {
     await expect.element(lastSpot).toBeInViewport();
     await expect.element(page.getByRole("button", { name: "Put Aorta on spot 1" })).toBeVisible();
     await settled;
+    await page.viewport(375, 812);
   });
 
   it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {

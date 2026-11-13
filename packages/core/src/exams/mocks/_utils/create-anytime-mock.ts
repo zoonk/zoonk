@@ -126,9 +126,13 @@ function toConditions({
   };
 }
 
-/** Reuse a running mock; `needsQuestions` requires preparing questions before retrying without `acceptFewer`. */
+/**
+ * Reuse a running mock; `needsQuestions` requires preparing questions before retrying with
+ * `afterWriting`, which answers `short` when the mock still lacks questions.
+ */
 export async function createAnytimeMock({
   acceptFewer,
+  afterWriting = false,
   goal,
   option,
   setup,
@@ -136,6 +140,7 @@ export async function createAnytimeMock({
   writesCap,
 }: {
   acceptFewer: boolean;
+  afterWriting?: boolean;
   goal: Goal;
   option: MockOption;
   setup: AnytimeMockSetup;
@@ -146,7 +151,7 @@ export async function createAnytimeMock({
   const planned = countPlannedQuestions(plan);
   const asksEssays = plan.sections.some((section) => section.essays.length > 0);
   const shortOfNew = !acceptFewer && isShortOfNew({ candidates, option, plan, setup });
-  const asksForNew = writesCap === null && shortOfNew;
+  const asksForNew = !afterWriting && writesCap === null && shortOfNew;
 
   const short =
     !acceptFewer &&

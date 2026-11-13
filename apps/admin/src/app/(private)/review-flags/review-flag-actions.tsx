@@ -2,6 +2,7 @@
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import { useAdminActionState } from "@/lib/use-admin-action-state";
+import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { CheckIcon, RefreshCwIcon } from "lucide-react";
 import {
   type ReviewFlagActionState,
@@ -11,41 +12,50 @@ import {
 
 const INITIAL_STATE: ReviewFlagActionState = { error: null, message: null, submissionId: 0 };
 
+type ReviewFlagAction = (
+  state: ReviewFlagActionState,
+  formData: FormData,
+) => Promise<ReviewFlagActionState>;
+
+function sayingWhatItDid(action: ReviewFlagAction): ReviewFlagAction {
+  return async (state, formData) => {
+    const next = await action(state, formData);
+
+    if (next.message) {
+      showSuccessToast(next.message);
+    }
+
+    return next;
+  };
+}
+
+/**
+ * Dismissing is the decision only a person can make (this is still right), so it's the row's
+ * button; a rewrite is what the daily run does anyway, so starting one now is the quiet action.
+ */
 export function ReviewFlagActions({ flagId }: { flagId: string }) {
-  const [rewrite, rewriteAction] = useAdminActionState({
-    action: rewriteReviewFlagAction,
+  const [, rewriteAction] = useAdminActionState({
+    action: sayingWhatItDid(rewriteReviewFlagAction),
     initialState: INITIAL_STATE,
   });
 
-  const [dismiss, dismissAction] = useAdminActionState({
-    action: dismissReviewFlagAction,
+  const [, dismissAction] = useAdminActionState({
+    action: sayingWhatItDid(dismissReviewFlagAction),
     initialState: INITIAL_STATE,
   });
-
-  const outcome = [rewrite, dismiss].find((state) => state.error ?? state.message);
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <div className="flex gap-2">
-        <form action={rewriteAction}>
-          <input name="flagId" type="hidden" value={flagId} />
-          <AdminActionSubmitButton icon={<RefreshCwIcon />}>Rewrite now</AdminActionSubmitButton>
-        </form>
-        <form action={dismissAction}>
-          <input name="flagId" type="hidden" value={flagId} />
-          <AdminActionSubmitButton icon={<CheckIcon />}>Dismiss</AdminActionSubmitButton>
-        </form>
-      </div>
-      {outcome ? (
-        <p
-          className={
-            outcome.error ? "text-destructive-text text-xs" : "text-muted-foreground text-xs"
-          }
-          role="status"
-        >
-          {outcome.error ?? outcome.message}
-        </p>
-      ) : null}
+    <div className="flex justify-end gap-2">
+      <form action={rewriteAction}>
+        <input name="flagId" type="hidden" value={flagId} />
+        <AdminActionSubmitButton icon={<RefreshCwIcon />} variant="ghost">
+          Rewrite now
+        </AdminActionSubmitButton>
+      </form>
+      <form action={dismissAction}>
+        <input name="flagId" type="hidden" value={flagId} />
+        <AdminActionSubmitButton icon={<CheckIcon />}>Dismiss</AdminActionSubmitButton>
+      </form>
     </div>
   );
 }

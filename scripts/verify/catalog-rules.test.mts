@@ -27,7 +27,7 @@ function offenders(catalogs: { content: string; path: string }[]) {
   return catalogOffenders(catalogs).map((offender) => `${offender.rule} ${offender.text}`);
 }
 
-describe("the founder's catalog rules", () => {
+describe("catalog wording checks", () => {
   it("asks for Subscribe wherever an action or a sentence leads to paying", () => {
     const catalog = po([
       ['msgid "See Plus"'],

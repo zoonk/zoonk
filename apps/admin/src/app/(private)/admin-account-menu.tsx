@@ -12,11 +12,14 @@ import {
 import { SIDEBAR_ACCOUNT_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { LogOutIcon } from "lucide-react";
+import Link from "next/link";
+import { CLI_LOGINS_PAGE } from "./admin-navigation";
 
 export type AdminAccount = { email: string; image: string | null; name: string };
 
 export function AdminAccountMenu({ account }: { account: AdminAccount }) {
   const name = account.name || account.email;
+  const CliLoginsIcon = CLI_LOGINS_PAGE.icon;
 
   return (
     <DropdownMenu>
@@ -33,6 +36,10 @@ export function AdminAccountMenu({ account }: { account: AdminAccount }) {
       <DropdownMenuContent align="start" side="top">
         <p className="text-muted-foreground truncate px-3 py-2.5 text-xs">{account.email}</p>
         <DropdownMenuSeparator />
+        <DropdownMenuItem render={<Link href={CLI_LOGINS_PAGE.url} prefetch />}>
+          <CliLoginsIcon aria-hidden="true" />
+          {CLI_LOGINS_PAGE.label}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => void logout()}>
           <LogOutIcon aria-hidden="true" />
           Log out

@@ -71,6 +71,29 @@ function ChoiceKey({ index }: { index: number }) {
   );
 }
 
+function ChoiceRowText({
+  children,
+  description,
+  index,
+  numberKeys,
+}: {
+  children: React.ReactNode;
+  description?: string;
+  index: number;
+  numberKeys: boolean;
+}) {
+  return (
+    <>
+      {numberKeys && <ChoiceKey index={index} />}
+
+      <ListRowContent>
+        <ListRowTitle>{children}</ListRowTitle>
+        {description && <ListRowDescription>{description}</ListRowDescription>}
+      </ListRowContent>
+    </>
+  );
+}
+
 /**
  * `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so
  * a one-answer question can move on with it.
@@ -174,12 +197,9 @@ export function ChoiceList<Value extends string>({
               pointerPick.current = choice.value;
             }}
           >
-            {numberKeys && <ChoiceKey index={index} />}
-
-            <ListRowContent>
-              <ListRowTitle>{choice.label}</ListRowTitle>
-              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
-            </ListRowContent>
+            <ChoiceRowText description={choice.description} index={index} numberKeys={numberKeys}>
+              {choice.label}
+            </ChoiceRowText>
 
             {choice.trailing}
             <ChoiceRadio
@@ -253,12 +273,9 @@ export function CheckList<Value extends string>({
             data-highlighted={isPicked || undefined}
             key={choice.value}
           >
-            {numberKeys && <ChoiceKey index={index} />}
-
-            <ListRowContent>
-              <ListRowTitle>{choice.label}</ListRowTitle>
-              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
-            </ListRowContent>
+            <ChoiceRowText description={choice.description} index={index} numberKeys={numberKeys}>
+              {choice.label}
+            </ChoiceRowText>
             <Checkbox
               aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
               checked={isPicked}

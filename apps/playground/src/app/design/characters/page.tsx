@@ -5,6 +5,7 @@ import {
   CHARACTER_MOMENTS,
   CHARACTER_PARTS,
   CHARACTER_RULES,
+  CHARACTER_SIZE_RULES,
   CHARACTER_TIMING_RULES,
   TRICKSTER_EXPRESSIONS,
 } from "@/design-system/characters";
@@ -13,9 +14,17 @@ import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyKind } from "@zoonk/utils/buddy";
 import { type Metadata } from "next";
-import { DocHeader, DocRules, DocSection, renderCode } from "../_components/doc";
+import {
+  DOC_TABLE_HEAD,
+  DOC_TABLE_ROW,
+  DocHeader,
+  DocRules,
+  DocSection,
+  renderCode,
+} from "../_components/doc";
 import { ActsTable } from "./_components/acts-table";
 import { BuddyStage } from "./_components/buddy-stage";
+import { SPECIMEN_ENERGY, SizeSpecimen } from "./_components/size-specimen";
 import { TricksterStage } from "./_components/trickster-stage";
 
 export const metadata: Metadata = { title: "Characters" };
@@ -26,8 +35,6 @@ const KINDS: readonly { kind: BuddyKind; name: string }[] = [
   { kind: "noodle", name: "Noodle" },
   { kind: "beep", name: "Beep" },
 ];
-
-const ENERGY = 70;
 
 const ENERGY_STATES = [
   { energy: 12, label: "Napping, 12%", studiedToday: false },
@@ -58,7 +65,7 @@ function ExpressionGrid() {
                 <Buddy
                   beltColor="orange"
                   className="h-23"
-                  energy={ENERGY}
+                  energy={SPECIMEN_ENERGY}
                   expression={expression.name}
                   kind={kind}
                   studiedToday
@@ -85,7 +92,7 @@ function ExpressionGrid() {
 
 function EnergyGrid() {
   return (
-    <div className="grid w-fit grid-cols-2 gap-x-12 gap-y-6 sm:grid-cols-4">
+    <div className={GRID}>
       {KINDS.map(({ kind, name }) => (
         <div className="flex flex-col gap-2" key={kind}>
           <p className="text-muted-foreground text-center text-xs font-medium">{name}</p>
@@ -108,16 +115,12 @@ function EnergyGrid() {
   );
 }
 
-const MOMENT_COLUMNS = "lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_8rem_minmax(0,1.2fr)]";
-const MOMENT_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
+const MOMENT_COLUMNS = "lg:grid-cols-[14rem_minmax(0,1fr)_8rem_minmax(0,1.2fr)]";
 
 function MomentsTable() {
   return (
     <div className="flex flex-col" role="table">
-      <div
-        className={cn("text-faint hidden gap-x-6 pb-2 text-xs lg:grid", MOMENT_COLUMNS)}
-        role="row"
-      >
+      <div className={cn(DOC_TABLE_HEAD, MOMENT_COLUMNS)} role="row">
         <span role="columnheader">Moment</span>
         <span role="columnheader">Who</span>
         <span role="columnheader">Act</span>
@@ -125,7 +128,7 @@ function MomentsTable() {
       </div>
       {CHARACTER_MOMENTS.map((moment) => (
         <div
-          className={cn(MOMENT_ROW, MOMENT_COLUMNS)}
+          className={cn(DOC_TABLE_ROW, MOMENT_COLUMNS)}
           key={`${moment.moment}-${moment.act}`}
           role="row"
         >
@@ -145,14 +148,13 @@ function MomentsTable() {
   );
 }
 
-const DEFINITION =
-  "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6 lg:grid-cols-[18rem_minmax(0,1fr)]";
+const DEFINITION_COLUMNS = "lg:grid-cols-[14rem_minmax(0,1fr)]";
 
 function Definitions({ items }: { items: readonly { term: string; text: string }[] }) {
   return (
     <dl className="flex flex-col">
       {items.map((item) => (
-        <div className={cn(DEFINITION)} key={item.term}>
+        <div className={cn(DOC_TABLE_ROW, DEFINITION_COLUMNS)} key={item.term}>
           <dt className="font-medium">{renderCode(item.term)}</dt>
           <dd className="text-muted-foreground">{renderCode(item.text)}</dd>
         </div>
@@ -176,8 +178,8 @@ export default function CharactersPage() {
         title="Acting"
       >
         <div className="grid gap-4 xl:grid-cols-3">
-          <BuddyStage beltColor="orange" energy={ENERGY} kind="zu" name="Zu" />
-          <BuddyStage beltColor="blue" energy={ENERGY} kind="otto" name="Otto" />
+          <BuddyStage beltColor="orange" energy={SPECIMEN_ENERGY} kind="zu" name="Zu" />
+          <BuddyStage beltColor="blue" energy={SPECIMEN_ENERGY} kind="otto" name="Otto" />
           <TricksterStage />
         </div>
       </DocSection>
@@ -211,6 +213,15 @@ export default function CharactersPage() {
             text: expression.says,
           }))}
         />
+      </DocSection>
+
+      <DocSection
+        id="sizes"
+        intro="A face when small, the whole body when large, and nothing cut by the picture's edge."
+        title="Sizes"
+      >
+        <SizeSpecimen />
+        <DocRules rules={CHARACTER_SIZE_RULES} />
       </DocSection>
 
       <DocSection

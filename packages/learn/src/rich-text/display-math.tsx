@@ -56,7 +56,7 @@ export function DisplayMath({ children }: { children: React.ReactNode }) {
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A formula wider than its column scrolls sideways, which needs focus by keyboard, and WebKit doesn't give a scroller focus (https://bugs.webkit.org/show_bug.cgi?id=277290).
         tabIndex={takesKeyboard ? 0 : undefined}
       >
-        <span className="block w-max min-w-full" ref={contentRef}>
+        <span className="block w-max min-w-full text-start [&_math]:mx-0" ref={contentRef}>
           {children}
         </span>
       </span>

@@ -1,5 +1,6 @@
 import { type TimelineVisual } from "@zoonk/core/library/steps/contract";
 import { cn } from "@zoonk/ui/lib/utils";
+import { SURFACE_CLASS } from "../_components/surface";
 
 export function TimelineVisualView({
   className,
@@ -10,7 +11,7 @@ export function TimelineVisualView({
 }) {
   return (
     <figure
-      className={cn("bg-card flex w-full flex-col gap-4 rounded-xl border p-4", className)}
+      className={cn(SURFACE_CLASS, "flex w-full flex-col gap-4 p-4", className)}
       data-slot="timeline-visual"
     >
       <figcaption className="text-foreground text-sm font-semibold text-balance">
@@ -25,8 +26,8 @@ export function TimelineVisualView({
           return (
             <li className="relative flex gap-3 pb-4 last:pb-0" key={key}>
               <span aria-hidden="true" className="relative flex w-3 shrink-0 justify-center">
-                <span className="bg-viz-accent ring-card relative z-10 mt-1.5 size-3 rounded-full ring-4" />
-                {!isLast && <span className="bg-viz-grid absolute top-3 -bottom-4 w-0.5" />}
+                <span className="bg-viz-accent ring-card relative z-10 mt-1 size-3 rounded-full ring-4" />
+                {!isLast && <span className="bg-viz-grid absolute top-3 -bottom-4 w-px" />}
               </span>
 
               <div className="flex min-w-0 flex-col gap-0.5">

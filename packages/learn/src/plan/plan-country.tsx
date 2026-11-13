@@ -2,6 +2,7 @@
 
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -59,9 +60,9 @@ function ChangeCountryDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={saving}>{t("Cancel")}</AlertDialogCancel>
           <form action={onConfirm} className="contents">
-            <Button busy={saving} type="submit">
+            <AlertDialogAction busy={saving} type="submit">
               {t("Change country")}
-            </Button>
+            </AlertDialogAction>
           </form>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,10 +1,10 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getAppLocale } from "@/i18n/locale";
-import { getSocialProfiles } from "@/lib/social";
 import { getSession } from "@zoonk/core/users/session";
 import { FeedbackForm, FeedbackFormSkeleton } from "@zoonk/learn/feedback/form";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { getSocialProfiles } from "@zoonk/ui/lib/social-profiles";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 

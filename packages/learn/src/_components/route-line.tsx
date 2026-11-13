@@ -31,7 +31,7 @@ export function RouteStop({ className, ...props }: React.ComponentProps<"section
 }
 
 const STATIONS = {
-  end: "size-4 rounded-sm border-[3px] border-foreground",
+  end: "size-4 rounded-sm border-[3px] border-foreground sm:size-[1.125rem]",
   page: "size-4 rounded-full border-[3px] border-foreground sm:size-[1.125rem]",
   stop: "size-3.5 rounded-full border-[2.5px] border-subject",
 } as const;
@@ -97,14 +97,13 @@ export function RouteTitle({
   );
 }
 
+/* The band hangs past the column as far as a highlighted row does, so what it holds stays on the column's edges. */
 const ZONE_CLASS = cn(
-  "group/zone bg-ground relative [--route-fill:var(--ground)]",
-  "-mr-4 ml-[calc(-1*var(--route-inset)-1rem)] pr-4 pl-[calc(var(--route-inset)+1rem)]",
-  "sm:mr-0 sm:ml-[calc(-1*var(--route-inset)-0.75rem)] sm:rounded-xl sm:pr-5 sm:pl-[calc(var(--route-inset)+0.75rem)]",
+  "group/zone bg-ground relative rounded-xl [--route-fill:var(--ground)]",
+  "-mr-2.5 ml-[calc(-1*var(--route-inset)-0.625rem)] pr-2.5 pl-[calc(var(--route-inset)+0.625rem)]",
 );
 
-const ZONE_ROW_CLASS =
-  "relative flex gap-4 py-4 text-reading leading-snug font-semibold sm:text-base";
+const ZONE_ROW_CLASS = "relative flex gap-4 py-4 text-base leading-snug font-semibold";
 
 function ZoneStation({ className }: { className?: string }) {
   return (
@@ -119,14 +118,29 @@ function ZoneStation({ className }: { className?: string }) {
   );
 }
 
-function ZoneLabel({ aside, summary }: { aside?: ReactNode; summary: ReactNode }) {
+/** `closedDetail` comes last and leaves when the zone opens, so opening moves nothing in the label. */
+function ZoneLabel({
+  aside,
+  closedDetail,
+  summary,
+}: {
+  aside?: ReactNode;
+  closedDetail?: ReactNode;
+  summary: ReactNode;
+}) {
   return (
-    <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+    <span className="grid min-w-0 flex-1 gap-x-4 gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
       <span className="text-pretty">{summary}</span>
 
       {aside && (
-        <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">
+        <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
           {aside}
+        </span>
+      )}
+
+      {closedDetail && (
+        <span className="text-muted-foreground text-compact leading-snug font-normal text-pretty group-open/zone:hidden sm:col-start-1 sm:text-sm">
+          {closedDetail}
         </span>
       )}
     </span>
@@ -139,11 +153,13 @@ function ZoneLabel({ aside, summary }: { aside?: ReactNode; summary: ReactNode }
 export function RouteZone({
   aside,
   children,
+  closedDetail,
   open = false,
   summary,
 }: {
   aside?: ReactNode;
   children: ReactNode;
+  closedDetail?: ReactNode;
   open?: boolean;
   summary: ReactNode;
 }) {
@@ -156,24 +172,24 @@ export function RouteZone({
         )}
       >
         <ZoneStation className="group-open/zone:hidden" />
-        <ZoneLabel aside={aside} summary={summary} />
+        <ZoneLabel aside={aside} closedDetail={closedDetail} summary={summary} />
 
         <LineMarker>
           <FoldChevron />
         </LineMarker>
       </summary>
 
-      <div className="pb-4">{children}</div>
+      <div>{children}</div>
     </details>
   );
 }
 
-/** A zone with nothing in it yet, such as a level not written: a dashed station and nothing to open. */
+/** A zone with nothing in it yet, such as a level not written: a pale station and nothing to open. */
 export function RouteZoneAhead({ aside, summary }: { aside?: ReactNode; summary: ReactNode }) {
   return (
     <div className={ZONE_CLASS} data-slot="route-zone">
       <div className={ZONE_ROW_CLASS}>
-        <ZoneStation className="border-dashed" />
+        <ZoneStation className="border-(--route-line)" />
         <ZoneLabel aside={aside} summary={summary} />
       </div>
     </div>
