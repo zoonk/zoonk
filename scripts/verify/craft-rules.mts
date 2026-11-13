@@ -22,8 +22,17 @@ export const SAME_WITHIN = 0.5;
 export const CRAFT_LINES = {
   /** Text and boxes. */
   aligned: 1,
-  /** A glyph's ink. */
-  glyph: 2,
+  /** Any more of a glyph's ink outside its column's edge is a lead (E2's bound). */
+  crossed: 0.05,
+  /** A glyph's ink past the letters of the text on its edge, toward the edge. */
+  glyph: 1,
+  /**
+   * A glyph's ink short of those letters: one whole-pixel pull serves every first letter, and a
+   * diagonal ("A") starts 2 px before a stem ("P") at a title's size.
+   */
+  glyphInside: 2,
+  /** A glyph this near a text's box is on that text's edge: letters start up to 2.4 px inside it. */
+  lettersNear: 3.5,
   /** Past this an edge is a different line on purpose, such as an indent. */
   nearMiss: 24,
   /** An icon's center to its line's center (E5). */
