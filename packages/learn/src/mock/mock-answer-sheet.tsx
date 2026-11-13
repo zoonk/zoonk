@@ -16,6 +16,7 @@ import { HistoryIcon, PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { BAR_PADDING_CLASS } from "../_components/task-layout";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
@@ -282,7 +283,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           />
         </DrawerContent>
 
-        <div className="border-border border-t px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className={cn("border-border border-t px-4", BAR_PADDING_CLASS)}>
           <SheetHandIn
             onHandIn={() => {
               setOpen(false);

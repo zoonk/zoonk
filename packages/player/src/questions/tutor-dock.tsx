@@ -2,6 +2,7 @@
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
 import {
+  BAR_PADDING_CLASS,
   TASK_ASIDE_PLACE_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
   TaskActionLabel,
@@ -192,7 +193,7 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
       >
         {suggests && <DockSuggestions buddy={buddy} />}
 
-        <div className="bg-background px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className={cn("bg-background px-5", BAR_PADDING_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
         </div>
       </div>
