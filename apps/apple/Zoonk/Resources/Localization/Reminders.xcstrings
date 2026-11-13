@@ -119,6 +119,65 @@
         }
       }
     },
+    "At %@ on your study days." : {
+      "comment" : "What the reminder offer promises, before and after it's on; the argument is a time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An deinen Lerntagen um %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A las %@ en tus días de estudio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À %@, les jours d’étude."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle %@ nei tuoi giorni di studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習する日の%@にお知らせします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공부하는 날 %@에 알려 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O %@ w dni nauki."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Às %@ nos seus dias de estudo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çalışma günlerinde saat %@."
+          }
+        }
+      }
+    },
     "Create an account to get email reminders" : {
       "comment" : "A guest's email reminders row, which opens account creation",
       "localizations" : {
@@ -528,6 +587,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planlarındaki çalışma günlerinde."
+          }
+        }
+      }
+    },
+    "One reminder on your %@, if you're not done for the day." : {
+      "comment" : "Under the reminders page's title: what reminders do; the argument is the link “study days”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Erinnerung an deinen %@, wenn du für heute noch nicht fertig bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un recordatorio en tus %@, si aún no terminas de estudiar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un rappel les %@, si tu n’as pas fini d’étudier pour la journée."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un promemoria nei tuoi %@, se non hai ancora finito per oggi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に、その日の学習が終わっていなければ1回お知らせします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루 학습을 아직 마치지 않았다면 %@에 한 번 알려 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedno przypomnienie w %@, jeśli do tego czasu nie skończysz nauki na dziś."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um lembrete nos seus %@, se você ainda não terminou o estudo do dia."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günlük çalışman bitmediyse %@ bir kez hatırlatırız."
           }
         }
       }
@@ -1000,6 +1118,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planını gör"
+          }
+        }
+      }
+    },
+    "study days" : {
+      "comment" : "Link to the Plan inside “One reminder on your study days…”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lerntagen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "días de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jours d’étude"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "giorni di studio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習する日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공부하는 날"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dni nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dias de estudo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "çalışma günlerinde"
           }
         }
       }

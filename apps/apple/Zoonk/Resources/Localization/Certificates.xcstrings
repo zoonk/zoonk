@@ -908,6 +908,65 @@
         }
       }
     },
+    "A record of completion on Zoonk, not academic credit." : {
+      "comment" : "What a course certificate is, before the note about its name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Nachweis über deinen Abschluss auf Zoonk, keine anrechenbare Studienleistung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una constancia de lo que completaste en Zoonk, sin créditos académicos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une attestation de fin de cours sur Zoonk, sans crédits universitaires."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un attestato di completamento su Zoonk, senza crediti formativi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkでの修了を示すもので、学校の単位にはなりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk에서 학습을 마쳤다는 기록이에요. 학점으로 인정되지는 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potwierdzenie ukończenia nauki w Zoonku, bez punktów zaliczeniowych na studiach."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um registro de conclusão no Zoonk, sem créditos acadêmicos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk’ta eğitimi tamamladığını gösterir, akademik kredi yerine geçmez."
+          }
+        }
+      }
+    },
     "about %@" : {
       "comment" : "An approximate study time, such as \"about 41 hr\"",
       "localizations" : {
@@ -1081,6 +1140,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LinkedIn profiline ekle"
+          }
+        }
+      }
+    },
+    "Anyone with the link can see this certificate." : {
+      "comment" : "Who can see a certificate's page",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wer den Link hat, kann dieses Zertifikat sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cualquier persona con el enlace puede ver este certificado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toute personne qui a le lien peut voir ce certificat."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiunque abbia il link può vedere questo certificato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リンクを知っている人は誰でもこの証明書を見ることができます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "링크가 있으면 누구나 이 인증서를 볼 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każdy, kto ma link, może zobaczyć ten certyfikat."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualquer pessoa com o link pode ver esse certificado."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantıya sahip herkes bu sertifikayı görebilir."
           }
         }
       }
@@ -2261,6 +2379,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayrıntılar"
+          }
+        }
+      }
+    },
+    "For finishing every lesson and challenge of this level." : {
+      "comment" : "How a certificate for a course's level is earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Abschluss aller Lektionen und Herausforderungen dieses Levels."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar cada lección y desafío de este nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé toutes les leçons et tous les défis de ce niveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per aver completato tutte le lezioni e le sfide di questo livello."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このレベルのすべてのレッスンとチャレンジを終えると取得できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 레벨의 모든 레슨과 챌린지를 마치면 받을 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ukończenie wszystkich lekcji i wyzwań na tym poziomie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir todas as aulas e todos os desafios deste nível."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu seviyedeki tüm dersleri ve meydan okumaları tamamladığın için."
+          }
+        }
+      }
+    },
+    "For finishing every lesson and challenge of this plan." : {
+      "comment" : "How a certificate for a course's whole plan is earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Abschluss aller Lektionen und Herausforderungen dieses Plans."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar cada lección y desafío de este plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé toutes les leçons et tous les défis de ce plan."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per aver completato tutte le lezioni e le sfide di questo piano."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この学習計画のすべてのレッスンとチャレンジを終えると取得できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 계획의 모든 레슨과 챌린지를 마치면 받을 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ukończenie wszystkich lekcji i wyzwań w tym planie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir todas as aulas e todos os desafios deste plano."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu plandaki tüm dersleri ve meydan okumaları tamamladığın için."
+          }
+        }
+      }
+    },
+    "For finishing this level, studying at least half of its lessons." : {
+      "comment" : "How a language level certificate is earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Abschluss dieses Levels, wenn du mindestens die Hälfte der Lektionen bearbeitet hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar este nivel y estudiar al menos la mitad de sus lecciones."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé ce niveau en étudiant au moins la moitié de ses leçons."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per aver completato questo livello studiando almeno metà delle lezioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半分以上のレッスンを学習し、このレベルを終えると取得できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 레벨의 레슨을 절반 이상 학습하고 레벨을 마치면 받을 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za ukończenie tego poziomu po przerobieniu co najmniej połowy jego lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir este nível, estudando pelo menos metade das aulas."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Derslerinin en az yarısını çalışarak bu seviyeyi tamamladığın için."
           }
         }
       }
@@ -3833,6 +4128,65 @@
         }
       }
     },
+    "Names aren't checked against an ID." : {
+      "comment" : "Ends a certificate's explanation: the name on it is the one the learner gave",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Namen werden nicht mit einem Ausweis abgeglichen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No verificamos los nombres con una identificación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les noms ne sont pas vérifiés avec une pièce d’identité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I nomi non vengono verificati con un documento d’identità."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前は本人確認書類と照合していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름은 신분증으로 확인하지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie sprawdzamy imion i nazwisk na podstawie dokumentu tożsamości."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os nomes não são conferidos com um documento de identidade."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adlar kimlik belgesiyle doğrulanmaz."
+          }
+        }
+      }
+    },
     "No certificates yet" : {
       "comment" : "Title when the learner has no certificate",
       "localizations" : {
@@ -5369,6 +5723,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sertifikanda görünecek adın"
+          }
+        }
+      }
+    },
+    "Your next certificate" : {
+      "comment" : "Heading over the learner's goals that can still earn a certificate",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein nächstes Zertifikat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu próximo certificado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton prochain certificat"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo prossimo certificato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次に目指す証明書"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 인증서"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój kolejny certyfikat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu próximo certificado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki sertifikan"
           }
         }
       }

@@ -3699,6 +3699,65 @@
         }
       }
     },
+    "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know." : {
+      "comment" : "A course outline before its chapters are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstell deinen Plan und Zoonk bereitet die Lektionen dieses Kurses vor. Dabei baut Zoonk auf dem auf, was du schon weißt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tu plan y Zoonk prepara las lecciones de este curso a partir de lo que ya sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée ton plan et Zoonk prépare les leçons de ce cours à partir de ce que tu sais déjà."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea il tuo piano e Zoonk prepara le lezioni di questo corso, partendo da quello che sai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を作ると、すでに知っている内容に合わせてZoonkがこのコースのレッスンを準備します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 만들면 Zoonk가 이미 아는 내용을 바탕으로 이 코스의 레슨을 준비해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ułóż swój plan, a Zoonk przygotuje lekcje tego kursu, uwzględniając to, co już wiesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monte seu plano e o Zoonk prepara as aulas deste curso, a partir do que você já sabe."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planını oluştur. Zoonk, bu kursun derslerini zaten bildiklerine göre hazırlar."
+          }
+        }
+      }
+    },
     "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level." : {
       "comment" : "A course outline before its chapters are written",
       "localizations" : {
@@ -6517,6 +6576,65 @@
         }
       }
     },
+    "How long it takes" : {
+      "comment" : "Header of how long a course takes to finish",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So lange dauert es"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuánto tiempo toma"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée du cours"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quanto tempo ci vuole"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修了までの期間"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료까지 걸리는 시간"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ile to zajmie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quanto tempo leva"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne kadar sürer"
+          }
+        }
+      }
+    },
     "In this course" : {
       "comment" : "Header of a lesson's place",
       "localizations" : {
@@ -6694,6 +6812,65 @@
         }
       }
     },
+    "Its lessons get ready when you start." : {
+      "comment" : "Under a chapter's start when its lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir bereiten die Lektionen vor, sobald du startest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sus lecciones se preparan cuando empiezas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ses leçons sont préparées quand tu commences."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepariamo le lezioni quando inizi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始めるときにレッスンを準備します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하면 레슨이 준비돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotujemy lekcje, gdy zaczniesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas ficam prontas quando você começa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başladığında dersler hazırlanır."
+          }
+        }
+      }
+    },
     "Just a guess, it doesn't count" : {
       "comment" : "Over a lesson's first question on its Library page, which the learner answers before being taught: it's only a guess, and a guess never earns or loses points.",
       "localizations" : {
@@ -6749,6 +6926,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sadece bir tahmin, puanını etkilemez"
+          }
+        }
+      }
+    },
+    "Keep going with %@" : {
+      "comment" : "Heads the way into a plan on a lesson's Library page; the argument is the course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter mit %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sigue con %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue avec %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua con %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の学習を続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 학습 이어가기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ucz się dalej: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue com %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile devam et"
           }
         }
       }
@@ -7227,6 +7463,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dersler"
+          }
+        }
+      }
+    },
+    "Lessons in %@" : {
+      "comment" : "Folds the lessons of a lesson's chapter; the argument is the chapter's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen in %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons de %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lezioni di %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のレッスン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 레슨"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lekcje w rozdziale: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ünitesindeki dersler"
           }
         }
       }
@@ -8116,6 +8411,65 @@
         }
       }
     },
+    "Part of %@" : {
+      "comment" : "Header of where a chapter sits in its course; the argument is the course's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teil von %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans le cours %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fa parte di %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に含まれる章"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에 포함된 챕터"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Część kursu: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parte de %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ kursunun bir parçası"
+          }
+        }
+      }
+    },
     "Please return to the catalog and choose another course." : {
       "comment" : "Guidance when a course request returns no content.",
       "localizations" : {
@@ -8407,6 +8761,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa bir soru"
+          }
+        }
+      }
+    },
+    "Ready when you get there." : {
+      "comment" : "Under the name of a course's level, such as Intermediate, whose chapters aren't ready yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bereit, sobald du dieses Level erreichst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estará listo cuando llegues."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout sera prêt quand tu y arriveras."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sarà tutto pronto quando ci arriverai."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このレベルに進む頃には準備が整います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습할 차례가 되면 준비돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Będzie gotowy, gdy tu dotrzesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo pronto quando você chegar lá."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu seviyeye geldiğinde hazır olacak."
           }
         }
       }
@@ -9062,6 +9475,65 @@
         }
       }
     },
+    "Start from this chapter" : {
+      "comment" : "A chapter page's last call, when the plan starts there",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ab diesem Kapitel starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar desde este capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer par ce chapitre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia da questo capitolo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この章から始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 챕터부터 시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zacznij od tego rozdziału"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar por este capítulo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üniteden başla"
+          }
+        }
+      }
+    },
     "Start here and Zoonk writes its lessons for your level." : {
       "comment" : "Under a chapter's start when its lessons aren't written yet",
       "localizations" : {
@@ -9353,6 +9825,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün başlarsan %@ civarında bitirirsin."
+          }
+        }
+      }
+    },
+    "Studying %lld minutes a day. Your plan skips what you already know, so it can take less." : {
+      "comment" : "Under the weeks a course's plan takes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bei %lld Minuten Lernzeit pro Tag. Dein Plan überspringt, was du schon weißt. So kann es schneller gehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con %lld minutos de estudio al día. Tu plan se salta lo que ya sabes, así que puedes tardar menos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec %lld minutes d’étude par jour. Ton plan saute ce que tu sais déjà, donc tu peux finir plus vite."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Studiando %lld minuti al giorno. Il tuo piano salta quello che sai già, quindi potresti impiegare meno tempo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日%lld分学習する場合の目安です。すでに知っている内容はスキップするため、もっと早く終わることもあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루 %lld분 학습 기준이에요. 이미 아는 내용은 건너뛰니 더 빨리 마칠 수도 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przy %lld min nauki dziennie. Twój plan pomija to, co już wiesz, więc może to potrwać krócej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudando %lld minutos por dia. Seu plano pula o que você já sabe, então pode levar menos tempo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günde %lld dakikalık çalışmayla. Planın zaten bildiklerini atladığı için daha kısa sürebilir."
           }
         }
       }
@@ -11011,6 +11542,65 @@
         }
       }
     },
+    "You get a plan for each day, from this chapter to the end of the course." : {
+      "comment" : "Under a chapter page's last call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bekommst für jeden Tag einen Plan, von diesem Kapitel bis zum Kursende."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibes un plan para cada día, desde este capítulo hasta el final del curso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as un plan pour chaque jour, de ce chapitre à la fin du cours."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai un piano per ogni giorno, da questo capitolo fino alla fine del corso."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この章からコースの最後まで、毎日の学習計画ができます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 챕터부터 코스 끝까지 매일 공부할 계획을 세워 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostajesz plan na każdy dzień, od tego rozdziału do końca kursu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você recebe um plano para cada dia, deste capítulo até o fim do curso."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üniteden kursun sonuna kadar her gün için bir planın olur."
+          }
+        }
+      }
+    },
     "You're offline" : {
       "comment" : "Title when catalog content cannot load because the device is offline.",
       "localizations" : {
@@ -11066,6 +11656,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Çevrimdışısın"
+          }
+        }
+      }
+    },
+    "Your first day" : {
+      "comment" : "Header of the lessons a course's plan starts with",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein erster Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primer día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton premier jour"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo primo giorno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初日の学習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫날 학습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój pierwszy dzień"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu primeiro dia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk günün"
           }
         }
       }
@@ -11422,6 +12071,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ tarihine kadar günde %2$@ çalışma planın"
+          }
+        }
+      }
+    },
+    "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know." : {
+      "comment" : "On an exam course's page, what Zoonk does with it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk erstellt dir einen Plan für jeden Tag bis zu deiner Prüfung. Er passt zu deiner verfügbaren Zeit und baut auf dem auf, was du schon weißt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk crea un plan de estudio para cada día hasta tu examen. Se adapta al tiempo que tienes y parte de lo que ya sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk te crée un plan d’étude pour chaque jour jusqu’à ton examen. Il s’adapte au temps dont tu disposes et part de ce que tu sais déjà."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk crea per te un piano per ogni giorno fino all’esame. Si adatta al tempo che hai e parte da quello che sai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkが試験当日までの毎日の学習計画を作ります。学習に使える時間と、すでに知っている内容に合わせた計画です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk가 시험일까지 매일 공부할 계획을 세워 줘요. 공부할 수 있는 시간에 맞춰 이미 아는 내용을 바탕으로 시작해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk układa ci plan nauki na każdy dzień aż do egzaminu. Dostosowuje go do czasu, który masz, i zaczyna od tego, co już wiesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk monta um plano de estudo para cada dia até a sua prova. Ele se adapta ao seu tempo e parte do que você já sabe."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk, sınavına kadar her gün için sana bir çalışma planı hazırlar. Plan, ayırabildiğin süreye uyar ve zaten bildiklerini temel alır."
+          }
+        }
+      }
+    },
+    "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter." : {
+      "comment" : "On a chapter's page, what Zoonk does with it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk erstellt dir einen Plan für jeden Tag. Er passt zu deiner verfügbaren Zeit und beginnt mit diesem Kapitel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk crea un plan de estudio para cada día. Se adapta al tiempo que tienes y empieza en este capítulo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk te crée un plan d’étude pour chaque jour. Il s’adapte au temps dont tu disposes et commence par ce chapitre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk crea per te un piano per ogni giorno. Si adatta al tempo che hai e parte da questo capitolo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkが毎日の学習計画を作ります。学習に使える時間に合わせて、この章から始めます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk가 매일 공부할 계획을 세워 줘요. 공부할 수 있는 시간에 맞춰 이 챕터부터 시작해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk układa ci plan nauki na każdy dzień. Dostosowuje go do czasu, który masz, i zaczyna od tego rozdziału."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk monta um plano de estudo para cada dia. Ele se adapta ao seu tempo e começa neste capítulo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk, her gün için sana bir çalışma planı hazırlar. Plan, ayırabildiğin süreye uyar ve bu üniteden başlar."
+          }
+        }
+      }
+    },
+    "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know." : {
+      "comment" : "On a course's page, what Zoonk does with it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk erstellt dir einen Plan für jeden Tag. Er passt zu deiner verfügbaren Zeit und baut auf dem auf, was du schon weißt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk crea un plan de estudio para cada día. Se adapta al tiempo que tienes y parte de lo que ya sabes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk te crée un plan d’étude pour chaque jour. Il s’adapte au temps dont tu disposes et part de ce que tu sais déjà."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk crea per te un piano per ogni giorno. Si adatta al tempo che hai e parte da quello che sai già."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonkが毎日の学習計画を作ります。学習に使える時間と、すでに知っている内容に合わせた計画です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk가 매일 공부할 계획을 세워 줘요. 공부할 수 있는 시간에 맞춰 이미 아는 내용을 바탕으로 시작해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk układa ci plan nauki na każdy dzień. Dostosowuje go do czasu, który masz, i zaczyna od tego, co już wiesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk monta um plano de estudo para cada dia. Ele se adapta ao seu tempo e parte do que você já sabe."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk, her gün için sana bir çalışma planı hazırlar. Plan, ayırabildiğin süreye uyar ve zaten bildiklerini temel alır."
           }
         }
       }

@@ -2054,6 +2054,71 @@
         }
       }
     },
+    "By continuing, you agree to our %@ and %@." : {
+      "comment" : "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du fortfährst, akzeptierst du unsere %1$@ und %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "By continuing, you agree to our %1$@ and %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al continuar, aceptas nuestros %1$@ y nuestra %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En continuant, tu acceptes nos %1$@ et notre %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuando, accetti i nostri %1$@ e la nostra %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続けると、%1$@と%2$@に同意したことになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속하면 %1$@ 및 %2$@에 동의하게 돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontynuując, akceptujesz nasze zasady: %1$@ i %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao continuar, você concorda com nossos %1$@ e nossa %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam ederek %1$@ ve %2$@ metinlerini kabul etmiş olursun."
+          }
+        }
+      }
+    },
     "By continuing, you agree to the Zoonk %@ and %@." : {
       "comment" : "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy",
       "localizations" : {
@@ -2479,6 +2544,65 @@
         }
       }
     },
+    "Change email" : {
+      "comment" : "Button that returns to the email entry step",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Adresse ändern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changer d’adresse e-mail"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia email"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスを変更する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 변경"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień adres e-mail"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alterar e-mail"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-posta adresini değiştir"
+          }
+        }
+      }
+    },
     "Change username" : {
       "comment" : "Shows the username field",
       "localizations" : {
@@ -2780,6 +2904,65 @@
         }
       }
     },
+    "Check your connection and try again." : {
+      "comment" : "Error shown when an account request cannot reach the service",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüf deine Verbindung und versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlla la connessione e riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インターネット接続を確認して、もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인터넷 연결을 확인하고 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź połączenie z internetem i spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifique sua conexão e tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantını kontrol et ve tekrar dene."
+          }
+        }
+      }
+    },
     "Check your connection and try restoring again." : {
       "comment" : "Recovery guidance after restoring App Store purchases fails",
       "localizations" : {
@@ -3018,6 +3201,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Destek ekibiyle iletişime geç"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "comment" : "Button that sends an email log in code\nButton that verifies an email code",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontynuuj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam et"
           }
         }
       }
@@ -3618,6 +3860,65 @@
         }
       }
     },
+    "Delete your account?" : {
+      "comment" : "Final confirmation title before permanent account deletion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konto löschen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar tu cuenta?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ton compte ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuoi eliminare il tuo account?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정을 삭제할까요?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunąć konto?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir sua conta?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabını silmek istiyor musun?"
+          }
+        }
+      }
+    },
     "Delete your Zoonk account?" : {
       "comment" : "Final confirmation title before permanent account deletion",
       "localizations" : {
@@ -4208,6 +4509,65 @@
         }
       }
     },
+    "Enter the code we sent to %@." : {
+      "comment" : "Under the code field; the argument is the learner's email address",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib den Code ein, den wir an %@ geschickt haben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa el código que te enviamos a %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisis le code envoyé à %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci il codice che abbiamo inviato a %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@に送信したコードを入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 주소로 보낸 코드를 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wpisz kod, który wysłaliśmy na adres %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digite o código que a gente enviou para %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ adresine gönderdiğimiz kodu gir."
+          }
+        }
+      }
+    },
     "Every goal · every lesson" : {
       "comment" : "What Zoonk Plus includes, in one line",
       "localizations" : {
@@ -4548,6 +4908,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sınav için: seviye tespit testi, planın ve ilk haftası"
+          }
+        }
+      }
+    },
+    "For your safety, log in again, then delete your account." : {
+      "comment" : "Why the learner logs in again before deleting their account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meld dich zu deiner Sicherheit noch einmal an und lösch dann dein Konto."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por tu seguridad, vuelve a iniciar sesión y luego elimina tu cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour ta sécurité, reconnecte-toi, puis supprime ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per la tua sicurezza, accedi di nuovo, poi elimina il tuo account."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安全のため、もう一度ログインしてからアカウントを削除してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보안을 위해 다시 로그인한 다음 계정을 삭제하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dla bezpieczeństwa zaloguj się ponownie, a potem usuń konto."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por segurança, entre de novo e depois exclua sua conta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Güvenliğin için tekrar giriş yap, ardından hesabını sil."
           }
         }
       }
@@ -5321,6 +5740,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Giriş yap"
+          }
+        }
+      }
+    },
+    "Log in or create an account" : {
+      "comment" : "Title above the native sign-in methods; new learners create an account here too",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmelden oder Konto erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión o crea una cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi ou crée un compte"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accedi o crea un account"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログインまたはアカウント作成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인 또는 계정 만들기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaloguj się lub utwórz konto"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre ou crie uma conta"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giriş yap veya hesap oluştur"
           }
         }
       }
@@ -6389,6 +6867,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus hemen sona erer ve yenileme ödemeni tekrar almaya çalışmayız."
+          }
+        }
+      }
+    },
+    "Plus from Google Play keeps charging until you cancel it there." : {
+      "comment" : "Before deleting the account, for Plus bought in Google Play",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für dein Plus-Abo bei Google Play zahlst du weiter, bis du es dort kündigst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de Google Play se sigue cobrando hasta que lo canceles ahí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton abonnement Plus via Google Play reste facturé tant que tu ne l’annules pas sur Google Play."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuerai a pagare Plus finché non lo disdici su Google Play."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Playで登録したPlusは、Google Playで解約するまで料金がかかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Play에서 구독한 Plus는 Google Play에서 해지할 때까지 요금이 계속 청구돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opłaty za Plus z Google Play będą pobierane, dopóki nie anulujesz tam subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Plus comprado via Google Play continua sendo cobrado até você cancelar por lá."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Play’den aldığın Plus aboneliğini orada iptal edene kadar ücret alınmaya devam eder."
+          }
+        }
+      }
+    },
+    "Plus from the App Store keeps charging until you cancel it there." : {
+      "comment" : "Before deleting the account, for Plus bought in the App Store",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für dein Plus-Abo im App Store zahlst du weiter, bis du es dort kündigst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus del App Store se sigue cobrando hasta que lo canceles ahí."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton abonnement Plus via l’App Store reste facturé tant que tu ne l’annules pas dans l’App Store."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuerai a pagare Plus finché non lo disdici sull’App Store."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Storeで登録したPlusは、App Storeで解約するまで料金がかかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store에서 구독한 Plus는 App Store에서 해지할 때까지 요금이 계속 청구돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opłaty za Plus z App Store będą pobierane, dopóki nie anulujesz tam subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Plus da App Store continua sendo cobrado até você cancelar por lá."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store’dan aldığın Plus aboneliğini orada iptal edene kadar ücret alınmaya devam eder."
           }
         }
       }
@@ -8401,6 +8997,65 @@
         }
       }
     },
+    "Temporary email addresses don't work here. Use another email." : {
+      "comment" : "Temporary inbox rejection; persistent privacy aliases remain supported",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wegwerf-E-Mail-Adressen funktionieren hier nicht. Nutz eine andere E-Mail-Adresse."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las direcciones de correo temporales no funcionan aquí. Usa otro correo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les adresses e-mail temporaires ne fonctionnent pas ici. Utilise une autre adresse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli indirizzi email temporanei non funzionano qui. Usa un’altra email."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使い捨てのメールアドレスは使えません。別のメールアドレスを使ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "임시 이메일 주소는 사용할 수 없어요. 다른 이메일 주소를 사용하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tymczasowe adresy e-mail nie działają tutaj. Użyj innego adresu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-mails temporários não funcionam aqui. Use outro e-mail."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçici e-posta adresleri burada kullanılamıyor. Başka bir e-posta adresi kullan."
+          }
+        }
+      }
+    },
     "Terms of Service" : {
       "comment" : "Link to the terms of service",
       "localizations" : {
@@ -8519,6 +9174,65 @@
         }
       }
     },
+    "That code is for another account. Send a new code." : {
+      "comment" : "Error shown when an account deletion code belongs to a different account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Code gehört zu einem anderen Konto. Lass dir einen neuen Code schicken."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ese código es de otra cuenta. Solicita un código nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce code correspond à un autre compte. Demande un nouveau code."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo codice è per un altro account. Richiedi un nuovo codice."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのコードは別のアカウント用です。新しいコードを送信してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 계정의 코드예요. 새 코드를 요청해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten kod jest do innego konta. Wyślij nowy kod."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse código é de outra conta. Envie um novo código."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu kod başka bir hesaba ait. Yeni bir kod gönder."
+          }
+        }
+      }
+    },
     "That code is invalid or expired. Request a new code and try again." : {
       "comment" : "Error shown when an email verification code is invalid or expired",
       "localizations" : {
@@ -8574,6 +9288,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu kod geçersiz veya süresi dolmuş. Yeni bir kod iste ve tekrar dene."
+          }
+        }
+      }
+    },
+    "That code isn't right. Try again." : {
+      "comment" : "Error shown when an email verification code is invalid or expired",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Code stimmt nicht. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ese código no es correcto. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce code n’est pas valide. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo codice non è valido. Riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードが正しくありません。もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코드가 맞지 않아요. 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten kod jest nieprawidłowy. Spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse código não está certo. Tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu kod geçerli değil. Tekrar dene."
           }
         }
       }
@@ -9107,6 +9880,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu abonelik App Store üzerinden yönetiliyor. Değiştirmek veya iptal etmek için Apple’ın abonelik ayarlarını kullan."
+          }
+        }
+      }
+    },
+    "To finish, remove Zoonk from Sign in with Apple." : {
+      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfern Zoonk zum Abschluss aus „Sign in with Apple“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para terminar, elimina Zoonk de Iniciar sesión con Apple."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour terminer, retire Zoonk de « Se connecter avec Apple »."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per finire, rimuovi Zoonk da Sign in with Apple."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に、Sign in with AppleからZoonkを削除してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마무리하려면 Sign in with Apple에서 Zoonk를 삭제하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby dokończyć, usuń Zoonk z usługi Sign in with Apple."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para concluir, remova o Zoonk de Sign in with Apple."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşlemi tamamlamak için Apple ile Giriş Yap bölümünden Zoonk’u kaldır."
           }
         }
       }
@@ -9921,6 +10753,65 @@
         }
       }
     },
+    "We couldn't delete your account. Try again or email hello@zoonk.com." : {
+      "comment" : "Generic account deletion failure message",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten dein Konto nicht löschen. Versuch es noch einmal oder schreib an hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos eliminar tu cuenta. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu supprimer ton compte. Réessaie ou écris à hello@zoonk.com."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a eliminare il tuo account. Riprova o scrivi a hello@zoonk.com."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除できませんでした。もう一度試すか、hello@zoonk.comまでお問い合わせください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정을 삭제하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 문의해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się usunąć twojego konta. Spróbuj ponownie lub napisz na hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para excluir sua conta. Tente de novo ou envie um e-mail para contato@zoonk.com."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabını silemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
+          }
+        }
+      }
+    },
     "We couldn't keep Plus. Try again or email hello@zoonk.com." : {
       "comment" : "Turning the stopped renewal of Plus bought on the web back on failed",
       "localizations" : {
@@ -10035,6 +10926,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz paketin içeriğini yükleyemedik."
+          }
+        }
+      }
+    },
+    "We couldn't log you in. Try again or email hello@zoonk.com." : {
+      "comment" : "Generic sign-in failure message",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten dich nicht anmelden. Versuch es noch einmal oder schreib an hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos iniciar sesión. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu te connecter. Réessaie ou écris à hello@zoonk.com."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a farti accedere. Riprova o scrivi a hello@zoonk.com."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログインできませんでした。もう一度試すか、hello@zoonk.comまでお問い合わせください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인하지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 문의해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się zalogować. Spróbuj ponownie lub napisz na hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para entrar na sua conta. Tente de novo ou envie um e-mail para contato@zoonk.com."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Girişini tamamlayamadık. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
+          }
+        }
+      }
+    },
+    "We couldn't send the code. Try again or email hello@zoonk.com." : {
+      "comment" : "Generic email verification code delivery failure",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten den Code nicht schicken. Versuch es noch einmal oder schreib an hello@zoonk.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos enviar el código. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu envoyer le code. Réessaie ou écris à hello@zoonk.com."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a inviare il codice. Riprova o scrivi a hello@zoonk.com."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードを送信できませんでした。もう一度試すか、hello@zoonk.comまでお問い合わせください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코드를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 문의해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się wysłać kodu. Spróbuj ponownie lub napisz na hello@zoonk.com."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu para enviar o código. Tente de novo ou envie um e-mail para contato@zoonk.com."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kodu gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
           }
         }
       }
@@ -10877,6 +11886,65 @@
         }
       }
     },
+    "You're still logged in. Check your connection and try again." : {
+      "comment" : "Explains that a temporary account load failure did not remove the session",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist weiterhin angemeldet. Prüf deine Verbindung und versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu sesión aún está abierta. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta session est toujours ouverte. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua sessione è ancora attiva. Controlla la connessione e riprova."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログインしたままです。インターネット接続を確認して、もう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인 상태는 그대로예요. 인터넷 연결을 확인하고 다시 시도해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja sesja nadal jest aktywna. Sprawdź połączenie z internetem i spróbuj ponownie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua sessão continua ativa. Verifique sua conexão e tente de novo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturumun hâlâ açık. Bağlantını kontrol et ve tekrar dene."
+          }
+        }
+      }
+    },
     "you@example.com" : {
       "comment" : "Example email address in the sign-in field: localize \"you\" and keep example.com",
       "localizations" : {
@@ -10936,6 +12004,65 @@
         }
       }
     },
+    "Your account was deleted." : {
+      "comment" : "Shown once the learner's account is deleted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Konto wurde gelöscht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu cuenta se eliminó."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compte a été supprimé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo account è stato eliminato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントを削除しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정이 삭제됐어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje konto zostało usunięte."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua conta foi excluída."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesabın silindi."
+          }
+        }
+      }
+    },
     "Your App Store purchases are now available on this Zoonk account." : {
       "comment" : "Confirms restored purchases were synchronized with Zoonk",
       "localizations" : {
@@ -10991,6 +12118,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Store’dan satın aldıkların artık bu Zoonk hesabında kullanılabilir."
+          }
+        }
+      }
+    },
+    "Your buddy and all your certificates use this name." : {
+      "comment" : "Under a field that changes the learner's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kumpel spricht dich mit diesem Namen an. Er steht auch auf all deinen Zertifikaten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este es el nombre que usan tu compañero y todos tus certificados."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compagnon t’appelle ainsi et ce nom figure sur tous tes certificats."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo compagno ti chiama così e questo nome compare su tutti i tuoi certificati."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相棒からの呼びかけや、すべての証明書に使われる名前です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "짝꿍이 이 이름으로 부르고, 모든 인증서에도 이 이름이 표시돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tak zwraca się do ciebie twój kumpel i takie imię widnieje na wszystkich twoich certyfikatach."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu parceiro e todos os seus certificados usam esse nome."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ders arkadaşın sana bu adla seslenir. Tüm sertifikalarında bu ad yer alır."
           }
         }
       }
@@ -11109,6 +12295,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verilerin"
+          }
+        }
+      }
+    },
+    "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone." : {
+      "comment" : "What deleting the account deletes, under its title and in its confirmation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Ziele, Pläne, Lernfortschritte, Erinnerungen und hochgeladenen Dateien werden endgültig gelöscht. Das lässt sich nicht rückgängig machen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus objetivos, planes, progreso, memoria y archivos subidos se eliminan para siempre. Esto no se puede deshacer."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes objectifs, tes plans, ta progression, les informations mémorisées et tes fichiers importés sont supprimés définitivement. Cette action est irréversible."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tuoi obiettivi, i piani, i progressi, la memoria e i file caricati vengono eliminati per sempre. Non si può tornare indietro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標、学習計画、学習の進捗、メモリ、アップロードしたデータが完全に削除されます。元に戻すことはできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목표, 계획, 진도, 메모리와 업로드한 자료가 영구적으로 삭제돼요. 되돌릴 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje cele, plany, postępy, zapamiętane informacje i przesłane pliki zostaną usunięte na zawsze. Nie da się tego cofnąć."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus objetivos, planos, progresso, memória e arquivos enviados são apagados de vez. Não dá para desfazer."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedeflerin, planların, ilerlemen, bellek kayıtların ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz."
           }
         }
       }
