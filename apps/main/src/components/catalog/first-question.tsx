@@ -73,7 +73,7 @@ async function QuestionScreen({
         />
       )}
 
-      <QuestionTitle className="mt-2 mb-5" heading={false} text={screen.question} />
+      <QuestionTitle className="mt-2 mb-4" heading={false} text={screen.question} />
 
       <FirstScreenChoices
         action={playerPath}
