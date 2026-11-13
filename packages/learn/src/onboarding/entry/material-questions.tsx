@@ -38,16 +38,12 @@ function useQuestionLimitMessage() {
 
   return (outcome: MaterialQuestionOutcome): string => {
     if (outcome.status !== "limitReached" || outcome.tier === "plus") {
-      return t("You've asked as many questions as your plan allows today.");
+      return t("No more questions today. More tomorrow.");
     }
 
     return outcome.period === "month"
-      ? t(
-          "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.",
-        )
-      : t(
-          "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.",
-        );
+      ? t("No more questions this month. More next month, or subscribe to keep going.")
+      : t("No more questions today. More tomorrow, or subscribe to keep going.");
   };
 }
 

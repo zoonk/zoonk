@@ -28,16 +28,12 @@ function useAttachLimitMessage() {
 
   return ({ period, tier }: UsageCap): string => {
     if (tier === "plus") {
-      return t("You've added as much material as your plan allows today. Try again tomorrow.");
+      return t("No more material today. More tomorrow.");
     }
 
     return period === "month"
-      ? t(
-          "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-        )
-      : t(
-          "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
-        );
+      ? t("No more material this month. More next month, or subscribe to keep going.")
+      : t("No more material today. More tomorrow, or subscribe to keep going.");
   };
 }
 
