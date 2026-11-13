@@ -20,8 +20,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { SignInAgainDialog } from "../../_components/sign-in-again-dialog";
 import { deleteAccountAction } from "./delete-account-action";
-import { SignInAgainDialog } from "./sign-in-again-dialog";
 
 const DELETE_BUTTON_CLASS = cn(
   buttonVariants({ size: "sm", variant: "outline" }),
@@ -35,7 +35,7 @@ async function leaveDeletedAccount() {
 }
 
 /**
- * A row of the profile's "Your data" list. `plusNotice` says what happens to the learner's Plus,
+ * A row of Privacy's "Your data" list. `plusNotice` says what happens to the learner's Plus,
  * which the server reads.
  */
 export function DeleteAccountRow({

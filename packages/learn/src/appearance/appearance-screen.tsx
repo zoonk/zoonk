@@ -25,7 +25,6 @@ export type AppearanceView = {
   /** Where the learner says they live; null until they say. */
   homeCountry: CountryName | null;
   homeCountrySuggested: readonly SuggestedCountry[];
-  shareUsageData: boolean;
   soundsEnabled: boolean;
 };
 
@@ -34,7 +33,6 @@ export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
   /** Null clears it. */
   setHomeCountry: (country: string | null) => Promise<boolean>;
-  setShareUsageData: (share: boolean) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
 
@@ -49,7 +47,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function useAppearance({ actions, view }: { actions: AppearanceActions; view: AppearanceView }) {
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
-  const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
   const [homeCountry, setOptimisticHome] = useOptimistic(view.homeCountry);
 
   const { run } = useOptimisticSave();
@@ -67,17 +64,11 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
         () => setOptimisticHome(next),
         () => actions.setHomeCountry(next?.code ?? null),
       ),
-    setShareUsageData: (next: boolean) =>
-      run(
-        () => setOptimisticShare(next),
-        () => actions.setShareUsageData(next),
-      ),
     setSoundsEnabled: (next: boolean) =>
       run(
         () => setOptimisticSounds(next),
         () => actions.setSoundsEnabled(next),
       ),
-    shareUsageData,
     soundsEnabled,
   };
 }
@@ -135,18 +126,6 @@ export function AppearanceScreen({
               value={appearance.homeCountry}
             />
           )}
-        </ListGroup>
-      </PageSection>
-
-      <PageSection>
-        <SectionTitle>{t("Privacy")}</SectionTitle>
-        <ListGroup>
-          <SwitchSettingRow
-            checked={appearance.shareUsageData}
-            description={t("Shows us how you use Zoonk, so we can improve it")}
-            label={t("Share usage data")}
-            onCheckedChange={appearance.setShareUsageData}
-          />
         </ListGroup>
       </PageSection>
     </div>

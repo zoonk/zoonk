@@ -27,9 +27,9 @@ import { safeAsync } from "@zoonk/utils/error";
 import { EllipsisIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
+import { SignInAgainDialog } from "../_components/sign-in-again-dialog";
 import { DeleteDialog, RenameDialog, usePasskeyName } from "./passkey-dialogs";
 import { refreshPasskeysAction } from "./refresh-passkeys-action";
-import { SignInAgainDialog } from "./sign-in-again-dialog";
 
 type PlainFailure = Exclude<PasskeyChangeFailure, "cancelled" | "signInAgain">;
 

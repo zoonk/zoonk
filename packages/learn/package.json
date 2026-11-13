@@ -155,6 +155,7 @@
     "./session/summary": "./src/session/summary/session-summary.tsx",
     "./session/types": "./src/session/session-types.ts",
     "./setting-rows": "./src/_components/setting-rows.tsx",
+    "./usage-data-setting": "./src/privacy/usage-data-setting.tsx",
     "./shell": "./src/shell/learn-shell.tsx",
     "./sources-chip": "./src/_components/sources-chip.tsx",
     "./speech": "./src/speech/use-spoken-audio.ts",

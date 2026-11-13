@@ -49,6 +49,7 @@ function useSettingsPages({
     toPage("reminders", t("Reminders")),
     toPage("aboutYou", t("About you")),
     toPage("memory", t("Memory")),
+    toPage("privacy", t("Privacy")),
   ].filter((item) => item !== false);
 
   const plan = [

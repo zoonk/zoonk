@@ -4,7 +4,7 @@ import { DownloadRow } from "@zoonk/learn/download-row";
 import { useExtracted } from "next-intl";
 import { exportAccountDataAction } from "./export-data-action";
 
-/** A row of the profile's "Your data" list. */
+/** A row of Privacy's "Your data" list. */
 export function ExportDataRow() {
   const t = useExtracted();
 
