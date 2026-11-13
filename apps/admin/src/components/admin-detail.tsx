@@ -36,6 +36,7 @@ export function AdminDetailHeader({
   actions,
   alert,
   facts,
+  mark,
   menu,
   parents,
   title,
@@ -45,6 +46,8 @@ export function AdminDetailHeader({
   actions?: React.ReactNode;
   alert?: string | null;
   facts: (string | null | undefined | false)[];
+  /** What the record is, drawn before its name: a person's photo or initials. */
+  mark?: React.ReactNode;
   menu?: React.ReactNode;
   parents: AdminBreadcrumbParent[];
   title: string;
@@ -64,7 +67,16 @@ export function AdminDetailHeader({
       }
       actionsBesideTitle={!actions}
       crumb={<AdminBreadcrumb current={title} parents={parents} />}
-      title={<DetailTitle className={titleClassName}>{title}</DetailTitle>}
+      title={
+        mark ? (
+          <span className="flex min-w-0 items-center gap-3">
+            {mark}
+            <DetailTitle className={titleClassName}>{title}</DetailTitle>
+          </span>
+        ) : (
+          <DetailTitle className={titleClassName}>{title}</DetailTitle>
+        )
+      }
     >
       {/* A record's facts here are names, a plan and dates: words, so the text face (Main's are counts). */}
       <DetailFacts className="font-sans">

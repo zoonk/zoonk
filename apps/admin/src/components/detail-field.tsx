@@ -44,19 +44,28 @@ function isData({ children, label }: { children: React.ReactNode; label: string 
   return ID_LABEL.test(label) || (DATA_VALUE.test(text) && !NAME_LIKE.test(text));
 }
 
-/** A value that is data is set in mono, digit under digit; `mono` says so where the value isn't a plain string. */
+/**
+ * A value that is data is set in mono, digit under digit; `mono` says so where the value isn't a
+ * plain string. An `icon` says what the field is before its label; give one to every field of a
+ * list or to none, so the labels share an edge.
+ */
 export function DetailField({
   children,
+  icon,
   label,
   mono,
 }: {
   children: React.ReactNode;
+  icon?: React.ReactNode;
   label: string;
   mono?: boolean;
 }) {
   return (
     <div className={FIELD_ROW_CLASS}>
-      <dt className="text-muted-foreground">{label}</dt>
+      <dt className="text-muted-foreground flex items-center gap-2.5 [&>svg]:size-4 [&>svg]:shrink-0">
+        {icon}
+        {label}
+      </dt>
       <dd
         className={cn(
           "[&_a]:hit-area min-w-0 wrap-anywhere [&_a]:relative",

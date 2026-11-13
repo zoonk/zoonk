@@ -1,4 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type Route } from "next";
+import Link from "next/link";
 import { DetailFieldsSkeleton } from "./detail-field";
 
 export function AdminSection({
@@ -33,6 +35,20 @@ export function AdminSection({
 
 export function AdminSectionEmpty({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-sm">{children}</p>;
+}
+
+/** Under a list cut to its first rows: the link that shows the rest. */
+export function AdminSectionMore({ children, href }: { children: React.ReactNode; href: Route }) {
+  return (
+    <Link
+      className="text-muted-foreground hover:text-foreground text-compact hit-area relative self-start font-medium"
+      href={href}
+      prefetch
+      scroll={false}
+    >
+      {children}
+    </Link>
+  );
 }
 
 const SKELETON_ROWS = 4;
