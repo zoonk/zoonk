@@ -1,12 +1,13 @@
 "use client";
 
 import { PageSectionLabel } from "@zoonk/learn/page";
+import { QuestionEyebrow } from "@zoonk/learn/question-title";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ClockIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { LessonRichText } from "../../_components/lesson-rich-text";
-import { LessonEyebrow, LessonQuestion } from "../../_components/lesson-step-text";
+import { LessonQuestion } from "../../_components/lesson-step-text";
 import { type StepOf } from "../lesson-step-view-props";
 import { ChallengeAvatar, ChallengeLabel, ChallengePanelView } from "./challenge-parts";
 import { type ChallengeNames } from "./use-challenge-names";
@@ -61,11 +62,11 @@ export function ChallengeIntro({
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flex flex-col gap-3">
-        <LessonEyebrow icon={<TargetIcon aria-hidden="true" />}>
+        <QuestionEyebrow icon={<TargetIcon aria-hidden="true" />}>
           {content.variant === "whatIf"
             ? t("What if · {setting}", { setting: fill(content.setting) })
             : t("Challenge · {setting}", { setting: fill(content.setting) })}
-        </LessonEyebrow>
+        </QuestionEyebrow>
         <LessonQuestion>{fill(content.title)}</LessonQuestion>
       </div>
 

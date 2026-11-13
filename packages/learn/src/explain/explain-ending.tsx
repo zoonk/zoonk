@@ -1,12 +1,10 @@
 "use client";
 
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { EnterLink } from "../_components/enter-button";
 import {
   ListGroup,
   ListRowContent,
@@ -20,15 +18,8 @@ import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionTitle } from "../_components/page";
 import { SectionLabel } from "../_components/section-label";
 import { SuccessEyebrow } from "../_components/success-eyebrow";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActions,
-  TaskAsideContent,
-  TaskBody,
-} from "../_components/task-layout";
+import { TaskActionBar, TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { LearnLink } from "../learn-link";
 import { DayMoment } from "../session/day-moment";
 import { type LessonCelebration } from "../session/lesson-celebration";
 import { MomentHeader, MomentSaving, PendingMainAction } from "../session/moment-header";
@@ -38,22 +29,15 @@ type ExplainResult = { answered: number; celebration: LessonCelebration | null; 
 
 function DoneLink({ href, saving }: { href: string; saving: boolean }) {
   const t = useExtracted();
-  const doneRef = useEnterClick<HTMLAnchorElement>();
 
   if (saving) {
     return <PendingMainAction>{t("Done")}</PendingMainAction>;
   }
 
   return (
-    <LearnLink
-      aria-keyshortcuts="Enter"
-      className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
-      href={href}
-      ref={doneRef}
-    >
+    <EnterLink href={href} icon={null}>
       {t("Done")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
+    </EnterLink>
   );
 }
 

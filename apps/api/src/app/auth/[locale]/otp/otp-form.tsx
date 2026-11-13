@@ -260,7 +260,7 @@ export function OTPForm({
           <Button
             autoFocus
             busy={resendCode.status === "sending"}
-            className="w-full font-[560]"
+            className="w-full"
             icon={<SendIcon aria-hidden="true" />}
             onClick={sendNewCode}
             size="lg"

@@ -1,23 +1,13 @@
 "use client";
 
+import { SHORTCUTS } from "@zoonk/ui/lib/shortcuts";
 import { useEffect } from "react";
 
-const SCREEN_KEYS = new Set([
-  "Enter",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "ArrowUp",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-]);
+const SCREEN_KEYS = new Set<string>(
+  (["main", "previous", "next", "answerBlank", "pick"] as const).flatMap(
+    (name) => SHORTCUTS[name].keys,
+  ),
+);
 
 const POPUP_SELECTOR = "[role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox']";
 

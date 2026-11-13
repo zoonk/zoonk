@@ -97,7 +97,6 @@ export type LessonPlayerProviderProps = {
   goalId?: string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
-  onExit: () => void;
   outline?: boolean;
   resume?: LessonRunAnswers;
   routes: LessonPlayerRoutes;
@@ -124,7 +123,6 @@ export function LessonPlayerProvider({
   goalId = null,
   lesson,
   linkComponent,
-  onExit,
   outline = false,
   resume = NO_ANSWERS,
   routes,
@@ -206,7 +204,6 @@ export function LessonPlayerProvider({
         title: lesson.title,
       },
       linkComponent,
-      onExit,
       outline,
       routes,
       slots,
@@ -220,7 +217,6 @@ export function LessonPlayerProvider({
       exampleLines.writing,
       lesson,
       linkComponent,
-      onExit,
       outline,
       routes,
       slots,

@@ -1,18 +1,12 @@
 "use client";
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { DrawerCloseButton } from "../../_components/details-drawer";
 import { LIST_GROUP_CLASS } from "../../_components/list-group";
 import { PageSectionTitle } from "../../_components/page";
+import { SheetHeader } from "../../_components/sheet-header";
 
 export function Phrases({
   conversation,
@@ -58,12 +52,9 @@ export function PhrasesSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center gap-3">
-          <DrawerTitle className="min-w-0 flex-1 text-xl font-semibold">
-            {t("Phrases you can use")}
-          </DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle className="min-w-0 flex-1">{t("Phrases you can use")}</DrawerTitle>
+        </SheetHeader>
         <DrawerContent className="pt-1 pb-6">
           <Phrases conversation={conversation} titled={false} />
         </DrawerContent>

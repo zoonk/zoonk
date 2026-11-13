@@ -5,6 +5,7 @@ import { type WarmUpCard as Card, type WarmUpDeck } from "@zoonk/core/library/wa
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import {
   type KeyboardEvent,
@@ -307,13 +308,13 @@ export function WaitQuizCard({
         </QuestionTitle>
       </div>
 
-      <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId}>
+      <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId} arrows="move">
         {card.options.map((option, index) => {
           const picked = option.id === pickedId;
 
           return (
             <AnswerOption
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={answered}
               guessed
               key={option.id}

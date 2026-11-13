@@ -119,7 +119,7 @@ A container's left and right padding are equal, its text is never closer than 8p
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px on a tablet, 40px beside the sidebar from `lg`. Only E7's bleeds pass it.
+Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px on a tablet, 40px beside the sidebar from `lg`. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
 - **Check.** The main region's leftmost and rightmost ink against the screen's edges.
 - **Usual break.** A box drawn with an outside ring, 1px wider than the field above it.
@@ -165,7 +165,7 @@ Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no
 
 ### Z1. Heights from the set, one height per row
 
-A control's height is one of `Button`'s: 44px for a screen's action (`lg`) and for inputs, 36px by default, 30px beside text (`sm`), 24px inside another control (`xs`); a top bar's button is 44px and 40px from `lg`; a bottom bar's buttons are 44px at every width; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
+A control's height is one of `Button`'s, and each height has one label size: 44px for a screen's action (`lg`) and for inputs, with a 15px label; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. No call site sets a button's height, label size or weight. A top bar's button is 44px and 40px from `lg` (a 14px label there); a bottom bar's buttons are 44px at every width; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
 
 - **Check.** In any row of controls, visible heights are equal within 0.5px, and each is in the set.
 - **Usual break.** A 44px select beside 36px buttons in a toolbar.
@@ -195,7 +195,7 @@ In a bar with a main and a second action, both are one height, and on a phone th
 
 ### T1. Sizes come from the roles
 
-Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`): 11.5px `text-2xs`, 12px `text-xs`, 13px `text-compact`, 14px `text-sm`, 15px `text-reading`, then 16, 18, 20, 24 and 30px from Tailwind's scale, and the sizes the title, headline, display, lead and readout roles set for themselves. No code writes a size (`text-[…]`) except a readout's 40 and 56px. A block uses three sizes at most: the main thing, its supporting line, its meta.
+Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`): 11.5px `text-2xs`, 12px `text-xs`, 13px `text-compact`, 14px `text-sm`, 15px `text-reading`, then 16, 18, 20, 24 and 30px from Tailwind's scale, and the sizes the title, headline, display, lead and readout roles set for themselves. No code writes a size (`text-[…]`) except a readout's 40 and 56px. A sheet's, a dialog's and a side sheet's title is 18px semibold, set by the piece, never by its caller. A block uses three sizes at most: the main thing, its supporting line, its meta.
 
 - **Check.** List the sizes in each block: four or more is a finding, and so is a size no role or shared piece has.
 - **Usual break.** `text-[1.1875rem]` for one heading; 13.5px beside 13px.
@@ -209,10 +209,10 @@ Two texts with different jobs differ by size (at least 1.15 times), by weight or
 
 ### T3. Two families, three weights
 
-Geist for words, Geist Mono for data, a math face only in a formula. Weights are 400, 500 and 600. Nothing under 11px.
+Geist for words, Geist Mono for data, a math face only in a formula. Weights are 400 (`font-normal`), 500 (`font-medium`) and 600 (`font-semibold`), by name: no code writes a weight as a number, and the type roles set 600 for a title and 500 for a label. A button's label is 500 at every size, filled or not; the fill is what makes the main action lead. Nothing under 11px.
 
 - **Check.** No serif or system font, in frames and emails too; nothing bold or light.
-- **Usual break.** HTML in a frame or an email with no font set, drawn in the browser's serif.
+- **Usual break.** HTML in a frame or an email with no font set, drawn in the browser's serif. `font-[560]` on one button to make it "a little firmer".
 
 ### T4. Numbers line up
 
@@ -306,7 +306,7 @@ One filled button in view, outside a dialog. Around it, buttons step down: outli
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, an empty radio's or checkbox's ring, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
@@ -375,6 +375,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - A highlighted or hovered row reaches 10px past the column on both sides, so rows stay square and hairlines straight.
 - The current tab's fill reaches 10px past the column like a highlighted row, so the first tab's label starts on the title's edge.
 - A highlighted row's band is inset 2px top and bottom, so two highlighted rows in a list don't touch; the row is still its full height.
+- A highlighted term's band reaches 0.1em past its letters on both sides, so its letters sit where plain text would; at a line's start the band passes the column by that much.
 - A chat bubble has one small corner, its tail, on the side of who wrote it.
 - A control with no outline hangs its hover box past the column so its glyph's ink sits on the edge (`edge`).
 - In the player, ✕ and "…" sit in the window's corners, not on the column, and the main action sits in the bottom-right corner on wide screens.

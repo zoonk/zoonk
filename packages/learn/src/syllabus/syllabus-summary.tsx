@@ -11,14 +11,13 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { PageSectionLabel } from "../_components/page";
+import { SheetHeader } from "../_components/sheet-header";
 import { useFormatDuration } from "../_utils/time-format";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
 import { SubjectIcon } from "./subject-icon";
@@ -240,10 +239,9 @@ export function SyllabusTopicsSheet({
       <DrawerTrigger render={<Button variant="link" />}>{label ?? t("See topics")}</DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("What you'll study")}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{t("What you'll study")}</DrawerTitle>
+        </SheetHeader>
         <DrawerContent className="flex flex-col gap-2 pt-1">
           {groups.map((group) => (
             <SummaryGroup

@@ -1,7 +1,7 @@
 "use client";
 
 import { type AppRoute, Link, usePathname } from "@/i18n/navigation";
-import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tabs";
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export type SectionNavItem<Href extends string> = {
