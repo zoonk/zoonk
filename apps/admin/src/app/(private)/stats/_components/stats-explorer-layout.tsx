@@ -79,7 +79,7 @@ export function StatsExplorerPageSkeleton() {
   return (
     <Container className="min-h-full gap-2">
       <AdminHeader
-        actions={<Skeleton className="h-7.5 w-24 rounded-md" />}
+        actions={<Skeleton className="h-11 w-28 rounded-lg lg:h-10" />}
         parent={STATS}
         title={
           <span aria-hidden="true" className="text-title flex h-lh items-center">

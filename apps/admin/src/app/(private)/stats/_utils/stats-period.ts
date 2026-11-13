@@ -117,7 +117,7 @@ export async function getStatsPeriod(params: StatsSearchParams) {
       comparisonLabel: "vs previous period",
       offset: 0,
       period: requestedPeriod,
-      periodLabel: `${formatCustomDate(customRange.start)} – ${formatCustomDate(customRange.end)}`,
+      periodLabel: formatCustomRange(customRange),
     };
   }
 
@@ -137,13 +137,13 @@ export async function getStatsPeriod(params: StatsSearchParams) {
   };
 }
 
-function formatCustomDate(date: Date): string {
+function formatCustomRange({ end, start }: { end: Date; start: Date }): string {
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
     month: "short",
     timeZone: "UTC",
     year: "numeric",
-  }).format(date);
+  }).formatRange(start, end);
 }
 
 function getComparisonLabel(period: HistoryPeriod): string {

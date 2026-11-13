@@ -1,7 +1,7 @@
 "use client";
 
+import { AdminBarMenu } from "@/components/admin-bar-buttons";
 import { AdminConfirmDialog } from "@/components/admin-confirm-dialog";
-import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -37,7 +37,7 @@ export function UserActionsMenu({
 
   return (
     <>
-      <DetailMenu label="User actions" size="sm">
+      <AdminBarMenu label="User actions">
         <DropdownMenuItem onClick={() => setDialog("signOut")}>
           <LogOutIcon aria-hidden="true" />
           Sign out everywhere
@@ -59,7 +59,7 @@ export function UserActionsMenu({
             Ban
           </DropdownMenuItem>
         )}
-      </DetailMenu>
+      </AdminBarMenu>
 
       <AdminConfirmDialog
         {...dialogProps("signOut")}
