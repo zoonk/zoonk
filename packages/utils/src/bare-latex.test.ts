@@ -48,7 +48,32 @@ describe(findBareLatex, () => {
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
   });
 
-  it("doesn't look for backslash commands, bare subscripts or spaced carets, which are as often something else", () => {
+  it("finds one letter with a bare subscript, and nothing it can wrap for the writer", () => {
+    const text = "At the inlet, C_A0 rises, (E_a) falls, F_Y(y) grows, x_1 is set and C_out drops.";
+
+    expect(find(text)).toStrictEqual([
+      problem("C_A0"),
+      problem("E_a"),
+      problem("F_Y(y)"),
+      problem("x_1"),
+      problem("C_out"),
+    ]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
+  it("leaves italics, names, code, math, links and emails that hold an underscore", () => {
+    const texts = [
+      "Read _carefully_ and _a_ word, then _the whole phrase_.",
+      "Store it in user_id or max_value, and call `x_1 = load()`.",
+      String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
+      "See https://example.com/a_b/x_1 or write to j_doe@example.com.",
+    ];
+
+    expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
+  });
+
+  it("doesn't look for backslash commands, longer subscripted names or spaced carets, which are as often something else", () => {
     const texts = [
       String.raw`Open C:\log.txt or (logs\log.txt), read data\train.jsonl in src\utils.`,
       String.raw`In a regex, \S matches a non-space and \n starts a new line.`,

@@ -3,8 +3,12 @@ import { splitLinesAndCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans";
 import { type TextLayout } from "./text-flaws";
 
-/** A caret between two characters, or a braced script, is math a writer left outside `$…$`. */
-const RAW_SCRIPT = /\S\^\S|[\^_]\{/u;
+/**
+ * A caret between two characters, a braced script, or one letter with a subscript (`C_A0`, `E_a`,
+ * `F_Y(y)`) is math a writer left outside `$…$`. A longer base (`user_id`, `CH_4`, `UTF_8`) is as
+ * often a name.
+ */
+const RAW_SCRIPT = /\S\^\S|[\^_]\{|^\p{L}_[\p{L}\p{N}]+(?:\([^()]*\))?$/u;
 
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
