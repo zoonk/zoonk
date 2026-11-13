@@ -1,17 +1,15 @@
 import { AuthGate } from "@/components/auth-gate";
-import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { EnterLink } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { getExtracted } from "next-intl/server";
-import { ProgressContent } from "./progress-content";
 
 export async function ProgressEmptyState({
   isAuthenticated,
@@ -24,16 +22,12 @@ export async function ProgressEmptyState({
   const { icon: Icon } = getMenu("stats");
 
   if (!isAuthenticated) {
-    return (
-      <ProgressContent>
-        <AuthGate next={next} />
-      </ProgressContent>
-    );
+    return <AuthGate bar next={next} />;
   }
 
   return (
-    <ProgressContent>
-      <Empty>
+    <>
+      <Empty className="flex-1">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <Icon aria-hidden="true" />
@@ -41,12 +35,12 @@ export async function ProgressEmptyState({
           <EmptyTitle>{t("No statistics yet")}</EmptyTitle>
           <EmptyDescription>{t("They show up after your first lesson.")}</EmptyDescription>
         </EmptyHeader>
-        <EmptyContent>
-          <Link className={buttonVariants({ size: "lg" })} href={getMenu("today").url}>
-            {t("Go to Today")}
-          </Link>
-        </EmptyContent>
       </Empty>
-    </ProgressContent>
+      <BottomBar>
+        <BottomBarActions>
+          <EnterLink href={getMenu("today").url}>{t("Go to Today")}</EnterLink>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }

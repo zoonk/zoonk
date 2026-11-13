@@ -1,13 +1,14 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
+import { BackLink, PageTitle, PageTop } from "@zoonk/ui/components/page-top";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
-import { BadgeCheckIcon, ChevronLeftIcon, DownloadIcon, PrinterIcon } from "lucide-react";
+import { BadgeCheckIcon, DownloadIcon, PrinterIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { EnterLink } from "../_components/enter-button";
-import { useLearnRoutes } from "../learn-context";
+import { Eyebrow } from "../_components/eyebrow";
+import { SubscribeMainAction } from "../_components/subscribe-gate";
 import { LearnLink } from "../learn-link";
 import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateDate, useCertificateSentence } from "./certificate-labels";
@@ -22,54 +23,27 @@ import { CertificateSheet } from "./certificate-sheet";
 /** What only the certificate's owner sees on its page. */
 export type CertificateOwner = { saveName: SaveCertificateName };
 
-/**
- * Where a title's first letter starts inside its box, in ems of Geist: a round letter by 0.053, a
- * stem by 0.08, a diagonal or a bar by 0.02. Any other letter or script takes the round one.
- */
-function titleBearingClass(text: string) {
-  const first = text.trimStart().charAt(0);
-
-  if ("AJTVWXYvwxy".includes(first)) {
-    return "[--title-bearing:0.02]";
-  }
-
-  if ("BDEFHIKLMNPRUbhiklmnpru".includes(first)) {
-    return "[--title-bearing:0.08]";
-  }
-
-  return "[--title-bearing:0.053]";
-}
-
-/**
- * The kit's pull puts the arrow's ink on the column's edge; the 34 px title under it (48 px from
- * 40rem) starts its first letter further in, so the link moves by that letter's start, to a whole
- * pixel and never left of the edge.
- */
-function BackLink({ href, title }: { href: string; title: string }) {
+/** Only the owner has a way back: to their list. A visitor's page starts at the title's height too. */
+function CertificateTop({ backHref, children }: { backHref?: string; children: React.ReactNode }) {
   const t = useExtracted();
+  const parent = t("Certificates");
 
   return (
-    <LearnLink
-      className={buttonVariants({
-        className: cn(
-          "text-muted-foreground relative left-[round(var(--title-size)*var(--title-bearing),1px)] mb-3.5 [--title-size:2.125rem] sm:[--title-size:3rem]",
-          titleBearingClass(title),
-        ),
-        edge: "start",
-        size: "sm",
-        variant: "ghost",
-      })}
-      href={href}
+    <PageTop
+      back={
+        backHref && (
+          <BackLink
+            aria-label={t("Back to {page}", { page: parent })}
+            render={<LearnLink href={backHref} />}
+          >
+            {parent}
+          </BackLink>
+        )
+      }
     >
-      <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
-      {t("Your certificates")}
-    </LearnLink>
+      {children}
+    </PageTop>
   );
-}
-
-export function CertificatesBackLink({ facts, href }: { facts: CertificateFacts; href: string }) {
-  const sentence = useCertificateSentence();
-  return <BackLink href={href} title={sentence(facts)} />;
 }
 
 /**
@@ -78,29 +52,29 @@ export function CertificatesBackLink({ facts, href }: { facts: CertificateFacts;
  */
 export function CertificateGate({ facts, href }: { facts: CertificateFacts; href: string }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const title = t("Certificates need a subscription");
 
   return (
-    <div className="flex flex-col items-start" data-slot="certificate-gate">
-      <BackLink href={href} title={title} />
-      <h1 className="text-headline max-w-4xl">{title}</h1>
-      <EnterLink className="mt-6 w-full sm:w-auto" href={routes.upgrade} size="lg">
-        {t("Subscribe")}
-      </EnterLink>
+    <div className="flex flex-col" data-slot="certificate-gate">
+      <CertificateTop backHref={href}>
+        <PageTitle className="max-w-4xl" variant="headline">
+          {t("Certificates need a subscription")}
+        </PageTitle>
+      </CertificateTop>
       <BlankCertificateSheet className="mt-8 max-w-150 rounded-xl" facts={facts} />
+      <BottomBar>
+        <SubscribeMainAction />
+      </BottomBar>
     </div>
   );
 }
 
-export function CertificateVerified() {
+export function CertificateVerified({ className }: { className?: string }) {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground text-compact inline-flex items-center gap-1.5">
-      <BadgeCheckIcon aria-hidden="true" className="text-success size-4" />
+    <Eyebrow className={className} icon={<BadgeCheckIcon aria-hidden="true" />} tone="success">
       {t("Verified certificate · issued by Zoonk")}
-    </p>
+    </Eyebrow>
   );
 }
 
@@ -109,22 +83,30 @@ function keepWhole(chunks: React.ReactNode) {
   return <span className="whitespace-nowrap">{chunks}</span>;
 }
 
-export function CertificateIntro({ facts }: { facts: CertificateFacts }) {
+export function CertificateIntro({
+  backHref,
+  facts,
+}: {
+  backHref?: string;
+  facts: CertificateFacts;
+}) {
   const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
   return (
-    <div className="flex flex-col">
-      <CertificateVerified />
-      <h1 className="text-headline mt-3.5 max-w-4xl">{sentence(facts)}</h1>
-      <p className="text-lead mt-2.5">
+    <CertificateTop backHref={backHref}>
+      <CertificateVerified className="mb-2" />
+      <PageTitle className="max-w-4xl" variant="headline">
+        {sentence(facts)}
+      </PageTitle>
+      <p className="text-lead mt-1.5">
         {t.rich("Certificate of completion, issued on <whole>{date}</whole>.", {
           date: date.long(facts.completedOn),
           whole: keepWhole,
         })}
       </p>
-    </div>
+    </CertificateTop>
   );
 }
 

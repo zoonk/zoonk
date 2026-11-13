@@ -1,11 +1,10 @@
+import { AuthGateAction } from "@/components/auth-gate-action";
 import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { getPathname } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { LogInIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -58,26 +57,22 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
     });
 
     return (
-      <div className="-mt-3 flex flex-col items-start gap-6">
-        <p className="text-muted-foreground text-pretty">
+      <>
+        <p className="text-muted-foreground -mt-3 flex-1 text-pretty">
           {t("Log in with your Zoonk staff account first. You'll come back here to approve it.")}
         </p>
-        <PendingLink
-          className={buttonVariants({ size: "lg" })}
-          href={`${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(back)}`}
-          icon={<LogInIcon aria-hidden="true" />}
-        >
-          {t("Log in")}
-        </PendingLink>
-      </div>
+        <BottomBar>
+          <BottomBarActions>
+            <AuthGateAction href={`/login?next=${encodeURIComponent(back)}`}>
+              {t("Log in")}
+            </AuthGateAction>
+          </BottomBarActions>
+        </BottomBar>
+      </>
     );
   }
 
-  return (
-    <div className="mt-2">
-      <CliLoginForm email={session.user.email} userCode={userCode} />
-    </div>
-  );
+  return <CliLoginForm email={session.user.email} userCode={userCode} />;
 }
 
 /** Where `pnpm zoonk login` sends staff to approve the login it started; the provider names this page. */

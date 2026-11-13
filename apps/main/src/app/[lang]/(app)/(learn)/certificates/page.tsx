@@ -47,11 +47,14 @@ async function CertificatesContent() {
     const t = await getExtracted();
 
     return (
-      <AuthGatePage
-        description={t("A certificate for every level and plan you finish.")}
-        next="/certificates"
-        title={t("Certificates")}
-      />
+      <>
+        <CertificatesBar back={BACK_HREF} />
+        <AuthGatePage
+          description={t("A certificate for every level and plan you finish.")}
+          next="/certificates"
+          title={t("Certificates")}
+        />
+      </>
     );
   }
 

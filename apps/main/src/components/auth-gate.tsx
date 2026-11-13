@@ -1,9 +1,11 @@
+import { AuthGateAction } from "@/components/auth-gate-action";
 import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { getSession } from "@zoonk/core/users/session";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -13,18 +15,24 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
-import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { LockIcon, LogInIcon, UserPlusIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { LockIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 
-/** A browser that was logged out is told so on every page, since its plan is still there. */
+/**
+ * A page that needs an account. Inside another page the gate holds its own button; as the whole
+ * screen (`bar`) its one way in is the bottom bar's main action, and the visitor's other way
+ * ("Build my plan") stays in the page.
+ */
 export async function AuthGate({
+  bar,
   className,
   ended: knownEnded,
   heading: Heading = "h2",
   next,
 }: {
+  bar?: boolean;
   className?: string;
   ended?: boolean;
   heading?: "h1" | "h2";
@@ -32,60 +40,63 @@ export async function AuthGate({
 }) {
   const t = await getExtracted();
   const session = await getSession();
-  const locale = await getAppLocale();
   const ended = knownEnded ?? (!session && hasSessionCookie(await cookies()));
-  const loginHref = `${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(getPathname({ href: next, locale }))}`;
+  const loginHref = `/login?next=${encodeURIComponent(getPathname({ href: next, locale: await getAppLocale() }))}`;
+  const guest = Boolean(session?.user.isAnonymous);
 
-  if (session?.user.isAnonymous) {
+  const main = (
+    <AuthGateAction href={loginHref}>{guest ? t("Create an account") : t("Log in")}</AuthGateAction>
+  );
+
+  const startLink = !guest && !ended && (
+    <Link className={buttonVariants({ size: "lg", variant: "outline" })} href="/start">
+      {t("Build my plan")}
+    </Link>
+  );
+
+  const words = guest ? (
+    <EmptyHeader>
+      <EmptyMedia variant="icon">
+        <LockIcon aria-hidden="true" />
+      </EmptyMedia>
+      <EmptyTitle>
+        <Heading>{t("Create an account to use this page")}</Heading>
+      </EmptyTitle>
+      <EmptyDescription>{t("You keep your plan and progress.")}</EmptyDescription>
+    </EmptyHeader>
+  ) : (
+    <EmptyHeader>
+      <EmptyMedia variant="icon">
+        <LockIcon aria-hidden="true" />
+      </EmptyMedia>
+      <EmptyTitle>
+        <Heading>{ended ? t("You've been logged out") : t("Log in to continue")}</Heading>
+      </EmptyTitle>
+      {ended && <EmptyDescription>{t("Log in to get back to your plan.")}</EmptyDescription>}
+    </EmptyHeader>
+  );
+
+  if (bar) {
     return (
-      <Empty className={className} data-account-ask>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <LockIcon aria-hidden="true" />
-          </EmptyMedia>
-          <EmptyTitle>
-            <Heading>{t("Create an account to use this page")}</Heading>
-          </EmptyTitle>
-          <EmptyDescription>{t("You keep your plan and progress.")}</EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <PendingLink
-            className={buttonVariants({ size: "lg" })}
-            href={loginHref}
-            icon={<UserPlusIcon aria-hidden="true" />}
-          >
-            {t("Create an account")}
-          </PendingLink>
-        </EmptyContent>
-      </Empty>
+      <>
+        <Empty className={cn("flex-1", className)} data-account-ask>
+          {words}
+          {startLink && <EmptyContent>{startLink}</EmptyContent>}
+        </Empty>
+        <BottomBar>
+          <BottomBarActions>{main}</BottomBarActions>
+        </BottomBar>
+      </>
     );
   }
 
   return (
     <Empty className={className} data-account-ask>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <LockIcon aria-hidden="true" />
-        </EmptyMedia>
-        <EmptyTitle>
-          <Heading>{ended ? t("You've been logged out") : t("Log in to continue")}</Heading>
-        </EmptyTitle>
-        {ended && <EmptyDescription>{t("Log in to get back to your plan.")}</EmptyDescription>}
-      </EmptyHeader>
+      {words}
       <EmptyContent>
         <div className="flex flex-wrap gap-2">
-          <PendingLink
-            className={buttonVariants({ size: "lg" })}
-            href={loginHref}
-            icon={<LogInIcon aria-hidden="true" />}
-          >
-            {t("Log in")}
-          </PendingLink>
-          {!ended && (
-            <Link className={buttonVariants({ size: "lg", variant: "outline" })} href="/start">
-              {t("Build my plan")}
-            </Link>
-          )}
+          {main}
+          {startLink}
         </div>
       </EmptyContent>
     </Empty>
@@ -95,7 +106,7 @@ export async function AuthGate({
 export function AuthGateScreen({ next }: { next: string }) {
   return (
     <ColumnScreen width="message">
-      <AuthGate heading="h1" next={next} />
+      <AuthGate bar heading="h1" next={next} />
     </ColumnScreen>
   );
 }
@@ -136,7 +147,7 @@ export function AuthGatePage({
 }) {
   return (
     <GatedPage description={description} title={title}>
-      <AuthGate ended={ended} next={next} />
+      <AuthGate bar ended={ended} next={next} />
     </GatedPage>
   );
 }

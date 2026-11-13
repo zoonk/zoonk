@@ -1,5 +1,4 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PublicPage } from "@/components/public/public-page";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
@@ -7,14 +6,15 @@ import { type CertificateFacts, normalizeCertificateCode } from "@zoonk/core/cer
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
 import { CertificateGate, CertificateVerified } from "@zoonk/learn/certificates/page";
+import { PageTop } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getCertificateLinks, getCertificateName } from "@zoonk/utils/certificate-links";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense, cache } from "react";
 import { CertificateNotFound } from "./certificate-not-found";
+import { CERTIFICATE_TOP_CLASS } from "./certificate-top";
 import { CertificateView } from "./certificate-view";
 import "./certificate-print.css";
 
@@ -102,7 +102,7 @@ async function CertificateBody({ params }: Props) {
   if (read.locked) {
     return (
       <section className="bg-ground">
-        <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-14 sm:pt-12 sm:pb-16")}>
+        <div className={CERTIFICATE_TOP_CLASS}>
           <CertificateGate facts={facts} href="/certificates" />
         </div>
       </section>
@@ -123,11 +123,13 @@ async function CertificateBody({ params }: Props) {
 function CertificateSkeleton() {
   return (
     <div aria-busy="true" className="bg-ground min-h-dvh">
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-16 sm:pt-12")}>
-        <CertificateVerified />
-        <Skeleton className="mt-4 h-10 w-full max-w-2xl" />
-        <Skeleton className="mt-2 h-10 w-2/3 max-w-xl" />
-        <Skeleton className="mt-4 h-5 w-80 max-w-full" />
+      <div className={CERTIFICATE_TOP_CLASS}>
+        <PageTop>
+          <CertificateVerified className="mb-2" />
+          <Skeleton className="h-10 w-full max-w-2xl" />
+          <Skeleton className="mt-1 h-10 w-2/3 max-w-xl" />
+          <Skeleton className="mt-2.5 h-5 w-80 max-w-full" />
+        </PageTop>
         <div className="mt-8 grid items-start gap-7 min-[72rem]:grid-cols-[minmax(0,1fr)_320px] min-[72rem]:gap-12">
           <Skeleton className="aspect-297/210 w-full rounded-lg" />
           <Skeleton className="h-64 w-full rounded-lg" />

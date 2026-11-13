@@ -2,7 +2,9 @@
 
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -75,27 +77,27 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
   }
 
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <BellOffIcon aria-hidden="true" />
-        </EmptyMedia>
-        <EmptyTitle>
-          <h1>{t("Turn off email reminders?")}</h1>
-        </EmptyTitle>
-      </EmptyHeader>
-      <EmptyContent>
-        <form action={() => turnOff()} className="contents">
-          <Button
-            busy={isPending}
-            icon={<BellOffIcon aria-hidden="true" />}
-            size="lg"
-            type="submit"
-          >
-            {t("Turn off")}
-          </Button>
-        </form>
-      </EmptyContent>
-    </Empty>
+    <>
+      <Empty className="flex-1">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <BellOffIcon aria-hidden="true" />
+          </EmptyMedia>
+          <EmptyTitle>
+            <h1>{t("Turn off email reminders?")}</h1>
+          </EmptyTitle>
+        </EmptyHeader>
+      </Empty>
+
+      <form action={() => turnOff()} className="contents">
+        <BottomBar>
+          <BottomBarActions>
+            <EnterButton busy={isPending} type="submit">
+              {t("Turn off")}
+            </EnterButton>
+          </BottomBarActions>
+        </BottomBar>
+      </form>
+    </>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import {
   LIST_GROUP_CLASS,
   ListRow,
@@ -18,7 +19,6 @@ import {
 } from "../_components/list-group";
 import { Meter, MeterFill } from "../_components/meter";
 import {
-  PageEyebrow,
   PageSection,
   PageSectionHeader,
   PageSectionTitle,
@@ -169,13 +169,7 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
   );
 }
 
-function EmptyCertificates({
-  continueHref,
-  upNext,
-}: {
-  continueHref: string;
-  upNext: CertificateUpNext[];
-}) {
+function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
   const t = useExtracted();
 
   return (
@@ -185,12 +179,6 @@ function EmptyCertificates({
         <h2 className="mt-6 text-lg font-semibold tracking-[-0.01em]">
           {t("No certificates yet")}
         </h2>
-        <LearnLink
-          className={buttonVariants({ className: "mt-3", size: "lg" })}
-          href={continueHref}
-        >
-          {t("Continue learning")}
-        </LearnLink>
       </div>
 
       {upNext.length > 0 && (
@@ -211,14 +199,12 @@ function EmptyCertificates({
   );
 }
 
-/** The empty eyebrow keeps its line, so the title sits where every detail page's does. */
 export function CertificatesHeader() {
   const t = useExtracted();
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow aria-hidden="true" className="min-h-4" />
         <DetailTitle>{t("Certificates")}</DetailTitle>
         <PageSubtitle>{t("A certificate for every level and plan you finish.")}</PageSubtitle>
       </DetailHeroText>
@@ -242,17 +228,28 @@ export function CertificatesScreen({
   continueHref: string;
   upNext: CertificateUpNext[];
 }) {
+  const t = useExtracted();
+  const empty = certificates.length === 0;
+
   return (
-    <DetailLayout bar={<CertificatesBar back={back} />} data-slot="certificates">
+    <DetailLayout bar={<CertificatesBar back={back} />} className="flex-1" data-slot="certificates">
       <CertificatesHeader />
 
-      <DetailContent>
-        {certificates.length > 0 ? (
-          <CertificateList certificates={certificates} />
+      <DetailContent className="flex-1">
+        {empty ? (
+          <EmptyCertificates upNext={upNext} />
         ) : (
-          <EmptyCertificates continueHref={continueHref} upNext={upNext} />
+          <CertificateList certificates={certificates} />
         )}
       </DetailContent>
+
+      {empty && (
+        <BottomBar>
+          <BottomBarActions>
+            <EnterLink href={continueHref}>{t("Continue learning")}</EnterLink>
+          </BottomBarActions>
+        </BottomBar>
+      )}
     </DetailLayout>
   );
 }
