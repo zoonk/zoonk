@@ -59,11 +59,8 @@ import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
-import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -194,14 +191,10 @@ private fun TestOutBody(
             when (val test = read.value) {
                 is TestOutRead.Ready -> {
                     if (test.questions.isEmpty() || ui.writing) {
-                        TestOutPreparing(viewModel, ui, page.title, plusRequired = false, navigator)
+                        TestOutPreparing(viewModel, ui, page.title, navigator)
                     } else {
                         TestOutQuestions(test, viewModel, ui, page, app, close)
                     }
-                }
-
-                TestOutRead.PlusRequired -> {
-                    TestOutPreparing(viewModel, ui, page.title, plusRequired = true, navigator)
                 }
 
                 TestOutRead.NothingToSkip -> {
@@ -234,17 +227,14 @@ internal fun TestOutPreparing(
     viewModel: TestOutViewModel,
     ui: TestOutUi,
     title: String,
-    plusRequired: Boolean,
     navigator: AppNavigator,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
     val waiting = ui.writing || ui.startFailed
-    val locked = plusRequired || ui.plusRequired
     val focus =
         rememberPressFocus(
             when {
                 waiting -> "wait"
-                locked -> "plus"
                 ui.refused != null -> "limit"
                 else -> "start"
             },
@@ -265,7 +255,7 @@ internal fun TestOutPreparing(
             if (waiting) {
                 null
             } else {
-                { TaskActionBar { StartActions(ui, locked, navigator, focus.requester, start) } }
+                { TaskActionBar { StartActions(ui, navigator, focus.requester, start) } }
             },
     ) {
         if (waiting) {
@@ -289,7 +279,6 @@ internal fun TestOutPreparing(
 @Composable
 private fun StartActions(
     ui: TestOutUi,
-    plusRequired: Boolean,
     navigator: AppNavigator,
     replacementFocus: FocusRequester,
     onStart: () -> Unit,
@@ -297,16 +286,6 @@ private fun StartActions(
     val refused = ui.refused
     val replacementModifier = Modifier.focusRequester(replacementFocus).semantics(mergeDescendants = true) {}.focusable()
     when {
-        plusRequired -> {
-            LimitNotice(
-                Limit.Reached(LimitTier.Free, LimitPeriod.Month),
-                LimitSubject.Lessons,
-                onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
-                modifier = replacementModifier,
-            )
-        }
-
         refused != null -> {
             LimitNotice(
                 refused,
