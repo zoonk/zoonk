@@ -69,13 +69,13 @@ function ChallengePracticeAction() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();
   const { primary } = screen;
-  const labels = { confirm: t("Confirm"), seeHowItWent: t("See how it went"), start: t("Start") };
+  const labels = { confirm: t("Confirm"), seeResult: t("See how it went"), start: t("Start") };
 
   if (!primary) {
     return null;
   }
 
-  const label = primary.label === "start" ? labels.start : labels.seeHowItWent;
+  const label = primary.label === "start" ? labels.start : labels.seeResult;
 
   return (
     <Button
@@ -172,7 +172,6 @@ export function LessonPracticeStep(props: Props) {
           title: "",
         },
         linkComponent: PlainLink,
-        onExit: idle,
         outline: false,
         routes: {
           exit: "/mistakes",

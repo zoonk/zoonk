@@ -5,6 +5,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
+/** A menu keeps the page's gutter from the screen's edge, as content does (craft S5). */
+const PAGE_GUTTER = 16;
+
 /** Inside a dynamic segment, give it a `key` that changes with the route: Base UI Menu's context goes stale across soft navigations. */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
@@ -18,7 +21,7 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
-  collisionPadding,
+  collisionPadding = PAGE_GUTTER,
   keepMounted,
   side = "bottom",
   sideOffset = 4,
@@ -42,7 +45,7 @@ function DropdownMenuContent({
       >
         <MenuPrimitive.Popup
           className={cn(
-            "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2 bg-popover text-popover-foreground ring-foreground/10 data-closed:animate-out data-open:animate-in z-50 max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-1 shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] ring-1 duration-100 outline-none data-closed:overflow-hidden",
+            "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=inline-end]:slide-in-from-left-2 bg-popover text-popover-foreground ring-foreground/10 data-closed:animate-out data-open:animate-in z-50 max-h-(--available-height) w-(--anchor-width) min-w-48 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-1 shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] ring-1 duration-100 outline-none ring-inset data-closed:overflow-hidden",
             className,
           )}
           data-slot="dropdown-menu-content"

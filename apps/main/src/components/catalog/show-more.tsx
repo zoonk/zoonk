@@ -1,5 +1,5 @@
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 /**
@@ -30,10 +30,7 @@ export function ShowMore({
         {/* Above the toggle's wider hit area, so a tap on the words lands on them. */}
         <span className="relative group-open/more:hidden">{more}</span>
         <span className="relative hidden group-open/more:inline">{less}</span>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="size-4 transition-transform group-open/more:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron inline />
       </summary>
 
       {children}

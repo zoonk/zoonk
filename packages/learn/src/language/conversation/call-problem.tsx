@@ -2,7 +2,6 @@
 
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
@@ -39,9 +38,7 @@ function ProblemWithBack({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
-            {t("Back")}
-          </TaskMainLink>
+          <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
         </TaskActions>
       }
       headerTitle={title}
@@ -174,7 +171,7 @@ export function CallEndedStatus({
         </span>
         <p className="flex min-w-0 flex-col text-pretty">
           <span className="text-sm leading-5 font-medium">{t("Call ended")}</span>
-          <span className="text-muted-foreground text-[0.8125rem] leading-snug">
+          <span className="text-muted-foreground text-compact leading-snug">
             <SavingLine grading={grading} />
           </span>
         </p>

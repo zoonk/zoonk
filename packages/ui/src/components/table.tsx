@@ -44,11 +44,19 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+/** A column of numbers that are compared: Geist Mono, digit under digit, ending on one edge (craft T4). */
+const NUMERIC_CLASS = "text-right font-mono tabular-nums";
+
+function TableHead({
+  className,
+  numeric = false,
+  ...props
+}: React.ComponentProps<"th"> & { numeric?: boolean }) {
   return (
     <th
       className={cn(
         "text-muted-foreground h-9 px-3 text-left align-middle text-xs font-medium whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
+        numeric && "text-right",
         className,
       )}
       data-slot="table-head"
@@ -57,11 +65,16 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   );
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({
+  className,
+  numeric = false,
+  ...props
+}: React.ComponentProps<"td"> & { numeric?: boolean }) {
   return (
     <td
       className={cn(
         "px-3 py-2 align-middle whitespace-nowrap first:pl-0 last:pr-0 has-[[role=checkbox]]:pr-0",
+        numeric && cn(NUMERIC_CLASS, "text-compact leading-5"),
         className,
       )}
       data-slot="table-cell"

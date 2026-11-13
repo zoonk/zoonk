@@ -9,7 +9,7 @@ function StatItem({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div>
       <p className="text-muted-foreground text-sm">{label}</p>
-      <div className="text-2xl font-bold">{value}</div>
+      <div className="text-2xl font-semibold">{value}</div>
     </div>
   );
 }

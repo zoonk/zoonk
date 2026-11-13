@@ -193,20 +193,22 @@ function RetroGlasses({ uid }: { uid: string }) {
   );
 }
 
-function MonocleGlasses({ uid }: { uid: string }) {
+function MonocleGlasses({ chain, uid }: { chain: boolean; uid: string }) {
   return (
     <g>
       <defs>
         <GoldGradient uid={uid} />
       </defs>
-      <path
-        d="M86.5 69 C 94 80, 88 92, 74 97.5"
-        fill="none"
-        stroke="#e0a534"
-        strokeDasharray="2.6 1.8"
-        strokeLinecap="round"
-        strokeWidth="1.8"
-      />
+      {chain && (
+        <path
+          d="M86.5 69 C 94 80, 88 92, 74 97.5"
+          fill="none"
+          stroke="#e0a534"
+          strokeDasharray="2.6 1.8"
+          strokeLinecap="round"
+          strokeWidth="1.8"
+        />
+      )}
       <circle
         cx="76"
         cy="58"
@@ -223,14 +225,22 @@ function MonocleGlasses({ uid }: { uid: string }) {
   );
 }
 
-export function BuddyGlassesFrame({ glasses, uid }: { glasses: BuddyGlasses; uid: string }) {
+export function BuddyGlassesFrame({
+  chain,
+  glasses,
+  uid,
+}: {
+  chain: boolean;
+  glasses: BuddyGlasses;
+  uid: string;
+}) {
   switch (glasses) {
     case "aviator":
       return <AviatorGlasses uid={uid} />;
     case "catEye":
       return <CatEyeGlasses />;
     case "monocle":
-      return <MonocleGlasses uid={uid} />;
+      return <MonocleGlasses chain={chain} uid={uid} />;
     case "retro":
       return <RetroGlasses uid={uid} />;
     case "round":

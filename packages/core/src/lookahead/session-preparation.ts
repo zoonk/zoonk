@@ -9,7 +9,6 @@ import {
 import { getGoalFieldInput } from "../library/items/item-field";
 import { findPlanFirstLessonId } from "../plans/_utils/plan-first-lesson";
 import { parsePlanSettings } from "../plans/planner/plan-state";
-import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import {
   type StudySessionRow,
   findOwnedStudySession,
@@ -60,11 +59,6 @@ function findNextLessonId(blocks: readonly StudySessionBlock[]): string | null {
   return next?.lessonId ?? null;
 }
 
-async function isPrepHeldForPlus(goal: Goal): Promise<boolean> {
-  const access = await loadExamPrepAccess({ goal });
-  return access.trialEnded;
-}
-
 async function isGuest(userId: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
     select: { isAnonymous: true },
@@ -92,10 +86,6 @@ async function decideSessionAccess({
 
   if (!session.goalId || !session.goal) {
     return { status: "notFound" };
-  }
-
-  if (await isPrepHeldForPlus(session.goal)) {
-    return { status: "plusRequired" };
   }
 
   return {
@@ -143,10 +133,6 @@ async function decideGoalAccess({
       status: "guest",
       userId,
     };
-  }
-
-  if (await isPrepHeldForPlus(goal)) {
-    return { status: "plusRequired" };
   }
 
   return {

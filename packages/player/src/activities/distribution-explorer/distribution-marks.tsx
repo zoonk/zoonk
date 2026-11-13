@@ -67,7 +67,7 @@ export function DistributionHandle({
         y={cy - PILL_HEIGHT / 2}
       />
       <text
-        className="fill-background text-[13px] font-semibold tabular-nums"
+        className="fill-background text-compact font-semibold tabular-nums"
         dominantBaseline="central"
         textAnchor="middle"
         x={cx}

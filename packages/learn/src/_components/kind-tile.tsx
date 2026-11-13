@@ -72,7 +72,6 @@ export function KindIcon({ className, kind }: { className?: string; kind: LearnK
       aria-hidden="true"
       className={cn("size-4 shrink-0", KIND_MARKS[kind].text, className)}
       data-slot="kind-icon"
-      strokeWidth={2}
     />
   );
 }

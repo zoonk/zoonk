@@ -6,14 +6,12 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { DrawerCloseButton } from "../../_components/details-drawer";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowButton,
@@ -23,6 +21,7 @@ import {
   ListRowTitle,
 } from "../../_components/list-group";
 import { PlusMark, PlusNotice } from "../../_components/plus-lock";
+import { SheetHeader } from "../../_components/sheet-header";
 import { useFormatDuration } from "../../_utils/time-format";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
@@ -58,7 +57,7 @@ function MinuteChips({
       {choices.map((choice) => (
         <label
           className={cn(
-            "border-input rounded-option flex min-h-11 cursor-pointer items-center justify-center gap-2 border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
+            "border-input flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
             "hover:bg-muted/50 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
             "has-checked:border-foreground has-checked:bg-muted",
           )}
@@ -186,19 +185,16 @@ export function PracticeCallSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <DrawerTitle className="text-xl font-semibold">
-              {t("Practice a conversation")}
-            </DrawerTitle>
+            <DrawerTitle>{t("Practice a conversation")}</DrawerTitle>
             {character && (
               <DrawerDescription>
                 {t("with {name} · {role}", { name: character.name, role: character.role })}
               </DrawerDescription>
             )}
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
         <DrawerContent className="pt-3">
           {open && <CallSetup conversation={conversation} onStart={start} />}
         </DrawerContent>

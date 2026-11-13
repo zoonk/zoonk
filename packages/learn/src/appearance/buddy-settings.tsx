@@ -4,12 +4,12 @@ import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { type BuddyGlasses, type BuddyKind, getBuddyStage } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -21,6 +21,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
+import { SheetHeader } from "../_components/sheet-header";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
 import { BUDDY_GLASSES, BuddyGlassesWorn, BuddyStageName } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
@@ -49,7 +50,7 @@ export function BuddyEditor({
   const [choice, setChoice] = useState(initial);
 
   return (
-    <Dialog
+    <Drawer
       onOpenChange={(open) => {
         if (!open) {
           onClose();
@@ -57,34 +58,36 @@ export function BuddyEditor({
       }}
       open
     >
-      <DialogContent className="max-h-[90dvh] overflow-y-auto" closeLabel={t("Close")}>
-        <DialogHeader>
-          <DialogTitle>{t("Your buddy")}</DialogTitle>
-        </DialogHeader>
+      <DrawerPopup>
+        <SheetHeader>
+          <DrawerTitle>{t("Your buddy")}</DrawerTitle>
+        </SheetHeader>
 
-        <BuddyPicker choice={choice} look={look} onChange={setChoice} />
+        <DrawerContent className="flex flex-col gap-6 pt-2">
+          <BuddyPicker choice={choice} look={look} onChange={setChoice} />
 
-        {glasses && (
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">{t("Glasses")}</p>
-            <BuddyGlassesPicker
-              kind={choice.kind}
-              look={look}
-              onChange={(next) => setChoice({ ...choice, glasses: next })}
-              options={glasses}
-              value={choice.glasses}
-            />
-          </div>
-        )}
+          {glasses && (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium">{t("Glasses")}</p>
+              <BuddyGlassesPicker
+                kind={choice.kind}
+                look={look}
+                onChange={(next) => setChoice({ ...choice, glasses: next })}
+                options={glasses}
+                value={choice.glasses}
+              />
+            </div>
+          )}
+        </DrawerContent>
 
-        <DialogFooter>
+        <DrawerFooter>
           <Button onClick={onClose} variant="outline">
             {t("Cancel")}
           </Button>
           <Button onClick={() => onSave(choice)}>{t("Save")}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DrawerFooter>
+      </DrawerPopup>
+    </Drawer>
   );
 }
 
@@ -101,6 +104,7 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
           glasses={buddy.glasses}
           kind={buddy.kind}
           studiedToday={look.studiedToday}
+          view="face"
         />
       </ListRowLeading>
       <ListRowContent>

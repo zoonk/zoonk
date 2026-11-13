@@ -16,7 +16,7 @@ import {
 } from "../learner/placement/placement-quick-format";
 import { parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
-import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
+import { loadExamPrepAccess } from "../sessions/_utils/load-exam-access";
 import { getSkippedSkillIds } from "../sessions/_utils/review-skills";
 import { needsPlus } from "./_utils/challenge-plus";
 import { isChallengeReached } from "./_utils/challenge-reach";
@@ -306,12 +306,7 @@ export async function requestUpcomingChallengeQuestionsFor({
   const now = new Date();
   const timeZone = getAnswerTimeZone({ goal, timeZone: null });
   const today = getDateInTimeZone({ date: now, timeZone });
-
-  const { includesMockExams, trialEnded } = await loadExamPrepAccess({ goal, timeZone, today });
-
-  if (trialEnded) {
-    return { status: "ready" };
-  }
+  const { includesMockExams } = await loadExamPrepAccess({ goal, timeZone, today });
 
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },

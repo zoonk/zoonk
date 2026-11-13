@@ -81,7 +81,6 @@ export async function readSavedDayView({
       freshStart: session.freshStart,
       goalId: session.goalId,
       readItems: readCatchUp,
-      trialEnded: view.examAccess.trialEnded,
     }),
   ]);
 

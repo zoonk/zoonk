@@ -197,7 +197,7 @@ export function MindMapViewer({
   const t = useExtracted();
   const descriptionId = useId();
   const alt = useMindMapAlt({ outline, title });
-  const barButton = buttonVariants({ size: "icon-bar", variant: "ghost" });
+  const barButton = buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" });
   const [asText, setAsText] = useState(false);
   const zoom = usePanZoom({ active: open && image !== null && !asText });
 
@@ -218,8 +218,8 @@ export function MindMapViewer({
           className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out fixed inset-0 z-50 flex flex-col duration-150 motion-reduce:animate-none"
           data-slot="mind-map-viewer"
         >
-          <header className="flex items-center gap-2 px-2 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
-            <DialogClose render={<Button size="icon-bar" variant="ghost" />}>
+          <header className="flex items-center gap-2 px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
+            <DialogClose render={<Button edge="start" size="icon-bar" variant="ghost" />}>
               <XIcon aria-hidden="true" />
               <span className="sr-only">{t("Close")}</span>
             </DialogClose>

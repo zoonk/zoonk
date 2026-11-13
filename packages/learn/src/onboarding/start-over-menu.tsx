@@ -24,8 +24,6 @@ import { LearnLink } from "../learn-link";
 import { goBackToApp } from "../shell/app-history";
 import { useOnboardingHost } from "./onboarding-host";
 
-const MENU_TRIGGER_CLASS = "-mr-3 lg:-mr-2.5 [&_svg:not([class*='size-'])]:size-5";
-
 const MENU_ROW_CLASS = "flex-col items-start gap-0.5 py-2";
 
 type MenuProps = {
@@ -41,9 +39,7 @@ function OnboardingBarMenu({ disabled, onDeclineProfile, onStartOver }: MenuProp
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<Button className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost" />}
-      >
+      <DropdownMenuTrigger render={<Button edge="end" size="icon-bar" variant="ghost" />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">
           {t({
@@ -127,7 +123,7 @@ function StartOverMenu({ onStartOver, ...menu }: MenuProps) {
 
 export function StartOverMenuSkeleton() {
   return (
-    <ButtonSkeleton className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost">
+    <ButtonSkeleton edge="end" size="icon-bar" variant="ghost">
       <EllipsisIcon aria-hidden="true" />
     </ButtonSkeleton>
   );

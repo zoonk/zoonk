@@ -2,12 +2,7 @@ import "server-only";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { isCurrentSession } from "./_utils/current-session";
-import {
-  appendExtraBlocks,
-  isFreeWeekOver,
-  planExtraBlocks,
-  withSessionAppendLock,
-} from "./_utils/extra-blocks";
+import { appendExtraBlocks, planExtraBlocks, withSessionAppendLock } from "./_utils/extra-blocks";
 import { readBlockLessonStates } from "./_utils/lesson-screens";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
@@ -24,7 +19,7 @@ export type ExtraStudyBlockResult =
 
 /**
  * Adds to the learner's current day only, once its planned blocks are finished; returns the first
- * added block and respects free-exam gates.
+ * added block.
  */
 export async function addExtraStudyBlock({
   input,
@@ -52,10 +47,6 @@ export async function addExtraStudyBlock({
 
       if (!extraTime.available) {
         return { reason: extraTime.reason, status: "unavailable" };
-      }
-
-      if (await isFreeWeekOver(session)) {
-        return { reason: "plusRequired", status: "unavailable" };
       }
 
       const planned = await planExtraBlocks({

@@ -12,12 +12,12 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../../_components/eyebrow";
 import { PageSectionTitle } from "../../_components/page";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
@@ -251,10 +251,10 @@ export function DoneStep() {
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepEyebrow>{t("Today's session")}</StepEyebrow>
+        <Eyebrow>{t("Today's session")}</Eyebrow>
         <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
         {stopped && summary.minutes >= 1 && (
-          <StepDetail className="font-mono text-[0.8125rem] tabular-nums">
+          <StepDetail className="text-compact font-mono tabular-nums">
             {t("{time} so far", { time: formatDuration(summary.minutes) })}
           </StepDetail>
         )}

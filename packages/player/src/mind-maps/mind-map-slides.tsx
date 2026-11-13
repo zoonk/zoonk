@@ -69,7 +69,10 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
 
   return (
     <div
-      className="max-w-column mx-auto grid w-full gap-6 px-4 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6"
+      className={cn(
+        TASK_COLUMN_CLASS,
+        "grid gap-6 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6",
+      )}
       data-slot="chapter-map-slide"
     >
       <button
@@ -108,7 +111,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
 function LessonMapSkeleton() {
   return (
     <div aria-busy="true" className="flex w-full flex-col items-center gap-5">
-      <Skeleton className="h-9 w-48 rounded-[9px]" />
+      <Skeleton className="h-9 w-48 rounded-lg" />
       <div className="grid w-full grid-cols-1 gap-x-3 gap-y-5 min-[26rem]:grid-cols-2">
         <Skeleton className="h-28 rounded-xl" />
         <Skeleton className="h-28 rounded-xl" />

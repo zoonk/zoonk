@@ -5,6 +5,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import {
   ArrowLeftRightIcon,
   BookOpenIcon,
+  KeyboardIcon,
   LayersIcon,
   LightbulbIcon,
   LogOutIcon,
@@ -32,7 +33,7 @@ type NavigationPaletteItem = PaletteRow & { kind: "navigation"; url: PaletteRout
 
 type LogoutPaletteItem = PaletteRow & { kind: "logout" };
 
-type FeedbackPaletteItem = PaletteRow & { kind: "feedback" };
+type HelpPaletteItem = PaletteRow & { kind: "feedback" | "shortcuts" };
 
 type GoalPaletteItem = PaletteRow & { goalId: string; kind: "goal" };
 
@@ -76,8 +77,8 @@ export type PaletteItem =
   | ContinuePaletteItem
   | CoursePaletteItem
   | ExplanationPaletteItem
-  | FeedbackPaletteItem
   | GoalPaletteItem
+  | HelpPaletteItem
   | LogoutPaletteItem
   | MockPaletteItem
   | NavigationPaletteItem
@@ -114,20 +115,22 @@ export function createLogoutPaletteItem({ label }: { label: string }): LogoutPal
   return { icon: LogOutIcon, id: "logout", kind: "logout", label, searchValue: label };
 }
 
-export function createFeedbackPaletteItem({
+const HELP_ITEMS = {
+  feedback: { icon: MessageSquareIcon, id: "send-feedback" },
+  shortcuts: { icon: KeyboardIcon, id: "keyboard-shortcuts" },
+} as const;
+
+/** Runs in place instead of opening a page; `keywords` are other words people type to find it. */
+export function createHelpPaletteItem({
   keywords,
+  kind,
   label,
 }: {
   keywords: string;
+  kind: keyof typeof HELP_ITEMS;
   label: string;
-}): FeedbackPaletteItem {
-  return {
-    icon: MessageSquareIcon,
-    id: "send-feedback",
-    kind: "feedback",
-    label,
-    searchValue: `${label} ${keywords}`,
-  };
+}): HelpPaletteItem {
+  return { ...HELP_ITEMS[kind], kind, label, searchValue: `${label} ${keywords}` };
 }
 
 export function createGoalPaletteItem({
