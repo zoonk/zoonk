@@ -5,9 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ListRowChevron } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { DoneMark } from "../_components/status-mark";
-import { MarkedText } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -103,7 +101,6 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
   const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks, state } = phase;
-  const locked = plan.access.mocksRequirePlus;
   const forNextSitting = phase.kind === "afterExam";
   const isCurrent = state === "current";
   const hasEvents = isCurrent && (checkpoint !== null || mocks.nextDate !== null);
@@ -125,13 +122,11 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
 
         {state === "upcoming" && mocks.count > 0 && (
           <p className="text-muted-foreground -mt-2.5 pb-1 text-xs">
-            <MarkedText mark={locked && <PlusMark />}>
-              {mocksLine({
-                count: mocks.count,
-                forNextSitting,
-                nextSitting: plan.schedule.nextSitting,
-              })}
-            </MarkedText>
+            {mocksLine({
+              count: mocks.count,
+              forNextSitting,
+              nextSitting: plan.schedule.nextSitting,
+            })}
           </p>
         )}
 
@@ -143,7 +138,6 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
                   challengeHref={links.challenge}
                   date={mocks.nextDate}
                   examHref={links.exam}
-                  locked={locked}
                 />
               </li>
             )}

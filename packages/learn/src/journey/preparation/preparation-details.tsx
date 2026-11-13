@@ -6,7 +6,6 @@ import { BigQuantity } from "../../_components/big-quantity";
 import { KindDot, KindMark } from "../../_components/kind-tile";
 import { ListRowChevron } from "../../_components/list-group";
 import { Meter, MeterFill } from "../../_components/meter";
-import { PlusMark } from "../../_components/plus-lock";
 import { QuietDisclosure } from "../../_components/quiet-disclosure";
 import { SectionLabel } from "../../_components/section-label";
 import { useScoreRange } from "../../_utils/use-score-range";
@@ -119,7 +118,6 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
         <span className="text-sm font-medium">{item.label}</span>
         {item.detail && <span className="text-muted-foreground text-xs">{item.detail}</span>}
       </span>
-      {item.plusRequired && <PlusMark />}
     </>
   );
 

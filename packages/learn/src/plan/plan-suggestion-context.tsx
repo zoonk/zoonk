@@ -31,14 +31,7 @@ export type SlotItem =
   | { choice: ExamChoiceView; key: string; kind: "choice" }
   | {
       key: string;
-      kind:
-        | "courseComplete"
-        | "coverage"
-        | "doesNotFit"
-        | "finished"
-        | "fitLessons"
-        | "freeWeekOver"
-        | "paused";
+      kind: "courseComplete" | "coverage" | "doesNotFit" | "finished" | "fitLessons" | "paused";
     }
   | { key: string; kind: "pastDate"; lessons: number };
 

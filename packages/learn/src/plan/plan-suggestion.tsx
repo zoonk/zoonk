@@ -1,10 +1,9 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, SparklesIcon } from "lucide-react";
+import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { useFreeWeekOverCopy } from "../_components/free-week-over";
 import {
   Suggestion,
   SuggestionAction,
@@ -12,13 +11,11 @@ import {
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
-  SuggestionLinkAction,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { CourseCompleteSuggestion } from "../journey/course-certificate";
 import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
-import { useLearnRoutes } from "../learn-context";
 import { usePlanScreen } from "./plan-context";
 import { usePlanCoverage, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
@@ -50,7 +47,7 @@ function useTimeItems(): SlotItem[] {
   const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const timeEnough = useTimeEnough();
-  const open = !plan.access.freeWeekOver && plan.status?.kind !== "pastDate";
+  const open = plan.status?.kind !== "pastDate";
 
   return [
     open && plan.fitOffer !== null && { key: "fitLessons", kind: "fitLessons" as const },
@@ -80,7 +77,6 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
     finished && { key: "finished", kind: "finished" },
     status === "needsAdjusting" && { key: "doesNotFit", kind: "doesNotFit" },
     ...(finished ? [] : timeItems),
-    plan.access.freeWeekOver && { key: "freeWeekOver", kind: "freeWeekOver" },
   ];
 
   return items.filter((item) => item !== false);
@@ -177,31 +173,6 @@ function DoesNotFitSuggestion() {
   );
 }
 
-function FreeWeekSuggestion() {
-  const t = useExtracted();
-  const routes = useLearnRoutes();
-  const { body, title } = useFreeWeekOverCopy();
-
-  return (
-    <Suggestion label={title} mark={<SparklesIcon />}>
-      <SuggestionLine>
-        <SuggestionSummary>{title}</SuggestionSummary>
-        <SuggestionLinkAction href={routes.upgrade} variant="outline">
-          {t("See Plus")}
-        </SuggestionLinkAction>
-      </SuggestionLine>
-
-      <SlotContent>
-        <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>{body}</SuggestionDescription>
-        <SuggestionActions>
-          <SuggestionLinkAction href={routes.upgrade}>{t("See Plus")}</SuggestionLinkAction>
-        </SuggestionActions>
-      </SlotContent>
-    </Suggestion>
-  );
-}
-
 function SlotSuggestion({ item }: { item: SlotItem }) {
   const { goal } = usePlanScreen();
   const coverage = usePlanCoverage();
@@ -235,8 +206,6 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
       );
     case "fitLessons":
       return <FitLessonsSuggestion item={item} />;
-    case "freeWeekOver":
-      return <FreeWeekSuggestion />;
     case "paused":
       return (
         host.goalStatus && (

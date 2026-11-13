@@ -13,7 +13,6 @@ export type StillNeededItem = {
   key: "memory" | "skills" | "test";
   kind: LearnKind;
   label: string;
-  plusRequired: boolean;
 };
 
 function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededItem {
@@ -28,7 +27,6 @@ function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededIte
       stillNeeded.rule === "examWeighted"
         ? t("Study the topics that count most")
         : t("Keep going with your lessons"),
-    plusRequired: false,
   };
 }
 
@@ -48,7 +46,6 @@ function useMemoryItem(preparation: Preparation): StillNeededItem {
     key: "memory",
     kind: "review",
     label: t("Review what you're starting to forget"),
-    plusRequired: false,
   };
 }
 
@@ -75,7 +72,6 @@ function useTestItem({
     key: "test",
     kind: kinds[mocks.kind],
     label: weekly ? t("Take your first weekly challenge") : t("Take your first mock exam"),
-    plusRequired: mocks.plusRequired,
   };
 }
 

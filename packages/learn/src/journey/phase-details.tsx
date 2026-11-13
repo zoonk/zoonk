@@ -3,8 +3,6 @@
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { PopoverDescription, PopoverTitle } from "@zoonk/ui/components/popover";
 import { useExtracted } from "next-intl";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText } from "../_components/title-row";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -49,7 +47,6 @@ function usePhaseLessons() {
 }
 
 function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks } = phase;
 
@@ -61,20 +58,13 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
     <ul className="flex flex-col">
       {mocks.nextDate && (
         <li>
-          <MockRow
-            challengeHref={links.challenge}
-            date={mocks.nextDate}
-            examHref={links.exam}
-            locked={plan.access.mocksRequirePlus}
-          />
+          <MockRow challengeHref={links.challenge} date={mocks.nextDate} examHref={links.exam} />
         </li>
       )}
 
       {!mocks.nextDate && mocks.count > 0 && (
         <li className="text-muted-foreground py-1.5 text-xs">
-          <MarkedText mark={plan.access.mocksRequirePlus && <PlusMark />}>
-            {mocksLine({ count: mocks.count, forNextSitting: false, nextSitting: null })}
-          </MarkedText>
+          {mocksLine({ count: mocks.count, forNextSitting: false, nextSitting: null })}
         </li>
       )}
 
