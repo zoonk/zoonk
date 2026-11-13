@@ -9,7 +9,6 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { getContentFixBatch } from "@/data/content-fixes/get-content-fix";
 import { formatDateTime } from "@/lib/format";
 import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
-import { type ContentFixStatus } from "@zoonk/db";
 import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -20,7 +19,12 @@ import { ContentFixChanges } from "../../_components/content-fix-changes";
 import { RejectForm, ResumeApplying, ReviewDecision } from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
 import { ContentFixVoice } from "../../_components/content-fix-voice";
-import { ContentFixStatusBadge, contentFixStatusLabels } from "../../content-fix-status";
+import {
+  ContentFixStatusBadge,
+  contentFixState,
+  contentFixStatusLabels,
+  findAppliedRevert,
+} from "../../content-fix-status";
 
 type Props = PageProps<"/content-fixes/batches/[batchId]">;
 
@@ -71,11 +75,11 @@ function sharedReason(fixes: readonly BatchFix[]): string | null {
 }
 
 function statusFacts(fixes: readonly BatchFix[]): string[] {
-  const counts = Map.groupBy(fixes, (fix) => fix.status);
+  const counts = Map.groupBy(fixes, (fix) => contentFixState(fix));
 
   return [...counts.entries()].map(
-    ([status, entries]: [ContentFixStatus, BatchFix[]]) =>
-      `${String(entries.length)} ${contentFixStatusLabels[status].toLowerCase()}`,
+    ([state, entries]) =>
+      `${String(entries.length)} ${contentFixStatusLabels[state].toLowerCase()}`,
   );
 }
 
@@ -115,6 +119,8 @@ function Why({ fixes, reason }: { fixes: readonly BatchFix[]; reason: string | n
 }
 
 function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason: string | null }) {
+  const revert = findAppliedRevert(fix);
+
   return (
     <li className="flex flex-col gap-4 rounded-xl border p-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -126,7 +132,16 @@ function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason:
         >
           {fix.location.trail.join(" › ") || "Deleted content"}
         </Link>
-        <ContentFixStatusBadge status={fix.status} />
+        <ContentFixStatusBadge state={contentFixState(fix)} />
+        {revert && (
+          <Link
+            className="hit-area relative text-sm underline"
+            href={`/content-fixes/${revert.id}`}
+            prefetch
+          >
+            See its revert
+          </Link>
+        )}
       </div>
 
       {fix.reason !== reason && (

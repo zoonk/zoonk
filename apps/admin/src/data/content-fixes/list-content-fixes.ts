@@ -15,6 +15,7 @@ const fixSelect = {
   id: true,
   proposer: { select: { name: true } },
   reason: true,
+  revertedBy: { select: { id: true, status: true }, where: { status: "applied" } },
   revertsId: true,
   status: true,
   unit: true,

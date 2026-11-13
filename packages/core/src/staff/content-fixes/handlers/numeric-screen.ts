@@ -13,16 +13,13 @@ import {
   toJson,
 } from "../_utils/resolved-change";
 import { type ContentFixEffect, type StoredChange } from "../contract";
-import { listContentValueChanges } from "../screen-content-rules";
+import { hasSameShape, isItemAnswerKey, listContentValueChanges } from "../screen-content-rules";
 import { type FieldChange } from "./fix-handler";
 import { checkScreenItemContent } from "./item-content-rules";
 
 type AskingScreen = { id: string; lessonId: string };
 
 type SetStored = { fields: FieldChange[]; id: string; model: "Item"; op: "set" };
-
-/** The numbers that decide the right answer; the rest is what learners read or the worked steps. */
-const KEY_PARTS = new Set(["answer", "solution", "tolerance", "variables"]);
 
 const PROSE_PARTS = new Set(["misconception", "reason", "steps"]);
 
@@ -38,9 +35,7 @@ export function findAskingScreen(
 }
 
 function classifyPath(path: string): "answerKey" | "prose" | "question" {
-  const [field, part] = path.split(".");
-
-  if (field === "otherSolutions" || (field === "math" && KEY_PARTS.has(part ?? ""))) {
+  if (isItemAnswerKey(path)) {
     return "answerKey";
   }
 
@@ -70,14 +65,13 @@ export async function resolveScreenItemSet(
     return checked;
   }
 
-  const changes = listContentValueChanges({ after: checked.after, before: item.content });
-
-  if (!changes) {
+  if (!hasSameShape({ after: checked.after, before: item.content })) {
     return refuse(
       "content must keep its shape: the same variables, steps and common mistakes, each with the same fields.",
     );
   }
 
+  const changes = listContentValueChanges({ after: checked.after, before: item.content });
   const classes = new Set(changes.map((change) => classifyPath(change.path)));
 
   if (classes.has("answerKey") && classes.has("question")) {

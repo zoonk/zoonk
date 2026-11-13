@@ -256,6 +256,41 @@ export function checkScreenContentChange({
   return { changesAnswerKey, changesQuestion, ok: true };
 }
 
+/**
+ * What decides a practice question's right answer, in any format. A numeric question's worked
+ * `math.steps` explain it; an order question's top-level `steps` are the answer.
+ */
+const ITEM_ANSWER_KEYS = new Set([
+  "acceptedAnswers",
+  "entry",
+  "isCorrect",
+  "isTrue",
+  "keyPoints",
+  "otherSolutions",
+  "pairs",
+  "rubric",
+  "sampleAnswer",
+  "select",
+  "steps",
+]);
+
+const MATH_ANSWER_KEYS = new Set(["answer", "solution", "tolerance", "variables"]);
+
+export function isItemAnswerKey(path: string): boolean {
+  const [field = "", part = ""] = path.split(".");
+
+  return (
+    ITEM_ANSWER_KEYS.has(field) ||
+    path.endsWith(".isCorrect") ||
+    (field === "math" && MATH_ANSWER_KEYS.has(part))
+  );
+}
+
+/** Whether two versions keep the same fields and entries, as a fix in place must. */
+export function hasSameShape({ after, before }: { after: unknown; before: unknown }): boolean {
+  return !("problem" in diffValues(before, after, []));
+}
+
 function valueAt(value: unknown, path: Path): unknown {
   return path.reduce<unknown>((current, segment) => {
     if (Array.isArray(current)) {
@@ -264,6 +299,49 @@ function valueAt(value: unknown, path: Path): unknown {
 
     return isRecord(current) ? current[segment] : undefined;
   }, value);
+}
+
+function isNested(value: unknown): boolean {
+  return Array.isArray(value) || isRecord(value);
+}
+
+function childKeys(before: unknown, after: unknown): Path {
+  if (Array.isArray(before) || Array.isArray(after)) {
+    const length = Math.max(
+      Array.isArray(before) ? before.length : 0,
+      Array.isArray(after) ? after.length : 0,
+    );
+
+    return Array.from({ length }, (_, index) => index);
+  }
+
+  const keys = [before, after].flatMap((value) => (isRecord(value) ? Object.keys(value) : []));
+  return [...new Set(keys)].toSorted();
+}
+
+function isWholeList(path: Path, values: readonly unknown[]): boolean {
+  return (
+    path.at(-1) === "distractors" &&
+    values.every(
+      (value) => Array.isArray(value) && value.every((entry) => typeof entry === "string"),
+    )
+  );
+}
+
+/** Each leaf that differs, walking into a side the other lacks so an added option lists its values. */
+function changedPaths(before: unknown, after: unknown, path: Path): Path[] {
+  const walks =
+    (isNested(before) || isNested(after)) &&
+    (shapeOf(before) === shapeOf(after) || before === undefined || after === undefined) &&
+    !isWholeList(path, [before, after]);
+
+  if (!walks) {
+    return JSON.stringify(before) === JSON.stringify(after) ? [] : [path];
+  }
+
+  return childKeys(before, after).flatMap((key) =>
+    changedPaths(valueAt(before, [key]), valueAt(after, [key]), [...path, key]),
+  );
 }
 
 export type ContentValueChange = {
@@ -275,26 +353,29 @@ export type ContentValueChange = {
 };
 
 /**
- * Every value that differs between two versions of a screen's content or a lesson's map, for
- * showing a fix to its reviewer. Null when they don't share a shape, which no stored fix does.
+ * Every value that differs between two versions of a screen's content, a practice question or a
+ * lesson's map, for showing a fix to its reviewer. A value one side lacks is `undefined` there.
  */
 export function listContentValueChanges({
   after,
   before,
+  of = "screen",
 }: {
   after: unknown;
   before: unknown;
-}): ContentValueChange[] | null {
-  const diff = diffValues(before, after, []);
+  of?: "item" | "screen";
+}): ContentValueChange[] {
+  return changedPaths(before, after, []).map((path) => {
+    const joined = path.join(".");
 
-  if ("problem" in diff) {
-    return null;
-  }
-
-  return diff.changed.map((path) => ({
-    after: valueAt(after, path),
-    before: valueAt(before, path),
-    isAnswerKey: classify({ answered: false, path }) === "answerKey",
-    path: path.join("."),
-  }));
+    return {
+      after: valueAt(after, path),
+      before: valueAt(before, path),
+      isAnswerKey:
+        of === "item"
+          ? isItemAnswerKey(joined)
+          : classify({ answered: false, path }) === "answerKey",
+      path: joined,
+    };
+  });
 }

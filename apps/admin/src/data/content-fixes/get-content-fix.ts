@@ -8,6 +8,8 @@ import {
 } from "@zoonk/core/staff/content-fixes/contract";
 import { contentFixVoiceSchema } from "@zoonk/core/staff/content-fixes/voice-schema";
 import { prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
+import { isUuid } from "@zoonk/utils/uuid";
 import { loadContentFixLocations } from "./content-fix-locations";
 
 const person = { select: { email: true, id: true, name: true } } as const;
@@ -77,6 +79,55 @@ function screenLabel(step: { kind: string; position: number }): string {
   return `Screen ${String(step.position + 1)} · ${step.kind}`;
 }
 
+const STRUCTURE_OPS = new Set<StoredChange["op"]>([
+  "setChapters",
+  "setGraph",
+  "setLessons",
+  "setPrerequisites",
+  "setSkills",
+]);
+
+function idsIn(value: unknown): string[] {
+  if (typeof value === "string") {
+    return isUuid(value) ? [value] : [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => idsIn(entry));
+  }
+
+  return isJsonObject(value) ? Object.values(value).flatMap((entry) => idsIn(entry)) : [];
+}
+
+/** The title of each chapter, lesson, skill and course a structure fix lists by id. */
+async function loadStructureNames(changes: readonly StoredChange[]): Promise<Map<string, string>> {
+  const ids = [
+    ...new Set(
+      changes.flatMap((change) =>
+        STRUCTURE_OPS.has(change.op) && "fields" in change ? idsIn(change.fields) : [],
+      ),
+    ),
+  ];
+
+  if (ids.length === 0) {
+    return new Map();
+  }
+
+  const where = { id: { in: ids } };
+
+  const [chapters, lessons, skills, courses] = await Promise.all([
+    prisma.chapter.findMany({ select: { id: true, title: true }, where }),
+    prisma.lesson.findMany({ select: { id: true, title: true }, where }),
+    prisma.skill.findMany({ select: { id: true, name: true }, where }),
+    prisma.course.findMany({ select: { id: true, title: true }, where }),
+  ]);
+
+  return new Map([
+    ...[...chapters, ...lessons, ...courses].map((row): [string, string] => [row.id, row.title]),
+    ...skills.map((skill): [string, string] => [skill.id, skill.name]),
+  ]);
+}
+
 /** What each changed row is, in the reviewer's terms. A row deleted since has no label. */
 async function loadRowLabels(changes: readonly StoredChange[]): Promise<Map<string, string>> {
   const [steps, variants, explanations, vocabulary] = await Promise.all([
@@ -128,9 +179,10 @@ type FixRow = Awaited<ReturnType<typeof findFixes>>[number];
 async function toDetails(fixes: readonly FixRow[]) {
   const changes = fixes.map((fix) => contentFixChangesSchema.parse(fix.changes));
 
-  const [locate, rowLabels] = await Promise.all([
+  const [locate, rowLabels, names] = await Promise.all([
     loadContentFixLocations(fixes),
     loadRowLabels(changes.flat()),
+    loadStructureNames(changes.flat()),
   ]);
 
   return fixes.map((fix, index) => ({
@@ -139,6 +191,7 @@ async function toDetails(fixes: readonly FixRow[]) {
     changes: changes[index] ?? [],
     effects: contentFixEffectsSchema.parse(fix.effects),
     location: locate(fix),
+    names,
     rowLabels,
     voice: contentFixVoiceSchema.nullable().parse(fix.voice),
   }));
