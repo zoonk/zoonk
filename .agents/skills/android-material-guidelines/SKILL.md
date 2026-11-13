@@ -59,7 +59,7 @@ Zoonk's [roles](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one) ea
 - **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" `LabelChip`, no notice in a list), and the subscription gate shows once, when the learner starts the feature.
 - **Words:** main's. "Your buddy", a buddy's name or a feature's name only after the screen that introduces it; before that, "we". A step with Skip has no "none" option.
 
-Compare a role across the app the way [the role read](../zoonk-design/SKILL.md#the-role-read) does on the web: renders of every screen that draws it, side by side.
+Compare a role across the app the way [the role read](../zoonk-design/references/craft.md#the-role-read) does on the web: renders of every screen that draws it, side by side.
 
 ## Book foldables
 
