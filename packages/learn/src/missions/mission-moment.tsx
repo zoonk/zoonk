@@ -9,7 +9,7 @@ import { useExtracted, useFormatter } from "next-intl";
 import { useId } from "react";
 import { BrainPowerReadout } from "../_components/moment-readouts";
 import { BuddyArt } from "../buddies/buddy-art";
-import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getJustDoneMissions, getMissionMomentKind } from "../session/pick-day-moment";
 import { MissionTrack } from "./mission-track";
 
