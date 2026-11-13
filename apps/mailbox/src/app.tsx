@@ -228,7 +228,7 @@ function getStatusLabel(status: EmailInboxStatus): string {
     return "Connecting";
   }
 
-  return "Live";
+  return "Connected";
 }
 
 function getStatusDotClassName(status: EmailInboxStatus): string {
