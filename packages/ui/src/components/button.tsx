@@ -1,7 +1,7 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { ArrowRightIcon, Loader2Icon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
@@ -85,6 +85,12 @@ type IconProps = { icon?: React.ReactNode; iconPosition?: "end" | "start" };
 const FORWARD_ICON = {
   icon: <ArrowRightIcon aria-hidden="true" />,
   iconPosition: "end",
+} as const satisfies IconProps;
+
+/** The one icon that leads the label of a button that ends a task by going back ("Back to Today"). A bare way back is a chevron. */
+const BACK_ICON = {
+  icon: <ArrowLeftIcon aria-hidden="true" />,
+  iconPosition: "start",
 } as const satisfies IconProps;
 
 /**
@@ -201,4 +207,4 @@ function ButtonSkeleton({ children, className, edge, size, variant }: ButtonSkel
   );
 }
 
-export { BusyContent, BusyIcon, Button, ButtonSkeleton, FORWARD_ICON, buttonVariants };
+export { BACK_ICON, BusyContent, BusyIcon, Button, ButtonSkeleton, FORWARD_ICON, buttonVariants };

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon } from "lucide-react";
+import { BACK_ICON } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
@@ -19,7 +19,7 @@ function SkippedEssay() {
       exitHref={hrefs.exit}
       footer={
         <TaskActions>
-          <TaskMainLink href={hrefs.exit} icon={<ArrowLeftIcon aria-hidden="true" />}>
+          <TaskMainLink href={hrefs.exit} {...BACK_ICON}>
             {t("Back to Today")}
           </TaskMainLink>
         </TaskActions>
