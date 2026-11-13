@@ -2,7 +2,7 @@
 
 import { AdminGateScreen } from "@/components/admin-gate-screen";
 import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
-import { Button } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -21,9 +21,9 @@ export function LoginScreen() {
         started ? (
           <OneTimeTokenLoginRedirect callbackPath="/auth/callback" locale={DEFAULT_LOCALE} />
         ) : (
-          <Button onClick={() => setStarted(true)} size="lg">
+          <EnterButton onClick={() => setStarted(true)} size="lg">
             Try again
-          </Button>
+          </EnterButton>
         )
       }
       title="Zoonk Admin"

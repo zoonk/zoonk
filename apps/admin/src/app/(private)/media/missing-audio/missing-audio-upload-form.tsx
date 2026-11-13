@@ -37,7 +37,7 @@ export function MissingAudioUploadForm({
   });
 
   return (
-    <form action={formAction} className="flex items-center justify-end gap-2">
+    <form action={formAction} className="flex items-center gap-2">
       <input name="resourceId" type="hidden" value={resourceId} />
       <input name="resourceKind" type="hidden" value={resourceKind} />
       <AdminSmallInput
