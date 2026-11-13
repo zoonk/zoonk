@@ -21,7 +21,7 @@ async function VisitorAccount() {
     <SidebarTooltip label={t("Log in")}>
       <CurrentPageLoginLink
         className={cn(
-          buttonVariants({ size: "bar", variant: "outline" }),
+          buttonVariants({ variant: "outline" }),
           "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
         )}
         icon={<LogInIcon aria-hidden="true" />}
