@@ -14,12 +14,29 @@ export async function DeletionPlusNotice() {
 
   return (
     <>
-      {web?.status === "ready" && <p>{t("Deleting your account ends Plus right away.")}</p>}
+      {web?.status === "ready" && (
+        <p>
+          {t({
+            description: "Shown only to subscribers, in the box that deletes their account.",
+            message: "Deleting your account ends Plus right away.",
+          })}
+        </p>
+      )}
       {active?.provider === "apple" && (
-        <p>{t("Plus from the App Store keeps charging until you cancel it there.")}</p>
+        <p>
+          {t({
+            description: "Shown only to subscribers, in the box that deletes their account.",
+            message: "Plus from the App Store keeps charging until you cancel it there.",
+          })}
+        </p>
       )}
       {active?.provider === "google" && (
-        <p>{t("Plus from Google Play keeps charging until you cancel it there.")}</p>
+        <p>
+          {t({
+            description: "Shown only to subscribers, in the box that deletes their account.",
+            message: "Plus from Google Play keeps charging until you cancel it there.",
+          })}
+        </p>
       )}
     </>
   );

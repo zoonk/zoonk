@@ -137,7 +137,17 @@ export function SettingsHubLists({
   );
 
   const plans = plan.map((item) =>
-    item.url === subscriptionUrl && shown.plus ? { ...item, trail: t("Plus") } : item,
+    item.url === subscriptionUrl && shown.plus
+      ? {
+          ...item,
+          trail: t({
+            description:
+              "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
+            id: "subscriberPlanName",
+            message: "Plus",
+          }),
+        }
+      : item,
   );
 
   return (
