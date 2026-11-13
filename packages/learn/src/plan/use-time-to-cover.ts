@@ -55,9 +55,9 @@ export function useTimeToCoverTexts() {
   return {
     building: t("Your plan is still being built. Try again in a moment."),
     failed: t("We couldn't work out the time needed."),
-    find: t("Find the time"),
-    finding: t("Finding the time…"),
+    finding: t("Finding the time that covers everything…"),
     noDate: t("We couldn't find a date that covers everything."),
+    seeChanges: t("See what changes"),
     tryAgain: t("Try again"),
   };
 }
