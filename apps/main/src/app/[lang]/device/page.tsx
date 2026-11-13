@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function CliLoginSkeleton() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mt-8 flex flex-col gap-8">
       <div className="flex flex-col gap-1.5">
         <Skeleton className="h-9 w-48" />
         <Skeleton className="h-5 w-72 max-w-full" />
@@ -58,7 +58,7 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
     });
 
     return (
-      <div className="flex flex-col items-start gap-4">
+      <div className="mt-3 flex flex-col items-start gap-6">
         <p className="text-muted-foreground text-pretty">
           {t("Log in with your Zoonk staff account first. You'll come back here to approve it.")}
         </p>
@@ -73,7 +73,11 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
     );
   }
 
-  return <CliLoginForm email={session.user.email} userCode={userCode} />;
+  return (
+    <div className="mt-8">
+      <CliLoginForm email={session.user.email} userCode={userCode} />
+    </div>
+  );
 }
 
 /** Where `pnpm zoonk login` sends staff to approve the login it started; the provider names this page. */
@@ -81,7 +85,7 @@ export default async function CliLoginPage({ searchParams }: Props) {
   const t = await getExtracted();
 
   return (
-    <ColumnScreen className="gap-8">
+    <ColumnScreen>
       <h1 className="text-title">{t("Log in to the Zoonk CLI")}</h1>
 
       <Suspense fallback={<CliLoginSkeleton />}>

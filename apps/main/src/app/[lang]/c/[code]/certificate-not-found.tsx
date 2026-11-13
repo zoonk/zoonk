@@ -15,7 +15,7 @@ export async function CertificateNotFound() {
 
   return (
     <section className="bg-ground">
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-10 pb-28 sm:pt-24 sm:pb-48")}>
+      <div className={cn(PUBLIC_CONTAINER_CLASS, "py-12 sm:py-24")}>
         <div className="max-w-column">
           <h1 className="text-headline">{t("We couldn't find this certificate")}</h1>
           <p className="text-lead mt-2.5">

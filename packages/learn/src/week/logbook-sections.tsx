@@ -153,7 +153,7 @@ export function TurnaroundStep() {
         <StepDetail className="tabular-nums">
           {t({
             description: '{from} and {to} are shares of right answers, like "40%".',
-            message: "{from} → {to} right answers",
+            message: "{from} to {to} right answers",
             values: { from: formatShare(turnaround.from), to: formatShare(turnaround.to) },
           })}
         </StepDetail>

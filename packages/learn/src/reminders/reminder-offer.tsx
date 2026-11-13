@@ -224,7 +224,7 @@ function EmailOffer({
         <Button
           busy={isSaving}
           disabled={isOn}
-          icon={isOn ? <CheckIcon aria-hidden="true" /> : <BellIcon aria-hidden="true" />}
+          icon={isOn ? <CheckIcon aria-hidden="true" /> : undefined}
           onClick={remind}
           size="sm"
           variant="outline"

@@ -44,7 +44,8 @@ export function details(rows: [label: string, value: string][]): string {
     )
     .join("");
 
-  return `<table role="presentation" style="border-collapse:collapse;margin:0 0 16px">${cells}</table>`;
+  // The cells pad 4px over and under, so the table gives that back to sit 16px from its neighbors.
+  return `<table role="presentation" style="border-collapse:collapse;margin:-4px 0 12px">${cells}</table>`;
 }
 
 export function renderEmail(blocks: string[]): string {

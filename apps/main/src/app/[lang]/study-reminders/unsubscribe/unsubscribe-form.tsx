@@ -10,6 +10,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
 import { BellOffIcon, MailCheckIcon, MailXIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -57,14 +58,16 @@ function UnsubscribeResult({ result }: { result: Result }) {
 export function UnsubscribeForm({ token }: { token: string | null }) {
   const t = useExtracted();
   const [result, setResult] = useState<Result | null>(token ? null : "invalid");
-  const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const turnOff = () =>
     startTransition(async () => {
       const { data } = await safeAsync(() => turnOffStudyReminderEmailAction(token));
-      setFailed(!data);
       setResult(data);
+
+      if (!data) {
+        showErrorToast(t("That didn't save. Try again."));
+      }
     });
 
   if (result) {
@@ -87,11 +90,6 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
             {t("Turn off")}
           </Button>
         </form>
-        {failed && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("That didn't save. Try again.")}
-          </p>
-        )}
       </EmptyContent>
     </Empty>
   );

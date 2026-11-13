@@ -61,20 +61,23 @@ export function BuddyEditor({
           <DialogTitle>{t("Your buddy")}</DialogTitle>
         </DialogHeader>
 
-        <BuddyPicker choice={choice} look={look} onChange={setChoice} />
+        {/* One gap between the cards, the name and the glasses, the picker's own. */}
+        <div className="flex flex-col gap-5">
+          <BuddyPicker choice={choice} look={look} onChange={setChoice} />
 
-        {glasses && (
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">{t("Glasses")}</p>
-            <BuddyGlassesPicker
-              kind={choice.kind}
-              look={look}
-              onChange={(next) => setChoice({ ...choice, glasses: next })}
-              options={glasses}
-              value={choice.glasses}
-            />
-          </div>
-        )}
+          {glasses && (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium">{t("Glasses")}</p>
+              <BuddyGlassesPicker
+                kind={choice.kind}
+                look={look}
+                onChange={(next) => setChoice({ ...choice, glasses: next })}
+                options={glasses}
+                value={choice.glasses}
+              />
+            </div>
+          )}
+        </div>
 
         <DialogFooter>
           <Button onClick={onClose} variant="outline">
