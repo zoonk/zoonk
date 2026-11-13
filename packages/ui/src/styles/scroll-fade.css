@@ -40,7 +40,7 @@
   @supports (animation-timeline: scroll()) {
     animation: scroll-fade-reveal-b 1ms ease-in-out;
     animation-timeline: scroll(self y);
-    animation-range: calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 24))) 100%;
+    animation-range: calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 4))) 100%;
     animation-fill-mode: both;
   }
 
