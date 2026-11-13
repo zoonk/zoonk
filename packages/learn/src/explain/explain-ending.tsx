@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterLink } from "../_components/enter-button";
+import { SuccessEyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRowContent,
@@ -17,7 +18,6 @@ import {
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionTitle } from "../_components/page";
 import { SectionLabel } from "../_components/section-label";
-import { SuccessEyebrow } from "../_components/success-eyebrow";
 import { TaskActionBar, TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "../session/day-moment";

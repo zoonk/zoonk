@@ -6,12 +6,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowLeftIcon, CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { Eyebrow } from "../_components/eyebrow";
 import { Meter, MeterFill } from "../_components/meter";
 import { PageSectionTitle } from "../_components/page";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
@@ -157,7 +157,7 @@ function NothingLeftComment() {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("Next step")}</StepEyebrow>
+        <Eyebrow>{t("Next step")}</Eyebrow>
         <StepTitle>{t("Nothing left to work on")}</StepTitle>
         <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
       </StepHeader>
@@ -179,7 +179,7 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepEyebrow>{t("Next step")}</StepEyebrow>
+        <Eyebrow>{t("Next step")}</Eyebrow>
         <StepTitle>{criterion ? criterionName(criterion) : t("What to rewrite")}</StepTitle>
       </StepHeader>
 

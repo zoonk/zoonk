@@ -1,5 +1,4 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { PageEyebrow } from "./page";
 
 export const STEP_TITLE_SLOT = "step-title";
 
@@ -20,12 +19,6 @@ export function StepHeader({ className, ...props }: React.ComponentProps<"div">)
       data-slot="step-header"
       {...props}
     />
-  );
-}
-
-export function StepEyebrow({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <PageEyebrow className={cn("text-balance", className)} data-slot="step-eyebrow" {...props} />
   );
 }
 

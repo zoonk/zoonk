@@ -9,14 +9,9 @@ import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, StarIcon, TargetIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../../_components/eyebrow";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
-import {
-  StepCard,
-  StepDetail,
-  StepEyebrow,
-  StepHeader,
-  StepTitle,
-} from "../../_components/step-card";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { useConversationTitle } from "./conversation-labels";
@@ -148,9 +143,7 @@ export function StarsStep({
       <StepCard>
         <Stars lost={lost} stars={result.stars} />
         <StepHeader>
-          <StepEyebrow>
-            {conversation.kind === "checkpoint" ? conversation.title : title}
-          </StepEyebrow>
+          <Eyebrow>{conversation.kind === "checkpoint" ? conversation.title : title}</Eyebrow>
           <StepTitle>{headline}</StepTitle>
           {feedback?.encouragement && <StepDetail>{feedback.encouragement}</StepDetail>}
         </StepHeader>
