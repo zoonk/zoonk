@@ -157,8 +157,8 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
         {renderActions?.(sortedEntries)}
       </div>
 
-      {/* As wide as its columns, so "More columns" adds columns without moving the ones there. */}
-      <Table className="w-auto">
+      {/* Each column keeps its content's width and a wide table scrolls, so "More columns" moves no column. */}
+      <Table className="w-max">
         <TableHeader>
           <TableRow>
             {shownColumns.map((column) => (
