@@ -171,11 +171,12 @@ export function TodaySession({ className }: { className?: string }) {
       <DayProgress />
       <DayOpenStatus className="mt-2" />
 
-      <div className="mt-3 flex flex-col first:mt-0 empty:hidden">
+      <div className="mt-3 flex flex-col first:mt-0 empty:hidden" data-slot="today-list">
         <SessionQueue next={next} />
       </div>
 
-      <TodayDayStatus className="mt-3 first:mt-0" />
+      {/* After the list, the line's top hairline closes the last row. */}
+      <TodayDayStatus className="mt-3 first:mt-0 [[data-slot=today-list]:not(:empty)+&]:mt-0" />
       <TodayUpNext className="mt-6" />
     </div>
   );
