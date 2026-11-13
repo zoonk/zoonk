@@ -61,8 +61,9 @@ function useDayParts() {
       { type: "conjunction" },
     );
 
+    // The no-break space keeps "·" with the count, so a wrapped line never ends on the dot.
     return questions > 0
-      ? t("{parts} · {count, plural, one {# question} other {# questions}}", {
+      ? t("{parts} ·{count, plural, one {# question} other {# questions}}", {
           count: questions,
           parts,
         })
