@@ -1308,21 +1308,6 @@ msgid "Curious alien"
 msgstr "Extraterrestre curieux"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "G6AWdQ"
-msgid "Young"
-msgstr "Jeune"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zHPqOq"
-msgid "Adult"
-msgstr "Adulte"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "GpLsPj"
-msgid "Baby"
-msgstr "Bébé"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "Vwapsm"
 msgid "Star"
 msgstr "Étoiles"

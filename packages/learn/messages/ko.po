@@ -1308,21 +1308,6 @@ msgid "Curious alien"
 msgstr "호기심 많은 외계인"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "G6AWdQ"
-msgid "Young"
-msgstr "어린이"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zHPqOq"
-msgid "Adult"
-msgstr "어른"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "GpLsPj"
-msgid "Baby"
-msgstr "아기"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "Vwapsm"
 msgid "Star"
 msgstr "별 모양"

@@ -1308,21 +1308,6 @@ msgid "Curious alien"
 msgstr "Meraklı uzaylı"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "G6AWdQ"
-msgid "Young"
-msgstr "Genç"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zHPqOq"
-msgid "Adult"
-msgstr "Yetişkin"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "GpLsPj"
-msgid "Baby"
-msgstr "Bebek"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "Vwapsm"
 msgid "Star"
 msgstr "Yıldız"
