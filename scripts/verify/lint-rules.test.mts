@@ -12,7 +12,6 @@ afterAll(() => {
   rmSync(folder, { force: true, recursive: true });
 });
 
-/** Runs one of the plugin's rules on each named source and returns `<file>:<line>` per report. */
 function lint(rule: string, files: Record<string, string>): string[] {
   const here = mkdtempSync(join(folder, `${rule}-`));
   const config = join(here, "oxlintrc.json");

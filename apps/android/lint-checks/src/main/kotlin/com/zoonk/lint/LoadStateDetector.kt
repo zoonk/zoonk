@@ -14,7 +14,6 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.USwitchClauseExpression
 import org.jetbrains.uast.USwitchExpression
 
-/** A screen that draws its own failed state beside its loading and empty ones. */
 class LoadStateDetector :
     Detector(),
     SourceCodeScanner {
