@@ -87,7 +87,10 @@ async function loadMap(db: TransactionClient, id: string) {
   }
 
   if (row.status === "running") {
-    return { problem: "Wait for the current mind-map run before fixing its text." };
+    return {
+      problem:
+        "Wait for the current mind-map run before fixing its text. If that run died, the map frees up when a learner asks for it again or its owed redraw is settled by the daily sweep.",
+    };
   }
 
   return { row };
