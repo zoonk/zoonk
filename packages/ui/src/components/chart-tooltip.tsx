@@ -5,7 +5,7 @@ export function ChartTooltipContent({ className, ...props }: ComponentProps<"div
   return (
     <div
       className={cn(
-        "bg-popover text-popover-foreground ring-border flex flex-col gap-0.5 rounded-md px-3 py-2 shadow-md ring-1",
+        "bg-popover text-popover-foreground ring-border flex flex-col gap-0.5 rounded-md px-3 py-2 shadow-md ring-1 ring-inset",
         className,
       )}
       data-slot="chart-tooltip-content"
