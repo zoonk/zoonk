@@ -441,7 +441,7 @@ msgstr "<number>+{points}</number> <words>Puissance Mentale</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
 msgid "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}"
-msgstr ""
+msgstr "{correct, plural, =0 {<number>#</number> bonne réponse} one {<number>#</number> bonne réponse} other {<number>#</number> bonnes réponses}}"
 
 #. Counts words the learner said aloud in pronunciation practice.
 #: src/_components/moment-readouts.tsx
@@ -2224,12 +2224,12 @@ msgstr "Reporter à lundi"
 #: src/challenge/challenge-footer.tsx
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
-msgstr ""
+msgstr "Les examens blancs nécessitent un abonnement"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "L_nv1C"
 msgid "After today's lessons"
-msgstr ""
+msgstr "Après les leçons d’aujourd’hui"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"
@@ -2397,15 +2397,6 @@ msgid "Your plan can't make room for this {duration} mock exam on {date}. It sta
 msgstr "Ton plan ne peut pas faire de place pour cet examen blanc de {duration} le {date}. Il reste à sa date actuelle."
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "Retour à Aujourd’hui"
-
-#: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
@@ -2421,6 +2412,15 @@ msgid "Undo"
 msgstr "Annuler"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "Retour à Aujourd’hui"
+
+#: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "Déplacé au {date}"
@@ -2433,17 +2433,17 @@ msgstr "Ton plan a déplacé les leçons suivantes pour lui faire de la place."
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "QJJTto"
 msgid "This call needs a subscription"
-msgstr ""
+msgstr "Cet appel nécessite un abonnement"
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr ""
+msgstr "Ton plan continue sans cet appel."
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
-msgstr ""
+msgstr "S’abonner"
 
 #: src/challenge/challenge-screen.tsx
 msgctxt "FxoA1t"
@@ -2565,7 +2565,7 @@ msgstr "Son bouclier est brisé. Tu as gagné !"
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "FhXNnE"
 msgid "The Trickster won this time."
-msgstr ""
+msgstr "Le Farceur a gagné cette fois."
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2607,7 +2607,7 @@ msgstr "Le bouclier du Farceur"
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "yjvTwW"
 msgid "{count, plural, one {# more to win} other {# more to win}}"
-msgstr ""
+msgstr "{count, plural, one {Encore # bonne réponse pour gagner} other {Encore # bonnes réponses pour gagner}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "SFplX2"
@@ -2703,12 +2703,12 @@ msgstr "{cracked, plural, =0 {# plaque sur {segments} est brisée} one {# plaque
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "N6ZXzw"
 msgid "You won"
-msgstr ""
+msgstr "Tu as gagné"
 
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "Cu4K5p"
 msgid "He won"
-msgstr ""
+msgstr "Il a gagné"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -2718,7 +2718,7 @@ msgstr "Tu as gagné la revanche"
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "s4X2yE"
 msgid "{lessons, plural, =0 {} one {After # short lesson on what tripped you up.} other {After # short lessons on what tripped you up.}}"
-msgstr ""
+msgstr "{lessons, plural, =0 {} one {Après # courte leçon sur ce qui t’a posé problème.} other {Après # courtes leçons sur ce qui t’a posé problème.}}"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "eqfxQN"
@@ -13867,7 +13867,7 @@ msgstr "Ta leçon n’est pas encore enregistrée"
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
-#: src/session/summary/summary-actions.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/today/today-action.tsx
 msgctxt "yQ15dh"
 msgid "We couldn't open the next step. Try again."
@@ -13934,7 +13934,7 @@ msgstr "S’entraîner maintenant"
 #: src/session/study-moment.tsx
 msgctxt "8i8j-M"
 msgid "We couldn't stop for today. Try again."
-msgstr ""
+msgstr "Impossible d’arrêter la séance pour aujourd’hui. Réessaie."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -14017,7 +14017,7 @@ msgstr "Quelques erreurs de suite. Une courte pause aide souvent, et tout ce que
 #: src/session/question-block/placement-note.tsx
 msgctxt "LlY4Wv"
 msgid "Checking what you already know"
-msgstr ""
+msgstr "On vérifie ce que tu sais déjà"
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14101,7 +14101,7 @@ msgstr "Une mauvaise réponse annule une bonne réponse. Tu hésites ? Ne répo
 #: src/session/reached-moment.tsx
 msgctxt "JxJr5v"
 msgid "{next} comes after {belt} {count}"
-msgstr ""
+msgstr "{next} vient après {belt} {count}"
 
 #: src/session/review-intro.tsx
 msgctxt "6UUFQv"

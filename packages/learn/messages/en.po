@@ -2397,15 +2397,6 @@ msgid "Your plan can't make room for this {duration} mock exam on {date}. It sta
 msgstr "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is."
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "Back to Today"
-
-#: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
@@ -2419,6 +2410,15 @@ msgstr "Back to Today"
 msgctxt "JkS37H"
 msgid "Undo"
 msgstr "Undo"
+
+#: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "Back to Today"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
@@ -13867,7 +13867,7 @@ msgstr "Your lesson isn't saved yet"
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
-#: src/session/summary/summary-actions.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/today/today-action.tsx
 msgctxt "yQ15dh"
 msgid "We couldn't open the next step. Try again."

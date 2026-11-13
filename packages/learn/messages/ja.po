@@ -441,7 +441,7 @@ msgstr "<number>+{points}</number> <words>脳力</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
 msgid "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}"
-msgstr ""
+msgstr "{correct, plural, =0 {<number>#</number>問正解} other {<number>#</number>問正解}}"
 
 #. Counts words the learner said aloud in pronunciation practice.
 #: src/_components/moment-readouts.tsx
@@ -2224,12 +2224,12 @@ msgstr "月曜日に移す"
 #: src/challenge/challenge-footer.tsx
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
-msgstr ""
+msgstr "模試にはサブスクリプションが必要です"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "L_nv1C"
 msgid "After today's lessons"
-msgstr ""
+msgstr "今日のレッスンの後"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"
@@ -2397,15 +2397,6 @@ msgid "Your plan can't make room for this {duration} mock exam on {date}. It sta
 msgstr "この{duration}の模試は、{date}の学習計画に入りきりません。日程はそのままです。"
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "「今日」に戻る"
-
-#: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
@@ -2421,6 +2412,15 @@ msgid "Undo"
 msgstr "元に戻す"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "「今日」に戻る"
+
+#: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "{date}に移動しました"
@@ -2433,17 +2433,17 @@ msgstr "時間を確保するため、その後のレッスンの日程をずら
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "QJJTto"
 msgid "This call needs a subscription"
-msgstr ""
+msgstr "この会話にはサブスクリプションが必要です"
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr ""
+msgstr "会話練習をしなくても、学習計画は続けられます。"
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
-msgstr ""
+msgstr "登録する"
 
 #: src/challenge/challenge-screen.tsx
 msgctxt "FxoA1t"
@@ -2565,7 +2565,7 @@ msgstr "相手の盾が壊れました。勝利です！"
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "FhXNnE"
 msgid "The Trickster won this time."
-msgstr ""
+msgstr "今回はトリックスターの勝ちです。"
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2607,7 +2607,7 @@ msgstr "トリックスターの盾"
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "yjvTwW"
 msgid "{count, plural, one {# more to win} other {# more to win}}"
-msgstr ""
+msgstr "{count, plural, other {あと#問正解で勝利}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "SFplX2"
@@ -2703,12 +2703,12 @@ msgstr "{cracked, plural, =0 {壊れた板は#枚です（全{segments}枚）} o
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "N6ZXzw"
 msgid "You won"
-msgstr ""
+msgstr "勝ちました"
 
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "Cu4K5p"
 msgid "He won"
-msgstr ""
+msgstr "トリックスターが勝ちました"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -2718,7 +2718,7 @@ msgstr "再戦に勝ちました"
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "s4X2yE"
 msgid "{lessons, plural, =0 {} one {After # short lesson on what tripped you up.} other {After # short lessons on what tripped you up.}}"
-msgstr ""
+msgstr "{lessons, plural, =0 {} other {つまずいたところを短時間で復習する#レッスンの後です。}}"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "eqfxQN"
@@ -13867,7 +13867,7 @@ msgstr "レッスンはまだ保存されていません"
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
-#: src/session/summary/summary-actions.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/today/today-action.tsx
 msgctxt "yQ15dh"
 msgid "We couldn't open the next step. Try again."
@@ -13934,7 +13934,7 @@ msgstr "今すぐ練習する"
 #: src/session/study-moment.tsx
 msgctxt "8i8j-M"
 msgid "We couldn't stop for today. Try again."
-msgstr ""
+msgstr "今日の学習を終了できませんでした。もう一度試してください。"
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -14017,7 +14017,7 @@ msgstr "何問か間違いが続いています。ひと休みすると、集中
 #: src/session/question-block/placement-note.tsx
 msgctxt "LlY4Wv"
 msgid "Checking what you already know"
-msgstr ""
+msgstr "すでに知っていることを確認しています"
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14101,7 +14101,7 @@ msgstr "1問間違えると、正解1問分が差し引かれます。自信が�
 #: src/session/reached-moment.tsx
 msgctxt "JxJr5v"
 msgid "{next} comes after {belt} {count}"
-msgstr ""
+msgstr "{next}は{belt}{count}の次です"
 
 #: src/session/review-intro.tsx
 msgctxt "6UUFQv"

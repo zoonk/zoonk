@@ -441,7 +441,7 @@ msgstr "<number>+{points}</number> <words>두뇌력</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "42ufnf"
 msgid "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}"
-msgstr ""
+msgstr "{correct, plural, =0 {정답 <number>#</number>개} other {정답 <number>#</number>개}}"
 
 #. Counts words the learner said aloud in pronunciation practice.
 #: src/_components/moment-readouts.tsx
@@ -2224,12 +2224,12 @@ msgstr "월요일로 옮기기"
 #: src/challenge/challenge-footer.tsx
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
-msgstr ""
+msgstr "모의고사는 구독이 필요해요"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "L_nv1C"
 msgid "After today's lessons"
-msgstr ""
+msgstr "오늘 레슨을 마친 후"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"
@@ -2397,15 +2397,6 @@ msgid "Your plan can't make room for this {duration} mock exam on {date}. It sta
 msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어요. 원래 일정대로 진행해요."
 
 #: src/challenge/challenge-moved-screen.tsx
-#: src/essay/essay-closed.tsx
-#: src/essay/essay-feedback.tsx
-#: src/onboarding/entry/guest-goal-gate.tsx
-#: src/session/open-next-step.tsx
-msgctxt "OC7hHG"
-msgid "Back to Today"
-msgstr "오늘로 돌아가기"
-
-#: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-result.tsx
 #: src/memory/memory-updated.tsx
@@ -2421,6 +2412,15 @@ msgid "Undo"
 msgstr "실행 취소"
 
 #: src/challenge/challenge-moved-screen.tsx
+#: src/essay/essay-closed.tsx
+#: src/essay/essay-feedback.tsx
+#: src/onboarding/entry/guest-goal-gate.tsx
+#: src/session/open-next-step.tsx
+msgctxt "OC7hHG"
+msgid "Back to Today"
+msgstr "오늘로 돌아가기"
+
+#: src/challenge/challenge-moved-screen.tsx
 msgctxt "smtXcI"
 msgid "Moved to {date}"
 msgstr "{date}로 옮겼어요"
@@ -2433,17 +2433,17 @@ msgstr "챌린지를 넣을 수 있도록 이후 레슨 일정을 옮겼어요."
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "QJJTto"
 msgid "This call needs a subscription"
-msgstr ""
+msgstr "이 대화는 구독이 필요해요"
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr ""
+msgstr "대화 없이도 계획은 계속 진행돼요."
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
-msgstr ""
+msgstr "구독하기"
 
 #: src/challenge/challenge-screen.tsx
 msgctxt "FxoA1t"
@@ -2565,7 +2565,7 @@ msgstr "트릭스터의 방패가 깨졌어요. 이겼어요!"
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "FhXNnE"
 msgid "The Trickster won this time."
-msgstr ""
+msgstr "이번에는 트릭스터가 이겼어요."
 
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "5qf9VW"
@@ -2607,7 +2607,7 @@ msgstr "트릭스터의 방패"
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "yjvTwW"
 msgid "{count, plural, one {# more to win} other {# more to win}}"
-msgstr ""
+msgstr "{count, plural, other {승리까지 정답 #개}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "SFplX2"
@@ -2703,12 +2703,12 @@ msgstr "{cracked, plural, =0 {#개 깨짐(전체 {segments}개)} other {#개 깨
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "N6ZXzw"
 msgid "You won"
-msgstr ""
+msgstr "이겼어요"
 
 #: src/checkpoints/trickster-shield.tsx
 msgctxt "Cu4K5p"
 msgid "He won"
-msgstr ""
+msgstr "트릭스터가 이겼어요"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "KLUSrr"
@@ -2718,7 +2718,7 @@ msgstr "재대결에서 이겼어요"
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "s4X2yE"
 msgid "{lessons, plural, =0 {} one {After # short lesson on what tripped you up.} other {After # short lessons on what tripped you up.}}"
-msgstr ""
+msgstr "{lessons, plural, =0 {} other {어려웠던 내용을 짧은 레슨 #개로 복습한 후예요.}}"
 
 #: src/checkpoints/use-checkpoint-outcome.ts
 msgctxt "eqfxQN"
@@ -13867,7 +13867,7 @@ msgstr "레슨이 아직 저장되지 않았어요"
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
-#: src/session/summary/summary-actions.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/today/today-action.tsx
 msgctxt "yQ15dh"
 msgid "We couldn't open the next step. Try again."
@@ -13934,7 +13934,7 @@ msgstr "지금 연습하기"
 #: src/session/study-moment.tsx
 msgctxt "8i8j-M"
 msgid "We couldn't stop for today. Try again."
-msgstr ""
+msgstr "오늘 학습을 종료하지 못했어요. 다시 시도해 보세요."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx
@@ -14017,7 +14017,7 @@ msgstr "몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될
 #: src/session/question-block/placement-note.tsx
 msgctxt "LlY4Wv"
 msgid "Checking what you already know"
-msgstr ""
+msgstr "이미 아는 내용을 확인하고 있어요"
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14101,7 +14101,7 @@ msgstr "하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답
 #: src/session/reached-moment.tsx
 msgctxt "JxJr5v"
 msgid "{next} comes after {belt} {count}"
-msgstr ""
+msgstr "{next}: {belt} {count} 다음"
 
 #: src/session/review-intro.tsx
 msgctxt "6UUFQv"
