@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function LogbookSkeleton() {
   return (
-    <TaskSkeleton title={<Skeleton className="h-1 w-24 rounded-xs" />}>
+    <TaskSkeleton>
       <Skeleton className="h-12 w-full max-w-80" />
       <div className="flex flex-col gap-2">
         <Skeleton className="h-3 w-40" />
@@ -29,6 +29,11 @@ function LogbookSkeleton() {
       <div className="grid w-full grid-cols-2 gap-2">
         <Skeleton className="h-20 rounded-xl" />
         <Skeleton className="h-20 rounded-xl" />
+      </div>
+      <div className="flex w-full flex-col gap-6 py-3">
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-full" />
       </div>
     </TaskSkeleton>
   );

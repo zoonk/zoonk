@@ -2,14 +2,19 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { ClockIcon, ListChecksIcon, SearchCheckIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ClockIcon,
+  ListChecksIcon,
+  SearchCheckIcon,
+  TrendingUpIcon,
+} from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { GoalRing } from "../_components/goal-ring";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { DoneMark } from "../_components/status-mark";
 import {
-  StepCard,
   StepDetail,
   StepEyebrow,
   StepHeader,
@@ -20,11 +25,10 @@ import {
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useLogbook } from "./logbook-context";
-import { TurnaroundChart } from "./turnaround-chart";
 
 const DAYS_PER_WEEK = 7;
 
-function WeekRings() {
+export function WeekRings() {
   const t = useExtracted();
   const format = useFormatter();
   const { recap } = useLogbook();
@@ -87,97 +91,53 @@ function useGoodNews(): string | null {
   return null;
 }
 
-export function WeekStep({ range }: { range: string }) {
+export function WeekHeader({ range }: { range: string }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
   const { learnerName, recap } = useLogbook();
   const goodNews = useGoodNews();
+  const studied = recap.ready && recap.week.daysStudied.length > 0;
 
   return (
-    <StepCard>
-      <WeekRings />
-      <StepHeader>
-        <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
+    <StepHeader>
+      <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
+
+      {studied && (
         <StepTitle className="wrap-anywhere">
           {learnerName ? t("What a week, {name}!", { name: learnerName }) : t("What a week!")}
         </StepTitle>
-        {goodNews && <StepDetail>{goodNews}</StepDetail>}
-      </StepHeader>
+      )}
 
-      <StatTiles>
-        <StatTile
-          icon={<ClockIcon />}
-          label={t("Time")}
-          tone="time"
-          value={formatDuration(recap.week.minutes)}
-        />
-        <StatTile icon={<ListChecksIcon />} label={t("Questions")} value={recap.week.questions} />
-      </StatTiles>
-    </StepCard>
-  );
-}
-
-export function QuietWeekStep({ range }: { range: string }) {
-  const t = useExtracted();
-  const { recap } = useLogbook();
-
-  return (
-    <StepCard>
-      <WeekRings />
-      <StepHeader>
-        <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
+      {!studied && (
         <StepTitle>
           {recap.ready ? t("A quiet week") : t("Your first weekly summary comes this Sunday")}
         </StepTitle>
-        {recap.ready && <StepDetail>{t("Every week starts fresh.")}</StepDetail>}
-      </StepHeader>
-    </StepCard>
+      )}
+
+      {studied && goodNews && <StepDetail>{goodNews}</StepDetail>}
+      {!studied && recap.ready && <StepDetail>{t("Every week starts fresh.")}</StepDetail>}
+    </StepHeader>
   );
 }
 
-export function TurnaroundStep() {
+export function WeekTiles() {
   const t = useExtracted();
-  const formatShare = useFormatShare();
+  const formatDuration = useFormatDuration();
   const { recap } = useLogbook();
-  const turnaround = recap.turnaround;
-
-  if (!turnaround) {
-    return null;
-  }
 
   return (
-    <StepCard>
-      <StepHeader>
-        <StepEyebrow>{t("Most improved")}</StepEyebrow>
-        <StepTitle>{turnaround.name}</StepTitle>
-        <StepDetail className="tabular-nums">
-          {t({
-            description: '{from} and {to} are shares of right answers, like "40%".',
-            message: "{from} to {to} right answers",
-            values: { from: formatShare(turnaround.from), to: formatShare(turnaround.to) },
-          })}
-        </StepDetail>
-      </StepHeader>
-
-      <TurnaroundChart turnaround={turnaround} />
-    </StepCard>
+    <StatTiles>
+      <StatTile
+        icon={<ClockIcon />}
+        label={t("Time")}
+        tone="time"
+        value={formatDuration(recap.week.minutes)}
+      />
+      <StatTile icon={<ListChecksIcon />} label={t("Questions")} value={recap.week.questions} />
+    </StatTiles>
   );
 }
 
-export function hasLearned(recap: ReturnType<typeof useLogbook>["recap"]): boolean {
-  const { fixes, newIdeas, reviews } = recap.buddyAte;
-  return newIdeas + reviews + fixes + recap.badges.length > 0;
-}
-
-function LearnedRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-}) {
+function CountRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   const format = useFormatter();
 
   if (value === 0) {
@@ -193,8 +153,26 @@ function LearnedRow({
   );
 }
 
+function NameRow({
+  children,
+  icon,
+  label,
+}: {
+  children: React.ReactNode;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <StepRow>
+      {icon}
+      <span className="shrink-0 font-medium">{label}</span>
+      <span className="text-muted-foreground min-w-0 flex-1 text-end text-pretty">{children}</span>
+    </StepRow>
+  );
+}
+
 /** Wrapped, since a step row sizes and grays any icon that is its direct child. */
-function LearnedKindMark({ kind }: { kind: LearnKind }) {
+function KindRowMark({ kind }: { kind: LearnKind }) {
   return (
     <span className="flex size-4 shrink-0 items-center justify-center">
       <KindMark kind={kind} />
@@ -202,58 +180,50 @@ function LearnedKindMark({ kind }: { kind: LearnKind }) {
   );
 }
 
-export function LearnedStep() {
+/** A row with nothing to say isn't drawn, so a light week is a short list. */
+export function WeekRows() {
   const t = useExtracted();
+  const formatShare = useFormatShare();
   const { recap } = useLogbook();
   const { fixes, newIdeas, reviews } = recap.buddyAte;
   const badges = recap.badges.length;
+  const { nextFocus, turnaround } = recap;
 
   return (
-    <StepCard>
-      <StepHeader>
-        {/* The empty line keeps the title where the other steps' titles are. */}
-        <StepEyebrow aria-hidden="true" className="min-h-4" />
-        <StepTitle>{t("This week")}</StepTitle>
-      </StepHeader>
-      <StepRows>
-        <LearnedRow
-          icon={<LearnedKindMark kind="lesson" />}
-          label={t("New topics")}
-          value={newIdeas}
-        />
-        <LearnedRow
-          icon={<LearnedKindMark kind="review" />}
-          label={t("Reviews done")}
-          value={reviews}
-        />
-        <LearnedRow
-          icon={<LearnedKindMark kind="mistakes" />}
-          label={t("Mistakes fixed")}
-          value={fixes}
-        />
-        <LearnedRow
-          icon={<SearchCheckIcon aria-hidden="true" className="text-muted-foreground size-4" />}
-          label={t({
-            description: "A badge for catching the Trickster's traps.",
-            message: "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}",
-            values: { count: badges },
+    <StepRows>
+      <CountRow icon={<KindRowMark kind="lesson" />} label={t("New topics")} value={newIdeas} />
+      <CountRow icon={<KindRowMark kind="review" />} label={t("Reviews done")} value={reviews} />
+      <CountRow icon={<KindRowMark kind="mistakes" />} label={t("Mistakes fixed")} value={fixes} />
+      <CountRow
+        icon={<SearchCheckIcon aria-hidden="true" />}
+        label={t({
+          description: "A badge for catching the Trickster's traps.",
+          message: "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}",
+          values: { count: badges },
+        })}
+        value={badges}
+      />
+
+      {turnaround && (
+        <NameRow icon={<TrendingUpIcon aria-hidden="true" />} label={t("Most improved")}>
+          {t({
+            description:
+              'A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%".',
+            message: "{topic} · {from} to {to}",
+            values: {
+              from: formatShare(turnaround.from),
+              to: formatShare(turnaround.to),
+              topic: turnaround.name,
+            },
           })}
-          value={badges}
-        />
-      </StepRows>
-    </StepCard>
-  );
-}
+        </NameRow>
+      )}
 
-export function NextWeekStep({ title }: { title: string }) {
-  const t = useExtracted();
-
-  return (
-    <StepCard>
-      <StepHeader>
-        <StepEyebrow>{t("Up next")}</StepEyebrow>
-        <StepTitle>{title}</StepTitle>
-      </StepHeader>
-    </StepCard>
+      {nextFocus && (
+        <NameRow icon={<ArrowRightIcon aria-hidden="true" />} label={t("Up next")}>
+          {nextFocus.title}
+        </NameRow>
+      )}
+    </StepRows>
   );
 }
