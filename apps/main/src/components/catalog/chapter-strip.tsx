@@ -67,7 +67,7 @@ function CourseMap({
             >
               <span
                 className={cn(
-                  "max-w-full truncate",
+                  "text-pretty",
                   group === here ? "text-foreground font-semibold" : "text-muted-foreground",
                 )}
               >
@@ -162,6 +162,7 @@ export async function ChapterStrip({
                   className={cn(
                     "absolute top-2 bottom-0 left-2 w-1 -translate-x-1/2 bg-(--route-line)",
                     "sm:top-2 sm:right-0 sm:bottom-auto sm:left-2 sm:h-1 sm:w-auto sm:translate-x-0 sm:-translate-y-1/2",
+                    !isLast && "max-sm:-bottom-3",
                     isLast &&
                       "bg-transparent bg-linear-to-b from-(--route-line) to-transparent sm:bg-linear-to-r",
                   )}

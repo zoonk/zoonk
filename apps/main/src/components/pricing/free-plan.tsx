@@ -51,7 +51,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
   }
 
   return (
-    <p className="text-muted-foreground flex min-h-11 items-center text-sm">
+    <p className="bg-muted text-muted-foreground flex min-h-11 items-center justify-center rounded-lg px-3 py-2 text-center text-sm font-medium text-balance">
       {viewerState.status === "free"
         ? t({
             description:

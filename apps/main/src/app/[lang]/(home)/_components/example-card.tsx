@@ -10,6 +10,8 @@ import { type ReactNode } from "react";
 export const EXAMPLE_ROWS_CLASS =
   "**:data-[slot=list-row-description]:text-compact **:data-[slot=list-row-description]:leading-4.5 **:data-[slot=list-row-title]:text-reading **:data-[slot=list-row-title]:leading-5 **:data-[slot=list-row-trailing]:text-compact";
 
+const EXAMPLE_TITLE_CLASS = "text-base leading-snug font-semibold tracking-[-0.015em]";
+
 export function ExampleCard({ className, ...props }: React.ComponentProps<"div">) {
   return <ProductWindow className={cn("p-5 sm:p-6", className)} {...props} />;
 }
@@ -28,9 +30,7 @@ export async function ExampleCardHead({
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <p className="text-base leading-snug font-semibold tracking-[-0.015em] text-pretty">
-          {title}
-        </p>
+        <p className={cn(EXAMPLE_TITLE_CLASS, "text-pretty")}>{title}</p>
         <p className="text-muted-foreground text-compact">
           {t("Example")}
           {detail && (
@@ -66,7 +66,7 @@ export async function ExampleDay({ detail, steps }: { detail?: string; steps: Da
   return (
     <div className="flex flex-col">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-xl leading-6 font-semibold tracking-[-0.02em]">{t("Today")}</span>
+        <span className={EXAMPLE_TITLE_CLASS}>{t("Today")}</span>
         <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-compact")}>
           {minutesText(minutes)}
         </span>

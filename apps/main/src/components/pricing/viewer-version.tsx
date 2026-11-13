@@ -50,7 +50,9 @@ export function PlanNextStepVersion({ versions }: { versions: ViewerVersions }) 
       </div>
 
       {!isVisitor && (
-        <div className={cn(PLAN_NEXT_STEP_CLASS, "self-center")}>{versions[status]}</div>
+        <div className={cn(PLAN_NEXT_STEP_CLASS, "self-center @3xl:self-start")}>
+          {versions[status]}
+        </div>
       )}
     </div>
   );

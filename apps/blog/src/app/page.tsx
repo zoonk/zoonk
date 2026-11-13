@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <h1 className="text-2xl font-semibold tracking-tight">{INTRO.title}</h1>
-      <p className="text-muted-foreground mt-2 mb-10 text-pretty">{INTRO.text}</p>
+      <p className="text-muted-foreground mt-2 mb-10 text-balance">{INTRO.text}</p>
 
       <PostList />
     </>
