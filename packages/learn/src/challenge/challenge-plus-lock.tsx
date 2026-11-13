@@ -10,8 +10,8 @@ export function ChallengeCallPlusNotice({ cta = false }: { cta?: boolean }) {
   const t = useExtracted();
 
   return (
-    <PlusNotice cta={cta}>
-      {t("Challenge calls come with Plus. Your plan keeps going without them.")}
+    <PlusNotice cta={cta} title={t("This call needs a subscription")}>
+      {t("Your plan goes on without it.")}
     </PlusNotice>
   );
 }
@@ -22,7 +22,7 @@ export function SeePlusAction() {
 
   return (
     <TaskActions>
-      <TaskMainLink href={routes.upgrade}>{t("See Plus")}</TaskMainLink>
+      <TaskMainLink href={routes.upgrade}>{t("Subscribe")}</TaskMainLink>
     </TaskActions>
   );
 }
