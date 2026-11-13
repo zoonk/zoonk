@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="session_block_review">Review</string>
+    <!-- A second go at the Trickster after losing. -->
+    <string name="session_block_rematch">Rematch</string>
+    <!-- A language plan's live call with the Trickster. -->
+    <string name="session_block_call">Call</string>
     <string name="session_block_mock_exam">Mock exam</string>
     <string name="session_block_weekly_challenge">Weekly challenge</string>
-    <string name="session_block_final_challenge">Final challenge</string>
-    <string name="session_block_challenge_rematch">Challenge, second try</string>
-    <string name="session_block_phase_challenge">Phase challenge</string>
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">What you already know</string>
-    <string name="session_block_reviews">Reviews</string>
-    <string name="session_block_quick_review">Quick review</string>
     <string name="session_block_new_lesson">New lesson</string>
     <string name="session_block_writing_practice">Writing practice</string>
-    <string name="session_block_full_review">Full review</string>
     <string name="session_block_practice_mistakes">Practice mistakes</string>
     <string name="session_block_bonus_practice">Bonus practice</string>
     <string name="session_block_mixed_practice">Mixed practice</string>
@@ -25,34 +24,18 @@
         <item quantity="other">%d questions</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="one">No reviews due today · %d question on your weakest topics</item>
-        <item quantity="other">No reviews due today · %d questions on your weakest topics</item>
+        <item quantity="one">%d question on what\'s been hardest for you</item>
+        <item quantity="other">%d questions on what\'s been hardest for you</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
         <item quantity="one">%1$d question · %2$s</item>
         <item quantity="other">%1$d questions · %2$s</item>
     </plurals>
-    <plurals name="session_block_review_topics_and_known">
-        <item quantity="one">%1$d question · %2$s, plus what you already know</item>
-        <item quantity="other">%1$d questions · %2$s, plus what you already know</item>
-    </plurals>
-    <!-- %2$s is the phase's name. -->
-    <plurals name="session_block_phase_questions">
-        <item quantity="one">%2$s · %1$d question, no hints</item>
-        <item quantity="other">%2$s · %1$d questions, no hints</item>
-    </plurals>
-    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
-    <string name="session_block_phase_live_call">%1$s · a live call</string>
-    <string name="session_block_live_call">A live call</string>
-    <plurals name="session_block_challenge_questions">
-        <item quantity="one">%d question, no hints</item>
-        <item quantity="other">%d questions, no hints</item>
-    </plurals>
-    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">%d question on every topic, your weakest first</item>
-        <item quantity="other">%d questions on every topic, your weakest first</item>
+        <item quantity="one">%d question on every topic</item>
+        <item quantity="other">%d questions on every topic</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">

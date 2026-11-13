@@ -52,9 +52,9 @@ val DayStep.learnKind: LearnKind
         }
     }
 
-/** A phase challenge's own name (the phase), which the week's challenge doesn't have. */
-val DayStep.challengePhase: String?
-    get() = title?.takeIf { checkpointFacts?.let { it.kind != CheckpointFacts.Kind.Weekly } == true }
+/** A language unit's challenge is a live call with the Trickster, with no questions. */
+private val DayStep.isCall: Boolean
+    get() = checkpointFacts?.let { !it.mock && it.kind != CheckpointFacts.Kind.Weekly } == true && questions == 0L
 
 private val DayStep.hasCapsules: Boolean
     get() = kind == StudyBlock.Kind.REVIEW && capsules.isNotEmpty()
@@ -71,9 +71,9 @@ fun blockTitle(step: DayStep): String {
             when {
                 checkpoint.kind == CheckpointFacts.Kind.Weekly && checkpoint.mock -> stringResource(R.string.session_block_mock_exam)
                 checkpoint.kind == CheckpointFacts.Kind.Weekly -> stringResource(R.string.session_block_weekly_challenge)
-                checkpoint.kind == CheckpointFacts.Kind.FinalBoss -> stringResource(R.string.session_block_final_challenge)
-                checkpoint.rematch -> stringResource(R.string.session_block_challenge_rematch)
-                else -> stringResource(R.string.session_block_phase_challenge)
+                step.isCall -> stringResource(R.string.session_block_call)
+                checkpoint.rematch -> stringResource(R.string.session_block_rematch)
+                else -> stringResource(R.string.checkpoint_trickster)
             }
         }
 
@@ -81,17 +81,8 @@ fun blockTitle(step: DayStep): String {
             stringResource(R.string.session_block_what_you_know)
         }
 
-        // Past this, "Quick review · 13 min" would read as a promise it didn't keep.
         step.kind == StudyBlock.Kind.REVIEW -> {
-            stringResource(
-                if (step.estimatedMinutes >
-                    QUICK_REVIEW_MAX_MINUTES
-                ) {
-                    R.string.session_block_reviews
-                } else {
-                    R.string.session_block_quick_review
-                },
-            )
+            stringResource(R.string.session_block_review)
         }
 
         step.kind == StudyBlock.Kind.LEARN -> {
@@ -103,7 +94,7 @@ fun blockTitle(step: DayStep): String {
         }
 
         step.fullReview -> {
-            stringResource(R.string.session_block_full_review)
+            stringResource(R.string.session_block_review)
         }
 
         step.mistakesOnly -> {
@@ -126,7 +117,6 @@ fun blockTitle(step: DayStep): String {
 @Composable
 fun blockDetail(step: DayStep): String? {
     val count = step.questions.toInt()
-    val phase = step.challengePhase
 
     return when {
         // Nothing was due, so the day reviews the weakest topics: never called due.
@@ -135,38 +125,19 @@ fun blockDetail(step: DayStep): String? {
         }
 
         step.hasCapsules -> {
-            val titles = shortTopicList(step.capsules.map { it.title })
-            val reviewed = step.capsules.sumOf { it.questions }
-            val known = step.questions > reviewed
-            pluralStringResource(
-                if (known) R.plurals.session_block_review_topics_and_known else R.plurals.session_block_review_topics,
-                count,
-                count,
-                titles,
-            )
+            pluralStringResource(R.plurals.session_block_review_topics, count, count, shortTopicList(step.capsules.map { it.title }))
         }
 
         step.kind == StudyBlock.Kind.LEARN -> {
             if (step.reinforcement) stringResource(R.string.session_block_rematch_lesson) else step.canDo
         }
 
-        // A language unit's challenge is a live call, with no questions.
-        step.checkpointFacts?.mock == false && count == 0 -> {
-            if (phase !=
-                null
-            ) {
-                stringResource(R.string.session_block_phase_live_call, phase)
-            } else {
-                stringResource(R.string.session_block_live_call)
-            }
-        }
-
-        phase != null -> {
-            pluralStringResource(R.plurals.session_block_phase_questions, count, count, phase)
+        step.isCall -> {
+            null
         }
 
         step.checkpoint != null -> {
-            pluralStringResource(R.plurals.session_block_challenge_questions, count, count)
+            pluralStringResource(R.plurals.session_block_questions, count, count)
         }
 
         step.kind == StudyBlock.Kind.PRODUCE -> {
@@ -219,7 +190,6 @@ internal fun topicWords(name: String): String =
         ?: ITEM_CODE.find(name)?.groupValues?.get(2)
         ?: name
 
-private const val QUICK_REVIEW_MAX_MINUTES = 5
 private const val NAMED = 3
 
 /** The Trickster is a phase's boss: the week's challenge and mocks wear their kind's mark. */

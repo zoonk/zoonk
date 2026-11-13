@@ -301,7 +301,7 @@
   "plan_get_recommendation": "2b7f15621faabcb916f53b284a1ddf801dfe20c17d6b57f253d3bb749669f303",
   "plan_go_to_today": "29b18f35a7dd5a9252a006122ff9e37a71b245b5a94deb90f5d226330b1ac15a",
   "plan_goal_date": "64d9f89975e54efe1862e1630e8c8c750c5dfba4639cdda302578d698ca8aba8",
-  "plan_goal_limit_reached": "6115920c97f10d9fd1e6c8615f31ad276f75158537a163903b88aa96f314aef9",
+  "plan_goal_limit_reached": "70061c1e8f5cef4afcd4068b49cf3093be46a0aa7f949266b82769d4b8b13ce9",
   "plan_goal_paused": "933537f92adfccf676899e3895b8d778520b827afea33f261f0c054f9f39d0fd",
   "plan_going_deeper": "447bbdfa0893be60d0b8d121cef6526c25808a3775dd6366054e023b88a0c06c",
   "plan_how_is_it_going": "31f83eced9ed98a469d61c0eeed564e671e75eb6ae5ba536dc4337520740d5c5",
@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "a3230b8b04399c04b4b8e41efc97a2287aee795c3936ad483820cd91bbf705d1",
   "plan_pace_win_challenge": "e45d3a0b4e836a78fffb4fd5fa9235ead215d8fffa5ce955fad4878a0f232987",
   "plan_pace_win_challenges": "20c3906994e979e6e53864d9d4a6f16142c8c1a07420988fbef607bf24a5db8c",
-  "plan_past_date_exam_sentence": "ef71baae0c07d1eca360206a146a7732967d9bf6f657bcda5abe3693e169fa4c",
+  "plan_past_date_exam_sentence": "a47537ddc8a4741f012e34453aead0d914b0091cb99f7a1be8fbffb1dbceab3c",
   "plan_past_date_exam_title": "fabaffa26cf73ab06eb7e320e13c91175736069bb136279bb98836d509692767",
-  "plan_past_date_goal_sentence": "2c21f69506ff929d8959042f3f725b56076deb1c1df31c0750948c9c1c223bb3",
+  "plan_past_date_goal_sentence": "3fc06076b014f6003a7ca6da2f3c4e9d6f8a17fa55d8036eae28c6fe3c63a0e0",
   "plan_past_date_goal_title": "a8734231b6c0547a316c60bbc62f9281c97d44bc3c37f6420392094ada50bb9e",
   "plan_pause_goal": "66b668dd2fbe26b03a122cd6e8be75f6e6a8ec93fc061110d2936db7c5df98c2",
   "plan_phase_after_exam": "0b8723d3d79bfb8aeb6e4e6ea02764f1be4c4f6855756c6d2196539526085f16",
@@ -655,8 +655,8 @@
     <string name="plan_resume_effect">Od dziś kontynuujesz plan, zaczynając od lekcji zaplanowanych na dni przerwy.</string>
     <string name="plan_resume">Wznów</string>
     <string name="plan_cancel">Anuluj</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="plan_goal_limit_reached">To maksymalna liczba celów, które możesz realizować naraz. Wstrzymaj jeden z nich lub wykup subskrypcję, żeby realizować więcej.</string>
     <string name="plan_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">Ukończono %1$d z %2$d etapu</item>
@@ -926,16 +926,16 @@
         <item quantity="other">O %1$d minut więcej nauki dziennie przez %2$s i znów uczysz się zgodnie z planem.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Przed egzaminem pozostała %d lekcja.</item>
-        <item quantity="few">Przed egzaminem pozostały %d lekcje.</item>
-        <item quantity="many">Przed egzaminem pozostało %d lekcji.</item>
-        <item quantity="other">Przed egzaminem pozostało %d lekcji.</item>
+        <item quantity="one">Termin egzaminu minął, a została jeszcze %d lekcja.</item>
+        <item quantity="few">Termin egzaminu minął, a zostały jeszcze %d lekcje.</item>
+        <item quantity="many">Termin egzaminu minął, a zostało jeszcze %d lekcji.</item>
+        <item quantity="other">Termin egzaminu minął, a zostało jeszcze %d lekcji.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Termin minął, a do ukończenia pozostała %d lekcja.</item>
-        <item quantity="few">Termin minął, a do ukończenia pozostały %d lekcje.</item>
-        <item quantity="many">Termin minął, a do ukończenia pozostało %d lekcji.</item>
-        <item quantity="other">Termin minął, a do ukończenia pozostało %d lekcji.</item>
+        <item quantity="one">Termin zakończenia minął, a została jeszcze %d lekcja.</item>
+        <item quantity="few">Termin zakończenia minął, a zostały jeszcze %d lekcje.</item>
+        <item quantity="many">Termin zakończenia minął, a zostało jeszcze %d lekcji.</item>
+        <item quantity="other">Termin zakończenia minął, a zostało jeszcze %d lekcji.</item>
     </plurals>
     <string name="plan_this_week">W tym tygodniu</string>
     <string name="plan_week_time">%1$s z %2$s</string>

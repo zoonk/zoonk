@@ -510,7 +510,7 @@ class TodayFlowTest {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
         rule.mainClock.advanceTimeBy(10.minutes.plus(30.seconds).inWholeMilliseconds)
-        rule.onNodeWithText("Being written for you…").assertExists()
+        rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
         rule.onNodeWithText("Taking longer than usual").assertExists()
@@ -531,7 +531,7 @@ class TodayFlowTest {
         rule.mainClock.advanceTimeBy(10.seconds.inWholeMilliseconds)
         todayApi.changed = false
         rule.mainClock.advanceTimeBy(10.minutes.inWholeMilliseconds)
-        rule.onNodeWithText("Being written for you…").assertExists()
+        rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(6.minutes.inWholeMilliseconds)
         rule.onNodeWithText("Taking longer than usual").assertExists()

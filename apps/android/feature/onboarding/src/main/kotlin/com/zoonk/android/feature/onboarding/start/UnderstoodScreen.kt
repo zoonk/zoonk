@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -54,9 +55,11 @@ import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
 import com.zoonk.android.feature.plan.Variety
 import com.zoonk.android.feature.plan.VarietySheet
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.GateWords
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.MAX_GOAL_LENGTH
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -94,7 +97,7 @@ internal fun ColumnScope.UnderstoodScreen(
     edits: FactEdits,
     onRewrite: (String) -> Unit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
     val locale = currentLocale()
@@ -166,14 +169,14 @@ internal fun ColumnScope.UnderstoodScreen(
     }
 
     if (locked.isNotEmpty()) {
-        val remedy = (if (hasAccount) onSeePlus else onCreateAccount).takeIf { plusLimit == null && shownError?.needsAccount != true }
+        val remedy = (if (hasAccount) onSubscribe else onCreateAccount).takeIf { plusLimit == null && shownError?.needsAccount != true }
         LockedGoals(locked, rows, timeZone, waiting = startable.isNotEmpty(), hasAccount, remedy)
     }
 
     if (plusLimit != null) {
-        GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
+        GoalLimitWall(plusLimit, onSubscribe, onOpenPlan)
     } else {
-        GoalFooter(shownError, onCreateAccount, onOpenPlan, onSeePlus) {
+        GoalFooter(shownError, onCreateAccount, onOpenPlan, onSubscribe) {
             Button(
                 busy = isCreating,
                 onClick = onConfirm,
@@ -221,26 +224,20 @@ private fun LockedGoals(
         }
     }
     if (!waiting) return
-    val one = goals.size == 1
     if (hasAccount) {
-        PlusNotice(
-            onSeePlus = onRemedy,
-            description =
-                stringResource(if (one) R.string.onboarding_understood_locked_goal else R.string.onboarding_understood_locked_goals),
-        )
+        val title = stringResource(R.string.onboarding_understood_locked_title)
+        val line = pluralStringResource(R.plurals.onboarding_understood_locked_line, goals.size)
+        if (onRemedy != null) SubscribeGate(title, onSubscribe = onRemedy, line = line) else GateWords(title, line)
     } else {
-        PlusNotice(
-            onSeePlus = null,
-            title = stringResource(R.string.onboarding_understood_free_account_title),
-            description =
-                stringResource(
-                    if (one) R.string.onboarding_understood_locked_goal_guest else R.string.onboarding_understood_locked_goals_guest,
-                ),
-            action =
-                onRemedy?.let { createAccount ->
-                    { OutlinedButton(onClick = createAccount) { Text(stringResource(R.string.onboarding_create_account)) } }
-                },
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            GateWords(stringResource(R.string.onboarding_understood_free_account_title), line = null)
+            onRemedy?.let { createAccount ->
+                OutlinedButton(
+                    onClick = createAccount,
+                    size = ButtonSize.Small,
+                ) { Text(stringResource(R.string.onboarding_create_account)) }
+            }
+        }
     }
 }
 
