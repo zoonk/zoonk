@@ -15,6 +15,7 @@ import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from
 import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
 import { type CraftCounts, countCraft, craftFindings } from "./craft.mts";
+import { type Shortcuts } from "./keys.mts";
 import {
   findOverflow,
   findTruncated,
@@ -46,6 +47,7 @@ export type Target = {
   browser: Browser;
   out: string;
   serverPid: number | null;
+  shortcuts: Shortcuts | null;
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
   typeScale: number[];

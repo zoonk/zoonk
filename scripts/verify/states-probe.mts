@@ -259,3 +259,17 @@ export function compareLayout(targetId: string): Comparison {
 
   return { moved, target: target instanceof HTMLElement ? place(target) : null };
 }
+
+/** The `data-zoonk-act` of every choice now picked, so the walk can put a radio group back. */
+export function pickedIds() {
+  return [
+    ...document.querySelectorAll(
+      "[aria-checked=true], [aria-selected=true], [aria-pressed=true], input:checked",
+    ),
+  ]
+    .map((node) => {
+      const holder = node.closest("[data-zoonk-act]") ?? node;
+      return holder instanceof HTMLElement ? (holder.dataset.zoonkAct ?? null) : null;
+    })
+    .filter((id) => id !== null);
+}

@@ -1,7 +1,8 @@
-/* oxlint-disable no-await-in-loop -- The walk acts on one page, one step at a time. */
+/* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
 import { type Locator, type Page } from "@playwright/test";
 import { type Finding } from "./checks.mts";
 import { lead } from "./craft-rules.mts";
+import { type PanelFacts, focusCameBack, inspectPanel, panelFindings, pressKeys } from "./keys.mts";
 import { type Target } from "./measure.mts";
 import {
   type Action,
@@ -9,6 +10,7 @@ import {
   type Moved,
   compareLayout,
   markActions,
+  pickedIds,
   snapshotLayout,
 } from "./states-probe.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
@@ -146,23 +148,12 @@ async function holdStill(page: Page) {
   }
 }
 
-async function pickedIds(page: Page) {
-  return page.evaluate(() =>
-    [
-      ...document.querySelectorAll(
-        "[aria-checked=true], [aria-selected=true], [aria-pressed=true], input:checked",
-      ),
-    ]
-      .map((node) => {
-        const holder = node.closest("[data-zoonk-act]") ?? node;
-        return holder instanceof HTMLElement ? (holder.dataset.zoonkAct ?? null) : null;
-      })
-      .filter((id) => id !== null),
-  );
-}
-
-async function walk(page: Page, url: string, blocked: () => number): Promise<Step[]> {
+async function walk(
+  page: Page,
+  { blocked, phone, url }: { blocked: () => number; phone: boolean; url: string },
+): Promise<{ panels: PanelFacts[]; steps: Step[] }> {
   const steps: Step[] = [];
+  const panels: PanelFacts[] = [];
 
   async function step(action: Action, doing: string, perform: () => Promise<unknown>, ms: number) {
     await page.evaluate(snapshotLayout);
@@ -214,7 +205,7 @@ async function walk(page: Page, url: string, blocked: () => number): Promise<Ste
         node.querySelector("input[type=radio]") !== null,
     );
 
-    const picked = await pickedIds(page);
+    const picked = await page.evaluate(pickedIds);
 
     await step(
       action,
@@ -252,6 +243,8 @@ async function walk(page: Page, url: string, blocked: () => number): Promise<Ste
       STEP_SETTLE_MS,
     );
 
+    const panel = await inspectPanel(page, phone);
+
     // One level in: the choices and fields in what just opened, such as a dialog's options.
     if ((await page.locator(OVERLAY).count()) > 0) {
       const inside = await page.evaluate(markActions, OVERLAY.replaceAll(":visible", ""));
@@ -275,6 +268,10 @@ async function walk(page: Page, url: string, blocked: () => number): Promise<Ste
       },
       STEP_SETTLE_MS,
     );
+
+    if (panel) {
+      panels.push({ ...panel, focusBack: await focusCameBack(page, action.id) });
+    }
   }
 
   async function control(action: Action, element: Locator) {
@@ -335,7 +332,7 @@ async function walk(page: Page, url: string, blocked: () => number): Promise<Ste
     await act(action);
   }
 
-  return steps;
+  return { panels, steps };
 }
 
 /**
@@ -372,7 +369,11 @@ export async function walkStates(
     await page.goto(url, { timeout: LOAD_TIMEOUT_MS });
     await page.waitForLoadState("networkidle").catch(() => null);
     await holdStill(page);
-    return stateLeads(await walk(page, page.url(), () => blocked));
+    const { shortcuts } = target;
+    const keys = viewport === "laptop" && shortcuts ? await pressKeys(page, url, shortcuts) : [];
+    const phone = viewport === "phone";
+    const { panels, steps } = await walk(page, { blocked: () => blocked, phone, url: page.url() });
+    return [...keys, ...panels.flatMap((panel) => panelFindings(panel)), ...stateLeads(steps)];
   } finally {
     await context.close();
   }

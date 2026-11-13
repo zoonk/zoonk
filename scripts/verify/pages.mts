@@ -12,6 +12,7 @@ import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
 import { readTypeScale } from "./craft-scale.mts";
 import { checkExposure } from "./exposure.mts";
+import { readShortcuts } from "./keys.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
@@ -126,6 +127,7 @@ const target = {
   out,
   queries,
   serverPid,
+  shortcuts: await readShortcuts(served),
   storageState,
   throttle: values.throttle,
   typeScale: readTypeScale(served),
