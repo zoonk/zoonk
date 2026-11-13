@@ -69,7 +69,7 @@ describe("one glyph on a button (zoonk/one-glyph-button)", () => {
   });
 });
 
-describe("the DUP lane's piece rules", () => {
+describe("shared-piece source checks", () => {
   it("reports an icon button pulled to an edge by hand", () => {
     assert.deepEqual(
       lint("no-hand-placed-icon-button", {
@@ -139,7 +139,7 @@ describe("the DUP lane's piece rules", () => {
   });
 });
 
-describe("the RULES lane's source checks", () => {
+describe("interface convention source checks", () => {
   it("reports a hand-drawn back glyph without changing other import restrictions", () => {
     assert.deepEqual(
       lint("one-back-link", {
