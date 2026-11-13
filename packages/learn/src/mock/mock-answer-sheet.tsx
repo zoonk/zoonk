@@ -31,21 +31,14 @@ function useSheetCountLine(): string {
   return t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered });
 }
 
-const CELL_SIZE = {
-  row: { cell: "h-7.5 rounded-md text-xs", essay: "size-3.5" },
-  sheet: { cell: "h-11 rounded-lg text-sm", essay: "size-4" },
-} as const;
-
 function QuestionCell({
   index,
   onPick,
   question,
-  size,
 }: {
   index: number;
   onPick: (position: number) => void;
   question: MockQuestion;
-  size: keyof typeof CELL_SIZE;
 }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -60,22 +53,17 @@ function QuestionCell({
         isEssay ? t("Written part") : t("Question {number}", { number: String(question.number) })
       }
       className={cn(
-        "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 hit-area relative flex w-full items-center justify-center font-mono font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
-        CELL_SIZE[size].cell,
+        "focus-visible:outline-ring text-muted-foreground ring-border enabled:hover:bg-muted/60 relative flex h-11 w-full items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:opacity-40 motion-reduce:transition-none",
         isDraftAnswered(draft) &&
           "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent",
         draft?.flagged && "text-warning-text ring-warning ring-2",
-        isCurrent && cn("ring-success ring-2", !draft?.flagged && "text-foreground"),
+        isCurrent && cn("ring-foreground ring-2", !draft?.flagged && "text-foreground"),
       )}
       disabled={!runner.moves.canOpen(index)}
       onClick={() => onPick(index)}
       type="button"
     >
-      {isEssay ? (
-        <PenLineIcon aria-hidden="true" className={CELL_SIZE[size].essay} />
-      ) : (
-        question.number
-      )}
+      {isEssay ? <PenLineIcon aria-hidden="true" className="size-4" /> : question.number}
     </button>
   );
 }
@@ -92,14 +80,15 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
     >
       {questions.map((question, index) => (
         <li key={question.itemId}>
-          <QuestionCell index={index} onPick={onPick} question={question} size="sheet" />
+          <QuestionCell index={index} onPick={onPick} question={question} />
         </li>
       ))}
     </ol>
   );
 }
 
-const MAP_ROW = 9;
+/** Seven 44 px numbers fit a phone's width with room between them, so no two press areas overlap. */
+const MAP_ROW = 7;
 
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
@@ -119,12 +108,12 @@ export function MockQuestionMap({ className }: { className?: string }) {
   return (
     <ol
       aria-label={t("Questions")}
-      className={cn("grid grid-cols-9 gap-2", className)}
+      className={cn("grid grid-cols-7 gap-2", className)}
       data-slot="mock-question-map"
     >
       {questions.slice(start, start + MAP_ROW).map((question, offset) => (
         <li key={question.itemId}>
-          <QuestionCell index={start + offset} onPick={runner.go} question={question} size="row" />
+          <QuestionCell index={start + offset} onPick={runner.go} question={question} />
         </li>
       ))}
     </ol>
