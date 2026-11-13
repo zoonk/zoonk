@@ -1016,8 +1016,8 @@ private struct PlusQuestions: View {
       if let month = limits.lessonsPerMonth {
         bullet(
           Text(
-            "\(month) lessons a month, across all your goals", tableName: "Subscriptions",
-            comment: "Free plan: lessons a month"))
+            "\(month) lessons a month, across all your goals, exams included",
+            tableName: "Subscriptions", comment: "Free plan: lessons a month"))
       }
 
       if let messages = limits.tutorMessagesPerDay {
