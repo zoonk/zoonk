@@ -175,8 +175,8 @@ export function TodaySession({ className }: { className?: string }) {
         <SessionQueue next={next} />
       </div>
 
-      {/* After the list, the line's top hairline closes the last row. */}
-      <TodayDayStatus className="mt-3 first:mt-0 [[data-slot=today-list]:not(:empty)+&]:mt-0" />
+      {/* After the list, the line's top hairline closes the last row; with no list, it opens the day. */}
+      <TodayDayStatus className="mt-3 first:mt-0 [[data-slot=today-list]+&]:mt-0" />
       <TodayUpNext className="mt-6" />
     </div>
   );
