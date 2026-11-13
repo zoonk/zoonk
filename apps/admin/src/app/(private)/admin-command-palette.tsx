@@ -6,19 +6,18 @@ import {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
   CommandItem,
+  CommandKeyHints,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArrowDownIcon, ArrowUpIcon, FileIcon, type LucideIcon } from "lucide-react";
+import { FileIcon, type LucideIcon } from "lucide-react";
 import { type Route } from "next";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -131,23 +130,7 @@ function Palette({ currentUrl }: { currentUrl: string }) {
           ))}
         </CommandList>
       </Command>
-      <CommandFooter>
-        <span>
-          <Kbd>
-            <ArrowUpIcon />
-          </Kbd>
-          <Kbd>
-            <ArrowDownIcon />
-          </Kbd>{" "}
-          move
-        </span>
-        <span>
-          <Kbd>⏎</Kbd> open
-        </span>
-        <span>
-          <Kbd>Esc</Kbd> close
-        </span>
-      </CommandFooter>
+      <CommandKeyHints close="close" move="move" open="open" />
     </CommandDialog>
   );
 }
