@@ -73,7 +73,7 @@ When shared Library content is wrong (a lesson, screen, question, word, sentence
 4. Exit code 0 means proposed, not applied. The output holds the `batchId`, the batch's `reviewUrl`, and each fix with its `reviewUrl`, `changes` (each `before` and `after`) and `effects`. Relay the batch's `reviewUrl` and each fix's changes and effects to the user, then stop: never open Admin, approve, or look for another way to apply it.
 5. After the user says they approved it, confirm with a fresh read: `pnpm zoonk staff list ContentFix --where "batchId eq <batchId>" --fields id,status,staleReason,voiceOwedAt`. `stale` means the content changed after the proposal: read the rows again and propose that fix anew. `approved` means approved but not applied yet; the approver finishes it in Admin.
 
-`pnpm zoonk staff fixes revert <fixId> --reason "…"` proposes putting back what an applied fix replaced, reviewed like any other fix, and `--batch <batchId>` instead of a fix id does it for every applied fix of a batch, as a new batch. A revert is refused once a later fix changed the same thing.
+`pnpm zoonk staff fixes revert <fixId> --reason "…"` proposes putting back what an applied fix replaced, reviewed like any other fix, and `--batch <batchId>` instead of a fix id does it for every applied fix of a batch that no other revert undid or is waiting to undo, as a new batch. A revert is refused once a later fix changed the same thing.
 
 A learner who started a lesson or level test before a fix landed is never marked wrong for it: an answer the fix made wrong isn't counted. A login made before fixes existed can only read: the CLI says so, and the user runs `pnpm zoonk login` again.
 

@@ -173,12 +173,23 @@ async function saveBatch(actor: Actor, proposals: readonly ProposedFix[]): Promi
 async function findApplied(input: { batchId?: string; fixId?: string }) {
   const fixes = await prisma.contentFix.findMany({
     orderBy: { id: "asc" },
-    select: { changes: true, id: true, status: true },
+    select: {
+      changes: true,
+      id: true,
+      revertedBy: {
+        select: { id: true },
+        take: 1,
+        where: { status: { in: ["proposed", "approved", "applied"] } },
+      },
+      status: true,
+    },
     where: input.fixId ? { id: input.fixId } : batchWhere(input.batchId ?? ""),
   });
 
   const name = input.fixId ? `ContentFix with id ${input.fixId}` : `batch ${input.batchId ?? ""}`;
   const applied = fixes.filter((fix) => fix.status === "applied");
+
+  const wanted = input.fixId ? applied : applied.filter((fix) => fix.revertedBy.length === 0);
 
   if (fixes.length === 0) {
     return { message: `No ${name}.`, status: "notFound" as const };
@@ -191,7 +202,14 @@ async function findApplied(input: { batchId?: string; fixId?: string }) {
     };
   }
 
-  return { applied, status: "found" as const };
+  if (wanted.length === 0) {
+    return {
+      message: `Every applied fix in ${name} is already reverted or has a revert waiting for review.`,
+      status: "invalid" as const,
+    };
+  }
+
+  return { applied: wanted, status: "found" as const };
 }
 
 async function buildRevert(input: {
