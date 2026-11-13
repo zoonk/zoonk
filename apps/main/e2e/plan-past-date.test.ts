@@ -65,7 +65,7 @@ function suggestionSlot(page: Page) {
 }
 
 test.describe("A plan whose date came with lessons left", () => {
-  test("keeps going from the Plan once he previews it, and undo brings it back", async ({
+  test("moves the date from the Plan once the learner checks it, and undo brings it back", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
@@ -78,11 +78,11 @@ test.describe("A plan whose date came with lessons left", () => {
       await page.goto("/plan");
 
       const slot = suggestionSlot(page);
-      const preview = slot.getByRole("button", { exact: true, name: "Preview" });
-      await expectHydrated(preview);
-      await preview.click();
-      await expect(slot.locator('[data-slot="diff-lines"]')).toBeVisible();
-      await slot.getByRole("button", { exact: true, name: "Apply" }).click();
+      const findDate = slot.getByRole("button", { exact: true, name: "Find a date" });
+      await expectHydrated(findDate);
+      await findDate.click();
+      // Disabled while the new date's changes are worked out.
+      await slot.getByRole("button", { exact: true, name: "Change my plan" }).click();
 
       await expect(slot.getByText("Plan updated", { exact: true })).toBeVisible();
       await expect.poll(() => countSetAside(user.goalId)).toBe(0);
@@ -92,7 +92,7 @@ test.describe("A plan whose date came with lessons left", () => {
       await expect.poll(() => readTargetDate(user.goalId)).toBe(date);
       await expect.poll(() => countSetAside(user.goalId)).toBe(setAside);
 
-      await expect(slot.getByRole("button", { exact: true, name: "Preview" })).toBeVisible();
+      await expect(slot.getByRole("button", { exact: true, name: "Find a date" })).toBeVisible();
     });
   });
 });
