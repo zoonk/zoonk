@@ -7,7 +7,7 @@ import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 
-export function useMistakeCount(): number {
+function useMistakeCount(): number {
   const { runner } = useMockScreen();
   // A question with several picks answered partly right missed some, so the notebook keeps it too.
   return runner.view.review.filter((entry) => entry.outcome !== "blank").length;
