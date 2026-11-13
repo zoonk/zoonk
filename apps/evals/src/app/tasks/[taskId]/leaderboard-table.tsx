@@ -9,6 +9,7 @@ import {
 } from "@/lib/leaderboard-sort";
 import { NUMBER_CELL_CLASS, NUMBER_HEAD_CLASS } from "@/lib/table-classes";
 import { Button } from "@zoonk/ui/components/button";
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import {
   Table,
   TableBody,
@@ -47,7 +48,12 @@ export function ModelLink({
   );
 }
 
-/** A number column keeps its label on the numbers' edge, so its arrow goes before the label. */
+const COLUMN_LABELS = ["More columns", "Fewer columns"];
+
+/**
+ * A number column keeps its label on the numbers' edge, so its arrow goes before the label. The
+ * arrow keeps its room when the column isn't the sorted one, so sorting moves no column.
+ */
 function ColumnHead<Entry>({
   column,
   direction,
@@ -70,7 +76,7 @@ function ColumnHead<Entry>({
   }
 
   const Arrow = direction === "asc" ? ArrowUpIcon : ArrowDownIcon;
-  const arrow = isSorted && <Arrow aria-hidden="true" className="size-3.5" />;
+  const arrow = <Arrow aria-hidden="true" className={cn("size-3.5", !isSorted && "invisible")} />;
 
   return (
     <TableHead
@@ -143,7 +149,10 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
             size="sm"
             variant="outline"
           >
-            {showsMore ? "Fewer columns" : "More columns"}
+            <SwapLabel
+              current={showsMore ? "Fewer columns" : "More columns"}
+              labels={COLUMN_LABELS}
+            />
           </Button>
           {renderActions?.(sortedEntries)}
         </div>

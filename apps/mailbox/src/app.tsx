@@ -1,3 +1,4 @@
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
@@ -149,7 +150,10 @@ function SignInCode({ code }: { code: string }) {
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <p className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">{code}</p>
         <MailboxButton onClick={() => void copyText(code).catch(() => null)}>
-          {isCopied ? copy.copied : copy.copyCode}
+          <SwapLabel
+            current={isCopied ? copy.copied : copy.copyCode}
+            labels={[copy.copyCode, copy.copied]}
+          />
         </MailboxButton>
       </div>
     </div>
