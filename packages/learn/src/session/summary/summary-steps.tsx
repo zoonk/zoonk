@@ -3,12 +3,12 @@
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
-import { ChangeSaveError } from "../../_components/save-error";
 import { focusStepTitle } from "../../_components/steps";
 import { TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
 import { TaskFrame } from "../../shell/task-frame";
+import { NextStepFailed } from "../action-failed";
 import { MomentAfterCeremony } from "../moment-ceremony";
 import { OpenNextStep } from "../open-next-step";
 import { SessionHeader } from "../session-header";
@@ -89,11 +89,7 @@ export function SummarySteps() {
             <SummaryOptions />
           </>
         }
-        footerNote={
-          keepGoing.failed && (
-            <ChangeSaveError>{t("We couldn't open the next step. Try again.")}</ChangeSaveError>
-          )
-        }
+        footerNote={keepGoing.failed && <NextStepFailed />}
         headerTitle={<TaskHeaderTitle title={t("Today")} />}
       >
         <CelebrationScope play={firstVisit}>

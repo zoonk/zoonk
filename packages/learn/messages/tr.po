@@ -13728,6 +13728,18 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "{base} vektörü"
 
+#: src/session/action-failed.tsx
+#: src/session/open-next-step.tsx
+#: src/today/today-action.tsx
+msgctxt "yQ15dh"
+msgid "We couldn't open the next step. Try again."
+msgstr "Sonraki adımı açamadık. Tekrar dene."
+
+#: src/session/action-failed.tsx
+msgctxt "8i8j-M"
+msgid "We couldn't stop for today. Try again."
+msgstr "Bugünkü çalışmanı sonlandıramadık. Tekrar dene."
+
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
@@ -13737,15 +13749,6 @@ msgstr "{minutes} dk. daha pratik yap"
 msgctxt "kapQxt"
 msgid "Your lesson isn't saved yet"
 msgstr "Dersin henüz kaydedilmedi"
-
-#: src/session/lesson-moment.tsx
-#: src/session/open-next-step.tsx
-#: src/session/study-moment.tsx
-#: src/session/summary/summary-steps.tsx
-#: src/today/today-action.tsx
-msgctxt "yQ15dh"
-msgid "We couldn't open the next step. Try again."
-msgstr "Sonraki adımı açamadık. Tekrar dene."
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"
@@ -13803,12 +13806,6 @@ msgstr "Sonraki derse geç"
 msgctxt "kY8Exq"
 msgid "Practice now"
 msgstr "Şimdi pratik yap"
-
-#: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
-msgctxt "8i8j-M"
-msgid "We couldn't stop for today. Try again."
-msgstr "Bugünkü çalışmanı sonlandıramadık. Tekrar dene."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx

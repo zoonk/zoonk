@@ -8,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 import { useAppLocale } from "../_utils/locale";
 
-/** One size wherever it shows: the meter's 6px, its plates 3px apart. */
 function ShieldMeter({
   broken,
   className,

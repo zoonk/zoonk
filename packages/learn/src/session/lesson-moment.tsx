@@ -6,11 +6,11 @@ import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
-import { ChangeSaveError } from "../_components/save-error";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { useStudyTimeFact } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { NextStepFailed } from "./action-failed";
 import { DayMoment } from "./day-moment";
 import { FailedMoment } from "./failed-moment";
 import { MomentHeader } from "./moment-header";
@@ -104,13 +104,7 @@ function OutsideSession({
         )}
       </TaskBody>
 
-      <TaskActionBar
-        note={
-          failed && (
-            <ChangeSaveError>{t("We couldn't open the next step. Try again.")}</ChangeSaveError>
-          )
-        }
-      >
+      <TaskActionBar note={failed && <NextStepFailed />}>
         <TaskActions>
           <EnterButton busy={isPending} enter="host" onClick={run}>
             {t("Continue")}

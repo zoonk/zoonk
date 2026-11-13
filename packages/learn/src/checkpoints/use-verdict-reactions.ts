@@ -6,7 +6,6 @@ import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
 import { getVerdictAct } from "./duel-ending";
 
-/** He reacts to each answer, and to the one that decides the duel with its ending. */
 export function useVerdictReactions() {
   const { checkpoint, duel } = useCheckpointScreen();
   const trickster = useRef<ActorHandle<TricksterActName>>(null);

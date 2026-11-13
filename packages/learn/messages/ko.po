@@ -13728,6 +13728,18 @@ msgctxt "WIPDp7"
 msgid "vector {base}"
 msgstr "벡터 {base}"
 
+#: src/session/action-failed.tsx
+#: src/session/open-next-step.tsx
+#: src/today/today-action.tsx
+msgctxt "yQ15dh"
+msgid "We couldn't open the next step. Try again."
+msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
+
+#: src/session/action-failed.tsx
+msgctxt "8i8j-M"
+msgid "We couldn't stop for today. Try again."
+msgstr "오늘 학습을 종료하지 못했어요. 다시 시도해 보세요."
+
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
@@ -13737,15 +13749,6 @@ msgstr "{minutes}분 더 연습하기"
 msgctxt "kapQxt"
 msgid "Your lesson isn't saved yet"
 msgstr "레슨이 아직 저장되지 않았어요"
-
-#: src/session/lesson-moment.tsx
-#: src/session/open-next-step.tsx
-#: src/session/study-moment.tsx
-#: src/session/summary/summary-steps.tsx
-#: src/today/today-action.tsx
-msgctxt "yQ15dh"
-msgid "We couldn't open the next step. Try again."
-msgstr "다음 단계를 열지 못했어요. 다시 시도해 보세요."
 
 #: src/session/moment-header.tsx
 msgctxt "uPG65F"
@@ -13803,12 +13806,6 @@ msgstr "다음 레슨"
 msgctxt "kY8Exq"
 msgid "Practice now"
 msgstr "지금 연습하기"
-
-#: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
-msgctxt "8i8j-M"
-msgid "We couldn't stop for today. Try again."
-msgstr "오늘 학습을 종료하지 못했어요. 다시 시도해 보세요."
 
 #: src/session/next-stop.tsx
 #: src/session/question-block/pause-suggestion.tsx

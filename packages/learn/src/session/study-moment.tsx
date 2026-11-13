@@ -8,11 +8,11 @@ import { EnterButton, EnterLink } from "../_components/enter-button";
 import { ListGroup } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { NextStepFailed, StopFailed } from "./action-failed";
 import { getOwnBrainPower } from "./block-brain-power";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
@@ -74,12 +74,8 @@ function MomentActions({
       note={
         (proceed.failed || stop.failed) && (
           <>
-            {proceed.failed && (
-              <ChangeSaveError>{t("We couldn't open the next step. Try again.")}</ChangeSaveError>
-            )}
-            {stop.failed && (
-              <ChangeSaveError>{t("We couldn't stop for today. Try again.")}</ChangeSaveError>
-            )}
+            {proceed.failed && <NextStepFailed />}
+            {stop.failed && <StopFailed />}
           </>
         )
       }

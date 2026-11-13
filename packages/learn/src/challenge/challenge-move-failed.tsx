@@ -6,7 +6,6 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useChallengeScreen } from "./challenge-context";
 
-/** What a refused or failed move says, or null, for the bar's note. */
 export function useMoveFailed(): React.ReactNode {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

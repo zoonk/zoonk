@@ -255,7 +255,6 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
-/** What the last start or move couldn't do, for the bar's note. */
 export function useChallengeFooterNote(): React.ReactNode {
   const { challenge } = useChallengeScreen();
   const startProblem = useStartProblem();

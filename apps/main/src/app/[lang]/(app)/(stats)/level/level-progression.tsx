@@ -151,9 +151,12 @@ async function NextStep({
 }
 
 export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevelDetails }) {
-  const t = await getExtracted();
-  const format = await getFormatter();
-  const beltColors = await getBeltColors();
+  const [t, format, beltColors] = await Promise.all([
+    getExtracted(),
+    getFormatter(),
+    getBeltColors(),
+  ]);
+
   const currentIndex = BELT_COLORS_ORDER.indexOf(currentBelt.color);
   const belt = beltColors[currentIndex];
 

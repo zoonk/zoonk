@@ -21,6 +21,7 @@ import { useVisibleWait } from "../generation/use-visible-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { useReadyHold } from "../wait/use-ready-hold";
 import { WaitScreen, WaitSlot, useWaitScreen } from "../wait/wait-screen";
+import { StopFailed } from "./action-failed";
 import {
   AlternativeButton,
   NotWritten,
@@ -163,9 +164,7 @@ function NextStopActionBar({
       {start.failed && (
         <ChangeSaveError>{t("We couldn't open this step. Try again.")}</ChangeSaveError>
       )}
-      {stop.failed && (
-        <ChangeSaveError>{t("We couldn't stop for today. Try again.")}</ChangeSaveError>
-      )}
+      {stop.failed && <StopFailed />}
       <OpeningWaitLine wait={start.wait} />
     </>
   );
