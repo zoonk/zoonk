@@ -1,16 +1,14 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getAppLocale } from "@/i18n/locale";
-import { getSocialProfiles } from "@/lib/social";
 import { getSession } from "@zoonk/core/users/session";
 import { FeedbackForm, FeedbackFormSkeleton } from "@zoonk/learn/feedback/form";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { getSocialProfiles } from "@zoonk/ui/lib/social-profiles";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
 const FOLLOW_US_ID = "follow-us";
-
-const MAIN_NETWORKS = new Set(["x", "instagram", "linkedin", "youtube", "bluesky"]);
 
 async function ContactSupport() {
   const session = await getSession();
@@ -23,7 +21,7 @@ async function ContactSupport() {
 async function FollowUs() {
   const t = await getExtracted();
   const locale = await getAppLocale();
-  const socials = getSocialProfiles(locale).filter((social) => MAIN_NETWORKS.has(social.name));
+  const socials = getSocialProfiles(locale);
 
   return (
     <PageSection aria-labelledby={FOLLOW_US_ID}>
