@@ -58,11 +58,11 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
       >
         {children}
         <ChevronDownIcon
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+          className="edge pointer-events-none -me-(--edge-pull) shrink-0 self-center group-aria-expanded/accordion-trigger:hidden"
           data-slot="accordion-trigger-icon"
         />
         <ChevronUpIcon
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+          className="edge pointer-events-none -me-(--edge-pull) hidden shrink-0 self-center group-aria-expanded/accordion-trigger:inline"
           data-slot="accordion-trigger-icon"
         />
       </AccordionPrimitive.Trigger>
