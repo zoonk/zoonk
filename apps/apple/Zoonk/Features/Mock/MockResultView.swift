@@ -177,7 +177,8 @@ struct MockResultView: View {
   @ViewBuilder
   private var reviewSections: some View {
     if !view.review.isEmpty {
-      MockReviewSection(items: view.review, opened: $choices.opened)
+      MockReviewSection(
+        items: view.review, labels: view.trueFalseLabels, opened: $choices.opened)
     }
 
     MockNotesSection(view: view)
@@ -1102,6 +1103,7 @@ private struct MockReviewSection: View {
   @Environment(\.reviewRows) private var rows
 
   let items: [MockReviewItem]
+  let labels: PracticeTrueFalseLabels
   @Binding var opened: Set<String>
 
   var body: some View {
@@ -1116,16 +1118,16 @@ private struct MockReviewSection: View {
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
                 .foregroundStyle(.mutedForeground)
-            } else if let answer = item.learnerAnswer {
+            } else if let answer = TrueFalseWords.savedAnswer(item.learnerAnswer, labels: labels) {
               Label {
-                Text(answer)
+                LessonRichText(answer)
               } icon: {
                 Image(systemName: "xmark").foregroundStyle(.destructive)
               }
             }
-            if let correct = item.correctAnswer {
+            if let correct = TrueFalseWords.savedAnswer(item.correctAnswer, labels: labels) {
               Label {
-                Text(correct)
+                LessonRichText(correct)
               } icon: {
                 Image(systemName: "checkmark").foregroundStyle(.success)
               }
