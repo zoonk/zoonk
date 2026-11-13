@@ -4,7 +4,8 @@ import { type LanguageConversationIntro } from "@zoonk/core/language/conversatio
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { PageEyebrow, PageSectionTitle } from "../../_components/page";
+import { Eyebrow } from "../../_components/eyebrow";
+import { PageSectionTitle } from "../../_components/page";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { TaskFrame } from "../../shell/task-frame";
@@ -150,9 +151,9 @@ function CallIntro({
       headerTitle={eyebrow}
     >
       <header className="flex flex-col gap-2">
-        <PageEyebrow>
+        <Eyebrow className="mb-1">
           {t("{time} · Level {level}", { level: conversation.level, time })}
-        </PageEyebrow>
+        </Eyebrow>
         <h1 className="text-title text-balance">{conversation.title}</h1>
         <p className="text-muted-foreground text-pretty">{conversation.situation}</p>
       </header>

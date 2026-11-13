@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { Link } from "@/i18n/navigation";
 import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { LessonQuestionMarkdown } from "@zoonk/player/tutor/markdown";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -22,12 +23,12 @@ async function EarlierQuestionEntry({ question }: { question: EarlierQuestion })
 
   return (
     <li className="flex flex-col gap-2 py-5 first:pt-0">
-      <p className="text-muted-foreground text-xs">
+      <Eyebrow className="mb-1">
         {question.courseTitle
           ? t("From an earlier version of {course}", { course: question.courseTitle })
           : t("From an earlier version of this course")}
         {question.lessonTitle && ` · ${question.lessonTitle}`}
-      </p>
+      </Eyebrow>
 
       <p className="font-medium text-pretty">{question.question}</p>
 

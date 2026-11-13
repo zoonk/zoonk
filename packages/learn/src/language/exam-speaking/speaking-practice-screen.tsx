@@ -14,7 +14,6 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../../_components/list-group";
-import { PageEyebrow } from "../../_components/page";
 import { LearnPageBar } from "../../shell/learn-bar";
 import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
 import { useTaskMinutes } from "./speaking-task-row";
@@ -69,7 +68,6 @@ export function SpeakingPracticeScreen({
         <DetailAside>
           <DetailHero>
             <DetailHeroText>
-              <PageEyebrow>{t("Exam-style speaking")}</PageEyebrow>
               <DetailTitle>{paper.title}</DetailTitle>
               <DetailFacts>
                 {t("{count, plural, one {# task} other {# tasks}} · {minutes} in the exam", {

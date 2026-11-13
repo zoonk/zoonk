@@ -10,12 +10,11 @@ import {
 } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { DetailContinueLink, useDoneShare } from "../../_components/detail-page";
-import { PageEyebrow } from "../../_components/page";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ContentFeedbackMenu } from "../../feedback/content-feedback-menu";
 import { LearnPageBar } from "../../shell/learn-bar";
 
-function UnitEyebrow({ unit }: { unit: LanguageUnitView["unit"] }) {
+function useUnitPlace(unit: LanguageUnitView["unit"]): string {
   const t = useExtracted();
 
   if (unit.position === null) {
@@ -28,21 +27,21 @@ function UnitEyebrow({ unit }: { unit: LanguageUnitView["unit"] }) {
   });
 }
 
-function UnitFacts({ lessons }: { lessons: LanguageUnitView["lessons"] }) {
+function UnitFacts({ view }: { view: LanguageUnitView }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const doneShare = useDoneShare();
+  const place = useUnitPlace(view.unit);
+  const { lessons } = view;
   const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
   const done = lessons.filter((lesson) => lesson.done).length;
 
-  if (lessons.length === 0) {
-    return null;
-  }
-
   const facts = [
-    t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
+    place,
+    lessons.length > 0 &&
+      t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
     minutes > 0 && formatDuration(minutes),
-    doneShare(done / lessons.length),
+    lessons.length > 0 && doneShare(done / lessons.length),
   ].filter(Boolean);
 
   return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
@@ -63,11 +62,8 @@ export function UnitHeader({
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>
-          <UnitEyebrow unit={unit} />
-        </PageEyebrow>
         <DetailTitle>{unit.title}</DetailTitle>
-        <UnitFacts lessons={lessons} />
+        <UnitFacts view={view} />
       </DetailHeroText>
 
       <DetailActions className="empty:hidden">

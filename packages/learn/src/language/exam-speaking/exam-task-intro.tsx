@@ -4,7 +4,7 @@ import { type LanguageConversationView } from "@zoonk/core/language/conversation
 import { type ExamTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef } from "react";
-import { PageEyebrow } from "../../_components/page";
+import { Eyebrow } from "../../_components/eyebrow";
 import { TaskAsideContent } from "../../_components/task-layout";
 import { TaskFrame } from "../../shell/task-frame";
 import { CharacterRow, SoundNote } from "../conversation/conversation-parts";
@@ -54,7 +54,7 @@ export function ExamTaskIntro({
       headerTitle={title(examTask)}
     >
       <header className="flex flex-col gap-2">
-        <PageEyebrow>{minutes(examTask.task.minutes)}</PageEyebrow>
+        <Eyebrow className="mb-1">{minutes(examTask.task.minutes)}</Eyebrow>
         <h1
           className="text-title text-balance outline-none"
           lang={conversation.targetLanguage}
