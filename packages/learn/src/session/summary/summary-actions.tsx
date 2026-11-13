@@ -71,20 +71,6 @@ export function KeepGoingButton({
   );
 }
 
-export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoing> }) {
-  const t = useExtracted();
-
-  if (!keepGoing.failed) {
-    return null;
-  }
-
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("We couldn't open the next step. Try again.")}
-    </p>
-  );
-}
-
 /** More study after a full day sits in the column under Tomorrow, so the bar keeps two actions. */
 export function SummaryExtraTime() {
   const t = useExtracted();

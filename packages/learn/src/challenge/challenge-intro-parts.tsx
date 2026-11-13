@@ -2,26 +2,21 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
-import { PageEyebrow } from "../_components/page";
 import { StepDetail, StepHeader, StepTitle } from "../_components/step-card";
-import { toLabelCase } from "../_utils/label-case";
 import { useChallengeScreen } from "./challenge-context";
 
 export function IntroHeading({
   detail,
   eyebrow,
   title,
-  when,
 }: {
   detail?: string | null;
   eyebrow?: string | null;
   title: string;
-  when?: string | null;
 }) {
   return (
     <StepHeader>
-      {eyebrow && <Eyebrow>{toLabelCase(eyebrow)}</Eyebrow>}
-      {when && <PageEyebrow>{when}</PageEyebrow>}
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <StepTitle>{title}</StepTitle>
       {detail && <StepDetail>{detail}</StepDetail>}
     </StepHeader>

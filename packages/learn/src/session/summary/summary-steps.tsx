@@ -3,6 +3,7 @@
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
+import { ChangeSaveError } from "../../_components/save-error";
 import { focusStepTitle } from "../../_components/steps";
 import { TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
@@ -14,7 +15,6 @@ import { SessionHeader } from "../session-header";
 import {
   FinishLink,
   KeepGoingButton,
-  KeepGoingFailed,
   SHARED_ROW_ACTION_CLASS,
   SeeMistakesLink,
   SummaryOptions,
@@ -85,10 +85,14 @@ export function SummarySteps() {
         exitHref={exitHref}
         footer={
           <>
-            <KeepGoingFailed keepGoing={keepGoing} />
             <SummaryButtons keepGoing={keepGoing} />
             <SummaryOptions />
           </>
+        }
+        footerNote={
+          keepGoing.failed && (
+            <ChangeSaveError>{t("We couldn't open the next step. Try again.")}</ChangeSaveError>
+          )
         }
         headerTitle={<TaskHeaderTitle title={t("Today")} />}
       >

@@ -25,7 +25,11 @@ export function BlockRow({ block, state }: SessionQueueRow) {
   const blockTitle = useBlockTitle();
 
   return (
-    <ListRow aria-current={state === "next" ? "step" : undefined} data-state={state} role="listitem">
+    <ListRow
+      aria-current={state === "next" ? "step" : undefined}
+      data-state={state}
+      role="listitem"
+    >
       <ListRowLeading>
         <BlockMark block={block} done={state === "done"} />
       </ListRowLeading>

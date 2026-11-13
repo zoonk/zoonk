@@ -105,11 +105,11 @@ function WeeklyIntro() {
       <IntroHeading
         detail={t("Questions on what you studied this week.")}
         title={t("Weekly challenge")}
-        when={challenge.startTime ? when : null}
       />
 
       <TaskMeta
         facts={[
+          challenge.startTime && when,
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
         ]}
         reward={prize}
@@ -226,11 +226,11 @@ function MockIntro() {
       <IntroHeading
         detail={[challenge.examName, area].filter(Boolean).join(" · ")}
         title={t("Mock exam {number}", { number: String(challenge.number ?? 1) })}
-        when={when}
       />
 
       <TaskMeta
         facts={[
+          when,
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           challenge.minutes !== null && duration(challenge.minutes),
           !challenge.fullLength && daySize({ fullLength: false }),

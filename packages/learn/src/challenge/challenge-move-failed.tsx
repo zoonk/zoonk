@@ -6,7 +6,8 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useChallengeScreen } from "./challenge-context";
 
-export function MoveFailed() {
+/** What a refused or failed move says, or null, for the bar's note. */
+export function useMoveFailed(): React.ReactNode {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const formatDuration = useFormatDuration();
@@ -14,27 +15,27 @@ export function MoveFailed() {
 
   if (move.refusal?.kind === "moveBeforeNextMonday") {
     return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
+      <ChangeSaveError>
         {t(
           "A weekly challenge or mock exam can move only to a day on or after next Monday. It stays where it is.",
         )}
-      </p>
+      </ChangeSaveError>
     );
   }
 
   if (move.refusal?.kind === "mockCollision") {
     return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
+      <ChangeSaveError>
         {t("That day already has a weekly challenge or mock exam, so this one stays where it is.")}
-      </p>
+      </ChangeSaveError>
     );
   }
 
   if (move.refusal?.kind === "noRoom") {
     return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
+      <ChangeSaveError>
         {t("Your plan can't make room for this challenge on Monday. It stays where it is.")}
-      </p>
+      </ChangeSaveError>
     );
   }
 
@@ -42,12 +43,12 @@ export function MoveFailed() {
     const { date, minutes } = move.refusal.unfundedMove;
 
     return (
-      <p className="text-destructive-text text-sm text-pretty" role="alert">
+      <ChangeSaveError>
         {t(
           "Your plan can't make room for this {duration} mock exam on {date}. It stays where it is.",
           { date: formatDate(date), duration: formatDuration(minutes) },
         )}
-      </p>
+      </ChangeSaveError>
     );
   }
 

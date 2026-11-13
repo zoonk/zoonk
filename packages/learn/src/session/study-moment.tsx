@@ -8,6 +8,7 @@ import { EnterButton, EnterLink } from "../_components/enter-button";
 import { ListGroup } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
+import { ChangeSaveError } from "../_components/save-error";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
@@ -42,14 +43,6 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
   );
 }
 
-function ActionFailed({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {children}
-    </p>
-  );
-}
-
 /**
  * On a phone Continue keeps the bar's bottom row, where the last answer's Continue was, so a quick
  * second tap never stops the session.
@@ -77,13 +70,21 @@ function MomentActions({
   const stop = useSessionAction({ action: onStop, steadyMs: SCREEN_STEADY_MS });
 
   return (
-    <TaskActionBar>
-      {proceed.failed && (
-        <ActionFailed>{t("We couldn't open the next step. Try again.")}</ActionFailed>
-      )}
-      {stop.failed && <ActionFailed>{t("We couldn't stop for today. Try again.")}</ActionFailed>}
-
-      <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
+    <TaskActionBar
+      note={
+        (proceed.failed || stop.failed) && (
+          <>
+            {proceed.failed && (
+              <ChangeSaveError>{t("We couldn't open the next step. Try again.")}</ChangeSaveError>
+            )}
+            {stop.failed && (
+              <ChangeSaveError>{t("We couldn't stop for today. Try again.")}</ChangeSaveError>
+            )}
+          </>
+        )
+      }
+    >
+      <TaskActions>
         {!sessionCompleted && (
           <Button
             busy={stop.isPending}

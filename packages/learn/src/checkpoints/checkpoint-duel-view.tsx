@@ -17,7 +17,7 @@ import { useCheckpointScreen } from "./checkpoint-context";
 import { getCurrentQuestion, getDuelScore } from "./checkpoint-duel-state";
 import { DuelOver, Verdict } from "./checkpoint-duel-verdict";
 import { NoVerdictStep } from "./checkpoint-empty";
-import { CheckpointError, CheckpointFrame } from "./checkpoint-frame";
+import { CheckpointFrame, useCheckpointError } from "./checkpoint-frame";
 import { useChallengeName } from "./checkpoint-labels";
 import { CheckpointOptions } from "./checkpoint-options";
 import { TricksterArt, getShieldCracks } from "./trickster-art";
@@ -267,6 +267,7 @@ export function CheckpointDuelView() {
   const { checkpoint } = useCheckpointScreen();
   const { position, question, score, segments, total } = useDuelNumbers();
   const aside = useDuelAside();
+  const error = useCheckpointError();
   const name = useChallengeName(checkpoint);
   const isBoss = checkpoint.kind !== "weekly";
   const empty = total === 0;
@@ -296,13 +297,11 @@ export function CheckpointDuelView() {
     <CheckpointFrame
       aside={empty ? null : aside}
       footer={
-        <>
-          <CheckpointError />
-          <QuestionActions>
-            <DuelAction />
-          </QuestionActions>
-        </>
+        <QuestionActions>
+          <DuelAction />
+        </QuestionActions>
       }
+      footerNote={error}
       headerTitle={<TaskHeaderTitle title={name} />}
       progress={empty ? undefined : progress}
     >

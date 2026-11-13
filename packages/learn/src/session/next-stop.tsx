@@ -6,9 +6,10 @@ import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
+import { Eyebrow } from "../_components/eyebrow";
 import { type LessonNotWritten } from "../_components/lesson-not-written-notice";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
-import { PageEyebrow } from "../_components/page";
+import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
@@ -157,24 +158,21 @@ function NextStopActionBar({
     return null;
   }
 
-  return (
-    <TaskActionBar>
+  const note = (start.failed || stop.failed || start.wait !== "none") && (
+    <>
       {start.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't open this step. Try again.")}
-        </p>
+        <ChangeSaveError>{t("We couldn't open this step. Try again.")}</ChangeSaveError>
       )}
-
       {stop.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't stop for today. Try again.")}
-        </p>
+        <ChangeSaveError>{t("We couldn't stop for today. Try again.")}</ChangeSaveError>
       )}
+      <OpeningWaitLine wait={start.wait} />
+    </>
+  );
 
-      {/* Empty, it takes back the bar's gap but stays in the page, so it's heard when it speaks. */}
-      <OpeningWaitLine className="text-sm empty:-mt-2" wait={start.wait} />
-
-      <TaskActions className={isReady ? undefined : "max-lg:flex-col max-lg:items-stretch"}>
+  return (
+    <TaskActionBar note={note}>
+      <TaskActions>
         {canStop && (
           <form action={() => void stop.run()} className="contents">
             <Button
@@ -277,7 +275,7 @@ export function NextStop({
 
         <TaskBody data-slot="next-stop">
           <div className="flex flex-col gap-2">
-            <PageEyebrow>{t("Up next")}</PageEyebrow>
+            <Eyebrow className="mb-1">{t("Up next")}</Eyebrow>
             <h2 className="text-title">{title(block)}</h2>
             {line && <p className="text-muted-foreground text-sm text-pretty">{line}</p>}
             <TaskMeta facts={facts} />

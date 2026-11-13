@@ -11,7 +11,7 @@ import { useSentenceSpace } from "../_utils/locale";
 import { useLessonsEffectText } from "../plan/use-effect-counts";
 import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
-import { MoveFailed } from "./challenge-move-failed";
+import { useMoveFailed } from "./challenge-move-failed";
 
 export function ChallengeMovedScreen({
   changeId,
@@ -25,6 +25,7 @@ export function ChallengeMovedScreen({
   const lessonsText = useLessonsEffectText();
   const leftOut = effect && effect.lessonsRemoved > 0 ? lessonsText(effect) : null;
   const { challenge, hrefs, move } = useChallengeScreen();
+  const moveFailed = useMoveFailed();
   const space = useSentenceSpace();
   const date = challenge.date ?? challenge.today;
 
@@ -32,23 +33,21 @@ export function ChallengeMovedScreen({
     <TaskFrame
       exitHref={hrefs.exit}
       footer={
-        <>
-          <MoveFailed />
-          <TaskActions>
-            <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
-            <Button
-              busy={move.pending}
-              className="shrink-0"
-              icon={<Undo2Icon aria-hidden="true" />}
-              onClick={() => void move.undo(changeId)}
-              size="xl"
-              variant="outline"
-            >
-              {t("Undo")}
-            </Button>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <Button
+            busy={move.pending}
+            className="shrink-0"
+            icon={<Undo2Icon aria-hidden="true" />}
+            onClick={() => void move.undo(changeId)}
+            size="xl"
+            variant="outline"
+          >
+            {t("Undo")}
+          </Button>
+          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+        </TaskActions>
       }
+      footerNote={moveFailed}
     >
       <StepCard role="status">
         <StepHeader>

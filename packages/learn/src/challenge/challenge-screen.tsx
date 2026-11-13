@@ -17,7 +17,7 @@ import {
   type ChallengeWriting,
   useChallengeScreen,
 } from "./challenge-context";
-import { ChallengeFooter } from "./challenge-footer";
+import { ChallengeFooter, useChallengeFooterNote } from "./challenge-footer";
 import { ChallengeIntro, useChallengeIntroAside } from "./challenge-intro";
 import { ChallengeMovedScreen } from "./challenge-moved-screen";
 import { useChallengeMove } from "./use-challenge-move";
@@ -44,9 +44,10 @@ function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
 function ChallengeIntroScreen() {
   const { hrefs } = useChallengeScreen();
   const aside = useChallengeIntroAside();
+  const note = useChallengeFooterNote();
 
   return (
-    <TaskFrame aside={aside} exitHref={hrefs.exit} footer={<ChallengeFooter />}>
+    <TaskFrame aside={aside} exitHref={hrefs.exit} footer={<ChallengeFooter />} footerNote={note}>
       <ChallengeIntro />
     </TaskFrame>
   );

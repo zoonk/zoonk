@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
+import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
@@ -15,7 +16,7 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
-import { MoveFailed } from "./challenge-move-failed";
+import { useMoveFailed } from "./challenge-move-failed";
 import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
@@ -78,16 +79,12 @@ function WaitingLine() {
   );
 }
 
-function StartProblem() {
+function useStartProblem(): React.ReactNode {
   const t = useExtracted();
   const { start } = useChallengeScreen();
 
   if (start.problem === "failed") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("That didn't go through. Try again in a moment.")}
-      </p>
-    );
+    return <ChangeSaveError>{t("That didn't go through. Try again in a moment.")}</ChangeSaveError>;
   }
 
   if (start.slow) {
@@ -106,20 +103,12 @@ function StartButton() {
   const { move, start } = useChallengeScreen();
 
   return (
-    <>
-      <StartProblem />
-      <MoveFailed />
-      <TaskActions>
-        <MoveToMondayButton />
-        <TaskMainButton
-          busy={start.busy}
-          disabled={move.pending}
-          onClick={() => void start.start()}
-        >
-          {t("Start")}
-        </TaskMainButton>
-      </TaskActions>
-    </>
+    <TaskActions>
+      <MoveToMondayButton />
+      <TaskMainButton busy={start.busy} disabled={move.pending} onClick={() => void start.start()}>
+        {t("Start")}
+      </TaskMainButton>
+    </TaskActions>
   );
 }
 
@@ -267,6 +256,24 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
+/** What the last start or move couldn't do, for the bar's note. */
+export function useChallengeFooterNote(): React.ReactNode {
+  const { challenge } = useChallengeScreen();
+  const startProblem = useStartProblem();
+  const moveFailed = useMoveFailed();
+  const startShows = challenge.status === "ready" && challenge.waitReason === null;
+  const start = startShows ? startProblem : null;
+
+  return (
+    (start || moveFailed) && (
+      <>
+        {start}
+        {moveFailed}
+      </>
+    )
+  );
+}
+
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
   const movable = useMovable();
@@ -277,7 +284,6 @@ export function ChallengeFooter() {
     <>
       <StatusRegion>{line}</StatusRegion>
       {actions}
-      {!startShows && <MoveFailed />}
       {!startShows && movable && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />

@@ -82,7 +82,7 @@ export async function BeltRack({
             <span
               aria-hidden="true"
               className={cn(
-                "hidden text-2xs whitespace-nowrap md:block",
+                "text-2xs hidden whitespace-nowrap md:block",
                 index === currentIndex && "text-foreground font-medium",
                 index < currentIndex && "text-muted-foreground",
                 index > currentIndex && "text-faint",

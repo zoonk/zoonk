@@ -22,7 +22,7 @@ function LogbookSkeleton() {
     <TaskSkeleton title={<Skeleton className="h-1 w-24 rounded-xs" />}>
       <Skeleton className="h-12 w-full max-w-80" />
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-3 w-40" />
+        <Skeleton className="mb-1.5 h-5.5 w-40 rounded-sm" />
         <Skeleton className="h-8 w-2/3" />
         <Skeleton className="h-5 w-1/2" />
       </div>
