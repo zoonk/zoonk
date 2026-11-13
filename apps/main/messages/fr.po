@@ -3621,11 +3621,6 @@ msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "Impossible de commencer le paiement. Contacte-nous à hello@zoonk.com"
 
-#: src/components/progress/progress-day-count-label.ts
-msgctxt "r9koty"
-msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
-msgstr "{count, plural, =0 {# jour} one {# jour} other {# jours}}"
-
 #: src/components/public/course-start-failure.tsx
 msgctxt "xANHtD"
 msgid "See Plus"

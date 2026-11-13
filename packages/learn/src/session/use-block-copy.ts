@@ -52,10 +52,6 @@ function useCheckpointTitle() {
   };
 }
 
-export function getChallengePhase(block: Pick<StudyBlock, "checkpoint" | "title">): string | null {
-  return block.checkpoint && block.checkpoint.kind !== "weekly" && block.title ? block.title : null;
-}
-
 export function hasCapsules(block: Pick<StudyBlock, "capsules" | "kind">): boolean {
   return block.kind === "review" && block.capsules.length > 0;
 }
