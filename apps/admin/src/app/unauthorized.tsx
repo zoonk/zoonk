@@ -1,28 +1,20 @@
+import { AdminGateScreen } from "@/components/admin-gate-screen";
 import { LogoutButton } from "@/components/logout";
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { getSession } from "@zoonk/core/users/session";
+import { Suspense } from "react";
+
+async function SignedInAs() {
+  const session = await getSession();
+  return session ? `You're signed in as ${session.user.email}. ` : null;
+}
 
 export default function Unauthorized() {
   return (
-    <Container variant="centered">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>401 - Unauthorized</ContainerTitle>
-          <ContainerDescription>
-            Log in with a different account to access this page.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody className="justify-end">
-        <LogoutButton />
-      </ContainerBody>
-    </Container>
+    <AdminGateScreen action={<LogoutButton />} title="This account can't open Admin">
+      <Suspense fallback={null}>
+        <SignedInAs />
+      </Suspense>
+      Admin is for Zoonk staff.
+    </AdminGateScreen>
   );
 }

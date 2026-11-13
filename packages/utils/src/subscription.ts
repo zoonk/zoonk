@@ -10,7 +10,7 @@ export const PLUS_PLAN = {
 } as const;
 
 export const PAID_PLANS = [PLUS_PLAN] as const;
-export const SUBSCRIPTION_PLANS = [FREE_PLAN, ...PAID_PLANS] as const;
+const SUBSCRIPTION_PLANS = [FREE_PLAN, ...PAID_PLANS] as const;
 export type SubscriptionPlanName = (typeof SUBSCRIPTION_PLANS)[number]["name"];
 
 export function isSubscriptionPlanName(plan: string): plan is SubscriptionPlanName {

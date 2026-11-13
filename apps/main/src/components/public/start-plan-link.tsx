@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/navigation";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
-import { ChevronRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { getSecondaryStartControlClassName, getStartControlClassName } from "./public-start";
 
@@ -29,7 +28,6 @@ export async function StartPlanLink({
       rel="nofollow"
     >
       {t("Build my plan")}
-      <ChevronRightIcon aria-hidden="true" data-icon="inline-end" />
     </Link>
   );
 }
