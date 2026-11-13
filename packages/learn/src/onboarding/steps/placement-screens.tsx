@@ -1,6 +1,5 @@
 "use client";
 
-import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   OnboardingActions,
@@ -8,11 +7,10 @@ import {
   OnboardingDescription,
   OnboardingHeading,
   OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding-frame";
-import { TestOutcome } from "../test-outcome";
+import { TestOutcome, TestStartActions } from "../test-outcome";
 
 export function PlacementIntro({
   onScratch,
@@ -32,19 +30,12 @@ export function PlacementIntro({
   return (
     <OnboardingColumn
       bar={
-        <OnboardingActions>
-          <OnboardingSecondaryButton
-            busy={pending}
-            disabled={starting}
-            icon={<SkipForwardIcon aria-hidden="true" />}
-            onClick={onScratch}
-          >
-            {t("Skip")}
-          </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
-            {t("Start")}
-          </OnboardingPrimaryButton>
-        </OnboardingActions>
+        <TestStartActions
+          onScratch={onScratch}
+          onStart={onStart}
+          pending={pending}
+          starting={starting}
+        />
       }
     >
       <OnboardingHeading>

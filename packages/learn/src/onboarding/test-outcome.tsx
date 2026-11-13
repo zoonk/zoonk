@@ -1,5 +1,6 @@
 "use client";
 
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import {
@@ -7,9 +8,41 @@ import {
   OnboardingColumn,
   OnboardingHeading,
   OnboardingPrimaryButton,
+  OnboardingSecondaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "./onboarding-frame";
+
+/** A test's start: Skip, which plans from what the learner said, then Start. */
+export function TestStartActions({
+  onScratch,
+  onStart,
+  pending,
+  starting,
+}: {
+  onScratch: () => void;
+  onStart: () => void;
+  pending: boolean;
+  starting: boolean;
+}) {
+  const t = useExtracted();
+
+  return (
+    <OnboardingActions>
+      <OnboardingSecondaryButton
+        busy={pending}
+        disabled={starting}
+        icon={<SkipForwardIcon aria-hidden="true" />}
+        onClick={onScratch}
+      >
+        {t("Skip")}
+      </OnboardingSecondaryButton>
+      <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
+        {t("Start")}
+      </OnboardingPrimaryButton>
+    </OnboardingActions>
+  );
+}
 
 /** The end of a test (the short test, the level test, the Focus test): what it found and the way on. */
 export function TestOutcome({

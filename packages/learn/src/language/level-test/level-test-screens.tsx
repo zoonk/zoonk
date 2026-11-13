@@ -7,20 +7,16 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import {
-  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
-  OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
-import { TestOutcome } from "../../onboarding/test-outcome";
+import { TestOutcome, TestStartActions } from "../../onboarding/test-outcome";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -82,19 +78,12 @@ export function TestIntro({
   return (
     <OnboardingColumn
       bar={
-        <OnboardingActions>
-          <OnboardingSecondaryButton
-            busy={pending}
-            disabled={starting}
-            icon={<SkipForwardIcon aria-hidden="true" />}
-            onClick={onScratch}
-          >
-            {t("Skip")}
-          </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
-            {t("Start")}
-          </OnboardingPrimaryButton>
-        </OnboardingActions>
+        <TestStartActions
+          onScratch={onScratch}
+          onStart={onStart}
+          pending={pending}
+          starting={starting}
+        />
       }
     >
       <OnboardingHeading>
