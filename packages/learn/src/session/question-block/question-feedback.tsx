@@ -13,8 +13,7 @@ import {
 } from "../../_components/feedback-panel";
 import { ItemCitationNote } from "../../_components/item-citation";
 import { useAppLocale } from "../../_utils/locale";
-import { toPlainItemLine } from "../../questions/_utils/item-text";
-import { ItemText } from "../../questions/item-text";
+import { ItemLine, ItemText } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import {
   type StudyAnswerFeedback,
@@ -22,6 +21,7 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
+/** The answer as item text, with its formulas, for `ItemLine` to show. */
 export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
   const locale = useAppLocale();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
@@ -39,14 +39,14 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
 
     if ("selectedIndex" in answer) {
       const option = question.options?.[answer.selectedIndex];
-      return option === undefined ? null : toPlainItemLine(option);
+      return option ?? null;
     }
 
     if ("selectedIndexes" in answer || "order" in answer) {
       const [picks, separator] =
         "order" in answer ? [answer.order, " → "] : [answer.selectedIndexes, "; "];
 
-      return picks.map((index) => toPlainItemLine(question.options?.[index] ?? "")).join(separator);
+      return picks.map((index) => question.options?.[index] ?? "").join(separator);
     }
 
     if ("text" in answer) {
@@ -61,7 +61,7 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
       return (question.left ?? [])
         .map((entry, index) => {
           const match = question.right?.[answer.matches[index] ?? -1] ?? "";
-          return `${toPlainItemLine(entry)} → ${toPlainItemLine(match)}`;
+          return `${entry} → ${match}`;
         })
         .join("; ");
     }
@@ -87,7 +87,7 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
 
   const lines = steps.map((step, index): DiffLine => ({
     kind: index === steps.length - 1 ? "added" : "context",
-    text: toPlainItemLine(step),
+    text: <ItemLine text={step} />,
   }));
 
   return (
@@ -219,7 +219,7 @@ export function QuestionFeedback({
 
       {correct && (
         <FeedbackExplanation>
-          {t("Right answer: {answer}", { answer: correct })}
+          {t("Right answer:")} <ItemLine text={correct} />
         </FeedbackExplanation>
       )}
 

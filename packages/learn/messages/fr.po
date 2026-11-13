@@ -8411,6 +8411,8 @@ msgid "{cause} · Fixed"
 msgstr "{cause} · Corrigée"
 
 #: src/mistakes/mistake-entry.tsx
+#: src/mistakes/practice-step.tsx
+#: src/session/question-block/question-feedback.tsx
 msgctxt "VM0Q1f"
 msgid "Right answer:"
 msgstr "Bonne réponse :"
@@ -8580,12 +8582,6 @@ msgstr "{count, plural, =0 {# erreur corrigée} one {# erreur corrigée et retir
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Retour sur ta réponse"
-
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Bonne réponse : {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts

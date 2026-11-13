@@ -6,8 +6,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { ANSWER_TONE } from "../../_components/answer-tone";
-import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemLine } from "../../questions/item-text";
+import { useSpokenText } from "../../rich-text/use-spoken-text";
 import { useFocusCheckWhenComplete } from "./question-actions";
 
 type Matches = number[];
@@ -48,6 +48,7 @@ export function MatchPairsQuestion({
   right: readonly string[];
 }) {
   const t = useExtracted();
+  const spoken = useSpokenText();
   const [matches, setMatches] = useState<Matches>(() => left.map(() => UNMATCHED));
   const [selected, setSelected] = useState<number | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -122,10 +123,10 @@ export function MatchPairsQuestion({
               <button
                 aria-label={
                   owner === UNMATCHED
-                    ? toPlainItemLine(entry)
+                    ? spoken.inline(entry)
                     : t("{entry}, matched with {other}", {
-                        entry: toPlainItemLine(entry),
-                        other: toPlainItemLine(left[owner] ?? ""),
+                        entry: spoken.inline(entry),
+                        other: spoken.inline(left[owner] ?? ""),
                       })
                 }
                 className={entryClass}

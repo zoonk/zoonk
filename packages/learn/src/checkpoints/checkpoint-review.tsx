@@ -77,7 +77,7 @@ function ReviewAnswer({
     <p className="text-sm">
       <span className="text-muted-foreground">{t("Answer:")}</span>{" "}
       <span className={cn(question.format === "numeric" && "font-mono tabular-nums")}>
-        {rightAnswer}
+        <ItemLine text={rightAnswer} />
       </span>
     </p>
   );

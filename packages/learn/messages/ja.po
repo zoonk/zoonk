@@ -8411,6 +8411,8 @@ msgid "{cause} · Fixed"
 msgstr "{cause} · 克服済み"
 
 #: src/mistakes/mistake-entry.tsx
+#: src/mistakes/practice-step.tsx
+#: src/session/question-block/question-feedback.tsx
 msgctxt "VM0Q1f"
 msgid "Right answer:"
 msgstr "正解："
@@ -8580,12 +8582,6 @@ msgstr "{count, plural, =0 {克服した間違いはありません} other {#個
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "回答へのフィードバック"
-
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "正解：{answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts

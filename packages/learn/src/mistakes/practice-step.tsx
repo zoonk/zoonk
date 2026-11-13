@@ -8,7 +8,7 @@ import {
   FeedbackPanel,
   FeedbackVerdict,
 } from "../_components/feedback-panel";
-import { ItemText } from "../questions/item-text";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { QuestionMainButton } from "../session/question-block/question-actions";
 import {
   WorkedSteps,
@@ -145,7 +145,7 @@ function PracticeFeedback({
 
       {correct && (
         <FeedbackExplanation>
-          {t("Right answer: {answer}", { answer: correct })}
+          {t("Right answer:")} <ItemLine text={correct} />
         </FeedbackExplanation>
       )}
       <WorkedSteps steps={feedback.workedSteps} />
