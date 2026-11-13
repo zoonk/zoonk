@@ -542,7 +542,7 @@ test.describe("Mind maps", () => {
         },
       );
 
-      await page.getByRole("link", { name: "Close lesson" }).click();
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
       await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
       await expect(map.getByText("Drawing the mind map…")).toBeVisible();
 
@@ -595,7 +595,7 @@ test.describe("Mind maps", () => {
         },
       );
 
-      // Close lesson brings back the router's kept copy, so the page reads its map again. That
+      // Leaving brings back the router's kept copy, so the page reads its map again. That
       // read is answered before the Save and arrives after it.
       await page.route("**/v1/goals/*/chapters/*/mind-map", async (route) => {
         const response = await route.fetch();
@@ -609,7 +609,7 @@ test.describe("Mind maps", () => {
         }
       });
 
-      await page.getByRole("link", { name: "Close lesson" }).click();
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
       await answered.promise;
       await page.getByRole("button", { name: "Full screen" }).click();
 

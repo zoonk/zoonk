@@ -1,6 +1,6 @@
 "use client";
 
-import { QuestionEyebrow } from "@zoonk/learn/question-title";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
@@ -75,12 +75,12 @@ function LessonNotice() {
   if (screen.quickCheck) {
     return (
       <PlayerContentFrame className="pt-4">
-        <QuestionEyebrow icon={<ZapIcon aria-hidden="true" />}>
+        <Eyebrow icon={<ZapIcon aria-hidden="true" />}>
           {t("Quick check · {current} of {total}", {
             current: String(screen.quickCheck.current + 1),
             total: String(screen.quickCheck.total),
           })}
-        </QuestionEyebrow>
+        </Eyebrow>
       </PlayerContentFrame>
     );
   }

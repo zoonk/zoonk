@@ -3,6 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import { KindMark } from "../_components/kind-tile";
 import {
   ListGroup,
@@ -11,7 +12,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
-import { StepCard, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
@@ -36,7 +37,7 @@ export function MockNextStep({ count }: { count: number }) {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("Now")}</StepEyebrow>
+        <Eyebrow>{t("Now")}</Eyebrow>
         <StepTitle>{title(count)}</StepTitle>
       </StepHeader>
     </StepCard>
