@@ -1,7 +1,6 @@
 "use client";
 
 import { type MockSectionView } from "@zoonk/core/exams/mocks/view-contract";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -66,7 +65,6 @@ export function MockBreak({ until }: { until: string }) {
             <TaskMainButton
               busy={runner.busy === "endBreak"}
               disabled={runner.pending}
-              icon={<PlayIcon aria-hidden="true" />}
               onClick={() => void runner.endBreak()}
             >
               {t("Start now")}

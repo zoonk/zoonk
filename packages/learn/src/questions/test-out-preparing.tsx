@@ -4,7 +4,6 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
@@ -66,7 +65,7 @@ function TestOutStart({
 
       {!plusRequired && !limit && (
         <TaskActions>
-          <TaskMainButton busy={starting} icon={<PlayIcon aria-hidden="true" />} onClick={onStart}>
+          <TaskMainButton busy={starting} onClick={onStart}>
             {t("Start the test")}
           </TaskMainButton>
         </TaskActions>

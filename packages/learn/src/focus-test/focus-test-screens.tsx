@@ -4,7 +4,6 @@ import {
   type FocusTestOffer,
   type FocusTestSitting,
 } from "@zoonk/core/learner/placement/focus-test-contract";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import {
@@ -67,7 +66,6 @@ export function FocusTestInvitation({
         <OnboardingPrimaryButton
           busy={pressed === "main"}
           disabled={pressed === "other"}
-          icon={<PlayIcon aria-hidden="true" />}
           onClick={onStart}
         >
           {t("Start the test")}
@@ -123,12 +121,7 @@ export function FocusTestResume({
 
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          autoFocus
-          disabled={pressed === "other"}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onContinue}
-        >
+        <OnboardingPrimaryButton autoFocus disabled={pressed === "other"} onClick={onContinue}>
           {t("Continue")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>

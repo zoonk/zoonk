@@ -1,7 +1,6 @@
 "use client";
 
 import { type Reached } from "@zoonk/core/sessions/reached";
-import { BACK_ICON } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
@@ -20,9 +19,7 @@ function BackBar({ backHref }: { backHref: string }) {
   return (
     <TaskActionBar>
       <TaskActions>
-        <TaskMainLink href={backHref} {...BACK_ICON}>
-          {t("Back")}
-        </TaskMainLink>
+        <TaskMainLink href={backHref}>{t("Back")}</TaskMainLink>
       </TaskActions>
     </TaskActionBar>
   );

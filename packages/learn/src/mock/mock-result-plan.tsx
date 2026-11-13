@@ -6,9 +6,10 @@ import { Button } from "@zoonk/ui/components/button";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import { Meter, MeterFill } from "../_components/meter";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
-import { StepCard, StepHeader, StepTitle, StepTitleLabel } from "../_components/step-card";
+import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
 
@@ -257,8 +258,8 @@ export function MockPlanStep({
   return (
     <StepCard>
       <StepHeader>
-        <StepTitle className="flex flex-col items-start gap-1.5">
-          <StepTitleLabel>{preparation ? t("Your preparation") : t("Your plan")}</StepTitleLabel>
+        <Eyebrow>{preparation ? t("Your preparation") : t("Your plan")}</Eyebrow>
+        <StepTitle>
           {preparation ? (
             <PreparationReadout change={preparation} />
           ) : (

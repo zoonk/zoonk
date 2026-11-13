@@ -551,7 +551,7 @@ test.describe("Mind maps", () => {
         },
       );
 
-      await page.getByRole("link", { name: "Leave" }).click();
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
       await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
       await expect(map.getByText("Drawing the mind map…")).toBeVisible();
 

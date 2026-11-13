@@ -4,12 +4,12 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import {
   QuestionActions,
   QuestionDontKnow,
   QuestionMainAction,
 } from "../_components/question-actions";
-import { QuestionEyebrow } from "../_components/question-title";
 import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -224,16 +224,12 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
     >
       {question && (
         <div className="flex flex-col gap-4" ref={questionRef}>
-          <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
-            {/* Empty, it still gives the line a baseline, so the count doesn't move between questions. */}
-            <QuestionEyebrow
-              className={cn(
-                String.raw`min-w-0 [&>span:empty]:before:content-['\200b']`,
-                aside && "with-aside:hidden",
-              )}
-            >
-              {hint?.(question)}
-            </QuestionEyebrow>
+          <div className="text-muted-foreground flex items-center justify-between gap-3">
+            {hint && (
+              <Eyebrow className={cn("min-w-0", aside && "with-aside:hidden")}>
+                {hint(question)}
+              </Eyebrow>
+            )}
             <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
               {t("{current, number} of {total, number}", { current, total })}
             </p>

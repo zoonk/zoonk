@@ -1,11 +1,11 @@
 "use client";
 
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
-import { BACK_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { Eyebrow } from "../_components/eyebrow";
 import { PageSectionTitle } from "../_components/page";
 import {
   StepCard,
@@ -114,10 +114,8 @@ function NothingLeftComment() {
   return (
     <StepCard>
       <StepHeader>
-        <StepTitle className="flex flex-col items-start gap-1.5">
-          <StepTitleLabel>{t("Next step")}</StepTitleLabel>
-          {t("Nothing left to work on")}
-        </StepTitle>
+        <Eyebrow>{t("Next step")}</Eyebrow>
+        <StepTitle>{t("Nothing left to work on")}</StepTitle>
         <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
       </StepHeader>
     </StepCard>
@@ -138,10 +136,8 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepTitle className="flex flex-col items-start gap-1.5">
-          <StepTitleLabel>{t("Next step")}</StepTitleLabel>
-          {criterion ? criterionName(criterion) : t("What to rewrite")}
-        </StepTitle>
+        <Eyebrow>{t("Next step")}</Eyebrow>
+        <StepTitle>{criterion ? criterionName(criterion) : t("What to rewrite")}</StepTitle>
       </StepHeader>
 
       {criterion?.quote && (
@@ -266,9 +262,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
         onRewrite ? (
           <TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>
         ) : (
-          <TaskMainLink href={hrefs.exit} {...BACK_ICON}>
-            {t("Back to Today")}
-          </TaskMainLink>
+          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
         )
       }
       items={items}

@@ -12,7 +12,6 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS, PAGE_ARTICLE_CLASS } from "../_components/detail-page";
@@ -140,7 +139,6 @@ export function ChooserStartButton({
       busy={busy}
       className={DETAIL_PRIMARY_CLASS}
       disabled={disabled || !mounted}
-      icon={<PlayIcon aria-hidden="true" />}
       onClick={onClick}
       size="lg"
     >

@@ -2,7 +2,6 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
@@ -23,11 +22,7 @@ export function MockResultActions() {
     return <TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>;
   }
 
-  return (
-    <TaskMainLink href={hrefs.mistakes} icon={<PlayIcon aria-hidden="true" />}>
-      {t("Review mistakes")}
-    </TaskMainLink>
-  );
+  return <TaskMainLink href={hrefs.mistakes}>{t("Review mistakes")}</TaskMainLink>;
 }
 
 /**

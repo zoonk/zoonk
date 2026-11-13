@@ -2,7 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { StepEyebrow } from "../_components/step-card";
+import { Eyebrow } from "../_components/eyebrow";
 import { TaskFrame } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { getMockSubject } from "./mock-labels";
@@ -19,7 +19,7 @@ export function MockEyebrow() {
   const { runner } = useMockScreen();
   const subject = getMockSubject(runner.view);
 
-  return <StepEyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</StepEyebrow>;
+  return <Eyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</Eyebrow>;
 }
 
 function SaveStatusLine() {

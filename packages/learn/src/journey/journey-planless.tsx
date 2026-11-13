@@ -1,7 +1,6 @@
 "use client";
 
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton, EnterLink } from "../_components/enter-button";
 import { Page, PageEyebrow, PageSection } from "../_components/page";
@@ -64,7 +63,6 @@ function SetupPaused({
       <EnterButton
         busy={isPending}
         className={SETUP_ACTION_CLASS}
-        icon={<PlayIcon aria-hidden="true" />}
         onClick={() => setStatus("active")}
         size="lg"
       >
@@ -85,7 +83,7 @@ function SetupLeft({ continueHref }: { continueHref: string }) {
       <p className="text-muted-foreground text-sm">
         {t("Answer them and we'll plan every day until you reach your goal.")}
       </p>
-      <EnterLink className={SETUP_ACTION_CLASS} href={continueHref} icon={null} size="lg">
+      <EnterLink className={SETUP_ACTION_CLASS} href={continueHref} size="lg">
         {t("Continue")}
       </EnterLink>
     </>

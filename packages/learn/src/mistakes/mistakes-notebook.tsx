@@ -109,7 +109,6 @@ function NotebookHero({
           <EnterLink
             className={DETAIL_PRIMARY_CLASS}
             href={hrefs.practice}
-            icon={null}
             // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
             prefetch={false}
             size="lg"

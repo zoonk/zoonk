@@ -13,7 +13,6 @@ import {
 } from "@zoonk/ui/components/alert-dialog";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
@@ -96,7 +95,6 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
         <TaskMainButton
           busy={runner.busy === "submit"}
           disabled={runner.pending}
-          icon={<SendIcon aria-hidden="true" />}
           onClick={() => setConfirming(true)}
         >
           {label}
@@ -156,7 +154,6 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
           <TaskMainButton
             busy={runner.busy === "startSpeaking"}
             disabled={runner.pending}
-            icon={<PlayIcon aria-hidden="true" />}
             onClick={() => void runner.startSpeaking()}
           >
             {t("Start")}

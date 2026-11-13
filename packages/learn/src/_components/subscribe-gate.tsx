@@ -73,9 +73,7 @@ export function SubscribeMainAction() {
 
   return (
     <TaskActions>
-      <EnterLink href={routes.upgrade} icon={null}>
-        {t("Subscribe")}
-      </EnterLink>
+      <EnterLink href={routes.upgrade}>{t("Subscribe")}</EnterLink>
     </TaskActions>
   );
 }

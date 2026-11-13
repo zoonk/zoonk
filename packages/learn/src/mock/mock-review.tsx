@@ -11,36 +11,7 @@ import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
-import { getOptionMarks } from "./mock-keys";
 import { ResultSection } from "./mock-result-section";
-
-/**
- * The review has a pick's words but not its number, so answers other than a statement's are marked
- * by how they went.
- */
-function AnswerMark({
-  answer,
-  entry,
-  right,
-}: {
-  answer: string;
-  entry: MockReviewEntry;
-  right: boolean;
-}) {
-  const { runner } = useMockScreen();
-  const isStatement = entry.format === "trueFalse" && (answer === "true" || answer === "false");
-  const marks = getOptionMarks({ format: entry.format, scoring: runner.view.scoring });
-
-  if (isStatement && marks === "numbers") {
-    return answer === "true" ? 1 : 2;
-  }
-
-  if (isStatement) {
-    return answer === "true" ? <CheckIcon /> : <XIcon />;
-  }
-
-  return right ? <CheckIcon /> : <XIcon />;
-}
 
 function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const t = useExtracted();
@@ -55,22 +26,12 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
 
       <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
         {yours !== null && (
-          <AnswerOption
-            disabled
-            marker={<AnswerMark answer={yours} entry={entry} right={false} />}
-            picked
-            result="wrong"
-          >
+          <AnswerOption disabled marker={<XIcon />} picked result="wrong">
             <ItemLine text={answerText(yours) ?? yours} />
           </AnswerOption>
         )}
         {right !== null && (
-          <AnswerOption
-            disabled
-            marker={<AnswerMark answer={right} entry={entry} right />}
-            picked={false}
-            result="right"
-          >
+          <AnswerOption disabled marker={<CheckIcon />} picked={false} result="right">
             <ItemLine text={answerText(right) ?? right} />
           </AnswerOption>
         )}

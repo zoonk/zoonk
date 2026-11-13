@@ -86,7 +86,6 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
     <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={buildStudyHref({ place, study, view })}
-      icon={null}
       // Where the learner stopped is only known once the page hydrates, so the deck loads on intent.
       prefetch="intent"
       size="lg"

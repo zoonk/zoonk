@@ -15,7 +15,7 @@ describe("bank mistake inputs on touch screens", () => {
         .toBeInViewport();
 
       await expect
-        .element(page.getByRole("link", { name: "Back to the notebook" }))
+        .element(page.getByRole("link", { exact: true, name: "Leave" }))
         .toBeInViewport();
 
       expect(window.scrollY).toBe(0);

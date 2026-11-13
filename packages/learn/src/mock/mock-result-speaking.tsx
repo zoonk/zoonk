@@ -4,6 +4,7 @@ import { type SpeakingSectionView } from "@zoonk/core/language/exam-speaking/con
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import {
   StepCard,
   StepDetail,
@@ -113,8 +114,8 @@ function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
   return (
     <StepCard>
       <StepHeader>
-        <StepTitle className="flex flex-col items-start gap-1.5">
-          <StepTitleLabel>{paper.paper}</StepTitleLabel>
+        <Eyebrow>{paper.paper}</Eyebrow>
+        <StepTitle>
           {range ? <StepTitleNumber>{range}</StepTitleNumber> : t("No estimate")}
         </StepTitle>
         <StepDetail className="text-sm">
