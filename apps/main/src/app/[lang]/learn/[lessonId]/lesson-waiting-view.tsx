@@ -36,6 +36,7 @@ export function LessonWaitingView({
         exitHref={inSession ? "/today" : (origin ?? "/")}
         initialRequest={request}
         key={request.status === "writing" ? request.generationId : request.status}
+        kind={waiting?.status === "ready" ? waiting.state.kind : "lesson"}
         lesson={lesson}
         warmUp={warmUp}
       />

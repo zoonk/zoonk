@@ -8321,6 +8321,65 @@
         }
       }
     },
+    "This challenge is being written for you. It's usually ready in a few minutes." : {
+      "comment" : "A challenge being written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erstellen diese Herausforderung für dich. Sie ist meist in wenigen Minuten fertig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos preparando este desafío para ti. Suele estar listo en unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On prépare ce défi pour toi. Il est généralement prêt en quelques minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo preparando questa sfida per te. Di solito è pronta in pochi minuti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このチャレンジを作成しています。通常は数分で準備が整います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지를 만들고 있어요. 보통 몇 분이면 준비돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przygotowujemy dla ciebie to wyzwanie. Zwykle jest gotowe w ciągu kilku minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este desafio está sendo criado para você. Ele costuma ficar pronto em poucos minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu meydan okumayı senin için hazırlıyoruz. Genellikle birkaç dakika içinde hazır olur."
+          }
+        }
+      }
+    },
     "This lesson is being written for you. It's usually ready in a few minutes." : {
       "comment" : "A lesson being written",
       "localizations" : {
