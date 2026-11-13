@@ -16,32 +16,21 @@ export function ExampleCard({ className, ...props }: React.ComponentProps<"div">
   return <ProductWindow className={cn("p-5 sm:p-6", className)} {...props} />;
 }
 
-export async function ExampleCardHead({
-  aside,
-  detail,
-  title,
-}: {
-  aside?: ReactNode;
-  detail?: ReactNode;
-  title: string;
-}) {
+export async function ExampleCardHead({ detail, title }: { detail?: ReactNode; title: string }) {
   const t = await getExtracted();
 
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex min-w-0 flex-col gap-0.5">
-        <p className={cn(EXAMPLE_TITLE_CLASS, "text-pretty")}>{title}</p>
-        <p className="text-muted-foreground text-compact">
-          {t("Example")}
-          {detail && (
-            <>
-              {` · `}
-              {detail}
-            </>
-          )}
-        </p>
-      </div>
-      {aside}
+    <div className="flex min-w-0 flex-col gap-0.5">
+      <p className={cn(EXAMPLE_TITLE_CLASS, "text-pretty")}>{title}</p>
+      <p className="text-muted-foreground text-compact">
+        {t("Example")}
+        {detail && (
+          <>
+            {` · `}
+            {detail}
+          </>
+        )}
+      </p>
     </div>
   );
 }

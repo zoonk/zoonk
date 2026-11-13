@@ -14,14 +14,12 @@ import { getExampleSet } from "./landing-examples";
 
 const TITLE_ID = "faq-title";
 
-function emailLink(address: string) {
-  return function renderEmail() {
-    return (
-      <a className={DISCLOSURE_LINK_CLASS} href={`mailto:${address}`}>
-        {address}
-      </a>
-    );
-  };
+function renderHelpLink(chunks: React.ReactNode) {
+  return (
+    <Link className={DISCLOSURE_LINK_CLASS} href="/support">
+      {chunks}
+    </Link>
+  );
 }
 
 export async function HomeFaq() {
@@ -30,16 +28,11 @@ export async function HomeFaq() {
   const { exams } = await getExampleSet();
   const limits = getFreePlanLimits();
 
-  const email = t({
-    description: "Zoonk's support address; your language may have its own.",
-    message: "hello@zoonk.com",
-  });
-
   const questions = [
     {
       answer: t(
-        "Yes. You start free, no account needed. A free account has {goals, plural, one {one goal} other {up to # goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}} are free. No card needed.",
-        { days: limits.examPrepDays ?? 0, goals: limits.activeGoals ?? 0 },
+        "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month, for {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed.",
+        { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPerMonth ?? 0 },
       ),
       id: "free",
       question: t("Is Zoonk free?"),
@@ -48,7 +41,7 @@ export async function HomeFaq() {
       answer: (
         <>
           {t(
-            "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime.",
+            "Every lesson and every goal, with no monthly limit. For an exam, that's your whole plan up to exam day, with mock exams timed like the real one. You also get help whenever you're stuck and more speaking practice. You see your whole plan before you pay, and you can cancel anytime.",
           )}
           {space}
           <Link className={DISCLOSURE_LINK_CLASS} href="/pricing">
@@ -57,17 +50,14 @@ export async function HomeFaq() {
         </>
       ),
       id: "plus",
-      question: t({
-        description: "In Brazilian Portuguese: “O que o Plus tem a mais?”",
-        message: "What does Plus add?",
-      }),
+      question: t("What do I get if I subscribe?"),
     },
     {
       answer: t({
         description:
-          "“Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”",
+          "In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”",
         message:
-          "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”.",
+          "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it.",
       }),
       id: "trust",
       question: t({
@@ -124,7 +114,7 @@ export async function HomeFaq() {
             {t("Frequently asked questions")}
           </h2>
           <p className="text-muted-foreground mt-3.5">
-            {t.rich("Still have questions? Write to <email></email>.", { email: emailLink(email) })}
+            {t.rich("Still have questions? <link>Ask us</link>.", { link: renderHelpLink })}
           </p>
         </div>
 

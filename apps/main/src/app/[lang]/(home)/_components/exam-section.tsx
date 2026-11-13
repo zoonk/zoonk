@@ -1,4 +1,3 @@
-import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { KindMark } from "@zoonk/learn/kind-tile";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { getExtracted, getFormatter } from "next-intl/server";
@@ -32,12 +31,6 @@ async function MockResult() {
   return (
     <ExampleCard>
       <ExampleCardHead
-        aside={
-          <span className={CHIP_CLASS}>
-            <span aria-hidden="true">{t("Plus")}</span>
-            <span className="sr-only">{t("Available with Plus")}</span>
-          </span>
-        }
         detail={mock.details && keepNumbersWithUnits(mock.details)}
         title={t("Mock exam {number, number} · {name}", { name: mock.name, number: 2 })}
       />

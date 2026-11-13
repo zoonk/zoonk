@@ -81,15 +81,13 @@ export async function EveryPlan() {
           <EveryPlanItem
             mark={<Zu className="size-7" view="face" />}
             name={t({
-              description:
-                "Zu is the study buddy's name. In Brazilian Portuguese: “Travou? Pergunte para Zu”.",
-              message: "Stuck? Ask Zu",
+              description: "In Brazilian Portuguese: “Travou? É só perguntar”.",
+              message: "Stuck? Just ask",
             })}
             text={t({
               description:
-                "Zu is the study buddy's name; the question is the one the learner is answering. In Brazilian Portuguese: “Zu, seu parceiro de estudos, explica ali mesmo na questão, do jeito mais simples que você precisar.”",
-              message:
-                "Zu, your study buddy, explains right there in the question, as simply as you need.",
+                "The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na questão, do jeito mais simples que você precisar.”",
+              message: "We explain right there in the question, as simply as you need.",
             })}
           />
         </ul>
