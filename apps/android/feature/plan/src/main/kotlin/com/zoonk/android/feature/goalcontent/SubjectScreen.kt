@@ -48,6 +48,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.scaffold.LoadedPage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
@@ -103,57 +104,42 @@ internal fun SubjectContent(
     val state by syllabus.collectShown()
     val scope = rememberCoroutineScope()
 
-    when (val shown = state) {
-        is LoadState.Loaded -> {
-            val subject = shown.value.subjects.firstOrNull { it.key == subjectKey }
-            if (subject == null) {
-                PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-            } else {
-                val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
-                val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
-                SubjectPage(
-                    syllabus = shown.value,
-                    subject = subject,
-                    writes = writes.state.collectAsStateWithLifecycle().value,
-                    menu = menu,
-                    ask = ask,
-                    actions =
-                        SubjectActions(
-                            back = back,
-                            openChapter = { navigator.open(AppRoute.Chapter(it.toString())) },
-                            adjustPlan = { navigator.open(AppRoute.Plan()) },
-                            restore = writes::restore,
-                            setCadence = writes::setCadence,
-                            openFarTopic = { chapter ->
-                                chapter.skillId?.let {
-                                    farTopics.open(
-                                        FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
-                                    )
-                                }
-                            },
-                            openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
-                        ),
-                )
-                FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
-            }
-        }
-
-        is LoadState.Failed -> {
-            PageScaffold(onBack = back) { padding ->
-                if (shown.error == ApiError.NotFound) {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
-                } else {
-                    LoadFailedMessage(onRetry = { scope.launch { syllabus.refresh() } }, modifier = Modifier.padding(padding))
-                }
-            }
-        }
-
-        LoadState.Empty -> {
+    LoadedPage(
+        state,
+        onBack = back,
+        onRetry = { scope.launch { syllabus.refresh() } },
+        onGoHome = { navigator.showRoot(AppTab.Today) },
+    ) { value ->
+        val subject = value.subjects.firstOrNull { it.key == subjectKey }
+        if (subject == null) {
             PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-        }
-
-        LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
+        } else {
+            val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
+            val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
+            SubjectPage(
+                syllabus = value,
+                subject = subject,
+                writes = writes.state.collectAsStateWithLifecycle().value,
+                menu = menu,
+                ask = ask,
+                actions =
+                    SubjectActions(
+                        back = back,
+                        openChapter = { navigator.open(AppRoute.Chapter(it.toString())) },
+                        adjustPlan = { navigator.open(AppRoute.Plan()) },
+                        restore = writes::restore,
+                        setCadence = writes::setCadence,
+                        openFarTopic = { chapter ->
+                            chapter.skillId?.let {
+                                farTopics.open(
+                                    FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
+                                )
+                            }
+                        },
+                        openMindMaps = { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf { mindMaps },
+                    ),
+            )
+            FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
         }
     }
 }

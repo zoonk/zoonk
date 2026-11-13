@@ -31,7 +31,7 @@ import com.zoonk.android.feature.plan.planChangeOfficialDateLine
 import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput.Status as Decision
@@ -58,7 +58,7 @@ internal fun TutorPlanChange(
                         Modifier.weight(1f).semantics { heading() },
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    if (oneWeek) LabelChip(stringResource(R.string.tutor_plan_change_one_week))
+                    if (oneWeek) Eyebrow(stringResource(R.string.tutor_plan_change_one_week))
                 }
                 // A change that left the plan as it was steps back in the conversation.
                 Text(

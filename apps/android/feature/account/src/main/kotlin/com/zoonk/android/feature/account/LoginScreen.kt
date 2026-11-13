@@ -256,8 +256,6 @@ fun CodeEntry(
             stringResource(R.string.account_send_new_code),
             isWorking = work == SignInWork.Resend,
             onClick = signIn::resendCode,
-            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
-            trailingIcon = null,
         )
     } else {
         WorkingButton(stringResource(R.string.account_continue), isWorking = work == SignInWork.CheckCode, onClick = signIn::checkCode)
@@ -377,16 +375,12 @@ private fun WorkingButton(
     isWorking: Boolean,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = { ButtonIcon(R.drawable.ic_arrow_forward) },
 ) {
     Button(
         busy = isWorking,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         enabled = enabled,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
     ) { Text(text) }
 }
 

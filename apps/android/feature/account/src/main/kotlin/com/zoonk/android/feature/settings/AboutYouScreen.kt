@@ -61,7 +61,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.BeforeFold
-import com.zoonk.android.ui.scaffold.DockedActionBar
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
@@ -365,17 +365,7 @@ private fun ProfilePage(
                     }
                 }
                 if (bar != null) {
-                    DockedActionBar {
-                        Column(
-                            Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .widthIn(max = PAGE_WIDTH)
-                                .fillMaxWidth()
-                                .padding(horizontal = LIST_ITEM_INSET, vertical = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            content = bar,
-                        )
-                    }
+                    BottomBar(columnWidth = PAGE_WIDTH, content = bar)
                 }
             }
         }

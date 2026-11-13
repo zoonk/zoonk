@@ -63,6 +63,7 @@ import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SuggestedGoal
@@ -217,7 +218,7 @@ private fun WelcomeBack(
     padding: PaddingValues,
 ) {
     TodayPage(padding) {
-        TodayPageHeader(state = null, title = stringResource(R.string.today_welcome_back))
+        TodayPageHeader(stringResource(R.string.today_welcome_back))
         TodayStatusLine(
             icon = R.drawable.ic_explore,
             sentence = stringResource(R.string.today_suggested_goal_question, suggestion.title),
@@ -266,7 +267,7 @@ private fun FirstGoal(
         modifier = Modifier.padding(padding),
     ) { examplesBeside ->
         TodayPage(PaddingValues()) {
-            TodayPageHeader(state = null, title = stringResource(R.string.today_title))
+            TodayPageHeader(stringResource(R.string.today_title))
             if (explanation != null) ExplanationContinue(explanation, navigator)
             UnfinishedGoal(onboarding, navigator::open)
             GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = start)
@@ -331,7 +332,6 @@ private fun GoalAtRest(
     if (goal?.status == LearnerSummaryGoal.Status.COMPLETED) {
         TodayAtRest(
             padding = padding,
-            state = stringResource(R.string.today_finished),
             icon = R.drawable.ic_flag,
             sentence = stringResource(R.string.today_finished_goal, goal.displayName),
             clause = stringResource(R.string.today_finished_detail),
@@ -344,7 +344,6 @@ private fun GoalAtRest(
     TodayAtRest(
         padding = padding,
         banner = { UnfinishedGoal(app.onboarding, navigator::open) },
-        state = stringResource(R.string.today_paused),
         icon = R.drawable.ic_pause,
         sentence =
             goal?.let { stringResource(R.string.today_paused_goal, it.displayName) } ?: stringResource(R.string.today_paused_this_goal),
@@ -396,7 +395,6 @@ private fun Preparing(
     if (setup.value?.planRevealed == false && setup.value?.planReadiness?.ready == true) {
         TodayAtRest(
             padding = padding,
-            state = stringResource(R.string.onboarding_plan_ready),
             icon = R.drawable.ic_check,
             sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
             clause = stringResource(R.string.onboarding_plan_look_over),
@@ -412,7 +410,6 @@ private fun Preparing(
     if (setup.value?.questionsLeft == true) {
         TodayAtRest(
             padding = padding,
-            state = stringResource(R.string.today_setting_up),
             icon = R.drawable.ic_checklist,
             sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
             clause = stringResource(R.string.today_setting_up_detail),
@@ -437,7 +434,7 @@ private fun Preparing(
     val poll = pollWhile(active = setup.value?.questionsLeft == false, read = app.today.today, context = read.goalId)
 
     TodayPage(padding) {
-        TodayPageHeader(state = stringResource(R.string.today_building_plan), title = stringResource(R.string.today_title))
+        TodayPageHeader(stringResource(R.string.today_title))
         if (poll.stalled) PlanWaitStalled(poll.restart) else TodayPlanWait(read.displayName)
     }
 }
@@ -486,7 +483,6 @@ private fun TodayPlanWait(goalTitle: String) {
 private fun TodayAtRest(
     padding: PaddingValues,
     banner: @Composable () -> Unit = {},
-    state: String,
     @DrawableRes icon: Int,
     sentence: String,
     clause: String,
@@ -496,7 +492,7 @@ private fun TodayAtRest(
 ) {
     TodayPage(padding) {
         banner()
-        TodayPageHeader(state = state, title = stringResource(R.string.today_title))
+        TodayPageHeader(stringResource(R.string.today_title))
         TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
         detail()
         TodayActions(actions)
@@ -516,7 +512,7 @@ internal fun TodayPage(
             contentAlignment = Alignment.TopCenter,
         ) {
             Column(
-                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 24.dp),
+                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(pagePadding()),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 content()

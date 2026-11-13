@@ -203,7 +203,7 @@ private fun CourseHero(
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
+                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
                 }
             }
         }

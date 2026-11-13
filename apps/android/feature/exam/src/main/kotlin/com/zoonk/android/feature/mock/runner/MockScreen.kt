@@ -306,15 +306,11 @@ internal fun MockMainButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
 ) = Button(
     busy = busy,
     onClick = onClick,
     modifier = modifier.heightIn(min = 48.dp),
     enabled = enabled,
-    leadingIcon = leadingIcon,
-    trailingIcon = trailingIcon,
 ) { Text(text) }
 
 /** "Mock exam", or "Mock exam · Mathematics" for one subject. */
@@ -366,7 +362,6 @@ private fun MockTimeUp(
                     enabled = !run.pending,
                     onClick = viewModel::submitSection,
                     modifier = main,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
@@ -399,7 +394,6 @@ private fun MockHandedIn(
                     enabled = !run.pending,
                     onClick = viewModel::finish,
                     modifier = main,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
@@ -438,7 +432,6 @@ private fun MockBreak(
                     enabled = !run.pending,
                     onClick = viewModel::endBreak,
                     modifier = main,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 )
             }
         },

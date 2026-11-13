@@ -113,7 +113,6 @@ fun LessonWaitingScreen(
                             onClick = viewModel::start,
                             modifier = Modifier.fillMaxWidth(),
                             enabled = current == LessonWriting.NotStarted,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) { Text(stringResource(R.string.player_start_this_lesson)) }
                     }
                 }

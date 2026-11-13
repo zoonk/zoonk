@@ -453,7 +453,6 @@ private fun DuelActions(
                     busy = state.pending,
                     onClick = viewModel::next,
                     modifier = width,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 ) {
                     Text(stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next))
                 }
@@ -465,7 +464,6 @@ private fun DuelActions(
                     onClick = { state.selected?.let(viewModel::confirm) },
                     modifier = width,
                     enabled = state.selected != null,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.checkpoint_confirm)) }
             }
         }

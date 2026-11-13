@@ -90,7 +90,7 @@ import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -204,7 +204,7 @@ internal fun GuessHookView(
             if (part.showsScreen) {
                 Column(verticalArrangement = Arrangement.spacedBy(QUESTION_SPACING)) {
                     if (marking != null) IdeaStrip(marking.map, step.marks)
-                    LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
+                    Eyebrow(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
                 }
             }
         },
@@ -363,7 +363,7 @@ internal fun WorkedExampleView(
         if (part.showsScreen) {
             if (marking != null) IdeaStrip(marking.map, step.marks)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
+                Eyebrow(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
             TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marksTerms)
@@ -556,7 +556,7 @@ internal fun TypedAnswerView(
         if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
+                if (inOwnWords) Eyebrow(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
                 ContextText(typed.context)
                 LessonStepVisual(typed.visual)
                 QuestionText(typed.question)

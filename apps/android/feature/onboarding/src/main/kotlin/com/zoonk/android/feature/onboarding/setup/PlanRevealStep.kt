@@ -434,7 +434,6 @@ private fun ColumnScope.RevealBody(
                     busy = starting,
                     onClick = onStart,
                     modifier = Modifier.weight(2f),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) {
                     Text(
                         stringResource(if (started) R.string.onboarding_continue else R.string.onboarding_reveal_start),

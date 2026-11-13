@@ -65,7 +65,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
@@ -243,7 +243,7 @@ internal fun WebPlusPlan(
             )
             if (standalone && subscription.state != State.UNPAID) {
                 val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
-                LabelChip(stringResource(label))
+                Eyebrow(stringResource(label))
             }
         }
         val dateLine =
@@ -287,7 +287,7 @@ internal fun CurrentPlan(
                 Modifier.pageTitle(),
                 style = MaterialTheme.typography.headlineMedium,
             )
-            LabelChip(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
+            Eyebrow(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
         }
         dateLine(subscription)?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
@@ -534,7 +534,6 @@ private fun PlusPlanCard(
                         onClick = { offer?.let { onSubscribe?.invoke(it) } },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = offer != null && onSubscribe != null,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) { Text(stringResource(R.string.subscription_subscribe)) }
                 }
             }

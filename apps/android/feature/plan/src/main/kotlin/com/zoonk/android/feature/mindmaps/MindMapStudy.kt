@@ -359,8 +359,6 @@ internal fun MindMapStudy(
                         Button(
                             onClick = { next() },
                             modifier = main,
-                            leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_check) }) else null,
-                            trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
                         ) { Text(stringResource(if (last) R.string.mindmaps_done else R.string.mindmaps_next)) }
                     }
                 }

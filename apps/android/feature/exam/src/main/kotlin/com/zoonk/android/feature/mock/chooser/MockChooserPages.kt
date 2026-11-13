@@ -70,8 +70,8 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.DetailPage
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.mainActionWidth
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
@@ -112,7 +112,6 @@ internal fun PracticeChooser(
             onClick = { start() },
             modifier = modifier.focus(replacementFocus),
             enabled = option != null,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
         ) { Text(stringResource(R.string.mock_chooser_start)) }
     }
 
@@ -216,7 +215,7 @@ internal fun MockWriting(
                 kind = GenerationKind.MockQuestions,
                 run = run,
                 onRetry = onRetry,
-                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
+                modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
             ) {
                 // The exam's name stays over the title, so the title doesn't jump when Start is pressed.
                 Eyebrow(eyebrow)

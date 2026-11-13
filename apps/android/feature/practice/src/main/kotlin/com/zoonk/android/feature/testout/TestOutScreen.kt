@@ -323,7 +323,6 @@ private fun StartActions(
                     busy = ui.starting,
                     onClick = onStart,
                     modifier = width.focusRequester(replacementFocus),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) {
                     Text(stringResource(R.string.testout_start))
                 }

@@ -445,7 +445,7 @@ internal fun SandboxRunBar(
             if (hasRun) {
                 OutlinedButton(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
             } else {
-                Button(busy = isRunning, onClick = onRun, modifier = runModifier, leadingIcon = icon, content = content)
+                Button(busy = isRunning, onClick = onRun, modifier = runModifier, content = content)
             }
         }
         if (runtime.status == SandboxRuntimeStatus.Loading) {

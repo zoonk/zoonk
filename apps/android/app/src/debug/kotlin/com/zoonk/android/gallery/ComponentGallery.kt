@@ -90,7 +90,6 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.LevelBar
@@ -120,6 +119,7 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -306,7 +306,6 @@ private fun TypeRoles() {
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow("Tue, Nov 3 · ~376 days left")
         PageTitleRow("Today") { Readout("43 min left") }
         Text("Quantum physics from scratch", style = type.displaySmall)
         Text("Subjects", style = type.titleLarge)
@@ -411,8 +410,8 @@ private fun MaterialComponents() {
 private fun BusyButtons() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) { Text("Start session") }
-            Button(onClick = {}, busy = true, trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) }) { Text("Continue") }
+            Button(onClick = {}, busy = true) { Text("Start session") }
+            Button(onClick = {}, busy = true) { Text("Continue") }
             OutlinedButton(
                 onClick = {},
                 busy = true,
@@ -427,7 +426,7 @@ private fun BusyButtons() {
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I'm not sure") }
-            Button(onClick = {}, enabled = false, focusableWhenDisabled = true, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+            Button(onClick = {}, enabled = false, focusableWhenDisabled = true) {
                 Text("Check")
             }
             OutlinedButton(onClick = {}, busy = true) { Text("Show more") }
@@ -479,10 +478,10 @@ private fun Navigation() {
 @Composable
 private fun Chips() {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        LabelChip("Plus")
-        LabelChip("1 week")
-        LabelChip("Focus")
-        LabelChip(text = formatMinutes(12, currentLocale()), icon = R.drawable.ic_timer)
+        Eyebrow("1 week")
+        Eyebrow("Focus")
+        SuccessEyebrow("Now you know")
+        Eyebrow(text = formatMinutes(12, currentLocale()), icon = R.drawable.ic_timer)
     }
 }
 

@@ -66,7 +66,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.GoalMindMap
@@ -243,7 +243,7 @@ internal fun MindMapsPage(
     PageScaffold(onBack = actions.back, title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             BeforeFold { beforeFold ->
-                LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
+                LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, pagePadding()) {
                     item(key = "hero", contentType = "hero") {
                         MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 })
                     }

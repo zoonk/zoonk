@@ -739,7 +739,6 @@ private fun ChallengeFooter(
                             busy = ui.starting,
                             onClick = vm::start,
                             modifier = width,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) { Text(stringResource(R.string.challenge_continue)) }
                     }
                 }
@@ -839,7 +838,6 @@ private fun StartActions(
             onClick = onStart,
             modifier = width,
             enabled = !ui.moving,
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
         ) {
             Text(stringResource(if (challenge.mock) R.string.challenge_mock_start else R.string.challenge_start))
         }

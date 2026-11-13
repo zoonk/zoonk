@@ -46,7 +46,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LocalStepHeading
@@ -310,7 +309,7 @@ private fun MainAction(
     if (placement || mistakes == 0) {
         Button(onClick = onContinue, modifier) { Text(stringResource(R.string.mock_result_continue)) }
     } else {
-        Button(onClick = onMistakes, modifier, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
+        Button(onClick = onMistakes, modifier) {
             Text(stringResource(R.string.mock_result_review_mistakes))
         }
     }

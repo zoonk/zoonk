@@ -116,7 +116,6 @@ private fun Profile(
             enabled = form.canSave && form.isChanged,
             busy = form.isSaving,
             modifier = Modifier.align(Alignment.End),
-            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
         ) {
             Text(stringResource(R.string.settings_save))
         }
