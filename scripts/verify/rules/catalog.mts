@@ -19,7 +19,7 @@ export const CATALOG_RULES = [
     question:
       'An action that leads to paying reads "Subscribe", and a sentence says "subscribe": never "See Plus", "See plans", "Get Plus" or "Upgrade".',
     role: "design",
-    text: /\b(?:see plus|see plans|get plus|try plus|upgrade)\b/iu,
+    text: /\b(?:see plus|see plans|get plus|try plus|go plus|view plans|upgrade)\b/iu,
   },
   {
     allowed: COMPARES_PLANS,

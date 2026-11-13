@@ -27,6 +27,7 @@ import {
 } from "./queries.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
+import { type RoleCapture, captureRoles, renderRoleSheets } from "./roles.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
@@ -54,6 +55,7 @@ const { positionals, values } = parseArgs({
     "no-prefetch": { default: false, type: "boolean" },
     out: { type: "string" },
     queries: { type: "string" },
+    roles: { default: false, type: "boolean" },
     schemes: { default: SCHEMES.join(","), type: "string" },
     soak: { type: "string" },
     throttle: { default: false, type: "boolean" },
@@ -147,6 +149,7 @@ const mode = navigationMode();
 const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
+const roles: RoleCapture[] = [];
 let soak: SoakReport | null = null;
 const renders: RenderReport[] = [];
 
@@ -163,7 +166,17 @@ try {
 
       // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
       if (navigationViewports.includes(viewport)) {
-        load.findings.push(...(await walkStates(target, { path, viewport })));
+        load.findings.push(
+          ...(await walkStates(target, {
+            capture: values.roles
+              ? async (page, state) => {
+                  roles.push(...(await captureRoles(page, { out, path, state, viewport })));
+                }
+              : undefined,
+            path,
+            viewport,
+          })),
+        );
       }
 
       const failing = load.findings.filter((finding) => finding.level === "fail").length;
@@ -216,6 +229,14 @@ try {
   sheets.push(
     ...(await renderSheets(browser, { baseline: baseline?.loads ?? [], loads })),
     ...(await renderNavigationSheet(browser, { navigations, out })),
+    ...(values.roles
+      ? await renderRoleSheets(browser, {
+          captures: roles,
+          out,
+          paths,
+          viewports: navigationViewports,
+        })
+      : []),
   );
 } finally {
   await browser.close();

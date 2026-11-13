@@ -2,6 +2,7 @@
 
 /** The control a key clicked, as the page describes it; null when the key clicked nothing. */
 export type Pressed = {
+  id: string | null;
   drawn: boolean;
   enter: string | null;
   keycap: boolean;
@@ -35,6 +36,7 @@ export function recordNextClick() {
     globalThis.zoonkPressed = control && {
       drawn: control.getClientRects().length > 0,
       enter: control instanceof HTMLElement ? (control.dataset.enter ?? null) : null,
+      id: control instanceof HTMLElement ? (control.dataset.zoonkKey ?? null) : null,
       keycap: [...control.querySelectorAll("[data-shortcut=main]")].some(
         (keycap) => keycap.getClientRects().length > 0,
       ),
@@ -69,12 +71,23 @@ export function readHooks() {
       (element) => element.getBoundingClientRect().width > 0,
     );
 
+  [...document.querySelectorAll("a, button, [role]")].forEach((control, index) => {
+    if (control instanceof HTMLElement) {
+      control.dataset.zoonkKey = `key-${index}`;
+    }
+  });
+
+  const identify = (element: Element) => ({
+    id: element instanceof HTMLElement ? (element.dataset.zoonkKey ?? "") : "",
+    label: text(element),
+  });
+
   const mainActions = [...document.querySelectorAll("[data-slot=button][data-variant=default]")];
 
   return {
     bound: [...document.querySelectorAll("[data-enter=bound]")]
       .filter((element) => drawn(element) && !element.matches(":disabled, [aria-disabled=true]"))
-      .map(text),
+      .map(identify),
     keycaps: [...document.querySelectorAll("[data-slot=shortcut-kbd][data-shortcut]")]
       .filter(drawn)
       .flatMap((keycap) => {
@@ -85,6 +98,7 @@ export function readHooks() {
               {
                 announced: control.getAttribute("aria-keyshortcuts"),
                 control: text(control),
+                id: control instanceof HTMLElement ? (control.dataset.zoonkKey ?? "") : "",
                 keycap: keycap.textContent.trim(),
                 name: keycap.dataset.shortcut ?? "",
               },

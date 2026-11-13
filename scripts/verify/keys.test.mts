@@ -20,7 +20,14 @@ const QUIET: KeyFacts = {
   sidebarsWithoutToggle: [],
 };
 
-const START = { drawn: true, enter: "bound", keycap: true, label: "Start", taskClose: false };
+const START = {
+  drawn: true,
+  enter: "bound",
+  id: "start",
+  keycap: true,
+  label: "Start",
+  taskClose: false,
+};
 
 function messages(facts: Partial<KeyFacts>) {
   return keyFindings({ ...QUIET, ...facts }).map(
@@ -29,10 +36,30 @@ function messages(facts: Partial<KeyFacts>) {
 }
 
 describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
+  it("distinguishes controls with the same label", () => {
+    const findings = messages({
+      enter: { bound: [{ id: "expected", label: "Start" }], pressed: START, unbuilt: [] },
+      keycaps: [
+        {
+          announced: "Enter",
+          expected: "Enter",
+          id: "expected",
+          label: "Start",
+          name: "main",
+          pressed: START,
+        },
+      ],
+    });
+
+    assert.equal(findings.length, 2);
+    assert.match(findings[0] ?? "", /Enter didn't press Start/u);
+    assert.match(findings[1] ?? "", /main key didn't press Start/u);
+  });
+
   it("says nothing for a page whose keys press what they show", () => {
     assert.deepEqual(
       messages({
-        enter: { bound: ["Start"], pressed: START, unbuilt: [] },
+        enter: { bound: [{ id: "start", label: "Start" }], pressed: START, unbuilt: [] },
         escape: {
           pressed: { ...START, enter: null, keycap: false, label: "Close", taskClose: true },
           task: true,
@@ -43,6 +70,7 @@ describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
           {
             announced: "F",
             expected: "F",
+            id: "start",
             label: "Flag",
             name: "flag",
             pressed: { ...START, label: "Flag" },
@@ -74,7 +102,10 @@ describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
     assert.deepEqual(
       messages({
         enter: {
-          bound: ["Start", "Skip"],
+          bound: [
+            { id: "start", label: "Start" },
+            { id: "skip", label: "Skip" },
+          ],
           pressed: { ...START, enter: null, label: "Skip" },
           unbuilt: ["Continue"],
         },
@@ -86,16 +117,26 @@ describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
       ],
     );
 
-    assert.deepEqual(messages({ enter: { bound: ["Start"], pressed: null, unbuilt: [] } }), [
-      "warn Behavior: A2 Enter: Enter didn't press Start, the screen's main action",
-    ]);
+    assert.deepEqual(
+      messages({ enter: { bound: [{ id: "start", label: "Start" }], pressed: null, unbuilt: [] } }),
+      ["warn Behavior: A2 Enter: Enter didn't press Start, the screen's main action"],
+    );
   });
 
   it("leads to a group arrows don't move through and a keycap whose key presses something else", () => {
     assert.deepEqual(
       messages({
         groups: [{ label: "Answers", moved: false, tabStops: 3 }],
-        keycaps: [{ announced: null, expected: "F", label: "Flag", name: "flag", pressed: null }],
+        keycaps: [
+          {
+            announced: null,
+            expected: "F",
+            id: "flag",
+            label: "Flag",
+            name: "flag",
+            pressed: null,
+          },
+        ],
       }),
       [
         "warn Behavior: A5 arrows: ↓ didn't move to the next option in Answers",

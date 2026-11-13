@@ -58,6 +58,7 @@ export async function readShortcuts(checkout: string): Promise<Shortcuts | null>
 }
 
 type Keycap = {
+  id: string;
   announced: string | null;
   expected: string;
   label: string;
@@ -66,7 +67,7 @@ type Keycap = {
 };
 
 export type KeyFacts = {
-  enter: { bound: string[]; pressed: Pressed; unbuilt: string[] };
+  enter: { bound: { id: string; label: string }[]; pressed: Pressed; unbuilt: string[] };
   escape: { pressed: Pressed; task: boolean; taskClose: boolean };
   groups: { label: string; moved: boolean; tabStops: number }[];
   keycaps: Keycap[];
@@ -100,11 +101,16 @@ function enterFindings({ bound, pressed, unbuilt }: KeyFacts["enter"]): Finding[
           ),
         ]
       : []),
-    ...(bound.length === 1 && pressed?.label !== only
-      ? [behavior("A2 Enter", `Enter didn't press ${only ?? ""}, the screen's main action`)]
+    ...(bound.length === 1 && pressed?.id !== only?.id
+      ? [behavior("A2 Enter", `Enter didn't press ${only?.label ?? ""}, the screen's main action`)]
       : []),
     ...(bound.length > 1
-      ? [behavior("A2 Enter", `two main actions answer Enter: ${bound.join(", ")}`)]
+      ? [
+          behavior(
+            "A2 Enter",
+            `two main actions answer Enter: ${bound.map((control) => control.label).join(", ")}`,
+          ),
+        ]
       : []),
     ...unbuilt.map((label) =>
       behavior("A2 Enter", `${label} is a main action drawn without the piece that binds Enter`),
@@ -114,7 +120,7 @@ function enterFindings({ bound, pressed, unbuilt }: KeyFacts["enter"]): Finding[
 
 function keycapFindings(keycap: Keycap): Finding[] {
   return [
-    ...(keycap.pressed?.label === keycap.label
+    ...(keycap.pressed?.id === keycap.id
       ? []
       : [
           behavior(
@@ -260,9 +266,9 @@ async function pressGroups(page: Page) {
     const options = group.locator("[role=radio]:not([disabled], [aria-disabled=true])");
 
     if ((await options.count()) >= 2) {
-      const tabStops = await group.locator("[role=radio][tabindex='0']").count();
       await options.first().focus();
       await page.keyboard.press("ArrowDown");
+      const tabStops = await group.locator("[role=radio][tabindex='0']").count();
 
       facts.push({
         label: (await group.getAttribute("aria-label")) ?? "a pick-one group",
@@ -284,6 +290,7 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
     if (page.url() !== url) {
       await page.goto(url);
       await page.waitForLoadState("networkidle").catch(() => null);
+      await page.evaluate(readHooks);
     }
   }
 
@@ -295,7 +302,15 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
   const escape = await press(page, keyOf(shortcuts, "leave"));
   await back();
   const groups = await pressGroups(page);
-  await back();
+
+  if (groups.length > 0) {
+    await page.goto(url);
+    await page.waitForLoadState("networkidle").catch(() => null);
+    await page.evaluate(readHooks);
+  } else {
+    await back();
+  }
+
   const keycaps: Keycap[] = [];
 
   for (const keycap of hooks.keycaps) {
@@ -308,6 +323,7 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
       keycaps.push({
         announced: keycap.announced,
         expected: digit ? keycap.keycap : shortcuts.shortcutKeys(keycap.name),
+        id: keycap.id,
         label: keycap.control,
         name: keycap.name,
         pressed: await press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name)),

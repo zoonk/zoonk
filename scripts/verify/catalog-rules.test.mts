@@ -34,6 +34,8 @@ describe("the founder's catalog rules", () => {
       ['msgid "That\'s all for today, or get Plus to keep going now."'],
       ['msgid "Upgrade"'],
       ['msgid "See plans"'],
+      ['msgid "GO PLUS"'],
+      ['msgid "View plans"'],
       ['msgid "Subscribe"'],
     ]);
 
@@ -44,6 +46,8 @@ describe("the founder's catalog rules", () => {
         "subscribe That's all for today, or get Plus to keep going now.",
         "subscribe Upgrade",
         "subscribe See plans",
+        "subscribe GO PLUS",
+        "subscribe View plans",
       ],
     );
   });

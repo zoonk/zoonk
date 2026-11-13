@@ -13,6 +13,7 @@ import {
   pickedIds,
   snapshotLayout,
 } from "./states-probe.mts";
+import { holdStill, settle } from "./states-wait.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { VIEWPORTS, type ViewportName } from "./viewports.mts";
 
@@ -28,11 +29,10 @@ const LISTED = 3;
 /** A field's checks can wait for a pause in typing. */
 const FIELD_SETTLE_MS = 700;
 const STEP_SETTLE_MS = 300;
-const TRANSITION_CAP_MS = 800;
 const ACT_TIMEOUT_MS = 2000;
-const STILL_MS = 500;
-const STILL_TRIES = 8;
-const OVERLAY = "[role=dialog]:visible, [role=menu]:visible, [role=listbox]:visible";
+
+const OVERLAY =
+  "[role=dialog]:visible, [role=alertdialog]:visible, [role=menu]:visible, [role=listbox]:visible";
 
 /** Only what reads: a write is aborted, so walking a page changes no data and starts no AI. */
 const READS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -114,42 +114,19 @@ export function stateLeads(steps: Step[]): Finding[] {
   });
 }
 
-async function settle(page: Page, ms: number) {
-  await page.waitForTimeout(ms);
-
-  await page.evaluate(
-    async (cap) =>
-      Promise.race([
-        Promise.all(
-          document
-            .getAnimations()
-            .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
-            .map(async (animation) => animation.finished.catch(() => null)),
-        ),
-        new Promise((resolve) => {
-          setTimeout(resolve, cap);
-        }),
-      ]),
-    TRANSITION_CAP_MS,
-  );
-}
-
-async function holdStill(page: Page) {
-  for (let tries = 0; tries < STILL_TRIES; tries += 1) {
-    await page.evaluate(snapshotLayout);
-    await page.waitForTimeout(STILL_MS);
-
-    const { moved: changed } = await page.evaluate(compareLayout, "");
-
-    if (changed.length === 0) {
-      return;
-    }
-  }
-}
-
 async function walk(
   page: Page,
-  { blocked, phone, url }: { blocked: () => number; phone: boolean; url: string },
+  {
+    blocked,
+    phone,
+    url,
+    capture,
+  }: {
+    blocked: () => number;
+    phone: boolean;
+    url: string;
+    capture?: (page: Page, state: string) => Promise<void>;
+  },
 ): Promise<{ panels: PanelFacts[]; steps: Step[] }> {
   const steps: Step[] = [];
   const panels: PanelFacts[] = [];
@@ -243,6 +220,7 @@ async function walk(
     );
 
     const panel = await inspectPanel(page, phone);
+    await capture?.(page, `opening ${action.id}`);
 
     // One level in: the choices and fields in what just opened, such as a dialog's options.
     if ((await page.locator(OVERLAY).count()) > 0) {
@@ -341,7 +319,15 @@ async function walk(
  */
 export async function walkStates(
   target: Target,
-  { path, viewport }: { path: string; viewport: ViewportName },
+  {
+    path,
+    viewport,
+    capture,
+  }: {
+    path: string;
+    viewport: ViewportName;
+    capture?: (page: Page, state: string) => Promise<void>;
+  },
 ): Promise<Finding[]> {
   const context = await target.browser.newContext({
     ...VIEWPORTS[viewport],
@@ -368,10 +354,18 @@ export async function walkStates(
     await page.goto(url, { timeout: LOAD_TIMEOUT_MS });
     await page.waitForLoadState("networkidle").catch(() => null);
     await holdStill(page);
+    await capture?.(page, "page");
     const { shortcuts } = target;
     const keys = viewport === "laptop" && shortcuts ? await pressKeys(page, url, shortcuts) : [];
     const phone = viewport === "phone";
-    const { panels, steps } = await walk(page, { blocked: () => blocked, phone, url: page.url() });
+
+    const { panels, steps } = await walk(page, {
+      blocked: () => blocked,
+      capture,
+      phone,
+      url: page.url(),
+    });
+
     return [...keys, ...panels.flatMap((panel) => panelFindings(panel)), ...stateLeads(steps)];
   } finally {
     await context.close();

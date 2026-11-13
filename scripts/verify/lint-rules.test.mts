@@ -138,3 +138,83 @@ describe("the DUP lane's piece rules", () => {
     );
   });
 });
+
+describe("the RULES lane's source checks", () => {
+  it("reports a hand-drawn back glyph without changing other import restrictions", () => {
+    assert.deepEqual(
+      lint("one-back-link", {
+        "bad.tsx": 'import { ArrowLeftIcon as Back, ChevronLeftIcon } from "lucide-react";',
+        "good.tsx":
+          'import { ChevronRightIcon } from "lucide-react";\nimport { BackLink } from "@zoonk/ui/components/page-top";',
+      }),
+      ["bad.tsx:1", "bad.tsx:1"],
+    );
+  });
+
+  it("reports only a badge whose only content is Plus", () => {
+    assert.deepEqual(
+      lint("no-plus-badge", {
+        "bad.tsx": [
+          "export const A = <Badge>Plus</Badge>;",
+          'export const B = <LabelChip>{t("Plus")}</LabelChip>;',
+          'export const C = <PlusMark>{"Plus"}</PlusMark>;',
+          'export const D = <Badge>{t({message: "Plus", description: "plan"})}</Badge>;',
+        ].join("\n"),
+        "good.tsx": [
+          "export const A = <Badge>Plus sign</Badge>;",
+          "export const B = <p>Plus</p>;",
+          "export const C = <Badge><PlusIcon />{count}</Badge>;",
+          "export const D = <Badge>{planName}</Badge>;",
+        ].join("\n"),
+      }),
+      ["bad.tsx:1", "bad.tsx:2", "bad.tsx:3", "bad.tsx:4"],
+    );
+  });
+
+  it("reports page-root and first-child top spacing without policing inner sections", () => {
+    assert.deepEqual(
+      lint("no-page-top-spacing", {
+        "bad.tsx": [
+          'export const A = <Page className="pt-4" />;',
+          'export const B = <DetailLayout className={cn("md:py-8", extra)} />;',
+          'export const C = <Page><header className="-mt-2" /></Page>;',
+          'export const D = <PageTop className="sm:mt-3" />;',
+        ].join("\n"),
+        "good.tsx": [
+          'export const A = <Page className="pb-8"><header /><section className="pt-4" /></Page>;',
+          'export const B = <Page><header><div className="pt-4" /></header></Page>;',
+          'export const C = <TaskFrame className="pt-4" />;',
+        ].join("\n"),
+      }),
+      ["bad.tsx:1", "bad.tsx:2", "bad.tsx:3", "bad.tsx:4"],
+    );
+  });
+
+  it("reports centered dialog imports while retaining full-screen and alert pieces", () => {
+    assert.deepEqual(
+      lint("one-overlay-piece", {
+        "bad.tsx": [
+          'import { DialogContent as Content } from "@zoonk/ui/components/dialog";',
+          'import { DialogHeader, DialogFooter } from "./dialog";',
+        ].join("\n"),
+        "good.tsx": [
+          'import { DialogPopup } from "@zoonk/ui/components/dialog";',
+          'import { AlertDialog } from "@zoonk/ui/components/alert-dialog";',
+          'import { Drawer } from "@zoonk/ui/components/drawer";',
+          'import { DialogContent } from "some-other-library";',
+        ].join("\n"),
+      }),
+      ["bad.tsx:1", "bad.tsx:2", "bad.tsx:2"],
+    );
+  });
+
+  it("reports the legacy eyebrow pieces", () => {
+    assert.deepEqual(
+      lint("one-eyebrow", {
+        "bad.tsx": "export const A = <PageEyebrow />;\nexport const B = <DetailEyebrow />;",
+        "good.tsx": "export const A = <Eyebrow />;\nexport const B = <PageTitle />;",
+      }),
+      ["bad.tsx:1", "bad.tsx:2"],
+    );
+  });
+});

@@ -72,6 +72,8 @@ Passing checks don't show the change working. Run the app and do what the change
 - Each load also reports its words, the text elements between the title and the main action, and its longest button label, and leads to a page past zoonk-design's Words budget (and, with `--baseline`, words up by more than 20%). Long-form and marketing pages report counts without leads ([measuring pages](references/pages.md)).
 - Look at each page's contact sheets first (`screens.png`: every screen in each scheme; `paints.png`: every paint of each load), then open a full screenshot or frame where something looks off. A change to speed or server cost reports the numbers before and after on the same setup.
 
+With `--roles`, the same write-blocked walk saves crops and comparison tables for shared roles across the given pages, including overlays it opens. Missing hooks are reported; differences are leads for the reader ([role sheets](references/pages.md#compare-shared-roles)).
+
 ## 5. Review it as a principal engineer, a security researcher and a designer
 
 Each role looks for what the others miss: the engineer for failure paths, data and cost; the security researcher for who else can reach the change and what it spends; the designer for what every screen looks like and how it's used. Their checklists say which of the tools above answers each question:

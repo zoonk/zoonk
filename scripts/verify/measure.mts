@@ -32,6 +32,7 @@ import {
   redactQuery,
   summarizePrefetches,
 } from "./requests.mts";
+import { readRoleFacts, roleFindings } from "./role-checks.mts";
 import { readCpuMs } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
@@ -125,6 +126,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
     production: !(await page.evaluate(isNextDev)),
+    roles: await page.evaluate(readRoleFacts),
     shifts: probe?.shifts ?? [],
     skeletonLastMs: probe?.skeletonFrames.at(-1) ?? null,
     skeletonSeenMs: probe?.skeletonFrames[0] ?? null,
@@ -184,7 +186,7 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, craft, timeOrigin: _, words: text, ...measured } = loaded;
+    const { bytes, craft, roles, timeOrigin: _, words: text, ...measured } = loaded;
     const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
@@ -215,6 +217,7 @@ export async function measureLoad(
         ...wordFindings(words),
         ...placeFindings(words),
         ...craftFindings(craft, target.typeScale),
+        ...roleFindings(roles),
       ],
       frames: paints,
       framesDirectory: `${name}-frames`,

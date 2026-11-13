@@ -177,9 +177,14 @@
     "zoonk/no-uncaught-transition-await": "error",
     // The founder's rulings, off until their pieces land and their offenders move
     // (build/TOOLS/OFFENDERS.md); switching one on is changing "off" to "error".
+    "zoonk/no-page-top-spacing": "off",
+    "zoonk/no-plus-badge": "off",
+    "zoonk/one-eyebrow": "off",
+    "zoonk/one-overlay-piece": "off",
     "zoonk/no-hand-made-fold": "off",
     "zoonk/no-hand-placed-icon-button": "off",
     "zoonk/one-answer-option": "off",
+    "zoonk/one-back-link": "off",
     "zoonk/one-glyph-button": "off",
     "zoonk/one-question-action-bar": "off",
     "zoonk/one-question-title": "off",
@@ -187,37 +192,6 @@
     "zoonk/tailwind-canonical-classes": "error"
   },
   "overrides": [
-    {
-      // L2: off until every back link is `BackLink` (build/TOOLS/OFFENDERS.md); restates the
-      // root's paths, since an override's options replace them.
-      "files": ["apps/*/src/**", "packages/learn/src/**", "packages/player/src/**"],
-      "rules": {
-        "eslint/no-restricted-imports": [
-          "off",
-          {
-            "paths": [
-              {
-                "name": "next-intl",
-                "importNames": ["useLocale"],
-                "allowTypeImports": true,
-                "message": "Use useAppLocale from @zoonk/learn/locale for routing and content. next-intl's locale is for formatting."
-              },
-              {
-                "name": "next-intl/server",
-                "importNames": ["getLocale"],
-                "allowTypeImports": true,
-                "message": "Use getAppLocale from @/i18n/locale for routing and content. next-intl's locale is for formatting."
-              },
-              {
-                "name": "lucide-react",
-                "importNames": ["ArrowLeftIcon", "ChevronLeftIcon"],
-                "message": "Back is `BackLink` from @zoonk/ui/components/page-top: a chevron and the name of the page it goes back to, the same on every page. A task keeps its ✕."
-              }
-            ]
-          }
-        ]
-      }
-    },
     {
       "files": ["apps/*/src/i18n/locale.ts", "packages/learn/src/_utils/locale.ts"],
       "rules": { "eslint/no-restricted-imports": "off" }
@@ -357,6 +331,14 @@
     {
       "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": { "zoonk/no-hardcoded-aria-label": "error" }
+    },
+    {
+      "files": ["packages/ui/src/**"],
+      "rules": {
+        "zoonk/no-page-top-spacing": "off",
+        "zoonk/one-back-link": "off",
+        "zoonk/one-overlay-piece": "off"
+      }
     },
     {
       "files": ["packages/ui/src/**", "packages/oxlint-plugin/**"],
