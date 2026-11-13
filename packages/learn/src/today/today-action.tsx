@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";

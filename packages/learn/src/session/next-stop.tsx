@@ -2,7 +2,7 @@
 
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { CircleStopIcon, PlayIcon } from "lucide-react";
+import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
