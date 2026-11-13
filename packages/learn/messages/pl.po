@@ -1389,36 +1389,6 @@ msgid "Round"
 msgstr "Okrągłe"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "EG5RcY"
-msgid "Star glasses"
-msgstr "Okulary w kształcie gwiazd"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zDRNy5"
-msgid "Aviator glasses"
-msgstr "Okulary pilotki"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "4k0N-w"
-msgid "Cat-eye glasses"
-msgstr "Okulary typu kocie oczy"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "kkaEy0"
-msgid "Retro glasses"
-msgstr "Okulary retro"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "gFpH0q"
-msgid "A monocle"
-msgstr "Monokl"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "AwxE2b"
-msgid "Round glasses"
-msgstr "Okrągłe okulary"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "bg3OJE"
 msgid "Win your first phase challenge"
 msgstr "Wygraj swoje pierwsze wyzwanie etapu"

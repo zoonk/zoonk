@@ -1389,36 +1389,6 @@ msgid "Round"
 msgstr "Round"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "EG5RcY"
-msgid "Star glasses"
-msgstr "Star glasses"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zDRNy5"
-msgid "Aviator glasses"
-msgstr "Aviator glasses"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "4k0N-w"
-msgid "Cat-eye glasses"
-msgstr "Cat-eye glasses"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "kkaEy0"
-msgid "Retro glasses"
-msgstr "Retro glasses"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "gFpH0q"
-msgid "A monocle"
-msgstr "A monocle"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "AwxE2b"
-msgid "Round glasses"
-msgstr "Round glasses"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "bg3OJE"
 msgid "Win your first phase challenge"
 msgstr "Win your first phase challenge"

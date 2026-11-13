@@ -1389,36 +1389,6 @@ msgid "Round"
 msgstr "Redondo"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "EG5RcY"
-msgid "Star glasses"
-msgstr "Óculos de estrela"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zDRNy5"
-msgid "Aviator glasses"
-msgstr "Óculos aviador"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "4k0N-w"
-msgid "Cat-eye glasses"
-msgstr "Óculos gatinho"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "kkaEy0"
-msgid "Retro glasses"
-msgstr "Óculos retrô"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "gFpH0q"
-msgid "A monocle"
-msgstr "Um monóculo"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "AwxE2b"
-msgid "Round glasses"
-msgstr "Óculos redondos"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "bg3OJE"
 msgid "Win your first phase challenge"
 msgstr "Vença seu primeiro desafio da fase"
