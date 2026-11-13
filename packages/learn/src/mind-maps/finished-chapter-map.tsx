@@ -115,7 +115,7 @@ function ReadChapterMap({
   }
 
   return (
-    <section aria-labelledby={labelId} className="flex flex-col gap-2" data-slot="finished-chapter">
+    <section aria-labelledby={labelId} className="flex flex-col gap-1" data-slot="finished-chapter">
       <PageSectionLabel id={labelId}>{t("Chapter finished")}</PageSectionLabel>
       {view === null && <RowSkeleton title={chapter.title} />}
       {view === "unreachable" && <Unreachable onRetry={onRetry} title={chapter.title} />}

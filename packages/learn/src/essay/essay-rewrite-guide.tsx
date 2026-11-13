@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { Callout } from "../_components/callout";
 import { PageSectionTitle } from "../_components/page";
 import { useEssayScreen } from "./essay-context";
-import { CriteriaRows } from "./essay-feedback";
+import { CriteriaRows } from "./essay-criteria-rows";
 import { useCriterionName } from "./essay-labels";
 import { rewriteStep } from "./essay-rewrite-step";
 
@@ -29,7 +29,7 @@ export function CriteriaInView({ headed = false }: { headed?: boolean }) {
           message: "Your last grade",
         })}
       </PageSectionTitle>
-      <CriteriaRows grade={grade} rubric={essay.rubric} />
+      <CriteriaRows grade={grade} meter={false} rubric={essay.rubric} />
     </section>
   );
 }
@@ -69,7 +69,12 @@ export function RewriteGuide({ onSeeGrade }: { onSeeGrade: () => void }) {
         {step.kind === "fullMarks" && (
           <p>{t("Every criterion has full marks in this estimate.")}</p>
         )}
-        <Button className="mt-1 self-start" onClick={onSeeGrade} size="sm" variant="outline">
+        <Button
+          className="text-foreground mt-1 self-start"
+          onClick={onSeeGrade}
+          size="sm"
+          variant="outline"
+        >
           {t("See the grade")}
         </Button>
       </div>

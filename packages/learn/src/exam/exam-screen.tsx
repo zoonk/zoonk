@@ -196,22 +196,18 @@ function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
   const main = isLastDays(exam.stage) ? null : mockAction;
 
   return (
-    <>
-      <DetailHero>
-        <DetailHeroText>
-          <ExamEyebrow />
-          <DetailTitle>{exam.examName}</DetailTitle>
-          <ExamFacts />
-        </DetailHeroText>
+    <DetailHero>
+      <DetailHeroText>
+        <ExamEyebrow />
+        <DetailTitle>{exam.examName}</DetailTitle>
+        <ExamFacts />
+      </DetailHeroText>
 
-        <DetailActions className={cn(!main && "max-lg:hidden")}>
-          {main}
-          <ReportProblemMenu className="max-lg:hidden" label={t("Exam options")} screen="exam" />
-        </DetailActions>
-      </DetailHero>
-
-      <ExamNoticeDay />
-    </>
+      <DetailActions className={cn(!main && "max-lg:hidden")}>
+        {main}
+        <ReportProblemMenu className="max-lg:hidden" label={t("Exam options")} screen="exam" />
+      </DetailActions>
+    </DetailHero>
   );
 }
 
@@ -301,6 +297,7 @@ export function ExamScreen({
         </DetailAside>
 
         <DetailContent>
+          <ExamNoticeDay />
           <ExamMoment />
           <ExamResultSection />
           <ExamMocks

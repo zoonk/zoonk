@@ -158,7 +158,7 @@ export function MockResultInsights() {
 
   return (
     <ResultSection rows title={t("What stood out")}>
-      <StepRows>
+      <StepRows className="[&>li:last-child]:pb-0">
         <TimingInsight result={result} />
         <ConsistencyInsight result={result} />
         <CalibrationInsight result={result} />

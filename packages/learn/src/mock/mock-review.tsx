@@ -98,7 +98,7 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
       </div>
       {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}
       {entry.context && <ItemText className="text-muted-foreground text-sm" text={entry.context} />}
-      <div className="font-medium">
+      <div className="text-base font-semibold">
         <ItemStem text={entry.question} />
       </div>
       {entry.outcome === "partial" && (

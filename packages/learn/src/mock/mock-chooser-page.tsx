@@ -98,14 +98,17 @@ function ChooserLine({ detail, status }: { detail: string; status: MockChooserSt
   );
 }
 
+/** `actionOnPhone` is false when the phone's bottom bar carries the action instead. */
 export function ChooserHeader({
   action,
+  actionOnPhone = true,
   detail,
   eyebrow,
   status,
   title,
 }: {
   action: ReactNode;
+  actionOnPhone?: boolean;
   detail: string;
   eyebrow: string;
   status: MockChooserStatus;
@@ -119,7 +122,7 @@ export function ChooserHeader({
         <ChooserLine detail={detail} status={status} />
       </DetailHeroText>
 
-      <DetailActions>{action}</DetailActions>
+      <DetailActions className={cn(!actionOnPhone && "max-md:hidden")}>{action}</DetailActions>
     </DetailHero>
   );
 }

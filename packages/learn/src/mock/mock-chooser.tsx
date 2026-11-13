@@ -142,13 +142,8 @@ function PracticeChooser({
       bar={bar}
     >
       <ChooserHeader
-        action={
-          open ? (
-            <div className="contents max-md:hidden">{start(true)}</div>
-          ) : (
-            <ChooserPlusLink href={hrefs.plus} />
-          )
-        }
+        action={open ? start(true) : <ChooserPlusLink href={hrefs.plus} />}
+        actionOnPhone={!open}
         detail={
           open
             ? t("Timed like the real exam. You see your result at the end.")

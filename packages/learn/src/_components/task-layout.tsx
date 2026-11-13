@@ -19,10 +19,13 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 
 export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3";
 
-/** A side stays at the bar's top, so a taller middle (a clock) never moves the close button. */
+/**
+ * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
+ * button, and a smaller button still centers on that line.
+ */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-w-fit flex-1 basis-0 justify-end self-start",
-  start: "flex min-w-fit flex-1 basis-0 justify-start self-start",
+  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start",
+  start: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start",
 } as const;
 
 export const BAR_PADDING_CLASS = "pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]";

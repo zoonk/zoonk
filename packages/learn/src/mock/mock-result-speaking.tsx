@@ -126,11 +126,11 @@ function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
             : noEstimate}
         </StepDetail>
         {paper.estimate.typed && hasPoints(paper.estimate) && (
-          <StepDetail>
+          <StepDetail className="text-sm">
             {t("You typed in at least one task, so the estimate leaves out how you sounded there.")}
           </StepDetail>
         )}
-        {rule && <StepDetail>{rule}</StepDetail>}
+        {rule && <StepDetail className="text-sm">{rule}</StepDetail>}
       </StepHeader>
       <SpeakingTaskRows tasks={paper.tasks} />
     </StepCard>
