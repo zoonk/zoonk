@@ -1,10 +1,14 @@
 "use client";
 
-import { dollarsCells } from "@/components/column-dollars";
 import { CaseCount, FailureCounts, KeyFlawCount } from "@/components/eval-counts";
 import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
 import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
-import { formatLatencyVerdict, formatPercent, formatSeconds } from "@/lib/format";
+import {
+  formatDollarsColumn,
+  formatLatencyVerdict,
+  formatPercent,
+  formatSeconds,
+} from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LeaderboardExport } from "./leaderboard-export";
@@ -90,7 +94,7 @@ function getColumns({
       },
     ),
     {
-      cell: dollarsCells(entries, (entry) => entry.costPer1000Runs),
+      cell: formatDollarsColumn(entries, (entry) => entry.costPer1000Runs),
       id: "cost",
       isNumber: true,
       label: "Cost / 1k runs",
@@ -171,7 +175,7 @@ function getMoreColumns(entries: LeaderboardEntry[], taskId: string): Column[] {
     ...shownWhen(
       entries.some((entry) => entry.judgeCost > 0),
       {
-        cell: dollarsCells(entries, (entry) => entry.judgeCost),
+        cell: formatDollarsColumn(entries, (entry) => entry.judgeCost),
         id: "judgeCost",
         isNumber: true,
         label: "Judge cost",

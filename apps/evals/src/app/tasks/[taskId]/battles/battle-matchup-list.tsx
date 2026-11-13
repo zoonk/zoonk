@@ -147,10 +147,10 @@ export function BattleMatchupList({
   const judgeViews = buildJudgeViews(matchups);
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 pt-4">
       {judgeViews.map((judge) => (
         <section key={judge.judgeId}>
-          <h2 className="mb-2 text-lg font-semibold">Judged by {judge.judgeName}</h2>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight">Judged by {judge.judgeName}</h2>
 
           <Accordion>
             {judge.models.map((model) => (

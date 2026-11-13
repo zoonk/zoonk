@@ -47,7 +47,7 @@ function UserInputSection({ userInput }: { userInput: Record<string, unknown> })
             <div className={cn("text-sm font-medium", PROSE_MEASURE_CLASS)} key={key}>
               <span className="text-muted-foreground">{key}:</span>{" "}
               {isMultiline ? (
-                <pre className="bg-muted mt-1 max-h-80 overflow-auto rounded-xl p-4 text-xs">
+                <pre className="bg-muted mt-1 max-h-80 overflow-y-auto rounded-xl p-4 text-xs wrap-break-word whitespace-pre-wrap">
                   {formatted}
                 </pre>
               ) : (
@@ -101,7 +101,9 @@ function OutputSection({ output }: { output: string }) {
         </Button>
       </div>
 
-      <pre className="bg-muted overflow-x-auto rounded-xl p-4 text-sm">{output}</pre>
+      <pre className="bg-muted rounded-xl p-4 text-sm wrap-break-word whitespace-pre-wrap">
+        {output}
+      </pre>
     </div>
   );
 }
@@ -160,7 +162,7 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
         </FoldRowTitle>
       </AccordionTrigger>
 
-      <AccordionContent className="flex flex-col gap-4 pt-4">
+      <AccordionContent className="flex flex-col gap-6 pt-4">
         <UserInputSection userInput={result.testCase.userInput} />
 
         <TokensSection inputTokens={result.inputTokens} outputTokens={result.outputTokens} />
@@ -188,7 +190,7 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
         </FoldRowTitle>
       </AccordionTrigger>
 
-      <AccordionContent className="flex flex-col gap-4 pt-4">
+      <AccordionContent className="flex flex-col gap-6 pt-4">
         <UserInputSection userInput={output.testCase.userInput} />
 
         <TokensSection inputTokens={output.inputTokens} outputTokens={output.outputTokens} />

@@ -138,24 +138,23 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-muted-foreground text-sm">{description}</p>
+      <p className="text-muted-foreground text-sm">{description}</p>
 
-        <div className="flex items-center gap-2">
-          <Button
-            aria-pressed={showsMore}
-            icon={<Columns3Icon />}
-            onClick={() => setShowsMore((shown) => !shown)}
-            size="sm"
-            variant="outline"
-          >
-            <SwapLabel
-              current={showsMore ? "Fewer columns" : "More columns"}
-              labels={COLUMN_LABELS}
-            />
-          </Button>
-          {renderActions?.(sortedEntries)}
-        </div>
+      {/* On the table's start edge, which stays put when "More columns" widens the table. */}
+      <div className="flex items-center gap-2">
+        <Button
+          aria-pressed={showsMore}
+          icon={<Columns3Icon />}
+          onClick={() => setShowsMore((shown) => !shown)}
+          size="sm"
+          variant="outline"
+        >
+          <SwapLabel
+            current={showsMore ? "Fewer columns" : "More columns"}
+            labels={COLUMN_LABELS}
+          />
+        </Button>
+        {renderActions?.(sortedEntries)}
       </div>
 
       {/* As wide as its columns, so "More columns" adds columns without moving the ones there. */}
