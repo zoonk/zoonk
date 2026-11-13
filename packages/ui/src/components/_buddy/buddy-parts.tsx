@@ -1,3 +1,5 @@
+import { type CharacterView } from "../_character/part";
+
 /** Ids inside an inline SVG are document-global, so each buddy prefixes its own. */
 export function buddyDefId(uid: string, name: string): string {
   return `${uid}-${name}`;
@@ -14,6 +16,7 @@ export type BuddyBodyProps = {
   glow: number;
   isNapping: boolean;
   uid: string;
+  view: CharacterView;
 };
 
 const SPARK_PATH = "M12 0 C13 8 16 11 24 12 C16 13 13 16 12 24 C11 16 8 13 0 12 C8 11 11 8 12 0Z";
@@ -58,12 +61,14 @@ export function BuddyHalo({
   cx,
   cy,
   glow,
+  grows,
   radius,
   uid,
 }: {
   cx: number;
   cy: number;
   glow: number;
+  grows: boolean;
   radius: number;
   uid: string;
 }) {
@@ -73,7 +78,7 @@ export function BuddyHalo({
         cx={cx}
         cy={cy}
         fill={buddyDefUrl(uid, "halo")}
-        r={radius * (1 + HALO_GROWTH * glow)}
+        r={grows ? radius * (1 + HALO_GROWTH * glow) : radius}
       />
     </g>
   );

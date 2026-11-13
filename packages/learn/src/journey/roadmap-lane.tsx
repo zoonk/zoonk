@@ -75,7 +75,7 @@ export function PhaseLane({ isLast, phase }: { isLast: boolean; phase: PlanPhase
 
       {typeof challengeShare === "number" && (
         <LaneMark beforeFlag={flag} end={challengeShare > PHASE_END_SHARE} share={challengeShare}>
-          <Trickster className="size-3.5" />
+          <Trickster className="size-3.5" view="face" />
         </LaneMark>
       )}
 
