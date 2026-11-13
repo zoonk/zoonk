@@ -3,12 +3,12 @@
 import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { Input } from "@zoonk/ui/components/input";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -18,6 +18,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { NameHint } from "../_components/name-hint";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 
 /** Resolves false when it didn't save. The profile name is the one every certificate shows. */
 export type SaveCertificateName = (name: string) => Promise<boolean>;
@@ -161,46 +162,41 @@ function NameDialogForm({
 
   return (
     <form
-      className="flex flex-col gap-4"
+      className="contents"
       onSubmit={(event) => {
         event.preventDefault();
         submit(name);
       }}
     >
-      <label className="sr-only" htmlFor={`${id}-name`}>
-        {t("Name on your certificates")}
-      </label>
-      <Input
-        aria-describedby={`${id}-hint`}
-        aria-invalid={isTooLong}
-        autoComplete="name"
-        id={`${id}-name`}
-        onChange={(event) => setName(event.target.value)}
-        placeholder={t("Your full name")}
-        required
-        value={name}
-      />
+      <DrawerContent className="flex flex-col gap-2 pt-2">
+        <label className="sr-only" htmlFor={`${id}-name`}>
+          {t("Name on your certificates")}
+        </label>
+        <Input
+          aria-describedby={`${id}-hint`}
+          aria-invalid={isTooLong}
+          autoComplete="name"
+          id={`${id}-name`}
+          onChange={(event) => setName(event.target.value)}
+          placeholder={t("Your full name")}
+          required
+          value={name}
+        />
 
-      {/* The line is always there, so the buttons don't move when the name is too long. */}
-      <p className="text-muted-foreground -mt-2 text-xs leading-snug" id={`${id}-hint`}>
-        <NameHint isTooLong={isTooLong} />
-      </p>
+        {/* The line is always there, so the buttons don't move when the name is too long. */}
+        <p className="text-muted-foreground text-xs leading-snug" id={`${id}-hint`}>
+          <NameHint isTooLong={isTooLong} />
+        </p>
+      </DrawerContent>
 
-      <DialogFooter>
+      <DrawerFooter>
         <Button onClick={onClose} size="lg" type="button" variant="outline">
           {t("Cancel")}
         </Button>
-        <Button
-          busy={pending}
-          disabled={!canSave}
-          focusableWhenDisabled
-          icon={<CheckIcon aria-hidden="true" />}
-          size="lg"
-          type="submit"
-        >
+        <Button busy={pending} disabled={!canSave} focusableWhenDisabled size="lg" type="submit">
           {t("Save")}
         </Button>
-      </DialogFooter>
+      </DrawerFooter>
     </form>
   );
 }
@@ -219,14 +215,14 @@ export function CertificateNameDialog({
   const t = useExtracted();
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent closeLabel={t("Close")}>
-        <DialogHeader>
-          <DialogTitle>{t("Name on your certificates")}</DialogTitle>
-        </DialogHeader>
+    <Drawer onOpenChange={onOpenChange} open={open}>
+      <DrawerPopup>
+        <SheetHeader>
+          <DrawerTitle>{t("Name on your certificates")}</DrawerTitle>
+        </SheetHeader>
 
         <NameDialogForm current={current} onClose={() => onOpenChange(false)} save={save} />
-      </DialogContent>
-    </Dialog>
+      </DrawerPopup>
+    </Drawer>
   );
 }

@@ -2,20 +2,21 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { Input } from "@zoonk/ui/components/input";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { SheetHeader } from "./sheet-header";
 
 /**
- * A dialog that edits one text: a title, an optional line, one field, Cancel and Save. Save stays
+ * A sheet that edits one text: a title, an optional line, one field, Cancel and Save. Save stays
  * off until the text is there and differs from `value`.
  */
 export function EditTextDialog({
@@ -49,7 +50,7 @@ export function EditTextDialog({
   const Field = multiline ? Textarea : Input;
 
   return (
-    <Dialog
+    <Drawer
       onOpenChange={(open) => {
         if (!open) {
           onClose();
@@ -57,41 +58,43 @@ export function EditTextDialog({
       }}
       open
     >
-      <DialogContent closeLabel={t("Close")}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
-        </DialogHeader>
-
+      <DrawerPopup>
         <form
-          className="flex flex-col gap-4"
+          className="contents"
           onSubmit={(event) => {
             event.preventDefault();
             onSave(trimmed);
           }}
         >
-          <label className="sr-only" htmlFor={fieldId}>
-            {label}
-          </label>
-          <Field
-            autoComplete="off"
-            id={fieldId}
-            maxLength={maxLength}
-            onChange={(event) => setText(event.target.value)}
-            placeholder={placeholder}
-            value={text}
-          />
+          <SheetHeader>
+            <DrawerTitle>{title}</DrawerTitle>
+            {description && <DrawerDescription>{description}</DrawerDescription>}
+          </SheetHeader>
 
-          <DialogFooter>
+          <DrawerContent className="pt-2">
+            <label className="sr-only" htmlFor={fieldId}>
+              {label}
+            </label>
+            <Field
+              autoComplete="off"
+              id={fieldId}
+              maxLength={maxLength}
+              onChange={(event) => setText(event.target.value)}
+              placeholder={placeholder}
+              value={text}
+            />
+          </DrawerContent>
+
+          <DrawerFooter>
             <Button onClick={onClose} type="button" variant="outline">
               {t("Cancel")}
             </Button>
             <Button busy={isPending} disabled={!trimmed || trimmed === value} type="submit">
               {t("Save")}
             </Button>
-          </DialogFooter>
+          </DrawerFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DrawerPopup>
+    </Drawer>
   );
 }
