@@ -14,11 +14,6 @@ function asksWords(reason: LanguageReason | null): boolean {
   return reason === "certificate" || reason === "other";
 }
 
-/** The field sits inside the reasons' radio group, whose arrow keys would move off it. */
-function keepKeys(event: React.KeyboardEvent<HTMLInputElement>) {
-  event.stopPropagation();
-}
-
 function ReasonWords({
   onChange,
   reason,
@@ -31,14 +26,11 @@ function ReasonWords({
   const t = useExtracted();
 
   return (
-    <div className="py-3 pl-8">
-      <TextField
-        label={reason === "certificate" ? t("Which one?") : t("In your own words")}
-        onChange={onChange}
-        onKeyDown={keepKeys}
-        value={value}
-      />
-    </div>
+    <TextField
+      label={reason === "certificate" ? t("Which certificate?") : t("In your own words")}
+      onChange={onChange}
+      value={value}
+    />
   );
 }
 

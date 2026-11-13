@@ -127,14 +127,13 @@ function ScheduleWeek({ minutes, week }: { minutes: number; week: Schedule["week
     <div className="flex flex-col gap-3">
       <WeekdayToggles days={week.days} onChange={week.setDays} />
 
-      {week.studiesOnWeekends && (
-        <WeekendMinutes
-          checked={week.weekendOn}
-          minutes={week.weekendPicked ?? minutes}
-          onChange={week.setWeekendPicked}
-          onCheckedChange={week.setWeekendOn}
-        />
-      )}
+      <WeekendMinutes
+        checked={week.weekendOn}
+        disabled={!week.studiesOnWeekends}
+        minutes={week.weekendPicked ?? minutes}
+        onChange={week.setWeekendPicked}
+        onCheckedChange={week.setWeekendOn}
+      />
     </div>
   );
 }

@@ -26,7 +26,6 @@ import {
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
-import { PlanStartNoticeSlot } from "./plan-start-notice";
 import { TypedAnswerField } from "./typed-answer-field";
 
 function useQuestionChoices({
@@ -107,7 +106,6 @@ function toAnswer({
 
 type PlacementControl = "confirm" | "dontKnow" | "stop";
 
-/** Pinned to the screen's bottom, as a lesson's are, so answering never needs a scroll. */
 function PlacementActions({
   canConfirm,
   dontKnowLabel,
@@ -128,8 +126,7 @@ function PlacementActions({
   const busy = pending ? pressed : null;
 
   return (
-    <div className="flex flex-col gap-2">
-      <PlanStartNoticeSlot />
+    <>
       {failures > 0 && !pending && <AnswersSaveError failures={failures} />}
 
       <QuestionActions>
@@ -143,7 +140,7 @@ function PlacementActions({
           onPress={onConfirm}
         />
       </QuestionActions>
-    </div>
+    </>
   );
 }
 

@@ -57,11 +57,13 @@ export function WeekdayToggles({
 
 export function WeekendMinutes({
   checked,
+  disabled,
   minutes,
   onChange,
   onCheckedChange,
 }: {
   checked: boolean;
+  disabled: boolean;
   minutes: number;
   onChange: (minutes: number) => void;
   onCheckedChange: (checked: boolean) => void;
@@ -72,6 +74,7 @@ export function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
+      disabled={disabled}
       onCheckedChange={onCheckedChange}
     >
       <TimeSelect label={t("Time on weekends")} onChange={onChange} value={minutes} />

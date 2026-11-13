@@ -256,10 +256,6 @@ function WeekendMinutes({
   const current = shape.weekend ?? shape.weekdays;
   const weekend = useTappedChoice(current);
 
-  if (!shape.canDiffer) {
-    return null;
-  }
-
   const setWeekend = (minutes: number) =>
     change(
       [{ kind: "setWeekdayMinutes", minutes, weekdays: shape.weekendDays }],
@@ -270,6 +266,7 @@ function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
+      disabled={!shape.canDiffer}
       // Switched off, the weekend takes the weekdays' time: wait for a change still saving, so it
       // takes the time that change sets rather than the one before it.
       readOnly={isPending}

@@ -91,19 +91,17 @@ export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: 
   const status = draft.exclusive ?? draft.picks[0] ?? null;
 
   const jobField = (
-    <div className="pb-3 pl-1">
-      <TextField
-        autoFocus={false}
-        description={
-          jobPrefill && draft.text === jobPrefill ? t("From your earlier answer") : undefined
-        }
-        label={t("Your job (optional)")}
-        maxLength={MAX_PROFILE_JOB_LENGTH}
-        onChange={(text) => setText(props, text)}
-        placeholder={t("E.g., software engineer, nurse")}
-        value={draft.text}
-      />
-    </div>
+    <TextField
+      autoFocus={false}
+      description={
+        jobPrefill && draft.text === jobPrefill ? t("From your earlier answer") : undefined
+      }
+      label={t("Your job (optional)")}
+      maxLength={MAX_PROFILE_JOB_LENGTH}
+      onChange={(text) => setText(props, text)}
+      placeholder={t("E.g., software engineer, nurse")}
+      value={draft.text}
+    />
   );
 
   return (
