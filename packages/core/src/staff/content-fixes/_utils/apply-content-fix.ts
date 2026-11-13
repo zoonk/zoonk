@@ -12,7 +12,10 @@ import {
   getSkillCacheTag,
   getSourceCacheTag,
 } from "../../../cache/tags";
-import { lockPlanSourceWrite } from "../../../library/_utils/plan-input-write";
+import {
+  lockPlanBlueprintWrite,
+  lockPlanSourceWrite,
+} from "../../../library/_utils/plan-input-write";
 import { getChapterCacheTags } from "../../../library/chapters/chapter-cache-tags";
 import { type StoredChange } from "../contract";
 import { type FixContext } from "../handlers/fix-handler";
@@ -23,8 +26,10 @@ const UNIT_TABLES = {
   chapter: sql`library_chapters`,
   course: sql`courses`,
   examBlueprint: sql`exam_blueprints`,
+  examSkillGraph: sql`exam_skill_graphs`,
   item: sql`items`,
   itemSet: sql`item_sets`,
+  languageSkillGraph: sql`language_skill_graphs`,
   lesson: sql`library_lessons`,
   levelTest: sql`language_level_tests`,
   mediaAsset: sql`media_assets`,
@@ -41,7 +46,13 @@ export async function lockFixRows(
   tx: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
 ): Promise<void> {
-  await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
+  const chapterCollections = changes.every(
+    (change) => change.model === "Chapter" && change.op === "setLessons",
+  );
+
+  if (!chapterCollections) {
+    await tx.$queryRaw`SELECT id FROM ${UNIT_TABLES[unit.kind]} WHERE id = ${unit.id}::uuid FOR NO KEY UPDATE`;
+  }
 
   const rows = changes.map((change) => findStoredHandler(change).lockRows(change));
   const tables = [...new Map(rows.map((row) => [row.table.sql, row.table])).entries()];
@@ -61,6 +72,7 @@ export async function lockFixPlans(
   changes: readonly StoredChange[],
 ): Promise<void> {
   const roots = changes.map((change) => findStoredHandler(change).planRoots(change));
+  const courseIds = [...new Set(roots.flatMap((root) => root.courseIds ?? []))];
   const itemIds = [...new Set(roots.flatMap((root) => root.itemIds ?? []))];
   const chapterIds = [...new Set(roots.flatMap((root) => root.chapterIds ?? []))];
   const lessonIds = [...new Set(roots.flatMap((root) => root.lessonIds ?? []))];
@@ -69,6 +81,7 @@ export async function lockFixPlans(
   const blueprintIds = roots.flatMap((root) => root.blueprintIds ?? []);
 
   if (
+    courseIds.length === 0 &&
     itemIds.length === 0 &&
     chapterIds.length === 0 &&
     lessonIds.length === 0 &&
@@ -86,11 +99,19 @@ export async function lockFixPlans(
         })
       : [];
 
+  const [blueprintId] = blueprintIds;
+
+  if (blueprintId && changes.every((change) => change.model === "ExamSkillGraph")) {
+    await lockPlanBlueprintWrite(tx, blueprintId);
+    return;
+  }
+
   await lockPlanSourceWrite(tx, {
     blueprintIds: [
       ...new Set([...blueprintIds, ...items.flatMap((item) => item.examBlueprintId ?? [])]),
     ],
     chapterIds,
+    courseIds,
     lessonIds,
     skillIds: [...new Set([...skillIds, ...items.map((item) => item.skillId)])],
   });
@@ -153,6 +174,10 @@ async function courseCacheTags(courseId: string): Promise<string[]> {
 
 /** The cached reads in every app that show what a fix of `unit` changes. */
 export async function getFixCacheTags(unit: FixUnit): Promise<string[]> {
+  if (unit.kind === "examSkillGraph" || unit.kind === "languageSkillGraph") {
+    return [];
+  }
+
   if (unit.kind === "source") {
     const [steps, lessons, blueprints] = await Promise.all([
       prisma.step.findMany({

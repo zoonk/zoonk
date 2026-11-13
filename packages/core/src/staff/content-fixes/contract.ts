@@ -70,6 +70,9 @@ export const contentFixChangesSchema = z
 const screenModelSchema = z.enum(["Step", "StepVariant"]);
 
 const effectSchema = z.discriminatedUnion("kind", [
+  z.object({ id: idSchema, kind: z.literal("structureAddressKept") }),
+  z.object({ kind: z.literal("existingPlanGraphsKept") }),
+  z.object({ count: z.int(), kind: z.literal("optionPicturesUnlinked"), stepId: idSchema }),
   z.object({ id: idSchema, kind: z.literal("itemSetReplaced"), replacementId: idSchema }),
   z.object({ id: idSchema, kind: z.literal("itemSetRestored") }),
   z.object({ chapterId: idSchema, kind: z.literal("mindMapRedrawOwed") }),

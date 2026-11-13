@@ -35,7 +35,10 @@ async function staleReasonFor(
   return isDeepStrictEqual(fresh.fix.changes, stored) ? null : STALE_CONTENT;
 }
 
-type Applied = { status: "applied"; unit: FixUnit } | { status: "stale" } | null;
+type Applied =
+  | { changes: StoredChange[]; status: "applied"; unit: FixUnit }
+  | { status: "stale" }
+  | null;
 
 /**
  * Claims one approved fix and applies it in its own transaction: it applies only while every row
@@ -83,6 +86,6 @@ export function applyApprovedFix({
     }
 
     await applyFixChanges(tx, { changes, context: { fixId, now }, unit });
-    return { status: "applied", unit };
+    return { changes, status: "applied", unit };
   });
 }

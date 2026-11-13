@@ -12,6 +12,7 @@ import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { applyApprovedFix } from "./_utils/apply-approved-fix";
 import { getFixCacheTags } from "./_utils/apply-content-fix";
 import { logContentFix } from "./_utils/content-fix-view";
+import { cacheUnits } from "./_utils/fix-cache-units";
 import { type FixUnit } from "./_utils/resolved-change";
 import { type StaffSessionRefusal, getStaffSessionUser } from "./_utils/staff-session";
 import { MAX_BATCH_FIXES, batchWhere } from "./batches";
@@ -141,7 +142,7 @@ async function applyOne({
   batchId: string;
   deciderId: string;
   fixId: string;
-}): Promise<FixUnit | null> {
+}): Promise<FixUnit[]> {
   const started = performance.now();
   const { data, error } = await safeAsync(() => applyApprovedFix({ deciderId, fixId }));
 
@@ -152,7 +153,11 @@ async function applyOne({
   const outcome = error ? "error" : (data?.status ?? "skipped");
   logContentFix({ action: "apply", actorUserId: deciderId, batchId, fixId, outcome, started });
 
-  return data?.status === "applied" ? data.unit : null;
+  if (data?.status !== "applied") {
+    return [];
+  }
+
+  return cacheUnits(data);
 }
 
 async function applyInOrder({
@@ -173,7 +178,7 @@ async function applyInOrder({
   const unit = await applyOne({ batchId, deciderId, fixId });
   const later = await applyInOrder({ batchId, deciderId, fixIds: rest });
 
-  return unit ? [unit, ...later] : later;
+  return [...unit, ...later];
 }
 
 /**

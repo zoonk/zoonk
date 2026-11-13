@@ -127,7 +127,7 @@ async function quoteProblem(
 function screenContents(changes: readonly StoredChange[]): Map<string, Json> {
   return new Map(
     changes.flatMap((change) =>
-      change.op === "set" && change.model === "Step"
+      (change.op === "set" || change.op === "setOptions") && change.model === "Step"
         ? change.fields.map((field) => [change.id, field.after] as const)
         : [],
     ),
@@ -205,6 +205,48 @@ async function deletedExplanationProblem(
     : null;
 }
 
+async function optionsVariantProblem(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<string | null> {
+  const steps = changes.filter((change) => change.model === "Step" && change.op === "setOptions");
+
+  const changedVariants = await db.stepVariant.findMany({
+    select: { stepId: true },
+    where: {
+      id: {
+        in: changes
+          .filter((change) => change.model === "StepVariant" && change.op === "setOptions")
+          .map((change) => change.id),
+      },
+    },
+  });
+
+  const stepIds = [
+    ...new Set([
+      ...steps.map((step) => step.id),
+      ...changedVariants.map((variant) => variant.stepId),
+    ]),
+  ];
+
+  const variants = await db.stepVariant.findMany({
+    select: { id: true },
+    where: { stepId: { in: stepIds } },
+  });
+
+  const missing = variants.find(
+    (variant) =>
+      !changes.some(
+        (change) =>
+          change.model === "StepVariant" && change.op === "setOptions" && change.id === variant.id,
+      ),
+  );
+
+  return missing
+    ? `setOptions must include every variant; include StepVariant ${missing.id}.`
+    : null;
+}
+
 async function unitProblem(
   db: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
@@ -218,7 +260,10 @@ async function unitProblem(
   }
 
   return (
-    (await lessonProblem(db, unit.id)) ??
+    (changes.every((change) => change.model === "Lesson" && change.op === "setSkills")
+      ? null
+      : await lessonProblem(db, unit.id)) ??
+    (await optionsVariantProblem(db, changes)) ??
     (await deletedExplanationProblem(db, changes)) ??
     (await numericScreenProblem(db, changes)) ??
     quoteProblem(db, { contents: screenContents(changes), lessonId: unit.id })
@@ -245,7 +290,12 @@ export async function prepareContentFix(
   const [first] = accepted;
   const units = new Set(accepted.map((change) => `${change.unit.kind}:${change.unit.id}`));
 
-  if (!first || units.size !== 1) {
+  const chapterCollections = accepted.every((change) => {
+    const stored = change.stored;
+    return isJsonObject(stored) && stored.model === "Chapter" && stored.op === "setLessons";
+  });
+
+  if (!first || (units.size !== 1 && !chapterCollections)) {
     return refuse(
       "One fix covers one lesson (with its screens), one chapter, one course, one practice question or one level test. Split it into one fix each.",
     );

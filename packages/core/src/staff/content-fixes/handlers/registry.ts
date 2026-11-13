@@ -9,6 +9,7 @@ import { levelTestSet } from "./level-test";
 import { mindMapSet } from "./mind-map";
 import { stepAttachPicture, stepDetachPicture } from "./pictures";
 import { explanationSet, itemRetire, itemUnretire } from "./practice";
+import { stepSetOptions, variantSetOptions } from "./screen-options";
 import { stepSet, variantSet } from "./screens";
 import {
   lessonSourcesSet,
@@ -18,6 +19,9 @@ import {
   stepSourcesSet,
 } from "./shared-sources";
 import { mediaAltSet, scenarioSet, skillSet, tutorAnswerSet, warmUpSet } from "./shared-text";
+import { examGraph, languageGraph } from "./structure-graphs";
+import { chapterLessons, courseChapters } from "./structure-placements";
+import { chapterSkills, lessonSkills, skillPrerequisites } from "./structure-skills";
 import { chapterSet, courseSet, lessonSet } from "./text-rows";
 
 /**
@@ -55,6 +59,15 @@ export const FIX_HANDLERS = [
   itemReplace,
   itemRestore,
   levelTestSet,
+  stepSetOptions,
+  variantSetOptions,
+  courseChapters,
+  chapterLessons,
+  chapterSkills,
+  lessonSkills,
+  skillPrerequisites,
+  examGraph,
+  languageGraph,
 ] as const;
 
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */
