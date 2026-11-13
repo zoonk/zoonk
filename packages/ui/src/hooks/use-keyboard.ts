@@ -160,7 +160,8 @@ export function useEnterClick<Target extends HTMLElement>({
 
   useEnterKey(
     () => {
-      if (!ref.current) {
+      // A control CSS hides at this width isn't the one on screen, so Enter isn't its to take.
+      if (!ref.current || ref.current.getClientRects().length === 0) {
         return false;
       }
 

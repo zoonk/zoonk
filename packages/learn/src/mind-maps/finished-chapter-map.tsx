@@ -16,7 +16,7 @@ import {
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
 import { type MindMapActions } from "./mind-map-actions";
-import { FINISH_ROW_CLASS, MindMapRow } from "./mind-map-row";
+import { MIND_MAP_ROW_CLASS, MindMapRow } from "./mind-map-row";
 
 type FinishedChapterMapProps = { chapter: FinishedChapter };
 
@@ -51,7 +51,7 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
   const t = useExtracted();
 
   return (
-    <div className={cn(LIST_ROW_CLASS, FINISH_ROW_CLASS)}>
+    <div className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
       <ListRowContent>
         <ListRowTitle>{title}</ListRowTitle>
         <ListRowDescription>
@@ -67,7 +67,7 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
 
 function RowSkeleton({ title }: { title: string }) {
   return (
-    <div aria-busy="true" className={cn(LIST_ROW_CLASS, FINISH_ROW_CLASS)}>
+    <div aria-busy="true" className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
       <ListRowLeading>
         <Skeleton className="size-4 rounded-sm" />
       </ListRowLeading>

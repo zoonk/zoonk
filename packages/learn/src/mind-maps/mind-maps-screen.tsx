@@ -274,6 +274,10 @@ export function MindMapsScreen({
   const current = tab ?? page.firstTab;
   const counts = countTabs(page);
 
+  const study = countDeck({ page, tab: current }) > 0 && (
+    <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
+  );
+
   return (
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
@@ -286,11 +290,7 @@ export function MindMapsScreen({
             <DetailTitle>{t("Mind maps")}</DetailTitle>
           </DetailHeroText>
 
-          <DetailActions>
-            {countDeck({ page, tab: current }) > 0 && (
-              <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
-            )}
-          </DetailActions>
+          <DetailActions className="max-md:hidden">{study}</DetailActions>
         </DetailHero>
 
         <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
@@ -306,6 +306,9 @@ export function MindMapsScreen({
             </PageTab>
           ))}
         </PageTabs>
+
+        {/* Under the tabs on a phone: a tab with no maps has no Study, and the tabs must not move for it. */}
+        <div className="flex flex-col empty:hidden md:hidden">{study}</div>
       </DetailAside>
 
       <DetailContent>

@@ -15,9 +15,10 @@ import {
 import { useExtracted, useFormatter } from "next-intl";
 import { TagBesideOrUnder } from "../_components/answer-option";
 import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
+import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
-import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { MistakeStimulus } from "./mistake-stimulus";
 import { type MistakeEntry } from "./mistakes-notebook";
@@ -198,9 +199,7 @@ export function MistakeEntryCard({
 
       <MistakeStimulus continued={continued} snapshot={snapshot} />
 
-      <div className="text-reading leading-snug font-medium lg:text-xl lg:leading-snug">
-        <ItemStem text={snapshot.question} />
-      </div>
+      <QuestionTitle heading={false} text={snapshot.question} />
 
       {(answer || correct) && (
         <div className="flex flex-col gap-2">

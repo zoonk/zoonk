@@ -31,8 +31,11 @@ import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use
 
 const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
 
-/** Room for a title and two lines, so the row a lesson's end reads in late moves nothing under it. */
-export const FINISH_ROW_CLASS = "min-h-16";
+/**
+ * Room for a title and the two lines a map being made shows, so pressing Create, or a row a
+ * lesson's end reads in late, moves nothing under it.
+ */
+export const MIND_MAP_ROW_CLASS = "min-h-19";
 
 function SlotMark({ shown }: { shown: MindMapShown }) {
   if (shown === "drawing" || shown === "writingLessons") {
@@ -149,7 +152,6 @@ export function MindMapRowView({
 
   // A lesson's end shows one row over "Up next", so it takes that row's mark and text edge.
   const alone = place === "finish";
-  const rowClass = alone ? FINISH_ROW_CLASS : undefined;
 
   const body = (
     <>
@@ -172,7 +174,7 @@ export function MindMapRowView({
     <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
       {ready && (
         <button
-          className={cn(LIST_ROW_INTERACTIVE_CLASS, rowClass)}
+          className={cn(LIST_ROW_INTERACTIVE_CLASS, MIND_MAP_ROW_CLASS)}
           onClick={() => setOpen(true)}
           type="button"
         >
@@ -182,7 +184,7 @@ export function MindMapRowView({
       )}
 
       {locked && (
-        <ListRowLink className={rowClass} href={routes.upgrade}>
+        <ListRowLink className={MIND_MAP_ROW_CLASS} href={routes.upgrade}>
           {body}
           <ListRowTrailing>
             <PlusMark className="font-sans" />
@@ -191,7 +193,7 @@ export function MindMapRowView({
       )}
 
       {!ready && !locked && (
-        <div className={cn(LIST_ROW_CLASS, rowClass)}>
+        <div className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
           {body}
           <span className="flex shrink-0 items-center empty:hidden">
             <RowAction

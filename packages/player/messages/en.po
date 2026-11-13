@@ -2541,7 +2541,6 @@ msgstr "Start the sound check"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/lesson-action-bar.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continue"
@@ -3360,56 +3359,6 @@ msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "Correct answer"
 
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Check"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "Confirm"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "I don't know yet"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "Next"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "Show the next step"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "See the answer"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "See how it went"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Start"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "QriCsD"
-msgid "Previous screen"
-msgstr "Previous screen"
-
 #: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
 msgctxt "ZpQ6us"
@@ -3493,10 +3442,20 @@ msgctxt "ZHEKO0"
 msgid "Lesson content"
 msgstr "Lesson content"
 
-#: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Screen options"
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "Confirm"
+
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "See how it went"
+
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Start"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
@@ -3762,11 +3721,6 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "You picked <strong>{answer}</strong> on “<question></question>”"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "More options"
-
-#: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
 msgid "Start from the first map"
 msgstr "Start from the first map"
@@ -3800,6 +3754,11 @@ msgstr "There are no maps to study here yet."
 msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "Previous map"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Next"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"

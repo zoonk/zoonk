@@ -134,8 +134,9 @@ function PracticeChooser({
     <ChooserLayout
       aside={
         <>
-          {option && <PickedMock option={option} severalDays={severalDays} />}
+          {/* What a pick shows comes last, so picking moves nothing above it. */}
           <ChooserLastMock mock={view.lastMock} resultHref={hrefs.mock} />
+          {option && <PickedMock option={option} severalDays={severalDays} />}
         </>
       }
       bar={bar}
