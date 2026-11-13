@@ -3,7 +3,7 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { FoldChevron } from "./collapsible";
 
 const accordionVariants = cva("flex w-full flex-col overflow-hidden", {
   defaultVariants: { variant: "default" },
@@ -50,21 +50,14 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         className={cn(
-          "group/accordion-trigger **:data-[slot=accordion-trigger-icon]:text-muted-foreground focus-visible:ring-ring/50 relative flex flex-1 items-start justify-between gap-6 rounded-lg border border-transparent p-4 text-left text-sm font-medium transition-colors outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4",
+          "focus-visible:ring-ring/50 relative flex flex-1 items-start justify-between gap-6 rounded-lg border border-transparent p-4 text-left text-sm font-medium transition-colors outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50",
           className,
         )}
         data-slot="accordion-trigger"
         {...props}
       >
         {children}
-        <ChevronDownIcon
-          className="edge pointer-events-none -me-(--edge-pull) shrink-0 self-center group-aria-expanded/accordion-trigger:hidden"
-          data-slot="accordion-trigger-icon"
-        />
-        <ChevronUpIcon
-          className="edge pointer-events-none -me-(--edge-pull) hidden shrink-0 self-center group-aria-expanded/accordion-trigger:inline"
-          data-slot="accordion-trigger-icon"
-        />
+        <FoldChevron />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );
