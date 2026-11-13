@@ -218,7 +218,7 @@ function TricksterPanel() {
         />
 
         <section className="flex flex-col gap-3">
-          <h3 className="text-reading font-semibold">{t("The Trickster's shield")}</h3>
+          <h3 className="text-sm font-medium">{t("The Trickster's shield")}</h3>
           <TricksterShieldPlates broken={score.correct} segments={checkpoint.passMark} />
           <TaskMeta
             facts={[
