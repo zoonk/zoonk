@@ -155,9 +155,11 @@ test.describe("Mocks whenever the learner wants", () => {
     await exam.getByText("The full exam", { exact: true }).click();
     await page.getByRole("button", { name: "Start" }).click();
 
-    const gate = page.getByRole("status").filter({ hasText: "Mock exams need a subscription" });
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Mock exams need a subscription" }),
+    ).toBeVisible();
 
-    await expect(gate.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: /^Subscribe/u })).toHaveAttribute(
       "href",
       /\/subscription$/u,
     );
