@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   type Actions,
   openPractice,
@@ -106,6 +106,38 @@ describe("exact standalone bank mistake practice", () => {
     await page.getByRole("button", { exact: true, name: "Positive charge" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+
+    expect(answer).toHaveBeenCalledWith(
+      expect.objectContaining({ answer: { matches: [0, 1] }, itemId: "original-bank-item" }),
+    );
+  });
+
+  it("matches with the number keys its entries show, and a matched entry answers none", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({ ...bankFeedback(), correctAnswer: { matches: [0, 1] } });
+
+    openPractice(null, { answer }, question("matchPairs"));
+    const electron = page.getByRole("button", { exact: true, name: "Electron" });
+    const negative = page.getByRole("button", { exact: true, name: "Negative charge" });
+    await expect.element(electron).toHaveAttribute("aria-keyshortcuts", "1");
+    await expect.element(negative).not.toHaveAttribute("aria-keyshortcuts");
+
+    await userEvent.keyboard("1");
+    await expect.element(electron).toHaveAttribute("aria-pressed", "true");
+    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "1");
+
+    await userEvent.keyboard("1");
+    const matched = page.getByRole("button", { name: "Negative charge, matched with Electron" });
+    await expect.element(matched).toBeVisible();
+
+    await userEvent.keyboard("2");
+    await expect.element(matched).not.toHaveAttribute("aria-keyshortcuts");
+    await userEvent.keyboard("1");
+    await expect.element(matched).toBeVisible();
+
+    await userEvent.keyboard("2");
+    await page.getByRole("button", { name: /^Check/u }).click();
 
     expect(answer).toHaveBeenCalledWith(
       expect.objectContaining({ answer: { matches: [0, 1] }, itemId: "original-bank-item" }),
