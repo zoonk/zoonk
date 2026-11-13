@@ -7,6 +7,7 @@ import {
   getDefaultSortDirection,
   sortLeaderboardEntries,
 } from "@/lib/leaderboard-sort";
+import { NUMBER_CELL_CLASS, NUMBER_HEAD_CLASS } from "@/lib/table-classes";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Table,
@@ -62,7 +63,7 @@ function ColumnHead<Entry>({
 
   if (!sortKey) {
     return (
-      <TableHead className={cn(isNumber && "text-right")} title={title}>
+      <TableHead className={cn(isNumber && NUMBER_HEAD_CLASS)} title={title}>
         {label}
       </TableHead>
     );
@@ -74,7 +75,7 @@ function ColumnHead<Entry>({
   return (
     <TableHead
       aria-sort={isSorted ? `${direction}ending` : undefined}
-      className={cn(isNumber && "text-right")}
+      className={cn(isNumber && NUMBER_HEAD_CLASS)}
       title={title}
     >
       <button
@@ -168,7 +169,10 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
             <TableRow key={entry.modelId}>
               {shownColumns.map((column) => (
                 <TableCell
-                  className={cn(column.isNumber && "text-right", column.cellClassName?.(entry))}
+                  className={cn(
+                    column.isNumber && NUMBER_CELL_CLASS,
+                    column.cellClassName?.(entry),
+                  )}
                   key={column.id}
                 >
                   {column.cell(entry, index)}

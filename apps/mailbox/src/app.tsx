@@ -180,14 +180,14 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
       <div className="p-5 md:p-6">
         {email.htmlBody ? (
           <iframe
-            className="border-border block min-h-95 w-full rounded-xl border bg-white md:min-h-105"
+            className="border-border block min-h-95 w-full rounded-xl border bg-white p-5 md:min-h-105"
             referrerPolicy="no-referrer"
             sandbox=""
             srcDoc={email.htmlBody}
             title={`${email.subject} email body`}
           />
         ) : (
-          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-7 font-mono text-sm leading-[1.65] whitespace-pre-wrap md:min-h-105">
+          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-7 font-mono text-sm leading-normal whitespace-pre-wrap md:min-h-105">
             {email.textBody || copy.noBody}
           </pre>
         )}

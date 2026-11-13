@@ -15,11 +15,11 @@ export function GalleryNav({
   return (
     <nav
       aria-label="Screens"
-      className="flex flex-col gap-5 max-lg:order-last lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto"
+      className="-mx-2.5 flex flex-col gap-5 px-2.5 max-lg:order-last lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto"
     >
       {groupEntries().map(({ entries, group }) => (
         <div className="flex flex-col gap-1" key={group}>
-          <p className="text-muted-foreground px-2 text-xs font-medium">{group}</p>
+          <p className="text-muted-foreground text-xs font-medium">{group}</p>
 
           <ul className="flex flex-col">
             {entries.map((entry) => (
@@ -27,7 +27,7 @@ export function GalleryNav({
                 <Link
                   aria-current={entry.id === current ? "page" : undefined}
                   className={cn(
-                    "hover:bg-muted block truncate rounded-lg px-2 py-1 text-sm max-lg:py-3",
+                    "hover:bg-muted -mx-2.5 block truncate rounded-lg px-2.5 py-1 text-sm max-lg:py-3",
                     entry.id === current && "bg-muted",
                   )}
                   href={galleryHref({ device, entry: entry.id })}
