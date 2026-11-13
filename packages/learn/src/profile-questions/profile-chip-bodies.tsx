@@ -54,7 +54,6 @@ export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string 
   return (
     <>
       <ProfileChips
-        capped={picker.capped}
         label={props.label}
         onToggle={picker.toggle}
         options={question.options.map((option) => ({
@@ -178,7 +177,6 @@ export function StudiesBody(props: BodyProps & { label: string }) {
   return (
     <>
       <ProfileChips
-        capped={picker.capped}
         label={props.label}
         onToggle={picker.toggle}
         options={question.options.map((option) => ({

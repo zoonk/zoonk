@@ -1,18 +1,21 @@
 "use client";
 
 import { Toggle } from "@zoonk/ui/components/toggle";
-import { useExtracted } from "next-intl";
+import { MAX_PROFILE_PICKS } from "./profile-draft";
 
 type ChipOption = { id: string; label: string; pressed: boolean };
 
 export function ProfileChip({
+  disabled = false,
   label,
   onToggle,
   pressed,
-}: Omit<ChipOption, "id"> & { onToggle: () => void }) {
+}: Omit<ChipOption, "id"> & { disabled?: boolean; onToggle: () => void }) {
   return (
     <Toggle
       className="aria-pressed:text-foreground text-reading h-auto min-h-11 rounded-lg px-3.5 py-2 text-left whitespace-normal"
+      disabled={disabled}
+      focusableWhenDisabled
       onPressedChange={onToggle}
       pressed={pressed}
       variant="outline"
@@ -22,19 +25,16 @@ export function ProfileChip({
   );
 }
 
-/** The cap line stays mounted while empty, so it's heard when a refused pick brings it. */
 export function ProfileChips({
-  capped,
   label,
   onToggle,
   options,
 }: {
-  capped: boolean;
   label: string;
   onToggle: (id: string) => void;
   options: ChipOption[];
 }) {
-  const t = useExtracted();
+  const isFull = options.filter((option) => option.pressed).length >= MAX_PROFILE_PICKS;
 
   return (
     <fieldset className="flex flex-col">
@@ -43,6 +43,7 @@ export function ProfileChips({
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <ProfileChip
+            disabled={isFull && !option.pressed}
             key={option.id}
             label={option.label}
             onToggle={() => onToggle(option.id)}
@@ -50,10 +51,6 @@ export function ProfileChips({
           />
         ))}
       </div>
-
-      <p aria-live="polite" className="sr-only">
-        {capped && t("Pick up to 3.")}
-      </p>
     </fieldset>
   );
 }

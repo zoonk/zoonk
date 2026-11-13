@@ -9,7 +9,7 @@ export type ProfileQuestion = ProfileQuestionView["id"];
 
 export type ChipQuestion = "tools" | "watch" | "listen" | "play" | "read" | "activities";
 
-const MAX_PROFILE_PICKS = 3;
+export const MAX_PROFILE_PICKS = 3;
 
 /** The exclusive rows, each of which declines the question. */
 export type ProfileExclusive = "none" | "nothing" | "nothingInParticular" | "ratherNot";

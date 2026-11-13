@@ -2,7 +2,6 @@
 
 import { type ProfileQuestionView } from "@zoonk/core/profile/questions/contract";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import {
   type ProfileDraft,
   type ProfileExclusive,
@@ -18,25 +17,14 @@ export type BodyProps = {
 };
 
 export type Picker = {
-  capped: boolean;
   exclusive: (exclusive: ProfileExclusive) => void;
   toggle: (id: string) => void;
 };
 
 export function usePicker({ draft, onChange, question }: BodyProps): Picker {
-  const [capped, setCapped] = useState(false);
-
   return {
-    capped,
-    exclusive: (exclusive) => {
-      setCapped(false);
-      onChange(toggleProfileExclusive({ draft, exclusive }));
-    },
-    toggle: (id) => {
-      const result = toggleProfilePick({ draft, id, question: question.id });
-      setCapped(result.capped);
-      onChange(result.draft);
-    },
+    exclusive: (exclusive) => onChange(toggleProfileExclusive({ draft, exclusive })),
+    toggle: (id) => onChange(toggleProfilePick({ draft, id, question: question.id }).draft),
   };
 }
 
