@@ -61,6 +61,7 @@ import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.mindmaps.monthly
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
@@ -71,9 +72,9 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
+import com.zoonk.api.models.MonthlyAllowanceItem
 import com.zoonk.api.models.StripeSubscriptionCancellation
 import com.zoonk.api.models.StripeSubscriptionCancellation.State
 import kotlinx.coroutines.launch
@@ -390,9 +391,9 @@ private fun Offer(
 }
 
 @Composable
-private fun messagesUsedToday(app: AppContainer): AllowanceItem? {
+private fun messagesUsedToday(app: AppContainer): MonthlyAllowanceItem? {
     val allowance by app.subscriptions.allowance.collectShown()
-    return allowance.value?.items?.firstOrNull { it.kind == AllowanceItem.Kind.TUTOR_MESSAGE }
+    return allowance.value?.monthly(MonthlyAllowanceItem.Kind.TUTOR_MESSAGE)
 }
 
 /**
@@ -408,7 +409,7 @@ internal fun PlanOffer(
     navigator: AppNavigator,
     onSubscribe: ((PlusOffer) -> Unit)?,
     onRetryFreePlan: () -> Unit,
-    messagesUsed: AllowanceItem? = null,
+    messagesUsed: MonthlyAllowanceItem? = null,
 ) {
     val limits = freePlan.value
     val hasAccount = viewer == PlanViewer.Free
