@@ -1,5 +1,6 @@
 "use client";
 
+import { type NoGlyph } from "@zoonk/ui/components/enter-button";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useRef } from "react";
@@ -155,7 +156,7 @@ export function TaskMainButton({
   className,
   disabled = false,
   onClick,
-}: {
+}: NoGlyph & {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -182,7 +183,7 @@ export function TaskMainLink({
   href,
   steadyMs = 0,
   toApp = false,
-}: {
+}: NoGlyph & {
   children: React.ReactNode;
   className?: string;
   href: string;

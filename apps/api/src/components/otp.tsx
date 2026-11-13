@@ -1,4 +1,3 @@
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { InputError } from "@zoonk/ui/components/input";
 import {
@@ -155,7 +154,6 @@ export function OTPSubmit({
       enter="host"
       size="lg"
       type="submit"
-      {...FORWARD_ICON}
       {...props}
     >
       {children}

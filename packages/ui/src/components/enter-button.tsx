@@ -15,6 +15,9 @@ export type Enter = "bound" | "host" | "off";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 
+/** A main action's one glyph is its ⏎ keycap. Named, so a spread of icon props is a type error too. */
+export type NoGlyph = { icon?: never; iconPosition?: never; keyHint?: never };
+
 const ENTER_HINT = <ShortcutKbd shortcut="main" tone="inverse" />;
 
 /**
@@ -30,7 +33,8 @@ export function EnterButton({
   enter = "bound",
   ref,
   ...props
-}: Omit<ButtonProps, "icon" | "iconPosition" | "keyHint" | "variant"> & { enter?: Enter }) {
+}: Omit<ButtonProps, "icon" | "iconPosition" | "keyHint" | "variant"> &
+  NoGlyph & { enter?: Enter }) {
   const enterRef = useEnterClick<HTMLButtonElement>({
     enabled: enter === "bound" && !disabled && !busy,
     focus: true,
@@ -61,13 +65,14 @@ export type EnterLinkHostProps = {
   ref?: React.Ref<HTMLAnchorElement>;
 };
 
-export type EnterLinkProps = Pick<EnterLinkHostProps, "href" | "onClick" | "ref"> & {
-  children: React.ReactNode;
-  className?: string;
-  /** False while Enter must wait, such as during a goal switch. */
-  enabled?: boolean;
-  size?: "lg" | "xl";
-};
+export type EnterLinkProps = Pick<EnterLinkHostProps, "href" | "onClick" | "ref"> &
+  NoGlyph & {
+    children: React.ReactNode;
+    className?: string;
+    /** False while Enter must wait, such as during a goal switch. */
+    enabled?: boolean;
+    size?: "lg" | "xl";
+  };
 
 /** The same main action as a link, drawn with the app's own `link`. Further props go to the link. */
 export function EnterLink<Extra extends object>({

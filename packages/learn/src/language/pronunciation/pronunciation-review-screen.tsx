@@ -5,7 +5,7 @@ import {
   type PronunciationReviewsView,
   type PronunciationRoundResult,
 } from "@zoonk/core/language/pronunciation/contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -219,7 +219,7 @@ function WordActions({
             {t("Try again")}
           </Button>
         )}
-        <TaskMainButton busy={round.isPending} onClick={round.next} {...FORWARD_ICON}>
+        <TaskMainButton busy={round.isPending} onClick={round.next}>
           {isLast ? t("See how it went") : t("Continue")}
         </TaskMainButton>
       </TaskActions>

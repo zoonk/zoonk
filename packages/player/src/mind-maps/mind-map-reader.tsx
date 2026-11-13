@@ -10,7 +10,6 @@ import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "@zoonk/learn/task-frame";
 import { TaskHeaderTitle } from "@zoonk/learn/task-header";
 import { TaskActions } from "@zoonk/learn/task-layout";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -169,9 +168,7 @@ function Reader({
               {t("Done")}
             </TaskMainLink>
           ) : (
-            <TaskMainButton {...FORWARD_ICON} onClick={next}>
-              {t("Next")}
-            </TaskMainButton>
+            <TaskMainButton onClick={next}>{t("Next")}</TaskMainButton>
           )}
         </TaskActions>
       }
