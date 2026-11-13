@@ -1,4 +1,4 @@
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import { FIRST_SCREEN_TOP_CLASS, PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { getAppLocale } from "@/i18n/locale";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
@@ -39,7 +39,8 @@ export async function HomeHero({ startPath }: { startPath: string }) {
       aria-labelledby={TITLE_ID}
       className={cn(
         PUBLIC_CONTAINER_CLASS,
-        "pt-3 pb-28 sm:pt-8 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-16 lg:pt-14 lg:pb-37 xl:grid-cols-[minmax(0,1fr)_26rem]",
+        FIRST_SCREEN_TOP_CLASS.landing,
+        "pb-28 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-16 lg:pb-37 xl:grid-cols-[minmax(0,1fr)_26rem]",
       )}
     >
       <div className="@container min-w-0">

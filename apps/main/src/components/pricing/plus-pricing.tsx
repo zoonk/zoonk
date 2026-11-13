@@ -1,4 +1,8 @@
-import { PUBLIC_BAND_CLASS, PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import {
+  FIRST_SCREEN_TOP_CLASS,
+  PUBLIC_BAND_CLASS,
+  PUBLIC_CONTAINER_CLASS,
+} from "@/components/public/landing-styles";
 import { PageStartMark } from "@/components/public/page-start";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link } from "@/i18n/navigation";
@@ -37,7 +41,7 @@ export async function PricingHero() {
   return (
     <section
       aria-labelledby="pricing-title"
-      className={cn(PUBLIC_CONTAINER_CLASS, "flex flex-col pt-12 lg:pt-24")}
+      className={cn(PUBLIC_CONTAINER_CLASS, FIRST_SCREEN_TOP_CLASS.pricing, "flex flex-col")}
     >
       <Eyebrow>{t("Pricing")}</Eyebrow>
 
