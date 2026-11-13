@@ -5,14 +5,15 @@ import { type ReviewExportEntry } from "@/lib/review-export";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@zoonk/ui/components/drawer";
 import { FileTextIcon, PrinterIcon } from "lucide-react";
 import { useState } from "react";
 import { printReviewOutputs } from "./review-print-document";
@@ -80,61 +81,61 @@ export function ReviewPdfExport({
   }
 
   return (
-    <Dialog onOpenChange={handleOpenChange} open={open}>
-      <DialogTrigger
+    <Drawer onOpenChange={handleOpenChange} open={open}>
+      <DrawerTrigger
         render={
           <Button disabled={summary.attempted === 0} size="sm" type="button" variant="outline" />
         }
       >
         <FileTextIcon />
         <span className="sr-only sm:not-sr-only">Export review PDF</span>
-      </DialogTrigger>
+      </DrawerTrigger>
 
-      <DialogContent closeLabel="Close">
-        <DialogHeader>
-          <DialogTitle>Export review PDF</DialogTitle>
-          <DialogDescription>
-            Choose the output languages to include. For repeated runs, the PDF uses the
-            lowest-scoring output when scores are available. Otherwise, it includes one generated
-            output per test case. A print dialog will open, where you can save the review as a PDF.
-            The summary covers all saved runs, including failures.
-          </DialogDescription>
-        </DialogHeader>
+      <DrawerPopup>
+        <DrawerHeader closeLabel="Close">
+          <DrawerTitle>Export review PDF</DrawerTitle>
+          <DrawerDescription>
+            Pick the languages to include. A test case that ran more than once shows its
+            lowest-scoring output. Your browser&apos;s print dialog saves it as a PDF.
+          </DrawerDescription>
+        </DrawerHeader>
 
-        <fieldset className="flex flex-col gap-1">
-          <legend className="sr-only">Output languages</legend>
-          {languages.map((language) => {
-            const outputCount = entries.filter((entry) => entry.language === language).length;
+        <DrawerContent className="flex flex-col gap-4 pt-2">
+          <fieldset className="flex flex-col gap-1">
+            <legend className="sr-only">Output languages</legend>
+            {languages.map((language) => {
+              const outputCount = entries.filter((entry) => entry.language === language).length;
 
-            return (
-              <label
-                className="hover:bg-muted/60 flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-colors"
-                key={language}
-              >
-                <Checkbox
-                  checked={selectedLanguages.includes(language)}
-                  onCheckedChange={(checked) => handleLanguageChange({ checked, language })}
-                />
-                <span className="font-medium">{getLanguageLabel(language)}</span>
-                <span className="text-muted-foreground ml-auto text-sm">
-                  {outputCount} {outputCount === 1 ? "output" : "outputs"}
-                </span>
-              </label>
-            );
-          })}
-        </fieldset>
+              return (
+                <label
+                  className="hover:bg-muted/60 -mx-2.5 flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 transition-colors"
+                  key={language}
+                >
+                  <Checkbox
+                    checked={selectedLanguages.includes(language)}
+                    onCheckedChange={(checked) => handleLanguageChange({ checked, language })}
+                  />
+                  <span className="font-medium">{getLanguageLabel(language)}</span>
+                  <span className="text-muted-foreground ml-auto text-sm">
+                    {outputCount} {outputCount === 1 ? "output" : "outputs"}
+                  </span>
+                </label>
+              );
+            })}
+          </fieldset>
 
-        <p aria-live="polite" className="text-muted-foreground text-sm">
-          {selectedEntries.length} {selectedEntries.length === 1 ? "output" : "outputs"} selected
-        </p>
-
-        {error && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {error}
+          <p aria-live="polite" className="text-muted-foreground text-sm">
+            {selectedEntries.length} {selectedEntries.length === 1 ? "output" : "outputs"} selected
           </p>
-        )}
 
-        <DialogFooter closeLabel="Close">
+          {error && (
+            <p className="text-destructive-text text-sm" role="alert">
+              {error}
+            </p>
+          )}
+        </DrawerContent>
+
+        <DrawerFooter>
           <Button
             disabled={entries.length > 0 && selectedEntries.length === 0}
             onClick={printReview}
@@ -142,8 +143,8 @@ export function ReviewPdfExport({
             <PrinterIcon />
             Print or save PDF
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DrawerFooter>
+      </DrawerPopup>
+    </Drawer>
   );
 }
