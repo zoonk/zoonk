@@ -24,7 +24,16 @@ export function DrawerCloseButton() {
   const t = useExtracted();
 
   return (
-    <DrawerClose render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}>
+    <DrawerClose
+      render={
+        <Button
+          className="shrink-0 [--icon-size:--spacing(5)]"
+          edge="end"
+          size="icon"
+          variant="ghost"
+        />
+      }
+    >
       <XIcon aria-hidden="true" />
       <span className="sr-only">{t("Close")}</span>
     </DrawerClose>
