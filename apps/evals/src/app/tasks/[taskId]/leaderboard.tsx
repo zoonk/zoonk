@@ -3,16 +3,16 @@
 import { CaseCount, FailureCounts, KeyFlawCount } from "@/components/eval-counts";
 import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
 import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
-import {
-  formatDollarsColumn,
-  formatLatencyVerdict,
-  formatPercent,
-  formatSeconds,
-} from "@/lib/format";
+import { formatDollarsColumn, formatLatencyVerdict, formatPercent } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LeaderboardExport } from "./leaderboard-export";
-import { type LeaderboardColumn, LeaderboardTable, ModelLink } from "./leaderboard-table";
+import {
+  type LeaderboardColumn,
+  LeaderboardTable,
+  ModelLink,
+  measuredColumns,
+} from "./leaderboard-table";
 
 type Column = LeaderboardColumn<LeaderboardEntry>;
 
@@ -47,6 +47,8 @@ function getColumns({
   taskId: string;
   totalRuns: number;
 }): Column[] {
+  const measured = measuredColumns(entries);
+
   return [
     {
       cell: (entry) => (
@@ -93,20 +95,8 @@ function getColumns({
         label: "Key flaws",
       },
     ),
-    {
-      cell: formatDollarsColumn(entries, (entry) => entry.costPer1000Runs),
-      id: "cost",
-      isNumber: true,
-      label: "Cost / 1k runs",
-      sortKey: "costPer1000Runs",
-    },
-    {
-      cell: (entry) => formatSeconds(entry.latencyP50),
-      id: "latencyP50",
-      isNumber: true,
-      label: "Latency p50",
-      sortKey: "latencyP50",
-    },
+    measured.cost,
+    measured.latencyP50,
     ...shownWhen(
       entries.some((entry) => entry.meetsLatencyBudget !== null),
       {
@@ -121,7 +111,7 @@ function getColumns({
 }
 
 function getMoreColumns(entries: LeaderboardEntry[], taskId: string): Column[] {
-  const categories = entries.find((entry) => entry.categoryScores.length > 0)?.categoryScores ?? [];
+  const measured = measuredColumns(entries);
 
   const caseCount = (kind: "attempted" | "generated" | "scored", label: string): Column => ({
     cell: (entry) => (
@@ -137,24 +127,10 @@ function getMoreColumns(entries: LeaderboardEntry[], taskId: string): Column[] {
   });
 
   return [
-    {
-      cell: (entry) => formatSeconds(entry.latencyP95),
-      id: "latencyP95",
-      isNumber: true,
-      label: "p95",
-      sortKey: "latencyP95",
-    },
-    { cell: (entry) => entry.provider, id: "provider", label: "Provider", sortKey: "provider" },
+    measured.latencyP95,
+    measured.provider,
     { cell: (entry) => entry.reasoning, id: "reasoning", label: "Reasoning", sortKey: "reasoning" },
-    ...categories.map((category): Column => ({
-      cell: (entry) =>
-        entry.categoryScores
-          .find((score) => score.categoryId === category.categoryId)
-          ?.score.toFixed(2) ?? "—",
-      id: `category-${category.categoryId}`,
-      isNumber: true,
-      label: category.label,
-    })),
+    ...measured.categoryColumns,
     ...REQUIRED_LANGUAGES.map((language): Column => ({
       cell: (entry) =>
         formatLanguageResults(entry.languages).find((result) => result.language === language)?.text,

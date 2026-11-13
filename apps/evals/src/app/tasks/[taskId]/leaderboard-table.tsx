@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDollarsColumn, formatSeconds } from "@/lib/format";
 import {
   type SortDirection,
   type SortKey,
@@ -8,6 +9,7 @@ import {
   sortLeaderboardEntries,
 } from "@/lib/leaderboard-sort";
 import { CELL_CLASS } from "@/lib/table-classes";
+import { type CategoryScoreSummary } from "@/lib/types";
 import { Button } from "@zoonk/ui/components/button";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import {
@@ -32,6 +34,58 @@ export type LeaderboardColumn<Entry> = {
   sortKey?: SortKey;
   title?: string;
 };
+
+type MeasuredEntry = Pick<
+  SortableEntry,
+  "costPer1000Runs" | "latencyP50" | "latencyP95" | "provider"
+> & { categoryScores: CategoryScoreSummary[] };
+
+export function measuredColumns<Entry extends MeasuredEntry>(entries: Entry[]) {
+  const categories = entries.find((entry) => entry.categoryScores.length > 0)?.categoryScores ?? [];
+
+  const cost: LeaderboardColumn<Entry> = {
+    cell: formatDollarsColumn(entries, (entry) => entry.costPer1000Runs),
+    id: "cost",
+    isNumber: true,
+    label: "Cost / 1k runs",
+    sortKey: "costPer1000Runs",
+  };
+
+  const latencyP50: LeaderboardColumn<Entry> = {
+    cell: (entry) => formatSeconds(entry.latencyP50),
+    id: "latencyP50",
+    isNumber: true,
+    label: "Latency p50",
+    sortKey: "latencyP50",
+  };
+
+  const latencyP95: LeaderboardColumn<Entry> = {
+    cell: (entry) => formatSeconds(entry.latencyP95),
+    id: "latencyP95",
+    isNumber: true,
+    label: "p95",
+    sortKey: "latencyP95",
+  };
+
+  const provider: LeaderboardColumn<Entry> = {
+    cell: (entry) => entry.provider,
+    id: "provider",
+    label: "Provider",
+    sortKey: "provider",
+  };
+
+  const categoryColumns = categories.map((category): LeaderboardColumn<Entry> => ({
+    cell: (entry) =>
+      entry.categoryScores
+        .find((score) => score.categoryId === category.categoryId)
+        ?.score.toFixed(2) ?? "—",
+    id: `category-${category.categoryId}`,
+    isNumber: true,
+    label: category.label,
+  }));
+
+  return { categoryColumns, cost, latencyP50, latencyP95, provider };
+}
 
 export function ModelLink({
   children,
