@@ -53,7 +53,6 @@ const FIXED_TABLE_CLASS =
 // A control keeps the row at 44 px, like a row of text: it sits on the first line's baseline, and a
 // 44 px hit area fills the row.
 const CONTROL_CELL_CLASS = "[&_td:has(button,input,select)]:py-0";
-("[&_td:has(button,input,select)]:py-0 [&_td:has(button,input,select)]:align-middle");
 
 function fillIndexOf(columns: AdminTableColumn[]) {
   return Math.max(
