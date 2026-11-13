@@ -229,6 +229,7 @@ export function FeedbackForm({
             disabled={viewerEmail === undefined}
             full
             icon={<SendIcon aria-hidden="true" />}
+            size="lg"
           >
             {t("Send message")}
           </SubmitButton>

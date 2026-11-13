@@ -122,7 +122,13 @@ export function CourseEditButton({ course }: { course: EditedCourse }) {
           </DrawerContent>
 
           <DrawerFooter>
-            <DrawerClose render={<Button variant="outline">Cancel</Button>} />
+            <DrawerClose
+              render={
+                <Button size="lg" variant="outline">
+                  Cancel
+                </Button>
+              }
+            />
             <SaveButton />
           </DrawerFooter>
         </form>

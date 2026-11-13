@@ -81,7 +81,9 @@ export function BuddyEditor({
         </DrawerContent>
 
         <DrawerFooter>
-          <Button onClick={() => onSave(choice)}>{t("Save")}</Button>
+          <Button onClick={() => onSave(choice)} size="lg">
+            {t("Save")}
+          </Button>
         </DrawerFooter>
       </DrawerPopup>
     </Drawer>
