@@ -149,7 +149,7 @@ export function AimPicker({
         <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
         <DrawerPopup>
           <DrawerHeader>
-            <DrawerTitle className="text-lg font-semibold">{title}</DrawerTitle>
+            <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
           <DrawerContent className="flex flex-col gap-3 pt-2">{choices}</DrawerContent>

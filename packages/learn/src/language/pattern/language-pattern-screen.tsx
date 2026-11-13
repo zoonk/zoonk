@@ -95,7 +95,7 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
       <Drawer onOpenChange={setOpen} open={open}>
         <DrawerPopup>
           <DrawerHeader className="flex-row items-start justify-between gap-3">
-            <DrawerTitle className="text-xl font-semibold">{pattern.title}</DrawerTitle>
+            <DrawerTitle>{pattern.title}</DrawerTitle>
             <DrawerCloseButton />
           </DrawerHeader>
 

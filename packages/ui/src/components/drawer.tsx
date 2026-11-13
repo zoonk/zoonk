@@ -68,7 +68,7 @@ function DrawerPopup({
           data-slot="drawer-popup"
           {...props}
         >
-          <div className="bg-muted mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
+          <div className="bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
           <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
@@ -79,7 +79,7 @@ function DrawerPopup({
 function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   return (
     <DrawerPrimitive.Content
-      className={cn("overflow-y-auto px-6 pb-6", className)}
+      className={cn("scroll-hairline-t overflow-y-auto px-6 pb-6", className)}
       data-slot="drawer-content"
       {...props}
     />
@@ -99,7 +99,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
 function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   return (
     <DrawerPrimitive.Title
-      className={cn("text-foreground text-base font-medium", className)}
+      className={cn("text-foreground text-lg leading-tight font-semibold", className)}
       data-slot="drawer-title"
       {...props}
     />

@@ -1,5 +1,6 @@
 "use client";
 
+import { QuestionEyebrow } from "@zoonk/learn/question-title";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
@@ -11,7 +12,6 @@ import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
 import { FILL_SCREEN_CLASS, PlayerContentFrame } from "../components/step-layouts";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
-import { LessonEyebrow } from "./_components/lesson-step-text";
 import { OrientationStrip } from "./_components/orientation-strip";
 import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
 import { getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
@@ -75,12 +75,12 @@ function LessonNotice() {
   if (screen.quickCheck) {
     return (
       <PlayerContentFrame className="pt-4">
-        <LessonEyebrow icon={<ZapIcon aria-hidden="true" />}>
+        <QuestionEyebrow icon={<ZapIcon aria-hidden="true" />}>
           {t("Quick check · {current} of {total}", {
             current: String(screen.quickCheck.current + 1),
             total: String(screen.quickCheck.total),
           })}
-        </LessonEyebrow>
+        </QuestionEyebrow>
       </PlayerContentFrame>
     );
   }

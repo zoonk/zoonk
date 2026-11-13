@@ -24,7 +24,16 @@ export function DrawerCloseButton() {
   const t = useExtracted();
 
   return (
-    <DrawerClose render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}>
+    <DrawerClose
+      render={
+        <Button
+          className="shrink-0 [--icon-size:--spacing(5)]"
+          edge="end"
+          size="icon"
+          variant="ghost"
+        />
+      }
+    >
       <XIcon aria-hidden="true" />
       <span className="sr-only">{t("Close")}</span>
     </DrawerClose>
@@ -48,7 +57,7 @@ export function DetailsDrawer({
 
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
+          <DrawerTitle>{title}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>

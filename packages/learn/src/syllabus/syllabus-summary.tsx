@@ -241,7 +241,7 @@ export function SyllabusTopicsSheet({
 
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("What you'll study")}</DrawerTitle>
+          <DrawerTitle>{t("What you'll study")}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="flex flex-col gap-2 pt-1">

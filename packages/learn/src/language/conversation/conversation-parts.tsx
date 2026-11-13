@@ -55,7 +55,7 @@ export function CallOffMessage({
 }) {
   return (
     <div className={cn("flex flex-col gap-1.5 py-6", className)} role="alert">
-      <p className="text-xl leading-snug font-[560] tracking-[-0.02em] text-balance">{title}</p>
+      <p className="text-xl leading-snug font-semibold tracking-[-0.02em] text-balance">{title}</p>
       {children}
     </div>
   );

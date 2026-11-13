@@ -142,7 +142,8 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
     >
       <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
         <Button
-          className="text-muted-foreground -ml-1 px-2"
+          className="text-muted-foreground"
+          edge="start"
           onClick={back}
           size="sm"
           variant="ghost"

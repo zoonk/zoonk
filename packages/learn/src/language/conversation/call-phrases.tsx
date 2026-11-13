@@ -59,9 +59,7 @@ export function PhrasesSheet({
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center gap-3">
-          <DrawerTitle className="min-w-0 flex-1 text-xl font-semibold">
-            {t("Phrases you can use")}
-          </DrawerTitle>
+          <DrawerTitle className="min-w-0 flex-1">{t("Phrases you can use")}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-1 pb-6">

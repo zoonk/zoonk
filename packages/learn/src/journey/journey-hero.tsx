@@ -171,7 +171,7 @@ function NumberSheet({
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
+          <DrawerTitle>{title}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>

@@ -94,7 +94,7 @@ export function FocusTestSubjectsSheet({ subjects }: { subjects: readonly FocusT
 
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("Subjects")}</DrawerTitle>
+          <DrawerTitle>{t("Subjects")}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
 

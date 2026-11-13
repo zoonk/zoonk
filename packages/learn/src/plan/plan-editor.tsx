@@ -89,8 +89,17 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
       >
         <PlanEditorChangeProvider>
           <SheetHeader className="flex-row items-center justify-between gap-3 px-6 pt-5 pb-3">
-            <SheetTitle className="text-xl font-semibold">{t("Adjust your plan")}</SheetTitle>
-            <SheetClose render={<Button edge="end" size="icon" variant="ghost" />}>
+            <SheetTitle>{t("Adjust your plan")}</SheetTitle>
+            <SheetClose
+              render={
+                <Button
+                  className="[--icon-size:--spacing(5)]"
+                  edge="end"
+                  size="icon"
+                  variant="ghost"
+                />
+              }
+            >
               <XIcon aria-hidden="true" />
               <span className="sr-only">{t("Close")}</span>
             </SheetClose>
@@ -115,7 +124,7 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
       <DrawerPopup initialFocus={initialFocus}>
         <PlanEditorChangeProvider>
           <DrawerHeader className="flex-row items-center justify-between gap-3">
-            <DrawerTitle className="text-xl font-semibold">{t("Adjust your plan")}</DrawerTitle>
+            <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
             <DrawerCloseButton />
           </DrawerHeader>
 
