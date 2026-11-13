@@ -9,16 +9,12 @@ import {
 import { createdLessonQuestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
 import { createBearerLearner, createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
@@ -26,8 +22,6 @@ import { readBody } from "./helpers/response";
 const LESSON_STEPS = ["hook", "explanation", "check", "typedAnswer", "summary"] as const;
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const OVERNIGHT_MS = 36_000_000;
-
-const FREE_WEEK_OVER_DAYS = 10;
 
 function stepId(steps: { id: string; kind: string }[], kind: string): string {
   return steps.find((step) => step.kind === kind)?.id ?? "";
@@ -68,6 +62,64 @@ test.describe("Library lessons API", () => {
 
   test.beforeAll(() => {
     baseURL = process.env.E2E_BASE_URL ?? "";
+  });
+
+  test("shares the monthly lesson boundary across concurrent starts and reports its reset", async () => {
+    const [{ api, userId }, first, second] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "monthly-lessons" }),
+      playableLessonFixture({ steps: ["check"] }),
+      playableLessonFixture({ steps: ["check"] }),
+    ]);
+
+    await usageRecordsFixture({ count: 19, createdAt: new Date(), kind: "lessonStart", userId });
+
+    const starts = await Promise.all(
+      [first, second].map(({ lesson }) =>
+        api.post(`/v1/library/lessons/${lesson.id}/starts`, { data: { timeZone: "UTC" } }),
+      ),
+    );
+
+    expect(
+      starts.map((response) => response.status()).toSorted((left, right) => left - right),
+    ).toStrictEqual([201, 402]);
+
+    const refused = starts.find((response) => response.status() === 402);
+
+    expect(await refused?.json()).toMatchObject({
+      error: {
+        code: "USAGE_LIMIT_REACHED",
+        details: { limit: { limit: 20, period: "month", resource: "lessonStart", tier: "free" } },
+      },
+    });
+
+    const admittedIndex = starts.findIndex((response) => response.status() === 201);
+    const admitted = [first, second][admittedIndex];
+    expect(admitted).toBeDefined();
+
+    const replay = await api.post(`/v1/library/lessons/${admitted?.lesson.id}/starts`, {
+      data: { timeZone: "UTC" },
+    });
+
+    expect(replay.status()).toBe(201);
+    const allowance = await api.get("/v1/me/allowance");
+    const body = await allowance.json();
+
+    expect(body.items).toContainEqual(
+      expect.objectContaining({
+        kind: "lessonStart",
+        monthlyLimit: 20,
+        remaining: 0,
+        usedThisMonth: 20,
+      }),
+    );
+
+    const now = new Date();
+
+    expect(body.resets.month).toBe(
+      new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString(),
+    );
+
+    await api.dispose();
   });
 
   test("combines an exact block opening with the run and returns an alternative with no run", async () => {
@@ -369,48 +421,6 @@ test.describe("Library lessons API", () => {
     });
 
     await guestApi.dispose();
-  });
-
-  test("holds a free exam plan's new lessons for Plus once its first week is over", async () => {
-    const [{ api, userId }, { lesson }, unwritten] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "free-week" }),
-      playableLessonFixture({ steps: [...LESSON_STEPS] }),
-      libraryLessonFixture(),
-    ]);
-
-    const goal = await goalFixture({
-      createdAt: new Date(Date.now() - FREE_WEEK_OVER_DAYS * MS_PER_DAY),
-      kind: "exam",
-      timezone: "America/Sao_Paulo",
-      userId,
-    });
-
-    await Promise.all([
-      learningProfileFixture({ activeGoalId: goal.id, userId }),
-      planFixture({
-        goalId: goal.id,
-        items: [lesson, unwritten].map((planned) => ({ lessonId: planned.id })),
-      }),
-    ]);
-
-    const plusRequired = { error: { code: "PLUS_REQUIRED" } };
-
-    const start = await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
-      data: { timeZone: "America/Sao_Paulo" },
-    });
-
-    expect(start.status()).toBe(402);
-    await expect(start.json()).resolves.toMatchObject(plusRequired);
-
-    const writing = await api.post(`/v1/library/lessons/${unwritten.id}/generations`);
-
-    expect(writing.status()).toBe(402);
-    await expect(writing.json()).resolves.toMatchObject(plusRequired);
-
-    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
-    await expect(prisma.learningEvent.count({ where: { userId } })).resolves.toBe(0);
-
-    await api.dispose();
   });
 
   test("plays a session block inside its session, continuing its Hyperdrive", async () => {

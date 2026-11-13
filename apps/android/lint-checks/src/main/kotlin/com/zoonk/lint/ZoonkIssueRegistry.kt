@@ -12,6 +12,7 @@ class ZoonkIssueRegistry : IssueRegistry() {
         listOf(
             HardcodedComposeTextDetector.ISSUE,
             ImplicitLocaleFormatDetector.ISSUE,
+            LoadStateDetector.ISSUE,
             MaterialComponentDetector.BUTTON,
             MaterialComponentDetector.TEXT_FIELD,
             MaterialComponentDetector.LIST_ITEM,

@@ -5,12 +5,7 @@ import { lessonMapSchema } from "../library/lessons/lesson-map";
 const lessonMindMapSchema = z
   .object({
     lessonId: uuidSchema(),
-    locked: z
-      .boolean()
-      .meta({
-        description:
-          "A free exam plan past its first week keeps this lesson, and so its map, for Plus",
-      }),
+    locked: z.boolean().meta({ description: "Always false. Lesson maps do not expire" }),
     map: lessonMapSchema.nullable().meta({ description: "Null while `locked`" }),
     position: z.int().min(1).meta({ description: "The lesson's number in its chapter" }),
     saved: z.boolean().meta({ description: "The learner saved this map to study again" }),

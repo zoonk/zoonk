@@ -89,29 +89,6 @@ describe(pickTodayNotice, () => {
     );
   });
 
-  it("says a free exam plan's first week is over before anything that asks more of the plan", () => {
-    const trialEnded = welcomeBack({ examAccess: { trialEnded: true }, freshStart: null });
-
-    expect(pick({ view: { planChange: fallingBehind, session: trialEnded } })).toBe("examAccess");
-
-    expect(
-      pick({
-        host: { sourceChange: true },
-        view: { insight: insightChange("proposed"), session: trialEnded },
-      }),
-    ).toBe("examAccess");
-
-    expect(
-      pick({
-        view: {
-          exam: { resultReported: false, stage: "examDay" },
-          planChange: planChange("proposed"),
-          session: trialEnded,
-        },
-      }),
-    ).toBe("exam");
-  });
-
   it("puts the exam's own days first, and its final stretch after a changed notice", () => {
     expect(
       pick({
@@ -137,15 +114,15 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { exam: { resultReported: true, stage: "afterExam" } } })).toBeNull();
   });
 
-  it("keeps a change already made, a tip and a language's practice below the exam plan's end", () => {
-    const trialEnded = welcomeBack({ examAccess: { trialEnded: true }, freshStart: null });
+  it("keeps a change already made, a tip and a language's practice in their priority order", () => {
+    const ordinarySession = welcomeBack({ examAccess: { trialEnded: false }, freshStart: null });
 
     expect(
       pick({
         host: { practice: true },
-        view: { planChange: planChange("applied"), session: trialEnded },
+        view: { planChange: planChange("applied"), session: ordinarySession },
       }),
-    ).toBe("examAccess");
+    ).toBe("planChange");
 
     expect(pick({ host: { practice: true }, view: { planChange: planChange("applied") } })).toBe(
       "planChange",
@@ -201,13 +178,6 @@ describe(pickTodayNotice, () => {
         },
       }),
     ).toBe("exam");
-
-    expect(
-      pick({
-        host,
-        view: { ...waiting, session: welcomeBack({ examAccess: { trialEnded: true } }) },
-      }),
-    ).toBe("examAccess");
   });
 
   it("shows what waited once the learner starts or has studied today", () => {

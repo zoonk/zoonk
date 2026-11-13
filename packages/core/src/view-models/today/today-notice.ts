@@ -74,9 +74,8 @@ export function showsWelcomeBack(
 }
 
 /**
- * One notice at most, the most pressing first. A free exam plan's ended week goes before anything
- * that asks more of the plan. While the day welcomes the learner back, only the exam's own days
- * and that ended week show: everything else waits until they start.
+ * One notice at most, the most pressing first. While the day welcomes the learner back, only the
+ * exam's own days show: everything else waits until they start.
  */
 export function pickTodayNotice({
   host,
@@ -85,13 +84,12 @@ export function pickTodayNotice({
   host: TodayHostNoticeState;
   today: NoticeTodayView;
 }): TodayNoticeKind | null {
-  const { exam, insight, session } = today;
+  const { exam, insight } = today;
   const insightChange = getInsightChange(insight);
   const planChange = getPlanChangeStatus(today);
 
   const pressing: [TodayNoticeKind, boolean][] = [
     ["exam", isExamDay(exam)],
-    ["examAccess", session.examAccess.trialEnded],
   ];
 
   const candidates: [TodayNoticeKind, boolean][] = showsWelcomeBack(today)

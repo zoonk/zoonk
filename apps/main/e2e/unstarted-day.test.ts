@@ -71,7 +71,7 @@ test.describe("An unstarted day", () => {
     await startStep(page);
     await expect(page.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
 
-    await page.getByRole("link", { name: "Close. Your answers are saved." }).click();
+    await page.getByRole("link", { name: "Leave. Your answers are saved." }).click();
     await expect(page).toHaveURL(/\/today$/u);
 
     await expect(page.getByRole("button", { name: /^Continue\b/u })).toBeVisible();

@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
@@ -19,19 +19,19 @@ function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
 
   if (isReport) {
     return (
-      <DialogHeader>
-        <DialogTitle>{t("Report a problem")}</DialogTitle>
-      </DialogHeader>
+      <DrawerHeader closeLabel={t("Close")}>
+        <DrawerTitle>{t("Report a problem")}</DrawerTitle>
+      </DrawerHeader>
     );
   }
 
   return (
-    <DialogHeader>
-      <DialogTitle>{t("Send feedback")}</DialogTitle>
-      <DialogDescription>
+    <DrawerHeader closeLabel={t("Close")}>
+      <DrawerTitle>{t("Send feedback")}</DrawerTitle>
+      <DrawerDescription>
         {t("Found a problem or have an idea? Tell us below or email hello@zoonk.com.")}
-      </DialogDescription>
-    </DialogHeader>
+      </DrawerDescription>
+    </DrawerHeader>
   );
 }
 
@@ -46,7 +46,7 @@ export function FeedbackFormDialog({
   const dialogRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Dialog
+    <Drawer
       onOpenChange={(open) => {
         if (!open && request) {
           onClose(request);
@@ -54,14 +54,13 @@ export function FeedbackFormDialog({
       }}
       open={request !== null}
     >
-      <DialogContent
-        closeLabel={t("Close")}
+      <DrawerPopup
         initialFocus={request?.context.reportType === "saveFailure" ? dialogRef : undefined}
         ref={dialogRef}
       >
         <FeedbackFormHeader isReport={request?.isReport ?? false} />
 
-        <DialogFooter>
+        <DrawerContent className="pt-2">
           {request && (
             <FeedbackForm
               context={request.context}
@@ -72,8 +71,8 @@ export function FeedbackFormDialog({
               }}
             />
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DrawerContent>
+      </DrawerPopup>
+    </Drawer>
   );
 }
