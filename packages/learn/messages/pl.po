@@ -8189,7 +8189,7 @@ msgstr "Właśnie ukończona"
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
-msgstr ""
+msgstr "Ukończono {done} z {total}"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"

@@ -8189,7 +8189,7 @@ msgstr "たった今達成"
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
-msgstr ""
+msgstr "{done}件完了（全{total}件）"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"

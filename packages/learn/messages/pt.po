@@ -8189,7 +8189,7 @@ msgstr "Concluída agora"
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
-msgstr ""
+msgstr "{done} de {total} concluídas"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"

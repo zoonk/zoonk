@@ -8189,7 +8189,7 @@ msgstr "Az önce tamamlandı"
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
-msgstr ""
+msgstr "{done} / {total} tamamlandı"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"

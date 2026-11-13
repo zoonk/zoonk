@@ -8189,7 +8189,7 @@ msgstr "방금 완료"
 #: src/missions/missions-card.tsx
 msgctxt "deISVW"
 msgid "{done} of {total} done"
-msgstr ""
+msgstr "{done}개 완료(전체 {total}개)"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
