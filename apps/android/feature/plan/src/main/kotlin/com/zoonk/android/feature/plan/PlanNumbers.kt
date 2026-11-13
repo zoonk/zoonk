@@ -56,7 +56,6 @@ import com.zoonk.android.feature.language.LevelValue
 import com.zoonk.android.feature.language.SkillLevelsCard
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPracticeRow
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -779,7 +778,6 @@ private data class StillNeededItem(
     val kind: LearnKind,
     val label: String,
     val detail: String?,
-    val plusRequired: Boolean,
     val opensExam: Boolean,
 )
 
@@ -815,7 +813,6 @@ private fun StillToDo(
                             } else {
                                 null
                             },
-                        plusRequired = false,
                         opensExam = false,
                     ),
                 )
@@ -827,8 +824,7 @@ private fun StillToDo(
                         LearnKind.Review,
                         stringResource(R.string.plan_still_keep_fresh),
                         pluralStringResource(R.plurals.plan_still_fading, fading, fading),
-                        false,
-                        false,
+                        opensExam = false,
                     ),
                 )
             }
@@ -848,7 +844,7 @@ private fun StillToDo(
                             LearnKind.Challenge to stringResource(R.string.plan_still_first_challenge)
                         }
                     }
-                add(StillNeededItem(kind, label, null, mocks.plusRequired, opensExam = kind == LearnKind.Mock))
+                add(StillNeededItem(kind, label, null, opensExam = kind == LearnKind.Mock))
             }
         }.take(MAX_STILL_SHOWN)
     if (items.isEmpty()) return
@@ -862,7 +858,6 @@ private fun StillToDo(
                     onClick = if (item.opensExam && links.hasExam) links::exam else null,
                     leading = { KindMark(item.kind) },
                     supporting = item.detail?.let { { Text(it) } },
-                    meta = if (item.plusRequired) ({ PlusMark() }) else null,
                 )
             }
         }

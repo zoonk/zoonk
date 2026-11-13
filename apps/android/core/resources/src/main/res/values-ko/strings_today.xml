@@ -31,7 +31,6 @@
   "today_done": "ab4b0d95758485ff217474197783fb587751b6092bc2920946a7628297007f44",
   "today_done_count": "456f78ab972b2bafbdc565a50260af263893a16973a63eef53db0adf98a6f299",
   "today_done_day_off": "9b5c406e533641cf0a499b9ab635899fcd4295796f839676df38652a8a980a72",
-  "today_earlier_work": "d7b3d91200adab2c771bce44cb9b55044cfaf6fda8b8faeeb5e2337d2e41989c",
   "today_exam_choice_choose": "cd4d55901ba5d38ad2547b8701f91a0b26d5d56ba680dcb4aa152b20e02e3a87",
   "today_exam_choice_question": "67c8fd60a6d490d7efb59e658a797f2ba9a288d5a6af157bb6bac9f472c29160",
   "today_exam_choice_question_several": "bc9bd23349e23b2c68091ef47959175d14a1124f39b0c155ab644694a45219dd",
@@ -40,10 +39,6 @@
   "today_exam_speaking_detail": "c7e95dca0b00071c582c4351ad7ad98dae831eebbacf24b3fbe727220658b2f3",
   "today_finished_detail": "5e05c684741cbca4eb7c511589aa5bf147a91ba1e8680a43fcec7a9b986c52e9",
   "today_finished_goal": "928616fa2be16f63ca901b38b08809ed7214ea8ebfdcedede92de05bd4aa62ec",
-  "today_fresh_start_new_phase": "408002f7c9755fde3343a0d5b4cf37b3cf7d88b7e5a80076cf21fbc7105d5fc0",
-  "today_fresh_start_new_week": "6e6990e129b88940f4054c15be54a0c2495f06e0b64d9c53b030689aa7d3082a",
-  "today_fresh_start_welcome_back": "2f7bc2d52c56ed3a6cc8d1e7d33e759f1980fde481c91fa43a3b58349dd53540",
-  "today_fresh_start_welcome_back_trial_ended": "526047d30733a6c57ea38bda94800620a76a116326ec29c9480894f2e9ce7b79",
   "today_get_lessons": "3507abf9f0c22240e8608138242e9cab8f11df58f2bfc5be323be9169bff4a4f",
   "today_insight_add_it": "bc6e1116efc5ca6a685706319ea0a72ccec151008cc306f4b7d62f9e668c7376",
   "today_insight_got_it": "c69bf8fd67f9360d254f49cfe81213b50c97b67f8f4a338b20e7992b47f9ce8a",
@@ -72,9 +67,7 @@
   "today_noted": "9f49c729c008e3487a100054c65a6d1275aa40421b31b33a233e8e8924106c1e",
   "today_nothing_new": "cf058ca6cc00afb9e0e8fd2876d3baae678c25905da6244fb5318d5dca664697",
   "today_nothing_new_detail": "659279e3f9a89b1da1909f6cc9ffd255be98714be2dca29dfc52a7ef64b4d260",
-  "today_nothing_to_review": "52efd1d9285356b3307cce59ba2a815ddc027f5ec960fee05fe22e96f5e272f0",
   "today_notice_exam": "df6fbc3f823203f766a4030f1451913ed79f9c60372dc370ea8d3858badc6ece",
-  "today_notice_exam_access": "b782f98007fa3736ff5386f76fab8601ae82b42bd969ed5df580b4fd91e0fbe7",
   "today_notice_exam_choice": "8c34912f6f41ca69d01e84d1d9a97dfee38d1989a508e1bcbf41b0eb892b5d99",
   "today_notice_falling_behind": "53be9233082b6d2915f10fba93f80ab55987223f2424b48dd67915e8f36d2afc",
   "today_notice_plan_change": "b2397b0c83045c11cee91214b0080cae8cebd44a2d58caf961166a410c723286",
@@ -212,11 +205,6 @@
     <string name="today_time_studied">%1$s 학습</string>
     <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s개 완료, 총 %2$s개</string>
-    <!-- %1$s is a duration, such as "55 min". -->
-    <string name="today_fresh_start_welcome_back">다시 만나서 반가워요! 오늘은 약 %1$s만 공부하면 돼서 가볍게 다시 시작할 수 있어요.</string>
-    <string name="today_fresh_start_welcome_back_trial_ended">다시 만나서 반가워요! 오늘은 %1$s 정도 걸려서 부담 없이 다시 시작할 수 있어요.</string>
-    <string name="today_fresh_start_new_phase">오늘부터 새 단계예요. 쉬운 내용으로 가볍게 시작해요.</string>
-    <string name="today_fresh_start_new_week">새로운 한 주예요. 오늘은 쉬운 내용으로 가볍게 시작해요.</string>
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
         <item quantity="other">%d개 완료</item>
@@ -264,7 +252,6 @@
         <item quantity="other">목표일이 되었을 때 레슨 %d개가 남아 있었어요.</item>
     </plurals>
     <string name="today_past_date_detail">계속 공부하려면 계획을 조정하세요.</string>
-    <string name="today_nothing_to_review">오늘은 복습할 내용이 없어요.</string>
     <string name="today_nothing_new">오늘은 새로 배울 내용이 없어요.</string>
     <string name="today_nothing_new_detail">계획에 있는 레슨은 모두 마쳤거나 이미 알고 있는 내용이에요.</string>
     <string name="today_up_next">다음에 배울 내용</string>
@@ -346,8 +333,6 @@
     <string name="today_practice_with_buddy">%1$s하고 연습하기</string>
     <string name="today_already_know_this">이미 아는 내용인가요?</string>
     <string name="today_take_the_test">테스트 보기</string>
-    <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
-    <string name="today_earlier_work">이전에 못 마친 레슨 · %1$s</string>
     <string name="today_practice_anytime">언제든 연습하기</string>
     <string name="today_mistakes_notebook">오답 노트</string>
     <string name="today_mistakes_redo">틀린 문제 다시 풀기</string>
@@ -370,7 +355,6 @@
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">대화로 연습하는 %1$s 과제</string>
     <string name="today_notice_exam">내 시험</string>
-    <string name="today_notice_exam_access">무료 요금제로 시험 준비하기</string>
     <string name="today_notice_suggested_goal">추천 목표</string>
     <string name="today_insight_label">최근 답변을 바탕으로</string>
     <string name="today_insight_add_it">추가하기</string>

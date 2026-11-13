@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.country.lessonVarietyName
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
@@ -127,21 +126,13 @@ private fun AfterExamRow(
 ) {
     val end = phase.end?.let { planDate(it, page.today, estimate = true, month = true) }
     val count = phase.mocks.count.toInt()
-    val locked = count > 0 && page.mocksRequirePlus
 
     ListRow(
         headline = { Text(phaseName(phase, page.mocksRequirePlus)) },
         leading = { StatusMark(MarkStatus.Todo) },
         supporting = if (count > 0) ({ Text(mocksForNextSitting(page, count)) }) else null,
         meta =
-            if (locked || end != null) {
-                {
-                    if (locked) PlusMark()
-                    end?.let { TrailingText(it) }
-                }
-            } else {
-                null
-            },
+            end?.let { { TrailingText(it) } },
     )
 }
 
@@ -236,7 +227,6 @@ internal fun PlanProperties(
                     value = mockScheduleValue(page, mocks),
                     onClick = if (links.hasExam) links::exam else null,
                     onClickLabel = stringResource(R.string.plan_about_exam),
-                    plus = page.mocksRequirePlus,
                 )
             }
             page.plan.examChoices.forEach { choice ->
@@ -322,7 +312,6 @@ private fun PropertyRow(
     value: String,
     onClick: (() -> Unit)?,
     onClickLabel: String? = null,
-    plus: Boolean = false,
     warning: Boolean = false,
 ) {
     FlowRow(
@@ -349,7 +338,6 @@ private fun PropertyRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (plus) PlusMark()
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,

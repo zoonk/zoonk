@@ -214,26 +214,6 @@ class TodayFlowTest {
         rule.onAllNodes(normalizedDescription("0 of 1 done")).assertCountEquals(0)
     }
 
-    @Test
-    @Config(qualifiers = "w411dp-h3000dp")
-    fun aFoldHidingOnlyPlusLessonsOmitsHeldTime() {
-        show("blocks" to sevenMinuteLessons(4), "lessonsComing" to true, "plusLessons" to plusLessons(), "minutes" to timeLeft(240.0))
-
-        rule.onAllNodes(normalizedText("+4 more")).assertCountEquals(1)
-        rule.onAllNodes(normalizedText("3 hr 32 min")).assertCountEquals(0)
-    }
-
-    @Test
-    @Config(qualifiers = "w411dp-h3000dp")
-    fun aFoldHidingOnlyPlusLessonsOmitsFractionalTime() {
-        show("blocks" to sevenMinuteLessons(5), "plusLessons" to plusLessons(), "minutes" to timeLeft(35.3))
-
-        rule.onAllNodes(normalizedText("+4 more")).assertCountEquals(1)
-        rule.onAllNodes(normalizedText("0 min") or normalizedText("18 sec")).assertCountEquals(0)
-    }
-
-    private fun plusLessons() = JsonArray(List(4) { index -> buildJsonObject { put("title", "Plus lesson ${index + 1}") } })
-
     private fun normalizedDescription(text: String) =
         SemanticsMatcher("description: $text") { node ->
             node.config.getOrNull(SemanticsProperties.ContentDescription)?.any { it.replace('\u00a0', ' ') == text } == true

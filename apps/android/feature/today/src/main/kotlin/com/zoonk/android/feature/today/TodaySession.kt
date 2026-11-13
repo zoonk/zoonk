@@ -60,7 +60,6 @@ import com.zoonk.android.feature.session.challengePhase
 import com.zoonk.android.feature.session.drawsDayProgress
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
@@ -95,12 +94,6 @@ internal fun LazyListScope.todaySession(
 ) {
     val day = model.day
 
-    if (model.today.earlierWork.isNotEmpty()) {
-        item(key = "earlier-work", contentType = "earlier-work") { EarlierWork(model, Modifier.pageItem().padding(top = 16.dp)) }
-    }
-
-    freshStartItem(model)
-
     if (drawsDayProgress(day.sessionBar.total, held = day.heldMinutes > 0)) {
         item(key = "segments", contentType = "segments") { TodayDayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
     }
@@ -116,50 +109,6 @@ internal fun LazyListScope.todaySession(
     item(key = "more", contentType = "more") { TodayMore(model, viewModel, actions, buddyName, Modifier.pageItem().padding(top = 16.dp)) }
 }
 
-private fun LazyListScope.freshStartItem(model: TodayDayModel) {
-    val day = model.day
-    val freshStart = day.freshStart ?: return
-
-    if (!day.showsFreshStart(model.today.studiedToday) || model.state == StudySession.State.AHEAD ||
-        model.state == StudySession.State.REST
-    ) {
-        return
-    }
-
-    item(key = "fresh-start", contentType = "note") {
-        val time = formatMinutes(day.minutes.left, currentLocale())
-        val text =
-            when (freshStart) {
-                FreshStart.WelcomeBack -> {
-                    // Past a free exam plan's first week, it's shorter for what Plus holds, not the break.
-                    val trialEnded = day.examAccess.trialEnded
-                    stringResource(
-                        if (trialEnded) R.string.today_fresh_start_welcome_back_trial_ended else R.string.today_fresh_start_welcome_back,
-                        time,
-                    )
-                }
-
-                FreshStart.NewPhase -> {
-                    stringResource(R.string.today_fresh_start_new_phase)
-                }
-
-                FreshStart.NewWeek -> {
-                    stringResource(R.string.today_fresh_start_new_week)
-                }
-            }
-
-        Row(Modifier.pageItem().padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(
-                painterResource(R.drawable.ic_wb_twilight),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
 private fun LazyListScope.sessionQueue(
     model: TodayDayModel,
     next: DayStep?,
@@ -167,19 +116,16 @@ private fun LazyListScope.sessionQueue(
     actions: TodayActionHandlers,
     list: LazyListState,
 ) {
-    if (model.day.steps.isEmpty() && model.day.plusLessons.isEmpty()) return
+    if (model.day.steps.isEmpty()) return
 
     val queue = model.day.queue
     val foldsDone = queue.done.size > DONE_ROWS
     val moreOpen = viewModel.moreOpen
     val coming = if (next != null && (model.day.lessonsComing || model.day.lessonsToPrepare)) 1 else 0
-    val upcoming = queue.after.size + coming + model.day.plusLessons.size
+    val upcoming = queue.after.size + coming
     val more = (upcoming - UPCOMING_ROWS).coerceAtLeast(0)
     val shownAfter = if (moreOpen) queue.after else queue.after.take(UPCOMING_ROWS)
     val showsComing = coming > 0 && (moreOpen || queue.after.size < UPCOMING_ROWS)
-    val plusShown =
-        (if (moreOpen) model.day.plusLessons.size else (UPCOMING_ROWS - queue.after.size - coming).coerceAtLeast(0))
-            .coerceAtMost(model.day.plusLessons.size)
     // The list's last row has no hairline under it, as main's `last:border-b-0`; above "+N more" it keeps one.
     val endsList = more == 0 || moreOpen
 
@@ -201,7 +147,7 @@ private fun LazyListScope.sessionQueue(
     val rowsShown = (if (!foldsDone || viewModel.doneOpen) queue.done else emptyList()) + queue.before + listOfNotNull(next) + shownAfter
 
     val beforeNext = next?.let { rowsShown.indexOf(it) - 1 }
-    val stepsEnd = endsList && !showsComing && plusShown == 0
+    val stepsEnd = endsList && !showsComing
 
     itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
         val isNext = step.position == next?.position
@@ -222,11 +168,9 @@ private fun LazyListScope.sessionQueue(
 
     if (showsComing) {
         item(key = "coming", contentType = "coming") {
-            ComingLessonsRow(model, viewModel, actions, Modifier.pageRow(), divider = !endsList || plusShown > 0)
+            ComingLessonsRow(model, viewModel, actions, Modifier.pageRow(), divider = !endsList)
         }
     }
-
-    plusLessons(model.day.plusLessons, actions, visible = plusShown, endsList = endsList)
 
     if (more > 0) {
         item(key = FOLD_MORE, contentType = "fold") {
@@ -264,27 +208,6 @@ private fun LazyListState.keepFoldInView(hidden: Int) {
     val foldedIndex = fold.index - hidden
 
     if (firstVisibleItemIndex >= foldedIndex) requestScrollToItem(foldedIndex, -fold.offset)
-}
-
-/** Not part of the session: never the next block, no mission mark, and the day's time leaves them out. */
-private fun LazyListScope.plusLessons(
-    titles: List<String>,
-    actions: TodayActionHandlers,
-    visible: Int,
-    endsList: Boolean,
-) {
-    val shown = titles.take(visible)
-    items(shown.withIndex().toList(), key = { "plus-${it.index}" }, contentType = { "plus" }) { (index, title) ->
-        DayQueueRow(
-            onClick = { actions.navigate(AppRoute.Subscription) },
-            modifier = Modifier.pageRow(),
-            divider = !endsList || index != shown.lastIndex,
-            leading = { KindMark(LearnKind.Lesson) },
-            meta = { PlusMark() },
-        ) {
-            Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        }
-    }
 }
 
 /**
@@ -400,43 +323,6 @@ private fun StepRow(
                 null
             },
     )
-}
-
-/** Earlier unfinished lessons, which the session fits into today's time once it starts; a long list starts folded. */
-@Composable
-private fun EarlierWork(
-    model: TodayDayModel,
-    modifier: Modifier,
-) {
-    val items = model.today.earlierWork
-    var open by rememberSaveable { mutableStateOf(items.size <= OPEN_BACKLOG_LIMIT) }
-    val count = formatNumber(items.size.toDouble(), currentLocale())
-
-    Column(modifier) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable(role = Role.Button) { open = !open }
-                    .heightIn(min = 48.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(stringResource(R.string.today_earlier_work, count), style = MaterialTheme.typography.titleSmall)
-            Icon(
-                painter = painterResource(R.drawable.ic_expand_more),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp).rotate(if (open) 180f else 0f),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        if (open) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                items.forEach { Text(it.title, style = MaterialTheme.typography.bodyMedium) }
-            }
-        }
-        HorizontalDivider(Modifier.padding(top = 12.dp))
-    }
 }
 
 /** The test that skips the chapter, offered on the next lesson unless it was failed today. */
@@ -614,18 +500,13 @@ private fun TodayDayStatus(
             TodayStatusLine(R.drawable.ic_dark_mode, stringResource(R.string.today_rest), stringResource(clause), modifier)
         }
 
-        // A free exam plan past its first week has its new lessons locked above, so it never claims they're all done.
         StudySession.State.AHEAD -> {
-            if (day.examAccess.trialEnded) {
-                TodayStatusLine(R.drawable.ic_auto_awesome, stringResource(R.string.today_nothing_to_review), null, modifier)
-            } else {
-                TodayStatusLine(
-                    R.drawable.ic_auto_awesome,
-                    stringResource(R.string.today_nothing_new),
-                    stringResource(R.string.today_nothing_new_detail),
-                    modifier,
-                )
-            }
+            TodayStatusLine(
+                R.drawable.ic_auto_awesome,
+                stringResource(R.string.today_nothing_new),
+                stringResource(R.string.today_nothing_new_detail),
+                modifier,
+            )
         }
 
         StudySession.State.UNDERWAY -> {
@@ -636,4 +517,3 @@ private fun TodayDayStatus(
 
 private const val DONE_ROWS = 1
 private const val FOLD_MORE = "fold-more"
-private const val OPEN_BACKLOG_LIMIT = 5

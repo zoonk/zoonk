@@ -277,7 +277,6 @@ private fun ChapterLesson.listed() =
         minutes = minutes.toInt(),
         done = state == ChapterLesson.State.DONE,
         next = state == ChapterLesson.State.NEXT,
-        plusRequired = plusRequired,
     )
 
 @Composable
@@ -356,7 +355,7 @@ private fun ChapterPractice(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.goalcontent_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
-            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut, plusRequired = chapter.testOut.plusRequired)
+            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut)
             if (mistakes) {
                 if (canTestOut) HorizontalDivider()
                 PracticeChapterRow(practice, onPractice = actions.practice)

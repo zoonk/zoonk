@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -540,14 +539,7 @@ internal fun CheckpointRow(
         leading = { Trickster(Modifier.size(markSize())) },
         supporting = if (lines.isEmpty()) null else ({ Column { lines.forEach { Text(it) } } }),
         meta =
-            if (checkpoint.locked || trailing != null) {
-                {
-                    if (checkpoint.locked) PlusMark()
-                    trailing?.let { TrailingText(it) }
-                }
-            } else {
-                null
-            },
+            trailing?.let { { TrailingText(it) } },
     )
 }
 
@@ -582,10 +574,7 @@ internal fun MockRow(
         onClick = onClick,
         leading = { KindMark(LearnKind.Mock) },
         supporting = minutes?.let { { Text(formatMinutes(it.roundToInt(), locale)) } },
-        meta = {
-            if (page.mocksRequirePlus) PlusMark()
-            TrailingText(PlanDateWords(words, words))
-        },
+        meta = { TrailingText(PlanDateWords(words, words)) },
     )
 }
 
@@ -706,7 +695,6 @@ internal fun ColumnScope.PhaseDetails(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     MetaLine(pluralStringResource(R.plurals.plan_mock_exams_count, phase.mocks.count.toInt(), phase.mocks.count.toInt()))
-                    if (page.mocksRequirePlus) PlusMark()
                 }
             }
             phase.checkpoint?.let { CheckpointRow(page, it, links) }

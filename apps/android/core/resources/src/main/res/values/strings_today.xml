@@ -25,11 +25,6 @@
     <!-- How many of today's session steps are done; %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s of %2$s done</string>
 
-    <!-- %1$s is a duration, such as "55 min". -->
-    <string name="today_fresh_start_welcome_back">Welcome back! Today is lighter, about %1$s, so it\'s easy to pick up again.</string>
-    <string name="today_fresh_start_welcome_back_trial_ended">Welcome back! Today takes about %1$s, so it\'s easy to pick up again.</string>
-    <string name="today_fresh_start_new_phase">A new phase starts today, with an easy warm-up first.</string>
-    <string name="today_fresh_start_new_week">A fresh week. Today starts with an easy warm-up.</string>
 
     <!-- %d is how many of today's session steps are done. -->
     <plurals name="today_done_count">
@@ -84,7 +79,6 @@
         <item quantity="other">Your date came with %d lessons left.</item>
     </plurals>
     <string name="today_past_date_detail">Adjust your plan to keep going.</string>
-    <string name="today_nothing_to_review">Nothing to review today.</string>
     <string name="today_nothing_new">Nothing new for today.</string>
     <string name="today_nothing_new_detail">You\'ve done every lesson in your plan, or already know it.</string>
 
@@ -172,8 +166,6 @@
     <string name="today_practice_with_buddy">Practice with %1$s</string>
     <string name="today_already_know_this">Already know this?</string>
     <string name="today_take_the_test">Take the test</string>
-    <!-- Lessons from earlier days the learner hasn't finished; %1$s is how many, as a number. -->
-    <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
     <string name="today_practice_anytime">Practice anytime</string>
     <string name="today_mistakes_notebook">Mistakes notebook</string>
     <string name="today_mistakes_redo">Redo what you got wrong</string>
@@ -198,7 +190,6 @@
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tasks on a call</string>
     <string name="today_notice_exam">Your exam</string>
-    <string name="today_notice_exam_access">Exam prep on the free plan</string>
     <string name="today_notice_suggested_goal">Suggested goal</string>
     <string name="today_insight_label">From your recent answers</string>
     <string name="today_insight_add_it">Add it</string>

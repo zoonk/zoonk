@@ -237,7 +237,6 @@ internal fun ColumnScope.PlanRevealStep(
                             },
                         ),
                     onCreateAccount = { navigator.open(AppRoute.Login) },
-                    onSeePlus = { navigator.open(AppRoute.Subscription) },
                 )
             }
         }
@@ -402,7 +401,6 @@ private fun ColumnScope.RevealBody(
     onAdjust: () -> Unit,
     onChangeChoice: () -> Unit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
     focus: RevealFocus,
 ) {
     SetupContent {
@@ -468,7 +466,7 @@ private fun ColumnScope.RevealBody(
 
         // F16: the plan editor's coverage actions (move the date to cover everything, the syllabus's
         // topics) and choices (bases, study everything) go with this.
-        coverage?.let { CoverageWords(it, plan, onSeePlus, focus) }
+        coverage?.let { CoverageWords(it, plan, focus) }
     }
 }
 
@@ -789,17 +787,12 @@ internal class RevealFocus(
 private fun CoverageWords(
     coverage: RevealCoverage,
     plan: Plan,
-    onSeePlus: () -> Unit,
     focus: RevealFocus,
 ) {
     val locale = currentLocale()
     val time = formatMinutes(plan.schedule.dailyMinutes.toInt(), locale)
     val text =
         when (coverage) {
-            RevealCoverage.FreeWeekOver -> {
-                return FreeWeekOverNotice(onSeePlus)
-            }
-
             is RevealCoverage.Covered -> {
                 focusTradeOff(plan, time)?.let { return FocusTradeOff(it, plan, focus) }
                 coveredText(coverage, time)
@@ -948,30 +941,6 @@ private fun summaryDetail(
             pluralStringResource(R.plurals.onboarding_reveal_topics_planned, detail.total, detail.planned, detail.total)
         }
     }
-
-/** The plan stays, locked, with what Plus opens. */
-@Composable
-private fun FreeWeekOverNotice(onSeePlus: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-    ) {
-        Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(painterResource(R.drawable.ic_lock), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(R.string.onboarding_reveal_free_week_over_title), style = MaterialTheme.typography.titleSmall)
-                Text(
-                    stringResource(R.string.onboarding_reveal_free_week_over_body),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                OutlinedButton(onClick = onSeePlus, modifier = Modifier.padding(top = 8.dp)) {
-                    Text(stringResource(R.string.onboarding_see_plus))
-                }
-            }
-        }
-    }
-}
 
 /** A flat row of a list, one touch target tall. */
 @Composable

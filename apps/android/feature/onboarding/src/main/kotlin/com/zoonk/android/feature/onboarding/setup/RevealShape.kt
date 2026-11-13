@@ -79,8 +79,6 @@ internal fun Plan.revealChapters(): List<PlanPhaseChaptersInner> =
         .orEmpty()
 
 internal sealed interface RevealCoverage {
-    data object FreeWeekOver : RevealCoverage
-
     data class Covered(
         val feasibility: PlanFeasibility,
         val fullCourse: Boolean,
@@ -102,8 +100,6 @@ internal fun revealCoverage(
     goalKind: Goal.Kind,
     syllabus: Syllabus?,
 ): RevealCoverage? {
-    if (plan.access.freeWeekOver) return RevealCoverage.FreeWeekOver
-
     val feasibility = plan.feasibility?.takeIf { it.deadline != null && !it.fits }
 
     if (feasibility != null) {

@@ -291,8 +291,6 @@
   "onboarding_reveal_estimated_notice_areas": "ff118e6b7df15df80d0979425dc7bb4f1c2860a00d3550c8d6f205fc313c1591",
   "onboarding_reveal_estimated_percent": "44a202905bfed7d8896e94150eec4ab87988ec5324dd7c1e3c74309bca46cc0e",
   "onboarding_reveal_first_week": "acc9824265c2b7be721221ddb9580349215d25fc216d3bc48084725d9deca885",
-  "onboarding_reveal_free_week_over_body": "ae05925d5bfde4371801fe0caecc632a1bc319b3e36ab2a4a43e89fd5180af96",
-  "onboarding_reveal_free_week_over_title": "222e67d155f4ad501953c0a6b21524282909d8f149752d630c46080734b8de3a",
   "onboarding_reveal_full_course": "2083c4f47ec89e169a1e9a3bdbabf1b358648e205717058bec66c2175198b964",
   "onboarding_reveal_full_course_finish": "e8e196e7114ba8bbc0b24d126ba93cd348713b3e4b3ed7d890d040f054f7f8d4",
   "onboarding_reveal_full_course_finish_month": "b11fe177df33e40d88f1302a70bd98bb5424a5de6fae11154f772a4bb054cba9",
@@ -813,9 +811,6 @@
     <string name="onboarding_reveal_notice_day_guide">Le calendrier officiel de l’examen indique le %1$s.</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">Aucune date d’examen en %1$s</string>
-    <string name="onboarding_reveal_free_week_over_title">Ta semaine gratuite de préparation à l’examen est terminée</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">Les révisions et la correction de tes erreurs restent gratuites. Plus te donne accès à de nouvelles leçons, au reste de ton plan et aux examens blancs.</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s par jour ne suffit pas pour couvrir ton objectif.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Avec %1$s par jour, tu étudies tous les sujets de l’examen, en approfondissant ceux qui reviennent le plus souvent.</string>

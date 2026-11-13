@@ -291,8 +291,6 @@
   "onboarding_reveal_estimated_notice_areas": "722893e75ee51d1eafe1dc65a01ec917ccbc85ca2e9a3fb8df09475ee85b2ad9",
   "onboarding_reveal_estimated_percent": "30c0fb3c747a169f48f90035a97e5b9f694ec1d03ecb59168d2f05ceac8e05f3",
   "onboarding_reveal_first_week": "2098c7417c943912e41dd10fd20c7d5bba444adac337987da95ee5b11af2030f",
-  "onboarding_reveal_free_week_over_body": "ad73f47754396a1c50929fcb2cfd646952f2fdf06d19bd8d53a3ecf4dd386214",
-  "onboarding_reveal_free_week_over_title": "a29c01ed4ce5c848738a176e465b240916782ed34e92a3fb0178e92e57b9860a",
   "onboarding_reveal_full_course": "5efc1a5345e213b870c7c8e9e9ebcb52ce0bf0e808864b57e48ae39f43f24f08",
   "onboarding_reveal_full_course_finish": "43251d1e69e4bc50e116d825d83d43ca46a4b2b43d6a34e9dcfd7d97b2a0f19c",
   "onboarding_reveal_full_course_finish_month": "bbe615051f3f4ed81a8468ad60b6460a543e5809db7312a3f65c82d635a683cf",
@@ -801,9 +799,6 @@
     <string name="onboarding_reveal_notice_day_guide">試験の公式日程では%1$sとなっています。</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$sには試験の予定がありません</string>
-    <string name="onboarding_reveal_free_week_over_title">試験対策の無料期間（1週間）が終了しました</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">復習や間違えたところの学び直しは、引き続き無料です。Plusでは新しいレッスン、学習計画の続き、模試を利用できます。</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">1日%1$sでは、目標の内容を学ぶ時間が足りません。</string>
     <string name="onboarding_reveal_covers_exam_deeper">1日%1$sの学習で、試験のすべてのトピックを学び、よく出るトピックはより深く学びます。</string>
