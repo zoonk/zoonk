@@ -3,7 +3,6 @@
 import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { Buddy } from "@zoonk/ui/components/buddy";
-import { Trickster } from "@zoonk/ui/components/trickster";
 import { type BuddyKind } from "@zoonk/utils/buddy";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -36,10 +35,19 @@ const CEREMONIES: Record<string, CeremonyMilestone> = {
 
 const KINDS: readonly BuddyKind[] = ["zu", "beep", "otto", "noodle"];
 const EDGE = "outline-foreground/35 outline outline-1 outline-dashed";
-const SIZES = ["size-12", "size-20", "size-24", "size-40"] as const;
+const NOW_SIZES = ["size-12", "size-20", "size-24", "size-40"] as const;
+const NEW_SIZES = ["h-14", "h-23", "h-28", "h-47"] as const;
+
+// "Now" is the same drawing in the picture it had before this round (the 120 grid, a square box).
+const NOW_PICTURE = { viewBox: "0 0 120 120" } as object;
 
 function Places() {
-  const ceremony = CEREMONIES[useSearchParams().get("ceremony") ?? ""];
+  const params = useSearchParams();
+  const ceremony = CEREMONIES[params.get("ceremony") ?? ""];
+  const now = params.get("side") === "now";
+  const sizes = now ? NOW_SIZES : NEW_SIZES;
+  const picture = now ? NOW_PICTURE : {};
+  const whole = now ? "size-24" : "h-28";
 
   if (ceremony) {
     return (
@@ -74,33 +82,40 @@ function Places() {
         <ChallengeWonSpecimen />
       </section>
 
-      <section className="flex w-[1100px] flex-col gap-6 pt-8" data-sheet="body-sizes">
+      <section className="flex w-[1100px] flex-col gap-6 p-8" data-sheet="body-sizes">
         <p className="text-sm">
-          The whole character, glowing, at 48, 80, 96 and 160 px. The dashed line is the edge of its
-          own picture.
+          The whole buddy, glowing, at four sizes; then napping, and as a glowing baby. The dashed
+          line is the edge of its own picture.
         </p>
         {KINDS.map((kind) => (
           <div className="flex items-end gap-8" key={kind}>
-            {SIZES.map((size) => (
+            {sizes.map((size) => (
               <span className={EDGE} key={size}>
-                <Buddy beltColor="black" className={size} energy={100} kind={kind} studiedToday />
+                <Buddy
+                  {...picture}
+                  beltColor="black"
+                  className={size}
+                  energy={100}
+                  kind={kind}
+                  studiedToday
+                />
               </span>
             ))}
             <span className={EDGE}>
-              <Buddy beltColor="black" className="size-24" energy={12} kind={kind} />
+              <Buddy {...picture} beltColor="black" className={whole} energy={12} kind={kind} />
             </span>
             <span className={EDGE}>
-              <Buddy beltColor="white" className="size-24" energy={100} kind={kind} studiedToday />
+              <Buddy
+                {...picture}
+                beltColor="white"
+                className={whole}
+                energy={100}
+                kind={kind}
+                studiedToday
+              />
             </span>
           </div>
         ))}
-        <div className="flex items-end gap-8">
-          {(["sly", "smug", "defeated"] as const).map((expression) => (
-            <span className={EDGE} key={expression}>
-              <Trickster className="size-28" expression={expression} pose="hero" />
-            </span>
-          ))}
-        </div>
       </section>
     </div>
   );
