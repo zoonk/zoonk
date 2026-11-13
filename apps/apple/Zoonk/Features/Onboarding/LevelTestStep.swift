@@ -396,13 +396,6 @@ private struct LevelTestIntro: View {
         }
       }
 
-      StepButtons(
-        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
-        continueIcon: .play,
-        skipLabel: Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
-        onContinue: onStart, onSkip: onSkip)
-
       if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
         Section {
           Button {
@@ -415,6 +408,13 @@ private struct LevelTestIntro: View {
           }
         }
       }
+    }
+    .bottomBar {
+      StepButtons(
+        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
+        skipLabel: Text(
+          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
+        onContinue: onStart, onSkip: onSkip)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isStarting || isSaving)
@@ -681,7 +681,8 @@ private struct LevelTestDone: View {
               comment: "Starting or skipping the level test failed"))
         }
       }
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Build my plan", tableName: "Onboarding", comment: "Ends the level test to build the plan"

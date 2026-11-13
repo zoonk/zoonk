@@ -13,7 +13,7 @@ struct CertificatesScreen: View {
       switch store.list.state {
       case .loaded(let certificates):
         ZoonkList {
-          CertificatesHeader(count: certificates.count)
+          CertificatesHeader()
 
           Section {
             ForEach(certificates) { certificate in
@@ -81,23 +81,14 @@ private struct CertificatesHeader: View {
   static let title = Text(
     "Certificates", tableName: "Certificates", comment: "Title of the learner's certificates")
 
-  /// Nil while there are none.
-  var count: Int?
-
   var body: some View {
     Section {
       PageHeader(
         Self.title,
-        eyebrow: count.map {
-          Text(
-            "\($0) certificates", tableName: "Certificates",
-            comment: "Over the learner's certificates: how many they have")
-        },
         supporting: Text(
           "A certificate for every level and plan you finish.", tableName: "Certificates",
           comment: "Under the learner's certificates: what earns one")
       )
-      .eyebrowAsWritten()
     }
   }
 }

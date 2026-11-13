@@ -124,7 +124,8 @@ struct ProfileEditorView: View {
         }
       }
       .disabled(session.isWorking)
-
+    }
+    .bottomBar {
       if isRequiredSetup {
         StepButtons(canContinue: isValid, onContinue: save)
           .environment(\.isSavingAnswer, session.isWorking)

@@ -11,10 +11,11 @@ struct RevealHero: View {
   var body: some View {
     HStack(alignment: .top, spacing: 16) {
       VStack(alignment: .leading, spacing: 6) {
-        DoneLabel(
-          text: Text(
+        Chip(
+          Text(
             "Plan created", tableName: "Onboarding",
-            comment: "Eyebrow over a goal whose plan was just built"))
+            comment: "Eyebrow over a goal whose plan was just built"),
+          tone: .success)
 
         Text(title)
           .typeStyle(.pageTitle)

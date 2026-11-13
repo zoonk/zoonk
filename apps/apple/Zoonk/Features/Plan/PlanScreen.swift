@@ -110,15 +110,6 @@ private func daysLeft(_ plan: GoalPlan?) -> String? {
     comment: "Plan subtitle: how many days are left until the goal's date")
 }
 
-/// Main's eyebrow: the goal, then the days left until its date.
-private func planEyebrow(goal: LearnerGoal, plan: GoalPlan) -> Text {
-  guard let left = daysLeft(plan) else {
-    return Text(goal.displayName)
-  }
-
-  return Text(verbatim: "\(goal.displayName)\u{00A0}· \(left)")
-}
-
 /// A plan is built while the questions are still answered, on a time the learner hasn't chosen
 /// yet, so the Plan leads back to them as Today does. Paused, nothing asks for them until the
 /// learner resumes the goal.
@@ -302,8 +293,7 @@ private struct PlanContent: View {
   private var header: some View {
     Section {
       PageHeader(
-        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"),
-        eyebrow: planEyebrow(goal: goal, plan: plan))
+        Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
     }
   }
 

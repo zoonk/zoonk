@@ -194,25 +194,26 @@ private struct UnderstoodCard: View {
         if let shownError {
           GoalErrorSection(error: shownError)
         }
-
-        if shownError?.needsAccount != true {
-          StepButtons(
-            canContinue: !rewriting,
-            canSkip: !isCreating && !rewriting,
-            continueLabel: Text(
-              "Looks right", tableName: "Onboarding",
-              comment: "Confirms what was understood and creates the goals"),
-            continueIcon: .check,
-            skipLabel: Text(
-              "Fix something", tableName: "Onboarding",
-              comment: "Opens the typed words to change and read again"),
-            skipIcon: nil,
-            onContinue: onConfirm
-          ) {
-            rewriting = true
-          }
-          .environment(\.isSavingAnswer, isCreating)
+      }
+    }
+    .bottomBar {
+      if !(startable.isEmpty && !isGuest), shownError?.limit?.isPlusLimit != true,
+        shownError?.needsAccount != true
+      {
+        StepButtons(
+          canContinue: !rewriting,
+          canSkip: !isCreating && !rewriting,
+          continueLabel: Text(
+            "Looks right", tableName: "Onboarding",
+            comment: "Confirms what was understood and creates the goals"),
+          skipLabel: Text(
+            "Fix something", tableName: "Onboarding",
+            comment: "Opens the typed words to change and read again"),
+          onContinue: onConfirm
+        ) {
+          rewriting = true
         }
+        .environment(\.isSavingAnswer, isCreating)
       }
     }
     .sheet(item: $choosingCountry) { choice in
@@ -814,13 +815,13 @@ private struct ExplainOutcome: View {
       if let error {
         GoalErrorSection(error: error)
       }
-
+    }
+    .bottomBar {
       if error?.needsAccount != true {
         StepButtons(
           continueLabel: Text(
             "Explain it", tableName: "Onboarding",
             comment: "Starts a quick explanation of the learner's question"),
-          continueIcon: .explain,
           onContinue: onStart
         )
         .environment(\.isSavingAnswer, isStarting)
@@ -886,13 +887,13 @@ private struct InstrumentOutcome: View {
       if let error {
         GoalErrorSection(error: error)
       }
-
+    }
+    .bottomBar {
       if error?.needsAccount != true {
         StepButtons(
           canSkip: waitlist != .joined,
           continueLabel: Text(
             "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
-          continueIcon: .play,
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
@@ -950,12 +951,12 @@ private struct DeclinedOutcome: View {
           tableName: "Onboarding", comment: "Why a goal is declined"))
 
       TypedGoalSection(goal: goal)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Try another goal", tableName: "Onboarding",
           comment: "Goes back to write a different goal"),
-        continueIcon: nil,
         onContinue: onRetry)
     }
   }
@@ -976,12 +977,12 @@ private struct UnclearOutcome: View {
           tableName: "Onboarding", comment: "Asks for a clearer goal, with examples"))
 
       TypedGoalSection(goal: goal)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Write my goal again", tableName: "Onboarding",
           comment: "Goes back to write the goal with more detail"),
-        continueIcon: nil,
         onContinue: onRetry)
     }
   }
