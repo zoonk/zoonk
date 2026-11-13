@@ -19,14 +19,18 @@ import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
 import { useStepLabel } from "./use-row-label";
 import { useLessonGettingReady } from "./use-today-copy";
 
+/** A row's mark and minutes center on a row of one or two lines and sit on the first of three. */
+const THREE_LINES_CLASS = "has-[[data-slot=today-row-lines]>:nth-child(3)]:items-start";
+
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
     "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
     isNext
-      ? "bg-muted -mx-2.5 my-0.5 items-start rounded-lg border-b-0 px-2.5 before:inset-x-0"
+      ? "bg-muted -mx-2.5 my-0.5 rounded-lg border-b-0 px-2.5 before:inset-x-0"
       : "before:-inset-x-2.5",
+    THREE_LINES_CLASS,
   );
 }
 
@@ -155,8 +159,8 @@ export function BlockRow({
         <BlockMark block={block} />
       </span>
 
-      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", isNext && "items-start")}>
-        <div className="flex flex-col gap-px">
+      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", THREE_LINES_CLASS)}>
+        <div className="flex flex-col gap-px" data-slot="today-row-lines">
           <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
           {!finished && <RowLines block={block} isNext={isNext} />}
