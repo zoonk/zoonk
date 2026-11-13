@@ -6,13 +6,14 @@ import {
   pageKind,
   placeFindings,
   summarizeWords,
-  titleGapFindings,
+  titleTopFindings,
   wordFindings,
   wordGrowth,
 } from "./words.mts";
 
 const MARKED_WORDS = 5;
 const GROWTH_PERCENT = 22;
+const EXTRA_TOP = 32;
 
 function page(overrides: Partial<PageWords> = {}): PageWords {
   return {
@@ -21,7 +22,7 @@ function page(overrides: Partial<PageWords> = {}): PageWords {
     actionPinned: null,
     kind: "app",
     longestButton: "Start",
-    titleGap: null,
+    titleTop: null,
     words: 40,
     ...overrides,
   };
@@ -46,7 +47,7 @@ describe("counting a page's words", () => {
         actionPinned: true,
         buttons: ["Continue", "Continue to daily time", "Skip"],
         text: "Pick a time",
-        titleGap: 16,
+        titleTop: null,
       },
       "app",
     );
@@ -122,10 +123,24 @@ describe("where the title and the main action sit (E8 and R2)", () => {
     );
   });
 
-  it("leads to a title with more room above it on one screen than the other", () => {
-    const [finding] = titleGapFindings(page({ titleGap: 40 }), page({ titleGap: 16 }));
-    assert.equal(finding?.value, 24);
-    assert.deepEqual(titleGapFindings(page({ titleGap: 18 }), page({ titleGap: 16 })), []);
-    assert.deepEqual(titleGapFindings(page({ titleGap: null }), page({ titleGap: 16 })), []);
+  it("catches the same 101 px title offset on both screen sizes", () => {
+    const phone = page({ titleTop: { actual: 101, expected: 69 } });
+    const laptop = page({ titleTop: { actual: 101, expected: 69 } });
+
+    assert.deepEqual(
+      [phone, laptop].map((each) => titleTopFindings(each)[0]?.value),
+      [EXTRA_TOP, EXTRA_TOP],
+    );
+
+    assert.deepEqual(titleTopFindings(page({ titleTop: { actual: 69, expected: 69 } })), []);
+  });
+
+  it("leaves other surfaces and absent app-shell titles alone", () => {
+    assert.deepEqual(titleTopFindings(page()), []);
+
+    assert.deepEqual(
+      titleTopFindings(page({ kind: "marketing", titleTop: { actual: 101, expected: 69 } })),
+      [],
+    );
   });
 });

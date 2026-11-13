@@ -163,6 +163,10 @@ describe("a panel the walk opened", () => {
     assert.deepEqual(panelFindings(panel), []);
   });
 
+  it("does not judge Escape focus when a nested action already closed the panel", () => {
+    assert.deepEqual(panelFindings({ ...panel, focusBack: null }), []);
+  });
+
   it("names each way a panel fails, and a phone's panel that isn't a sheet", () => {
     assert.deepEqual(
       panelFindings({

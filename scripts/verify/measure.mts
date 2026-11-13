@@ -16,6 +16,7 @@ import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
 import { craftFindings } from "./craft.mts";
 import { type Shortcuts } from "./keys.mts";
+import { type PageTopClasses } from "./page-top.mts";
 import {
   findOverflow,
   findTruncated,
@@ -42,6 +43,7 @@ import {
   placeFindings,
   readWords,
   summarizeWords,
+  titleTopFindings,
   wordFindings,
 } from "./words.mts";
 
@@ -59,6 +61,7 @@ export type Target = {
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
   typeScale: number[];
+  pageTop: PageTopClasses | null;
 };
 
 export type LoadReport = LoadMeasurement & {
@@ -104,7 +107,7 @@ export async function warmUp(target: Target, path: string) {
   }
 }
 
-async function readLoadedPage(page: Page, traffic: Traffic) {
+async function readLoadedPage(page: Page, traffic: Traffic, pageTop: PageTopClasses | null) {
   const prefetched = new Set(
     traffic.requests
       .filter((request) => classifyRequest(request) === "prefetch")
@@ -135,7 +138,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     unprefetchedLinks: links
       .filter((link) => !prefetched.has(link))
       .map((link) => redactQuery(link)),
-    words: await page.evaluate(readWords),
+    words: await page.evaluate(readWords, pageTop),
   };
 }
 
@@ -167,7 +170,7 @@ export async function measureLoad(
     const window = { from, to: Date.now() };
     const mainThreadMs = (await readMainThreadMs(cdp)) - workBefore;
     await screencast.stop();
-    const loaded = await readLoadedPage(page, traffic);
+    const loaded = await readLoadedPage(page, traffic, target.pageTop);
     // Chrome's in-page navigation timing can put a streamed page's first byte before the network
     // delivered it, so the time comes from the network layer.
     const responseStart = response?.request().timing().responseStart ?? -1;
@@ -216,6 +219,7 @@ export async function measureLoad(
         ...judgeLoad(measurement),
         ...wordFindings(words),
         ...placeFindings(words),
+        ...titleTopFindings(words),
         ...craftFindings(craft, target.typeScale),
         ...roleFindings(roles),
       ],
