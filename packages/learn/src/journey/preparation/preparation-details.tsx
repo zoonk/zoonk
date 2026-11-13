@@ -202,9 +202,7 @@ export function PreparationDetails({
         stillNeeded={stillNeeded}
       />
       <QuietDisclosure label={t("How it's calculated")}>
-        <p className="text-muted-foreground pt-2 text-[0.8125rem] leading-snug text-pretty">
-          {note}
-        </p>
+        <p className="text-muted-foreground text-compact pt-2 leading-normal text-pretty">{note}</p>
       </QuietDisclosure>
     </div>
   );

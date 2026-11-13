@@ -19,7 +19,7 @@ export function QuietDisclosure({
 }) {
   return (
     <Collapsible className={className} data-slot="quiet-disclosure">
-      <CollapsibleTrigger className="group/quiet text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 hit-area relative -mx-1 inline-flex items-center gap-1 rounded-md px-1 text-[0.8125rem] leading-snug underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]">
+      <CollapsibleTrigger className="group/quiet text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative -mx-1 inline-flex items-center gap-1 rounded-md px-1 leading-snug underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]">
         {label}
         <ChevronDownIcon
           aria-hidden="true"

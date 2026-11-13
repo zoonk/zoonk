@@ -107,7 +107,7 @@ export function Suggestion({
   );
 }
 
-function SuggestionMark() {
+function SuggestionMark({ className }: { className?: string }) {
   const { mark } = useSuggestion();
   const presentation = use(PresentationContext);
 
@@ -118,6 +118,7 @@ function SuggestionMark() {
         "flex shrink-0 items-center justify-center",
         mark ? "text-muted-foreground" : "text-warning",
         MARK_SIZE[presentation],
+        className,
       )}
       data-slot="suggestion-mark"
     >
@@ -210,14 +211,20 @@ export function SuggestionContent({
   );
 }
 
+/** The mark's box is one line of the title, so it sits on the first line however many the title takes. */
+const TITLE_TYPE: Readonly<Record<Exclude<Presentation, "line">, string>> = {
+  panel: "text-compact leading-snug",
+  sheet: "text-lg leading-snug",
+};
+
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   const presentation = use(PresentationContext);
 
   if (presentation === "sheet") {
     return (
-      <div className="flex items-center gap-2.5" data-slot="suggestion-header">
-        <SuggestionMark />
-        <DrawerTitle className="text-lg leading-snug font-semibold text-pretty">
+      <div className="flex items-start gap-2.5" data-slot="suggestion-header">
+        <SuggestionMark className={cn("h-lh", TITLE_TYPE.sheet)} />
+        <DrawerTitle className={cn("font-semibold text-pretty", TITLE_TYPE.sheet)}>
           {children}
         </DrawerTitle>
       </div>
@@ -225,9 +232,9 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex items-center gap-2" data-slot="suggestion-header">
-      <SuggestionMark />
-      <h2 className="text-compact leading-snug font-semibold text-pretty">{children}</h2>
+    <div className="flex items-start gap-2" data-slot="suggestion-header">
+      <SuggestionMark className={cn("h-lh", TITLE_TYPE.panel)} />
+      <h2 className={cn("font-semibold text-pretty", TITLE_TYPE.panel)}>{children}</h2>
     </div>
   );
 }

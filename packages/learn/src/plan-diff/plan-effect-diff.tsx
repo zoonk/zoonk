@@ -9,12 +9,12 @@ import { type ChangeRow, usePlanChangeRows } from "./use-change-rows";
 
 function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
   return (
-    <dl className="flex flex-col pt-1 text-[0.8125rem] leading-snug [&>div+div]:border-t [&>div:last-child]:pb-0">
+    <dl className="text-compact flex flex-col pt-1 leading-normal [&>div+div]:border-t [&>div:last-child]:pb-0">
       {rows.map((row) => (
         <div className="flex flex-col gap-0.5 py-2" key={row.key}>
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-            <dt className="text-muted-foreground">{row.label}</dt>
-            <dd className="font-mono text-xs tabular-nums">
+            <dt>{row.label}</dt>
+            <dd className="font-mono tabular-nums">
               {row.before && (
                 <>
                   <span className="text-muted-foreground">{row.before}</span>
@@ -27,9 +27,7 @@ function ChangeRows({ rows }: { rows: readonly ChangeRow[] }) {
               {row.after}
             </dd>
           </div>
-          {row.detail && (
-            <dd className="text-muted-foreground text-xs text-pretty">{row.detail}</dd>
-          )}
+          {row.detail && <dd className="text-muted-foreground text-pretty">{row.detail}</dd>}
         </div>
       ))}
     </dl>
