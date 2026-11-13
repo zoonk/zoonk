@@ -1742,16 +1742,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "dochodzi %arg lekcja"
-                    }
-                  },
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "dochodzą %arg lekcje"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "dochodzi %arg lekcja"
                     }
                   },
                   "other" : {
@@ -2015,16 +2015,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "dochodzi mniej więcej %arg lekcja"
-                    }
-                  },
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "dochodzą mniej więcej %arg lekcje"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "dochodzi mniej więcej %arg lekcja"
                     }
                   },
                   "other" : {
@@ -2288,16 +2288,16 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg lekcję"
-                    }
-                  },
                   "few" : {
                     "stringUnit" : {
                       "state" : "translated",
                       "value" : "%arg lekcje"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lekcję"
                     }
                   },
                   "other" : {
@@ -23137,61 +23137,61 @@
         }
       }
     },
-    "Longer calls come with Plus." : {
-      "comment" : "Says longer practice calls need Plus",
+    "Longer calls need a subscription" : {
+      "comment" : "A free learner picked a practice call length their plan doesn't include",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Längere Gespräche gibt es mit Plus."
+            "value" : "Für längere Gespräche brauchst du ein Abo"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus incluye llamadas más largas."
+            "value" : "Necesitas una suscripción para llamadas más largas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les appels plus longs sont inclus dans Plus."
+            "value" : "Les appels plus longs nécessitent un abonnement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus puoi fare conversazioni più lunghe."
+            "value" : "Per conversazioni più lunghe serve un abbonamento"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusなら、より長く会話練習ができます。"
+            "value" : "より長い会話練習にはサブスクリプションが必要です"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus를 구독하면 더 오래 대화할 수 있어요."
+            "value" : "더 오래 대화하려면 구독이 필요해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dłuższe rozmowy są dostępne w pakiecie Plus."
+            "value" : "Dłuższe rozmowy wymagają subskrypcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversas mais longas estão disponíveis no Plus."
+            "value" : "Conversas mais longas exigem uma assinatura"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daha uzun sohbetler Plus’ta."
+            "value" : "Daha uzun sohbetler için abonelik gerekiyor"
           }
         }
       }
@@ -31051,6 +31051,65 @@
         }
       }
     },
+    "That's all the goals you can study at once. Pause another goal to resume this one, or subscribe to study more." : {
+      "comment" : "Explains why resuming a goal failed: the learner follows as many goals at once as their plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst keine weiteren Ziele gleichzeitig verfolgen. Pausier ein anderes Ziel, um dieses fortzusetzen, oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcanzaste el límite de objetivos que puedes estudiar a la vez. Pausa otro objetivo para reanudar este o suscríbete para estudiar más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suis déjà le maximum d’objectifs à la fois. Mets un autre objectif en pause pour reprendre celui-ci, ou abonne-toi pour en suivre plus."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di obiettivi da seguire insieme. Metti in pausa un altro obiettivo per riprendere questo o abbonati per seguirne di più."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同時に進められる目標の上限に達しました。この目標を再開するには、ほかの目標を一時停止するか、登録して同時に進める目標を増やしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동시에 공부할 수 있는 목표 수를 다 채웠어요. 다른 목표를 일시 중지하면 이 목표를 이어갈 수 있어요. 구독하면 더 많은 목표를 동시에 공부할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masz już maksymalną liczbę aktywnych celów. Wstrzymaj inny cel, żeby wrócić do tego, lub wykup subskrypcję, żeby realizować więcej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já estuda o máximo de objetivos ao mesmo tempo. Pause outro objetivo para retomar esse ou assine para estudar mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda bu kadar hedef üzerinde çalışabilirsin. Buna devam etmek için başka bir hedefi duraklat ya da daha fazla hedef için abone ol."
+          }
+        }
+      }
+    },
     "The call didn't start. Try again in a moment." : {
       "comment" : "Says the practice call didn't start",
       "localizations" : {
@@ -36181,65 +36240,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanacakların"
-          }
-        }
-      }
-    },
-    "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more." : {
-      "comment" : "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para tener más objetivos activos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Mets un autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Metti in pausa un altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで同時に進められる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。Plusに登録すれば、より多くの目標を同時に進められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Pause outro objetivo para retomar este ou assine o Plus para ter mais objetivos ativos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat ya da daha fazla hedefi takip etmek için Plus’a geç."
           }
         }
       }
