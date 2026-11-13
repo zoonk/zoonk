@@ -17,6 +17,7 @@ import {
 } from "../_components/suggestion";
 import { ArchiveGoal } from "../journey/archive-goal";
 import { usePlanScreen } from "./plan-context";
+import { STUDY_AFTER_EXAM } from "./plan-full-course";
 import {
   CheckingChange,
   OfferPreview,
@@ -31,8 +32,6 @@ import {
   usePlanSuggestionSlot,
 } from "./plan-suggestion-context";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
-
-const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [{ fullCourse: true, kind: "setFullCourse" }];
 
 function OtherOptions({ item }: { item: SlotItem }) {
   const t = useExtracted();
@@ -73,7 +72,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   const waiting = useRef(0);
   const asked = useRef(0);
   const isExam = goal.kind === "exam";
-  const { title } = pastDateText({ isExam, lessons: item.lessons });
+  const { ask, title } = pastDateText({ isExam, lessons: item.lessons });
   const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
 
   const showChange = async () => {
@@ -154,9 +153,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       );
     }
 
-    const doesText = isExam
-      ? t("Keep studying them, or archive this goal?")
-      : t("Move your date so your time covers what's left.");
+    const doesText = ask ?? t("Move your date so your time covers what's left.");
 
     const mainLabel = isExam ? t("Keep studying") : t("Preview");
 

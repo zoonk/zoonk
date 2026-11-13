@@ -20,6 +20,9 @@ export const TODAY_ASIDE_CLASS = cn(
 );
 
 /** From `sm` the button centers on the title's line, under the eyebrow's, and adds no height to the heading's row. */
+/** A Today action's button: the row's width on a phone, its label's from `sm`. */
+export const TODAY_ACTION_BUTTON_CLASS = "w-full text-reading sm:w-auto";
+
 export const TODAY_ACTION_CLASS = cn(
   "[grid-area:action] sm:mt-3.5 sm:-mb-1.5 sm:self-start",
   "max-sm:bg-background max-sm:fixed max-sm:inset-x-0 max-sm:z-20 max-sm:px-4 max-sm:pt-3 max-sm:pb-3",

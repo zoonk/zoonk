@@ -1,6 +1,5 @@
 "use client";
 
-import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { ArchiveIcon } from "lucide-react";
@@ -9,12 +8,9 @@ import { useState, useTransition } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { ChangeSaveError } from "../_components/save-error";
 import { ArchiveGoal } from "../journey/archive-goal";
+import { STUDY_AFTER_EXAM } from "../plan/plan-full-course";
 import { useTodayScreen } from "./today-context";
-import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
-
-const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [{ fullCourse: true, kind: "setFullCourse" }];
-
-const ACTION_CLASS = "w-full text-reading sm:w-auto";
+import { TODAY_ACTION_BUTTON_CLASS, TODAY_ACTION_STATUS_CLASS } from "./today-layout";
 
 /**
  * An exam whose date passed with lessons left: the learner studies them or archives the goal.
@@ -47,7 +43,7 @@ export function TodayExamOver() {
         <form action={keepStudying} className="contents">
           <EnterButton
             busy={isPending}
-            className={ACTION_CLASS}
+            className={TODAY_ACTION_BUTTON_CLASS}
             enter="host"
             size="lg"
             type="submit"
@@ -63,7 +59,7 @@ export function TodayExamOver() {
           {(archive) => (
             <Button
               busy={archive.pending}
-              className={ACTION_CLASS}
+              className={TODAY_ACTION_BUTTON_CLASS}
               disabled={isPending}
               icon={<ArchiveIcon aria-hidden="true" />}
               onClick={archive.ask}

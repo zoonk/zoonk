@@ -14,6 +14,11 @@ import { usePlanChange } from "./use-plan-change";
  * goal's plan practices until its date, so its end without one is previewed when asked. Null when
  * there's nothing to choose.
  */
+/** The one change that keeps an exam's plan going after the exam. */
+export const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [
+  { fullCourse: true, kind: "setFullCourse" },
+];
+
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();
   const { feasibility, schedule } = plan;

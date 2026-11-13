@@ -76,18 +76,14 @@ function WaitingStatus({ className }: { className?: string }) {
  * Never a rest day or "nothing new" past the goal's date: the lessons left are still the plan's.
  */
 function PastDateStatus({ className, lessons }: { className?: string; lessons: number }) {
-  const t = useExtracted();
   const pastDateText = usePastDateText();
   const { today } = useTodayScreen();
+  const { ask, sentence } = pastDateText({ isExam: today.goal.kind === "exam", lessons });
 
   return (
     <TodayStatusLine className={className} icon={<CalendarClockIcon />}>
-      <TodayStatusSentence>
-        {pastDateText({ isExam: today.goal.kind === "exam", lessons }).sentence}
-      </TodayStatusSentence>
-      {today.goal.kind === "exam" && (
-        <TodayStatusClause>{t("Keep studying them, or archive this goal?")}</TodayStatusClause>
-      )}
+      <TodayStatusSentence>{sentence}</TodayStatusSentence>
+      {ask && <TodayStatusClause>{ask}</TodayStatusClause>}
     </TodayStatusLine>
   );
 }
