@@ -3,6 +3,7 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { countSetAside, passTheDate } from "./past-date";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
 test.describe("Today after an exam's date, with lessons left", () => {
   test("Keep studying puts the lessons back on the plan", async ({ browser }) => {
@@ -17,8 +18,8 @@ test.describe("Today after an exam's date, with lessons left", () => {
       await expectHydrated(keepStudying);
       await keepStudying.click();
 
-      await expect.poll(() => countSetAside(user.goalId)).toBe(0);
-      await expect(keepStudying).toBeHidden();
+      await expect(keepStudying).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
+      expect(await countSetAside(user.goalId)).toBe(0);
     });
   });
 
