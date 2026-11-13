@@ -145,6 +145,7 @@ export function ReviewPdfExport({
           <Button
             disabled={entries.length > 0 && selectedEntries.length === 0}
             onClick={printReview}
+            size="lg"
           >
             <PrinterIcon />
             Print or save PDF
