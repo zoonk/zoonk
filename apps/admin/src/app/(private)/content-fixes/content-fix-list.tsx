@@ -9,7 +9,7 @@ import { type ContentFixListItem, listContentFixes } from "@/data/content-fixes/
 import { formatDateTime } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
-import { ContentFixStatusBadge } from "./content-fix-status";
+import { ContentFixStatusBadge, contentFixState } from "./content-fix-status";
 
 const PENDING_COLUMNS: AdminTableColumn[] = [
   { label: "Fix" },
@@ -48,7 +48,7 @@ function ContentFixRow({ fix, withDecision }: { fix: ContentFixListItem; withDec
       </TableCell>
       {withDecision && (
         <TableCell className="text-xs">
-          <ContentFixStatusBadge status={fix.status} />
+          <ContentFixStatusBadge state={contentFixState(fix)} />
           <div className="text-muted-foreground mt-1">
             {[formatDateTime(fix.decidedAt), fix.decider?.name].filter(Boolean).join(" · ")}
           </div>

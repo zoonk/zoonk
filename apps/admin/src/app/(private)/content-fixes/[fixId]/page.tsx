@@ -25,7 +25,7 @@ import {
 } from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
 import { ContentFixVoice } from "../_components/content-fix-voice";
-import { contentFixStatusLabels } from "../content-fix-status";
+import { contentFixState, contentFixStatusLabels } from "../content-fix-status";
 
 type Props = PageProps<"/content-fixes/[fixId]">;
 
@@ -157,21 +157,24 @@ function Outcome({ fix, viewerId }: { fix: ContentFixDetail; viewerId: string | 
   const decided = [fix.decider?.name, formatDateTime(fix.decidedAt)].filter(Boolean).join(" · ");
   const reverts = fix.revertedBy.filter((revert) => revert.status !== "rejected");
 
+  const state = contentFixState(fix);
+
   const messages = {
     applied: "Applied. Learners get the changed content.",
     approved: "Approved with a passkey. It hasn't applied yet.",
     rejected: "Rejected. Nothing changed.",
+    reverted: "Applied, then reverted. Learners get the content from before this fix.",
     stale: `Stale. Nothing changed. ${fix.staleReason ?? ""}`,
   };
 
-  if (fix.status === "proposed") {
+  if (state === "proposed") {
     return null;
   }
 
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm">
-        {messages[fix.status]} <span className="text-muted-foreground">{decided}</span>
+        {messages[state]} <span className="text-muted-foreground">{decided}</span>
       </p>
 
       {reverts.length > 0 && (
@@ -189,7 +192,7 @@ function Outcome({ fix, viewerId }: { fix: ContentFixDetail; viewerId: string | 
         </ul>
       )}
 
-      {fix.status === "applied" && <RevertForm fixId={fix.id} />}
+      {state === "applied" && <RevertForm fixId={fix.id} />}
       {fix.status === "approved" && fix.deciderId === viewerId && (
         <ResumeApplying batchId={fix.batchId} count={1} />
       )}
@@ -234,7 +237,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
       <AdminDetailHeader
         alert={fix.status === "stale" ? contentFixStatusLabels.stale : null}
         facts={[
-          fix.status !== "stale" && contentFixStatusLabels[fix.status],
+          fix.status !== "stale" && contentFixStatusLabels[contentFixState(fix)],
           `Proposed ${formatDateTime(fix.createdAt)}`,
         ]}
         parents={FIX_PARENTS}
