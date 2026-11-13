@@ -2,7 +2,8 @@
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 import { ShortcutKbd, TooltipKbd } from "@zoonk/ui/components/kbd";
-import { TooltipContent, TooltipProvider, TooltipTrigger } from "@zoonk/ui/components/tooltip";
+import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
+import { TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { isApplePlatform } from "@zoonk/ui/hooks/shortcut-label";
 import { SHORTCUTS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -19,9 +20,6 @@ import {
 
 /** Tailwind's `lg`, where a sidebar on either side shows. */
 const SIDEBAR_SHOWN_QUERY = "(min-width: 64rem)";
-
-/** The delay `Sidebar` gives its items' names, so both sides' toggles name themselves alike. */
-const TOOLTIP_DELAY_MS = 400;
 
 const listeners = new Set<() => void>();
 
@@ -204,27 +202,25 @@ export function SidebarToggle({
   useEffect(() => (ref.current ? registerToggle(ref.current, side) : undefined), [side]);
 
   return (
-    <TooltipProvider delay={TOOLTIP_DELAY_MS}>
-      <TooltipPrimitive.Root>
-        <TooltipTrigger
-          aria-keyshortcuts={shortcutKeys("sidebar")}
-          className={cn(sideClass, className)}
-          data-side={side}
-          data-slot="sidebar-toggle"
-          onClick={() => toggleSidebar(side)}
-          ref={ref}
-          type="button"
-        >
-          <Icon aria-hidden="true" />
-          <span className="sr-only">{label}</span>
-        </TooltipTrigger>
-
-        <TooltipContent align={side === "end" ? "end" : "center"} side={tooltipSide}>
-          {label}
-          <TooltipKbd shortcut="sidebar" />
-        </TooltipContent>
-      </TooltipPrimitive.Root>
-    </TooltipProvider>
+    <ShortcutTooltip
+      align={side === "end" ? "end" : "center"}
+      label={label}
+      shortcut="sidebar"
+      side={tooltipSide}
+    >
+      <button
+        aria-keyshortcuts={shortcutKeys("sidebar")}
+        className={cn(sideClass, className)}
+        data-side={side}
+        data-slot="sidebar-toggle"
+        onClick={() => toggleSidebar(side)}
+        ref={ref}
+        type="button"
+      >
+        <Icon aria-hidden="true" />
+        <span className="sr-only">{label}</span>
+      </button>
+    </ShortcutTooltip>
   );
 }
 

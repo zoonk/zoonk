@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -71,24 +72,31 @@ export function QuestionActions({ className, ...props }: React.ComponentProps<ty
   );
 }
 
+/** A task's way back one screen (←), at the start of its bar; `label` names what it goes back to. */
 export function QuestionBack({
   className,
+  label,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "children" | "size" | "variant">) {
+}: Omit<React.ComponentProps<typeof Button>, "children" | "size" | "variant"> & {
+  label?: string;
+}) {
   const t = useExtracted();
+  const name = label ?? t("Previous screen");
 
   return (
-    <Button
-      aria-keyshortcuts={shortcutKeys("previous")}
-      className={cn(TASK_BACK_ACTION_CLASS, className)}
-      data-slot="question-back"
-      size="icon"
-      variant="outline"
-      {...props}
-    >
-      <ChevronLeftIcon aria-hidden="true" />
-      <span className="sr-only">{t("Previous screen")}</span>
-    </Button>
+    <ShortcutTooltip align="start" label={name} shortcut="previous" side="top">
+      <Button
+        aria-keyshortcuts={shortcutKeys("previous")}
+        className={cn(TASK_BACK_ACTION_CLASS, className)}
+        data-slot="question-back"
+        size="icon"
+        variant="outline"
+        {...props}
+      >
+        <ChevronLeftIcon aria-hidden="true" />
+        <span className="sr-only">{name}</span>
+      </Button>
+    </ShortcutTooltip>
   );
 }
 

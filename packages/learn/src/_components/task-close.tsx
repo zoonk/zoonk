@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
@@ -148,22 +149,30 @@ export function TaskClose({
     />
   );
 
+  const tooltip = (control: React.ReactElement) => (
+    <ShortcutTooltip align="start" label={label ?? t("Leave")} shortcut="leave">
+      {control}
+    </ShortcutTooltip>
+  );
+
   if (onPress) {
     return (
       <>
-        <Button
-          {...shared}
-          className={cn("shrink-0", className)}
-          disabled={disabled}
-          edge="start"
-          focusableWhenDisabled
-          onClick={onButtonClick}
-          ref={buttonRef}
-          size={size}
-          variant="ghost"
-        >
-          {content}
-        </Button>
+        {tooltip(
+          <Button
+            {...shared}
+            className={cn("shrink-0", className)}
+            disabled={disabled}
+            edge="start"
+            focusableWhenDisabled
+            onClick={onButtonClick}
+            ref={buttonRef}
+            size={size}
+            variant="ghost"
+          >
+            {content}
+          </Button>,
+        )}
         {ask}
       </>
     );
@@ -175,20 +184,22 @@ export function TaskClose({
 
   return (
     <>
-      <Link
-        {...shared}
-        className={cn(
-          buttonVariants({ edge: "start", size, variant: "ghost" }),
-          "shrink-0",
-          className,
-        )}
-        href={href}
-        onClick={onLinkClick}
-        prefetch={prefetch}
-        ref={linkRef}
-      >
-        {content}
-      </Link>
+      {tooltip(
+        <Link
+          {...shared}
+          className={cn(
+            buttonVariants({ edge: "start", size, variant: "ghost" }),
+            "shrink-0",
+            className,
+          )}
+          href={href}
+          onClick={onLinkClick}
+          prefetch={prefetch}
+          ref={linkRef}
+        >
+          {content}
+        </Link>,
+      )}
       {ask}
     </>
   );

@@ -5,14 +5,14 @@ import { keepMindMapPlace } from "@zoonk/learn/mind-maps/resume";
 import { type MindMapSave, MindMapSaveButton } from "@zoonk/learn/mind-maps/save";
 import { type SavedMapTarget, toSavedMapKey, useMindMapSaves } from "@zoonk/learn/mind-maps/saves";
 import { type MindMapTab, buildStudyHref } from "@zoonk/learn/mind-maps/urls";
+import { QuestionBack } from "@zoonk/learn/question-actions";
 import { StatusRegion } from "@zoonk/learn/status-region";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "@zoonk/learn/task-frame";
 import { TaskHeaderTitle } from "@zoonk/learn/task-header";
-import { TASK_BACK_ACTION_CLASS, TaskActions } from "@zoonk/learn/task-layout";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { TaskActions } from "@zoonk/learn/task-layout";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { CheckIcon, ChevronLeftIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { type ScreenTurn } from "../components/screen-turn";
@@ -163,18 +163,7 @@ function Reader({
       fit="always"
       footer={
         <TaskActions data-slot="mind-map-reader-actions">
-          {!isFirst && (
-            <Button
-              aria-keyshortcuts={shortcutKeys("previous")}
-              className={TASK_BACK_ACTION_CLASS}
-              onClick={previous}
-              size="icon"
-              variant="outline"
-            >
-              <ChevronLeftIcon aria-hidden="true" />
-              <span className="sr-only">{t("Previous map")}</span>
-            </Button>
-          )}
+          {!isFirst && <QuestionBack label={t("Previous map")} onClick={previous} />}
 
           {isLast ? (
             <TaskMainLink href={hrefs.exit} icon={<CheckIcon aria-hidden="true" />} toApp>
@@ -191,7 +180,7 @@ function Reader({
         <>
           {save && (
             <MindMapSaveButton
-              aria-keyshortcuts={shortcutKeys("save")}
+              shortcut
               {...save}
               className="shrink-0"
               labelled={false}
