@@ -1,6 +1,5 @@
 "use client";
 
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
@@ -135,9 +134,7 @@ function PlacementBar({
   if (holding) {
     return (
       <WaitBar>
-        <OnboardingPrimaryButton onClick={release} {...FORWARD_ICON}>
-          {t("Continue")}
-        </OnboardingPrimaryButton>
+        <OnboardingPrimaryButton onClick={release}>{t("Continue")}</OnboardingPrimaryButton>
       </WaitBar>
     );
   }

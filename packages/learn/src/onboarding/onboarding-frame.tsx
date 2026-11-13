@@ -1,20 +1,18 @@
 "use client";
 
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
 import { EnterButton } from "../_components/enter-button";
-import { PageEyebrow } from "../_components/page";
+import { Eyebrow } from "../_components/eyebrow";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { ChangeSaveError } from "../_components/save-error";
 import {
-  ACTION_BAR_SURFACE_CLASS,
-  BAR_PADDING_CLASS,
   TASK_MAIN_ACTION_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
   TaskActions,
 } from "../_components/task-layout";
-import { toLabelCase } from "../_utils/label-case";
 import { OnboardingBarRow, isStepBar } from "./onboarding-bar";
 import {
   NO_BAR,
@@ -24,16 +22,14 @@ import {
   useOnboardingScreen,
   useOnboardingSection,
 } from "./onboarding-host";
-import {
-  OnboardingBottomBar,
-  OnboardingScreenPage,
-  OnboardingSectionFrame,
-} from "./onboarding-page";
+import { OnboardingScreenPage, OnboardingSectionFrame } from "./onboarding-page";
 import { useOnboardingRail } from "./onboarding-rail";
+import { PlanStartNotice, usePlanStartFailure } from "./steps/plan-start-notice";
 
 export { OnboardingEmbedded, OnboardingPage } from "./onboarding-host";
 
-const STANDALONE_COLUMN_CLASS = "mx-auto w-full max-w-xl px-4";
+const STANDALONE_COLUMN_CLASS =
+  "mx-auto w-full max-w-xl px-(--page-gutter) [--page-gutter:--spacing(4)]";
 
 export function OnboardingFrame({
   bar = NO_BAR,
@@ -89,10 +85,7 @@ export function OnboardingColumn({
   wide = false,
   ...props
 }: React.ComponentProps<"main"> & {
-  /**
-   * The screen's actions, the only place they go: pinned at the screen's bottom, so no screen is
-   * too long for them. Pass `OnboardingActions`.
-   */
+  /** The screen's actions, the only place they go. Pass `OnboardingActions`. */
   bar?: ReactNode;
   rail?: ReactNode;
   wide?: boolean;
@@ -132,8 +125,7 @@ export function OnboardingColumn({
         {...props}
       >
         {children}
-
-        <OnboardingBottomBar>{bar}</OnboardingBottomBar>
+        {bar}
       </section>
     );
   }
@@ -148,11 +140,7 @@ export function OnboardingColumn({
         {children}
       </div>
 
-      <OnboardingBottomBar
-        className={cn(ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS, "-mx-4 px-4")}
-      >
-        {bar}
-      </OnboardingBottomBar>
+      {bar}
     </main>
   );
 }
@@ -210,23 +198,20 @@ export function OnboardingDescription({
  */
 export function OnboardingSubject({
   children,
-  className,
   position,
 }: {
   children: string;
-  className?: string;
+  /** Where the learner is, such as "Question 2 of 8" or the time left: at the row's end, not in the chip. */
   position?: string;
 }) {
   return (
-    <PageEyebrow className={cn("min-w-0 text-pretty wrap-break-word", className)}>
-      <span>{toLabelCase(children)}</span>
-      {position && (
-        <>
-          <span aria-hidden="true">{" · "}</span>
-          <span>{position}</span>
-        </>
-      )}
-    </PageEyebrow>
+    <div
+      className="text-muted-foreground flex items-center justify-between gap-3"
+      data-slot="onboarding-subject"
+    >
+      <Eyebrow className="min-w-0 wrap-break-word">{children}</Eyebrow>
+      {position && <p className="shrink-0 font-mono text-xs tabular-nums">{position}</p>}
+    </div>
   );
 }
 
@@ -244,9 +229,10 @@ export function OnboardingHeading({
     return (
       <div
         className={cn(
-          "flex min-w-0 flex-col gap-1 *:data-[slot=onboarding-description]:pt-1",
-          // A step keeps the eyebrow's line when it has none, so every step's title is at one height.
-          isStepBar(bar) && "first:not-has-[>[data-slot=page-eyebrow]]:pt-5",
+          "flex min-w-0 flex-col gap-1 *:data-[slot=eyebrow]:mb-2 *:data-[slot=onboarding-description]:pt-1 *:data-[slot=onboarding-subject]:mb-2",
+          // A step keeps the chip's line when it has none, so every step's title is at one height.
+          isStepBar(bar) &&
+            "first:not-has-[>[data-slot=onboarding-subject],>[data-slot=eyebrow]]:pt-8.5",
           className,
         )}
         data-slot="onboarding-heading"
@@ -256,28 +242,54 @@ export function OnboardingHeading({
     );
   }
 
-  return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-2 *:data-[slot=eyebrow]:mb-1 *:data-[slot=onboarding-subject]:mb-1",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
+type ActionsProps = { children: ReactNode; failed?: boolean; note?: ReactNode };
+
 /**
- * A screen's actions, for `OnboardingColumn`'s `bar`: the other action, then the main one. A save
- * that failed and a `note` about the actions are said over them.
+ * A screen's actions, for `OnboardingColumn`'s `bar`: the other action, then the main one, pinned at
+ * the screen's bottom. What the last action couldn't do and a `note` about the actions are said over
+ * them, where they move nothing.
  */
-export function OnboardingActions({
-  children,
-  failed = false,
-  note,
-}: {
-  children: ReactNode;
-  failed?: boolean;
-  note?: ReactNode;
-}) {
+export function OnboardingActions({ children, ...props }: ActionsProps) {
   return (
-    <>
-      {failed && <ChangeSaveError />}
-      {note}
+    <OnboardingBottomBar {...props}>
       <TaskActions>{children}</TaskActions>
-    </>
+    </OnboardingBottomBar>
+  );
+}
+
+/** `OnboardingActions` around a row of the screen's own, such as a question's. */
+export function OnboardingBottomBar({ children, failed = false, note }: ActionsProps) {
+  const { failure } = useOnboardingScreen();
+  const planFailure = usePlanStartFailure();
+  const said = failure || failed || note || planFailure;
+
+  return (
+    <BottomBar
+      note={
+        said && (
+          <div className="flex flex-col gap-2">
+            {failure}
+            {failed && <ChangeSaveError />}
+            {note}
+            {planFailure && <PlanStartNotice run={planFailure} />}
+          </div>
+        )
+      }
+    >
+      {children}
+    </BottomBar>
   );
 }
 

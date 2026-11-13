@@ -1,6 +1,6 @@
 "use client";
 
-import { QuestionEyebrow } from "@zoonk/learn/question-title";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { ListOrderedIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -21,9 +21,7 @@ export function WorkedExampleStepView({ step }: LessonStepViewProps<StepOf<"work
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flex flex-col gap-3">
-        <QuestionEyebrow icon={<ListOrderedIcon aria-hidden="true" />}>
-          {t("Worked example")}
-        </QuestionEyebrow>
+        <Eyebrow icon={<ListOrderedIcon aria-hidden="true" />}>{t("Worked example")}</Eyebrow>
         {step.content.title && <LessonQuestion>{step.content.title}</LessonQuestion>}
       </div>
 

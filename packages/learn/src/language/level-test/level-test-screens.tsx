@@ -7,7 +7,7 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { PlayIcon, SkipForwardIcon } from "lucide-react";
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -91,12 +91,7 @@ export function TestIntro({
           >
             {t("Skip")}
           </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton
-            busy={starting}
-            disabled={pending}
-            icon={<PlayIcon aria-hidden="true" />}
-            onClick={onStart}
-          >
+          <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
             {t("Start")}
           </OnboardingPrimaryButton>
         </OnboardingActions>

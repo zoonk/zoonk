@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";
@@ -111,7 +110,6 @@ function ContinueLink({ href }: { href: string }) {
       className={ACTION_CLASS}
       enabled={!switching}
       href={href}
-      icon={<PlayIcon aria-hidden="true" />}
       lessonWritten={href.startsWith("/learn/")}
       size="lg"
     >
@@ -138,7 +136,6 @@ function ContinueButton() {
           busy={isPending}
           className={ACTION_CLASS}
           enter="host"
-          icon={<PlayIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >
@@ -172,18 +169,16 @@ function SummaryLink() {
 function SaveAction({
   action,
   children,
-  icon,
 }: {
   action: () => Promise<boolean>;
   children: React.ReactNode;
-  icon: React.ReactNode;
 }) {
   const { failed, isPending, run } = useSessionAction({ action });
 
   return (
     <>
       <form action={() => void run()} className="contents">
-        <EnterButton busy={isPending} className={ACTION_CLASS} icon={icon} size="lg" type="submit">
+        <EnterButton busy={isPending} className={ACTION_CLASS} size="lg" type="submit">
           {children}
         </EnterButton>
       </form>
@@ -205,7 +200,7 @@ function PracticeTime() {
   }
 
   return (
-    <SaveAction action={actions.addExtraTime} icon={<PlayIcon aria-hidden="true" />}>
+    <SaveAction action={actions.addExtraTime}>
       {t("Practice for {minutes} minutes", { minutes: String(extraTime.minutes) })}
     </SaveAction>
   );
@@ -216,7 +211,7 @@ function PrepareLessons() {
   const { actions } = useTodayScreen();
 
   return (
-    <SaveAction action={actions.prepareLessons} icon={<ListPlusIcon aria-hidden="true" />}>
+    <SaveAction action={actions.prepareLessons}>
       {t({
         description: "Button that has Zoonk write today's lessons.",
         message: "Get today's lessons",
@@ -237,7 +232,6 @@ function KeepLearning() {
           className={ACTION_CLASS}
           disabled={rowSent}
           enter="host"
-          icon={<PlayIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >

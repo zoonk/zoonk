@@ -43,7 +43,7 @@ describe("exact lesson mistake practice", () => {
       expect.objectContaining({ itemId: expect.any(String) }),
     );
 
-    await page.getByRole("button", { name: "End practice. What you answered counts." }).click();
+    await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
     await expect.element(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
     expect(actions.finish).toHaveBeenCalledWith({ answerIds: ["saved-answer"] });
   });

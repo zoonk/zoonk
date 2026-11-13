@@ -4,12 +4,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { Page } from "../_components/page";
-import { ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS } from "../_components/task-layout";
 import { PageWithAside } from "../shell/learn-shell";
 import { OnboardingBarRow, OnboardingPageBar } from "./onboarding-bar";
 import { type OnboardingBar, useOnboardingScreen } from "./onboarding-host";
 import { useOnboardingRail } from "./onboarding-rail";
-import { PlanStartNoticeSlot } from "./steps/plan-start-notice";
 
 export function OnboardingSectionFrame({
   bar,
@@ -50,44 +48,6 @@ const WIDE_ASIDE_CLASS =
 
 const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
 
-/**
- * Reaches past the page's own padding (the shell's, or the column's beside an aside), so its
- * hairline runs across the page and it rests on the screen's bottom edge.
- */
-const PAGE_BOTTOM_BAR_CLASS = cn(
-  ACTION_BAR_SURFACE_CLASS,
-  BAR_PADDING_CLASS,
-  "-mx-4 -mb-12 px-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10",
-);
-
-/**
- * A screen's actions under what the last one couldn't do, at the end on a computer. Hidden while it
- * holds no control, since a wait's bar is empty until it has something to offer.
- */
-export function OnboardingBottomBar({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const { failure } = useOnboardingScreen();
-
-  return (
-    <div
-      className={cn(
-        "flex flex-col gap-2 not-has-[a,button,[role=alert]]:hidden lg:items-end",
-        className,
-      )}
-      data-slot="onboarding-bottom-bar"
-    >
-      {failure}
-      <PlanStartNoticeSlot />
-      {children}
-    </div>
-  );
-}
-
 export function OnboardingScreenPage({
   backHref,
   barEnd,
@@ -120,7 +80,7 @@ export function OnboardingScreenPage({
         {children}
       </Page>
 
-      <OnboardingBottomBar className={PAGE_BOTTOM_BAR_CLASS}>{bottomBar}</OnboardingBottomBar>
+      {bottomBar}
     </PageWithAside>
   );
 }

@@ -4,7 +4,7 @@ import {
   type FocusTestOffer,
   type FocusTestSitting,
 } from "@zoonk/core/learner/placement/focus-test-contract";
-import { PlayIcon, SkipForwardIcon } from "lucide-react";
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   OnboardingActions,
@@ -63,7 +63,6 @@ export function FocusTestInvitation({
           <OnboardingPrimaryButton
             busy={pressed === "main"}
             disabled={pressed === "other"}
-            icon={<PlayIcon aria-hidden="true" />}
             onClick={onStart}
           >
             {t("Start")}
@@ -106,12 +105,7 @@ export function FocusTestResume({
           <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>
             {seeResult}
           </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton
-            autoFocus
-            disabled={pressed === "other"}
-            icon={<PlayIcon aria-hidden="true" />}
-            onClick={onContinue}
-          >
+          <OnboardingPrimaryButton autoFocus disabled={pressed === "other"} onClick={onContinue}>
             {t("Continue")}
           </OnboardingPrimaryButton>
         </OnboardingActions>

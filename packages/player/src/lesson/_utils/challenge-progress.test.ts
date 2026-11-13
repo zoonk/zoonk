@@ -102,7 +102,7 @@ describe("a challenge in the lesson player", () => {
     expect(primaryOf(finished)).toStrictEqual({
       action: "check",
       disabled: false,
-      label: "seeHowItWent",
+      label: "seeResult",
     });
   });
 

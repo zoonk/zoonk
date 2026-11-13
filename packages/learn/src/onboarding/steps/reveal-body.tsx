@@ -5,12 +5,11 @@ import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { SuccessEyebrow } from "../../_components/eyebrow";
 import { PageSectionTitle } from "../../_components/page";
 import { StepOpenFailed } from "../../_components/step-open-failed";
-import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { BuddyArt } from "../../buddies/buddy-art";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { PlanChoiceLines } from "../../plan/plan-choice-lines";
@@ -95,11 +94,7 @@ function RevealActions({
 
       {/* A submit, so a press before the page hydrates starts once it does. */}
       <form action={() => onStart()} className="contents">
-        <OnboardingPrimaryButton
-          busy={pending}
-          icon={<PlayIcon aria-hidden="true" />}
-          type="submit"
-        >
+        <OnboardingPrimaryButton busy={pending} type="submit">
           {started ? t("Continue") : t("Start")}
         </OnboardingPrimaryButton>
       </form>

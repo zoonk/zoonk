@@ -21,6 +21,7 @@ import { useSpokenText } from "../../rich-text/use-spoken-text";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
+  OnboardingBottomBar,
   OnboardingColumn,
   OnboardingHeading,
   OnboardingScreenTop,
@@ -127,9 +128,9 @@ function PlacementActions({
   const busy = pending ? pressed : null;
 
   return (
-    <>
-      {failures > 0 && !pending && <AnswersSaveError failures={failures} />}
-
+    <OnboardingBottomBar
+      note={failures > 0 && !pending && <AnswersSaveError failures={failures} />}
+    >
       <QuestionActions>
         <QuestionDontKnow busy={busy === "dontKnow"} disabled={pending} onPress={onDontKnow}>
           {dontKnowLabel}
@@ -141,7 +142,7 @@ function PlacementActions({
           onPress={onConfirm}
         />
       </QuestionActions>
-    </>
+    </OnboardingBottomBar>
   );
 }
 

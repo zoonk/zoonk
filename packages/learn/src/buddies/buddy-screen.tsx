@@ -302,7 +302,6 @@ export function BuddyScreen({
             />
           }
           name={name}
-          stage={status.stage}
         >
           <BuddyToday
             buddy={buddy}

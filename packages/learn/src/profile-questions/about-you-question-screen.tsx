@@ -4,16 +4,15 @@ import {
   type ProfileAnswerInput,
   type ProfileQuestionView,
 } from "@zoonk/core/profile/questions/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
-import { CLEAR_OF_PINNED_ACTIONS_CLASS, PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
+import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { ChangeSaveError } from "../_components/save-error";
-import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
 import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
 import { useProfileQuestionDescription, useProfileQuestionTitle } from "./profile-question-copy";
@@ -74,25 +73,13 @@ export function AboutYouQuestionScreen({
         />
       </div>
 
-      <div
-        className={cn(
-          PINNED_ACTIONS_CLASS,
-          ABOVE_BOTTOM_TABS_CLASS,
-          "-mb-4 flex flex-col gap-3 pb-4 lg:bottom-0",
-        )}
-      >
-        {failed && <ChangeSaveError />}
-
-        <Button
-          busy={isPending}
-          className="self-start"
-          disabled={!input}
-          icon={<CheckIcon aria-hidden="true" />}
-          type="submit"
-        >
-          {t("Save")}
-        </Button>
-      </div>
+      <BottomBar note={failed && <ChangeSaveError />}>
+        <BottomBarActions>
+          <EnterButton busy={isPending} disabled={!input} type="submit">
+            {t("Save")}
+          </EnterButton>
+        </BottomBarActions>
+      </BottomBar>
     </form>
   );
 }

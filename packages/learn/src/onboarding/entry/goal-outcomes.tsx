@@ -7,7 +7,6 @@ import {
   HandHeartIcon,
   LightbulbIcon,
   MessageCircleQuestionIcon,
-  PlayIcon,
   UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -131,11 +130,7 @@ export function ExplainGoal({
     <OnboardingColumn
       bar={
         <GoalActions error={error} signUpHref={signUpHref}>
-          <OnboardingPrimaryButton
-            busy={isStarting}
-            icon={<LightbulbIcon aria-hidden="true" />}
-            onClick={onStart}
-          >
+          <OnboardingPrimaryButton busy={isStarting} onClick={onStart}>
             {t("Explain it")}
           </OnboardingPrimaryButton>
         </GoalActions>
@@ -288,11 +283,7 @@ export function InstrumentGoal({
           >
             {t("Join the waitlist")}
           </OnboardingSecondaryButton>
-          <OnboardingPrimaryButton
-            busy={isStarting}
-            icon={<PlayIcon aria-hidden="true" />}
-            onClick={onStartMusicianship}
-          >
+          <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
             {t("Start music basics")}
           </OnboardingPrimaryButton>
         </GoalActions>

@@ -3,7 +3,7 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArchiveIcon, PlayIcon } from "lucide-react";
+import { ArchiveIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -49,7 +49,6 @@ export function TodayExamOver() {
             busy={isPending}
             className={ACTION_CLASS}
             enter="host"
-            icon={<PlayIcon aria-hidden="true" />}
             size="lg"
             type="submit"
           >
