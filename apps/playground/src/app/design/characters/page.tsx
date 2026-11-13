@@ -5,6 +5,7 @@ import {
   CHARACTER_MOMENTS,
   CHARACTER_PARTS,
   CHARACTER_RULES,
+  CHARACTER_SIZE_RULES,
   CHARACTER_TIMING_RULES,
   TRICKSTER_EXPRESSIONS,
 } from "@/design-system/characters";
@@ -23,6 +24,7 @@ import {
 } from "../_components/doc";
 import { ActsTable } from "./_components/acts-table";
 import { BuddyStage } from "./_components/buddy-stage";
+import { SizeSpecimen } from "./_components/size-specimen";
 import { TricksterStage } from "./_components/trickster-stage";
 
 export const metadata: Metadata = { title: "Characters" };
@@ -213,6 +215,15 @@ export default function CharactersPage() {
             text: expression.says,
           }))}
         />
+      </DocSection>
+
+      <DocSection
+        id="sizes"
+        intro="A face when small, the whole body when large, and nothing cut by the picture's edge."
+        title="Sizes"
+      >
+        <SizeSpecimen />
+        <DocRules rules={CHARACTER_SIZE_RULES} />
       </DocSection>
 
       <DocSection
