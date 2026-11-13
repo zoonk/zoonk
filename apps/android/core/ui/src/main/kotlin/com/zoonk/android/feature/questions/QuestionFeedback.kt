@@ -2,7 +2,6 @@ package com.zoonk.android.feature.questions
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -52,7 +51,7 @@ fun QuestionFeedback(
                 feedback.correctAnswer,
                 question,
                 words,
-            )?.let { Text(stringResource(R.string.questions_right_answer, it), style = explanation) }
+            )?.let { ItemLine(stringResource(R.string.questions_right_answer, it), style = explanation) }
         }
 
         feedback.explanation?.let { ItemText(it, style = explanation) }
@@ -82,7 +81,10 @@ fun verdict(
         else -> Verdict(stringResource(R.string.questions_not_quite), FeedbackTone.Wrong)
     }
 
-/** An answer in words: an option's, steps in their order, pairs, a number with its unit. */
+/**
+ * An answer as item text (an option's, steps in their order, pairs, a number with its unit), for
+ * [ItemLine] to show with its math.
+ */
 @Composable
 fun answerText(
     answer: Answer?,
@@ -98,15 +100,15 @@ fun answerText(
         }
 
         is Answer.Choice -> {
-            options.getOrNull(answer.index)?.let(::plainItemLine)
+            options.getOrNull(answer.index)
         }
 
         is Answer.Choices -> {
-            answer.indexes.joinToString("; ") { plainItemLine(options.getOrElse(it) { "" }) }
+            answer.indexes.joinToString("; ") { options.getOrElse(it) { "" } }
         }
 
         is Answer.Order -> {
-            answer.order.joinToString(" → ") { plainItemLine(options.getOrElse(it) { "" }) }
+            answer.order.joinToString(" → ") { options.getOrElse(it) { "" } }
         }
 
         is Answer.Text -> {
@@ -126,7 +128,7 @@ fun answerText(
             question.left
                 .orEmpty()
                 .mapIndexed { index, entry ->
-                    "${plainItemLine(entry)} → ${plainItemLine(right.getOrElse(answer.matches.getOrElse(index) { -1 }) { "" })}"
+                    "$entry → ${right.getOrElse(answer.matches.getOrElse(index) { -1 }) { "" }}"
                 }.joinToString("; ")
         }
     }
@@ -141,16 +143,8 @@ fun WorkedSteps(
     if (steps.isEmpty()) return
     val lines =
         steps.mapIndexed { index, step ->
-            DiffLine(
-                if (index ==
-                    steps.lastIndex
-                ) {
-                    DiffKind.Added
-                } else {
-                    DiffKind.Context
-                },
-                plainItemLine(step),
-            )
+            val line = itemLine(step)
+            DiffLine(if (index == steps.lastIndex) DiffKind.Added else DiffKind.Context, line.text, spoken = line.spoken)
         }
 
     // A formula reads left to right in every language.

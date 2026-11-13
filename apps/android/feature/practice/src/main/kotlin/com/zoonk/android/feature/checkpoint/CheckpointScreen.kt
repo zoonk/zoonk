@@ -74,6 +74,7 @@ import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
+import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.Question
@@ -943,7 +944,7 @@ private fun ReviewItem(
                 )
             } else {
                 answerText(correct, question, duel.read.words)?.let {
-                    Text(stringResource(R.string.checkpoint_answer, it), style = MaterialTheme.typography.bodyMedium)
+                    ItemLine(stringResource(R.string.checkpoint_answer, it), style = MaterialTheme.typography.bodyMedium)
                 }
             }
             answer.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }

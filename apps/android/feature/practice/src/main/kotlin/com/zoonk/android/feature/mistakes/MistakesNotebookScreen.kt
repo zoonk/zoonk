@@ -64,7 +64,7 @@ import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.feature.questions.plainItemLine
+import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -663,8 +663,8 @@ private fun MistakeEntry(
             contextStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
         )
         RichText(snapshot.question, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-        snapshot.answer?.let { MistakeAnswer(plainItemLine(savedAnswerText(it, words)), right = false) }
-        snapshot.correctAnswer?.let { MistakeAnswer(plainItemLine(savedAnswerText(it, words)), right = true) }
+        snapshot.answer?.let { MistakeAnswer(itemLine(savedAnswerText(it, words)), right = false) }
+        snapshot.correctAnswer?.let { MistakeAnswer(itemLine(savedAnswerText(it, words)), right = true) }
         snapshot.explanation?.let {
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
