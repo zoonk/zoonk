@@ -17,30 +17,33 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
   return (
     <footer className="border-t" id={PUBLIC_FOOTER_ID}>
       <div className={PUBLIC_CONTAINER_CLASS}>
-        <div className="text-muted-foreground flex flex-wrap items-center gap-x-7 gap-y-3 py-8 text-sm">
+        {/* The logo and the globe share a column, so the links and the languages start on one edge. */}
+        <div className="text-muted-foreground grid grid-cols-[1.5rem_minmax(0,1fr)] items-center gap-x-7 gap-y-1 py-8 text-sm">
           <ZoonkLogo className="text-foreground size-6" />
 
-          <nav aria-label={t("Footer")} className="flex flex-wrap gap-x-6">
-            <Link className={FOOTER_LINK_CLASS} href="/courses">
-              {t("Courses")}
-            </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/pricing">
-              {t("Pricing")}
-            </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/support">
-              {t("Help")}
-            </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/privacy">
-              {t("Privacy")}
-            </Link>
-            <Link className={FOOTER_LINK_CLASS} href="/terms">
-              {t("Terms")}
-            </Link>
-          </nav>
+          <div className="flex flex-wrap items-center gap-x-6">
+            <nav aria-label={t("Footer")} className="flex flex-wrap gap-x-6">
+              <Link className={FOOTER_LINK_CLASS} href="/courses">
+                {t("Courses")}
+              </Link>
+              <Link className={FOOTER_LINK_CLASS} href="/pricing">
+                {t("Pricing")}
+              </Link>
+              <Link className={FOOTER_LINK_CLASS} href="/support">
+                {t("Help")}
+              </Link>
+              <Link className={FOOTER_LINK_CLASS} href="/privacy">
+                {t("Privacy")}
+              </Link>
+              <Link className={FOOTER_LINK_CLASS} href="/terms">
+                {t("Terms")}
+              </Link>
+            </nav>
+
+            <p className="sm:ml-auto">{t("© {year} Zoonk", { year: COPYRIGHT_YEAR })}</p>
+          </div>
 
           <FooterLanguages pathname={pathname} />
-
-          <p className="sm:ml-auto">{t("© {year} Zoonk", { year: COPYRIGHT_YEAR })}</p>
         </div>
       </div>
     </footer>

@@ -1,6 +1,5 @@
-import { CheckMark } from "@/components/public/check-mark";
+import { CheckItem } from "@/components/public/check-mark";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 
 export function PlanIncludes({
   items,
@@ -17,12 +16,9 @@ export function PlanIncludes({
 
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
-          <li className="flex items-start gap-3 text-sm leading-5" key={item.id}>
-            <LineMarker>
-              <CheckMark size="sm" />
-            </LineMarker>
-            <span className="text-pretty">{item.text}</span>
-          </li>
+          <CheckItem className="text-sm leading-5" key={item.id}>
+            {item.text}
+          </CheckItem>
         ))}
       </ul>
     </div>

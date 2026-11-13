@@ -191,7 +191,7 @@ export async function PlusPlan({
       className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, PLAN_CARD_ROWS_CLASS, "ring-foreground/25")}
     >
       <div className={PLAN_NAME_ROW_CLASS}>
-        <h2 className="text-base font-semibold tracking-[-0.015em]" id={PLUS_PLAN_ID}>
+        <h2 className="text-section" id={PLUS_PLAN_ID}>
           {t("Plus")}
         </h2>
 

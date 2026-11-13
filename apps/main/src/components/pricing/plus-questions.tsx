@@ -1,3 +1,4 @@
+import { CheckItem } from "@/components/public/check-mark";
 import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
@@ -6,7 +7,6 @@ import {
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -72,12 +72,9 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
 
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
-          <li className={cn(DISCLOSURE_ANSWER_CLASS, "flex gap-3")} key={item}>
-            <LineMarker>
-              <span aria-hidden="true" className="bg-foreground/35 size-1.5 rounded-full" />
-            </LineMarker>
-            <span>{keepNumbersWithWords(item)}</span>
-          </li>
+          <CheckItem className={DISCLOSURE_ANSWER_CLASS} key={item}>
+            {keepNumbersWithWords(item)}
+          </CheckItem>
         ))}
       </ul>
     </div>

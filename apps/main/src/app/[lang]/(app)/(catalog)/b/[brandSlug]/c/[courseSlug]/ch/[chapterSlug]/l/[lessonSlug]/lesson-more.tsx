@@ -1,11 +1,11 @@
 import { ChapterLessonRows } from "@/components/public/chapter-lesson-rows";
+import { CheckItem } from "@/components/public/check-mark";
 import { PublicDisclosure } from "@/components/public/public-disclosure";
 import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref } from "@/lib/public/public-hrefs";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
 import { LessonRichText } from "@zoonk/player/lesson/rich-text";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
@@ -28,19 +28,14 @@ export async function LessonMore({
   const durationLabel = await getTotalDurationLabel(chapterMinutes);
 
   return (
-    <div className={cn("mt-16 border-y sm:mt-20", ideas.length === 0 && "min-[72rem]:hidden")}>
+    <div className={cn("mt-16 border-y sm:mt-24", ideas.length === 0 && "min-[72rem]:hidden")}>
       {ideas.length > 0 && (
         <PublicDisclosure summary={t("What you'll learn")}>
           <ul className="flex flex-col gap-3">
             {ideas.map((idea) => (
-              <li className="text-reading flex gap-3 leading-relaxed sm:text-base" key={idea}>
-                <LineMarker>
-                  <span aria-hidden="true" className="bg-foreground/35 size-1.5 rounded-full" />
-                </LineMarker>
-                <span className="text-pretty">
-                  <LessonRichText text={idea} />
-                </span>
-              </li>
+              <CheckItem className="text-reading leading-relaxed sm:text-base" key={idea}>
+                <LessonRichText text={idea} />
+              </CheckItem>
             ))}
           </ul>
         </PublicDisclosure>

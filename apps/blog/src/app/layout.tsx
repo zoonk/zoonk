@@ -19,11 +19,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-6 py-8">
+        <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-4 py-8 sm:px-6">
           <header className="mb-10 flex items-center justify-between">
             <Logo />
 
-            <a href={TRY_ZOONK.href} className={buttonVariants({ size: "sm", variant: "outline" })}>
+            <a href={TRY_ZOONK.href} className={buttonVariants({ size: "bar" })}>
               {TRY_ZOONK.label}
             </a>
           </header>

@@ -1,48 +1,34 @@
-import { DaySegment, type DaySegmentState } from "@zoonk/learn/day-segments";
 import { KindDot } from "@zoonk/learn/kind-tile";
-import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import {
   AXIS_CLASS,
   AXIS_TEXT_CLASS,
   AxisLabel,
-  BAND_CHECK_CLASS,
   BAND_CLASS,
   BAND_COLUMN_CLASS,
   BAND_NAME_CLASS,
   BAND_ROWS_CLASS,
-  BAND_STATE_CLASS,
   getBandColumnsStyle,
 } from "@zoonk/learn/roadmap-styles";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, FlagIcon } from "lucide-react";
+import { FlagIcon } from "lucide-react";
 
 const PERCENT = 100;
 
-type RoadBandState = "current" | "done" | "plus" | "upcoming";
+type RoadBandState = "free" | "plus";
 
 export type RoadBand = {
   id: string;
   name: string;
   state: RoadBandState;
   weight: number;
-  startLabel?: string;
   todayShare?: number;
-  share?: number;
   mocks?: readonly number[];
 };
 
-const BAND_LOOK: Record<RoadBandState, string> = {
-  current: BAND_STATE_CLASS.current,
-  done: BAND_STATE_CLASS.done,
-  plus: "text-faint ring-border bg-[repeating-linear-gradient(135deg,transparent_0_6px,color-mix(in_oklab,var(--faint)_18%,transparent)_6px_7px)] ring-1 ring-inset",
-  upcoming: BAND_STATE_CLASS.upcoming,
-};
-
-const SEGMENT_STATE: Record<RoadBandState, DaySegmentState> = {
-  current: "current",
-  done: "done",
-  plus: "ahead",
-  upcoming: "ahead",
+/** One look per state, so the chart, its phone bar and its legend can't drift apart. */
+export const ROAD_LOOK: Record<RoadBandState, string> = {
+  free: "bg-surface-3 text-foreground ring-input ring-1 ring-inset",
+  plus: "text-faint ring-border bg-[repeating-linear-gradient(135deg,transparent_0_3px,color-mix(in_oklab,var(--faint)_32%,transparent)_3px_4px)] ring-1 ring-inset",
 };
 
 const FULL_FROM = {
@@ -64,21 +50,9 @@ function TodayTicks({ share }: { share: number }) {
 
 function RoadBandFace({ band }: { band: RoadBand }) {
   return (
-    <span className={cn(BAND_CLASS, BAND_LOOK[band.state])}>
-      <span className={BAND_NAME_CLASS}>
-        {band.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />}
-        {band.name}
-      </span>
+    <span className={cn(BAND_CLASS, ROAD_LOOK[band.state])}>
+      <span className={BAND_NAME_CLASS}>{band.name}</span>
       {band.todayShare !== undefined && <TodayTicks share={band.todayShare} />}
-
-      {band.state === "current" && band.share !== undefined && band.share > 0 && (
-        <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-          <span
-            className="bg-success absolute bottom-0 left-0 h-0.5"
-            style={{ width: `${band.share * PERCENT}%` }}
-          />
-        </span>
-      )}
     </span>
   );
 }
@@ -120,14 +94,8 @@ function RoadAxis({
         </AxisLabel>
       )}
 
-      {band.startLabel && (
-        <AxisLabel className={cn(isLast && "@max-[10rem]/phase:hidden")} share={0}>
-          <span className={AXIS_TEXT_CLASS}>{band.startLabel}</span>
-        </AxisLabel>
-      )}
-
       {isLast && (
-        <AxisLabel after={band.todayShare !== undefined || Boolean(band.startLabel)} share={1}>
+        <AxisLabel after={band.todayShare !== undefined} share={1}>
           <span className={cn(AXIS_TEXT_CLASS, "text-foreground")}>{end}</span>
         </AxisLabel>
       )}
@@ -156,14 +124,12 @@ export function PlanRoad({
       <p className="sr-only">{caption}</p>
 
       <div aria-hidden="true" className={cn("flex flex-col gap-2", FULL_FROM[fullFrom].compact)}>
-        <span className={METER_PARTS_CLASS}>
+        <span className="flex h-2.5 gap-0.5">
           {bands.map((band) => (
-            <DaySegment
-              className="min-w-6"
+            <span
+              className={cn("rounded-meter min-w-6", ROAD_LOOK[band.state])}
               key={band.id}
-              weight={band.weight}
-              share={band.state === "current" ? (band.share ?? 0) : 0}
-              state={SEGMENT_STATE[band.state]}
+              style={{ flexGrow: band.weight }}
             />
           ))}
         </span>

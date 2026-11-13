@@ -9,7 +9,7 @@ import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId } from "@/components/catalog/try-lesson";
-import { CheckMark } from "@/components/public/check-mark";
+import { CheckItem } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
 import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { StartBlock } from "@/components/public/public-start";
@@ -27,7 +27,6 @@ import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
 import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -85,12 +84,9 @@ async function ChapterObjectives({
 
       <ul className="flex flex-col">
         {objectives.map((objective) => (
-          <li className="text-reading flex gap-3 py-3 leading-5" key={objective}>
-            <LineMarker>
-              <CheckMark size="sm" />
-            </LineMarker>
-            <span className="text-pretty">{objective}</span>
-          </li>
+          <CheckItem className="text-reading py-3 leading-5 last:pb-0" key={objective}>
+            {objective}
+          </CheckItem>
         ))}
       </ul>
     </section>
@@ -217,7 +213,9 @@ export async function LibraryChapterPage({
             <p className="text-muted-foreground sm:text-reading flex flex-wrap items-center gap-x-2 text-sm">
               <SubjectGlyph subject={subject} />
               <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-              {area && <span className="before:mr-2 before:content-['·']">{area}</span>}
+              {area && (
+                <span className="leading-snug before:mr-2 before:content-['·']">{area}</span>
+              )}
             </p>
 
             <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
@@ -250,7 +248,7 @@ export async function LibraryChapterPage({
         {(hasLesson || hasObjectives) && (
           <div
             className={cn(
-              "grid grid-cols-1 gap-12",
+              "grid grid-cols-1 gap-16 sm:gap-24",
               hasLesson &&
                 hasObjectives &&
                 "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-16",

@@ -56,7 +56,7 @@ function ChapterLessonLinks({
   const hasLoneLesson = chapter.lessons.length === 1;
 
   return (
-    <p className="text-muted-foreground max-w-column mt-1.5 text-sm leading-relaxed text-pretty">
+    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-pretty">
       {chapter.lessons.map((lesson, index) => (
         <Fragment key={lesson.id}>
           {index > 0 && OUTLINE_SEPARATOR}

@@ -12,7 +12,7 @@ const START_CTA = {
 export function StartCta() {
   return (
     <aside
-      className="not-prose bg-background text-foreground -mx-6 my-12 flex flex-col items-center px-6 py-12 text-center md:rounded-2xl lg:-mx-28 dark:border-y md:dark:border"
+      className="not-prose bg-background text-foreground -mx-4 my-12 flex flex-col items-center px-4 py-12 text-center sm:-mx-6 sm:px-6 md:rounded-xl lg:-mx-28 dark:border-y md:dark:border"
       data-slot="ink-band"
     >
       <Buddy beltColor="white" className="h-23" energy={null} glasses="round" kind="zu" />

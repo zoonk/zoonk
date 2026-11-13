@@ -24,7 +24,7 @@ function StartNote({ children, className }: { children: ReactNode; className?: s
   return (
     <p
       className={cn(
-        "text-muted-foreground text-compact mt-5 flex gap-2 leading-snug sm:text-sm",
+        "text-muted-foreground text-compact mt-5 flex gap-3 leading-snug sm:text-sm",
         className,
       )}
     >

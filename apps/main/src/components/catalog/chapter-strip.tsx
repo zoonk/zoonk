@@ -62,6 +62,7 @@ function CourseMap({
             <span
               className={cn(
                 "hidden min-w-0 flex-col text-xs leading-4 sm:flex",
+                index < groups.length - 1 && "pe-2",
                 index === groups.length - 1 && index > 0 && "items-end text-right",
               )}
             >

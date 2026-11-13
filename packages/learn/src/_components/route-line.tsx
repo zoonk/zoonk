@@ -180,17 +180,17 @@ export function RouteZone({
         </LineMarker>
       </summary>
 
-      <div className="pb-4">{children}</div>
+      <div>{children}</div>
     </details>
   );
 }
 
-/** A zone with nothing in it yet, such as a level not written: a dashed station and nothing to open. */
+/** A zone with nothing in it yet, such as a level not written: a pale station and nothing to open. */
 export function RouteZoneAhead({ aside, summary }: { aside?: ReactNode; summary: ReactNode }) {
   return (
     <div className={ZONE_CLASS} data-slot="route-zone">
       <div className={ZONE_ROW_CLASS}>
-        <ZoneStation className="border-dashed" />
+        <ZoneStation className="border-(--route-line)" />
         <ZoneLabel aside={aside} summary={summary} />
       </div>
     </div>

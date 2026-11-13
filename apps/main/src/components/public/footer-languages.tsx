@@ -23,12 +23,12 @@ function LanguageLinks({ pathname }: { pathname: string }) {
   const current = useAppLocale();
 
   return (
-    <nav aria-label={t("Language")} className="flex gap-x-5">
-      <span className="flex h-11 shrink-0 items-center">
+    <nav aria-label={t("Language")} className="col-span-2 grid grid-cols-subgrid">
+      <span className="flex h-11 items-center">
         <GlobeIcon aria-hidden="true" className="size-4" />
       </span>
 
-      <span className="flex flex-wrap items-center gap-x-5">
+      <span className="flex flex-wrap items-center gap-x-6">
         {SUPPORTED_LOCALES.map((locale) => (
           <a
             aria-current={locale === current ? "true" : undefined}

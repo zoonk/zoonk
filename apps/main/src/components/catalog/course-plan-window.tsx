@@ -16,6 +16,7 @@ const PLAN_BODY_CLASS =
 function renderBig(chunks: ReactNode) {
   const parts: unknown[] = Array.isArray(chunks) ? chunks : [chunks];
   const text = parts.filter((part) => typeof part === "string").join("");
+
   return (
     <BigQuantity className="text-foreground text-[2.5rem] sm:text-[3.5rem]">{text}</BigQuantity>
   );
@@ -47,8 +48,8 @@ async function FirstDay({
   const foldedMinutes = folded.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <p className="flex items-baseline justify-between gap-3">
+    <div className="flex min-w-0 flex-col">
+      <p className="mb-2 flex items-baseline justify-between gap-3">
         <span className="text-reading font-semibold">
           {t({
             description:

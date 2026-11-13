@@ -1,26 +1,22 @@
 import { COURSE_HERO_PAIR_CLASS } from "@/components/catalog/catalog-hero";
-import { CheckMark } from "@/components/public/check-mark";
+import { CheckItem } from "@/components/public/check-mark";
 import { type CourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
 const STOP_CLASS = "flex flex-col gap-5";
 const LIST_CLASS = "divided-rows max-w-column flex flex-col";
-const ROW_CLASS = "py-3 text-reading leading-relaxed first:pt-0";
+const ROW_CLASS = "py-3 text-reading leading-relaxed first:pt-0 last:pb-0";
 
 /** The details step writes only a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show. */
 function OutcomeList({ outcomes }: { outcomes: string[] }) {
   return (
     <ul className={LIST_CLASS}>
       {outcomes.map((item) => (
-        <li className={cn(ROW_CLASS, "flex gap-3")} key={item}>
-          <LineMarker>
-            <CheckMark size="sm" />
-          </LineMarker>
-          <span className="text-pretty">{item}</span>
-        </li>
+        <CheckItem className={ROW_CLASS} key={item}>
+          {item}
+        </CheckItem>
       ))}
     </ul>
   );

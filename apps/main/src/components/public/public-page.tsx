@@ -23,7 +23,7 @@ export function PublicPage({
   return (
     <div className="flex min-h-dvh flex-col">
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
-      <PublicHeader ownStart={ownStart} />
+      <PublicHeader ownStart={ownStart} pathname={pathname} />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
     </div>

@@ -50,19 +50,21 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
     );
   }
 
-  if (viewerState.status === "free") {
-    return (
-      <p className="text-muted-foreground flex min-h-11 items-center text-sm">
-        {t({
-          description:
-            "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.",
-          message: "What you have now",
-        })}
-      </p>
-    );
-  }
-
-  return null;
+  return (
+    <p className="text-muted-foreground flex min-h-11 items-center text-sm">
+      {viewerState.status === "free"
+        ? t({
+            description:
+              "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.",
+            message: "What you have now",
+          })
+        : t({
+            description:
+              "On the Free card, in the button's place, for a learner who has Plus: everything listed on this card is part of what they already have.",
+            message: "Included in Plus",
+          })}
+    </p>
+  );
 }
 
 export async function FreePlan({
@@ -84,7 +86,7 @@ export async function FreePlan({
       className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, PLAN_CARD_ROWS_CLASS)}
     >
       <div className={PLAN_NAME_ROW_CLASS}>
-        <h2 className="text-base font-semibold tracking-[-0.015em]" id={FREE_PLAN_ID}>
+        <h2 className="text-section" id={FREE_PLAN_ID}>
           {t("Free")}
         </h2>
       </div>

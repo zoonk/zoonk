@@ -1,4 +1,4 @@
-import { PlanRoad, type RoadBand } from "@/components/public/plan-road";
+import { PlanRoad, ROAD_LOOK, type RoadBand } from "@/components/public/plan-road";
 import { ProductWindow } from "@/components/public/product-window";
 import { Stop, StopBody, StopEyebrow, StopHeader, StopTitle } from "@/components/public/stop";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -23,7 +23,7 @@ const PRACTICE_FIRST_MOCK_SHARE = 0.35;
 const PRACTICE_SECOND_MOCK_SHARE = 0.8;
 const FINAL_MOCK_SHARE = 0.4;
 
-const SWATCH_CLASS = "inline-block h-2.5 w-3.5 rounded-meter ring-1 ring-inset";
+const SWATCH_CLASS = "inline-block h-2.5 w-3.5 rounded-meter";
 
 async function getExamRoad(): Promise<RoadBand[]> {
   const t = await getExtracted();
@@ -35,7 +35,7 @@ async function getExamRoad(): Promise<RoadBand[]> {
       name: t("{days, plural, =7 {Week 1} one {Day 1} other {The first # days}}", {
         days: freeDays,
       }),
-      state: "current",
+      state: "free",
       todayShare: 0,
       weight: freeDays + FREE_BAND_ROOM,
     },
@@ -72,16 +72,11 @@ async function ExamPlanRoad() {
           className="text-muted-foreground hidden flex-wrap gap-x-4 gap-y-1.5 text-xs lg:flex"
         >
           <span className="inline-flex items-center gap-1.5">
-            <span className={cn(SWATCH_CLASS, "bg-surface-3 ring-input")} />
+            <span className={cn(SWATCH_CLASS, ROAD_LOOK.free)} />
             {t("Free")}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span
-              className={cn(
-                SWATCH_CLASS,
-                "ring-border bg-[repeating-linear-gradient(135deg,transparent_0_3px,color-mix(in_oklab,var(--faint)_32%,transparent)_3px_4px)]",
-              )}
-            />
+            <span className={cn(SWATCH_CLASS, ROAD_LOOK.plus)} />
             {t("Plus")}
           </span>
           <span className="inline-flex items-center gap-1.5">
@@ -143,7 +138,7 @@ export async function PricingCovers() {
       </StopHeader>
 
       <StopBody>
-        <ProductWindow className="flex flex-col gap-7 p-5 sm:px-8 sm:py-7">
+        <ProductWindow className="flex flex-col gap-7 p-6 sm:p-7">
           <ExamPlanRoad />
 
           <FreeMonth />

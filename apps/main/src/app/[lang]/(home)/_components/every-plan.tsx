@@ -68,8 +68,8 @@ export async function EveryPlan() {
           <EveryPlanItem
             mark={<KindIcon className="size-4 sm:size-5" kind="review" />}
             name={t({
-              description: "In Brazilian Portuguese: “Traz de volta antes de você esquecer”.",
-              message: "It brings things back before you forget",
+              description: "In Brazilian Portuguese: “Revisa antes de você esquecer”.",
+              message: "It reviews before you forget",
             })}
             text={t({
               description:
