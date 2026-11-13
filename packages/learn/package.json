@@ -136,6 +136,7 @@
     "./progress-cells": "./src/_components/progress-cells.tsx",
     "./plus-lock": "./src/_components/plus-lock.tsx",
     "./rich-table": "./src/_components/rich-table.tsx",
+    "./subscribe-gate": "./src/_components/subscribe-gate.tsx",
     "./roadmap-styles": "./src/journey/roadmap-styles.tsx",
     "./provider": "./src/learn-provider.tsx",
     "./reminders": "./src/reminders/reminders-screen.tsx",
