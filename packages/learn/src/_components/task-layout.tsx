@@ -21,8 +21,9 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 
 export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3";
 
+/** Where the sidebar's toggle closes the end side, what comes before it gives the edge up to it. */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-w-fit flex-1 basis-0 justify-end",
+  end: "flex min-w-fit flex-1 basis-0 justify-end lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
   start: "flex min-w-fit flex-1 basis-0 justify-start",
 } as const;
 
@@ -242,8 +243,8 @@ export function TaskSkeleton({
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            {aside && <Skeleton className="hidden size-9 rounded-lg lg:block" />}
-            {menu && <Skeleton className="-mr-2.5 size-9 rounded-lg" />}
+            {menu && <Skeleton className={cn("-mr-2.5 size-9 rounded-lg", aside && "lg:mr-0")} />}
+            {aside && <Skeleton className="-mr-2.5 hidden size-9 rounded-lg lg:block" />}
           </div>
         </div>
 
