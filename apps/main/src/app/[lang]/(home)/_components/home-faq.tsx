@@ -3,6 +3,7 @@ import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
+  renderHelpLink,
 } from "@/components/public/public-disclosure";
 import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
@@ -13,14 +14,6 @@ import { getExtracted } from "next-intl/server";
 import { getExampleSet } from "./landing-examples";
 
 const TITLE_ID = "faq-title";
-
-function renderHelpLink(chunks: React.ReactNode) {
-  return (
-    <Link className={DISCLOSURE_LINK_CLASS} href="/support">
-      {chunks}
-    </Link>
-  );
-}
 
 export async function HomeFaq() {
   const t = await getExtracted();
