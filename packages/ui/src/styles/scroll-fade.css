@@ -104,7 +104,9 @@
   /* Keyboard focus scrolls an item clear of the faded edge. */
   scroll-padding-inline: var(--_scroll-fade-size-x);
 
-  &:dir(rtl) {
+  /* The build rewrites :dir() as a list of languages, which a scroller that sets dir itself doesn't match. */
+  &:dir(rtl),
+  &[dir="rtl"] {
     --_scroll-fade-x-direction: to left;
   }
 

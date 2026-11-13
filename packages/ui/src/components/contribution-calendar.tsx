@@ -105,7 +105,8 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
 
 /**
  * RTL so an overflowing calendar opens at its newest edge. On touch it is as wide as a whole number of
- * weeks and snaps to them, so a swipe never rests on half a week.
+ * weeks and snaps to them, so a swipe never rests on half a week. The side with earlier or later
+ * weeks fades by one week, the only sign on a still screen that the rest of the year is a swipe away.
  */
 export function ContributionCalendarViewport({
   children,
@@ -115,7 +116,7 @@ export function ContributionCalendarViewport({
   return (
     <div
       className={cn(
-        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-(--calendar-touch-width) pointer-coarse:snap-x pointer-coarse:snap-mandatory",
+        "scroll-fade-x ml-auto w-full min-w-0 overflow-x-auto pb-1 [--scroll-fade-x-size:calc(var(--calendar-cell)+var(--calendar-gap))] pointer-coarse:w-(--calendar-touch-width) pointer-coarse:snap-x pointer-coarse:snap-mandatory",
         className,
       )}
       data-slot={VIEWPORT_SLOT}
