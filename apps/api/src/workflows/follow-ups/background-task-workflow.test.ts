@@ -32,6 +32,16 @@ async function owedWordFix() {
     data: {
       changes: [
         {
+          clip: {
+            after: null,
+            before: {
+              audioGeneratedAt: null,
+              audioModel: null,
+              audioPromptVersion: null,
+              audioRunId: null,
+              audioUrl: null,
+            },
+          },
           fields: [{ after: "rental", before: word.word, field: "word" }],
           id: word.id,
           model: "Word",
