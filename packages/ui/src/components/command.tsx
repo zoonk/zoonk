@@ -103,7 +103,7 @@ function CommandInput({
       className="flex items-center gap-3 px-4 pt-2.5 pb-2 sm:border-b sm:p-0"
       data-slot="command-input-wrapper"
     >
-      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset sm:h-13 sm:rounded-none sm:px-4 sm:ring-0 sm:focus-within:ring-0">
+      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset sm:h-13 sm:gap-3 sm:rounded-none sm:px-5 sm:ring-0 sm:focus-within:ring-0">
         <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <Autocomplete.Input
           autoFocus
@@ -210,7 +210,7 @@ function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       aria-hidden="true"
       className={cn(
-        "text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-3.5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
+        "text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
         className,
       )}
       data-slot="command-footer"
