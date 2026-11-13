@@ -91,7 +91,7 @@ export function BuddyEnergy({
         <span className={PAGE_SECTION_TITLE_CLASS}>{t("Energy")}</span>
         <span className="text-compact flex items-center gap-0.5 font-mono font-medium tabular-nums">
           {formatShare(share)}
-          <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-3.5" />
+          <ChevronRightIcon aria-hidden="true" className="text-faint size-3.5" />
         </span>
       </span>
 

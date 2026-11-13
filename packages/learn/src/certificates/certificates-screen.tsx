@@ -84,7 +84,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="group-hover:decoration-input text-sm leading-snug font-[550] tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
+        <span className="group-hover:decoration-input text-sm leading-snug font-medium tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
           {name}
           {!links && <PlusMark className="ml-2 align-middle" />}
         </span>

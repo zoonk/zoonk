@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { InputError } from "@zoonk/ui/components/input";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useFormStatus } from "react-dom";
 
@@ -19,7 +19,7 @@ export function AuthTitle({ children, className }: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn(
-        "text-2xl leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-3xl",
+        "text-2xl leading-[1.1] font-semibold tracking-[-0.035em] text-balance sm:text-3xl",
         className,
       )}
     >
@@ -74,22 +74,21 @@ export function AuthSubmit({
   className,
   isLoading,
   ...props
-}: React.ComponentProps<typeof Button> & { isLoading?: boolean }) {
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter"> & { isLoading?: boolean }) {
   const status = useFormStatus();
 
   return (
-    <Button
-      aria-keyshortcuts="Enter"
+    // Enter in the form's field submits it, so the key is the field's.
+    <EnterButton
       busy={isLoading ?? status.pending}
       className={cn("w-full", className)}
-      focusableWhenDisabled
+      enter="host"
       size="lg"
       type="submit"
       {...FORWARD_ICON}
       {...props}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+    </EnterButton>
   );
 }

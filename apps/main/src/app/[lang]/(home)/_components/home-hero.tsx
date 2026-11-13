@@ -55,7 +55,7 @@ async function ExamPlan() {
 
         <p className="mt-2 flex justify-between gap-3 text-xs">
           <span>
-            <b className="font-[550]">{tPhases("Foundations")}</b>
+            <b className="font-medium">{tPhases("Foundations")}</b>
             <span className="text-muted-foreground">
               {` · ${t("day {number, number}", { number: PLAN_DAY })}`}
             </span>
@@ -92,7 +92,7 @@ export async function HomeHero({ startPath }: { startPath: string }) {
     >
       <div className="@container min-w-0">
         <h1
-          className="text-[min(10.6cqi,5.25rem)] leading-none font-[680] tracking-[-0.045em] lg:leading-[0.98]"
+          className="text-[min(10.6cqi,5.25rem)] leading-none font-semibold tracking-[-0.045em] lg:leading-[0.98]"
           id={TITLE_ID}
         >
           {await getHomeHeadline({ line: renderLine, locale, more: renderMore })}

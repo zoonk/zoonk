@@ -4,7 +4,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, XIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { PAGE_COLUMN_CLASS } from "../_components/page";
@@ -96,7 +96,6 @@ export function LearnBackLink({
   crumb = false,
   href,
   label,
-  leave = false,
   named = false,
   toApp = false,
 }: {
@@ -104,12 +103,10 @@ export function LearnBackLink({
   crumb?: boolean;
   href: string;
   label?: string;
-  leave?: boolean;
   /** Shows `label` beside the chevron at every width. */
   named?: boolean;
   toApp?: boolean;
 }) {
-  const t = useExtracted();
   const ref = useEscapeClick<HTMLAnchorElement>();
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -134,8 +131,10 @@ export function LearnBackLink({
       onClick={onClick}
       ref={ref}
     >
-      {leave ? <XIcon aria-hidden="true" /> : <ChevronLeftIcon aria-hidden="true" />}
-      <span className="sr-only">{leave ? t("Leave") : <BackLinkName label={label} />}</span>
+      <ChevronLeftIcon aria-hidden="true" />
+      <span className="sr-only">
+        <BackLinkName label={label} />
+      </span>
       {crumb && label && (
         <span aria-hidden="true" className="hidden lg:inline">
           {label}

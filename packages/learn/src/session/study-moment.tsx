@@ -1,11 +1,10 @@
 "use client";
 
-import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowRightIcon, CircleStopIcon } from "lucide-react";
+import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { EnterButton } from "../_components/enter-button";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
@@ -14,7 +13,6 @@ import { type TestOutStart, TestOutStartLink } from "../_components/test-out-sta
 import { useFormatDuration, useStudyTimeFact } from "../_utils/time-format";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { LearnLink } from "../learn-link";
 import { FinishedChapterMoment } from "../mind-maps/finished-chapter-map";
 import { ReminderOffer, type ReminderOfferActions } from "../reminders/reminder-offer";
 import { getOwnBrainPower } from "./block-brain-power";
@@ -135,7 +133,12 @@ function MomentActions({
         {continueHref ? (
           <MomentContinueLink href={continueHref} />
         ) : (
-          <EnterButton busy={proceed.isPending} onClick={proceed.run} {...FORWARD_ICON}>
+          <EnterButton
+            busy={proceed.isPending}
+            enter="host"
+            onClick={proceed.run}
+            {...FORWARD_ICON}
+          >
             {sessionCompleted ? t("See today's summary") : t("Continue")}
           </EnterButton>
         )}
@@ -261,12 +264,10 @@ export function StudyMoment({
 
 function MomentContinueLink({ href }: { href: string }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
   const steady = useSteady(SCREEN_STEADY_MS);
 
   return (
-    <LearnLink
-      className={buttonVariants({ size: "xl" })}
+    <EnterLink
       href={href}
       lessonWritten
       onClick={(event) => {
@@ -274,10 +275,8 @@ function MomentContinueLink({ href }: { href: string }) {
           event.preventDefault();
         }
       }}
-      ref={ref}
     >
       {t("Continue")}
-      <ArrowRightIcon aria-hidden="true" className="size-4" />
-    </LearnLink>
+    </EnterLink>
   );
 }

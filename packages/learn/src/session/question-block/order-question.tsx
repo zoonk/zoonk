@@ -1,6 +1,7 @@
 "use client";
 
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
@@ -79,7 +80,7 @@ export function OrderQuestion({
           return (
             <AnswerOption
               aria-checked={place !== -1}
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={locked}
               key={step}
               marker={index + 1}

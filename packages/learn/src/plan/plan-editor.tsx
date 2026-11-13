@@ -18,7 +18,6 @@ import {
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
@@ -89,8 +88,17 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
       >
         <PlanEditorChangeProvider>
           <SheetHeader className="flex-row items-center justify-between gap-3 px-6 pt-5 pb-3">
-            <SheetTitle className="text-xl font-semibold">{t("Adjust your plan")}</SheetTitle>
-            <SheetClose render={<Button edge="end" size="icon" variant="ghost" />}>
+            <SheetTitle>{t("Adjust your plan")}</SheetTitle>
+            <SheetClose
+              render={
+                <Button
+                  className="[--icon-size:--spacing(5)]"
+                  edge="end"
+                  size="icon"
+                  variant="ghost"
+                />
+              }
+            >
               <XIcon aria-hidden="true" />
               <span className="sr-only">{t("Close")}</span>
             </SheetClose>
@@ -114,9 +122,8 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup initialFocus={initialFocus}>
         <PlanEditorChangeProvider>
-          <DrawerHeader className="flex-row items-center justify-between gap-3">
-            <DrawerTitle className="text-xl font-semibold">{t("Adjust your plan")}</DrawerTitle>
-            <DrawerCloseButton />
+          <DrawerHeader closeLabel={t("Close")}>
+            <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
           </DrawerHeader>
 
           <DrawerContent className="flex flex-col gap-7 pt-2">

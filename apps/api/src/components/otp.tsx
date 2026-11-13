@@ -47,15 +47,12 @@ function keepDigits(text: string) {
 
 export const OTP_LENGTH = 6;
 
-/** The six boxes share the column's width, so they start and end where the field and Continue do. */
-const OTP_SLOT_CLASS = "h-11 w-auto flex-1";
-
 export function OTPFormSkeleton() {
   return (
     <div aria-hidden="true" className="flex w-full flex-col items-center gap-2">
       <div className="flex w-full gap-2">
         {Array.from({ length: OTP_LENGTH }, (_, index) => (
-          <Skeleton className={cn(OTP_SLOT_CLASS, "rounded-lg")} key={index} />
+          <Skeleton className="h-11 flex-1 rounded-lg" key={index} />
         ))}
       </div>
 
@@ -69,7 +66,6 @@ export function OTPFormSkeleton() {
 export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
   return (
     <InputOTP
-      containerClassName="gap-3"
       maxLength={OTP_LENGTH}
       name="otp"
       pasteTransformer={keepDigits}
@@ -77,13 +73,13 @@ export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
       required
       {...props}
     >
-      <InputOTPGroup className="w-full">
-        <InputOTPSlot className={OTP_SLOT_CLASS} index={0} />
-        <InputOTPSlot className={OTP_SLOT_CLASS} index={1} />
-        <InputOTPSlot className={OTP_SLOT_CLASS} index={2} />
-        <InputOTPSlot className={OTP_SLOT_CLASS} index={3} />
-        <InputOTPSlot className={OTP_SLOT_CLASS} index={4} />
-        <InputOTPSlot className={OTP_SLOT_CLASS} index={5} />
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
       </InputOTPGroup>
     </InputOTP>
   );

@@ -96,7 +96,7 @@ export function CertificateNameField({
       className={cn("flex w-full max-w-md flex-col gap-2 text-left", className)}
       data-slot="certificate-name-field"
     >
-      <label className="text-compact font-[550]" htmlFor={`${id}-name`}>
+      <label className="text-compact font-medium" htmlFor={`${id}-name`}>
         {current ? t("Name on your certificates") : t("Your name, as it should appear")}
       </label>
 
