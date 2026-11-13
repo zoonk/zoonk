@@ -1,4 +1,5 @@
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { InputError } from "@zoonk/ui/components/input";
 import {
   InputOTP,
@@ -6,9 +7,7 @@ import {
   type InputOTPProps,
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export function OTP({ children, className }: React.ComponentProps<"div">) {
@@ -149,19 +148,18 @@ export function OTPSubmit({
   ...props
 }: React.ComponentProps<"button"> & { isLoading?: boolean }) {
   return (
-    <Button
-      aria-keyshortcuts={shortcutKeys("main")}
+    // Enter in the code's field submits its form, so the key is the field's.
+    <EnterButton
       busy={isLoading ?? false}
       className={cn("w-full font-[560]", className)}
       disabled={disabled}
-      focusableWhenDisabled
+      enter="host"
       size="lg"
       type="submit"
       {...FORWARD_ICON}
       {...props}
     >
       {children}
-      <ShortcutKbd shortcut="main" tone="inverse" />
-    </Button>
+    </EnterButton>
   );
 }

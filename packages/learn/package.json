@@ -35,6 +35,7 @@
     "./daily-time-picker": "./src/_components/daily-time-picker.tsx",
     "./device-storage": "./src/_utils/device-storage.ts",
     "./choice-styles": "./src/onboarding/choice-styles.ts",
+    "./enter-button": "./src/_components/enter-button.tsx",
     "./essay": "./src/essay/essay-screen.tsx",
     "./exam": "./src/exam/exam-screen.tsx",
     "./explain/ending": "./src/explain/explain-ending.tsx",

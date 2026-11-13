@@ -8,8 +8,6 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
@@ -18,11 +16,11 @@ import {
   DetailContent,
   DetailLayout,
 } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PageTab, PageTabs } from "../_components/page-tabs";
-import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
   MIND_MAP_TABS,
@@ -85,19 +83,18 @@ function StudyLabel() {
 
 function StudyLink({ goalId, study, view }: { goalId: string; study: string; view: MindMapTab }) {
   const place = useMindMapPlace({ goalId, view });
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
+    <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={buildStudyHref({ place, study, view })}
+      icon={null}
       // Where the learner stopped is only known once the page hydrates, so the deck loads on intent.
       prefetch="intent"
-      ref={ref}
+      size="lg"
     >
       <StudyLabel />
-      <ShortcutKbd shortcut="main" tone="inverse" />
-    </LearnLink>
+    </EnterLink>
   );
 }
 

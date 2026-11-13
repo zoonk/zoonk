@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ignoreHeldEnter, useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronLeftIcon, EyeIcon, HelpCircleIcon, PlayIcon } from "lucide-react";
@@ -128,8 +128,8 @@ export function QuestionDontKnow({
  * pressed elsewhere moves focus to it, since an answer option locks while it's checked, and a held
  * Enter acts once, so it can't check and then skip the verdict.
  *
- * `enter`: `host` when the screen binds Enter itself, `off` when Enter must not press it (handing
- * in). The ⏎ hint shows whenever Enter works.
+ * `enter` is `EnterButton`'s: `host` when the screen binds Enter itself, `off` when Enter must not
+ * press it (handing in).
  */
 export function QuestionMainAction({
   action,
@@ -141,36 +141,21 @@ export function QuestionMainAction({
   id = QUESTION_MAIN_ACTION_ID,
   onPress,
   ...props
-}: Omit<React.ComponentProps<typeof EnterButton>, "iconPosition" | "shortcut"> & {
+}: Omit<React.ComponentProps<typeof EnterButton>, "iconPosition" | "size"> & {
   action: QuestionAction;
-  enter?: "bound" | "host" | "off";
   onPress?: () => void;
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
   const label = useActionLabel(action);
-
-  useEnterKey(
-    () => {
-      if (!onPress || !ref.current || ref.current.getClientRects().length === 0) {
-        return false;
-      }
-
-      ref.current.focus();
-      onPress();
-    },
-    { enabled: enter === "bound" && !disabled && !busy },
-  );
 
   return (
     <EnterButton
       busy={busy}
       data-slot="question-main-action"
       disabled={disabled}
+      enter={enter}
       id={id}
       onClick={onPress}
       onKeyDown={ignoreHeldEnter}
-      ref={ref}
-      shortcut={enter !== "off"}
       {...(icon ? { icon } : ICONS[action])}
       {...props}
     >

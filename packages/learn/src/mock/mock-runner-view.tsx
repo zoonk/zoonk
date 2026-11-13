@@ -164,6 +164,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 }
 
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
+  const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
   const sheet = useMockSheetAside({ deadline, onHandIn: handIn });
@@ -171,6 +172,12 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
   return (
     <MockFrame
       aside={sheet}
+      confirmExit={{
+        cancel: t("Stay"),
+        confirm: t("Leave"),
+        description: t("Your answers are saved. The clock keeps running while you're away."),
+        title: t("Leave the mock exam?"),
+      }}
       footer={<RunnerFooter onHandIn={handIn} />}
       headerEnd={<MockAnswerSheet onHandIn={handIn} />}
       headerTitle={<ClockTitle clockBeside deadline={deadline} />}

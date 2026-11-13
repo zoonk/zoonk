@@ -1,11 +1,9 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { PageEyebrow } from "../_components/page";
 import { PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { toLabelCase } from "../_utils/label-case";
@@ -270,21 +268,11 @@ export function OnboardingPrimaryButton({
   children,
   className,
   ...props
-}: React.ComponentProps<typeof Button>) {
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !props.disabled && !props.busy });
-
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size">) {
   return (
-    <Button
-      aria-keyshortcuts={shortcutKeys("main")}
-      className={cn("w-full font-[560]", className)}
-      focusableWhenDisabled
-      size="lg"
-      {...props}
-      ref={ref}
-    >
+    <EnterButton className={cn("w-full font-[560]", className)} size="lg" {...props}>
       {children}
-      <ShortcutKbd shortcut="main" tone="inverse" />
-    </Button>
+    </EnterButton>
   );
 }
 

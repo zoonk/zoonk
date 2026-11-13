@@ -1,6 +1,7 @@
 "use client";
 
 import { type LibraryLessonCompletion } from "@zoonk/core/lesson-player/contract";
+import { EnterLink } from "@zoonk/learn/enter-button";
 import {
   ListGroup,
   ListRow,
@@ -12,17 +13,7 @@ import {
 } from "@zoonk/learn/list";
 import { PageSectionLabel } from "@zoonk/learn/page";
 import { DoneMark } from "@zoonk/learn/status-mark";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActionLabel,
-  TaskActions,
-} from "@zoonk/learn/task-layout";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { cn } from "@zoonk/ui/lib/utils";
+import { TaskActionBar, TaskActionLabel, TaskActions } from "@zoonk/learn/task-layout";
 import { MapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLessonPlayerConfig } from "../lesson-player-context";
@@ -58,20 +49,13 @@ export function LessonCompletionPlan({ reveal }: { reveal: PlanReveal }) {
 export function SeePlanAction({ reveal }: { reveal: PlanReveal }) {
   const t = useExtracted();
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
     <TaskActionBar>
       <TaskActions>
-        <LinkComponent
-          aria-keyshortcuts={shortcutKeys("main")}
-          className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
-          href={routes.seePlan(reveal.goalId)}
-          ref={ref}
-        >
+        <EnterLink href={routes.seePlan(reveal.goalId)} icon={null} link={LinkComponent}>
           <TaskActionLabel>{t("See your plan")}</TaskActionLabel>
-          <ShortcutKbd shortcut="main" tone="inverse" />
-        </LinkComponent>
+        </EnterLink>
       </TaskActions>
     </TaskActionBar>
   );

@@ -1,13 +1,9 @@
 "use client";
 
-import { BusyContent, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useRef } from "react";
-import { EnterButton } from "../_components/enter-button";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import { TaskClose } from "../_components/task-close";
 import {
@@ -19,7 +15,6 @@ import {
   type TaskSegment,
 } from "../_components/task-header";
 import {
-  TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
   TaskAside,
   type TaskAsideWidth,
@@ -27,7 +22,6 @@ import {
   getTaskAsideRootProps,
 } from "../_components/task-layout";
 import { useSteady } from "../_utils/use-steady";
-import { LearnLink } from "../learn-link";
 import { goBackToApp } from "./app-history";
 import { type TaskExitConfirmation } from "./task-exit-dialog";
 
@@ -155,11 +149,6 @@ export function TaskFrame({
   );
 }
 
-/** A main action one screen size hides (`lg:hidden`) leaves Enter to the one that size shows. */
-function isShown(element: HTMLElement | null): boolean {
-  return element !== null && element.getClientRects().length > 0;
-}
-
 export function TaskMainButton({
   busy = false,
   children,
@@ -175,11 +164,7 @@ export function TaskMainButton({
   disabled?: boolean;
   onClick: () => void;
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
   const mounted = useIsMounted();
-  const isDisabled = disabled || busy || !mounted;
-
-  useEnterKey(() => (isShown(ref.current) ? onClick() : false), { enabled: !isDisabled });
 
   return (
     <EnterButton
@@ -189,7 +174,6 @@ export function TaskMainButton({
       icon={icon}
       iconPosition={iconPosition}
       onClick={onClick}
-      ref={ref}
     >
       {children}
     </EnterButton>
@@ -211,10 +195,7 @@ export function TaskMainLink({
   steadyMs?: number;
   toApp?: boolean;
 }) {
-  const ref = useRef<HTMLAnchorElement>(null);
   const isSteady = useSteady(steadyMs);
-
-  useEnterKey(() => (isShown(ref.current) && isSteady() ? ref.current?.click() : false));
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (!isSteady()) {
@@ -231,17 +212,8 @@ export function TaskMainLink({
   };
 
   return (
-    <LearnLink
-      aria-keyshortcuts={shortcutKeys("main")}
-      className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS, className)}
-      href={href}
-      onClick={onClick}
-      ref={ref}
-    >
-      <BusyContent {...(iconProps.icon ? iconProps : FORWARD_ICON)}>
-        {children}
-        <ShortcutKbd shortcut="main" tone="inverse" />
-      </BusyContent>
-    </LearnLink>
+    <EnterLink className={className} href={href} onClick={onClick} {...iconProps}>
+      {children}
+    </EnterLink>
   );
 }

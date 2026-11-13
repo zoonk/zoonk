@@ -187,15 +187,24 @@ export function useEnterKey(
   useShortcut("main", callback, { enabled });
 }
 
+/**
+ * Enter presses the control it's given, when it's drawn. `focus` moves focus there first, so the
+ * next Enter is the control's own.
+ */
 export function useEnterClick<Target extends HTMLElement>({
   enabled = true,
-}: { enabled?: boolean } = {}) {
+  focus = false,
+}: { enabled?: boolean; focus?: boolean } = {}) {
   const ref = useRef<Target>(null);
 
   useEnterKey(
     () => {
       if (!isDrawn(ref.current)) {
         return false;
+      }
+
+      if (focus) {
+        ref.current.focus();
       }
 
       ref.current.click();
