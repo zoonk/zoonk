@@ -9,7 +9,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Link from "next/link";
 import { RankingItem } from "./ranking-item";
 
@@ -20,14 +19,6 @@ type TestCaseEntry = {
   anonymousId: string;
   categoryScores?: CategoryScore[];
 };
-
-export function BattleMatchupListSkeleton() {
-  return (
-    <div aria-hidden="true" className="py-8">
-      <Skeleton className="h-6 w-48 rounded" />
-    </div>
-  );
-}
 
 function buildJudgeViews(
   matchups: BattleMatchup[],

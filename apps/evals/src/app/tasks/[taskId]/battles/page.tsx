@@ -5,7 +5,7 @@ import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/contai
 import { type Metadata } from "next";
 import { Suspense } from "react";
 import { type TaskRouteParams, getTaskRouteFromParams } from "../_utils/task-route";
-import { BattleMatchupList, BattleMatchupListSkeleton } from "./battle-matchup-list";
+import { BattleMatchupList } from "./battle-matchup-list";
 
 type BattlesRouteProps = { params: TaskRouteParams };
 
@@ -38,15 +38,14 @@ async function BattleResults({ params }: BattlesRouteProps) {
 export default function BattlesPage({ params }: BattlesRouteProps) {
   return (
     <main className="flex flex-col gap-4">
+      {/* One boundary: the title and the list arrive together, so the list never moves down. */}
       <Suspense fallback={<EvalPageTopSkeleton />}>
         <BattlesHeader params={params} />
-      </Suspense>
 
-      <ContainerBody>
-        <Suspense fallback={<BattleMatchupListSkeleton />}>
+        <ContainerBody>
           <BattleResults params={params} />
-        </Suspense>
-      </ContainerBody>
+        </ContainerBody>
+      </Suspense>
     </main>
   );
 }
