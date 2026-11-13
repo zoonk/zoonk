@@ -10546,9 +10546,9 @@ msgid "What score do you need?"
 msgstr "What score do you need?"
 
 #: src/onboarding/steps/reason-step.tsx
-msgctxt "PtLljQ"
-msgid "Which one?"
-msgstr "Which one?"
+msgctxt "P5KfyI"
+msgid "Which certificate?"
+msgstr "Which certificate?"
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "j4_o5O"
