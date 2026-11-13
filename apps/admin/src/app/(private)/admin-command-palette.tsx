@@ -100,35 +100,38 @@ function Palette({ currentUrl }: { currentUrl: string }) {
           maxLength={100}
           placeholder="Search pages and records…"
         />
-        <div
-          aria-live="polite"
-          className="text-muted-foreground h-7 shrink-0 px-4 py-1 text-xs"
-          role="status"
-        >
-          {takingLong && "Searching…"}
-          {!searching && failed && "Search couldn't load. Edit your search to retry."}
-          {empty &&
-            (trimmedQuery.length < 2
-              ? "Type at least 2 characters to find records."
-              : "No results found.")}
+        {/* One box of a set height, so the palette doesn't resize as words and rows come and go. */}
+        <div className="flex min-h-0 flex-1 flex-col sm:h-[min(60vh,28rem)] sm:flex-none">
+          <div
+            aria-live="polite"
+            className="text-muted-foreground shrink-0 px-4 text-xs not-empty:pt-4 sm:px-5"
+            role="status"
+          >
+            {takingLong && "Searching…"}
+            {!searching && failed && "Search couldn't load. Edit your search to retry."}
+            {empty &&
+              (trimmedQuery.length < 2
+                ? "Type at least 2 characters to find records."
+                : "No results found.")}
+          </div>
+          <CommandList>
+            {groups.map((group) => (
+              <CommandGroup items={group.items} key={group.label}>
+                <CommandGroupLabel>{group.label}</CommandGroupLabel>
+                <CommandCollection>
+                  {(item: PaletteItem) => (
+                    <PaletteOption
+                      closePalette={closePalette}
+                      currentUrl={currentUrl}
+                      item={item}
+                      key={item.href}
+                    />
+                  )}
+                </CommandCollection>
+              </CommandGroup>
+            ))}
+          </CommandList>
         </div>
-        <CommandList className="min-h-[min(60vh,28rem)]">
-          {groups.map((group) => (
-            <CommandGroup items={group.items} key={group.label}>
-              <CommandGroupLabel>{group.label}</CommandGroupLabel>
-              <CommandCollection>
-                {(item: PaletteItem) => (
-                  <PaletteOption
-                    closePalette={closePalette}
-                    currentUrl={currentUrl}
-                    item={item}
-                    key={item.href}
-                  />
-                )}
-              </CommandCollection>
-            </CommandGroup>
-          ))}
-        </CommandList>
       </Command>
       <CommandKeyHints close="close" move="move" open="open" />
     </CommandDialog>
