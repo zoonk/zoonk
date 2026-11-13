@@ -50,6 +50,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.EmptyState
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
@@ -244,7 +245,7 @@ internal fun MindMapsPage(
             BeforeFold { beforeFold ->
                 LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
                     item(key = "hero", contentType = "hero") {
-                        MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 }, actions.navigate)
+                        MindMapsHeader(mindMaps, study = { actions.study(tab, null) }.takeIf { decks.getValue(tab) > 0 })
                     }
                     stickyHeader(key = "tabs", contentType = "tabs") { MindMapsTabs(tab, decks) { picked = it.key } }
 
@@ -297,21 +298,17 @@ internal class TabActions(
     ) = state.saves[target] ?: server
 }
 
-/** The title with the goal under it, then Study, which opens the tab's maps where this device stopped. */
+/** The goal over the title, then Study when the tab has maps to study. */
 @Composable
 private fun MindMapsHeader(
     mindMaps: GoalMindMaps,
     study: (() -> Unit)?,
-    navigate: (AppRoute) -> Unit,
 ) {
     Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Eyebrow(mindMaps.goal.displayName)
         Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
-        Text(mindMaps.goal.displayName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         if (study != null) {
-            Button(
-                onClick = study,
-                modifier = Modifier.padding(top = 12.dp),
-            ) { Text(stringResource(R.string.mindmaps_study)) }
+            Button(onClick = study, modifier = Modifier.padding(top = 12.dp)) { Text(stringResource(R.string.mindmaps_study)) }
         }
     }
 }
