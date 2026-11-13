@@ -3,7 +3,7 @@ import { Buddy } from "@zoonk/ui/components/buddy";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { Specimen } from "../../_components/doc";
 
-const ENERGY = 70;
+export const SPECIMEN_ENERGY = 70;
 
 /** Each picture has a hairline around it here, to show that nothing of the character passes it. */
 const FRAME = "ring-border ring-1 ring-inset";
@@ -17,7 +17,7 @@ export function SizeSpecimen() {
             <Buddy
               beltColor="orange"
               className={`${className} ${FRAME}`}
-              energy={ENERGY}
+              energy={SPECIMEN_ENERGY}
               kind="zu"
               studiedToday
               view={view}

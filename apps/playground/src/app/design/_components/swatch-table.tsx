@@ -33,6 +33,20 @@ function measure(table: HTMLElement | null): Record<string, number> {
   return ratios;
 }
 
+function TextSample({ token }: { token: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="text-sm font-semibold"
+      data-measure="text"
+      data-token={token}
+      style={{ color: `var(--${token})` }}
+    >
+      Aa
+    </span>
+  );
+}
+
 function Sample({ mode, token }: { mode: string; token: ColorToken }) {
   if (token.on) {
     return (
@@ -41,15 +55,7 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
         data-surface
         style={{ backgroundColor: `var(--${token.on})` }}
       >
-        <span
-          aria-hidden="true"
-          className="text-sm font-semibold"
-          data-measure="text"
-          data-token={token.name}
-          style={{ color: `var(--${token.name})` }}
-        >
-          Aa
-        </span>
+        <TextSample token={token.name} />
       </span>
     );
   }
@@ -64,17 +70,7 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
         role="img"
         style={{ backgroundColor: `var(--${token.name})` }}
       />
-      {token.text && (
-        <span
-          aria-hidden="true"
-          className="text-sm font-semibold"
-          data-measure="text"
-          data-token={token.name}
-          style={{ color: `var(--${token.name})` }}
-        >
-          Aa
-        </span>
-      )}
+      {token.text && <TextSample token={token.name} />}
     </>
   );
 }

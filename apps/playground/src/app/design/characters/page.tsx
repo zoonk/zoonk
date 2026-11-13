@@ -24,7 +24,7 @@ import {
 } from "../_components/doc";
 import { ActsTable } from "./_components/acts-table";
 import { BuddyStage } from "./_components/buddy-stage";
-import { SizeSpecimen } from "./_components/size-specimen";
+import { SPECIMEN_ENERGY, SizeSpecimen } from "./_components/size-specimen";
 import { TricksterStage } from "./_components/trickster-stage";
 
 export const metadata: Metadata = { title: "Characters" };
@@ -35,8 +35,6 @@ const KINDS: readonly { kind: BuddyKind; name: string }[] = [
   { kind: "noodle", name: "Noodle" },
   { kind: "beep", name: "Beep" },
 ];
-
-const ENERGY = 70;
 
 const ENERGY_STATES = [
   { energy: 12, label: "Napping, 12%", studiedToday: false },
@@ -67,7 +65,7 @@ function ExpressionGrid() {
                 <Buddy
                   beltColor="orange"
                   className="h-23"
-                  energy={ENERGY}
+                  energy={SPECIMEN_ENERGY}
                   expression={expression.name}
                   kind={kind}
                   studiedToday
@@ -180,8 +178,8 @@ export default function CharactersPage() {
         title="Acting"
       >
         <div className="grid gap-4 xl:grid-cols-3">
-          <BuddyStage beltColor="orange" energy={ENERGY} kind="zu" name="Zu" />
-          <BuddyStage beltColor="blue" energy={ENERGY} kind="otto" name="Otto" />
+          <BuddyStage beltColor="orange" energy={SPECIMEN_ENERGY} kind="zu" name="Zu" />
+          <BuddyStage beltColor="blue" energy={SPECIMEN_ENERGY} kind="otto" name="Otto" />
           <TricksterStage />
         </div>
       </DocSection>
