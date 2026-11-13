@@ -96,7 +96,7 @@ test("loading an unwritten lesson asks for nothing, and it opens once another ap
     title: `Electron clouds ${randomUUID().slice(0, 6)}`,
   });
 
-  const start = page.getByRole("button", { name: "Start this lesson" });
+  const start = page.getByRole("button", { name: "Get it ready" });
   const asked: string[] = [];
 
   page.on("request", (request) => {
@@ -139,7 +139,7 @@ test("a lesson another app pulls for a fix and rewrites opens as it is now, not 
 
   await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
   await page.reload();
-  const start = page.getByRole("button", { name: "Start this lesson" });
+  const start = page.getByRole("button", { name: "Get it ready" });
   await expectHydrated(start);
   await start.click();
 
@@ -227,7 +227,7 @@ test.describe("A lesson still being written", () => {
     ]);
 
     await page.goto(`/learn/${unwritten.id}`);
-    const start = page.getByRole("button", { name: "Start this lesson" });
+    const start = page.getByRole("button", { name: "Get it ready" });
     await expectHydrated(start);
     await start.click();
 
@@ -270,7 +270,7 @@ test.describe("A lesson still being written", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: unwritten.title })).toBeVisible();
 
-    const start = page.getByRole("button", { name: "Start this lesson" });
+    const start = page.getByRole("button", { name: "Get it ready" });
     await expect(start).toBeVisible();
 
     const before = await page.request.get("/api/auth/get-session");
