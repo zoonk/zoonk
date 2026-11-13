@@ -226,21 +226,23 @@ export async function toLevelTestView({
 
 /**
  * Whether a fix changed this part of the bank after the learner's test began, so an answer to it
- * may have been given to the old wording and doesn't count. A test's first answer has no start
- * yet, so it began now.
+ * may have been given to the old wording and doesn't count. Before its first answer, the test may
+ * have been on screen since the goal was made.
  */
 export async function isFixedDuringTest({
   bankId,
+  goal,
   part,
   progress,
 }: {
   bankId: string;
+  goal: Pick<Goal, "createdAt">;
   part: string;
   progress: Pick<LevelTestProgress, "startedAt">;
 }): Promise<boolean> {
   const fixed = await findRowsFixedSince({
     rows: [{ id: bankId, model: "LanguageLevelTest", parts: [part] }],
-    startedAt: progress.startedAt ? new Date(progress.startedAt) : new Date(),
+    startedAt: progress.startedAt ? new Date(progress.startedAt) : goal.createdAt,
   });
 
   return fixed.length > 0;

@@ -8,7 +8,7 @@ import {
 } from "./level-test-contract";
 
 type TestAnswers = {
-  answers: readonly Pick<LevelTestProgress["answers"][number], "answerIndex" | "id" | "skipped">[];
+  answers: readonly Pick<LevelTestProgress["answers"][number], "correct" | "id" | "skipped">[];
   placement?: LevelTestProgress["placement"];
   speaking: LevelTestProgress["speaking"];
 };
@@ -128,10 +128,7 @@ function scoreAnswers({
       return [];
     }
 
-    const correct =
-      answer.answerIndex === null ? null : answer.answerIndex === question.answerIndex;
-
-    return [{ band: getBand(question.level), correct }];
+    return [{ band: getBand(question.level), correct: answer.correct }];
   });
 }
 

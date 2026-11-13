@@ -79,10 +79,7 @@ async function recordTestActivity({
   transaction: TransactionClient;
   userId: string;
 }) {
-  const rightAnswers = new Map(
-    bank.questions.map((question) => [question.id, question.answerIndex]),
-  );
-
+  const asked = new Set(bank.questions.map((question) => question.id));
   const fresh = progress.answers.slice(progress.counted).filter((answer) => !answer.skipped);
 
   if (fresh.length === 0) {
@@ -92,9 +89,7 @@ async function recordTestActivity({
   await settleAnsweredActivity(transaction, {
     answers: fresh.map((answer) => ({
       durationMs: answer.durationMs,
-      isCorrect: rightAnswers.has(answer.id)
-        ? answer.answerIndex !== null && rightAnswers.get(answer.id) === answer.answerIndex
-        : null,
+      isCorrect: asked.has(answer.id) ? answer.correct === true : null,
     })),
     contentIds: {},
     goalId,

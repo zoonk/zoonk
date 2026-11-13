@@ -9,6 +9,7 @@ import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied
 import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
 import { readGoalDetails } from "../_utils/language-goal";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
+import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { gradeLevelTestSpeech } from "./grade-level-test-speech";
 import { levelTestPart } from "./level-test-parts";
@@ -144,7 +145,30 @@ describe("level test answers to a question fixed during the test", () => {
     ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: false } });
 
     const { answer } = await lastAnswer(goalId);
-    expect(answer).toStrictEqual({ answerIndex: 0, durationMs: 0, id: first });
+    expect(answer).toStrictEqual({ answerIndex: 0, correct: false, durationMs: 0, id: first });
+  });
+
+  it("excuses the first answer to a question fixed while the learner was on it", async () => {
+    const { bankId, goalId } = await learnerWithBank();
+
+    await prisma.goal.update({
+      data: { createdAt: new Date(Date.now() - 60 * MINUTE_MS) },
+      where: { id: goalId },
+    });
+
+    const first = await nextQuestionId(goalId);
+
+    await moveAnswerKey({
+      bankId,
+      decidedAt: new Date(Date.now() - 10 * MINUTE_MS),
+      questionId: first,
+    });
+
+    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: first } });
+
+    await expect(lastAnswer(goalId)).resolves.toMatchObject({
+      answer: { answerIndex: null, skipped: true },
+    });
   });
 
   it("counts the right answer to a question fixed during the test", async () => {
@@ -155,6 +179,24 @@ describe("level test answers to a question fixed during the test", () => {
     await expect(
       answerLanguageLevelTest({ goalId, input: { answerIndex: 1, questionId: first } }),
     ).resolves.toMatchObject({ status: "ready", test: { lastCorrect: true } });
+  });
+});
+
+describe("level test answers saved before a fix", () => {
+  it("keeps the verdict each answer got when it was given", async () => {
+    const { bankId, goalId } = await learnerWithBank();
+    const answered = await nextQuestionId(goalId);
+    await answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: answered } });
+
+    const before = await getLanguageLevelTest(goalId);
+    await moveAnswerKey({ bankId, questionId: answered });
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toStrictEqual(before);
+
+    const levels =
+      before.status === "ready" && before.test.status === "ready" && before.test.levels;
+
+    await expect(finishLanguageLevelTest(goalId)).resolves.toMatchObject({ levels });
   });
 });
 

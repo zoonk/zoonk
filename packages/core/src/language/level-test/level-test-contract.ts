@@ -39,6 +39,8 @@ export const levelTestAnswerSchema = z.object({
     .min(0)
     .max(OPTIONS - 1)
     .nullable(),
+  /** The verdict when it was given, null for "I don't know": a later fix to the key never re-scores it. */
+  correct: z.boolean().nullable().default(null),
   durationMs: z.int().min(0).default(0),
   id: z.string(),
   skipped: z.boolean().optional(),

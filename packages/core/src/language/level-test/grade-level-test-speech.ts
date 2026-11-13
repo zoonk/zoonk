@@ -97,6 +97,7 @@ export async function gradeLevelTestSpeech({
     !match.isCorrect &&
     (await isFixedDuringTest({
       bankId,
+      goal: owned.goal,
       part: levelTestPart({ kind: "speaking", level: step.speaking.level }),
       progress,
     }));

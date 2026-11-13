@@ -81,7 +81,12 @@ describe("level test answers kept for checking the bank", () => {
       prisma.anonymousLevelTest.findUniqueOrThrow({ where: { id: recordId } }),
     ).resolves.toStrictEqual({
       ...pair,
-      answers: [firstId, secondId].map((id) => ({ answerIndex: 1, durationMs: 9000, id })),
+      answers: [firstId, secondId].map((id) => ({
+        answerIndex: 1,
+        correct: false,
+        durationMs: 9000,
+        id,
+      })),
       bankRunId: runId,
       id: recordId,
       questions: [firstId, secondId].map((id) => questions.find((question) => question.id === id)),
@@ -102,7 +107,9 @@ describe("level test answers kept for checking the bank", () => {
     const recordId = await readRecordId(goalId);
     const record = await prisma.anonymousLevelTest.findUniqueOrThrow({ where: { id: recordId } });
 
-    expect(record.answers).toStrictEqual([{ answerIndex: 0, durationMs: 0, id: questionId }]);
+    expect(record.answers).toStrictEqual([
+      { answerIndex: 0, correct: true, durationMs: 0, id: questionId },
+    ]);
   });
 
   it("keeps the answers of a learner who deletes their account", async () => {

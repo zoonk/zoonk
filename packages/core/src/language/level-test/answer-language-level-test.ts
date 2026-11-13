@@ -54,12 +54,16 @@ export async function answerLanguageLevelTest({
     (input.answerIndex !== step.question.answerIndex &&
       (await isFixedDuringTest({
         bankId,
+        goal: owned.goal,
         part: levelTestPart({ kind: "question", questionId: step.question.id }),
         progress,
       })));
 
+  const answerIndex = skipped ? null : input.answerIndex;
+
   const answer = {
-    answerIndex: skipped ? null : input.answerIndex,
+    answerIndex,
+    correct: answerIndex === null ? null : answerIndex === step.question.answerIndex,
     durationMs: input.durationMs ?? 0,
     id: input.questionId,
     ...(skipped && { skipped: true }),
@@ -99,7 +103,7 @@ export async function answerLanguageLevelTest({
       bank,
       bankWrittenAt,
       goal: owned.goal,
-      lastCorrect: skipped ? null : input.answerIndex === step.question.answerIndex,
+      lastCorrect: skipped ? null : answer.correct === true,
       progress: next,
     }),
   };
