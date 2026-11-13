@@ -67,14 +67,14 @@ describe(pickDayMoment, () => {
     expect(pick).toBe("chapter");
   });
 
-  it("gives one mission done and Energy moving no moment: the day's bar shows the progress", () => {
+  it("shows one mission done when nothing rarer happened, and never Energy moving", () => {
     const pick = pickDayMoment({
       ceremony: null,
       missionMoment: ONE_MISSION,
       reached: { energy: 80, level: null },
     });
 
-    expect(pick).toBeNull();
+    expect(pick).toBe("mission");
   });
 
   it("shows nothing extra when the activity moved none of them", () => {

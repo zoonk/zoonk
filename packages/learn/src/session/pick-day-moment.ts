@@ -41,15 +41,15 @@ export function getMissionMomentKind(facts: MissionMomentFacts): "all" | "one" |
 }
 
 /**
- * A task's end shows one extra moment at most, the rarest that applies, and only what was earned:
- * one mission done or Energy moving is progress the day's bar, Today and the buddy's page show.
+ * A task's end shows one extra moment at most, the rarest that applies. Energy moving gets none:
+ * the buddy's page shows it.
  */
 export function pickDayMoment({
   ceremony,
   finishedChapter,
   missionMoment,
   reached,
-}: DayMomentFacts): "belt" | "chapter" | "missions" | null {
+}: DayMomentFacts): "belt" | "chapter" | "mission" | "missions" | null {
   const missions = missionMoment ? getMissionMomentKind(missionMoment) : null;
 
   if (reached.level && ceremony?.kind !== "belt") {
@@ -60,5 +60,9 @@ export function pickDayMoment({
     return "missions";
   }
 
-  return finishedChapter ? "chapter" : null;
+  if (finishedChapter) {
+    return "chapter";
+  }
+
+  return missions === "one" ? "mission" : null;
 }
