@@ -183,8 +183,7 @@ export function RevealToday({
   const session = reveal?.today;
   const formatDay = useFormatDay();
   const formatDuration = useFormatDuration();
-  const catchUp = new Set(session?.catchUp?.positions);
-  const label = useStepLabel((step) => catchUp.has(step.position));
+  const label = useStepLabel();
   const next = session?.blocks.find((block) => block.position === session.nextPosition);
 
   if (!reveal || !session || session.blocks.length === 0) {

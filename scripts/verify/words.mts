@@ -185,14 +185,14 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
 const SAME_GAP = 4;
 
 /**
- * The founder's rule 4 on one load: a screen's one main action is pinned in the bottom bar. A
+ * R2 on one load: a screen's one main action is pinned in the bottom bar. A
  * screen that keeps it elsewhere says why in its decisions, so this is a lead.
  */
 export function placeFindings(page: PageWords): Finding[] {
   return page.kind === "app" && page.actionPinned === false
     ? [
         {
-          check: "Rule 4 main action",
+          check: "R2 main action pinned",
           level: "warn",
           message: `"${page.action ?? ""}" is the screen's one main action and isn't pinned in the bottom bar`,
         },
@@ -200,7 +200,7 @@ export function placeFindings(page: PageWords): Finding[] {
     : [];
 }
 
-/** The founder's rule 3: the title sits as close to the top on a phone as on a computer. */
+/** E8: the title sits as close to the top on a phone as on a computer. */
 export function titleGapFindings(phone: PageWords, laptop: PageWords): Finding[] {
   if (
     phone.kind !== "app" ||
@@ -213,7 +213,7 @@ export function titleGapFindings(phone: PageWords, laptop: PageWords): Finding[]
 
   return [
     {
-      check: "Rule 3 page top",
+      check: "E8 page top",
       level: "warn",
       message: `the title has ${phone.titleGap} px above it on a phone and ${laptop.titleGap} px on a laptop: one page top, the same on both`,
       unit: "px",

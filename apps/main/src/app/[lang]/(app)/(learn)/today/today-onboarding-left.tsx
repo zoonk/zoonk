@@ -45,10 +45,8 @@ export async function TodayOnboardingLeft({
             {t("See your plan")}
           </EnterLink>
         }
-        clause={t("Look it over before you start.")}
         icon={<MapIcon />}
         sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
-        state={t("Plan ready")}
         title={t("Today")}
       />
     );
@@ -59,13 +57,11 @@ export async function TodayOnboardingLeft({
       banner={banner}
       actions={
         <EnterLink href={href} size="lg">
-          {t("Continue setting up")}
+          {t("Continue")}
         </EnterLink>
       }
-      clause={t("It's built from what you tell us.")}
       icon={<ListChecksIcon />}
       sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}
-      state={t("Setting up")}
       title={t("Today")}
     />
   );

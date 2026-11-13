@@ -38,10 +38,10 @@ export function WaitingOption({
   const routes = useLearnRoutes();
 
   const lockedLine = onMakeRoom
-    ? t("Pause a goal or get Plus")
+    ? t("Pause a goal to start it")
     : t({
         description:
-          "Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.",
+          "A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.",
         message: "Starts with a free account",
       });
 

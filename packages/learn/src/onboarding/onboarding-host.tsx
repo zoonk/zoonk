@@ -47,13 +47,7 @@ export function useOnboardingSection(): boolean {
   return useOnboardingHost()?.kind === "section";
 }
 
-/** `start` takes the way back's place, for a screen whose way out is a close. */
-export type OnboardingBar = {
-  end?: ReactNode;
-  middle?: ReactNode;
-  onBack?: () => void;
-  start?: ReactNode;
-};
+export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () => void };
 
 export const NO_BAR: OnboardingBar = {};
 
