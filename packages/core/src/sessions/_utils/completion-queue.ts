@@ -14,9 +14,9 @@ import { getSessionMinutes, getVisibleSessionTotal } from "../session-minutes";
 import { loadCarriedItemIds } from "./catch-up";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getDayCatchUp, getDayProgress } from "./day-progress";
+import { loadExamPrepAccess } from "./load-exam-access";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { getDayOutlines } from "./outlining-stand-ins";
-import { loadExamPrepAccess } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
@@ -87,7 +87,7 @@ export async function loadSessionTime({
     reserved,
   });
 
-  return { minutes, plan, reserved, session, trialEnded: access?.trialEnded ?? false };
+  return { minutes, plan, reserved, session };
 }
 
 /** Whether the lessons the day holds time for are being written now, as Today says it. */
@@ -130,7 +130,7 @@ export async function loadCompletionQueue({
     where: { id: sessionId, userId },
   });
 
-  const [{ minutes, plan, reserved, session, trialEnded }, carriedItemIds] = await Promise.all([
+  const [{ minutes, plan, reserved, session }, carriedItemIds] = await Promise.all([
     loadSessionTime({ stored, timeZone, userId }),
     loadCarriedItemIds(stored.goalId),
   ]);
@@ -156,7 +156,6 @@ export async function loadCompletionQueue({
         }),
         freshStart: session.freshStart,
         items: plan?.items ?? [],
-        trialEnded,
       }),
       complete: sessionCompleted,
       lessonsComing,

@@ -148,7 +148,7 @@ const componentsSchema = z
           .boolean()
           .meta({
             description:
-              "The test needs Plus now: the plan has no mocks and its free days are over. Show the mock with the Plus mark",
+              "Always false. Free exam goals measure full reviews instead of subscription-only mocks",
           }),
         taken: z.number().int().min(0),
         value: shareSchema.nullable().meta({ description: "Recent results" }),
