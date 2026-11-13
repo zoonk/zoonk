@@ -1,4 +1,4 @@
-import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
+import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
 import { TITLE_ROW_CLASS } from "@zoonk/learn/title-row";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -61,16 +61,16 @@ export async function PlanSkeleton() {
     >
       <Page aria-busy="true">
         <PageHeaderContent>
-          <div className="flex h-4 items-center" data-slot="page-eyebrow">
-            <Skeleton className="h-3 w-48 rounded-sm" />
-          </div>
           <PageHeader className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
             <PageTitle>{t("Plan")}</PageTitle>
-            <div className="flex flex-wrap items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-2">
               <Skeleton className="h-7.5 w-24 rounded-lg" />
               <Skeleton className="size-7.5 rounded-lg" />
             </div>
           </PageHeader>
+          <PageSubtitle>
+            <Skeleton className="my-1 h-3 w-48 rounded-sm" />
+          </PageSubtitle>
         </PageHeaderContent>
 
         <div className="flex flex-col gap-2 sm:hidden">

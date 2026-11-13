@@ -5,9 +5,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
-import { ChangeSaveError } from "../_components/save-error";
 import { TimeAnswer } from "../_components/time-answer";
-import { WeekdayToggle } from "../_components/weekday-toggle";
+import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
 import { useGoalDateValues } from "../_utils/iso-date";
 import { getFullTimeNote, getMarkedTimes, getOffer, getTimeLine } from "../_utils/time-answer";
@@ -208,8 +207,6 @@ function DailyMinutes({
         onUseTime={setMinutes}
         planChange={planChange}
       />
-
-      <FullCourseSwitch />
     </div>
   );
 }
@@ -235,13 +232,11 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   return (
     <fieldset className="flex flex-col gap-2" id={getEditorSectionId("days")}>
       <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
-      <div className="grid max-w-sm grid-cols-7 gap-1">
+      <div className={WEEKDAY_GRID_CLASS}>
         {weekdays.map((day) => (
           <WeekdayToggle
-            className="h-11 min-w-0 px-0 capitalize"
             // The last study day can't be turned off: a plan needs at least one.
             disabled={isPending || (day.studies && studyCount === 1)}
-            display="short"
             focusableWhenDisabled
             key={day.weekday}
             onPressedChange={(pressed) =>
@@ -257,7 +252,6 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
               )
             }
             pressed={tapped.shown?.weekday === day.weekday ? tapped.shown.studies : day.studies}
-            variant="outline"
             weekday={day.weekday}
           />
         ))}
@@ -333,12 +327,14 @@ export function PlanSchedule() {
         weekendOn={weekendOn}
       />
       <StudyDays planChange={schedule} />
-      <WeekendMinutes
-        checked={weekendOn}
-        onCheckedChange={setWeekendChoice}
-        planChange={schedule}
-      />
-      {planChange.failed && <ChangeSaveError />}
+      <div className="flex flex-col">
+        <WeekendMinutes
+          checked={weekendOn}
+          onCheckedChange={setWeekendChoice}
+          planChange={schedule}
+        />
+        <FullCourseSwitch />
+      </div>
     </>
   );
 }

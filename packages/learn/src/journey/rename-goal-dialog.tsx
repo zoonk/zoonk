@@ -3,19 +3,19 @@
 import { MAX_GOAL_TITLE_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 
 export function RenameGoalDialog({
   displayName,
@@ -34,7 +34,7 @@ export function RenameGoalDialog({
   const trimmed = name.trim();
 
   return (
-    <Dialog
+    <Drawer
       open
       onOpenChange={(open) => {
         if (!open && !pending) {
@@ -42,8 +42,9 @@ export function RenameGoalDialog({
         }
       }}
     >
-      <DialogContent closeLabel={t("Close")}>
+      <DrawerPopup>
         <form
+          className="contents"
           onSubmit={(event) => {
             event.preventDefault();
 
@@ -61,13 +62,10 @@ export function RenameGoalDialog({
             });
           }}
         >
-          <DialogHeader>
-            <DialogTitle>{t("Rename goal")}</DialogTitle>
-            <DialogDescription>
-              {t("Choose a name you recognize. Your study plan stays the same.")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="my-6 grid gap-2">
+          <SheetHeader>
+            <DrawerTitle>{t("Rename goal")}</DrawerTitle>
+          </SheetHeader>
+          <DrawerContent className="grid gap-2 pt-2">
             <Label htmlFor={id}>
               {t({
                 description: "A learning goal's name, not a person's name",
@@ -83,17 +81,17 @@ export function RenameGoalDialog({
               required
             />
             {failed && <ChangeSaveError />}
-          </div>
-          <DialogFooter>
+          </DrawerContent>
+          <DrawerFooter>
             <Button type="button" variant="outline" disabled={pending} onClick={onClose}>
               {t("Cancel")}
             </Button>
             <Button type="submit" busy={pending} disabled={!trimmed}>
               {t("Save")}
             </Button>
-          </DialogFooter>
+          </DrawerFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DrawerPopup>
+    </Drawer>
   );
 }

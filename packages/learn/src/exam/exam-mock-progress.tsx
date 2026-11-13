@@ -2,22 +2,15 @@
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon, TrophyIcon } from "lucide-react";
+import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { Meter, MeterFill } from "../_components/meter";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { useMockShapeLabel } from "../mock/mock-labels";
-import { findBestArea } from "./best-area";
+import { getMockSubject } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
-import {
-  ProgressLineChart,
-  type ProgressPoint,
-  SampleProgressChart,
-  Sparkline,
-} from "./mock-progress-chart";
+import { ProgressLineChart, type ProgressPoint, Sparkline } from "./mock-progress-chart";
 
 type Progress = NonNullable<ExamView["progress"]>;
 type ProgressMock = Progress["mocks"][number];
@@ -26,15 +19,6 @@ type SubjectTrend = Progress["subjects"][number];
 const TITLE_ID = "exam-progress-title";
 
 const PERCENT = 100;
-
-const SAMPLE_MOCKS = 6;
-const SAMPLE_FIRST = 30;
-const SAMPLE_STEP = 7;
-
-const SAMPLE = Array.from(
-  { length: SAMPLE_MOCKS },
-  (_, index) => SAMPLE_FIRST + index * SAMPLE_STEP,
-);
 
 function useMockDate() {
   const format = useFormatter();
@@ -46,10 +30,9 @@ function useMockDate() {
 function usePoints(progress: Progress): ProgressPoint[] {
   const t = useExtracted();
   const date = useMockDate();
-  const shapeLabel = useMockShapeLabel();
 
   return progress.mocks.map((mock) => {
-    const shape = shapeLabel(mock);
+    const shape = getMockSubject(mock);
     const name = t("Mock exam {number}", { number: String(mock.number) });
 
     return {
@@ -61,18 +44,15 @@ function usePoints(progress: Progress): ProgressPoint[] {
   });
 }
 
-function useProgressLine(progress: Progress): string {
+/** What changed between mock exams, in one sentence, or nothing when no subject moved. */
+function useProgressLine(progress: Progress): string | null {
   const t = useExtracted();
   const format = useFormatter();
   const list = (names: string[]) => format.list(names, { type: "conjunction" });
-  const { improved, mocks, needsWork } = progress;
-
-  if (mocks.length < 2) {
-    return t("Take another mock exam to see how your score changes.");
-  }
+  const { improved, needsWork } = progress;
 
   if (improved.length > 0 && needsWork.length > 0) {
-    return t("Better in {improved}. Still needs work: {needsWork}.", {
+    return t("Better in {improved}. Work on {needsWork}.", {
       improved: list(improved),
       needsWork: list(needsWork),
     });
@@ -82,13 +62,7 @@ function useProgressLine(progress: Progress): string {
     return t("Better in {improved}.", { improved: list(improved) });
   }
 
-  if (needsWork.length > 0) {
-    return t("Still needs work: {needsWork}.", { needsWork: list(needsWork) });
-  }
-
-  return progress.subjects.some((trend) => trend.change !== null)
-    ? t("No subject has changed much yet.")
-    : t("Trends by subject show once your mocks ask enough new questions of each one.");
+  return needsWork.length > 0 ? t("Work on {needsWork}.", { needsWork: list(needsWork) }) : null;
 }
 
 function formatChange(change: number | null): string {
@@ -139,12 +113,10 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
   );
 }
 
-function ProgressTiles({ progress }: { progress: Progress }) {
+function useLatestMock(progress: Progress) {
   const t = useExtracted();
   const { exam } = useExamScreen();
-  const shapeLabel = useMockShapeLabel();
   const first = progress.mocks[0];
-  const best = findBestArea(progress.subjects);
 
   const latest =
     progress.mocks.findLast((mock) => mock.shape?.kind !== "area") ?? progress.mocks.at(-1);
@@ -153,43 +125,59 @@ function ProgressTiles({ progress }: { progress: Progress }) {
     return null;
   }
 
-  const name = [
-    t("Mock exam {number}", { number: String(latest.number) }),
-    latest.shape?.kind === "area" ? shapeLabel(latest) : null,
-  ]
+  const name = [t("Mock exam {number}", { number: String(latest.number) }), getMockSubject(latest)]
     .filter(Boolean)
     .join(" · ");
 
-  const change = first && progress.mocks.length > 1 ? latest.percent - first.percent : null;
+  return {
+    change: first && progress.mocks.length > 1 ? latest.percent - first.percent : null,
+    measure:
+      exam.scoring.method === "net"
+        ? t("Score in {mock}", { mock: name })
+        : t("Right answers in {mock}", { mock: name }),
+    percent: latest.percent,
+  };
+}
+
+/** With one mock exam, what the rows measure is the section's own line, under its title. */
+function OneMockMeasure({ progress }: { progress: Progress }) {
+  const latest = useLatestMock(progress);
+
+  if (!latest || latest.change !== null) {
+    return null;
+  }
+
+  return <p className="text-muted-foreground text-compact">{latest.measure}</p>;
+}
+
+function LatestMock({ progress }: { progress: Progress }) {
+  const t = useExtracted();
+  const latest = useLatestMock(progress);
+
+  if (!latest) {
+    return null;
+  }
+
+  // One mock exam has nothing to compare: the subject rows below are its result.
+  if (latest.change === null) {
+    return null;
+  }
 
   return (
     <StatTiles>
       <StatTile
         detail={
           <>
-            {exam.scoring.method === "net"
-              ? t("Net score in {mock}", { mock: name })
-              : t("Right answers in {mock}", { mock: name })}
-            {change !== null && (
-              <span className={cn("block", change > 0 && "text-success-text")}>
-                {t("{change} since the first", { change: formatChange(change) })}
-              </span>
-            )}
+            {latest.measure}
+            <span className={cn("block", latest.change > 0 && "text-success-text")}>
+              {t("{change} since the first", { change: formatChange(latest.change) })}
+            </span>
           </>
         }
         icon={<TimerIcon />}
-        label={t("Latest mock")}
+        label={t("Latest mock exam")}
         value={`${latest.percent}%`}
       />
-      {best && (
-        <StatTile
-          detail={best.name}
-          icon={<TrophyIcon />}
-          label={t("Best area")}
-          tone="success"
-          value={`${best.percent}%`}
-        />
-      )}
     </StatTiles>
   );
 }
@@ -205,7 +193,9 @@ function ProgressCard({ progress }: { progress: Progress }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <ProgressTiles progress={progress} />
+      {line && <p className="text-reading font-medium text-pretty">{line}</p>}
+
+      <LatestMock progress={progress} />
 
       {first && latest && progress.mocks.length > 1 && (
         <ProgressLineChart
@@ -230,24 +220,6 @@ function ProgressCard({ progress }: { progress: Progress }) {
           ))}
         </ul>
       )}
-
-      <p className="text-muted-foreground text-compact text-pretty">{line}</p>
-    </div>
-  );
-}
-
-function LockedProgress() {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col gap-3" data-slot="locked-progress">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("Each mock's score over time, and how each subject is going.")}
-        </p>
-        <PlusMark />
-      </div>
-      <SampleProgressChart values={SAMPLE} />
     </div>
   );
 }
@@ -256,16 +228,19 @@ export function ExamMockProgress() {
   const t = useExtracted();
   const { exam } = useExamScreen();
 
-  if (!exam.mocksRequirePlus && !exam.progress) {
+  if (!exam.progress) {
     return null;
   }
 
   return (
     <PageSection aria-labelledby={TITLE_ID}>
-      <PageSectionHeader>
-        <PageSectionTitle id={TITLE_ID}>{t("How your mocks went")}</PageSectionTitle>
-      </PageSectionHeader>
-      {exam.progress ? <ProgressCard progress={exam.progress} /> : <LockedProgress />}
+      <div className="flex flex-col gap-1">
+        <PageSectionHeader>
+          <PageSectionTitle id={TITLE_ID}>{t("Your progress")}</PageSectionTitle>
+        </PageSectionHeader>
+        <OneMockMeasure progress={exam.progress} />
+      </div>
+      <ProgressCard progress={exam.progress} />
     </PageSection>
   );
 }

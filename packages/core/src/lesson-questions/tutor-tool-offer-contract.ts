@@ -6,7 +6,8 @@ import { practiceCallSchema } from "../view-models/language/language-view-contra
 const tutorOfferAccessSchema = z
   .enum(["open", "plusRequired"])
   .meta({
-    description: "plusRequired: shown locked, with what Plus unlocks, instead of its button",
+    description:
+      "plusRequired: the learner's plan doesn't include it and Plus does, so it can't start",
   });
 
 const tutorOfferCourseSchema = z

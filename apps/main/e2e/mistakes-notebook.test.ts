@@ -2,9 +2,13 @@ import { prisma } from "@zoonk/db";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { createMistakeLearner } from "./mistake-drill-days";
 import { openAs } from "./study-day";
+
+function notebookTab(page: Page, name: RegExp) {
+  return page.getByRole("navigation", { name: "Mistakes" }).getByRole("link", { name });
+}
 
 test.describe("Mistakes notebook", () => {
   test("replays a lesson's original after a lost response and leaves another mistake on its skill open", async ({
@@ -84,7 +88,9 @@ test.describe("Mistakes notebook", () => {
     await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
     await expect(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
     await page.getByRole("link", { name: /^Back(?! to)/u }).click();
-    await expect(page.getByText("1 ready to practice")).toBeVisible();
+    await expect(notebookTab(page, /^Fixed\s*1$/u)).toBeVisible();
+    await expect(notebookTab(page, /^To fix\s*1$/u)).toBeVisible();
+    await expect(page.getByRole("link", { name: /^Practice mistakes/u })).toBeVisible();
     await page.context().close();
   });
 
@@ -95,7 +101,7 @@ test.describe("Mistakes notebook", () => {
     const page = await openAs(browser, user);
 
     await page.goto("/mistakes");
-    await expect(page.getByText("2 ready to practice")).toBeVisible();
+    await expect(notebookTab(page, /^To fix\s*2$/u)).toBeVisible();
 
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
     await page.getByRole("radio", { name: "Right answer" }).click();
@@ -128,11 +134,11 @@ test.describe("Mistakes notebook", () => {
 
     // Once, not retried: the browser's old copy shows until a fresh read replaces it. Visible only,
     // since Next keeps the page it left in the DOM, hidden.
-    await expect(page.getByText("2 ready to practice").filter({ visible: true })).toHaveCount(0, {
+    await expect(notebookTab(page, /^To fix\s*2$/u).filter({ visible: true })).toHaveCount(0, {
       timeout: 1,
     });
 
-    await expect(page.getByText("1 ready to practice")).toBeVisible();
+    await expect(notebookTab(page, /^To fix\s*1$/u)).toBeVisible();
 
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
     await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();
@@ -166,8 +172,7 @@ test.describe("Mistakes notebook", () => {
     ).toBeVisible();
 
     await page.getByRole("link", { name: /^Back(?! to)/u }).click();
-    await expect(page.getByText("1 ready to practice")).toBeVisible();
-    await expect(page.getByText("1 available tomorrow")).toBeVisible();
+    await expect(notebookTab(page, /^To fix\s*2$/u)).toBeVisible();
 
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
     await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();

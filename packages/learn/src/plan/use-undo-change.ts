@@ -2,7 +2,8 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 
@@ -16,11 +17,9 @@ export function useUndoChange({
   const { actions } = usePlanScreen();
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
 
   const undo = () => {
-    setFailed(false);
-
     startTransition(async () => {
       const { data: undone } = await safeAsync(() =>
         actions.decide({ changeId: change.id, status: "undone" }),
@@ -31,11 +30,11 @@ export function useUndoChange({
           editor.undo(change.id);
           onUndone?.();
         } else {
-          setFailed(true);
+          saveFailed();
         }
       });
     });
   };
 
-  return { failed, isPending, undo };
+  return { isPending, undo };
 }

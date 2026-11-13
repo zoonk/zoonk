@@ -140,7 +140,7 @@ export function ExamChoiceStep({
               />
             )}
 
-            <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>
+            <p className="text-muted-foreground text-sm">{leftOutLine}</p>
           </section>
         );
       })}

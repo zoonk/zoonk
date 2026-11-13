@@ -36,7 +36,7 @@ function FoldChevron({ className, inline = false }: { className?: string; inline
       aria-hidden="true"
       className={cn(
         "size-4 shrink-0 self-center transition-transform in-aria-expanded:rotate-180 in-data-panel-open:rotate-180 motion-reduce:transition-none [details[open]>summary_&]:rotate-180",
-        !inline && "text-faint edge -me-(--edge-pull)",
+        !inline && "text-faint edge ms-(--edge-pull) -me-(--edge-pull)",
         className,
       )}
       data-slot="fold-chevron"

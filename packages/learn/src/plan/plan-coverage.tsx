@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { CalendarCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -85,11 +85,12 @@ export function useMoveDate({
   planChange?: ReturnType<typeof usePlanChange>;
 } = {}) {
   const own = usePlanChange();
-  const { change, failed, isPending } = planChange ?? own;
+  const { change, isPending } = planChange ?? own;
   const { changes, keepFocus } = usePlanScreen();
   const { answered, find } = useTimeToCover();
   const [finding, setFinding] = useState(false);
   const [outcome, setOutcome] = useState<MoveOutcome>(null);
+  const saveFailed = useChangeSaveFailed();
   const date = answered?.fittingDate ?? null;
 
   const findDate = async () => {
@@ -105,6 +106,10 @@ export function useMoveDate({
     }
 
     setOutcome(found.status === "stale" ? null : found.status);
+
+    if (found.status === "failed") {
+      saveFailed();
+    }
   };
 
   const move = async () => {
@@ -134,13 +139,7 @@ export function useMoveDate({
     keepFocus(() => findSectionControl("time"));
   };
 
-  return {
-    date,
-    failed: failed || outcome === "failed",
-    move,
-    outcome,
-    pending: finding || isPending,
-  };
+  return { date, move, outcome, pending: finding || isPending };
 }
 
 export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
@@ -161,10 +160,6 @@ export function MoveDateFailure({
   move: ReturnType<typeof useMoveDate>;
 }) {
   const texts = useTimeToCoverTexts();
-
-  if (move.failed) {
-    return <ChangeSaveError />;
-  }
 
   if (move.outcome === "building" || move.outcome === "noDate") {
     return (

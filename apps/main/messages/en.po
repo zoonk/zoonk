@@ -1903,7 +1903,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, one {# answer} other {# answers}}, needs {minimum, number} to count"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1915,7 +1914,6 @@ msgid "Throughout the week"
 msgstr "Throughout the week"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1972,29 +1970,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "Within {points, plural, =0 {# points} one {# point} other {# points}}"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "Your best day is {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Not enough answers yet"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "You answer about the same every day."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, one {# answer} other {# answers}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "Your best time is the {time}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "In the last 90 days"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "The time of day makes no difference."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Answers"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "Answer more questions to see when you do best."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2952,9 +2950,9 @@ msgid "Terms of Use"
 msgstr "Terms of Use"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Test out of a chapter"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "Chapter test"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
