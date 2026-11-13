@@ -83,7 +83,7 @@ export async function AuthGate({
           </PendingLink>
           {!ended && (
             <Link className={buttonVariants({ size: "lg", variant: "outline" })} href="/start">
-              {t("Start free")}
+              {t("Build my plan")}
             </Link>
           )}
         </div>
