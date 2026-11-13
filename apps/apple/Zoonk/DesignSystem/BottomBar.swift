@@ -10,15 +10,34 @@ extension View {
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions
   ) -> some View {
-    safeAreaBar(edge: .bottom) {
-      BottomBar(note: note, actions: actions())
-    }
+    modifier(BottomBarPlacement(bar: BottomBar(note: note, actions: actions())))
   }
+}
+
+/// Reads the screen's readable columns for the bar.
+private struct BottomBarPlacement<Actions: View>: ViewModifier {
+  let bar: BottomBar<Actions>
+
+  @State private var columns: [ColumnMargins] = []
+
+  func body(content: Content) -> some View {
+    content
+      .onPreferenceChange(ColumnMarginsKey.self) { columns = $0 }
+      .safeAreaBar(edge: .bottom) {
+        bar.environment(\.barColumn, columns.count == 1 ? columns.first : nil)
+      }
+  }
+}
+
+extension EnvironmentValues {
+  @Entry fileprivate var barColumn: ColumnMargins?
 }
 
 private struct BottomBar<Actions: View>: View {
   let note: BarNote?
   let actions: Actions
+
+  @Environment(\.barColumn) private var column
 
   @Environment(\.stacksContent) private var isStacked
   @Environment(\.horizontalSizeClass) private var sizeClass
@@ -44,7 +63,7 @@ private struct BottomBar<Actions: View>: View {
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? 160 : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
-    .taskColumn()
+    .barColumn(column)
     .keepsOffFold()
     .overlay(alignment: .top) {
       if let note {
@@ -124,6 +143,19 @@ struct BarNote: View {
 }
 
 extension View {
+  /// The bar lines up with the screen's one readable column, such as a list's 768pt one on iPad,
+  /// so its buttons end where the rows do; without one it keeps main's 680pt task column.
+  @ViewBuilder
+  fileprivate func barColumn(_ column: ColumnMargins?) -> some View {
+    if let column {
+      padding(.leading, column.leading)
+        .padding(.trailing, column.trailing)
+        .scenePadding()
+    } else {
+      taskColumn()
+    }
+  }
+
   /// Main's task column: at most 680pt wide, centered on the screen, inside the scene's margins.
   func taskColumn(alignment: Alignment = .center) -> some View {
     frame(maxWidth: 680, alignment: alignment)
