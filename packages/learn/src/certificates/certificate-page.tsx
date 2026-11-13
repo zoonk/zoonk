@@ -90,7 +90,7 @@ export function CertificateOwnerActions({
   const t = useExtracted();
 
   if (!links) {
-    return <CertificatePlusNotice className="max-w-xl" />;
+    return <CertificatePlusNotice />;
   }
 
   if (!facts.recipientName) {

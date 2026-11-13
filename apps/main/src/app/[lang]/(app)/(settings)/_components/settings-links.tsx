@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionNav, type SectionNavItem } from "@/components/learn/section-nav";
+import { usePathname } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
 import {
@@ -58,9 +59,12 @@ function useSettingsPages({
   return { label: t("Settings"), plan, yours };
 }
 
+/** Someone without an account who opens Profile from a link still sees its tab, marked as the page they're on. */
 export function SettingsNavLinks(shown: SettingsPagesShown) {
-  const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: true });
-  const first = getMenu(shown.showProfile ? "profile" : "appearance").url;
+  const onProfile = usePathname() === getMenu("profile").url;
+  const showProfile = shown.showProfile || onProfile;
+  const { label, plan, yours } = useSettingsPages({ ...shown, showProfile, withProfile: true });
+  const first = getMenu(showProfile ? "profile" : "appearance").url;
 
   return (
     <SectionNav

@@ -13,7 +13,7 @@ export function SetupFormSkeleton() {
         <Skeleton className="h-11 w-full rounded-lg" />
       </div>
 
-      <div className="h-5" />
+      <div className="mb-2 h-5" />
       <Skeleton className="h-11 w-full rounded-lg" />
     </div>
   );

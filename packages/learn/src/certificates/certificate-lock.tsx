@@ -60,5 +60,5 @@ export function CertificatePlusNotice({ className }: { className?: string }) {
 export function CertificatesPlusNotice() {
   const t = useExtracted();
 
-  return <PlusNotice className="max-w-xl" title={t("Certificates come with Plus")} />;
+  return <PlusNotice title={t("Certificates come with Plus")} />;
 }

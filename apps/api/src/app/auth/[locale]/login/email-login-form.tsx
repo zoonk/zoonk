@@ -41,7 +41,9 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   }[state.status];
 
   return (
-    <AuthForm action={formAction}>
+    // The server checks the address and says what's wrong in the form's own line, in the app's
+    // language; the browser's bubble would cover Continue.
+    <AuthForm action={formAction} noValidate>
       <input name="locale" type="hidden" value={locale} />
 
       <AuthField>

@@ -19,7 +19,7 @@ import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
-import { ChartNoAxesColumnIncreasingIcon, TargetIcon, ZapIcon } from "lucide-react";
+import { CalendarCheckIcon, TargetIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
 import { StatsCalendarSkeleton } from "../_components/stats-calendar";
@@ -107,7 +107,7 @@ async function StudyDaysTile({
   return (
     <StatTile
       className={TILE_CLASS}
-      icon={<ChartNoAxesColumnIncreasingIcon />}
+      icon={<CalendarCheckIcon />}
       label={label}
       tone="success"
       value={

@@ -50,7 +50,8 @@ export function AuthField({ children, className }: React.ComponentProps<"fieldse
 
 /**
  * The one line between a form's field and Continue that says what went wrong, or that something was
- * done. Its room is always there, so Continue doesn't move when it fills.
+ * done. Its room is always there, so Continue doesn't move when it fills, and it sits closer to the
+ * field it speaks about than to Continue.
  */
 export function AuthStatus({
   children,
@@ -61,7 +62,7 @@ export function AuthStatus({
   return (
     <InputError
       aria-live="polite"
-      className={cn("min-h-5", tone === "quiet" && "text-muted-foreground", className)}
+      className={cn("mb-2 min-h-5", tone === "quiet" && "text-muted-foreground", className)}
       {...props}
     >
       {children}
