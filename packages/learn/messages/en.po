@@ -634,11 +634,6 @@ msgid "Collapse sidebar"
 msgstr "Collapse sidebar"
 
 #: src/_components/task-header.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Screen options"
-
-#: src/_components/task-header.tsx
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Expand sidebar"
