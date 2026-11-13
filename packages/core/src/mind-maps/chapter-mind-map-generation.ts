@@ -54,20 +54,41 @@ export async function holdChapterMindMap({
 export async function writeChapterMindMapStructure({
   analytics,
   chapterId,
+  redraw = false,
 }: {
   analytics: MindMapAnalytics;
   chapterId: string;
-}): Promise<void> {
+  redraw?: boolean;
+}): Promise<boolean> {
   const map = await findMindMap(chapterId);
 
   if (!map) {
     throw new Error(`Chapter ${chapterId} has no mind map to write.`);
   }
 
-  await prisma.chapterMindMap.update({ data: { runId: analytics.runId }, where: { chapterId } });
+  const claimed = await prisma.chapterMindMap.updateMany({
+    data: {
+      runId: analytics.runId,
+      ...(redraw ? { redrawAttemptedAt: new Date(), status: "running" } : {}),
+    },
+    where: {
+      chapterId,
+      ...(redraw
+        ? {
+            OR: [{ redrawAttemptedAt: null, status: "completed" }, { runId: analytics.runId }],
+            redrawOwedAt: { not: null },
+            status: { in: ["completed", "running"] },
+          }
+        : { OR: [{ runId: null }, { runId: analytics.runId }], status: "running" }),
+    },
+  });
+
+  if (claimed.count === 0) {
+    return false;
+  }
 
   if (map.structure) {
-    return;
+    return true;
   }
 
   const source = await loadMindMapSource(chapterId);
@@ -90,6 +111,8 @@ export async function writeChapterMindMapStructure({
     },
     where: { chapterId },
   });
+
+  return true;
 }
 
 const NO_IMAGE = {
@@ -119,7 +142,7 @@ export async function drawChapterMindMap({
     throw new Error(`Chapter ${chapterId}'s mind map has no text to draw.`);
   }
 
-  if (map.imageUrl && corrections.length === 0) {
+  if (map.runId !== analytics.runId || (map.imageUrl && corrections.length === 0)) {
     return null;
   }
 
@@ -151,7 +174,10 @@ export async function showChapterMindMap({
 
   if (!drawn) {
     await prisma.chapterMindMap.update({
-      data: { generatedAt: map.generatedAt ?? new Date(), status: "completed" },
+      data: {
+        generatedAt: map.generatedAt ?? new Date(),
+        status: map.redrawOwedAt ? "running" : "completed",
+      },
       where: { chapterId },
     });
 
@@ -168,7 +194,7 @@ export async function showChapterMindMap({
       imageModel: drawn.model,
       imageUrl: saved.url,
       imageWidth: saved.width,
-      status: "completed",
+      status: map.redrawOwedAt ? "running" : "completed",
       thumbnailUrl: saved.thumbnailUrl,
     },
     where: { chapterId, structure: { equals: drawn.structure } },
@@ -232,7 +258,35 @@ export async function failChapterMindMap({
   runId: string;
 }): Promise<void> {
   await prisma.chapterMindMap.updateMany({
+    data: { redrawOwedAt: null, status: "completed" },
+    where: { chapterId, redrawOwedAt: { not: null }, runId },
+  });
+
+  await prisma.chapterMindMap.updateMany({
     data: { status: "failed" },
     where: { OR: [{ runId }, { runId: null }], chapterId, status: "running" },
   });
+}
+
+export async function finishChapterMindMapRedraw({
+  chapterId,
+  runId,
+}: {
+  chapterId: string;
+  runId: string;
+}): Promise<void> {
+  await prisma.chapterMindMap.updateMany({
+    data: { redrawOwedAt: null, status: "completed" },
+    where: { chapterId, runId },
+  });
+}
+
+export async function listOwedMindMapRedraws(): Promise<string[]> {
+  const rows = await prisma.chapterMindMap.findMany({
+    orderBy: { redrawOwedAt: "asc" },
+    take: 100,
+    where: { redrawAttemptedAt: null, redrawOwedAt: { not: null }, status: "completed" },
+  });
+
+  return rows.map((row) => row.chapterId);
 }

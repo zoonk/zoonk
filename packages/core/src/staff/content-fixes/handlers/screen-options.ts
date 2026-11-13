@@ -171,7 +171,7 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
     resolve,
     revert: (db, stored) => {
       const content = stored.fields[0]?.before ?? null;
-      const groups = isJsonObject(content) ? collectionsRemovedIds(content) : [];
+      const groups = isJsonObject(content) ? collectContentIds(content) : [];
 
       return resolve(db, {
         allowedIds: groups,
@@ -192,9 +192,9 @@ function optionsHandler<ModelName extends Model>(model: ModelName) {
   });
 }
 
-function collectionsRemovedIds(value: Json): string[] {
+function collectContentIds(value: Json): string[] {
   if (Array.isArray(value)) {
-    return value.flatMap((entry) => collectionsRemovedIds(entry));
+    return value.flatMap((entry) => collectContentIds(entry));
   }
 
   if (!isJsonObject(value)) {
@@ -203,7 +203,7 @@ function collectionsRemovedIds(value: Json): string[] {
 
   return [
     ...(typeof value.id === "string" ? [value.id] : []),
-    ...Object.values(value).flatMap((entry) => collectionsRemovedIds(entry)),
+    ...Object.values(value).flatMap((entry) => collectContentIds(entry)),
   ];
 }
 

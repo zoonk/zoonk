@@ -18,6 +18,13 @@ import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
 import { mockSession } from "../_test-utils/mock-session";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { drawTestImage } from "../library/media/_test-utils/image-mocks";
+import {
+  approve,
+  proposeFix,
+  revertFix,
+  signInApprover,
+  signInProposer,
+} from "../staff/content-fixes/_test-utils/content-fix-steps";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { getChapterView } from "../view-models/chapter/get-chapter-view";
 import {
@@ -468,6 +475,97 @@ describe("chapter mind maps", () => {
     await expect(
       prisma.usageRecord.findMany({ select: { targetId: true }, where: { userId: user.id } }),
     ).resolves.toStrictEqual([{ targetId: finished }]);
+  });
+
+  it("keeps the corrected outline ready and uncharged while one shared redraw owns the map", async () => {
+    const { finished, goal, user } = await finishedChapter();
+    const analytics = runAnalytics();
+    await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    await writeChapterMindMapStructure({ analytics, chapterId: finished });
+    const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
+    await showChapterMindMap({ chapterId: finished, drawn });
+
+    await prisma.followUp.deleteMany({ where: { userId: user.id } });
+    await prisma.usageRecord.deleteMany({ where: { userId: user.id } });
+
+    const map = await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } });
+    const before = await getChapterMindMap({ chapterId: finished });
+    const usedBefore = await prisma.usageRecord.count({ where: { userId: user.id } });
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: map.id,
+          model: "ChapterMindMap",
+          set: { structure: { ...structure, title: "Corrected outline" } },
+        },
+      ],
+      reason: "Fix the map title.",
+    });
+
+    const approver = await signInApprover();
+    const decided = await approve({ fixId: fix.id, key: approver.key });
+
+    mockSession(user.id);
+    const after = await getChapterMindMap({ chapterId: finished });
+    const asked = await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    const usedAfter = await prisma.usageRecord.count({ where: { userId: user.id } });
+    const rowAfterTap = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+
+    await expect(
+      writeChapterMindMapStructure({
+        analytics: { runId: "redraw-run" },
+        chapterId: finished,
+        redraw: true,
+      }),
+    ).resolves.toBe(true);
+
+    const owners = await Promise.all(
+      ["redraw-run", "other-run"].map((runId) =>
+        writeChapterMindMapStructure({ analytics: { runId }, chapterId: finished, redraw: true }),
+      ),
+    );
+
+    expect(owners.filter(Boolean)).toHaveLength(1);
+    const winner = owners[0] ? "redraw-run" : "other-run";
+
+    await expect(
+      writeChapterMindMapStructure({ analytics: { runId: "learner-run" }, chapterId: finished }),
+    ).resolves.toBe(false);
+
+    await expect(
+      requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
+    ).resolves.toStrictEqual({ status: "ready" });
+
+    await failChapterMindMap({ chapterId: finished, runId: winner });
+    const rowAfterFail = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+
+    await signInProposer();
+    const reverted = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    expect({
+      asked,
+      decided: "fix" in decided ? decided.fix?.status : decided.status,
+      reverted: reverted.status === "proposed" ? "proposed" : reverted,
+      rowAfterFail: rowAfterFail.status,
+      rowAfterTap: rowAfterTap.status,
+      statusAfterFix: "mindMap" in after ? after.mindMap.status : after.status,
+      statusBefore: "mindMap" in before ? before.mindMap.status : before.status,
+      usedAfter,
+      usedBefore,
+    }).toStrictEqual({
+      asked: { status: "ready" },
+      decided: "applied",
+      reverted: "proposed",
+      rowAfterFail: "completed",
+      rowAfterTap: "completed",
+      statusAfterFix: "ready",
+      statusBefore: "ready",
+      usedAfter: 0,
+      usedBefore: 0,
+    });
   });
 
   it("does not publish an old drawing after a staff fix changes the outline", async () => {

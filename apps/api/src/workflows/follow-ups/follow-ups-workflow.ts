@@ -99,14 +99,6 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       return;
     }
-    case "redrawChapterMindMap":
-      await startOnce(
-        chapterMindMapWorkflow,
-        [{ chapterId: followUp.input.chapterId }],
-        `mind-map-redraw:${followUp.input.fixId}`,
-      );
-
-      return;
     case "writeSentenceOrders":
       await startSentenceOrders(followUp.input.lessonId);
       return;

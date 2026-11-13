@@ -56,7 +56,7 @@ function describeEffect({
 }): string {
   switch (effect.kind) {
     case "structureAddressKept":
-      return "The removed lesson keeps its home address.";
+      return "The removed lesson keeps its home address. Held plans keep it until their next rebuild.";
     case "existingPlanGraphsKept":
       return "Future plans use the corrected graph. Existing plans keep their own graph copies.";
     case "optionPicturesUnlinked":

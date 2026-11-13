@@ -1,12 +1,13 @@
 import { type TransactionClient, sql } from "@zoonk/db";
 import { z } from "zod";
-import { writeSharedExamGraph } from "../../../library/curriculum/reusable-curriculum";
 import { type PlanGraph, planGraphSchema } from "../../../plans/planner/plan-state";
 import { type Json, toJson } from "../_utils/resolved-change";
 import { collectionHandler } from "./collection-handler";
 import { idSchema } from "./fix-handler";
 
 const MAX_GRAPH_WEIGHT = 5;
+// PlanItem.lessons is stored as PostgreSQL smallint.
+const MAX_GRAPH_LESSONS = 32_767;
 
 const graphSchema = z.strictObject({
   graph: planGraphSchema.strict(),
@@ -65,6 +66,17 @@ async function graphProblem(
     return "Every graph skill and course must be public with no owner.";
   }
 
+  if (
+    primaryCourseId &&
+    courses.some((course) => course.id === primaryCourseId && !course.isPublished)
+  ) {
+    return "The primary course must be published.";
+  }
+
+  if (skills.some((skill) => rows.find((row) => row.id === skill.skillId)?.name !== skill.name)) {
+    return "Every graph skill name must match its Skill row.";
+  }
+
   if (await changedLanguage(db, previous, rows)) {
     return "A graph keeps its language and target language.";
   }
@@ -98,12 +110,13 @@ function graphShapeProblem(graph: PlanGraph): string | undefined {
   if (
     skills.some(
       (skill) =>
+        skill.lessons > MAX_GRAPH_LESSONS ||
         skill.phase >= graph.phases.length ||
         (skill.weight !== null &&
           (!Number.isInteger(skill.weight) || skill.weight < 1 || skill.weight > MAX_GRAPH_WEIGHT)),
     )
   ) {
-    return "A graph skill needs a phase in range and weight null or 1–5.";
+    return "A graph skill needs a usable lesson count, a phase in range and weight null or 1–5.";
   }
 
   if (graph.optionSkills?.some((skill) => skill.after !== null && !ids.includes(skill.after))) {
@@ -212,9 +225,8 @@ export const examGraph = collectionHandler({
   schema: graphSchema,
   table: sql`exam_skill_graphs`,
   write: async (tx, id, value) => {
-    const row = await tx.examSkillGraph.findUniqueOrThrow({ where: { id } });
     const next = graphSchema.parse(value);
-    await writeSharedExamGraph(tx, { ...row, ...next });
+    await tx.examSkillGraph.update({ data: next, where: { id } });
   },
 });
 

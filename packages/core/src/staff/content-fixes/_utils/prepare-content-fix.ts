@@ -262,14 +262,9 @@ export async function prepareContentFix(
   const [first] = accepted;
   const units = new Set(accepted.map((change) => `${change.unit.kind}:${change.unit.id}`));
 
-  const chapterCollections = accepted.every((change) => {
-    const stored = change.stored;
-    return isJsonObject(stored) && stored.model === "Chapter" && stored.op === "setLessons";
-  });
-
-  if (!first || (units.size !== 1 && !chapterCollections)) {
+  if (!first || units.size !== 1) {
     return refuse(
-      "One fix changes one thing: a lesson with its screens, a word or sentence with the lesson rows that use it, or one row of another model (a lesson's move sets both chapters). Split it into one fix each.",
+      "One fix changes one thing: a lesson with its screens, a word or sentence with the lesson rows that use it, or one row of another model. Split it into one fix each.",
     );
   }
 

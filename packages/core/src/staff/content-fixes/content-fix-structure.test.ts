@@ -72,7 +72,7 @@ describe("staff curriculum collections", () => {
   });
 
   it("reorders chapters without position collisions", async () => {
-    const course = await courseFixture();
+    const course = await courseFixture({ isPublished: true });
     const first = await libraryChapterFixture();
     const second = await libraryChapterFixture();
 
@@ -185,7 +185,7 @@ describe("staff curriculum collections", () => {
 
 describe("shared plan graphs", () => {
   it("fixes future language graphs, reverts and refuses invalid references", async () => {
-    const course = await courseFixture();
+    const course = await courseFixture({ isPublished: true });
     const skill = await skillFixture();
 
     const graph = {

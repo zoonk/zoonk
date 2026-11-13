@@ -8,7 +8,9 @@ import {
   checkChapterMindMapImage,
   drawChapterMindMap,
   failChapterMindMap,
+  finishChapterMindMapRedraw,
   holdChapterMindMap,
+  listOwedMindMapRedraws,
   removeChapterMindMapImage,
   showChapterMindMap,
   writeChapterMindMapStructure,
@@ -72,10 +74,11 @@ export async function holdMindMapStep({
 export async function writeMindMapStructureStep(input: {
   analytics: MindMapAnalytics;
   chapterId: string;
-}): Promise<void> {
+  redraw?: boolean;
+}): Promise<boolean> {
   "use step";
 
-  await writeChapterMindMapStructure(input);
+  return writeChapterMindMapStructure(input);
 }
 
 /** A drawn picture is paid for, so a failed store fails the run instead of retrying to draw another. */
@@ -121,4 +124,17 @@ export async function failMindMapStep(input: { chapterId: string; runId: string 
   "use step";
 
   await failChapterMindMap(input);
+}
+
+export async function finishMindMapRedrawStep(input: {
+  chapterId: string;
+  runId: string;
+}): Promise<void> {
+  "use step";
+  await finishChapterMindMapRedraw(input);
+}
+
+export async function listOwedMindMapRedrawsStep(): Promise<string[]> {
+  "use step";
+  return listOwedMindMapRedraws();
 }

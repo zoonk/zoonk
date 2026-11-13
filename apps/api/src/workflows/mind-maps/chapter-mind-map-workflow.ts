@@ -9,6 +9,7 @@ import {
   checkMindMapStep,
   drawMindMapStep,
   failMindMapStep,
+  finishMindMapRedrawStep,
   holdMindMapStep,
   removeMindMapImageStep,
   writeMindMapStructureStep,
@@ -82,6 +83,7 @@ export async function chapterMindMapWorkflow({
   analytics,
   chapterId,
   lessons,
+  redraw,
 }: ChapterMindMapInput): Promise<ChapterMindMapResult> {
   "use workflow";
 
@@ -101,12 +103,20 @@ export async function chapterMindMapWorkflow({
       await writeLessons({ analytics, chapterId, lessons, runId: workflowRunId });
     }
 
-    await writeMindMapStructureStep(run);
+    if (!(await writeMindMapStructureStep({ ...run, redraw }))) {
+      return { hasImage: false };
+    }
+
     await drawMindMapStep(run);
+    const result = await checkShownMindMap(run);
+
+    if (redraw) {
+      await finishMindMapRedrawStep({ chapterId, runId: workflowRunId });
+    }
+
+    return result;
   } catch (error) {
     await failMindMapStep({ chapterId, runId: workflowRunId });
     throw error;
   }
-
-  return checkShownMindMap(run);
 }

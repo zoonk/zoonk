@@ -15,6 +15,7 @@ type MindMapChapterRow = {
   mapImageUrl: string | null;
   mapImageWidth: number | null;
   mapOwed: boolean;
+  mapRedrawOwedAt: Date | null;
   mapStatus: GenerationStatus | null;
   mapStructure: unknown;
   mapThumbnailUrl: string | null;
@@ -52,6 +53,7 @@ function toMindMapRow(chapter: MindMapChapterRow): MindMapRow | null {
     imageHeight: chapter.mapImageHeight,
     imageUrl: chapter.mapImageUrl,
     imageWidth: chapter.mapImageWidth,
+    redrawOwedAt: chapter.mapRedrawOwedAt,
     status: chapter.mapStatus,
     structure: chapter.mapStructure ?? null,
     thumbnailUrl: chapter.mapThumbnailUrl,
@@ -85,6 +87,7 @@ function readChapterRows({
             AND f.input->>'chapterId' = pc.chapter_id::text
         ) AS "mapOwed",
         mm.status::text AS "mapStatus",
+        mm.redraw_owed_at AS "mapRedrawOwedAt",
         mm.structure AS "mapStructure",
         mm.image_url AS "mapImageUrl",
         mm.image_width AS "mapImageWidth",
