@@ -122,7 +122,6 @@ msgid "Today"
 msgstr "Today"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
@@ -225,7 +224,6 @@ msgid "More tomorrow."
 msgstr "More tomorrow."
 
 #: src/_components/help-limit-notice.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
 msgstr "More next month, or subscribe to keep going."
@@ -281,6 +279,11 @@ msgid "You've reached today's limit"
 msgstr "You've reached today's limit"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "No more new lessons today"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "No more lessons without an account"
@@ -296,9 +299,9 @@ msgid "No more new lessons this month"
 msgstr "No more new lessons this month"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "No more new lessons today"
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "No more new mind maps today"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -311,9 +314,9 @@ msgid "No more new mind maps this month"
 msgstr "No more new mind maps this month"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "jaoJk9"
-msgid "No more new mind maps today"
-msgstr "No more new mind maps today"
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "No more previews today"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -324,11 +327,6 @@ msgstr "No more previews without an account"
 msgctxt "-sI9v1"
 msgid "No more previews this month"
 msgstr "No more previews this month"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "No more previews today"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"

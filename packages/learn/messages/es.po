@@ -122,7 +122,6 @@ msgid "Today"
 msgstr "Hoy"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
@@ -225,7 +224,6 @@ msgid "More tomorrow."
 msgstr "Tendrás más mañana."
 
 #: src/_components/help-limit-notice.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
 msgstr "Tendrás más el próximo mes o puedes suscribirte para seguir."
@@ -281,6 +279,11 @@ msgid "You've reached today's limit"
 msgstr "Alcanzaste el límite de hoy"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "No te quedan lecciones nuevas hoy"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Necesitas una cuenta para seguir con las lecciones"
@@ -296,9 +299,9 @@ msgid "No more new lessons this month"
 msgstr "No te quedan lecciones nuevas este mes"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "No te quedan lecciones nuevas hoy"
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "No te quedan mapas mentales nuevos hoy"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -311,9 +314,9 @@ msgid "No more new mind maps this month"
 msgstr "No te quedan mapas mentales nuevos este mes"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "jaoJk9"
-msgid "No more new mind maps today"
-msgstr "No te quedan mapas mentales nuevos hoy"
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "No te quedan vistas previas hoy"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -324,11 +327,6 @@ msgstr "Necesitas una cuenta para ver más vistas previas"
 msgctxt "-sI9v1"
 msgid "No more previews this month"
 msgstr "No te quedan vistas previas este mes"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "No te quedan vistas previas hoy"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"

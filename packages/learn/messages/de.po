@@ -122,7 +122,6 @@ msgid "Today"
 msgstr "Heute"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
@@ -225,7 +224,6 @@ msgid "More tomorrow."
 msgstr "Morgen gibt es mehr."
 
 #: src/_components/help-limit-notice.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
 msgstr "Nächsten Monat gibt es mehr. Mit einem Abo geht es sofort weiter."
@@ -281,6 +279,11 @@ msgid "You've reached today's limit"
 msgstr "Du hast dein Limit für heute erreicht"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Heute keine neuen Lektionen mehr"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Ohne Konto keine weiteren Lektionen"
@@ -296,9 +299,9 @@ msgid "No more new lessons this month"
 msgstr "Diesen Monat keine neuen Lektionen mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Heute keine neuen Lektionen mehr"
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "Heute keine neuen Mindmaps mehr"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -311,9 +314,9 @@ msgid "No more new mind maps this month"
 msgstr "Diesen Monat keine neuen Mindmaps mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "jaoJk9"
-msgid "No more new mind maps today"
-msgstr "Heute keine neuen Mindmaps mehr"
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "Heute keine Vorschauen mehr"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -324,11 +327,6 @@ msgstr "Ohne Konto keine weiteren Vorschauen"
 msgctxt "-sI9v1"
 msgid "No more previews this month"
 msgstr "Diesen Monat keine Vorschauen mehr"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "Heute keine Vorschauen mehr"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"

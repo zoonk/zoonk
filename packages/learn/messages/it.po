@@ -122,7 +122,6 @@ msgid "Today"
 msgstr "Oggi"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
@@ -225,7 +224,6 @@ msgid "More tomorrow."
 msgstr "Potrai continuare domani."
 
 #: src/_components/help-limit-notice.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
 msgstr "Puoi continuare il mese prossimo o abbonarti per farlo subito."
@@ -281,6 +279,11 @@ msgid "You've reached today's limit"
 msgstr "Hai raggiunto il limite di oggi"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Hai esaurito le nuove lezioni per oggi"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Hai esaurito le lezioni disponibili senza account"
@@ -296,9 +299,9 @@ msgid "No more new lessons this month"
 msgstr "Hai esaurito le nuove lezioni per questo mese"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Hai esaurito le nuove lezioni per oggi"
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "Hai esaurito le nuove mappe mentali per oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -311,9 +314,9 @@ msgid "No more new mind maps this month"
 msgstr "Hai esaurito le nuove mappe mentali per questo mese"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "jaoJk9"
-msgid "No more new mind maps today"
-msgstr "Hai esaurito le nuove mappe mentali per oggi"
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "Hai esaurito le anteprime per oggi"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -324,11 +327,6 @@ msgstr "Hai esaurito le anteprime disponibili senza account"
 msgctxt "-sI9v1"
 msgid "No more previews this month"
 msgstr "Hai esaurito le anteprime per questo mese"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "Hai esaurito le anteprime per oggi"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"

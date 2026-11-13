@@ -122,7 +122,6 @@ msgid "Today"
 msgstr "Hoje"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
@@ -225,7 +224,6 @@ msgid "More tomorrow."
 msgstr "Amanhã tem mais."
 
 #: src/_components/help-limit-notice.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
 msgstr "No mês que vem tem mais. Assine para continuar agora."
@@ -281,6 +279,11 @@ msgid "You've reached today's limit"
 msgstr "Você chegou ao limite de hoje"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Você chegou ao limite de novas aulas de hoje"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Você precisa de uma conta para ter mais aulas"
@@ -296,9 +299,9 @@ msgid "No more new lessons this month"
 msgstr "Você chegou ao limite de novas aulas deste mês"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Você chegou ao limite de novas aulas de hoje"
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "Você chegou ao limite de novos mapas mentais de hoje"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -311,9 +314,9 @@ msgid "No more new mind maps this month"
 msgstr "Você chegou ao limite de novos mapas mentais deste mês"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "jaoJk9"
-msgid "No more new mind maps today"
-msgstr "Você chegou ao limite de novos mapas mentais de hoje"
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "Você chegou ao limite de prévias de hoje"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -324,11 +327,6 @@ msgstr "Você precisa de uma conta para ver mais prévias"
 msgctxt "-sI9v1"
 msgid "No more previews this month"
 msgstr "Você chegou ao limite de prévias deste mês"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "Você chegou ao limite de prévias de hoje"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"

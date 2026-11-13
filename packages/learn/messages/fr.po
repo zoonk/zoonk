@@ -122,7 +122,6 @@ msgid "Today"
 msgstr "Aujourd’hui"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
@@ -225,7 +224,6 @@ msgid "More tomorrow."
 msgstr "Tu en auras d’autres demain."
 
 #: src/_components/help-limit-notice.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "64dPfY"
 msgid "More next month, or subscribe to keep going."
 msgstr "Tu en auras d’autres le mois prochain ou dès maintenant en t’abonnant."
@@ -281,6 +279,11 @@ msgid "You've reached today's limit"
 msgstr "Tu as atteint ta limite pour aujourd’hui"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Tu n’as plus de nouvelles leçons aujourd’hui"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Il te faut un compte pour suivre d’autres leçons"
@@ -296,9 +299,9 @@ msgid "No more new lessons this month"
 msgstr "Tu n’as plus de nouvelles leçons ce mois-ci"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Tu n’as plus de nouvelles leçons aujourd’hui"
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "Tu ne peux plus créer de cartes mentales aujourd’hui"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
@@ -311,9 +314,9 @@ msgid "No more new mind maps this month"
 msgstr "Tu ne peux plus créer de cartes mentales ce mois-ci"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "jaoJk9"
-msgid "No more new mind maps today"
-msgstr "Tu ne peux plus créer de cartes mentales aujourd’hui"
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "Tu n’as plus d’aperçus aujourd’hui"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
@@ -324,11 +327,6 @@ msgstr "Il te faut un compte pour voir d’autres aperçus"
 msgctxt "-sI9v1"
 msgid "No more previews this month"
 msgstr "Tu n’as plus d’aperçus ce mois-ci"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "o0NLBw"
-msgid "No more previews today"
-msgstr "Tu n’as plus d’aperçus aujourd’hui"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
