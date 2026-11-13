@@ -57,6 +57,7 @@ import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.feature.certificates.BlankCertificate
 import com.zoonk.android.feature.certificates.CertificateAction
 import com.zoonk.android.feature.certificates.CertificateActions
+import com.zoonk.android.feature.certificates.CertificateGateSheet
 import com.zoonk.android.feature.certificates.CertificateKind
 import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.CertificateNameField
@@ -294,9 +295,11 @@ private fun Words(
             textAlign = TextAlign.Center,
         )
         if (awarded.last().locked) {
-            OutlinedButton(onClick = onSeePlus, modifier = Modifier.padding(top = 24.dp)) {
+            var gated by rememberSaveable { mutableStateOf(false) }
+            OutlinedButton(onClick = { gated = true }, modifier = Modifier.padding(top = 24.dp)) {
                 Text(stringResource(R.string.certificates_see_yours))
             }
+            if (gated) CertificateGateSheet(onSubscribe = onSeePlus, onDismiss = { gated = false })
             return@Column
         }
 

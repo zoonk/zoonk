@@ -17,7 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -38,6 +41,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.certificates.CertificateGateSheet
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -126,10 +130,14 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
     }
 
     items(certificates, key = { it.code }, contentType = { "certificate" }) { certificate ->
+        var gated by rememberSaveable { mutableStateOf(false) }
         Column(Modifier.bleed(LIST_ITEM_INSET).padding(top = if (certificate == certificates.first()) 16.dp else 0.dp)) {
             if (certificate != certificates.first()) ListDivider()
-            CertificateRow(app, certificate) { navigator.open(AppRoute.Certificate(certificate.code)) }
+            CertificateRow(app, certificate) {
+                if (certificate.locked) gated = true else navigator.open(AppRoute.Certificate(certificate.code))
+            }
         }
+        if (gated) CertificateGateSheet(onSubscribe = { navigator.open(AppRoute.Subscription) }, onDismiss = { gated = false })
     }
 }
 

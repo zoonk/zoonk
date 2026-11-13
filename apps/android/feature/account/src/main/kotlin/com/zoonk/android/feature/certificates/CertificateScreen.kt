@@ -59,6 +59,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
@@ -100,6 +101,16 @@ fun CertificateScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_certificate)) },
+        bottomBar =
+            if (certificate?.locked == true) {
+                {
+                    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.subscription_subscribe))
+                    }
+                }
+            } else {
+                null
+            },
     ) { padding ->
         Box(
             Modifier
@@ -110,7 +121,7 @@ fun CertificateScreen(
         ) {
             when {
                 certificate?.locked == true -> {
-                    CertificateGate(certificate) { navigator.open(AppRoute.Subscription) }
+                    CertificateGate(certificate)
                 }
 
                 certificate != null -> {
@@ -187,17 +198,11 @@ private fun Certificate(
 
 /** Main's `CertificateGate`: without a subscription, the gate is the page, and the blank sheet under it says which certificate is waiting. */
 @Composable
-private fun CertificateGate(
-    certificate: OwnedCertificate,
-    onSubscribe: () -> Unit,
-) {
+private fun CertificateGate(certificate: OwnedCertificate) {
     TrackShown(AnalyticsEvent.SubscriptionGateShown)
     DetailColumn(rememberScrollState()) {
-        Text(stringResource(R.string.certificates_gate_title), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
-        Button(onClick = onSubscribe, modifier = Modifier.padding(top = 24.dp).fillMaxWidth(), size = ButtonSize.Large) {
-            Text(stringResource(R.string.subscription_subscribe))
-        }
-        BlankCertificate(certificate.naming, Modifier.padding(top = 32.dp).fillMaxWidth())
+        PageTitleRow(stringResource(R.string.certificates_gate_title))
+        BlankCertificate(certificate.naming, Modifier.padding(top = 24.dp).fillMaxWidth())
     }
 }
 
