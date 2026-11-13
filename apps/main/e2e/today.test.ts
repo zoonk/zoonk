@@ -96,9 +96,7 @@ test.describe("Today without a session to start", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    const keepLearning = page
-      .getByRole("region", { name: "Today's lessons" })
-      .getByRole("button", { name: "Keep learning" });
+    const keepLearning = page.getByRole("button", { name: "Keep learning" });
 
     await expectHydrated(keepLearning);
     await keepLearning.click();

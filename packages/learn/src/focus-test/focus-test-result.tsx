@@ -252,9 +252,17 @@ export function FocusTestCheckpoint({
   plan: FocusTestPlanActions | null;
   pressed: Pressed;
 }) {
-  const { answer, decide, failed: answerFailed, pressed: decision } = useProposalAnswer(plan);
+  const {
+    answer,
+    decide,
+    failed: answerFailed,
+    pressed: decision,
+    repriced,
+  } = useProposalAnswer(plan);
+
   const focus = focusTest.checkpoint?.focus ?? null;
-  const proposal = plan && focus?.proposal?.canApply ? focus.proposal : null;
+  const waiting = repriced ?? focus?.proposal;
+  const proposal = plan && waiting?.canApply ? waiting : null;
 
   if (focus && proposal && !answer) {
     return (
@@ -263,6 +271,7 @@ export function FocusTestCheckpoint({
         onDecide={(status) => decide(proposal.id, status)}
         pressed={decision}
         proposal={proposal}
+        repriced={repriced !== null}
         rows={focus.rows}
       />
     );

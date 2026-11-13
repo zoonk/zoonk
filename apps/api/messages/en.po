@@ -411,9 +411,9 @@ msgid "Below you can choose a mock exam to take now."
 msgstr "Below you can choose a mock exam to take now."
 
 #: src/lib/tutor-confirmation.ts
-msgctxt "aK1CcD"
-msgid "Below is the Plus page."
-msgstr "Below is the Plus page."
+msgctxt "cO6qa4"
+msgid "Below you can subscribe."
+msgstr "Below you can subscribe."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "KAqcUe"

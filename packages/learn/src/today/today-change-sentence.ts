@@ -1,9 +1,14 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useChangeSentence } from "../plan/use-change-sentence";
-import { countsByDate } from "../plan/use-estimate-sentence";
+import { type GoalDateKind, getGoalDateKind } from "../plan/goal-date-kind";
+import { useChangeWords } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
+
+/** A full-course exam plan may grow past its date, so its count isn't one by the date. */
+function countsByDate(effect: PlanChangeView["effect"], targetDate: string | null): boolean {
+  return targetDate !== null && (!effect?.endDateAfter || effect.endDateAfter <= targetDate);
+}
 
 function useTodayDateAhead(): string | null {
   const { today } = useTodayScreen();
@@ -20,7 +25,11 @@ export function useTodayCountsByDate() {
     change.status === "proposed" || countsByDate(change.effect, dateAhead);
 }
 
-export function useTodayChangeSentence() {
-  const targetDate = useTodayDateAhead();
-  return useChangeSentence({ targetDate });
+export function useTodayDateKind(): GoalDateKind {
+  const { today } = useTodayScreen();
+  return getGoalDateKind(today.goal.kind);
+}
+
+export function useTodayChangeWords() {
+  return useChangeWords({ dateKind: useTodayDateKind() });
 }

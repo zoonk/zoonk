@@ -1,13 +1,11 @@
 "use client";
 
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
+import { CheckIcon, CircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { Eyebrow } from "../_components/eyebrow";
-import { Meter, MeterFill } from "../_components/meter";
 import { PageSectionTitle } from "../_components/page";
 import {
   StepCard,
@@ -16,18 +14,21 @@ import {
   StepRow,
   StepRows,
   StepTitle,
-  StepTitleLabel,
   StepTitleNumber,
+  renderStepNumber,
 } from "../_components/step-card";
 import { Steps, type StepsItem } from "../_components/steps";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useEssayScreen } from "./essay-context";
+import { CriteriaRows } from "./essay-criteria-rows";
 import {
+  ESSAY_QUOTE_CLASS,
   useCriterionName,
   useFormatScore,
   useInterventionElementName,
   useWritingName,
 } from "./essay-labels";
+import { EssaySkipButton } from "./essay-skip-button";
 import { useFinishEssay } from "./use-finish-essay";
 
 type Grade = EssayDraft["grade"];
@@ -39,70 +40,13 @@ function hasMissingElements(grade: Grade): boolean {
   return elements !== null && ELEMENTS.some((key) => !elements[key]);
 }
 
-type Criterion = Grade["criteria"][number];
-
-function renderNumber(chunks: React.ReactNode) {
-  return <span className="tabular-nums">{chunks}</span>;
-}
-
-/**
- * A custom rubric's criteria each show on the total's scale, so three read "10 of 10", never "3.34
- * · 3.33 · 3.33".
- */
-function toShownScore({
-  criterion,
-  rubric,
-  total,
-}: {
-  criterion: Criterion;
-  rubric: string;
-  total: Grade["total"];
-}): { max: number; score: number } {
-  if (rubric !== "custom" || criterion.maxScore <= 0) {
-    return { max: criterion.maxScore, score: criterion.score };
-  }
-
-  return { max: total.maxScore, score: (criterion.score / criterion.maxScore) * total.maxScore };
-}
-
-export function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }) {
-  const t = useExtracted();
-  const criterionName = useCriterionName();
-  const formatScore = useFormatScore();
-
-  return (
-    <StepRows aria-label={t("Score by criterion")}>
-      {grade.criteria.map((criterion) => {
-        const isNext = criterion.id === grade.nextStep?.criterionId;
-        const share = criterion.maxScore > 0 ? criterion.score / criterion.maxScore : 0;
-        const shown = toShownScore({ criterion, rubric, total: grade.total });
-
-        return (
-          <StepRow key={criterion.id}>
-            <span className={cn("min-w-0 flex-1", isNext && "font-semibold")}>
-              {criterionName(criterion)}
-            </span>
-            <Meter className="w-16 shrink-0 sm:w-20">
-              <MeterFill className={isNext ? "bg-warning" : undefined} share={share} />
-            </Meter>
-            <span className="shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums">
-              {t("{score} of {max}", {
-                max: formatScore(shown.max),
-                score: formatScore(shown.score),
-              })}
-            </span>
-          </StepRow>
-        );
-      })}
-    </StepRows>
-  );
-}
-
 export function EssayGradeCard({
+  children,
   closed,
   grade,
   rubric,
 }: {
+  children?: React.ReactNode;
   closed?: boolean;
   grade: Grade;
   rubric: string;
@@ -125,8 +69,8 @@ export function EssayGradeCard({
   return (
     <StepCard>
       <StepHeader>
-        <StepTitle className="flex flex-col items-start gap-1.5">
-          <StepTitleLabel>{writingName(rubric)}</StepTitleLabel>
+        <Eyebrow>{writingName(rubric)}</Eyebrow>
+        <StepTitle>
           <StepTitleNumber>
             {t("{low}–{high}", {
               high: formatScore(grade.range.high),
@@ -137,18 +81,30 @@ export function EssayGradeCard({
         <StepDetail className="text-sm">
           {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
             max: formatScore(grade.total.maxScore),
-            mono: renderNumber,
+            mono: renderStepNumber,
           })}
         </StepDetail>
       </StepHeader>
       <CriteriaRows grade={grade} rubric={rubric} />
+      {children}
     </StepCard>
   );
 }
 
+/** Beside the grade from the width that shows the aside, so the button is the narrower screens'. */
 function GradeStep({ closed, grade }: { closed: boolean; grade: Grade }) {
+  const t = useExtracted();
   const { rubric } = useEssayScreen().essay;
-  return <EssayGradeCard closed={closed} grade={grade} rubric={rubric} />;
+
+  return (
+    <EssayGradeCard closed={closed} grade={grade} rubric={rubric}>
+      <div className="with-aside:hidden flex">
+        <DetailsDrawer label={t("See comments")} title={t("Comments")} trigger="small">
+          <CriterionComments grade={grade} />
+        </DetailsDrawer>
+      </div>
+    </EssayGradeCard>
+  );
 }
 
 function NothingLeftComment() {
@@ -184,7 +140,9 @@ export function NextStepComment({ grade }: { grade: Grade }) {
       </StepHeader>
 
       {criterion?.quote && (
-        <blockquote className="border-warning border-l-2 pl-3 italic">{criterion.quote}</blockquote>
+        <blockquote className={cn(ESSAY_QUOTE_CLASS, "border-warning italic")}>
+          {criterion.quote}
+        </blockquote>
       )}
       <p>{nextStep.text}</p>
       {criterion?.example && (
@@ -245,7 +203,9 @@ function CriterionComments({ grade }: { grade: Grade }) {
         <li className="flex flex-col gap-1 text-sm" key={criterion.id}>
           <p className="font-semibold">{criterionName(criterion)}</p>
           {criterion.quote && (
-            <blockquote className="text-muted-foreground border-border border-l-2 pl-3 italic">
+            <blockquote
+              className={cn(ESSAY_QUOTE_CLASS, "text-muted-foreground border-border italic")}
+            >
               {criterion.quote}
             </blockquote>
           )}
@@ -265,16 +225,17 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
   const closed = !onRewrite;
 
   const skip = onRewrite && (
-    <Button
-      busy={finishing.pending}
-      className="shrink-0"
-      icon={<SkipForwardIcon aria-hidden="true" />}
-      onClick={() => void finishing.finish()}
-      size="xl"
-      variant="outline"
-    >
-      {t("Skip the rewrite")}
-    </Button>
+    <>
+      {finishing.failures > 0 && (
+        <p
+          className="text-destructive-text order-first basis-full text-sm lg:text-right"
+          role="alert"
+        >
+          {t("That didn't go through. Try again in a moment.")}
+        </p>
+      )}
+      <EssaySkipButton finishing={finishing} />
+    </>
   );
 
   const items: StepsItem[] = tooShort
@@ -302,22 +263,6 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
         ) : (
           <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
         )
-      }
-      finalOptions={
-        <>
-          {finishing.failures > 0 && (
-            <p className="text-destructive-text text-sm" role="alert">
-              {t("That didn't go through. Try again in a moment.")}
-            </p>
-          )}
-          {!tooShort && (
-            <div className="with-aside:hidden flex flex-col">
-              <DetailsDrawer label={t("See comments on every criterion")} title={t("Comments")}>
-                <CriterionComments grade={grade} />
-              </DetailsDrawer>
-            </div>
-          )}
-        </>
       }
       items={items}
     />

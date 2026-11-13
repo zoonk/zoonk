@@ -24,7 +24,7 @@ function enlargeText(fontSize: string) {
 function wordsOf(card: Element) {
   const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT, {
     acceptNode: (node) =>
-      node.parentElement?.closest("[aria-hidden=true], .sr-only")
+      node.parentElement?.closest("[data-slot='line-marker'], .sr-only")
         ? NodeFilter.FILTER_REJECT
         : NodeFilter.FILTER_ACCEPT,
   });
@@ -73,7 +73,7 @@ function unreadableWords(cards: readonly Element[]) {
     const board = card.closest("[class~='@container']")?.getBoundingClientRect().width ?? 0;
     const right = box.right - Number(getComputedStyle(card).paddingRight.replace("px", ""));
 
-    const marks = [...card.querySelectorAll("[aria-hidden=true]")].map((mark) =>
+    const marks = [...card.querySelectorAll("[data-slot='line-marker']")].map((mark) =>
       mark.getBoundingClientRect(),
     );
 

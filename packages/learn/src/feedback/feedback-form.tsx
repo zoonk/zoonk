@@ -224,7 +224,13 @@ export function FeedbackForm({
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row sm:justify-end">
-          <SubmitButton disabled={viewerEmail === undefined} icon={<SendIcon aria-hidden="true" />}>
+          <SubmitButton
+            className="sm:w-max"
+            disabled={viewerEmail === undefined}
+            full
+            icon={<SendIcon aria-hidden="true" />}
+            size="lg"
+          >
             {t("Send message")}
           </SubmitButton>
         </div>

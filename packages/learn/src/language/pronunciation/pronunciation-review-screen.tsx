@@ -55,10 +55,7 @@ function RoundResult({
 
   return (
     <>
-      <MomentHeader
-        detail={t("An accent never blocks you.")}
-        title={result ? t("Practice done") : t("Nothing said this time")}
-      >
+      <MomentHeader title={result ? t("Practice done") : t("Nothing said this time")}>
         {result && (
           <MomentReadouts
             brainPower={result.brainPower}
@@ -237,13 +234,15 @@ function WordActions({
   }
 
   return (
-    <RecordButton
-      className="w-full"
-      disabled={round.isPending}
-      elapsedMs={mic.elapsedMs}
-      onStart={() => void mic.start()}
-      onStop={mic.stop}
-      recording={mic.status === "recording"}
-    />
+    <TaskActions>
+      <RecordButton
+        busy={mic.status === "acquiring"}
+        disabled={round.isPending}
+        elapsedMs={mic.elapsedMs}
+        onStart={() => void mic.start()}
+        onStop={mic.stop}
+        recording={mic.status === "recording"}
+      />
+    </TaskActions>
   );
 }

@@ -173,7 +173,6 @@ export async function LibraryChapterPage({
           <ContentFeedbackMenu
             label={t("Chapter options")}
             screen="chapter"
-            size="icon-bar"
             target={{ contentId: chapter.id, contentKind: "chapter" }}
           />
         }

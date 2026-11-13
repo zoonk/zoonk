@@ -24,13 +24,7 @@ export function SubjectScreenClient({
   subject: SyllabusSubject;
   syllabus: Pick<
     SyllabusView,
-    | "examDocument"
-    | "fromMaterial"
-    | "kind"
-    | "knownTopicsReturn"
-    | "questionsSource"
-    | "sharedExams"
-    | "writtenPractice"
+    "fromMaterial" | "kind" | "questionsSource" | "sharedExams" | "writtenPractice"
   >;
   tutor: TutorViewer;
 }) {

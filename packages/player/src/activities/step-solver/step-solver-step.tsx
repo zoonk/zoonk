@@ -35,7 +35,7 @@ function StepMarker({
         status === "done" && isFirstPickWrong && "bg-destructive-text text-background",
         status === "current" && "bg-primary text-primary-foreground",
         status === "later" &&
-          "border-border bg-background text-muted-foreground border-2 border-dashed",
+          "border-border bg-background text-muted-foreground border border-dashed",
       )}
     >
       {status === "done" && !isFirstPickWrong && <Check className="size-4" />}

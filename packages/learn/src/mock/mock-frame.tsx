@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
 import { TaskFrame } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
-import { useMockShapeLabel } from "./mock-labels";
+import { getMockSubject } from "./mock-labels";
 
 export function MockFrame(
   props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref">,
@@ -16,11 +16,10 @@ export function MockFrame(
 
 export function MockEyebrow() {
   const t = useExtracted();
-  const shapeLabel = useMockShapeLabel();
   const { runner } = useMockScreen();
-  const shape = shapeLabel(runner.view);
+  const subject = getMockSubject(runner.view);
 
-  return <Eyebrow>{shape ? `${t("Mock exam")} · ${shape}` : t("Mock exam")}</Eyebrow>;
+  return <Eyebrow>{subject ? `${t("Mock exam")} · ${subject}` : t("Mock exam")}</Eyebrow>;
 }
 
 function SaveStatusLine() {
@@ -29,12 +28,14 @@ function SaveStatusLine() {
 
   if (runner.saveStatus === "retrying") {
     return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
-        <span className="min-w-0 flex-1">{t("Not saved yet · retrying")}</span>
+      <div className="flex items-center gap-2 text-sm" role="status">
+        <span className="text-muted-foreground min-w-0 flex-1">
+          {t("Not saved yet · retrying")}
+        </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
           {t("Try again")}
         </Button>
-      </p>
+      </div>
     );
   }
 

@@ -4,6 +4,7 @@ import { type LessonLimit } from "@zoonk/learn/help-limit";
 export const LESSON_LIMIT_PARAM = "limit";
 
 const SLOW_DOWN_PREFIX = "slow-down-";
+const FREE_LESSONS_USED_PREFIX = "free-opens-";
 const SIGN_UP_REQUIRED = "sign-up";
 
 export function toLessonLimitParam(limit: LessonLimit): string {
@@ -13,6 +14,10 @@ export function toLessonLimitParam(limit: LessonLimit): string {
 
   if (limit.status === "signUpRequired") {
     return SIGN_UP_REQUIRED;
+  }
+
+  if (limit.period === "rolling30Days") {
+    return `${FREE_LESSONS_USED_PREFIX}${Date.parse(limit.availableAt) || 0}`;
   }
 
   if (limit.tier === "free") {
@@ -27,6 +32,25 @@ const SLOW_DOWN_PATTERN = /^slow-down-(?<seconds>\d+)$/u;
 function readSlowDown(value: string): LessonLimit | null {
   const seconds = SLOW_DOWN_PATTERN.exec(value)?.groups?.seconds;
   return seconds ? { retryAfterSeconds: Number(seconds), status: "slowDown" } : null;
+}
+
+const FREE_LESSONS_USED_PATTERN = /^free-opens-(?<opens>\d+)$/u;
+
+function readFreeLessonsUsed(value: string): LessonLimit | null {
+  const opens = FREE_LESSONS_USED_PATTERN.exec(value)?.groups?.opens;
+  const date = new Date(Number(opens ?? Number.NaN));
+
+  // A number in the address past what a Date holds is no date, the same as no number.
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return {
+    availableAt: date.toISOString(),
+    period: "rolling30Days",
+    status: "limitReached",
+    tier: "free",
+  };
 }
 
 export function readLessonLimitParam(value: unknown): LessonLimit | null {
@@ -46,6 +70,6 @@ export function readLessonLimitParam(value: unknown): LessonLimit | null {
     case SIGN_UP_REQUIRED:
       return { status: "signUpRequired" };
     default:
-      return readSlowDown(value);
+      return readSlowDown(value) ?? readFreeLessonsUsed(value);
   }
 }

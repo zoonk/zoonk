@@ -147,7 +147,7 @@ export function readPanel(phone: boolean) {
   const LABEL_LENGTH = 40;
 
   const panel = [...document.querySelectorAll("[role=dialog], [role=alertdialog]")].find(
-    (element) => element.checkVisibility(),
+    (element) => !element.closest("[data-slot=toast]") && element.checkVisibility(),
   );
 
   if (!panel) {
@@ -157,6 +157,8 @@ export function readPanel(phone: boolean) {
   const drawn = (element: Element) => element.getClientRects().length > 0;
   const box = panel.getBoundingClientRect();
   const dialog = panel.getAttribute("role") === "dialog";
+  const popover = panel.matches("[data-slot=popover-content]");
+  const desktopPalette = !phone && panel.querySelector("[data-slot=command-input]") !== null;
 
   const drawer =
     panel.closest("[data-slot=drawer-popup]") ?? panel.querySelector("[data-slot=drawer-popup]");
@@ -179,9 +181,11 @@ export function readPanel(phone: boolean) {
     label: panel.getAttribute("aria-label") ?? title?.slice(0, LABEL_LENGTH) ?? "a panel",
     needsClose:
       dialog &&
+      !popover &&
+      !desktopPalette &&
       !panel.closest("[data-slot=suggestion-sheet]") &&
       !panel.querySelector("[data-slot=suggestion-sheet]"),
-    sheet: phone && dialog ? Math.abs(box.bottom - innerHeight) <= 2 : null,
+    sheet: phone && dialog && !popover ? Math.abs(box.bottom - innerHeight) <= 2 : null,
   };
 }
 
@@ -191,8 +195,8 @@ export function readPanel(phone: boolean) {
  */
 export function focusReturned(opener: string) {
   if (
-    [...document.querySelectorAll("[role=dialog], [role=alertdialog]")].some((panel) =>
-      panel.checkVisibility(),
+    [...document.querySelectorAll("[role=dialog], [role=alertdialog]")].some(
+      (panel) => !panel.closest("[data-slot=toast]") && panel.checkVisibility(),
     )
   ) {
     return false;

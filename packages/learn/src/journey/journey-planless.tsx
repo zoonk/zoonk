@@ -3,7 +3,7 @@
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
 import { EnterButton, EnterLink } from "../_components/enter-button";
-import { Page, PageEyebrow, PageSection } from "../_components/page";
+import { Page, PageSection } from "../_components/page";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
@@ -17,19 +17,19 @@ import { GoalOnlyMenu } from "./journey-menu";
 import { PlanHeader } from "./plan-header";
 
 function PlanlessHeader({
-  eyebrow,
   goalStatus,
   goalTitle,
+  subtitle,
 }: {
-  eyebrow: string;
   goalStatus: GoalStatusControl;
   goalTitle: string;
+  subtitle: string;
 }) {
   const goalMenu = useGoalMenu(goalStatus);
 
   return (
     <>
-      <PlanHeader eyebrow={<PageEyebrow>{eyebrow}</PageEyebrow>}>
+      <PlanHeader subtitle={subtitle}>
         <GoalOnlyMenu goal={goalMenu} />
       </PlanHeader>
 
@@ -101,7 +101,7 @@ export function JourneySetup({
 }) {
   return (
     <Page data-slot="journey-setup">
-      <PlanlessHeader eyebrow={goalTitle} goalStatus={goalStatus} goalTitle={goalTitle} />
+      <PlanlessHeader goalStatus={goalStatus} goalTitle={goalTitle} subtitle={goalTitle} />
 
       <PageSection aria-labelledby={SETUP_TITLE_ID} className="max-w-xl items-start gap-2">
         {goalStatus.status === "paused" ? (
@@ -132,9 +132,9 @@ export function JourneyBuilding({
   return (
     <Page data-slot="journey-preparing">
       <PlanlessHeader
-        eyebrow={t("{goal} · Building your plan", { goal: goalTitle })}
         goalStatus={goalStatus}
         goalTitle={goalTitle}
+        subtitle={t("{goal} · Building your plan", { goal: goalTitle })}
       />
 
       <section className="flex max-w-xl flex-col gap-8">

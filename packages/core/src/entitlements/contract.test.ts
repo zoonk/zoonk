@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type AllowanceItem, getReachedCap } from "./contract";
 
-function mindMaps(attrs: Partial<AllowanceItem>): AllowanceItem {
+function mindMaps(attrs: Partial<Exclude<AllowanceItem, { kind: "lessonStart" }>>): AllowanceItem {
   return {
     dailyLimit: 3,
     fairUseDailyLimit: null,

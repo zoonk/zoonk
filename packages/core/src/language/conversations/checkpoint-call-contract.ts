@@ -38,7 +38,7 @@ export const languageCheckpointCallSchema = z
       .object({ intro: languageConversationIntroSchema, status: z.literal("notStarted") })
       .meta({
         description:
-          'The call isn\'t made yet: show its intro, and Start makes it (`POST /v1/language-conversations` with `kind: "checkpoint"`)',
+          'The call isn\'t made yet; `POST /v1/language-conversations` with `kind: "checkpoint"` makes it',
         id: "LanguageCheckpointCallIntro",
       }),
     z
@@ -52,14 +52,14 @@ export const languageCheckpointCallSchema = z
       .object({ reason: z.enum(["challenge", "lessons"]), status: z.literal("earlierFirst") })
       .meta({
         description:
-          "Earlier lessons of the session come first (`lessons`): go back to Today. `challenge` is retained for older clients and is never returned",
+          "Earlier lessons of the session come first (`lessons`), so the call can't start yet. `challenge` is retained for older clients and is never returned",
         id: "LanguageCheckpointCallEarlierFirst",
       }),
     z
       .object({ status: z.literal("plusRequired") })
       .meta({
         description:
-          "The learner's plan leaves phase challenges to Plus: show the challenge's intro (`GET /v1/challenges/{planItemId}`), locked, with what Plus unlocks",
+          "The learner's plan leaves phase challenges to Plus, so the call can't start; the challenge's intro is `GET /v1/challenges/{planItemId}`",
         id: "LanguageCheckpointCallPlusRequired",
       }),
     z

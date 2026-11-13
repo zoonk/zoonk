@@ -209,9 +209,7 @@ const criterionGradeSchema = z.object({
 });
 
 export const examSpeakingFeedbackSchema = z.object({
-  brief: z
-    .boolean()
-    .meta({ description: "The candidate said too little to judge well; the result says so once" }),
+  brief: z.boolean().meta({ description: "The candidate said too little to judge well" }),
   criteria: z.array(criterionGradeSchema),
   focus: z.string().meta({ description: "The criterion to work on first" }),
   heard: z

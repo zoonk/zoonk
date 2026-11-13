@@ -24,7 +24,6 @@ export type TutorBuddy = {
   docked: boolean;
   drawerOpen: boolean;
   identity: TutorIdentity;
-  missed: boolean;
   navigation: LessonQuestionNavigation;
   /** Fills the composer with the suggestion, for the learner to send. */
   open: (suggestion?: LessonScreenSuggestion) => void;
@@ -45,13 +44,12 @@ export function TutorBuddyProvider({
   children,
   context,
   identity,
-  missed,
   navigation,
   quote,
   screenSuggestion,
   suggests,
   visit,
-}: Pick<TutorBuddy, "identity" | "missed" | "navigation" | "screenSuggestion" | "suggests"> & {
+}: Pick<TutorBuddy, "identity" | "navigation" | "screenSuggestion" | "suggests"> & {
   children: React.ReactNode;
   context: LessonQuestionContext | null;
   quote: React.ReactNode;
@@ -104,7 +102,6 @@ export function TutorBuddyProvider({
       docked,
       drawerOpen,
       identity,
-      missed,
       navigation,
       open: (suggestion) => {
         const offered = show(suggestion);
@@ -147,7 +144,6 @@ export function TutorBuddyProvider({
     docked,
     drawerOpen,
     identity,
-    missed,
     navigation,
     open,
     screenSuggestion,

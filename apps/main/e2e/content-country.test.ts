@@ -94,7 +94,7 @@ test.describe("Content country", () => {
 
       await page.goto("/plan");
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
-      const row = properties.getByRole("button", { name: /^Content country/u });
+      const row = properties.getByRole("button", { name: /^Country/u });
       await expectHydrated(row);
       await expect(row).toHaveText(/Portugal$/u);
       await expect(properties.getByText("Português (Brasil)")).toBeVisible();
@@ -108,7 +108,7 @@ test.describe("Content country", () => {
       await search.fill("alem");
       await picker.getByRole("option", { name: "Alemanha" }).click();
 
-      const confirm = page.getByRole("alertdialog", { name: "Change the content country?" });
+      const confirm = page.getByRole("alertdialog", { name: "Change your country?" });
       await expect(confirm).toContainText("New country: Alemanha.");
       await confirm.getByRole("button", { name: "Cancel" }).click();
       await expect(confirm).toBeHidden();
@@ -116,7 +116,7 @@ test.describe("Content country", () => {
       expect(await readCountry()).toBe("PT");
 
       await picker.getByRole("option", { name: "Alemanha" }).click();
-      await confirm.getByRole("button", { name: "Rebuild plan" }).click();
+      await confirm.getByRole("button", { name: "Change country" }).click();
       await expect(picker).toBeHidden();
       await expect.poll(readCountry).toBe("DE");
 
@@ -124,7 +124,7 @@ test.describe("Content country", () => {
       await expect(row).toHaveText(/Alemanha$/u);
       await expect(properties.getByText("Português (Brasil)")).toHaveCount(0);
 
-      await expect(page.getByText("Preparing your new plan")).toBeVisible();
+      await expect(page.getByText("Getting your new plan ready")).toBeVisible();
       await expect(page.locator('[data-slot="journey"]')).toBeVisible();
 
       // E2E has no models, so the test saves the new graph's mark as the rebuild would; the Plan
@@ -137,7 +137,7 @@ test.describe("Content country", () => {
       });
 
       await expect(page.getByText("Your new plan is ready.")).toBeVisible({ timeout: 15_000 });
-      await expect(page.getByText("Preparing your new plan")).toBeHidden();
+      await expect(page.getByText("Getting your new plan ready")).toBeHidden();
     });
   });
 });

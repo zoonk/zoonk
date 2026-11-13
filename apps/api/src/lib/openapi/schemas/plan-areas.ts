@@ -15,7 +15,7 @@ export const planAreaSchema = z.object({
     .nullable()
     .meta({
       description:
-        "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): show and focus it with that area, never on its own. Null for every other area",
+        "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): it belongs with that area and is focused with it, never on its own. Null for every other area",
     }),
   pastBasics: z
     .boolean()

@@ -165,7 +165,7 @@ test.describe("Quick explanations", () => {
 
     await saved.promise;
 
-    await expect(page.getByRole("button", { name: "See explanation" })).toBeVisible({
+    await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible({
       timeout: 3000,
     });
   });

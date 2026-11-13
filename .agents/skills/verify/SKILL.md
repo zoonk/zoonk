@@ -85,7 +85,7 @@ You can't unsee how you built the change. For anything beyond a small fix, the r
 
 ## 6. Walk it as learners
 
-For anything a learner can notice, use the product as two to four contrasting personas with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md), including a bad day, from entry to outcome and back the next day. Use the screen, don't only look at it: is it clear, quick, honest and recoverable, and is anything there that needn't be? For substantial changes a separate agent walks with only the persona brief and the URL, so it doesn't know how the change works.
+For anything a learner can notice, use the product as two to four contrasting personas with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md), including a bad day, from entry to outcome and back the next day. Use the screen, don't only look at it: is it clear, quick, honest and recoverable, and is anything there that needn't be? Two checks answer that by use, not by opinion: the [first-glance test](../zoonk-design/SKILL.md#the-first-glance-test) on every changed screen, and the designer's "Less" item in the [review](references/review.md). For substantial changes a separate agent walks with only the persona brief and the URL, so it doesn't know how the change works.
 
 ## 7. Fix and run it again
 

@@ -7,17 +7,16 @@ import {
   type LearnTab,
 } from "@repo/packages/learn/src/shell/learn-navigation.tsx";
 import {
+  FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
-  LearnShellEnd,
-  LearnShellHeader,
   LearnShellMain,
-  LearnShellStart,
 } from "@repo/packages/learn/src/shell/learn-shell.tsx";
 import { Avatar, AvatarFallback } from "@repo/packages/ui/src/components/avatar.tsx";
 import { BeltIndicator } from "@repo/packages/ui/src/components/belt-indicator.tsx";
-import { SidebarSearch } from "@repo/packages/ui/src/components/sidebar-toggle.tsx";
-import { User } from "lucide-react";
+import { Button } from "@repo/packages/ui/src/components/button.tsx";
+import { PageTopBar } from "@repo/packages/ui/src/components/page-top.tsx";
+import { SearchIcon, User } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ADAPTERS } from "../learn/common";
 import { story, type Lang } from "../story";
@@ -90,46 +89,49 @@ function BarLevel({ color, level }: { color: any; level: number }) {
   );
 }
 
+/** Under `lg` the bar's icon opens the command palette. */
 function Search() {
   const t = useExtracted();
   return (
-    <SidebarSearch
-      className="col-span-2 mt-1.5"
-      label={t("Search or ask…")}
-      onClick={NOOP}
-      placement="bar"
-    />
+    <Button className="text-muted-foreground" onClick={NOOP} size="icon-bar" variant="ghost">
+      <SearchIcon aria-hidden="true" />
+      <span className="sr-only">{t("Search")}</span>
+    </Button>
   );
 }
 
-/** The tab root's top bar on phones: goal switcher, belt and level, avatar, then search. */
+/** The tab root's top bar on phones: goal switcher, then search, belt and level, avatar. */
 export function TopBar({ goal, lang }: { goal: GoalKey; lang: Lang }) {
   const initial = (story[lang] as any).learnerName?.[0];
   return (
-    <LearnShellHeader className="lg:hidden">
-      <LearnShellStart>
-        <GoalSwitcher
-          activeGoalId={goal}
-          explanationHref="/explain"
-          exploreHref="/courses"
-          goals={switcherGoals(lang) as any}
-          newGoalHref="/start"
-          onSelect={NOOP_ASYNC}
-          onStartWaiting={NOOP_ASYNC}
-          placement="bar"
-          waitingGoals={[]}
-        />
-      </LearnShellStart>
-      <LearnShellEnd>
-        <BarLevel color="yellow" level={4} />
-        <span className="relative size-7 shrink-0 rounded-full">
-          <Avatar className="size-full">
-            <AvatarFallback>{initial || <User size={16} />}</AvatarFallback>
-          </Avatar>
-        </span>
-      </LearnShellEnd>
-      <Search />
-    </LearnShellHeader>
+    <div className={FRAME_COLUMN_CLASS}>
+      <PageTopBar
+        actions={
+          <>
+            <Search />
+            <BarLevel color="yellow" level={4} />
+            <span className="relative size-7 shrink-0 rounded-full">
+              <Avatar className="size-full">
+                <AvatarFallback>{initial || <User size={16} />}</AvatarFallback>
+              </Avatar>
+            </span>
+          </>
+        }
+        back={
+          <GoalSwitcher
+            activeGoalId={goal}
+            explanationHref="/explain"
+            exploreHref="/courses"
+            goals={switcherGoals(lang) as any}
+            newGoalHref="/start"
+            onSelect={NOOP_ASYNC}
+            onStartWaiting={NOOP_ASYNC}
+            placement="bar"
+            waitingGoals={[]}
+          />
+        }
+      />
+    </div>
   );
 }
 

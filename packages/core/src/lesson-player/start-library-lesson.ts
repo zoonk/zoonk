@@ -40,7 +40,6 @@ export type LibraryLessonStartOutcome =
   | Exclude<UsageDecision, { status: "allowed" }>
   | { run: LibraryLessonRun; status: "started" }
   | { status: "notFound" }
-  | { status: "plusRequired" }
   | { opening: StudyBlockOpening; status: "opened" }
   | { status: "retryable" };
 

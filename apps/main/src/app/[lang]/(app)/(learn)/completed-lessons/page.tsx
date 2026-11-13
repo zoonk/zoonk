@@ -95,10 +95,10 @@ async function CompletedLessonsSkeleton() {
       <CompletedLessonsBar />
       <div className={cn(PAGE_COLUMN_CLASS, INBOX_PAGE_CLASS, "flex flex-col gap-8")}>
         <div className="flex flex-col gap-1">
-          <span className="flex h-4 items-center">
-            <Skeleton className="h-3 w-32 rounded-sm" />
-          </span>
           <PageTitle>{t("Completed lessons")}</PageTitle>
+          <span className="flex h-6 items-center pt-1">
+            <Skeleton className="h-3.5 w-32 rounded-sm" />
+          </span>
         </div>
         <ListSectionSkeleton rows={6} />
       </div>

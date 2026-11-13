@@ -1,9 +1,8 @@
 "use client";
 
-import { useMindMapAlt } from "@zoonk/learn/mind-maps/description";
 import { MindMapOutline } from "@zoonk/learn/mind-maps/outline";
 import { type MindMapSave } from "@zoonk/learn/mind-maps/save";
-import { toMindMapSrc } from "@zoonk/learn/mind-maps/urls";
+import { MindMapThumbnail } from "@zoonk/learn/mind-maps/thumbnail";
 import { MindMapViewer } from "@zoonk/learn/mind-maps/viewer";
 import { TASK_COLUMN_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
@@ -16,7 +15,6 @@ import { LessonMap } from "../lesson/_components/lesson-map";
 import { SWIPE_THROUGH } from "../lesson/use-swipe-navigation";
 import { type ChapterSlide, type LessonMindMap } from "./mind-map-deck";
 
-const THUMBNAIL_WIDTH = 640;
 const COLUMN_CLASS = cn(TASK_COLUMN_CLASS, "flex flex-col gap-5 pt-4 pb-8");
 const NOTE_CLASS = "text-muted-foreground text-sm text-pretty";
 
@@ -54,7 +52,6 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
   const t = useExtracted();
   const [isZoomed, setIsZoomed] = useState(false);
   const { image, outline, title } = slide;
-  const alt = useMindMapAlt({ outline, title });
 
   if (!image) {
     return (
@@ -81,16 +78,12 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
         type="button"
         {...SWIPE_THROUGH}
       >
-        {/* oxlint-disable-next-line next/no-img-element -- @zoonk/player doesn't depend on next/image; maps are stored, optimized webp files. */}
-        <img
-          alt={alt}
-          className="ring-border bg-card aspect-square h-auto w-full rounded-xl object-contain ring-1"
-          decoding="async"
-          height={image.height}
+        <MindMapThumbnail
+          className="outline-border bg-card aspect-square h-auto w-full rounded-xl object-contain outline -outline-offset-1"
+          image={image}
+          outline={outline}
           sizes="(min-width: 72rem) 50rem, 100vw"
-          src={toMindMapSrc(image.url)}
-          srcSet={`${toMindMapSrc(image.thumbnailUrl)} ${THUMBNAIL_WIDTH}w, ${toMindMapSrc(image.url)} ${image.width}w`}
-          width={image.width}
+          title={title}
         />
       </button>
 
