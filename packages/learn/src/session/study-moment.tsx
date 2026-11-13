@@ -5,16 +5,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton, EnterLink } from "../_components/enter-button";
-import { KindMark } from "../_components/kind-tile";
+import { ListGroup } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
-import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getOwnBrainPower } from "./block-brain-power";
-import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
 import { MomentHeader } from "./moment-header";
@@ -22,17 +20,14 @@ import { MomentToday } from "./moment-today";
 import { pickDayMoment } from "./pick-day-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
-import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
+import { BlockRow, SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
-import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
 function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const blockTitle = useBlockTitle();
 
   return (
     <section
@@ -40,13 +35,9 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
       data-slot="study-moment-next"
     >
       <PageSectionLabel>{t("Up next")}</PageSectionLabel>
-      <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-lg px-2.5 py-2.75">
-        <KindMark kind={getBlockKind(block)} />
-        <span className="min-w-0 flex-1 truncate text-sm font-medium">{blockTitle(block)}</span>
-        <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-          {formatDuration(block.estimatedMinutes)}
-        </span>
-      </div>
+      <ListGroup role="list">
+        <BlockRow block={block} state="next" />
+      </ListGroup>
     </section>
   );
 }

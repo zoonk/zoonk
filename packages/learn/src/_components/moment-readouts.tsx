@@ -44,7 +44,7 @@ function useBrainPowerIntro(earned: boolean): boolean {
 function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-readout inline-block", className)}
+      className={cn("text-readout me-[0.1em] inline-block", className)}
       data-slot="readout-number"
       {...props}
     />
