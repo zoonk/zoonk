@@ -81,12 +81,12 @@ export function TimeAnswer({
   const offered = offer && !failed ? offer : null;
 
   return (
-    <div className="flex min-h-18 flex-col gap-2 sm:min-h-12">
+    <div className="flex min-h-15 flex-col gap-2 sm:min-h-10">
       <p
         aria-busy={updating || isBusyLine(line)}
         aria-live="polite"
         className={cn(
-          "text-muted-foreground text-sm leading-6 text-pretty transition-opacity",
+          "text-muted-foreground text-sm text-pretty transition-opacity",
           updating && "opacity-50",
         )}
       >
