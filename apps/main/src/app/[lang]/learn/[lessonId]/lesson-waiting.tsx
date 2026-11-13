@@ -6,14 +6,11 @@ import { type LessonRequest, useLessonWriting } from "@/lib/lessons/use-lesson-w
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
-import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
 import { type LessonKind } from "@zoonk/learn/generation/kinds";
 import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
-import { KindMark } from "@zoonk/learn/kind-tile";
 import { LessonNotWrittenNotice } from "@zoonk/learn/lesson-not-written";
-import { ListRowChevron } from "@zoonk/learn/list";
 import { TaskMainButton } from "@zoonk/learn/task-frame";
 import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/wait";
@@ -22,72 +19,12 @@ import { LessonWaitStatus } from "@zoonk/learn/wait/lesson-status";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
+import { type ReadyAlternative, ReadyLesson } from "./lesson-ready-alternative";
 import { LessonRouteFrame } from "./lesson-route-frame";
-
-type ReadyAlternative = NonNullable<
-  Extract<LessonWaitingResult, { status: "ready" }>["state"]["alternative"]
->;
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
-const ALTERNATIVE_AFTER_MS = 15_000;
-
 const OPEN_RETRY_MS = 2000;
-
-function Alternative({
-  alternative,
-  instead = false,
-}: {
-  alternative: ReadyAlternative;
-  instead?: boolean;
-}) {
-  const t = useExtracted();
-
-  const rowClass =
-    "bg-muted hover:bg-muted/70 -mx-2.5 flex min-h-11 items-center gap-3 rounded-lg px-2.5 py-2.75 text-sm font-medium transition-colors";
-
-  return (
-    <section className="flex flex-col gap-2">
-      <h2 className="text-label">
-        {instead
-          ? t({
-              description:
-                "Heading over a lesson or review the learner can start now, because this lesson couldn't be written.",
-              message: "Ready to do instead",
-            })
-          : t("Ready while you wait")}
-      </h2>
-      {alternative.kind === "lesson" ? (
-        <Link className={rowClass} href={`/learn/${alternative.lessonId}`}>
-          <KindMark kind="lesson" />
-          <span className="min-w-0 flex-1 text-balance">{alternative.title}</span>
-          <ListRowChevron />
-        </Link>
-      ) : (
-        <Link className={rowClass} href="/today">
-          <KindMark kind="review" />
-          <span className="min-w-0 flex-1">
-            {t("{count, plural, one {Review # idea} other {Review # ideas}}", {
-              count: alternative.dueSkills,
-            })}
-          </span>
-          <ListRowChevron />
-        </Link>
-      )}
-    </section>
-  );
-}
-
-function useIsLate() {
-  const [late, setLate] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLate(true), ALTERNATIVE_AFTER_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return late;
-}
 
 /** The wait is measured until the lesson is ready; it opens once the learner moves on. */
 function useOpenWhenReady(open: boolean) {
@@ -121,22 +58,12 @@ function WritingProgress({
   const t = useExtracted();
 
   return (
-    <>
-      <GenerationWait
-        doneLabel={holding ? t("Your lesson is ready") : undefined}
-        kind={kind}
-        run={holding ? toHeldRun(run) : run}
-        since={since}
-      />
-
-      {run.status !== "failed" && (
-        <p className="text-muted-foreground text-sm text-pretty">
-          {holding
-            ? t("Your lesson is ready. Start it whenever you like.")
-            : t("It usually takes a few minutes. The lesson opens here as soon as it's ready.")}
-        </p>
-      )}
-    </>
+    <GenerationWait
+      doneLabel={holding ? t("Your lesson is ready") : undefined}
+      kind={kind}
+      run={holding ? toHeldRun(run) : run}
+      since={since}
+    />
   );
 }
 
@@ -145,7 +72,7 @@ function WritingWaitBar({ footer, holding }: { footer?: React.ReactNode; holding
   const { release, slotShown } = useWaitScreen();
 
   if (holding) {
-    return <StartLessonBar busy={false} onStart={release} />;
+    return <StartLessonBar busy={false} onStart={release} ready />;
   }
 
   if (footer || !slotShown) {
@@ -163,7 +90,7 @@ function WritingWaitBar({ footer, holding }: { footer?: React.ReactNode; holding
 
 function WritingWait({
   alternative,
-  children,
+  asked,
   footer,
   frame,
   kind,
@@ -171,14 +98,13 @@ function WritingWait({
   writing,
 }: {
   alternative: ReadyAlternative | null;
-  children?: React.ReactNode;
+  asked: boolean;
   footer?: React.ReactNode;
   frame: LessonFrame;
   kind: LessonKind;
   warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
-  const late = useIsLate();
   const since = useMountTime().getTime();
 
   const followed = useWorkflowRun({
@@ -206,11 +132,27 @@ function WritingWait({
     track: trackEvent,
   });
 
+  const state = waitState({ asked, holding, run });
+
+  if (state === "stopped") {
+    return (
+      <LessonRouteFrame
+        {...frame}
+        footer={<RetryBar onRetry={run.retry} />}
+        lead={<WaitNote state="stopped" />}
+      >
+        {alternative && <ReadyLesson alternative={alternative} />}
+      </LessonRouteFrame>
+    );
+  }
+
   return (
     <WaitScreen deck={warmUp} goalId={frame.goalId} hold={hold} surface="lessonWait">
-      <LessonRouteFrame {...frame} footer={<WritingWaitBar footer={footer} holding={holding} />}>
-        {children}
-
+      <LessonRouteFrame
+        {...frame}
+        footer={<WritingWaitBar footer={footer} holding={holding} />}
+        lead={<WaitNote state={state} />}
+      >
         <WaitContent
           progress={progress}
           status={
@@ -222,35 +164,84 @@ function WritingWait({
           }
         />
 
-        {!holding && (late || run.status === "failed") && alternative && (
-          <Alternative alternative={alternative} />
-        )}
+        {!holding && alternative && <ReadyLesson alternative={alternative} />}
       </LessonRouteFrame>
     </WaitScreen>
   );
 }
 
-function UnwrittenLessonNote() {
+function RetryBar({ onRetry }: { onRetry?: () => void }) {
   const t = useExtracted();
 
   return (
-    <p className="flex flex-col gap-1 text-sm text-pretty">
-      <span className="font-medium">{t("This lesson isn't written yet")}</span>
-      <span className="text-muted-foreground">
-        {t("Zoonk writes it when you start. It takes a few minutes.")}
-      </span>
-    </p>
+    <TaskActionBar>
+      <TaskActions>
+        <TaskMainButton onClick={() => onRetry?.()}>{t("Try again")}</TaskMainButton>
+      </TaskActions>
+    </TaskActionBar>
   );
 }
 
-function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void }) {
+type WaitState = "notReady" | "gettingReady" | "ready" | "stopped";
+
+function waitState({
+  asked,
+  holding,
+  run,
+}: {
+  asked: boolean;
+  holding: boolean;
+  run: GenerationRun;
+}): WaitState {
+  if (holding) {
+    return "ready";
+  }
+
+  if (run.status === "failed" && run.failure !== "connection") {
+    return "stopped";
+  }
+
+  return asked ? "gettingReady" : "notReady";
+}
+
+function WaitNote({ state }: { state: WaitState }) {
+  const t = useExtracted();
+
+  const title = {
+    gettingReady: t("Getting your lesson ready"),
+    notReady: t("This lesson isn't ready yet"),
+    ready: t("Your lesson is ready"),
+    stopped: t("We couldn't get this lesson ready"),
+  }[state];
+
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="text-title">{title}</h1>
+      {(state === "notReady" || state === "gettingReady") && (
+        <p className="text-muted-foreground text-base leading-relaxed text-pretty">
+          {t("It takes a few minutes, and keeps going if you leave.")}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function StartLessonBar({
+  busy,
+  onStart,
+  ready = false,
+}: {
+  busy: boolean;
+  onStart: () => void;
+  ready?: boolean;
+}) {
   const t = useExtracted();
 
   return (
     <TaskActionBar>
       <TaskActions>
         <TaskMainButton busy={busy} onClick={onStart}>
-          {t("Start this lesson")}
+          {ready ? t("Start this lesson") : t("Get it ready")}
         </TaskMainButton>
       </TaskActions>
     </TaskActionBar>
@@ -306,22 +297,19 @@ export function LessonWaiting({
         footer={footer}
         frame={frame}
         key={writing.attempt}
+        asked={!showsStart}
         kind={kind}
         warmUp={warmUp}
         writing={writing}
-      >
-        {showsStart && <UnwrittenLessonNote />}
-      </WritingWait>
+      />
     );
   }
 
   return (
-    <LessonRouteFrame {...frame} footer={footer}>
-      {showsStart && <UnwrittenLessonNote />}
+    <LessonRouteFrame {...frame} footer={footer} lead={showsStart && <WaitNote state="notReady" />}>
+      {showsStart && alternative && <ReadyLesson alternative={alternative} />}
 
-      {(request.status === "refused" ||
-        request.status === "plusRequired" ||
-        request.status === "setAside") && (
+      {(request.status === "refused" || request.status === "setAside") && (
         <>
           <LessonNotWrittenNotice
             className="rounded-none bg-transparent p-0"
@@ -330,7 +318,7 @@ export function LessonWaiting({
             reason={request}
             routes={{ signUp: signUpHref, upgrade: "/subscription" }}
           />
-          {alternative && <Alternative alternative={alternative} instead />}
+          {alternative && <ReadyLesson alternative={alternative} />}
         </>
       )}
     </LessonRouteFrame>

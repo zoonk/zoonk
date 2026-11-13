@@ -73,7 +73,7 @@ async function WeekLabels() {
 export async function PlusAdds() {
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
-  const lessons = getFreePlanLimits().lessonsPerMonth ?? 0;
+  const lessons = getFreePlanLimits().lessonsPer30Days ?? 0;
   const freeDays = Math.ceil(lessons / EXAMPLE_LESSONS_A_DAY);
 
   return (

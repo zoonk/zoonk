@@ -9,7 +9,6 @@ import { useExtracted } from "next-intl";
 import { type ComponentType, createContext, use, useEffect, useId, useState } from "react";
 import {
   LIST_ROW_CLASS,
-  LIST_ROW_FIRST_LINE_CLASS,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -69,7 +68,7 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
 function RowSkeleton({ title }: { title: string }) {
   return (
     <div aria-busy="true" className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
-      <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
+      <ListRowLeading>
         <Skeleton className="size-4 rounded-sm" />
       </ListRowLeading>
       <ListRowContent className="justify-start">

@@ -36,7 +36,7 @@ export const BAR_PADDING_CLASS = "pt-4 pb-[max(1rem,env(safe-area-inset-bottom))
 
 /** The kit's bottom bar on a task's column. */
 export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
-  return <BottomBar className={TASK_BAR_ROW_CLASS} data-slot="task-action-bar" {...props} />;
+  return <BottomBar className={TASK_BAR_ROW_CLASS} {...props} />;
 }
 
 export { BottomBarActions as TaskActions } from "@zoonk/ui/components/bottom-bar";
@@ -259,12 +259,16 @@ export function TaskSkeleton({
       <div className="border-b border-transparent">
         <div className={TASK_HEADER_BAR_CLASS}>
           <div className={TASK_HEADER_SIDE_CLASS.start}>
-            <Skeleton className="-ml-2.5 size-9 rounded-lg" />
+            <Skeleton className="-ml-3 size-11 rounded-lg lg:-ml-2.5 lg:size-10" />
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            {menu && <Skeleton className={cn("-mr-2.5 size-9 rounded-lg", aside && "lg:mr-0")} />}
-            {aside && <Skeleton className="-mr-2.5 hidden size-9 rounded-lg lg:block" />}
+            {menu && (
+              <Skeleton
+                className={cn("-mr-3 size-11 rounded-lg lg:-mr-2.5 lg:size-10", aside && "lg:mr-0")}
+              />
+            )}
+            {aside && <Skeleton className="-mr-2.5 hidden size-10 rounded-lg lg:block" />}
           </div>
         </div>
 

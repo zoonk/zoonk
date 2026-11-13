@@ -10,7 +10,6 @@ import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindIcon } from "../_components/kind-tile";
 import {
   LIST_ROW_CLASS,
-  LIST_ROW_FIRST_LINE_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
   ListRowDescription,
@@ -149,7 +148,7 @@ export function MindMapRowView({
   const body = (
     <>
       {alone ? (
-        <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
+        <ListRowLeading>
           <SlotMark shown={shown} />
         </ListRowLeading>
       ) : (

@@ -19,10 +19,8 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
-import { SubscribeGate } from "../../_components/subscribe-gate";
-import { useSentenceSpace } from "../../_utils/locale";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitMessage } from "../conversation/call-limit-message";
+import { CallLimitReason } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
 
@@ -55,13 +53,9 @@ export function SpeakingPaperSection({
 }) {
   const t = useExtracted();
   const titleId = useId();
-  const space = useSentenceSpace();
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
-  // A free learner sees the tasks as a subscriber does; a task's Start is where the gate shows.
-  const gated = paper.access === "plusRequired";
-  const [tried, setTried] = useState(false);
 
   const call = useCallStart({
     onStart: async () => {
@@ -115,13 +109,8 @@ export function SpeakingPaperSection({
                 index={index}
                 language={paper.language}
                 level={paper.level}
-                locked={paused}
+                needsSubscription={paper.access === "plusRequired"}
                 onStart={() => {
-                  if (gated) {
-                    setTried(true);
-                    return;
-                  }
-
                   selected.current = task.key;
                   setStartedTask(task.key);
                   setLimit(null);
@@ -137,8 +126,6 @@ export function SpeakingPaperSection({
         </ol>
       </ListGroup>
 
-      {tried && <SubscribeGate title={t("Speaking practice needs a subscription")} />}
-
       {call.writing && (
         <WritingWait
           hint={t("Your task opens as soon as its card is ready.")}
@@ -147,7 +134,7 @@ export function SpeakingPaperSection({
         />
       )}
 
-      {call.failed && limit && <CallLimitMessage className="py-4" limit={limit} />}
+      {call.failed && limit && <CallLimitReason className="py-4" limit={limit} role="alert" />}
 
       {call.failed && !limit && (
         <p className="text-destructive-text px-1 text-sm" role="alert">
@@ -156,15 +143,7 @@ export function SpeakingPaperSection({
       )}
 
       <PageSectionFooter>
-        {paper.tasks.some((task) => task.role === "partner")
-          ? t(
-              "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )
-          : t(
-              "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-            )}
-        {space}
-        <a href={paper.source} rel="noreferrer" target="_blank">
+        <a className="hit-area relative" href={paper.source} rel="noreferrer" target="_blank">
           {t("Official format")}
         </a>
       </PageSectionFooter>

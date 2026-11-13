@@ -1,3 +1,4 @@
+import { toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import {
   type GoalMindMapView,
   type GoalMindMapsView,
@@ -132,7 +133,7 @@ export function toMindMapLimit({
   }
 
   return {
-    period: stop.period ?? "day",
+    period: toCalendarPeriod(stop.period ?? "day"),
     resource: stop.resource ?? undefined,
     status: "limitReached",
     tier,

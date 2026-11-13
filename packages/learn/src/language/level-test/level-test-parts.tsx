@@ -141,8 +141,10 @@ export function SpeakingPrompt({
 
       {canRecord && recorder.status !== "denied" ? (
         <RecordButton
+          busy={recorder.status === "acquiring"}
           className="w-full max-w-xs"
-          disabled={pending || recorder.status === "acquiring"}
+          disabled={pending}
+          size="lg"
           elapsedMs={recorder.elapsedMs}
           onStart={() => void recorder.start()}
           onStop={recorder.stop}

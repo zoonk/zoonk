@@ -68,7 +68,7 @@ export function AdminDetailHeader({
   title,
   titleClassName,
 }: {
-  /** Small buttons (`size="sm"`), so they sit level with the title. */
+  /** The page's buttons, in its top bar: `Button size="bar"`. */
   actions?: React.ReactNode;
   alert?: string | null;
   facts: (string | null | undefined | false)[];
@@ -127,7 +127,7 @@ export function AdminDetailHeaderSkeleton({
         actions ? (
           <Skeleton
             aria-hidden="true"
-            className={cn("h-7.5 rounded-md", actions === "menu" ? "w-7.5" : "w-40")}
+            className={cn("h-11 rounded-lg lg:h-10", actions === "menu" ? "w-11 lg:w-10" : "w-40")}
           />
         ) : null
       }

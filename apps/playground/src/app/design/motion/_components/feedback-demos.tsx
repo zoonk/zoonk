@@ -17,12 +17,7 @@ function segmentClass(index: number, answered: number): string {
 export function PressDemo() {
   return (
     <div className="flex flex-col items-start gap-4">
-      <button
-        className="press bg-primary text-primary-foreground hover:bg-primary/80 text-reading h-11 rounded-lg px-5 font-medium"
-        type="button"
-      >
-        Continue
-      </button>
+      <Button size="xl">Continue</Button>
 
       <button
         className="press ring-input hover:bg-muted flex min-h-12 w-full max-w-sm items-center gap-3 rounded-xl px-4 text-left text-sm ring-1 [--press-scale:0.99]"

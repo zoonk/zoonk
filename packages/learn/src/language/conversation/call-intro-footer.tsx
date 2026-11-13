@@ -6,9 +6,10 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StatusRegion } from "../../_components/status-region";
+import { SubscribeMainAction } from "../../_components/subscribe-gate";
 import { TaskActions } from "../../_components/task-layout";
-import { ChallengeCallPlusNotice, SeePlusAction } from "../../challenge/challenge-plus-lock";
 import { TaskMainButton } from "../../shell/task-frame";
+import { ChallengeCallGate } from "./challenge-call-gate";
 import { CallReason } from "./conversation-parts";
 import { loadLiveCallSession } from "./load-live-call-session";
 import {
@@ -24,7 +25,7 @@ export type CallIntroFooterState = "failed" | "idle" | "plusRequired" | "startin
 const PROMPT_SHOWN_MS = 300;
 
 /** An examiner isn't someone the learner calls, so exams keep "Start the call". */
-export function callsCharacter(conversation: Pick<LanguageConversationIntro, "examTask" | "kind">) {
+function callsCharacter(conversation: Pick<LanguageConversationIntro, "examTask" | "kind">) {
   return !conversation.examTask && conversation.kind !== "speakingMock";
 }
 
@@ -197,8 +198,8 @@ function CallIntroActions({
   if (start === "plusRequired") {
     return (
       <>
-        <ChallengeCallPlusNotice />
-        <SeePlusAction />
+        <ChallengeCallGate form="words" />
+        <SubscribeMainAction />
       </>
     );
   }

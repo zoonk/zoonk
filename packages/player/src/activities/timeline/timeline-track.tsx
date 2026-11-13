@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Ref } from "react";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { CARD_LEFT, EventCard, type TrackEvent } from "./timeline-event-card";
 import { spreadLabels, yearTicks } from "./timeline-scale";
 import { type TimelineAxis, yearToY } from "./use-timeline-axis";
@@ -130,7 +131,10 @@ function AnchorCard({
 }) {
   return (
     <div
-      className="bg-background absolute right-0 flex min-h-11 -translate-y-1/2 flex-col justify-center rounded-xl border px-3 py-1.5"
+      className={cn(
+        ACTIVITY_BOX_CLASS,
+        "absolute right-0 flex min-h-11 -translate-y-1/2 flex-col justify-center px-3 py-1.5",
+      )}
       style={{ left: CARD_LEFT, top }}
     >
       <p className="text-muted-foreground text-xs tabular-nums">{formatYear(item.shownYear)}</p>

@@ -29,7 +29,7 @@ type SessionScreen = {
   goalId?: string;
   limit: LessonLimit | null;
   preparing?: boolean;
-  reason?: "plusRequired" | "setAside";
+  reason?: "setAside";
 };
 
 export function getSessionHref({
@@ -176,10 +176,7 @@ function useOpenUnwrittenLesson() {
           blockId: destination.blockId,
           generationId: answer.status === "writing" ? answer.generationId : undefined,
           limit: answer.status === "refused" ? answer.limit : null,
-          reason:
-            answer.status === "plusRequired" || answer.status === "setAside"
-              ? answer.status
-              : undefined,
+          reason: answer.status === "setAside" ? answer.status : undefined,
         },
         onSessionAddress,
       );

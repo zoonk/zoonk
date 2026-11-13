@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { useActivityDraggable } from "../_components/activity-drag-drop";
 
 const CHIP_CLASS =
-  "flex min-h-11 items-center gap-1.5 rounded-full border bg-background ps-2.5 pe-3.5 text-sm font-medium";
+  "flex min-h-11 items-center gap-1.5 rounded-lg border bg-background ps-2.5 pe-3.5 text-sm font-medium";
 
 function NameChipFace({ isLifted, name }: { isLifted: boolean; name: string }) {
   return (
@@ -40,7 +40,7 @@ function NameChip({
         isDisabled ? name : t("Put {name} on spot {number}", { name, number: String(activeNumber) })
       }
       className={cn(
-        "focus-visible:ring-ring/50 touch-manipulation rounded-full outline-none select-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 touch-manipulation rounded-lg outline-none select-none focus-visible:ring-[3px]",
         isDisabled ? "opacity-60" : "hover:[&>span]:bg-accent cursor-grab active:cursor-grabbing",
         isDragging && "relative z-10",
       )}

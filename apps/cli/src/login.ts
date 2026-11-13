@@ -131,7 +131,7 @@ export async function logOut({ file, origin }: LoginPlace) {
   });
 
   if (revocation === null) {
-    process.stderr.write(`Not logged in to ${origin}.\n`);
+    process.stderr.write(`Not logged in to ${origin}, so there was nothing to log out of.\n`);
     return;
   }
 

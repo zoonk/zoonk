@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useTermHighlighter } from "../_components/lesson-step-text";
 import { MarkedText } from "../_components/marked-text";
+import { NumberedLine } from "../_components/numbered-line";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];
@@ -23,23 +24,13 @@ function WorkedExampleLine({
   step: WorkedExampleContentData["steps"][number];
 }) {
   return (
-    <li
-      className={cn(
-        "flex gap-3",
-        entering && "animate-in fade-in slide-in-from-bottom-1 duration-base ease-out",
-      )}
+    <NumberedLine
+      className={cn(entering && "animate-in fade-in slide-in-from-bottom-1 duration-base ease-out")}
+      number={number}
     >
-      <span
-        aria-hidden="true"
-        className="text-muted-foreground w-4 shrink-0 pt-0.5 font-mono text-sm leading-relaxed tabular-nums sm:text-base"
-      >
-        {number}
-      </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-0.5 text-base leading-relaxed sm:text-lg">
-        <RichTextBlocks text={step.text} />
-        {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
-      </div>
-    </li>
+      <RichTextBlocks text={step.text} />
+      {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
+    </NumberedLine>
   );
 }
 
@@ -105,7 +96,7 @@ export function WorkedExampleContent({
       {isDone && (
         <div className={cn(SURFACE_CLASS, "flex flex-col gap-1 p-4")}>
           <p className="text-muted-foreground text-sm font-medium">{t("Result")}</p>
-          <RichTextBlocks className="text-base leading-relaxed sm:text-lg" text={content.result} />
+          <RichTextBlocks className={LESSON_BODY_CLASS} text={content.result} />
         </div>
       )}
 

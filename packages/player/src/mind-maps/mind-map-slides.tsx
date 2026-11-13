@@ -79,7 +79,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
         {...SWIPE_THROUGH}
       >
         <MindMapThumbnail
-          className="ring-border bg-card aspect-square h-auto w-full rounded-xl object-contain ring-1"
+          className="outline-border bg-card aspect-square h-auto w-full rounded-xl object-contain outline -outline-offset-1"
           image={image}
           outline={outline}
           sizes="(min-width: 72rem) 50rem, 100vw"

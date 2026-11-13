@@ -73,6 +73,7 @@ export const MOMENT_RULES: readonly string[] = [
 ];
 
 export const PRINCIPLES: readonly string[] = [
+  "One message per screen, in the learner's words: one thing leads, the rest supports it or leaves.",
   "Neutral by default, colored on purpose: tone steps separate, color signals.",
   "Soft colors in the regular theme; strict contrast when the device asks for more.",
   "One meaning per hue, the same on every screen, and never color alone.",

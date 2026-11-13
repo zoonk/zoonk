@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { GalleryNav } from "./_components/gallery-nav";
 import { PreviewFrame } from "./_components/preview-frame";
 import { SiteNav } from "./_components/site-nav";
-import { ToggleNav } from "./_components/toggle-nav";
+import { TabNav } from "./_components/tab-nav";
 import {
   type GallerySelection,
   PREVIEW_DEVICES,
@@ -42,11 +42,11 @@ async function Gallery({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
       <section aria-label={`${entry.label} preview`} className="flex min-w-0 flex-col gap-4">
         <div className="flex flex-col gap-1">
           <p className="text-muted-foreground text-xs">{entry.group}</p>
-          <h2 className="text-lg font-semibold">{entry.label}</h2>
+          <h2 className="font-semibold">{entry.label}</h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <ToggleNav
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          <TabNav
             label="State"
             options={entry.states.map((option) => ({
               href: href({ state: option }),
@@ -55,7 +55,7 @@ async function Gallery({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
             }))}
           />
 
-          <ToggleNav
+          <TabNav
             label="Device"
             options={PREVIEW_DEVICES.map((option) => ({
               href: href({ device: option }),
@@ -65,7 +65,7 @@ async function Gallery({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
           />
 
           <a
-            className="text-muted-foreground text-sm underline-offset-4 hover:underline"
+            className="text-muted-foreground text-compact hit-area relative underline-offset-4 hover:underline"
             href={src}
             rel="noreferrer"
             target="_blank"
@@ -94,10 +94,9 @@ export default function GalleryPage({ searchParams }: PageProps<"/">) {
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold">Player playground</h1>
+          <h1 className="text-section">Player playground</h1>
           <p className="text-muted-foreground text-sm">
-            Every activity, lesson screen and picture as learners see it, from the player&apos;s
-            shared fixtures. Nothing here is saved.
+            Every activity, lesson screen and picture, as learners see it. Nothing is saved.
           </p>
         </div>
 

@@ -7,6 +7,7 @@ import { PageWithAside } from "../shell/learn-shell";
 import { EnterLink } from "./enter-button";
 import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
+/** `bottomBar` is the page's `BottomBar`: with an aside it pins over the main column only. */
 export function DetailLayout({
   aside,
   asideLabel = "",
@@ -19,11 +20,10 @@ export function DetailLayout({
   aside?: React.ReactNode;
   asideLabel?: string;
   bar?: React.ReactNode;
-  /** The page's `BottomBar`: last in the page's own column, so the aside never covers it. */
   bottomBar?: React.ReactNode;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-col" {...props}>
+    <article className="flex min-w-0 flex-1 flex-col" {...props}>
       {bar}
       <div
         className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}
@@ -31,16 +31,20 @@ export function DetailLayout({
       >
         {children}
       </div>
-      {bottomBar}
     </article>
   );
 
   if (!aside) {
-    return page;
+    return (
+      <>
+        {page}
+        {bottomBar}
+      </>
+    );
   }
 
   return (
-    <PageWithAside aside={aside} asideLabel={asideLabel}>
+    <PageWithAside aside={aside} asideLabel={asideLabel} bottomBar={bottomBar}>
       {page}
     </PageWithAside>
   );
@@ -68,7 +72,7 @@ export function DetailContent({ className, ...props }: React.ComponentProps<"div
 
 export const DETAIL_PRIMARY_CLASS = cn(
   buttonVariants({ size: "lg" }),
-  "min-w-0 flex-1 lg:flex-none lg:px-5",
+  "min-w-0 flex-1 md:flex-none md:px-5",
 );
 
 export function DetailContinueLink({

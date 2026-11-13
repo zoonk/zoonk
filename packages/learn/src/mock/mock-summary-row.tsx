@@ -1,10 +1,8 @@
 "use client";
 
 import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import {
-  LIST_ROW_FIRST_LINE_CLASS,
   ListRow,
   ListRowBody,
   ListRowContent,
@@ -54,7 +52,7 @@ export function MockSummaryRow({
 
   const content = (
     <>
-      <ListRowLeading className={cn(stacked && LIST_ROW_FIRST_LINE_CLASS)}>
+      <ListRowLeading>
         <StatusMark status="done" />
       </ListRowLeading>
       <ListRowBody>

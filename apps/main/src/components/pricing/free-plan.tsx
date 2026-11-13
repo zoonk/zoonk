@@ -124,7 +124,7 @@ export async function FreePlan({
           ]}
           summary={t(
             "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month",
-            { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPerMonth ?? 0 },
+            { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPer30Days ?? 0 },
           )}
         />
       </div>
