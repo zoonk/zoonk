@@ -30,17 +30,20 @@ const GROUND_Y = 116;
 
 /**
  * A view's picture holds everything that view draws, for every buddy, stage, face, glasses and
- * Energy, so its edge never cuts the buddy and a change of state moves nothing. The face view has
- * no stage, snore, monocle chain or growing glow.
+ * Energy, with 2 units to spare, so its edge never cuts the buddy and a change of state moves
+ * nothing. The body's is 6:7, so give it a height; a face's is square, and has no stage, snore,
+ * monocle chain or growing glow.
  */
-const BODY_BOX = "-8 -16 136 136";
+const BODY_BOX = "0 -18 120 140";
 
 const FACE_BOX: Record<BuddyKind, string> = {
-  beep: "8.5 -4 103 103",
-  noodle: "12 11.5 96 96",
-  otto: "15 9 90 90",
-  zu: "15 -0.5 90 90",
+  beep: "7 -5.5 106 106",
+  noodle: "10 9.6 100 100",
+  otto: "14 8 92 92",
+  zu: "13.5 -1.75 93 93",
 };
+
+const VIEW_CLASS: Record<CharacterView, string> = { body: "h-28 w-auto", face: "size-8" };
 
 const NO_SWAPS: readonly BuddyExpression[] = [];
 
@@ -111,7 +114,7 @@ export function BuddyFigure({
     <svg
       aria-hidden={label ? undefined : true}
       aria-label={label}
-      className={cn("size-24 shrink-0 overflow-visible", className)}
+      className={cn("shrink-0 overflow-visible", VIEW_CLASS[view], className)}
       data-energy={energyState}
       data-buddy={kind}
       data-slot="buddy"

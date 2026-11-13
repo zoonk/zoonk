@@ -1,15 +1,13 @@
 "use client";
 
 import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
-import { cn } from "@zoonk/ui/lib/utils";
 import { type LearnBuddy, resolveLearnBuddy } from "./use-buddy-name";
 
 type ActorProps = React.ComponentProps<typeof BuddyActor>;
 
-/** The learner's buddy, wherever it shows: `view="face"` below about 64px, the body from there up. */
+/** The learner's buddy, wherever it shows: `view="face"` with a size below about 64px, the body with a height from there up. */
 export function BuddyArt({
   buddy: learnerBuddy,
-  className,
   label = "",
   ...props
 }: { buddy: LearnBuddy | null } & Pick<
@@ -21,7 +19,6 @@ export function BuddyArt({
   return (
     <BuddyActor
       beltColor={buddy.beltColor}
-      className={cn("size-16 shrink-0", className)}
       energy={buddy.energy}
       glasses={buddy.glasses}
       kind={buddy.kind}

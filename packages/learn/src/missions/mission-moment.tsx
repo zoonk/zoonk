@@ -65,7 +65,7 @@ function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolea
     <span className="flex shrink-0" data-slot="moment-buddy">
       <BuddyArt
         buddy={buddy}
-        className={whole ? "size-27" : "size-12"}
+        className={whole ? "h-28" : "size-12"}
         expression={whole ? "happy" : "neutral"}
         reaction={
           whole ? { act: "cheer", delayMs: 2 * BEAT_MS } : { act: "smile", delayMs: BEAT_MS }
