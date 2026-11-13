@@ -98,7 +98,7 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
       <ListRowLeading>
         <Buddy
           beltColor={look.beltColor}
-          className="size-9"
+          className="size-8"
           energy={look.energy}
           glasses={buddy.glasses}
           kind={buddy.kind}
