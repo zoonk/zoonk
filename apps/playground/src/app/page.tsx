@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { GalleryNav } from "./_components/gallery-nav";
 import { PreviewFrame } from "./_components/preview-frame";
 import { SiteNav } from "./_components/site-nav";
-import { ToggleNav } from "./_components/toggle-nav";
+import { TabNav } from "./_components/tab-nav";
 import {
   type GallerySelection,
   PREVIEW_DEVICES,
@@ -45,8 +45,8 @@ async function Gallery({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
           <h2 className="font-semibold">{entry.label}</h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <ToggleNav
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          <TabNav
             label="State"
             options={entry.states.map((option) => ({
               href: href({ state: option }),
@@ -55,7 +55,7 @@ async function Gallery({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
             }))}
           />
 
-          <ToggleNav
+          <TabNav
             label="Device"
             options={PREVIEW_DEVICES.map((option) => ({
               href: href({ device: option }),

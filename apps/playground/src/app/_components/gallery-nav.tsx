@@ -27,8 +27,8 @@ export function GalleryNav({
                 <Link
                   aria-current={entry.id === current ? "page" : undefined}
                   className={cn(
-                    "hover:bg-muted block truncate rounded-md px-2 py-1 text-sm max-lg:py-3",
-                    entry.id === current && "bg-muted font-medium",
+                    "hover:bg-muted block truncate rounded-lg px-2 py-1 text-sm max-lg:py-3",
+                    entry.id === current && "bg-muted",
                   )}
                   href={galleryHref({ device, entry: entry.id })}
                   prefetch
