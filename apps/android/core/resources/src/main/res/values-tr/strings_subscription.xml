@@ -6,21 +6,21 @@
   "subscription_already_plus_apple": "b133804f77c7957c2c1d070114c5b7e4f6f4c659d4c4e4d2f062856ce380ddef",
   "subscription_already_plus_google": "1aee577a25d7ec62df2f1aabb42d703d5e398d3eb2e1b2ff6adb59e7354e5855",
   "subscription_already_plus_website": "3c00e8be11ea5ad143a167493dc7e4d31405b53fc45be30306cebd2f7a3b1a43",
-  "subscription_answer_cancel": "1ac8fa58bfce9e43ea23ad1498fa522da5247ad18e700a6fadeb9cce37f5b95c",
+  "subscription_answer_cancel": "70c1ab43274608bf1efef20022bad075974ca2021dcb2854122c3cb298c694eb",
   "subscription_answer_fair_use": "13ae49f8d5d74a90547f787ae90bbd80faacd5af98ab6c407c049a0d8d08968b",
-  "subscription_answer_free_buddy": "f691549cb86fd1c63f9f1d1ec228296a0827f28c0a8ac4329b922ed3287e63e0",
-  "subscription_answer_free_buddy_uploads": "7f12cd1f0f8735cd6607330089b7d171416ec980cdb9c04018a4465d5cfc143a",
+  "subscription_answer_free_buddy": "7f1936dfbcce0178e97c74f19f9ab6a21f4b6b986fee8de46d80e4bacc472bdf",
+  "subscription_answer_free_buddy_uploads": "a4a6f1e5b88ac43cdd9470b13e42ac06efdb518323eb31de29851dbc16055039",
   "subscription_answer_free_calls": "74406928e3178f2758e22ef046e42fa3d51a7bda6c8511502181716aa455c02d",
   "subscription_answer_free_goals": "404e216b6f4f33b8644ccb939b679d93b209a40f141e0c5a045a1b884bbf4b57",
   "subscription_answer_free_guest_lead": "5522bdc1a877880c25f7f7e0618aeb989e6554621655b1d8e8d7a2b9e9adfdcf",
-  "subscription_answer_free_lead": "1e119cb3ca707d7ca2e111c3deed86e8e39c7e9c327d02124ee6e80e8928d2a4",
-  "subscription_answer_free_lessons": "43b70d7c9c6bd715e4731851c39c4f1a42357cfa05a310225fb17a989d73942b",
+  "subscription_answer_free_lead": "1d2bbe4465bd1e36db66ab6ee6071d3e6e10d0baa1860a5fd5f9d45da1107f07",
+  "subscription_answer_free_lessons": "093befcd84dd9543fd460ce646fcbd02710eee8f97776de805c251b57152d827",
   "subscription_answer_free_uploads": "fff35a81ad2d54531a15746e5e23d70a491886fb5cea21bd03149abc053e1937",
   "subscription_answer_refund": "8a3d390e17572bfc9d5ec36b58ab94f63856e9a6412707abba4a2ede8956c734",
-  "subscription_answer_unlimited": "591dea981d38b06fbdf619a2f9967933096fd2ddd9a4ed3ce6a77d9b9c800e1e",
+  "subscription_answer_unlimited": "2543e51d805fbeac4f2fdd6780d78b9cbe0c8f1838fcb35f2d7ad4e4b850781a",
   "subscription_available_with_plus": "3bb09e4c0a16c2501e59f46ff40b19d27b3e4c401679dc54b82c7c3e95734bd0",
   "subscription_benefit_buddy": "02fe0c9b222a68f7af8816efb57d1b436030bfdcf783db1ac748b57df7bb05a2",
-  "subscription_benefit_calls": "11980f422ce25fd72f4816aee851c5eed90f3fb8a348b371c27ef923494e157d",
+  "subscription_benefit_calls": "ac3b2c9d481b8bc0f3ab23a28153ba69210d91726fa80e5f074a9d17f3d01a26",
   "subscription_benefit_certificates": "327755911895a6d3b1d585592ff3707193373a9b6238f8de49ce578ef108a12c",
   "subscription_benefit_exam": "e8129354a3b08e7c7b7f1c11db826c955ad7f2c805be27e4aa3bc3e4455a7398",
   "subscription_benefit_mocks": "555fde75de93755e1cd84c0e1110a9f7f3e0758a0aa89f7be84fbbbd4d387c66",
@@ -35,7 +35,7 @@
   "subscription_cancel_title": "4c3f641394553f7213fb3baba6c1e9c3df22f78145d7a347ff21fc7177a6e609",
   "subscription_cancel_unpaid": "c81b58831e2c7b4b93559692e09f939240b6d96e9f847b00d0a704d2c38950a0",
   "subscription_contact_support": "8064f05f931c772f3742264a14010577184faa0e6d2b2463b73ef442933f4e8d",
-  "subscription_current_plan": "b868dbcab3bba7eedbab73669e78620a575b07ea58383c5efadce565dd9fdd70",
+  "subscription_current_plan": "88443b10dadd6a449d5632a55d43abb90aed882f672aa0c173fbab9ec993bea4",
   "subscription_deletion_app_store": "0dd35d74d41343e97c88fb43d95a90bf5f4b3f067c8e0531dc092f23a9931500",
   "subscription_deletion_google_play": "207057586605aa8f6c3a811c53490b7eb93b22b60cd2192899f4e1e58faa2401",
   "subscription_deletion_notice": "7d33a8958869c99d2201da4350e57bbf4f86bd59e8f4396ebf95521be81ae4d9",
@@ -67,12 +67,12 @@
   "subscription_period_ends_on": "275d743e676cd9e3753544b9a3b4656181f9731ca5e2a828c0b1be0eed297223",
   "subscription_plus": "541f88fc504471be1f0c03da1f74060138a5f86f4912b040c5f319551e078700",
   "subscription_purchase_confirm_failed": "4673159f2f2610749e59b2cf466134daa1ab03c476316c92d12d04cb0179ddcb",
-  "subscription_purchase_confirming": "8656d655563a790ac5a740ad38846d23c84bcccef72b795f7cd1a81e75be6e19",
+  "subscription_purchase_confirming": "4f96a6e857aff7cf0c1bd6b399f36e8d49b8753b28871b1cc5a609a02f7ba4e0",
   "subscription_purchase_other_account": "ef93816af9db3c348d837d18f3c6539fc64fc503c81c5698e3d8f7a423b76e61",
   "subscription_purchase_pending": "db78c899a42f64c8fd68b32870cb4c01f2053b938783934a81b58bdd4f121b5e",
   "subscription_purchase_play_failed": "3f527ce1b71eeed6a962af090ce25c16659cec7c282bc456e888ac3022c358aa",
   "subscription_question_cancel": "e4d63ada35a22dded5edfec992117fa8a6181eebda6f5633208081721f64b9d0",
-  "subscription_question_free": "2bef0b13e0541e2ad201919cff563a22deff8df26f614d07ca7bce5b6766a20e",
+  "subscription_question_free": "6a39dd2b0f28edf7e6b6a969afc2a6b12181f863acde4a5a7d631a3e6af1f36b",
   "subscription_question_refund": "36ae34db970da4a518dff775544fc10841b78492e151a19ca053ed40815938fd",
   "subscription_question_unlimited": "17b2ff45d89ba5a2c05c982021070c96f69ed2225188693b21cd164983bc70f5",
   "subscription_questions_email": "f51980d5b0ebf6c12de29b401ac63ae255bfee93497265845c66dc22ba42ce91",
@@ -147,7 +147,7 @@
     <string name="subscription_subscribe">Abone ol</string>
     <string name="subscription_cancel_anytime">İstediğin zaman iptal et.</string>
     <string name="subscription_purchase_pending">Ödemen beklemede. Google Play onayladığında Plus etkinleşecek.</string>
-    <string name="subscription_purchase_confirming">Satın alma işlemini doğruluyoruz…</string>
+    <string name="subscription_purchase_confirming">Plus’ı etkinleştiriyoruz…</string>
     <string name="subscription_purchase_other_account">Bu Google Play aboneliği başka bir Zoonk hesabına ait. Kullanmak için o hesaba giriş yap.</string>
     <string name="subscription_purchase_play_failed">Google Play satın alma işlemini tamamlayamadı. Tekrar dene.</string>
     <string name="subscription_purchase_confirm_failed">Satın alma işlemin tamamlandı, ancak henüz doğrulayamadık. Geri döndüğünde tekrar deneyeceğiz.</string>
@@ -160,12 +160,12 @@
     <string name="subscription_benefit_exam">Sınava kadar her günü kapsayan eksiksiz planın</string>
     <string name="subscription_benefit_mocks">Gerçek sınavla aynı süre sınırına sahip deneme sınavları</string>
     <string name="subscription_benefit_buddy">Takıldığın her an yanında olan yapay zekâ destekli bir ders arkadaşı</string>
-    <string name="subscription_benefit_calls">Konuşma pratiği sohbetlerinde daha yüksek limitler</string>
+    <string name="subscription_benefit_calls">Konuşma pratiği için daha fazla sohbet</string>
     <string name="subscription_benefit_certificates">Tamamladığın her seviye için bir sertifika</string>
     <string name="subscription_start_free">Ücretsiz başla</string>
     <string name="subscription_no_card_needed">Kart gerekmez.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
-    <string name="subscription_current_plan">Mevcut paketin</string>
+    <string name="subscription_current_plan">Şu anki paketin</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("20 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->
@@ -190,26 +190,26 @@
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">cevabı göster</string>
     <string name="subscription_hide_answer">cevabı gizle</string>
-    <string name="subscription_question_free">Ücretsiz pakette neler var?</string>
+    <string name="subscription_question_free">Neler ücretsiz?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Hesap açmadan %d dersle ücretsiz başla. Ücretsiz hesap açarsan şunlardan yararlanabilirsin:</item>
         <item quantity="other">Hesap açmadan %d dersle ücretsiz başla. Ücretsiz hesap açarsan şunlardan yararlanabilirsin:</item>
     </plurals>
-    <string name="subscription_answer_free_lead">Ücretsiz paketle şunlardan yararlanabilirsin:</string>
+    <string name="subscription_answer_free_lead">Plus olmadan şunlardan yararlanabilirsin:</string>
     <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d hedef üzerinde aynı anda çalışabilirsin</item>
         <item quantity="other">%d hedef üzerinde aynı anda çalışabilirsin</item>
     </plurals>
     <plurals name="subscription_answer_free_lessons">
-        <item quantity="one">Tüm hedeflerin için ayda toplam %d ders</item>
-        <item quantity="other">Tüm hedeflerin için ayda toplam %d ders</item>
+        <item quantity="one">Sınavlar dahil tüm hedeflerin için ayda %d ders</item>
+        <item quantity="other">Sınavlar dahil tüm hedeflerin için ayda %d ders</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">Günde %1$s ve %2$s</string>
+    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
+    <string name="subscription_answer_free_buddy_uploads">Yapay zekâ ders arkadaşı: günde %1$s ve %2$s</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">arkadaşına %d mesaj</item>
-        <item quantity="other">arkadaşına %d mesaj</item>
+        <item quantity="one">%d mesaj</item>
+        <item quantity="other">%d mesaj</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d yükleme</item>
@@ -217,11 +217,11 @@
     </plurals>
     <string name="subscription_answer_free_calls">Konuşma pratiği için Plus’tan daha az sohbet (sınavların konuşma bölümleri Plus’a dahildir)</string>
     <string name="subscription_question_unlimited">Plus gerçekten sınırsız mı?</string>
-    <string name="subscription_answer_unlimited">Neredeyse. Derslerde, hedeflerde ve arkadaşınla mesajlaşmada limitler yalnızca botları ve otomatik araçları engellemek için var; öğrenenleri sınırlamak için değil. Konuşma pratiği sohbetlerinin günlük ve aylık limitleri ücretsiz pakettekinden daha yüksek.</string>
+    <string name="subscription_answer_unlimited">Neredeyse. Dersler, hedefler ve ders arkadaşın için sınırlar yalnızca botları ve otomatik araçları engellemek için var, öğrenmeni kısıtlamak için değil. Konuşma pratiği sohbetlerinin günlük ve aylık sınırları var; Plus’ta bu sınırlar daha yüksek.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Adil kullanım politikamızı oku</string>
     <string name="subscription_question_cancel">İptal edersem ne olur?</string>
-    <string name="subscription_answer_cancel">Plus’ı ödemesini yaptığın dönemin sonuna kadar kullanmaya devam edersin. Ardından ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur.</string>
+    <string name="subscription_answer_cancel">Ödemesini yaptığın dönem bitene kadar Plus’ı kullanmaya devam edersin. Ardından Ücretsiz pakete dönersin; hedeflerin ve ilerlemen korunur.</string>
     <string name="subscription_question_refund">Ücret iadesi alabilir miyim?</string>
     <string name="subscription_answer_refund">Google Play’den alınan Plus aboneliklerinin iade işlemlerini Google Play yürütür: iade talebini Google Play üzerinden ilet. Web sitemizden abone olduysan hello@zoonk.com adresine yaz, durumu inceleyelim.</string>
 </resources>

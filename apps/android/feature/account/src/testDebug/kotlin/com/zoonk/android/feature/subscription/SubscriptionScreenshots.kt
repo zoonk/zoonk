@@ -124,10 +124,10 @@ class SubscriptionScreenshots {
 private val LIMITS =
     FreePlan(
         activeGoals = 1,
-        examPrepDays = 7,
+        examPrepDays = null,
         guestLessons = 3,
-        lessonsPerDay = 5,
-        lessonsPerMonth = 40,
+        lessonsPerDay = null,
+        lessonsPerMonth = 20,
         tutorMessagesPerDay = 10,
         uploadsPerDay = 1,
     )

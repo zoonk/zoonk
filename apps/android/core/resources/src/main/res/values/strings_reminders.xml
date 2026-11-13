@@ -7,7 +7,7 @@
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Want a study reminder?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">At %1$s on your study days, when you still have learning left.</string>
+    <string name="reminders_offer_body">At %1$s on your study days.</string>
     <string name="reminders_remind_me">Remind me</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">No thanks</string>

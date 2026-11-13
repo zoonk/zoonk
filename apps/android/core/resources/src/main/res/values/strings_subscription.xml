@@ -55,7 +55,7 @@
     <string name="subscription_subscribe">Subscribe</string>
     <string name="subscription_cancel_anytime">Cancel anytime.</string>
     <string name="subscription_purchase_pending">Your payment is pending. Plus starts once Google Play confirms it.</string>
-    <string name="subscription_purchase_confirming">Confirming your purchase…</string>
+    <string name="subscription_purchase_confirming">Turning on Plus…</string>
     <string name="subscription_purchase_other_account">This Google Play subscription belongs to another Zoonk account. Log in to that account to use it.</string>
     <string name="subscription_purchase_play_failed">Google Play couldn\'t complete the purchase. Try again.</string>
     <string name="subscription_purchase_confirm_failed">Your purchase went through, but we couldn\'t confirm it yet. We\'ll try again when you come back.</string>
@@ -68,12 +68,12 @@
     <string name="subscription_benefit_exam">Your whole exam plan, every day to the exam</string>
     <string name="subscription_benefit_mocks">Mock exams, timed like the real one</string>
     <string name="subscription_benefit_buddy">An AI study buddy whenever you\'re stuck</string>
-    <string name="subscription_benefit_calls">Higher limits for speaking calls</string>
+    <string name="subscription_benefit_calls">More speaking practice calls</string>
     <string name="subscription_benefit_certificates">A certificate for every level you finish</string>
     <string name="subscription_start_free">Start free</string>
     <string name="subscription_no_card_needed">No card needed.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
-    <string name="subscription_current_plan">Your current plan</string>
+    <string name="subscription_current_plan">What you have now</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("20 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->
@@ -98,26 +98,26 @@
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">show the answer</string>
     <string name="subscription_hide_answer">hide the answer</string>
-    <string name="subscription_question_free">What\'s in the free plan?</string>
+    <string name="subscription_question_free">What\'s free?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Start free with %d lesson, no account needed. With a free account, you get:</item>
         <item quantity="other">Start free with %d lessons, no account needed. With a free account, you get:</item>
     </plurals>
-    <string name="subscription_answer_free_lead">With the free plan, you get:</string>
+    <string name="subscription_answer_free_lead">Without Plus, you get:</string>
     <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d goal at a time</item>
         <item quantity="other">%d goals at a time</item>
     </plurals>
     <plurals name="subscription_answer_free_lessons">
-        <item quantity="one">%d lesson a month, across all your goals</item>
-        <item quantity="other">%d lessons a month, across all your goals</item>
+        <item quantity="one">%d lesson a month, across all your goals, exams included</item>
+        <item quantity="other">%d lessons a month, across all your goals, exams included</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">%1$s and %2$s a day</string>
+    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
+    <string name="subscription_answer_free_buddy_uploads">An AI study buddy: %1$s and %2$s a day</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d message to your buddy</item>
-        <item quantity="other">%d messages to your buddy</item>
+        <item quantity="one">%d message</item>
+        <item quantity="other">%d messages</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d upload</item>
@@ -125,11 +125,11 @@
     </plurals>
     <string name="subscription_answer_free_calls">Speaking practice calls, fewer than with Plus (exam speaking tasks come with Plus)</string>
     <string name="subscription_question_unlimited">Is Plus really unlimited?</string>
-    <string name="subscription_answer_unlimited">Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan.</string>
+    <string name="subscription_answer_unlimited">Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than without Plus.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Read our fair use policy</string>
     <string name="subscription_question_cancel">What happens if I cancel?</string>
-    <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back on the free plan, and your goals and progress stay with you.</string>
+    <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back to free, and your goals and progress stay with you.</string>
     <string name="subscription_question_refund">Can I get a refund?</string>
     <string name="subscription_answer_refund">Google Play handles refunds for Plus bought there: ask for one in Google Play. If you subscribed on our website, write to us at hello@zoonk.com and we\'ll look into it.</string>
 </resources>

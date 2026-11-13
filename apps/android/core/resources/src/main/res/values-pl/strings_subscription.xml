@@ -6,21 +6,21 @@
   "subscription_already_plus_apple": "1867ec29e0f713715394051755b348b3414637857e01d8bf040fab63f3932988",
   "subscription_already_plus_google": "406944b393621715faa3380a6db5421c37ce15c93a9edb43270c9d981f99ddf6",
   "subscription_already_plus_website": "45719405f6d2b983720fa4e04508f922c61e7c2e0846adf07034afe93dbcf507",
-  "subscription_answer_cancel": "56364d61c4a566c3a12cb77b2fd955bb6644b29d9a9e9e56aa8c7df095eca14e",
+  "subscription_answer_cancel": "5f6cdc15899685c25d8df5437e634bcbacc9ebe121ff7540f74dab3c5118f30f",
   "subscription_answer_fair_use": "5ec5e8ede4bed3eaa7c114f774b099840148be2368f04fc4d2706f04503d04fa",
-  "subscription_answer_free_buddy": "0307b290c14b1c2dabbbbbb5b2ee905c9001ce0609e346484ffe37e51177b129",
-  "subscription_answer_free_buddy_uploads": "78a1c75ef62e177136b05fd53dca554127acd2f60c9f2dfeaf9f6d4afa714271",
+  "subscription_answer_free_buddy": "5faf92535023b73946f1418fcba718897f1a4c147809f6db6fa950c09a95dc33",
+  "subscription_answer_free_buddy_uploads": "9c6bebc0eb24e9b3522b5e5e518e476b4aa4848ce98a5e9d5fd611c7f56f47e3",
   "subscription_answer_free_calls": "bc8d38c3c985577f85a0ca85fdf2fc634bf93cd5c935512fb36500f39cafa5c5",
   "subscription_answer_free_goals": "34e38b1558d1e3caa540d7ea098621dbe87d100b4b32f4614fd371f9c8057582",
   "subscription_answer_free_guest_lead": "35eb1e79ef279fc5b189781e94c1d804b02578c1af2bbc8b885f281b8755efed",
-  "subscription_answer_free_lead": "90e76a3e3245d14f7c9cafc2e7276b6c95d37d60560a105fe09d61594bdfc09e",
-  "subscription_answer_free_lessons": "2d5ff5f5a5898ee46add850bd3026db8d0b6894f4413e4567b332b840f7ff3cb",
+  "subscription_answer_free_lead": "b40ab342c342f0724db135c2da5d361ac06e437e9d847123e46eb7bce7fdffbf",
+  "subscription_answer_free_lessons": "2dcdd155368d80e2beccc92b8cbcdad11165088e9535f92805cf7b6bb5470779",
   "subscription_answer_free_uploads": "09df73d8e8dc4dc12f8708cb26b632792a177138bd1a03c58ffeaedee8c700ee",
   "subscription_answer_refund": "68db17f81c2f8fb78e5dcad495c7bb0b97e588065be73fc6769e804b04243b6f",
-  "subscription_answer_unlimited": "733494666663e804b31dc5ba534d2e757501d9c231d4a7c8b9c7e0cc79f30646",
+  "subscription_answer_unlimited": "9c09922e0733f158b1cbb800132703093a2b1d60211f8a84b43c11c4a96d524e",
   "subscription_available_with_plus": "8f56e870d9478a420e1d7c1a1d9fc67233d9faacd4096649cb4041b83bd91206",
   "subscription_benefit_buddy": "de49ac157e537c1a1079558a35a24922077698d46b39d868be686119cd786e03",
-  "subscription_benefit_calls": "2f3b39568ab09e6b7b54659223384dea1ad1c62c0737cffc53094fa4a5127313",
+  "subscription_benefit_calls": "7c9f95ccadf3d4c52b7c98bb88fe3178cffb5770eee7c0408a722085422c6688",
   "subscription_benefit_certificates": "40e6ca5ed419d28f383f162328903993b64e07195db5dc71356241756311e45e",
   "subscription_benefit_exam": "8b5ad07c831d5eb4589c67161c6308c1b6008071abffd8483d75657fdd9acabb",
   "subscription_benefit_mocks": "6dcbb151102b48c27d112fbbdb321172ec7f7173b697a31ed4db04694787d517",
@@ -35,7 +35,7 @@
   "subscription_cancel_title": "3389b33a5d3cf186235873315f257efd9f883d120e0c120e8585f27e8647d583",
   "subscription_cancel_unpaid": "e888c3283d418bf0ad1c1fd106dc940900a3f837ec67cefecf270301b36c5247",
   "subscription_contact_support": "e3411ea11e26cc584c06427e1ebe2310d4e2dc6f53ee91114c087f3da55453ca",
-  "subscription_current_plan": "77ffd4fa9703b2efdc0f110d6c25b665894f02ba29fb2f85d0c6b063f727027e",
+  "subscription_current_plan": "c458235141588794983d2afee254ab322c42c23341094556bec377d371dc7477",
   "subscription_deletion_app_store": "a1d02ef2675303d8767f52375b96b5c77e551a6c31ce97808ffd1747e929a758",
   "subscription_deletion_google_play": "0082a4eae510e0c21889c6f9989bc9e32c4ce0d6aa286e6b689ef5c24b8519e9",
   "subscription_deletion_notice": "e35c2bf090fa66afd9d4b0292679ee6e7f25683250f63ed3b0e6249d5b821609",
@@ -67,12 +67,12 @@
   "subscription_period_ends_on": "0103d3a81c726eb323ae8843fa5357a757870a6bce0592792432d085f1499b5b",
   "subscription_plus": "e358b2b848a7f894aa06799e9010fdee46acd6dc1ac9f79c413598f8e6a9c027",
   "subscription_purchase_confirm_failed": "d764fac9190d5c4648b0b5b0bebb2818a0410acd21015f6572acb8e222d6dce5",
-  "subscription_purchase_confirming": "f34ec3afc49da51369c107f8787a23edc7d8fe0d096f2e0b52a5475f30563a8f",
+  "subscription_purchase_confirming": "ec053ce4f8f1f0525f475e73cb5cbd619393d960de8b211dae06e3ce261a7128",
   "subscription_purchase_other_account": "1e702372bdeb2cbc26a87101afc2053b4b445a44923a36f14954119d4353eeab",
   "subscription_purchase_pending": "cf1f319fcfc5f623f74ab368b60d56e19e1084f0bd154c184bd43fe31e58e959",
   "subscription_purchase_play_failed": "30a02a5b29ce0bb0c14390c7d7d27c8f9f735fddbf369fc28c76ce056603a624",
   "subscription_question_cancel": "568afc609d6cffbe16f48615d7dfe75af3eed805350459557b9ccf1afd42401c",
-  "subscription_question_free": "92ad140eb48b6b673fcb1b46fd7deb346a0ebd8c9f544b70d7950a21a3392d1c",
+  "subscription_question_free": "d63eb28147fa3791dc1d9408acf3cf061a258a11118254a08a4f9edc2fd50448",
   "subscription_question_refund": "01445e92a1e14cce668f9878aa162da32800d9b84f049a777a022ca500ba3345",
   "subscription_question_unlimited": "67de483d343ef582ee1a7c6c54f392be6f97b14fb265c8c5b2100d619aff025c",
   "subscription_questions_email": "503d51d516c447894cea9129d5a86072ba5ac0f5b176c306862735a342625a54",
@@ -147,7 +147,7 @@
     <string name="subscription_subscribe">Subskrybuj</string>
     <string name="subscription_cancel_anytime">Możesz zrezygnować w dowolnej chwili.</string>
     <string name="subscription_purchase_pending">Twoja płatność czeka na potwierdzenie. Plus zacznie działać, gdy Google Play ją potwierdzi.</string>
-    <string name="subscription_purchase_confirming">Potwierdzamy twój zakup…</string>
+    <string name="subscription_purchase_confirming">Włączamy Plus…</string>
     <string name="subscription_purchase_other_account">Ta subskrypcja Google Play jest przypisana do innego konta w Zoonku. Zaloguj się na to konto, aby z niej korzystać.</string>
     <string name="subscription_purchase_play_failed">Nie udało się dokończyć zakupu w Google Play. Spróbuj ponownie.</string>
     <string name="subscription_purchase_confirm_failed">Zakup się powiódł, ale nie udało nam się go jeszcze potwierdzić. Spróbujemy ponownie, gdy wrócisz.</string>
@@ -160,7 +160,7 @@
     <string name="subscription_benefit_exam">Cały twój plan nauki, dzień po dniu aż do egzaminu</string>
     <string name="subscription_benefit_mocks">Egzaminy próbne z limitem czasu jak na prawdziwym egzaminie</string>
     <string name="subscription_benefit_buddy">Kumpel do nauki z AI zawsze, gdy potrzebujesz pomocy</string>
-    <string name="subscription_benefit_calls">Wyższe limity rozmów do ćwiczenia mówienia</string>
+    <string name="subscription_benefit_calls">Więcej rozmów, by ćwiczyć mówienie</string>
     <string name="subscription_benefit_certificates">Certyfikat za każdy ukończony poziom</string>
     <string name="subscription_start_free">Zacznij za darmo</string>
     <string name="subscription_no_card_needed">Nie potrzebujesz karty.</string>
@@ -196,14 +196,14 @@
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">pokaż odpowiedź</string>
     <string name="subscription_hide_answer">ukryj odpowiedź</string>
-    <string name="subscription_question_free">Co obejmuje pakiet Free?</string>
+    <string name="subscription_question_free">Co jest za darmo?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Zacznij za darmo od %d lekcji bez zakładania konta. Bezpłatne konto daje ci:</item>
         <item quantity="few">Zacznij za darmo od %d lekcji bez zakładania konta. Bezpłatne konto daje ci:</item>
         <item quantity="many">Zacznij za darmo od %d lekcji bez zakładania konta. Bezpłatne konto daje ci:</item>
         <item quantity="other">Zacznij za darmo od %d lekcji bez zakładania konta. Bezpłatne konto daje ci:</item>
     </plurals>
-    <string name="subscription_answer_free_lead">W pakiecie Free otrzymujesz:</string>
+    <string name="subscription_answer_free_lead">Bez pakietu Plus masz:</string>
     <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d cel naraz</item>
@@ -212,18 +212,18 @@
         <item quantity="other">%d celu naraz</item>
     </plurals>
     <plurals name="subscription_answer_free_lessons">
-        <item quantity="one">%d lekcja miesięcznie, łącznie na wszystkie twoje cele</item>
-        <item quantity="few">%d lekcje miesięcznie, łącznie na wszystkie twoje cele</item>
-        <item quantity="many">%d lekcji miesięcznie, łącznie na wszystkie twoje cele</item>
-        <item quantity="other">%d lekcji miesięcznie, łącznie na wszystkie twoje cele</item>
+        <item quantity="one">%d lekcję miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
+        <item quantity="few">%d lekcje miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
+        <item quantity="many">%d lekcji miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
+        <item quantity="other">%d lekcji miesięcznie łącznie na wszystkie twoje cele, w tym egzaminy</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">%1$s i %2$s dziennie</string>
+    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
+    <string name="subscription_answer_free_buddy_uploads">Kumpel do nauki z AI: %1$s i %2$s dziennie</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d wiadomość do kumpla</item>
-        <item quantity="few">%d wiadomości do kumpla</item>
-        <item quantity="many">%d wiadomości do kumpla</item>
-        <item quantity="other">%d wiadomości do kumpla</item>
+        <item quantity="one">%d wiadomość</item>
+        <item quantity="few">%d wiadomości</item>
+        <item quantity="many">%d wiadomości</item>
+        <item quantity="other">%d wiadomości</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d przesłany plik</item>
@@ -233,11 +233,11 @@
     </plurals>
     <string name="subscription_answer_free_calls">Rozmowy do ćwiczenia mówienia, mniej niż w Plus (zadania egzaminacyjne z mówienia są dostępne w Plus)</string>
     <string name="subscription_question_unlimited">Czy Plus naprawdę nie ma limitów?</string>
-    <string name="subscription_answer_unlimited">Prawie. Limity lekcji, celów i rozmów z kumplem są tylko po to, by blokować boty i zautomatyzowane narzędzia, a nie osoby, które się uczą. Rozmowy do ćwiczenia mówienia mają dzienne i miesięczne limity, wyższe niż w bezpłatnym pakiecie.</string>
+    <string name="subscription_answer_unlimited">Prawie. Limity lekcji, celów i kontaktu z kumplem służą tylko blokowaniu botów i automatycznych narzędzi, a nie osób, które się uczą. Rozmowy, w których ćwiczysz mówienie, mają dzienne i miesięczne limity, wyższe niż bez pakietu Plus.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Przeczytaj zasady uczciwego korzystania</string>
     <string name="subscription_question_cancel">Co się stanie, jeśli zrezygnuję?</string>
-    <string name="subscription_answer_cancel">Korzystasz z pakietu Plus do końca opłaconego okresu. Potem wracasz do pakietu Free, a twoje cele i postępy zostają.</string>
+    <string name="subscription_answer_cancel">Zachowasz Plus do końca opłaconego okresu. Potem wrócisz do pakietu Free, a twoje cele i postępy pozostaną bez zmian.</string>
     <string name="subscription_question_refund">Czy mogę otrzymać zwrot pieniędzy?</string>
     <string name="subscription_answer_refund">Google Play zajmuje się zwrotami za kupiony tam pakiet Plus: poproś o zwrot w Google Play. Jeśli subskrypcja została wykupiona na naszej stronie, napisz do nas na hello@zoonk.com, a przyjrzymy się sprawie.</string>
 </resources>

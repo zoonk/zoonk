@@ -11,7 +11,7 @@
   "reminders_no_thanks": "43299ab3fcafea42a5f4b61da42c487e49efe5e66618a90ef796ec44638e21eb",
   "reminders_not_now": "97db0e11bbb687b9ef12256f6e5e199690d47440eed7abbf4af24eb6804d377a",
   "reminders_notifications_off": "e8bba6c0ad80bb494c0e4c7069b083c107e257b27a73a56709926f8bf493e055",
-  "reminders_offer_body": "aa2f8900b7cb0a62a8b0f70b44c56048f2c7d87782b9377d5116c1faec4e2b5e",
+  "reminders_offer_body": "8b0faa3119b6ed53a23ea1889d8d599a33b671995f06814edf53363acdc0a0bd",
   "reminders_offer_title": "e5dfccc59bed7f4ddef0a45e79817aedca6ae71fecef07c67d397dddde6a3822",
   "reminders_on": "d2c3445ba9f53f7faa8c5823a393deccda5e7a381174a1396c4de5fe320ad325",
   "reminders_open_settings": "2f613a29ae32c31b61d124d5003ed3eb1d87c4ba5b20d38d681c0f9c170f454f",
@@ -38,7 +38,7 @@
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Çalışma hatırlatması ister misin?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">Çalışma günlerinde, tamamlaman gerekenler kaldıysa %1$s saatinde.</string>
+    <string name="reminders_offer_body">Çalışma günlerinde saat %1$s.</string>
     <string name="reminders_remind_me">Bana hatırlat</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">Hayır, teşekkürler</string>
@@ -69,10 +69,10 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">E-posta hatırlatmaları almak için hesap oluştur</string>
     <string name="reminders_push">Anlık bildirimler</string>
-    <string name="reminders_quiet">Ara verdiğin için duraklatıldı. Çalışmaya dönünce yeniden açılır.</string>
-    <string name="reminders_save_failed">Kaydedilemedi. Tekrar dene.</string>
-    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
-    <string name="reminders_use_this_device">Bu cihazı kullan</string>
     <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
     <string name="reminders_this_device">Bu cihaz</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">Bu cihazı kullan</string>
+    <string name="reminders_quiet">Ara verdiğin için duraklatıldı. Çalışmaya dönünce yeniden açılır.</string>
+    <string name="reminders_save_failed">Kaydedilemedi. Tekrar dene.</string>
 </resources>

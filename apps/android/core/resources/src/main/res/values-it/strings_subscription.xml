@@ -6,21 +6,21 @@
   "subscription_already_plus_apple": "9388333e340f92ada66f87509429ec15406f7dc31ed20af25bd88057075cf797",
   "subscription_already_plus_google": "a7f2915d9a377f28afd084877e0e83223c709e2974e250dc15381ed153bdd5f9",
   "subscription_already_plus_website": "3d7ac3e69c68ddb0013adf78596f7aa6f5102b333f8117b688e435a3a96ca482",
-  "subscription_answer_cancel": "efbdc917463cb1324d560909d132d8176b86db4ef8d0869713f786265e0e02b1",
+  "subscription_answer_cancel": "f64731ea91510241592d285c51c31cbc56065ec18f6b19e4445f7b70f09200cb",
   "subscription_answer_fair_use": "77431b2f61fc2965da35b69486f205696c2824554bc722ab5113b8cdf90fe5c4",
-  "subscription_answer_free_buddy": "893cb863313c670a14c4855e1481e19b7b83726360d35de889d1ede557464c34",
-  "subscription_answer_free_buddy_uploads": "197a63115e00dd2ce89144d13cf63289035fe1835672beb59d285c7ae8b054a9",
+  "subscription_answer_free_buddy": "f054f7c5ad5b4ad9529b36cbbb9a4a5b0ad293c555a8f12fb60c92bf4aae975b",
+  "subscription_answer_free_buddy_uploads": "344d4f163c57e820fa5936d4c6f5161786168b110a3ac3866badc047b60cb8ed",
   "subscription_answer_free_calls": "ef0f2761ea5a6597f3d7b95ecfaabf4711abb97f486dd8663c26ab8a162abe9e",
   "subscription_answer_free_goals": "50f81aeab6e17e4ebcfb40f81501b19213cacd291861d8f3ecdfb0a12e47ad7c",
   "subscription_answer_free_guest_lead": "eeb229b4a0d3a8229a9a612614d747b8f07275cdf5b5df6316a436e07ab2167e",
-  "subscription_answer_free_lead": "8c7ec45ae00e11a405799bf273529b52a58887f0ac80cb08c075d46308fcd9c4",
-  "subscription_answer_free_lessons": "49ebadac09d5e7a328ceb8c170479c15a8591220556612cf6276c38d749d063b",
+  "subscription_answer_free_lead": "f78a92c0e90b7179b8afaf0676cd7e4fb274c8eeefb3feaef6fdeab3ee9ff5c2",
+  "subscription_answer_free_lessons": "a22998eadf461060f331bacad98d9c5007c905a976f6c58d99b70b9f5daed74e",
   "subscription_answer_free_uploads": "bfcca4de0576937cf620e09e988f0cdb9b71b2711aee220ac4a86329eb20180f",
   "subscription_answer_refund": "0e6822f31c7daf696966d5016fcee4493240d7f10638d45230bd0ab519369e36",
-  "subscription_answer_unlimited": "7c8db76514076b4c2121001cebc75630d17288980a1892b9d6ab0f551e5fdcf0",
+  "subscription_answer_unlimited": "bf8a5f0050d53f293d6ed394c70b39219ecb2cb3f8aa8a4bd1beb848f227881a",
   "subscription_available_with_plus": "52fd19e7baf57f8c145fb99271a8d70c48463c74089edd9f54d55f176cbe6513",
   "subscription_benefit_buddy": "39023333f8b52061d08441329721ce62589398cda0a3c3fe46ca696405263437",
-  "subscription_benefit_calls": "a5f67d6ecb18643c2d1c7f62dc17e329b90cd0256e3548875c046e8fd6c4a5bb",
+  "subscription_benefit_calls": "f76cd5e1b59427f00345083cda8c94d0ab6b0f552066b73535a7a34307eca2dc",
   "subscription_benefit_certificates": "4446d51074aba915bfc516f9b10774adeabde1f6d54edef25a6e2873bf9acad8",
   "subscription_benefit_exam": "cad0d0a805dbcd7dde82ef432b189e39fcd4a044985685b92667aa1dc95e3d9c",
   "subscription_benefit_mocks": "efbc8a30fc842a1735aea6c706d4bd3f09c1efc196ce694c86f1cd2f784a96c2",
@@ -35,7 +35,7 @@
   "subscription_cancel_title": "5e7917bea88a5278a733bf4ada48d88e7523e8506b3ebb6ebadf84c7d526fd95",
   "subscription_cancel_unpaid": "1e86d3c7496e8cdf15da811c8f9937d3061f4b5c6d1a52b466bc0395d40d8d72",
   "subscription_contact_support": "9e79f8e59df7e70b0a027d7dac5d5697060cd7218640c3704e4d73733441f8da",
-  "subscription_current_plan": "394b870c2f28ecdda3ac87e86b4ccca9da31f9725715b292bed528209ae83d21",
+  "subscription_current_plan": "d26748134a6a6846eccaa527a77706ada5ca31ad3c0f1ce79545cf1db9ea263a",
   "subscription_deletion_app_store": "4187bda578dddc77fded31ea95717b5c917e2f426f58a91d26970bb17512046d",
   "subscription_deletion_google_play": "1ab76f557e875d3af3661410c688d5d1fa8ca7b116d78f6729d7f350f3706c21",
   "subscription_deletion_notice": "45aa32a03def675b1361000c03101740e2b916b85b7d452853c99b2862645d4c",
@@ -67,12 +67,12 @@
   "subscription_period_ends_on": "ccd174825fa40da0f55868b14059636ac10f3f7b6dd72dfc876117a1c99e3750",
   "subscription_plus": "b1d4d18bb5a29c0078a429b7652432ce3313715a6b7b479b3c6ff1be51b96029",
   "subscription_purchase_confirm_failed": "caf13f33e225e0bb5e1415462b2fd240d4f2a04bc483a3de11d7e88e268cdc78",
-  "subscription_purchase_confirming": "f235815e143d0acab54a81e6cfd041910f213f68ce275f87358f75e8d7d62f67",
+  "subscription_purchase_confirming": "ba479bd759df7a781fa613847af4744c1ac59232d1366666499948fca02fbe6f",
   "subscription_purchase_other_account": "9ec5950bdb0a538dad6357eaf139dba47ac29051c77e35a032835071b9e855bf",
   "subscription_purchase_pending": "a57e052e42d37343d2b3f66a16beb359f5a22cce35eb8ba71f895411e33e90c0",
   "subscription_purchase_play_failed": "be3bd76560690eeb7114583fdcdb42119275327d3599ebfeae2846bb78aad007",
   "subscription_question_cancel": "32aba20b14a34c27fd0adaaf8b6445efe1b49ac3cbc5c2ef4e64e8491446de45",
-  "subscription_question_free": "e9dd88f97d4bb4c0eb2a79336f340e91e24f20a144b3e46606da502af8af3a53",
+  "subscription_question_free": "591f53e5675bcc47c830d3cfb61be2f23e8bd4ac4b1a66a74da04ae2f4e61931",
   "subscription_question_refund": "d5b2e86593c26672fd4be5eaa1428044f1d1c51e513b17b906b37148308e4782",
   "subscription_question_unlimited": "b39ce0bde99d691ca0c782f4784c30799cb887e5963aa3660f2861313a85c5a7",
   "subscription_questions_email": "e129fd8e497cca2309ba845f5836ea7baf632de1bf200a29be287ec13e78ab7a",
@@ -147,7 +147,7 @@
     <string name="subscription_subscribe">Abbonati</string>
     <string name="subscription_cancel_anytime">Puoi disdire quando vuoi.</string>
     <string name="subscription_purchase_pending">Il pagamento è in sospeso. Plus si attiva quando Google Play lo conferma.</string>
-    <string name="subscription_purchase_confirming">Stiamo confermando il tuo acquisto…</string>
+    <string name="subscription_purchase_confirming">Stiamo attivando Plus…</string>
     <string name="subscription_purchase_other_account">Questo abbonamento Google Play appartiene a un altro account Zoonk. Accedi a quell’account per usarlo.</string>
     <string name="subscription_purchase_play_failed">Google Play non ha potuto completare l’acquisto. Riprova.</string>
     <string name="subscription_purchase_confirm_failed">L’acquisto è andato a buon fine, ma non abbiamo ancora potuto confermarlo. Riproveremo quando tornerai.</string>
@@ -160,12 +160,12 @@
     <string name="subscription_benefit_exam">Il tuo piano completo, per ogni giorno fino all’esame</string>
     <string name="subscription_benefit_mocks">Simulazioni con gli stessi tempi dell’esame</string>
     <string name="subscription_benefit_buddy">Un compagno di studio con l’IA ogni volta che ti blocchi</string>
-    <string name="subscription_benefit_calls">Limiti più alti per le conversazioni</string>
+    <string name="subscription_benefit_calls">Più conversazioni di allenamento</string>
     <string name="subscription_benefit_certificates">Un certificato per ogni livello che completi</string>
     <string name="subscription_start_free">Inizia gratis</string>
     <string name="subscription_no_card_needed">Non serve una carta.</string>
     <!-- In the Free plan card, where the button would be, for a learner already on Free. -->
-    <string name="subscription_current_plan">La tua formula attuale</string>
+    <string name="subscription_current_plan">Quello che hai ora</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("20 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->
@@ -193,13 +193,13 @@
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">mostra la risposta</string>
     <string name="subscription_hide_answer">nascondi la risposta</string>
-    <string name="subscription_question_free">Cosa include la formula Free?</string>
+    <string name="subscription_question_free">Cos’è gratis?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Inizia gratis con %d lezione, senza registrarti. Con un account gratuito hai:</item>
         <item quantity="many">Inizia gratis con %d lezioni, senza registrarti. Con un account gratuito hai:</item>
         <item quantity="other">Inizia gratis con %d lezioni, senza registrarti. Con un account gratuito hai:</item>
     </plurals>
-    <string name="subscription_answer_free_lead">Con la formula Free hai:</string>
+    <string name="subscription_answer_free_lead">Senza Plus hai:</string>
     <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d obiettivo alla volta</item>
@@ -207,16 +207,16 @@
         <item quantity="other">%d obiettivi alla volta</item>
     </plurals>
     <plurals name="subscription_answer_free_lessons">
-        <item quantity="one">%d lezione al mese, in totale per tutti i tuoi obiettivi</item>
-        <item quantity="many">%d lezioni al mese, in totale per tutti i tuoi obiettivi</item>
-        <item quantity="other">%d lezioni al mese, in totale per tutti i tuoi obiettivi</item>
+        <item quantity="one">%d lezione al mese in totale per tutti i tuoi obiettivi, esami inclusi</item>
+        <item quantity="many">%d lezioni al mese in totale per tutti i tuoi obiettivi, esami inclusi</item>
+        <item quantity="other">%d lezioni al mese in totale per tutti i tuoi obiettivi, esami inclusi</item>
     </plurals>
-    <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
-    <string name="subscription_answer_free_buddy_uploads">%1$s e %2$s al giorno</string>
+    <!-- %1$s is the buddy messages ("10 messages"), %2$s the uploads ("3 uploads"). -->
+    <string name="subscription_answer_free_buddy_uploads">Un compagno di studio con l’IA: %1$s e %2$s al giorno</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d messaggio al tuo compagno</item>
-        <item quantity="many">%d messaggi al tuo compagno</item>
-        <item quantity="other">%d messaggi al tuo compagno</item>
+        <item quantity="one">%d messaggio</item>
+        <item quantity="many">%d messaggi</item>
+        <item quantity="other">%d messaggi</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
         <item quantity="one">%d caricamento</item>
@@ -225,11 +225,11 @@
     </plurals>
     <string name="subscription_answer_free_calls">Meno conversazioni di allenamento rispetto a Plus (i compiti delle prove orali sono inclusi in Plus)</string>
     <string name="subscription_question_unlimited">Plus è davvero illimitato?</string>
-    <string name="subscription_answer_unlimited">Quasi. Le lezioni, gli obiettivi e il tuo compagno hanno limiti solo per fermare bot e strumenti automatici, non chi studia. Le conversazioni hanno limiti giornalieri e mensili, più alti rispetto alla formula Free.</string>
+    <string name="subscription_answer_unlimited">Quasi. I limiti per le lezioni, gli obiettivi e il tuo compagno di studio servono solo a fermare bot e strumenti automatici, non chi studia. Le conversazioni di allenamento hanno limiti giornalieri e mensili più alti che senza Plus.</string>
     <!-- Link to the policy on Plus's usage limits, which stop bots and automated tools. Not copyright fair use. -->
     <string name="subscription_answer_fair_use">Leggi le nostre regole per un uso corretto</string>
     <string name="subscription_question_cancel">Cosa succede se disdico l’abbonamento?</string>
-    <string name="subscription_answer_cancel">Continui a usare Plus fino alla fine del periodo che hai già pagato. Poi torni alla formula Free e mantieni i tuoi obiettivi e progressi.</string>
+    <string name="subscription_answer_cancel">Continui a usare Plus fino alla fine del periodo già pagato. Poi torni alla formula Free e conservi i tuoi obiettivi e progressi.</string>
     <string name="subscription_question_refund">Posso avere un rimborso?</string>
     <string name="subscription_answer_refund">Google Play gestisce i rimborsi per gli abbonamenti a Plus acquistati lì: richiedine uno su Google Play. Se hai attivato l’abbonamento sul nostro sito, scrivici a hello@zoonk.com e valuteremo la tua richiesta.</string>
 </resources>

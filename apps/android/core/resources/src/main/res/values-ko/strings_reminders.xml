@@ -11,7 +11,7 @@
   "reminders_no_thanks": "860768fe656c254fde0ecfce8098456298524be9d45803f42d463e687c2badac",
   "reminders_not_now": "d4e6fcaab6e0a3c41516edf0d91f31e29d35d2f5666ed73d396d9c7c6c8bfb58",
   "reminders_notifications_off": "a364ef3049c189ed0a9ff69f9e9a957cf7fda314905ad8ecdae7354af058315b",
-  "reminders_offer_body": "cd84f2581352b66d2be24a42a3ebad5c424401a1182fc67fc2f730f9485f7319",
+  "reminders_offer_body": "5d994d3c898d6318a1b5f95bd4874be90a531738974ce96298d80b1d5722c221",
   "reminders_offer_title": "1ca1e31527a875247bd86936db05f3c167bdae63dccd008fe9c34730fe50153a",
   "reminders_on": "aff6a3b632340dd9da9bf5c768d307661f831e3e9627479f07373d54f4769dd2",
   "reminders_open_settings": "572584dd9d8a88219eb7ed6f47d236e2f7d42f11783d5b63eb5bda3b2bbd9fc0",
@@ -38,7 +38,7 @@
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">학습 알림을 받아 보실래요?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">공부하기로 한 날에 할 공부가 남아 있으면 %1$s에 알려 드려요.</string>
+    <string name="reminders_offer_body">학습하는 날 %1$s에 알려 드려요.</string>
     <string name="reminders_remind_me">알림 받기</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">아니요, 괜찮아요</string>
@@ -69,10 +69,10 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">계정을 만들고 이메일 알림 받기</string>
     <string name="reminders_push">푸시 알림</string>
-    <string name="reminders_quiet">쉬는 동안 알림을 일시 중지했어요. 다시 공부하면 켜져요.</string>
-    <string name="reminders_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
-    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
-    <string name="reminders_use_this_device">이 기기로 받기</string>
     <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
     <string name="reminders_this_device">이 기기</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">이 기기로 받기</string>
+    <string name="reminders_quiet">쉬는 동안 알림을 일시 중지했어요. 다시 공부하면 켜져요.</string>
+    <string name="reminders_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
 </resources>
