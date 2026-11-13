@@ -8,7 +8,6 @@ import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
-import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { toBeltColor } from "../_utils/use-belt-name";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
