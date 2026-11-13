@@ -28,6 +28,15 @@ function preloadDrawer() {
   preloadTutorMarkdown();
 }
 
+function useOpenDrawer(kind: LessonQuestionScreenKind) {
+  const { open } = useLessonQuestionController();
+
+  return () => {
+    void questionPanel.load();
+    open({ kind });
+  };
+}
+
 const PRELOAD_ON_INTENT = {
   onFocus: preloadDrawer,
   onPointerDown: preloadDrawer,
@@ -74,11 +83,11 @@ function AskTutorRow({
   identity: TutorIdentity;
   kind: LessonQuestionScreenKind;
 }) {
-  const { open } = useLessonQuestionController();
+  const openDrawer = useOpenDrawer(kind);
   const label = useAskLabel({ kind, name: identity.name });
 
   return (
-    <ListRowButton {...PRELOAD_ON_INTENT} onClick={() => open({ kind })}>
+    <ListRowButton {...PRELOAD_ON_INTENT} onClick={openDrawer}>
       <ListRowLeading>
         <span aria-hidden="true" className="flex size-5 items-center justify-center *:size-5!">
           {identity.avatar}
@@ -101,7 +110,7 @@ function AskTutorButton({
   size: AskTutorSize;
 }) {
   const t = useExtracted();
-  const { open } = useLessonQuestionController();
+  const openDrawer = useOpenDrawer(kind);
   const label = useAskLabel({ kind, name: identity.name });
 
   const name = t("Ask {name}", { name: identity.name });
@@ -112,7 +121,7 @@ function AskTutorButton({
         {...PRELOAD_ON_INTENT}
         aria-label={label}
         className={TASK_ASK_CLASS}
-        onClick={() => open({ kind })}
+        onClick={openDrawer}
         size="xl"
         type="button"
         variant="outline"
@@ -134,7 +143,7 @@ function AskTutorButton({
       {...PRELOAD_ON_INTENT}
       aria-label={label}
       className={cn("pl-1.5", size === "bar" && BAR_ASK_CLASS)}
-      onClick={() => open({ kind })}
+      onClick={openDrawer}
       size={size}
       type="button"
       variant="outline"
