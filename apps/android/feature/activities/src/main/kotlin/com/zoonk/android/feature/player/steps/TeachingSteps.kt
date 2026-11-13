@@ -567,14 +567,7 @@ internal fun TypedAnswerView(
 
         if (part.showsTurn) AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
-        if (part.showsTurn && !locked && writingOptions) {
-            Column {
-                ExplainFirstButton(screen, actions)
-                if (!isNumber && !screen.canExplainFirst) {
-                    GhostAction(R.drawable.ic_help, stringResource(R.string.player_dont_know_yet)) { actions.dontKnow(step.id) }
-                }
-            }
-        }
+        if (part.showsTurn && !locked && writingOptions) ExplainFirstButton(screen, actions)
     }
 }
 
@@ -680,6 +673,15 @@ fun SpokenRecordAction(
         modifier = modifier,
         onBlocked = { voice.blocked = true },
     )
+}
+
+/** Whether a written answer offers "I don't know yet" in the bar; one with its explanation ahead offers that first instead. */
+fun offersDontKnow(
+    screen: LessonScreen,
+    state: LessonPlayerState,
+): Boolean {
+    val typed = (screen.step?.content as? StepContent.TypedAnswer)?.content ?: return false
+    return state.phase == LessonPhase.Playing && !screen.canExplainFirst && !isNumberAnswer(typed.acceptedAnswers)
 }
 
 /** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */

@@ -37,12 +37,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.data.TrackShown
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute

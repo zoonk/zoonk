@@ -1,11 +1,5 @@
 package com.zoonk.android.feature.tutor
 
-import com.zoonk.android.data.TrackShown
-import com.zoonk.android.data.AnalyticsEvent
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -30,7 +24,11 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +47,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.conversation.PracticeCallSheet
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
 import com.zoonk.android.feature.country.lessonLanguageLine
@@ -196,7 +196,11 @@ private fun StartGoalOffer(
         tile = { OfferIcon(R.drawable.ic_add) },
         modifier = modifier,
     ) {
-        OfferAction(stringResource(R.string.tutor_offer_start), gate = if (locked) stringResource(R.string.tutor_offer_goal_gate) else null, routes) {
+        OfferAction(
+            stringResource(R.string.tutor_offer_start),
+            gate = if (locked) stringResource(R.string.tutor_offer_goal_gate) else null,
+            routes,
+        ) {
             routes.open(AppRoute.StartGoal(goal = offer.goal))
         }
         offer.course?.let { CatalogCourseRow(it) { routes.open(AppRoute.CatalogCourse(it.id.toString())) } }
@@ -315,7 +319,11 @@ private fun MockExamOffer(
         tile = { KindDot(LearnKind.Mock) },
         modifier = modifier,
     ) {
-        OfferAction(stringResource(R.string.tutor_offer_choose), gate = if (locked) stringResource(R.string.tutor_offer_mock_gate) else null, routes) {
+        OfferAction(
+            stringResource(R.string.tutor_offer_choose),
+            gate = if (locked) stringResource(R.string.tutor_offer_mock_gate) else null,
+            routes,
+        ) {
             routes.open(AppRoute.MockChooser)
         }
     }
@@ -341,7 +349,11 @@ private fun EssayOffer(
         tile = { KindDot(LearnKind.Essay) },
         modifier = modifier,
     ) {
-        OfferAction(stringResource(R.string.tutor_offer_open), gate = if (locked) stringResource(R.string.tutor_offer_essay_gate) else null, routes) {
+        OfferAction(
+            stringResource(R.string.tutor_offer_open),
+            gate = if (locked) stringResource(R.string.tutor_offer_essay_gate) else null,
+            routes,
+        ) {
             routes.open(AppRoute.Subject(offer.subjectKey))
         }
     }

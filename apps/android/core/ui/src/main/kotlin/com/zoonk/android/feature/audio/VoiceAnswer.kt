@@ -47,7 +47,6 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -285,7 +284,6 @@ fun RecordButton(
         onClick = if (recording != null) onStop else onStart,
         modifier = modifier,
         enabled = enabled || recording != null,
-        leadingIcon = { ButtonIcon(if (recording != null) R.drawable.ic_stop_filled else R.drawable.ic_mic) },
     ) {
         if (recording == null) {
             Text(stringResource(R.string.audio_record))
@@ -321,7 +319,6 @@ private const val SLOW_CHECK_MS = 15_000L
 
 /** Silence still shows the meter, faintly. */
 private const val CLOCK_ALPHA = 0.7f
-
 
 /** Inline, beside the step it belongs to; [description] says what the microphone is for here. */
 @Composable

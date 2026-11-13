@@ -31,9 +31,8 @@
   "buddy_page_goal_placeholder": "8da342f207d6ea27c45c1f572a25b514a3670249e811e89692f898dce00188cd",
   "buddy_page_greeting": "ad3d3271fb8a3a9209df1cb2957cb38a7346c9782528a8a1c5cba28a331a246f",
   "buddy_page_grows": "0b5caa30fefd5c720337a9a4b3b14e50a1e2ceeacc6444c22dbbdece5b83acbb",
-  "buddy_page_line": "19499a43ecfa6d3f1d925a7c1ff154e2c540a07cb6742ddc567c6cc484acd209",
   "buddy_page_missions": "012a51c6f6cf281e5dc7d93297455948821946d118a27c029e96dd87d42dcdf1",
-  "buddy_page_missions_count": "0b529bba5dbffdeff68054e7d22b99cda06ac97589308760cfcc540b33768f5c",
+  "buddy_page_missions_count": "cfa985439727c6b899af1b9a1c3258e7b50c87bc127e6b815ae2cda80e778c26",
   "buddy_page_missions_done": "e38241576f551f5d3c67d7525976e3b445300765eebaabe9d13ba9125a55f767",
   "buddy_page_more": "89a7b2a9941e449cfcaa649a8aeddc7554681ebc4d46355dbf61bbc19ef215fa",
   "buddy_page_not_yet": "a9d2e36f25ddab305f5888d4b0371204f654c24da510461620890cb8a5994e64",
@@ -59,8 +58,6 @@
 }
 -->
 <resources>
-    <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Tu compañero de estudio · %1$s</string>
     <string name="buddy_page_more">Más sobre %1$s</string>
     <string name="buddy_page_change">Cambiar a %1$s</string>
     <string name="buddy_page_choose">Elegir tu compañero</string>
@@ -90,8 +87,12 @@
     <string name="buddy_page_missions">Misiones</string>
     <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
     <string name="buddy_page_energy_share">%1$s de Energía</string>
-    <!-- The day's missions beside their ring, like "1 of 3 missions". -->
-    <string name="buddy_page_missions_count">%1$d de %2$d misiones</string>
+    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
+    <plurals name="buddy_page_missions_count">
+        <item quantity="one">%1$d de %2$d misión</item>
+        <item quantity="many">%1$d de %2$d misiones</item>
+        <item quantity="other">%1$d de %2$d misiones</item>
+    </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">Misiones completadas: %1$d de %2$d</string>
     <string name="buddy_page_fully_grown">Crecimiento completo</string>

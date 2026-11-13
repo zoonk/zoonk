@@ -92,12 +92,12 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
-import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.asAnswered
+import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.lessonMap
 import com.zoonk.android.feature.player.engine.round
@@ -118,12 +118,13 @@ import com.zoonk.android.feature.player.steps.LocalAskSimpler
 import com.zoonk.android.feature.player.steps.LocalPrimaryFocus
 import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
+import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
-import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.offersDontKnow
 import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
@@ -143,6 +144,7 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
 import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
@@ -431,6 +433,7 @@ fun LessonPlayer(
                                 ActionBar(
                                     screen,
                                     actions,
+                                    offersDontKnow(screen, state),
                                     language.prompt,
                                     primaryFocus,
                                     onBack = { viewModel.dispatch(LessonAction.GoBack) },
@@ -858,6 +861,7 @@ private suspend fun PointerInputScope.countTouches(touches: MutableIntState) {
 private fun ActionBar(
     screen: LessonScreen,
     actions: StepActions,
+    dontKnow: Boolean,
     prompt: PromptAudio?,
     primaryFocus: FocusRequester,
     onBack: () -> Unit,
@@ -881,38 +885,51 @@ private fun ActionBar(
     val step = screen.step
     val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, actions)
 
-    TaskActions(back) { width ->
-        if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
-        if (records && step != null) {
-            SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
+    val dontKnowAbove = dontKnow && back != null && !isWideLayout()
+    val giveUp: @Composable (Modifier) -> Unit = { modifier ->
+        SecondaryButton(
+            onClick = { step?.let { actions.dontKnow(it.id) } },
+            modifier = modifier,
+            leadingIcon = { ButtonIcon(R.drawable.ic_help) },
+        ) { Text(stringResource(R.string.player_dont_know_yet)) }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (dontKnowAbove) giveUp(Modifier.fillMaxWidth())
+        TaskActions(back) { width ->
+            if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
+            if (dontKnow && !dontKnowAbove) giveUp(Modifier)
+            if (records && step != null) {
+                SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
+                ask()
+                return@TaskActions
+            }
+            val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
+            val iconId = primary.label.icon()
+            val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
+            val forward = iconId == R.drawable.ic_arrow_forward
+            if (primary.label == PrimaryLabel.DontKnowYet) {
+                SecondaryButton(
+                    onClick = actions::runPrimary,
+                    enabled = primary.enabled,
+                    busy = primary.busy,
+                    modifier = width.focusRequester(primaryFocus),
+                    leadingIcon = icon,
+                    content = label,
+                )
+            } else {
+                Button(
+                    busy = primary.busy,
+                    onClick = actions::runPrimary,
+                    modifier = width.focusRequester(primaryFocus),
+                    enabled = primary.enabled,
+                    leadingIcon = icon.takeUnless { forward },
+                    trailingIcon = icon.takeIf { forward },
+                    content = label,
+                )
+            }
             ask()
-            return@TaskActions
         }
-        val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
-        val iconId = primary.label.icon()
-        val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
-        val forward = iconId == R.drawable.ic_arrow_forward
-        if (primary.label == PrimaryLabel.DontKnowYet) {
-            SecondaryButton(
-                onClick = actions::runPrimary,
-                enabled = primary.enabled,
-                busy = primary.busy,
-                modifier = width.focusRequester(primaryFocus),
-                leadingIcon = icon,
-                content = label,
-            )
-        } else {
-            Button(
-                busy = primary.busy,
-                onClick = actions::runPrimary,
-                modifier = width.focusRequester(primaryFocus),
-                enabled = primary.enabled,
-                leadingIcon = icon.takeUnless { forward },
-                trailingIcon = icon.takeIf { forward },
-                content = label,
-            )
-        }
-        ask()
     }
 }
 

@@ -75,6 +75,9 @@
   "player_explain_first": "cc912bbf4a3d3f444fdf2477a743bdf45bc277d981dc0c9fd4f69f09f90c0d9f",
   "player_finish": "6125fb5faa5b30cf9bbab8563006825d7a16f261c6dc22abdf7b9105c9e2eadd",
   "player_from_the_lesson": "0e11ee36bf56bbdeae293ebdfca7aa1392d21cc8e0df34ae94db9db98ade7ba0",
+  "player_get_it_ready": "1392ddcf46a48d44706086ee70dbcb691d85a72ac33f662663e7fb891ccb4f26",
+  "player_getting_challenge_ready": "c4f2efa5ab6dfa483060399838c85973037a60823d18db04371674f9a9f71b4e",
+  "player_getting_lesson_ready": "52af08e49c675d8e4d78a639d86971ef63444d99dcc4e40aafeba8a7c18bb5f7",
   "player_guess_chip": "c7f4a553f6728373e9d47ad80b4db97efd40aa1e9f2115f69d99613c145a4827",
   "player_guest_limit_description": "b9ee01300cdd0d9f754bb357ee39bbcfd9cd701b7ca716750a6b50facb0e531c",
   "player_guest_save_note": "b0b633821f86ef8e6e907423959a3e2fc07f584d7f625bc3d99fb9b966a00029",
@@ -94,6 +97,7 @@
   "player_lesson_map_nested": "2c050a8255cde596287017ac1405380c2b7d1806b2ceea04739716b8937b5e25",
   "player_lesson_not_saved": "8886fab3bdc652708e96ed3be0d4ce790b7f130797df691b33dad1415880433d",
   "player_lesson_of": "1062104bd23d7e1820e0e9ab8e5196b8f29622506e859c4b90a9fa2d35c421c5",
+  "player_lesson_ready": "47e72635d6ae0169e2c8a38732c02976761eeeb99c49a07ad8b5f6dc52b83097",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
   "player_microphone_blocked": "6347cfd9522a5d5fb670890f070a888f91d6ad42f493d1190575411ddb09c64f",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
@@ -101,7 +105,6 @@
   "player_not_found_title": "fd7c7bf9194bf0e302698a3476549a9faa4da8458b8c2bbeb6f5f6afc21c5ac8",
   "player_not_in_app_description": "303546ba08cc4e2276516ad1273d0bda3a1919599763c6ad5bb8a57f6d7b4273",
   "player_not_in_app_title": "eb28b1eb7666364fada33b422fafc1fcd1163a035f9f55d956292cd32e3661d9",
-  "player_not_written_description": "b1923cc616b2fafdb0c50f5a1a797db7af8961ff56e2dd4acec87f48c882a57d",
   "player_not_written_title": "c691a27215f20940f02673e30f37fe8144b043fd9cd1b0a59c6b5449626ec821",
   "player_nothing_left_description": "79e2f8ebf61acb37ac79e8c22d86062c3e7450aae7197ebea5a54c55d10c9f72",
   "player_nothing_left_title": "e0ccb0f337e77f5876b007aa508befa2fb7122549ad7b4b2995a801115c84074",
@@ -132,8 +135,7 @@
   "player_previous_screen": "917fb457b767ddc2fc655973a4d2d8a395f0b00b11d14a952544df042411b86d",
   "player_progress": "511c47278132c9379a2ed68b135b8ad5b8b95b3a711b60ec0802f98b852c1e6a",
   "player_quick_check": "cd32fb9195f5587d2dec978eb78f340714d8bbc000f79794a036d37ff513f83a",
-  "player_ready_instead": "8e823aa7539b87c50acdb08608f8e6097ff8d1e9fa75f6b010b6e3c70f154068",
-  "player_ready_while_waiting": "0ea0689decf9fd479aa4ca868d2846b5e3eee857987b872bb7bb1fda22159e07",
+  "player_ready_now": "2ac92656838bc1fd8353168f60ddb5375eef3da95b19e2ff702b3b8936af6927",
   "player_review_ideas": "0bc279247074a777c60e36e01699a99949c9a9e70c9d474681a3904b426cb429",
   "player_save_failed": "ecb3f699e33fce633df023bf50ca2882de9579568a3e29243657204085776c62",
   "player_saved_to_mistakes": "4802ce138af5b670ef1ee4ecee353be3c33b908c3f5627a227995249680f62b2",
@@ -168,6 +170,7 @@
   "player_verdict_sample_answer": "a5c88ebd3881736dd0a1e2b00a9d19cea185c30b354dcdd30927892c06db36d1",
   "player_verdict_typo": "6420c57226fc41598b7d5f1828455e775b680c8b67357b2fc74ae8ce3b51657e",
   "player_verdict_unchecked": "a4dffdcd27caab35833b46c3ca9e76946e13a33f39d6c1e454593b734cee2b5f",
+  "player_wait_stopped": "3ec98aa7a171a49acf131c7761911d9db78bce1c6dc5623547c8a3566a3b9025",
   "player_what_we_heard": "bfe4694bad39f3f3938bbed4b082514deb76869c4671f762472113a0aa9c3f4d",
   "player_word_heard_as": "74ae69f4a33a8b42a4ba82734275c3d296437e7c18f57231d9aed8ff0c28694d",
   "player_word_not_heard": "0f127d156a099b13965ebaf2eb55795de62b4dc1e5992638543e23ea1ba44d73",
@@ -177,7 +180,7 @@
   "player_write_again": "a681135ce7f2adf1fdb1cc6470238c87883ca1114b168f87d4e2067582d4bfa0",
   "player_write_your_answer": "f53d264f3d7b71f794b1f327cebb49195974befd19a765f870f0ac742bb07b2e",
   "player_writing_lesson": "c921bb17f2aa38d5ce18f8d4b884b2297a1a0482db305ead7c9290cc8fefea38",
-  "player_writing_note": "49a4bcb268b535f7cd452eb42277764b4b9dd4953b834fac22a1f0aacd86c5b9",
+  "player_writing_note": "efa27a6389c5c20d3871f750f1220d617894887e97a1fed16314454f43cb2f68",
   "player_your_answer": "c5d23a3ad588edce41e71ff88da7da054b05643d6fb838f4e9fdbfa7e7f44f06",
   "player_your_example": "d8280581441c526421eea87cbe191d4e569f1474c7e45f4fbd79cf36cea97246"
 }
@@ -281,7 +284,11 @@
     <string name="player_your_answer">選んだ答え</string>
     <string name="player_write_your_answer">答えを書いてください</string>
     <string name="player_not_written_title">このレッスンはまだ準備できていません</string>
-    <string name="player_not_written_description">準備には数分かかります。</string>
+    <string name="player_get_it_ready">準備する</string>
+    <string name="player_getting_lesson_ready">レッスンを準備しています</string>
+    <string name="player_getting_challenge_ready">チャレンジを準備しています</string>
+    <string name="player_lesson_ready">レッスンの準備ができました</string>
+    <string name="player_wait_stopped">このレッスンを準備できませんでした</string>
     <string name="player_start_this_lesson">このレッスンを始める</string>
     <string name="player_writing_lesson">レッスンを作成しています</string>
     <string name="player_phase_plan">レッスンの構成を考えています</string>
@@ -308,10 +315,9 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">チェックで見つかった問題を直しています</string>
     <string name="player_challenge_phase_fix_line_1">つじつまが合わない部分を作り直しています…</string>
-    <string name="player_writing_note">数分かかります。</string>
-    <string name="player_ready_while_waiting">待っている間にできること</string>
-    <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
-    <string name="player_ready_instead">今できる別の学習</string>
+    <string name="player_writing_note">準備には数分かかります。画面を離れても準備は続きます。</string>
+    <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
+    <string name="player_ready_now">今すぐ始められる学習</string>
     <plurals name="player_review_ideas">
         <item quantity="other">ポイント%1$s個を復習する</item>
     </plurals>

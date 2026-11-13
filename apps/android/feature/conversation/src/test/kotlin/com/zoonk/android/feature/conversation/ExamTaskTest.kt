@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.conversation
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -29,10 +31,10 @@ class ExamTaskTest {
         harness.runs.finishes = false
         show()
 
-        compose.onNodeWithText("Try this task with a new card").performClick()
+        compose.onNodeWithText("Try again").performClick()
         compose.waitForIdle()
         compose.onNodeWithText("This didn't finish").assertExists()
-        compose.onNodeWithText("Try this task with a new card").assertDoesNotExist()
+        compose.onAllNodesWithText("Try again").assertCountEquals(1)
 
         compose.onNodeWithText("Try again").performClick()
         compose.waitForIdle()

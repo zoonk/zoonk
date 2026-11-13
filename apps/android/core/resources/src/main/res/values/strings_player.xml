@@ -105,7 +105,11 @@
     <string name="player_write_your_answer">Write your answer</string>
 
     <string name="player_not_written_title">This lesson isn\'t ready yet</string>
-    <string name="player_not_written_description">Getting it ready takes a few minutes.</string>
+    <string name="player_get_it_ready">Get it ready</string>
+    <string name="player_getting_lesson_ready">Getting your lesson ready</string>
+    <string name="player_getting_challenge_ready">Getting your challenge ready</string>
+    <string name="player_lesson_ready">Your lesson is ready</string>
+    <string name="player_wait_stopped">We couldn\'t get this lesson ready</string>
     <string name="player_start_this_lesson">Start this lesson</string>
     <string name="player_writing_lesson">Writing your lesson</string>
     <string name="player_phase_plan">Planning the lesson</string>
@@ -132,10 +136,9 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">Fixing what the check found</string>
     <string name="player_challenge_phase_fix_line_1">Rewriting the parts that didn\'t add up…</string>
-    <string name="player_writing_note">It takes a few minutes.</string>
-    <string name="player_ready_while_waiting">Ready while you wait</string>
-    <!-- Heading over a lesson or review that's ready now, offered in place of a lesson that couldn't be written. -->
-    <string name="player_ready_instead">Ready to do instead</string>
+    <string name="player_writing_note">It takes a few minutes, and keeps going if you leave.</string>
+    <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
+    <string name="player_ready_now">Ready to start now</string>
     <plurals name="player_review_ideas">
         <item quantity="one">Review %1$s idea</item>
         <item quantity="other">Review %1$s ideas</item>

@@ -31,9 +31,8 @@
   "buddy_page_goal_placeholder": "c3e7fc18c8875cfd3ebf3c11ff0c54d7e62de4db55493eda5fd8042f6ed1d4ad",
   "buddy_page_greeting": "4b83c1fa23bf6d22e1838a55ae1e23cfd7a57fe4135d7e2293a2a97cbcf0e832",
   "buddy_page_grows": "dd9d9861f7d5878f1482f5c346a983a45cb087cb15e1a66360caef3921c8c4b8",
-  "buddy_page_line": "52dfed0f13512715bf9fa0aa3629a7fccce15b7c733d052a76b3dc4d0a2cd32c",
   "buddy_page_missions": "6d40b0fcfa985693781d8f8252fc321484bb715ff8ecfc5f6858869bc29e3174",
-  "buddy_page_missions_count": "59b8e085300b212d0c552c5d681555bc94554eb0d861d9be609dbc99aa5be1fb",
+  "buddy_page_missions_count": "6c101c5c3c3ca9d46f24817d1e9b4b106e4d955037196da9bbf09041d44024d8",
   "buddy_page_missions_done": "0253950800870a0fe55feb4e0caa872eef2a516d5f5c1e2414e621fbb866dd51",
   "buddy_page_more": "28e280f3ddccf335f0cbadbc2a6cf053e7f37d83cd38b189f96063e550362c8a",
   "buddy_page_not_yet": "0120f0123b9c46090939fd5b4dd507668bd753155eedb13f2ee91893cdb1da41",
@@ -59,8 +58,6 @@
 }
 -->
 <resources>
-    <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Ders arkadaşın · %1$s</string>
     <string name="buddy_page_more">%1$s hakkında daha fazla bilgi al</string>
     <string name="buddy_page_change">%1$s yerine başka bir arkadaş seç</string>
     <string name="buddy_page_choose">Arkadaşını seç</string>
@@ -90,8 +87,11 @@
     <string name="buddy_page_missions">Görevler</string>
     <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
     <string name="buddy_page_energy_share">%1$s Enerji</string>
-    <!-- The day's missions beside their ring, like "1 of 3 missions". -->
-    <string name="buddy_page_missions_count">%1$d / %2$d görev</string>
+    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
+    <plurals name="buddy_page_missions_count">
+        <item quantity="one">%1$d / %2$d görev</item>
+        <item quantity="other">%1$d / %2$d görev</item>
+    </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">%1$d görev tamamlandı, toplam %2$d görev var</string>
     <string name="buddy_page_fully_grown">Büyümesini tamamladı</string>

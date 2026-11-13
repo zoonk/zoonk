@@ -245,10 +245,37 @@ internal val BuddyLook.bodyInk: Rect
     get() {
         val (x, y, width, height) =
             when (kind) {
-                BuddyKind.Beep -> stage.pick(floatArrayOf(22f, 23f, 77.5f, 97.5f), floatArrayOf(15f, 3f, 92.5f, 118f), floatArrayOf(7f, -16f, 108f, 137.5f))
-                BuddyKind.Noodle -> stage.pick(floatArrayOf(22.5f, 38f, 77f, 81f), floatArrayOf(15f, 22f, 92.5f, 97.5f), floatArrayOf(7f, 6f, 108f, 114f))
-                BuddyKind.Otto -> stage.pick(floatArrayOf(24f, 38f, 75.5f, 83f), floatArrayOf(16.5f, 22f, 91f, 99f), floatArrayOf(9f, 6f, 106f, 116f))
-                BuddyKind.Zu -> stage.pick(floatArrayOf(22.5f, 22f, 77f, 98f), floatArrayOf(15f, 2f, 92.5f, 119f), floatArrayOf(7f, -18f, 108f, 139f))
+                BuddyKind.Beep -> {
+                    stage.pick(
+                        floatArrayOf(22f, 23f, 77.5f, 97.5f),
+                        floatArrayOf(15f, 3f, 92.5f, 118f),
+                        floatArrayOf(7f, -16f, 108f, 137.5f),
+                    )
+                }
+
+                BuddyKind.Noodle -> {
+                    stage.pick(
+                        floatArrayOf(22.5f, 38f, 77f, 81f),
+                        floatArrayOf(15f, 22f, 92.5f, 97.5f),
+                        floatArrayOf(7f, 6f, 108f, 114f),
+                    )
+                }
+
+                BuddyKind.Otto -> {
+                    stage.pick(
+                        floatArrayOf(24f, 38f, 75.5f, 83f),
+                        floatArrayOf(16.5f, 22f, 91f, 99f),
+                        floatArrayOf(9f, 6f, 106f, 116f),
+                    )
+                }
+
+                BuddyKind.Zu -> {
+                    stage.pick(
+                        floatArrayOf(22.5f, 22f, 77f, 98f),
+                        floatArrayOf(15f, 2f, 92.5f, 119f),
+                        floatArrayOf(7f, -18f, 108f, 139f),
+                    )
+                }
             }
         return Rect(Offset(x, y), Size(width, height))
     }

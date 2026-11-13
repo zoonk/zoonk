@@ -627,7 +627,13 @@ private fun WordActions(
 
         else -> {
             TaskActions { width ->
-                RecordButton(status = status, onStart = tapRecord, onStop = model.recorder::stop, modifier = width, enabled = !round.pending)
+                RecordButton(
+                    status = status,
+                    onStart = tapRecord,
+                    onStop = model.recorder::stop,
+                    modifier = width,
+                    enabled = !round.pending,
+                )
             }
         }
     }

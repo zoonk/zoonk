@@ -46,24 +46,26 @@ import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitPeriod
-import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.ReadyAlternative
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
-private val ALTERNATIVE_AFTER = 15.seconds
-
 /** The lesson read can lag the run's end by a moment, so it's read again until it shows. */
 private val OPEN_RETRY = 2.seconds
 
-/** A lesson not written yet (main's `LessonWaiting`): its outline, "Start this lesson", then its writing. */
+private enum class WaitMoment { NotReady, GettingReady, Ready, Stopped }
+
+/**
+ * A lesson not ready yet (main's `LessonWaiting`): "Get it ready", then the wait, which goes on if
+ * the learner leaves, and a lesson or review that is ready now to do meanwhile.
+ */
 @Composable
 fun LessonWaitingScreen(
     outline: LessonOutline,
@@ -78,18 +80,10 @@ fun LessonWaitingScreen(
     val alternative by viewModel.alternative.collectAsStateWithLifecycle()
     val warmUpId by viewModel.warmUpId.collectAsStateWithLifecycle()
     val kind by viewModel.kind.collectAsStateWithLifecycle()
-    var late by remember { mutableStateOf(false) }
     val current = writing
     val waits = current == LessonWriting.Writing || current == LessonWriting.Ready
     val ready = current == LessonWriting.Ready || (current == LessonWriting.Writing && run.status == GenerationRun.Status.Ready)
     val hold = rememberReadyHold(ready)
-
-    LaunchedEffect(waits) {
-        if (waits) {
-            delay(ALTERNATIVE_AFTER)
-            late = true
-        }
-    }
     val quiz = rememberWaitQuiz(warmUpId, warmUps)
     if (waits) TrackVisibleWait("lessonWait", "lesson", goalId)
     val opens = hold.over
@@ -100,7 +94,18 @@ fun LessonWaitingScreen(
         }
     }
 
+    val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
     val showsStart = current == LessonWriting.NotStarted || current == LessonWriting.Starting
+    val moment =
+        when {
+            showsStart -> WaitMoment.NotReady
+            hold.holding -> WaitMoment.Ready
+            current == LessonWriting.Failed -> WaitMoment.Stopped
+            waits && shown.status == GenerationRun.Status.Failed && shown.failure != GenerationFailure.Connection -> WaitMoment.Stopped
+            waits -> WaitMoment.GettingReady
+            else -> null
+        }
+    val retry = if (current == LessonWriting.Failed) viewModel::start else viewModel::retry
 
     LessonFrame(
         title = outline.title,
@@ -115,9 +120,12 @@ fun LessonWaitingScreen(
                             onClick = viewModel::start,
                             modifier = Modifier.fillMaxWidth(),
                             enabled = current == LessonWriting.NotStarted,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
-                        ) { Text(stringResource(R.string.player_start_this_lesson)) }
+                        ) { Text(stringResource(R.string.player_get_it_ready)) }
                     }
+                }
+
+                moment == WaitMoment.Stopped -> {
+                    { Button(onClick = retry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_try_again)) } }
                 }
 
                 hold.holding -> {
@@ -139,73 +147,82 @@ fun LessonWaitingScreen(
             },
     ) {
         LessonColumnBeforeFold {
-            Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            if (moment != null) {
+                WaitNote(moment)
+            } else {
+                Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            }
 
             when (current) {
                 null -> {
                     CircularProgressIndicator()
                 }
 
-                LessonWriting.NotStarted, LessonWriting.Starting -> {
-                    Notice(stringResource(R.string.player_not_written_title), stringResource(R.string.player_not_written_description))
-                }
-
                 LessonWriting.Writing, LessonWriting.Ready -> {
-                    val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
-                    val failed = shown.status == GenerationRun.Status.Failed
-                    quiz.open()
-                    val share =
-                        com.zoonk.android.ui.components
-                            .rememberGenerationProgress(kind, shown)
-                    WaitContent(
-                        quiz,
-                        hold,
-                        AnalyticsEvent.WarmUpSurface.LessonWait,
-                        kind,
-                        shown,
-                        stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
-                        goalId = goalId,
-                        progressShare = share,
-                        onRetry = viewModel::retry,
-                    ) {
-                        LessonWritingProgress(
+                    if (moment != WaitMoment.Stopped) {
+                        quiz.open()
+                        val share =
+                            com.zoonk.android.ui.components
+                                .rememberGenerationProgress(kind, shown)
+                        val status =
+                            when {
+                                hold.holding -> R.string.player_lesson_ready
+                                kind == GenerationKind.Challenge -> R.string.player_getting_challenge_ready
+                                else -> R.string.player_getting_lesson_ready
+                            }
+                        WaitContent(
+                            quiz,
+                            hold,
+                            AnalyticsEvent.WarmUpSurface.LessonWait,
                             kind,
                             shown,
-                            viewModel::retry,
-                            if (hold.holding) null else stringResource(R.string.player_writing_note),
+                            stringResource(status),
+                            goalId = goalId,
                             progressShare = share,
-                        )
-                    }
-                    if (!hold.holding && (late || failed)) alternative?.let { Alternative(it, instead = false, exits) }
-                }
-
-                LessonWriting.Failed -> {
-                    GenerationWait(
-                        kind,
-                        GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.NotStarted),
-                        onRetry = viewModel::start,
-                    )
-                    alternative?.let { Alternative(it, instead = false, exits) }
-                }
-
-                LessonWriting.SetAside -> {
-                    LessonNotWrittenNotice(current, viewModel::start, exits::open)
-                    alternative?.let { Alternative(it, instead = true, exits) }
-                }
-
-                is LessonWriting.Refused -> {
-                    when (current.refusal) {
-                        is LessonRefusal.Limited, LessonRefusal.PlusRequired -> {
-                            LessonNotWrittenNotice(current, viewModel::start, exits::open)
-                        }
-
-                        LessonRefusal.NotFound, LessonRefusal.Failed, LessonRefusal.NotInApp -> {
-                            LessonAccessScreen(current.refusal, viewModel::start, exits)
+                            onRetry = viewModel::retry,
+                        ) {
+                            LessonWritingProgress(kind, shown, viewModel::retry, note = null, progressShare = share)
                         }
                     }
-                    alternative?.let { Alternative(it, instead = true, exits) }
                 }
+
+                LessonWriting.SetAside, is LessonWriting.Refused -> {
+                    val screen =
+                        (current as? LessonWriting.Refused)?.refusal?.takeIf {
+                            it == LessonRefusal.NotFound || it == LessonRefusal.Failed || it == LessonRefusal.NotInApp
+                        }
+                    if (screen != null) {
+                        LessonAccessScreen(screen, viewModel::start, exits)
+                    } else {
+                        LessonNotWrittenNotice(current, viewModel::start, exits::open)
+                    }
+                }
+
+                else -> {}
             }
+
+            if (!hold.holding) alternative?.let { ReadyNow(it, exits) }
+        }
+    }
+}
+
+@Composable
+private fun WaitNote(moment: WaitMoment) {
+    val title =
+        when (moment) {
+            WaitMoment.NotReady -> R.string.player_not_written_title
+            WaitMoment.GettingReady -> R.string.player_getting_lesson_ready
+            WaitMoment.Ready -> R.string.player_lesson_ready
+            WaitMoment.Stopped -> R.string.player_wait_stopped
+        }
+    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stringResource(title), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        if (moment == WaitMoment.NotReady || moment == WaitMoment.GettingReady) {
+            Text(
+                stringResource(R.string.player_writing_note),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         }
     }
 }
@@ -277,9 +294,8 @@ private fun Notice(
 }
 
 @Composable
-private fun Alternative(
+private fun ReadyNow(
     alternative: ReadyAlternative,
-    instead: Boolean,
     exits: LessonPlayerExits,
 ) {
     val (label, open) =
@@ -296,7 +312,7 @@ private fun Alternative(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            stringResource(if (instead) R.string.player_ready_instead else R.string.player_ready_while_waiting),
+            stringResource(R.string.player_ready_now),
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.labelLarge,
         )

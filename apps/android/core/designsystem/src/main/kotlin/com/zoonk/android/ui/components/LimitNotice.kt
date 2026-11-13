@@ -69,9 +69,19 @@ fun limitWords(
 @Composable
 fun comesBackLine(limit: Limit.Reached): String? =
     when (limit.tier) {
-        LimitTier.Guest -> null
-        LimitTier.Plus -> stringResource(if (limit.monthly) R.string.limit_more_next_month else R.string.limit_more_tomorrow)
-        LimitTier.Free -> stringResource(if (limit.monthly) R.string.limit_more_next_month_or_subscribe else R.string.limit_more_tomorrow_or_subscribe)
+        LimitTier.Guest -> {
+            null
+        }
+
+        LimitTier.Plus -> {
+            stringResource(if (limit.monthly) R.string.limit_more_next_month else R.string.limit_more_tomorrow)
+        }
+
+        LimitTier.Free -> {
+            stringResource(
+                if (limit.monthly) R.string.limit_more_next_month_or_subscribe else R.string.limit_more_tomorrow_or_subscribe,
+            )
+        }
     }
 
 /** The lesson screen's line: what stays free, then when lessons come back. */
@@ -96,11 +106,36 @@ private fun reachedTitle(
     val guest = limit.tier == LimitTier.Guest
 
     return when (subject) {
-        LimitSubject.Help -> if (guest) R.string.limit_help_guest else if (month) R.string.limit_help_month else R.string.limit_help_day
-        LimitSubject.Messages -> if (guest) R.string.limit_help_guest else if (month) R.string.limit_messages_month else R.string.limit_messages_day
-        LimitSubject.Explanations -> {
-            if (guest) R.string.limit_help_guest else if (month) R.string.limit_explanations_month else R.string.limit_explanations_day
+        LimitSubject.Help -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (month) {
+                R.string.limit_help_month
+            } else {
+                R.string.limit_help_day
+            }
         }
+
+        LimitSubject.Messages -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (month) {
+                R.string.limit_messages_month
+            } else {
+                R.string.limit_messages_day
+            }
+        }
+
+        LimitSubject.Explanations -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (month) {
+                R.string.limit_explanations_month
+            } else {
+                R.string.limit_explanations_day
+            }
+        }
+
         LimitSubject.Lessons -> {
             when {
                 guest -> R.string.limit_lessons_guest
@@ -109,8 +144,29 @@ private fun reachedTitle(
                 else -> R.string.limit_lessons_day
             }
         }
-        LimitSubject.MindMaps -> if (guest) R.string.limit_mind_maps_guest else if (month) R.string.limit_mind_maps_month else R.string.limit_mind_maps_day
-        LimitSubject.Outlines -> if (guest) R.string.limit_outlines_guest else if (month) R.string.limit_outlines_month else R.string.limit_outlines_day
-        LimitSubject.Calls -> null
+
+        LimitSubject.MindMaps -> {
+            if (guest) {
+                R.string.limit_mind_maps_guest
+            } else if (month) {
+                R.string.limit_mind_maps_month
+            } else {
+                R.string.limit_mind_maps_day
+            }
+        }
+
+        LimitSubject.Outlines -> {
+            if (guest) {
+                R.string.limit_outlines_guest
+            } else if (month) {
+                R.string.limit_outlines_month
+            } else {
+                R.string.limit_outlines_day
+            }
+        }
+
+        LimitSubject.Calls -> {
+            null
+        }
     }
 }

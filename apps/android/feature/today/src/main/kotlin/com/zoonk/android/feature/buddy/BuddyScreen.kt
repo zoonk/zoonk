@@ -297,18 +297,9 @@ internal fun BuddyHeader(
         Box(Modifier.size(FACE_SIZE)) {
             if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), state = face) else BuddyStill(look)
         }
-        // The day's line takes the buddy's line under the name.
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
             Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            if (line != null) {
-                line()
-            } else {
-                Text(
-                    stringResource(R.string.buddy_page_line),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
+            line?.invoke()
         }
         menu?.invoke()
     }

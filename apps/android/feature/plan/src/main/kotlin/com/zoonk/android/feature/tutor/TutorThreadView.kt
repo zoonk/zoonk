@@ -65,8 +65,8 @@ import com.zoonk.android.feature.session.toDayMission
 import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Your study buddy · %1$s</string>
     <string name="buddy_page_more">More about %1$s</string>
     <string name="buddy_page_change">Change %1$s</string>
     <string name="buddy_page_choose">Choose your buddy</string>
@@ -33,8 +31,11 @@
     <string name="buddy_page_missions">Missions</string>
     <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
     <string name="buddy_page_energy_share">%1$s Energy</string>
-    <!-- The day's missions beside their ring, like "1 of 3 missions". -->
-    <string name="buddy_page_missions_count">%1$d of %2$d missions</string>
+    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
+    <plurals name="buddy_page_missions_count">
+        <item quantity="one">%1$d of %2$d mission</item>
+        <item quantity="other">%1$d of %2$d missions</item>
+    </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">Missions done: %1$d of %2$d</string>
     <string name="buddy_page_fully_grown">Fully grown</string>

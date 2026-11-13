@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -138,7 +139,7 @@ internal fun BuddyTodayLine(
                     }
                     if (today == null) Text(DASH, style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
-                        today?.let { stringResource(R.string.buddy_page_missions_count, done, it.missions.size) }
+                        today?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
                             ?: stringResource(R.string.buddy_page_missions),
                         style = number,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

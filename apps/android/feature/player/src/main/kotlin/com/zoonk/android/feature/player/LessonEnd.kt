@@ -57,6 +57,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
@@ -66,7 +67,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
-import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn

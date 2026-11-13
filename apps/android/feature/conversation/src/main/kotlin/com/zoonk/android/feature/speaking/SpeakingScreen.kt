@@ -47,14 +47,14 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.data.TrackShown
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.openWebPage
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallLimitMessage
@@ -443,7 +443,9 @@ private fun TaskRow(
                         }
                     }
                     task.lastTry?.let { last ->
-                        OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) }
+                        OutlinedButton(
+                            onClick = { onLastResult(last.conversationId) },
+                        ) { Text(stringResource(R.string.speaking_last_result)) }
                     }
                 }
             }

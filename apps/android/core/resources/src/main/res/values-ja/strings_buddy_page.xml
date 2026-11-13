@@ -31,9 +31,8 @@
   "buddy_page_goal_placeholder": "b37d2e2b74bb31269a3f814e7b679a4418b572d1241ebcd7ae0f62fb5e4a4966",
   "buddy_page_greeting": "20d0334bac860a2e8b10eebe0fae1b33051b9ffc7adc84440a1bc85f541d8b52",
   "buddy_page_grows": "0e149fc8735ae968cb89af2a20b4a03b900f942d59c77253b9216d48ecae213b",
-  "buddy_page_line": "5f5fa70669fa70badca2d80fe4f01f36bd76ddcf0c1aa7e56925232c6d1b49ed",
   "buddy_page_missions": "a4b193c38ec468967d9da2b31a893f432a761808edcfb273ec3b38de8757d403",
-  "buddy_page_missions_count": "0c97704cfb87bce4c424effc34f133330927b73c0df2eb74585795ed791ac3d2",
+  "buddy_page_missions_count": "9ffb449aab0a5f1debbcc156c91b0ac482daf9c4c5bc06659ec87ea6f84ca1da",
   "buddy_page_missions_done": "5edd0f8def77e55ee6e48824d9c809e07e36fb88c34efd063d4d1f5bef939941",
   "buddy_page_more": "ddb7a357aa832bee724d295bdb8c2cef3ff99cedff101c033ff356d3aafa0edb",
   "buddy_page_not_yet": "47c38bcdf5544429ff160b5485031265a8cf95a716d89d677afdb2bdc8fa4b59",
@@ -59,8 +58,6 @@
 }
 -->
 <resources>
-    <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">学習の相棒 · %1$s</string>
     <string name="buddy_page_more">%1$sについて</string>
     <string name="buddy_page_change">%1$sを変える</string>
     <string name="buddy_page_choose">相棒を選ぶ</string>
@@ -90,8 +87,10 @@
     <string name="buddy_page_missions">ミッション</string>
     <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
     <string name="buddy_page_energy_share">エネルギー %1$s</string>
-    <!-- The day's missions beside their ring, like "1 of 3 missions". -->
-    <string name="buddy_page_missions_count">ミッション%1$d件達成（全%2$d件）</string>
+    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
+    <plurals name="buddy_page_missions_count">
+        <item quantity="other">ミッション%1$d/%2$d完了</item>
+    </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">ミッション完了数：%1$d件（全%2$d件）</string>
     <string name="buddy_page_fully_grown">成長完了</string>
