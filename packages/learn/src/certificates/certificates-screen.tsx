@@ -88,9 +88,9 @@ function CertificateItem({ facts, links }: ListedCertificate) {
           {name}
           {!links && <PlusMark className="ml-2 align-middle" />}
         </span>
-        <span className="text-muted-foreground text-xs leading-snug tabular-nums">
+        <span className="text-muted-foreground text-xs leading-snug">
           {level && `${level} · `}
-          {date.short(facts.completedOn)}
+          <span className="font-mono tabular-nums">{date.short(facts.completedOn)}</span>
         </span>
       </span>
 

@@ -33,8 +33,7 @@ function DetailRow({
       <dd
         className={cn(
           "min-w-0 text-right",
-          // Mono is for codes and links; dates and counts read as the words beside them.
-          mono ? "font-mono text-xs" : "font-medium tabular-nums",
+          mono ? "font-mono text-xs tabular-nums" : "font-medium",
         )}
       >
         {children}
@@ -53,14 +52,14 @@ function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boole
 
   const rows = [
     facts.courseLevel && { label: t("Level"), mono: false, value: levelName(facts.courseLevel) },
-    { label: t("Completed"), mono: false, value: date.short(facts.completedOn) },
+    { label: t("Completed"), mono: true, value: date.short(facts.completedOn) },
     facts.lessonsStudied
-      ? { label: t("Lessons studied"), mono: false, value: format.number(facts.lessonsStudied) }
+      ? { label: t("Lessons studied"), mono: true, value: format.number(facts.lessonsStudied) }
       : null,
     facts.lessonsTestedOut
-      ? { label: t("Passed by test"), mono: false, value: format.number(facts.lessonsTestedOut) }
+      ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
       : null,
-    facts.minutes ? { label: t("Study time"), mono: false, value: studyTime(facts.minutes) } : null,
+    facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
     !locked && { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
   ];
 
