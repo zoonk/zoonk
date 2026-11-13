@@ -131,7 +131,7 @@ struct TodayDayView: View {
     return Section {
       VStack(alignment: .leading, spacing: 6) {
         PageHeader(
-          Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine
+          Text("Today", tableName: "Today", comment: "Today tab's title"), supporting: dayLine
         ) {
           HStack(alignment: .lastTextBaseline, spacing: 16) {
             if let dayTime {

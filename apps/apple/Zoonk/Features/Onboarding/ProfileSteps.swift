@@ -551,7 +551,7 @@ struct ProfileStep: View {
 
     QuestionForm {
       ProfileQuestionSections(view: question, context: context, draft: $draft)
-    } buttons: {
+
       if view.firstLesson?.status == .ready {
         FlowLayout(spacing: 8, alignment: .firstTextBaseline) {
           Text("Lesson 1 is ready.", tableName: "AboutYou", comment: "Over an About you question")
@@ -579,8 +579,9 @@ struct ProfileStep: View {
         }
         .typeStyle(.note)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .listRowSeparator(.hidden)
       }
-
+    } buttons: {
       StepButtons(
         canContinue: hasAnswer,
         skipLabel: context.skipDeclines ? ProfileCopy.decline(question.id, .ratherNotSay) : nil

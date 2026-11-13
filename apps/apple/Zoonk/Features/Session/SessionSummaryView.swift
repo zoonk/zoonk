@@ -82,7 +82,7 @@ struct SessionSummaryView: View {
         page(.rewards, visit: visit) {
           rewards(summary, isStep: false)
         }
-        .pageBar { actionBar(summary, at: nil) }
+        .bottomBar { actionBar(summary, at: nil) }
       } single: {
         if !stopped, summary.hasRewardsBeyondBrainPower {
           TabView(selection: $step) {
@@ -98,7 +98,7 @@ struct SessionSummaryView: View {
           }
           .tabViewStyle(.page(indexDisplayMode: .always))
           .indexViewStyle(.page(backgroundDisplayMode: .always))
-          .pageBar {
+          .bottomBar {
             // Only the page slides: the buttons change at once, as they do after a swipe.
             actionBar(summary, at: step)
               .animation(nil, value: step)
@@ -107,7 +107,7 @@ struct SessionSummaryView: View {
           page(.done, visit: visit) {
             doneStep(summary, showsBrainPower: true)
           }
-          .pageBar { actionBar(summary, at: nil) }
+          .bottomBar { actionBar(summary, at: nil) }
         }
       }
       .onChange(of: step) { previous, current in

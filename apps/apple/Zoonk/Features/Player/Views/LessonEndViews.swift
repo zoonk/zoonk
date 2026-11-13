@@ -32,7 +32,7 @@ struct LessonCompletionView: View {
         reminderOfferCard
         guestEndingView
       }
-      .safeAreaBar(edge: .bottom) { actionBar }
+      .bottomBar { actionBar }
     } single: {
       page {
         moment
@@ -42,7 +42,7 @@ struct LessonCompletionView: View {
         reminderOfferCard
         guestEndingView
       }
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+      .bottomBar { actionBar }
     }
     .onChange(of: offer, initial: true) {
       if let offer, reminderOffer == nil {
@@ -261,12 +261,11 @@ struct LessonCompletionView: View {
             Text(
               "Finish", tableName: "Player",
               comment: "Saves a lesson answered in an earlier sitting"
-            ).frame(maxWidth: .infinity)
+            )
           }
         case .failed:
           Button(action: finish) {
-            Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
-              maxWidth: .infinity)
+            Text("Try again", tableName: "Player", comment: "Tries saving the lesson again")
           }
         case .saved where planReveal != nil:
           Button {
@@ -277,7 +276,7 @@ struct LessonCompletionView: View {
             Text(
               "See your plan", tableName: "Player",
               comment: "Ends a goal's first lesson for the plan the learner hasn't seen yet"
-            ).frame(maxWidth: .infinity)
+            )
           }
         case .saving, .saved:
           Button {
@@ -293,18 +292,13 @@ struct LessonCompletionView: View {
               close()
             }
           } label: {
-            Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
-              maxWidth: .infinity)
+            Text("Continue", tableName: "Player", comment: "Leaves the finished lesson")
           }
           .disabled(completion.status == .saving)
         }
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
       .keyboardShortcut(.defaultAction)
-      .frame(maxWidth: 680)
-      .frame(maxWidth: .infinity)
-      .scenePadding()
     }
   }
 
@@ -722,21 +716,15 @@ struct LessonWaitingView: View {
         }
       }
     }
-    .safeAreaBar(edge: .bottom) {
+    .bottomBar {
       if holding == nil, writing == .notStarted {
         Button(action: write) {
           Text(
             "Start this lesson", tableName: "Player",
-            comment: "Starts a lesson that isn't written yet: it's written, then opens"
-          )
-          .frame(maxWidth: .infinity)
+            comment: "Starts a lesson that isn't written yet: it's written, then opens")
         }
         .buttonStyle(.mainAction)
-        .controlSize(.large)
         .keyboardShortcut(.defaultAction)
-        .frame(maxWidth: 680)
-        .frame(maxWidth: .infinity)
-        .scenePadding()
       }
     }
     .announcesStatus(notWrittenLine)

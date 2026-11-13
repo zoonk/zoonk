@@ -176,11 +176,6 @@ struct ProfileEditorView: View {
       }
       .disabled(session.isWorking)
 
-      if isRequiredSetup {
-        StepButtons(canContinue: isValid, onContinue: save)
-          .environment(\.isSavingAnswer, session.isWorking)
-      }
-
       Group {
         if let deleteAccount {
           Section {
@@ -225,6 +220,12 @@ struct ProfileEditorView: View {
         }
       }
       .disabled(session.isWorking)
+    }
+    .bottomBar {
+      if isRequiredSetup {
+        StepButtons(canContinue: isValid, onContinue: save)
+          .environment(\.isSavingAnswer, session.isWorking)
+      }
     }
     .navigationTitle(
       isRequiredSetup

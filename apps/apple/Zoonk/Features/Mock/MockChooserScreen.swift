@@ -138,7 +138,7 @@ private struct MockChooser: View {
     Section {
       PageHeader(
         Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
-        eyebrow: Text(view.examName), supporting: line
+        supporting: line
       )
       .announcesAlert(failure)
 

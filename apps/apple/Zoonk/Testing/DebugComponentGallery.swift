@@ -36,7 +36,7 @@
       ScrollViewReader { proxy in
         ZoonkList {
           PageHeader(
-            Text(verbatim: "Design system"), eyebrow: Text(verbatim: "Tue, Nov 3 · Debug"),
+            Text(verbatim: "Design system"), chip: Chip(Text(verbatim: "Tue, Nov 3 · Debug")),
             supporting: Text(verbatim: "Every role and shared piece, as main's /design.")
           ) {
             Text(verbatim: "43 min")
