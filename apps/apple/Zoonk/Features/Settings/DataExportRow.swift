@@ -8,7 +8,7 @@ struct DataExportRow: View {
   @State private var failed = false
 
   let title: Text
-  let description: Text
+  var description: Text?
   let filename: String
   let prepare: () async -> Data?
 

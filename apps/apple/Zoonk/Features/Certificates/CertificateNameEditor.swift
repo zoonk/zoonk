@@ -63,7 +63,7 @@ struct CertificateNameEditor: View {
           )
           .foregroundStyle(.destructiveText)
         } else {
-          hint
+          NameHint()
             .foregroundStyle(.mutedForeground)
         }
       }
@@ -92,16 +92,6 @@ struct CertificateNameEditor: View {
       : Text(
         "Name on your certificates", tableName: "Certificates",
         comment: "Label of the field that changes the name on the learner's certificates")
-  }
-
-  private var hint: Text {
-    isFirst
-      ? Text(
-        "Your certificates and your buddy use this name. You can change it anytime.",
-        tableName: "Certificates", comment: "Under the field asking for the learner's name")
-      : Text(
-        "Your certificates and your buddy use this name.", tableName: "Certificates",
-        comment: "Under the field that changes the learner's name")
   }
 
   private func save() {

@@ -3,7 +3,6 @@ import SwiftUI
 /// Light, dark and reduced motion follow the device, so there's no theme picker.
 struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
-  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SettingsStore.self) private var settings
   @State private var isEditingBuddy = false
   @State private var isPickingHome = false
@@ -12,10 +11,7 @@ struct PreferencesView: View {
     ZoonkList {
       Section {
         PageHeader(
-          Text("Preferences", tableName: "Account", comment: "Title of the Preferences page"),
-          supporting: Text(
-            "Your buddy, lessons and language, the way you like them.", tableName: "Settings",
-            comment: "Under the Preferences page's title: what the page changes"))
+          Text("Preferences", tableName: "Account", comment: "Title of the Preferences page"))
       }
 
       if let preferences = settings.preferences.value {
@@ -36,10 +32,6 @@ struct PreferencesView: View {
             .controlSize(.small)
           } title: {
             Text(preferences.buddy.displayName)
-            Text(
-              "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name)\u{00A0}· \(preferences.buddy.glasses.worn)",
-              tableName: "Settings",
-              comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
           } icon: {
             BuddyFace(kind: preferences.buddy.kind, glasses: preferences.buddy.glasses)
               .typeStyle(.section.weight(.regular))
@@ -63,21 +55,6 @@ struct PreferencesView: View {
             Text("Lessons", tableName: "Settings", comment: "Preferences section about lessons"))
         }
 
-        Section {
-          SettingToggle(
-            isOn: usageDataBinding,
-            title: Text(
-              "Share usage data", tableName: "Settings",
-              comment: "Switch that lets Zoonk record how the learner uses it, for analytics"),
-            description: Text(
-              "Shows us how you use Zoonk, so we can improve it", tableName: "Settings",
-              comment: "What sharing usage data does"))
-        } header: {
-          SectionTitle(
-            Text(
-              "Your data", tableName: "Settings",
-              comment: "Preferences section about the learner's data"))
-        }
       }
 
       Section {
@@ -123,19 +100,11 @@ struct PreferencesView: View {
             "Language and region", tableName: "Settings",
             comment: "Preferences section about the app's language and where the learner lives"))
       } footer: {
-        SectionFooter {
-          VStack(alignment: .leading, spacing: 8) {
+        if settings.preferences.value != nil {
+          SectionFooter {
             Text(
-              "Zoonk follows your device's language. Change it for Zoonk alone in Settings.",
-              tableName: "Settings",
-              comment: "Explains where the app's language is changed on iPhone and iPad")
-
-            if settings.preferences.value != nil {
-              Text(
-                "For new goals and your examples. It doesn't change the plans you already have.",
-                tableName: "Settings",
-                comment: "What the country the learner lives in changes")
-            }
+              "So examples and exams match your country.", tableName: "Settings",
+              comment: "Under the country the learner lives in: what it changes")
           }
         }
       }
@@ -166,8 +135,7 @@ struct PreferencesView: View {
             comment: "Row with the country the learner lives in, which they tell us"),
           language: OnboardingAPI.language,
           suggested: preferences.suggestedCountries,
-          selected: preferences.homeCountry?.code,
-          offersNotSet: true
+          selected: preferences.homeCountry?.code
         ) { choice in
           // Nothing rebuilds, so it closes at once; a failed save shows on the page.
           Task {
@@ -208,19 +176,6 @@ struct PreferencesView: View {
         }
       })
   }
-
-  private var usageDataBinding: Binding<Bool> {
-    Binding(
-      get: { learner.summary.value?.analytics.usageDataSharing == true },
-      set: { shares in
-        learner.showUsageDataSharing(shares)
-
-        Task {
-          await settings.updatePreferences(.shareUsageData(shares))
-        }
-      })
-  }
-
 }
 
 struct SettingsSaveError: View {

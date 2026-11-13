@@ -10,6 +10,7 @@ private enum AccountDestination: Hashable {
   case memory
   case preferences
   case plus(AccountSubscription)
+  case privacy
   case profile
   case reminders
   case subscription(UUID)
@@ -202,6 +203,8 @@ struct AccountSheet: View {
       }
     case .preferences:
       PreferencesView()
+    case .privacy:
+      PrivacyView(deleteAccount: deleteAccountAction)
     case .reminders:
       RemindersView {
         path.append(.createAccount)
@@ -211,10 +214,8 @@ struct AccountSheet: View {
       if isGuest {
         LoginView()
       } else if let account = session.account {
-        ProfileEditorView(account: account, isRequiredSetup: false) {
-          path.append(.deleteAccount(makeDeletionDestination(account)))
-        }
-        .id(account.user.id)
+        ProfileEditorView(account: account, isRequiredSetup: false)
+          .id(account.user.id)
       }
     case .plus(let subscription):
       PlusStatusView(subscription: subscription)
@@ -231,6 +232,15 @@ struct AccountSheet: View {
     case .signedIn(let account): !isGuest && !account.needsProfileSetup
     case .signedOut: false
     }
+  }
+
+  /// Nil for a guest, who has no account to delete.
+  private var deleteAccountAction: (() -> Void)? {
+    guard !isGuest, let account = session.account else {
+      return nil
+    }
+
+    return { path.append(.deleteAccount(makeDeletionDestination(account))) }
   }
 
   private var closeButton: some View {
@@ -326,7 +336,7 @@ struct AccountSheet: View {
     case .signedOut, .unavailable:
       switch path.last {
       case .aboutYou, .aboutYouQuestion, .certificate, .certificates, .createAccount, .memory,
-        .plus, .preferences, .profile, .reminders, .subscription:
+        .plus, .preferences, .privacy, .profile, .reminders, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -340,10 +350,8 @@ struct AccountSheet: View {
 
 /// A guest gets "Create an account" instead of logging out, which would lose their plan.
 private struct SettingsHubView: View {
-  @Environment(CertificatesStore.self) private var certificates
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
-  @Environment(SettingsStore.self) private var settings
   @Environment(StudyRemindersStore.self) private var reminders
   @ScaledMetric(relativeTo: .body) private var avatarSize = 36.0
 
@@ -376,43 +384,14 @@ private struct SettingsHubView: View {
           ListRow(
             Text(
               "Certificates", tableName: "Account",
-              comment: "Settings row for the learner's certificates")
-          ) {
-            EmptyView()
-          } trailing: {
-            if let count = certificates.list.value?.count {
-              Text(count, format: .number)
-            }
-          }
+              comment: "Settings row for the learner's certificates"))
         }
       }
 
       Section {
         AccountSectionLink(destination: .preferences, sectionOpen: sectionOpen) {
           ListRow(
-            Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
-          ) {
-            EmptyView()
-          } trailing: {
-            // Words, not data: main's summary is in the sans face.
-            Group {
-              if let buddy = settings.preferences.value?.buddy {
-                // Short of room, the buddy's name gives way to the language.
-                HStack(spacing: 0) {
-                  Text(verbatim: "\(buddy.displayName)\u{00A0}· ")
-                    .lineLimit(1)
-                  Text(appLanguageName)
-                    .layoutPriority(1)
-                }
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(
-                  Text(verbatim: "\(buddy.displayName)\u{00A0}· \(appLanguageName)"))
-              } else {
-                Text(appLanguageName)
-              }
-            }
-            .typeStyle(.meta)
-          }
+            Text("Preferences", tableName: "Account", comment: "Settings row for Preferences"))
         }
 
         AccountSectionLink(destination: .reminders, sectionOpen: sectionOpen) {
@@ -443,14 +422,12 @@ private struct SettingsHubView: View {
 
         AccountSectionLink(destination: .memory, sectionOpen: sectionOpen) {
           ListRow(
-            Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers")
-          ) {
-            EmptyView()
-          } trailing: {
-            if let count = settings.memory.value?.facts.count {
-              Text(count, format: .number)
-            }
-          }
+            Text("Memory", tableName: "Account", comment: "Settings row for what Zoonk remembers"))
+        }
+
+        AccountSectionLink(destination: .privacy, sectionOpen: sectionOpen) {
+          ListRow(
+            Text("Privacy", tableName: "Settings", comment: "Settings row for the Privacy page"))
         }
       }
 
@@ -503,9 +480,7 @@ private struct SettingsHubView: View {
         }
       }
     }
-    .loads(
-      settings.preferences, settings.memory, reminders.reminder, certificates.list,
-      refreshable: false)
+    .loads(reminders.reminder, refreshable: false)
   }
 
   private var isGuest: Bool {
@@ -552,6 +527,7 @@ private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeleti
     subscription: account.account.subscription)
 }
 
+/// A subscriber's row shows the plain value "Plus"; a free learner's shows nothing.
 private struct AccountSubscriptionRow: View {
   let access: AccountAccess
   let appAccountToken: UUID?
@@ -559,18 +535,17 @@ private struct AccountSubscriptionRow: View {
 
   var body: some View {
     AccountSectionLink(destination: destination, sectionOpen: sectionOpen) {
-      ListRow(subscriptionLabel) {
+      ListRow(
+        Text("Subscription", tableName: "Account", comment: "Account option for subscription")
+      ) {
         EmptyView()
       } trailing: {
         if access.subscription != nil {
-          PlusMark(
-            accessibilityLabel: Text(
-              "Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name"))
+          Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
+            .typeStyle(.meta)
         }
       }
     }
-    .accessibilityLabel(subscriptionLabel)
-    .accessibilityValue(status)
   }
 
   private var destination: AccountDestination? {
@@ -579,53 +554,6 @@ private struct AccountSubscriptionRow: View {
     } else {
       appAccountToken.map(AccountDestination.subscription)
     }
-  }
-
-  private var status: Text {
-    guard let subscription = access.subscription else {
-      return freeStatus
-    }
-
-    return switch StoreSubscriptionProvider(rawValue: subscription.provider) {
-    case .apple: appStoreStatus
-    case .google: googlePlayStatus
-    case nil: activeStatus
-    }
-  }
-
-  private var subscriptionLabel: Text {
-    Text(
-      "Subscription",
-      tableName: "Account",
-      comment: "Account option for subscription")
-  }
-
-  private var freeStatus: Text {
-    Text(
-      "Free",
-      tableName: "Account",
-      comment: "Status shown when the account has no active subscription")
-  }
-
-  private var appStoreStatus: Text {
-    Text(
-      "App Store",
-      tableName: "Account",
-      comment: "Status shown when an active subscription is managed by the App Store")
-  }
-
-  private var googlePlayStatus: Text {
-    Text(
-      "Google Play",
-      tableName: "Account",
-      comment: "Status shown when an active subscription is managed by Google Play")
-  }
-
-  private var activeStatus: Text {
-    Text(
-      "Active",
-      tableName: "Account",
-      comment: "Status for an active subscription")
   }
 }
 
