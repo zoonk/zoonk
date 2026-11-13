@@ -3,7 +3,7 @@
 import {
   CHART_CATEGORY_PADDING,
   CHART_TICK_FONT_SIZE,
-  ChartValueTick,
+  CHART_VALUE_TICK,
   getEvenTicks,
 } from "@/components/chart-axis";
 import { formatUsd } from "@/lib/ai-format";
@@ -59,7 +59,8 @@ export function AiDailySpendChart({ points }: { points: DailySpendPoint[] }) {
             allowDecimals={false}
             axisLine={false}
             domain={[0, ticks.at(-1) ?? 1]}
-            tick={<ChartValueTick format={formatDollars} />}
+            tick={CHART_VALUE_TICK}
+            tickFormatter={formatDollars}
             tickLine={false}
             ticks={ticks}
             width="auto"

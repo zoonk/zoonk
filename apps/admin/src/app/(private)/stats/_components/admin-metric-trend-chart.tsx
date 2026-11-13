@@ -3,7 +3,7 @@
 import {
   CHART_CATEGORY_PADDING,
   CHART_TICK_FONT_SIZE,
-  ChartValueTick,
+  CHART_VALUE_TICK,
   getEvenTicks,
 } from "@/components/chart-axis";
 import { formatDuration } from "@/lib/format-duration";
@@ -212,10 +212,9 @@ export function AdminMetricTrendChart({
                 allowDecimals={valueFormat !== "number"}
                 axisLine={false}
                 domain={ticks ? [0, ticks.at(-1) ?? 1] : undefined}
-                tick={
-                  <ChartValueTick
-                    format={(value) => formatMetricTrendAxisValue({ format: valueFormat, value })}
-                  />
+                tick={CHART_VALUE_TICK}
+                tickFormatter={(value: number) =>
+                  formatMetricTrendAxisValue({ format: valueFormat, value })
                 }
                 tickLine={false}
                 ticks={ticks}

@@ -43,7 +43,7 @@ export function MissingAudioUploadForm({
       <AdminSmallInput
         accept="audio/mpeg,audio/mp4,audio/m4a,audio/wav,audio/x-wav,audio/ogg,audio/webm"
         aria-label={`Audio file for ${text}`}
-        className="px-2 py-0 text-xs file:h-7 file:text-xs md:text-xs"
+        className="px-2 py-2 text-xs file:h-7 file:text-xs md:text-xs"
         frameClassName="max-w-56"
         key={state.submissionId}
         name="audio"

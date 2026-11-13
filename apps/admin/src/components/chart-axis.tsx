@@ -24,38 +24,14 @@ export function getEvenTicks(maximumValue: number): number[] {
 export const CHART_TICK_FONT_SIZE = 11.5;
 
 /**
- * A value axis's label, ending on one edge like a column of numbers. Its axis takes `width="auto"`,
- * so the widest label starts on the chart's left edge, in line with the text above and below it.
+ * A value axis's labels: mono figures that end on one edge, like a column of numbers. Its axis takes
+ * `width="auto"`, so Recharts measures them and the widest starts on the chart's left edge.
  */
-export function ChartValueTick({
-  format,
-  payload,
-  x,
-  y,
-}: {
-  format: (value: number) => string;
-  payload?: { value: number };
-  x?: number;
-  y?: number;
-}) {
-  if (!payload || x === undefined || y === undefined) {
-    return null;
-  }
-
-  return (
-    <text
-      dy="0.32em"
-      fill="var(--muted-foreground)"
-      fontFamily="var(--font-mono)"
-      fontSize={CHART_TICK_FONT_SIZE}
-      textAnchor="end"
-      x={x}
-      y={y}
-    >
-      {format(payload.value)}
-    </text>
-  );
-}
+export const CHART_VALUE_TICK = {
+  fill: "var(--muted-foreground)",
+  fontFamily: "var(--font-mono)",
+  fontSize: CHART_TICK_FONT_SIZE,
+};
 
 /** The plot reaches both edges of the chart; this keeps the first and last bars off them. */
 export const CHART_CATEGORY_PADDING = { left: 8, right: 8 };
