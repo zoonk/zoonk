@@ -23,8 +23,11 @@ struct RemindersView: View {
           Text(
             "Reminders", tableName: "Reminders", comment: "Title of the reminders settings page"),
           supporting: Text(
-            "One reminder on your study days, when you still have learning left.",
-            tableName: "Reminders", comment: "Under the reminders page's title: what reminders do"))
+            "One reminder on your \(Self.studyDays), if you're not done for the day.",
+            tableName: "Reminders",
+            comment:
+              "Under the reminders page's title: what reminders do; the argument is the link “study days”"
+          ))
       }
 
       if let reminder = reminders.reminder.value {
@@ -32,7 +35,7 @@ struct RemindersView: View {
           DatePicker(selection: timeBinding(reminder), displayedComponents: .hourAndMinute) {
             ListRow(
               Text("Time", tableName: "Reminders", comment: "Row for the time reminders go out"),
-              description: Text(ReminderTime.zoneName(reminder.timeZone)))
+              description: ReminderTime.zoneName(reminder.timeZone).map { Text($0) })
           }
           .environment(\.timeZone, .gmt)
         }
@@ -40,24 +43,6 @@ struct RemindersView: View {
         Section {
           emailRow(reminder)
           pushRows(reminder)
-        } footer: {
-          SectionFooter {
-            VStack(alignment: .leading, spacing: 4) {
-              Text(
-                "On your study days, from your plans.", tableName: "Reminders",
-                comment: "Under the reminder switches: which days reminders go out")
-
-              Button {
-                router.sheet = nil
-                router.showRoot(of: .plan)
-              } label: {
-                Text("See your plan", tableName: "Reminders", comment: "Opens the Plan")
-                  .typeWeight(.semibold)
-                  .underline()
-              }
-              .buttonStyle(.borderless)
-            }
-          }
         }
 
         if reminder.quiet {
@@ -94,6 +79,18 @@ struct RemindersView: View {
       }
     }
     .loads(reminders.reminder)
+    .environment(
+      \.openURL,
+      OpenURLAction { url in
+        guard url == Self.planLink else {
+          return .systemAction
+        }
+
+        router.sheet = nil
+        router.showRoot(of: .plan)
+        return .handled
+      }
+    )
     .task(id: scenePhase) {
       if scenePhase == .active {
         notificationsOff = await notifications.isDenied()
@@ -182,6 +179,17 @@ struct RemindersView: View {
     case .failed:
       pushFailed = true
     }
+  }
+
+  private static let planLink = URL(string: "zoonk-reminders:plan")!
+
+  /// Opens the Plan, where the study days are.
+  private static var studyDays: AttributedString {
+    var link = AttributedString(
+      localized: "study days", table: "Reminders",
+      comment: "Link to the Plan inside “One reminder on your study days…”")
+    link.link = planLink
+    return link
   }
 
   private func timeBinding(_ reminder: StudyReminder) -> Binding<Date> {
