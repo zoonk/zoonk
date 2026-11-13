@@ -28,7 +28,7 @@ function DetailRow({
   mono?: boolean;
 }) {
   return (
-    <div className="border-border text-compact flex items-baseline justify-between gap-4 border-t py-2.5">
+    <div className="border-border text-compact flex min-h-11 items-baseline justify-between gap-4 border-t py-3">
       <dt className="text-muted-foreground shrink-0">{label}</dt>
       <dd
         className={cn(

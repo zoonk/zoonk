@@ -32,15 +32,16 @@ function renderHtml({
   words: ReminderWords["email"];
 }) {
   const button =
-    "display:inline-block;padding:10px 18px;border-radius:10px;background:#18181b;color:#fafafa;text-decoration:none;font-weight:600";
+    "display:inline-block;padding:10px 18px;line-height:24px;border-radius:10px;background:#18181b;color:#fafafa;text-decoration:none;font-weight:600";
 
-  // Each link is its own block with room around it, so a thumb on a phone hits the one it means.
-  const footerLink = "display:inline-block;padding:6px 0;color:#71717a";
+  // Each line is its own block with room around it, so a thumb on a phone hits the link it means
+  // and the three lines are evenly spaced.
+  const footerLine = "display:inline-block;padding:6px 0;color:#71717a";
 
   const footer = [
-    escapeHtml(words.why),
-    link(links.settings, words.settings, footerLink),
-    link(links.unsubscribe, words.unsubscribe, footerLink),
+    `<span style="${footerLine}">${escapeHtml(words.why)}</span>`,
+    link(links.settings, words.settings, footerLine),
+    link(links.unsubscribe, words.unsubscribe, footerLine),
   ].join("<br>");
 
   return `<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#18181b;max-width:560px"><h1 style="font-size:20px;font-weight:600;margin:0 0 8px">${escapeHtml(text.title)}</h1><p style="margin:0 0 20px">${escapeHtml(text.body)}</p><p style="margin:0 0 28px">${link(links.today, words.open, button)}</p><p style="margin:0;font-size:12px;color:#71717a">${footer}</p></div>`;

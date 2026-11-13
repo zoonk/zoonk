@@ -28,7 +28,7 @@ export function LockedCertificateSheet({
   return (
     <span
       className={cn(
-        "bg-muted text-muted-foreground @container flex aspect-297/210 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-md p-[6%] text-center shadow-[0_0_0_1px_var(--color-border)]",
+        "bg-muted text-muted-foreground @container flex aspect-297/210 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-md p-[6%] text-center shadow-[inset_0_0_0_1px_var(--color-border)]",
         className,
       )}
       data-slot="locked-certificate"

@@ -85,7 +85,7 @@ export function DeleteAccountRow({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("Delete your account?")}</AlertDialogTitle>
-            <AlertDialogDescription className="flex flex-col gap-2" render={<div />}>
+            <AlertDialogDescription className="flex flex-col gap-2 text-pretty" render={<div />}>
               <p>
                 {t(
                   "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone.",

@@ -50,7 +50,7 @@ export async function AuthGate({
         </EmptyHeader>
         <EmptyContent>
           <PendingLink
-            className={buttonVariants()}
+            className={buttonVariants({ size: "lg" })}
             href={loginHref}
             icon={<UserPlusIcon aria-hidden="true" />}
           >
@@ -75,14 +75,14 @@ export async function AuthGate({
       <EmptyContent>
         <div className="flex flex-wrap gap-2">
           <PendingLink
-            className={buttonVariants()}
+            className={buttonVariants({ size: "lg" })}
             href={loginHref}
             icon={<LogInIcon aria-hidden="true" />}
           >
             {t("Log in")}
           </PendingLink>
           {!ended && (
-            <Link className={buttonVariants({ variant: "outline" })} href="/start">
+            <Link className={buttonVariants({ size: "lg", variant: "outline" })} href="/start">
               {t("Start free")}
             </Link>
           )}

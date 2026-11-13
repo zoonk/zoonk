@@ -50,15 +50,11 @@ function UsernameHint({ status, username }: { status: UsernameStatusType; userna
     );
   }
 
-  if (status === "invalid") {
-    return (
-      <span className="text-destructive-text">
-        {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
-      </span>
-    );
-  }
-
-  return null;
+  return (
+    <span className={status === "invalid" ? "text-destructive-text" : undefined}>
+      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
+    </span>
+  );
 }
 
 function SaveButton({ disabled }: { disabled: boolean }) {
@@ -153,12 +149,7 @@ export function ProfileForm({
         </SettingRow>
 
         <SettingRow
-          description={
-            // The hint's line is always there, so the field doesn't move when a hint shows.
-            <span className="block min-h-lh">
-              {status !== "idle" && <UsernameHint status={status} username={username} />}
-            </span>
-          }
+          description={<UsernameHint status={status} username={username} />}
           descriptionId={usernameHintId}
           label={<label htmlFor="username">{t("Username")}</label>}
           wide
@@ -168,7 +159,7 @@ export function ProfileForm({
               <InputGroupText>@</InputGroupText>
             </InputGroupAddon>
             <InputGroupInput
-              aria-describedby={status === "idle" ? undefined : usernameHintId}
+              aria-describedby={usernameHintId}
               aria-invalid={status === "invalid" || status === "taken"}
               autoCapitalize="none"
               autoComplete="username"

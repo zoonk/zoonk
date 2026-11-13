@@ -47,7 +47,7 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
 
   return (
     <AlertDialog onOpenChange={setOpen} open={open}>
-      <AlertDialogTrigger className={buttonVariants({ size: "sm", variant: "outline" })}>
+      <AlertDialogTrigger className={buttonVariants({ size: "lg", variant: "outline" })}>
         {t("Cancel Plus")}
       </AlertDialogTrigger>
       <AlertDialogContent>

@@ -42,7 +42,7 @@ export async function ProgressEmptyState({
           <EmptyDescription>{t("They show up after your first lesson.")}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Link className={buttonVariants({ size: "sm" })} href={getMenu("today").url}>
+          <Link className={buttonVariants({ size: "lg" })} href={getMenu("today").url}>
             {t("Go to Today")}
           </Link>
         </EmptyContent>

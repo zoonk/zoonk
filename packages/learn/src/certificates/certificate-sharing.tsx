@@ -95,8 +95,8 @@ export function AddToLinkedInButton({ className }: { className?: string }) {
 
   return (
     <Button className={className} onClick={openLinkedIn} size="lg" variant="outline">
-      <ArrowUpRightIcon aria-hidden="true" data-icon="inline-start" />
       {t("Add to LinkedIn")}
+      <ArrowUpRightIcon aria-hidden="true" data-icon="inline-end" />
     </Button>
   );
 }

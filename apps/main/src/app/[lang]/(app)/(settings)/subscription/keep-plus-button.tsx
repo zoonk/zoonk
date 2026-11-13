@@ -29,15 +29,17 @@ export function KeepPlusButton() {
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-muted-foreground text-sm">{t("Keep Plus, and it renews as before.")}</p>
+    <div className="flex flex-col gap-4">
+      <p className="text-muted-foreground text-sm text-pretty">
+        {t("Keep Plus, and it renews as before.")}
+      </p>
 
       <form action={() => keep()} className="contents">
         <Button
           busy={pending}
           className="w-max"
           icon={<Undo2Icon aria-hidden="true" />}
-          size="sm"
+          size="lg"
           type="submit"
           variant="outline"
         >

@@ -244,7 +244,7 @@ export function CertificateShareDialog({
         overNested
       >
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">{t("Share your certificate")}</DialogTitle>
+          <DialogTitle>{t("Share your certificate")}</DialogTitle>
           <DialogDescription>
             {t("Your post shows this picture and links to your certificate's page.")}
           </DialogDescription>
@@ -253,7 +253,7 @@ export function CertificateShareDialog({
         {/* oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; this is Main's own rendered PNG. */}
         <img
           alt=""
-          className="ring-border aspect-1200/630 h-auto w-full rounded-lg bg-white ring-1"
+          className="outline-border aspect-1200/630 h-auto w-full rounded-lg bg-white outline-1 -outline-offset-1"
           height={630}
           src={links.imageUrls.link}
           width={1200}
@@ -261,7 +261,7 @@ export function CertificateShareDialog({
 
         <div className="flex flex-col gap-1.5">
           <span className="text-muted-foreground text-xs">{t("Suggested text")}</span>
-          <div className="border-input flex items-start gap-3 rounded-lg border px-3.5 py-3">
+          <div className="border-input flex items-start gap-3 rounded-lg border p-3">
             <p className="min-w-0 flex-1 text-sm leading-normal text-pretty">{text}</p>
             <CopyButton label={t("Copy the suggested text")} text={text} />
           </div>

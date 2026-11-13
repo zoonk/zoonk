@@ -4,6 +4,7 @@ import {
   type ProfileQuestionView,
   type ProfileQuestionsView,
 } from "@zoonk/core/profile/questions/contract";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -187,7 +188,10 @@ function MemoryOffNotice() {
       <NoticeCardContent>
         <NoticeCardDescription>{t("Your day and For fun need Memory.")}</NoticeCardDescription>
         <NoticeCardActions>
-          <LearnLink className="text-sm font-medium underline" href="/settings/memory">
+          <LearnLink
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+            href="/settings/memory"
+          >
             {t("Turn on Memory")}
           </LearnLink>
         </NoticeCardActions>

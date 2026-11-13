@@ -29,12 +29,12 @@ export async function ManagedSubscription({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm text-pretty">{description}</p>
+      <p className="text-muted-foreground text-sm text-balance">{description}</p>
 
       <div className="flex flex-wrap gap-2">
         {action ? (
           <a
-            className={cn(buttonVariants({ size: "sm" }), "w-max")}
+            className={cn(buttonVariants({ size: "lg" }), "w-max")}
             href={action.href}
             rel="noopener noreferrer"
             target="_blank"
@@ -43,7 +43,7 @@ export async function ManagedSubscription({
           </a>
         ) : (
           <Link
-            className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
+            className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-max")}
             href="/support"
           >
             {t("Write to us")}

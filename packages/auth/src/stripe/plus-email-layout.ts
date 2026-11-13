@@ -13,6 +13,16 @@ export type BillingInterval = "month" | "year";
 const SELLER =
   "Zoonk Tecnologia e Educação Ltda · CNPJ 42.262.784/0001-76 · Setor SGAN 601, Módulo H, Sala 55, SS1, Parte 14, Edif Ion, Asa Norte, Brasília (DF), 70830-018, Brazil · hello@zoonk.com";
 
+/** Keeps the tax id and the building's name whole when a phone wraps the line. */
+function sellerHtml(): string {
+  return escapeHtml(SELLER)
+    .replace(
+      "CNPJ 42.262.784/0001-76",
+      '<span style="white-space:nowrap">CNPJ 42.262.784/0001-76</span>',
+    )
+    .replace("Edif Ion", "Edif&nbsp;Ion");
+}
+
 function fill(template: string, values: Record<string, string>): string {
   return Object.entries(values).reduce(
     (text, [key, value]) => text.replaceAll(`{${key}}`, value),
@@ -49,7 +59,7 @@ export function details(rows: [label: string, value: string][]): string {
 }
 
 export function renderEmail(blocks: string[]): string {
-  return `<div style="${EMAIL_TEXT_STYLE}">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${escapeHtml(SELLER)}</p></div>`;
+  return `<div style="${EMAIL_TEXT_STYLE}">${blocks.join("")}<p style="margin:24px 0 0;font-size:12px;color:#71717a">${sellerHtml()}</p></div>`;
 }
 
 /**

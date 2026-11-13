@@ -24,7 +24,7 @@ function ManageRemindersLink() {
 
   return (
     <Link
-      className={buttonVariants({ variant: "outline" })}
+      className={buttonVariants({ size: "lg", variant: "outline" })}
       href={getMenu("reminders").url}
       prefetch={false}
     >
@@ -86,7 +86,12 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
       </EmptyHeader>
       <EmptyContent>
         <form action={() => turnOff()} className="contents">
-          <Button busy={isPending} icon={<BellOffIcon aria-hidden="true" />} type="submit">
+          <Button
+            busy={isPending}
+            icon={<BellOffIcon aria-hidden="true" />}
+            size="lg"
+            type="submit"
+          >
             {t("Turn off")}
           </Button>
         </form>

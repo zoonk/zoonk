@@ -62,7 +62,12 @@ async function BeltTile({ level }: { level: BeltLevelDetails }) {
   return (
     <StatTile
       className={TILE_CLASS}
-      icon={<BeltIndicator aria-hidden color={level.color} label={belt} size="sm" />}
+      icon={
+        // In the 14px box every other tile's icon has, so each tile's label starts at one edge.
+        <span className="flex size-3.5 items-center justify-center">
+          <BeltIndicator aria-hidden color={level.color} label={belt} size="sm" />
+        </span>
+      }
       label={belt}
       value={<TileLink href={getMenu("level").url} label={belt} value={String(level.level)} />}
     />

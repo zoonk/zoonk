@@ -4,13 +4,13 @@ import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
 import {
   LIST_GROUP_CLASS,
   ListRow,
   ListRowBody,
+  ListRowChevron,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -90,14 +90,13 @@ function CertificateItem({ facts, links }: ListedCertificate) {
         </span>
         <span className="text-muted-foreground text-xs leading-snug">
           {level && `${level} · `}
-          <span className="font-mono tabular-nums">{date.short(facts.completedOn)}</span>
+          <span className="tabular-nums">{date.short(facts.completedOn)}</span>
         </span>
       </span>
 
-      <ChevronRightIcon
-        aria-hidden="true"
-        className="text-muted-foreground/60 size-4 shrink-0 lg:hidden"
-      />
+      <span className="contents lg:hidden">
+        <ListRowChevron />
+      </span>
     </LearnLink>
   );
 }
@@ -185,7 +184,7 @@ function EmptyCertificates({
     <div className="flex max-w-104 flex-col gap-10">
       <div className="flex flex-col items-start">
         <GhostCertificate />
-        <h2 className="mt-6 text-base font-semibold tracking-[-0.01em]">
+        <h2 className="mt-6 text-lg font-semibold tracking-[-0.01em]">
           {t("No certificates yet")}
         </h2>
         <LearnLink
