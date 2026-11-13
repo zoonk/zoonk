@@ -9,6 +9,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
@@ -101,14 +102,14 @@ export function ContinueBar({ onContinue }: { onContinue: () => void }) {
     <TaskActionBar>
       <TaskActions>
         <Button
-          aria-keyshortcuts="Enter"
+          aria-keyshortcuts={shortcutKeys("main")}
           autoFocus
           className={TASK_MAIN_ACTION_CLASS}
           onClick={onContinue}
           size="xl"
         >
           {t("Continue")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          <ShortcutKbd shortcut="main" tone="inverse" />
         </Button>
       </TaskActions>
     </TaskActionBar>

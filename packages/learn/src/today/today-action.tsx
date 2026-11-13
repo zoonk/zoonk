@@ -3,6 +3,7 @@
 import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -118,7 +119,7 @@ function ContinueLink({ href }: { href: string }) {
     >
       <BusyContent icon={<PlayIcon aria-hidden="true" />}>
         {started ? t("Continue session") : t("Start session")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </BusyContent>
     </LearnLink>
   );
@@ -139,7 +140,7 @@ function ContinueButton() {
       <form action={() => void run()} className="contents">
         <Button
           aria-describedby={NEXT_TITLE_ID}
-          aria-keyshortcuts="Enter"
+          aria-keyshortcuts={shortcutKeys("main")}
           busy={isPending}
           className={ACTION_CLASS}
           icon={<PlayIcon aria-hidden="true" />}
@@ -147,7 +148,7 @@ function ContinueButton() {
           type="submit"
         >
           {started ? t("Continue session") : t("Start session")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          <ShortcutKbd shortcut="main" tone="inverse" />
         </Button>
       </form>
 
@@ -171,7 +172,7 @@ function SummaryLink() {
     >
       <BusyContent {...FORWARD_ICON}>
         {t("See today's summary")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </BusyContent>
     </LearnLink>
   );
@@ -241,7 +242,7 @@ function KeepLearning() {
     <>
       <form action={() => void run()} className="contents">
         <Button
-          aria-keyshortcuts="Enter"
+          aria-keyshortcuts={shortcutKeys("main")}
           busy={isPending && !rowSent}
           className={ACTION_CLASS}
           disabled={rowSent}
@@ -251,7 +252,7 @@ function KeepLearning() {
           type="submit"
         >
           {t("Keep learning")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          <ShortcutKbd shortcut="main" tone="inverse" />
         </Button>
       </form>
 
@@ -285,7 +286,7 @@ function SeePlanLink() {
     >
       <BusyContent {...FORWARD_ICON}>
         {t("See your plan")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </BusyContent>
     </LearnLink>
   );

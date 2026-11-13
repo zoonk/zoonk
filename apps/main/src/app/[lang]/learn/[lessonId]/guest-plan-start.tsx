@@ -7,6 +7,7 @@ import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
@@ -22,7 +23,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
   return (
     <>
       <Button
-        aria-keyshortcuts="Enter"
+        aria-keyshortcuts={shortcutKeys("main")}
         busy={pending}
         className="w-full"
         onClick={startCourse}
@@ -31,7 +32,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
         {...FORWARD_ICON}
       >
         {t("Build my plan")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </Button>
 
       {pending && (
@@ -59,9 +60,14 @@ export function GuestPlanStart({ goal, start }: { goal: string; start: CourseSta
   }
 
   return (
-    <Link aria-keyshortcuts="Enter" className={PLAN_CLASS} href={getGoalStartHref(goal)} ref={ref}>
+    <Link
+      aria-keyshortcuts={shortcutKeys("main")}
+      className={PLAN_CLASS}
+      href={getGoalStartHref(goal)}
+      ref={ref}
+    >
       {t("Build my plan")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </Link>
   );
 }

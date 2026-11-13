@@ -21,6 +21,7 @@ import {
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -63,13 +64,13 @@ export function SeePlanAction({ reveal }: { reveal: PlanReveal }) {
     <TaskActionBar>
       <TaskActions>
         <LinkComponent
-          aria-keyshortcuts="Enter"
+          aria-keyshortcuts={shortcutKeys("main")}
           className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
           href={routes.seePlan(reveal.goalId)}
           ref={ref}
         >
           <TaskActionLabel>{t("See your plan")}</TaskActionLabel>
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          <ShortcutKbd shortcut="main" tone="inverse" />
         </LinkComponent>
       </TaskActions>
     </TaskActionBar>

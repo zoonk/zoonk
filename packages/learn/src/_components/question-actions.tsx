@@ -2,6 +2,7 @@
 
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ignoreHeldEnter, useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronLeftIcon, EyeIcon, HelpCircleIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -78,7 +79,7 @@ export function QuestionBack({
 
   return (
     <Button
-      aria-keyshortcuts="ArrowLeft"
+      aria-keyshortcuts={shortcutKeys("previous")}
       className={cn(TASK_BACK_ACTION_CLASS, className)}
       data-slot="question-back"
       size="icon"

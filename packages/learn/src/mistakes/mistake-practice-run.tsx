@@ -1,13 +1,11 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { QuestionActions } from "../_components/question-actions";
 import { AnswersSaveError } from "../_components/save-error";
+import { TaskClose } from "../_components/task-close";
 import {
   TaskActionBar,
   TaskAside,
@@ -16,7 +14,6 @@ import {
 } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
-import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { type MomentCeremony } from "../session/moment-ceremony";
@@ -41,42 +38,20 @@ export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-const CLOSE_CLASS = buttonVariants({ edge: "start", size: "icon", variant: "ghost" });
-
 function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   const t = useExtracted();
-  const linkRef = useEscapeClick<HTMLAnchorElement>();
-  const buttonRef = useEscapeClick<HTMLButtonElement>();
   const { phase } = run.state;
 
   if (run.state.answerIds.length === 0 || phase.kind === "ending" || phase.kind === "ended") {
-    return (
-      <LearnLink
-        aria-keyshortcuts="Escape"
-        aria-label={t("Back to the notebook")}
-        className={CLOSE_CLASS}
-        href={backHref}
-        ref={linkRef}
-      >
-        <XIcon aria-hidden="true" />
-      </LearnLink>
-    );
+    return <TaskClose href={backHref} />;
   }
 
   return (
-    <Button
-      aria-keyshortcuts="Escape"
-      aria-label={t("End practice. What you answered counts.")}
-      edge="start"
+    <TaskClose
       disabled={phase.kind === "checking"}
-      focusableWhenDisabled
-      onClick={run.end}
-      ref={buttonRef}
-      size="icon"
-      variant="ghost"
-    >
-      <XIcon aria-hidden="true" />
-    </Button>
+      label={t("Leave. What you answered counts.")}
+      onPress={run.end}
+    />
   );
 }
 

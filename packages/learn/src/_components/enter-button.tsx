@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TASK_MAIN_ACTION_CLASS } from "./task-layout";
 
@@ -17,14 +18,14 @@ export function EnterButton({
 }: Omit<React.ComponentProps<typeof Button>, "size" | "variant"> & { shortcut?: boolean }) {
   return (
     <Button
-      aria-keyshortcuts={shortcut ? "Enter" : undefined}
+      aria-keyshortcuts={shortcut ? shortcutKeys("main") : undefined}
       className={cn(TASK_MAIN_ACTION_CLASS, className)}
       focusableWhenDisabled
       size="xl"
       {...props}
     >
       {children}
-      {shortcut && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
+      {shortcut && <ShortcutKbd shortcut="main" tone="inverse" />}
     </Button>
   );
 }

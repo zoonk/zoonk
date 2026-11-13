@@ -169,6 +169,7 @@
     "./surface": "./src/_components/surface.tsx",
     "./task-foot-height": "./src/_components/task-foot-height.tsx",
     "./task-frame": "./src/shell/task-frame.tsx",
+    "./task-close": "./src/_components/task-close.tsx",
     "./task-header": "./src/_components/task-header.tsx",
     "./task-layout": "./src/_components/task-layout.tsx",
     "./test-out": "./src/questions/test-out-run.tsx",

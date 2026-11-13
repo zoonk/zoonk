@@ -121,7 +121,7 @@ function NotebookHero({
             ref={ref}
           >
             {t("Practice mistakes")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+            <ShortcutKbd shortcut="main" tone="inverse" />
           </LearnLink>
         </DetailActions>
       )}

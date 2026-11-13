@@ -4,6 +4,7 @@ import { useRouter } from "@/i18n/navigation";
 import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
@@ -45,7 +46,7 @@ export function StartPlanForm({
       </p>
       <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
       <Button
-        aria-keyshortcuts="Enter"
+        aria-keyshortcuts={shortcutKeys("main")}
         busy={isPending}
         className="mt-1"
         size="lg"
@@ -53,7 +54,7 @@ export function StartPlanForm({
         {...FORWARD_ICON}
       >
         {t("Start from this plan")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </Button>
       {state && "error" in state && state.error === "refused" && (
         <p className="text-destructive-text text-sm" role="alert">

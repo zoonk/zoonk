@@ -8,6 +8,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { PlayIcon } from "lucide-react";
@@ -108,7 +109,7 @@ function RevealActions({
         {/* A submit, so a press before the page hydrates starts once it does. */}
         <form action={() => onStart()} className="contents">
           <Button
-            aria-keyshortcuts="Enter"
+            aria-keyshortcuts={shortcutKeys("main")}
             busy={pending}
             className="flex-2 font-[560] lg:flex-none"
             icon={<PlayIcon aria-hidden="true" />}
@@ -117,7 +118,7 @@ function RevealActions({
             type="submit"
           >
             {started ? t("Continue") : t("Start")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+            <ShortcutKbd shortcut="main" tone="inverse" />
           </Button>
         </form>
       </div>

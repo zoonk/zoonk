@@ -13,6 +13,7 @@ import {
 } from "@zoonk/ui/components/dialog";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
@@ -156,14 +157,14 @@ function CeremonyBar({
         )}
 
         <Button
-          aria-keyshortcuts="Enter"
+          aria-keyshortcuts={shortcutKeys("main")}
           autoFocus
           className={TASK_MAIN_ACTION_CLASS}
           onClick={onConfirm}
           size="xl"
         >
           {action}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          <ShortcutKbd shortcut="main" tone="inverse" />
         </Button>
       </TaskActions>
     </TaskActionBar>

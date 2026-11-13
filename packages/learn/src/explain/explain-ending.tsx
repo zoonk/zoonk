@@ -4,6 +4,7 @@ import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -46,13 +47,13 @@ function DoneLink({ href, saving }: { href: string; saving: boolean }) {
 
   return (
     <LearnLink
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcutKeys("main")}
       className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
       href={href}
       ref={doneRef}
     >
       {t("Done")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </LearnLink>
   );
 }

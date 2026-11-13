@@ -21,6 +21,7 @@ import { useStudyTimeFact } from "@zoonk/learn/time-format";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
@@ -87,17 +88,17 @@ function CompletionLinks({ pending }: { pending: boolean }) {
         {pending ? (
           <PendingMainAction>
             <NextLabel nextLesson={nextLesson} />
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+            <ShortcutKbd shortcut="main" tone="inverse" />
           </PendingMainAction>
         ) : (
           <LinkComponent
-            aria-keyshortcuts="Enter"
+            aria-keyshortcuts={shortcutKeys("main")}
             className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
             href={nextLessonHref ?? routes.exit}
             ref={primaryRef}
           >
             <NextLabel nextLesson={nextLesson} />
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+            <ShortcutKbd shortcut="main" tone="inverse" />
           </LinkComponent>
         )}
       </TaskActions>

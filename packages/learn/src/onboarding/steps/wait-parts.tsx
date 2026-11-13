@@ -93,7 +93,7 @@ export function WaitLinkAction({ children, href }: { children: ReactNode; href: 
     >
       <PlayIcon aria-hidden="true" data-icon="inline-start" />
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </LearnLink>
   );
 }

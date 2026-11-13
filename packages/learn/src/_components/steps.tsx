@@ -2,7 +2,8 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -35,7 +36,7 @@ export function StepsBackButton({ onClick }: { onClick: () => void }) {
 
   return (
     <Button
-      aria-keyshortcuts="ArrowLeft"
+      aria-keyshortcuts={shortcutKeys("previous")}
       aria-label={t("Back")}
       className={TASK_BACK_ACTION_CLASS}
       onClick={onClick}
@@ -136,7 +137,7 @@ export function Steps({
 
   const back = () => move("back");
 
-  useKeyboardCallback("ArrowLeft", back, { mode: "none", screen: true });
+  useShortcut("previous", back);
 
   useEffect(() => {
     if (focusedIndex.current === current) {
@@ -160,7 +161,6 @@ export function Steps({
   return (
     <TaskFrame
       aside={aside}
-      closeOnEscape
       exitHref={exitHref}
       footer={
         showsStep ? (

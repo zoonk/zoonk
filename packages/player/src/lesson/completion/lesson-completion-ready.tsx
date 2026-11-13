@@ -11,6 +11,7 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 
 /** Saved answers can resume at the end, but finishing may start memory work and needs a new tap. */
@@ -26,14 +27,14 @@ export function LessonCompletionReady({ onFinish }: { onFinish: () => void }) {
       <TaskActionBar>
         <TaskActions>
           <Button
-            aria-keyshortcuts="Enter"
+            aria-keyshortcuts={shortcutKeys("main")}
             className={TASK_MAIN_ACTION_CLASS}
             onClick={onFinish}
             ref={finishRef}
             size="xl"
           >
             <TaskActionLabel>{t("Finish")}</TaskActionLabel>
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+            <ShortcutKbd shortcut="main" tone="inverse" />
           </Button>
         </TaskActions>
       </TaskActionBar>

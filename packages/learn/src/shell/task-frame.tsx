@@ -3,14 +3,13 @@
 import { BusyContent, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { createOnDemand } from "@zoonk/ui/lib/on-demand";
+import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
+import { TaskClose } from "../_components/task-close";
 import {
   TaskHeader,
   TaskHeaderBar,
@@ -32,95 +31,6 @@ import { LearnLink } from "../learn-link";
 import { goBackToApp } from "./app-history";
 import { type TaskExitConfirmation } from "./task-exit-dialog";
 
-const exitDialog = createOnDemand(() => import("./task-exit-dialog"));
-
-function TaskCloseLink({
-  beforeExit,
-  closeOnEscape,
-  confirmExit,
-  href,
-  toApp,
-}: {
-  beforeExit?: () => Promise<unknown> | null;
-  closeOnEscape: boolean;
-  confirmExit?: TaskExitConfirmation | null;
-  href: string | null;
-  toApp: boolean;
-}) {
-  const t = useExtracted();
-  const ref = useEscapeClick<HTMLAnchorElement>({ enabled: closeOnEscape });
-  const [confirming, setConfirming] = useState(false);
-  const leaving = useRef(false);
-  const dialog = exitDialog.useModule({ enabled: Boolean(confirmExit) });
-
-  if (!href) {
-    return <span aria-hidden="true" className="size-9 shrink-0" />;
-  }
-
-  const leave = (link: HTMLAnchorElement | null) => {
-    leaving.current = true;
-    link?.click();
-  };
-
-  const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const isPlainClick =
-      event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-
-    if (!isPlainClick) {
-      return;
-    }
-
-    if (confirmExit && !leaving.current) {
-      event.preventDefault();
-      void exitDialog.load();
-      setConfirming(true);
-      return;
-    }
-
-    const saving = leaving.current ? null : beforeExit?.();
-
-    if (saving) {
-      event.preventDefault();
-      const link = event.currentTarget;
-      void saving.finally(() => leave(link));
-      return;
-    }
-
-    if (toApp && goBackToApp()) {
-      event.preventDefault();
-    }
-  };
-
-  return (
-    <>
-      <LearnLink
-        className={cn(
-          buttonVariants({ edge: "start", size: "icon", variant: "ghost" }),
-          "shrink-0",
-        )}
-        href={href}
-        onClick={onClick}
-        ref={ref}
-      >
-        <XIcon aria-hidden="true" />
-        <span className="sr-only">{t("Leave")}</span>
-      </LearnLink>
-
-      {confirmExit && dialog && (
-        <dialog.TaskExitDialog
-          confirmation={confirmExit}
-          onLeave={() => {
-            setConfirming(false);
-            leave(ref.current);
-          }}
-          onOpenChange={setConfirming}
-          open={confirming}
-        />
-      )}
-    </>
-  );
-}
-
 export type TaskFrameAside = {
   children?: React.ReactNode;
   footer?: React.ReactNode;
@@ -139,7 +49,6 @@ export function TaskFrame({
   aside,
   beforeExit,
   children,
-  closeOnEscape = false,
   confirmExit = null,
   exitHref,
   exitToApp = false,
@@ -155,8 +64,7 @@ export function TaskFrame({
    */
   beforeExit?: () => Promise<unknown> | null;
   children: React.ReactNode;
-  /** Only for a screen with nothing to lose (a result), never mid-task. */
-  closeOnEscape?: boolean;
+  /** Asked first, by the ✕ and by Esc, while leaving would lose something. */
   confirmExit?: TaskExitConfirmation | null;
   /** Null while leaving would lose work, such as a call being saved. */
   exitHref: string | null;
@@ -195,10 +103,9 @@ export function TaskFrame({
       <TaskHeader className="bg-background sticky top-0">
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
-            <TaskCloseLink
+            <TaskClose
               beforeExit={beforeExit}
-              closeOnEscape={closeOnEscape}
-              confirmExit={confirmExit}
+              confirm={confirmExit}
               href={exitHref}
               toApp={exitToApp}
             />
@@ -325,7 +232,7 @@ export function TaskMainLink({
 
   return (
     <LearnLink
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcutKeys("main")}
       className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS, className)}
       href={href}
       onClick={onClick}
@@ -333,7 +240,7 @@ export function TaskMainLink({
     >
       <BusyContent {...(iconProps.icon ? iconProps : FORWARD_ICON)}>
         {children}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </BusyContent>
     </LearnLink>
   );

@@ -7,15 +7,12 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
-import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
+import { SidebarToggle, useSidebarOpen } from "@zoonk/ui/components/sidebar-toggle";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { EllipsisIcon, PanelRightIcon } from "lucide-react";
+import { EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useSyncExternalStore } from "react";
-import { deviceStorage } from "../_utils/device-storage";
 import { useAppLocale } from "../_utils/locale";
 import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
 
@@ -39,7 +36,7 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
-/** The end side offers the aside's toggle on a task that has one. */
+/** The end side offers the sidebar's toggle on a task that has one. */
 export function TaskHeaderSide({
   align,
   children,
@@ -47,9 +44,18 @@ export function TaskHeaderSide({
   align: "end" | "start";
   children?: React.ReactNode;
 }) {
+  const t = useExtracted();
+
   return (
     <div className={TASK_HEADER_SIDE_CLASS[align]}>
-      {align === "end" && <TaskAsideToggle />}
+      {align === "end" && (
+        <SidebarToggle
+          className="hidden lg:group-data-aside/task:inline-flex"
+          collapseLabel={t("Collapse sidebar")}
+          expandLabel={t("Expand sidebar")}
+          side="end"
+        />
+      )}
       {children}
     </div>
   );
@@ -189,69 +195,7 @@ export function TaskHeaderSegments({
   );
 }
 
-/** Where a task's aside can show (`TaskAside`): Tailwind's `lg`. */
-const ASIDE_QUERY = "(min-width: 64rem)";
-
-const asideListeners = new Set<() => void>();
-
-function subscribeToAside(onChange: () => void) {
-  const query = globalThis.matchMedia(ASIDE_QUERY);
-  query.addEventListener("change", onChange);
-  asideListeners.add(onChange);
-
-  return () => {
-    query.removeEventListener("change", onChange);
-    asideListeners.delete(onChange);
-  };
-}
-
-function isAsideCollapsed(): boolean {
-  return document.documentElement.hasAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
-}
-
-/**
- * Follows the `with-aside` variant in `@zoonk/ui`'s `globals.css`. False on the server and while
- * hydrating, so layout stays in CSS; use it only for behavior.
- */
+/** Follows the `with-aside` variant in `@zoonk/ui`'s `globals.css`; use it only for behavior. */
 export function useTaskAsideShown(): boolean {
-  return useSyncExternalStore(
-    subscribeToAside,
-    () => globalThis.matchMedia(ASIDE_QUERY).matches && !isAsideCollapsed(),
-    () => false,
-  );
-}
-
-function toggleAside() {
-  const collapsed = document.documentElement.toggleAttribute(ASIDE_COLLAPSED_ATTRIBUTE);
-  deviceStorage.set(ASIDE_COLLAPSED_KEY, String(collapsed));
-
-  for (const listener of asideListeners) {
-    listener();
-  }
-}
-
-function TaskAsideToggle() {
-  const t = useExtracted();
-  const collapsed = useSyncExternalStore(subscribeToAside, isAsideCollapsed, () => false);
-  const label = collapsed ? t("Expand sidebar") : t("Collapse sidebar");
-
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        aria-label={label}
-        onClick={toggleAside}
-        render={
-          <Button
-            className="hidden shrink-0 lg:group-data-aside/task:inline-flex"
-            data-slot="task-aside-toggle"
-            size="icon"
-            variant="ghost"
-          />
-        }
-      >
-        <PanelRightIcon aria-hidden="true" />
-      </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
-  );
+  return useSidebarOpen("end");
 }

@@ -14,6 +14,7 @@ import {
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -157,7 +158,7 @@ export function ChooserStartButton({
 
   return (
     <Button
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcutKeys("main")}
       busy={busy}
       className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       disabled={isDisabled}
@@ -168,7 +169,7 @@ export function ChooserStartButton({
       size="lg"
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </Button>
   );
 }
@@ -179,13 +180,13 @@ export function ChooserPlusLink({ href }: { href: string }) {
 
   return (
     <LearnLink
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcutKeys("main")}
       className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
       href={href}
       ref={ref}
     >
       {t("See Plus")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </LearnLink>
   );
 }

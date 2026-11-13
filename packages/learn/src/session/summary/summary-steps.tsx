@@ -1,7 +1,7 @@
 "use client";
 
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -44,7 +44,7 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
     setOpen(false);
   };
 
-  useKeyboardCallback("ArrowLeft", () => (shown ? close() : false), { mode: "none", screen: true });
+  useShortcut("previous", () => (shown ? close() : false));
 
   const last = useRef({ open, shown });
 
@@ -147,7 +147,6 @@ export function SummarySteps() {
           label: t("Earned today"),
           title: t("Earned today"),
         }}
-        closeOnEscape
         exitHref={exitHref}
         footer={
           <>

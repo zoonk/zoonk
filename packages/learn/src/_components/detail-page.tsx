@@ -92,7 +92,7 @@ export function DetailContinueLink({
     >
       <BusyContent icon={<PlayIcon aria-hidden="true" />}>
         {started ? t("Continue") : t("Start")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+        <ShortcutKbd shortcut="main" tone="inverse" />
       </BusyContent>
     </LearnLink>
   );

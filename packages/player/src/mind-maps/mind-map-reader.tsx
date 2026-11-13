@@ -10,7 +10,8 @@ import { TaskFrame, TaskMainButton, TaskMainLink } from "@zoonk/learn/task-frame
 import { TaskHeaderTitle } from "@zoonk/learn/task-header";
 import { TASK_BACK_ACTION_CLASS, TaskActions } from "@zoonk/learn/task-layout";
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { CheckIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -20,10 +21,6 @@ import { type DeckSlide, type LessonMindMap, findLessonMap } from "./mind-map-de
 import { type MindMapReaderHrefs, MindMapReaderMenu } from "./mind-map-reader-menu";
 import { ChapterMapSlide, LessonMapSlide, SlideFrame } from "./mind-map-slides";
 import { type ChapterLessons, type LoadLessonMaps, useChapterLessons } from "./use-chapter-lessons";
-
-const SCREEN_KEY = { mode: "none", screen: true } as const;
-
-const SAVE_KEY = "s";
 
 export type MindMapReaderActions = { lessonMaps: LoadLessonMaps; save: SaveMindMap };
 
@@ -68,7 +65,6 @@ function EmptyDeck({ exit }: { exit: string }) {
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={exit}
       exitToApp
       footer={
@@ -156,13 +152,12 @@ function Reader({
 
   useKeptPlace({ chapterId: shown.chapterId, goalId, isLast, lessonId, view });
   useSwipeNavigation({ onBack: previous, onForward: next, ref: body });
-  useKeyboardCallback("ArrowRight", () => next() && undefined, SCREEN_KEY);
-  useKeyboardCallback("ArrowLeft", () => previous() && undefined, SCREEN_KEY);
-  useLetterKey(SAVE_KEY, () => (save ? save.onToggle() : false));
+  useShortcut("next", () => next() && undefined);
+  useShortcut("previous", () => previous() && undefined);
+  useShortcut("save", () => (save ? save.onToggle() : false));
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={hrefs.exit}
       exitToApp
       fit="always"
@@ -170,7 +165,7 @@ function Reader({
         <TaskActions data-slot="mind-map-reader-actions">
           {!isFirst && (
             <Button
-              aria-keyshortcuts="ArrowLeft"
+              aria-keyshortcuts={shortcutKeys("previous")}
               className={TASK_BACK_ACTION_CLASS}
               onClick={previous}
               size="icon"
@@ -196,7 +191,7 @@ function Reader({
         <>
           {save && (
             <MindMapSaveButton
-              aria-keyshortcuts={SAVE_KEY}
+              aria-keyshortcuts={shortcutKeys("save")}
               {...save}
               className="shrink-0"
               labelled={false}

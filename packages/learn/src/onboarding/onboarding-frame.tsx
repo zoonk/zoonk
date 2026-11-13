@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
 import { PageEyebrow } from "../_components/page";
@@ -274,7 +275,7 @@ export function OnboardingPrimaryButton({
 
   return (
     <Button
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcutKeys("main")}
       className={cn("w-full font-[560]", className)}
       focusableWhenDisabled
       size="lg"
@@ -282,7 +283,7 @@ export function OnboardingPrimaryButton({
       ref={ref}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </Button>
   );
 }

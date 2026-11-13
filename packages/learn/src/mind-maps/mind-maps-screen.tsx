@@ -96,7 +96,7 @@ function StudyLink({ goalId, study, view }: { goalId: string; study: string; vie
       ref={ref}
     >
       <StudyLabel />
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </LearnLink>
   );
 }

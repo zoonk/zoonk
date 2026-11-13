@@ -3,6 +3,7 @@
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
 
@@ -172,7 +173,7 @@ export function GoalFieldSubmit({
 }: Omit<React.ComponentProps<typeof Button>, "size" | "type" | "variant">) {
   return (
     <Button
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcutKeys("main")}
       className={cn("shrink-0 px-4", className)}
       focusableWhenDisabled
       size="lg"
@@ -181,7 +182,7 @@ export function GoalFieldSubmit({
       {...props}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      <ShortcutKbd shortcut="main" tone="inverse" />
     </Button>
   );
 }
