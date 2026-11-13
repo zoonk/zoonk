@@ -149,7 +149,7 @@ function RoadmapLegend() {
       )}
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
-          <Trickster className="size-3.5" view="face" />
+          <Trickster className="size-4" view="face" />
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
       )}
