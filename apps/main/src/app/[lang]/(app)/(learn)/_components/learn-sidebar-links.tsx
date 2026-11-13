@@ -52,26 +52,19 @@ export function LearnSidebarFeedback() {
 }
 
 type SidebarMenu =
-  | "certificates"
+  | "activity"
   | "completedLessons"
   | "courses"
+  | "energy"
   | "exam"
+  | "level"
   | "mindMaps"
   | "mistakes"
+  | "mock"
+  | "patterns"
   | "pricing"
-  | "speaking"
-  | "stats";
-
-const ALSO_CURRENT: Partial<Record<SidebarMenu, string[]>> = {
-  exam: ["/mock/new"],
-  stats: [
-    getMenu("activity").url,
-    getMenu("energy").url,
-    getMenu("level").url,
-    getMenu("patterns").url,
-    getMenu("score").url,
-  ],
-};
+  | "score"
+  | "speaking";
 
 function isUnder(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -110,7 +103,7 @@ function SidebarLinkView({ count, current, label, menu }: SidebarLinkProps & { c
 function CurrentSidebarLink(props: SidebarLinkProps) {
   const pathname = usePathname();
   const { url: href } = getMenu(props.menu);
-  const current = [href, ...(ALSO_CURRENT[props.menu] ?? [])].some((url) => isUnder(pathname, url));
+  const current = isUnder(pathname, href);
 
   return <SidebarLinkView {...props} current={current} />;
 }

@@ -2,6 +2,7 @@ import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Sidebar,
+  SidebarBody,
   SidebarFooter,
   SidebarHeader,
   SidebarHeaderRow,
@@ -11,7 +12,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { LogInIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { LearnGoalMenu } from "./learn-goal-menu";
-import { SidebarAccount, StudySection } from "./learn-sidebar-learner";
+import { LearnerSections, SidebarAccount } from "./learn-sidebar-learner";
 import { LearnSidebarFeedback, LearnSidebarSearch } from "./learn-sidebar-links";
 
 async function VisitorAccount() {
@@ -46,9 +47,10 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
         <LearnSidebarSearch />
       </SidebarHeader>
 
-      {tabs}
-
-      <StudySection />
+      <SidebarBody className="gap-4">
+        {tabs}
+        <LearnerSections />
+      </SidebarBody>
 
       <SidebarFooter>
         <LearnSidebarFeedback />

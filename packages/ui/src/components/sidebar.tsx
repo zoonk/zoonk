@@ -68,6 +68,20 @@ export function SidebarHeaderRow({ className, ...props }: React.ComponentProps<"
   );
 }
 
+/**
+ * What sits between the header and the footer. It scrolls by itself when the window is short, so
+ * the footer stays in reach; its padding keeps a row's focus ring inside what scrolls.
+ */
+export function SidebarBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("-m-3 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-3", className)}
+      data-slot="sidebar-body"
+      {...props}
+    />
+  );
+}
+
 export function SidebarSection({
   children,
   className,
@@ -78,7 +92,9 @@ export function SidebarSection({
     <nav className={cn("flex flex-col gap-0.5", className)} data-slot="sidebar-section" {...props}>
       {/* Collapsed, the label keeps its one line of room, so the icons under it stay put. */}
       {label && (
-        <span className="text-label sidebar-collapsed:invisible truncate px-2 pb-1">{label}</span>
+        <span className="text-faint sidebar-collapsed:invisible truncate px-2 pb-1 text-xs leading-4 font-medium">
+          {label}
+        </span>
       )}
       {children}
     </nav>

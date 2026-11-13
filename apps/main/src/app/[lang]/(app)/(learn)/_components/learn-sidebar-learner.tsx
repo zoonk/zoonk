@@ -30,15 +30,29 @@ function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
         label={t("Mistakes notebook")}
         menu="mistakes"
       />
+      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
+      {places?.exam && <LearnSidebarLink label={t("Mock exam")} menu="mock" />}
+      {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
+      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
       {places?.completedLessons && (
         <LearnSidebarLink label={t("Completed lessons")} menu="completedLessons" />
       )}
-      {places?.certificates && <LearnSidebarLink label={t("Certificates")} menu="certificates" />}
-      {places?.exam && <LearnSidebarLink label={t("Exam")} menu="exam" />}
-      {places?.speaking && <LearnSidebarLink label={t("Speaking")} menu="speaking" />}
-      {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
-      <LearnSidebarLink label={t("Statistics")} menu="stats" />
     </>
+  );
+}
+
+/** Every number on these pages covers all of the learner's goals, so the group never changes with the goal. */
+function StatsLinks() {
+  const t = useExtracted();
+
+  return (
+    <SidebarSection aria-label={t("Stats")} label={t("Stats")}>
+      <LearnSidebarLink label={t("Level")} menu="level" />
+      <LearnSidebarLink label={t("Energy")} menu="energy" />
+      <LearnSidebarLink label={t("Patterns")} menu="patterns" />
+      <LearnSidebarLink label={t("Score")} menu="score" />
+      <LearnSidebarLink label={t("Activity")} menu="activity" />
+    </SidebarSection>
   );
 }
 
@@ -46,9 +60,12 @@ function StudySectionView({ places }: { places: LearnerSummaryPlaces | null }) {
   const t = useExtracted();
 
   return (
-    <SidebarSection aria-label={t("Study")} label={t("Study")}>
-      <StudyLinksView places={places} />
-    </SidebarSection>
+    <>
+      <SidebarSection aria-label={t("Study")} label={t("Study")}>
+        <StudyLinksView places={places} />
+      </SidebarSection>
+      <StatsLinks />
+    </>
   );
 }
 
@@ -75,7 +92,7 @@ function FrameStudySection() {
   return <StudySectionView places={learner.summary.places} />;
 }
 
-export function StudySection() {
+export function LearnerSections() {
   return (
     <Suspense fallback={<PendingStudySection />}>
       <FrameStudySection />
