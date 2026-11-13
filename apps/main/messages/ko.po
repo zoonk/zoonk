@@ -2743,11 +2743,6 @@ msgid "Opening your lesson"
 msgstr "레슨을 열고 있어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "뒤로"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "레슨 소개"

@@ -2743,11 +2743,6 @@ msgid "Opening your lesson"
 msgstr "Abrindo sua aula"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Voltar"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Sobre esta aula"
