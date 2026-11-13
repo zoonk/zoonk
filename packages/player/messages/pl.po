@@ -12,26 +12,6 @@ msgid "Before and after"
 msgstr "Przed i po"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "-KqWLm"
-msgid "Build an argument"
-msgstr "Zbuduj argumentację"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "n9MRd4"
-msgid "Build it"
-msgstr "Zbuduj"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "InC3wm"
-msgid "Build the sentence"
-msgstr "Ułóż zdanie"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "0lfSFT"
-msgid "Compare sources"
-msgstr "Porównaj źródła"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "khPfjz"
 msgid "Drag a corner"
 msgstr "Przeciągnij narożnik"
@@ -47,125 +27,14 @@ msgid "Estimate first"
 msgstr "Najpierw oszacuj"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "7JlauX"
-msgid "Explore"
-msgstr "Odkrywaj"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "iSynlE"
-msgid "Explore the map"
-msgstr "Odkrywaj mapę"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "J5ozVw"
-msgid "Fill the square"
-msgstr "Uzupełnij pole"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Xl9ymg"
-msgid "Find the error"
-msgstr "Znajdź błąd"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "XsJOM5"
-msgid "Hands on"
-msgstr "W praktyce"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "UJRCcU"
-msgid "Label it"
-msgstr "Podpisz"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eGo7pb"
-msgid "Link causes"
-msgstr "Powiąż przyczyny"
-
-#: src/activities/_components/activity-badge.tsx
-#: src/lesson/feedback/lesson-spoken-words.tsx
-msgctxt "zhvWvI"
-msgid "Listen"
-msgstr "Posłuchaj"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "SQ_uG1"
-msgid "Match pairs"
-msgstr "Połącz w pary"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "wIskGV"
 msgid "Move a curve"
 msgstr "Przesuń krzywą"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "JZiAEC"
-msgid "Place in time"
-msgstr "Umieść na osi czasu"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "zgfs1R"
-msgid "Place it"
-msgstr "Umieść na miejscu"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Pofn38"
-msgid "Play it"
-msgstr "Zagraj"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "a2AaWv"
 msgid "Predict first"
 msgstr "Najpierw przewidź wynik"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "OghajY"
-msgid "Put in order"
-msgstr "Ułóż w kolejności"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "epbkrE"
-msgid "Query the data"
-msgstr "Wykonaj zapytanie"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eF6aGp"
-msgid "Read and listen"
-msgstr "Czytaj i słuchaj"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "ApZCMI"
-msgid "Read the chart"
-msgstr "Odczytaj wykres"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9HU8vw"
-msgid "Reply"
-msgstr "Odpowiedz"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "JRCKkF"
-msgid "Run the code"
-msgstr "Uruchom kod"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "eZSeUm"
-msgid "Simulate"
-msgstr "Przeprowadź symulację"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "9yzaMX"
-msgid "Sort into groups"
-msgstr "Podziel na grupy"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "6XjjqC"
-msgid "Split it"
-msgstr "Podziel"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "sLJxwK"
-msgid "Spot the pattern"
-msgstr "Znajdź regułę"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "kUkIDR"
@@ -183,24 +52,9 @@ msgid "Tap along"
 msgstr "Stukaj w rytm"
 
 #: src/activities/_components/activity-badge.tsx
-msgctxt "XUcSce"
-msgid "Test a pattern"
-msgstr "Sprawdź regułę"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "YrB0ys"
-msgid "Try it"
-msgstr "Wypróbuj"
-
-#: src/activities/_components/activity-badge.tsx
 msgctxt "82b3Fd"
 msgid "Turn it"
 msgstr "Obróć"
-
-#: src/activities/_components/activity-badge.tsx
-msgctxt "Mpyk9t"
-msgid "What if"
-msgstr "Co by było, gdyby"
 
 #: src/activities/_components/activity-data-note.tsx
 msgctxt "9we_u3"
@@ -3277,6 +3131,11 @@ msgstr "Jak powiedzieć {word}"
 msgctxt "ilXsym"
 msgid "sounds like {respelling}"
 msgstr "brzmi jak {respelling}"
+
+#: src/lesson/feedback/lesson-spoken-words.tsx
+msgctxt "zhvWvI"
+msgid "Listen"
+msgstr "Posłuchaj"
 
 #: src/lesson/feedback/lesson-spoken-words.tsx
 msgctxt "BvZ66J"

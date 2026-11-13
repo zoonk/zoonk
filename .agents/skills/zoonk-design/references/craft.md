@@ -402,7 +402,7 @@ An app screen's one main action sits in `BottomBar`, pinned to the bottom of the
 
 ### R3. The line over a title is `Eyebrow`
 
-When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves.
+When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves. A chip earns its place only by saying what its title doesn't: over "Match each word to its meaning.", "Match pairs" repeats it and goes, while "Estimate first" over "How long is a million seconds?" says to guess before the answer shows and stays. An activity's title says what to do with the content and never how to work the screen, so an activity keeps a chip only when it names how the screen is worked ("Drag a corner", "Tap along", "Ear training") or what comes first ("Estimate first").
 
 - **Check.** Anything directly over a title is the chip, or nothing (`zoonk/one-eyebrow`, and a `verify:pages` lead for text over a title outside the piece).
 - **Usual break.** Gray or mono uppercase text over a title in one area and a chip in the next.

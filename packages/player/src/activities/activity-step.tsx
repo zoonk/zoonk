@@ -66,6 +66,7 @@ export function ActivityStep({
   const { badge, checkFirst } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const isCheckFirst = checkFirst(content);
+  const badgeKind = badge(content);
 
   const checkArea = (
     <ActivityCheckArea
@@ -80,7 +81,7 @@ export function ActivityStep({
   return (
     <InteractiveStepLayout data-slot="activity-step">
       <div className="flex flex-col gap-3">
-        <ActivityBadge kind={badge(content)} />
+        {badgeKind && <ActivityBadge kind={badgeKind} />}
         <LessonQuestion id={labelId}>{content.prompt}</LessonQuestion>
       </div>
 
