@@ -78,7 +78,7 @@ function BuddyTodaySheet({
         <DrawerContent className="flex flex-col gap-4 pt-2">
           <BuddyEnergy className="-mb-2" href={energyHref} name={name} status={status} />
 
-          {(!today || today.missions.length > 0) && (
+          {today && today.missions.length > 0 && (
             <div className="border-t pt-5">
               <MissionsCard
                 brainPower={status.belt.totalBrainPower}
