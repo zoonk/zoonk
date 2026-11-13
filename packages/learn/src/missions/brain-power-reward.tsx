@@ -29,16 +29,16 @@ export function BrainPowerReward({
   return (
     <Popover>
       <PopoverTrigger
-        className="hit-area focus-visible:ring-ring/50 relative flex shrink-0 flex-col items-end gap-1 rounded-md outline-none focus-visible:ring-[3px]"
+        className="hit-area focus-visible:ring-ring/50 relative flex shrink-0 flex-col items-end gap-0.5 rounded-md outline-none focus-visible:ring-[3px]"
         data-slot="brain-power-reward"
       >
         {/* Earned, the chip is `brain-text`: the page's color on `brain` is under AA in light. */}
         <span
           className={cn(
-            "flex items-center gap-1 font-mono text-base leading-none font-semibold tabular-nums",
+            "flex items-center gap-1 font-mono text-sm font-semibold tabular-nums",
             earned
-              ? "bg-brain-text text-background rounded-md py-1 pr-1.5 pl-1"
-              : "text-brain-text",
+              ? "bg-brain-text text-background rounded-sm py-1 pr-1.5 pl-1 leading-none"
+              : "text-brain-text leading-snug",
           )}
         >
           {earned ? (
@@ -48,7 +48,7 @@ export function BrainPowerReward({
           )}
           {value}
         </span>
-        <span className="text-muted-foreground decoration-faint text-2xs leading-none underline decoration-dotted underline-offset-2">
+        <span className="text-muted-foreground decoration-faint text-xs leading-snug underline decoration-dotted underline-offset-2">
           {t("Brain Power")}
         </span>
       </PopoverTrigger>
