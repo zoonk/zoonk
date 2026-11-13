@@ -88,7 +88,7 @@ export const lessonStepCheckResultSchema = z
       .boolean()
       .meta({
         description:
-          "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise.",
+          "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise.",
       }),
     correctAnswer: z
       .string()
