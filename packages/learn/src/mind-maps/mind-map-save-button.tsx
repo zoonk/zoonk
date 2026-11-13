@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookmarkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -29,21 +31,26 @@ export function MindMapSaveButton({
   labelled = true,
   onToggle,
   saved,
+  shortcut = false,
   size = "bar",
   variant = "outline",
   ...props
 }: MindMapSave &
-  Pick<React.ComponentProps<typeof Button>, "aria-keyshortcuts" | "edge" | "size" | "variant"> & {
+  Pick<React.ComponentProps<typeof Button>, "edge" | "size" | "variant"> & {
     /** A keycap, after the label. */
     children?: React.ReactNode;
     className?: string;
     /** False draws the bookmark alone, where there's no room for the word. */
     labelled?: boolean;
+    /** True where S saves the map: the button says so, in its tooltip when it's the bookmark alone. */
+    shortcut?: boolean;
   }) {
   const t = useExtracted();
+  const label = saved ? <SavedLabel /> : t("Save");
 
-  return (
+  const button = (
     <Button
+      aria-keyshortcuts={shortcut ? shortcutKeys("save") : undefined}
       aria-pressed={saved}
       className={className}
       data-slot="mind-map-save"
@@ -53,8 +60,18 @@ export function MindMapSaveButton({
       variant={variant}
       {...props}
     >
-      <span className={cn(!labelled && "sr-only")}>{saved ? <SavedLabel /> : t("Save")}</span>
+      <span className={cn(!labelled && "sr-only")}>{label}</span>
       {children}
     </Button>
+  );
+
+  if (!shortcut || labelled) {
+    return button;
+  }
+
+  return (
+    <ShortcutTooltip align="end" label={label} shortcut="save">
+      {button}
+    </ShortcutTooltip>
   );
 }

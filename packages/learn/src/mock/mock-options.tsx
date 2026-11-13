@@ -3,6 +3,7 @@
 import { type MockAnswer, type MockChoice } from "@zoonk/core/exams/mocks/answer-contract";
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -84,7 +85,7 @@ export function MockOptions({ question }: { question: MockQuestion }) {
     <AnswerOptionGroup>
       {options.map((option, index) => (
         <AnswerOption
-          aria-keyshortcuts={String(index + 1)}
+          aria-keyshortcuts={shortcutKeys("pick", index)}
           className={cn(option.answer === null && "text-muted-foreground")}
           disabled={locked}
           key={option.key}
@@ -130,7 +131,7 @@ export function MockPicks({ question, select }: { question: MockQuestion; select
         {options.map((label, index) => (
           <AnswerOption
             aria-checked={picks.includes(index)}
-            aria-keyshortcuts={String(index + 1)}
+            aria-keyshortcuts={shortcutKeys("pick", index)}
             disabled={locked}
             key={label}
             marker={index + 1}

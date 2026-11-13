@@ -62,7 +62,7 @@ function SheetContent({
             data-slot="sheet-close"
             render={
               <Button
-                className="absolute top-4 right-6"
+                className="absolute top-5 right-6 [--icon-size:--spacing(5)]"
                 edge="end"
                 size="icon-sm"
                 variant="ghost"
@@ -91,7 +91,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   return (
     <SheetPrimitive.Title
-      className={cn("text-foreground text-base font-medium", className)}
+      className={cn("text-foreground text-lg leading-tight font-semibold", className)}
       data-slot="sheet-title"
       {...props}
     />

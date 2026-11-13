@@ -14,7 +14,6 @@ export function MockExpired() {
 
   return (
     <MockFrame
-      closeOnEscape
       footer={
         <TaskActions>
           <TaskMainLink href={hrefs.again} icon={<PlayIcon aria-hidden="true" />}>

@@ -15,7 +15,7 @@ function getFirstLetter(title: string): string {
  * Neutral, not a color per goal: every hue already means something. Server components draw it too.
  */
 const GOAL_TILE_CLASS =
-  "bg-muted text-foreground ring-input text-2xs grid size-4 shrink-0 place-items-center rounded-sm leading-none font-bold uppercase ring-1 ring-inset";
+  "bg-muted text-foreground ring-input text-2xs grid size-4 shrink-0 place-items-center rounded-sm leading-none font-semibold uppercase ring-1 ring-inset";
 
 export function GoalMark({ goal }: { goal: GoalMarkGoal }) {
   if (isFlagCode(goal.languageFlag)) {

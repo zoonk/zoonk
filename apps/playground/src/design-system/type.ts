@@ -28,6 +28,12 @@ export const TYPE_ROLES: readonly TypeRole[] = [
     use: "An app page's or a task's title (`PageTitle`, `DetailTitle`).",
   },
   {
+    className: "text-lg font-semibold leading-tight",
+    name: "Sheet title",
+    sample: "Adjust your plan",
+    use: "A sheet's, a dialog's or a side sheet's title (18px), set by `DrawerTitle`, `DialogTitle` and `SheetTitle`.",
+  },
+  {
     className: "text-section",
     name: "Section",
     sample: "Example plan",
@@ -99,6 +105,7 @@ export const TYPE_RULES: readonly string[] = [
   "Geist for words, Geist Mono for data (`font-sans`, `font-mono`); no other family. Writing and quoting are words too: an essay's box, a typed answer and a quoted source are Geist, never a serif.",
   "The one exception is a formula: KaTeX's MathML keeps a math face, a serif, because math has its own conventions (italic variables, upright operators, fractions, stretchy brackets) that Geist can't set. Numbers in a sentence stay in the sentence's face; only real formulas take it.",
   "Readouts are Geist with tabular figures; Geist Mono stays for standalone data in rows, eyebrows and facts lines. A number inside a sentence stays in the sentence's face.",
+  "Three weights, by name: 400 (`font-normal`), 500 (`font-medium`), 600 (`font-semibold`). No code writes a weight as a number; a button's label is 500 at every size.",
   "Three levels of type in a block at most: the main thing, its supporting line, its meta.",
   "Titles, not labels: a page's parts are named by sentence-case titles; uppercase labels live only inside panels.",
 ];

@@ -1,19 +1,16 @@
 "use client";
 
-import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { ChangeSaveError } from "../_components/save-error";
 import { usePendingSender } from "../_utils/use-pending-sender";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 import { useTodayScreen } from "./today-context";
@@ -106,21 +103,19 @@ function ContinueLink({ href }: { href: string }) {
   const t = useExtracted();
   const { started } = useSessionState();
   const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
-    <LearnLink
+    <EnterLink
       aria-describedby={NEXT_TITLE_ID}
-      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
+      className={ACTION_CLASS}
+      enabled={!switching}
       href={href}
+      icon={<PlayIcon aria-hidden="true" />}
       lessonWritten={href.startsWith("/learn/")}
-      ref={ref}
+      size="lg"
     >
-      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
-        {started ? t("Continue") : t("Start")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+      {started ? t("Continue") : t("Start")}
+    </EnterLink>
   );
 }
 
@@ -137,18 +132,17 @@ function ContinueButton() {
   return (
     <>
       <form action={() => void run()} className="contents">
-        <Button
+        <EnterButton
           aria-describedby={NEXT_TITLE_ID}
-          aria-keyshortcuts="Enter"
           busy={isPending}
           className={ACTION_CLASS}
+          enter="host"
           icon={<PlayIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >
           {started ? t("Continue") : t("Start")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        </EnterButton>
       </form>
 
       <TodayContinueStatus className={cn(TODAY_ACTION_STATUS_CLASS, "sm:hidden")} />
@@ -160,20 +154,17 @@ function SummaryLink() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
+    <EnterLink
+      className={ACTION_CLASS}
+      enabled={!switching}
       href={actions.summaryHref}
       prefetch={false}
-      ref={ref}
+      size="lg"
     >
-      <BusyContent {...FORWARD_ICON}>
-        {t("See today's summary")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+      {t("See today's summary")}
+    </EnterLink>
   );
 }
 
@@ -191,9 +182,9 @@ function SaveAction({
   return (
     <>
       <form action={() => void run()} className="contents">
-        <Button busy={isPending} className={ACTION_CLASS} icon={icon} size="lg" type="submit">
+        <EnterButton busy={isPending} className={ACTION_CLASS} icon={icon} size="lg" type="submit">
           {children}
-        </Button>
+        </EnterButton>
       </form>
 
       <div className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
@@ -240,19 +231,17 @@ function KeepLearning() {
   return (
     <>
       <form action={() => void run()} className="contents">
-        <Button
-          aria-keyshortcuts="Enter"
+        <EnterButton
           busy={isPending && !rowSent}
           className={ACTION_CLASS}
           disabled={rowSent}
-          focusableWhenDisabled
+          enter="host"
           icon={<PlayIcon aria-hidden="true" />}
           size="lg"
           type="submit"
         >
           {t("Keep learning")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        </EnterButton>
       </form>
 
       <span
@@ -275,19 +264,11 @@ function SeePlanLink() {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
-      href={routes.journey}
-      ref={ref}
-    >
-      <BusyContent {...FORWARD_ICON}>
-        {t("See your plan")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+    <EnterLink className={ACTION_CLASS} enabled={!switching} href={routes.journey} size="lg">
+      {t("See your plan")}
+    </EnterLink>
   );
 }
 

@@ -1,8 +1,7 @@
-import { Link } from "@/i18n/navigation";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
+import { EnterLink } from "@zoonk/learn/enter-button";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { ListChecksIcon, MapIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
@@ -42,9 +41,9 @@ export async function TodayOnboardingLeft({
       <TodayAtRest
         banner={banner}
         actions={
-          <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
+          <EnterLink href={href} icon={null} size="lg">
             {t("See your plan")}
-          </Link>
+          </EnterLink>
         }
         icon={<MapIcon />}
         sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
@@ -57,9 +56,9 @@ export async function TodayOnboardingLeft({
     <TodayAtRest
       banner={banner}
       actions={
-        <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
+        <EnterLink href={href} icon={null} size="lg">
           {t("Continue")}
-        </Link>
+        </EnterLink>
       }
       icon={<ListChecksIcon />}
       sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}

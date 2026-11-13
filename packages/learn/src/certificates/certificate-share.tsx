@@ -244,7 +244,7 @@ export function CertificateShareDialog({
         overNested
       >
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">{t("Share your certificate")}</DialogTitle>
+          <DialogTitle>{t("Share your certificate")}</DialogTitle>
           <DialogDescription>
             {t("Your post shows this picture and links to your certificate's page.")}
           </DialogDescription>

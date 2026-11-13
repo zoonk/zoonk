@@ -3,6 +3,7 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
+  DrawerCloseButton,
   DrawerContent,
   DrawerPopup,
   DrawerTitle,
@@ -199,7 +200,7 @@ export function SuggestionContent({
       <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
         <PresentationContext value="sheet">
           <DrawerContent
-            className="flex flex-col gap-4 px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+            className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
             data-slot="suggestion-sheet"
           >
             {children}
@@ -211,15 +212,15 @@ export function SuggestionContent({
 }
 
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
+  const t = useExtracted();
   const presentation = use(PresentationContext);
 
   if (presentation === "sheet") {
     return (
       <div className="flex items-center gap-2.5" data-slot="suggestion-header">
         <SuggestionMark />
-        <DrawerTitle className="text-lg leading-snug font-semibold text-pretty">
-          {children}
-        </DrawerTitle>
+        <DrawerTitle className="min-w-0 flex-1 text-pretty">{children}</DrawerTitle>
+        <DrawerCloseButton label={t("Close")} />
       </div>
     );
   }
