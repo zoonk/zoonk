@@ -1,7 +1,9 @@
 "use client";
 
+import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ignoreHeldEnter, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { pickKey, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
@@ -14,12 +16,22 @@ type Matches = number[];
 
 const UNMATCHED = -1;
 
-function PairBadge({ number }: { number: number }) {
+/**
+ * An entry starts with the key that picks it. Once matched, its pair's number takes the key's
+ * place in the same box, so matching moves no text.
+ */
+function EntryMarker({ index, pair }: { index: number; pair: number }) {
+  const key = pickKey(index);
+
   return (
-    <LineMarker aria-hidden="true">
-      <span className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums">
-        {number}
-      </span>
+    <LineMarker aria-hidden="true" className="w-6 justify-center">
+      {pair === UNMATCHED && key && <Kbd>{key}</Kbd>}
+
+      {pair !== UNMATCHED && (
+        <span className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums">
+          {pair + 1}
+        </span>
+      )}
     </LineMarker>
   );
 }
@@ -90,7 +102,19 @@ export function MatchPairsQuestion({
   useNumberKeys({
     count: selected === null ? left.length : right.length,
     enabled: !disabled,
-    onPick: (index) => (selected === null ? pickLeft(index) : pickRight(index)),
+    onPick: (index) => {
+      if (selected === null) {
+        pickLeft(index);
+        return;
+      }
+
+      // A matched entry on this side shows its pair's number, not a key.
+      if (matches.includes(index)) {
+        return false;
+      }
+
+      pickRight(index);
+    },
   });
 
   return (
@@ -99,6 +123,9 @@ export function MatchPairsQuestion({
         {left.map((entry, index) => (
           <li key={entry}>
             <button
+              aria-keyshortcuts={
+                !disabled && selected === null ? shortcutKeys("pick", index) : undefined
+              }
               aria-pressed={selected === index}
               className={cn(entryClass, selected === index && ANSWER_TONE.picked)}
               disabled={disabled}
@@ -106,7 +133,7 @@ export function MatchPairsQuestion({
               onKeyDown={ignoreHeldEnter}
               type="button"
             >
-              {matches[index] !== UNMATCHED && <PairBadge number={index + 1} />}
+              <EntryMarker index={index} pair={matches[index] === UNMATCHED ? UNMATCHED : index} />
               <EntryText text={entry} />
             </button>
           </li>
@@ -120,6 +147,11 @@ export function MatchPairsQuestion({
           return (
             <li key={entry}>
               <button
+                aria-keyshortcuts={
+                  !disabled && selected !== null && owner === UNMATCHED
+                    ? shortcutKeys("pick", index)
+                    : undefined
+                }
                 aria-label={
                   owner === UNMATCHED
                     ? toPlainItemLine(entry)
@@ -134,7 +166,7 @@ export function MatchPairsQuestion({
                 onKeyDown={ignoreHeldEnter}
                 type="button"
               >
-                {owner !== UNMATCHED && <PairBadge number={owner + 1} />}
+                <EntryMarker index={index} pair={owner} />
                 <EntryText text={entry} />
               </button>
             </li>
