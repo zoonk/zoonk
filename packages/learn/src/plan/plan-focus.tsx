@@ -66,7 +66,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
     <LearnLink
       className={cn(
         CARD_ROW_CLASS,
-        "focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 shrink-0 outline-none focus-visible:ring-[3px]",
       )}
       href={href}
     >
