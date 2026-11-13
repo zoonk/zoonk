@@ -35,7 +35,14 @@ import {
 import { readCpuMs } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
-import { type PageWords, pageKind, readWords, summarizeWords, wordFindings } from "./words.mts";
+import {
+  type PageWords,
+  pageKind,
+  placeFindings,
+  readWords,
+  summarizeWords,
+  wordFindings,
+} from "./words.mts";
 
 export const NETWORK_IDLE_MS = 15_000;
 
@@ -208,6 +215,7 @@ export async function measureLoad(
       findings: [
         ...judgeLoad(measurement),
         ...wordFindings(words),
+        ...placeFindings(words),
         ...craftFindings(craft, target.typeScale),
       ],
       frames: paints,

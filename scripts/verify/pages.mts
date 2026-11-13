@@ -32,6 +32,7 @@ import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
+import { titleGapFindings } from "./words.mts";
 
 /**
  * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
@@ -173,6 +174,16 @@ try {
 
       loads.push(load);
     }
+
+    const phone = loads.find(
+      (load) => load.path === redactQuery(path) && load.viewport === "phone",
+    );
+
+    const laptop = loads.find(
+      (load) => load.path === redactQuery(path) && load.viewport === "laptop",
+    );
+
+    laptop?.findings.push(...(phone ? titleGapFindings(phone.words, laptop.words) : []));
   }
 
   if (values.nav && paths.length > 1) {
