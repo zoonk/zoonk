@@ -3,7 +3,9 @@ import { type VariantProps, cva } from "class-variance-authority";
 
 const shortcutKbdVariants = cva("hidden pointer-fine:inline-flex", {
   defaultVariants: { tone: "default" },
-  variants: { tone: { default: "", inverse: "bg-current/12 text-current/80 ring-current/20" } },
+  variants: {
+    tone: { default: "", inverse: "text-compact bg-current/15 text-current ring-current/25" },
+  },
 });
 
 type ShortcutKbdProps = { children: React.ReactNode; className?: string } & VariantProps<
