@@ -51,10 +51,6 @@ export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 export const ROW_CHEVRON_CLASS =
   "text-faint edge ms-(--edge-pull) -me-(--edge-pull) size-4 shrink-0 self-center";
 
-/** The same chevron after a 12px line, such as a header's "1 of 4". */
-export const SMALL_CHEVRON_CLASS =
-  "edge -me-(--edge-pull) size-3.5 shrink-0 [--icon-size:--spacing(3.5)]";
-
 export function ListRowChevron() {
   return <ChevronRightIcon aria-hidden="true" className={ROW_CHEVRON_CLASS} />;
 }

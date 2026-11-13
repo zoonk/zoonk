@@ -1,9 +1,8 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { SMALL_CHEVRON_CLASS } from "../_components/list-group";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
@@ -80,9 +79,9 @@ function RoadmapCompact({
               >{` · ${position.name}`}</span>
             )}
           </span>
-          <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
+          <span className="text-muted-foreground flex items-center gap-3 font-mono tabular-nums">
             {phaseWhen(position.phase)}
-            {onOpen && <ChevronRightIcon aria-hidden="true" className={SMALL_CHEVRON_CLASS} />}
+            {onOpen ? <ListRowChevron /> : <ListRowChevronSpace />}
           </span>
         </span>
       )}
@@ -95,7 +94,7 @@ function RoadmapCompact({
               total: phases.length,
             })}
           </span>
-          <ChevronRightIcon aria-hidden="true" className={SMALL_CHEVRON_CLASS} />
+          <ListRowChevron />
         </span>
       )}
     </>
