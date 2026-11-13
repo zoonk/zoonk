@@ -216,8 +216,7 @@ private func makeScorePatterns(
     strongestDaypart: strongestDaypart,
     strongestWeekday: strongestWeekday,
     timeVerdict: makePatternVerdict(patterns.timeVerdict, strongest: strongestDaypart),
-    weekdays: try patterns.weekdays.map(makeWeekdayScorePattern),
-    weekSpread: patterns.weekSpread.map { ScoreSpread(high: $0.high, low: $0.low) })
+    weekdays: try patterns.weekdays.map(makeWeekdayScorePattern))
 }
 
 private func makePatternVerdict<Pattern>(
