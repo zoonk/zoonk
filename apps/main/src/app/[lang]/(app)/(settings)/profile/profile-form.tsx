@@ -67,7 +67,7 @@ function SaveButton({ disabled }: { disabled: boolean }) {
       disabled={disabled}
       focusableWhenDisabled
       icon={<CheckIcon aria-hidden="true" />}
-      size="sm"
+      size="lg"
       type="submit"
     >
       {t("Save")}
