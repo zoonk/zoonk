@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import {
   Sheet,
   SheetClose,
@@ -116,9 +122,9 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup initialFocus={initialFocus}>
         <PlanEditorChangeProvider>
-          <SheetHeader>
+          <DrawerHeader closeLabel={t("Close")}>
             <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
-          </SheetHeader>
+          </DrawerHeader>
 
           <DrawerContent className="flex flex-col gap-7 pt-2">
             <EditorSections />

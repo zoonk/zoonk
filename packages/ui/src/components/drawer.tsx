@@ -100,6 +100,26 @@ function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   );
 }
 
+/** The ✕ of a sheet, the size of a dialog's. */
+function DrawerCloseButton({ label }: { label: string }) {
+  return (
+    <DrawerPrimitive.Close
+      data-slot="drawer-close"
+      render={
+        <Button
+          className="-my-1 shrink-0 [--icon-size:--spacing(5)]"
+          edge="end"
+          size="icon-sm"
+          variant="ghost"
+        />
+      }
+    >
+      <XIcon aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </DrawerPrimitive.Close>
+  );
+}
+
 /**
  * A sheet's title (and its one line under it) with the ✕ that closes it, so no sheet depends on a
  * swipe, Esc or a press outside. The ✕ is a dialog's, at its size.
@@ -118,20 +138,7 @@ function DrawerHeader({
     >
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">{children}</div>
 
-      <DrawerPrimitive.Close
-        data-slot="drawer-close"
-        render={
-          <Button
-            className="shrink-0 [--icon-size:--spacing(5)]"
-            edge="end"
-            size="icon-sm"
-            variant="ghost"
-          />
-        }
-      >
-        <XIcon aria-hidden="true" />
-        <span className="sr-only">{closeLabel}</span>
-      </DrawerPrimitive.Close>
+      <DrawerCloseButton label={closeLabel} />
     </div>
   );
 }
@@ -159,6 +166,7 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 export {
   Drawer,
   DrawerClose,
+  DrawerCloseButton,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
