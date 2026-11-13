@@ -68,7 +68,7 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
       return t("Past or present, finished or not. Pick up to 3.");
     case "conditions":
       return t(
-        "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.",
+        "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
       );
     case "learningSupport":
       return t("Pick anything that helps.");
@@ -80,7 +80,7 @@ export function useProfileQuestionDescription(question: ProfileQuestion): string
     case "activities":
       return t("Pick up to 3.");
     case "addressForm":
-      return t("Your buddy and your feedback will talk to you this way.");
+      return t("We'll talk to you this way.");
     default:
       return question satisfies never;
   }
