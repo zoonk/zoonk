@@ -22,7 +22,7 @@ function SubjectTable() {
         <div
           className={cn(
             modeClass(mode.id),
-            "ring-border flex flex-col gap-2.5 rounded-xl p-4 ring-1",
+            "ring-border flex flex-col gap-2 rounded-xl p-4 ring-1",
           )}
           key={mode.id}
         >

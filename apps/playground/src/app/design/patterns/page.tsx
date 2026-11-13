@@ -167,7 +167,7 @@ function SubjectsSpecimen() {
       </Surface>
       <ul className="flex flex-col gap-2 text-sm">
         {(["economics", "languages", "science", "society"] as const).map((subject) => (
-          <li className="flex items-center gap-2.5" key={subject}>
+          <li className="flex items-center gap-2" key={subject}>
             <SubjectGlyph subject={subject} />
             {subject.charAt(0).toUpperCase() + subject.slice(1)}
           </li>

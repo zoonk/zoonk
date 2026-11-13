@@ -119,7 +119,7 @@ export default function IconsPage() {
       >
         <Specimen className="grid gap-3 sm:grid-cols-3">
           {KINDS.map(({ kind, label }) => (
-            <span className="flex items-center gap-2.5 text-sm" key={kind}>
+            <span className="flex items-center gap-2 text-sm" key={kind}>
               <KindMark kind={kind} />
               {label}
             </span>
