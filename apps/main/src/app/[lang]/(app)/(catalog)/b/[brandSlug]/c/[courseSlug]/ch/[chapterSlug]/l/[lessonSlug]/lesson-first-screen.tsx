@@ -5,7 +5,8 @@ import { StartLessonButton } from "@/components/public/start-lesson-button";
 import { getAppLocale } from "@/i18n/locale";
 import { withOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -80,7 +81,7 @@ export async function LessonFirstScreen({
   if (screen?.kind === "text") {
     return (
       <FirstScreenSection>
-        <RichTextBlocks className="mb-6 text-lg leading-relaxed text-pretty" text={screen.text} />
+        <RichTextBlocks className={cn(LESSON_BODY_CLASS, "mb-6 text-pretty")} text={screen.text} />
 
         <StartBlock className="mt-0 sm:mt-0" note={note}>
           <StartLink href={startHref}>{t("Start the lesson")}</StartLink>
