@@ -1,3 +1,4 @@
+import { lead } from "./craft-rules.mts";
 import { errorFindings, requestFindings } from "./request-checks.mts";
 import { type RequestRecord } from "./requests.mts";
 
@@ -39,7 +40,10 @@ export type Finding = {
   value?: number;
 };
 
-export type LayoutShift = { at: number; sources: string[]; value: number };
+/** What moved, and how far in CSS pixels: `down` and `right` are negative going up and left. */
+export type ShiftSource = { down: number; node: string; right: number };
+
+export type LayoutShift = { at: number; sources: ShiftSource[]; value: number };
 
 export type LoadMeasurement = {
   accessibility: string[];
@@ -136,21 +140,49 @@ export function budgetFinding({
   return [{ check, level, message: `over ${limit} ms`, unit: "ms", value }];
 }
 
-export function shiftFindings(cls: number, shifts: LayoutShift[]): Finding[] {
+function describeShift({ down, node, right }: ShiftSource) {
+  const ways = [
+    right === 0 ? "" : `${Math.abs(right)} px ${right > 0 ? "right" : "left"}`,
+    down === 0 ? "" : `${Math.abs(down)} px ${down > 0 ? "down" : "up"}`,
+  ].filter(Boolean);
+
+  return ways.length > 0 ? `${node} moved ${ways.join(" and ")}` : `${node} changed size`;
+}
+
+/**
+ * Past Core Web Vitals' line a shift fails; under it, it's still the screen jumping as something
+ * arrived (craft's X3), named with each element and its pixels.
+ */
+export function shiftFindings(cls: number, shifts: LayoutShift[], when: string): Finding[] {
   if (cls <= BUDGETS.cls.warn) {
     return [];
   }
 
-  const moved = [...new Set(shifts.flatMap((shift) => shift.sources))].slice(0, LISTED_SOURCES);
+  const sources = shifts.flatMap((shift) => shift.sources);
+  const moved = [...new Set(sources.map((source) => describeShift(source)))];
+  const listed = `${moved.slice(0, LISTED_SOURCES).join("; ") || "unknown"}${moved.length > LISTED_SOURCES ? ` and ${moved.length - LISTED_SOURCES} more` : ""}`;
+
+  if (cls > BUDGETS.cls.fail) {
+    return [
+      {
+        check: "layout shift",
+        level: "fail",
+        message: `moved: ${listed}`,
+        unit: "CLS",
+        value: cls,
+      },
+    ];
+  }
 
   return [
-    {
-      check: "layout shift",
-      level: cls > BUDGETS.cls.fail ? "fail" : "warn",
-      message: `moved: ${moved.join(", ") || "unknown"}`,
-      unit: "CLS",
-      value: cls,
-    },
+    lead(
+      "X3",
+      `${when}: ${listed}`,
+      Math.max(
+        0,
+        ...sources.map((source) => Math.max(Math.abs(source.down), Math.abs(source.right))),
+      ),
+    ),
   ];
 }
 
@@ -301,7 +333,7 @@ export function judgeLoad(load: LoadMeasurement): Finding[] {
   const findings: Finding[] = [
     ...errorFindings(load),
     ...requestFindings(load.requests),
-    ...shiftFindings(cumulativeLayoutShift(load.shifts), load.shifts),
+    ...shiftFindings(cumulativeLayoutShift(load.shifts), load.shifts, "as the page loaded"),
     ...speedFindings(load),
     ...(load.production ? flashFindings(load.flashes) : []),
     ...shellFindings(load),

@@ -95,6 +95,7 @@ class NextStopTest {
                     LessonReadiness(
                         alternative = null,
                         generationId = "run-1",
+                        kind = LessonReadiness.Kind.LESSON,
                         setAside = setAside,
                         status = status ?: throw ApiException(ApiError.Unauthorized),
                         warmUpId = warmUpId,

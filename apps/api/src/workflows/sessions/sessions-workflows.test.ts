@@ -1,12 +1,15 @@
-import { generateChallengeCase } from "@zoonk/ai/tasks/challenge/case";
+import { draftEmptyScript } from "@zoonk/ai/tasks/challenge/assemble";
+import { generateChallengePlan } from "@zoonk/ai/tasks/challenge/plan";
+import { challengePlanFixture } from "@zoonk/ai/tasks/challenge/plan-fixture";
+import { generateChallengeScript } from "@zoonk/ai/tasks/challenge/script";
 import { generateItems } from "@zoonk/ai/tasks/items/generate";
 import { generatePlacementItems } from "@zoonk/ai/tasks/items/placement-items";
 import { classifyWorkField } from "@zoonk/ai/tasks/items/work-field";
 import { generateConversationScenario } from "@zoonk/ai/tasks/language/conversation-scenario";
+import { checkChallengeQuality } from "@zoonk/ai/tasks/quality/challenge-quality-check";
 import { generateStepVariant } from "@zoonk/ai/tasks/variants/step-variant";
 import { requestClaimQuestionsFor } from "@zoonk/core/lookahead/claim-questions";
 import { prisma } from "@zoonk/db";
-import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -118,7 +121,13 @@ async function nurseWithWrittenLessons() {
   ]);
 
   vi.mocked(classifyWorkField).mockResolvedValue(taskResult({ field: "nursing" as const }));
-  vi.mocked(generateChallengeCase).mockResolvedValue(taskResult(writtenChallengeCaseFixture()));
+  vi.mocked(generateChallengePlan).mockResolvedValue(taskResult(challengePlanFixture()));
+
+  vi.mocked(generateChallengeScript).mockResolvedValue(
+    taskResult(draftEmptyScript(challengePlanFixture())),
+  );
+
+  vi.mocked(checkChallengeQuality).mockResolvedValue(taskResult({ findings: [] }));
 
   vi.mocked(generateStepVariant).mockResolvedValue(
     taskResult({
@@ -273,7 +282,7 @@ describe(sessionPreparationWorkflow, () => {
       expect.objectContaining({ key: "no-install" }),
     );
 
-    expect(generateChallengeCase).toHaveBeenCalledWith(
+    expect(generateChallengePlan).toHaveBeenCalledWith(
       expect.objectContaining({ field: "nursing", variant: "work" }),
     );
 
