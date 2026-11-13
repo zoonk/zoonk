@@ -210,7 +210,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
           <ContentFeedbackMenu
             label={t("Question options")}
             screen={header.screen}
-            size="task"
             target={{ contentId: itemId, contentKind: "item" }}
           />
         )

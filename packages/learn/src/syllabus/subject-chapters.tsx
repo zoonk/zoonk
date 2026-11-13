@@ -99,7 +99,7 @@ function DoneChapters({
         </ListRowContent>
         <ChevronDownIcon
           aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/done:rotate-180 motion-reduce:transition-none"
+          className="text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center transition-transform group-data-panel-open/done:rotate-180 motion-reduce:transition-none"
         />
       </CollapsibleTrigger>
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
@@ -116,7 +116,7 @@ function MindMapsLink({ href }: { href: string }) {
 
   return (
     <LearnLink
-      className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-my-1 -mr-2.5")}
+      className={buttonVariants({ className: "-my-1", edge: "end", size: "sm", variant: "ghost" })}
       href={href}
     >
       <NetworkIcon aria-hidden="true" data-icon="inline-start" />

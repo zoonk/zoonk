@@ -86,7 +86,7 @@ function SupportNote(props: BodyProps) {
     return (
       <div className="flex">
         <Button
-          className="-ml-2.5"
+          edge="start"
           icon={<PlusIcon aria-hidden="true" />}
           onClick={() => setOpen(true)}
           type="button"
@@ -104,7 +104,7 @@ function SupportNote(props: BodyProps) {
       <Textarea
         aria-describedby={helpId}
         autoFocus
-        className="text-base md:text-[0.9375rem]"
+        className="md:text-reading text-base"
         id={noteId}
         maxLength={MAX_MEMORY_STATEMENT_LENGTH}
         onChange={(event) => setText(props, event.target.value)}

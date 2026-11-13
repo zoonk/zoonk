@@ -22,7 +22,7 @@ export function TodayFreshStart({ className }: { className?: string }) {
   return (
     <p
       className={cn(
-        "text-muted-foreground flex items-start gap-2 text-[0.8125rem] leading-snug text-pretty",
+        "text-muted-foreground text-compact flex items-start gap-2 leading-snug text-pretty",
         className,
       )}
       data-slot="today-fresh-start"

@@ -11,7 +11,6 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderProgress,
@@ -95,9 +94,8 @@ function TaskCloseLink({
     <>
       <LearnLink
         className={cn(
-          buttonVariants({ size: "icon", variant: "ghost" }),
+          buttonVariants({ edge: "start", size: "icon", variant: "ghost" }),
           "shrink-0",
-          TASK_HEADER_ICON_CLASS.start,
         )}
         href={href}
         onClick={onClick}

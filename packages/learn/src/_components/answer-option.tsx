@@ -20,7 +20,7 @@ export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<
   return (
     <div
       aria-label={t("Answer options")}
-      className={cn("flex flex-col gap-2.5", className)}
+      className={cn("flex flex-col gap-2", className)}
       data-slot="answer-option-group"
       role="radiogroup"
       {...props}

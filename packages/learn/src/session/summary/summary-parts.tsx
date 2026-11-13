@@ -254,7 +254,7 @@ export function DoneStep() {
         <StepEyebrow>{t("Today's session")}</StepEyebrow>
         <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
         {stopped && summary.minutes >= 1 && (
-          <StepDetail className="font-mono text-[0.8125rem] tabular-nums">
+          <StepDetail className="text-compact font-mono tabular-nums">
             {t("{time} so far", { time: formatDuration(summary.minutes) })}
           </StepDetail>
         )}

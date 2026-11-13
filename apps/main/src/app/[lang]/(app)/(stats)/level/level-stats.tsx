@@ -18,9 +18,9 @@ function getLevelShare(level: BeltLevelDetails): number {
 /** Brain Power's violet: a belt's own color (yellow, white) barely shows against the track. */
 function LevelBar({ level }: { level: BeltLevelDetails }) {
   return (
-    <span aria-hidden="true" className="bg-surface-3 mt-1 flex h-1 overflow-hidden rounded-[2px]">
+    <span aria-hidden="true" className="bg-surface-3 mt-1 flex h-1 overflow-hidden rounded-xs">
       <span
-        className="bg-brain h-full rounded-[2px]"
+        className="bg-brain h-full rounded-xs"
         style={{ width: `${getLevelShare(level) * PERCENT}%` }}
       />
     </span>

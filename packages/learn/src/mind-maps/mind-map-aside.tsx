@@ -120,7 +120,7 @@ function LockedMap() {
       href={routes.upgrade}
     >
       <StateHeading>
-        <p className="flex items-center justify-between gap-3 text-[0.9375rem] font-medium">
+        <p className="text-reading flex items-center justify-between gap-3 font-medium">
           {t("Mind map")}
           <PlusMark className="font-sans" />
         </p>
@@ -151,7 +151,7 @@ function MapRequest({
     <div className="flex flex-col gap-4" data-slot="mind-map-request">
       <StateHeading>
         <div aria-live="polite" className="flex flex-col gap-0.5">
-          <p className="text-[0.9375rem] font-medium">{t("Mind map")}</p>
+          <p className="text-reading font-medium">{t("Mind map")}</p>
           {line && <p className={STATE_TEXT_CLASS}>{line}</p>}
           {hint && <p className={STATE_TEXT_CLASS}>{hint}</p>}
         </div>

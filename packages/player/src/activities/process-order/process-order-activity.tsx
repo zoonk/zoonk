@@ -24,7 +24,7 @@ function PositionBadge({
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold tabular-nums",
+        "text-compact flex size-7 shrink-0 items-center justify-center rounded-full font-semibold tabular-nums",
         state === null && "bg-muted text-foreground",
         state === "correct" && "bg-success-text text-background",
         state === "incorrect" && "bg-destructive-text text-white",

@@ -57,7 +57,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
         ))}
       </svg>
 
-      <figcaption className="text-muted-foreground grid grid-cols-7 text-center font-mono text-[0.6875rem]">
+      <figcaption className="text-muted-foreground text-2xs grid grid-cols-7 text-center font-mono">
         {turnaround.points.map((point) => (
           <span key={point.date.toISOString()}>
             {format.dateTime(point.date, { timeZone: "UTC", weekday: "narrow" })}
