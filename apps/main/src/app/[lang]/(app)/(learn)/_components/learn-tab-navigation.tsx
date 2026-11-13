@@ -5,8 +5,8 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { usePathname } from "@/i18n/navigation";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
-import { markAppEntry } from "@zoonk/learn/bar";
-import { type LearnBuddy } from "@zoonk/learn/buddy-name";
+import { markAppEntry, nameAppEntry } from "@zoonk/learn/bar";
+import { type LearnBuddy, useBuddyName } from "@zoonk/learn/buddy-name";
 import { useGoalSwitchPending } from "@zoonk/learn/goal-switcher";
 import {
   LearnBottomNavigation,
@@ -16,6 +16,7 @@ import {
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
 import { cn } from "@zoonk/ui/lib/utils";
+import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
 import { VisitorSideLinks } from "./learn-sidebar-learner";
@@ -203,7 +204,7 @@ function TabRootContent({ children }: { children: React.ReactNode }) {
 }
 
 const OWN_BAR_FIRST_PAINT_CLASS =
-  "[[data-slot=learn-shell-content]:has([data-slot=learn-page-bar],[data-slot=learn-section-bar])_&]:hidden";
+  "[[data-slot=learn-shell-content]:has([data-slot=learn-shell-main]_[data-slot=page-top-bar])_&]:hidden";
 
 /**
  * The path is read after the first paint, so the bar is drawn until then and a tab's own page never
@@ -221,15 +222,35 @@ export function TabRootOnly({ children }: { children: React.ReactNode }) {
 /** Sections leave as a whole; onboarding's way out skips its own screens, which would only lead back into it. */
 const APP_SECTIONS = new Set(["(settings)", "(stats)", "(catalog)", "(onboarding)"]);
 
+/** A tab's own page has the frame's bar, so the frame names it for a way back to it. */
+function useTabRootName(): string | undefined {
+  const t = useExtracted();
+  const [, first = "", ...rest] = usePathname().split("/");
+  const learner = useFrameLearner();
+  const buddyName = useBuddyName(learner.status === "ready" ? learner.summary.buddy : null);
+
+  if (rest.length > 0) {
+    return undefined;
+  }
+
+  const names: Record<string, string> = { buddy: buddyName, plan: t("Plan"), today: t("Today") };
+  return names[first];
+}
+
 function MarkAppEntry() {
   const pathname = usePathname();
   const section = useSelectedLayoutSegments().find((segment) => APP_SECTIONS.has(segment));
+  const tabName = useTabRootName();
 
   // In the commit that writes the page's history entry, so no tap finds the entry unmarked.
   useLayoutEffect(() => {
     markAppEntry(section);
+
+    if (tabName) {
+      nameAppEntry(tabName);
+    }
     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- Each page is a new history entry to mark.
-  }, [pathname, section]);
+  }, [pathname, section, tabName]);
 
   return null;
 }

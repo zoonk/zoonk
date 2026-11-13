@@ -27,7 +27,7 @@ export async function LoginBarLink({
 }
 
 /** A bar short of room keeps "Log in" and lets these go. */
-const NARROW_BAR_CLASS = "max-sm:group-data-title-away/page-bar:hidden @max-2xs/page-bar:hidden";
+const NARROW_BAR_CLASS = "max-sm:group-data-title-away/page-bar:hidden max-[20rem]:hidden";
 
 /** What someone without a session can use from a bar: the catalog, the prices and the way in. */
 export function VisitorBarLinks({ className }: { className?: string }) {

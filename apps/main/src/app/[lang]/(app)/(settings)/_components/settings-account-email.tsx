@@ -1,19 +1,12 @@
-import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { getSession } from "@zoonk/core/users/session";
-import { getExtracted } from "next-intl/server";
 
-/** An email keeps its own case: the line's capitals made it read "PERSONA@ZOONK.TEST". */
-export async function SettingsEyebrow() {
-  const t = await getExtracted();
-  const [session, subscription] = await Promise.all([getSession(), getActiveSubscription()]);
+/** Which account these settings belong to; a guest has no email to show. */
+export async function SettingsAccountEmail() {
+  const session = await getSession();
 
   if (!session || session.user.isAnonymous) {
     return null;
   }
 
-  return (
-    <span className="normal-case">
-      {subscription ? t("{email} · Plus", { email: session.user.email }) : session.user.email}
-    </span>
-  );
+  return session.user.email;
 }

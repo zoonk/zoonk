@@ -7,7 +7,6 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
 import { getMenu } from "@/lib/menu";
-import { LearnShellEnd } from "@zoonk/learn/shell";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
@@ -59,11 +58,11 @@ type BarEndProps = {
 
 function PendingBarEnd({ search, visitor }: BarEndProps) {
   return (
-    <LearnShellEnd>
+    <>
       <VisitorLook>{visitor}</VisitorLook>
       <div className="signed-in:contents hidden">{search}</div>
       <PendingAccountAvatar className="size-7" />
-    </LearnShellEnd>
+    </>
   );
 }
 
@@ -71,7 +70,7 @@ function BarEnd({ search, visitor }: BarEndProps) {
   const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
-    return <LearnShellEnd>{visitor}</LearnShellEnd>;
+    return visitor;
   }
 
   if (learner.status !== "ready") {
@@ -81,11 +80,11 @@ function BarEnd({ search, visitor }: BarEndProps) {
   const { level } = learner.summary;
 
   return (
-    <LearnShellEnd>
+    <>
       {search}
       {level && <LevelLink level={level} />}
       <UserAvatarMenu />
-    </LearnShellEnd>
+    </>
   );
 }
 

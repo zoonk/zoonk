@@ -40,7 +40,8 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
   return (
     <Sidebar aria-label={t("Sidebar")} className="gap-4">
       <SidebarHeader className="gap-4">
-        <SidebarHeaderRow>
+        {/* 44px, as tall as a page's bar, so the goal and the page's way back share a line. */}
+        <SidebarHeaderRow className="min-h-11">
           <LearnGoalMenu placement="sidebar" />
           <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")} />
         </SidebarHeaderRow>
