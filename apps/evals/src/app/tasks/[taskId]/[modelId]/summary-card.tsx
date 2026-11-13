@@ -18,7 +18,7 @@ function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div>
       <dt className="text-muted-foreground text-xs">{label}</dt>
-      <dd className="text-sm tabular-nums">{value}</dd>
+      <dd className="text-sm font-medium tabular-nums">{value}</dd>
     </div>
   );
 }

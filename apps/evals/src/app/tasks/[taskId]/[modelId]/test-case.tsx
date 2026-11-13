@@ -25,19 +25,11 @@ function formatValue(value: unknown): string {
     return value;
   }
 
-  if (Array.isArray(value)) {
-    if (value.length === 0) {
-      return "[]";
-    }
-
-    if (typeof value[0] === "string") {
-      return value.join(", ");
-    }
-
-    return JSON.stringify(value, null, 2);
+  if (Array.isArray(value) && typeof value[0] === "string") {
+    return value.join(", ");
   }
 
-  return JSON.stringify(value);
+  return JSON.stringify(value, null, 2);
 }
 
 function UserInputSection({ userInput }: { userInput: Record<string, unknown> }) {
