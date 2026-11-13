@@ -48,12 +48,6 @@ const FRAME_CLASS = SURFACE_CLASS;
 const LINE_CLASS = "min-[72rem]:hidden";
 const PANEL_CLASS = "hidden min-[72rem]:flex";
 
-const MARK_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "[&>svg]:size-4",
-  panel: "[&>svg]:size-3.5",
-  sheet: "[&>svg]:size-5",
-};
-
 export function Suggestion({
   answered = false,
   children,
@@ -108,18 +102,15 @@ export function Suggestion({
   );
 }
 
-function SuggestionMark({ className }: { className?: string }) {
+function SuggestionMark() {
   const { mark } = useSuggestion();
-  const presentation = use(PresentationContext);
 
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "flex shrink-0 items-center justify-center",
+        "flex shrink-0 items-center justify-center [&>svg]:size-4",
         mark ? "text-muted-foreground" : "text-warning",
-        MARK_SIZE[presentation],
-        className,
       )}
       data-slot="suggestion-mark"
     >
@@ -221,20 +212,17 @@ export function SuggestionContent({
   );
 }
 
-/** The mark's box is one line of the title, so it sits on the first line however many the title takes. */
-const TITLE_TYPE: Readonly<Record<Exclude<Presentation, "line">, string>> = {
-  panel: "text-compact leading-snug",
-  sheet: "text-lg leading-tight",
-};
-
+/**
+ * The title starts on the edge the lines and buttons under it start on: the kind's mark stays with
+ * the one-line form, where it leads the row.
+ */
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
   const presentation = use(PresentationContext);
 
   if (presentation === "sheet") {
     return (
-      <div className="flex items-start gap-2.5" data-slot="suggestion-header">
-        <SuggestionMark className={cn("h-lh", TITLE_TYPE.sheet)} />
+      <div className="flex items-start gap-3" data-slot="suggestion-header">
         <DrawerTitle className="min-w-0 flex-1 text-pretty">{children}</DrawerTitle>
         <DrawerCloseButton label={t("Close")} />
       </div>
@@ -242,10 +230,12 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex items-start gap-2" data-slot="suggestion-header">
-      <SuggestionMark className={cn("h-lh", TITLE_TYPE.panel)} />
-      <h2 className={cn("font-semibold text-pretty", TITLE_TYPE.panel)}>{children}</h2>
-    </div>
+    <h2
+      className="text-compact leading-snug font-semibold text-pretty"
+      data-slot="suggestion-header"
+    >
+      {children}
+    </h2>
   );
 }
 
