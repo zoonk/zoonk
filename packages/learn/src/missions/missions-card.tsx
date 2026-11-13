@@ -78,12 +78,12 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
     <button
       aria-controls={fold.listId}
       aria-expanded={fold.open}
-      className="hit-area focus-visible:ring-ring/50 relative flex items-center gap-1 rounded-sm text-left outline-none focus-visible:ring-[3px]"
+      className="hit-area focus-visible:ring-ring/50 relative rounded-sm text-left outline-none focus-visible:ring-[3px]"
       onClick={fold.onToggle}
       type="button"
     >
       {title}
-      <FoldChevron className="text-muted-foreground" inline />
+      <FoldChevron className="text-muted-foreground ms-1 inline-block align-[-3px]" inline />
     </button>
   );
 }
