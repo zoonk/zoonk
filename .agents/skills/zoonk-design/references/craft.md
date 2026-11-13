@@ -269,7 +269,7 @@ An icon and its label are one gap apart per component (`Button`'s own gap; 12px 
 
 ### I6. One glyph on a button
 
-A button shows its label and at most one glyph: an icon, a forward chevron or a keycap, never two. A main action that Enter presses shows the ⏎ hint on devices with a keyboard and no other glyph; while it works, the spinner takes the hint's place, and nothing changes width. A glyph sits on the label's center line.
+A button shows its label and at most one glyph: an icon, a forward chevron or a keycap, never two. A main action that Enter presses shows the ⏎ hint on devices with a keyboard and no other glyph, on a phone too; while it works, the spinner takes the hint's place, and nothing changes width. A glyph sits on the label's center line.
 
 - **Check.** Count the glyphs in each button: two is a finding. The glyph's center against the label's: 1px or less. The button's width at rest and busy: equal.
 - **Usual break.** A forward arrow and ⏎ on "Start". An icon added so the spinner has a place to go.
