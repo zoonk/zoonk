@@ -3,7 +3,6 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -11,9 +10,10 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { safeAsync } from "@zoonk/utils/error";
-import { PauseIcon, XIcon } from "lucide-react";
+import { PauseIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TransitionStartFunction, useId, useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import {
   ListGroup,
   ListRow,
@@ -165,12 +165,7 @@ export function MakeRoomSheet({
             </DrawerDescription>
           </div>
 
-          <DrawerClose
-            render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
-          >
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
