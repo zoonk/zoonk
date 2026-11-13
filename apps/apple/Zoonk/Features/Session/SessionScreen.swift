@@ -213,6 +213,7 @@ private struct NextStopView: View {
   @State private var isStopping = false
   @State private var failed = false
   @State private var lessonStatus: String?
+  @State private var lessonKind = GenerationWait.Kind.lesson
   /// The block whose lesson this screen showed being written.
   @State private var waitedFor: String?
   /// The goal's warm-up deck, while the lesson written is its first.
@@ -283,7 +284,8 @@ private struct NextStopView: View {
       }
 
     return NextStopWait(
-      deckID: deckID, goalID: day.goalId, held: held, isWritten: lessonStatus == "ready",
+      kind: lessonKind, deckID: deckID, goalID: day.goalId, held: held,
+      isWritten: lessonStatus == "ready",
       isWaiting: isLessonWorkRunning || held != nil
     ) {
       daySoFar
@@ -522,9 +524,7 @@ private struct NextStopView: View {
 
     return AnyView(
       Label {
-        Text(
-          "This lesson is being written for you. It's usually ready in a few minutes.",
-          tableName: "Session", comment: "A lesson being written")
+        Text(lessonKind.writingNote)
       } icon: {
         ProgressView()
       }
@@ -631,6 +631,10 @@ private struct NextStopView: View {
         let readiness = await store.lessonReadiness(lessonID: lessonID)
         lessonStatus = readiness?.status.rawValue
 
+        if let readiness {
+          lessonKind = GenerationWait.Kind(readiness)
+        }
+
         // Read only while the lesson isn't written, so it's kept for a learner still guessing.
         if let deckID = readiness?.warmUpId {
           warmUp = FirstLessonWarmUp(lessonID: lessonID, deckID: deckID)
@@ -674,6 +678,7 @@ private struct NextStopView: View {
 /// The next stop's lesson being written as a wait: its strip over the quiz while the goal's deck
 /// deals, the lesson's writing one tap away.
 private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
+  let kind: GenerationWait.Kind
   let deckID: String?
   let goalID: String?
   let held: WaitHolding?
@@ -738,10 +743,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
     WaitHeading(
       title: title,
       description: isWritten
-        ? Text(LessonWaitingView.lessonReady)
-        : Text(
-          "This lesson is being written for you. It's usually ready in a few minutes.",
-          tableName: "Session", comment: "A lesson being written"))
+        ? Text(LessonWaitingView.lessonReady) : Text(kind.writingNote))
 
     upNext()
   }
@@ -751,14 +753,13 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
       ? Text(
         "Your lesson is ready", tableName: "Player",
         comment: "The lesson's status over the quiz once it's written")
-      : Text(
-        "Writing your lesson", tableName: "Player",
-        comment: "The lesson's status over the quiz while it's written")
+      : Text(kind.name)
   }
 
-  /// The session doesn't hear the writing's steps, so the ring drifts over a lesson's usual time.
+  /// The session doesn't hear the writing's steps, so the ring drifts over the run's usual time.
   private func share(at date: Date) -> Double {
-    0.95 * (1 - exp(-max(0, date.timeIntervalSince(since)) / (GenerationWait.lessonSeconds / 2)))
+    let elapsed = max(0, date.timeIntervalSince(since))
+    return 0.95 * (1 - exp(-elapsed / (GenerationWait.usualSeconds(kind) / 2)))
   }
 
   private func bar(_ place: WaitBarPlace, _ deal: WaitDeal, ready: WaitReady?) -> WaitBar<
@@ -818,6 +819,22 @@ private struct MomentSummary: View {
         CatchUpLine(catchUp: catchUp)
           .padding(.top, 8)
       }
+    }
+  }
+}
+
+extension GenerationWait.Kind {
+  /// The next stop's line while its lesson is written: nothing else on it names a challenge.
+  fileprivate var writingNote: LocalizedStringResource {
+    switch self {
+    case .challenge:
+      LocalizedStringResource(
+        "This challenge is being written for you. It's usually ready in a few minutes.",
+        table: "Session", comment: "A challenge being written")
+    default:
+      LocalizedStringResource(
+        "This lesson is being written for you. It's usually ready in a few minutes.",
+        table: "Session", comment: "A lesson being written")
     }
   }
 }

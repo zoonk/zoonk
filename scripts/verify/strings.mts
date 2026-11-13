@@ -7,7 +7,7 @@ export type CatalogString = { line: number; note: string; sources: string[]; tex
 
 export const STYLE_GUIDE = "packages/i18n/.eloqnt/styleguide.en.md";
 
-const WEB_CATALOG = /(?:^|\/)messages\/en\.po$/u;
+export const WEB_CATALOG = /(?:^|\/)messages\/en\.po$/u;
 const ANDROID_CATALOG = /\/res\/values\/strings[^/]*\.xml$/u;
 
 const HEDGE = /\b(?:for now|so far|may|up to)\b/iu;

@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from "vitest";
-import { type ChallengeCaseParams } from "../challenge/challenge-case";
+import { type ChallengeCaseParams } from "../challenge/challenge-schema";
 import { type CourseDetailsParams } from "../courses/course-details";
 import { type CourseOutlineParams } from "../curriculum/course-outline";
 import { type QuickExplanationParams } from "../explain/quick-explanation";

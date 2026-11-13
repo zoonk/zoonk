@@ -76,6 +76,11 @@ class LessonWaitScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun compactDrawing() = capture("drawing-compact", deck = false, written = true)
 
+    /** A challenge its check held back, being fixed: its own phases, never marking or drawing. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun compactChallengeFix() = capture("challenge-fix-compact", deck = false, challengeFix = true)
+
     @Test
     @Config(qualifiers = "w700dp-h1200dp-xhdpi")
     fun medium() = capture("medium")
@@ -166,6 +171,7 @@ class LessonWaitScreenshots {
         notStarted: Boolean = false,
         fold: Boolean = false,
         rightToLeft: Boolean = false,
+        challengeFix: Boolean = false,
     ) {
         val outline = OUTLINE
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
@@ -174,10 +180,22 @@ class LessonWaitScreenshots {
             FakeLessonPlayerApi(LessonLoad.NotGenerated(outline)).apply {
                 readinessStates += if (notStarted) "notStarted" else "generating"
                 warmUpId = WARM_UP_ID.takeIf { deck }
+                readinessKind = if (challengeFix) "challenge" else "lesson"
             }
         val events = MutableSharedFlow<GenerationEvent>(replay = 10)
-        events.tryEmit(GenerationEvent(at = 0, status = "completed", step = "planLesson"))
-        events.tryEmit(GenerationEvent(at = 6_000, status = "started", step = "writeLesson"))
+        if (challengeFix) {
+            // The fix starts as the screen opens, so the bar shows where a learner sees it then.
+            val start = System.currentTimeMillis() - 125_000
+            events.tryEmit(GenerationEvent(at = start, status = "started", step = "writeLesson"))
+            events.tryEmit(GenerationEvent(at = start, status = "started", step = "planChallenge"))
+            events.tryEmit(GenerationEvent(at = start + 75_000, status = "completed", step = "planChallenge"))
+            events.tryEmit(GenerationEvent(at = start + 115_000, status = "completed", step = "writeChallenge"))
+            events.tryEmit(GenerationEvent(at = start + 125_000, status = "completed", step = "reviewChallenge"))
+            events.tryEmit(GenerationEvent(at = start + 125_000, status = "started", step = "fixChallenge"))
+        } else {
+            events.tryEmit(GenerationEvent(at = 0, status = "completed", step = "planLesson"))
+            events.tryEmit(GenerationEvent(at = 6_000, status = "started", step = "writeLesson"))
+        }
         if (written) {
             events.tryEmit(GenerationEvent(at = 50_000, status = "completed", step = "writeLesson"))
             events.tryEmit(GenerationEvent(at = 50_100, status = "started", step = "markLesson"))

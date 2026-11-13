@@ -5,7 +5,12 @@ import { canViewLibraryRow } from "../../library/_utils/library-visibility";
 import { getSession } from "../../users/get-session";
 
 export type ViewerLesson =
-  | { isGuest: boolean; lesson: { id: string; title: string }; status: "ready"; userId: string }
+  | {
+      isGuest: boolean;
+      lesson: { id: string; identityKey: string; title: string };
+      status: "ready";
+      userId: string;
+    }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -22,7 +27,7 @@ export async function findViewerLesson(lessonId: string): Promise<ViewerLesson> 
   }
 
   const lesson = await prisma.lesson.findUnique({
-    select: { id: true, ownerId: true, title: true, visibility: true },
+    select: { id: true, identityKey: true, ownerId: true, title: true, visibility: true },
     where: { id: lessonId },
   });
 
@@ -32,7 +37,7 @@ export async function findViewerLesson(lessonId: string): Promise<ViewerLesson> 
 
   return {
     isGuest: session.user.isAnonymous === true,
-    lesson: { id: lesson.id, title: lesson.title },
+    lesson: { id: lesson.id, identityKey: lesson.identityKey, title: lesson.title },
     status: "ready",
     userId: session.user.id,
   };

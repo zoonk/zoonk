@@ -1,4 +1,4 @@
-import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/case";
+import { type WrittenChallengeCase } from "@zoonk/ai/tasks/challenge/schema";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 import { describeContentIssues, safeParseStepContent } from "../steps/contract/step-contract";
 import { type ChallengeLessonSpec } from "./challenge-lesson-spec";
@@ -80,6 +80,27 @@ function toChallengeContent({
   };
 }
 
+function listPanels(written: WrittenChallengeCase): WrittenPanel[] {
+  const later = written.nodes.flatMap((node) =>
+    node.choices.flatMap((choice) => (choice.timeJump?.panel ? [choice.timeJump.panel] : [])),
+  );
+
+  return [...written.panels, ...later];
+}
+
+/** The player shows a metric's value as one large line, so a chart drawn in text wraps into a jumble of numbers. */
+function getMultilineMetricProblems(written: WrittenChallengeCase): string[] {
+  return listPanels(written).flatMap((panel) =>
+    panel.metrics.flatMap((metric) =>
+      /[\r\n]/u.test(`${metric.label}${metric.value}`)
+        ? [
+            `Panel metric "${metric.label}" runs over several lines: a metric is a short label and value, so give a chart's or table's data as separate metrics`,
+          ]
+        : [],
+    ),
+  );
+}
+
 export function checkWrittenChallenge({
   variant,
   written,
@@ -88,8 +109,11 @@ export function checkWrittenChallenge({
   written: WrittenChallengeCase;
 }) {
   const parsed = safeParseStepContent("challenge", toChallengeContent({ variant, written }));
+  const problems = getMultilineMetricProblems(written);
 
-  return parsed.success
-    ? { content: parsed.data, problems: [] }
-    : { content: null, problems: describeContentIssues(parsed.error) };
+  if (!parsed.success) {
+    return { content: null, problems: [...describeContentIssues(parsed.error), ...problems] };
+  }
+
+  return { content: problems.length === 0 ? parsed.data : null, problems };
 }

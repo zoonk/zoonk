@@ -3,6 +3,7 @@ import { type WrittenVariant, generateStepVariant } from "@zoonk/ai/tasks/varian
 import { type StepKind, prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
 import { getOrCreateStepVariant } from "./get-or-create-step-variant";
@@ -14,22 +15,26 @@ const original = {
   title: "Discounts",
 };
 
-function mockVariant(data: WrittenVariant) {
-  vi.mocked(generateStepVariant).mockResolvedValueOnce({
-    data,
-    provenance: {
-      generatedAt: new Date().toISOString(),
-      latencyMs: 1,
-      model: "openai/gpt-6-luna",
-      promptVersion: "test",
-      provider: "test",
-      requestedModel: "openai/gpt-6-luna",
-      runId: randomUUID(),
-      usage: {},
-    },
-    systemPrompt: "",
-    usage: {} as never,
-    userPrompt: "",
+function mockVariant(data: WrittenVariant, wait?: Promise<unknown>) {
+  vi.mocked(generateStepVariant).mockImplementationOnce(async () => {
+    await wait;
+
+    return {
+      data,
+      provenance: {
+        generatedAt: new Date().toISOString(),
+        latencyMs: 1,
+        model: "openai/gpt-6-luna",
+        promptVersion: "test",
+        provider: "test",
+        requestedModel: "openai/gpt-6-luna",
+        runId: randomUUID(),
+        usage: {},
+      },
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    };
   });
 }
 
@@ -43,7 +48,7 @@ const version: WrittenVariant = {
   visual: null,
 };
 
-const TOOL = { key: "google-sheets" } as const;
+const TOOL = { key: "google-sheets", workflowRunId: "test-run" } as const;
 
 async function createStep(attrs: { content?: object; kind?: StepKind } = {}) {
   const lesson = await libraryLessonFixture({ contentStatus: "completed" });
@@ -56,7 +61,7 @@ describe(getOrCreateStepVariant, () => {
 
     const stored = await stepVariantFixture({
       content: original,
-      ...TOOL,
+      key: TOOL.key,
       kind: "tool",
       stepId: step.id,
     });
@@ -101,16 +106,30 @@ describe(getOrCreateStepVariant, () => {
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
-  it("ends concurrent requests with one shared row", async () => {
+  it("reserves concurrent runs atomically and ends with one shared row", async () => {
     const step = await createStep();
-    mockVariant(version);
-    mockVariant({ ...version, text: "On a ward, pay 75 of every 100 reais." });
+    const gate = Promise.withResolvers<boolean>();
+    mockVariant(version, gate.promise);
+    mockVariant({ ...version, text: "On a ward, pay 75 of every 100 reais." }, gate.promise);
 
-    const results = await Promise.all([
-      getOrCreateStepVariant({ ...TOOL, stepId: step.id }),
-      getOrCreateStepVariant({ ...TOOL, stepId: step.id }),
+    const pending = Promise.all([
+      getOrCreateStepVariant({ ...TOOL, stepId: step.id, workflowRunId: "concurrent-a" }),
+      getOrCreateStepVariant({ ...TOOL, stepId: step.id, workflowRunId: "concurrent-b" }),
     ]);
 
+    try {
+      await vi.waitFor(() => expect(generateStepVariant).toHaveBeenCalledTimes(2));
+    } finally {
+      gate.resolve(true);
+    }
+
+    const results = await pending;
+
+    const summary = await prisma.stepVariantGeneration.findFirstOrThrow({
+      where: { stepId: step.id },
+    });
+
+    expect(summary.claimedRunIds.toSorted()).toStrictEqual(["concurrent-a", "concurrent-b"]);
     const ids = results.map((result) => result.status === "ready" && result.variant.id);
 
     expect(new Set(ids).size).toBe(1);
@@ -121,7 +140,11 @@ describe(getOrCreateStepVariant, () => {
     const step = await createStep();
     mockVariant(version);
 
-    const result = await getOrCreateStepVariant({ key: "  Google Sheets ", stepId: step.id });
+    const result = await getOrCreateStepVariant({
+      key: "  Google Sheets ",
+      stepId: step.id,
+      workflowRunId: randomUUID(),
+    });
 
     expect(result).toMatchObject({
       status: "ready",
@@ -142,17 +165,65 @@ describe(getOrCreateStepVariant, () => {
     expect(generateStepVariant).toHaveBeenCalledOnce();
   });
 
-  it("tries once more when a draft fails the checks, then gives up", async () => {
+  it("holds back one candidate per preparation, replays failures and passes problems to the next run", async () => {
     const step = await createStep();
     const filler = { ...version, text: "It's important to note that 25% is a quarter." };
     mockVariant(filler);
     mockVariant(filler);
 
     const result = await getOrCreateStepVariant({ ...TOOL, stepId: step.id });
+    const replay = await getOrCreateStepVariant({ ...TOOL, stepId: step.id });
+    expect(replay).toStrictEqual(result);
+    expect(generateStepVariant).toHaveBeenCalledOnce();
+    await getOrCreateStepVariant({ ...TOOL, stepId: step.id, workflowRunId: "next-preparation" });
+
+    expect(generateStepVariant).toHaveBeenLastCalledWith(
+      expect.objectContaining({ problems: expect.arrayContaining([expect.any(String)]) }),
+    );
 
     expect(result).toMatchObject({ status: "failed" });
     expect(generateStepVariant).toHaveBeenCalledTimes(2);
     await expect(prisma.stepVariant.count({ where: { stepId: step.id } })).resolves.toBe(0);
+  });
+
+  it("leaves an infrastructure reservation spent without a rejected draft and retries the same run", async () => {
+    const step = await createStep();
+    vi.mocked(generateStepVariant).mockRejectedValueOnce(new Error("Provider unavailable"));
+
+    await expect(getOrCreateStepVariant({ ...TOOL, stepId: step.id })).rejects.toThrow(
+      "Provider unavailable",
+    );
+
+    await expect(
+      prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId: step.id } }),
+    ).resolves.toMatchObject({ claimedRunIds: [TOOL.workflowRunId], heldBackDrafts: [] });
+
+    mockVariant(version);
+
+    await expect(getOrCreateStepVariant({ ...TOOL, stepId: step.id })).resolves.toMatchObject({
+      status: "ready",
+    });
+
+    await expect(
+      prisma.stepVariantGeneration.findFirstOrThrow({ where: { stepId: step.id } }),
+    ).resolves.toMatchObject({ claimedRunIds: [TOOL.workflowRunId], heldBackDrafts: [] });
+  });
+
+  it("does not write a held-back private tool again in the next preparation", async () => {
+    const user = await userFixture();
+    const lesson = await libraryLessonFixture({ contentStatus: "completed", ownerId: user.id });
+    const step = await libraryStepFixture({ content: original, lessonId: lesson.id });
+    mockVariant({ ...version, text: "It's important to note that 25% is a quarter." });
+
+    await expect(getOrCreateStepVariant({ ...TOOL, stepId: step.id })).resolves.toMatchObject({
+      status: "failed",
+    });
+
+    await expect(
+      getOrCreateStepVariant({ ...TOOL, stepId: step.id, workflowRunId: "next-preparation" }),
+    ).resolves.toStrictEqual({ status: "exhausted" });
+
+    expect(generateStepVariant).toHaveBeenCalledOnce();
   });
 
   it("has no versions for screens that don't support them, or without a tool", async () => {
@@ -167,9 +238,9 @@ describe(getOrCreateStepVariant, () => {
 
     const step = await createStep();
 
-    await expect(getOrCreateStepVariant({ key: "!!", stepId: step.id })).resolves.toStrictEqual({
-      status: "unsupported",
-    });
+    await expect(
+      getOrCreateStepVariant({ key: "!!", stepId: step.id, workflowRunId: randomUUID() }),
+    ).resolves.toStrictEqual({ status: "unsupported" });
 
     expect(generateStepVariant).not.toHaveBeenCalled();
   });
