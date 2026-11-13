@@ -38,7 +38,7 @@ function CourseMap({
 }) {
   return (
     <div aria-label={label} className="hidden sm:block" role="img">
-      <div className="flex gap-1 sm:gap-1.5">
+      <div className="flex gap-1 sm:gap-2">
         {groups.map((group, index) => (
           <div
             className="flex min-w-0 basis-0 flex-col gap-2 sm:min-w-14"

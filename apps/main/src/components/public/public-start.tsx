@@ -55,7 +55,7 @@ export function StartBlock({
 
       {note && (
         <p
-          className="text-muted-foreground text-compact text-center sm:text-left sm:text-sm"
+          className="text-muted-foreground text-compact text-center text-balance sm:text-left sm:text-sm"
           data-slot="start-note"
         >
           {note}

@@ -30,7 +30,7 @@ export function PublicDisclosure({
           <span className="text-pretty">{summary}</span>
 
           {aside && (
-            <span className="text-muted-foreground text-compact flex-none font-normal tabular-nums sm:text-sm">
+            <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">
               {aside}
             </span>
           )}

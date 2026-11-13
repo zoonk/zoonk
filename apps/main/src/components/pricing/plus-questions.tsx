@@ -105,10 +105,7 @@ export async function PlusQuestions({
         <p className="text-muted-foreground text-sm">
           {t("Still unsure?")}
           {space}
-          <a
-            className="text-foreground underline-offset-4 hover:underline"
-            href={`mailto:${email}`}
-          >
+          <a className={DISCLOSURE_LINK_CLASS} href={`mailto:${email}`}>
             {email}
           </a>
         </p>
