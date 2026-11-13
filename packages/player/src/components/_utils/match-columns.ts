@@ -1,7 +1,6 @@
-import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
+import { type MatchEntryState } from "@zoonk/learn/match-entry";
 
 export type Pair = { left: string; right: string };
-export type ItemVisualState = "correct" | "idle" | "incorrectFlash" | "selected";
 export type MatchSide = "left" | "right";
 export type MatchItemData = { id: string; label: string; side: MatchSide };
 export type MatchSelection = MatchItemData;
@@ -83,7 +82,25 @@ export function isItemMatched({
   );
 }
 
-export function getItemVisualState({
+/** The place of the left entry of the pair `item` is in: the number both of its entries show. */
+export function getPairIndex({
+  correctMatches,
+  item,
+  leftItems,
+}: {
+  correctMatches: MatchAttempt[];
+  item: MatchItemData;
+  leftItems: MatchItemData[];
+}): number | undefined {
+  const match = correctMatches.find(
+    (attempt) => getAttemptItemId({ attempt, side: item.side }) === item.id,
+  );
+
+  const index = leftItems.findIndex((left) => left.id === match?.leftId);
+  return index === -1 ? undefined : index;
+}
+
+export function getEntryState({
   correctMatches,
   flashingMatch,
   item,
@@ -93,13 +110,13 @@ export function getItemVisualState({
   flashingMatch: MatchAttempt | null;
   item: MatchItemData;
   selected: MatchSelection | null;
-}): ItemVisualState {
+}): MatchEntryState {
   if (isItemMatched({ correctMatches, item })) {
-    return "correct";
+    return "right";
   }
 
   if (flashingMatch && getAttemptItemId({ attempt: flashingMatch, side: item.side }) === item.id) {
-    return "incorrectFlash";
+    return "wrong";
   }
 
   if (selected && selected.id === item.id) {
@@ -107,40 +124,4 @@ export function getItemVisualState({
   }
 
   return "idle";
-}
-
-export function getItemClassName(state: ItemVisualState): string {
-  if (state === "correct") {
-    return `${ANSWER_TONE.right} pointer-events-none`;
-  }
-
-  if (state === "incorrectFlash") {
-    return ANSWER_TONE.wrong;
-  }
-
-  if (state === "selected") {
-    return ANSWER_TONE.picked;
-  }
-
-  return `${ANSWER_TONE.idle} hover:bg-muted/60`;
-}
-
-export function getActiveKeyboardSide(selected: MatchSelection | null): MatchSide {
-  if (!selected) {
-    return "left";
-  }
-
-  return selected.side === "left" ? "right" : "left";
-}
-
-export function getKeyboardItems({
-  activeKeyboardSide,
-  leftItems,
-  rightItems,
-}: {
-  activeKeyboardSide: MatchSide;
-  leftItems: MatchItemData[];
-  rightItems: MatchItemData[];
-}): MatchItemData[] {
-  return activeKeyboardSide === "left" ? leftItems : rightItems;
 }

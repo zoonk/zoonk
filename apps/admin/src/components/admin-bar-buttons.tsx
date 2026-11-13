@@ -2,8 +2,29 @@
 
 import { openAdminMenu } from "@/lib/admin-menu-event";
 import { Button } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
-import { MenuIcon, SearchIcon } from "lucide-react";
+import { EllipsisIcon, MenuIcon, SearchIcon } from "lucide-react";
+
+/** A record's "…" in the page's bar: what staff do to it less often, after its buttons. */
+export function AdminBarMenu({ children, label }: { children: React.ReactNode; label: string }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button size="icon-bar" variant="outline" />}>
+        <EllipsisIcon aria-hidden="true" />
+        <span className="sr-only">{label}</span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-60">
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 /** Where the sidebar is hidden, the page's bar opens the menu from its start. */
 export function AdminBarMenuButton() {

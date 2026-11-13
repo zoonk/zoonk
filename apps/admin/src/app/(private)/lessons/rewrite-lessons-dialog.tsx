@@ -76,7 +76,7 @@ export function RewriteLessonsDialog({
       open={open}
       title="Rewrite lessons by model"
       trigger={
-        <Button size="sm" variant="outline">
+        <Button size="bar" variant="outline">
           Rewrite by model
         </Button>
       }

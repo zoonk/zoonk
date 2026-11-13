@@ -84,7 +84,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
         {/* oxlint-disable-next-line next/no-img-element -- @zoonk/player doesn't depend on next/image; maps are stored, optimized webp files. */}
         <img
           alt={alt}
-          className="ring-border bg-card aspect-square h-auto w-full rounded-xl object-contain ring-1"
+          className="outline-border bg-card aspect-square h-auto w-full rounded-xl object-contain outline -outline-offset-1"
           decoding="async"
           height={image.height}
           sizes="(min-width: 72rem) 50rem, 100vw"

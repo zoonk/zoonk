@@ -93,13 +93,11 @@ export function TaskHeaderMenu({
   children,
   label,
   onOpenChange,
-  size = "icon",
   ...content
 }: Pick<React.ComponentProps<typeof DropdownMenuContent>, "className" | "finalFocus"> & {
   children: React.ReactNode;
   label?: string;
   onOpenChange?: (open: boolean) => void;
-  size?: "icon" | "icon-bar";
 }) {
   const t = useExtracted();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -108,14 +106,7 @@ export function TaskHeaderMenu({
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         ref={trigger}
-        render={
-          <Button
-            className="shrink-0 in-data-task-header:[--icon-size:--spacing(5)]"
-            edge="end"
-            size={size}
-            variant="ghost"
-          />
-        }
+        render={<Button className="shrink-0" edge="end" size="icon-bar" variant="ghost" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label ?? t("Screen options")}</span>

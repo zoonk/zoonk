@@ -19,7 +19,7 @@ export function AdminHeader({
   parent,
   title,
 }: {
-  /** Small buttons (`size="sm"`) and a record's menu. */
+  /** `Button size="bar"` and a record's `AdminBarMenu`. */
   actions?: React.ReactNode;
   children?: React.ReactNode;
   /** The list a record belongs to. A list page has none. */

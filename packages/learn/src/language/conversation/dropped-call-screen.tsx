@@ -5,11 +5,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
-import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { MicrophoneOff } from "./call-intro-footer";
 import { CallLimitReason } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
+import { ChallengeCallGate } from "./challenge-call-gate";
 import { CallOffMessage, CallReason } from "./conversation-parts";
 import { type DroppedCall } from "./dropped-call";
 import { type CallAudio, type MicrophoneProblem, openTypedCallAudio } from "./use-call-microphone";
@@ -37,7 +37,7 @@ function DroppedCallReason({
   }
 
   if (reason === "plusRequired") {
-    return <ChallengeCallPlusNotice cta />;
+    return <ChallengeCallGate form="inPlace" />;
   }
 
   if (reason === "callInProgress" || reason === "callsPaused" || reason === "ended") {

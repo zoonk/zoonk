@@ -19,7 +19,6 @@ import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
 import { drawsDayMeter } from "./day-segments";
-import { TodayContinueStatus } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDayTime, getHeldMinutes } from "./today-time";
@@ -131,29 +130,5 @@ export function DayTime({ className }: { className?: string }) {
         </PopoverHeader>
       </PopoverContent>
     </Popover>
-  );
-}
-
-/**
- * From `sm` a slow or failed open speaks under the action, in the room over the day's bar, so it
- * takes no line of its own and nothing moves. On a phone the docked action says it.
- */
-export function DayOpenStatus({ className }: { className?: string }) {
-  const { today } = useTodayScreen();
-
-  if (today.session.state !== "underway") {
-    return null;
-  }
-
-  return (
-    <p
-      className={cn(
-        "text-muted-foreground absolute right-0 bottom-full hidden max-w-full text-xs leading-4 sm:flex",
-        className,
-      )}
-      data-slot="today-open-status"
-    >
-      <TodayContinueStatus className="min-w-0 truncate text-right" />
-    </p>
   );
 }

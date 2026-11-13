@@ -1,7 +1,9 @@
 "use client";
 
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type RandomSimulationMode } from "./random-simulation-mode";
 import { useSamplingFormat } from "./use-sampling-format";
@@ -27,7 +29,7 @@ export function SamplingExpectedSpread({ content }: { content: Content }) {
   }));
 
   return (
-    <div className="bg-background flex flex-col gap-2 rounded-xl border px-4 py-3 text-sm">
+    <div className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-2 text-sm")}>
       <p className="font-medium">{t("What the math says")}</p>
 
       <ul className="flex flex-col gap-1 tabular-nums">

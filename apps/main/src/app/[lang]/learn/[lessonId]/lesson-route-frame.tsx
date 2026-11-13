@@ -25,11 +25,13 @@ export function LessonRouteFrame({
   children,
   exitHref,
   footer,
+  lead,
   lesson,
 }: {
   children: React.ReactNode;
   exitHref: string;
   footer?: React.ReactNode;
+  lead?: React.ReactNode;
   lesson: LessonAbout;
 }) {
   const t = useExtracted();
@@ -60,8 +62,17 @@ export function LessonRouteFrame({
 
       <main className="flex flex-1 flex-col">
         <TaskBody>
+          {lead}
+
           <TaskAsideContent>
-            <p className="text-muted-foreground text-pretty">{lesson.description}</p>
+            <p
+              className={cn(
+                "text-muted-foreground text-pretty",
+                lead && "with-aside:block hidden text-sm",
+              )}
+            >
+              {lesson.description}
+            </p>
           </TaskAsideContent>
 
           {children}

@@ -85,7 +85,7 @@ export const planResponseSchema = z
         .boolean()
         .meta({
           description:
-            "Always false. Exam plans do not expire; new lessons use the shared monthly allowance",
+            "Always false. Exam plans do not expire; new lessons use the shared rolling 30-day allowance",
         }),
       mocksRequirePlus: z.boolean(),
     }),

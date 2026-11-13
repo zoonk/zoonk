@@ -4,6 +4,7 @@ import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schem
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { useAppLocale } from "@zoonk/learn/locale";
 import { Input } from "@zoonk/ui/components/input";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
   exactFractionDigitsFor,
   formatLocalizedNumber,
@@ -23,10 +24,12 @@ function answerValue(answer: ActivityAnswer | null): number | null {
 export function ActivityNumericCheck({
   answer,
   check,
+  className,
   onAnswerChange,
   phase,
 }: {
   answer: ActivityAnswer | null;
+  className?: string;
   check: NumericCheck;
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: ActivityPhase;
@@ -74,7 +77,7 @@ export function ActivityNumericCheck({
   );
 
   return (
-    <div className="flex flex-col gap-3" data-slot="activity-numeric-check">
+    <div className={cn("flex flex-col gap-3", className)} data-slot="activity-numeric-check">
       <ActivityCheckQuestion htmlFor={inputId}>{check.question}</ActivityCheckQuestion>
 
       <div className="flex items-center gap-2">

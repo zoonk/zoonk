@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { keyedByPosition } from "../_utils/position-keys";
 import { type SampleResult, countPassing } from "./pattern-results";
 
@@ -45,7 +46,8 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
   return (
     <li
       className={cn(
-        "bg-background flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 font-mono text-base",
+        ACTIVITY_CARD_CLASS,
+        "flex min-h-11 items-center gap-2 py-2 font-mono text-base",
         !result.passes && "border-destructive/50 bg-destructive/10",
       )}
     >
@@ -102,14 +104,17 @@ export function RegexSampleList({
         )}
       </div>
 
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {results
           ? keyedByPosition(results, (result) => result.sample).map(({ item, key }) => (
               <SampleRow key={key} result={item} shouldMatch={shouldMatch} />
             ))
           : keyedByPosition(samples, (sample) => sample).map(({ item, key }) => (
               <li
-                className="bg-background flex min-h-11 items-center rounded-xl border px-3 py-2 font-mono text-base whitespace-pre"
+                className={cn(
+                  ACTIVITY_CARD_CLASS,
+                  "flex min-h-11 items-center py-2 font-mono text-base whitespace-pre",
+                )}
                 key={key}
               >
                 {item}

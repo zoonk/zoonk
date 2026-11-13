@@ -1,9 +1,9 @@
 "use client";
 
 import { type FeedbackStatus } from "@zoonk/db";
+import { AdminBarMenu } from "@/components/admin-bar-buttons";
 import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { Button } from "@zoonk/ui/components/button";
-import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { CheckIcon, MailIcon, MailOpenIcon, ReplyIcon } from "lucide-react";
 import { startTransition } from "react";
@@ -22,7 +22,9 @@ const STATUS_ACTIONS: Record<FeedbackStatus, { icon: React.ReactNode; label: str
 
 /**
  * Reply opens the staff person's own mail, so replying and marking it replied are two presses. The
- * step that takes a message out of New is a button; the other states are in the menu.
+ * step that takes a message out of New is a button; the other states are in the menu. On a phone
+ * the bar has room for one short button beside the way back, so that step is the menu's first item
+ * there and the button says "Reply".
  */
 export function MessageActions({
   email,
@@ -54,36 +56,44 @@ export function MessageActions({
 
   return (
     <>
-        {email ? (
-          <Button
-            icon={<ReplyIcon aria-hidden="true" />}
-            nativeButton={false}
-            render={<a href={`mailto:${email}?subject=${encodeURIComponent("Your message to Zoonk")}`} />}
-            size="sm"
-          >
-            Reply by email
+      {email ? (
+        <Button
+          icon={<ReplyIcon aria-hidden="true" />}
+          nativeButton={false}
+          render={
+            <a href={`mailto:${email}?subject=${encodeURIComponent("Your message to Zoonk")}`} />
+          }
+          size="bar"
+        >
+          Reply<span className="max-sm:hidden"> by email</span>
+        </Button>
+      ) : null}
+
+      {closing ? (
+        <form action={formAction} className="max-sm:hidden">
+          <input name="messageId" type="hidden" value={messageId} />
+          <input name="status" type="hidden" value={closing} />
+          <Button icon={STATUS_ACTIONS[closing].icon} size="bar" type="submit" variant="outline">
+            {STATUS_ACTIONS[closing].label}
           </Button>
-        ) : null}
+        </form>
+      ) : null}
 
+      <AdminBarMenu label="Message actions">
         {closing ? (
-          <form action={formAction}>
-            <input name="messageId" type="hidden" value={messageId} />
-            <input name="status" type="hidden" value={closing} />
-            <Button icon={STATUS_ACTIONS[closing].icon} size="sm" type="submit" variant="outline">
-              {STATUS_ACTIONS[closing].label}
-            </Button>
-          </form>
+          <DropdownMenuItem className="sm:hidden" onClick={() => setStatus(closing)}>
+            {STATUS_ACTIONS[closing].icon}
+            {STATUS_ACTIONS[closing].label}
+          </DropdownMenuItem>
         ) : null}
 
-        <DetailMenu label="Message actions" size="sm">
-          {menuStatuses.map((option) => (
-            <DropdownMenuItem key={option} onClick={() => setStatus(option)}>
-              {STATUS_ACTIONS[option].icon}
-              {STATUS_ACTIONS[option].label}
-            </DropdownMenuItem>
-          ))}
-        </DetailMenu>
+        {menuStatuses.map((option) => (
+          <DropdownMenuItem key={option} onClick={() => setStatus(option)}>
+            {STATUS_ACTIONS[option].icon}
+            {STATUS_ACTIONS[option].label}
+          </DropdownMenuItem>
+        ))}
+      </AdminBarMenu>
     </>
-
   );
 }
