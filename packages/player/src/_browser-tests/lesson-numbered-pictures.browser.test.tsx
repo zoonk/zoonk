@@ -101,9 +101,9 @@ describe("numbered pictures", () => {
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
-    const dontKnow = page.getByRole("button", { exact: true, name: "I don't know yet" });
+    const seeAnswer = page.getByRole("button", { exact: true, name: "See the answer" });
     const revealed = page.getByRole("status").filter({ hasText: "Here's the answer" });
-    await expect.element(dontKnow).toBeDisabled();
+    await expect.element(seeAnswer).toBeDisabled();
 
     await press("Enter");
     await expect.element(revealed).not.toBeInTheDocument();
@@ -118,7 +118,7 @@ describe("numbered pictures", () => {
       .element(page.getByRole("img", { name: numberedCheckContent.image.alt }))
       .toBeVisible();
 
-    await dontKnow.click();
+    await seeAnswer.click();
     await expect.element(revealed).toBeVisible();
   });
 

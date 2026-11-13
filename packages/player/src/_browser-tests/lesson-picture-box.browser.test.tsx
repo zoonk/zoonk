@@ -104,7 +104,7 @@ describe("a drawn lesson picture", () => {
       await expectSameBoxOnceLoaded({ alt: hookAlt, answer: hook.answer, ratio: SCENE });
       expect(topOf(QUESTION)).toBe(questionTop);
 
-      await page.getByRole("button", { exact: true, name: "I don't know yet" }).click();
+      await page.getByRole("button", { exact: true, name: "See the answer" }).click();
       await page.getByRole("button", { name: /^Continue/u }).click();
 
       await expect.element(page.getByText(EXPLANATION)).toBeVisible();

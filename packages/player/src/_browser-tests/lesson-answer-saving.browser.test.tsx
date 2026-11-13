@@ -682,11 +682,11 @@ describe("saving answers", () => {
     container.innerHTML = renderToString(player);
     document.body.append(container);
 
-    const dontKnow = container.querySelector<HTMLButtonElement>(`#${LESSON_PRIMARY_ID}`);
-    expect(dontKnow?.textContent).toMatch(/^I don't know yet/u);
+    const seeAnswer = container.querySelector<HTMLButtonElement>(`#${LESSON_PRIMARY_ID}`);
+    expect(seeAnswer?.textContent).toMatch(/^See the answer/u);
 
     const root = hydrateRoot(container, player);
-    dontKnow?.click();
+    seeAnswer?.click();
 
     await expect.element(page.getByRole("heading", { name: "Reading it" })).toBeVisible();
     await expect.poll(() => server.startLesson.mock.calls.length).toBe(1);

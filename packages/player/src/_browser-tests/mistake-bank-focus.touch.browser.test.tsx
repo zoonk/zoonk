@@ -14,9 +14,7 @@ describe("bank mistake inputs on touch screens", () => {
         .element(page.getByRole("heading", { name: "Practice mistakes" }))
         .toBeInViewport();
 
-      await expect
-        .element(page.getByRole("link", { name: "Back to the notebook" }))
-        .toBeInViewport();
+      await expect.element(page.getByRole("link", { name: "Leave" })).toBeInViewport();
 
       expect(window.scrollY).toBe(0);
       await field.click();
