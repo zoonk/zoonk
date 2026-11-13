@@ -77,10 +77,7 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
 /// A chapter with written lesson maps, as the Lessons tab lists it.
 struct LessonMapGroup: Decodable, Equatable, Sendable {
   let chapterId: String
-  /// Locked ones included.
   let count: Int
-  /// How many of them a free exam plan past its first week keeps for Plus.
-  let locked: Int
   /// The ones that open, in chapter order: a reader opened with this list keeps these.
   let lessonIds: [String]
 

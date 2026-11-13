@@ -424,25 +424,16 @@ private struct LessonGroupRow: View {
     }
   }
 
-  /// "Chapter 5 · 6 lesson maps", with how many are Plus's when access is mixed.
+  /// "Chapter 5 · 6 lesson maps".
   private var facts: String {
-    var facts = [
+    [
       String(
         localized: "Chapter \(item.chapter.position)", table: "MindMaps",
         comment: "A chapter's number"),
       String(
         localized: "\(item.group.count) lesson maps", table: "MindMaps",
         comment: "How many of a chapter's lessons have a map"),
-    ]
-
-    if item.group.locked > 0 {
-      facts.append(
-        String(
-          localized: "\(item.group.locked) locked", table: "MindMaps",
-          comment: "How many of a chapter's lesson maps open only with Plus"))
-    }
-
-    return facts.joinedFacts()
+    ].joinedFacts()
   }
 }
 

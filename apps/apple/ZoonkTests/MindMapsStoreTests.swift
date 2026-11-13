@@ -686,7 +686,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
         ? []
         : [
           LessonMapGroup(
-            chapterId: "chapter", count: lessonIds.count, locked: 0, lessonIds: lessonIds)
+            chapterId: "chapter", count: lessonIds.count, lessonIds: lessonIds)
         ],
       saved: answered?.saved
         ?? (saved
