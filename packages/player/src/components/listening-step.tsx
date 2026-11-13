@@ -14,7 +14,7 @@ function AudioPrompt({ audio }: { audio: PromptAudio }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <Eyebrow>{t("What do you hear?")}</Eyebrow>
+      <QuestionText>{t("What do you hear?")}</QuestionText>
       <PromptAudioButton audio={audio} variant="labeled" />
     </div>
   );

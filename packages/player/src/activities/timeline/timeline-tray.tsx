@@ -1,8 +1,10 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { GripVertical } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
+import { ACTIVITY_BOX_CLASS, ACTIVITY_PRESS_CLASS } from "../_components/activity-canvas";
 
 type PointerPoint = { clientX: number; clientY: number };
 
@@ -37,7 +39,11 @@ export function TimelineTray({
 
       <button
         aria-label={t("Place {event} on the timeline", { event: label })}
-        className="bg-background border-viz-accent focus-visible:ring-ring/50 hover:bg-accent flex min-h-11 w-full cursor-grab touch-none items-center gap-3 rounded-xl border-2 border-dashed px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px] active:cursor-grabbing"
+        className={cn(
+          ACTIVITY_BOX_CLASS,
+          ACTIVITY_PRESS_CLASS,
+          "border-viz-accent hover:bg-accent flex w-full cursor-grab touch-none items-center gap-3 border-dashed px-3 py-2 active:cursor-grabbing",
+        )}
         onClick={() => {
           if (!hasDragged.current) {
             onPlace();

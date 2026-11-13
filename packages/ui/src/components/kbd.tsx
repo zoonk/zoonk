@@ -4,6 +4,7 @@ import { useShortcutLabel } from "@zoonk/ui/hooks/shortcut-label";
 import { SHORTCUTS, type ShortcutName, isModShortcut, pickKey } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
+import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, CornerDownLeftIcon } from "lucide-react";
 
 const shortcutKbdVariants = cva("hidden pointer-fine:inline-flex", {
   defaultVariants: { tone: "default" },
@@ -31,7 +32,30 @@ export function useShortcutCap(shortcut: ShortcutName, index?: number): string {
   return isModShortcut(shortcut) ? modCap : cap;
 }
 
-function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
+/** A key named by a symbol is drawn as Lucide's glyph: a font's ⏎ and arrows are a few pixels of ink. */
+const KEY_GLYPHS: Partial<Record<string, typeof CornerDownLeftIcon>> = {
+  "←": ArrowLeftIcon,
+  "→": ArrowRightIcon,
+  "↓": ArrowDownIcon,
+  "⏎": CornerDownLeftIcon,
+};
+
+function KeyGlyph({ children }: { children: React.ReactNode }) {
+  const Glyph = typeof children === "string" ? KEY_GLYPHS[children] : undefined;
+
+  if (!Glyph) {
+    return children;
+  }
+
+  return (
+    <>
+      <Glyph aria-hidden="true" />
+      <span className="sr-only">{children}</span>
+    </>
+  );
+}
+
+function Kbd({ children, className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
       className={cn(
@@ -40,7 +64,9 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
       )}
       data-slot="kbd"
       {...props}
-    />
+    >
+      <KeyGlyph>{children}</KeyGlyph>
+    </kbd>
   );
 }
 

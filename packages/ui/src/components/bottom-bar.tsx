@@ -5,7 +5,9 @@ const ROW_CLASS = "w-full px-(--page-gutter)";
 /**
  * The one home of a screen's main action, on a phone and a computer: pinned to the bottom of its
  * frame while the screen scrolls under it. Its buttons never move: what the last action couldn't do
- * goes in `note`, which is drawn over the screen above the bar instead of pushing the bar taller.
+ * goes in `note`, which is drawn over the screen above the bar instead of pushing the bar taller,
+ * and read to screen readers as it appears: pass its words (an error that must interrupt keeps
+ * `role="alert"`).
  *
  * It reaches the frame's edges by the frame's own padding (`--page-gutter`, `--page-bottom`) and
  * rests on what the frame docks under it (`--page-dock`), so it's the same piece in the app's
@@ -25,14 +27,18 @@ function BottomBar({
       data-slot="bottom-bar"
       {...props}
     >
-      {note && (
-        <div
-          className="bg-background border-border absolute inset-x-0 bottom-full border-t"
-          data-slot="bottom-bar-note"
-        >
-          <div className={cn(ROW_CLASS, "pt-2 text-sm", className)}>{note}</div>
-        </div>
-      )}
+      {/* Mounted while empty: a screen reader reads a line added to a live region it already knows. */}
+      <div
+        aria-live="polite"
+        className="absolute inset-x-0 bottom-full"
+        data-slot="bottom-bar-note"
+      >
+        {note && (
+          <div className="bg-background border-border border-t">
+            <div className={cn(ROW_CLASS, "pt-2 text-sm", className)}>{note}</div>
+          </div>
+        )}
+      </div>
 
       <div
         className={cn(
@@ -49,13 +55,16 @@ function BottomBar({
 }
 
 /**
- * A row of the bar's buttons, 8px apart: the main action last, taking the row's width on a phone
- * and sitting at its end on a computer.
+ * A row of the bar's buttons, 8px apart, the main action last. The main action (the one Enter
+ * presses) takes what the row has left on a phone and its own width at the row's end on a computer.
  */
 function BottomBarActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-full flex-wrap items-center gap-2 lg:justify-end", className)}
+      className={cn(
+        "flex w-full flex-wrap items-center gap-2 *:data-enter:grow lg:justify-end lg:*:data-enter:grow-0",
+        className,
+      )}
       data-slot="bottom-bar-actions"
       {...props}
     />

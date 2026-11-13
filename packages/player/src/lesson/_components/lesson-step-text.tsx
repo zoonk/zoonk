@@ -1,5 +1,5 @@
 import { QuestionTitle } from "@zoonk/learn/question-title";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { useLessonPlayerConfig } from "../lesson-player-context";
@@ -22,9 +22,6 @@ export function LessonContext({ children }: { children?: string }) {
 
   return <RichTextBlocks className="text-base leading-relaxed" text={children} />;
 }
-
-export const LESSON_BODY_CLASS =
-  "text-foreground text-lg leading-relaxed md:text-xl md:leading-[1.6]";
 
 /** Knowledge lessons put a teaching screen's bold terms on the highlighter; language lessons keep plain bold. */
 export function useTermHighlighter(): string | null {

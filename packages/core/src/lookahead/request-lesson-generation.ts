@@ -25,7 +25,6 @@ export type LessonGenerationRequest =
   | { decision: Exclude<UsageDecision, { status: "allowed" | "unauthorized" }>; status: "refused" }
   | { status: "setAside" }
   | { status: "notFound" }
-  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 async function getActiveGoal(userId: string) {

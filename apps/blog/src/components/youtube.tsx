@@ -4,7 +4,7 @@ type YouTubeProps = { id: string };
 
 export function YouTube({ id }: YouTubeProps) {
   return (
-    <div className="not-prose my-6 w-full overflow-hidden rounded-lg">
+    <div className="not-prose my-6 w-full overflow-hidden rounded-xl">
       <YouTubeEmbed videoid={id} playlabel="Play YouTube video" />
     </div>
   );

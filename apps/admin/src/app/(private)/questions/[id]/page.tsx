@@ -1,11 +1,13 @@
 import { AdminAnswerMarkdown } from "@/components/admin-answer-markdown";
 import {
   AdminDetailBody,
+  AdminDetailColumns,
   AdminDetailHeader,
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
-import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminSection, AdminSectionEmpty, AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
 import { getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { formatDateTime } from "@/lib/format";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -13,7 +15,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { QuestionDetails } from "./question-details";
+import { QuestionAskedIn, QuestionWrittenBy } from "./question-details";
 
 export async function generateMetadata({
   params,
@@ -33,27 +35,32 @@ export async function generateMetadata({
   return { title: record.question };
 }
 
-const QUESTION_PARENTS = [{ href: "/questions", label: "Questions" }];
+const QUESTION_PARENTS = [{ href: "/questions", label: "Buddy questions" }];
 
-const QUESTION_STATUS_LABELS = {
-  completed: "Completed",
-  failed: "Failed",
-  pending: "Pending",
-  running: "Running",
+const QUESTION_TABS = [
+  { label: "Answer", value: "answer" },
+  { label: "Written by", value: "written" },
+] as const;
+
+/** An answered question needs no state; one that failed or isn't written yet says so. */
+const UNANSWERED_LABELS = {
+  failed: "The answer failed",
+  pending: "Waiting for its answer",
+  running: "Being answered",
 } as const;
 
-export default function QuestionDetailPage({ params }: PageProps<"/questions/[id]">) {
+export default function QuestionDetailPage({ params, searchParams }: PageProps<"/questions/[id]">) {
   return (
     <AdminDetailPage>
       <Suspense fallback={<QuestionDetailSkeleton />}>
-        <QuestionDetailContent params={params} />
+        <QuestionDetailContent params={params} searchParams={searchParams} />
       </Suspense>
     </AdminDetailPage>
   );
 }
 
-async function QuestionDetailContent({ params }: Pick<PageProps<"/questions/[id]">, "params">) {
-  const { id } = await params;
+async function QuestionDetailContent({ params, searchParams }: PageProps<"/questions/[id]">) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   if (!isUuid(id)) {
     notFound();
@@ -66,35 +73,47 @@ async function QuestionDetailContent({ params }: Pick<PageProps<"/questions/[id]
   }
 
   const { user } = question.thread;
-  const failed = question.status === "failed";
+  const tab = readAdminTab({ tabs: QUESTION_TABS, value: query.tab });
 
   return (
     <>
       <AdminDetailHeader
-        alert={failed ? QUESTION_STATUS_LABELS.failed : null}
+        alert={question.status === "failed" ? UNANSWERED_LABELS.failed : null}
         facts={[
-          !failed && QUESTION_STATUS_LABELS[question.status],
+          question.status !== "completed" &&
+            question.status !== "failed" &&
+            UNANSWERED_LABELS[question.status],
           user.name || user.username || user.email,
           `Asked ${formatDateTime(question.createdAt)}`,
         ]}
         parents={QUESTION_PARENTS}
         title={question.question}
+        titleClassName="max-w-3xl"
       />
 
       <AdminDetailBody>
-        <AdminSection title="Answer">
-          <div className="max-w-3xl leading-7">
-            {question.answer ? (
-              <AdminAnswerMarkdown answer={question.answer} />
-            ) : (
-              <p>No answer is available yet.</p>
-            )}
-          </div>
-        </AdminSection>
+        <AdminRecordTabs
+          current={tab}
+          label="Buddy question"
+          path={`/questions/${question.id}`}
+          tabs={QUESTION_TABS}
+        />
 
-        <AdminSection title="Details">
-          <QuestionDetails question={question} />
-        </AdminSection>
+        {tab === "answer" ? (
+          <AdminDetailColumns aside={<QuestionAskedIn question={question} />}>
+            <AdminSection title="The buddy answered">
+              {question.answer ? (
+                <div className="flex max-w-2xl flex-col gap-3 text-sm leading-6">
+                  <AdminAnswerMarkdown answer={question.answer} />
+                </div>
+              ) : (
+                <AdminSectionEmpty>No answer yet.</AdminSectionEmpty>
+              )}
+            </AdminSection>
+          </AdminDetailColumns>
+        ) : null}
+
+        {tab === "written" ? <QuestionWrittenBy question={question} /> : null}
       </AdminDetailBody>
     </>
   );
@@ -113,7 +132,6 @@ function QuestionDetailSkeleton() {
             <Skeleton className="h-4 w-4/5" />
           </div>
         </AdminSectionSkeleton>
-        <AdminSectionSkeleton rows={11} />
       </AdminDetailBody>
     </>
   );

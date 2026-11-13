@@ -134,7 +134,7 @@ async function walk(
   async function step(action: Action, doing: string, perform: () => Promise<unknown>, ms: number) {
     await page.evaluate(snapshotLayout);
     const writes = blocked();
-    await perform();
+    const performed = await perform();
     await settle(page, ms);
 
     steps.push({
@@ -148,12 +148,17 @@ async function walk(
       await page.goto(url, { timeout: LOAD_TIMEOUT_MS });
       await page.waitForLoadState("networkidle").catch(() => null);
     }
+
+    return performed;
   }
 
   async function closeOverlay() {
     if ((await page.locator(OVERLAY).count()) > 0) {
       await page.keyboard.press("Escape");
+      return true;
     }
+
+    return false;
   }
 
   async function field(action: Action, element: Locator) {
@@ -233,21 +238,26 @@ async function walk(
       }
     }
 
-    await step(
+    const closedByWalk = await step(
       action,
       "closing",
       async () => {
-        if ((await page.locator(OVERLAY).count()) > 0) {
-          await closeOverlay();
-        } else {
+        const closed = await closeOverlay();
+
+        if (!closed && !panel) {
           await element.click({ timeout: ACT_TIMEOUT_MS });
         }
+
+        return closed;
       },
       STEP_SETTLE_MS,
     );
 
     if (panel) {
-      panels.push({ ...panel, focusBack: await focusCameBack(page, action.id) });
+      panels.push({
+        ...panel,
+        focusBack: closedByWalk ? await focusCameBack(page, action.id) : null,
+      });
     }
   }
 

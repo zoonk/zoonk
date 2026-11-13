@@ -360,9 +360,9 @@ msgid "Below you can choose a mock exam to take now."
 msgstr "아래에서 지금 볼 모의고사를 고를 수 있어요."
 
 #: src/lib/tutor-confirmation.ts
-msgctxt "aK1CcD"
-msgid "Below is the Plus page."
-msgstr "아래에 Plus 페이지가 있어요."
+msgctxt "cO6qa4"
+msgid "Below you can subscribe."
+msgstr "아래에서 구독할 수 있어요."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "KAqcUe"

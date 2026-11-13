@@ -11,7 +11,6 @@ export type LessonWritingAnswer =
   | { generationId: string; status: "writing" }
   | { limit: LessonLimit; status: "refused" }
   | { status: "failed" }
-  | { status: "plusRequired" }
   | { status: "ready" }
   | { status: "setAside" };
 
@@ -25,10 +24,6 @@ function readAnswer({
   response: Response;
 }): LessonWritingAnswer {
   const code = isJsonObject(body) ? getString(body.error, "code") : null;
-
-  if (code === LESSON_PLAYER_ERROR_CODES.plusRequired) {
-    return { status: "plusRequired" };
-  }
 
   const limit = readRefusedLimit({ body, status: response.status });
 

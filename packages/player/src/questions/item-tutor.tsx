@@ -48,7 +48,6 @@ function ItemBuddy({
     <TutorBuddyProvider
       context={item && context}
       identity={identity}
-      missed={missed}
       navigation={navigation}
       quote={item && <ItemQuote item={item} />}
       suggests={missed}

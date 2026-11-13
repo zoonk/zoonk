@@ -10,6 +10,7 @@ import {
   ActivityPlotGridY,
   ActivityPlotGuide,
   ActivityPlotLine,
+  PLOT_LINE_WIDTH,
   usePlotScales,
 } from "./activity-plot";
 
@@ -110,7 +111,12 @@ export function ActivityFormulaChart({
   yDomain: NumericDomain;
 }) {
   return (
-    <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} yDomain={yDomain}>
+    <ActivityPlot
+      height={PLOT_HEIGHT}
+      padding={{ right: PLOT_LINE_WIDTH / 2 }}
+      xDomain={xDomain}
+      yDomain={yDomain}
+    >
       <ActivityPlotGridY format={formatTick} ticks={niceTicks(yDomain, 3)} />
       <ActivityPlotAxisX format={formatX} ticks={[xDomain[0], xDomain[1]]} />
 

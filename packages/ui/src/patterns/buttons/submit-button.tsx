@@ -38,7 +38,6 @@ export function MainSubmitButton({
       busy={status.pending}
       className={cn("w-full", className)}
       enter="host"
-      size="lg"
       type="submit"
       {...props}
     />

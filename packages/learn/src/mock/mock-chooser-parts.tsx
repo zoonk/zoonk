@@ -24,9 +24,5 @@ export type MockChooserStatus =
 export function MockPlusNotice() {
   const t = useExtracted();
 
-  return (
-    <PlusNotice cta={false}>
-      {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-    </PlusNotice>
-  );
+  return <PlusNotice cta={false} title={t("Mock exams come with Plus")} />;
 }

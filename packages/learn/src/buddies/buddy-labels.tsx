@@ -77,7 +77,7 @@ export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
 
   switch (glasses) {
     case "star":
-      return t("Win your first phase challenge");
+      return t("Win your first challenge");
     case "aviator":
       return t("Finish your first weekly challenge");
     case "catEye":
@@ -85,7 +85,7 @@ export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
     case "retro":
       return t("Finish 50 reviews");
     case "monocle":
-      return t("Win the final challenge");
+      return t("Win your plan's last challenge");
     case "round":
       return t({
         description: "How the learner gets the round glasses: every buddy has them.",

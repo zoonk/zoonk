@@ -1,200 +1,117 @@
 import { AdminSection } from "@/components/admin-section";
-import { DetailField, DetailFields } from "@/components/detail-field";
-import { SubscriptionStatusBadge } from "@/components/subscription-status-badge";
+import { StateMark } from "@/components/state-mark";
+import { getUser } from "@/data/users/get-user";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
-import { getSubscriptionProviderLabel, getSubscriptionStatusLabel } from "@/lib/subscription";
-import { Badge } from "@zoonk/ui/components/badge";
-import { ChangePlanDialog } from "./change-plan-dialog";
+import { formatDate } from "@/lib/format";
+import { getLearnerLabel } from "@/lib/learner-label";
+import {
+  getPlanLabel,
+  getSubscriptionBilledBy,
+  getSubscriptionStatusLabel,
+  getSubscriptionStore,
+} from "@/lib/subscription";
+import { CreditCardIcon } from "lucide-react";
+import { ChangePlanButton } from "./change-plan-button";
 
 type UserSubscriptions = Awaited<ReturnType<typeof getUserSubscriptions>>;
-type UserSubscriptionRecord = NonNullable<UserSubscriptions["active"]>;
+type ActiveSubscription = NonNullable<UserSubscriptions["active"]>;
 
+/** Better Auth schedules a cancellation by timestamp or at the period end, so both count. */
+function getCancellationDate(subscription: ActiveSubscription) {
+  if (!subscription.cancelAt && !subscription.cancelAtPeriodEnd) {
+    return null;
+  }
+
+  return subscription.cancelAt ?? subscription.periodEnd;
+}
+
+function ActiveFacts({ subscription }: { subscription: ActiveSubscription }) {
+  const cancels = getCancellationDate(subscription);
+  const store = getSubscriptionStore(subscription.provider);
+
+  const facts = [
+    getSubscriptionBilledBy(subscription),
+    subscription.periodStart && `Since ${formatDate(subscription.periodStart)}`,
+    !cancels &&
+      subscription.periodEnd &&
+      `${store ? "Renews" : "Ends"} ${formatDate(subscription.periodEnd)}`,
+  ];
+
+  return (
+    <>
+      <span>{facts.filter(Boolean).join(" · ")}</span>
+      {cancels ? (
+        <StateMark state="canceled" tone="attention">
+          Cancels {formatDate(cancels)}
+        </StateMark>
+      ) : null}
+      {store ? <span>Change it in {store.where}.</span> : null}
+      {subscription.stripeCustomerId ? (
+        <span className="font-mono text-xs">{subscription.stripeCustomerId}</span>
+      ) : null}
+    </>
+  );
+}
+
+/** What they pay for, in a few lines: the plan, who bills it and until when. */
 export async function UserSubscription({ userId }: { userId: string }) {
   "use cache: private";
 
-  const subscriptions = await getUserSubscriptions(userId);
+  const [user, { active, canceled, incomplete }] = await Promise.all([
+    getUser(userId),
+    getUserSubscriptions(userId),
+  ]);
+
+  if (!user) {
+    return null;
+  }
+
+  const store = active ? getSubscriptionStore(active.provider) : null;
 
   return (
     <AdminSection
       action={
-        canChangeSubscriptionPlan(subscriptions.active) && (
-          <ChangePlanDialog
+        store ? null : (
+          <ChangePlanButton
+            hasPlus={Boolean(active)}
             userId={userId}
-            currentPlan={getCurrentSubscriptionPlan(subscriptions.active)}
+            userName={getLearnerLabel(user)}
           />
         )
       }
       title="Subscription"
     >
-      <UserSubscriptionDetails subscriptions={subscriptions} />
+      <div className="flex items-start gap-2.5">
+        <CreditCardIcon
+          aria-hidden="true"
+          className="text-muted-foreground mt-0.5 size-4 shrink-0"
+        />
+        <div className="text-muted-foreground text-compact flex min-w-0 flex-col gap-1">
+          <span className="text-foreground flex flex-wrap items-center gap-x-3 text-sm font-medium">
+            {getPlanLabel(active?.plan)}
+            {active && active.status !== "active" ? (
+              <StateMark className="font-normal" state={active.status ?? "incomplete"}>
+                {getSubscriptionStatusLabel(active.status)}
+              </StateMark>
+            ) : null}
+          </span>
+
+          {active ? <ActiveFacts subscription={active} /> : null}
+
+          {incomplete ? (
+            <span>Unfinished checkout: {getPlanLabel(incomplete.plan)}, started and not paid</span>
+          ) : null}
+
+          {canceled ? (
+            <span>
+              Last canceled: {getPlanLabel(canceled.plan)}
+              {canceled.canceledAt ? `, ${formatDate(canceled.canceledAt)}` : ""}
+            </span>
+          ) : null}
+
+          {active || canceled || incomplete ? null : <span>They never had a subscription.</span>}
+        </div>
+      </div>
     </AdminSection>
   );
-}
-
-function UserSubscriptionDetails({ subscriptions }: { subscriptions: UserSubscriptions }) {
-  const subscription = subscriptions.active;
-
-  return (
-    <DetailFields>
-      <DetailField label="Plan">
-        <span className="capitalize">{subscription?.plan ?? "Free"}</span>
-      </DetailField>
-      <SubscriptionProviderField subscription={subscription} />
-      <SubscriptionStatusField subscription={subscription} />
-      <SubscriptionBillingField subscription={subscription} />
-      <CurrentSubscriptionPeriodField subscription={subscriptions.active} />
-      <ScheduledCancellationField subscription={subscriptions.active} />
-      <IncompleteCheckoutField subscription={subscriptions.incomplete} />
-      <LastCancellationField subscription={subscriptions.canceled} />
-      <StripeCustomerField subscription={subscription} />
-    </DetailFields>
-  );
-}
-
-function SubscriptionProviderField({
-  subscription,
-}: {
-  subscription: UserSubscriptionRecord | null;
-}) {
-  return (
-    <DetailField label="Provider">
-      {subscription ? getSubscriptionProviderLabel(subscription.provider) : "—"}
-    </DetailField>
-  );
-}
-
-function SubscriptionStatusField({
-  subscription,
-}: {
-  subscription: UserSubscriptionRecord | null;
-}) {
-  if (!subscription) {
-    return <DetailField label="Status">—</DetailField>;
-  }
-
-  return (
-    <DetailField label="Status">
-      <SubscriptionStatusBadge className="capitalize" status={subscription.status}>
-        {getSubscriptionStatusLabel(subscription.status)}
-      </SubscriptionStatusBadge>
-    </DetailField>
-  );
-}
-
-function SubscriptionBillingField({
-  subscription,
-}: {
-  subscription: UserSubscriptionRecord | null;
-}) {
-  if (!subscription?.billingInterval) {
-    return null;
-  }
-
-  return (
-    <DetailField label="Billing">
-      <span className="capitalize">{subscription.billingInterval}</span>
-    </DetailField>
-  );
-}
-
-function CurrentSubscriptionPeriodField({
-  subscription,
-}: {
-  subscription: UserSubscriptionRecord | null;
-}) {
-  if (!subscription?.periodStart || !subscription.periodEnd) {
-    return null;
-  }
-
-  return (
-    <DetailField label="Current period">
-      {formatDate(subscription.periodStart)} – {formatDate(subscription.periodEnd)}
-    </DetailField>
-  );
-}
-
-function ScheduledCancellationField({
-  subscription,
-}: {
-  subscription: UserSubscriptionRecord | null;
-}) {
-  const scheduledCancellation = getScheduledCancellation(subscription);
-
-  if (!scheduledCancellation) {
-    return null;
-  }
-
-  return (
-    <DetailField label="Scheduled cancellation">
-      <span className="flex items-center gap-2">
-        <Badge variant="secondary">Scheduled</Badge>
-        {scheduledCancellation.date
-          ? formatDate(scheduledCancellation.date)
-          : "End of current period"}
-      </span>
-    </DetailField>
-  );
-}
-
-function IncompleteCheckoutField({
-  subscription,
-}: {
-  subscription: UserSubscriptionRecord | null;
-}) {
-  if (!subscription) {
-    return null;
-  }
-
-  return (
-    <DetailField label="Incomplete checkout">
-      <span className="flex items-center gap-2">
-        <SubscriptionStatusBadge status={subscription.status}>Incomplete</SubscriptionStatusBadge>
-        <span className="capitalize">{subscription.plan}</span>
-      </span>
-    </DetailField>
-  );
-}
-
-function LastCancellationField({ subscription }: { subscription: UserSubscriptionRecord | null }) {
-  if (!subscription) {
-    return null;
-  }
-
-  return (
-    <DetailField label="Last cancellation">
-      <span className="flex items-center gap-2">
-        <SubscriptionStatusBadge status={subscription.status}>Canceled</SubscriptionStatusBadge>
-        {subscription.canceledAt ? formatDate(subscription.canceledAt) : "Date unavailable"}
-      </span>
-    </DetailField>
-  );
-}
-
-function StripeCustomerField({ subscription }: { subscription: UserSubscriptionRecord | null }) {
-  if (!subscription?.stripeCustomerId) {
-    return null;
-  }
-
-  return <DetailField label="Stripe customer">{subscription.stripeCustomerId}</DetailField>;
-}
-
-function canChangeSubscriptionPlan(subscription: UserSubscriptionRecord | null) {
-  return !subscription || subscription.provider === "zoonk";
-}
-
-function getCurrentSubscriptionPlan(subscription: UserSubscriptionRecord | null) {
-  return subscription?.plan ?? "free";
-}
-
-/** Better Auth schedules a cancellation by timestamp or at the period end, so both count. */
-function getScheduledCancellation(subscription: UserSubscriptionRecord | null) {
-  if (!subscription?.cancelAt && !subscription?.cancelAtPeriodEnd) {
-    return null;
-  }
-
-  return { date: subscription.cancelAt ?? subscription.periodEnd };
-}
-
-function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString();
 }

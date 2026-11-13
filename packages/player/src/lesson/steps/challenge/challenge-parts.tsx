@@ -34,10 +34,7 @@ export function ChallengeAvatar({ name, slot }: { name: string; slot: ChallengeS
   return (
     <span
       aria-hidden="true"
-      className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
-        slot?.ai ? "bg-foreground text-background" : "bg-muted text-foreground",
-      )}
+      className="bg-muted text-foreground flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
     >
       {slot?.ai ? <BotIcon className="size-4" /> : name.slice(0, 1).toUpperCase()}
     </span>

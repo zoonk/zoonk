@@ -108,7 +108,7 @@ test("loading an unwritten lesson asks for nothing, and it opens once another ap
   await failLessonWriting(page);
 
   await page.goto(`/learn/${unwritten.id}`);
-  await expect(page.getByText("This lesson isn't written yet")).toBeVisible();
+  await expect(page.getByText("This lesson isn't ready yet")).toBeVisible();
   await expect(start).toBeVisible();
   await page.reload();
   await expect(start).toBeVisible();

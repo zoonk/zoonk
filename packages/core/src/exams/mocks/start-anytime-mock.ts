@@ -63,6 +63,7 @@ export async function startAnytimeMock({
 
   const result = await createAnytimeMock({
     acceptFewer: input.acceptFewer ?? false,
+    afterWriting: input.afterWriting,
     goal,
     option,
     setup,

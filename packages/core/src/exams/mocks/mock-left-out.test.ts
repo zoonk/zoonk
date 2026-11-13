@@ -32,7 +32,6 @@ const CERTIFICATE: ExamStructure = {
 describe(listMockLeftOut, () => {
   it("says each part of the exam day a full mock can't ask yet, and the bank's essays it can", () => {
     const [full] = listMockOptions({
-      dayInTurn: null,
       essays: [{ area: null, itemId: "essay" }],
       goalAreas: ["English"],
       structure: CERTIFICATE,
@@ -82,7 +81,6 @@ describe(listMockLeftOut, () => {
 
   it("says half of a day leaves its written part to full mocks, even with essays in the bank", () => {
     const [, half] = listMockOptions({
-      dayInTurn: null,
       essays: [{ area: null, itemId: "essay" }],
       goalAreas: ["English"],
       structure: CERTIFICATE,

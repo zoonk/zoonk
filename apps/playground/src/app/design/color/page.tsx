@@ -1,5 +1,6 @@
 import { COLOR_GROUPS, COLOR_RULES } from "@/design-system/color";
 import { type Subject, SubjectGlyph, SubjectLabel } from "@zoonk/learn/subject-label";
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { type Metadata } from "next";
@@ -20,10 +21,7 @@ function SubjectTable() {
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {MODES.map((mode) => (
         <div
-          className={cn(
-            modeClass(mode.id),
-            "ring-border flex flex-col gap-2.5 rounded-xl p-4 ring-1",
-          )}
+          className={cn(modeClass(mode.id), SURFACE_CLASS, "flex flex-col gap-2 p-4")}
           key={mode.id}
         >
           <p className="text-muted-foreground pb-1 text-xs font-medium">{mode.label}</p>
