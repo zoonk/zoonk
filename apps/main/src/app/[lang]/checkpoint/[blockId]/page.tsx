@@ -9,6 +9,7 @@ import { withQuery } from "@/lib/with-query";
 import { getCheckpoint } from "@zoonk/core/checkpoints/get";
 import { openLanguageCheckpointCall } from "@zoonk/core/language/conversations/start";
 import { getSession } from "@zoonk/core/users/session";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -129,11 +130,13 @@ async function CheckpointContent({ params, searchParams }: Props) {
 
   return (
     <MainLearnProvider>
-      <CheckpointClient
-        buddy={buddy}
-        checkpoint={checkpoint}
-        continueHref={sessionReturn.continueHref}
-      />
+      <DrawnMath content={checkpoint}>
+        <CheckpointClient
+          buddy={buddy}
+          checkpoint={checkpoint}
+          continueHref={sessionReturn.continueHref}
+        />
+      </DrawnMath>
     </MainLearnProvider>
   );
 }

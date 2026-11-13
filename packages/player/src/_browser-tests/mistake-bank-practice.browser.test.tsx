@@ -78,6 +78,31 @@ describe("exact standalone bank mistake practice", () => {
     );
   });
 
+  it("shows a question's formulas typeset from the first frame, and its feedback's", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { selectedIndex: 0 },
+        explanation: String.raw`The exponents add up to $2^{11}$ ways.`,
+        fixed: false,
+        fixedMistakeIds: [],
+        isCorrect: false,
+        mistakeStatus: "open",
+      });
+
+    openPractice(null, { answer }, question("multipleChoice"));
+    await expect.element(page.getByRole("radio").first()).toBeVisible();
+    expect(document.querySelectorAll("math")).toHaveLength(4);
+    await expect.element(page.getByText("costs $5 or $10")).toBeVisible();
+
+    await page.getByRole("radio").nth(1).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback).toBeVisible();
+    expect(feedback.element().querySelectorAll("math")).toHaveLength(1);
+  });
+
   it("keeps the bank ordering controls and sends the selected order", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
