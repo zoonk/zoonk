@@ -1,9 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { COLUMN_GHOST_ACTION_CLASS } from "../../components/step-layouts";
 import { useTutorBuddy } from "../../questions/tutor-buddy";
 import { isExplaining } from "../_utils/lesson-struggle";
 import { type PlayableLibraryStep } from "../lesson-player-types";
@@ -29,10 +27,8 @@ export function DidntGetItButton() {
 
   return (
     <Button
-      className={cn(
-        COLUMN_GHOST_ACTION_CLASS,
-        "text-muted-foreground pl-1.5 [--edge-text-start:calc(--spacing(1.5)+1px)]",
-      )}
+      className="text-muted-foreground w-fit"
+      edge="start"
       data-slot="didnt-get-it"
       onClick={() => buddy.openAndAsk("simpler")}
       size="sm"

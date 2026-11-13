@@ -3,6 +3,7 @@
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
@@ -14,10 +15,12 @@ type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
 export function ActivityChoiceCheck({
   answer,
   check,
+  className,
   onAnswerChange,
   phase,
 }: {
   answer: ActivityAnswer | null;
+  className?: string;
   check: ChoiceCheck;
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: ActivityPhase;
@@ -27,7 +30,7 @@ export function ActivityChoiceCheck({
   const isChecked = phase === "checked";
 
   return (
-    <div className="flex flex-col gap-3" data-slot="activity-choice-check">
+    <div className={cn("flex flex-col gap-3", className)} data-slot="activity-choice-check">
       <ActivityCheckQuestion>{check.question}</ActivityCheckQuestion>
 
       <PlayerChoiceSceneOptions

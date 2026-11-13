@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ActivitySoundButton } from "../_components/activity-sound-button";
 import { useChordName, useNoteNames } from "../_utils/use-music-labels";
@@ -33,7 +34,13 @@ export function KeyboardFretboardHeader({
   }
 
   return (
-    <div className="flex items-start justify-between gap-3">
+    <div
+      className={cn(
+        "flex gap-3",
+        // Two buttons leave the title no room beside them on a phone, so they take their own row.
+        byEar ? "flex-col" : "items-start justify-between",
+      )}
+    >
       <div className="flex min-w-0 flex-col gap-0.5">
         <p className="text-lg leading-tight font-semibold">{title()}</p>
 
@@ -49,7 +56,7 @@ export function KeyboardFretboardHeader({
         </p>
       </div>
 
-      <div className="flex shrink-0 flex-wrap justify-end gap-2">
+      <div className={cn("flex shrink-0 flex-wrap gap-2", !byEar && "justify-end")}>
         {byEar?.onPlay && (
           <ActivitySoundButton onPlay={byEar.onPlay}>{t("Play the sound")}</ActivitySoundButton>
         )}

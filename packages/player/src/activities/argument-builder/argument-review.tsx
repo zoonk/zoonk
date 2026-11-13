@@ -1,6 +1,8 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { ArgumentText, ArgumentWhy } from "./argument-parts";
 
 type Candidate = { id: string; isStrong: boolean; why: string };
@@ -27,7 +29,7 @@ export function ArgumentReview({
   return (
     <div className="flex flex-col gap-3" data-slot="argument-review">
       {strongQuote && strongQuote.id !== pickedQuote?.id && (
-        <section className="bg-background flex flex-col gap-1.5 rounded-xl border px-3.5 py-2.5">
+        <section className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-1.5")}>
           <p className="text-success-text text-xs font-semibold">{t("Stronger evidence")}</p>
           <ArgumentText citation={strongQuote.citation} text={strongQuote.quote} />
           <ArgumentWhy text={strongQuote.why} />
@@ -35,7 +37,7 @@ export function ArgumentReview({
       )}
 
       {strongReasoning && strongReasoning.id !== pickedReasoning?.id && (
-        <section className="bg-background flex flex-col gap-1.5 rounded-xl border px-3.5 py-2.5">
+        <section className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-1.5")}>
           <p className="text-success-text text-xs font-semibold">{t("Stronger reasoning")}</p>
           <ArgumentText text={strongReasoning.text} />
           <ArgumentWhy text={strongReasoning.why} />

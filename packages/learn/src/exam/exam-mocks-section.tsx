@@ -63,13 +63,7 @@ export function ExamMocks({ offered }: { offered: boolean }) {
         </ol>
       )}
 
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
-          )}
-        </PlusNotice>
-      )}
+      {locked && <PlusNotice title={t("Mock exams come with Plus")} />}
     </PageSection>
   );
 }
