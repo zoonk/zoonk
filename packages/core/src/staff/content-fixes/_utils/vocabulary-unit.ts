@@ -44,15 +44,9 @@ export async function findLessonsShowing(
     where: { id: unit.id },
   });
 
-  const tile = {
-    distractors: { has: word?.word ?? "" },
-    lesson: { targetLanguage: word?.targetLanguage ?? "" },
-  };
-
   const rows = await Promise.all([
     db.lessonWord.findMany({ select, where: { wordId: unit.id } }),
     db.step.findMany({ select, where: { wordId: unit.id, ...CURRENT_STEPS } }),
-    db.lessonWord.findMany({ select, where: tile }),
     word ? findLessonsWithWordTiles(db, word) : [],
   ]);
 

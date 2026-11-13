@@ -438,6 +438,44 @@ describe("word and sentence fixes", () => {
     ]);
   });
 
+  it("updates the lessons whose tiles show a word as a distractor in another case", async () => {
+    const text = `rent${crypto.randomUUID().replaceAll("-", "")}`;
+    const shown = `R${text.slice(1)}`;
+
+    const [reading, vocabulary] = await Promise.all([
+      languageLessonFixture({ sentenceText: "It is cheap." }),
+      languageLessonFixture(),
+    ]);
+
+    await Promise.all([
+      prisma.lessonSentence.updateMany({
+        data: { distractors: [shown] },
+        where: { lessonId: reading.lesson.id },
+      }),
+      prisma.lessonWord.updateMany({
+        data: { distractors: [shown] },
+        where: { lessonId: vocabulary.lesson.id },
+      }),
+    ]);
+
+    const word = await wordFixture({
+      organizationId: reading.word.organizationId,
+      targetLanguage: "en",
+      word: text,
+    });
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [{ id: word.id, model: "Word", set: { romanization: "rent" } }],
+      reason: "Missing romanization.",
+    });
+
+    expect(fix.effects).toStrictEqual([
+      { kind: "lessonsUpdated", lessonIds: [reading.lesson.id, vocabulary.lesson.id].toSorted() },
+    ]);
+  });
+
   it("copies a sentence fix to spoken screens and owes word orders again, and its revert puts both back", async () => {
     const { lesson, sentence, steps } = await languageLessonFixture();
     const spoken = spokenStep(steps);
