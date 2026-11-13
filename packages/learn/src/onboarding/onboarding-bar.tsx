@@ -87,7 +87,7 @@ export function OnboardingPageBar({
           {bar.onBack ? (
             <BackButton onBack={bar.onBack} />
           ) : (
-            <TaskClose className="lg:hidden" href={backHref} size="icon-bar" toApp />
+            <TaskClose className="lg:hidden" href={backHref} toApp />
           )}
           {/* Centered on the bar's row: 12px over it, half of its 44px. */}
           {bar.middle && (
