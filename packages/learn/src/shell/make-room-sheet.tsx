@@ -3,14 +3,13 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { safeAsync } from "@zoonk/utils/error";
-import { PauseIcon, XIcon } from "lucide-react";
+import { PauseIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TransitionStartFunction, useId, useState } from "react";
 import {
@@ -153,23 +152,12 @@ export function MakeRoomSheet({
     <Drawer onOpenChange={(open) => !isStarting && room.setOpen(open)} open={state.open}>
       <DrawerPopup>
         <SheetHeader>
-          <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-balance">
-              {t("Make room for {goal}", { goal })}
-            </DrawerTitle>
-            <DrawerDescription className="text-pretty">
-              {t(
-                "That's as many goals as you can study at once without Plus. Pause one to start this one.",
-              )}
-            </DrawerDescription>
-          </div>
-
-          <DrawerClose
-            render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
-          >
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerTitle className="text-balance">{t("Make room for {goal}", { goal })}</DrawerTitle>
+          <DrawerDescription className="text-pretty">
+            {t(
+              "That's as many goals as you can study at once without Plus. Pause one to start this one.",
+            )}
+          </DrawerDescription>
         </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
