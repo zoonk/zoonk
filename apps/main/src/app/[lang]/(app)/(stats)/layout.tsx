@@ -13,7 +13,12 @@ export default async function StatsLayout({ children }: LayoutProps<"/[lang]">) 
 
   return (
     <>
-      <SectionPage hub={{ href: getMenu("stats").url, title: t("Statistics") }} nav={<StatsNav />}>
+      <SectionPage
+        hub={{ href: getMenu("stats").url, title: t("Statistics") }}
+        nav={<StatsNav />}
+        note={t("Across all your goals")}
+        root
+      >
         {children}
       </SectionPage>
       <LearnerSummarySeed />

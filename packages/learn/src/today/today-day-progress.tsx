@@ -1,16 +1,25 @@
 "use client";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { METER_PARTS_CLASS } from "../_components/meter";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
 import { drawsDayMeter } from "./day-segments";
-import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
+import { TodayContinueStatus } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDayTime, getHeldMinutes } from "./today-time";
@@ -64,12 +73,12 @@ export function DayProgress({ className }: { className?: string }) {
 }
 
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
-export function useStudiedToday(): number {
+function useStudiedToday(): number {
   const { today } = useTodayScreen();
   return today.session.week.days.find((day) => day.isToday)?.minutes ?? 0;
 }
 
-export function DayTime({ className }: { className?: string }) {
+function DayTimeReadout({ className }: { className?: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { today } = useTodayScreen();
@@ -88,34 +97,63 @@ export function DayTime({ className }: { className?: string }) {
   );
 }
 
-export function DayMeta({ className }: { className?: string }) {
+/**
+ * A day that keeps time for a mock exam is shorter than the learner's time a day, so its time opens
+ * why.
+ */
+export function DayTime({ className }: { className?: string }) {
   const t = useExtracted();
+  const formatDate = useFormatIsoDate();
   const { today } = useTodayScreen();
-  const speaking = useTodayContinueSpeaking();
-  const { blocks, minutes, sessionBar } = today.session;
+  const { mockFunding, session } = today;
 
-  if (blocks.length === 0 && minutes.left === 0) {
+  if (!mockFunding || session.state === "done" || session.state === "rest") {
+    return <DayTimeReadout className={className} />;
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger
+        className="decoration-faint hit-area focus-visible:ring-ring/50 relative rounded-sm underline decoration-dotted decoration-1 underline-offset-4 outline-none focus-visible:ring-[3px]"
+        data-slot="today-shorter-day"
+      >
+        <DayTimeReadout className={className} />
+      </PopoverTrigger>
+
+      <PopoverContent align="end" className="w-64 gap-2">
+        <PopoverHeader>
+          <PopoverTitle>{t("A shorter day")}</PopoverTitle>
+          <PopoverDescription>
+            {t("Your plan keeps time for the mock exam on {date}.", {
+              date: formatDate(mockFunding.mockDate),
+            })}
+          </PopoverDescription>
+        </PopoverHeader>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+/**
+ * From `sm` a slow or failed open speaks under the action, in the room over the day's bar, so it
+ * takes no line of its own and nothing moves. On a phone the docked action says it.
+ */
+export function DayOpenStatus({ className }: { className?: string }) {
+  const { today } = useTodayScreen();
+
+  if (today.session.state !== "underway") {
     return null;
   }
 
   return (
     <p
       className={cn(
-        "text-muted-foreground hidden min-h-5 items-baseline gap-3 font-mono text-xs tabular-nums sm:flex",
+        "text-muted-foreground absolute right-0 bottom-full hidden max-w-full text-xs leading-4 sm:flex",
         className,
       )}
-      data-slot="today-day-meta"
+      data-slot="today-open-status"
     >
-      {!speaking && sessionBar.total > 0 && (
-        <span>
-          {t(
-            "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-            { done: sessionBar.completed, total: sessionBar.total },
-          )}
-        </span>
-      )}
-      <TodayContinueStatus className="ml-auto min-w-0 truncate text-right font-sans" />
-      {!speaking && <DayTime className="text-foreground text-xl" />}
+      <TodayContinueStatus className="min-w-0 truncate text-right" />
     </p>
   );
 }

@@ -77,6 +77,7 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
       <PendingLink
         className={buttonVariants({ size: "sm", variant: "outline" })}
         data-account-ask
+        data-account-offer
         href={signUpHref}
         icon={<UserPlusIcon aria-hidden="true" />}
       >
