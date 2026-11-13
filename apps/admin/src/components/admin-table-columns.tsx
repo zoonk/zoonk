@@ -114,7 +114,7 @@ function AdminTableColumnHead({ column, sized }: { column: AdminTableColumn; siz
       <Link
         aria-current={sort.isActive ? "page" : undefined}
         className={cn(
-          "hover:text-foreground hit-area relative inline-block w-full text-inherit transition-colors [&>svg]:inline [&>svg]:align-[-0.125em]",
+          "hover:text-foreground hit-area relative inline-block w-full text-inherit transition-colors [&>svg]:inline [&>svg]:align-[-0.25em]",
           align === "right" ? "text-right [&>svg]:me-1" : "text-left [&>svg]:ms-1",
         )}
         href={sort.href}
