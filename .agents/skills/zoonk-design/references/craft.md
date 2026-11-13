@@ -306,7 +306,7 @@ One filled button in view, outside a dialog. Around it, buttons step down: outli
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.

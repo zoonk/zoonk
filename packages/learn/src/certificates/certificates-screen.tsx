@@ -97,10 +97,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
         </span>
       </span>
 
-      <ChevronRightIcon
-        aria-hidden="true"
-        className="text-muted-foreground/60 size-4 shrink-0 lg:hidden"
-      />
+      <ChevronRightIcon aria-hidden="true" className="text-faint size-4 shrink-0 lg:hidden" />
     </LearnLink>
   );
 }
