@@ -436,7 +436,11 @@ internal fun SheetLegend(flagged: Int) {
     // The mark sits on the first line and grows with the words.
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.Top) {
         FlagGlyph(Modifier.padding(top = (line - glyph) / 2).size(glyph))
-        Text(pluralStringResource(R.plurals.mock_flagged_count, flagged, flagged), color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
+        Text(
+            pluralStringResource(R.plurals.mock_flagged_count, flagged, flagged),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = style,
+        )
     }
 }
 
@@ -624,7 +628,8 @@ internal fun SheetSections(
 }
 
 @Composable
-private fun sheetCounts(counts: SectionCounts): String = pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered)
+private fun sheetCounts(counts: SectionCounts): String =
+    pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered)
 
 private const val MAP_ROW = 7
 private val MAP_GAP = 8.dp

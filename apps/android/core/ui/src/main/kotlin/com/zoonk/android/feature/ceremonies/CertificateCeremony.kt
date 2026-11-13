@@ -54,6 +54,7 @@ import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.courseLevelName
+import com.zoonk.android.feature.certificates.BlankCertificate
 import com.zoonk.android.feature.certificates.CertificateAction
 import com.zoonk.android.feature.certificates.CertificateActions
 import com.zoonk.android.feature.certificates.CertificateKind
@@ -62,7 +63,6 @@ import com.zoonk.android.feature.certificates.CertificateNameField
 import com.zoonk.android.feature.certificates.CertificateNameModel
 import com.zoonk.android.feature.certificates.CertificatePicture
 import com.zoonk.android.feature.certificates.LinkedInSheet
-import com.zoonk.android.feature.certificates.BlankCertificate
 import com.zoonk.android.feature.certificates.caption
 import com.zoonk.android.feature.certificates.certificateNameModel
 import com.zoonk.android.feature.certificates.fileName

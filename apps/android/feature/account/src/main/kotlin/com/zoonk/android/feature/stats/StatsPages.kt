@@ -54,8 +54,8 @@ import com.zoonk.android.ui.format.formatHourRange
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
-import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
 import com.zoonk.api.models.CurrentUserProgressResponse
 import com.zoonk.api.models.CurrentUserProgressResponseLevel
@@ -576,7 +576,12 @@ internal fun ScorePage(context: StatsContext) {
         StatTile(
             label = pluralStringResource(R.plurals.stats_last_days, SCORE_WINDOW_DAYS, whole(SCORE_WINDOW_DAYS.toLong(), locale)),
             value = metricPercent(score.score, locale),
-            detail = stringResource(R.string.stats_correct_of_total, whole(score.correctAnswers, locale), whole(score.totalAnswers, locale)),
+            detail =
+                stringResource(
+                    R.string.stats_correct_of_total,
+                    whole(score.correctAnswers, locale),
+                    whole(score.totalAnswers, locale),
+                ),
             tone = StatTone.Success,
             icon = icon(R.drawable.ic_target),
         )

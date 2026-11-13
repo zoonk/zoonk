@@ -138,7 +138,13 @@ private fun FormatDayRow(
             Text(title, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
             day.minutes
                 ?.takeIf { it > 0 }
-                ?.let { Text(formatDuration(it * SECONDS_PER_MINUTE, locale), color = MaterialTheme.colorScheme.onSurfaceVariant, style = numbers) }
+                ?.let {
+                    Text(
+                        formatDuration(it * SECONDS_PER_MINUTE, locale),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = numbers,
+                    )
+                }
         }
         Text(parts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }

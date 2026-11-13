@@ -159,9 +159,10 @@ private fun YourData(
     navigator: AppNavigator,
     signedIn: SessionState.SignedIn,
 ) {
-    val data = viewModel(key = "your-data:${signedIn.session.localId}") {
-        YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email)
-    }
+    val data =
+        viewModel(key = "your-data:${signedIn.session.localId}") {
+            YourDataViewModel(app.account, signedIn.session, signedIn.account.user.email)
+        }
     val context = LocalContext.current
     val export =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
@@ -194,7 +195,11 @@ private fun YourData(
     }
 
     val account by app.subscriptions.account.collectShown()
-    val provider = account.value?.account?.subscription?.provider
+    val provider =
+        account.value
+            ?.account
+            ?.subscription
+            ?.provider
     DeletionDialogs(app, navigator, data, signedIn, deletionPlusNotices(app.subscriptions.websiteSubscription, provider))
 }
 

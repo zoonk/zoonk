@@ -271,15 +271,36 @@ private fun MapFacts.statusLine(
 ): String? {
     val library = place == MindMapPlace.Library
     val chapter = place == MindMapPlace.Chapter
-    val offer = stringResource(if (place == MindMapPlace.Finish) R.string.mindmaps_row_description_finish else R.string.mindmaps_row_description)
+    val offer =
+        stringResource(
+            if (place ==
+                MindMapPlace.Finish
+            ) {
+                R.string.mindmaps_row_description_finish
+            } else {
+                R.string.mindmaps_row_description
+            },
+        )
 
     return when (shown) {
         MindMapShown.Available, MindMapShown.Refused -> {
             val count = lessonsToWrite.toInt()
             when {
-                library -> null
-                count > 0 && !plus -> pluralStringResource(R.plurals.mindmaps_lessons_first_free, count, formatNumber(count.toDouble(), currentLocale()))
-                else -> offer
+                library -> {
+                    null
+                }
+
+                count > 0 && !plus -> {
+                    pluralStringResource(
+                        R.plurals.mindmaps_lessons_first_free,
+                        count,
+                        formatNumber(count.toDouble(), currentLocale()),
+                    )
+                }
+
+                else -> {
+                    offer
+                }
             }
         }
 

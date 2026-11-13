@@ -131,7 +131,11 @@ private fun shownScore(
 /** "Next step", a muted label inside the title block over the criterion's name. */
 @Composable
 private fun NextStepLabel() {
-    Text(stringResource(R.string.essay_next_step), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+    Text(
+        stringResource(R.string.essay_next_step),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 @Composable

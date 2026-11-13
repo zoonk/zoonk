@@ -378,7 +378,11 @@ private fun DetailsSheet(
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.mock_result_details), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            Text(
+                stringResource(R.string.mock_result_details),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleLarge,
+            )
             Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) { content() }
         }
     }

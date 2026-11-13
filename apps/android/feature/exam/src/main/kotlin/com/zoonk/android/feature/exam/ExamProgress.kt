@@ -153,7 +153,14 @@ private fun LatestMockTile(latest: LatestMock) {
                     footer = {
                         Text(
                             stringResource(R.string.exam_since_first, signedChange(change)),
-                            color = if (change > 0) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            color =
+                                if (change >
+                                    0
+                                ) {
+                                    MaterialTheme.colorScheme.onTertiaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
                             style = MaterialTheme.typography.bodySmall,
                         )
                     },
@@ -234,10 +241,25 @@ private fun progressLine(
     val improved = progress.improved
     val needsWork = progress.needsWork
     return when {
-        improved.isNotEmpty() && needsWork.isNotEmpty() -> stringResource(R.string.exam_progress_better_and_needs_work, list(improved), list(needsWork))
-        improved.isNotEmpty() -> stringResource(R.string.exam_progress_better, list(improved))
-        needsWork.isNotEmpty() -> stringResource(R.string.exam_progress_needs_work, list(needsWork))
-        else -> null
+        improved.isNotEmpty() && needsWork.isNotEmpty() -> {
+            stringResource(
+                R.string.exam_progress_better_and_needs_work,
+                list(improved),
+                list(needsWork),
+            )
+        }
+
+        improved.isNotEmpty() -> {
+            stringResource(R.string.exam_progress_better, list(improved))
+        }
+
+        needsWork.isNotEmpty() -> {
+            stringResource(R.string.exam_progress_needs_work, list(needsWork))
+        }
+
+        else -> {
+            null
+        }
     }
 }
 

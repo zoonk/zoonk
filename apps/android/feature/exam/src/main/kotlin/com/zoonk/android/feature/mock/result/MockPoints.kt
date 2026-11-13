@@ -83,13 +83,25 @@ internal fun missedMinimum(points: MockPoints?): MissedMinimum? {
     val needed = minimumText(minimum)
     val name = first.name
     return MissedMinimum(
-        title = name?.let { stringResource(R.string.mock_result_below_minimum_named, it) } ?: stringResource(R.string.mock_result_below_minimum),
+        title =
+            name?.let {
+                stringResource(
+                    R.string.mock_result_below_minimum_named,
+                    it,
+                )
+            } ?: stringResource(R.string.mock_result_below_minimum),
         line =
             if (minimum.unit == PointsMinimum.Unit.PERCENT) {
                 stringResource(R.string.mock_result_below_minimum_percent, percent(scorePercent(first)), needed)
             } else {
                 val short = first.short ?: 0.0
-                pointsText(R.plurals.mock_result_below_minimum_points, R.string.mock_result_below_minimum_points_decimal, short, points(short), needed)
+                pointsText(
+                    R.plurals.mock_result_below_minimum_points,
+                    R.string.mock_result_below_minimum_points_decimal,
+                    short,
+                    points(short),
+                    needed,
+                )
             },
     )
 }

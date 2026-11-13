@@ -161,7 +161,16 @@ internal fun PreparationReadout(
             style = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold),
         )
         Text(
-            stringResource(if (preparation.after < preparation.before) R.string.mock_result_down_from else R.string.mock_result_up_from, before),
+            stringResource(
+                if (preparation.after <
+                    preparation.before
+                ) {
+                    R.string.mock_result_down_from
+                } else {
+                    R.string.mock_result_up_from
+                },
+                before,
+            ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.zoonkType.data,
         )
@@ -282,9 +291,18 @@ private fun OfferStatus(
             answerLine(offer, answer, adapt)?.let { it to applied }
         }
     if (lines.isEmpty()) return
-    val glyph = with(LocalDensity.current) { MaterialTheme.typography.bodyMedium.lineHeight.toDp() }
+    val glyph =
+        with(LocalDensity.current) {
+            MaterialTheme.typography.bodyMedium.lineHeight
+                .toDp()
+        }
 
-    Column(Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        Modifier.semantics(mergeDescendants = true) {
+            liveRegion = LiveRegionMode.Polite
+        },
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         lines.forEach { (line, applied) ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (applied) {

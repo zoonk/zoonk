@@ -98,9 +98,10 @@ private fun Profile(
     app: AppContainer,
     signedIn: SessionState.SignedIn,
 ) {
-    val form = viewModel(key = "profile-form:${signedIn.session.localId}") {
-        ProfileFormViewModel(app.account, signedIn.account.user, createSavedStateHandle())
-    }
+    val form =
+        viewModel(key = "profile-form:${signedIn.session.localId}") {
+            ProfileFormViewModel(app.account, signedIn.account.user, createSavedStateHandle())
+        }
 
     // A save's answer is a snackbar, so Save and the rows under it stay where they are.
     LaunchedEffect(form.isSaved) {

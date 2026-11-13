@@ -778,7 +778,9 @@ private fun ChallengeFooter(
             OpensLine(challenge)
         }
 
-        Challenge.Status.PLUS_REQUIRED -> StartActions(challenge, ui, movable, actions) { gated = true }
+        Challenge.Status.PLUS_REQUIRED -> {
+            StartActions(challenge, ui, movable, actions) { gated = true }
+        }
     }
     if (!ready) {
         MoveFailed(ui)
@@ -854,7 +856,6 @@ private fun SeeResult(
         Button(onClick = { actions.openBlock(challenge) }, modifier = width) { Text(stringResource(R.string.challenge_see_result)) }
     }
 }
-
 
 /** Lane E's gate in a task's bar: what stopped, over Subscribe. */
 @Composable

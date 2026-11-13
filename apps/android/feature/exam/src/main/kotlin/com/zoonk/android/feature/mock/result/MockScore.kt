@@ -150,7 +150,8 @@ private fun score(
 
         irt != null -> {
             Score(
-                exam?.let { stringResource(R.string.mock_result_estimated_exam_score, it) } ?: stringResource(R.string.mock_result_estimated_score),
+                exam?.let { stringResource(R.string.mock_result_estimated_exam_score, it) }
+                    ?: stringResource(R.string.mock_result_estimated_score),
                 scoreRange(irt.low, irt.high),
                 range = true,
             )
@@ -210,10 +211,25 @@ private fun ScoreHeader(
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(mockTitle(view.number), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
             when {
-                missed != null -> Text(missed.title, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.headlineMedium)
-                score.range -> ScoreRange(score.value)
-                score.lead != null -> RightOfReadout(score.value, score.lead)
-                else -> Readout(score.value, style = MaterialTheme.typography.displayMedium)
+                missed != null -> {
+                    Text(
+                        missed.title,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                }
+
+                score.range -> {
+                    ScoreRange(score.value)
+                }
+
+                score.lead != null -> {
+                    RightOfReadout(score.value, score.lead)
+                }
+
+                else -> {
+                    Readout(score.value, style = MaterialTheme.typography.displayMedium)
+                }
             }
         }
         Text(missed?.line ?: score.label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
@@ -401,4 +417,3 @@ internal fun NoteLines(lines: List<String>) {
         lines.forEach { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
     }
 }
-
