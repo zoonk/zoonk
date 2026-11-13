@@ -588,6 +588,12 @@
     letter-spacing: -0.006em;
   }
 
+  /* Preflight sets bold text to `bolder`, which is 700; the heaviest weight here is 600. */
+  b,
+  strong {
+    @apply font-semibold;
+  }
+
   /* The browser draws its own filled calendar on a date field; this is Lucide's, in the muted tone. */
   input[type="date"]::-webkit-calendar-picker-indicator {
     background: var(--muted-foreground);
