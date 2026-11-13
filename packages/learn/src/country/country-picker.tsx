@@ -22,7 +22,7 @@ import { type CountryChoice, type SuggestedCountry } from "./country-choice";
 import { foundNoCountry, matchesCountry } from "./country-search";
 import { useCountryCatalog } from "./use-country-catalog";
 
-type PickerRow = { country: CountryChoice | null; home: boolean; key: string; label: string };
+type PickerRow = { country: CountryChoice; home: boolean; key: string; label: string };
 
 type PickerGroup = { id: string; items: PickerRow[]; label: string | null };
 
@@ -55,7 +55,7 @@ function searchRows({
 
   return toRows("result", pool)
     .filter((row) => matchesCountry({ name: row.label, query }))
-    .map((row) => ({ ...row, home: row.home || homeCodes.has(row.country?.code ?? "") }));
+    .map((row) => ({ ...row, home: row.home || homeCodes.has(row.country.code) }));
 }
 
 function PickerOption({
@@ -63,7 +63,7 @@ function PickerOption({
   row,
   selected,
 }: {
-  onPick: (country: CountryChoice | null) => void;
+  onPick: (country: CountryChoice) => void;
   row: PickerRow;
   selected: boolean;
 }) {
@@ -131,13 +131,11 @@ function CatalogState({ onRetry, status }: { onRetry: () => void; status: "faile
 /**
  * Picking a row hands it to `onPick` and leaves the picker open: the caller closes it, or keeps it
  * open while it asks to confirm or shows why the save failed (`children`, under the search field).
- * `noneLabel` adds a first row that picks null, for a setting that can be left unset.
  */
 export function CountryPicker({
   children,
   finalFocus,
   language,
-  noneLabel,
   onOpenChange,
   onPick,
   open,
@@ -150,9 +148,8 @@ export function CountryPicker({
   finalFocus?: React.ComponentProps<typeof CommandDialog>["finalFocus"];
   /** The list's names and lesson varieties: a goal's language for its content, else the app's. */
   language: string;
-  noneLabel?: string;
   onOpenChange: (open: boolean) => void;
-  onPick: (country: CountryChoice | null) => void;
+  onPick: (country: CountryChoice) => void;
   open: boolean;
   /** Opened from inside another dialog, so it dims that one too. */
   overNested?: boolean;
@@ -165,10 +162,6 @@ export function CountryPicker({
   const catalog = useCountryCatalog({ enabled: open, language });
   const searching = query.trim() !== "";
 
-  const noneRow: PickerRow[] = noneLabel
-    ? [{ country: null, home: false, key: "none", label: noneLabel }]
-    : [];
-
   const groups: PickerGroup[] = searching
     ? [
         {
@@ -178,7 +171,6 @@ export function CountryPicker({
         },
       ]
     : [
-        { id: "none", items: noneRow, label: null },
         { id: "suggested", items: toRows("suggested", suggested), label: t("Suggested") },
         { id: "all", items: toRows("all", catalog.countries ?? []), label: t("All countries") },
       ].filter((group) => group.items.length > 0);
@@ -248,7 +240,7 @@ export function CountryPicker({
                     key={row.key}
                     onPick={onPick}
                     row={row}
-                    selected={(row.country?.code ?? null) === value}
+                    selected={row.country.code === value}
                   />
                 )}
               </CommandCollection>

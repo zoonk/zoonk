@@ -22,7 +22,7 @@ export type AppearanceView = {
   canPersonalize: boolean;
   look: BuddyLook;
   buddy: ResolvedBuddy;
-  /** Where the learner says they live; null until they say. */
+  /** Where the learner lives: where they signed in from until they change it; null when that wasn't known. */
   homeCountry: CountryName | null;
   homeCountrySuggested: readonly SuggestedCountry[];
   soundsEnabled: boolean;
@@ -31,8 +31,7 @@ export type AppearanceView = {
 /** How Preferences saves. Each resolves to whether it was saved. */
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
-  /** Null clears it. */
-  setHomeCountry: (country: string | null) => Promise<boolean>;
+  setHomeCountry: (country: string) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
 
@@ -59,10 +58,10 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
       ),
-    setHomeCountry: (next: CountryName | null) =>
+    setHomeCountry: (next: CountryName) =>
       run(
         () => setOptimisticHome(next),
-        () => actions.setHomeCountry(next?.code ?? null),
+        () => actions.setHomeCountry(next.code),
       ),
     setSoundsEnabled: (next: boolean) =>
       run(

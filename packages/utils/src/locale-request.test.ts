@@ -1,11 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { getLocaleFromRequest, getRequestCountry } from "./locale-request";
+import { getIpCountry, getLocaleFromRequest, getRequestCountry } from "./locale-request";
 
 function countryFromLanguage(acceptLanguage: string | null): string {
   return getRequestCountry(
     new Headers(acceptLanguage === null ? {} : { "accept-language": acceptLanguage }),
   );
 }
+
+describe(getIpCountry, () => {
+  it("reads Vercel's IP country", () => {
+    expect(getIpCountry(new Headers({ "x-vercel-ip-country": "BR" }))).toBe("BR");
+  });
+
+  it("never guesses a country from the browser's language", () => {
+    expect(getIpCountry(new Headers({ "accept-language": "pt-BR" }))).toBeNull();
+  });
+});
 
 describe(getRequestCountry, () => {
   it("takes Vercel's IP country before the browser's language", () => {

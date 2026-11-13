@@ -25,7 +25,6 @@ export async function setSoundsEnabledAction(soundsEnabled: boolean): Promise<bo
   return saveProfile({ soundsEnabled });
 }
 
-/** Null clears it. */
 export async function setHomeCountryAction(homeCountry: unknown): Promise<boolean> {
   return saveProfile({ homeCountry });
 }
