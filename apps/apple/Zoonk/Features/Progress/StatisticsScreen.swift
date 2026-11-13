@@ -82,10 +82,7 @@ private struct StatsOverview: View {
     {
       StatsPage {
         PageHeader(
-          Text(AppTab.statistics.title),
-          eyebrow: Text(
-            "All goals", tableName: "Progress",
-            comment: "Under Statistics: its numbers cover every goal"))
+          Text(AppTab.statistics.title))
 
         OverviewTiles(
           activity: activity.summary, energy: progress.energy.value, level: progress.level.value,

@@ -76,6 +76,7 @@ private struct ZoonkButton: View {
   @Environment(\.isBusy) private var isBusy
   @Environment(\.controlSize) private var controlSize
   @Environment(\.buttonSizing) private var sizing
+  @Environment(\.mainActionFillsRow) private var fillsRow
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -87,14 +88,15 @@ private struct ZoonkButton: View {
     let shape = RoundedRectangle(
       cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
-    configuration.label
+    labelOnlyIfMain(configuration.label)
+      .environment(\.showsButtonIcon, !isLabelOnly)
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
       .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
       .padding(.vertical, isIcon ? 0 : 6)
       .frame(minWidth: isIcon ? height : nil, minHeight: height)
-      .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
+      .frame(maxWidth: fills && !isIcon ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {
         if variant == .outline && !isDestructive {
@@ -107,6 +109,20 @@ private struct ZoonkButton: View {
       .animation(.easeOut(duration: 0.15), value: isPressed)
       .contentShape(MinimumHitArea())
   }
+
+  /// A main action is its label alone (main's rule 6): any icon its label carries stays off it.
+  private var isLabelOnly: Bool { variant == .main && !isIcon }
+
+  @ViewBuilder
+  private func labelOnlyIfMain(_ label: ButtonStyleConfiguration.Label) -> some View {
+    if isLabelOnly {
+      label.labelStyle(.titleOnly)
+    } else {
+      label
+    }
+  }
+
+  private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }
 
   /// A busy button keeps its look even where its container is disabled, such as a form that locks
   /// while its answer saves: only its spinner says it's working.

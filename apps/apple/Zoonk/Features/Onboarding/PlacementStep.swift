@@ -188,11 +188,11 @@ struct PlacementStep: View {
           tableName: "Onboarding", comment: "What placement is"))
 
       saveFailure
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Start", tableName: "Onboarding", comment: "Starts placement's questions"),
-        continueIcon: .play,
         skipLabel: Text(
           "Skip and start from the basics", tableName: "Onboarding",
           comment: "Skips placement; the plan starts at the beginning")
@@ -233,7 +233,8 @@ struct PlacementStep: View {
       StepHeader(title: title, description: description)
 
       saveFailure
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "See my plan", tableName: "Onboarding", comment: "Ends placement and shows the plan")

@@ -1,35 +1,31 @@
 import SwiftUI
 
-/// Main's page header, as a page's first row: a mono eyebrow, the page's title, at most one
-/// supporting line, and at its end the page's main readout or its action. The page keeps
-/// `navigationTitle` for Back, VoiceOver and the iPad and iPhone Duo bars, and takes
-/// `barTitleAfterHero(_:)`, so its bar shows the name only once this title scrolls under it.
+/// Main's page header, as a page's first row: the page's title, at most one supporting line, and at
+/// its end the page's main readout or its action. A page has nothing over its title (B1-038); a
+/// task's step, card or result may take the one `Chip` there. The page keeps `navigationTitle`
+/// through `barTitleAfterHero(_:)`, so Back, VoiceOver and the iPad and iPhone Duo bars name it,
+/// and its bar shows the name only once this title scrolls under it.
 struct PageHeader<Trailing: View>: View {
-  var eyebrow: Text?
-  private var isEyebrowAsWritten = false
-  private var isEyebrowDone = false
   let title: Text
+  var chip: Chip?
   var supporting: Text?
   @ViewBuilder let trailing: Trailing
 
   init(
-    _ title: Text, eyebrow: Text? = nil, supporting: Text? = nil,
+    _ title: Text, chip: Chip? = nil, supporting: Text? = nil,
     @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
-    self.eyebrow = eyebrow
+    self.chip = chip
     self.supporting = supporting
     self.trailing = trailing()
   }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      if let eyebrow, isEyebrowDone {
-        DoneLabel(text: eyebrow)
-      } else if let eyebrow {
-        eyebrow
-          .typeStyle(isEyebrowAsWritten ? .eyebrow.asWritten() : .eyebrow)
-          .foregroundStyle(.faint)
+      if let chip {
+        chip
+          .padding(.bottom, 8)
       }
 
       AccessibilityStack(alignment: .lastTextBaseline, spacing: 12) {
@@ -54,41 +50,8 @@ struct PageHeader<Trailing: View>: View {
   }
 }
 
-extension PageHeader {
-  /// Main's `normal-case` eyebrow: a count such as "2 certificates" keeps its case.
-  func eyebrowAsWritten() -> Self {
-    var header = self
-    header.isEyebrowAsWritten = true
-    return header
-  }
-
-  /// The eyebrow says something just saved, with the reveal's check.
-  func eyebrowDone(_ isDone: Bool = true) -> Self {
-    var header = self
-    header.isEyebrowDone = isDone
-    return header
-  }
-}
-
-/// Main's done line over a page's title, such as "Plan created": a check and what just saved. Its
-/// check lands with the moment when the page celebrates.
-struct DoneLabel: View {
-  let text: Text
-
-  var body: some View {
-    Label {
-      text
-    } icon: {
-      Image(systemName: "checkmark.circle.fill")
-        .settles()
-    }
-    .typeStyle(.body.weight(.semibold))
-    .foregroundStyle(.successText)
-  }
-}
-
 extension PageHeader where Trailing == EmptyView {
-  init(_ title: Text, eyebrow: Text? = nil, supporting: Text? = nil) {
-    self.init(title, eyebrow: eyebrow, supporting: supporting) { EmptyView() }
+  init(_ title: Text, chip: Chip? = nil, supporting: Text? = nil) {
+    self.init(title, chip: chip, supporting: supporting) { EmptyView() }
   }
 }

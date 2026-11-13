@@ -70,14 +70,13 @@ private struct OnboardingDetail: Decodable {
   }
 }
 
-/// A question's list, with its buttons pinned under it so they stay in reach however long the list
-/// is. While an answer saves (`sendsAnswer`), its fields lock (`locksWhileSaving`) and only the
+/// A question's list, with its buttons in the bottom bar so they stay in reach however long the
+/// list is. While an answer saves (`sendsAnswer`), its fields lock (`locksWhileSaving`) and only the
 /// button that sent it spins; the list itself stays enabled, so that button keeps its focus. A failed
-/// save says so over the buttons.
+/// save says so over the bar.
 struct QuestionForm<Content: View, Buttons: View>: View {
   @ViewBuilder let content: Content
   @ViewBuilder let buttons: Buttons
-  private var hasButtons = true
 
   @Environment(\.answerFailure) private var failure
 
@@ -91,19 +90,8 @@ struct QuestionForm<Content: View, Buttons: View>: View {
       content
     }
     .scrollDismissesKeyboard(.interactively)
-    .safeAreaBar(edge: .bottom) {
-      if hasButtons || failure != nil {
-        VStack(spacing: 12) {
-          if let failure {
-            FailureLine(message: failure)
-          }
-
-          buttons
-        }
-        .keepsOffFold()
-        .scenePadding(.horizontal)
-        .padding(.vertical, 10)
-      }
+    .bottomBar(note: failure.map { FailureLine(message: $0) }) {
+      buttons
     }
     // Skip's outline is see-through, so what scrolls under the bar stops at its edge.
     .scrollEdgeEffectStyle(.hard, for: .bottom)
@@ -113,7 +101,6 @@ struct QuestionForm<Content: View, Buttons: View>: View {
 extension QuestionForm where Buttons == EmptyView {
   init(@ViewBuilder content: () -> Content) {
     self.init(content: content) {}
-    hasButtons = false
   }
 }
 
@@ -183,56 +170,21 @@ struct StepHeader: View {
 
   var body: some View {
     Section {
-      PageHeader(title, eyebrow: subject.map { Text(verbatim: $0) }, supporting: description)
+      PageHeader(title, chip: subject.map { Chip(Text(verbatim: $0)) }, supporting: description)
         .listRowBackground(Color.clear)
     }
   }
 }
 
-/// A step's Continue, with an optional Skip under it: a list's last section, or a `QuestionForm`'s
-/// pinned bar.
+/// A step's Skip and Continue, for a screen's bottom bar: `.bottomBar { StepButtons(...) }`, or a
+/// `QuestionForm`'s `buttons`. Continue is the main action, so it is its label alone; Skip may carry
+/// one icon. Either one's request is `isSavingAnswer`; the one pressed spins.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
   var continueLabel: Text?
-  var continueIcon: ActionIcon? = .forward
   var skipLabel: Text?
-  var skipIcon: ActionIcon? = .skip
-  var note: Text?
-  let onContinue: () -> Void
-  var onSkip: (() -> Void)?
-
-  var body: some View {
-    Section {
-      StepButtonStack(
-        canContinue: canContinue, canSkip: canSkip, continueLabel: continueLabel,
-        continueIcon: continueIcon, skipLabel: skipLabel, skipIcon: skipIcon,
-        onContinue: onContinue, onSkip: onSkip
-      )
-      .keepsOffFold()
-      .listRowInsets(.vertical, 0)
-      .listRowBackground(Color.clear)
-    } footer: {
-      SectionFooter {
-        if let note {
-          note
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-        }
-      }
-    }
-  }
-}
-
-/// A label passed in takes its own icon, or none where no idea fits it; the defaults are Continue's
-/// forward arrow and Skip's. Either one's request is `isSavingAnswer`; the one pressed spins.
-struct StepButtonStack: View {
-  var canContinue = true
-  var canSkip = true
-  var continueLabel: Text?
-  var continueIcon: ActionIcon? = .forward
-  var skipLabel: Text?
-  var skipIcon: ActionIcon? = .skip
+  var skipIcon: ActionIcon?
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
@@ -243,32 +195,29 @@ struct StepButtonStack: View {
     let proceeds = sender.sent(.proceed, isSaving: isSaving)
     let skips = sender.sent(.skip, isSaving: isSaving)
 
-    VStack(spacing: 12) {
-      BusyButton(isBusy: proceeds, icon: continueIcon) {
-        sender.press(.proceed)
-        onContinue()
+    if let onSkip {
+      BusyButton(isBusy: skips, icon: skipIcon) {
+        sender.press(.skip)
+        onSkip()
       } label: {
-        continueLabel
-          ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+        skipLabel
+          ?? Text(
+            "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
       }
-      .buttonStyle(.mainAction)
-      .disabled((!canContinue || isSaving) && !proceeds)
-
-      if let onSkip {
-        BusyButton(isBusy: skips, icon: skipIcon) {
-          sender.press(.skip)
-          onSkip()
-        } label: {
-          skipLabel
-            ?? Text(
-              "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
-        }
-        .buttonStyle(.outline)
-        .disabled((!canSkip || isSaving) && !skips)
-      }
+      .buttonStyle(.outline)
+      .disabled((!canSkip || isSaving) && !skips)
     }
-    .buttonSizing(.flexible)
-    .controlSize(.large)
+
+    BusyButton(isBusy: proceeds) {
+      sender.press(.proceed)
+      onContinue()
+    } label: {
+      continueLabel
+        ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+    }
+    .buttonStyle(.mainAction)
+    .disabled((!canContinue || isSaving) && !proceeds)
+    .keyboardShortcut(.defaultAction)
     .onChange(of: isSaving) {
       if !isSaving {
         sender.saveEnded()
@@ -418,23 +367,22 @@ private struct CountryQuestion: View {
         }
       }
       .locksWhileSaving()
-    } buttons: {
-      VStack(alignment: .leading, spacing: 12) {
-        if let notice {
-          Text(notice)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
 
-        StepButtonStack(canContinue: picked != nil) {
-          if let picked {
-            onAnswer(["country": picked.code, "question": "contentCountry"])
-          }
-        } onSkip: {
-          onAnswer(["question": "contentCountry"])
-        }
+      if let notice {
+        Text(notice)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+          .announcesStatus(notice)
       }
-      .announcesStatus(notice)
+    } buttons: {
+      StepButtons(canContinue: picked != nil) {
+        if let picked {
+          onAnswer(["country": picked.code, "question": "contentCountry"])
+        }
+      } onSkip: {
+        onAnswer(["question": "contentCountry"])
+      }
     }
   }
 
@@ -467,7 +415,7 @@ private struct CountryQuestion: View {
       String(
         localized: "If you skip: \(country.name)", table: "Onboarding",
         comment:
-          "Above the content country question's buttons: the country Skip keeps; the argument is a country's name, such as Brazil"
+          "Under the content country question's choices: the country Skip keeps; the argument is a country's name, such as Brazil"
       )
     }
   }
@@ -1111,8 +1059,7 @@ private struct DateQuestion: View {
     } buttons: {
       StepButtons(
         skipLabel: Text(
-          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
-        skipIcon: nil
+          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's")
       ) {
         onAnswer(["question": "targetDate", "targetDate": first])
       } onSkip: {
@@ -1511,8 +1458,7 @@ private struct SubjectsLevelQuestion: View {
           : nil,
         skipLabel: Text(
           "I'm starting from scratch", tableName: "Onboarding",
-          comment: "Says the learner knows none of the exam yet"),
-        skipIcon: nil
+          comment: "Says the learner knows none of the exam yet")
       ) {
         onAnswer([
           "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),

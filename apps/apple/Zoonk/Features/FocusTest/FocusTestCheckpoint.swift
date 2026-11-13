@@ -73,12 +73,11 @@ struct FocusTestCheckpoint: View {
       }
 
       FocusTestSaveFailure(failed: decideFailed)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(FocusTestCopy.updatePlan),
-        continueIcon: nil,
         skipLabel: Text(FocusTestCopy.notNow),
-        skipIcon: nil,
         onContinue: { decide(.applied, on: proposal) },
         onSkip: { decide(.declined, on: proposal) })
     }
@@ -101,15 +100,17 @@ struct FocusTestCheckpoint: View {
             : Text(
               "Here's where to focus", tableName: "FocusTest",
               comment: "Title of the Focus test's result: the subjects to give more time"),
-          eyebrow: host == .onboarding
-            ? Text(
-              "Answers saved", tableName: "FocusTest",
-              comment:
-                "Over the Focus test's result in onboarding: nothing the learner answered was lost")
-            : Text(FocusTestCopy.name),
+          chip: host == .onboarding
+            ? Chip(
+              Text(
+                "Answers saved", tableName: "FocusTest",
+                comment:
+                  "Over the Focus test's result in onboarding: nothing the learner answered was lost"
+              ),
+              tone: .success)
+            : Chip(Text(FocusTestCopy.name)),
           supporting: Text(line(hasRows: !rows.isEmpty, lessonsSkipped: lessonsSkipped))
         )
-        .eyebrowDone(host == .onboarding)
         .listRowBackground(Color.clear)
 
         if decision == .applied, let answered, answered.canUndo {
@@ -149,14 +150,14 @@ struct FocusTestCheckpoint: View {
       }
 
       FocusTestSaveFailure(failed: failed || decideFailed)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: host == .onboarding
           ? Text(FocusTestCopy.continueLabel)
           : Text(
             "Done", tableName: "FocusTest",
             comment: "Leaves the Focus test's result for the plan"),
-        continueIcon: host == .onboarding ? .forward : .check,
         skipLabel: Text(
           "Answer more questions", tableName: "FocusTest",
           comment: "Opens another Focus test sitting from its result on the plan"),

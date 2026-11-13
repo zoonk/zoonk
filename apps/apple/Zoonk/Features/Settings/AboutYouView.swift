@@ -128,8 +128,7 @@ struct AboutYouQuestionView: View {
           StepButtons(
             canContinue: canEdit && draft.wrappedValue.isComplete,
             continueLabel: Text(
-              "Save", tableName: "AboutYou", comment: "Saves an About you answer"),
-            continueIcon: nil
+              "Save", tableName: "AboutYou", comment: "Saves an About you answer")
           ) {
             save(draft.wrappedValue)
           }

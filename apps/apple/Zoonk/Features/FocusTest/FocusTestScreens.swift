@@ -59,17 +59,17 @@ struct FocusTestInvitation: View {
       }
 
       FocusTestSaveFailure(failed: failed)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Start the test", tableName: "FocusTest", comment: "Starts the Focus test"),
-        continueIcon: .play,
         skipLabel: host == .onboarding
           ? Text(
             "Skip for now", tableName: "FocusTest",
             comment: "Postpones the Focus test; it can be taken later from the plan")
           : Text(FocusTestCopy.notNow),
-        skipIcon: nil, onContinue: onStart, onSkip: onSkip)
+        onContinue: onStart, onSkip: onSkip)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, pressed != nil)
@@ -157,12 +157,12 @@ struct FocusTestResume: View {
           comment: "Under \"Continue your test\": how many answers the open sitting saved"))
 
       FocusTestSaveFailure(failed: failed)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(FocusTestCopy.continueLabel),
-        continueIcon: .play,
         skipLabel: Text(FocusTestCopy.seeResult),
-        skipIcon: nil, onContinue: onContinue, onSkip: onSeeResult)
+        onContinue: onContinue, onSkip: onSeeResult)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, pressed != nil)
@@ -185,7 +185,8 @@ struct FocusTestEnded: View {
         description: nil)
 
       FocusTestSaveFailure(failed: failed)
-
+    }
+    .bottomBar {
       StepButtons(continueLabel: Text(FocusTestCopy.seeResult), onContinue: onFinish)
     }
     .onboardingColumn()
@@ -210,7 +211,8 @@ struct FocusTestUnavailable: View {
           tableName: "Onboarding", comment: "Why placement is skipped"))
 
       FocusTestSaveFailure(failed: failed)
-
+    }
+    .bottomBar {
       StepButtons(continueLabel: Text(FocusTestCopy.continueLabel), onContinue: onContinue)
     }
     .onboardingColumn()
