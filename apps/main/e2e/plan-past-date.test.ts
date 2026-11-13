@@ -1,48 +1,9 @@
 import { type Page } from "@playwright/test";
-import { prisma } from "@zoonk/db";
 import { expectHydrated } from "@zoonk/e2e/hydration";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { countSetAside, isoDaysFromNow, passTheDate, readTargetDate } from "./past-date";
 import { routeTimeToCover } from "./time-to-cover-routes";
-
-const LEARN_KINDS = ["chapter", "lesson"] as const;
-
-function isoDaysFromNow(days: number): string {
-  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
-}
-
-async function readTargetDate(goalId: string): Promise<string | null> {
-  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-  return goal.targetDate?.toISOString().slice(0, 10) ?? null;
-}
-
-function countSetAside(goalId: string): Promise<number> {
-  return prisma.planItem.count({
-    where: { kind: { in: [...LEARN_KINDS] }, plan: { goalId }, status: "skipped" },
-  });
-}
-
-async function passTheDate(goalId: string) {
-  const date = isoDaysFromNow(-3);
-
-  await prisma.$transaction([
-    prisma.goal.update({
-      data: { targetDate: new Date(`${date}T00:00:00Z`) },
-      where: { id: goalId },
-    }),
-    prisma.planItem.updateMany({
-      data: { scheduledFor: new Date(`${isoDaysFromNow(-4)}T00:00:00Z`), status: "skipped" },
-      where: { kind: { in: [...LEARN_KINDS] }, plan: { goalId }, status: "todo" },
-    }),
-    prisma.planItem.deleteMany({
-      where: { kind: { notIn: [...LEARN_KINDS] }, plan: { goalId }, status: "todo" },
-    }),
-    prisma.studySession.deleteMany({ where: { goalId, status: { in: ["active", "planned"] } } }),
-  ]);
-
-  return { date, setAside: await countSetAside(goalId) };
-}
 
 async function routeFoundDate({
   date,
