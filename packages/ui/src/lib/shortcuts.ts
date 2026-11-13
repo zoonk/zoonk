@@ -17,9 +17,6 @@ const NUMBER_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
  * it, and `scripts/verify/shortcut-keys.test.mts` fails on a key bound or drawn anywhere else.
  */
 export const SHORTCUTS = {
-  answerBlank: { cap: "↓", does: "On a true or false card: leave it blank", keys: ["ArrowDown"] },
-  answerFalse: { cap: "←", does: "On a true or false card: answer False", keys: ["ArrowLeft"] },
-  answerTrue: { cap: "→", does: "On a true or false card: answer True", keys: ["ArrowRight"] },
   audio: { cap: "P", does: "Play or pause the screen's audio", keys: ["p", "P"] },
   flag: { cap: "F", does: "Flag this question in a mock exam", keys: ["f", "F"] },
   leave: {
