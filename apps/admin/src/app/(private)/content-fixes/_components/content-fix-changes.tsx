@@ -264,6 +264,17 @@ function ChangeBody({ change, compact }: { change: StoredChange; compact: boolea
       return <p className="text-sm">Puts this question back in new practice.</p>;
     case "revoice":
       return <p className="text-sm">Records a new clip of “{change.text}”.</p>;
+    case "restoreClip":
+      return (
+        <div className="flex flex-col gap-1">
+          <p className="text-sm">Puts back the clip of “{change.text}” it had before.</p>
+          {change.after.audioUrl && (
+            <audio className="w-full max-w-md" controls preload="none" src={change.after.audioUrl}>
+              <track kind="captions" />
+            </audio>
+          )}
+        </div>
+      );
     case "detachPicture":
       return (
         <p className="text-sm">

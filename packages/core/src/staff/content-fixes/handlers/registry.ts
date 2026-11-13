@@ -25,7 +25,12 @@ import { examGraph, languageGraph } from "./structure-graphs";
 import { chapterLessons, courseChapters } from "./structure-placements";
 import { chapterSkills, lessonSkills, skillPrerequisites } from "./structure-skills";
 import { chapterSet, courseSet, lessonSet } from "./text-rows";
-import { sentenceRevoice, wordRevoice } from "./vocabulary-revoice";
+import {
+  sentenceRestoreClip,
+  sentenceRevoice,
+  wordRestoreClip,
+  wordRevoice,
+} from "./vocabulary-revoice";
 import { sentenceSet, wordSet } from "./vocabulary-rows";
 
 /**
@@ -79,6 +84,8 @@ export const FIX_HANDLERS = [
   skillPrerequisites,
   examGraph,
   languageGraph,
+  wordRestoreClip,
+  sentenceRestoreClip,
 ] as const;
 
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */
