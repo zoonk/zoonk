@@ -1,4 +1,4 @@
-import { geistMono, geistSans } from "@/lib/fonts";
+import { FONT_VARIABLES } from "@zoonk/ui/fonts";
 import { type Metadata, type Viewport } from "next";
 import "@zoonk/ui/globals.css";
 
@@ -12,7 +12,7 @@ export const viewport: Viewport = { interactiveWidget: "resizes-content" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html className={`${geistSans.variable} ${geistMono.variable}`} lang="en">
+    <html className={FONT_VARIABLES} lang="en">
       <body className="font-sans antialiased">{children}</body>
     </html>
   );
