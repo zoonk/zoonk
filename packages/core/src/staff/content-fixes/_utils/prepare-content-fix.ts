@@ -269,7 +269,7 @@ export async function prepareContentFix(
 
   if (!first || (units.size !== 1 && !chapterCollections)) {
     return refuse(
-      "One fix covers one lesson (with its screens), one chapter, one course, one practice question, one level test, or one word or sentence (with the lesson rows that use it). Split it into one fix each.",
+      "One fix changes one thing: a lesson with its screens, a word or sentence with the lesson rows that use it, or one row of another model (a lesson's move sets both chapters). Split it into one fix each.",
     );
   }
 

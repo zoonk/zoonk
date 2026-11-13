@@ -167,6 +167,9 @@ async function outlineProblem(
   return undefined;
 }
 
+const GRAPH_RULES =
+  "setGraph: { graph, primaryCourseId? }, the whole plan graph. Its skills and courses are public, unmerged and in its language; phases, weights (1-5 or null) and option skills are checked. Existing plans keep their graph copies; only future plans use it.";
+
 export const examGraph = collectionHandler({
   load: async (db, id, value) => {
     const next = graphSchema.parse(value);
@@ -205,8 +208,7 @@ export const examGraph = collectionHandler({
   },
   model: "ExamSkillGraph",
   op: "setGraph",
-  rules:
-    "Send the final graph and optional primaryCourseId. Existing plans keep their graph copies; only future plans use this graph. References must be public, unmerged and in one language.",
+  rules: GRAPH_RULES,
   schema: graphSchema,
   table: sql`exam_skill_graphs`,
   write: async (tx, id, value) => {
@@ -241,8 +243,7 @@ export const languageGraph = collectionHandler({
   },
   model: "LanguageSkillGraph",
   op: "setGraph",
-  rules:
-    "Send the final graph and optional primaryCourseId. Existing plans keep their graph copies; only future plans use this graph. References must be public, unmerged and in one language.",
+  rules: GRAPH_RULES,
   schema: graphSchema,
   table: sql`language_skill_graphs`,
   write: async (tx, id, value) => {

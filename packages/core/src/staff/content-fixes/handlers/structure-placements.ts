@@ -7,7 +7,7 @@ import { collectionHandler, collectionIds, sharedProblem } from "./collection-ha
 import { idSchema } from "./fix-handler";
 
 const rules =
-  "Send the final ordered list of existing public children with no owner, in the same language and target language. No identity, address or learner history changes. Plans refresh at the next planning write.";
+  "Every child exists, is public with no owner and shares the language and target language; positions come from the order. No identity, address or learner history changes. Plans refresh at the next planning write.";
 
 const chaptersSchema = z.array(
   z.strictObject({ area: z.string().nullable(), chapterId: idSchema, level: z.enum(CourseLevel) }),
@@ -50,7 +50,7 @@ export const courseChapters = collectionHandler({
   },
   model: "Course",
   op: "setChapters",
-  rules,
+  rules: `setChapters: [{ chapterId, level, area }], the course's final chapters in order. ${rules}`,
   schema: chaptersSchema,
   table: sql`courses`,
   write: async (tx, id, value) => {
@@ -110,7 +110,7 @@ export const chapterLessons = collectionHandler({
   },
   model: "Chapter",
   op: "setLessons",
-  rules: `${rules} A chapter keeps at least one lesson. Moves include both chapters in one fix. Removed home lessons keep their addresses.`,
+  rules: `setLessons: [lessonId, …], the chapter's final lessons in order. ${rules} A chapter keeps at least one lesson. A move sets both chapters in one fix. A lesson leaving its home chapter keeps its address.`,
   schema: collectionIds.min(1),
   table: sql`library_chapters`,
   write: (tx, id, value) =>

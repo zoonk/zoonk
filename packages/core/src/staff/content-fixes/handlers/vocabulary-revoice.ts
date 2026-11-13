@@ -52,7 +52,7 @@ function vocabularyRevoice<Model extends VocabularyModel>(model: Model) {
     model,
     op: "revoice",
     proposal: {
-      rules: `Records a new clip of the ${model.toLowerCase()} whose text is right but whose clip is wrong. The clip is voiced before it can be approved, and the approver hears it.`,
+      rules: `{ revoice: true } records a new clip of a ${model.toLowerCase()} whose text is right but whose clip is wrong. The clip is voiced before it can be approved, and the approver hears it.`,
       schema: z.strictObject({ id: idSchema, model: z.literal(model), revoice: z.literal(true) }),
     },
     resolve: (db, proposed) => resolveRevoice(db, proposed),

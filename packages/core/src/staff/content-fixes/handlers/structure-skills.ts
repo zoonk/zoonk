@@ -3,7 +3,7 @@ import { writeSkillsPrerequisites } from "../../../library/skills/create-skill";
 import { collectionHandler, collectionIds, sharedProblem } from "./collection-handler";
 
 const rules =
-  "Send the final membership list of existing public unmerged skills with no owner, in the same language and target language. Retained memberships keep createdAt. Plans refresh on their next planning write; learner history stays.";
+  "Every skill exists, is public, unmerged, with no owner and shares the language and target language. Kept memberships keep createdAt. Plans refresh on their next planning write; learner history stays.";
 
 export const chapterSkills = collectionHandler({
   load: async (db, id, value) => {
@@ -31,7 +31,7 @@ export const chapterSkills = collectionHandler({
   },
   model: "Chapter",
   op: "setSkills",
-  rules,
+  rules: `setSkills: [skillId, …], the final skills. ${rules}`,
   schema: collectionIds.transform((ids) => ids.toSorted()),
   table: sql`library_chapters`,
   write: async (tx, id, value) => {
@@ -68,7 +68,7 @@ export const lessonSkills = collectionHandler({
   },
   model: "Lesson",
   op: "setSkills",
-  rules,
+  rules: `setSkills: [skillId, …], the final skills. ${rules}`,
   schema: collectionIds.transform((ids) => ids.toSorted()),
   table: sql`library_lessons`,
   write: async (tx, id, value) => {
@@ -125,7 +125,7 @@ export const skillPrerequisites = collectionHandler({
   },
   model: "Skill",
   op: "setPrerequisites",
-  rules: `${rules} Only newly added edges that create a cycle are refused.`,
+  rules: `setPrerequisites: [skillId, …], the skill's final prerequisites. ${rules} Only new edges that make a cycle are refused.`,
   schema: collectionIds.transform((ids) => ids.toSorted()),
   table: sql`skills`,
   write: async (tx, id, value) => {
