@@ -1,7 +1,6 @@
 "use client";
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -9,20 +8,15 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { BookOpenIcon, CheckIcon, EllipsisIcon } from "lucide-react";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
+import { BookOpenIcon, CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { DrawerCloseButton } from "../../_components/details-drawer";
+import { QuestionActions, QuestionMainAction } from "../../_components/question-actions";
 import { AnswersSaveError } from "../../_components/save-error";
-import { TaskHeaderTitle } from "../../_components/task-header";
+import { TaskHeaderMenu, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
-import { useFormatDuration } from "../../_utils/time-format";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
@@ -43,7 +37,6 @@ type LanguagePatternActions = {
 };
 
 const PERCENT = 100;
-const DRILL_MINUTES = 3;
 
 function DoneAction({ exitHref }: { exitHref: string }) {
   const t = useExtracted();
@@ -90,20 +83,12 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
 
   return (
     <div className="with-aside:hidden">
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
-        >
-          <EllipsisIcon aria-hidden="true" />
-          <span className="sr-only">{t("Screen options")}</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <BookOpenIcon aria-hidden="true" />
-            {t("See the rule")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <TaskHeaderMenu>
+        <DropdownMenuItem onClick={() => setOpen(true)}>
+          <BookOpenIcon aria-hidden="true" />
+          {t("See the rule")}
+        </DropdownMenuItem>
+      </TaskHeaderMenu>
 
       <Drawer onOpenChange={setOpen} open={open}>
         <DrawerPopup>
@@ -136,7 +121,6 @@ export function LanguagePatternScreen({
   renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
   const drill = usePatternDrill({ drill: pattern.drill, practice: actions.practice });
   const { step } = drill;
 
@@ -166,9 +150,7 @@ export function LanguagePatternScreen({
         exitToApp
         footer={
           <TaskActions>
-            <TaskMainButton onClick={drill.start}>
-              {t("Practice")}
-            </TaskMainButton>
+            <TaskMainButton onClick={drill.start}>{t("Practice")}</TaskMainButton>
           </TaskActions>
         }
         headerTitle={<TaskHeaderTitle title={t("Mistake pattern")} />}
@@ -205,21 +187,21 @@ export function LanguagePatternScreen({
           {drill.failures > 0 && !drill.isSaving && (
             <AnswersSaveError failures={drill.failures} onRetry={drill.retry} />
           )}
-          <TaskActions>
+          <QuestionActions>
             {checked ? (
-              <TaskMainButton busy={drill.isSaving} onClick={drill.next} {...FORWARD_ICON}>
-                {isLast ? t("See result") : t("Continue")}
-              </TaskMainButton>
+              <QuestionMainAction
+                action={isLast ? "seeResult" : "continue"}
+                busy={drill.isSaving}
+                onPress={drill.next}
+              />
             ) : (
-              <TaskMainButton
+              <QuestionMainAction
+                action="check"
                 disabled={drill.picked === null}
-                icon={<CheckIcon aria-hidden="true" />}
-                onClick={drill.check}
-              >
-                {t("Check")}
-              </TaskMainButton>
+                onPress={drill.check}
+              />
             )}
-          </TaskActions>
+          </QuestionActions>
         </>
       }
       headerEnd={<RuleMenu pattern={pattern} />}

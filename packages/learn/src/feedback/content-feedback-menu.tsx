@@ -10,6 +10,7 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useId } from "react";
+import { TaskHeaderMenu } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
 import { ReportProblemItem } from "./report-problem-item";
 
@@ -34,16 +35,20 @@ export function ContentFeedbackMenu({
     return null;
   }
 
+  const onOpenChange = (open: boolean) => feedback.setMenuOpen({ menuId, open });
+
+  if (size !== "detail") {
+    return (
+      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange} size={size}>
+        <ReportProblemItem screen={screen} target={target} />
+      </TaskHeaderMenu>
+    );
+  }
+
   return (
-    <DropdownMenu onOpenChange={(open) => feedback.setMenuOpen({ menuId, open })}>
+    <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
-        render={
-          size === "detail" ? (
-            <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
-          ) : (
-            <Button className="shrink-0" edge="end" size={size} variant="ghost" />
-          )
-        }
+        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label}</span>

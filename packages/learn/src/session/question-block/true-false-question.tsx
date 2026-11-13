@@ -6,9 +6,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import { QuestionTitle } from "../../_components/question-title";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { parseRichBlocks } from "../../rich-text/rich-text-parser";
-import { QuestionTitle } from "./question-title";
 
 const SWIPE_THRESHOLD_PX = 90;
 const TILT_DEGREES_PER_PX = 0.06;

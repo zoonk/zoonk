@@ -66,7 +66,10 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
 
   return (
     <div
-      className="max-w-column mx-auto grid w-full gap-6 px-4 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6"
+      className={cn(
+        TASK_COLUMN_CLASS,
+        "grid gap-6 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6",
+      )}
       data-slot="chapter-map-slide"
     >
       <button

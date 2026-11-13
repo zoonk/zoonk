@@ -5,22 +5,26 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TASK_MAIN_ACTION_CLASS } from "./task-layout";
 
-/** Shows the ⏎ hint only: the caller binds Enter, since when it may press depends on the step. */
+/**
+ * A task's main action. It shows the ⏎ hint only: the caller binds Enter, since when it may press
+ * depends on the step, and passes `shortcut={false}` where Enter doesn't press it.
+ */
 export function EnterButton({
   children,
   className,
+  shortcut = true,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "variant">) {
+}: Omit<React.ComponentProps<typeof Button>, "size" | "variant"> & { shortcut?: boolean }) {
   return (
     <Button
-      aria-keyshortcuts="Enter"
+      aria-keyshortcuts={shortcut ? "Enter" : undefined}
       className={cn(TASK_MAIN_ACTION_CLASS, className)}
       focusableWhenDisabled
       size="xl"
       {...props}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      {shortcut && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
     </Button>
   );
 }

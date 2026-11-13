@@ -8,11 +8,12 @@ import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { countWords } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { QuestionTitle } from "../_components/question-title";
 import { useAppLocale } from "../_utils/locale";
 import { useWritingName } from "../essay/essay-labels";
 import { EssayWordCount } from "../essay/essay-word-count";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { isMultiPick } from "../questions/pick-rule";
 import { useMockScreen } from "./mock-context";
@@ -185,9 +186,7 @@ export function MockQuestionCard({ question }: { question: MockQuestion }) {
       )}
 
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={question.question} heading="h2" />
-      </div>
+      <QuestionTitle text={question.question} />
 
       <MockAnswerInput question={question} />
     </div>

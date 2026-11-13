@@ -3,6 +3,7 @@
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import {
   DetailActions,
   DetailFacts,
@@ -14,7 +15,6 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import {
@@ -208,10 +208,7 @@ function MistakesInbox({
                 </ListRowContent>
                 <ListRowTrailing>{group.length}</ListRowTrailing>
               </ListRowBody>
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"
-              />
+              <FoldChevron className="lg:hidden" />
             </button>
 
             <section

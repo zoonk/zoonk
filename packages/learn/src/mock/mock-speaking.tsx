@@ -17,12 +17,12 @@ import { PlayIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { QuestionTitle } from "../_components/question-title";
 import { DoneMark } from "../_components/status-mark";
 import { TaskActions } from "../_components/task-layout";
 import { WritingWait } from "../generation/writing-wait";
 import { useTaskMinutes } from "../language/exam-speaking/speaking-task-row";
 import { LearnLink } from "../learn-link";
-import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { TaskMainButton } from "../shell/task-frame";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
@@ -169,7 +169,7 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   return (
     <MockFrame footer={footer} headerTitle={<ClockTitle deadline={deadline} />}>
       <div className="flex flex-col gap-4">
-        <h2 className={QUESTION_TEXT_CLASS}>{section?.name ?? speaking?.paper ?? t("Speaking")}</h2>
+        <QuestionTitle>{section?.name ?? speaking?.paper ?? t("Speaking")}</QuestionTitle>
 
         {speaking && <SpeakingPaper paper={speaking} />}
 
