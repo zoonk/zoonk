@@ -11,8 +11,6 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -23,6 +21,7 @@ import {
   DetailContent,
   DetailLayout,
 } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListGroup,
@@ -93,7 +92,6 @@ function NotebookHero({
   notebook: Notebook;
 }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: notebook.availability.ready > 0 });
   const { availability, counts } = notebook;
 
   return (
@@ -113,16 +111,16 @@ function NotebookHero({
 
       {availability.ready > 0 && (
         <DetailActions>
-          <LearnLink
+          <EnterLink
             className={DETAIL_PRIMARY_CLASS}
             href={hrefs.practice}
+            icon={null}
             // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
             prefetch={false}
-            ref={ref}
+            size="lg"
           >
             {t("Practice mistakes")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </LearnLink>
+          </EnterLink>
         </DetailActions>
       )}
     </DetailHero>

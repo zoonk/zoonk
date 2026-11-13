@@ -6,14 +6,12 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { DrawerCloseButton } from "../../_components/details-drawer";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowButton,
@@ -23,6 +21,7 @@ import {
   ListRowTitle,
 } from "../../_components/list-group";
 import { PlusMark, PlusNotice } from "../../_components/plus-lock";
+import { SheetHeader } from "../../_components/sheet-header";
 import { useFormatDuration } from "../../_utils/time-format";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
@@ -186,7 +185,7 @@ export function PracticeCallSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <DrawerTitle>{t("Practice a conversation")}</DrawerTitle>
             {character && (
@@ -195,8 +194,7 @@ export function PracticeCallSheet({
               </DrawerDescription>
             )}
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
         <DrawerContent className="pt-3">
           {open && <CallSetup conversation={conversation} onStart={start} />}
         </DrawerContent>

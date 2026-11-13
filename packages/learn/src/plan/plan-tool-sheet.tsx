@@ -7,7 +7,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -16,6 +15,7 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { WritingWait } from "../generation/writing-wait";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import { useSystemName } from "./use-system-name";
@@ -149,10 +149,10 @@ export function PlanToolSheet({
       open={tool !== null}
     >
       <DrawerPopup>
-        <DrawerHeader>
+        <SheetHeader>
           <DrawerTitle>{tool?.name}</DrawerTitle>
           <DrawerDescription>{t("How will you use it?")}</DrawerDescription>
-        </DrawerHeader>
+        </SheetHeader>
 
         {tool && <ToolChoiceForm key={tool.name} onClose={onClose} tool={tool} />}
       </DrawerPopup>

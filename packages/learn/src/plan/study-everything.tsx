@@ -6,15 +6,14 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { LibraryBigIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
@@ -116,7 +115,7 @@ function StudyEverythingSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex flex-col gap-1">
             <DrawerTitle>{t("Study everything")}</DrawerTitle>
             <DrawerDescription>
@@ -125,8 +124,7 @@ function StudyEverythingSheet({
                 : t("Every part of your goal, at your own pace, with no end date.")}
             </DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         {open && <FullCourseChoice course={course} onDone={() => onOpenChange(false)} />}
       </DrawerPopup>

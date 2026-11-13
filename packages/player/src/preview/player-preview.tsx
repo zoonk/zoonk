@@ -45,10 +45,6 @@ const ROUTES = {
   upgrade: "/",
 } as const;
 
-function noop() {
-  return null;
-}
-
 function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
   const local = localAdapters(lesson);
 
@@ -118,7 +114,6 @@ export function PlayerPreview({
         key={`${lesson.id}:${state}`}
         lesson={lesson}
         linkComponent={PreviewLink}
-        onExit={noop}
         routes={ROUTES}
         viewer={{ learnerId: PREVIEW_LEARNER_ID }}
       >

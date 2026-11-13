@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { TaskClose } from "@zoonk/learn/task-close";
 import {
   TaskHeader,
   TaskHeaderBar,
@@ -15,26 +16,10 @@ import {
 } from "@zoonk/learn/task-layout";
 import { useFormatDuration } from "@zoonk/learn/time-format";
 import { WaitTopBarBack } from "@zoonk/learn/wait";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 type LessonAbout = { description: string; estimatedMinutes?: number; title: string };
-
-function LessonExit({ href }: { href: string }) {
-  const t = useExtracted();
-
-  return (
-    <Link
-      className={cn(buttonVariants({ edge: "start", size: "icon", variant: "ghost" }), "shrink-0")}
-      href={href}
-    >
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Back")}</span>
-    </Link>
-  );
-}
 
 export function LessonRouteFrame({
   children,
@@ -63,7 +48,7 @@ export function LessonRouteFrame({
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
             <WaitTopBarBack>
-              <LessonExit href={exitHref} />
+              <TaskClose href={exitHref} link={Link} />
             </WaitTopBarBack>
           </TaskHeaderSide>
 

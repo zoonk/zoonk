@@ -7,15 +7,14 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { useSentenceSpace } from "../_utils/locale";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
@@ -276,13 +275,12 @@ export function PlanBasesSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex flex-col gap-1">
             <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         {open && <BasesChoices bases={bases} onDone={() => onOpenChange(false)} />}
       </DrawerPopup>

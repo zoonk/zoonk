@@ -1,6 +1,7 @@
 "use client";
 
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
 import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
@@ -85,7 +86,7 @@ export function ChoiceQuestion({
         {options.map((option, index) =>
           isShown({ index, result }) ? (
             <AnswerOption
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={locked}
               key={option}
               marker={index + 1}

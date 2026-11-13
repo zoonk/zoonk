@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Kbd, ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { ShortcutKbd, TooltipKbd } from "@zoonk/ui/components/kbd";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
-import { AUDIO_KEY, useAudioKey } from "@zoonk/ui/hooks/keyboard";
+import { useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type PromptAudio } from "../player-audio-context";
@@ -18,7 +18,6 @@ export function PromptAudioButton({
   const t = useExtracted();
   const Icon = audio.isPlaying ? PauseIcon : Volume2Icon;
   const label = audio.isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
-  const shortcut = AUDIO_KEY.toUpperCase();
   const audioKey = useAudioKey(audio.toggle);
 
   const shared = {
@@ -33,7 +32,7 @@ export function PromptAudioButton({
       <Button {...shared} className="w-fit" size="lg" variant="outline">
         <Icon aria-hidden="true" />
         {audio.isPlaying ? t("Pause") : t("Play")}
-        <ShortcutKbd>{shortcut}</ShortcutKbd>
+        <ShortcutKbd shortcut="audio" />
       </Button>
     );
   }
@@ -58,7 +57,7 @@ export function PromptAudioButton({
 
       <TooltipContent>
         {label}
-        <Kbd className="ms-2">{shortcut}</Kbd>
+        <TooltipKbd shortcut="audio" />
       </TooltipContent>
     </Tooltip>
   );
