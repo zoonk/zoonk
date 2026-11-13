@@ -7,6 +7,12 @@ enum ContentFixStatus {
 }
 
 enum ContentFixUnit {
+  skill
+  warmUp
+  source
+  mediaAsset
+  examBlueprint
+  itemSet
   course
   chapter
   lesson

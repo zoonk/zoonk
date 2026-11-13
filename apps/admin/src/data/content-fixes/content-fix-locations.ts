@@ -145,17 +145,59 @@ async function loadItems(ids: string[]) {
   ]);
 }
 
+async function loadShared(units: readonly Unit[]): Promise<[string, ContentFixLocation][]> {
+  const [skills, sources, exams, assets, sets, warmUps] = await Promise.all([
+    prisma.skill.findMany({
+      select: { id: true, language: true, name: true },
+      where: { id: { in: idsOf(units, "skill") } },
+    }),
+    prisma.source.findMany({
+      select: { id: true, language: true, title: true },
+      where: { id: { in: idsOf(units, "source") } },
+    }),
+    prisma.examBlueprint.findMany({
+      select: { id: true, language: true, name: true },
+      where: { id: { in: idsOf(units, "examBlueprint") } },
+    }),
+    prisma.mediaAsset.findMany({
+      select: { alt: true, id: true, language: true },
+      where: { id: { in: idsOf(units, "mediaAsset") } },
+    }),
+    prisma.itemSet.findMany({
+      select: { id: true, language: true },
+      where: { id: { in: idsOf(units, "itemSet") } },
+    }),
+    prisma.warmUp.findMany({
+      select: { id: true, language: true },
+      where: { id: { in: idsOf(units, "warmUp") } },
+    }),
+  ]);
+
+  return [
+    ...skills.map((row) => ({ ...row, title: row.name })),
+    ...sources,
+    ...exams.map((row) => ({ ...row, title: row.name })),
+    ...assets.map((row) => ({ ...row, title: row.alt ?? "Media asset" })),
+    ...sets.map((row) => ({ ...row, title: "Question set" })),
+    ...warmUps.map((row) => ({ ...row, title: "Warm-up deck" })),
+  ].map((row) => [
+    row.id,
+    { adminHref: null, language: row.language, mainUrl: null, trail: [row.title] },
+  ]);
+}
+
 const MISSING: ContentFixLocation = { adminHref: null, language: null, mainUrl: null, trail: [] };
 
 /** Where each fix's content lives now, read fresh: a fix keeps plain ids, so the content may be gone. */
 export async function loadContentFixLocations(units: readonly Unit[]) {
-  const [lessons, chapters, courses, items] = await Promise.all([
+  const [lessons, chapters, courses, items, shared] = await Promise.all([
     loadLessons(idsOf(units, "lesson")),
     loadChapters(idsOf(units, "chapter")),
     loadCourses(idsOf(units, "course")),
     loadItems(idsOf(units, "item")),
+    loadShared(units),
   ]);
 
-  const locations = new Map([...lessons, ...chapters, ...courses, ...items]);
+  const locations = new Map([...lessons, ...chapters, ...courses, ...items, ...shared]);
   return (unit: Unit): ContentFixLocation => locations.get(unit.unitId) ?? MISSING;
 }

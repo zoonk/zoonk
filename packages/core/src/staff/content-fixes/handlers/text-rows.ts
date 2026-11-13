@@ -3,6 +3,7 @@ import { type TransactionClient, sql } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
+import { parseCourseLandingPageContent } from "../../../courses/course-landing-page";
 import { readSavedLessonMap } from "../../../library/lessons/lesson-map";
 import {
   type Json,
@@ -11,6 +12,7 @@ import {
   changedFields,
   nonEmptyText,
   refuse,
+  toJson,
 } from "../_utils/resolved-change";
 import { type ContentFixEffect } from "../contract";
 import {
@@ -24,6 +26,7 @@ import {
   toRevertedSet,
   toSetProposal,
 } from "./fix-handler";
+import { extraData } from "./text-row-fields";
 
 type TextModel = "Chapter" | "Course" | "Lesson";
 
@@ -36,9 +39,9 @@ const TABLES = {
 } as const;
 
 const FIELDS = {
-  Chapter: ["title", "description"],
-  Course: ["title", "description"],
-  Lesson: ["title", "description", "summary"],
+  Chapter: ["title", "description", "objectives"],
+  Course: ["title", "description", "landingPage"],
+  Lesson: ["title", "description", "summary", "canDo", "relatedQuestions"],
 } as const satisfies Record<TextModel, readonly string[]>;
 
 const RULES = {
@@ -94,6 +97,30 @@ function fieldProblem({
   field: string;
   model: TextModel;
 }): string | null {
+  if (field === "landingPage") {
+    const current = parseCourseLandingPageContent(before);
+    const next = parseCourseLandingPageContent(after);
+
+    return current &&
+      next &&
+      current.audience.length === next.audience.length &&
+      current.outcomes.length === next.outcomes.length
+      ? null
+      : "landingPage must keep its existing shape and list lengths.";
+  }
+
+  if (field === "objectives" || field === "relatedQuestions") {
+    const parsed = z.array(z.string().trim().min(1)).safeParse(after);
+
+    return parsed.success && Array.isArray(before) && parsed.data.length === before.length
+      ? null
+      : `${field} must keep its count and contain nonblank text.`;
+  }
+
+  if (field === "canDo" && after === null) {
+    return null;
+  }
+
   if (field === "summary") {
     return summaryProblem({ after, before });
   }
@@ -106,13 +133,16 @@ function fieldProblem({
 }
 
 function toValue({ after, field }: { after: Json; field: string }): Json {
-  return field === "summary" || after === null ? after : nonEmptyText(after);
+  return ["summary", "landingPage", "objectives", "relatedQuestions"].includes(field) ||
+    after === null
+    ? after
+    : nonEmptyText(after);
 }
 
 async function loadTextRow(db: TransactionClient, { id, model }: { id: string; model: TextModel }) {
   if (model === "Course") {
     const course = await db.course.findUnique({
-      select: { description: true, title: true, userId: true, visibility: true },
+      select: { description: true, landingPage: true, title: true, userId: true, visibility: true },
       where: { id },
     });
 
@@ -126,7 +156,7 @@ async function loadTextRow(db: TransactionClient, { id, model }: { id: string; m
 
   if (model === "Chapter") {
     const chapter = await db.chapter.findUnique({
-      select: { description: true, ownerId: true, title: true, visibility: true },
+      select: { description: true, objectives: true, ownerId: true, title: true, visibility: true },
       where: { id },
     });
 
@@ -139,7 +169,15 @@ async function loadTextRow(db: TransactionClient, { id, model }: { id: string; m
   }
 
   const lesson = await db.lesson.findUnique({
-    select: { description: true, ownerId: true, summary: true, title: true, visibility: true },
+    select: {
+      canDo: true,
+      description: true,
+      ownerId: true,
+      relatedQuestions: true,
+      summary: true,
+      title: true,
+      visibility: true,
+    },
     where: { id },
   });
 
@@ -196,7 +234,7 @@ async function resolveTextRow<Model extends TextModel>(
     return refuse(PRIVATE_CONTENT);
   }
 
-  const row: Record<string, Json> = loaded.row;
+  const row = z.record(z.string(), z.json()).parse(toJson(loaded.row));
 
   const problem = Object.entries(set)
     .map(([field, after]) => fieldProblem({ after, before: row[field], field, model }))
@@ -249,16 +287,20 @@ async function applyText(
   const where = { id };
 
   if (model === "Course") {
-    await tx.course.update({ data: { ...textData(fields), ...clearedDescription(fields) }, where });
+    await tx.course.update({
+      data: { ...textData(fields), ...clearedDescription(fields), ...extraData(fields) },
+      where,
+    });
+
     return;
   }
 
   if (model === "Chapter") {
-    await tx.chapter.update({ data: textData(fields), where });
+    await tx.chapter.update({ data: { ...textData(fields), ...extraData(fields) }, where });
     return;
   }
 
-  await tx.lesson.update({ data: textData(fields), where });
+  await tx.lesson.update({ data: { ...textData(fields), ...extraData(fields) }, where });
 }
 
 /** Plans read a chapter's or lesson's title, never its description or summary. */

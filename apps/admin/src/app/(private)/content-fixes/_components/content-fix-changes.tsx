@@ -15,11 +15,25 @@ import { connection } from "next/server";
 const MODEL_LABELS: Record<StoredChange["model"], string> = {
   AnswerExplanation: "Answer explanation",
   Chapter: "Chapter",
+  ChapterMindMap: "Chapter mind map",
+  ConversationScenario: "Conversation scenario",
   Course: "Course",
+  ExamBlueprint: "Exam blueprint",
+  ExamCourseWeights: "Exam course weights",
   Item: "Practice question",
+  ItemSet: "Question set",
   Lesson: "Lesson",
+  LessonSource: "Lesson citations",
+  MediaAsset: "Media asset",
+  Skill: "Skill",
+  Source: "Source",
+  SourceChangeNotice: "Source notice",
   Step: "Screen",
+  StepSource: "Screen citations",
   StepVariant: "Screen version",
+  TargetCutoff: "Target cutoff",
+  TutorSharedAnswer: "Shared tutor answer",
+  WarmUp: "Warm-up",
 };
 
 type Side = "after" | "before";
@@ -189,7 +203,22 @@ function PictureLink({ mediaAssetId }: { mediaAssetId: string }) {
 }
 
 function ChangeBody({ change, compact }: { change: StoredChange; compact: boolean }) {
+  if (change.model === "ItemSet") {
+    return (
+      <>
+        <p>
+          {change.op === "replace"
+            ? "Replaces the whole set for future practice; open sessions keep their copy."
+            : "Restores the original set for future practice."}
+        </p>
+        <AdminJson label="Before" value={change.before} />
+        <AdminJson label="After" value={change.after} />
+      </>
+    );
+  }
+
   switch (change.op) {
+    case "setCitation":
     case "set":
       return change.fields.map((field) => (
         <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />

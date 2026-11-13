@@ -70,6 +70,9 @@ export const contentFixChangesSchema = z
 const screenModelSchema = z.enum(["Step", "StepVariant"]);
 
 const effectSchema = z.discriminatedUnion("kind", [
+  z.object({ id: idSchema, kind: z.literal("itemSetReplaced"), replacementId: idSchema }),
+  z.object({ id: idSchema, kind: z.literal("itemSetRestored") }),
+  z.object({ chapterId: idSchema, kind: z.literal("mindMapRedrawOwed") }),
   z
     .object({ kind: z.literal("lessonVersion"), lessonId: idSchema })
     .meta({ description: "Learners who open the lesson next get the fixed version" }),

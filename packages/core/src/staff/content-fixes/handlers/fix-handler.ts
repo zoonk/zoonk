@@ -17,7 +17,13 @@ export const setFieldsSchema = z
 /** One thing a stored change writes, such as a row's field, its retirement or its picture. */
 export type FixTarget = { id: string; model: string; part: string };
 
-export type PlanRoots = { chapterIds?: string[]; itemIds?: string[]; lessonIds?: string[] };
+export type PlanRoots = {
+  skillIds?: string[];
+  blueprintIds?: string[];
+  chapterIds?: string[];
+  itemIds?: string[];
+  lessonIds?: string[];
+};
 
 export type FixContext = { fixId: string; now: Date };
 

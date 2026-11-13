@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
-import { type Plan, type TransactionClient, prisma } from "@zoonk/db";
+import { type ContentFixUnit, type Plan, type TransactionClient, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
@@ -20,7 +20,12 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { listeningSetFixture } from "@zoonk/testing/fixtures/listening";
-import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  itemFixture,
+  itemSetFixture,
+  skillFixture,
+  textSetContent,
+} from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -45,6 +50,7 @@ import {
   lockFixRows,
 } from "../staff/content-fixes/_utils/apply-content-fix";
 import { type StoredChange, contentFixChangesSchema } from "../staff/content-fixes/contract";
+import { prepareProposedChange } from "../staff/content-fixes/handlers/registry";
 import { getSession } from "../users/get-session";
 import { writePlanInputs } from "./_utils/plan-input-write";
 import { attachChapterToCourse } from "./chapters/attach-course-chapter";
@@ -472,6 +478,13 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.update"],
     },
   ],
+  "staff/content-fixes/handlers/exam-facts.ts": [
+    {
+      verdict: "marks",
+      why: "blueprint facts change plan inputs under the content-fix plan lock",
+      writes: ["examBlueprint.update"],
+    },
+  ],
   "staff/content-fixes/handlers/item-content.ts": [
     {
       verdict: "marks",
@@ -479,11 +492,25 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["item.create", "item.update"],
     },
   ],
+  "staff/content-fixes/handlers/item-set.ts": [
+    {
+      verdict: "marks",
+      why: "whole-set replacement changes bank picks under the content-fix plan lock",
+      writes: ["itemSet.create", "item.create", "item.updateMany"],
+    },
+  ],
   "staff/content-fixes/handlers/practice.ts": [
     {
       verdict: "marks",
       why: "retiring or restoring bank items changes skill and exam plans",
       writes: ["item.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/shared-text.ts": [
+    {
+      verdict: "marks",
+      why: "skill text changes plan inputs under the content-fix plan lock",
+      writes: ["skill.update"],
     },
   ],
   "staff/content-fixes/handlers/text-rows.ts": [
@@ -1680,7 +1707,7 @@ function writeFix({
   unit,
 }: {
   changes: StoredChange[];
-  unit: { id: string; kind: "chapter" | "lesson" | "item" };
+  unit: { id: string; kind: ContentFixUnit };
 }) {
   return writePlanInputs(async (tx) => {
     await lockFixPlans(tx, changes);
@@ -1853,6 +1880,75 @@ async function itemContentCase(op: "replace" | "restore" | "set"): Promise<Write
   };
 }
 
+async function sharedFixCase(model: "Skill" | "ExamBlueprint" | "ItemSet"): Promise<WriterCase> {
+  const skill = await skillFixture();
+
+  const blueprint = await examBlueprintFixture({
+    structure: { formats: [], mock: null, rules: [], subjects: [] },
+  });
+
+  const plan =
+    model === "ExamBlueprint"
+      ? await examPlan(blueprint.id)
+      : await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  const set = await itemSetFixture({ examBlueprintId: blueprint.id });
+  const setPlan = model === "ItemSet" ? await examPlan(blueprint.id) : null;
+  const item = await itemFixture({ setId: set.id, setPosition: 0, skillId: skill.id });
+
+  const proposal = {
+    ExamBlueprint: { id: blueprint.id, model: "ExamBlueprint", set: { name: "Corrected exam" } },
+    ItemSet: {
+      id: set.id,
+      model: "ItemSet",
+      replace: {
+        content: textSetContent("Corrected passage"),
+        questions: [{ content: item.content, id: item.id }],
+      },
+    },
+    Skill: { id: skill.id, model: "Skill", set: { name: "Corrected skill" } },
+  }[model];
+
+  const prepared = await prepareProposedChange(prisma, proposal);
+
+  if (!prepared.ok) {
+    throw new Error(prepared.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([prepared.stored]);
+
+  return {
+    expectWritten: async () => {
+      if (setPlan) {
+        await expect(
+          prisma.plan.findUniqueOrThrow({ where: { id: setPlan.id } }),
+        ).resolves.toMatchObject({ sourceVersion: setPlan.sourceVersion + 1 });
+      }
+
+      if (model === "Skill") {
+        await expect(
+          prisma.skill.findUniqueOrThrow({ where: { id: skill.id } }),
+        ).resolves.toMatchObject({ name: "Corrected skill" });
+      }
+
+      if (model === "ExamBlueprint") {
+        await expect(
+          prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),
+        ).resolves.toMatchObject({ name: "Corrected exam" });
+      }
+
+      if (model === "ItemSet") {
+        await expect(
+          prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
+        ).resolves.toMatchObject({ retiredAt: expect.any(Date) });
+      }
+    },
+    plan,
+    root: model === "ExamBlueprint" ? blueprintRoot(blueprint.id) : skillRoot(skill.id),
+    write: () => writeFix({ changes, unit: prepared.unit }),
+  };
+}
+
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
@@ -1884,15 +1980,20 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
+  "staff/content-fixes/handlers/exam-facts.ts": {
+    blueprintSet: () => sharedFixCase("ExamBlueprint"),
+  },
   "staff/content-fixes/handlers/item-content.ts": {
     "replace item": () => itemContentCase("replace"),
     "restore replaced item": () => itemContentCase("restore"),
     "reword item": () => itemContentCase("set"),
   },
+  "staff/content-fixes/handlers/item-set.ts": { itemSetReplace: () => sharedFixCase("ItemSet") },
   "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),
   },
+  "staff/content-fixes/handlers/shared-text.ts": { skillSet: () => sharedFixCase("Skill") },
   "staff/content-fixes/handlers/text-rows.ts": {
     "chapter title": () => textFixCase("chapter", "title"),
     "lesson title": () => textFixCase("lesson", "title"),

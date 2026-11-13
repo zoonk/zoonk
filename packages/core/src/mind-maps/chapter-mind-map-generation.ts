@@ -2,7 +2,7 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { checkMindMapImage } from "@zoonk/ai/tasks/mind-maps/check";
 import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
-import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
+import { type MindMapStructure, mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
 import { generateMindMapStructure } from "@zoonk/ai/tasks/mind-maps/structure";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
@@ -100,7 +100,7 @@ const NO_IMAGE = {
   thumbnailUrl: null,
 } as const;
 
-export type DrawnMindMap = { image: Uint8Array; model: string };
+export type DrawnMindMap = { image: Uint8Array; model: string; structure: MindMapStructure };
 
 /** Workflow bridge, not authorization; without corrections returns null for an already-stored picture. Store in a separate durable step to avoid paying twice. */
 export async function drawChapterMindMap({
@@ -132,7 +132,7 @@ export async function drawChapterMindMap({
     structure: structure.data,
   });
 
-  return { image: data.image, model: provenance.model };
+  return { image: data.image, model: provenance.model, structure: structure.data };
 }
 
 /** Workflow bridge, not authorization; show immediately, then check text afterward. Null drawn only finishes an already-stored map. */
@@ -161,7 +161,7 @@ export async function showChapterMindMap({
   const ownerId = map.chapter.visibility === "private" ? map.chapter.ownerId : null;
   const saved = await saveMindMapImage({ image: drawn.image, ownerId });
 
-  await prisma.chapterMindMap.update({
+  await prisma.chapterMindMap.updateMany({
     data: {
       generatedAt: new Date(),
       imageHeight: saved.height,
@@ -171,7 +171,7 @@ export async function showChapterMindMap({
       status: "completed",
       thumbnailUrl: saved.thumbnailUrl,
     },
-    where: { chapterId },
+    where: { chapterId, structure: { equals: drawn.structure } },
   });
 }
 

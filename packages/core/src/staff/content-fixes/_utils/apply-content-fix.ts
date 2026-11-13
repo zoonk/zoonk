@@ -5,8 +5,12 @@ import {
   getCourseCacheTag,
   getCourseCurriculumCacheTag,
   getCourseRouteCacheTag,
+  getExamBlueprintCacheTag,
   getLibraryChapterCacheTag,
   getLibraryLessonCacheTag,
+  getMediaAssetCacheTag,
+  getSkillCacheTag,
+  getSourceCacheTag,
 } from "../../../cache/tags";
 import { lockPlanSourceWrite } from "../../../library/_utils/plan-input-write";
 import { getChapterCacheTags } from "../../../library/chapters/chapter-cache-tags";
@@ -18,8 +22,14 @@ import { type FixUnit } from "./resolved-change";
 const UNIT_TABLES = {
   chapter: sql`library_chapters`,
   course: sql`courses`,
+  examBlueprint: sql`exam_blueprints`,
   item: sql`items`,
+  itemSet: sql`item_sets`,
   lesson: sql`library_lessons`,
+  mediaAsset: sql`media_assets`,
+  skill: sql`skills`,
+  source: sql`sources`,
+  warmUp: sql`warm_ups`,
 } as const;
 
 /**
@@ -54,7 +64,16 @@ export async function lockFixPlans(
   const chapterIds = [...new Set(roots.flatMap((root) => root.chapterIds ?? []))];
   const lessonIds = [...new Set(roots.flatMap((root) => root.lessonIds ?? []))];
 
-  if (itemIds.length === 0 && chapterIds.length === 0 && lessonIds.length === 0) {
+  const skillIds = roots.flatMap((root) => root.skillIds ?? []);
+  const blueprintIds = roots.flatMap((root) => root.blueprintIds ?? []);
+
+  if (
+    itemIds.length === 0 &&
+    chapterIds.length === 0 &&
+    lessonIds.length === 0 &&
+    skillIds.length === 0 &&
+    blueprintIds.length === 0
+  ) {
     return;
   }
 
@@ -67,10 +86,12 @@ export async function lockFixPlans(
       : [];
 
   await lockPlanSourceWrite(tx, {
-    blueprintIds: [...new Set(items.flatMap((item) => item.examBlueprintId ?? []))],
+    blueprintIds: [
+      ...new Set([...blueprintIds, ...items.flatMap((item) => item.examBlueprintId ?? [])]),
+    ],
     chapterIds,
     lessonIds,
-    skillIds: [...new Set(items.map((item) => item.skillId))],
+    skillIds: [...new Set([...skillIds, ...items.map((item) => item.skillId)])],
   });
 }
 
@@ -131,6 +152,47 @@ async function courseCacheTags(courseId: string): Promise<string[]> {
 
 /** The cached reads in every app that show what a fix of `unit` changes. */
 export async function getFixCacheTags(unit: FixUnit): Promise<string[]> {
+  if (unit.kind === "source") {
+    const [steps, lessons, blueprints] = await Promise.all([
+      prisma.step.findMany({
+        select: { lessonId: true },
+        where: { OR: [{ sourceId: unit.id }, { sources: { some: { sourceId: unit.id } } }] },
+      }),
+      prisma.lessonSource.findMany({ select: { lessonId: true }, where: { sourceId: unit.id } }),
+      prisma.examBlueprint.findMany({ select: { id: true }, where: { sourceId: unit.id } }),
+    ]);
+
+    const tags = await Promise.all(
+      [...new Set([...steps, ...lessons].map((row) => row.lessonId))].map((id) =>
+        lessonCacheTags(id),
+      ),
+    );
+
+    return [
+      ...new Set([
+        getSourceCacheTag(unit.id),
+        ...tags.flat(),
+        ...blueprints.map((row) => getExamBlueprintCacheTag(row.id)),
+      ]),
+    ];
+  }
+
+  if (unit.kind === "skill") {
+    return [getSkillCacheTag(unit.id)];
+  }
+
+  if (unit.kind === "mediaAsset") {
+    return [getMediaAssetCacheTag(unit.id)];
+  }
+
+  if (unit.kind === "examBlueprint") {
+    return [getExamBlueprintCacheTag(unit.id)];
+  }
+
+  if (unit.kind === "warmUp") {
+    return [`warm-up:${unit.id}`];
+  }
+
   if (unit.kind === "lesson") {
     return [...new Set(await lessonCacheTags(unit.id))];
   }
