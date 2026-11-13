@@ -3,7 +3,7 @@ import { Variant, VariantSwitch, VariantSwitchOption } from "@/components/public
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
-import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { type PriceInfo } from "@zoonk/utils/currency";
@@ -31,13 +31,13 @@ export type PlusViewerState =
 const PERIODS = ["monthly", "yearly"] as const;
 
 /**
- * Not the tab piece: two choices in one tinted track, the chosen one a raised segment, so the other
- * plainly reads as something to press.
+ * Not the tab piece: two joined buttons. The one to press is an outlined button, and the chosen one
+ * is filled, so which is which shows without comparing them.
  */
-const BILLING_SWITCH_CLASS = "bg-muted flex rounded-lg p-0.5";
+const BILLING_SWITCH_CLASS = "flex";
 
 const BILLING_OPTION_CLASS =
-  "text-compact has-checked:bg-background has-checked:ring-border dark:has-checked:bg-input/60 has-focus-visible:ring-ring/50 hit-area flex h-8 items-center gap-1.5 rounded-md px-3 font-medium whitespace-nowrap transition-colors not-has-checked:hover:bg-background/60 has-checked:ring-1 has-focus-visible:ring-[3px]";
+  "text-compact border-input bg-background has-checked:border-foreground has-checked:bg-foreground has-checked:text-background has-focus-visible:ring-ring/50 hit-area not-has-checked:hover:bg-muted flex h-8 items-center gap-1.5 border px-3 font-medium whitespace-nowrap transition-colors first:rounded-l-lg last:-ml-px last:rounded-r-lg has-focus-visible:z-10 has-focus-visible:ring-[3px]";
 
 const DEFAULT_PERIOD = "monthly";
 const PLUS_PLAN_ID = "plus-plan";
@@ -71,7 +71,7 @@ export async function PlusLoginLink({
 
   if (!hasChoice) {
     return (
-      <PendingLink className={className} href={getHref()} {...FORWARD_ICON}>
+      <PendingLink className={className} href={getHref()}>
         {t("Subscribe")}
       </PendingLink>
     );
@@ -79,7 +79,7 @@ export async function PlusLoginLink({
 
   return PERIODS.map((period) => (
     <Variant as="span" className="contents" key={period} name={billingSwitch} value={period}>
-      <PendingLink className={className} href={getHref(period)} {...FORWARD_ICON}>
+      <PendingLink className={className} href={getHref(period)}>
         {t("Subscribe")}
       </PendingLink>
     </Variant>
@@ -229,7 +229,7 @@ export async function PlusPlan({
             >
               {t("Yearly")}
               {comparison && (
-                <span className="text-muted-foreground font-normal">
+                <span className="font-normal opacity-70">
                   {t("save {amount}", {
                     amount: formatPlanPrice({ locale, price: comparison.savings }),
                   })}

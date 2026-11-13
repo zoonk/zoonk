@@ -48,7 +48,7 @@ export async function PricingHero() {
         {t({
           description:
             "The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.",
-          message: "Follow your plan all the way to your date.",
+          message: "Follow your study plan all the way to your date.",
         })}
       </h1>
 
@@ -56,7 +56,7 @@ export async function PricingHero() {
         {t({
           description: "“Plus” is the name of the subscription.",
           message:
-            "Plus has no monthly limit on lessons, so you study as much as each day's plan asks for.",
+            "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job.",
         })}
       </p>
     </section>

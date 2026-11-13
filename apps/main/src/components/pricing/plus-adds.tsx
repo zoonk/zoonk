@@ -18,6 +18,12 @@ const WEEKDAYS_IN_WEEK = 5;
 const WEEKS = Array.from({ length: WEEKS_IN_PICTURE }, (_, week) => week);
 const WEEKDAYS = Array.from({ length: WEEKDAYS_IN_WEEK }, (_, day) => day);
 
+const MONTH_ROW_CLASS =
+  "grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5 sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1fr)]";
+
+const WEEKS_CLASS = "grid grid-cols-4 gap-2";
+
+/** One mark is one weekday of study. */
 function MonthRow({
   caption,
   daysCovered,
@@ -28,10 +34,10 @@ function MonthRow({
   name: string;
 }) {
   return (
-    <div className="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5 sm:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1fr)]">
+    <div className={MONTH_ROW_CLASS}>
       <p className="text-sm font-semibold">{name}</p>
 
-      <div aria-hidden="true" className="flex gap-2">
+      <div aria-hidden="true" className={WEEKS_CLASS}>
         {WEEKS.map((week) => (
           <MeterParts className="h-2.5" key={week}>
             {WEEKDAYS.map((day) => (
@@ -45,6 +51,20 @@ function MonthRow({
       </div>
 
       <p className="text-muted-foreground text-compact col-start-2 sm:col-start-3">{caption}</p>
+    </div>
+  );
+}
+
+async function WeekLabels() {
+  const t = await getExtracted();
+
+  return (
+    <div aria-hidden="true" className={cn(MONTH_ROW_CLASS, "-mb-2")}>
+      <div className={cn(WEEKS_CLASS, "text-muted-foreground col-start-2 text-xs")}>
+        {WEEKS.map((week) => (
+          <span key={week}>{t("Week {number, number}", { number: week + 1 })}</span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -67,7 +87,7 @@ export async function PlusAdds() {
 
         <StopTitle id={PLUS_ADDS_TITLE_ID}>
           {t(
-            "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts} other {# lessons last}} {days, plural, =5 {about a week} one {a day} other {about # days}}.",
+            "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts} other {# lessons last}} {days, plural, =5 {about a week} =10 {about two weeks} one {a day} other {about # days of study}}.",
             { days: freeDays, lessons, minutes: EXAMPLE_MINUTES },
           )}
         </StopTitle>
@@ -88,9 +108,11 @@ export async function PlusAdds() {
             </p>
           </div>
 
+          <WeekLabels />
+
           <MonthRow
             caption={t(
-              "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} one {the first day} other {the first # days}}",
+              "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}",
               { days: freeDays, lessons },
             )}
             daysCovered={freeDays}

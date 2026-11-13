@@ -46,7 +46,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     <p className={DISCLOSURE_ANSWER_CLASS}>
       {hasNoAccount(reader) && limits.guestLessons !== null
         ? t(
-            "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
+            "You can try {count, plural, one {# lesson} other {# lessons}} with no account. With a free account, you get:",
             { count: limits.guestLessons },
           )
         : t("Without Plus, you get:")}
@@ -60,11 +60,16 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     t("{month, plural, one {# lesson} other {# lessons}} a month, across all your goals", {
       month: limits.lessonsPerMonth ?? 0,
     }),
-    t(
-      "An AI study buddy: {tutor, plural, one {# message} other {# messages}} and {uploads, plural, one {# upload} other {# uploads}} a day",
-      { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
-    ),
-    t("Speaking practice calls, fewer than with Plus (exam speaking tasks come with Plus)"),
+    t("An AI study buddy: {count, plural, one {# message} other {# messages}} a day", {
+      count: limits.tutorMessagesPerDay ?? 0,
+    }),
+    t({
+      description:
+        "What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. {count} is how many a day.",
+      message: "Your own study material: {count, plural, one {# file} other {# files}} a day",
+      values: { count: limits.uploadsPerDay ?? 0 },
+    }),
+    t("Speaking practice calls, fewer than with Plus"),
   ];
 
   return (
@@ -113,7 +118,7 @@ export async function PlusQuestions({
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
             {t.rich(
-              "Almost. Lessons, goals and the AI study buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
+              "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
             )}
           </p>
