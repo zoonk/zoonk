@@ -4,16 +4,23 @@ export type EntitlementTier = "free" | "guest" | "plus";
 
 export type UsagePeriod = "day" | "month" | "rolling30Days" | "total";
 
+export type CalendarPeriod = Exclude<UsagePeriod, "rolling30Days">;
+
+/**
+ * Screens that name a calendar window ("today", "this month") read the free plan's rolling 30 days
+ * as its month, the way the plan is described: "20 lessons a month".
+ */
+export function toCalendarPeriod(period: UsagePeriod): CalendarPeriod {
+  return period === "rolling30Days" ? "month" : period;
+}
+
 type AllowanceResource = UsageKind | "activeGoals" | "aiSpend" | "callSeconds" | "generatedLessons";
 
 export type AllowanceLimit = {
   limit: number;
   resource: AllowanceResource;
   tier: EntitlementTier;
-} & (
-  | { availableAt: Date; period: "rolling30Days" }
-  | { period: Exclude<UsagePeriod, "rolling30Days"> }
-);
+} & ({ availableAt: Date; period: "rolling30Days" } | { period: CalendarPeriod });
 
 /** slowDown retries after retryAfterSeconds; limitReached waits for a cap reset. signUpRequired moves guest work into an account. */
 export type UsageDecision =
