@@ -1,14 +1,12 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
-import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { BackLink, PageTitle, PageTop } from "@zoonk/ui/components/page-top";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { BadgeCheckIcon, DownloadIcon, PrinterIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
-import { SubscribeMainAction } from "../_components/subscribe-gate";
 import { LearnLink } from "../learn-link";
 import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateDate, useCertificateSentence } from "./certificate-labels";
@@ -48,7 +46,8 @@ function CertificateTop({ backHref, children }: { backHref?: string; children: R
 
 /**
  * What a certificate's owner sees at its address without a subscription: the gate is the page, and
- * the blank sheet under it says which certificate is waiting.
+ * the blank sheet under it says which certificate is waiting. The page puts `SubscribeMainAction`
+ * in its bottom bar.
  */
 export function CertificateGate({ facts, href }: { facts: CertificateFacts; href: string }) {
   const t = useExtracted();
@@ -61,9 +60,6 @@ export function CertificateGate({ facts, href }: { facts: CertificateFacts; href
         </PageTitle>
       </CertificateTop>
       <BlankCertificateSheet className="mt-8 max-w-150 rounded-xl" facts={facts} />
-      <BottomBar>
-        <SubscribeMainAction />
-      </BottomBar>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PublicPage } from "@/components/public/public-page";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
@@ -6,6 +7,8 @@ import { type CertificateFacts, normalizeCertificateCode } from "@zoonk/core/cer
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
 import { CertificateGate, CertificateVerified } from "@zoonk/learn/certificates/page";
+import { SubscribeMainAction } from "@zoonk/learn/subscribe-gate";
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { PageTop } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getCertificateLinks, getCertificateName } from "@zoonk/utils/certificate-links";
@@ -101,10 +104,13 @@ async function CertificateBody({ params }: Props) {
 
   if (read.locked) {
     return (
-      <section className="bg-ground">
+      <section className="bg-ground flex flex-1 flex-col">
         <div className={CERTIFICATE_TOP_CLASS}>
           <CertificateGate facts={facts} href="/certificates" />
         </div>
+        <BottomBar className={PUBLIC_CONTAINER_CLASS}>
+          <SubscribeMainAction />
+        </BottomBar>
       </section>
     );
   }

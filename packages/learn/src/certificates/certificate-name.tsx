@@ -26,7 +26,8 @@ export type SaveCertificateName = (name: string) => Promise<boolean>;
 function checkName({ current, name }: { current: string | null; name: string }) {
   const trimmed = name.trim();
   const isTooLong = isNameChangeTooLong({ name, savedName: current ?? "" });
-  return { isTooLong, trimmed, valid: Boolean(trimmed) && !isTooLong };
+  const changed = trimmed !== (current ?? "").trim();
+  return { isTooLong, trimmed, valid: Boolean(trimmed) && changed && !isTooLong };
 }
 
 function useNameSave({
