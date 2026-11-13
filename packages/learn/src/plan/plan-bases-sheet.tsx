@@ -129,7 +129,8 @@ function BasesFooter({
       <div aria-live="polite">{note()}</div>
 
       <Button
-        disabled={isPending || changed.length === 0 || preview.status !== "ready"}
+        busy={isPending}
+        disabled={changed.length === 0 || preview.status !== "ready"}
         focusableWhenDisabled
         onClick={onSave}
         ref={saveButton}
