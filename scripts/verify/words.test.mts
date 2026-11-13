@@ -109,7 +109,7 @@ describe("judging a page's words", () => {
   });
 });
 
-describe("where the title and the main action sit (the founder's rules 3 and 4)", () => {
+describe("where the title and the main action sit (E8 and R2)", () => {
   it("leads to an app screen's one main action that isn't pinned", () => {
     assert.deepEqual(
       [
