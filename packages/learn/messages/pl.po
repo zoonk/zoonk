@@ -8647,24 +8647,19 @@ msgid "time left"
 msgstr "pozostały czas"
 
 #: src/mock/mock-entry.tsx
-msgctxt "gaCKXR"
-msgid "Whenever you want: a full exam day, half a day or one subject"
-msgstr "Kiedy chcesz: cały dzień egzaminacyjny, pół dnia lub jeden przedmiot"
+msgctxt "CfczSe"
+msgid "The full exam, half of it or one subject"
+msgstr ""
 
 #: src/mock/mock-entry.tsx
-msgctxt "HVwCpv"
-msgid "Whenever you want: a full exam day or half a day"
-msgstr "Kiedy chcesz: cały dzień egzaminacyjny lub pół dnia"
+msgctxt "fWOwxQ"
+msgid "The full exam or half of it"
+msgstr ""
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
 msgstr "Kontynuuj egzamin próbny"
-
-#: src/mock/mock-entry.tsx
-msgctxt "QJQ0Nr"
-msgid "It's where you left it"
-msgstr "Wrócisz do miejsca przerwania"
 
 #: src/mock/mock-expired.tsx
 msgctxt "2E0g32"

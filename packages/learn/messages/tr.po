@@ -8647,24 +8647,19 @@ msgid "time left"
 msgstr "kalan süre"
 
 #: src/mock/mock-entry.tsx
-msgctxt "gaCKXR"
-msgid "Whenever you want: a full exam day, half a day or one subject"
-msgstr "İstediğin zaman: tam gün, yarım gün veya tek branş"
+msgctxt "CfczSe"
+msgid "The full exam, half of it or one subject"
+msgstr ""
 
 #: src/mock/mock-entry.tsx
-msgctxt "HVwCpv"
-msgid "Whenever you want: a full exam day or half a day"
-msgstr "İstediğin zaman: tam gün veya yarım gün"
+msgctxt "fWOwxQ"
+msgid "The full exam or half of it"
+msgstr ""
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
 msgstr "Deneme sınavına devam et"
-
-#: src/mock/mock-entry.tsx
-msgctxt "QJQ0Nr"
-msgid "It's where you left it"
-msgstr "Bıraktığın yerde duruyor"
 
 #: src/mock/mock-expired.tsx
 msgctxt "2E0g32"
