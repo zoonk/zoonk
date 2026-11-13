@@ -1,6 +1,9 @@
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 
-/** The screens before Admin opens (signing in, an account that can't open it): one centered block. */
+/**
+ * The screens before Admin opens (signing in, an account that can't open it): one centered block
+ * that starts at one height, so the logo doesn't move from one to the next.
+ */
 export function AdminGateScreen({
   action,
   children,
@@ -11,7 +14,7 @@ export function AdminGateScreen({
   title: string;
 }) {
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 p-6 text-center">
+    <main className="flex min-h-dvh flex-col items-center gap-6 p-6 pt-[30dvh] text-center">
       <ZoonkLogo className="size-10" />
 
       <div className="flex max-w-sm flex-col gap-1">

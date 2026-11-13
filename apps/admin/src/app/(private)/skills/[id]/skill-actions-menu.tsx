@@ -139,7 +139,7 @@ function MergeTargetPicker({
             className="flex items-start gap-3 border-b py-2.5 font-normal last:border-b-0"
             key={option.id}
           >
-            <RadioGroupItem className="mt-0.5" value={option.id} />
+            <RadioGroupItem value={option.id} />
             <span className="flex min-w-0 flex-col gap-0.5">
               <span className="wrap-break-word">{option.name}</span>
               <span className="text-muted-foreground text-xs">

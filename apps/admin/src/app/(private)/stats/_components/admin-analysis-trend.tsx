@@ -67,7 +67,7 @@ export function AdminAnalysisTrend({
           </p>
           {comparison ? <AnalysisChange {...comparison} /> : null}
         </div>
-        <p className="text-muted-foreground max-w-2xl text-sm">{description}</p>
+        <p className="text-muted-foreground max-w-column text-sm">{description}</p>
       </header>
 
       {children}

@@ -14,7 +14,7 @@ export function AiMockShell({ children, current }: { children: React.ReactNode; 
   return (
     <AdminPage>
       <AdminPageHeader title="AI" />
-      <AdminPageBody className="gap-8">
+      <AdminPageBody className="gap-10">
         {current === "spend" ? (
           <AdminNotice title="40 AI runs failed or are stuck" tone="destructive">
             5 failed. 35 started over an hour ago and never finished. <MockLink>See them</MockLink>

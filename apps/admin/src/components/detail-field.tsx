@@ -1,5 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { isValidElement } from "react";
 
 const FIELD_ROW_CLASS =
   "grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 py-3 text-sm @lg:grid-cols-[11rem_minmax(0,1fr)]";
@@ -16,16 +17,30 @@ const DATA_VALUE = /^(?:\$?[\d,]+(?:\.\d+)?%?(?: [a-z]+)?|\d+ × \d+|(?=\S*[\d._
 
 const MODEL_NAME = /^[a-z-]+\/[\w.-]+$/u;
 
-function isData(children: React.ReactNode): boolean {
-  if (typeof children === "number") {
-    return true;
+/** A field that names an identifier holds one, whatever it looks like ("enem"). */
+const ID_LABEL = /\b(?:id|key|hash|slug)$/iu;
+
+/** The words a value shows, through a link around them. */
+function textOf(children: React.ReactNode): string | null {
+  if (typeof children === "string" || typeof children === "number") {
+    return String(children);
   }
 
-  return (
-    typeof children === "string" &&
-    DATA_VALUE.test(children.trim()) &&
-    !MODEL_NAME.test(children.trim())
-  );
+  if (isValidElement<{ children?: React.ReactNode }>(children)) {
+    return textOf(children.props.children);
+  }
+
+  return null;
+}
+
+function isData({ children, label }: { children: React.ReactNode; label: string }): boolean {
+  const text = textOf(children)?.trim();
+
+  if (!text) {
+    return false;
+  }
+
+  return ID_LABEL.test(label) || (DATA_VALUE.test(text) && !MODEL_NAME.test(text));
 }
 
 /** A value that is data is set in mono, digit under digit; `mono` says so where the value isn't a plain string. */
@@ -44,7 +59,7 @@ export function DetailField({
       <dd
         className={cn(
           "[&_a]:hit-area min-w-0 wrap-break-word [&_a]:relative",
-          (mono ?? isData(children)) && "text-compact font-mono tabular-nums",
+          (mono ?? isData({ children, label })) && "text-compact font-mono tabular-nums",
         )}
       >
         {children}
