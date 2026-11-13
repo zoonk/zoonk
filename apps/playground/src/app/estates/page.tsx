@@ -40,9 +40,17 @@ const ROUTES = {
   upgrade: "/",
 } as const;
 
-function Link({ children, className, href, ref }: any) {
+function Link({ children, className, href, onClick, ref }: any) {
   return (
-    <a className={className} href={href} onClick={(event) => event.preventDefault()} ref={ref}>
+    <a
+      className={className}
+      href={href}
+      onClick={(event) => {
+        onClick?.(event);
+        event.preventDefault();
+      }}
+      ref={ref}
+    >
       {children}
     </a>
   );
