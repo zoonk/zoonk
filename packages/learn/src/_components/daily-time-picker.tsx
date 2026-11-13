@@ -144,7 +144,7 @@ function DailyTimeReadout({
     >
       <span aria-hidden="true" className="flex items-baseline gap-2">
         <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
-        <ChevronDownIcon className="text-muted-foreground size-5 shrink-0 translate-y-1" />
+        <ChevronDownIcon className="text-muted-foreground size-5 shrink-0 translate-y-0.5" />
         {waiting && <ShortcutKbd>⏎</ShortcutKbd>}
       </span>
 

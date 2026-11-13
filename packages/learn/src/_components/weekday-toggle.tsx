@@ -15,12 +15,7 @@ export function WeekdayToggle({
   const formatWeekday = useFormatWeekday();
 
   return (
-    <Toggle
-      aria-label={formatWeekday(weekday)}
-      className="h-11 min-w-0 px-0 capitalize"
-      variant="outline"
-      {...props}
-    >
+    <Toggle className="h-11 min-w-0 px-0 capitalize" variant="outline" {...props}>
       {formatWeekday(weekday, "short")}
     </Toggle>
   );
