@@ -78,8 +78,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.LoadedPage
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
@@ -163,7 +163,7 @@ internal fun ChapterContent(
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
 
-    LoadedPage(
+    ResourceScaffold(
         state,
         onBack = back,
         onRetry = { scope.launch { resource.refresh() } },
