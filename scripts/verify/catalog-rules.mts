@@ -5,7 +5,13 @@ import { join, resolve } from "node:path";
 import { CATALOG_RULES, catalogRulesBroken } from "./rules/catalog.mts";
 import { isCatalog, readCatalog } from "./strings.mts";
 
-export type Offender = { line: number; path: string; rule: string; text: string };
+export type Offender = {
+  line: number;
+  path: string;
+  rule: string;
+  sources: string[];
+  text: string;
+};
 
 export function catalogOffenders(catalogs: { content: string; path: string }[]): Offender[] {
   return catalogs.flatMap(({ content, path }) =>
@@ -14,6 +20,7 @@ export function catalogOffenders(catalogs: { content: string; path: string }[]):
         line: string.line,
         path,
         rule: rule.id,
+        sources: string.sources,
         text: string.text,
       })),
     ),
@@ -38,7 +45,8 @@ if (import.meta.main) {
     console.log(`\n## ${rule.name} (${here.length})\n`);
 
     for (const offender of here) {
-      console.log(`- ${offender.path}:${offender.line} ${offender.text}`);
+      const used = offender.sources.length > 0 ? ` (in ${offender.sources.join(", ")})` : "";
+      console.log(`- ${offender.path}:${offender.line} ${offender.text}${used}`);
     }
   }
 }
