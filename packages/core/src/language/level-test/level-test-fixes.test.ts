@@ -231,105 +231,148 @@ describe("level test answers saved before a fix", () => {
   });
 });
 
+const SPEAKING_LEVELS = ["A1", "A2", "B1"];
+
+function speakingSentences(suffix: string) {
+  return SPEAKING_LEVELS.map((level) => ({
+    level,
+    sentence: `Say ${level}${suffix}`,
+    translation: "Diga",
+  }));
+}
+
+/** Rewrites every speaking sentence from `from` to `to` suffixes, as an approved fix would. */
+async function fixSpeakingSentences({
+  bankId,
+  from,
+  questions,
+  to,
+}: {
+  bankId: string;
+  from: string;
+  questions: Awaited<ReturnType<typeof learnerWithBank>>["questions"];
+  to: string;
+}) {
+  const before = { questions, speaking: speakingSentences(from) };
+  const after = { questions, speaking: speakingSentences(to) };
+
+  await prisma.languageLevelTest.update({ data: { content: after }, where: { id: bankId } });
+
+  await appliedFixFixture({
+    changes: [
+      {
+        fields: [{ after: toJson(after), before: toJson(before), field: "content" }],
+        id: bankId,
+        model: "LanguageLevelTest",
+        op: "set",
+        parts: SPEAKING_LEVELS.map((level) => levelTestPart({ kind: "speaking", level })),
+      },
+    ],
+    unit: "levelTest",
+    unitId: bankId,
+  });
+}
+
+async function reachSpeakingPart(goalId: string) {
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+  await prisma.goal.update({
+    data: {
+      details: {
+        ...readGoalDetails(goal),
+        levelTest: {
+          answers: ["reading", "listening"].flatMap((skill) =>
+            SPEAKING_LEVELS.map((level) => ({ answerIndex: 0, id: `${skill}-${level}-0` })),
+          ),
+          speaking: null,
+          startedAt: new Date().toISOString(),
+        },
+      },
+    },
+    where: { id: goalId },
+  });
+}
+
+/** The learner says the sentence they were shown, so the word a later fix added is missed. */
+function learnerMisses(word: string) {
+  vi.mocked(assessPronunciation).mockImplementation(async ({ expectedText }) => ({
+    data: {
+      transcript: expectedText.replace(` ${word}`, ""),
+      words: expectedText
+        .split(" ")
+        .map((text) => ({
+          heard: null,
+          issue: null,
+          status: text === word ? ("missed" as const) : ("correct" as const),
+          text,
+        })),
+    },
+    provenance: {
+      generatedAt: "",
+      latencyMs: 1,
+      model: "m",
+      promptVersion: "v",
+      provider: "p",
+      requestedModel: "m",
+      runId: "r",
+      usage: {},
+    },
+    systemPrompt: "",
+    usage: undefined as never,
+    userPrompt: "",
+  }));
+}
+
+async function savedSpeaking(goalId: string) {
+  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+  return (readGoalDetails(goal).levelTest as { speaking: unknown }).speaking;
+}
+
+const audio = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" };
+
 describe("level test sentence fixed during the test", () => {
   it("doesn't score a take of the old sentence, asks the fixed one again, then scores it", async () => {
     const { bankId, goalId, questions } = await learnerWithBank();
-    const levels = ["A1", "A2", "B1"];
-
-    const speaking = levels.map((level) => ({
-      level,
-      sentence: `Say ${level}`,
-      translation: "Diga",
-    }));
-
-    const before = { questions, speaking };
-
-    const after = {
-      questions,
-      speaking: speaking.map((entry) => ({ ...entry, sentence: `${entry.sentence} now` })),
-    };
-
-    await prisma.languageLevelTest.update({ data: { content: after }, where: { id: bankId } });
-
-    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-
-    await prisma.goal.update({
-      data: {
-        details: {
-          ...readGoalDetails(goal),
-          levelTest: {
-            answers: ["reading", "listening"].flatMap((skill) =>
-              levels.map((level) => ({ answerIndex: 0, id: `${skill}-${level}-0` })),
-            ),
-            speaking: null,
-            startedAt: new Date().toISOString(),
-          },
-        },
-      },
-      where: { id: goalId },
-    });
-
-    await appliedFixFixture({
-      changes: [
-        {
-          fields: [{ after: toJson(after), before: toJson(before), field: "content" }],
-          id: bankId,
-          model: "LanguageLevelTest",
-          op: "set",
-          parts: levels.map((level) => levelTestPart({ kind: "speaking", level })),
-        },
-      ],
-      unit: "levelTest",
-      unitId: bankId,
-    });
-
-    // The learner says the sentence they were shown, so its last word, added by the fix, is missed.
-    vi.mocked(assessPronunciation).mockImplementation(async ({ expectedText }) => ({
-      data: {
-        transcript: expectedText.replace(" now", ""),
-        words: expectedText
-          .split(" ")
-          .map((text) => ({
-            heard: null,
-            issue: null,
-            status: text === "now" ? ("missed" as const) : ("correct" as const),
-            text,
-          })),
-      },
-      provenance: {
-        generatedAt: "",
-        latencyMs: 1,
-        model: "m",
-        promptVersion: "v",
-        provider: "p",
-        requestedModel: "m",
-        runId: "r",
-        usage: {},
-      },
-      systemPrompt: "",
-      usage: undefined as never,
-      userPrompt: "",
-    }));
-
-    const audio = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" };
+    await fixSpeakingSentences({ bankId, from: "", questions, to: " now" });
+    await reachSpeakingPart(goalId);
+    learnerMisses("now");
 
     await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
       status: "ready",
       test: { next: { kind: "speaking", speaking: { sentence: expect.stringContaining("now") } } },
     });
 
-    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-    expect(readGoalDetails(saved).levelTest).toMatchObject({ speaking: null });
+    await expect(savedSpeaking(goalId)).resolves.toBeNull();
 
     await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
       status: "ready",
       test: { next: { kind: "done" } },
     });
 
-    const retaken = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+    await expect(savedSpeaking(goalId)).resolves.toMatchObject({ score: expect.any(Number) });
+  });
 
-    expect(readGoalDetails(retaken).levelTest).toMatchObject({
-      speaking: { score: expect.any(Number) },
+  it("doesn't score a take of the shown fixed sentence once staff fix it again, then scores", async () => {
+    const { bankId, goalId, questions } = await learnerWithBank();
+    await fixSpeakingSentences({ bankId, from: "", questions, to: " now" });
+    await reachSpeakingPart(goalId);
+    learnerMisses("now");
+    await gradeLevelTestSpeech({ audio, goalId });
+
+    await fixSpeakingSentences({ bankId, from: " now", questions, to: " now please" });
+    learnerMisses("please");
+
+    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
+      status: "ready",
+      test: {
+        next: { kind: "speaking", speaking: { sentence: expect.stringContaining("please") } },
+      },
+    });
+
+    await expect(savedSpeaking(goalId)).resolves.toBeNull();
+
+    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
+      test: { next: { kind: "done" } },
     });
   });
 });
