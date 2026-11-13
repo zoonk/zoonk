@@ -33,7 +33,7 @@ export async function sessionGoalFixture({
     timezone: "UTC",
     userId,
     ...goal,
-    // Decline placement without aging the goal, which would also expire a free exam trial.
+
     details: { placementDeclined: true, ...goal?.details },
   });
 
