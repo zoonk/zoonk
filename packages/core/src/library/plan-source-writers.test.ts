@@ -521,7 +521,13 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["skill.update"],
     },
   ],
-
+  "staff/content-fixes/handlers/structure-graphs.ts": [
+    {
+      verdict: "marks",
+      why: "a shared exam graph change marks plans built from its blueprint",
+      writes: ["examSkillGraph.update"],
+    },
+  ],
   "staff/content-fixes/handlers/structure-placements.ts": [
     {
       verdict: "marks",
@@ -2062,10 +2068,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/curriculum/exam-graph-repair.ts": { addMissingExamGraphSkills: graphRepairCase },
   "library/curriculum/exam-skill-graph-reset.ts": { resetExamSkillGraphForAdmin: graphResetCase },
   "library/curriculum/place-chapters-after.ts": { placeChaptersAfter: continuationsCase },
-  "library/curriculum/reusable-curriculum.ts": {
-    saveExamSkillGraph: sharedGraphCase,
-    staffGraph: graphFixCase,
-  },
+  "library/curriculum/reusable-curriculum.ts": { saveExamSkillGraph: sharedGraphCase },
   "library/curriculum/save-lesson-specs.ts": { saveLessonSpecs: lessonSpecsCase },
   "library/curriculum/save-outline-chapter.ts": { saveOutlineChapter: outlineCase },
   "library/curriculum/teaching-chapters.ts": { tagTeachingChapters: teachingChaptersCase },
@@ -2103,7 +2106,7 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "retire item": () => itemFixCase("retire"),
   },
   "staff/content-fixes/handlers/shared-text.ts": { skillSet: () => sharedFixCase("Skill") },
-
+  "staff/content-fixes/handlers/structure-graphs.ts": { examGraph: graphFixCase },
   "staff/content-fixes/handlers/structure-placements.ts": {
     chapters: () => structureFixCase("setChapters"),
     lessons: () => structureFixCase("setLessons"),
