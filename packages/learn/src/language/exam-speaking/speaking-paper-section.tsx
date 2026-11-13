@@ -19,7 +19,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
-import { PlusNotice } from "../../_components/plus-lock";
+import { SubscribeGate } from "../../_components/subscribe-gate";
 import { useSentenceSpace } from "../../_utils/locale";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitMessage } from "../conversation/call-limit-message";
@@ -59,7 +59,9 @@ export function SpeakingPaperSection({
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
-  const locked = paper.access === "plusRequired";
+  // A free learner sees the tasks as a subscriber does; a task's Start is where the gate shows.
+  const gated = paper.access === "plusRequired";
+  const [tried, setTried] = useState(false);
 
   const call = useCallStart({
     onStart: async () => {
@@ -84,14 +86,6 @@ export function SpeakingPaperSection({
         <PageSectionTitle id={titleId}>{title ?? t("Speaking")}</PageSectionTitle>
         {!title && <PageSectionDetail>{paper.title}</PageSectionDetail>}
       </PageSectionHeader>
-
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-          )}
-        </PlusNotice>
-      )}
 
       {(paused || call.paused) && (
         <NoticeCard>
@@ -121,8 +115,13 @@ export function SpeakingPaperSection({
                 index={index}
                 language={paper.language}
                 level={paper.level}
-                locked={locked || paused}
+                locked={paused}
                 onStart={() => {
+                  if (gated) {
+                    setTried(true);
+                    return;
+                  }
+
                   selected.current = task.key;
                   setStartedTask(task.key);
                   setLimit(null);
@@ -137,6 +136,8 @@ export function SpeakingPaperSection({
           ))}
         </ol>
       </ListGroup>
+
+      {tried && <SubscribeGate title={t("Speaking practice needs a subscription")} />}
 
       {call.writing && (
         <WritingWait
