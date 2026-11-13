@@ -137,12 +137,13 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
     >
       <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
         <Button
-          className="text-muted-foreground -ml-1 px-2"
+          className="text-muted-foreground"
+          edge="start"
           onClick={back}
           size="sm"
           variant="ghost"
         >
-          <ChevronLeftIcon aria-hidden="true" />
+          <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
           {buddy.context.kind === "item"
             ? t("Back")
             : t({
@@ -215,7 +216,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         count,
         name: buddy.identity.name,
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid"
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area edge relative -me-(--edge-pull) inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none [--edge-text-end:--spacing(1)] [--icon-size:--spacing(3.5)] focus-visible:outline-2 focus-visible:outline-solid"
       onClick={() => buddy.open()}
       type="button"
     >

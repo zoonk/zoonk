@@ -5,7 +5,7 @@ import { LessonVisual } from "@zoonk/learn/visual";
 import { Button } from "@zoonk/ui/components/button";
 import { PenLineIcon, PenOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
+import { InteractiveStepLayout } from "../../components/step-layouts";
 import { LessonContext, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
@@ -22,7 +22,8 @@ function SkipWritingButton() {
 
   return (
     <Button
-      className={COLUMN_GHOST_ACTION_CLASS}
+      className="w-fit"
+      edge="start"
       onClick={() => {
         actions.skipWriting();
         focusLessonAfterTurn();

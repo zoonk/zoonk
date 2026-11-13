@@ -31,7 +31,14 @@ const SAMPLE =
   "Because we can't pin down where the electron is. The cloud maps where it's most likely to be.";
 
 const noVoice: VoiceText = () => Promise.resolve({ limit: null, status: "failed" });
-const ROUTES = { exit: "/", exitTo: null, nextLesson: null, seePlan: () => "/", signUp: "/", upgrade: "/" } as const;
+const ROUTES = {
+  exit: "/",
+  exitTo: null,
+  nextLesson: null,
+  seePlan: () => "/",
+  signUp: "/",
+  upgrade: "/",
+} as const;
 
 function Link({ children, className, href, ref }: any) {
   return (
@@ -56,10 +63,12 @@ function States() {
               ? (["check", "check"] as const)
               : state === "skipwriting"
                 ? (["typedAnswer", "check"] as const)
-            : (["explanation", "check"] as const);
+                : (["explanation", "check"] as const);
 
     const built = buildLesson(
-      kinds.map((kind, index) => teachingStep(kind, { id: `estate-${index}` })),
+      kinds.map((kind, index) => teachingStep(kind, { id: `estate-${index}` })) as Parameters<
+        typeof buildLesson
+      >[0],
       { id: "estates", title: "Why is the electron a cloud?" },
     );
 
