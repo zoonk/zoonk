@@ -15,7 +15,7 @@ export const TODAY_MAIN_CLASS = cn(
 
 /** On a phone the page ends with room for the action docked over it. */
 export const TODAY_ASIDE_CLASS = cn(
-  "max-sm:pb-17 sm:grid sm:grid-cols-2 sm:gap-x-10 sm:gap-y-8 min-[72rem]:flex min-[72rem]:gap-8",
+  "max-sm:pb-17 sm:grid sm:grid-cols-2 sm:gap-x-10 sm:gap-y-8 min-[72rem]:flex min-[72rem]:gap-9",
   CLEAR_OF_DOCK_CLASS,
 );
 
