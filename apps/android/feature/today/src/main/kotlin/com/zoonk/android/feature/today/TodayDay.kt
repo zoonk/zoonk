@@ -58,9 +58,10 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.DockedActionBar
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.isMediumLayout
+import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
@@ -103,7 +104,6 @@ fun TodayDay(
     onboarding: OnboardingStore? = null,
     refreshIfChanged: suspend () -> Boolean,
 ) {
-    val wide = isMediumLayout()
     val poll =
         pollWhile(
             active = read.day.isWaitingForLessons(read.today.lessonStatus),
@@ -196,12 +196,10 @@ fun TodayDay(
                     contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
                 ) {
                     item(key = "heading", contentType = "heading") {
-                        TodayHeading(model, wide, Modifier.pageItem()) {
-                            if (wide) TodayAction(model, viewModel, actions, Modifier.widthIn(max = WIDE_ACTION_WIDTH), docked = false)
-                        }
+                        TodayHeading(model, onAdjustPlan = { actions.navigate(AppRoute.Plan()) }, Modifier.pageItem())
                     }
 
-                    todaySession(model, viewModel, actions, list, wide, buddyName)
+                    todaySession(model, viewModel, actions, list, buddyName)
 
                     if (!beside) {
                         item(key = "aside", contentType = "aside") {
@@ -211,7 +209,7 @@ fun TodayDay(
                     }
                 }
 
-                if (!wide) TodayActionBar(model, viewModel, actions)
+                TodayActionBar(model, viewModel, actions)
             }
         }
     }
@@ -249,7 +247,7 @@ internal class TodayActionHandlers(
     val navigate: (AppRoute) -> Unit,
 )
 
-/** Docked above the navigation bar on a phone, so the day's one action is always in reach. */
+/** The day's one action, pinned to the bottom at every width; what it waits for or why it failed shows over the bar. */
 @Composable
 private fun TodayActionBar(
     model: TodayDayModel,
@@ -258,8 +256,9 @@ private fun TodayActionBar(
 ) {
     if (!model.hasAction) return
 
-    DockedActionBar {
-        TodayAction(model, viewModel, actions, Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), docked = true)
+    val status = rememberActionStatus(model, viewModel)
+    BottomBar(columnWidth = PAGE_WIDTH, note = if (status.speaking) ({ TodayActionStatus(status) }) else null) {
+        TodayAction(model, viewModel, actions, status)
     }
 }
 
@@ -273,28 +272,20 @@ private val TodayDayModel.hasAction: Boolean
             (state == StudySession.State.AHEAD && day.extraTime.available)
 
 @Composable
-internal fun TodayAction(
+private fun TodayAction(
     model: TodayDayModel,
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
-    modifier: Modifier,
-    docked: Boolean,
+    status: ActionStatus,
 ) {
-    if (!model.hasAction) return
-
-    val status = rememberActionStatus(model, viewModel)
-
-    Column(modifier, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        val buttonModifier = if (docked) Modifier.fillMaxWidth() else Modifier
+    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+        val buttonModifier = Modifier.mainActionWidth()
         val busy = status.tap != null && viewModel.pending == status.tap
         val waiting = viewModel.pending != null && !busy
 
-        // The bar is pinned by its bottom, so a line under the button would lift it.
-        if (docked) TodayActionStatus(status)
-
         when {
             model.pastDate != null -> {
-                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
+                ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) {
                     actions.navigate(AppRoute.Plan())
                 }
             }
@@ -305,7 +296,6 @@ internal fun TodayAction(
                     busy,
                     buttonModifier,
                     waiting = waiting,
-                    icon = R.drawable.ic_playlist_add,
                     onClick = actions.prepare,
                 )
             }
@@ -320,7 +310,7 @@ internal fun TodayAction(
             }
 
             model.state == StudySession.State.DONE -> {
-                ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier, icon = R.drawable.ic_arrow_forward) {
+                ActionButton(stringResource(R.string.today_see_summary), busy = false, buttonModifier) {
                     actions.navigate(AppRoute.Session(goalId = (model.day.goalId ?: model.today.goal.id).toString()))
                 }
             }
@@ -341,9 +331,6 @@ internal fun TodayAction(
                 )
             }
         }
-
-        // Beside the title, Continue's words go on the day's meta line, as main's do.
-        if (!docked && status.tap != TodayTap.Continue) TodayActionStatus(status)
     }
 }
 
@@ -403,18 +390,14 @@ private fun ActionButton(
     busy: Boolean,
     modifier: Modifier,
     waiting: Boolean = false,
-    @DrawableRes icon: Int = R.drawable.ic_play_arrow,
     onClick: () -> Unit,
 ) {
-    val forward = icon == R.drawable.ic_arrow_forward
     Button(
         busy = busy,
         onClick = onClick,
-        modifier = modifier.widthIn(min = 160.dp),
+        modifier = modifier,
         enabled = !waiting,
         focusableWhenDisabled = waiting,
-        leadingIcon = if (forward) null else ({ ButtonIcon(icon) }),
-        trailingIcon = if (forward) ({ ButtonIcon(R.drawable.ic_arrow_forward) }) else null,
     ) { Text(label) }
 }
 
@@ -422,7 +405,7 @@ private fun ActionButton(
 @Composable
 internal fun TodayPlaceholder(padding: PaddingValues) {
     TodayPage(padding) {
-        TodayPageHeader(state = null, title = stringResource(R.string.today_title))
+        TodayPageHeader(stringResource(R.string.today_title))
         Box(Modifier.fillMaxWidth().padding(top = 32.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
     }
 }
@@ -434,6 +417,3 @@ internal fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWi
 internal fun Modifier.pageRow(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth()
 
 private const val SWITCHING_ALPHA = 0.6f
-
-/** Beside the title, the action and its wait line never squeeze the title. */
-private val WIDE_ACTION_WIDTH = 280.dp

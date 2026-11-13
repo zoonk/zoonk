@@ -90,6 +90,7 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
@@ -179,9 +180,9 @@ private fun Paper(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(bottom = 24.dp),
+            contentPadding = pagePadding(),
         ) {
-            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(top = 8.dp, bottom = 24.dp)) { hero() } }
+            if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(bottom = 24.dp)) { hero() } }
             item(key = "paper") {
                 SpeakingPaperSection(
                     paper = paper,
@@ -201,7 +202,6 @@ private fun Paper(
 @Composable
 private fun PaperHero(paper: SpeakingPaper) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow(stringResource(R.string.speaking_eyebrow))
         Text(paper.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         Text(
             pluralStringResource(
@@ -216,7 +216,7 @@ private fun PaperHero(paper: SpeakingPaper) {
     }
 }
 
-private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
+private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth()
 
 private val PAGE_WIDTH = 720.dp
 
@@ -437,7 +437,6 @@ private fun TaskRow(
                             busy = starting,
                             onClick = { if (locked) gated = true else onStart() },
                             enabled = !busy,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         ) {
                             Text(stringResource(R.string.speaking_start_task))
                         }

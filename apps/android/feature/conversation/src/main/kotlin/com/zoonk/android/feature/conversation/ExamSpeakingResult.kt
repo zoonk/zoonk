@@ -33,7 +33,7 @@ import com.zoonk.android.data.ContentWritingWait
 import com.zoonk.android.data.recode
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.Readout
@@ -266,7 +266,7 @@ private fun CriterionRow(
                         },
                     style = MaterialTheme.typography.bodySmall,
                 )
-                if (focus) LabelChip(stringResource(R.string.conversation_focus))
+                if (focus) Eyebrow(stringResource(R.string.conversation_focus))
             }
         }
     }
@@ -478,7 +478,7 @@ internal fun SpeakingMockResult(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(mockCriterionName(key), style = MaterialTheme.typography.titleSmall)
-                                    if (key == feedback.focus) LabelChip(stringResource(R.string.conversation_focus))
+                                    if (key == feedback.focus) Eyebrow(stringResource(R.string.conversation_focus))
                                 }
                                 Text(
                                     graded?.let { bandRange(it.bandLow, it.bandHigh) } ?: stringResource(R.string.conversation_not_rated),

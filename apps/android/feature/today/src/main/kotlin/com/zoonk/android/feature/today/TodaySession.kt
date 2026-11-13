@@ -91,7 +91,6 @@ internal fun LazyListScope.todaySession(
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
     list: LazyListState,
-    wide: Boolean,
     buddyName: String,
 ) {
     val day = model.day
@@ -104,13 +103,6 @@ internal fun LazyListScope.todaySession(
 
     if (drawsDayProgress(day.sessionBar.total, held = day.heldMinutes > 0)) {
         item(key = "segments", contentType = "segments") { TodayDayProgress(model, Modifier.pageItem().padding(top = 20.dp)) }
-    }
-
-    if (wide && (day.steps.isNotEmpty() || model.state == StudySession.State.WAITING)) {
-        item(
-            key = "meta",
-            contentType = "meta",
-        ) { DayMeta(model, rememberActionStatus(model, viewModel), Modifier.pageItem().padding(top = 8.dp)) }
     }
 
     sessionQueue(model, day.nextStep, viewModel, actions, list)
@@ -544,32 +536,6 @@ internal fun stepsDone(bar: SessionBar): String {
         formatNumber(bar.completed.toDouble(), locale),
         formatNumber(bar.total.toDouble(), locale),
     )
-}
-
-@Composable
-private fun DayMeta(
-    model: TodayDayModel,
-    status: ActionStatus,
-    modifier: Modifier,
-) {
-    // While Continue waits or failed, its words take the line, as main's meta does.
-    Row(modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        if (status.tap == TodayTap.Continue && status.speaking) {
-            Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
-        } else {
-            if (model.day.sessionBar.total > 0) {
-                Text(
-                    text = stepsDone(model.day.sessionBar),
-                    modifier = Modifier.weight(1f),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.zoonkType.data,
-                )
-            } else {
-                Box(Modifier.weight(1f))
-            }
-            DayTime(model, MaterialTheme.typography.titleLarge)
-        }
-    }
 }
 
 @Composable

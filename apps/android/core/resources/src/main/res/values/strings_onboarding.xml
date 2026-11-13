@@ -583,7 +583,6 @@
     <string name="onboarding_reveal_reading_line_dates">Checking the exam\'s dates and format…</string>
     <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
     <string name="onboarding_see_plan">See your plan</string>
-    <string name="onboarding_plan_ready">Plan ready</string>
     <string name="onboarding_plan_ready_goal">Your %1$s plan is ready.</string>
     <string name="onboarding_plan_look_over">Look it over before you start.</string>
     <string name="onboarding_reveal_start_here">Start here</string>

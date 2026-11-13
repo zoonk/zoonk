@@ -214,7 +214,6 @@ private fun ColumnScope.PlacementIntro(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.onboarding_placement_start))
             }
@@ -583,7 +582,6 @@ private fun ColumnScope.PlacementOutcome(
                 busy = pending,
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(action)
             }

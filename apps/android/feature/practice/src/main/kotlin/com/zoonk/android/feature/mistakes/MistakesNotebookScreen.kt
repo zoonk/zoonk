@@ -89,10 +89,10 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageSpan
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.scaffold.onPageSpan
 import com.zoonk.android.ui.scaffold.pageFold
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
@@ -355,7 +355,7 @@ private fun NarrowNotebook(
     open: String?,
     listState: LazyListState,
 ) {
-    LazyColumn(Modifier.fillMaxSize(), listState, detailPagePadding()) {
+    LazyColumn(Modifier.fillMaxSize(), listState, pagePadding()) {
         notebookHead(page, actions, lead)
         notebookBody(page, actions) {
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
@@ -384,7 +384,7 @@ private fun WideNotebook(
     selectedKey: String?,
     listState: LazyListState,
 ) {
-    val padding = detailPagePadding()
+    val padding = pagePadding()
 
     Row(Modifier.fillMaxSize()) {
         LazyColumn(

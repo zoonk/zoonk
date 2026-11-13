@@ -78,6 +78,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.LoadedPage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
@@ -162,52 +163,37 @@ internal fun ChapterContent(
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
 
-    when (val shown = state) {
-        is LoadState.Loaded -> {
-            val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
-            val practiceState by practice.state.collectAsStateWithLifecycle()
-            val opened = (practiceState.outcome as? PracticeOutcome.Opened)?.route
+    LoadedPage(
+        state,
+        onBack = back,
+        onRetry = { scope.launch { resource.refresh() } },
+        onGoHome = { navigator.showRoot(AppTab.Today) },
+    ) { value ->
+        val practice = viewModel(key = "chapter-${key.goalId}-${key.chapterId}") { ChapterViewModel(store, key) }
+        val practiceState by practice.state.collectAsStateWithLifecycle()
+        val opened = (practiceState.outcome as? PracticeOutcome.Opened)?.route
 
-            LaunchedEffect(opened) {
-                if (opened != null) {
-                    practice.consumeOpened()
-                    navigator.open(opened)
-                }
-            }
-
-            ChapterPage(
-                chapter = shown.value,
-                practice = practiceState,
-                menu = menu,
-                ask = ask,
-                mindMap = mindMap(),
-                actions =
-                    ChapterActions(
-                        back = back,
-                        openLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
-                        testOut = { navigator.open(AppRoute.TestOut(key.chapterId.toString())) },
-                        practice = practice::practice,
-                    ),
-            )
-        }
-
-        is LoadState.Failed -> {
-            PageScaffold(onBack = back) { padding ->
-                if (shown.error == ApiError.NotFound) {
-                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
-                } else {
-                    LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }, modifier = Modifier.padding(padding))
-                }
+        LaunchedEffect(opened) {
+            if (opened != null) {
+                practice.consumeOpened()
+                navigator.open(opened)
             }
         }
 
-        LoadState.Empty -> {
-            PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
-        }
-
-        LoadState.Idle, LoadState.Loading -> {
-            PageScaffold(onBack = back) { PageLoading(Modifier.padding(it), MaterialTheme.colorScheme.tertiary) }
-        }
+        ChapterPage(
+            chapter = value,
+            practice = practiceState,
+            menu = menu,
+            ask = ask,
+            mindMap = mindMap(),
+            actions =
+                ChapterActions(
+                    back = back,
+                    openLesson = { navigator.open(AppRoute.Lesson(it.toString())) },
+                    testOut = { navigator.open(AppRoute.TestOut(key.chapterId.toString())) },
+                    practice = practice::practice,
+                ),
+        )
     }
 }
 

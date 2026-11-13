@@ -73,7 +73,7 @@ class GateScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonGone() = capture("gate-lesson-gone-phone") { LessonAccessScreen(LessonRefusal.NotFound, onRetry = {}, exits = EXITS) }
+    fun lessonGone() = capture("gate-lesson-gone-phone") { access(LessonRefusal.NotFound) }
 
     @Test
     @Config(qualifiers = PHONE, fontScale = 2f)
@@ -95,7 +95,13 @@ class GateScreenshots {
         }
 
     @Composable
-    private fun access(limit: Limit) = LessonAccessScreen(LessonRefusal.Limited(limit), onRetry = {}, exits = EXITS)
+    private fun access(limit: Limit) = access(LessonRefusal.Limited(limit))
+
+    @Composable
+    private fun access(refusal: LessonRefusal) =
+        LessonFrame(title = "Multiplying powers of ten", onClose = {}, bottomBar = lessonAccessBar(refusal, onRetry = {}, exits = EXITS)) {
+            LessonAccessScreen(refusal, onRetry = {})
+        }
 
     private fun capture(
         name: String,

@@ -317,7 +317,6 @@ private const val CLOCK_TICK_MS = 250L
 /** Main's spoken answers say so after 15 seconds. */
 private const val SLOW_CHECK_MS = 15_000L
 
-/** Silence still shows the meter, faintly. */
 private const val CLOCK_ALPHA = 0.7f
 
 /** Inline, beside the step it belongs to; [description] says what the microphone is for here. */

@@ -106,6 +106,10 @@ fun LessonWaitingScreen(
             else -> null
         }
     val retry = if (current == LessonWriting.Failed) viewModel::start else viewModel::retry
+    val refused =
+        (current as? LessonWriting.Refused)?.refusal?.takeIf {
+            it == LessonRefusal.NotFound || it == LessonRefusal.Failed || it == LessonRefusal.NotInApp
+        }
 
     LessonFrame(
         title = outline.title,
@@ -139,6 +143,10 @@ fun LessonWaitingScreen(
 
                 waits && quiz.hasQuiz && (quiz.showingProgress || quiz.hasNext) -> {
                     { WaitQuizAction(quiz, hold) }
+                }
+
+                refused != null -> {
+                    lessonAccessBar(refused, viewModel::start, exits)
                 }
 
                 else -> {
@@ -187,12 +195,8 @@ fun LessonWaitingScreen(
                 }
 
                 LessonWriting.SetAside, is LessonWriting.Refused -> {
-                    val screen =
-                        (current as? LessonWriting.Refused)?.refusal?.takeIf {
-                            it == LessonRefusal.NotFound || it == LessonRefusal.Failed || it == LessonRefusal.NotInApp
-                        }
-                    if (screen != null) {
-                        LessonAccessScreen(screen, viewModel::start, exits)
+                    if (refused != null) {
+                        LessonAccessScreen(refused, viewModel::start)
                     } else {
                         LessonNotWrittenNotice(current, viewModel::start, exits::open)
                     }

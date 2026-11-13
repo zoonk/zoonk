@@ -162,7 +162,6 @@ fun GoalBox(
                 Button(
                     onClick = submit,
                     busy = isSubmitting,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     size = ButtonSize.Large,
                 ) {
                     Text(stringResource(R.string.goal_box_submit))

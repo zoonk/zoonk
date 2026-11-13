@@ -53,7 +53,7 @@ import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.materialCitationLabel
@@ -423,7 +423,7 @@ internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQ
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     answer.citations.forEach { citation ->
                         val label = materialCitationLabel(citation.title, citation.page, citation.unit == MaterialCitation.Unit.SLIDE)
-                        LabelChip(text = label, icon = R.drawable.ic_description)
+                        Eyebrow(text = label, icon = R.drawable.ic_description)
                     }
                 }
             }

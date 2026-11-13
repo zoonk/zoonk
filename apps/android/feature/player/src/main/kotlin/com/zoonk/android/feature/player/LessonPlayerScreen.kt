@@ -133,7 +133,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
@@ -146,6 +146,7 @@ import com.zoonk.android.ui.components.TaskSegments
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.isWideLayout
 import com.zoonk.android.ui.components.taskColumn
+import com.zoonk.android.ui.scaffold.BAR_GAP
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.PageSpan
 import com.zoonk.android.ui.scaffold.SpreadScreen
@@ -414,6 +415,10 @@ fun LessonPlayer(
                 },
             bottomBar =
                 when {
+                    state?.run is LessonRun.Refused -> {
+                        lessonAccessBar((state.run as LessonRun.Refused).refusal, viewModel::retryStart, exits)
+                    }
+
                     state == null || screen == null -> {
                         null
                     }
@@ -607,7 +612,7 @@ private fun Content(
     when {
         run is LessonRun.Refused -> {
             Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                LessonAccessScreen(run.refusal, onRetry = viewModel::retryStart, exits = exits)
+                LessonAccessScreen(run.refusal, onRetry = viewModel::retryStart)
             }
         }
 
@@ -763,7 +768,7 @@ private fun Notice(
     if (!shown) return
 
     if (quickCheck != null) {
-        LabelChip(
+        Eyebrow(
             text = stringResource(R.string.player_quick_check, count(quickCheck.first + 1), count(quickCheck.second)),
             icon = R.drawable.ic_bolt,
         )
@@ -894,7 +899,7 @@ private fun ActionBar(
         ) { Text(stringResource(R.string.player_dont_know_yet)) }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(BAR_GAP)) {
         if (dontKnowAbove) giveUp(Modifier.fillMaxWidth())
         TaskActions(back) { width ->
             if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
@@ -905,16 +910,13 @@ private fun ActionBar(
                 return@TaskActions
             }
             val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
-            val iconId = primary.label.icon()
-            val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
-            val forward = iconId == R.drawable.ic_arrow_forward
             if (primary.label == PrimaryLabel.DontKnowYet) {
                 SecondaryButton(
                     onClick = actions::runPrimary,
                     enabled = primary.enabled,
                     busy = primary.busy,
                     modifier = width.focusRequester(primaryFocus),
-                    leadingIcon = icon,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
                     content = label,
                 )
             } else {
@@ -923,8 +925,6 @@ private fun ActionBar(
                     onClick = actions::runPrimary,
                     modifier = width.focusRequester(primaryFocus),
                     enabled = primary.enabled,
-                    leadingIcon = icon.takeUnless { forward },
-                    trailingIcon = icon.takeIf { forward },
                     content = label,
                 )
             }
@@ -932,15 +932,6 @@ private fun ActionBar(
         }
     }
 }
-
-private fun PrimaryLabel.icon(): Int =
-    when (this) {
-        PrimaryLabel.Check, PrimaryLabel.Confirm -> R.drawable.ic_check
-        PrimaryLabel.Continue, PrimaryLabel.Next, PrimaryLabel.NextStep, PrimaryLabel.SeeHowItWent -> R.drawable.ic_arrow_forward
-        PrimaryLabel.DontKnowYet -> R.drawable.ic_help
-        PrimaryLabel.SeeAnswer -> R.drawable.ic_visibility
-        PrimaryLabel.Start -> R.drawable.ic_play_arrow
-    }
 
 private fun PrimaryLabel.text(): Int =
     when (this) {

@@ -304,12 +304,11 @@ internal fun StartActions(
             val label: @Composable RowScope.() -> Unit = {
                 Text(stringResource(if (follows) R.string.catalog_continue_plan else R.string.catalog_build_plan))
             }
-            val arrow: @Composable () -> Unit = { ButtonIcon(R.drawable.ic_arrow_forward) }
 
             if (secondary) {
-                OutlinedButton(onClick = start, busy = saving, trailingIcon = arrow, content = label)
+                OutlinedButton(onClick = start, busy = saving, forward = true, content = label)
             } else {
-                Button(busy = saving, onClick = start, trailingIcon = arrow, content = label)
+                Button(busy = saving, onClick = start, content = label)
             }
 
             if (onTryLesson != null) {

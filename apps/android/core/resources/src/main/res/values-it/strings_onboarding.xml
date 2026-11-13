@@ -210,7 +210,6 @@
   "onboarding_plan_answers_saved": "c80211b5bc65effe895b97724d68f4604805b8569ec9941072b45bcee12abe1d",
   "onboarding_plan_look_over": "a33bb6dd7fe7d3d59c707d6c8671aee0e4edf78a81a43e1c2452df473f4d04ee",
   "onboarding_plan_not_started": "3df9fc2faaa6a69937e13c140ae40ebf65004e76a62b0f78fc055b366cb4df4a",
-  "onboarding_plan_ready": "f8ca6ba2cb2fff25f6db9fe4b9a97938d834465c7c073d3eff1b5ae573b5125c",
   "onboarding_plan_ready_goal": "f102cc208bcc4286c01e9e85426397e06478400cc5655a8c1f75a89806290c0d",
   "onboarding_plan_so_far": "697c53626850e34dd673c2f668b0f2e5fc5269f63925479d3e9c0bf85d0809c8",
   "onboarding_plan_stopped": "28d1fa047181342290a4e51b1f320b55d7b54a48efe83b5531fb0d6f0083cce6",
@@ -1062,7 +1061,6 @@
     <string name="onboarding_reveal_reading_line_dates">Stiamo controllando le date e le modalità dell’esame…</string>
     <string name="onboarding_reveal_reading_line_fit">Stiamo inserendo tutto nel tuo piano…</string>
     <string name="onboarding_see_plan">Vedi il tuo piano</string>
-    <string name="onboarding_plan_ready">Piano pronto</string>
     <string name="onboarding_plan_ready_goal">Il tuo piano per %1$s è pronto.</string>
     <string name="onboarding_plan_look_over">Dagli un’occhiata prima di iniziare.</string>
     <string name="onboarding_reveal_start_here">Inizia da qui</string>

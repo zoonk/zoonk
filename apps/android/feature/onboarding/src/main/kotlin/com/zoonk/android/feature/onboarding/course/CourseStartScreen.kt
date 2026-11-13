@@ -222,7 +222,6 @@ private fun CourseStartForm(
                 Button(
                     busy = vm.isStarting,
                     onClick = start,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     modifier =
                         Modifier.fillMaxWidth().semantics {
                             liveRegion = LiveRegionMode.Polite

@@ -68,7 +68,7 @@ import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.OwnedCertificate
@@ -121,7 +121,7 @@ fun CertificateScreen(
                             icon = R.drawable.ic_workspace_premium,
                             title = stringResource(R.string.certificates_not_found),
                             description = stringResource(R.string.not_found_description),
-                            modifier = beforeFold.padding(detailPagePadding()),
+                            modifier = beforeFold.padding(pagePadding()),
                         )
                     }
                 }
@@ -194,7 +194,7 @@ private fun DetailColumn(
         Modifier
             .fillMaxSize()
             .verticalScroll(scroll)
-            .padding(detailPagePadding())
+            .padding(pagePadding())
             .widthIn(max = DETAIL_PAGE_WIDTH),
         content = content,
     )
@@ -269,7 +269,6 @@ private fun OwnerActions(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = actions.busy == null,
                     busy = actions.busy == CertificateAction.Share,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_share) },
                     size = ButtonSize.Large,
                 ) {
                     ActionText(stringResource(R.string.certificates_share))

@@ -178,5 +178,5 @@ internal fun StartCallButton(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
 ) {
-    Button(busy = starting, onClick = onClick, modifier = modifier, leadingIcon = { ButtonIcon(R.drawable.ic_call) }) { Text(label) }
+    Button(busy = starting, onClick = onClick, modifier = modifier) { Text(label) }
 }

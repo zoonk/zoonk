@@ -148,7 +148,6 @@ internal fun ColumnScope.ChooseFocusBody(
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = chosen.toSet() != current.toSet() && !unchanged,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) { Text(stringResource(if (removes) R.string.plan_remove_focus else R.string.plan_focus_on_these)) }
             if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },

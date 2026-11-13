@@ -226,7 +226,6 @@ internal fun ColumnScope.ExplainGoal(
             busy = isStarting,
             onClick = onStart,
             modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_lightbulb) },
         ) { Text(stringResource(R.string.onboarding_explain_it)) }
     }
 }
@@ -323,7 +322,6 @@ internal fun ColumnScope.InstrumentGoal(
             busy = isStarting,
             onClick = onStartMusicianship,
             modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
         ) { Text(stringResource(R.string.onboarding_start_musicianship)) }
         TextButton(
             busy = isJoining,
