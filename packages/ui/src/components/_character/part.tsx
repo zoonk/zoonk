@@ -7,6 +7,9 @@ export type PartPose = {
 
 type Pivot = readonly [x: number, y: number];
 
+/** `face` is the head alone, for sizes too small to read the body. */
+export type CharacterView = "body" | "face";
+
 function formatScale(scale: NonNullable<PartPose["scale"]>): string {
   return typeof scale === "number" ? String(scale) : `${scale[0]} ${scale[1]}`;
 }

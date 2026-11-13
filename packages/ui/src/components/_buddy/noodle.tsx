@@ -1,7 +1,9 @@
 import { Part } from "../_character/part";
 import { BELT_FILL, type BuddyBodyProps, buddyDefId, buddyDefUrl } from "./buddy-parts";
 
-export function NoodleBody({ face, uid }: BuddyBodyProps) {
+export function NoodleBody({ face, uid, view }: BuddyBodyProps) {
+  const whole = view === "body";
+
   return (
     <>
       <defs>
@@ -17,34 +19,53 @@ export function NoodleBody({ face, uid }: BuddyBodyProps) {
         </clipPath>
       </defs>
 
-      <Part name="shadow" pivot={[60, 113]}>
-        <ellipse cx="60" cy="113" fill="#000" opacity=".08" rx="30" ry="4.5" />
-      </Part>
-      <Part name="feet" pivot={[60, 106]}>
-        <ellipse cx="47" cy="106" fill="#e8628f" rx="9" ry="6" />
-        <ellipse cx="73" cy="106" fill="#e8628f" rx="9" ry="6" />
-      </Part>
+      {whole && (
+        <>
+          <Part name="shadow" pivot={[60, 113]}>
+            <ellipse cx="60" cy="113" fill="#000" opacity=".08" rx="30" ry="4.5" />
+          </Part>
+          <Part name="feet" pivot={[60, 106]}>
+            <ellipse cx="47" cy="106" fill="#e8628f" rx="9" ry="6" />
+            <ellipse cx="73" cy="106" fill="#e8628f" rx="9" ry="6" />
+          </Part>
+        </>
+      )}
       <Part name="body" pivot={[60, 108]}>
-        <Part name="arm-left" pivot={[22, 70]}>
-          <ellipse cx="17" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(25 17 74)" />
-        </Part>
-        <Part name="arm-right" pivot={[98, 70]}>
-          <ellipse cx="103" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(-25 103 74)" />
-        </Part>
+        {whole && (
+          <>
+            <Part name="arm-left" pivot={[22, 70]}>
+              <ellipse cx="17" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(25 17 74)" />
+            </Part>
+            <Part name="arm-right" pivot={[98, 70]}>
+              <ellipse
+                cx="103"
+                cy="74"
+                fill="#ff8fb3"
+                rx="7"
+                ry="9"
+                transform="rotate(-25 103 74)"
+              />
+            </Part>
+          </>
+        )}
         <Part name="head" pivot={[60, 104]}>
           <g clipPath={buddyDefUrl(uid, "noodle-clip")}>
             <rect fill={buddyDefUrl(uid, "noodle-shade")} height="120" width="120" x="0" y="0" />
-            <rect height="11" style={BELT_FILL} width="120" x="0" y="86" />
-            <rect
-              fill="none"
-              height="11"
-              stroke="#000"
-              strokeOpacity=".12"
-              strokeWidth="1.5"
-              width="120"
-              x="0"
-              y="86"
-            />
+            {whole && (
+              <>
+                <rect height="11" style={BELT_FILL} width="120" x="0" y="86" />
+                <rect
+                  fill="none"
+                  height="11"
+                  stroke="#000"
+                  strokeOpacity=".12"
+                  strokeWidth="1.5"
+                  width="120"
+                  x="0"
+                  y="86"
+                />
+              </>
+            )}
           </g>
           <g fill="none" opacity=".8" stroke="#e0598a" strokeLinecap="round" strokeWidth="3">
             <path d="M47 27 q6 -7 13 -1" />
@@ -62,31 +83,35 @@ export function NoodleBody({ face, uid }: BuddyBodyProps) {
             ry="5"
             transform="rotate(-20 44 30)"
           />
-          <path
-            d="M58 91 l-9 14 l5 2 l8 -12 z"
-            stroke="#000"
-            strokeOpacity=".15"
-            strokeWidth="1.2"
-            style={BELT_FILL}
-          />
-          <path
-            d="M62 91 l9 14 l-5 2 l-8 -12 z"
-            stroke="#000"
-            strokeOpacity=".15"
-            strokeWidth="1.2"
-            style={BELT_FILL}
-          />
-          <rect
-            height="14"
-            rx="4"
-            stroke="#000"
-            strokeOpacity=".18"
-            strokeWidth="1.2"
-            style={BELT_FILL}
-            width="14"
-            x="53"
-            y="84"
-          />
+          {whole && (
+            <>
+              <path
+                d="M58 91 l-9 14 l5 2 l8 -12 z"
+                stroke="#000"
+                strokeOpacity=".15"
+                strokeWidth="1.2"
+                style={BELT_FILL}
+              />
+              <path
+                d="M62 91 l9 14 l-5 2 l-8 -12 z"
+                stroke="#000"
+                strokeOpacity=".15"
+                strokeWidth="1.2"
+                style={BELT_FILL}
+              />
+              <rect
+                height="14"
+                rx="4"
+                stroke="#000"
+                strokeOpacity=".18"
+                strokeWidth="1.2"
+                style={BELT_FILL}
+                width="14"
+                x="53"
+                y="84"
+              />
+            </>
+          )}
 
           {face}
         </Part>

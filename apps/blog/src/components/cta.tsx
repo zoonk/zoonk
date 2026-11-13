@@ -15,7 +15,7 @@ export function StartCta() {
       className="not-prose bg-background text-foreground -mx-6 my-12 flex flex-col items-center px-6 py-12 text-center md:rounded-2xl lg:-mx-28 dark:border-y md:dark:border"
       data-slot="ink-band"
     >
-      <Buddy beltColor="white" className="size-20" energy={null} glasses="round" kind="zu" />
+      <Buddy beltColor="white" className="h-23" energy={null} glasses="round" kind="zu" />
       <p className="mt-4 text-3xl font-semibold tracking-tight text-balance">{START_CTA.title}</p>
       <p className="text-muted-foreground mt-2 max-w-sm text-pretty">{START_CTA.text}</p>
       <a className={buttonVariants({ className: "mt-6", size: "lg" })} href={START_CTA.href}>
