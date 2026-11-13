@@ -81,10 +81,10 @@ export const OTP_LENGTH = 6;
 
 function OTPGroupSkeleton() {
   return (
-    <div className="flex gap-2">
-      <Skeleton className="h-13 w-12 rounded-lg" />
-      <Skeleton className="h-13 w-12 rounded-lg" />
-      <Skeleton className="h-13 w-12 rounded-lg" />
+    <div className="flex flex-1 gap-2">
+      <Skeleton className="h-11 flex-1 rounded-lg" />
+      <Skeleton className="h-11 flex-1 rounded-lg" />
+      <Skeleton className="h-11 flex-1 rounded-lg" />
     </div>
   );
 }
@@ -92,7 +92,7 @@ function OTPGroupSkeleton() {
 export function OTPFormSkeleton() {
   return (
     <div aria-hidden="true" className="flex w-full flex-col items-center gap-4">
-      <div className="flex justify-center gap-3">
+      <div className="flex w-full gap-2">
         <OTPGroupSkeleton />
         <OTPGroupSkeleton />
       </div>
@@ -106,7 +106,6 @@ export function OTPFormSkeleton() {
 export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
   return (
     <InputOTP
-      containerClassName="justify-center gap-3"
       maxLength={OTP_LENGTH}
       name="otp"
       pasteTransformer={keepDigits}
