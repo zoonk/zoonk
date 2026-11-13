@@ -53,11 +53,16 @@ function GoalRow({ goal }: { goal: UserGoal }) {
       </TableCell>
       <TableCell>{toWords(goal.status)}</TableCell>
       <TableCell numeric>{goal.dailyMinutes} min</TableCell>
-      <TableCell>{formatDate(goal.targetDate)}</TableCell>
+      <TableCell className="text-foreground">{formatDate(goal.targetDate)}</TableCell>
       <TableCell numeric>
-        {goal.plan
-          ? `${goal.doneItems.toLocaleString("en")} of ${goal.totalItems.toLocaleString("en")} done`
-          : "No plan"}
+        {goal.plan ? (
+          <>
+            {goal.doneItems.toLocaleString("en")} <span className="font-sans">of</span>{" "}
+            {goal.totalItems.toLocaleString("en")} <span className="font-sans">done</span>
+          </>
+        ) : (
+          <span className="font-sans">No plan</span>
+        )}
       </TableCell>
     </AdminTableRow>
   );
@@ -137,7 +142,9 @@ export async function UserPlans({ userId }: { userId: string }) {
               <TableCell className="min-w-56 whitespace-normal">
                 <GoalName goal={goal} />
               </TableCell>
-              <TableCell numeric>{goal.plan ? goal.plan.version : "No plan"}</TableCell>
+              <TableCell numeric>
+                {goal.plan ? goal.plan.version : <span className="font-sans">No plan</span>}
+              </TableCell>
               <TableCell numeric>
                 {goal.plan?.estimateHours ? `${Math.round(goal.plan.estimateHours)} h` : "—"}
               </TableCell>

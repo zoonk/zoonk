@@ -43,7 +43,7 @@ function SessionRow({ session, showGoal }: { session: UserStudySession; showGoal
       </TableCell>
       <TableCell numeric>{session.plannedMinutes} min</TableCell>
       <TableCell numeric>
-        {done} of {session.blocks.length}
+        {done} <span className="font-sans">of</span> {session.blocks.length}
       </TableCell>
       <TableCell className="text-muted-foreground min-w-48 whitespace-normal">
         {describeBlocks(session.blocks) || "—"}

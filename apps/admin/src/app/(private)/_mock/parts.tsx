@@ -2,7 +2,6 @@ import { AdminTableRow } from "@/components/admin-table-row";
 // Review-pack mocks only: static pictures of proposed pages, built from the shared components.
 // Remove this folder and every `mock` route before the redesign lands.
 import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 
 export type MockOption = { reason?: string; right?: boolean; share?: string; text: string };
@@ -65,7 +64,6 @@ export function MockTable({
           <AdminTableRow key={row.key}>
             {row.cells.map((cell, index) => (
               <TableCell
-                className={cn(index > 0 && "text-muted-foreground")}
                 numeric={columns[index]?.align === "right"}
                 // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
                 key={index}

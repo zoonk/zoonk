@@ -38,7 +38,7 @@ export async function UserLearnerSkills({ userId }: { userId: string }) {
               </AdminTableRowLink>
             </TableCell>
             <TableCell>{toWords(learnerSkill.state)}</TableCell>
-            <TableCell>{formatDate(learnerSkill.due)}</TableCell>
+            <TableCell className="text-foreground">{formatDate(learnerSkill.due)}</TableCell>
             <TableCell numeric>{learnerSkill.reps}</TableCell>
             <TableCell numeric>{learnerSkill.lapses}</TableCell>
             <TableCell numeric>{formatCount(learnerSkill.recallDays, "day")}</TableCell>

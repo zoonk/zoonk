@@ -209,7 +209,7 @@ function Screens({ json }: { json: boolean }) {
           </Screen>
 
           <Screen kind="Summary" number={10}>
-            <ul className="flex list-disc flex-col gap-1 pl-5">
+            <ul className="flex list-outside list-disc flex-col gap-1">
               <li>Bids are what buyers offer; asks are what sellers accept.</li>
               <li>A trade happens when one side accepts the other&apos;s price.</li>
               <li>The price on the screen is just the last trade.</li>
@@ -234,7 +234,7 @@ function Details() {
       <FactsFrom
         dump={lesson}
         omit={["Held back", "Spec", "Skills", "Chapters", "Visibility", "In plans"]}
-        rename={{ "Can do": "What the learner can do after" }}
+        rename={{ "Can do": "Learners can then" }}
         section="Details"
       />
     </AdminSection>

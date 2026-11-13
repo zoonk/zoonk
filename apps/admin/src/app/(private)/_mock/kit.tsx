@@ -152,10 +152,7 @@ export function MockRows({
         <AdminTableRow key={rowIndex}>
           {row.map((cell, index) => (
             <TableCell
-              className={cn(
-                index === 0 && "whitespace-normal",
-                index > 0 && "text-muted-foreground",
-              )}
+              className={cn(index === 0 && "whitespace-normal")}
               numeric={aligned[index]?.align === "right"}
               // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
               key={index}
