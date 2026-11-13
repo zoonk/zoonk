@@ -70,6 +70,7 @@ export function AnswerOption({
   picked,
   result = null,
   tag,
+  type = "button",
   ...props
 }: React.ComponentProps<"button"> & {
   guessed?: boolean;
@@ -80,6 +81,9 @@ export function AnswerOption({
   /** Replaces the result's word; `null` shows none. */
   tag?: React.ReactNode;
 }) {
+  // A submit option sends its form on the tap, so it's a plain button: nothing stays picked.
+  const picks = type !== "submit";
+
   const shownTag =
     tag === undefined && result ? (
       <ResultTag guessed={guessed} picked={picked} result={result} />
@@ -89,7 +93,7 @@ export function AnswerOption({
 
   return (
     <button
-      aria-checked={picked}
+      aria-checked={picks ? picked : undefined}
       className={cn(
         ANSWER_OPTION_CLASS,
         "focus-visible:outline-ring enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
@@ -108,8 +112,8 @@ export function AnswerOption({
         ignoreHeldEnter(event);
         onKeyDown?.(event);
       }}
-      role="radio"
-      type="button"
+      role={picks ? "radio" : undefined}
+      type={picks ? "button" : "submit"}
       {...props}
     >
       <LineMarker
