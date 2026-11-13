@@ -101,12 +101,12 @@ export function StatsPeriodPicker({
           <Button
             aria-label={`Choose period. Current: ${statsPeriod.periodLabel}`}
             className="max-w-full justify-between sm:max-w-64"
-            size="sm"
+            size="bar"
             variant="outline"
           />
         }
       >
-        <CalendarIcon aria-hidden />
+        <CalendarIcon aria-hidden className="max-sm:hidden" />
         <span className="truncate">{statsPeriod.periodLabel}</span>
         <ChevronDownIcon aria-hidden />
       </PopoverTrigger>
