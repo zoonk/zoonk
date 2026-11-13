@@ -46,6 +46,8 @@ const UNDERSCORE_MARK =
 
 const STAR_MARK = /(?<=\S)\*(?!\*)|(?<!\*)\*(?=\S)/gu;
 
+const FORMULA_AS_WORD = "x";
+
 function quote(text: string): string {
   return `"${text.trim()}"`;
 }
@@ -56,19 +58,33 @@ function quote(text: string): string {
  */
 export function findStrayEmphasis(line: string): Set<number> {
   const list = LIST_MARK.exec(line)?.[0].length ?? 0;
+  const pieces = splitAtMath(line.slice(list));
+  const isFormula = (index: number) => (pieces[index]?.kind ?? "text") !== "text";
 
-  const segments = splitAtMath(line.slice(list)).flatMap((piece) =>
+  const segments = pieces.flatMap((piece, index) =>
     piece.kind === "text"
-      ? parseInlineMarkupRanges(piece.text).flatMap(({ kind, start, text }) =>
-          kind === "text" ? [{ start: list + piece.start + start, text }] : [],
+      ? parseInlineMarkupRanges(piece.text).flatMap(({ end, kind, start, text }) =>
+          kind === "text"
+            ? [
+                {
+                  lead: start === 0 && isFormula(index - 1) ? FORMULA_AS_WORD : "",
+                  start: list + piece.start + start,
+                  text,
+                  trail: end === piece.text.length && isFormula(index + 1) ? FORMULA_AS_WORD : "",
+                },
+              ]
+            : [],
         )
       : [],
   );
 
   const at = (pattern: RegExp) =>
-    segments.flatMap(({ start, text }) =>
-      [...text.matchAll(pattern)].flatMap((match) =>
-        Array.from({ length: match[0].length }, (_, offset) => start + match.index + offset),
+    segments.flatMap(({ lead, start, text, trail }) =>
+      [...`${lead}${text}${trail}`.matchAll(pattern)].flatMap((match) =>
+        Array.from(
+          { length: match[0].length },
+          (_, offset) => start - lead.length + match.index + offset,
+        ),
       ),
     );
 

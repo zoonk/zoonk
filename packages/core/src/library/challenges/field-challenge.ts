@@ -1,18 +1,17 @@
 import "server-only";
-import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/case";
-import { type StepVariant, prisma } from "@zoonk/db";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
+import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { createOrFindByIdentity, toProvenanceData } from "../_utils/library-rows";
 import { STEP_CONTRACT_VERSION } from "../steps/contract/step-contract";
+import {
+  holdBackStepVariantDraft,
+  reserveStepVariantGeneration,
+} from "../variants/variant-generation";
 import { toVariantKey } from "../variants/variant-keys";
-import { draftChallengeCase, toChallengeCaseInputs } from "./_utils/draft-challenge";
+import { toChallengeCaseInputs } from "./_utils/challenge-inputs";
+import { type ChallengeDraft } from "./challenge-draft";
 import { parseChallengeLessonSpec } from "./challenge-lesson-spec";
-
-export type FieldChallengeResult =
-  | { status: "failed"; problems: string[] }
-  | { status: "notFound" }
-  | { status: "ready"; created: boolean; variant: StepVariant }
-  | { status: "unsupported" };
 
 function findFieldChallenge({ key, stepId }: { key: string; stepId: string }) {
   return prisma.stepVariant.findUnique({
@@ -32,50 +31,86 @@ function loadChallengeStep(stepId: string) {
   });
 }
 
-/** Internal workflow bridge: `field` must be a shared key, never the learner's free text. */
-export async function getOrCreateFieldChallenge({
+/** Internal workflow bridge: hold the normalized field token before reserving or generating. */
+export async function prepareFieldChallengeDraft({
   analytics,
   field,
   stepId,
+  workflowRunId,
 }: {
   analytics?: ChallengeCaseParams["analytics"];
   field: string;
   stepId: string;
-}): Promise<FieldChallengeResult> {
+  workflowRunId: string;
+}) {
   const key = toVariantKey(field);
 
   if (!isUuid(stepId) || !key) {
-    return { status: "notFound" };
-  }
-
-  const existing = await findFieldChallenge({ key, stepId });
-
-  if (existing) {
-    return { created: false, status: "ready", variant: existing };
+    return { status: "notFound" as const };
   }
 
   const step = await loadChallengeStep(stepId);
 
   if (step?.kind !== "challenge" || step.lesson.contentStatus !== "completed") {
-    return { status: "notFound" };
+    return { status: "notFound" as const };
   }
 
   const spec = parseChallengeLessonSpec(step.lesson.spec);
 
   if (spec?.variant !== "work" || step.lesson.ownerId) {
-    return { status: "unsupported" };
+    return { status: "unsupported" as const };
   }
 
-  const drafted = await draftChallengeCase({
-    analytics: { contentScope: "shared", ...analytics },
-    inputs: { ...toChallengeCaseInputs({ lesson: step.lesson, spec }), field: key },
+  const reservation = await reserveStepVariantGeneration({
+    key,
+    kind: "field",
+    stepId,
+    workflowRunId,
   });
 
-  if (!drafted.content) {
-    return { problems: drafted.problems, status: "failed" };
+  if (reservation.status !== "reserved") {
+    return reservation;
   }
 
-  const { content, provenance } = drafted;
+  return {
+    params: {
+      ...toChallengeCaseInputs({ lesson: step.lesson, spec }),
+      analytics: { ...analytics, contentScope: "shared" as const },
+      field: key,
+      problems: reservation.problems.map((problem) => problem.problem),
+    },
+    review: true,
+    status: "challengeDraft" as const,
+  };
+}
+
+export async function finishFieldChallengeDraft({
+  draft,
+  field,
+  stepId,
+  workflowRunId,
+}: {
+  draft: ChallengeDraft;
+  field: string;
+  stepId: string;
+  workflowRunId: string;
+}) {
+  const key = toVariantKey(field);
+
+  if ("problems" in draft) {
+    await holdBackStepVariantDraft({
+      key,
+      kind: "field",
+      model: draft.model,
+      problems: draft.problems.map((problem) => ({ problem, screen: null })),
+      stepId,
+      workflowRunId,
+    });
+
+    return { status: "heldBack" as const };
+  }
+
+  const { content, provenance } = draft;
 
   const { created, row } = await createOrFindByIdentity({
     create: () =>
@@ -92,5 +127,5 @@ export async function getOrCreateFieldChallenge({
     findExisting: () => findFieldChallenge({ key, stepId }),
   });
 
-  return { created, status: "ready", variant: row };
+  return { created, status: "ready" as const, variant: row };
 }

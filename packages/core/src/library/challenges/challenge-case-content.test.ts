@@ -75,4 +75,50 @@ describe(checkWrittenChallenge, () => {
       written.nodes.map((node) => node.choices.map((choice) => choice.id).toSorted()),
     );
   });
+
+  it("rejects a metric drawn over several lines, on an opening or a later panel", () => {
+    const written = writtenChallengeCaseFixture();
+    const [panel] = written.panels;
+    const jumped = written.nodes.flatMap((node) => node.choices).find((choice) => choice.timeJump);
+
+    if (!panel || !jumped?.timeJump?.panel) {
+      throw new Error("The fixture needs an opening panel and a time jump with a panel");
+    }
+
+    const plot = {
+      label: "Dose vs. response",
+      note: null,
+      value: "y |   *\n  | *   *\n  +------ x",
+    };
+
+    const table = { label: "Week\nSales", note: null, value: "120" };
+
+    const drawn: WrittenCase = {
+      ...written,
+      nodes: written.nodes.map((node) => ({
+        ...node,
+        choices: node.choices.map((choice) =>
+          choice === jumped && choice.timeJump?.panel
+            ? {
+                ...choice,
+                timeJump: {
+                  ...choice.timeJump,
+                  panel: { ...choice.timeJump.panel, metrics: [table] },
+                },
+              }
+            : choice,
+        ),
+      })),
+      panels: [{ ...panel, metrics: [plot] }],
+    };
+
+    const checked = checkWrittenChallenge({ variant: "work", written: drawn });
+
+    expect(checked.content).toBeNull();
+
+    expect(checked.problems).toStrictEqual([
+      expect.stringContaining('"Dose vs. response" runs over several lines'),
+      expect.stringContaining('"Week\nSales" runs over several lines'),
+    ]);
+  });
 });
