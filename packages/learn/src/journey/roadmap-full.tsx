@@ -1,7 +1,7 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
+import { Drawer, DrawerPopup, DrawerTrigger } from "@zoonk/ui/components/drawer";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
@@ -65,8 +65,8 @@ function PhaseBand({
   const label = usePhaseLabel();
 
   return (
-    <Popover>
-      <PopoverTrigger
+    <Drawer>
+      <DrawerTrigger
         render={
           <button
             aria-current={phase.state === "current" ? "step" : undefined}
@@ -84,16 +84,12 @@ function PhaseBand({
       >
         <BandFace isLast={isLast} phase={phase} />
         {todayShare !== null && <TodayTicks share={todayShare} />}
-      </PopoverTrigger>
+      </DrawerTrigger>
 
-      <PopoverContent
-        align="start"
-        className="max-h-[min(60vh,28rem)] w-80 gap-3 overflow-y-auto"
-        side="bottom"
-      >
+      <DrawerPopup>
         <PhaseDetails links={links} phase={phase} />
-      </PopoverContent>
-    </Popover>
+      </DrawerPopup>
+    </Drawer>
   );
 }
 

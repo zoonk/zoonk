@@ -1,8 +1,9 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { PopoverDescription, PopoverTitle } from "@zoonk/ui/components/popover";
+import { DrawerContent, DrawerDescription, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
+import { SheetHeader } from "../_components/sheet-header";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -88,20 +89,22 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
 
   return (
     <>
-      <div className="flex flex-col gap-0.5">
-        <PopoverTitle>
+      <SheetHeader>
+        <DrawerTitle>
           {phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus })}
-        </PopoverTitle>
-        <PopoverDescription className="font-mono text-xs tabular-nums">
+        </DrawerTitle>
+        <DrawerDescription className="font-mono text-xs tabular-nums">
           {[range, phaseLessons(phase)].filter(Boolean).join(" · ")}
-        </PopoverDescription>
-      </div>
+        </DrawerDescription>
+      </SheetHeader>
 
-      {listsChapters ? (
-        <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
-      ) : (
-        <ExamPhaseEvents links={links} phase={phase} />
-      )}
+      <DrawerContent className="pt-2">
+        {listsChapters ? (
+          <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
+        ) : (
+          <ExamPhaseEvents links={links} phase={phase} />
+        )}
+      </DrawerContent>
     </>
   );
 }
