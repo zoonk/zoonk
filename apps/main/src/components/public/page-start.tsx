@@ -1,5 +1,6 @@
 "use client";
 
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useEffect, useRef, useSyncExternalStore } from "react";
 
@@ -108,22 +109,28 @@ export function ShownWhenStartAway({
   );
 }
 
-/** For a phone: `className` hides it from the width where the page's bar or sidebar holds the button. */
+/**
+ * The shared bottom bar, out of the page's flow: it shows only after a scroll, so a bar in the flow
+ * would leave an empty band at the page's end. `className` hides it from the width where the page's
+ * bar or sidebar holds the button; `rowClassName` gives its row the frame's column.
+ */
 export function StickyStartBar({
   children,
   className,
+  rowClassName,
 }: {
   children: ReactNode;
   className?: string;
+  rowClassName?: string;
 }) {
   return (
     <ShownWhenStartAway
       className={cn(
-        "bg-background/90 supports-backdrop-filter:bg-background/75 fixed inset-x-0 bottom-0 z-30 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md",
+        "fixed inset-x-0 bottom-0 z-30 px-(--page-gutter) [--page-bottom:0px] [--page-dock:0px] [--page-gutter:--spacing(4)]",
         className,
       )}
     >
-      {children}
+      <BottomBar className={rowClassName}>{children}</BottomBar>
     </ShownWhenStartAway>
   );
 }

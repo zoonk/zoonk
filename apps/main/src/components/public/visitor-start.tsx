@@ -11,7 +11,10 @@ export async function VisitorStartBar() {
 
   return (
     <VisitorOnly>
-      <StickyStartBar className="lg:hidden">
+      <StickyStartBar
+        className="sm:[--page-gutter:--spacing(8)] lg:hidden"
+        rowClassName="sm:mx-auto sm:max-w-3xl"
+      >
         <Link className={cn(buttonVariants({ size: "lg" }), "w-full")} href="/start">
           {t("Build my plan")}
         </Link>
