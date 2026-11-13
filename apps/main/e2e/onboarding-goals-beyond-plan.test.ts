@@ -224,7 +224,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.getByRole("button", { name: "Looks right" }).click();
 
     await expect(
-      page.getByRole("alert").filter({ hasText: "Without an account, you can follow one goal." }),
+      page.getByRole("alert").filter({ hasText: "Without an account, you study one goal." }),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Create a free account" })).toBeVisible();
