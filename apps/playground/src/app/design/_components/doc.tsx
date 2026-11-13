@@ -43,7 +43,7 @@ export function DocSection({
   );
 }
 
-/** A list's mark sits in a 16px box on the column's edge and its text starts 28px in, as `ListRow`'s does. */
+/** A list's mark starts on the column's edge and its text 28px in, as `ListRow`'s does. */
 const LIST_ITEM = "flex gap-3";
 
 export function DocRules({ rules }: { rules: readonly string[] }) {
@@ -51,7 +51,7 @@ export function DocRules({ rules }: { rules: readonly string[] }) {
     <ul className={cn(DOC_MEASURE, "flex flex-col gap-1.5 text-sm leading-5.5")}>
       {rules.map((rule) => (
         <li className={LIST_ITEM} key={rule}>
-          <span aria-hidden="true" className="flex h-5.5 w-4 shrink-0 items-center justify-center">
+          <span aria-hidden="true" className="flex h-5.5 w-4 shrink-0 items-center">
             <span className="size-1 rounded-full bg-current" />
           </span>
           <span>{renderCode(rule)}</span>
