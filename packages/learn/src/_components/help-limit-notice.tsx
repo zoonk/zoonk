@@ -25,7 +25,7 @@ export type CalendarLimit =
   | SignUpRequired;
 
 /** The free plan's lessons come back one at a time: `availableAt` is the instant the next one opens. */
-export type FreeLessonsUsed = {
+type FreeLessonsUsed = {
   availableAt: string;
   period: "rolling30Days";
   status: "limitReached";
