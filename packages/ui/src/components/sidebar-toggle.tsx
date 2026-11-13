@@ -170,8 +170,8 @@ const TOGGLE = {
   end: {
     Icon: PanelRightIcon,
     className: cn(
-      buttonVariants({ edge: "end", size: "icon", variant: "ghost" }),
-      "shrink-0 [--glyph-blank:2] [--icon-size:--spacing(5)]",
+      buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" }),
+      "shrink-0 [--glyph-blank:2]",
     ),
     tooltipSide: "bottom",
   },

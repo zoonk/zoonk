@@ -18,7 +18,7 @@ function MediaPending({
       data-slot="media-pending"
       {...props}
     >
-      <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0" />
+      <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0 rounded-none" />
       <div
         className={cn(
           "relative flex flex-col items-center gap-2 p-4 text-center text-sm",

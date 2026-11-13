@@ -1,5 +1,6 @@
 "use client";
 
+import { TaskActionBar, TaskActions } from "@zoonk/learn/task-layout";
 import { HourglassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
@@ -7,26 +8,39 @@ import { PlayerContentFrame } from "../../components/step-layouts";
 
 const MS_PER_SECOND = 1000;
 
+/** A lesson that can't open: what stopped, one line, and its one way on in the bar where "Check" is. */
 export function AccessLayout({
-  children,
+  actions,
   description,
   icon,
   title,
 }: {
-  children?: React.ReactNode;
-  description: string;
+  actions?: React.ReactNode;
+  description?: string;
   icon: React.ReactNode;
   title: string;
 }) {
   return (
-    <PlayerContentFrame className="flex flex-col gap-6 pt-4 pb-8" data-slot="lesson-access">
-      <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
-      <div className="flex flex-col gap-2" role="status">
-        <h2 className="text-title">{title}</h2>
-        <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
-      </div>
-      {children && <div className="flex flex-col gap-2 sm:flex-row">{children}</div>}
-    </PlayerContentFrame>
+    <>
+      <PlayerContentFrame
+        className="flex flex-1 flex-col gap-6 pt-4 pb-8"
+        data-slot="lesson-access"
+      >
+        <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
+        <div className="flex flex-col gap-2" role="status">
+          <h2 className="text-title">{title}</h2>
+          {description && (
+            <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
+          )}
+        </div>
+      </PlayerContentFrame>
+
+      {actions && (
+        <TaskActionBar data-slot="lesson-access-bar">
+          <TaskActions>{actions}</TaskActions>
+        </TaskActionBar>
+      )}
+    </>
   );
 }
 
@@ -53,7 +67,7 @@ export function LessonSlowDown({
   return (
     <AccessLayout
       description={t(
-        "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
+        "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}.",
         { seconds: Math.max(secondsLeft, 0) },
       )}
       icon={<HourglassIcon aria-hidden="true" />}

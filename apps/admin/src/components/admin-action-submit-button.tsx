@@ -12,7 +12,7 @@ export function AdminActionSubmitButton({
 }: {
   children: React.ReactNode;
   icon: React.ReactNode;
-  size?: "lg" | "sm";
+  size?: "bar" | "lg" | "sm";
   variant?: "ghost" | "outline";
 }) {
   const status = useFormStatus();

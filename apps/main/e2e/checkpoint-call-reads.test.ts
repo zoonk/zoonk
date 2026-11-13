@@ -46,7 +46,7 @@ test("Today's call link and the call's page write nothing until the learner star
 
   await page.goto("/today");
 
-  await expect(page.getByRole("link", { name: /^(?:Start|Continue) session/u })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: /^(?:Start|Continue)$/u })).toHaveAttribute(
     "href",
     href,
   );

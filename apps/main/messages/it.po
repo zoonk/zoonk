@@ -461,6 +461,11 @@ msgid "Search or ask…"
 msgstr "Cerca o chiedi…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "chiudi"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "3ATcmQ"
 msgid "move"
 msgstr "spostati"
@@ -469,11 +474,6 @@ msgstr "spostati"
 msgctxt "-9qP4Y"
 msgid "open"
 msgstr "apri"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-msgctxt "BSij1a"
-msgid "close"
-msgstr "chiudi"
 
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -758,6 +758,7 @@ msgstr "Qualcosa è andato storto. Riprova."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -874,9 +875,9 @@ msgid "No answer was saved."
 msgstr "Non è stata salvata nessuna risposta."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Le domande che hai fatto nei tuoi corsi prima che li rifacessimo. Le lezioni sono cambiate, quindi le tue domande restano qui e puoi rileggerle."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "Le domande che hai fatto nelle lezioni che nel frattempo sono cambiate."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2766,26 +2767,21 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Stiamo aprendo la tua lezione"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "Puoi iniziare subito"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, one {Ripassa # concetto} other {Ripassa # concetti}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Informazioni sulla lezione"
-
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "Da fare in alternativa"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "Da fare nell’attesa"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, one {Ripassa # concetto} other {Ripassa # concetti}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
@@ -2793,24 +2789,29 @@ msgid "Your lesson is ready"
 msgstr "La tua lezione è pronta"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "La tua lezione è pronta. Iniziala quando vuoi."
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "Stiamo preparando la tua lezione"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Di solito ci vuole qualche minuto. La lezione si apre qui appena è pronta."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "Questa lezione non è ancora pronta"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Questa lezione è ancora da preparare"
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "Non siamo riusciti a preparare questa lezione"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk la prepara quando inizi. Ci vuole qualche minuto."
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "Ci vuole qualche minuto e continuiamo anche se lasci la pagina."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "Prepara la lezione"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"

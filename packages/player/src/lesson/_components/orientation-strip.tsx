@@ -1,5 +1,6 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { useExtracted } from "next-intl";
 import { PlayerContentFrame } from "../../components/step-layouts";
 import { isLanguageStep } from "../_utils/lesson-steps";
@@ -27,15 +28,15 @@ export function OrientationStrip({ step }: { step: PlayableLibraryStep }) {
       >
         <IdeaMiniMap count={ideas.length} current={index} />
 
-        <div className="flex min-h-11 min-w-0 flex-col justify-center">
-          <p className="text-muted-foreground font-mono text-xs text-balance tabular-nums">
+        <div className="flex min-h-11 min-w-0 flex-col items-start justify-center gap-1.5">
+          <Eyebrow>
             {t({
               description:
                 "Above a lesson screen: which of the lesson map's ideas the screen teaches, such as 'Idea 2 of 4'.",
               message: "Idea {current} of {total}",
               values: { current: String(index + 1), total: String(ideas.length) },
             })}
-          </p>
+          </Eyebrow>
           {idea.label && (
             <p className="text-foreground text-base leading-snug font-semibold text-pretty wrap-break-word">
               {idea.label}

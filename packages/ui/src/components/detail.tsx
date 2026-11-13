@@ -9,8 +9,7 @@ import { EllipsisIcon } from "lucide-react";
 
 /**
  * A "…" with no action beside it sits on the title's first line, at the column's end, at every
- * width. The small line above the title is always the header's first row, so the title is its
- * second.
+ * width.
  */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
@@ -70,7 +69,7 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
     <div
       className={cn(
         "flex flex-wrap items-center gap-2 md:shrink-0",
-        "has-[>[data-slot=dropdown-menu-trigger]:only-child]:col-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:row-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:mt-[0.09375rem] has-[>[data-slot=dropdown-menu-trigger]:only-child]:self-start",
+        "has-[>[data-slot=dropdown-menu-trigger]:only-child]:col-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:row-start-1 has-[>[data-slot=dropdown-menu-trigger]:only-child]:mt-[0.09375rem] has-[>[data-slot=dropdown-menu-trigger]:only-child]:self-start",
         className,
       )}
       data-slot="detail-actions"
@@ -83,26 +82,19 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
 export const DETAIL_MENU_TRIGGER_CLASS =
   "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
 
-/** `size="sm"` is for a header whose actions are small buttons: the menu is 30px beside them too. */
 export function DetailMenu({
   children,
   label,
-  size,
+  onOpenChange,
 }: {
   children: React.ReactNode;
   label: string;
-  size?: "sm";
+  onOpenChange?: (open: boolean) => void;
 }) {
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
-        render={
-          size === "sm" ? (
-            <Button size="icon-sm" variant="outline" />
-          ) : (
-            <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
-          )
-        }
+        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label}</span>

@@ -1,60 +1,75 @@
 "use client";
 
-import { formatDollars, formatSeconds } from "@/lib/format";
+import { formatDollars } from "@/lib/format";
 import { type BattleLeaderboardEntry } from "@/lib/types";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
-import Link from "next/link";
-import { useState } from "react";
+  type LeaderboardColumn,
+  LeaderboardTable,
+  ModelLink,
+  measuredColumns,
+} from "./leaderboard-table";
 
-type SortKey =
-  | "modelName"
-  | "provider"
-  | "averageScore"
-  | "latencyP50"
-  | "latencyP95"
-  | "costPer1000Runs";
+type Column = LeaderboardColumn<BattleLeaderboardEntry>;
 
-type SortDirection = "asc" | "desc";
+function CodeChecks({ checks }: { checks: BattleLeaderboardEntry["codeChecks"] }) {
+  if (!checks) {
+    return "—";
+  }
 
-const DEFAULT_SORT_DIRECTIONS: Record<SortKey, SortDirection> = {
-  averageScore: "desc",
-  costPer1000Runs: "desc",
-  latencyP50: "desc",
-  latencyP95: "desc",
-  modelName: "asc",
-  provider: "asc",
-};
-
-function getDefaultSortDirection(key: SortKey): SortDirection {
-  return DEFAULT_SORT_DIRECTIONS[key];
+  return (
+    <span className={checks.passed < checks.total ? "text-warning-text" : undefined}>
+      {checks.passed}/{checks.total}
+    </span>
+  );
 }
 
-function sortEntries(
-  entries: BattleLeaderboardEntry[],
-  sortKey: SortKey,
-  sortDirection: SortDirection,
-): BattleLeaderboardEntry[] {
-  return [...entries].toSorted((a, b) => {
-    const aValue = a[sortKey];
-    const bValue = b[sortKey];
+function getColumns(entries: BattleLeaderboardEntry[], taskId: string) {
+  const measured = measuredColumns(entries);
 
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return sortDirection === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-    }
+  const codeChecks: Column = {
+    cell: (entry) => <CodeChecks checks={entry.codeChecks} />,
+    id: "codeChecks",
+    isNumber: true,
+    label: "Parts passing code checks",
+  };
 
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
-    }
+  const columns: Column[] = [
+    {
+      cell: (_entry, index) => index + 1,
+      cellClassName: () => "text-muted-foreground w-10",
+      id: "rank",
+      label: "#",
+    },
+    {
+      cell: (entry) => (
+        <ModelLink modelId={entry.modelId} taskId={taskId}>
+          {entry.modelName}
+        </ModelLink>
+      ),
+      id: "model",
+      label: "Model",
+      sortKey: "modelName",
+    },
+    {
+      cell: (entry) => entry.averageScore.toFixed(2),
+      cellClassName: () => "font-semibold",
+      id: "score",
+      isNumber: true,
+      label: "Score / 10",
+      sortKey: "averageScore",
+    },
+    ...(entries.some((entry) => entry.codeChecks) ? [codeChecks] : []),
+    measured.cost,
+    measured.latencyP50,
+  ];
 
-    return 0;
-  });
+  const moreColumns: Column[] = [
+    measured.latencyP95,
+    measured.provider,
+    ...measured.categoryColumns,
+  ];
+
+  return { columns, moreColumns };
 }
 
 export function BattleLeaderboard({
@@ -66,112 +81,24 @@ export function BattleLeaderboard({
   entries: BattleLeaderboardEntry[];
   judgeCost: number;
 }) {
-  const [sortKey, setSortKey] = useState<SortKey>("averageScore");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-
-  const sortedEntries = sortEntries(entries, sortKey, sortDirection);
-  const categories = entries[0]?.categoryScores ?? [];
-  const hasCodeChecks = entries.some((entry) => entry.codeChecks);
-
-  function handleSort(key: SortKey) {
-    if (sortKey === key) {
-      setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
-      return;
-    }
-
-    setSortKey(key);
-    setSortDirection(getDefaultSortDirection(key));
-  }
-
-  if (sortedEntries.length === 0) {
+  if (entries.length === 0) {
     return (
-      <div className="text-muted-foreground py-8 text-center">
-        No battle results yet. Run Battle Mode to compare models.
-      </div>
+      <p className="text-muted-foreground py-8 text-sm">
+        No battles yet. Run a battle to have judges compare the models&apos; outputs side by side.
+      </p>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-sm">
-        Judges never score their own model family, so models are ranked by average score. Judge cost
-        so far: {formatDollars(judgeCost)}.
-      </p>
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-10">#</TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("modelName")}>
-              Model {sortKey === "modelName" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("provider")}>
-              Provider {sortKey === "provider" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("averageScore")}>
-              Avg Score {sortKey === "averageScore" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            {categories.map((category) => (
-              <TableHead key={category.categoryId}>{category.label}</TableHead>
-            ))}
-
-            {hasCodeChecks && <TableHead>Code checks</TableHead>}
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP50")}>
-              p50 {sortKey === "latencyP50" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("latencyP95")}>
-              p95 {sortKey === "latencyP95" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-
-            <TableHead className="cursor-pointer" onClick={() => handleSort("costPer1000Runs")}>
-              Cost / 1k runs{" "}
-              {sortKey === "costPer1000Runs" && (sortDirection === "asc" ? "↑" : "↓")}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {sortedEntries.map((entry, index) => (
-            <TableRow key={entry.modelId}>
-              <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>
-                <Link href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}>
-                  {entry.modelName}
-                </Link>
-              </TableCell>
-              <TableCell>{entry.provider}</TableCell>
-              <TableCell className="font-semibold">{entry.averageScore.toFixed(2)}</TableCell>
-              {categories.map((category) => {
-                const categoryScore = entry.categoryScores.find(
-                  (score) => score.categoryId === category.categoryId,
-                );
-
-                return (
-                  <TableCell key={category.categoryId}>
-                    {categoryScore?.score.toFixed(2) ?? "—"}
-                  </TableCell>
-                );
-              })}
-              {hasCodeChecks && (
-                <TableCell>
-                  {entry.codeChecks
-                    ? `${entry.codeChecks.passed}/${entry.codeChecks.total} parts, ${entry.codeChecks.problems} problems`
-                    : "—"}
-                </TableCell>
-              )}
-              <TableCell>{formatSeconds(entry.latencyP50)}</TableCell>
-              <TableCell>{formatSeconds(entry.latencyP95)}</TableCell>
-              <TableCell>{formatDollars(entry.costPer1000Runs)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <LeaderboardTable
+      description="Judges from other model families compare every model's output on the same test case."
+      entries={entries}
+      footer={
+        <p className="text-muted-foreground text-xs">
+          Judges have cost {formatDollars(judgeCost)} so far.
+        </p>
+      }
+      {...getColumns(entries, taskId)}
+    />
   );
 }

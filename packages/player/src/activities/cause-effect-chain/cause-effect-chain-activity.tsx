@@ -5,6 +5,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
+  ACTIVITY_CARD_CLASS,
+  ACTIVITY_PRESS_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -44,7 +46,9 @@ function NodeCard({
       <button
         aria-pressed={isCause}
         className={cn(
-          "bg-background focus-visible:ring-ring/50 flex min-h-11 w-full flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px] motion-safe:transition-colors",
+          ACTIVITY_CARD_CLASS,
+          ACTIVITY_PRESS_CLASS,
+          "flex w-full flex-col items-start gap-0.5 motion-safe:transition-colors",
           isCause && "border-viz-highlight ring-viz-highlight/30 ring-2",
           isCandidate && "hover:border-viz-highlight border-dashed",
           !disabled && !isCause && !isCandidate && "hover:bg-accent",

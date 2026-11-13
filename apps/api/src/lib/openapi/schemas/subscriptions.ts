@@ -24,11 +24,11 @@ export const freePlanResponseSchema = z
     guestLessons: freePlanLimitSchema.meta({
       description: "Lessons a guest can start before creating an account",
     }),
-    lessonsPerDay: freePlanLimitSchema.meta({
-      description: "Always null. Free lesson admission uses the monthly allowance",
+    lessonsPer30Days: freePlanLimitSchema.meta({
+      description: `${getFreePlanLimits().lessonsPer30Days} distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge`,
     }),
-    lessonsPerMonth: freePlanLimitSchema.meta({
-      description: `${getFreePlanLimits().lessonsPerMonth} distinct lessons across all goals per UTC calendar month; admitted lessons can be replayed without another charge`,
+    lessonsPerDay: freePlanLimitSchema.meta({
+      description: "Always null. Free lesson admission uses the rolling 30-day allowance",
     }),
     tutorMessagesPerDay: freePlanLimitSchema.meta({
       description: "Messages a free account can send its study buddy each day",

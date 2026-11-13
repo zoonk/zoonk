@@ -2,7 +2,7 @@
 
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
@@ -78,9 +78,9 @@ function ChallengeDecision({
   const { node } = progress.walk;
 
   return (
-    <div className="flex flex-col gap-3" data-slot="challenge-decision">
-      <div className="text-foreground text-lg font-semibold" id={`challenge-prompt-${node.id}`}>
-        <RichTextBlocks text={names.fill(node.prompt)} paragraphTag="h3" />
+    <div className="flex flex-col gap-4" data-slot="challenge-decision">
+      <div id={`challenge-prompt-${node.id}`}>
+        <QuestionTitle text={names.fill(node.prompt)} />
       </div>
 
       <PlayerChoiceSceneOptions

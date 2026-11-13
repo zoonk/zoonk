@@ -157,6 +157,7 @@ export function readPanel(phone: boolean) {
   const drawn = (element: Element) => element.getClientRects().length > 0;
   const box = panel.getBoundingClientRect();
   const dialog = panel.getAttribute("role") === "dialog";
+  const popover = panel.matches("[data-slot=popover-content]");
 
   const drawer =
     panel.closest("[data-slot=drawer-popup]") ?? panel.querySelector("[data-slot=drawer-popup]");
@@ -179,9 +180,10 @@ export function readPanel(phone: boolean) {
     label: panel.getAttribute("aria-label") ?? title?.slice(0, LABEL_LENGTH) ?? "a panel",
     needsClose:
       dialog &&
+      !popover &&
       !panel.closest("[data-slot=suggestion-sheet]") &&
       !panel.querySelector("[data-slot=suggestion-sheet]"),
-    sheet: phone && dialog ? Math.abs(box.bottom - innerHeight) <= 2 : null,
+    sheet: phone && dialog && !popover ? Math.abs(box.bottom - innerHeight) <= 2 : null,
   };
 }
 

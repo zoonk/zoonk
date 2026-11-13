@@ -61,7 +61,7 @@ function UnsavedAnswers() {
         <Popover>
           <PopoverTrigger
             render={
-              <Button className="text-muted-foreground shrink-0" size="icon" variant="ghost" />
+              <Button className="text-muted-foreground shrink-0" size="icon-bar" variant="ghost" />
             }
           >
             <CloudOffIcon aria-hidden="true" />

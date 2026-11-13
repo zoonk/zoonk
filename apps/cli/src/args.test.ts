@@ -171,4 +171,15 @@ describe(parseInvocation, () => {
       expect.objectContaining({ exitCode: EXIT_CODES.usage }),
     );
   });
+
+  it.each([
+    [["staff", "get", "Goal"], "pnpm zoonk staff get <model> <id> [--fields ...]"],
+    [["staff", "fixes", "revert"], 'pnpm zoonk staff fixes revert <id> --reason "…"'],
+    [["whoami", "now"], "pnpm zoonk whoami"],
+    [["staff", "list", "Goal", "--unknown"], "Unknown option '--unknown'.\nRun"],
+  ])("says how %j should be written", (argv, message) => {
+    expect(() => parseInvocation(argv)).toThrow(
+      expect.objectContaining({ message: expect.stringContaining(message) }),
+    );
+  });
 });
