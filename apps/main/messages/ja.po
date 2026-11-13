@@ -1955,7 +1955,7 @@ msgstr "過去90日間で、正答率が最も高かった曜日や時間帯を�
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
-msgstr ""
+msgstr "過去90日間で、スコアが高かった曜日や時間帯です。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -2038,27 +2038,27 @@ msgstr "集計には曜日や時間帯ごとに{count, plural, other {#件の回
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
-msgstr ""
+msgstr "いちばん成績がよい曜日は{day}です。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "ZTJDAv"
 msgid "You answer about the same every day."
-msgstr ""
+msgstr "どの曜日も成績はほぼ同じです。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "RF7ki8"
 msgid "Your best time is the {time}."
-msgstr ""
+msgstr "いちばん成績がよい時間帯は{time}です。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "6hLEQI"
 msgid "The time of day makes no difference."
-msgstr ""
+msgstr "時間帯による成績の差はありません。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
-msgstr ""
+msgstr "問題にもっと答えると、いちばん成績がよい曜日や時間帯がわかります。"
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2981,7 +2981,7 @@ msgstr "利用規約"
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 msgctxt "su55__"
 msgid "Chapter test"
-msgstr ""
+msgstr "章のテスト"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx

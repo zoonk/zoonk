@@ -1955,7 +1955,7 @@ msgstr "Scopri quando hai ottenuto i risultati migliori negli ultimi 90 giorni."
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
-msgstr ""
+msgstr "Quando hai risposto meglio negli ultimi 90 giorni."
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -2038,27 +2038,27 @@ msgstr "Consideriamo un giorno o una fascia oraria solo con almeno {count, plura
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
-msgstr ""
+msgstr "Il tuo giorno migliore è {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "ZTJDAv"
 msgid "You answer about the same every day."
-msgstr ""
+msgstr "Ottieni risultati simili ogni giorno."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "RF7ki8"
 msgid "Your best time is the {time}."
-msgstr ""
+msgstr "Rendi meglio di {time}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "6hLEQI"
 msgid "The time of day makes no difference."
-msgstr ""
+msgstr "Il momento della giornata non fa differenza."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "IrWIWh"
 msgid "Answer more questions to see when you do best."
-msgstr ""
+msgstr "Rispondi ad altre domande per scoprire quando rendi meglio."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2981,7 +2981,7 @@ msgstr "Termini di servizio"
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 msgctxt "su55__"
 msgid "Chapter test"
-msgstr ""
+msgstr "Test del capitolo"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
