@@ -43,10 +43,12 @@ async function getStoreDateLine(subscription: Subscription): Promise<React.React
     return null;
   }
 
-  return t.rich("Paid until <mono>{date}</mono>.", {
-    date: toDate(subscription.periodEnd),
-    mono: renderDate,
-  });
+  const date = toDate(subscription.periodEnd);
+
+  // Nobody pays for a Plus that Zoonk added, so it has an end, not a renewal.
+  return subscription.provider === "apple" || subscription.provider === "google"
+    ? t.rich("Renews on <mono>{date}</mono>.", { date, mono: renderDate })
+    : t.rich("You have Plus until <mono>{date}</mono>.", { date, mono: renderDate });
 }
 
 type WebSubscription = Extract<

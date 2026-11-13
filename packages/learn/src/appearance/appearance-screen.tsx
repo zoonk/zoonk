@@ -7,7 +7,6 @@ import { useExtracted } from "next-intl";
 import { useOptimistic } from "react";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
 import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
@@ -53,11 +52,10 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
   const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
   const [homeCountry, setOptimisticHome] = useOptimistic(view.homeCountry);
 
-  const { failed, run } = useOptimisticSave();
+  const { run } = useOptimisticSave();
 
   return {
     buddy,
-    failed,
     homeCountry,
     saveBuddy: (next: AppearanceBuddy) =>
       run(
@@ -151,8 +149,6 @@ export function AppearanceScreen({
           />
         </ListGroup>
       </PageSection>
-
-      {appearance.failed && <ChangeSaveError />}
     </div>
   );
 }

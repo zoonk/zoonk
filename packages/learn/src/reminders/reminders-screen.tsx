@@ -12,7 +12,6 @@ import { useId, useOptimistic } from "react";
 import { ListGroup } from "../_components/list-group";
 import { NoticeCard } from "../_components/notice-card";
 import { PageSectionFooter } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { ReminderTimeSelect } from "./reminder-time";
@@ -30,16 +29,19 @@ function applyChange(reminder: StudyReminderView, change: ReminderChange): Study
 }
 
 function TimeSetting({
+  namesZone,
   onChange,
   time,
   timeZone,
 }: {
+  namesZone: boolean;
   onChange: (time: string) => void;
   time: string;
   timeZone: string;
 }) {
   const t = useExtracted();
-  const zone = useOtherZoneName(timeZone);
+  const otherZone = useOtherZoneName(timeZone);
+  const zone = namesZone ? otherZone : null;
   const selectId = useId();
   const zoneId = useId();
 
@@ -95,7 +97,7 @@ export function RemindersScreen({
 }) {
   const t = useExtracted();
   const [view, applyOptimistic] = useOptimistic(reminder, applyChange);
-  const { failed, run } = useOptimisticSave();
+  const { run } = useOptimisticSave();
 
   const change = (next: ReminderChange) =>
     run(
@@ -108,6 +110,8 @@ export function RemindersScreen({
       <div className="flex flex-col gap-3">
         <ListGroup>
           <TimeSetting
+            // Nothing is sent to a guest without the phone app, so no clock needs naming.
+            namesZone={Boolean(view.email.address ?? view.push.phone)}
             onChange={(time) => change({ time })}
             time={view.time}
             timeZone={view.timeZone}
@@ -139,7 +143,7 @@ export function RemindersScreen({
             {t({
               description:
                 "Stands in for the Push notifications row: name them in the same words as that row",
-              message: "To get push notifications, turn them on in the Zoonk app.",
+              message: "To get notifications on your phone, turn them on in the Zoonk phone app.",
             })}
           </PageSectionFooter>
         )}
@@ -151,8 +155,6 @@ export function RemindersScreen({
           {t("Paused while you're away. Studying turns them back on.")}
         </NoticeCard>
       )}
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

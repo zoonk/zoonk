@@ -47,10 +47,10 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
           d={path}
           fill="none"
           strokeLinecap="round"
-          strokeWidth="3"
+          strokeWidth="2"
         />
         {studied.map((point) => (
-          <circle className="fill-success" cx={point.x} cy={point.y} key={point.index} r="4.5" />
+          <circle className="fill-success" cx={point.x} cy={point.y} key={point.index} r="3.5" />
         ))}
       </svg>
 

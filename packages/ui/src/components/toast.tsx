@@ -26,8 +26,13 @@ const TOAST_CLASS =
 const TOAST_VIEWPORT_CLASS =
   "pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-full max-lg:in-[body:has([data-bottom-bar])]:mb-[calc(4rem+env(safe-area-inset-bottom))]";
 
-function showSuccessToast(title: ReactNode) {
-  return toast.add({ title, type: "success" });
+/** `action` is the one thing to do about what just happened, such as Undo. */
+function showSuccessToast(title: ReactNode, action?: { label: ReactNode; onClick: () => void }) {
+  return toast.add({
+    actionProps: action && { children: action.label, onClick: action.onClick },
+    title,
+    type: "success",
+  });
 }
 
 function showErrorToast(title: ReactNode) {

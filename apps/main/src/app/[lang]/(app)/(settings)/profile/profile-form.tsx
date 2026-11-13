@@ -7,10 +7,10 @@ import {
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
 import { ListGroup } from "@zoonk/learn/list";
-import { ChangeSaveError } from "@zoonk/learn/save-error";
+import { NameHint } from "@zoonk/learn/name-hint";
+import { useChangeSaveErrorMessage } from "@zoonk/learn/save-error";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import { Button } from "@zoonk/ui/components/button";
-import { FieldDynamicDescription } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
 import {
   InputGroup,
@@ -19,21 +19,12 @@ import {
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { showErrorToast, showSuccessToast } from "@zoonk/ui/components/toast";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { profileFormAction } from "./actions";
-
-function NameHint({ isTooLong }: { isTooLong: boolean }) {
-  const t = useExtracted();
-
-  if (isTooLong) {
-    return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
-  }
-
-  return t("Your certificates and your buddy use this name.");
-}
 
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {
   const t = useExtracted();
@@ -88,32 +79,6 @@ function SaveButton({ disabled }: { disabled: boolean }) {
   );
 }
 
-function SaveError({ state }: { state: typeof initialState }) {
-  const t = useExtracted();
-
-  if (state.status === "error") {
-    return <ChangeSaveError />;
-  }
-
-  if (state.status === "nameTooLong") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("Use 150 characters or fewer.")}
-      </p>
-    );
-  }
-
-  if (state.status === "usernameTaken") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("{username} is already taken", { username: state.username })}
-      </p>
-    );
-  }
-
-  return null;
-}
-
 type FormStatus = "error" | "idle" | "nameTooLong" | "success" | "usernameTaken";
 
 const initialState = { status: "idle" as FormStatus, username: "" };
@@ -129,12 +94,31 @@ export function ProfileForm({
   const nameHintId = useId();
   const usernameHintId = useId();
 
+  const saveError = useChangeSaveErrorMessage();
+
+  /** A save's answer goes in a toast, so Save and the rows under it stay where they are. */
+  const tellResult = (result: typeof initialState) => {
+    if (result.status === "success") {
+      showSuccessToast(t("Saved."));
+    } else if (result.status === "usernameTaken") {
+      showErrorToast(t("{username} is already taken", { username: result.username }));
+    } else if (result.status === "nameTooLong") {
+      showErrorToast(t("Use 150 characters or fewer."));
+    } else if (result.status === "error") {
+      showErrorToast(saveError);
+    }
+  };
+
   const [state, formAction] = useActionState(
-    (previous: typeof initialState, formData: FormData) =>
-      profileFormAction(previous, formData).catch(() => ({
+    async (previous: typeof initialState, formData: FormData) => {
+      const result = await profileFormAction(previous, formData).catch(() => ({
         ...previous,
         status: "error" as const,
-      })),
+      }));
+
+      tellResult(result);
+      return result;
+    },
     initialState,
   );
 
@@ -202,9 +186,7 @@ export function ProfileForm({
         </SettingRow>
       </ListGroup>
 
-      <div className="flex flex-col items-end gap-2 border-t pt-3">
-        <FieldDynamicDescription successMessage={state.status === "success" ? t("Saved.") : null} />
-        <SaveError state={state} />
+      <div className="flex justify-end border-t pt-3">
         <SaveButton disabled={!canSave} />
       </div>
     </form>

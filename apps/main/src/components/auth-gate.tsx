@@ -46,7 +46,7 @@ export async function AuthGate({
           <EmptyTitle>
             <Heading>{t("Create an account to use this page")}</Heading>
           </EmptyTitle>
-          <EmptyDescription>{t("Your plan and progress come with you.")}</EmptyDescription>
+          <EmptyDescription>{t("You keep your plan and progress.")}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <PendingLink
@@ -81,9 +81,11 @@ export async function AuthGate({
           >
             {t("Log in")}
           </PendingLink>
-          <Link className={buttonVariants({ variant: "outline" })} href="/start">
-            {ended ? t("Start something new") : t("Start free")}
-          </Link>
+          {!ended && (
+            <Link className={buttonVariants({ variant: "outline" })} href="/start">
+              {t("Start free")}
+            </Link>
+          )}
         </div>
       </EmptyContent>
     </Empty>

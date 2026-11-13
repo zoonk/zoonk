@@ -5,18 +5,19 @@ import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
 import { Input } from "@zoonk/ui/components/input";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { NameHint } from "../_components/name-hint";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
 
 /** Resolves false when it didn't save. The profile name is the one every certificate shows. */
 export type SaveCertificateName = (name: string) => Promise<boolean>;
@@ -37,7 +38,7 @@ function useNameSave({
   save: SaveCertificateName;
 }) {
   const [name, setName] = useState(current ?? "");
-  const [failed, setFailed] = useState(false);
+  const saveError = useChangeSaveErrorMessage();
   const [pending, startTransition] = useTransition();
   const { isTooLong, valid } = checkName({ current, name });
   const canSave = !pending && valid;
@@ -51,25 +52,16 @@ function useNameSave({
 
     startTransition(async () => {
       const { data: saved } = await safeAsync(() => save(check.trimmed));
-      setFailed(!saved);
 
       if (saved) {
         onSaved?.(check.trimmed);
+      } else {
+        showErrorToast(saveError);
       }
     });
   };
 
-  return { canSave, failed, isTooLong, name, pending, setName, submit };
-}
-
-function NameHint({ isTooLong }: { isTooLong: boolean }) {
-  const t = useExtracted();
-
-  if (isTooLong) {
-    return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
-  }
-
-  return t("Your certificates and your buddy use this name.");
+  return { canSave, isTooLong, name, pending, setName, submit };
 }
 
 /** In place on the award moment and on the page, while there's no name to print or a change to make. */
@@ -89,7 +81,7 @@ export function CertificateNameField({
   const t = useExtracted();
   const id = useId();
 
-  const { canSave, failed, isTooLong, name, pending, setName, submit } = useNameSave({
+  const { canSave, isTooLong, name, pending, setName, submit } = useNameSave({
     current,
     onSaved,
     save,
@@ -144,8 +136,6 @@ export function CertificateNameField({
       <p className="text-muted-foreground text-xs leading-snug" id={`${id}-hint`}>
         <NameHint isTooLong={isTooLong} />
       </p>
-
-      {failed && <ChangeSaveError />}
     </form>
   );
 }
@@ -163,7 +153,7 @@ function NameDialogForm({
   const t = useExtracted();
   const id = useId();
 
-  const { canSave, failed, isTooLong, name, pending, setName, submit } = useNameSave({
+  const { canSave, isTooLong, name, pending, setName, submit } = useNameSave({
     current,
     onSaved: onClose,
     save,
@@ -181,7 +171,7 @@ function NameDialogForm({
         {t("Name on your certificates")}
       </label>
       <Input
-        aria-describedby={isTooLong ? `${id}-error` : undefined}
+        aria-describedby={`${id}-hint`}
         aria-invalid={isTooLong}
         autoComplete="name"
         id={`${id}-name`}
@@ -191,13 +181,10 @@ function NameDialogForm({
         value={name}
       />
 
-      {isTooLong && (
-        <p className="text-destructive-text text-sm" id={`${id}-error`}>
-          {t("Use 150 characters or fewer.")}
-        </p>
-      )}
-
-      {failed && <ChangeSaveError />}
+      {/* The line is always there, so the buttons don't move when the name is too long. */}
+      <p className="text-muted-foreground -mt-2 text-sm" id={`${id}-hint`}>
+        <NameHint isTooLong={isTooLong} />
+      </p>
 
       <DialogFooter>
         <Button onClick={onClose} size="lg" type="button" variant="outline">
@@ -236,9 +223,6 @@ export function CertificateNameDialog({
       <DialogContent closeLabel={t("Close")}>
         <DialogHeader>
           <DialogTitle>{t("Name on your certificates")}</DialogTitle>
-          <DialogDescription>
-            {t("Your certificates and your buddy use this name.")}
-          </DialogDescription>
         </DialogHeader>
 
         <NameDialogForm current={current} onClose={() => onOpenChange(false)} save={save} />

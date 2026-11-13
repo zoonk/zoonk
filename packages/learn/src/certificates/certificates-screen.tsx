@@ -31,7 +31,7 @@ import { GoalCountryName, GoalMark } from "../shell/goal-mark";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
   useCertificateDate,
-  useCertificateName,
+  useCertificateRowName,
   useCertificateSentence,
 } from "./certificate-labels";
 import { CertificatesPlusNotice, LockedCertificateSheet } from "./certificate-lock";
@@ -58,10 +58,10 @@ const UP_NEXT_ID = "certificates-up-next";
 
 /** A locked one opens its owner's locked page, by its code: the same row, marked for Plus. */
 function CertificateItem({ facts, links }: ListedCertificate) {
-  const certificateName = useCertificateName();
-  const t = useExtracted();
+  const rowName = useCertificateRowName();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
+  const { level, name } = rowName(facts);
 
   return (
     <LearnLink
@@ -85,13 +85,12 @@ function CertificateItem({ facts, links }: ListedCertificate) {
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="group-hover:decoration-input text-sm leading-snug font-[550] tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
-          {certificateName(facts)}
+          {name}
           {!links && <PlusMark className="ml-2 align-middle" />}
         </span>
-        <span className="text-muted-foreground text-xs leading-snug">
-          {t("Certificate of completion")}
-          {" · "}
-          <span className="font-mono tabular-nums">{date.short(facts.completedOn)}</span>
+        <span className="text-muted-foreground text-xs leading-snug tabular-nums">
+          {level && `${level} · `}
+          {date.short(facts.completedOn)}
         </span>
       </span>
 
@@ -183,14 +182,14 @@ function EmptyCertificates({
   const t = useExtracted();
 
   return (
-    <div className="flex max-w-xl flex-col gap-10">
+    <div className="flex max-w-104 flex-col gap-10">
       <div className="flex flex-col items-start">
         <GhostCertificate />
         <h2 className="mt-6 text-base font-semibold tracking-[-0.01em]">
           {t("No certificates yet")}
         </h2>
         <LearnLink
-          className={buttonVariants({ className: "mt-5", size: "lg" })}
+          className={buttonVariants({ className: "mt-3", size: "lg" })}
           href={continueHref}
         >
           {t("Continue learning")}
@@ -200,7 +199,7 @@ function EmptyCertificates({
       {upNext.length > 0 && (
         <PageSection aria-labelledby={UP_NEXT_ID}>
           <PageSectionHeader>
-            <PageSectionTitle id={UP_NEXT_ID}>{t("Up next")}</PageSectionTitle>
+            <PageSectionTitle id={UP_NEXT_ID}>{t("Your next certificate")}</PageSectionTitle>
           </PageSectionHeader>
           <ul className={LIST_GROUP_CLASS}>
             {upNext.map((item) => (

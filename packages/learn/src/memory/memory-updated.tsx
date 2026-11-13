@@ -24,7 +24,7 @@ type MemoryChangeSummary = Pick<MemoryChange, "action"> & {
   previous: MemoryFactSummary | null;
 };
 
-function toMemoryChangeReferences(changes: MemoryChangeSummary[]): MemoryChangeReference[] {
+export function toMemoryChangeReferences(changes: MemoryChangeSummary[]): MemoryChangeReference[] {
   return changes.map((change) => ({
     factId: change.fact?.id ?? null,
     previousFactId: change.previous?.id ?? null,

@@ -25,8 +25,6 @@ import { getBestDayName, getBestTimeName } from "../patterns/pattern-summary";
 import { ScoreChart } from "../score/score-chart";
 import { OVERVIEW_CHART_MEDIA } from "./overview-chart-media";
 
-const PERCENT = 100;
-
 export async function ScoreTrend({
   history,
 }: {
@@ -59,36 +57,19 @@ export async function ScoreTrend({
   );
 }
 
-function PatternsRow({
-  label,
-  score,
-  value,
-}: {
-  label: string;
-  score?: string | null;
-  value: string;
-}) {
+function PatternsRow({ label, value }: { label: string; value: string }) {
   return (
     <ListRow>
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{label}</ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing className="gap-3">
-          <span className="text-foreground font-sans text-sm first-letter:uppercase">{value}</span>
-          {score && <span>{score}</span>}
+        <ListRowTrailing className="text-foreground font-sans text-sm first-letter:uppercase">
+          {value}
         </ListRowTrailing>
       </ListRowBody>
     </ListRow>
   );
-}
-
-async function getBestScore(verdict: { best?: { score: number }; kind: string }) {
-  const format = await getFormatter();
-
-  return verdict.kind === "best" && verdict.best
-    ? format.number(verdict.best.score / PERCENT, { maximumFractionDigits: 0, style: "percent" })
-    : null;
 }
 
 export async function PatternsOverview({ patterns }: { patterns: ScorePatternsData | null }) {
@@ -96,8 +77,6 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
 
   const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
   const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
-  const dayScore = patterns ? await getBestScore(patterns.dayVerdict) : null;
-  const timeScore = patterns ? await getBestScore(patterns.timeVerdict) : null;
 
   return (
     <PageSection aria-labelledby="overview-patterns">
@@ -119,8 +98,8 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
       </PageSectionHeader>
 
       <ListGroup>
-        <PatternsRow label={t("Best day")} score={dayScore} value={day ?? t("Not yet")} />
-        <PatternsRow label={t("Best time")} score={timeScore} value={time ?? t("Not yet")} />
+        <PatternsRow label={t("Best day")} value={day ?? t("Not yet")} />
+        <PatternsRow label={t("Best time")} value={time ?? t("Not yet")} />
       </ListGroup>
     </PageSection>
   );
@@ -130,9 +109,6 @@ export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsDat
   const t = await getExtracted();
 
   const day = patterns ? await getBestDayName(patterns.dayVerdict) : null;
-  const time = patterns ? await getBestTimeName(patterns.timeVerdict) : null;
-
-  const value = [day, time].filter(Boolean).join(" · ");
 
   return (
     <ListGroup className="md:hidden">
@@ -141,8 +117,8 @@ export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsDat
           <ListRowContent>
             <ListRowTitle>{t("Patterns")}</ListRowTitle>
           </ListRowContent>
-          <ListRowTrailing className="font-sans text-sm first-letter:uppercase">
-            {value || t("Not yet")}
+          <ListRowTrailing className="font-sans">
+            {day ? t("Best on {day}", { day }) : t("Not yet")}
           </ListRowTrailing>
         </ListRowBody>
       </ListRowLink>

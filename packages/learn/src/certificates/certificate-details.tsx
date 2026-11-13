@@ -12,6 +12,7 @@ import {
 } from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
+import { SoftBreaks } from "../_components/soft-breaks";
 import { useLevelName } from "../course/use-level-name";
 import { useCertificateDate, useStudyTime } from "./certificate-labels";
 import { CertificateNameDialog } from "./certificate-name";
@@ -32,7 +33,8 @@ function DetailRow({
       <dd
         className={cn(
           "min-w-0 text-right",
-          mono ? "font-mono text-xs tabular-nums" : "font-medium",
+          // Mono is for codes and links; dates and counts read as the words beside them.
+          mono ? "font-mono text-xs" : "font-medium tabular-nums",
         )}
       >
         {children}
@@ -51,14 +53,14 @@ function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boole
 
   const rows = [
     facts.courseLevel && { label: t("Level"), mono: false, value: levelName(facts.courseLevel) },
-    { label: t("Completed"), mono: true, value: date.short(facts.completedOn) },
+    { label: t("Completed"), mono: false, value: date.short(facts.completedOn) },
     facts.lessonsStudied
-      ? { label: t("Lessons studied"), mono: true, value: format.number(facts.lessonsStudied) }
+      ? { label: t("Lessons studied"), mono: false, value: format.number(facts.lessonsStudied) }
       : null,
     facts.lessonsTestedOut
-      ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
+      ? { label: t("Passed by test"), mono: false, value: format.number(facts.lessonsTestedOut) }
       : null,
-    facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
+    facts.minutes ? { label: t("Study time"), mono: false, value: studyTime(facts.minutes) } : null,
     !locked && { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
   ];
 
@@ -102,7 +104,9 @@ function OwnerLinkRow({ links }: { links: CertificateLinks }) {
 
   return (
     <DetailRow label={t("Link")} mono>
-      <span className="break-all">{shown}</span>
+      <span className="wrap-anywhere">
+        <SoftBreaks>{shown}</SoftBreaks>
+      </span>
       <Button
         className="ml-2 font-sans font-[550]"
         onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}

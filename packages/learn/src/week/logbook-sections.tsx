@@ -127,40 +127,18 @@ export function QuietWeekStep({ range }: { range: string }) {
       <StepHeader>
         <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
         <StepTitle>
-          {recap.ready ? t("A quiet week") : t("Your first summary comes on Sunday")}
+          {recap.ready ? t("A quiet week") : t("Your first weekly summary comes this Sunday")}
         </StepTitle>
-        <StepDetail>
-          {recap.ready ? t("Every week starts fresh.") : t("It shows your week in numbers.")}
-        </StepDetail>
+        {recap.ready && <StepDetail>{t("Every week starts fresh.")}</StepDetail>}
       </StepHeader>
     </StepCard>
   );
-}
-
-function useReason(): string | null {
-  const t = useExtracted();
-  const { recap } = useLogbook();
-  const turnaround = recap.turnaround;
-
-  if (turnaround?.reason === "gold") {
-    return t(
-      "You remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}.",
-      { count: turnaround.rememberedOn.length },
-    );
-  }
-
-  if (turnaround?.reason === "solid") {
-    return t("You kept getting it right on later days.");
-  }
-
-  return null;
 }
 
 export function TurnaroundStep() {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const { recap } = useLogbook();
-  const reason = useReason();
   const turnaround = recap.turnaround;
 
   if (!turnaround) {
@@ -182,7 +160,6 @@ export function TurnaroundStep() {
       </StepHeader>
 
       <TurnaroundChart turnaround={turnaround} />
-      {reason && <p className="text-pretty">{reason}</p>}
     </StepCard>
   );
 }
@@ -233,7 +210,11 @@ export function LearnedStep() {
 
   return (
     <StepCard>
-      <StepTitle>{t("This week")}</StepTitle>
+      <StepHeader>
+        {/* The empty line keeps the title where the other steps' titles are. */}
+        <StepEyebrow aria-hidden="true" className="min-h-4" />
+        <StepTitle>{t("This week")}</StepTitle>
+      </StepHeader>
       <StepRows>
         <LearnedRow
           icon={<LearnedKindMark kind="lesson" />}
@@ -242,7 +223,7 @@ export function LearnedStep() {
         />
         <LearnedRow
           icon={<LearnedKindMark kind="review" />}
-          label={t("Review questions")}
+          label={t("Reviews done")}
           value={reviews}
         />
         <LearnedRow

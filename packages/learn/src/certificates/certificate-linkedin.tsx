@@ -15,6 +15,7 @@ import { type CertificateLinks, formatCertificateCode } from "@zoonk/utils/certi
 import { ArrowUpRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ListGroup, ListRow, ListRowContent } from "../_components/list-group";
+import { SoftBreaks } from "../_components/soft-breaks";
 import { CopyButton } from "./certificate-copy-button";
 import { useCertificateDate, useCertificateName } from "./certificate-labels";
 
@@ -41,7 +42,7 @@ function FieldRow({
         <span
           className={cn("text-sm wrap-anywhere", mono ? "text-compact font-mono" : "font-medium")}
         >
-          {value}
+          {mono ? <SoftBreaks>{value}</SoftBreaks> : value}
         </span>
       </ListRowContent>
       {copy && <CopyButton label={copy} text={value} />}

@@ -68,31 +68,31 @@ function QuestionName({ question }: { question: ProfileQuestion }) {
       return t({
         description: "What the learner likes to watch.",
         id: "aboutYouWatch",
-        message: "Watch",
+        message: "What you watch",
       });
     case "listen":
       return t({
         description: "What the learner likes to listen to.",
         id: "aboutYouListen",
-        message: "Listen",
+        message: "What you listen to",
       });
     case "play":
       return t({
         description: "What the learner likes to play.",
         id: "aboutYouPlay",
-        message: "Play",
+        message: "What you play",
       });
     case "read":
       return t({
         description: "What the learner likes to read.",
         id: "aboutYouRead",
-        message: "Read",
+        message: "What you read",
       });
     case "activities":
       return t({
         description: "What the learner likes to do for fun.",
         id: "aboutYouDo",
-        message: "Do",
+        message: "What you do for fun",
       });
     case "conditions":
       return t({
@@ -185,12 +185,10 @@ function MemoryOffNotice() {
   return (
     <NoticeCard>
       <NoticeCardContent>
-        <NoticeCardDescription>
-          {t("Turn on Memory to use and change every answer.")}
-        </NoticeCardDescription>
+        <NoticeCardDescription>{t("Your day and For fun need Memory.")}</NoticeCardDescription>
         <NoticeCardActions>
           <LearnLink className="text-sm font-medium underline" href="/settings/memory">
-            {t("Memory")}
+            {t("Turn on Memory")}
           </LearnLink>
         </NoticeCardActions>
       </NoticeCardContent>

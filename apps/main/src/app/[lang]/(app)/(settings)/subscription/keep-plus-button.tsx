@@ -3,21 +3,24 @@
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { Button } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { type KeepPlusResult, keepPlusAction } from "./keep-plus-action";
 
 export function KeepPlusButton() {
   const t = useExtracted();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<KeepPlusResult | null>(null);
 
   const keep = () => {
     startTransition(async () => {
       const outcome = await noteAppWrite(keepPlusAction()).catch((): KeepPlusResult => "failed");
-      setResult(outcome);
+
+      if (outcome === "failed") {
+        showErrorToast(t("We couldn't keep Plus. Try again or email hello@zoonk.com."));
+      }
 
       if (outcome === "unavailable") {
         router.refresh();
@@ -41,12 +44,6 @@ export function KeepPlusButton() {
           {t("Keep Plus")}
         </Button>
       </form>
-
-      {result === "failed" && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't keep Plus. Try again or email hello@zoonk.com.")}
-        </p>
-      )}
     </div>
   );
 }

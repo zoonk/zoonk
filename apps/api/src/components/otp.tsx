@@ -1,12 +1,9 @@
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { InputError } from "@zoonk/ui/components/input";
 import {
   InputOTP,
   InputOTPGroup,
   type InputOTPProps,
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 
@@ -18,37 +15,8 @@ export function OTP({ children, className }: React.ComponentProps<"div">) {
   );
 }
 
-export function OTPHeader({ children, className }: React.ComponentProps<"header">) {
-  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
-}
-
-export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
-  return (
-    <h1
-      className={cn(
-        "text-2xl leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-3xl",
-        className,
-      )}
-    >
-      {children}
-    </h1>
-  );
-}
-
-export function OTPDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
-}
-
 export function OTPDescriptionSkeleton() {
   return <Skeleton className="h-5 w-60 max-w-full rounded-md" />;
-}
-
-export function OTPForm({ children, className, ...props }: React.ComponentProps<"form">) {
-  return (
-    <form className={cn("flex w-full flex-col items-center gap-4", className)} {...props}>
-      {children}
-    </form>
-  );
 }
 
 export function OTPActions({ children, className }: React.ComponentProps<"div">) {
@@ -61,7 +29,7 @@ export function OTPLinks({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center justify-center gap-x-1 text-sm",
+        "text-muted-foreground mt-2.5 flex flex-wrap items-center justify-center gap-x-1 text-sm",
         className,
       )}
     >
@@ -79,26 +47,18 @@ function keepDigits(text: string) {
 
 export const OTP_LENGTH = 6;
 
-function OTPGroupSkeleton() {
-  return (
-    <div className="flex gap-2">
-      <Skeleton className="h-13 w-12 rounded-lg" />
-      <Skeleton className="h-13 w-12 rounded-lg" />
-      <Skeleton className="h-13 w-12 rounded-lg" />
-    </div>
-  );
-}
-
 export function OTPFormSkeleton() {
   return (
-    <div aria-hidden="true" className="flex w-full flex-col items-center gap-4">
-      <div className="flex justify-center gap-3">
-        <OTPGroupSkeleton />
-        <OTPGroupSkeleton />
+    <div aria-hidden="true" className="flex w-full flex-col items-center gap-1.5">
+      <div className="flex justify-center gap-2">
+        {Array.from({ length: OTP_LENGTH }, (_, index) => (
+          <Skeleton className="h-13 w-12 rounded-lg" key={index} />
+        ))}
       </div>
 
+      <div className="h-5" />
       <Skeleton className="h-11 w-full rounded-lg" />
-      <Skeleton className="my-3 h-5 w-52 rounded-md" />
+      <Skeleton className="mt-2.5 mb-3 h-5 w-52 rounded-md" />
     </div>
   );
 }
@@ -118,49 +78,10 @@ export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
         <InputOTPSlot index={2} />
-      </InputOTPGroup>
-      <InputOTPGroup>
         <InputOTPSlot index={3} />
         <InputOTPSlot index={4} />
         <InputOTPSlot index={5} />
       </InputOTPGroup>
     </InputOTP>
-  );
-}
-
-export function OTPError({
-  children,
-  hasError,
-  ...props
-}: React.ComponentProps<"div"> & { hasError?: boolean }) {
-  if (!hasError) {
-    return null;
-  }
-
-  return <InputError {...props}>{children}</InputError>;
-}
-
-export function OTPSubmit({
-  children,
-  className,
-  isLoading,
-  disabled,
-  ...props
-}: React.ComponentProps<"button"> & { isLoading?: boolean }) {
-  return (
-    <Button
-      aria-keyshortcuts="Enter"
-      busy={isLoading ?? false}
-      className={cn("w-full font-[560]", className)}
-      disabled={disabled}
-      focusableWhenDisabled
-      size="lg"
-      type="submit"
-      {...FORWARD_ICON}
-      {...props}
-    >
-      {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
   );
 }

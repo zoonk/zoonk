@@ -10,19 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
-import { type BuddyGlasses, type BuddyKind, getBuddyStage } from "@zoonk/utils/buddy";
+import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
   ListGroup,
   ListRow,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
-import { BUDDY_GLASSES, BuddyGlassesWorn, BuddyStageName } from "../buddies/buddy-labels";
+import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
 import { useBuddyName } from "../buddies/use-buddy-name";
 
@@ -105,11 +104,6 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle className="truncate">{name}</ListRowTitle>
-        <ListRowDescription>
-          <BuddyStageName stage={getBuddyStage(look.beltColor)} />
-          {" · "}
-          <BuddyGlassesWorn glasses={buddy.glasses} />
-        </ListRowDescription>
       </ListRowContent>
     </>
   );

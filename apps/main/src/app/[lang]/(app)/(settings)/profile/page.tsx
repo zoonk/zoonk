@@ -1,6 +1,7 @@
 import { SectionPageHeader } from "@/components/learn/section-page";
 import { getSession } from "@zoonk/core/users/session";
 import { ListGroup } from "@zoonk/learn/list";
+import { NameHint } from "@zoonk/learn/name-hint";
 import { Page, PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -80,11 +81,7 @@ async function ProfileSkeleton() {
       <SectionSkeleton label={t("Account")}>
         <div className="flex flex-col">
           <ListGroup>
-            <SettingRow
-              description={t("Your certificates and your buddy use this name.")}
-              label={t("Name")}
-              wide
-            >
+            <SettingRow description={<NameHint />} label={t("Name")} wide>
               <Skeleton className="h-11 w-full rounded-lg" />
             </SettingRow>
             <SettingRow label={t("Username")} wide>

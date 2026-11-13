@@ -6,6 +6,7 @@ import { Suspense } from "react";
 /** The product's name, the same in every language. */
 const BRAND_NAME = "Zoonk";
 
+/** Sits where the public pages' bar draws the Zoonk mark: on its gutter, at its bar's middle. */
 async function BackLink({ appUrl }: { appUrl: string | Promise<string> }) {
   const [t, href] = await Promise.all([getExtracted(), appUrl]);
 
@@ -16,7 +17,7 @@ async function BackLink({ appUrl }: { appUrl: string | Promise<string> }) {
           'The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.',
         message: "Back to Zoonk",
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 edge absolute top-3 left-2 -ms-(--edge-pull) inline-flex min-h-11 items-center gap-0.5 rounded-lg px-2 text-sm font-medium outline-none focus-visible:ring-[3px] sm:top-5 sm:left-5"
+      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 edge absolute top-1.5 left-2 -ms-(--edge-pull) inline-flex min-h-11 items-center gap-0.5 rounded-lg px-2 text-sm font-medium outline-none focus-visible:ring-[3px] sm:top-3.5 sm:left-4 lg:left-6"
       href={href}
     >
       <ChevronLeftIcon aria-hidden="true" className="size-4" />

@@ -7,13 +7,12 @@ import {
   type MemoryFactView,
   type MemoryView,
 } from "@zoonk/core/memory/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { Switch } from "@zoonk/ui/components/switch";
-import { downloadFile } from "@zoonk/utils/download";
+import { showErrorToast, showSuccessToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
-import { DownloadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useOptimistic, useState, useTransition } from "react";
+import { useId, useOptimistic } from "react";
+import { DownloadRow } from "../_components/download-row";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import {
   PageSection,
@@ -21,12 +20,11 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
-import { type MemoryUndoOutcome, MemoryUpdated } from "./memory-updated";
+import { type MemoryUndoOutcome, toMemoryChangeReferences } from "./memory-updated";
 
 export type MemoryActions = {
   deleteFact: (factId: string) => Promise<MemoryChange | null>;
@@ -77,12 +75,13 @@ function MemorySwitch({
   return (
     <ListGroup>
       <SettingRow
-        description={!enabled && t("Nothing is remembered or used while this is off.")}
+        // Always there, so the rows under the switch don't move when it flips.
+        description={t("When off, nothing new is saved and these notes aren't used.")}
         descriptionId={descriptionId}
         label={<span id={labelId}>{t("Use memory")}</span>}
       >
         <Switch
-          aria-describedby={enabled ? undefined : descriptionId}
+          aria-describedby={descriptionId}
           aria-labelledby={labelId}
           checked={enabled}
           onCheckedChange={onChange}
@@ -92,66 +91,46 @@ function MemorySwitch({
   );
 }
 
-function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) {
+/** A removed note is offered back in a toast, so the list only closes the row's gap. */
+function useUndoToast(undo: MemoryActions["undo"]) {
   const t = useExtracted();
-  const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const removed = t("Removed from memory");
+  const undoLabel = t("Undo");
+  const failed = t("Couldn't undo. Try again.");
+  const changed = t("Couldn't undo. It changed since.");
 
-  const download = () => {
-    startTransition(async () => {
-      const { data } = await safeAsync(exportMemory);
-      setFailed(!data);
+  return (change: MemoryChange) =>
+    showSuccessToast(removed, {
+      label: undoLabel,
+      onClick: async () => {
+        const { data: outcome } = await safeAsync(() => undo(toMemoryChangeReferences([change])));
 
-      if (data) {
-        downloadFile(JSON.stringify(data, null, 2), "zoonk-memory.json", "application/json");
-      }
+        if (outcome !== "undone") {
+          showErrorToast(outcome === "conflict" ? changed : failed);
+        }
+      },
     });
-  };
-
-  return (
-    <div className="flex flex-col gap-2">
-      <ListGroup>
-        <SettingRow label={t("Download my memory")}>
-          <form action={() => download()} className="contents">
-            <Button
-              aria-label={t("Download my memory")}
-              busy={isPending}
-              icon={<DownloadIcon aria-hidden="true" />}
-              size="sm"
-              type="submit"
-              variant="outline"
-            >
-              {t("Download")}
-            </Button>
-          </form>
-        </SettingRow>
-      </ListGroup>
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't prepare the download. Try again.")}
-        </p>
-      )}
-    </div>
-  );
 }
 
 function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: MemoryView }) {
   const [facts, editFacts] = useOptimistic(memory.facts, applyFactEdit);
   const [enabled, setOptimisticEnabled] = useOptimistic(memory.enabled);
-  const [lastChange, setLastChange] = useState<MemoryChange | null>(null);
-  const { failed, run } = useOptimisticSave();
+  const { run } = useOptimisticSave();
+  const offerUndo = useUndoToast(actions.undo);
 
   return {
     enabled,
     facts,
-    failed,
-    lastChange,
     removeFact: (factId: string) =>
       run(
         () => editFacts({ id: factId, statement: null }),
         async () => {
           const change = await actions.deleteFact(factId);
-          setLastChange(change);
+
+          if (change) {
+            offerUndo(change);
+          }
+
           return change !== null;
         },
       ),
@@ -176,16 +155,6 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
   return (
     <div className="flex flex-col gap-7" data-slot="memory-screen">
       <MemorySwitch enabled={screen.enabled} onChange={screen.setEnabled} />
-
-      {screen.lastChange && (
-        <MemoryUpdated
-          changes={[screen.lastChange]}
-          key={screen.lastChange.previous?.id}
-          onUndo={actions.undo}
-        />
-      )}
-
-      {screen.failed && <ChangeSaveError />}
 
       {groups.length === 0 && screen.enabled && (
         <p className="text-muted-foreground text-sm">
@@ -216,7 +185,15 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
       ))}
 
       <footer className="flex flex-col gap-4">
-        <MemoryExportRow exportMemory={actions.exportMemory} />
+        {groups.length > 0 && (
+          <ListGroup>
+            <DownloadRow
+              fileName="zoonk-memory.json"
+              label={t("Download my memory")}
+              load={actions.exportMemory}
+            />
+          </ListGroup>
+        )}
         <PageSectionFooter>
           {t(
             "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",

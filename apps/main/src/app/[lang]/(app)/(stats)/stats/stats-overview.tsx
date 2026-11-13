@@ -22,8 +22,9 @@ import { formatMetricPercent, formatWholeNumber } from "@zoonk/utils/number";
 import { ChartNoAxesColumnIncreasingIcon, TargetIcon, ZapIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { StatsCalendarSkeleton } from "../_components/stats-calendar";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
-import { ActivityChart, ActivityChartSkeleton } from "../activity/activity-chart";
+import { ActivityChart } from "../activity/activity-chart";
 import { ScoreChartSkeleton } from "../score/score-chart";
 import { PatternsLinkRow, PatternsOverview, ScoreTrend } from "./overview-details";
 
@@ -178,7 +179,7 @@ export async function StatsOverviewSkeleton() {
   return (
     <div className="flex flex-col gap-8">
       <StatTilesSkeleton className="sm:grid-cols-4" count={4} />
-      <ActivityChartSkeleton />
+      <StatsCalendarSkeleton />
       <div className={DETAILS_CLASS}>
         <PageSection>
           <PageSectionHeader>

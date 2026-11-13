@@ -24,7 +24,7 @@ export async function ManagedSubscription({
     appleDescription: t("You subscribed in the App Store."),
     googleDescription: t("You subscribed in Google Play."),
     provider,
-    zoonkDescription: t("To change or cancel Plus, write to us."),
+    zoonkDescription: t("Zoonk added Plus to your account. To change it, write to us."),
   });
 
   return (
@@ -32,7 +32,7 @@ export async function ManagedSubscription({
       <p className="text-muted-foreground text-sm text-pretty">{description}</p>
 
       <div className="flex flex-wrap gap-2">
-        {action && (
+        {action ? (
           <a
             className={cn(buttonVariants({ size: "sm" }), "w-max")}
             href={action.href}
@@ -41,14 +41,14 @@ export async function ManagedSubscription({
           >
             {actionLabel}
           </a>
+        ) : (
+          <Link
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
+            href="/support"
+          >
+            {t("Write to us")}
+          </Link>
         )}
-
-        <Link
-          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
-          href="/support"
-        >
-          {t("Get help")}
-        </Link>
       </div>
     </div>
   );

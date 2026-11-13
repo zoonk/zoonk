@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
@@ -21,19 +22,25 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<CancelPlusResult | null>(null);
 
   const cancel = () => {
     startTransition(async () => {
       const outcome = await cancelPlusAction().catch((): CancelPlusResult => "failed");
-      setResult(outcome);
 
-      if (outcome !== "failed") {
-        setOpen(false);
+      if (outcome === "failed") {
+        showErrorToast(
+          t("We couldn't cancel Plus. Try again or email {email}.", {
+            email: t("hello@zoonk.com"),
+          }),
+        );
 
-        if (outcome === "unavailable") {
-          router.refresh();
-        }
+        return;
+      }
+
+      setOpen(false);
+
+      if (outcome === "unavailable") {
+        router.refresh();
       }
     });
   };
@@ -52,13 +59,6 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
               : t("You keep Plus until the end of the period you already paid for.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {result === "failed" && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("We couldn't cancel Plus. Try again or email {email}.", {
-              email: t("hello@zoonk.com"),
-            })}
-          </p>
-        )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("Go back")}</AlertDialogCancel>
           <Button busy={pending} onClick={cancel}>

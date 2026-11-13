@@ -50,6 +50,11 @@ export function CertificateVerified() {
   );
 }
 
+/** A date never breaks across two lines. */
+function keepWhole(chunks: React.ReactNode) {
+  return <span className="whitespace-nowrap">{chunks}</span>;
+}
+
 /** A locked certificate (only its owner sees it) isn't issued yet, so it claims neither. */
 export function CertificateIntro({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
   const t = useExtracted();
@@ -62,8 +67,9 @@ export function CertificateIntro({ facts, locked }: { facts: CertificateFacts; l
       <h1 className={cn("text-headline max-w-4xl", !locked && "mt-3.5")}>{sentence(facts)}</h1>
       {!locked && (
         <p className="text-lead mt-2.5">
-          {t("Certificate of completion, issued on {date}.", {
+          {t.rich("Certificate of completion, issued on <whole>{date}</whole>.", {
             date: date.long(facts.completedOn),
+            whole: keepWhole,
           })}
         </p>
       )}

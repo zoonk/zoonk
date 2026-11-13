@@ -1,15 +1,7 @@
 "use client";
 
-import {
-  OTPActions,
-  OTPError,
-  OTPForm as OTPFormContainer,
-  OTPInput,
-  OTPLinks,
-  OTPSubmit,
-  OTP_LENGTH,
-  OTP_LINK_CLASS,
-} from "@/components/otp";
+import { AuthForm, AuthStatus, AuthSubmit } from "@/components/auth-form";
+import { OTPActions, OTPInput, OTPLinks, OTP_LENGTH, OTP_LINK_CLASS } from "@/components/otp";
 import { authClient } from "@zoonk/auth/client";
 import { DISPOSABLE_EMAIL_ERROR_CODE } from "@zoonk/auth/email-signup-contract";
 import { Button } from "@zoonk/ui/components/button";
@@ -100,49 +92,35 @@ function readCode(form: HTMLFormElement): string {
   return parseFormField(new FormData(form), "otp") ?? "";
 }
 
-function OTPErrorMessage({ status }: { status: OTPStatus }) {
+/**
+ * One line holds what the code's check or a new code's request answered, whichever came last: a
+ * check clears the request's answer, and a new code clears the check's.
+ */
+function CodeStatus({ resendStatus, status }: { resendStatus: ResendStatus; status: OTPStatus }) {
   const t = useExtracted();
 
-  const messages: Partial<Record<OTPStatus, string>> = {
-    disposableEmail: t("Temporary email addresses don't work here. Use another email."),
-    error: t("Something went wrong. Try again in a moment."),
-    expired: t("This code expired. Get a new one."),
-    rateLimited: t("Too many tries. Wait a minute, then try again."),
-    tooManyAttempts: t("Too many wrong tries with this code. Get a new one."),
-    wrongCode: t("That code isn't right. Check the email and try again."),
+  const resendMessages: Partial<Record<ResendStatus, string>> = {
+    failed: t("We couldn't send a new code. Try again."),
+    rateLimited: t("Wait a minute, then ask for a new code."),
+    sent: t("We sent you a new code."),
   };
 
-  const message = messages[status];
+  const codeMessages: Partial<Record<OTPStatus, string>> = {
+    disposableEmail: t("Temporary emails don't work. Use another."),
+    error: t("Something went wrong. Try again in a moment."),
+    expired: t("This code expired. Get a new one."),
+    rateLimited: t("Too many tries. Try again in a minute."),
+    tooManyAttempts: t("Too many wrong tries. Get a new code."),
+    wrongCode: t("That code isn't right. Try again."),
+  };
+
+  const resendMessage = resendMessages[resendStatus];
 
   return (
-    <OTPError aria-live="polite" hasError={Boolean(message)}>
-      {message}
-    </OTPError>
+    <AuthStatus tone={resendStatus === "sent" ? "quiet" : "error"}>
+      {resendMessage ?? codeMessages[status]}
+    </AuthStatus>
   );
-}
-
-function ResendMessage({ email, status }: { email: string; status: ResendStatus }) {
-  const t = useExtracted();
-
-  if (status === "sent") {
-    return (
-      <p className="text-muted-foreground text-sm" role="status">
-        {t("We sent a new code to {email}.", { email })}
-      </p>
-    );
-  }
-
-  if (status === "rateLimited" || status === "failed") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {status === "rateLimited"
-          ? t("Wait a minute before asking for another code.")
-          : t("We couldn't send a new code. Try again.")}
-      </p>
-    );
-  }
-
-  return null;
 }
 
 function useResendCode(email: string) {
@@ -156,7 +134,7 @@ function useResendCode(email: string) {
     return sendStatus === "sent";
   };
 
-  return { resend, status };
+  return { clear: () => setStatus("idle"), resend, status };
 }
 
 export function OTPForm({
@@ -217,6 +195,7 @@ export function OTPForm({
     }
 
     isLockedRef.current = true;
+    resendCode.clear();
     setStatus("pending");
 
     const answer = await checkCode({ form, otp });
@@ -241,7 +220,7 @@ export function OTPForm({
   };
 
   return (
-    <OTPFormContainer onSubmit={handleSubmit} ref={formRef}>
+    <AuthForm className="items-center" onSubmit={handleSubmit} ref={formRef}>
       <OTPInput
         aria-label={t("Code from the email")}
         autoFocus
@@ -249,8 +228,7 @@ export function OTPForm({
         key={codeRound}
         onComplete={() => formRef.current?.requestSubmit()}
       />
-      <OTPErrorMessage status={status} />
-      <ResendMessage email={email} status={resendCode.status} />
+      <CodeStatus resendStatus={resendCode.status} status={status} />
 
       <OTPActions>
         {isCodeGone ? (
@@ -258,7 +236,7 @@ export function OTPForm({
           <Button
             autoFocus
             busy={resendCode.status === "sending"}
-            className="w-full font-[560]"
+            className="w-full"
             icon={<SendIcon aria-hidden="true" />}
             onClick={sendNewCode}
             size="lg"
@@ -267,7 +245,7 @@ export function OTPForm({
             {t("Send a new code")}
           </Button>
         ) : (
-          <OTPSubmit isLoading={isChecking}>{t("Continue")}</OTPSubmit>
+          <AuthSubmit isLoading={isChecking}>{t("Continue")}</AuthSubmit>
         )}
       </OTPActions>
 
@@ -290,6 +268,6 @@ export function OTPForm({
 
         <ChangeEmailLink href={loginHref}>{t("Change email")}</ChangeEmailLink>
       </OTPLinks>
-    </OTPFormContainer>
+    </AuthForm>
   );
 }

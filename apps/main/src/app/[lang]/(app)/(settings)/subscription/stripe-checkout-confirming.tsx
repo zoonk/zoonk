@@ -48,24 +48,24 @@ function ConfirmationAttempt({ restart }: { restart: () => void }) {
           <PageSubtitle>
             {waiting
               ? t("This takes a few seconds.")
-              : t("If you paid, Plus will show up here soon.")}
+              : t("Plus will show up here once your payment is confirmed.")}
           </PageSubtitle>
         </PageHeaderContent>
       </PageHeader>
 
-      {waiting ? (
-        <span
-          aria-label={t("Turning on Plus")}
-          className="text-muted-foreground flex"
-          role="status"
-        >
-          <Spinner aria-hidden="true" className="size-5" role="presentation" />
-        </span>
-      ) : (
-        <Button className="self-start" onClick={restart} size="sm" variant="outline">
-          {t("Check again")}
-        </Button>
-      )}
+      {/* One row's height for both, so the slow state moves nothing. */}
+      <div className="flex min-h-7.5 items-center">
+        {waiting ? (
+          <span className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
+            <Spinner aria-hidden="true" className="size-4" role="presentation" />
+            {t("Confirming your payment…")}
+          </span>
+        ) : (
+          <Button onClick={restart} size="sm" variant="outline">
+            {t("Check again")}
+          </Button>
+        )}
+      </div>
     </Page>
   );
 }

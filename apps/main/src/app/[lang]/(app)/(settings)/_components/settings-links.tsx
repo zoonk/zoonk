@@ -80,11 +80,7 @@ function SettingsGroup({ items }: { items: SettingsPage[] }) {
             <ListRowContent>
               <ListRowTitle>{item.label}</ListRowTitle>
             </ListRowContent>
-            {item.trail !== null && item.trail !== undefined && (
-              <ListRowTrailing className={typeof item.trail === "number" ? undefined : "font-sans"}>
-                {item.trail}
-              </ListRowTrailing>
-            )}
+            {item.trail && <ListRowTrailing className="font-sans">{item.trail}</ListRowTrailing>}
           </ListRowBody>
         </ListRowLink>
       ))}
@@ -125,26 +121,18 @@ function useRemindersSummary(reminders: HubReminders | null | undefined): string
       });
 }
 
+/** Only Reminders shows a value: its time is the one setting worth reading without opening it. */
 export function SettingsHubLists({
-  memoryCount,
-  preferencesSummary,
   reminders,
   ...shown
-}: SettingsPagesShown & {
-  memoryCount?: number;
-  preferencesSummary?: React.ReactNode;
-  reminders?: HubReminders | null;
-}) {
+}: SettingsPagesShown & { reminders?: HubReminders | null }) {
   const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: false });
   const remindersSummary = useRemindersSummary(reminders);
+  const remindersUrl = getMenu("reminders").url;
 
-  const trails = new Map<string, React.ReactNode>([
-    [getMenu("appearance").url, preferencesSummary],
-    [getMenu("reminders").url, remindersSummary],
-    [getMenu("memory").url, memoryCount],
-  ]);
-
-  const summaries = yours.map((item) => ({ ...item, trail: trails.get(item.url) }));
+  const summaries = yours.map((item) =>
+    item.url === remindersUrl ? { ...item, trail: remindersSummary } : item,
+  );
 
   return (
     <nav aria-label={label} className="flex flex-col gap-6">

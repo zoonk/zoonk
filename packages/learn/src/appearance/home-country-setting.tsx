@@ -29,7 +29,7 @@ export function HomeCountrySetting({
 
   return (
     <SettingRow
-      description={t("For your examples and new goals.")}
+      description={t("So examples and exams match your country.")}
       descriptionId={descriptionId}
       label={<span id={labelId}>{title}</span>}
     >
