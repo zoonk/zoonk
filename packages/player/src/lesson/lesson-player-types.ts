@@ -38,7 +38,6 @@ export type LessonRunRefusal =
   | { reason: "failed" }
   | { period: "day" | "month" | "total"; reason: "limitReached"; tier: LessonPlayerTier }
   | { reason: "notFound" }
-  | { reason: "plusRequired" }
   | { reason: "slowDown"; retryAfterSeconds: number }
   | { reason: "unauthorized" };
 

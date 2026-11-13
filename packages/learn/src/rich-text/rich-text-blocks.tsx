@@ -49,13 +49,16 @@ function RichTableBlock({ block }: { block: Extract<RichBlock, { kind: "table" }
   const words = useMathWords();
 
   return (
-    <RichTable
-      align={block.align}
-      header={block.header}
-      label={block.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
-      renderCell={(cell) => <RichInlineSegments segments={cell} />}
-      rows={block.rows}
-    />
+    // Padding, not margin: in the lesson's block flow a margin would collapse into the paragraph's.
+    <div className="min-w-0 py-1.5">
+      <RichTable
+        align={block.align}
+        header={block.header}
+        label={block.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
+        renderCell={(cell) => <RichInlineSegments segments={cell} />}
+        rows={block.rows}
+      />
+    </div>
   );
 }
 

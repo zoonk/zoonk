@@ -542,7 +542,6 @@ msgid "Start the lesson"
 msgstr "Lektion starten"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Diese Lektion starten"
@@ -843,6 +842,7 @@ msgstr "Etwas ist schiefgelaufen. Versuch es bitte noch einmal."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -954,9 +954,9 @@ msgid "No answer was saved."
 msgstr "Es wurde keine Antwort gespeichert."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Hier findest du deine Fragen aus der Zeit, bevor wir deine Kurse überarbeitet haben. Die Lektionen haben sich geändert, aber du kannst deine Fragen hier noch einmal lesen."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr ""
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2870,26 +2870,21 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Wir öffnen deine Lektion"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr ""
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, one {# Idee wiederholen} other {# Ideen wiederholen}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Über diese Lektion"
-
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "Das kannst du stattdessen machen"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "Bereit für deine Wartezeit"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, one {# Idee wiederholen} other {# Ideen wiederholen}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
@@ -2897,24 +2892,29 @@ msgid "Your lesson is ready"
 msgstr "Deine Lektion ist bereit"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Deine Lektion ist bereit. Leg los, wann du möchtest."
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Das dauert normalerweise ein paar Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Diese Lektion ist noch nicht erstellt"
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr ""
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk erstellt sie, wenn du startest. Das dauert ein paar Minuten."
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr ""
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr ""
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"

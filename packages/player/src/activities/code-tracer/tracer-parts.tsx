@@ -92,12 +92,12 @@ export function TracerControls({
         {label}
       </p>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         <Button
           aria-label={t("Step back")}
           disabled={!canGoBack}
           onClick={onBack}
-          size="icon-lg"
+          size="icon"
           variant="outline"
         >
           <StepBack aria-hidden="true" />
@@ -106,7 +106,7 @@ export function TracerControls({
           aria-label={t("Step forward")}
           disabled={!canGoForward}
           onClick={onForward}
-          size="icon-lg"
+          size="icon"
           variant="outline"
         >
           <StepForward aria-hidden="true" />

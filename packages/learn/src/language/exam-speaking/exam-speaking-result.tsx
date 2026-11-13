@@ -55,9 +55,11 @@ function CriterionName({
   return (
     <span className="flex min-w-0 flex-col">
       <span className="font-medium">{gloss(criterion)}</span>
-      <span className="text-muted-foreground text-xs" lang={language}>
-        {criterion.name}
-      </span>
+      {criterion.name.toLowerCase() !== gloss(criterion).toLowerCase() && (
+        <span className="text-muted-foreground text-xs" lang={language}>
+          {criterion.name}
+        </span>
+      )}
     </span>
   );
 }
@@ -83,10 +85,7 @@ function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedbackView }):
 
   return [
     !feedback.heard && t("You typed your replies, so this estimate leaves out how you sound."),
-    feedback.brief &&
-      t(
-        "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate.",
-      ),
+    feedback.brief && t("You said little, so this estimate is rough."),
   ].filter((note) => typeof note === "string");
 }
 
@@ -105,7 +104,7 @@ function CriterionEstimate({
   const { standing } = graded.grade;
 
   return (
-    <span className="flex shrink-0 flex-col items-end gap-1">
+    <span className="flex shrink-0 flex-col items-end">
       <span className="font-mono font-medium whitespace-nowrap tabular-nums">
         {estimateText(graded.grade.estimate)}
       </span>
@@ -114,7 +113,7 @@ function CriterionEstimate({
       >
         {standingText(standing, level)}
       </span>
-      {focus && <span className={CHIP_CLASS}>{t("Focus")}</span>}
+      {focus && <span className={cn(CHIP_CLASS, "mt-1")}>{t("Focus")}</span>}
     </span>
   );
 }
@@ -132,7 +131,6 @@ function CriteriaStep({
   const title = useExamTaskTitle();
   const levelLine = useLevelLine({ examTask });
   const notes = useEvidenceNotes({ feedback });
-  const aboutSound = feedback.heard && examTask.criteria.some((criterion) => criterion.sound);
 
   return (
     <>
@@ -163,13 +161,7 @@ function CriteriaStep({
         </ResultRows>
       </StepCard>
 
-      <EstimateNote>
-        {aboutSound
-          ? t(
-              "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.",
-            )
-          : t("An estimate from one practice task, not an official score.")}
-      </EstimateNote>
+      <EstimateNote>{t("An estimate, not an official score.")}</EstimateNote>
     </>
   );
 }
@@ -203,7 +195,6 @@ function NoGradeStep() {
   return (
     <StepCard>
       <StepTitle>{t("This task has no estimate")}</StepTitle>
-      <StepDetail>{t("Try the task again when you're ready.")}</StepDetail>
     </StepCard>
   );
 }
@@ -266,9 +257,7 @@ export function ExamSpeakingResult({
       exitHref={exitHref}
       finalAction={
         nextTaskHref ? (
-          <TaskMainLink href={nextTaskHref}>
-            {t("Go to task {number}", { number: String(examTask.number + 1) })}
-          </TaskMainLink>
+          <TaskMainLink href={nextTaskHref}>{t("Next task")}</TaskMainLink>
         ) : (
           <TaskMainLink href={nextHref}>{t("Continue")}</TaskMainLink>
         )
@@ -281,7 +270,7 @@ export function ExamSpeakingResult({
               kind="examSpeaking"
               onTryAgain={onTryAgain}
             >
-              {t("Try this task with a new card")}
+              {t("Try again")}
             </TryCallAgain>
           )}
           {graded.length > 0 && (
