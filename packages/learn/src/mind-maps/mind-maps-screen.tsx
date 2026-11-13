@@ -1,7 +1,6 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
-import { Button } from "@zoonk/ui/components/button";
 import {
   DetailActions,
   DetailHero,
