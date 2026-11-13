@@ -2106,9 +2106,9 @@ msgstr "どの回答もスコアに同じように反映されるため、難し
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "OkGBmK"
-msgid "Right answers · 90 days"
-msgstr "正解・90日間"
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "スコア · 90日間"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "h8AhL5"

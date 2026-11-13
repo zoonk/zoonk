@@ -36,7 +36,7 @@ export async function ScoreTrend({
   return (
     <PageSection aria-labelledby="overview-score">
       <PageSectionHeader>
-        <PageSectionTitle id="overview-score">{t("Right answers · 90 days")}</PageSectionTitle>
+        <PageSectionTitle id="overview-score">{t("Score · 90 days")}</PageSectionTitle>
         {history && (
           <PageSectionDetail>
             {formatMetricPercent({ format, value: history.score })}

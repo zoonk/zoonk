@@ -2106,9 +2106,9 @@ msgstr "모든 답을 똑같이 반영해서 어려운 레슨을 풀면 점수�
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "OkGBmK"
-msgid "Right answers · 90 days"
-msgstr "정답 · 90일"
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "점수 · 90일"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "h8AhL5"

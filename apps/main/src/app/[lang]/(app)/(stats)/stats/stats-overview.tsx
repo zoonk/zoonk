@@ -57,7 +57,9 @@ function TileLink<Href extends string>({
 }
 
 async function BeltTile({ level }: { level: BeltLevelDetails }) {
+  const t = await getExtracted();
   const belt = await getBeltLabel({ color: level.color });
+  const label = t("Level");
 
   return (
     <StatTile
@@ -68,8 +70,9 @@ async function BeltTile({ level }: { level: BeltLevelDetails }) {
           <BeltIndicator aria-hidden color={level.color} label={belt} size="sm" />
         </span>
       }
-      label={belt}
-      value={<TileLink href={getMenu("level").url} label={belt} value={String(level.level)} />}
+      detail={belt}
+      label={label}
+      value={<TileLink href={getMenu("level").url} label={label} value={String(level.level)} />}
     />
   );
 }
@@ -124,7 +127,7 @@ async function StudyDaysTile({
 async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
   const t = await getExtracted();
   const format = await getFormatter();
-  const label = t("Right answers");
+  const label = t("Score");
   const { score } = progress;
   const value = score ? formatMetricPercent({ format, value: score.score }) : "–";
 
@@ -188,7 +191,7 @@ export async function StatsOverviewSkeleton() {
       <div className={DETAILS_CLASS}>
         <PageSection>
           <PageSectionHeader>
-            <PageSectionTitle>{t("Right answers · 90 days")}</PageSectionTitle>
+            <PageSectionTitle>{t("Score · 90 days")}</PageSectionTitle>
           </PageSectionHeader>
           <ScoreChartSkeleton />
         </PageSection>

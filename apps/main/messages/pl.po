@@ -2106,9 +2106,9 @@ msgstr "Każda odpowiedź liczy się tak samo, więc trudniejsze lekcje mogą na
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "OkGBmK"
-msgid "Right answers · 90 days"
-msgstr "Poprawne odpowiedzi · 90 dni"
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "Wynik · 90 dni"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "h8AhL5"

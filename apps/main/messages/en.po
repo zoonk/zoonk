@@ -2106,9 +2106,9 @@ msgstr "Every answer counts the same, so harder lessons can lower your score for
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "OkGBmK"
-msgid "Right answers · 90 days"
-msgstr "Right answers · 90 days"
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "Score · 90 days"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "h8AhL5"

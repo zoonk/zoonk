@@ -2106,9 +2106,9 @@ msgstr "Her cevap aynı ağırlıkta sayılır, bu yüzden daha zor dersler puan
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "OkGBmK"
-msgid "Right answers · 90 days"
-msgstr "Doğru cevaplar · 90 gün"
+msgctxt "emqpoS"
+msgid "Score · 90 days"
+msgstr "Puan · 90 gün"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "h8AhL5"
