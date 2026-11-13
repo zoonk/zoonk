@@ -11,6 +11,7 @@ type PlotPadding = { bottom: number; left: number; right: number; top: number };
 type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScale };
 
 const FALLBACK_WIDTH = 318;
+const HALF_PIXEL = 0.5;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: 44, right: 12, top: 12 };
 const LABEL_GAP = 6;
 const X_LABEL_OFFSET = 18;
@@ -112,7 +113,7 @@ export function ActivityPlotAxisX({
   format: (value: number) => string;
   ticks: readonly number[];
 }) {
-  const { x, y } = usePlotScales();
+  const { width, x, y } = usePlotScales();
   const [bottom] = y.range;
 
   return (
@@ -121,7 +122,7 @@ export function ActivityPlotAxisX({
         <text
           className="fill-muted-foreground"
           key={tick}
-          textAnchor="middle"
+          textAnchor={x.toPixel(tick) >= width - HALF_PIXEL ? "end" : "middle"}
           x={x.toPixel(tick)}
           y={bottom + X_LABEL_OFFSET}
         >

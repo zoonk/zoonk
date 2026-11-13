@@ -246,7 +246,7 @@ function PatternExamples({ fields, pattern }: { fields: Fields; pattern: string 
   const tested = results.status === "tested" ? results : null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-5">
       {results.status === "invalid" && (
         <p className="text-destructive-text text-sm" role="status">
           {t(

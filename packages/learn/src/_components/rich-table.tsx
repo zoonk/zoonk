@@ -52,7 +52,7 @@ export function RichTable<TCell>({
     >
       <div
         aria-label={label}
-        className="scroll-fade-x overflow-x-auto outline-none"
+        className="scroll-fade-x overflow-x-auto pb-0.5 outline-none"
         role="region"
         // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
         tabIndex={0}

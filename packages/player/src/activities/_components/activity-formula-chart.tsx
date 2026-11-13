@@ -110,7 +110,7 @@ export function ActivityFormulaChart({
   yDomain: NumericDomain;
 }) {
   return (
-    <ActivityPlot height={PLOT_HEIGHT} xDomain={xDomain} yDomain={yDomain}>
+    <ActivityPlot height={PLOT_HEIGHT} padding={{ right: 0 }} xDomain={xDomain} yDomain={yDomain}>
       <ActivityPlotGridY format={formatTick} ticks={niceTicks(yDomain, 3)} />
       <ActivityPlotAxisX format={formatX} ticks={[xDomain[0], xDomain[1]]} />
 
