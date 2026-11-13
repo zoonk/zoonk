@@ -3,6 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useCapLine } from "../../_components/help-limit-notice";
 import { SubscribeGate } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
@@ -17,17 +18,14 @@ export function isPlusGoalLimit(reason: GoalLimitReason): boolean {
 export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
+  const monthLine = useCapLine({ period: "month", tier: "free" });
 
   if (!isPlusGoalLimit(reason)) {
     return null;
   }
 
   if (reason !== "activeGoals") {
-    return (
-      <SubscribeGate title={t("No more new goals this month")}>
-        {t("More next month, or subscribe to keep going.")}
-      </SubscribeGate>
-    );
+    return <SubscribeGate title={t("No more new goals this month")}>{monthLine}</SubscribeGate>;
   }
 
   return (

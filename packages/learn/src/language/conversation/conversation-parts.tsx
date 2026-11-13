@@ -8,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 
-/** A call's 32px mark: the character, the microphone, the phone. */
 export const CALL_MARK_CLASS =
   "grid size-8 shrink-0 place-items-center rounded-full [&>svg]:size-4";
 

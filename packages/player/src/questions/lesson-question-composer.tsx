@@ -59,7 +59,6 @@ const FRAME_CLASS = cn(TUTOR_COMPOSER_FRAME_CLASS, "items-end rounded-xl! border
 
 const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
 
-/** Only how far it grows differs: a page gives it more room than a rail or a sheet. */
 const TEXTAREA_MAX_CLASS: Record<ComposerVariant, string> = {
   compact: "max-h-[min(8rem,25dvh)]",
   page: "max-h-40",

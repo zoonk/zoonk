@@ -1,7 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { LESSON_BODY_CLASS } from "./lesson-step-text";
 
-/** One numbered line of a reading screen: a worked example's step, a summary's idea. */
 export function NumberedLine({
   children,
   className,

@@ -5,7 +5,7 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterLink } from "../../_components/enter-button";
-import { type CallLimit, useCallLimitLine } from "../../_components/help-limit-notice";
+import { type CallLimit, useCapLine } from "../../_components/help-limit-notice";
 import { SubscribeMainAction } from "../../_components/subscribe-gate";
 import { TaskActions } from "../../_components/task-layout";
 import { useLearnRoutes } from "../../learn-context";
@@ -68,7 +68,7 @@ function CallLimitScreen({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const line = useCallLimitLine(limit);
+  const line = useCapLine(limit);
 
   return (
     <TaskFrame

@@ -7,7 +7,6 @@ type Place = (action: React.ReactNode) => void;
 const PlaceContext = createContext<Place | null>(null);
 const PlacedContext = createContext<React.ReactNode>(null);
 
-/** Around a question and the bar it is answered from. */
 export function MainActionSlotProvider({ children }: { children: React.ReactNode }) {
   const [placed, setPlaced] = useState<React.ReactNode>(null);
 

@@ -1,12 +1,10 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { CreateAccountLink } from "./create-account-link";
 import { GateWords, SubscribeAction } from "./subscribe-gate";
 
 type SignUpRequired = { status: "signUpRequired" };
@@ -58,8 +56,6 @@ function LimitNoticeBody({
   routes,
   words,
 }: LimitNoticeProps & { limit: HelpLimit; words: LimitWords }) {
-  const t = useExtracted();
-
   if (limit.status === "slowDown" || (limit.status === "limitReached" && limit.tier === "plus")) {
     return (
       <div className={className}>
@@ -73,13 +69,7 @@ function LimitNoticeBody({
       <GateWords {...words} />
 
       {needsAccount(limit) ? (
-        <PendingLink
-          className={buttonVariants({ size: "sm", variant: "outline" })}
-          href={routes.signUp}
-          icon={<UserPlusIcon aria-hidden="true" />}
-        >
-          {t("Create a free account")}
-        </PendingLink>
+        <CreateAccountLink href={routes.signUp} />
       ) : (
         <SubscribeAction href={routes.upgrade} link={LinkComponent} />
       )}
@@ -155,49 +145,48 @@ export function useHelpLimitWords(limit: HelpLimit, kind?: HelpKind): LimitWords
     : refusal(limit);
 }
 
-/** A free learner's month of lessons is the plan's one allowance, so its title says so. */
-export function useLessonLimitWords(limit: LessonLimit): LimitWords {
-  const t = useExtracted();
+type CapTitles = { day: string; guest: string; month: string };
+
+/** Every cap reads the same way: a guest's title alone, otherwise the title and when it comes back. */
+function useCapWords() {
   const refusal = useRefusalWords();
   const comesBack = useComesBackLine();
 
-  if (limit.status !== "limitReached") {
-    return refusal(limit);
-  }
+  return (limit: LessonLimit, titles: CapTitles): LimitWords => {
+    if (limit.status !== "limitReached") {
+      return refusal(limit);
+    }
 
-  if (limit.tier === "guest") {
-    return { title: t("No more lessons without an account") };
-  }
+    if (limit.tier === "guest") {
+      return { title: titles.guest };
+    }
 
-  if (limit.tier === "free" && isMonthly(limit)) {
-    return { line: comesBack(limit), title: t("You've used this month's free lessons") };
-  }
-
-  return {
-    line: comesBack(limit),
-    title: isMonthly(limit) ? t("No more new lessons this month") : t("No more new lessons today"),
+    return { line: comesBack(limit), title: isMonthly(limit) ? titles.month : titles.day };
   };
+}
+
+/** A free learner's month of lessons is the plan's one allowance, so its title says so. */
+export function useLessonLimitWords(limit: LessonLimit): LimitWords {
+  const t = useExtracted();
+  const capWords = useCapWords();
+  const free = limit.status === "limitReached" && limit.tier === "free";
+
+  return capWords(limit, {
+    day: t("No more new lessons today"),
+    guest: t("No more lessons without an account"),
+    month: free ? t("You've used this month's free lessons") : t("No more new lessons this month"),
+  });
 }
 
 function useMindMapLimitWords(limit: MindMapLimit): LimitWords {
   const t = useExtracted();
-  const refusal = useRefusalWords();
-  const comesBack = useComesBackLine();
+  const capWords = useCapWords();
 
-  if (limit.status !== "limitReached") {
-    return refusal(limit);
-  }
-
-  if (limit.tier === "guest") {
-    return { title: t("No more mind maps without an account") };
-  }
-
-  return {
-    line: comesBack(limit),
-    title: isMonthly(limit)
-      ? t("No more new mind maps this month")
-      : t("No more new mind maps today"),
-  };
+  return capWords(limit, {
+    day: t("No more new mind maps today"),
+    guest: t("No more mind maps without an account"),
+    month: t("No more new mind maps this month"),
+  });
 }
 
 function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
@@ -214,21 +203,13 @@ function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
 
 function useOutlineLimitWords(limit: OutlineLimit): LimitWords {
   const t = useExtracted();
-  const refusal = useRefusalWords();
-  const comesBack = useComesBackLine();
+  const capWords = useCapWords();
 
-  if (limit.status !== "limitReached") {
-    return refusal(limit);
-  }
-
-  if (limit.tier === "guest") {
-    return { title: t("No more previews without an account") };
-  }
-
-  return {
-    line: comesBack(limit),
-    title: isMonthly(limit) ? t("No more previews this month") : t("No more previews today"),
-  };
+  return capWords(limit, {
+    day: t("No more previews today"),
+    guest: t("No more previews without an account"),
+    month: t("No more previews this month"),
+  });
 }
 
 export function HelpLimitNotice({
@@ -257,8 +238,8 @@ export function OutlineLimitNotice({
   return <LimitNoticeBody {...props} limit={limit} words={useOutlineLimitWords(limit)} />;
 }
 
-/** When a learner's calls come back, for a screen that draws its own way on. */
-export function useCallLimitLine(limit: CallLimit): string | undefined {
+/** When a used-up cap comes back, for a screen or gate that draws its own way on. */
+export function useCapLine(limit: CallLimit): string | undefined {
   const comesBack = useComesBackLine();
   return comesBack({ period: limit.period, status: "limitReached", tier: limit.tier });
 }
