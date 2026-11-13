@@ -10,8 +10,9 @@ export type AdminActionState = { error: string | null; submissionId: number };
  * form after the action, so `onRejected` returns what the failed state keeps, such as what was typed.
  * Next rejects with the action's `redirect()` too, so that passes on.
  *
- * A failure is said in a toast, so nothing on the page moves to make room for it. A form with
- * fields that says it beside its own button asks for `"inline"`.
+ * A failure is said in a toast, so nothing on the page moves to make room for it. A form that
+ * keeps room for it beside its own button asks for `"inline"`; a dialog does, since a toast sits
+ * under a dialog's backdrop.
  */
 export function useAdminActionState<State extends AdminActionState>({
   action,
@@ -30,7 +31,7 @@ export function useAdminActionState<State extends AdminActionState>({
 
       return {
         ...onRejected(previous, formData),
-        error: "Something went wrong. Try again, or reload the page if it keeps happening.",
+        error: "Something went wrong. Try again or reload the page.",
         submissionId: previous.submissionId + 1,
       };
     });

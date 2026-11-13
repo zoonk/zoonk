@@ -15,8 +15,8 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useState } from "react";
 
 /**
- * A Server Action that throws when it fails, or one that answers `{ error }` to say why. No error
- * closes the dialog; an error leaves it open under a toast that says why.
+ * A Server Action that throws when it fails, or one that answers `{ error }` to say why in the
+ * dialog. No error closes it.
  */
 type AdminConfirmAction =
   | ((formData: FormData) => Promise<void>)
@@ -87,7 +87,7 @@ function ConfirmForm({
   destructive = false,
   onConfirmed,
 }: ConfirmFormProps & { onConfirmed: () => void }) {
-  const [, formAction] = useAdminActionState<AdminActionState>({
+  const [state, formAction] = useAdminActionState<AdminActionState>({
     action: async (previous, formData) => {
       const result = await action(formData);
       const error = typeof result === "object" ? result.error : null;
@@ -99,21 +99,34 @@ function ConfirmForm({
       return { error, submissionId: previous.submissionId + 1 };
     },
     initialState: { error: null, submissionId: 0 },
+    report: "inline",
   });
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
       {children}
-      <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <SubmitButton
-          className="w-auto"
-          disabled={confirmDisabled}
-          variant={destructive ? "destructive" : "default"}
+
+      <div className="-mt-3 flex flex-col gap-2">
+        {/* Always a line tall, so the dialog doesn't grow when the action fails. */}
+        <p
+          aria-live="polite"
+          className="text-destructive-text min-h-4 text-xs"
+          key={state.submissionId}
         >
-          {confirmLabel}
-        </SubmitButton>
-      </AlertDialogFooter>
+          {state.error}
+        </p>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <SubmitButton
+            className="w-auto"
+            disabled={confirmDisabled}
+            variant={destructive ? "destructive" : "default"}
+          >
+            {confirmLabel}
+          </SubmitButton>
+        </AlertDialogFooter>
+      </div>
     </form>
   );
 }
