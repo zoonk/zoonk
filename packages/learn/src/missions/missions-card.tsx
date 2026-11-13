@@ -1,19 +1,16 @@
 "use client";
 
 import { countDoneMissions, isFullMeal } from "@zoonk/core/sessions/missions";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { TargetIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
-import { useId } from "react";
+import { useExtracted } from "next-intl";
+import { useId, useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
-import { FactSegments } from "../_components/task-meta";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { useFormatDuration } from "../_utils/time-format";
 import { BuddyArt } from "../buddies/buddy-art";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { type DayStep } from "../session/session-types";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
@@ -23,38 +20,22 @@ import { MissionTrack } from "./mission-track";
 
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
 
-function MissionsStatus({
-  missions,
-  points,
-}: {
-  missions: readonly MissionView[];
-  points: number;
-}) {
+function MissionsStatus({ missions }: { missions: readonly MissionView[] }) {
   const t = useExtracted();
-  const format = useFormatter();
-  const formatDuration = useFormatDuration();
-  const left = missions.filter((mission) => mission.status !== "done");
-  const minutes = left.reduce((sum, mission) => sum + (mission.minutes ?? 0), 0);
+  const done = countDoneMissions(missions);
 
-  if (left.length === 0) {
-    return t("You earned +{points} Brain Power.", { points: format.number(points) });
+  if (done === missions.length) {
+    return null;
   }
 
-  const count =
-    left.length === missions.length
-      ? t("{count, plural, one {# mission} other {# missions}}", { count: left.length })
-      : t("{count, plural, one {# left} other {# left}}", { count: left.length });
-
-  return <FactSegments facts={minutes > 0 ? [count, `~${formatDuration(minutes)}`] : [count]} />;
+  return t("{done} of {total} done", { done: String(done), total: String(missions.length) });
 }
 
 function MissionRow({
-  block,
   buddy,
   links,
   mission,
 }: {
-  block?: DayStep;
   buddy: LearnBuddy | null;
   links: MissionLinks;
   mission: MissionView;
@@ -67,8 +48,8 @@ function MissionRow({
 
   return (
     <MissionListRow
-      detail={done ? null : <MissionStepLine block={block} mission={mission} />}
-      mark={<MissionMark block={block} buddy={buddy} done={done} kind={mission.kind} />}
+      detail={done ? null : <MissionStepLine mission={mission} />}
+      mark={<MissionMark buddy={buddy} done={done} kind={mission.kind} />}
       muted={done || Boolean(mission.waitReason)}
       name={missionName(mission)}
       stateLabel={stateLabel({
@@ -79,52 +60,79 @@ function MissionRow({
         waitReason: mission.waitReason,
       })}
       target={target}
-      trailing={!done && <MissionRowEnd mission={mission} />}
     />
   );
 }
 
-function MissionRowEnd({ mission }: { mission: MissionView }) {
-  if (mission.opens?.kind !== "block" || mission.waitReason) {
-    return null;
+type RowsFold = { listId: string; onToggle: () => void; open: boolean };
+
+function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
+  const t = useExtracted();
+  const title = won ? t("Missions done") : t("Today's missions");
+
+  if (!fold) {
+    return title;
   }
 
-  return <TargetIcon aria-hidden="true" className="text-brain size-3.5" />;
+  return (
+    <button
+      aria-controls={fold.listId}
+      aria-expanded={fold.open}
+      className="hit-area focus-visible:ring-ring/50 relative rounded-sm text-left outline-none focus-visible:ring-[3px]"
+      onClick={fold.onToggle}
+      type="button"
+    >
+      {title}
+      <FoldChevron className="text-muted-foreground ms-1 inline-block align-[-3px]" inline />
+    </button>
+  );
 }
 
+/** The title keeps its own line, so it stays whole beside the buddy in a side column. */
 function MissionsHeading({
+  fold,
   missions,
-  points,
+  reward,
   titleId,
   won,
 }: {
+  fold: RowsFold | null;
   missions: readonly MissionView[];
-  points: number;
+  reward: React.ReactNode;
   titleId: string;
   won: boolean;
 }) {
-  const t = useExtracted();
-
   return (
-    <div className="flex flex-col gap-0.5">
-      <h2 className="text-sm leading-snug font-semibold wrap-break-word" id={titleId}>
-        {won ? t("Missions done") : t("Today's missions")}
+    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <h2 className="text-sm leading-snug font-semibold text-balance wrap-break-word" id={titleId}>
+        <MissionsTitle fold={fold} won={won} />
       </h2>
-      <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums">
-        <MissionsStatus missions={missions} points={points} />
+      <div className={cn(TITLE_ROW_CLASS, "gap-y-0.5")}>
+        <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums empty:hidden">
+          <MissionsStatus missions={missions} />
+        </p>
+        {reward}
+      </div>
+      {isFullMeal(missions) && (
         <span className="sr-only">
-          {", "}
-          <ProgressCount done={countDoneMissions(missions)} total={missions.length} />
+          <ProgressCount done={missions.length} total={missions.length} />
         </span>
-      </p>
+      )}
     </div>
   );
 }
 
+/**
+ * The buddy and the rows' marks share one 24px column, so the title starts where the rows' names
+ * do. The header's slot is as tall as the title's line and the line under it, so the buddy centers
+ * on those two lines however many more a long title takes.
+ */
+const MARK_COLUMN_CLASS = "[&_[data-slot=list-row-leading]]:w-6";
+
 function MissionsLine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Surface
-      className={cn(TITLE_ROW_CLASS, "min-h-14 gap-y-1 px-4 py-2.5 text-sm", className)}
+      className={cn(TITLE_ROW_CLASS, "min-h-14 gap-y-1 p-4 text-sm", className)}
       data-slot="missions-card"
     >
       {children}
@@ -132,45 +140,42 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
   );
 }
 
+/**
+ * One list with one look wherever it shows: every mission is a row, named by what to do, and the
+ * reward says what doing them all earns. Today folds the rows behind the title (`foldRows`),
+ * since most of them are already rows of the day's list right above the card.
+ */
 export function MissionsCard({
-  blockOf,
   brainPower,
   buddy,
   className,
   showBuddy = true,
   collapseWhenDone = false,
+  foldRows = false,
   links,
-  rowsInQueue = false,
   today,
 }: {
-  blockOf?: (mission: MissionView) => DayStep | undefined;
   brainPower: number | null;
   buddy: LearnBuddy | null;
   className?: string;
   collapseWhenDone?: boolean;
+  foldRows?: boolean;
   links: MissionLinks;
-  rowsInQueue?: boolean;
   showBuddy?: boolean;
   today: MissionsDay | null;
 }) {
   const t = useExtracted();
   const missionName = useMissionName(buddy);
   const titleId = useId();
+  const listId = useId();
+  const [unfolded, setUnfolded] = useState(false);
+  const open = !foldRows || unfolded;
 
-  if (!today) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        {t("Today's missions start with today's session.")}
-      </p>
-    );
-  }
-
-  const { missions } = today;
-
-  if (missions.length === 0) {
+  if (!today || today.missions.length === 0) {
     return null;
   }
 
+  const { missions } = today;
   const points = today.fullMeal.bonus;
   const allDone = isFullMeal(missions);
   const won = allDone && today.fullMeal.earned;
@@ -195,33 +200,35 @@ export function MissionsCard({
       aria-labelledby={titleId}
       className={cn(
         SURFACE_CLASS,
-        "flex flex-col px-4 pt-3.5 pb-1",
-        rowsInQueue && "max-[72rem]:pb-3.5",
+        "flex flex-col px-4 pt-4",
+        open ? "pb-1.25" : "pb-4",
+        showBuddy && MARK_COLUMN_CLASS,
         className,
       )}
       data-slot="missions-card"
     >
-      <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-1")}>
-        {/* Centers on the title and its count, whatever the reward beside them takes. */}
-        <div className="flex items-center gap-2.5 *:last:min-w-0">
-          {showBuddy && <BuddyArt buddy={buddy} className="size-6" view="face" />}
-          <MissionsHeading missions={missions} points={points} titleId={titleId} won={won} />
-        </div>
-        <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
+      <div className="flex items-start gap-3">
+        {showBuddy && (
+          <span className="flex h-10 w-6 shrink-0 items-center justify-center">
+            <BuddyArt buddy={buddy} className="size-6" view="face" />
+          </span>
+        )}
+        <MissionsHeading
+          fold={foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null}
+          missions={missions}
+          reward={<BrainPowerReward brainPower={brainPower} earned={won} points={points} />}
+          titleId={titleId}
+          won={won}
+        />
       </div>
 
       <MissionTrack className="mt-3.5" missions={missions} />
 
-      <ListGroup className={cn("mt-1.5", rowsInQueue && "max-[72rem]:hidden")}>
+      <ListGroup className="mt-1.5" hidden={!open} id={listId}>
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>
-              <MissionRow
-                block={blockOf?.(mission)}
-                buddy={buddy}
-                links={links}
-                mission={mission}
-              />
+              <MissionRow buddy={buddy} links={links} mission={mission} />
             </li>
           ))}
         </ul>

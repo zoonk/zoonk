@@ -8,7 +8,6 @@ import { KindDot } from "../_components/kind-tile";
 import {
   ListRowBody,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
@@ -17,12 +16,13 @@ import {
 import { PlusMark } from "../_components/plus-lock";
 import { LearnLink } from "../learn-link";
 
+/** The buddy's offer card names what a mock exam can be; the rows that open the chooser don't. */
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
   const t = useExtracted();
 
   return bySubject
-    ? t("Whenever you want: a full exam day, half a day or one subject")
-    : t("Whenever you want: a full exam day or half a day");
+    ? t("The full exam, half of it or one subject")
+    : t("The full exam or half of it");
 }
 
 export function MockEntryRow({
@@ -33,10 +33,6 @@ export function MockEntryRow({
   view: MockOptionsView;
 }) {
   const t = useExtracted();
-
-  const description = useMockEntryDescription({
-    bySubject: view.options.some((option) => option.kind === "area"),
-  });
 
   if (!view.running && view.options.length === 0) {
     return null;
@@ -50,7 +46,6 @@ export function MockEntryRow({
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{t("Continue your mock exam")}</ListRowTitle>
-          <ListRowDescription>{t("It's where you left it")}</ListRowDescription>
         </ListRowContent>
       </ListRowLink>
     );
@@ -64,7 +59,6 @@ export function MockEntryRow({
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
-          <ListRowDescription>{description}</ListRowDescription>
         </ListRowContent>
         {view.access === "plusRequired" && (
           <ListRowTrailing>

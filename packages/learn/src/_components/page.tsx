@@ -1,4 +1,4 @@
-import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-top";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export { PageTitle } from "@zoonk/ui/components/page-top";

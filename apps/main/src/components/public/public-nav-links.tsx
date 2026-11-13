@@ -18,15 +18,21 @@ export async function PricingBarLink({ className }: { className?: string }) {
   );
 }
 
-/** So visitors and crawlers reach both from every public page. */
-export async function PublicNavLinks() {
+export async function CoursesBarLink({ className }: { className?: string }) {
   const t = await getExtracted();
 
   return (
+    <Link className={cn(NAV_LINK_CLASS, className)} href="/courses">
+      {t("Courses")}
+    </Link>
+  );
+}
+
+/** So visitors and crawlers reach both from every public page. */
+export function PublicNavLinks() {
+  return (
     <>
-      <Link className={cn(NAV_LINK_CLASS, "hidden sm:inline-flex")} href="/courses">
-        {t("Courses")}
-      </Link>
+      <CoursesBarLink className="hidden sm:inline-flex" />
       <PricingBarLink />
     </>
   );
