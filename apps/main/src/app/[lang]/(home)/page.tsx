@@ -34,15 +34,15 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: getLocalizedAlternates({ href: "/", language }),
     description: t({
       description:
-        "The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”",
+        "The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano de estudos para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”",
       message:
-        "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know. Start free, no account needed.",
+        "Tell Zoonk your goal and the date. It builds a study plan for each day that fits your time and starts from what you already know. Start free, no account needed.",
     }),
     title: {
       absolute: t({
         description:
-          "The landing's title. In Brazilian Portuguese: “Zoonk: um plano para cada dia até o seu objetivo”.",
-        message: "Zoonk: A plan for each day, all the way to your goal",
+          "The landing's title. In Brazilian Portuguese: “Zoonk: um plano de estudos para cada dia até o seu objetivo”.",
+        message: "Zoonk: A study plan for each day, all the way to your goal",
       }),
     },
   };

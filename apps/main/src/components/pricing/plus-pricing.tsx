@@ -26,10 +26,11 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 
   return {
     description: t(
-      "Start free with {goals, plural, one {one goal} other {up to # goals}}. Zoonk Plus adds every goal and every lesson, your whole exam plan with mock exams, and your AI study buddy whenever you need it.",
-      { goals: getFreePlanLimits().activeGoals ?? 0 },
+      "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime.",
+      { lessons: getFreePlanLimits().lessonsPerMonth ?? 0 },
     ),
-    title: t("Zoonk pricing: free and Plus"),
+    // Absolute: the name is already in it.
+    title: { absolute: t("Zoonk pricing: free and Plus plans") },
   };
 }
 

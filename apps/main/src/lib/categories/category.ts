@@ -37,10 +37,15 @@ export async function getCategoryMeta(params: { category: CourseCategory }) {
 
   return {
     description: t(
-      "{category} courses in short lessons, with a plan for each day that starts from what you already know. Start free.",
+      "Online {category} courses with short interactive lessons and a study plan for each day that starts from what you already know. Start free.",
       { category: label },
     ),
-    title: t("{category} courses", { category: label }),
+    title: t({
+      description:
+        "A search result's title for the courses of one category. {category} is its name, such as “Science” or “Languages”.",
+      message: "{category} courses online",
+      values: { category: label },
+    }),
   };
 }
 

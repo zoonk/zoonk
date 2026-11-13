@@ -8,7 +8,8 @@ import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {
   alternates: { canonical: "./" },
-  description: "What we're building at Zoonk, and why: a study plan for each day, from any goal.",
+  description:
+    "Product news and release notes from Zoonk, the app that builds you a study plan for each day, from any goal.",
   metadataBase: new URL(BLOG_URL),
   title: { default: "Zoonk Blog", template: "%s | Zoonk Blog" },
 };

@@ -58,18 +58,28 @@ async function getLibraryCourseMetadata({
     alternates: { canonical: getCourseUrl({ ...params, language: course.language }), languages },
     description: course.description
       ? t(
-          "{description} Learn it in short lessons, with a plan for each day that starts from what you already know. Start free.",
+          "{description} An online course in short lessons, with a study plan for each day that starts from what you already know. Start free.",
           { description: course.description },
         )
       : t(
-          "Learn {course} in short lessons, with a plan for each day that starts from what you already know. Start free.",
+          "Learn {course} online in short lessons, with a study plan for each day that starts from what you already know. Start free.",
           { course: course.title },
         ),
     robots: { follow: true, index: route.isListed && contentLocale === locale },
     title:
       course.format === "exam"
-        ? t("Prepare for {course}", { course: course.title })
-        : t("Learn {course}", { course: course.title }),
+        ? t({
+            description:
+              "A search result's title for an exam's page. {course} is the exam's name, such as “SAT” or “ENEM”. Use the words people in your country type when they look for help studying for an exam.",
+            message: "{course} prep: study plan and lessons",
+            values: { course: course.title },
+          })
+        : t({
+            description:
+              "A search result's title for a course's page. {course} is the course's name. Use the words people in your country type when they look for a course on the internet.",
+            message: "Learn {course}: online course",
+            values: { course: course.title },
+          }),
   };
 }
 

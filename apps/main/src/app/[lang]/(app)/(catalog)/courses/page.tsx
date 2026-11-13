@@ -14,10 +14,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     alternates: { canonical: getLocalizedUrl({ href: "/courses", language }) },
     description: t(
-      "Pick a course and get a plan for each day that fits your time and starts from what you already know. Short lessons in science, math, languages, exams and more. Start free.",
+      "Online courses to learn with AI: science, math, languages, exam prep and more. Pick one and get a study plan for each day, in short interactive lessons. Start free.",
     ),
     robots: { follow: true, index: true },
-    title: t("Explore courses"),
+    title: t({
+      description: "A search result's title for the list of every course.",
+      message: "Online courses with a study plan for each day",
+    }),
   };
 }
 
