@@ -1,10 +1,9 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, SparklesIcon } from "lucide-react";
+import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { useFreeWeekOverCopy } from "../_components/free-week-over";
 import {
   Suggestion,
   SuggestionAction,
@@ -12,20 +11,16 @@ import {
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
-  SuggestionLinkAction,
-  SuggestionOpen,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { CourseCompleteSuggestion } from "../journey/course-certificate";
 import { GoalPausedSuggestion } from "../journey/goal-actions";
 import { StudyNextSuggestion } from "../journey/study-next";
-import { useLearnRoutes } from "../learn-context";
 import { usePlanScreen } from "./plan-context";
 import { usePlanCoverage, useTimeEnough } from "./plan-coverage";
 import { CoverageSuggestion } from "./plan-coverage-suggestion";
 import { ExamChoiceSuggestion } from "./plan-exam-choices";
 import { FitLessonsSuggestion } from "./plan-fit-suggestion";
-import { usePaceFixText } from "./plan-notice";
 import { PastDateSuggestion } from "./plan-past-date-suggestion";
 import {
   PlanSuggestionContext,
@@ -52,7 +47,7 @@ function useTimeItems(): SlotItem[] {
   const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const timeEnough = useTimeEnough();
-  const open = !plan.access.freeWeekOver && plan.status?.kind !== "pastDate";
+  const open = plan.status?.kind !== "pastDate";
 
   return [
     open && plan.fitOffer !== null && { key: "fitLessons", kind: "fitLessons" as const },
@@ -62,7 +57,6 @@ function useTimeItems(): SlotItem[] {
 
 function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   const { plan } = usePlanScreen();
-  const fix = usePaceFixText();
   const timeItems = useTimeItems();
   const status = plan.status?.kind;
   const finished = host.next !== null;
@@ -81,11 +75,8 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
     },
     ...(finished ? timeItems : []),
     finished && { key: "finished", kind: "finished" },
-    status === "needsAdjusting" &&
-      fix !== null && { key: "tooTight", kind: "tooTight", text: fix.text },
-    status === "behind" && fix !== null && { key: "behind", kind: "behind", text: fix.text },
+    status === "needsAdjusting" && { key: "doesNotFit", kind: "doesNotFit" },
     ...(finished ? [] : timeItems),
-    plan.access.freeWeekOver && { key: "freeWeekOver", kind: "freeWeekOver" },
   ];
 
   return items.filter((item) => item !== false);
@@ -128,9 +119,9 @@ export function PlanSuggestionProvider({
     return () => clearTimeout(timer);
   }, [result]);
 
-  const move = (step: -1 | 1) => {
+  const showNext = () => {
     setPreview();
-    setPosition((index + step + items.length) % items.length);
+    setPosition((index + 1) % items.length);
   };
 
   return (
@@ -144,12 +135,12 @@ export function PlanSuggestionProvider({
         host,
         index,
         items,
-        move,
         preview,
         requestPreview,
         result,
         setPreview,
         setResult,
+        showNext,
       }}
     >
       {children}
@@ -157,65 +148,25 @@ export function PlanSuggestionProvider({
   );
 }
 
-function PaceSuggestion({ item }: { item: Extract<SlotItem, { kind: "behind" | "tooTight" }> }) {
+function DoesNotFitSuggestion() {
   const t = useExtracted();
-  const routes = useLearnRoutes();
   const { host } = usePlanSuggestionSlot();
-
-  const title =
-    item.kind === "tooTight" ? t("Your plan no longer fits") : t("A little to catch up");
+  const title = t("More lessons than days left");
 
   return (
     <Suggestion label={title} mark={<CalendarClockIcon />}>
       <SuggestionLine>
-        <SuggestionSummary>{item.text}</SuggestionSummary>
-        {item.kind === "tooTight" ? (
-          <SuggestionAction onClick={host.onAdjust} variant="outline">
-            {t("Adjust")}
-          </SuggestionAction>
-        ) : (
-          <SuggestionOpen />
-        )}
-      </SuggestionLine>
-
-      <SlotContent>
-        <SuggestionHeader>{title}</SuggestionHeader>
-        {item.kind === "tooTight" ? (
-          <SuggestionActions>
-            <SuggestionAction onClick={host.onAdjust}>{t("Adjust plan")}</SuggestionAction>
-          </SuggestionActions>
-        ) : (
-          <>
-            <SuggestionDescription>{item.text}</SuggestionDescription>
-            <SuggestionActions>
-              <SuggestionLinkAction href={routes.today}>{t("Go to Today")}</SuggestionLinkAction>
-            </SuggestionActions>
-          </>
-        )}
-      </SlotContent>
-    </Suggestion>
-  );
-}
-
-function FreeWeekSuggestion() {
-  const t = useExtracted();
-  const routes = useLearnRoutes();
-  const { body, title } = useFreeWeekOverCopy();
-
-  return (
-    <Suggestion label={title} mark={<SparklesIcon />}>
-      <SuggestionLine>
         <SuggestionSummary>{title}</SuggestionSummary>
-        <SuggestionLinkAction href={routes.upgrade} variant="outline">
-          {t("See Plus")}
-        </SuggestionLinkAction>
+        <SuggestionAction onClick={host.onAdjust} variant="outline">
+          {t("Adjust")}
+        </SuggestionAction>
       </SuggestionLine>
 
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>{body}</SuggestionDescription>
+        <SuggestionDescription>{t("Add time a day or pick a later date.")}</SuggestionDescription>
         <SuggestionActions>
-          <SuggestionLinkAction href={routes.upgrade}>{t("See Plus")}</SuggestionLinkAction>
+          <SuggestionAction onClick={host.onAdjust}>{t("Adjust plan")}</SuggestionAction>
         </SuggestionActions>
       </SlotContent>
     </Suggestion>
@@ -228,9 +179,8 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
   const { host } = usePlanSuggestionSlot();
 
   switch (item.kind) {
-    case "behind":
-    case "tooTight":
-      return <PaceSuggestion item={item} />;
+    case "doesNotFit":
+      return <DoesNotFitSuggestion />;
     case "choice":
       return <ExamChoiceSuggestion item={item} />;
     case "courseComplete":
@@ -256,8 +206,6 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
       );
     case "fitLessons":
       return <FitLessonsSuggestion item={item} />;
-    case "freeWeekOver":
-      return <FreeWeekSuggestion />;
     case "paused":
       return (
         host.goalStatus && (

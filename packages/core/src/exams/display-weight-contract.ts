@@ -8,5 +8,5 @@ export const displayWeightSchema = z
   })
   .nullable()
   .describe(
-    "Normalized display weight among every notice subject, including written subjects not yet taught. Missing stated shares use the average stated subject. All whole percentages sum to 100; assumed weights must be identified as estimates. Null for plan modules or a notice with no positive weight. Original share and planner weights are unchanged.",
+    "Normalized display weight among every notice subject, including written subjects not yet taught. Missing stated shares use the average stated subject. All whole percentages sum to 100; an assumed weight is an estimate, not a number the notice states. Null for plan modules or a notice with no positive weight. Original share and planner weights are unchanged.",
   );

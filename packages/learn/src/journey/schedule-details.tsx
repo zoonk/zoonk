@@ -1,7 +1,8 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
@@ -9,13 +10,15 @@ import { SectionLabel } from "../_components/section-label";
 import { DoneMark } from "../_components/status-mark";
 import { isoDateToUtc } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
+import { useLearnRoutes } from "../learn-context";
+import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
-import { usePaceFixText } from "../plan/plan-notice";
+import { usePlanStateLine } from "../plan/plan-notice";
 import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
 
 type PlanDay = PlanView["week"]["days"][number];
 
-const WEEK_TITLE_ID = "pace-week-title";
+const WEEK_TITLE_ID = "schedule-week-title";
 
 function isDone(item: PlanDay["items"][number]): boolean {
   return item.status === "done" || item.status === "testedOut";
@@ -92,7 +95,7 @@ function PlanWeek() {
         )}
       </div>
 
-      <ol className="grid grid-cols-7 gap-1">
+      <ol className="flex justify-between">
         {days.map((day) => {
           const date = isoDateToUtc(day.date);
 
@@ -121,53 +124,40 @@ function PlanWeek() {
   );
 }
 
-export function usePaceNumber({ paused, status }: { paused: boolean; status: PlanStatus }) {
+export function useScheduleNumber({ paused, status }: { paused: boolean; status: PlanStatus }) {
   const t = useExtracted();
   const statusText = usePlanStatusText();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
-
-  if (status.kind === "finished") {
-    return { detail: null, label: t("Pace"), value: t("Finished") };
-  }
+  const label = t("Schedule");
+  const timeADay = t("{time} a day", { time: formatDuration(plan.schedule.dailyMinutes) });
 
   if (status.kind === "pastDate") {
     return {
       detail: t("{count, plural, one {# lesson left} other {# lessons left}}", {
         count: status.lessons,
       }),
-      label: t("Pace"),
-      value: t("Past date"),
+      label,
+      value: statusText(status),
     };
   }
 
-  if (status.kind === "challengesLeft") {
-    return { detail: statusText(status), label: t("Pace"), value: t("Challenges") };
+  if (status.kind === "finished" || status.kind === "challengesLeft") {
+    return { detail: null, label, value: statusText(status) };
   }
 
   if (paused) {
-    return { detail: t("Nothing is planned"), label: t("Pace"), value: t("Paused") };
+    return { detail: null, label, value: t("Paused") };
   }
 
-  switch (status.kind) {
-    case "ahead":
-      return { detail: statusText(status), label: t("Pace"), value: t("Ahead") };
-    case "behind":
-      return { detail: statusText(status), label: t("Pace"), value: t("Behind") };
-    case "needsAdjusting":
-      return { detail: statusText(status), label: t("Pace"), value: t("Too tight") };
-    case "onTrack":
-      return {
-        detail: t("{time} a day", { time: formatDuration(plan.schedule.dailyMinutes) }),
-        label: t("Pace"),
-        value: t("On pace"),
-      };
-    default:
-      return status satisfies never;
-  }
+  return {
+    detail: status.kind === "needsAdjusting" ? null : timeADay,
+    label,
+    value: statusText(status),
+  };
 }
 
-export function PaceDetails({
+export function ScheduleDetails({
   logbookHref,
   onAdjust,
   paused = false,
@@ -179,8 +169,9 @@ export function PaceDetails({
   status: PlanStatus;
 }) {
   const t = useExtracted();
+  const routes = useLearnRoutes();
   const statusText = usePlanStatusText();
-  const planFix = usePaceFixText();
+  const stateLine = usePlanStateLine();
 
   const resting =
     paused &&
@@ -188,7 +179,7 @@ export function PaceDetails({
     status.kind !== "pastDate" &&
     status.kind !== "challengesLeft";
 
-  const fix = resting ? null : planFix;
+  const line = resting ? null : stateLine;
 
   return (
     <div className="flex flex-col gap-7">
@@ -199,11 +190,19 @@ export function PaceDetails({
             {t("Nothing is planned until you resume it.")}
           </p>
         )}
-        {fix && <p className="text-muted-foreground text-sm">{fix.text}</p>}
-        {fix?.adjust && (
+        {line && <p className="text-muted-foreground text-sm">{line.text}</p>}
+        {line?.adjust && (
           <Button className="mt-1 self-start" onClick={onAdjust} size="sm" variant="outline">
             {t("Adjust plan")}
           </Button>
+        )}
+        {line?.today && (
+          <LearnLink
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }), "mt-1 self-start")}
+            href={routes.today}
+          >
+            {t("Go to Today")}
+          </LearnLink>
         )}
       </div>
 

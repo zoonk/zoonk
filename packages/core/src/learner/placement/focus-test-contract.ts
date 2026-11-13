@@ -2,7 +2,7 @@ import { z } from "zod";
 import { planChangeSchema } from "../../plans/plan-change-contract";
 import { answerTimeZoneSchema } from "../contract";
 
-/** The `source` of the plan changes the test proposes, which the apps word like a rebalance. */
+/** The `source` of the plan changes the test proposes. */
 export const FOCUS_TEST_SOURCE = "focusTest";
 
 const countSchema = z.int().min(0);
@@ -21,7 +21,7 @@ const subjectNameShape = {
   shortName: z
     .string()
     .nullable()
-    .meta({ description: "What learners call it; show it when set, else `name`" }),
+    .meta({ description: "What learners call it, when that differs from `name`" }),
 };
 
 const focusTestSubjectSchema = z

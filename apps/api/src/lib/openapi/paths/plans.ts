@@ -79,7 +79,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes/{changeId}": {
     post: {
       description:
-        'The learner\'s answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen ("Got it") for an applied change the plan should stop showing. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.',
+        "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal works it out against the plan as it is today first: when that differs from the `effect` it had, nothing is applied and the answer is the change still `proposed`, with the new `effect`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
       operationId: "decidePlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeDecisionInputSchema } },
@@ -125,7 +125,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/tool-choices": {
     post: {
       description:
-        "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
+        "The learner's answer about one or more of the plan's tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
       operationId: "createPlanToolChoice",
       requestBody: {
         content: { "application/json": { schema: planToolChoiceInputSchema } },

@@ -109,7 +109,7 @@ export const spokenAnswerGradeSchema = z
       .array(spokenPracticeWordSchema)
       .meta({
         description:
-          "At most two words to highlight, as written in the sentence: tapping one plays it at normal and slow speed with its respelling and tip",
+          "At most two words worth hearing again, as written in the sentence; each has its respelling and tip in `words`",
       }),
   })
   .meta({ id: "SpokenAnswerGrade" });

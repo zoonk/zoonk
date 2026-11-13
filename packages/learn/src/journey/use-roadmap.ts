@@ -3,7 +3,7 @@
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { daysBetween } from "../_utils/iso-date";
-import { getPhaseDay, getShareInPhase } from "../plan/phase-weight";
+import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
 
@@ -65,26 +65,26 @@ export function useRoadmapOverrun(): { phaseIndex: number; share: number } | nul
   return phase && share !== null ? { phaseIndex: phase.index, share } : null;
 }
 
+/** The phase's place leads; its own name follows only when it has one. */
 export function useRoadmapPosition() {
   const t = useExtracted();
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
-  const { currentIndex, phases, today } = useRoadmapPhases();
+  const { currentIndex, phases } = useRoadmapPhases();
   const current = phases[currentIndex];
 
   if (!current) {
     return null;
   }
 
-  const day = getPhaseDay({ phase: current, today });
-  const number = currentIndex + 1;
-  const total = phases.length;
+  const name = phaseName(current, { mocksRequirePlus: plan.access.mocksRequirePlus });
 
   return {
-    day: day && t("day {day, number} of {days, number}", day),
-    name: phaseName(current, { mocksRequirePlus: plan.access.mocksRequirePlus }),
-    number,
-    place: t("phase {number, number} of {total, number}", { number, total }),
-    total,
+    name: name === phaseName(current, { byPlace: true }) ? null : name,
+    phase: current,
+    place: t("Phase {number, number} of {total, number}", {
+      number: currentIndex + 1,
+      total: phases.length,
+    }),
   };
 }

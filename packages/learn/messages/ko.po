@@ -56,6 +56,7 @@ msgid "{total, plural, one {{done, number} of # lesson done} other {{done, numbe
 msgstr "{total, plural, other {레슨 {done, number}개 완료(전체 #개)}}"
 
 #: src/_components/chapter-mark.tsx
+#: src/syllabus/subject-aside.tsx
 msgctxt "djZCU5"
 msgid "Skipped"
 msgstr "건너뜀"
@@ -356,12 +357,14 @@ msgstr "예정"
 #: src/appearance/appearance-screen.tsx
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/mind-maps/mind-maps-screen.tsx
+#: src/plan-diff/use-change-rows.ts
 msgctxt "iqLF8D"
 msgid "Lessons"
 msgstr "레슨"
 
 #: src/_components/lesson-list.tsx
 #: src/chapter/chapter-screen.tsx
+#: src/journey/preparation/use-preparation-parts.ts
 #: src/language/conversation/call-stars-step.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/syllabus/subject-aside.tsx
@@ -486,7 +489,7 @@ msgid "Finish"
 msgstr "마치기"
 
 #: src/_components/question-actions.tsx
-#: src/plan/plan-suggestion-context.tsx
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "다음"
@@ -558,7 +561,6 @@ msgstr "저장하지 못했어요. 다시 시도해 보세요."
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -615,6 +617,11 @@ msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "뒤로"
+
+#: src/_components/suggestion-menu.tsx
+msgctxt "KcETCo"
+msgid "Other options"
+msgstr "다른 방법"
 
 #: src/_components/suggestion.tsx
 msgctxt "FgydNe"
@@ -970,29 +977,11 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "흰띠"
 
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. {count} and {total} are points of the exam's score.
+#. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
-msgctxt "8GYum4"
-msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} points."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, number}점, 시험 총점 {total, number}점)은 제외돼요."
-
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
-#: src/_utils/use-choice-left-out.ts
-msgctxt "Rpl5Yb"
-msgid "Until you pick, your plan and mocks leave out {name}: {count, number} of the exam's {total, number} questions."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, number}문제, 시험 전체 {total, number}문제)은 제외돼요."
-
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
-#: src/_utils/use-choice-left-out.ts
-msgctxt "T-mUNO"
-msgid "Until you pick, your plan and mocks leave out {name}: {count, plural, one {# question} other {# questions}}."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분({count, plural, other {#문제}})은 제외돼요."
-
-#. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option.
-#: src/_utils/use-choice-left-out.ts
-msgctxt "8-nW5Q"
-msgid "Until you pick, your plan and mocks leave out {name}."
-msgstr "선택하기 전까지 계획과 모의고사에서 {name} 부분은 제외돼요."
+msgctxt "vYD7Jb"
+msgid "Pick one so your plan includes it."
+msgstr "계획에 포함할 항목을 하나 선택하세요."
 
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
@@ -1122,6 +1111,7 @@ msgstr "안경"
 #: src/mind-maps/mind-map-save-button.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
+#: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-date.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
@@ -1133,6 +1123,7 @@ msgstr "저장"
 #: src/certificates/certificate-details.tsx
 #: src/certificates/certificate-moment-parts.tsx
 #: src/onboarding/steps/schedule-aim.tsx
+#: src/plan/plan-bases.tsx
 #: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-tools.tsx
 msgctxt "BY343C"
@@ -1462,7 +1453,6 @@ msgstr "{done, plural, =0 {미션 #개 완료 / 전체 {total}개} other {완료
 #: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
 #: src/journey/journey-hero.tsx
-#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "아직이에요"
@@ -2260,6 +2250,8 @@ msgstr "이 단계에서 배운 내용을 골고루 섞은 문제를 힌트 없�
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
 msgctxt "2yz8Wb"
 msgid "The Trickster"
 msgstr "트릭스터"
@@ -2295,6 +2287,7 @@ msgstr "이번 주에 공부한 내용으로 만든 문제예요. 힌트는 없�
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/checkpoint-labels.tsx
+#: src/plan-diff/use-change-rows.ts
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "7Y-wMz"
@@ -2437,6 +2430,7 @@ msgid "What he'll ask"
 msgstr "물어볼 내용"
 
 #: src/challenge/challenge-topics.tsx
+#: src/syllabus/subject-matrix.tsx
 #: src/syllabus/subject-screen.tsx
 #: src/syllabus/syllabus-summary.tsx
 msgctxt "eNbJHf"
@@ -2444,22 +2438,20 @@ msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, other {주제 #개}}"
 
 #: src/chapter/chapter-header.tsx
-#: src/language/unit/unit-header.tsx
-#: src/today/today-lessons-card.tsx
-msgctxt "n7xPkB"
-msgid "{count, plural, one {# lesson} other {# lessons}}"
-msgstr "{count, plural, other {레슨 #개}}"
-
-#: src/chapter/chapter-header.tsx
-msgctxt "4g6Lc5"
-msgid "{subject} · Chapter {number, number}"
-msgstr "{subject} · 챕터 {number, number}"
-
-#: src/chapter/chapter-header.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "sIR8OK"
 msgid "Chapter {number, number}"
 msgstr "챕터 {number, number}"
+
+#: src/chapter/chapter-header.tsx
+#: src/language/unit/unit-header.tsx
+#: src/plan-diff/use-change-rows.ts
+#: src/syllabus/subject-aside.tsx
+#: src/today/today-lessons-card.tsx
+#: src/topic-outline/use-far-topic-line.ts
+msgctxt "n7xPkB"
+msgid "{count, plural, one {# lesson} other {# lessons}}"
+msgstr "{count, plural, other {레슨 #개}}"
 
 #: src/chapter/chapter-header.tsx
 msgctxt "uPK7mm"
@@ -2498,9 +2490,10 @@ msgid "Chapter summary"
 msgstr "챕터 요약"
 
 #: src/chapter/chapter-screen.tsx
-msgctxt "EJSVsO"
-msgid "Skills"
-msgstr "스킬"
+#: src/syllabus/subject-aside.tsx
+msgctxt "kc79d3"
+msgid "Topics"
+msgstr "주제"
 
 #: src/chapter/chapter-screen.tsx
 #: src/language/pattern/language-pattern-screen.tsx
@@ -2636,8 +2629,6 @@ msgid "Phase {phase} challenge"
 msgstr "{phase}단계 챌린지"
 
 #: src/checkpoints/checkpoint-labels.tsx
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
 #: src/session/use-block-copy.ts
 msgctxt "H1a9B8"
 msgid "Phase challenge"
@@ -2827,19 +2818,15 @@ msgid "Message {name}"
 msgstr "{name}에게 메시지 보내기"
 
 #: src/conversation/tutor-country-offer.tsx
-#: src/conversation/tutor-plan-change.tsx
-#: src/conversation/tutor-variety-offer.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-offer-suggestion.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "EWw_tK"
-msgid "Apply"
-msgstr "적용"
+#: src/plan/plan-country.tsx
+msgctxt "g0uUNM"
+msgid "Change country"
+msgstr "국가 바꾸기"
 
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "-DMpal"
-msgid "Applying it rebuilds your plan for this country. The lessons you've finished stay done."
-msgstr "적용하면 이 나라에 맞춰 계획을 다시 만들어요. 끝낸 레슨은 완료 상태로 남아요."
+msgctxt "q6A4gA"
+msgid "We'll make a new plan for it. Finished lessons stay done."
+msgstr "선택한 국가에 맞춰 계획을 새로 만들 거예요. 완료한 레슨은 그대로 유지돼요."
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "BcB9ZH"
@@ -2848,9 +2835,9 @@ msgstr "저장했어요. 새 계획을 준비하고 있어요. 그동안 계속 
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "RZJ-9n"
-msgid "Content country: {country}"
-msgstr "학습 기준 국가: {country}"
+msgctxt "N6YBR8"
+msgid "Country: {country}"
+msgstr "국가: {country}"
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
@@ -2989,14 +2976,12 @@ msgid "Practice"
 msgstr "연습하기"
 
 #: src/conversation/tutor-plan-change.tsx
-msgctxt "LTNKL8"
-msgid "1 week"
-msgstr "1주"
-
-#: src/conversation/tutor-plan-change.tsx
-msgctxt "j_pdrL"
-msgid "Not applied. Your plan stays as it was."
-msgstr "적용하지 않았어요. 계획은 그대로 유지돼요."
+#: src/focus-test/use-result-line.ts
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "PxpLj-"
+msgid "Your plan stays as it was."
+msgstr "계획은 그대로예요."
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/use-result-line.ts
@@ -3014,14 +2999,23 @@ msgstr "새 제안으로 바뀌었어요."
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/today/today-plan-change.tsx
-msgctxt "mo37qw"
-msgid "Use my date anyway"
-msgstr "그래도 내가 정한 날짜 사용하기"
+msgctxt "Md3Sb7"
+msgid "Use my date"
+msgstr "내가 정한 날짜 사용하기"
 
 #: src/conversation/tutor-plan-change.tsx
-msgctxt "eUZEWb"
-msgid "Change to your plan"
-msgstr "계획 변경"
+#: src/mock/mock-result-plan.tsx
+#: src/plan/plan-offer-preview.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "ZPLfTK"
+msgid "Change my plan"
+msgstr "내 계획 바꾸기"
+
+#: src/conversation/tutor-plan-change.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "VRiHEe"
+msgid "Keep official date"
+msgstr "공식 시험일 유지하기"
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "mytixa"
@@ -3072,7 +3066,6 @@ msgid "Take a mock exam"
 msgstr "모의고사 보기"
 
 #: src/conversation/tutor-tool-offer.tsx
-#: src/plan/plan-choice-lines.tsx
 #: src/plan/plan-exam-choices.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-tools.tsx
@@ -3080,6 +3073,11 @@ msgstr "모의고사 보기"
 msgctxt "TuQ18m"
 msgid "Choose"
 msgstr "선택"
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "EWw_tK"
+msgid "Apply"
+msgstr "적용"
 
 #. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/conversation/tutor-variety-offer.tsx
@@ -3595,6 +3593,7 @@ msgstr "내 진도"
 
 #: src/exam/exam-mocks-section.tsx
 #: src/journey/preparation/use-preparation-parts.ts
+#: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-properties.tsx
 msgctxt "zP4GPk"
 msgid "Mock exams"
@@ -3661,6 +3660,7 @@ msgid "See your exam"
 msgstr "시험 정보 보기"
 
 #: src/exam/exam-next-mock.tsx
+#: src/plan-diff/use-change-rows.ts
 msgctxt "y6zY5Q"
 msgid "Next mock exam"
 msgstr "다음 모의고사"
@@ -4130,7 +4130,6 @@ msgid "Your time can't cover everything before your exam."
 msgstr "시험 전까지 모든 내용을 공부할 시간이 부족해요."
 
 #: src/focus-test/focus-test-proposal.tsx
-#: src/today/today-plan-change.tsx
 msgctxt "YWfqky"
 msgid "Update my plan"
 msgstr "내 계획 바꾸기"
@@ -4319,13 +4318,6 @@ msgctxt "G-NFHn"
 msgid "Your plan now gives these subjects more time."
 msgstr "계획에서 이 과목들에 시간을 더 배정했어요."
 
-#: src/focus-test/use-result-line.ts
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "PxpLj-"
-msgid "Your plan stays as it was."
-msgstr "계획은 그대로예요."
-
 #. Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.
 #: src/focus-test/use-result-line.ts
 msgctxt "60Ever"
@@ -4456,7 +4448,7 @@ msgid "in progress"
 msgstr "진행 중"
 
 #: src/generation/generation-wait.tsx
-#: src/journey/pace-details.tsx
+#: src/journey/schedule-details.tsx
 #: src/today/today-week-day.tsx
 msgctxt "B7ijKz"
 msgid "done"
@@ -4946,11 +4938,11 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "코스 완료"
 
-#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
+#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
 #: src/journey/goal-actions.tsx
-msgctxt "hnzjLt"
-msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
+msgctxt "7MouSk"
+msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
+msgstr "무료로 동시에 진행할 수 있는 목표 수를 다 채웠어요. 다른 목표를 일시 중지하거나 구독하면 이 목표를 이어서 진행할 수 있어요."
 
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
@@ -5007,15 +4999,16 @@ msgstr "{goal} 목표가 일시 중지됐어요"
 
 #: src/journey/goal-actions.tsx
 #: src/journey/journey-planless.tsx
-#: src/journey/pace-details.tsx
+#: src/journey/schedule-details.tsx
 msgctxt "MsEnHi"
 msgid "Nothing is planned until you resume it."
 msgstr "다시 시작할 때까지는 학습 일정이 잡히지 않아요."
 
 #: src/journey/journey-chapters.tsx
-msgctxt "CQYCqB"
-msgid "{count, plural, one {# skill you already know} other {# skills you already know}}"
-msgstr "{count, plural, other {이미 아는 스킬 #개}}"
+#: src/syllabus/use-subject-progress.ts
+msgctxt "B3fpYI"
+msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
+msgstr "{count, plural, other {이미 알던 주제 #개}}"
 
 #: src/journey/journey-chapters.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -5032,29 +5025,15 @@ msgstr "{done, number} / {total, number}"
 
 #: src/journey/journey-chapters.tsx
 #: src/syllabus/syllabus-chapter-row.tsx
-msgctxt "GsDb91"
-msgid "Skipped because you already know it"
-msgstr "이미 아는 내용이라 건너뛰었어요"
+#: src/syllabus/topic-note.tsx
+msgctxt "VPnXIm"
+msgid "Skipped · you already know it"
+msgstr "건너뜀 · 이미 알던 내용"
 
 #: src/journey/journey-chapters.tsx
-msgctxt "r2xdZ3"
-msgid "Going deeper into an earlier topic"
+msgctxt "8beg4V"
+msgid "More on an earlier topic"
 msgstr "앞서 배운 주제를 더 깊이 배워요"
-
-#: src/journey/journey-chapters.tsx
-msgctxt "9CAy81"
-msgid "Lessons from {courses} are being written."
-msgstr "{courses}의 레슨을 만들고 있어요."
-
-#: src/journey/journey-chapters.tsx
-msgctxt "lZA9VT"
-msgid "More lessons for this unit are being written."
-msgstr "이 단원의 레슨을 더 만들고 있어요."
-
-#: src/journey/journey-chapters.tsx
-msgctxt "c43P0r"
-msgid "More lessons for this phase are being written."
-msgstr "이 단계의 레슨을 더 만들고 있어요."
 
 #: src/journey/journey-chapters.tsx
 msgctxt "OGR3YM"
@@ -5067,11 +5046,6 @@ msgstr "챕터 접기"
 msgctxt "E7pYSQ"
 msgid "{count, plural, one {# more chapter} other {# more chapters}}"
 msgstr "{count, plural, other {챕터 #개 더}}"
-
-#: src/journey/journey-hero.tsx
-msgctxt "hGeYkM"
-msgid "No change this week"
-msgstr "이번 주 변화 없음"
 
 #: src/journey/journey-hero.tsx
 #: src/today/today-preparation.tsx
@@ -5118,9 +5092,9 @@ msgid "Your preparation"
 msgstr "내 준비도"
 
 #: src/journey/journey-hero.tsx
-msgctxt "skEl9S"
-msgid "Your pace"
-msgstr "내 페이스"
+msgctxt "53oGbg"
+msgid "Your schedule"
+msgstr "내 일정"
 
 #: src/journey/journey-menu.tsx
 msgctxt "jgL8u5"
@@ -5128,10 +5102,11 @@ msgid "Talk to {name}"
 msgstr "{name}에게 말 걸기"
 
 #: src/journey/journey-menu.tsx
-#: src/journey/pace-details.tsx
+#: src/journey/schedule-details.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/syllabus/subject-not-planned.tsx
+#: src/today/today-falling-behind.tsx
 msgctxt "2f2Vee"
 msgid "Adjust plan"
 msgstr "계획 조정하기"
@@ -5181,10 +5156,19 @@ msgstr ", 완료"
 #: src/journey/journey-path.tsx
 #: src/journey/path-phase-row.tsx
 #: src/journey/phase-details.tsx
+#: src/plan-diff/use-change-rows.ts
+#: src/syllabus/syllabus-summary-topics.tsx
 #: src/syllabus/use-subject-progress.ts
 msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "계획에 없어요"
+
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "대화"
 
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
@@ -5208,19 +5192,14 @@ msgid "{count, plural, one {# mock exam} other {# mock exams}}"
 msgstr "{count, plural, other {모의고사 #회}}"
 
 #: src/journey/journey-phase-events.tsx
-msgctxt "sl-DjA"
-msgid "{count, plural, one {# mock exam} other {# mock exams}} for the next sitting, on {date}"
-msgstr "{count, plural, other {다음 시험 대비 모의고사 #회}} (시험일: {date})"
+msgctxt "0FC2at"
+msgid "{count, plural, one {# mock exam before your next exam date, {date}} other {# mock exams before your next exam date, {date}}}"
+msgstr "{count, plural, other {모의고사 #회 (다음 시험일인 {date} 전까지)}}"
 
 #: src/journey/journey-phase-events.tsx
-msgctxt "p73pgy"
-msgid "{count, plural, one {# mock exam} other {# mock exams}} for the next sitting"
-msgstr "{count, plural, other {다음 시험 대비 모의고사 #회}}"
-
-#: src/journey/journey-phase-events.tsx
-msgctxt "gL-uuk"
-msgid "Mock exam for the next sitting"
-msgstr "다음 시험 대비 모의고사"
+msgctxt "u82DIi"
+msgid "{count, plural, one {# mock exam before your next exam date} other {# mock exams before your next exam date}}"
+msgstr "{count, plural, other {모의고사 #회 (다음 시험일 전까지)}}"
 
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
@@ -5268,114 +5247,6 @@ msgctxt "F1DaXB"
 msgid "Next on your path"
 msgstr "다음 단계"
 
-#: src/journey/pace-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "LeNKyW"
-msgid "not studied"
-msgstr "학습 안 함"
-
-#: src/journey/pace-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "1sq74z"
-msgid "rest day"
-msgstr "쉬는 날"
-
-#: src/journey/pace-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "kkpP2k"
-msgid "today"
-msgstr "오늘"
-
-#: src/journey/pace-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "sl8z6d"
-msgid "planned"
-msgstr "학습 예정"
-
-#: src/journey/pace-details.tsx
-msgctxt "v4LcAP"
-msgid "{done} of {planned}"
-msgstr "{done} / {planned}"
-
-#: src/journey/pace-details.tsx
-#: src/today/today-week.tsx
-msgctxt "PtxhIN"
-msgid "This week"
-msgstr "이번 주"
-
-#: src/journey/pace-details.tsx
-#: src/today/today-week-day.tsx
-msgctxt "PEfhwo"
-msgid "{day}: {status}"
-msgstr "{day}: {status}"
-
-#: src/journey/pace-details.tsx
-msgctxt "F1fcf5"
-msgid "Pace"
-msgstr "페이스"
-
-#: src/journey/pace-details.tsx
-msgctxt "EQpfkS"
-msgid "Finished"
-msgstr "완료"
-
-#: src/journey/pace-details.tsx
-#: src/questions/test-out-aside.tsx
-msgctxt "FvhRwo"
-msgid "{count, plural, one {# lesson left} other {# lessons left}}"
-msgstr "{count, plural, other {레슨 #개 남음}}"
-
-#: src/journey/pace-details.tsx
-msgctxt "j0ntF6"
-msgid "Past date"
-msgstr "날짜 지남"
-
-#: src/journey/pace-details.tsx
-msgctxt "___zLu"
-msgid "Challenges"
-msgstr "챌린지"
-
-#: src/journey/pace-details.tsx
-msgctxt "OBsjC_"
-msgid "Nothing is planned"
-msgstr "계획된 학습이 없어요"
-
-#: src/journey/pace-details.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "일시 중지됨"
-
-#: src/journey/pace-details.tsx
-msgctxt "Z35MUj"
-msgid "Ahead"
-msgstr "계획보다 빠름"
-
-#: src/journey/pace-details.tsx
-msgctxt "RlWvYP"
-msgid "Behind"
-msgstr "계획보다 느림"
-
-#: src/journey/pace-details.tsx
-msgctxt "iWt4G7"
-msgid "Too tight"
-msgstr "너무 빠듯함"
-
-#: src/journey/pace-details.tsx
-#: src/onboarding/understood/use-understood-rows.ts
-msgctxt "aefUZL"
-msgid "{time} a day"
-msgstr "하루 {time}"
-
-#: src/journey/pace-details.tsx
-msgctxt "dPX7wH"
-msgid "On pace"
-msgstr "계획대로"
-
-#: src/journey/pace-details.tsx
-msgctxt "htY1di"
-msgid "Last week's recap"
-msgstr "지난주 요약"
-
 #. {date} is a month, like "Jan" or "Jan 2028", never a day.
 #: src/journey/path-phase-row.tsx
 msgctxt "0r6xAZ"
@@ -5416,36 +5287,20 @@ msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "{date}에 이어서 진행해요"
 
-#. On a phase of the learner's plan: the plan has no room for its challenge before their goal's date.
 #: src/journey/path-phase-row.tsx
-msgctxt "e4_rBx"
-msgid "No time for this phase's challenge before your date"
-msgstr "목표일 전에 이 단계의 챌린지를 할 시간이 없어요"
+msgctxt "oIX23Q"
+msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
+msgstr "{count, plural, other {아직 공부하지 않은 레슨 #개}}"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "LZkGdn"
-msgid "{count, plural, one {# lesson was left out} other {# lessons were left out}}"
-msgstr "{count, plural, other {레슨 #개가 제외됐어요}}"
+msgctxt "sk-jVa"
+msgid "The call isn't in your plan"
+msgstr "대화는 계획에 없어요"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "uDE8Kt"
-msgid "Challenge left out"
-msgstr "챌린지 제외"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "FSd2Qh"
-msgid "More lessons on the way"
-msgstr "추가 레슨을 만들고 있어요"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "Kw3CDV"
-msgid "More lessons on the way · challenge <date></date>"
-msgstr "추가 레슨을 만들고 있어요 · 챌린지 <date></date>"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "QYw146"
-msgid "Lessons done · challenge <date></date>"
-msgstr "레슨 완료 · 챌린지 <date></date>"
+msgctxt "xl2sjx"
+msgid "The Trickster isn't in your plan"
+msgstr "트릭스터는 계획에 없어요"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
@@ -5478,13 +5333,6 @@ msgid "{days, plural, one {About # day left} other {About # days left}}"
 msgstr "{days, plural, other {약 #일 남았어요}}"
 
 #: src/journey/plan-roadmap.tsx
-#: src/plan/plan-suggestion-context.tsx
-msgctxt "dQg5Ol"
-msgid "{number, number} of {total, number}"
-msgstr "{number, number}/{total, number}"
-
-#: src/journey/plan-roadmap.tsx
-#: src/journey/plan-sections.tsx
 msgctxt "EcisNA"
 msgid "{done, number} of {total, plural, one {# phase} other {# phases}} done"
 msgstr "{done, number}개 단계 완료 / {total, plural, other {전체 #개}}"
@@ -5504,13 +5352,6 @@ msgctxt "yPg8s6"
 msgid "Until"
 msgstr "종료일"
 
-#: src/journey/plan-sections.tsx
-#: src/mind-maps/mind-maps-screen.tsx
-#: src/syllabus/subject-chapters.tsx
-msgctxt "Z9Sg5E"
-msgid "Mind maps"
-msgstr "마인드맵"
-
 #. A menu or section of other options and links, like an app's “More” menu.
 #: src/journey/plan-sections.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -5518,10 +5359,17 @@ msgctxt "I5NMJ8"
 msgid "More"
 msgstr "더보기"
 
+#: src/journey/plan-sections.tsx
+#: src/mind-maps/mind-maps-screen.tsx
+#: src/syllabus/subject-chapters.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "마인드맵"
+
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "djCOWA"
-msgid "Take more mock exams of the whole exam or half of it to see your estimated score."
-msgstr "예상 점수를 확인하려면 시험 전체 또는 절반 분량의 모의고사를 더 보세요."
+msgctxt "6wpEuS"
+msgid "Take a full or half mock exam to see your estimated score."
+msgstr "예상 점수를 보려면 모의고사를 전체 또는 절반 분량으로 풀어 보세요."
 
 #: src/journey/preparation/preparation-details.tsx
 #: src/mock/mock-result-view.tsx
@@ -5535,49 +5383,36 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, other {최근 모의고사 #회 기준}}"
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "HpIglx"
-msgid "Your progress is the share of your plan's lessons you've studied or already knew. Mastery, memory and weekly challenges show how well you know them."
-msgstr "진도는 계획에 있는 레슨 중 학습했거나 이미 알고 있던 레슨의 비율이에요. 숙련도와 기억 상태, 주간 챌린지를 보면 내용을 얼마나 잘 알고 있는지 알 수 있어요."
+msgctxt "QexwxS"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
+msgstr "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과목별 수치는 공부한 비율에 정답률을 곱한 값이고, 모의고사를 보기 전까지는 75% 미만이에요."
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "bjG_sT"
-msgid "Your preparation adds up your subjects, each counting as much as it's worth on the exam. A subject's preparation is how much you've studied times how well you know it: right answers, memory and full reviews. Harder and more frequent topics count more, and a subject stays under 75% until you've answered them and done a full review in your test's format."
-msgstr "준비도는 시험에서 각 과목이 차지하는 배점 비중에 따라 과목별 준비도를 합산해 계산해요. 과목별 준비도는 학습한 양에 얼마나 잘 알고 있는지를 곱한 값이에요. 얼마나 잘 아는지는 정답률과 기억, 총복습으로 확인해요. 더 어렵고 자주 출제되는 주제일수록 비중이 커요. 이런 주제의 문제를 풀고 실제 시험 형식으로 총복습을 마치기 전까지는 해당 과목의 준비도가 75% 미만에 머물러요."
+msgctxt "Kch5Cx"
+msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
+msgstr "계획에 있는 레슨 중 공부했거나 이미 알고 있던 레슨의 비율이에요. 정답률과 기억하는 정도, 주간 챌린지 결과로 얼마나 잘 알고 있는지 알 수 있어요."
 
 #: src/journey/preparation/preparation-details.tsx
-msgctxt "7zRS6a"
-msgid "Your preparation adds up your subjects, each counting as much as it's worth on the exam. A subject's preparation is how much you've studied times how well you know it: right answers, memory and mock exams. Harder and more frequent topics count more, and a subject stays under 75% until you've answered them and taken a mock exam."
-msgstr "준비도는 시험에서 각 과목이 차지하는 배점 비중에 따라 과목별 준비도를 합산해 계산해요. 과목별 준비도는 학습한 양에 얼마나 잘 알고 있는지를 곱한 값이에요. 얼마나 잘 아는지는 정답률과 기억, 모의고사로 확인해요. 더 어렵고 자주 출제되는 주제일수록 비중이 커요. 이런 주제의 문제를 풀고 모의고사를 보기 전까지는 해당 과목의 준비도가 75% 미만에 머물러요."
-
-#: src/journey/preparation/preparation-details.tsx
-msgctxt "FJjggo"
-msgid "How it's measured"
-msgstr "준비도 계산 방식"
-
-#: src/journey/preparation/preparation-details.tsx
-msgctxt "ab5Khh"
-msgid "How your progress is measured"
-msgstr "진도 측정 방법"
-
-#: src/journey/preparation/preparation-details.tsx
-msgctxt "zuTP0I"
-msgid "Still to do"
-msgstr "남은 할 일"
+msgctxt "J6PYLA"
+msgid "How it's calculated"
+msgstr "계산 방법"
 
 #: src/journey/preparation/use-preparation-parts.ts
-msgctxt "SR5xv8"
-msgid "{count, plural, =0 {# full reviews done} one {# full review done} other {# full reviews done}}"
-msgstr "{count, plural, =0 {총복습을 #회 마쳤어요} other {총복습 #회를 마쳤어요}}"
+msgctxt "DVOdy2"
+msgid "Topics studied"
+msgstr "공부한 주제"
 
 #: src/journey/preparation/use-preparation-parts.ts
-msgctxt "3J7iiO"
-msgid "Full reviews"
-msgstr "총복습"
+#: src/mock/mock-result-view.tsx
+#: src/syllabus/subject-aside.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "정답"
 
 #: src/journey/preparation/use-preparation-parts.ts
-msgctxt "7JVbCy"
-msgid "{count, plural, =0 {# weekly challenges} one {# weekly challenge} other {# weekly challenges}}"
-msgstr "{count, plural, =0 {주간 챌린지 #개} other {#개의 주간 챌린지}}"
+msgctxt "ntRjjB"
+msgid "Remembered"
+msgstr "기억하는 내용"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
@@ -5585,99 +5420,44 @@ msgid "Weekly challenges"
 msgstr "주간 챌린지"
 
 #: src/journey/preparation/use-preparation-parts.ts
-msgctxt "2NIffY"
-msgid "{count, plural, =0 {# mock exams taken} one {# mock exam taken} other {# mock exams taken}}"
-msgstr "{count, plural, =0 {모의고사를 #회 봤어요} other {모의고사 #회를 봤어요}}"
-
-#: src/journey/preparation/use-preparation-parts.ts
-#: src/syllabus/use-subject-progress.ts
-msgctxt "jrDQIZ"
-msgid "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}"
-msgstr "{total, plural, other {레슨 {done, number}/#개 완료}}"
-
-#: src/journey/preparation/use-preparation-parts.ts
-msgctxt "577gc8"
-msgid "{studied, number} of {total, plural, one {# skill} other {# skills}}, weighted by importance"
-msgstr "스킬 {studied, number}/{total, plural, other {#개 학습, 중요도 반영}}"
-
-#: src/journey/preparation/use-preparation-parts.ts
-#: src/syllabus/subject-aside.tsx
-msgctxt "jSqwdW"
-msgid "Coverage"
-msgstr "학습 진도"
-
-#: src/journey/preparation/use-preparation-parts.ts
-#: src/syllabus/subject-aside.tsx
-msgctxt "waiaaL"
-msgid "Shows after a few practice questions"
-msgstr "연습 문제를 몇 개 풀면 표시돼요"
-
-#: src/journey/preparation/use-preparation-parts.ts
-#: src/syllabus/subject-aside.tsx
-msgctxt "1mxf2N"
-msgid "{correct, number} of {answered, number} right"
-msgstr "정답 {correct, number}개 / 총 {answered, number}문제"
-
-#: src/journey/preparation/use-preparation-parts.ts
-#: src/syllabus/subject-aside.tsx
-msgctxt "rqsya_"
-msgid "Mastery"
-msgstr "숙련도"
-
-#: src/journey/preparation/use-preparation-parts.ts
-msgctxt "2E846t"
-msgid "Of what you studied"
-msgstr "학습한 내용 기준"
-
-#: src/journey/preparation/use-preparation-parts.ts
-msgctxt "TRZdIr"
-msgid "Long-term memory"
-msgstr "장기 기억"
+msgctxt "9_WhRd"
+msgid "{count, plural, one {# taken} other {# taken}}"
+msgstr "{count, plural, other {#회 응시}}"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "yDbOtR"
-msgid "About {time} in your plan"
-msgstr "계획상 약 {time}"
+msgctxt "_jCIXm"
+msgid "Study the topics that count most"
+msgstr "시험에서 비중이 큰 주제 공부하기"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "mn7AoK"
-msgid "Get the topics that weigh most to Solid"
-msgstr "비중이 가장 큰 주제를 안정 단계로 올리기"
+msgctxt "F8O7UW"
+msgid "Keep going with your lessons"
+msgstr "레슨 계속하기"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "ga7XCH"
-msgid "Get every skill to Solid"
-msgstr "모든 스킬을 안정 단계로 올리기"
+msgctxt "fEvUvT"
+msgid "{count, plural, one {# topic, in your next reviews} other {# topics, in your next reviews}}"
+msgstr "{count, plural, other {다음 복습에서 다룰 주제 #개}}"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "foBmj-"
-msgid "{count, plural, one {# skill fading, back in your reviews} other {# skills fading, back in your reviews}}"
-msgstr "{count, plural, other {잊혀 가는 스킬 #개를 복습에 다시 넣었어요}}"
+msgctxt "9Aopkl"
+msgid "Review what you're starting to forget"
+msgstr "잊혀 가는 내용 복습하기"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "hnzCSw"
-msgid "Keep what you studied fresh"
-msgstr "배운 내용 오래 기억하기"
-
-#: src/journey/preparation/use-still-needed.ts
-msgctxt "iWbCyR"
-msgid "Do a full review in your test's format"
-msgstr "시험 형식에 맞춰 총복습하기"
-
-#: src/journey/preparation/use-still-needed.ts
-msgctxt "ePGEKw"
-msgid "Take your first mock exam"
-msgstr "첫 모의고사 보기"
+msgctxt "HRQ_zL"
+msgid "Needed to go past 75%"
+msgstr "75%를 넘기려면 필요해요"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "xOPwTm"
 msgid "Take your first weekly challenge"
 msgstr "첫 주간 챌린지에 도전하기"
 
-#: src/journey/rename-goal-dialog.tsx
-msgctxt "kRla6I"
-msgid "Choose a name you recognize. Your study plan stays the same."
-msgstr "알아보기 쉬운 이름을 정하세요. 학습 계획은 그대로 유지돼요."
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "ePGEKw"
+msgid "Take your first mock exam"
+msgstr "첫 모의고사 보기"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
@@ -5691,15 +5471,19 @@ msgid "Your plan picks up from today, starting with the lessons planned for the 
 msgstr "오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요."
 
 #: src/journey/roadmap-full.tsx
-msgctxt "Q-aTo1"
-msgid "Exam day"
-msgstr "시험 당일"
+#: src/onboarding/plan-receipt.tsx
+#: src/onboarding/understood/understood-date-row.ts
+#: src/plan/plan-date.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "xuAlmp"
+msgid "Exam date"
+msgstr "시험일"
 
 #: src/journey/roadmap-full.tsx
-#: src/plan/plan-properties.tsx
-msgctxt "h0He2G"
-msgid "Goal date"
-msgstr "목표일"
+#: src/plan-diff/use-change-rows.ts
+msgctxt "Humfno"
+msgid "End date"
+msgstr "종료일"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -5711,6 +5495,79 @@ msgstr "단계"
 msgctxt "yXPFJy"
 msgid "<date></date> · exam"
 msgstr "<date></date> · 시험"
+
+#: src/journey/schedule-details.tsx
+#: src/today/today-week-day.tsx
+msgctxt "LeNKyW"
+msgid "not studied"
+msgstr "학습 안 함"
+
+#: src/journey/schedule-details.tsx
+#: src/today/today-week-day.tsx
+msgctxt "1sq74z"
+msgid "rest day"
+msgstr "쉬는 날"
+
+#: src/journey/schedule-details.tsx
+#: src/today/today-week-day.tsx
+msgctxt "kkpP2k"
+msgid "today"
+msgstr "오늘"
+
+#: src/journey/schedule-details.tsx
+#: src/today/today-week-day.tsx
+msgctxt "sl8z6d"
+msgid "planned"
+msgstr "학습 예정"
+
+#: src/journey/schedule-details.tsx
+msgctxt "v4LcAP"
+msgid "{done} of {planned}"
+msgstr "{done} / {planned}"
+
+#: src/journey/schedule-details.tsx
+#: src/today/today-week.tsx
+msgctxt "PtxhIN"
+msgid "This week"
+msgstr "이번 주"
+
+#: src/journey/schedule-details.tsx
+#: src/today/today-week-day.tsx
+msgctxt "PEfhwo"
+msgid "{day}: {status}"
+msgstr "{day}: {status}"
+
+#: src/journey/schedule-details.tsx
+msgctxt "hGQqkW"
+msgid "Schedule"
+msgstr "일정"
+
+#: src/journey/schedule-details.tsx
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "aefUZL"
+msgid "{time} a day"
+msgstr "하루 {time}"
+
+#: src/journey/schedule-details.tsx
+#: src/questions/test-out-aside.tsx
+msgctxt "FvhRwo"
+msgid "{count, plural, one {# lesson left} other {# lessons left}}"
+msgstr "{count, plural, other {레슨 #개 남음}}"
+
+#: src/journey/schedule-details.tsx
+msgctxt "C2iTEH"
+msgid "Paused"
+msgstr "일시 중지됨"
+
+#: src/journey/schedule-details.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "오늘의 학습으로 이동하기"
+
+#: src/journey/schedule-details.tsx
+msgctxt "htY1di"
+msgid "Last week's recap"
+msgstr "지난주 요약"
 
 #: src/journey/study-next.tsx
 msgctxt "rw5sWV"
@@ -5726,11 +5583,6 @@ msgstr "관련 코스"
 msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "계획을 모두 마쳤어요"
-
-#: src/journey/study-next.tsx
-msgctxt "vzHrGX"
-msgid "Here's what to study next."
-msgstr "다음으로 공부할 내용이에요."
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/journey/use-phase-when.ts
@@ -5752,14 +5604,9 @@ msgid "{dateKind, select, month {About {date}} other {About {date}}}"
 msgstr "{dateKind, select, month {{date}쯤} other {{date}쯤}}"
 
 #: src/journey/use-roadmap.ts
-msgctxt "nnaL1H"
-msgid "day {day, number} of {days, number}"
-msgstr "{day, number}일째 (총 {days, number}일)"
-
-#: src/journey/use-roadmap.ts
-msgctxt "oZPvpX"
-msgid "phase {number, number} of {total, number}"
-msgstr "{number, number}단계 (총 {total, number}단계)"
+msgctxt "nO5Gb7"
+msgid "Phase {number, number} of {total, number}"
+msgstr "{number, number}단계 (전체 {total, number}단계)"
 
 #: src/language-aim/aim-picker.tsx
 msgctxt "OIMmZ8"
@@ -6315,11 +6162,6 @@ msgstr "또는 답변을 입력하세요"
 msgctxt "9WRlF4"
 msgid "Send"
 msgstr "보내기"
-
-#: src/language/conversation/conversation-live.tsx
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "대화"
 
 #: src/language/conversation/conversation-live.tsx
 msgctxt "E6r0bc"
@@ -8823,6 +8665,7 @@ msgid "Your plan gives {area} more time."
 msgstr "계획에서 {area}에 더 많은 시간을 배정해요."
 
 #: src/mock/mock-result-plan.tsx
+#: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
 msgid "{names} and {count, plural, one {# more topic} other {# more topics}}"
@@ -8847,11 +8690,6 @@ msgstr "{topics} 문제를 모두 맞혔어요."
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "이미 아는 레슨 {count, plural, other {#개}}를 건너뛸까요?"
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "ZPLfTK"
-msgid "Change my plan"
-msgstr "내 계획 바꾸기"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "uFDpFL"
@@ -9014,11 +8852,6 @@ msgstr "{exam} 예상 점수"
 msgctxt "bYZf2G"
 msgid "Score out of {max}"
 msgstr "점수({max}점 만점)"
-
-#: src/mock/mock-result-view.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "정답"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "I3yltc"
@@ -9771,14 +9604,6 @@ msgid "Getting started"
 msgstr "시작하기"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/understood-date-row.ts
-#: src/plan/plan-date.tsx
-#: src/plan/plan-properties.tsx
-msgctxt "xuAlmp"
-msgid "Exam date"
-msgstr "시험일"
-
-#: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/date-step.tsx
 msgctxt "P7PLVj"
 msgid "Date"
@@ -9893,6 +9718,7 @@ msgstr "어느 나라를 기준으로 배울까요?"
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/plan/plan-country.tsx
 #: src/plan/plan-language.tsx
+#: src/plan/plan-properties.tsx
 msgctxt "vONi-O"
 msgid "Country"
 msgstr "국가"
@@ -10865,8 +10691,6 @@ msgid "Exam country"
 msgstr "시험 국가"
 
 #: src/onboarding/understood/use-content-country-row.ts
-#: src/plan/plan-country.tsx
-#: src/plan/plan-properties.tsx
 msgctxt "2NB2XO"
 msgid "Content country"
 msgstr "콘텐츠 기준 국가"
@@ -10916,86 +10740,149 @@ msgctxt "d68iA8"
 msgid "Your plan and lessons follow this material"
 msgstr "이 자료에 맞춰 계획과 레슨을 만들어요"
 
-#: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "wM76L5"
-msgid "About {lessons, plural, one {# more lesson} other {# more lessons}}."
-msgstr "{lessons, plural, other {레슨이 약 #개 늘어나요}}."
+#. {names} are a few of the lessons a plan change affects, as examples; the full count is shown beside them.
+#: src/plan-diff/change-names.ts
+msgctxt "lwkzML"
+msgid "{names} and more"
+msgstr "{names} 등"
 
 #: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "6qELt8"
-msgid "{lessons, plural, one {# more lesson} other {# more lessons}}."
-msgstr "{lessons, plural, other {레슨이 #개 늘어나요}}."
+msgctxt "61Vs84"
+msgid "The numbers are different today."
+msgstr "오늘은 계산 결과가 달라졌어요."
 
 #: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "i1hUey"
-msgid "Adds about {lessons, plural, one {# lesson} other {# lessons}}."
-msgstr "레슨을 약 {lessons, plural, other {#개}} 추가해요."
+#: src/plan/plan-bases-sheet.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "D0KGfN"
+msgid "Your plan stays as it is."
+msgstr "계획은 그대로 유지돼요."
 
 #: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "zFFz5n"
-msgid "Adds {lessons, plural, one {# lesson} other {# lessons}}."
-msgstr "{lessons, plural, other {레슨 #개를 추가해요}}."
+msgctxt "3vidCV"
+msgid "See all changes"
+msgstr "전체 변경 사항 보기"
 
-#: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "vxsE1V"
-msgid "Leaves out {lessons, plural, one {# lesson} other {# lessons}}."
-msgstr "{lessons, plural, other {레슨 #개를 제외해요}}."
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "oGZanC"
+msgid "{count, plural, one {You'll study # fewer lesson before your exam.} other {You'll study # fewer lessons before your exam.}}"
+msgstr "{count, plural, other {시험 전까지 공부할 레슨이 #개 줄어요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "4JQeSn"
-msgid "{lessons, plural, one {# fewer lesson} other {# fewer lessons}}."
-msgstr "{lessons, plural, other {레슨이 #개 줄어요}}."
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "hWUm8T"
+msgid "{count, plural, one {You'll study # fewer lesson before your end date.} other {You'll study # fewer lessons before your end date.}}"
+msgstr "{count, plural, other {종료일 전까지 공부할 레슨이 #개 줄어요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "-FjPjU"
-msgid "Goal date {date}"
-msgstr "목표일 {date}"
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "owOJN0"
+msgid "{count, plural, one {You'll study # fewer lesson.} other {You'll study # fewer lessons.}}"
+msgstr "{count, plural, other {공부할 레슨이 #개 줄어요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "hq8xlY"
-msgid "Plan ends {date}"
-msgstr "계획 종료일 {date}"
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "jLX-HE"
+msgid "{count, plural, one {You'll study # more lesson before your exam.} other {You'll study # more lessons before your exam.}}"
+msgstr "{count, plural, other {시험 전까지 공부할 레슨이 #개 늘어요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "0iSWjk"
-msgid "{name} until {date}"
-msgstr "{name} {date}까지"
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "cHhwpw"
+msgid "{count, plural, one {You'll study # more lesson before your end date.} other {You'll study # more lessons before your end date.}}"
+msgstr "{count, plural, other {종료일 전까지 공부할 레슨이 #개 늘어요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "kb-_HJ"
-msgid "{name}: {count, plural, one {# lesson} other {# lessons}} to go"
-msgstr "{name}: {count, plural, other {레슨 #개 남음}}"
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "V266cw"
+msgid "{count, plural, one {You'll study # more lesson.} other {You'll study # more lessons.}}"
+msgstr "{count, plural, other {공부할 레슨이 #개 늘어요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "Ba0YTh"
-msgid "Next mock {date}"
-msgstr "다음 모의고사 {date}"
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "9VnIZh"
+msgid "{count, plural, one {{topics} won't be in your plan.} other {{topics} won't be in your plan.}}"
+msgstr "{count, plural, other {계획에서 {topics}을(를) 제외해요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "GOpo2p"
-msgid "Mock exams on {weekday}"
-msgstr "매주 {weekday}에 모의고사"
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "O5GloM"
+msgid "{count, plural, one {{topics} will be added to your plan.} other {{topics} will be added to your plan.}}"
+msgstr "{count, plural, other {계획에 {topics}을(를) 추가해요.}}"
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "uQpEJ2"
-msgid "Weekly challenges on {weekday}"
-msgstr "매주 {weekday}에 주간 챌린지"
+#. {after} and {before} are days, like "May 5".
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "fW_YDZ"
+msgid "Your plan will end on {after} instead of {before}."
+msgstr "계획 종료일이 {after}로 바뀌어요(변경 전: {before})."
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "j46Zxi"
-msgid "After the change"
-msgstr "변경 후"
+#. {after} and {before} are days, like "May 5".
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "AVlXD0"
+msgid "{phase} will end on {after} instead of {before}."
+msgstr "{phase} 단계 종료일이 {after}로 바뀌어요(변경 전: {before})."
 
-#: src/plan-diff/plan-effect-diff.tsx
-msgctxt "tgvES0"
-msgid "Now"
-msgstr "지금"
+#. {date} is a weekday and day, like "Monday, May 5".
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "k2rsUl"
+msgid "Your next mock exam will be on {date}."
+msgstr "다음 모의고사는 {date}에 봐요."
+
+#. {day} is a weekday, like "Monday".
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "doCZva"
+msgid "Your mock exams will be on {day}."
+msgstr "모의고사는 {day}마다 봐요."
+
+#. {day} is a weekday, like "Monday".
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "UcCZ16"
+msgid "Your weekly challenge will be on {day}."
+msgstr "주간 챌린지는 {day}에 진행돼요."
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "yOT7kI"
+msgid "{count, plural, one {# fewer} other {# fewer}}"
+msgstr "{count, plural, other {#개 감소}}"
+
+#: src/plan-diff/use-change-rows.ts
+#: src/plan/plan-suggestion-context.tsx
+msgctxt "GYQ3G4"
+msgid "{count, plural, one {# more} other {# more}}"
+msgstr "{count, plural, other {#개 더}}"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "2gZdB5"
+msgid "Added to your plan"
+msgstr "계획에 추가"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "Yv-EZa"
+msgid "Plan ends"
+msgstr "계획 종료"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "awd0Xk"
+msgid "{name} ends"
+msgstr "{name} 종료"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "-pTI25"
+msgid "{name} starts"
+msgstr "{name} 시작"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "2A9FaL"
+msgid "{count, plural, =0 {# lessons to go} one {# lesson to go} other {# lessons to go}}"
+msgstr "{count, plural, =0 {남은 레슨 #개} other {남은 레슨 #개}}"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "MBvJer"
+msgid "Starts with {subjects}"
+msgstr "{subjects}부터 시작"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "GgV_JT"
+msgid "Review on {date}"
+msgstr "{date} 복습"
+
+#: src/plan-diff/use-change-rows.ts
+msgctxt "LcFFqV"
+msgid "New lessons start"
+msgstr "새 레슨 시작"
 
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
@@ -11063,41 +10950,23 @@ msgctxt "IdA8la"
 msgid "Get a recommendation"
 msgstr "추천받기"
 
-#. Choice to study a prerequisite with all its lessons, in depth.
-#: src/plan/plan-bases-choices.tsx
-msgctxt "Lp5uON"
-msgid "In depth"
-msgstr "깊이 배우기"
-
-#: src/plan/plan-bases-choices.tsx
-msgctxt "eXbuB9"
-msgid "Essentials"
-msgstr "핵심만 배우기"
-
-#: src/plan/plan-bases-choices.tsx
-msgctxt "erH3RF"
-msgid "Quick lesson"
-msgstr "짧은 레슨"
-
+#. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
 msgid "Every lesson"
 msgstr "모든 레슨"
 
+#. Choice to study only the first, most important lessons of a prerequisite.
 #: src/plan/plan-bases-choices.tsx
-msgctxt "IVFaot"
-msgid "The first third of the lessons"
-msgstr "전체 레슨 중 앞의 3분의 1"
+msgctxt "JAb8N8"
+msgid "First lessons only"
+msgstr "초반 레슨만"
 
+#. Choice to study a prerequisite as one short lesson.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "5EBgSS"
 msgid "One short lesson each"
 msgstr "각각 짧은 레슨 하나씩"
-
-#: src/plan/plan-bases-choices.tsx
-msgctxt "mcsKQc"
-msgid "Leave them out of your plan"
-msgstr "계획에서 제외"
 
 #: src/plan/plan-bases-choices.tsx
 msgctxt "VKfWR3"
@@ -11115,62 +10984,14 @@ msgid "{name} (studied)"
 msgstr "{name} (학습함)"
 
 #: src/plan/plan-bases-choices.tsx
-msgctxt "Mz9DHY"
-msgid "{names} · {time}"
-msgstr "{names} · {time}"
-
-#: src/plan/plan-bases-choices.tsx
-msgctxt "ex6-sv"
-msgid "Different choices"
-msgstr "선택이 서로 다름"
+msgctxt "fQZLRH"
+msgid "Mixed"
+msgstr "항목마다 다름"
 
 #: src/plan/plan-bases-choices.tsx
 msgctxt "V8qBJk"
 msgid "Choose by subject"
 msgstr "과목별로 선택하기"
-
-#: src/plan/plan-bases-effect.tsx
-msgctxt "W3ruGP"
-msgid "Everything then fits by your date."
-msgstr "정한 날짜까지 모두 마칠 수 있어요."
-
-#: src/plan/plan-bases-effect.tsx
-msgctxt "BUCVa4"
-msgid "By your date: {after} of the exam, as now."
-msgstr "정한 날짜까지 시험 범위의 {after}를 공부할 수 있어요. 지금과 같아요."
-
-#: src/plan/plan-bases-effect.tsx
-msgctxt "3rajAn"
-msgid "By your date: {after} of your goal, as now."
-msgstr "정한 날짜까지 목표의 {after}를 달성할 수 있어요. 지금과 같아요."
-
-#: src/plan/plan-bases-effect.tsx
-msgctxt "4AK5yB"
-msgid "By your date: {after} of the exam, against {before} now."
-msgstr "정한 날짜까지 시험 범위의 {after}를 공부할 수 있어요. 현재는 {before}예요."
-
-#: src/plan/plan-bases-effect.tsx
-msgctxt "OVPlJP"
-msgid "By your date: {after} of your goal, against {before} now."
-msgstr "정한 날짜까지 목표의 {after}를 달성할 수 있어요. 현재는 {before}예요."
-
-#: src/plan/plan-bases-effect.tsx
-msgctxt "2Vm8KH"
-msgid "{count, plural, one {# topic comes in: {topics}.} other {# topics come in: {topics}.}}"
-msgstr "{count, plural, other {주제 #개가 계획에 추가돼요: {topics}.}}"
-
-#: src/plan/plan-bases-effect.tsx
-#: src/plan/use-effect-counts.ts
-msgctxt "EtDfjk"
-msgid "{count, plural, one {# topic leaves: {topics}.} other {# topics leave: {topics}.}}"
-msgstr "{count, plural, other {주제 #개가 제외돼요: {topics}.}}"
-
-#: src/plan/plan-bases-sheet.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/study-everything.tsx
-msgctxt "g_RDWS"
-msgid "Checking what changes…"
-msgstr "변경 사항을 확인하고 있어요…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-coverage-suggestion.tsx
@@ -11182,24 +11003,10 @@ msgstr "변경 사항을 확인하지 못했어요."
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
-msgctxt "D0KGfN"
-msgid "Your plan stays as it is."
-msgstr "계획은 그대로 유지돼요."
-
-#: src/plan/plan-bases-sheet.tsx
-msgctxt "ooU7Aw"
-msgid "Save choices"
-msgstr "선택 내용 저장하기"
-
-#: src/plan/plan-bases-sheet.tsx
-msgctxt "Ey0ZIg"
-msgid "Your prerequisites have different choices. Picking one above applies it to all."
-msgstr "사전 지식마다 선택한 방식이 달라요. 위에서 하나를 선택하면 모두에 적용돼요."
-
-#: src/plan/plan-bases-sheet.tsx
-msgctxt "QpxGG7"
-msgid "Prerequisites you've studied stay studied."
-msgstr "이미 공부한 사전 지식은 학습 완료 상태로 유지돼요."
+#: src/plan/study-everything.tsx
+msgctxt "g_RDWS"
+msgid "Checking what changes…"
+msgstr "변경 사항을 확인하고 있어요…"
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
@@ -11207,45 +11014,28 @@ msgctxt "KOMCPT"
 msgid "Prerequisites"
 msgstr "사전 지식"
 
-#: src/plan/plan-bases.tsx
-msgctxt "dkcNQw"
-msgid "Choose prerequisites"
-msgstr "사전 지식 선택하기"
-
-#. {option} is the option of an exam's choice the learner's plan studies, such as a specialty (Desenvolvimento de Sistemas) or a foreign language, named as the exam's notice names it
 #: src/plan/plan-choice-lines.tsx
-msgctxt "Su6-x7"
-msgid "Following the {option} syllabus"
-msgstr "{option} 출제 범위에 맞춰 진행 중"
+msgctxt "YT4OTs"
+msgid "{group}: {option}"
+msgstr "{group}: {option}"
 
 #: src/plan/plan-choices.tsx
 msgctxt "pNi2vP"
 msgid "Your choices"
 msgstr "내 선택"
 
-#: src/plan/plan-choices.tsx
-msgctxt "MYtZfb"
-msgid "Change how you study them."
-msgstr "사전 지식의 학습 방식을 바꿔 보세요."
-
 #: src/plan/plan-country.tsx
-msgctxt "BiNqQt"
-msgid "Change the content country?"
-msgstr "콘텐츠 기준 국가를 바꿀까요?"
+msgctxt "4QudkV"
+msgid "Change your country?"
+msgstr "국가를 바꿀까요?"
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/plan/plan-country.tsx
-msgctxt "tkfoYf"
-msgid "New country: {country}. Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready."
-msgstr "변경할 국가: {country}. 이 국가에 맞춰 계획을 다시 만들어요. 레슨 완료 기록은 그대로 유지되고, 새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요."
-
-#: src/plan/plan-country.tsx
-msgctxt "xZIG58"
-msgid "Rebuild plan"
-msgstr "계획 다시 만들기"
+msgctxt "4ncwjO"
+msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
+msgstr "새 국가: {country}. 이 국가에 맞는 새 계획을 만들어요. 레슨 완료 기록은 그대로 유지돼요."
 
 #: src/plan/plan-coverage-suggestion.tsx
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "TJo5E6"
 msgid "Preview"
 msgstr "미리 보기"
@@ -11281,21 +11071,6 @@ msgctxt "7_AJHO"
 msgid "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then."
 msgstr "마감일이 없으면 원하는 속도로 모든 내용을 공부해요. 마감일이 있으면 그날까지 가장 중요한 내용을 공부할 수 있도록 계획을 맞춰요."
 
-#: src/plan/plan-edit-request.tsx
-msgctxt "d42SLL"
-msgid "Something else? Tell {name}"
-msgstr "다른 요청이 있나요? {name}에게 말하기"
-
-#: src/plan/plan-edit-request.tsx
-msgctxt "nJBi9i"
-msgid "In your own words, like “skip a module” or “less on weekends”. You'll see the change before it applies."
-msgstr "“모듈 하나 건너뛰고 싶어요”나 “주말에는 덜 공부할래요”처럼 편하게 말해 주세요. 적용 전에 변경 내용을 확인할 수 있어요."
-
-#: src/plan/plan-edit-request.tsx
-msgctxt "3HJP7W"
-msgid "In your own words, like “less on weekends”. You'll see the change before it applies."
-msgstr "“주말에는 덜 공부할래요”처럼 편하게 말해 주세요. 적용 전에 변경 내용을 확인할 수 있어요."
-
 #: src/plan/plan-editor.tsx
 #: src/today/today-heading.tsx
 msgctxt "v5e5kt"
@@ -11315,23 +11090,25 @@ msgid "{group}: which one will you take?"
 msgstr "{group}: 어떤 과목으로 시험을 볼 건가요?"
 
 #: src/plan/plan-finish.tsx
-#: src/plan/use-effect-text.ts
 msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "{month}쯤에 마쳐요."
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-fit-suggestion.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "VNHyd8"
-msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
-msgstr "{dateKind, select, month {정해 둔 시간으로 {date}까지 모두 공부할 수 있어요} other {정해 둔 시간으로 {date}까지 모두 공부할 수 있어요}}"
+msgctxt "ylM0GM"
+msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
+msgstr "{count, plural, other {레슨 #개를 더 할 시간이 있어요}}"
 
 #: src/plan/plan-fit-suggestion.tsx
-msgctxt "JzlCcg"
-msgid "{count, plural, one {# more lesson fits in your time} other {# more lessons fit in your time}}"
-msgstr "{count, plural, other {레슨 #개를 더 공부할 시간이 있어요}}"
+#: src/plan/plan-offer-preview.tsx
+msgctxt "tV4o-5"
+msgid "Your plan is updated."
+msgstr "계획을 수정했어요."
+
+#: src/plan/plan-fit-suggestion.tsx
+msgctxt "hKZBEc"
+msgid "Add to my plan"
+msgstr "내 계획에 추가하기"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11428,47 +11205,36 @@ msgid "When off, your plan ends at the exam."
 msgstr "끄면 계획이 시험일에 끝나요."
 
 #: src/plan/plan-notice.tsx
-msgctxt "3qUBgl"
-msgid "{count, plural, one {Every lesson is done: win the challenge to finish your plan.} other {Every lesson is done: win the challenges to finish your plan.}}"
-msgstr "{count, plural, other {모든 레슨을 마쳤어요. 챌린지에서 승리해 계획을 마무리하세요.}}"
+msgctxt "GlgNJb"
+msgid "{count, plural, one {Every lesson is done. Win the challenge to finish your plan.} other {Every lesson is done. Win the challenges to finish your plan.}}"
+msgstr "{count, plural, other {레슨을 모두 마쳤어요. 챌린지에서 이겨 계획을 마무리하세요.}}"
 
 #: src/plan/plan-notice.tsx
-msgctxt "zUETAb"
-msgid "Your plan no longer fits in the time left."
-msgstr "남은 시간으로는 계획을 모두 마칠 수 없어요."
+msgctxt "WaA1zn"
+msgid "You have more lessons than days left. Add time a day or pick a later date."
+msgstr "남은 날보다 레슨이 더 많아요. 하루 학습 시간을 늘리거나 날짜를 늦춰 보세요."
 
 #: src/plan/plan-notice.tsx
-msgctxt "ubJ71W"
-msgid "{lessons, plural, one {# lesson from earlier days comes first} other {# lessons from earlier days come first}}: once you've done them, you're keeping pace again."
-msgstr "{lessons, plural, other {밀린 레슨 #개를 먼저 배워요}}. 모두 마치면 다시 계획대로 진행할 수 있어요."
+msgctxt "Z7cgdl"
+msgid "They come first on Today."
+msgstr "‘오늘’에 먼저 나와요."
 
 #: src/plan/plan-notice.tsx
-msgctxt "jeTB73"
-msgid "{minutes, number} more minutes a day for {days, plural, one {# day} other {# days}} and you're keeping pace again."
-msgstr "하루에 {minutes, number}분씩 더 공부하면 {days, plural, other {#일}} 만에 다시 계획대로 진행할 수 있어요."
+msgctxt "XVhC0H"
+msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
+msgstr "{days, plural, other {하루에 {minutes, number}분씩 #일 동안 더 공부하면 계획을 따라잡을 수 있어요.}}"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-offer-suggestion.tsx
-msgctxt "tV4o-5"
-msgid "Your plan is updated."
-msgstr "계획을 수정했어요."
-
-#. "Then" means "with this change".
-#: src/plan/plan-offer-preview.tsx
-msgctxt "edZO_c"
-msgid "Your plan then covers everything in depth."
-msgstr "이렇게 조정한 계획은 모든 내용을 깊이 있게 다뤄요."
+#: src/plan/plan-schedule.tsx
+msgctxt "VNHyd8"
+msgid "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}"
+msgstr "{dateKind, select, month {정해 둔 시간으로 {date}까지 모두 공부할 수 있어요} other {정해 둔 시간으로 {date}까지 모두 공부할 수 있어요}}"
 
 #: src/plan/plan-offer-preview.tsx
 msgctxt "u6V8AA"
 msgid "{time} a day covers everything in depth"
 msgstr "하루 {time}씩 공부하면 모든 내용을 깊이 있게 배워요"
-
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "KcETCo"
-msgid "Other options"
-msgstr "다른 방법"
 
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/study-everything.tsx
@@ -11478,15 +11244,35 @@ msgid "Study everything"
 msgstr "모두 공부하기"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-msgctxt "0kaP6f"
-msgid "Every topic, even after the exam, at your own pace."
-msgstr "시험이 끝난 뒤에도 모든 주제를 원하는 속도로 배워요."
+msgctxt "PpW8Dz"
+msgid "Move your end date to {date}?"
+msgstr "종료일을 {date}로 바꿀까요?"
 
 #: src/plan/plan-past-date-suggestion.tsx
-msgctxt "oNLSka"
-msgid "Move your date so your time covers what's left."
-msgstr "날짜를 늦춰 남은 내용을 모두 배울 시간을 마련해요."
+#: src/plan/use-operation-question.ts
+msgctxt "oACP53"
+msgid "Keep studying after the exam?"
+msgstr "시험 후에도 계속 공부할까요?"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "chLjlx"
+msgid "{count, plural, one {You have # lesson left. Keep studying it?} other {You have # lessons left. Keep studying them?}}"
+msgstr "{count, plural, other {레슨이 #개 남았어요. 계속 공부할까요?}}"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "zBJlTm"
+msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
+msgstr "{count, plural, other {레슨이 #개 남았어요. 종료일을 늦추면 모두 공부할 수 있어요.}}"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "계속 공부하기"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "A4AeAM"
+msgid "Find a date"
+msgstr "날짜 찾기"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11497,11 +11283,6 @@ msgstr "<mono>{weekdays}</mono> · 주말 <mono>{weekend}</mono>"
 msgctxt "7X2m8_"
 msgid "Lesson language"
 msgstr "레슨 언어"
-
-#: src/plan/plan-properties.tsx
-msgctxt "ONsenW"
-msgid "Lesson examples"
-msgstr "레슨 예시"
 
 #: src/plan/plan-properties.tsx
 msgctxt "burjuf"
@@ -11519,29 +11300,34 @@ msgid "Next <date></date>"
 msgstr "다음 <date></date>"
 
 #: src/plan/plan-properties.tsx
+msgctxt "h0He2G"
+msgid "Goal date"
+msgstr "목표일"
+
+#: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"
 msgid "Everything"
 msgstr "모두"
 
 #: src/plan/plan-rebuild-notice.tsx
-msgctxt "a1BrGF"
-msgid "Preparing your new plan"
+msgctxt "pTY-Gt"
+msgid "Getting your new plan ready"
 msgstr "새 계획을 준비하고 있어요"
 
 #: src/plan/plan-rebuild-notice.tsx
-msgctxt "_K_Sir"
-msgid "Keep studying: this plan stays until the new one is ready, and the lessons you've finished stay done."
-msgstr "새 계획이 준비될 때까지 지금 계획으로 계속 공부할 수 있어요. 레슨 완료 기록도 그대로 유지돼요."
+msgctxt "UyJ0-k"
+msgid "Keep studying this one until then."
+msgstr "그동안은 지금 계획대로 계속 공부하세요."
 
 #: src/plan/plan-rebuild-notice.tsx
-msgctxt "WIKiub"
-msgid "Your new plan couldn't be prepared"
-msgstr "새 계획을 준비하지 못했어요"
+msgctxt "w5tLGV"
+msgid "Your new plan couldn't be made"
+msgstr "새 계획을 만들지 못했어요"
 
 #: src/plan/plan-rebuild-notice.tsx
-msgctxt "JQ6rKG"
-msgid "Your plan still has the lessons it had before."
-msgstr "기존 레슨은 계획에 그대로 남아 있어요."
+msgctxt "qeSUI3"
+msgid "Your plan is as it was."
+msgstr "계획은 그대로예요."
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "jvdY5E"
@@ -11554,96 +11340,64 @@ msgid "Working out what your time covers…"
 msgstr "학습 시간 안에 얼마나 배울 수 있는지 계산하고 있어요…"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "FvyQR4"
-msgid "{days, plural, one {One day ahead} other {# days ahead}}"
-msgstr "{days, plural, other {계획보다 #일 빠름}}"
+msgctxt "sKBfpV"
+msgid "{days, plural, one {# day ahead} other {# days ahead}}"
+msgstr "{days, plural, other {#일 앞섬}}"
 
 #: src/plan/plan-status-label.tsx
-#: src/session/moment-today.tsx
-msgctxt "UKUhFr"
-msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
-msgstr "{lessons, plural, other {밀린 레슨 #개}}"
+msgctxt "2pL7R-"
+msgid "{lessons, plural, one {# lesson behind} other {# lessons behind}}"
+msgstr "{lessons, plural, other {레슨 #개 뒤처짐}}"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "6-04cL"
-msgid "{days, plural, one {One day behind} other {# days behind}}"
-msgstr "{days, plural, other {계획보다 #일 늦음}}"
+msgctxt "XBEzEj"
+msgid "{days, plural, one {# day behind} other {# days behind}}"
+msgstr "{days, plural, other {#일 뒤처짐}}"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "UwUvgY"
-msgid "{count, plural, one {# challenge left} other {# challenges left}}"
-msgstr "{count, plural, other {챌린지 #개가 남았어요}}"
+msgctxt "KZW1X5"
+msgid "{count, plural, one {# challenge to go} other {# challenges to go}}"
+msgstr "{count, plural, other {남은 챌린지 #개}}"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "GyerFd"
-msgid "Plan finished"
-msgstr "계획 완료"
+msgctxt "EQpfkS"
+msgid "Finished"
+msgstr "완료"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "WR0vTU"
-msgid "Needs adjusting"
-msgstr "조정 필요"
+msgctxt "1f3FcP"
+msgid "Not enough time"
+msgstr "시간 부족"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "cSDGl5"
-msgid "Keeping pace"
+msgctxt "aOfyGC"
+msgid "Up to date"
 msgstr "계획대로"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "DCVgDx"
-msgid "Past your date"
+msgctxt "yDYFFn"
+msgid "Date passed"
 msgstr "날짜 지남"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "c1uCCY"
-msgid "{count, plural, one {# lesson was left before your exam.} other {# lessons were left before your exam.}}"
-msgstr "{count, plural, other {시험일에 레슨 #개가 남아 있었어요.}}"
+msgctxt "kWj6AT"
+msgid "{count, plural, one {Your exam date has passed with # lesson left.} other {Your exam date has passed with # lessons left.}}"
+msgstr "{count, plural, other {시험 날짜가 지났고 레슨이 #개 남아 있어요.}}"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "nIQLv3"
-msgid "{count, plural, one {# lesson was left before your exam} other {# lessons were left before your exam}}"
-msgstr "{count, plural, other {시험일에 레슨 #개가 남아 있었어요}}"
+msgctxt "tMCWfy"
+msgid "Your exam date has passed"
+msgstr "시험 날짜가 지났어요"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "LucpZF"
-msgid "{count, plural, one {Your date came with # lesson left.} other {Your date came with # lessons left.}}"
-msgstr "{count, plural, other {목표일에 레슨 #개가 남아 있었어요.}}"
+msgctxt "EedEYt"
+msgid "{count, plural, one {Your end date has passed with # lesson left.} other {Your end date has passed with # lessons left.}}"
+msgstr "{count, plural, other {종료일이 지났고 레슨이 #개 남아 있어요.}}"
 
 #: src/plan/plan-status-label.tsx
-msgctxt "bbLR5l"
-msgid "{count, plural, one {Your date came with # lesson left} other {Your date came with # lessons left}}"
-msgstr "{count, plural, other {목표일에 레슨 #개가 남아 있었어요}}"
-
-#: src/plan/plan-steering.tsx
-msgctxt "zpMMIi"
-msgid "Too easy"
-msgstr "너무 쉬워요"
-
-#: src/plan/plan-steering.tsx
-msgctxt "zW6NKq"
-msgid "Too hard"
-msgstr "너무 어려워요"
-
-#: src/plan/plan-steering.tsx
-msgctxt "oIi_31"
-msgid "More practice"
-msgstr "연습을 더 하고 싶어요"
-
-#: src/plan/plan-steering.tsx
-msgctxt "y-vu6e"
-msgid "More explanation"
-msgstr "설명이 더 필요해요"
-
-#: src/plan/plan-steering.tsx
-msgctxt "F5wXZe"
-msgid "How is it going?"
-msgstr "공부는 어떤가요?"
-
-#. An arrow button that goes back to the previous plan suggestion.
-#: src/plan/plan-suggestion-context.tsx
-msgctxt "JJNc3c"
-msgid "Previous"
-msgstr "이전"
+msgctxt "pOhULo"
+msgid "Your end date has passed"
+msgstr "종료일이 지났어요"
 
 #: src/plan/plan-suggestion-context.tsx
 #: src/plan/plan-suggestion.tsx
@@ -11658,24 +11412,14 @@ msgid "Plan updated"
 msgstr "계획을 바꿨어요"
 
 #: src/plan/plan-suggestion.tsx
-msgctxt "-r70tt"
-msgid "Your plan no longer fits"
-msgstr "계획을 마칠 시간이 부족해졌어요"
+msgctxt "xGiUnw"
+msgid "More lessons than days left"
+msgstr "남은 날보다 레슨이 많아요"
 
 #: src/plan/plan-suggestion.tsx
-msgctxt "7IgvSr"
-msgid "A little to catch up"
-msgstr "조금만 더 하면 따라잡을 수 있어요"
-
-#: src/plan/plan-suggestion.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "오늘의 학습으로 이동하기"
-
-#: src/plan/plan-suggestion.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Plus 알아보기"
+msgctxt "bgDfbl"
+msgid "Add time a day or pick a later date."
+msgstr "하루 학습 시간을 늘리거나 날짜를 늦추세요."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "LCDh_J"
@@ -11784,299 +11528,103 @@ msgid "You'll use"
 msgstr "사용할 도구"
 
 #: src/plan/study-everything.tsx
+msgctxt "0kaP6f"
+msgid "Every topic, even after the exam, at your own pace."
+msgstr "시험이 끝난 뒤에도 모든 주제를 원하는 속도로 배워요."
+
+#: src/plan/study-everything.tsx
 msgctxt "_qzMWL"
 msgid "Every part of your goal, at your own pace, with no end date."
 msgstr "기한 없이 목표의 모든 내용을 원하는 속도로 배워요."
 
-#: src/plan/use-area-sentence.ts
-msgctxt "joDSGq"
-msgid "More time for {areas}."
-msgstr "{areas}에 쓰는 시간을 늘려요."
-
-#: src/plan/use-area-sentence.ts
-msgctxt "eEjhoj"
-msgid "Your plan has no focus."
-msgstr "계획에 중점 과목이 없어요."
-
-#: src/plan/use-area-sentence.ts
-msgctxt "ocTqQ4"
-msgid "Less time for {areas}."
-msgstr "{areas}에 쓰는 시간을 줄여요."
-
-#: src/plan/use-area-sentence.ts
-msgctxt "jJaw4W"
-msgid "{areas} left out of the plan."
-msgstr "{areas} 학습을 계획에서 제외해요."
-
-#: src/plan/use-area-sentence.ts
-msgctxt "lfa4J0"
-msgid "{areas} back in the plan."
-msgstr "{areas} 학습을 계획에 다시 포함해요."
-
-#: src/plan/use-area-sentence.ts
-msgctxt "3m9aLR"
-msgid "Starting past the basics: {areas}."
-msgstr "{areas} 학습은 기초 다음 단계부터 시작해요."
-
-#: src/plan/use-area-sentence.ts
-msgctxt "XMTtKV"
-msgid "Starting from the basics again: {areas}."
-msgstr "{areas} 학습은 다시 기초부터 시작해요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "TkZSZs"
-msgid "You start {area} on {after} instead of {before}."
-msgstr "{area} 학습을 {after}에 시작해요. 원래는 {before}에 시작할 예정이었어요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "9EritW"
-msgid "You start {area} on {after}."
-msgstr "{area} 학습을 {after}에 시작해요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "Kp3Vrm"
-msgid "You still start {area} on {after}."
-msgstr "{area} 학습은 그대로 {after}에 시작해요."
-
-#. {after} is a day, like "May 5".
-#: src/plan/use-area-start-texts.ts
-msgctxt "AOIzyB"
-msgid "You still finish {area} around {after}, with all its lessons: everything fits by your date."
-msgstr "{area}의 모든 레슨을 예정대로 {after}쯤 마쳐요. 정한 날짜 안에 모두 마칠 수 있어요."
-
-#. {after} and {before} are days, like "May 5".
-#: src/plan/use-area-start-texts.ts
-msgctxt "jUTbla"
-msgid "{area} gets about {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
-msgstr "{area}에 {count, plural, other {레슨이 약 #개 늘어나서}} {after}쯤 마쳐요. 원래는 {before}에 마칠 예정이었어요."
-
-#. {after} and {before} are days, like "May 5".
-#: src/plan/use-area-start-texts.ts
-msgctxt "WncCQq"
-msgid "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
-msgstr "{area}에 {count, plural, other {레슨이 #개 늘어나서}} {after}쯤 마쳐요. 원래는 {before}에 마칠 예정이었어요."
-
-#. {after} and {before} are days, like "May 5".
-#: src/plan/use-area-start-texts.ts
-msgctxt "_Q4kxN"
-msgid "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}."
-msgstr "{area}의 {count, plural, other {남은 레슨이 #개 줄어서}} {after}쯤 마쳐요. 원래는 {before}에 마칠 예정이었어요."
-
-#. {after} and {before} are days, like "May 5".
-#: src/plan/use-area-start-texts.ts
-msgctxt "KerAfr"
-msgid "You finish {area} around {after} instead of {before}."
-msgstr "{area} 학습을 {after}쯤 마쳐요. 원래는 {before}에 마칠 예정이었어요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "4W5VPZ"
-msgid "{area}: {after, plural, =0 {# lessons} one {# lesson} other {# lessons}} to go instead of {before, number}."
-msgstr "{area}: {after, plural, =0 {남은 레슨은 #개예요} other {레슨 #개가 남아요}}. 이전에는 {before, number}개였어요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "YJq__G"
-msgid "The new lessons start on {date}, before the basics."
-msgstr "새 레슨은 {date}에 기초 레슨보다 먼저 시작해요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "DRTI4r"
-msgid "The new lessons start on {date}."
-msgstr "새 레슨은 {date}에 시작해요."
-
-#: src/plan/use-area-start-texts.ts
-msgctxt "z41QIM"
-msgid "Your review on {date} starts with {areas}."
-msgstr "{date} 복습은 {areas}부터 시작해요."
+#: src/plan/use-bases-texts.ts
+msgctxt "wkUyCk"
+msgid "We recommend every lesson. Your time covers them."
+msgstr "모든 레슨을 추천해요. 계획한 시간 안에 끝낼 수 있어요."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "Fx63gk"
-msgid "Your time covers everything, so we recommend each prerequisite in depth."
-msgstr "모든 내용을 배울 시간이 충분해서 사전 지식을 하나씩 깊이 있게 배우는 걸 추천해요."
+msgctxt "5yF3ST"
+msgid "We recommend one short lesson each, so there's time for the rest."
+msgstr "나머지도 공부할 수 있게 짧은 레슨을 하나씩 추천해요."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "gw_OFm"
-msgid "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what comes up most."
-msgstr "{days, plural, other {#일 남았어요}}. 자주 출제되는 내용을 배울 시간도 남길 수 있게 사전 지식은 짧은 레슨으로 하나씩 배우는 걸 추천해요."
+msgctxt "jCiV53"
+msgid "We recommend the first lessons only."
+msgstr "첫 레슨만 추천해요."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "McdYH6"
-msgid "{days, plural, one {# day left} other {# days left}}: we recommend a quick lesson for each prerequisite, so there's time for what matters most to your goal."
-msgstr "{days, plural, other {#일 남았어요}}. 목표 달성에 가장 중요한 내용을 배울 시간도 남길 수 있게 사전 지식은 짧은 레슨으로 하나씩 배우는 걸 추천해요."
+msgctxt "c28kAC"
+msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · your choices · {time}"
+msgstr "{count, plural, other {사전 지식 #가지}} · 직접 선택 · {time}"
 
 #: src/plan/use-bases-texts.ts
-msgctxt "L-5EDu"
-msgid "We recommend the essentials, so the topics that build on them make sense."
-msgstr "뒤에 배울 주제를 이해할 수 있도록 핵심 내용을 배우는 걸 추천해요."
+msgctxt "TnvUWN"
+msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · every lesson · {time}"
+msgstr "{count, plural, other {사전 지식 #가지}} · 모든 레슨 · {time}"
 
 #: src/plan/use-bases-texts.ts
-msgctxt "ZQDb1Q"
-msgid "We recommend the essentials, so what builds on them makes sense."
-msgstr "뒤에 배울 내용을 이해할 수 있도록 핵심 내용을 배우는 걸 추천해요."
+msgctxt "BF1KGi"
+msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · one short lesson each · {time}"
+msgstr "{count, plural, other {사전 지식 #가지}} · 짧은 레슨 하나씩 · {time}"
 
 #: src/plan/use-bases-texts.ts
-msgctxt "k_tJu8"
-msgid "Topics that come up a lot build on these."
-msgstr "자주 출제되는 주제의 바탕이 되는 지식이에요."
+msgctxt "TAEj0x"
+msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · skipped"
+msgstr "{count, plural, other {사전 지식 #가지}} · 건너뜀"
 
 #: src/plan/use-bases-texts.ts
-msgctxt "Ao6Fag"
-msgid "Your goal's final work builds on these."
-msgstr "목표의 최종 과제에 필요한 기초 지식이에요."
+msgctxt "i9cQu4"
+msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
+msgstr "{count, plural, other {사전 지식 #가지}} · 첫 레슨만 · {time}"
 
-#: src/plan/use-bases-texts.ts
-msgctxt "9N60CL"
-msgid "{count, plural, one {# prerequisite you showed you know is already out of your plan.} other {# prerequisites you showed you know are already out of your plan.}}"
-msgstr "{count, plural, other {이미 알고 있는 것으로 확인된 사전 지식 #개는 계획에서 빠져 있어요.}}"
+#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
+#: src/plan/use-change-sentence.ts
+msgctxt "U_KFTb"
+msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
+msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꾸고, 시험일은 {date}쯤으로 할까요?} other {공식 시험 안내에 맞춰 계획을 바꾸고, 시험일은 {date}쯤으로 할까요?}}"
 
-#: src/plan/use-bases-texts.ts
-msgctxt "Go6YMb"
-msgid "Already know some? Show it in a test and they leave your plan on their own."
-msgstr "이미 아는 내용이 있나요? 테스트로 확인해 보세요. 아는 내용은 계획에서 자동으로 빠져요."
+#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
+#: src/plan/use-change-sentence.ts
+msgctxt "vRjVI1"
+msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
+msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꾸고, 시험일은 {date}로 할까요?} other {공식 시험 안내에 맞춰 계획을 바꾸고, 시험일은 {date}로 할까요?}}"
 
-#: src/plan/use-bases-texts.ts
-msgctxt "WVfKOh"
-msgid "{count, plural, one {# prerequisite, {time} with your choice.} other {# prerequisites, {time} with your choices.}}"
-msgstr "{count, plural, other {선택한 방식으로 사전 지식 #개를 배우는 데 {time} 걸려요.}}"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "TOeHho"
-msgid "{count, plural, one {# prerequisite, {time} in depth.} other {# prerequisites, {time} in depth.}}"
-msgstr "{count, plural, other {사전 지식 #개를 깊이 있게 배우는 데 {time} 걸려요.}}"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "TJA_yI"
-msgid "{count, plural, one {# prerequisite, {time} for its quick lesson.} other {# prerequisites, {time} for a quick lesson each.}}"
-msgstr "{count, plural, other {사전 지식 #개를 짧은 레슨으로 하나씩 배우는 데 {time} 걸려요.}}"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "XpCEl_"
-msgid "{count, plural, one {# prerequisite, skipped.} other {# prerequisites, all skipped.}}"
-msgstr "{count, plural, other {사전 지식 #개를 모두 건너뛰어요.}}"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "7sIzM8"
-msgid "{count, plural, one {# prerequisite, {time} for its essentials.} other {# prerequisites, {time} for their essentials.}}"
-msgstr "{count, plural, other {사전 지식 #개의 핵심 내용을 배우는 데 {time} 걸려요.}}"
+#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/plan/use-change-sentence.ts
+msgctxt "fZ_NjG"
+msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
+msgstr "{document, select, notice {시험 공고에 맞춰 계획을 바꿀까요?} other {공식 시험 안내에 맞춰 계획을 바꿀까요?}}"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "hFKPQ9"
-msgid "Harder from now on: tougher practice, and the basics you already do well are skipped."
-msgstr "이제 더 어려운 내용으로 연습하고, 이미 잘하는 기초 내용은 건너뛰어요."
+msgctxt "m8Su88"
+msgid "Move your exam date to around {date}?"
+msgstr "시험일을 {date}쯤으로 바꿀까요?"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "VgcdiE"
-msgid "Easier material from now on."
-msgstr "앞으로는 더 쉬운 내용을 배워요."
+#: src/plan/use-operation-question.ts
+msgctxt "7WE3xg"
+msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
+msgstr "{dateKind, select, exam {시험 날짜를 {date}로 바꿀까요?} goal {종료일을 {date}로 바꿀까요?} other {날짜를 {date}로 바꿀까요?}}"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "z8OoV5"
-msgid "Lessons at the usual difficulty from now on."
-msgstr "앞으로는 레슨을 보통 난이도로 진행해요."
+msgctxt "KoD1U9"
+msgid "Done. Today's lessons changed too."
+msgstr "완료했어요. 오늘 레슨도 바뀌었어요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "GShaPF"
-msgid "{document, select, notice {Your plan follows the exam notice.} other {Your plan follows the exam's official guide.}}"
-msgstr "{document, select, notice {시험 공고에 맞춘 계획이에요.} other {시험 공식 안내서에 맞춘 계획이에요.}}"
+msgctxt "fpDDO_"
+msgid "Done. It starts on your next study day."
+msgstr "완료했어요. 다음 학습일부터 적용돼요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "n-S3-o"
-msgid "Daily time changed to {time}."
-msgstr "하루에 {time}씩 공부하도록 바꿨어요."
+msgctxt "r84WhO"
+msgid "Done."
+msgstr "완료했어요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "bkqP1O"
-msgid "A light week from {date}, at half the time."
-msgstr "{date}부터 일주일 동안은 학습 시간을 절반으로 줄여요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "QB_qg5"
-msgid "The weekly challenge moved to {date}."
-msgstr "주간 챌린지 날짜가 {date}로 바뀌었어요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "VzP2ac"
-msgid "{activities} left out of your lessons."
-msgstr "{activities} 활동이 레슨에서 제외돼요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "SHExgI"
-msgid "{activities} back in your lessons."
-msgstr "{activities} 활동이 레슨에 다시 포함돼요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "izrQV6"
-msgid "More practice from now on."
-msgstr "앞으로 연습 비중이 커져요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "Uk3JNb"
-msgid "More explanation from now on."
-msgstr "앞으로 설명 비중이 커져요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "ZIyDwb"
-msgid "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}"
-msgstr "{count, plural, other {{skills}이(가) 계획에 추가돼요.}}"
-
-#. The goal's date moved, earlier or later. {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-choice-sentence.ts
-msgctxt "FunQxr"
-msgid "Date moved to {date}."
-msgstr "날짜가 {date}로 바뀌었어요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "TXiOHF"
-msgid "Your phase dates moved, so more lessons fit before your goal's date."
-msgstr "단계별 날짜가 바뀌어서 목표 날짜 전에 더 많은 레슨을 마칠 수 있어요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "2rqIF8"
-msgid "The lessons your time fits come into your plan."
-msgstr "학습 시간에 맞는 분량의 레슨이 계획에 포함돼요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "dlXL9P"
-msgid "Your plan studies {subject} for {group}."
-msgstr "{subject} 학습을 {group}에 맞춰 계획해요."
-
-#: src/plan/use-change-sentence.ts
-#: src/plan/use-coverage-sentence.ts
-msgctxt "5m7gA2"
-msgid "Your plan changed."
-msgstr "계획이 바뀌었어요."
-
-#. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "Fvg-A-"
-msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam around {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam around {date}.}}"
-msgstr "{document, select, notice {시험 공고를 확인했어요. 공고에 나온 과목에 맞춰 계획을 세울 수 있고, 시험은 {date}쯤이에요.} other {공식 시험 안내서를 확인했어요. 안내서에 나온 파트에 맞춰 계획을 세울 수 있고, 시험은 {date}쯤이에요.}}"
-
-#. "With the exam on {date}" means "and the exam is on {date}". {date} is a day, like "May 5".
-#: src/plan/use-change-sentence.ts
-msgctxt "DbbM04"
-msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam on {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam on {date}.}}"
-msgstr "{document, select, notice {시험 공고를 확인했어요. 공고에 나온 과목에 맞춰 계획을 세울 수 있고, 시험은 {date}에 있어요.} other {공식 시험 안내서를 확인했어요. 안내서에 나온 파트에 맞춰 계획을 세울 수 있고, 시험은 {date}에 있어요.}}"
-
-#: src/plan/use-change-sentence.ts
-msgctxt "Z-_K59"
-msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects and topics.} other {We read the exam's official guide: your plan can follow its parts and topics.}}"
-msgstr "{document, select, notice {시험 공고를 확인했어요. 공고에 나온 과목과 주제에 맞춰 계획을 세울 수 있어요.} other {공식 시험 안내서를 확인했어요. 안내서에 나온 파트와 주제에 맞춰 계획을 세울 수 있어요.}}"
-
-#: src/plan/use-change-sentence.ts
-msgctxt "Kqvu9e"
-msgid "It's in your plan, and today's session follows it."
-msgstr "계획에 반영되고, 오늘의 학습도 그에 맞춰 진행돼요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "V-ag7C"
-msgid "It's in your plan from your next study day. Today's session stays as it is."
-msgstr "다음 학습일부터 계획에 반영돼요. 오늘의 학습은 그대로예요."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "0tqBTR"
-msgid "Your plan follows it from now on."
-msgstr "앞으로 이 내용에 맞춰 계획이 진행돼요."
+msgctxt "hDHAZM"
+msgid "Change your plan?"
+msgstr "계획을 바꿀까요?"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "tl9iG7"
@@ -12084,283 +11632,359 @@ msgid "For your new level, these come first: {skills}."
 msgstr "새로운 수준에 맞춰 {skills}부터 학습해요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "Bot8U5"
-msgid "More time for {areas}, where it's needed most."
-msgstr "가장 연습이 필요한 {areas} 영역에 시간을 더 써요."
-
-#: src/plan/use-change-sentence.ts
 msgctxt "a_18ck"
 msgid "Your Focus test suggests more time for {subjects}."
 msgstr "집중 진단 결과, {subjects}에 시간을 더 쓰는 걸 추천해요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "O1UIS5"
-msgid "{document, select, notice {The exam notice sets the exam for {date}.} other {The exam's official calendar sets the exam for {date}.}}"
-msgstr "{document, select, notice {시험 공고에 따르면 시험은 {date}에 있어요.} other {공식 시험 일정에 따르면 시험은 {date}에 있어요.}}"
+#: src/plan/use-operation-statement.ts
+#: src/plan/use-system-change-sentence.ts
+msgctxt "5m7gA2"
+msgid "Your plan changed."
+msgstr "계획이 바뀌었어요."
 
 #: src/plan/use-change-sentence.ts
-msgctxt "JG-uWo"
-msgid "{document, select, notice {Keep the notice's date} other {Keep the official date}}"
-msgstr "{document, select, notice {공고에 나온 날짜 유지하기} other {공식 시험일 유지하기}}"
+msgctxt "VDuR1W"
+msgid "The official exam date is {date}."
+msgstr "공식 시험일은 {date}이에요."
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "_zOKdj"
-msgid "{count, plural, one {# prerequisite is studied in depth.} other {# prerequisites are studied in depth.}}"
-msgstr "{count, plural, other {사전 지식 #개를 깊이 있게 배워요.}}"
+#: src/plan/use-operation-question.ts
+msgctxt "EP7Gpz"
+msgid "Add {topics} to your plan?"
+msgstr "계획에 {topics}을(를) 추가할까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "cRHcrX"
-msgid "{count, plural, one {# prerequisite keeps its essentials.} other {# prerequisites keep their essentials.}}"
-msgstr "{count, plural, other {사전 지식 #개는 핵심 내용만 배워요.}}"
+#: src/plan/use-operation-question.ts
+msgctxt "oeLkPK"
+msgid "Focus on {subjects}?"
+msgstr "{subjects}에 집중할까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "Nd-uE5"
-msgid "{count, plural, one {# prerequisite gets a quick lesson.} other {# prerequisites get a quick lesson each.}}"
-msgstr "{count, plural, other {사전 지식 #개를 짧은 레슨으로 하나씩 배워요.}}"
+#: src/plan/use-operation-question.ts
+msgctxt "IhILju"
+msgid "Remove your focus?"
+msgstr "집중 학습 설정을 해제할까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "9SgcVz"
-msgid "{count, plural, one {# prerequisite is skipped.} other {# prerequisites are skipped.}}"
-msgstr "{count, plural, other {사전 지식 #개를 건너뛰어요.}}"
+#: src/plan/use-operation-question.ts
+msgctxt "WL0WWw"
+msgid "Less time for {subjects}?"
+msgstr "{subjects} 공부 시간을 줄일까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "c8OqeU"
-msgid "No deadline: you study everything at your own pace."
-msgstr "기한 없이 편한 페이스로 모든 내용을 배워요."
+#: src/plan/use-operation-question.ts
+msgctxt "WqIOkc"
+msgid "Take {subjects} out of your plan?"
+msgstr "계획에서 {subjects}을(를) 뺄까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "H05M2k"
-msgid "You study everything: what doesn't fit before the exam comes after it."
-msgstr "모든 내용을 배워요. 시험 전까지 다 배우지 못한 내용은 시험 후에 이어서 배워요."
+#: src/plan/use-operation-question.ts
+msgctxt "pFDR2w"
+msgid "Add {subjects} back to your plan?"
+msgstr "계획에 {subjects}을(를) 다시 넣을까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "iLZyQ_"
-msgid "Your plan ends at the exam again."
-msgstr "계획은 다시 시험일까지예요."
+#: src/plan/use-operation-question.ts
+msgctxt "pATZcK"
+msgid "Skip the basics of {subjects}?"
+msgstr "{subjects}의 기초를 건너뛸까요?"
 
-#: src/plan/use-choice-sentence.ts
-msgctxt "AhM22J"
-msgid "Your course now goes up to {level}."
-msgstr "이제 코스에서 {level}까지 배워요."
+#: src/plan/use-operation-question.ts
+msgctxt "yzWPVh"
+msgid "Start {subjects} from the basics?"
+msgstr "{subjects} 공부를 기초부터 시작할까요?"
 
-#: src/plan/use-coverage-sentence.ts
-msgctxt "PTMqby"
-msgid "{count, plural, one {{topics} no longer fits by your date.} other {{topics} no longer fit by your date.}}"
-msgstr "{count, plural, other {이제 목표 날짜까지 {topics} 학습을 마칠 수 없어요.}}"
+#: src/plan/use-operation-question.ts
+msgctxt "_zDz_e"
+msgid "Study {time} a day?"
+msgstr "하루에 {time} 공부할까요?"
 
-#: src/plan/use-coverage-sentence.ts
-msgctxt "dNd_Kc"
-msgid "{count, plural, one {{topics} now fits by your date.} other {{topics} now fit by your date.}}"
-msgstr "{count, plural, other {이제 목표 날짜까지 {topics} 학습을 마칠 수 있어요.}}"
+#: src/plan/use-operation-question.ts
+msgctxt "qhZ_eV"
+msgid "{count, plural, one {Make {days} a rest day?} other {Make {days} rest days?}}"
+msgstr "{count, plural, other {{days}을(를) 쉬는 날로 정할까요?}}"
 
-#: src/plan/use-coverage-sentence.ts
-msgctxt "AoCG79"
-msgid "Now in your plan: {topics}."
-msgstr "계획에 추가된 주제: {topics}."
+#: src/plan/use-operation-question.ts
+msgctxt "iRxfqr"
+msgid "Study {time} on {days}?"
+msgstr "{time}씩 {days}에 공부할까요?"
 
-#: src/plan/use-coverage-sentence.ts
-msgctxt "jzsdEN"
-msgid "Out of your plan: {topics}."
-msgstr "계획에서 제외된 주제: {topics}."
+#: src/plan/use-operation-question.ts
+msgctxt "D1Mn7p"
+msgid "Take a lighter week from {date}, at half the time?"
+msgstr "{date}부터 일주일 동안 학습 시간을 절반으로 줄일까요?"
 
-#: src/plan/use-coverage-sentence.ts
-msgctxt "iNSgWW"
-msgid "Your placement answers changed what fits by your date."
-msgstr "실력 진단 답변에 따라 목표일까지 배울 수 있는 내용이 바뀌었어요."
+#: src/plan/use-operation-question.ts
+msgctxt "p6lRdj"
+msgid "Move this week's challenge to {date}?"
+msgstr "이번 주 챌린지를 {date}로 옮길까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "_K4MVL"
-msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}, such as {names}."
-msgstr "레슨이 약 {added, plural, other {#개}} 늘고 {removed, plural, other {#개}} 줄어요(예: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "2s-lg0"
+msgid "Study without an end date?"
+msgstr "종료일 없이 공부할까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "YSiG5s"
-msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}, such as {names}."
-msgstr "레슨이 {added, plural, other {#개}} 늘고 {removed, plural, other {#개}} 줄어요(예: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "Q_ZMVF"
+msgid "End your plan at the exam?"
+msgstr "시험 날짜에 계획을 끝낼까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "Y-R1d7"
-msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}: {names}."
-msgstr "레슨이 약 {added, plural, other {#개}} 늘고 {removed, plural, other {#개}} 줄어요(제외: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "9Lad6A"
+msgid "More practice?"
+msgstr "연습을 늘릴까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "jpBrVZ"
-msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}: {names}."
-msgstr "레슨이 {added, plural, other {#개}} 늘고 {removed, plural, other {#개}} 줄어요(제외: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "bq8SzH"
+msgid "More explanation?"
+msgstr "설명을 늘릴까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "rBHYoU"
-msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}."
-msgstr "레슨이 약 {added, plural, other {#개}} 늘고 {removed, plural, other {#개}} 줄어요."
+#: src/plan/use-operation-question.ts
+msgctxt "1O6Vbq"
+msgid "Harder lessons?"
+msgstr "레슨을 더 어렵게 할까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "YHbjhT"
-msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}."
-msgstr "레슨이 {added, plural, other {#개}} 늘고 {removed, plural, other {#개}} 줄어요."
+#: src/plan/use-operation-question.ts
+msgctxt "74YmjL"
+msgid "Easier lessons?"
+msgstr "레슨을 더 쉽게 할까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "cktzJe"
-msgid "{lessons, plural, one {# fewer lesson} other {# fewer lessons}}, such as {names}."
-msgstr "레슨이 {lessons, plural, other {#개}} 줄어요(예: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "gsoC3D"
+msgid "Back to the usual difficulty?"
+msgstr "기본 난이도로 돌아갈까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "TtcaE1"
-msgid "{lessons, plural, one {# fewer lesson} other {# fewer lessons}}: {names}."
-msgstr "레슨이 {lessons, plural, other {#개}} 줄어요({names})."
+#: src/plan/use-operation-question.ts
+msgctxt "QuhpKB"
+msgid "Take {activities} out of your lessons?"
+msgstr "레슨에서 {activities}을(를) 뺄까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "kNBecE"
-msgid "{skill} (about {lessons, number})"
-msgstr "{skill}(약 {lessons, number}개)"
+#: src/plan/use-operation-question.ts
+msgctxt "hXKB4p"
+msgid "Bring {activities} back to your lessons?"
+msgstr "레슨에 {activities}을(를) 다시 넣을까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "iHy8J9"
-msgid "Lessons not written yet: {skills}."
-msgstr "아직 만들지 않은 레슨: {skills}."
+#: src/plan/use-operation-question.ts
+msgctxt "JcSj1Q"
+msgid "Change your prerequisites?"
+msgstr "사전 지식 설정을 바꿀까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "iDJBGb"
-msgid "Adds about {added, plural, one {# lesson} other {# lessons}} and leaves out {removed, number}, such as {names}."
-msgstr "레슨 약 {added, plural, other {#개}}를 추가하고 {removed, number}개를 제외해요(예: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "Rbgsrw"
+msgid "Study up to {level}?"
+msgstr "{level}까지 공부할까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "vJamsr"
-msgid "Adds {added, plural, one {# lesson} other {# lessons}} and leaves out {removed, number}, such as {names}."
-msgstr "레슨 {added, plural, other {#개}}를 추가하고 {removed, number}개를 제외해요(예: {names})."
+#: src/plan/use-operation-question.ts
+msgctxt "etSQn0"
+msgid "Add the lessons your time fits?"
+msgstr "학습 시간에 맞춰 레슨을 추가할까요?"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "i0-WRr"
-msgid "Adds about {added, plural, one {# lesson} other {# lessons}} and leaves out {removed, number}: {names}."
-msgstr "레슨 약 {added, plural, other {#개}}를 추가하고 {removed, number}개를 제외해요({names})."
+#: src/plan/use-operation-statement.ts
+msgctxt "lhP9Vj"
+msgid "Harder lessons from now on."
+msgstr "이제부터 더 어려운 레슨을 공부해요."
 
-#: src/plan/use-effect-counts.ts
-msgctxt "Z53KHy"
-msgid "Adds {added, plural, one {# lesson} other {# lessons}} and leaves out {removed, number}: {names}."
-msgstr "레슨 {added, plural, other {#개}}를 추가하고 {removed, number}개를 제외해요({names})."
+#: src/plan/use-operation-statement.ts
+msgctxt "HiqeC5"
+msgid "Easier lessons from now on."
+msgstr "이제부터 더 쉬운 레슨을 공부해요."
 
-#: src/plan/use-effect-counts.ts
-msgctxt "qMikbS"
-msgid "Adds about {added, plural, one {# lesson} other {# lessons}} and leaves out {removed, number}."
-msgstr "레슨 약 {added, plural, other {#개}}를 추가하고 {removed, number}개를 제외해요."
+#: src/plan/use-operation-statement.ts
+msgctxt "z8OoV5"
+msgid "Lessons at the usual difficulty from now on."
+msgstr "앞으로는 레슨을 보통 난이도로 진행해요."
 
-#: src/plan/use-effect-counts.ts
-msgctxt "dhuyYm"
-msgid "Adds {added, plural, one {# lesson} other {# lessons}} and leaves out {removed, number}."
-msgstr "레슨 {added, plural, other {#개}}를 추가하고 {removed, number}개를 제외해요."
+#. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
+#: src/plan/use-operation-statement.ts
+msgctxt "BRMQFR"
+msgid "{document, select, notice {Your plan follows the exam's official guide.} other {Your plan follows the exam's official guide.}}"
+msgstr "{document, select, notice {시험 공고에 맞춘 계획이에요.} other {공식 시험 안내에 맞춘 계획이에요.}}"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "99lptj"
-msgid "Leaves out {lessons, plural, one {# lesson} other {# lessons}}, such as {names}."
-msgstr "레슨 {lessons, plural, other {#개}}를 제외해요(예: {names})."
+#: src/plan/use-operation-statement.ts
+msgctxt "TOJUUa"
+msgid "{count, plural, one {{topics} added to your plan.} other {{topics} added to your plan.}}"
+msgstr "{count, plural, other {계획에 {topics}을(를) 추가해요.}}"
 
-#: src/plan/use-effect-counts.ts
-msgctxt "j3OVHp"
-msgid "Leaves out {lessons, plural, one {# lesson} other {# lessons}}: {names}."
-msgstr "레슨 {lessons, plural, other {#개}}를 제외해요({names})."
+#: src/plan/use-operation-statement.ts
+msgctxt "rl5o-A"
+msgid "Your focus: {subjects}."
+msgstr "집중 과목: {subjects}."
 
-#. A suggested change, not one already made.
-#: src/plan/use-effect-counts.ts
-msgctxt "NeqKcc"
-msgid "Lessons left out include {names}."
-msgstr "제외할 레슨에는 {names} 등이 있어요."
+#: src/plan/use-operation-statement.ts
+msgctxt "eEjhoj"
+msgid "Your plan has no focus."
+msgstr "계획에 중점 과목이 없어요."
 
-#. A suggested change, not one already made.
-#: src/plan/use-effect-counts.ts
-msgctxt "GOzVd7"
-msgid "Lessons left out: {names}."
-msgstr "제외할 레슨: {names}."
+#: src/plan/use-operation-statement.ts
+msgctxt "izZeA3"
+msgid "Less time for {subjects}."
+msgstr "{subjects}에 쓰는 시간을 줄여요."
 
-#. {after} and {before} are days, like "May 5".
-#: src/plan/use-effect-text.ts
-msgctxt "IUkTus"
-msgid "Ends {after} instead of {before}."
-msgstr "종료일이 {after}로 바뀌어요(기존: {before})."
+#: src/plan/use-operation-statement.ts
+msgctxt "WfEaF5"
+msgid "{count, plural, one {{subjects} isn't in your plan.} other {{subjects} aren't in your plan.}}"
+msgstr "{count, plural, other {계획에서 {subjects}을(를) 제외해요.}}"
 
-#. In the month form, {after} and {before} are months, like "May 2027"; otherwise days, like "May 5".
-#: src/plan/use-effect-text.ts
-msgctxt "OZ4Mxp"
-msgid "{dateKind, select, month {Ends around {after} instead of {before}.} other {Ends around {after} instead of {before}.}}"
-msgstr "{dateKind, select, month {종료 시점이 {after}쯤으로 바뀌어요(기존: {before}).} other {종료 시점이 {after}쯤으로 바뀌어요(기존: {before}).}}"
+#: src/plan/use-operation-statement.ts
+msgctxt "JRd4qM"
+msgid "{count, plural, one {{subjects} added to your plan.} other {{subjects} added to your plan.}}"
+msgstr "{count, plural, other {계획에 {subjects}을(를) 추가해요.}}"
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "FJ-d5Y"
-msgid "{lessons, plural, one {Your goal takes # fewer lesson.} other {Your goal takes # fewer lessons.}}"
-msgstr "{lessons, plural, other {목표를 이루는 데 필요한 레슨이 #개 줄어요.}}"
+#: src/plan/use-operation-statement.ts
+msgctxt "yFPguK"
+msgid "Your plan skips the basics of {subjects}."
+msgstr "계획에서는 {subjects}의 기초를 건너뛰어요."
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "f1LZew"
-msgid "{lessons, plural, one {Your goal takes about # more lesson.} other {Your goal takes about # more lessons.}}"
-msgstr "{lessons, plural, other {목표를 이루는 데 레슨이 약 #개 더 필요해요.}}"
+#: src/plan/use-operation-statement.ts
+msgctxt "S-SOzv"
+msgid "{count, plural, one {{subjects} starts from the basics.} other {{subjects} start from the basics.}}"
+msgstr "{count, plural, other {{subjects}의 기초부터 시작해요.}}"
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "xM0WOm"
-msgid "{lessons, plural, one {Your goal takes # more lesson.} other {Your goal takes # more lessons.}}"
-msgstr "{lessons, plural, other {목표를 이루는 데 레슨이 #개 더 필요해요.}}"
+#: src/plan/use-operation-statement.ts
+msgctxt "oKdn3i"
+msgid "{count, plural, one {# with every lesson} other {# with every lesson}}"
+msgstr "{count, plural, other {매 레슨마다 #개}}"
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "VE4kqn"
-msgid "{lessons, plural, one {# lesson no longer fits by your date.} other {# lessons no longer fit by your date.}}"
-msgstr "{lessons, plural, other {목표 날짜까지 마칠 수 있는 레슨이 #개 줄어요.}}"
+#: src/plan/use-operation-statement.ts
+msgctxt "LC1sYj"
+msgid "{count, plural, one {# with the first lessons only} other {# with the first lessons only}}"
+msgstr "{count, plural, other {초반 레슨에서만 #개}}"
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "xcKc0O"
-msgid "{lessons, plural, one {About # more lesson fits by your date.} other {About # more lessons fit by your date.}}"
-msgstr "{lessons, plural, other {목표 날짜까지 레슨을 약 #개 더 마칠 수 있어요.}}"
+#: src/plan/use-operation-statement.ts
+msgctxt "32u5L7"
+msgid "{count, plural, one {# with one short lesson} other {# with one short lesson}}"
+msgstr "{count, plural, other {짧은 레슨 하나로 #개}}"
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "g50YGO"
-msgid "{lessons, plural, one {# more lesson fits by your date.} other {# more lessons fit by your date.}}"
-msgstr "{lessons, plural, other {목표 날짜까지 레슨을 #개 더 마칠 수 있어요.}}"
+#. Counts blocks of today's study session the learner skipped.
+#: src/plan/use-operation-statement.ts
+#: src/today/today-session-card.tsx
+msgctxt "iykTqr"
+msgid "{count, plural, one {# skipped} other {# skipped}}"
+msgstr "{count, plural, other {#개 건너뜀}}"
 
-#: src/plan/use-estimate-sentence.ts
-msgctxt "tYcO5N"
-msgid "We now plan for the time your lessons need."
-msgstr "이제 레슨에 필요한 시간을 반영해 계획을 세워요."
+#: src/plan/use-operation-statement.ts
+msgctxt "kCS0RJ"
+msgid "Prerequisites: {parts}."
+msgstr "사전 지식: {parts}."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "8KCSND"
+msgid "You now study {time} a day."
+msgstr "이제 하루에 {time}씩 공부해요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "gGz2WP"
+msgid "{days}: rest day."
+msgstr "{days}: 쉬는 날이에요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "2oT8vO"
+msgid "{days}: {time} a day."
+msgstr "{days}: 하루 {time}씩 학습해요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "nybPwt"
+msgid "A lighter week from {date}, at half the time."
+msgstr "{date}부터 일주일 동안 학습 시간을 절반으로 줄여요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "acLp-D"
+msgid "This week's challenge moved to {date}."
+msgstr "이번 주 챌린지를 {date}로 옮겨요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "EYPoni"
+msgid "{dateKind, select, exam {Exam date: {date}.} goal {End date: {date}.} other {Date moved to {date}.}}"
+msgstr "{dateKind, select, exam {시험일: {date}.} goal {종료일: {date}.} other {날짜를 {date}로 바꿔요.}}"
+
+#: src/plan/use-operation-statement.ts
+msgctxt "DxGmxU"
+msgid "Your plan has no end date."
+msgstr "계획에 종료일이 없어요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "RnY04z"
+msgid "Your plan goes on after the exam."
+msgstr "시험 후에도 계획은 계속돼요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "JXOYRt"
+msgid "Your plan ends at the exam."
+msgstr "계획은 시험일에 끝나요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "0qr5y7"
+msgid "Your lessons no longer have {activities}."
+msgstr "레슨에서 {activities} 활동이 빠져요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "SHExgI"
+msgid "{activities} back in your lessons."
+msgstr "{activities} 활동이 레슨에 다시 포함돼요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "izrQV6"
+msgid "More practice from now on."
+msgstr "앞으로 연습 비중이 커져요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "Uk3JNb"
+msgid "More explanation from now on."
+msgstr "앞으로 설명 비중이 커져요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "ennIrt"
+msgid "Level to reach: {level}."
+msgstr "목표 레벨: {level}."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "IQ6KGj"
+msgid "Lessons added to your plan."
+msgstr "계획에 레슨이 추가돼요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "zC0937"
+msgid "Your phase dates moved."
+msgstr "단계별 일정이 바뀌어요."
+
+#: src/plan/use-operation-statement.ts
+msgctxt "h71iYS"
+msgid "{group}: {subject}."
+msgstr "{group}: {subject}."
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "Z1bF3V"
-msgid "Some lessons are taking longer than planned, so the challenges that end these phases now come before them. Moving their dates fits the lessons in first."
-msgstr "일부 레슨이 예상보다 오래 걸려 단계 챌린지가 레슨보다 먼저 잡혀 있어요. 챌린지 날짜를 옮기면 레슨을 먼저 마칠 수 있어요."
+msgctxt "5B12nE"
+msgid "Move your phase dates later?"
+msgstr "단계별 종료일을 늦출까요?"
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "8ASDwt"
-msgid "Some lessons are taking longer than planned, so the challenge that ends {phase} now comes before them. Moving that end {days, plural, one {# day} other {# days}} later fits them in first."
-msgstr "일부 레슨이 예상보다 오래 걸려 {phase}의 마지막 챌린지가 레슨보다 먼저 잡혀 있어요. 종료일을 {days, plural, other {#일}} 늦추면 레슨을 먼저 마칠 수 있어요."
+msgctxt "hMsz2_"
+msgid "That gives you time to finish each phase's lessons."
+msgstr "그러면 각 단계의 레슨을 마칠 시간이 생겨요."
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "OGdDLv"
-msgid "{count} phase challenges fall on days you rest. Moving your phase dates gives them study days."
-msgstr "단계 챌린지 {count}개가 쉬는 날에 잡혀 있어요. 단계 일정을 조정하면 공부하는 날에 할 수 있어요."
+msgctxt "dpv6iX"
+msgid "{days, plural, one {Move the end of {phase} # day later?} other {Move the end of {phase} # days later?}}"
+msgstr "{days, plural, other {{phase} 종료일을 #일 늦출까요?}}"
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "zsalm7"
-msgid "{phase} ends with a challenge on {day}, a day you rest. Moving your phase dates gives it a study day."
-msgstr "{phase}의 마지막 챌린지가 쉬는 날인 {day}에 잡혀 있어요. 단계 일정을 조정하면 공부하는 날에 할 수 있어요."
+msgctxt "HGzql1"
+msgid "That gives you time to finish its lessons."
+msgstr "그러면 이 단계의 레슨을 마칠 시간이 생겨요."
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "L1jU9X"
-msgid "Keeping your phase dates leaves {outcomes} out by your goal's date. Moving them fits them in."
-msgstr "단계 일정을 그대로 두면 목표 날짜까지의 계획에 {outcomes}을(를) 포함할 수 없어요. 일정을 조정하면 포함할 수 있어요."
+msgctxt "ZVhIKc"
+msgid "Move your phase dates off rest days?"
+msgstr "단계별 종료일이 쉬는 날과 겹치지 않게 조정할까요?"
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "hbCDAt"
-msgid "Some lessons take more or less time than planned. Moving your phase dates fits more of them before your goal's date."
-msgstr "일부 레슨은 예상보다 시간이 더 걸리거나 덜 걸려요. 단계 일정을 조정하면 목표 날짜까지 더 많은 레슨을 마칠 수 있어요."
+msgctxt "aaz24-"
+msgid "Move the end of {phase} off {day}?"
+msgstr "{phase} 종료일을 {day} 말고 다른 날로 옮길까요?"
 
 #: src/plan/use-phase-dates-sentence.ts
-msgctxt "5-K3bz"
-msgid "A phase's challenge falls on a day without room for it. Moving your phase dates gives it room."
-msgstr "단계 챌린지가 시간이 부족한 날에 잡혀 있어요. 단계 일정을 조정하면 챌린지를 할 시간이 생겨요."
+msgctxt "Xs5viu"
+msgid "{day} is a day you don't study."
+msgstr "{day}에는 공부하지 않아요."
 
-#: src/plan/use-phase-ends-text.ts
-msgctxt "Dn2o-3"
-msgid "{phase} ends {after} instead of {before}."
-msgstr "{phase}의 종료일이 {after}로 바뀌어요(기존: {before})."
-
-#: src/plan/use-phase-ends-text.ts
-msgctxt "VCsayo"
-msgid "{phase}: {after} (was {before})"
-msgstr "{phase}: {after} (기존 {before})"
+#: src/plan/use-phase-dates-sentence.ts
+msgctxt "DdoYN0"
+msgid "Move your phase dates?"
+msgstr "단계별 종료일을 옮길까요?"
 
 #: src/plan/use-phase-name.ts
 msgctxt "planPhases.0LvMLZ"
@@ -12391,71 +12015,6 @@ msgstr "마무리"
 msgctxt "planPhases.vgG-Fn"
 msgid "After the exam"
 msgstr "시험 후"
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "_9tzOi"
-msgid "Leave out: {activities}."
-msgstr "제외: {activities}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "zGH4a8"
-msgid "Back in your lessons: {activities}."
-msgstr "레슨에 다시 포함: {activities}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "mlgPyu"
-msgid "Leave out of the plan: {areas}."
-msgstr "계획에서 제외: {areas}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "x5EnlY"
-msgid "Back in the plan: {areas}."
-msgstr "계획에 다시 포함: {areas}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "MHmq3i"
-msgid "Add to your plan: {skills}."
-msgstr "계획에 추가: {skills}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "Ug6b0w"
-msgid "Daily time: {time}."
-msgstr "하루 학습 시간: {time}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "8lqPZz"
-msgid "Weekly challenge: {date}."
-msgstr "주간 챌린지: {date}."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "Mk9Lt2"
-msgid "More practice."
-msgstr "연습 비중 늘리기."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "i8iXqU"
-msgid "More explanation."
-msgstr "설명 비중을 늘려요."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "IXaFjE"
-msgid "Harder material."
-msgstr "더 어려운 내용."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "Uk1YPh"
-msgid "Easier material."
-msgstr "더 쉬운 내용."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "ZDlgRn"
-msgid "Lessons at the usual difficulty."
-msgstr "보통 난이도의 레슨."
-
-#: src/plan/use-proposed-sentence.ts
-msgctxt "C8erdS"
-msgid "Goal date: {date}."
-msgstr "목표 날짜: {date}."
 
 #: src/plan/use-relearn-sentence.ts
 msgctxt "U1dGge"
@@ -12529,14 +12088,24 @@ msgid "{first} – {last}"
 msgstr "{first}~{last}"
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "TPmKpi"
-msgid "Lessons left from earlier days come first, and the rest of your plan moved later."
-msgstr "이전 학습일에 남은 레슨부터 할 수 있게 나머지 계획을 뒤로 미뤘어요."
+msgctxt "6dw0H9"
+msgid "Your plan moved to fit the days you missed."
+msgstr "공부하지 못한 날을 반영해 계획을 조정했어요."
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "ARyfXf"
-msgid "{lessons, plural, one {You tested out of # lesson} other {You tested out of # lessons}}, so it's off your plan."
-msgstr "{lessons, plural, other {테스트에서 이미 아는 내용으로 확인된 레슨 #개를 계획에서 제외했어요.}}"
+msgctxt "gU3R5_"
+msgid "Your plan changed to match the time your lessons take."
+msgstr "레슨에 걸리는 시간에 맞춰 계획을 조정했어요."
+
+#: src/plan/use-system-change-sentence.ts
+msgctxt "BEtnOi"
+msgid "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}"
+msgstr "{lessons, plural, other {테스트를 통과해 계획에서 레슨 #개를 건너뛰어요.}}"
+
+#: src/plan/use-system-change-sentence.ts
+msgctxt "KjtC18"
+msgid "Your test answers changed your plan."
+msgstr "테스트에서 답한 내용에 따라 계획이 바뀌었어요."
 
 #: src/plan/use-system-name.ts
 msgctxt "JcZHkZ"
@@ -12568,11 +12137,11 @@ msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "필요한 시간을 계산하지 못했어요."
 
-#. A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything".
+#. A button that works out the daily time that covers the whole goal. The line above it says what's left uncovered.
 #: src/plan/use-time-to-cover.ts
-msgctxt "Yxy0ov"
-msgid "Find the time that covers everything"
-msgstr "모두 공부하는 데 필요한 시간 찾기"
+msgctxt "8bQ4-P"
+msgid "Find the time"
+msgstr "필요한 시간 계산하기"
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "fgq47T"
@@ -12604,34 +12173,6 @@ msgstr "이미 {tools} 사용 준비가 되어 있어 따로 설정할 필요가
 msgctxt "-8_nhW"
 msgid "No install for {tools}: you'll learn with examples."
 msgstr "{tools} 설치 없이 예제로 배워요."
-
-#: src/plan/use-weekday-texts.ts
-msgctxt "gGz2WP"
-msgid "{days}: rest day."
-msgstr "{days}: 쉬는 날이에요."
-
-#: src/plan/use-weekday-texts.ts
-msgctxt "2oT8vO"
-msgid "{days}: {time} a day."
-msgstr "{days}: 하루 {time}씩 학습해요."
-
-#. {day} is a weekday, like "Monday".
-#: src/plan/use-weekday-texts.ts
-msgctxt "yZoT4v"
-msgid "Weekly mocks move to {day}."
-msgstr "주간 모의고사 일정이 {day}로 바뀌어요."
-
-#. {day} is a weekday, like "Monday".
-#: src/plan/use-weekday-texts.ts
-msgctxt "qshyFl"
-msgid "Weekly challenges move to {day}."
-msgstr "주간 챌린지 일정이 {day}로 바뀌어요."
-
-#. {date} is a weekday and day, like "Monday, May 5".
-#: src/plan/use-weekday-texts.ts
-msgctxt "y3TJi_"
-msgid "Your next mock moves to {date}."
-msgstr "다음 모의고사 일정이 {date}로 바뀌어요."
 
 #: src/plan/written-cadence.tsx
 msgctxt "8T3kjt"
@@ -13469,6 +13010,11 @@ msgid "No lessons left to catch up."
 msgstr "밀린 레슨이 없어요."
 
 #: src/session/moment-today.tsx
+msgctxt "UKUhFr"
+msgid "{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}"
+msgstr "{lessons, plural, other {밀린 레슨 #개}}"
+
+#: src/session/moment-today.tsx
 msgctxt "H0kmsQ"
 msgid "{done, plural, one {<gain># caught up today</gain>} other {<gain># caught up today</gain>}} · {left, plural, one {# to go} other {# to go}}"
 msgstr "{done, plural, other {<gain>오늘 밀린 레슨 #개 완료</gain>}} · {left, plural, other {#개 남음}}"
@@ -14123,26 +13669,21 @@ msgstr "이런 내용이에요:"
 
 #. Marks a topic that comes up often in the exam.
 #: src/syllabus/frequency-chip.tsx
-msgctxt "5ZjoJT"
-msgid "Appears a lot"
-msgstr "자주 나와요"
+msgctxt "tSwkMF"
+msgid "Asked a lot"
+msgstr "자주 출제"
 
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
-msgctxt "FdA2rE"
-msgid "{count, plural, one {Topics shared with {exams} count for both exams, so you study them once.} other {Topics shared with {exams} count for every exam that has them, so you study them once.}}"
-msgstr "{count, plural, other {{exams}에서도 다루는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요.}}"
+msgctxt "d1-Zc7"
+msgid "You study the topics shared with {exams} once."
+msgstr "{exams}에도 나오는 주제는 한 번만 공부해요."
 
 #. On one exam's plan, when the learner has several other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
-msgctxt "r3nJf6"
-msgid "{count, plural, one {Topics shared with your # other exam count for both exams, so you study them once.} other {Topics shared with your # other exams count for every exam that has them, so you study them once.}}"
-msgstr "{count, plural, other {다른 시험 #개와 겹치는 주제는 한 번만 공부해도 해당 주제가 포함된 모든 시험에 반영돼요.}}"
-
-#: src/syllabus/shared-exams.tsx
-msgctxt "A9RghR"
-msgid "Practice stays in each exam's style."
-msgstr "연습은 각 시험의 형식에 맞춰 진행돼요."
+msgctxt "U3XN4Z"
+msgid "{count, plural, one {You study the topics shared with your # other exam once.} other {You study the topics shared with your # other exams once.}}"
+msgstr "{count, plural, other {다른 시험 #개에도 나오는 주제는 한 번만 공부해요.}}"
 
 #. Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.
 #: src/syllabus/shared-exams.tsx
@@ -14157,24 +13698,14 @@ msgid "{count, plural, one {Also in # exam} other {Also in # exams}}"
 msgstr "{count, plural, other {다른 시험 #개에도 포함}}"
 
 #: src/syllabus/subject-aside.tsx
-msgctxt "kc79d3"
-msgid "Topics"
-msgstr "주제"
-
-#: src/syllabus/subject-aside.tsx
 msgctxt "_7RyZo"
 msgid "Next date"
 msgstr "다음 학습일"
 
 #: src/syllabus/subject-aside.tsx
-msgctxt "1qgPAN"
-msgid "Known before"
-msgstr "이미 알던 것"
-
-#: src/syllabus/subject-aside.tsx
-msgctxt "Wfs1md"
-msgid "{count, plural, one {# lesson skipped} other {# lessons skipped}}"
-msgstr "{count, plural, other {레슨 #개 건너뜀}}"
+msgctxt "jSqwdW"
+msgid "Coverage"
+msgstr "학습 진도"
 
 #: src/syllabus/subject-aside.tsx
 msgctxt "AGSt8i"
@@ -14187,19 +13718,14 @@ msgid "{count, plural, one {# chapter done} other {# chapters done}}"
 msgstr "{count, plural, other {챕터 #개 완료}}"
 
 #: src/syllabus/subject-chapters.tsx
-msgctxt "IIaGIu"
-msgid "{count, plural, one {# chapter skipped because you already know it} other {# chapters skipped because you already know them}}"
-msgstr "{count, plural, other {이미 아는 챕터 #개 건너뜀}}"
+msgctxt "duDcbL"
+msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
+msgstr "{count, plural, other {이미 알던 챕터 #개}}"
 
 #: src/syllabus/subject-chapters.tsx
-msgctxt "63eLKO"
-msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# skipped because you already know it} other {# skipped because you already know them}}"
-msgstr "{done, plural, other {챕터 #개 완료}}, {known, plural, other {이미 아는 챕터 #개 건너뜀}}"
-
-#: src/syllabus/subject-matrix.tsx
-msgctxt "wivscR"
-msgid "{count, plural, one {# skill} other {# skills}}"
-msgstr "{count, plural, other {스킬 #개}}"
+msgctxt "oUXyHJ"
+msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
+msgstr "{done, plural, other {챕터 #개 완료}}, {known, plural, other {이미 알던 챕터 #개}}"
 
 #: src/syllabus/subject-matrix.tsx
 msgctxt "f1GnB3"
@@ -14212,25 +13738,24 @@ msgid "See all {count, number}"
 msgstr "{count, number}개 모두 보기"
 
 #: src/syllabus/subject-not-planned.tsx
-msgctxt "2ohKfk"
-msgid "Bring it back"
-msgstr "계획에 다시 넣기"
+msgctxt "MaFsVi"
+msgid "Add it back"
+msgstr "다시 추가하기"
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
 msgid "You took this subject out of your plan."
 msgstr "이 과목을 계획에서 뺐어요."
 
-#. "It" is the subject this page shows.
 #: src/syllabus/subject-not-planned.tsx
-msgctxt "cneAlM"
-msgid "It doesn't fit in the time you have."
-msgstr "이 과목까지 공부하기에는 시간이 부족해요."
+msgctxt "Xs-i9Q"
+msgid "This subject isn't in your plan: not enough time before your exam."
+msgstr "시험 전까지 공부할 시간이 부족해 이 과목은 계획에 없어요."
 
 #: src/syllabus/subject-not-planned.tsx
-msgctxt "HZ38hX"
-msgid "Your plan doesn't teach this subject yet."
-msgstr "아직 계획에 이 과목이 없어요."
+msgctxt "aqUWND"
+msgid "This subject isn't in your plan yet."
+msgstr "이 과목은 아직 계획에 없어요."
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "BZdkSg"
@@ -14238,26 +13763,10 @@ msgid "From your material"
 msgstr "내 자료에서 가져옴"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "LLtKhp"
-msgid "Subject"
-msgstr "과목"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "kEbyXS"
-msgid "Module"
-msgstr "모듈"
-
-#: src/syllabus/subject-screen.tsx
 #: src/syllabus/syllabus-notes.tsx
 msgctxt "viO9ZX"
 msgid "Also in your plan"
 msgstr "내 계획에도 포함"
-
-#: src/syllabus/subject-screen.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "ncweL6"
-msgid "{document, select, notice {Beyond the notice} other {Beyond the official guide}}"
-msgstr "{document, select, notice {공고 외 내용} other {공식 안내서 외 내용}}"
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "GG6-cA"
@@ -14275,9 +13784,9 @@ msgid "Topics in your material"
 msgstr "내 자료에 있는 주제"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "6tI9cu"
-msgid "{document, select, notice {Topics in the notice} other {Topics in the official guide}}"
-msgstr "{document, select, notice {공고에 나온 주제} other {공식 안내서에 나온 주제}}"
+msgctxt "np_f3U"
+msgid "Topics on the exam"
+msgstr "시험에 나오는 주제"
 
 #: src/syllabus/subject-screen.tsx
 #: src/syllabus/use-subject-progress.ts
@@ -14326,34 +13835,15 @@ msgid "{total, plural, one {# lesson} other {# lessons}} · {done, plural, =0 {#
 msgstr "{total, plural, other {레슨 #개}} · {done, plural, =0 {#개 완료됨} other {#개 완료}}"
 
 #: src/syllabus/syllabus-notes.tsx
-msgctxt "YbPUny"
-msgid "Topics marked <tag></tag> are the ones your material says come up a lot. They get more of your time."
-msgstr "자료에 따르면 <tag></tag> 표시가 있는 주제가 자주 출제돼요. 이런 주제에 학습 시간을 더 배정해요."
+#: src/syllabus/syllabus-section.tsx
+msgctxt "fhwTpA"
+msgid "Sources"
+msgstr "출처"
 
 #: src/syllabus/syllabus-notes.tsx
-msgctxt "GBjZYv"
-msgid "Topics marked <tag></tag> are the ones past exams asked most."
-msgstr "<tag></tag> 표시가 있는 주제는 이전 시험에서 가장 자주 출제됐어요."
-
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "VwHmId"
-msgid "Topics marked <tag></tag> are the ones past exams asked most ({basis}, according to <link>{publisher}</link>). The ones asked least are the ones that wait."
-msgstr "<tag></tag> 표시가 있는 주제는 지난 시험에서 가장 자주 출제된 주제예요({basis}, <link>{publisher}</link> 기준). 가장 적게 출제된 주제는 뒤로 미뤄져요."
-
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "PIxMDD"
-msgid "Topics marked <tag></tag> are the ones past exams asked most ({basis}, according to <link>{publisher}</link>). They get more of your time."
-msgstr "<tag></tag> 표시가 있는 주제는 이전 시험에서 가장 자주 출제됐어요({basis}, 출처: <link>{publisher}</link>). 이런 주제에 학습 시간을 더 배정해요."
-
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "hrUM7C"
-msgid "The topics past exams asked least are the ones that wait ({basis}, according to <link>{publisher}</link>)."
-msgstr "지난 시험에서 가장 적게 출제된 주제는 뒤로 미뤄져요({basis}, <link>{publisher}</link> 기준)."
-
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "rDolB5"
-msgid "The topics past exams asked most get more of your time ({basis}, according to <link>{publisher}</link>)."
-msgstr "이전 시험에서 가장 자주 출제된 주제에 학습 시간을 더 배정해요({basis}, 출처: <link>{publisher}</link>)."
+msgctxt "ohA5d_"
+msgid "How often past exams asked each topic: {basis}, according to <link>{publisher}</link>."
+msgstr "지난 시험의 주제별 출제 빈도는 {basis} 기준이에요. 출처는 <link>{publisher}</link>예요."
 
 #: src/syllabus/syllabus-notes.tsx
 msgctxt "mNd4kZ"
@@ -14392,11 +13882,6 @@ msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, other {모듈 #개}}"
 
-#: src/syllabus/syllabus-summary-topics.tsx
-msgctxt "Swb9n_"
-msgid "Out of your plan"
-msgstr "계획에서 제외"
-
 #: src/syllabus/syllabus-summary.tsx
 msgctxt "JbrEuc"
 msgid "Most questions: {subjects}"
@@ -14418,14 +13903,14 @@ msgid "{planned, number} of {total, plural, one {# topic} other {# topics}} in y
 msgstr "주제 {planned, number}개가 계획에 포함돼 있어요 · 전체 {total, plural, other {#개예요}}"
 
 #: src/syllabus/syllabus-summary.tsx
-msgctxt "PZqneq"
-msgid "{document, select, notice {{count, plural, one {# subject from the notice} other {# subjects from the notice}}} other {{count, plural, one {# part from the official guide} other {# parts from the official guide}}}}"
-msgstr "{document, select, notice {{count, plural, other {공고에 있는 #과목}}} other {{count, plural, other {공식 안내서에 있는 파트 #개}}}}"
+msgctxt "AxYibj"
+msgid "{count, plural, one {# subject on the exam} other {# subjects on the exam}}"
+msgstr "{count, plural, other {시험 과목 #개}}"
 
 #: src/syllabus/syllabus-summary.tsx
-msgctxt "qnBQra"
-msgid "{total, plural, one {# topic} other {# topics}}, {leftOut, number} out of your plan"
-msgstr "{total, plural, other {주제 #개}} 중 {leftOut, number}개는 계획에서 제외"
+msgctxt "Jeb9y8"
+msgid "{total, plural, one {# topic} other {# topics}}, {leftOut, number} not in your plan"
+msgstr "{total, plural, other {주제 #개}}, {leftOut, number}개는 계획에서 제외"
 
 #: src/syllabus/syllabus-summary.tsx
 #: src/syllabus/use-subject-progress.ts
@@ -14444,49 +13929,42 @@ msgid "What you'll study"
 msgstr "학습할 내용"
 
 #: src/syllabus/topic-note.tsx
-msgctxt "10rODe"
-msgid "You took this subject out of your plan"
-msgstr "이 과목을 계획에서 제외했어요"
+msgctxt "kIKTnm"
+msgid "Not in your plan · you took this subject out"
+msgstr "계획에서 제외 · 직접 뺀 과목이에요"
 
 #: src/syllabus/topic-note.tsx
-msgctxt "HHT3UY"
-msgid "You start past the basics"
-msgstr "기초 다음 단계부터 시작해요"
+msgctxt "Wz9Y3H"
+msgid "Skipped · you already know the basics"
+msgstr "건너뜀 · 기초를 이미 알고 있어요"
 
 #: src/syllabus/topic-note.tsx
-msgctxt "4w-M0H"
-msgid "You chose to skip this prerequisite"
-msgstr "이 사전 지식은 건너뛰기로 했어요"
+msgctxt "QGcMHn"
+msgid "Skipped · your choice"
+msgstr "건너뜀 · 직접 선택했어요"
 
 #: src/syllabus/topic-note.tsx
-msgctxt "ZSNP90"
-msgid "Doesn't fit in the time you have"
-msgstr "학습할 시간이 부족해요"
+msgctxt "DQ_P5S"
+msgid "Not in your plan · your time doesn't cover it"
+msgstr "계획에서 제외 · 학습 시간이 부족해요"
 
 #: src/syllabus/topic-note.tsx
-msgctxt "Dxu47D"
-msgid "No lessons on it yet"
-msgstr "아직 관련 레슨이 없어요"
-
-#: src/syllabus/topic-note.tsx
-msgctxt "EbIlL5"
-msgid "You know this · it comes back in your reviews"
-msgstr "이미 아는 내용이에요 · 복습에서 다시 나와요"
-
-#: src/syllabus/topic-note.tsx
-msgctxt "BEA2s_"
-msgid "You know this · it comes back in practice"
-msgstr "이미 아는 내용이에요 · 연습에서 다시 나와요"
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+#: src/topic-outline/use-far-topic-line.ts
+msgctxt "5CkyMG"
+msgid "Not ready yet"
+msgstr "아직 준비되지 않았어요"
 
 #: src/syllabus/use-subject-progress.ts
-msgctxt "otJ_IF"
-msgid "{count, plural, one {# topic skipped because you already know it} other {# topics skipped because you already know them}}"
-msgstr "{count, plural, other {이미 아는 내용이라 주제 #개를 건너뛰었어요}}"
+msgctxt "0O99bA"
+msgid "{count, plural, one {# lesson you already know} other {# lessons you already know}}"
+msgstr "{count, plural, other {이미 아는 레슨 #개}}"
 
 #: src/syllabus/use-subject-progress.ts
-msgctxt "5jDXJt"
-msgid "{count, plural, one {# lesson skipped because you already know it} other {# lessons skipped because you already know them}}"
-msgstr "{count, plural, other {이미 아는 내용이라 레슨 #개를 건너뛰었어요}}"
+msgctxt "jrDQIZ"
+msgid "{total, plural, one {{done, number} of # lesson} other {{done, number} of # lessons}}"
+msgstr "{total, plural, other {레슨 {done, number}/#개 완료}}"
 
 #: src/today/today-action.tsx
 #: src/today/today-more.tsx
@@ -14537,12 +14015,6 @@ msgstr "지금 레슨 준비하기"
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "다음 레슨"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "5CkyMG"
-msgid "Not ready yet"
-msgstr "아직 준비되지 않았어요"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -14641,35 +14113,40 @@ msgid "Your exam"
 msgstr "내 시험"
 
 #: src/today/today-falling-behind.tsx
-msgctxt "0NqGSq"
-msgid "At {time} a day, your plan now covers {after} of the exam, down from {before}."
-msgstr "하루 {time}씩 공부하는 현재 계획에서 다루는 시험 범위는 {after}로, 이전의 {before}보다 줄었어요."
+msgctxt "nnEO3o"
+msgid "{time} a day now covers {after} of the exam, down from {before}."
+msgstr "하루 {time}으로 준비할 수 있는 시험 범위가 {after}로 줄었어요. 이전에는 {before}였어요."
 
 #: src/today/today-falling-behind.tsx
-msgctxt "7ZAXhG"
-msgid "At {time} a day, your plan now covers {after} of your goal, down from {before}."
-msgstr "하루 {time}씩 공부하는 현재 계획에서 다루는 범위는 목표의 {after}로, 이전의 {before}보다 줄었어요."
+msgctxt "OPF07J"
+msgid "{time} a day now covers {after} of your goal, down from {before}."
+msgstr "하루 {time}으로 끝낼 수 있는 분량이 목표의 {after}로 줄었어요. 이전에는 {before}였어요."
 
 #: src/today/today-falling-behind.tsx
-msgctxt "qjO1fl"
-msgid "More time a day"
-msgstr "하루 학습 시간 늘리기"
+msgctxt "sS7-IQ"
+msgid "Add time"
+msgstr "학습 시간 늘리기"
 
 #: src/today/today-falling-behind.tsx
-msgctxt "eH7xFh"
-msgid "More time or a later date"
-msgstr "학습 시간 늘리기 또는 날짜 미루기"
+msgctxt "UucZ2o"
+msgid "Keep studying after the exam"
+msgstr "시험 후에도 계속 공부하기"
 
-#. Keeps the learner's daily study time as it is.
+#. Keeps the learner's time a day as it is.
 #: src/today/today-falling-behind.tsx
 msgctxt "-0WD6T"
 msgid "Keep my time"
 msgstr "학습 시간 유지하기"
 
 #: src/today/today-falling-behind.tsx
-msgctxt "wYILx0"
-msgid "Noted. You keep your time, with less depth where it counts least."
-msgstr "알겠어요. 학습 시간은 그대로 유지하고, 덜 중요한 부분은 가볍게 다뤄요."
+msgctxt "-AN5eF"
+msgid "You missed a few days"
+msgstr "며칠 공부를 쉬었어요"
+
+#: src/today/today-falling-behind.tsx
+msgctxt "38ojSQ"
+msgid "Okay. Your time stays the same."
+msgstr "알겠어요. 학습 시간은 그대로예요."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "6WPC9q"
@@ -14776,11 +14253,6 @@ msgctxt "Rvj-oy"
 msgid "Next suggestion"
 msgstr "다음 제안"
 
-#: src/today/today-plan-change.tsx
-msgctxt "4azoNv"
-msgid "Suggested change"
-msgstr "변경 제안"
-
 #: src/today/today-practice.tsx
 msgctxt "8Ax9BM"
 msgid "Practice anytime"
@@ -14846,12 +14318,6 @@ msgstr "{answered, number}문제 / {count, plural, other {총 #문제}}"
 msgctxt "RrxniK"
 msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, other {#개 완료}}"
-
-#. Counts blocks of today's study session the learner skipped.
-#: src/today/today-session-card.tsx
-msgctxt "iykTqr"
-msgid "{count, plural, one {# skipped} other {# skipped}}"
-msgstr "{count, plural, other {#개 건너뜀}}"
 
 #. Counts blocks of today's study session the learner finished and skipped.
 #: src/today/today-session-card.tsx
@@ -14960,46 +14426,36 @@ msgid "Every topic"
 msgstr "모든 주제"
 
 #: src/topic-outline/far-topic-sheet.tsx
-msgctxt "OA9N1Z"
-msgid "Preparing the lessons… It takes about half a minute."
-msgstr "레슨을 준비하고 있어요… 30초 정도 걸려요."
+msgctxt "xYCwcS"
+msgid "Getting your lessons ready…"
+msgstr "레슨을 준비하고 있어요…"
 
 #: src/topic-outline/far-topic-sheet.tsx
-msgctxt "VCjBXi"
-msgid "There's nothing left to prepare for this topic."
-msgstr "이 주제에는 더 준비할 레슨이 없어요."
+msgctxt "6Jpy6P"
+msgid "This topic has no more lessons to get ready."
+msgstr "이 주제에는 더 이상 준비할 레슨이 없어요."
 
 #: src/topic-outline/far-topic-sheet.tsx
-msgctxt "VuPbmJ"
-msgid "See the lessons"
-msgstr "레슨 보기"
+msgctxt "a5YKUq"
+msgid "Get them ready"
+msgstr "레슨 준비하기"
 
 #: src/topic-outline/far-topic-sheet.tsx
-msgctxt "oo_iQE"
-msgid "A topic's lessons are planned two weeks before you get to it. You can see this one's now."
-msgstr "주제별 레슨은 그 주제를 배우기 2주 전에 계획해요. 이 주제의 레슨은 지금 볼 수 있어요."
+msgctxt "Wvd9Tn"
+msgid "Getting these lessons ready takes about half a minute."
+msgstr "이 레슨을 준비하는 데 약 30초가 걸려요."
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
-msgctxt "2bgkMA"
-msgid "{dateKind, select, month {From {start}} other {From {start}}}"
-msgstr "{dateKind, select, month {{start}부터} other {{start}부터}}"
-
-#: src/topic-outline/use-far-topic-line.ts
-msgctxt "l2bP9u"
-msgid "{count, plural, =1 {# lesson} other {About # lessons}}"
-msgstr "{count, plural, =1 {레슨 #개} other {레슨 약 #개}}"
+msgctxt "GNNk9G"
+msgid "{dateKind, select, month {Starts in {start}} other {Starts {start}}}"
+msgstr "{dateKind, select, month {{start}에 시작} other {{start} 시작}}"
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
-msgctxt "96EsHJ"
-msgid "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}"
-msgstr "{dateKind, select, month {{count} · {start}부터} other {{count} · {start}부터}}"
-
-#: src/topic-outline/use-far-topic-line.ts
-msgctxt "c1J3nF"
-msgid "Lessons on the way"
-msgstr "레슨을 만들고 있어요"
+msgctxt "83fmM5"
+msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
+msgstr "{dateKind, select, month {{count} · {start}에 시작} other {{count} · {start} 시작}}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"

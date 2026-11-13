@@ -37,6 +37,12 @@ function usePlanEndText(): string | null {
     : null;
 }
 
+/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
+function getPhaseLastDay({ checkpoint, endDate }: PlanPhaseView): string | null {
+  const challengeDay = checkpoint?.state === "upcoming" ? checkpoint.date : null;
+  return challengeDay && endDate && challengeDay > endDate ? challengeDay : endDate;
+}
+
 function useFinishHasDate(): boolean {
   const { goal, plan } = usePlanScreen();
   return plan.schedule.targetDate !== null || goal.kind !== "exam";
@@ -67,7 +73,9 @@ export function usePhaseWhen() {
       return finishHasDate ? null : planEnd;
     }
 
-    if (!phase.endDate) {
+    const lastDay = getPhaseLastDay(phase);
+
+    if (!lastDay) {
       return null;
     }
 
@@ -78,9 +86,7 @@ export function usePhaseWhen() {
       description:
         'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
       message: "{dateKind, select, month {Until {date}} other {Until {date}}}",
-      values: isEstimate
-        ? formatEstimate(phase.endDate)
-        : { date: formatDate(phase.endDate), dateKind: "day" },
+      values: isEstimate ? formatEstimate(lastDay) : { date: formatDate(lastDay), dateKind: "day" },
     });
   };
 }

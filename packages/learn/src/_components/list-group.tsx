@@ -43,8 +43,13 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-/** A row's trailing chevron, its ink on the row's end edge. */
-const ROW_CHEVRON_CLASS = "text-faint edge -me-(--edge-pull) size-4 shrink-0 self-center";
+/**
+ * A row's trailing chevron, its ink on the row's end edge. The pull moves the glyph, not its place:
+ * every glyph keeps a 16px slot, so the value before a ">" ends where the value before a fold arrow
+ * does.
+ */
+const ROW_CHEVRON_CLASS =
+  "text-faint edge ms-(--edge-pull) -me-(--edge-pull) size-4 shrink-0 self-center";
 
 /** The same chevron after a 12px line, such as a header's "1 of 4". */
 export const SMALL_CHEVRON_CLASS =
@@ -52,6 +57,14 @@ export const SMALL_CHEVRON_CLASS =
 
 export function ListRowChevron() {
   return <ChevronRightIcon aria-hidden="true" className={ROW_CHEVRON_CLASS} />;
+}
+
+/**
+ * The chevron's slot, empty, at the end of a row that can't be opened: the value before it ends
+ * where the other rows' values do.
+ */
+export function ListRowChevronSpace() {
+  return <span aria-hidden="true" className="size-4 shrink-0" />;
 }
 
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
@@ -199,24 +212,33 @@ export function ListRowTitle({ className, ...props }: React.ComponentProps<"span
   );
 }
 
+/**
+ * The number is the title's first word, so a numbered row's text starts on the edge every other
+ * row's does, and a `description` starts there too.
+ */
 export function ListRowNumberedTitle({
   children,
   className,
+  description,
   number,
   textClassName,
 }: {
   children: React.ReactNode;
   className?: string;
+  description?: React.ReactNode;
   number: number;
   textClassName?: string;
 }) {
   return (
-    <ListRowTitle className={cn("flex items-baseline gap-1.5", className)}>
-      <span className="text-muted-foreground shrink-0 font-mono text-xs font-normal tabular-nums">
-        {`${number}.`}
-      </span>
-      <span className={cn("min-w-0", textClassName)}>{children}</span>
-    </ListRowTitle>
+    <span className={cn("flex flex-col", className)}>
+      <ListRowTitle className={textClassName}>
+        <span className="text-muted-foreground me-1.5 font-mono text-xs font-normal tabular-nums">
+          {`${number}.`}
+        </span>
+        {children}
+      </ListRowTitle>
+      {description && <span className="flex flex-col pt-px empty:hidden">{description}</span>}
+    </span>
   );
 }
 
