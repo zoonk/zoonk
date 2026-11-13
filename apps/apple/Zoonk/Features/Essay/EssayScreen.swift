@@ -200,7 +200,7 @@ private struct EssayContent: View {
         Button {
           Task { await finish() }
         } label: {
-          Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
+          Text("Skip", tableName: "Essay", comment: "Goes on without rewriting")
         }
         .buttonStyle(.outline)
         .controlSize(.large)

@@ -75,14 +75,16 @@ struct TestOutScreen: View {
           case .loaded(.test(let test)):
             GradedAtEndRun(
               questions: test.questions, labels: test.trueFalseLabels, draftKey: draftKey,
-              hint: { _ in rule(test.passMark) }, isPending: isSubmitting, failures: submitFailures,
+              hint: { question in
+                question.id == test.questions.first?.id ? rule(test.passMark) : ""
+              }, isPending: isSubmitting, failures: submitFailures,
               onReport: { showsSaveReport = true },
               onFinish: { answers in Task { await submit(answers) } })
           }
         }
       }
       .navigationTitle(
-        Text("Test out", tableName: "Practice", comment: "Title of a chapter test-out.")
+        Text("Chapter test", tableName: "Practice", comment: "Title of a chapter test.")
       )
       .navigationBarTitleDisplayMode(.inline)
       .taskClose {
@@ -128,7 +130,7 @@ struct TestOutScreen: View {
       PracticeResultTitle(
         title: result.passed
           ? LocalizedStringResource(
-            "You already know this", table: "Practice", comment: "A passed test-out's result.")
+            "You passed the test", table: "Practice", comment: "A passed chapter test's result.")
           : LocalizedStringResource(
             "Not yet, and that's fine", table: "Practice", comment: "A failed test-out's result."),
         detail: resultDetail(result))
@@ -199,7 +201,7 @@ struct TestOutScreen: View {
         "Your plan already skips it.", table: "Practice",
         comment: "A passed test-out that skipped nothing new.")
       : LocalizedStringResource(
-        "\(result.lessonsSkipped) lessons are off your plan.", table: "Practice",
+        "Your plan skips \(result.lessonsSkipped) lessons you already know.", table: "Practice",
         comment: "How many lessons a passed test-out skipped.")
   }
 
