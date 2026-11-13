@@ -56,7 +56,7 @@ function CommandDialog({
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
+        <DialogOverlay />
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}
@@ -68,8 +68,8 @@ function CommandDialog({
             ref={popupRef}
             className={cn(
               "flex h-dvh w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)]",
-              "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] sm:ring-1 sm:ring-inset",
-              "sm:dark:ring-foreground/20 sm:dark:shadow-[0_24px_64px_-12px_rgb(0_0_0/0.8)]",
+              "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:ring-1 sm:ring-inset",
+              "sm:dark:ring-foreground/20",
               className,
             )}
           >
