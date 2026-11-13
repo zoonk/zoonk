@@ -24,7 +24,7 @@ const THREE_LINES_CLASS = "has-[[data-slot=today-row-lines]>:nth-child(3)]:items
 
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
-    "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
+    "group/row relative isolate flex min-h-11 items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
     "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
     isNext
