@@ -8,6 +8,7 @@ import { BookOpenIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { MeterPart, MeterParts } from "../_components/meter";
+import { SURFACE_CLASS } from "../_components/surface";
 import { useFormatDuration } from "../_utils/time-format";
 
 const MINUTES_PER_HOUR = 60;
@@ -19,7 +20,7 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
   const lessons = Math.max(1, chapter.lessonCount);
 
   return (
-    <section className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
+    <section className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
       <p className="text-muted-foreground text-sm">{t("This is part of")}</p>
 
       {course && (

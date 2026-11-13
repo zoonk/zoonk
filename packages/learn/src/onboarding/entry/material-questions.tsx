@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
 import {
@@ -82,7 +83,7 @@ function TurnAnswer({
 
   return (
     <TutorMessage identity={identity}>
-      <div className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
+      <div className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
         <p className="leading-relaxed whitespace-pre-wrap">{answer}</p>
 
         {citations.length > 0 && (
