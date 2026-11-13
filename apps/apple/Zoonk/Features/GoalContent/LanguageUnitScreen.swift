@@ -403,7 +403,7 @@ private struct LanguageUnitContent: View {
               .typeStyle(.meta.weight(.medium))
               .foregroundStyle(.mutedForeground)
 
-            ItemText(mistake.question)
+            LessonTextBlocks(mistake.question)
               .typeStyle(.body.weight(.medium))
 
             if let answer = mistake.answer {
@@ -415,7 +415,7 @@ private struct LanguageUnitContent: View {
             }
 
             if let explanation = mistake.explanation {
-              ItemText(explanation)
+              LessonTextBlocks(explanation)
                 .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
             }

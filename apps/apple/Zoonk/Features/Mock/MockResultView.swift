@@ -707,7 +707,7 @@ private struct MockEssaySections: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(essay.question)
+        LessonTextBlocks(essay.question)
           .typeStyle(.body.weight(.semibold))
         status
       }
@@ -1110,9 +1110,9 @@ private struct MockReviewSection: View {
         DisclosureGroup(isExpanded: $opened.contains("review:\(item.id)")) {
           VStack(alignment: .leading, spacing: 8) {
             if let context = item.context {
-              ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            ItemText(item.question)
+            LessonTextBlocks(item.question)
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
                 .foregroundStyle(.mutedForeground)
@@ -1138,7 +1138,7 @@ private struct MockReviewSection: View {
               .foregroundStyle(.mutedForeground)
             }
             if let explanation = item.explanation {
-              ItemText(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             if let citation = item.citation {
               CitationNote(citation: citation)
@@ -1156,7 +1156,7 @@ private struct MockReviewSection: View {
             }
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
-            Text(ItemTextBlock.plain(item.question))
+            LessonRichText(item.question)
               .lineLimit(2)
           }
         }

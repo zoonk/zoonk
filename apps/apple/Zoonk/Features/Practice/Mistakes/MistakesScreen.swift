@@ -367,7 +367,7 @@ private struct MistakeEntryView: View {
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
         visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
 
-      ItemText(snapshot.question).typeStyle(.body.weight(.medium))
+      LessonTextBlocks(snapshot.question).typeStyle(.body.weight(.medium))
 
       if let answer = TrueFalseWords.savedAnswer(snapshot.answer, labels: labels) {
         MistakeAnswerRow(text: answer, isRight: false)
@@ -378,7 +378,7 @@ private struct MistakeEntryView: View {
       }
 
       if let explanation = snapshot.explanation {
-        ItemText(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
+        LessonTextBlocks(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       actions
@@ -485,7 +485,7 @@ struct MistakeAnswerRow: View {
 
   var body: some View {
     TagBesideOrUnder(
-      text: RichInline(text: ItemTextBlock.inline(text)),
+      text: LessonRichText.typeset(text),
       tag: AnyView(
         Text(
           isRight

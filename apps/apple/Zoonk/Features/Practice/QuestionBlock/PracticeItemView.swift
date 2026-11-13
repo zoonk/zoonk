@@ -91,7 +91,7 @@ struct ChoiceItemView: View {
             isPicked: shownPicks.contains(index),
             result: optionResult(index, correct: correct, picked: shownPicks),
             isLocked: isLocked,
-            text: RichInline(text: ItemTextBlock.inline(option)),
+            text: LessonRichText.typeset(option),
             action: { pick(index) }
           )
           .practiceFocus(index == 0 ? .answer : nil)
@@ -219,7 +219,7 @@ struct TrueFalseStatementCard: View {
   private static let swipeThreshold: CGFloat = 90
 
   var body: some View {
-    ItemText(statement)
+    LessonTextBlocks(statement)
       .typeStyle(.section)
       .foregroundStyle(result == nil ? Color(.foreground) : .mutedForeground)
       .padding(20)
@@ -304,7 +304,7 @@ struct MatchPairsItemView: View {
             isPicked: selected == index,
             isLocked: isLocked,
             tag: current[index] == nil ? nil : AnyView(PairBadge(number: index + 1)),
-            text: RichInline(text: ItemTextBlock.inline(entry)),
+            text: LessonRichText.typeset(entry),
             action: { pickLeft(index, current: current) }
           )
           .practiceFocus(index == 0 ? .answer : nil)
@@ -321,7 +321,7 @@ struct MatchPairsItemView: View {
           AnswerOption(
             isLocked: isLocked || (selected == nil && owner == nil),
             tag: owner.map { AnyView(PairBadge(number: $0 + 1)) },
-            text: RichInline(text: ItemTextBlock.inline(entry)),
+            text: LessonRichText.typeset(entry),
             action: { pickRight(index, current: current) }
           )
           .accessibilityValue(matchedValue(owner))
@@ -337,7 +337,7 @@ struct MatchPairsItemView: View {
     guard let owner, left.indices.contains(owner) else { return Text(verbatim: "") }
 
     return Text(
-      "Matched with \(ItemTextBlock.plain(left[owner]))", tableName: "Practice",
+      "Matched with \(LessonRichText.spoken(left[owner]))", tableName: "Practice",
       comment: "VoiceOver value of a right-column entry already matched with a left entry.")
   }
 
@@ -426,7 +426,7 @@ struct OrderItemView: View {
           result: result,
           isLocked: isLocked,
           tag: place.map { AnyView(PairBadge(number: $0 + 1)) },
-          text: RichInline(text: ItemTextBlock.inline(step)),
+          text: LessonRichText.typeset(step),
           action: { tap(index) }
         )
         .accessibilityValue(placeValue(place, result: result))
