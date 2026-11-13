@@ -5,7 +5,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
@@ -14,9 +13,9 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { ListPlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactElement, type ReactNode, useRef, useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { OutlineLimitNotice } from "../_components/help-limit-notice";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
+import { SheetHeader } from "../_components/sheet-header";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -184,13 +183,12 @@ export function FarTopicSheet({
       </form>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold text-balance">{title}</DrawerTitle>
+            <DrawerTitle className="text-balance">{title}</DrawerTitle>
             <DrawerDescription>{line({ lessons, nextDate })}</DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         <DrawerContent className="pt-2">
           <FarTopicBody

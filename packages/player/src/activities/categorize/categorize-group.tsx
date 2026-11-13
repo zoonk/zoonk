@@ -4,11 +4,11 @@ import { AnswerOption } from "@zoonk/learn/answer-option";
 import { ANSWER_TONE } from "@zoonk/learn/answer-tone";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { SpokenMath } from "@zoonk/learn/rich-text/spoken-math";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { getNumberKeyShortcut } from "../../player-shortcuts";
 import { useActivityDropTarget } from "../_components/activity-drag-drop";
 
 type Group = { id: string; label: string; rule: string };
@@ -69,7 +69,7 @@ export function CategorizeGroupOption({
     // A group sorts the card the moment it's pressed, so it's a plain button, not a radio to pick.
     <AnswerOption
       aria-checked={undefined}
-      aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
+      aria-keyshortcuts={shortcutKeys("pick", index)}
       marker={index + 1}
       onClick={onSort}
       picked={isOver}

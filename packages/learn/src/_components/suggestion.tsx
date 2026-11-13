@@ -3,6 +3,7 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
+  DrawerCloseButton,
   DrawerContent,
   DrawerPopup,
   DrawerTitle,
@@ -133,7 +134,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
       <div
         className={cn(
           FRAME_CLASS,
-          "flex min-h-12 items-center gap-2.5 py-2 pr-2 pl-3",
+          "flex min-h-12 items-center gap-3 py-2 pr-2 pl-4",
           LINE_CLASS,
           className,
         )}
@@ -197,7 +198,7 @@ export function SuggestionContent({
     <>
       <PresentationContext value="panel">
         <div
-          className={cn(FRAME_CLASS, "flex-col gap-2.5 p-3.5", PANEL_CLASS, className)}
+          className={cn(FRAME_CLASS, "flex-col gap-2.5 p-4", PANEL_CLASS, className)}
           data-slot="suggestion-panel"
         >
           {children}
@@ -209,7 +210,7 @@ export function SuggestionContent({
       <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
         <PresentationContext value="sheet">
           <DrawerContent
-            className="flex flex-col gap-4 px-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+            className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
             data-slot="suggestion-sheet"
           >
             {children}
@@ -223,19 +224,19 @@ export function SuggestionContent({
 /** The mark's box is one line of the title, so it sits on the first line however many the title takes. */
 const TITLE_TYPE: Readonly<Record<Exclude<Presentation, "line">, string>> = {
   panel: "text-compact leading-snug",
-  sheet: "text-lg leading-snug",
+  sheet: "text-lg leading-tight",
 };
 
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
+  const t = useExtracted();
   const presentation = use(PresentationContext);
 
   if (presentation === "sheet") {
     return (
       <div className="flex items-start gap-2.5" data-slot="suggestion-header">
         <SuggestionMark className={cn("h-lh", TITLE_TYPE.sheet)} />
-        <DrawerTitle className={cn("font-semibold text-pretty", TITLE_TYPE.sheet)}>
-          {children}
-        </DrawerTitle>
+        <DrawerTitle className="min-w-0 flex-1 text-pretty">{children}</DrawerTitle>
+        <DrawerCloseButton label={t("Close")} />
       </div>
     );
   }

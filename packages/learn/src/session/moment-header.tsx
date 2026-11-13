@@ -1,10 +1,9 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { StepDetail, StepHeader } from "../_components/step-card";
-import { TASK_MAIN_ACTION_CLASS } from "../_components/task-layout";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { MOMENT_TITLE_PROPS } from "./moment-ceremony";
 
@@ -57,8 +56,8 @@ export function MomentSavingTitle() {
 
 export function PendingMainAction({ children }: { children: React.ReactNode }) {
   return (
-    <Button className={TASK_MAIN_ACTION_CLASS} disabled focusableWhenDisabled size="xl">
+    <EnterButton busy enter="host">
       {children}
-    </Button>
+    </EnterButton>
   );
 }

@@ -3,18 +3,12 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanBaseView, type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { QUIET_ACTION_CLASS } from "../_components/quiet-disclosure";
+import { SheetHeader } from "../_components/sheet-header";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
@@ -250,10 +244,9 @@ export function PlanBasesSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("Prerequisites")}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
+        </SheetHeader>
 
         {open && <BasesChoices bases={bases} onDone={() => onOpenChange(false)} />}
       </DrawerPopup>

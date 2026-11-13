@@ -3,15 +3,14 @@
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { EnterButton } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
 import { ChangeSaveError } from "../../_components/save-error";
 import { StepOpenFailed } from "../../_components/step-open-failed";
@@ -81,7 +80,6 @@ function RevealActions({
   started: boolean;
 }) {
   const t = useExtracted();
-  const startRef = useEnterClick<HTMLButtonElement>();
 
   return (
     <div
@@ -101,18 +99,15 @@ function RevealActions({
 
         {/* A submit, so a press before the page hydrates starts once it does. */}
         <form action={() => onStart()} className="contents">
-          <Button
-            aria-keyshortcuts="Enter"
+          <EnterButton
             busy={pending}
-            className="flex-2 font-[560] lg:flex-none"
+            className="flex-2 lg:flex-none"
             icon={<PlayIcon aria-hidden="true" />}
-            ref={startRef}
             size="lg"
             type="submit"
           >
             {started ? t("Continue") : t("Start")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </Button>
+          </EnterButton>
         </form>
       </div>
 

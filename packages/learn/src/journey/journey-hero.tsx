@@ -5,18 +5,12 @@ import { type LanguageProgressView } from "@zoonk/core/view-models/language/cont
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { getLessonShare } from "@zoonk/core/view-models/syllabus/lesson-share";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { ListGroup } from "../_components/list-group";
+import { SheetHeader } from "../_components/sheet-header";
 import { useFormatGoalProgress, useFormatShare } from "../_utils/percent";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
@@ -177,10 +171,9 @@ function NumberSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{title}</DrawerTitle>
+        </SheetHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>
       </DrawerPopup>
     </Drawer>

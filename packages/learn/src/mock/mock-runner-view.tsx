@@ -3,7 +3,8 @@
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -21,7 +22,6 @@ import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
-import { FLAG_KEY } from "./mock-keys";
 import { useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
 import { getSectionPlace } from "./mock-place";
@@ -85,11 +85,11 @@ function FlagButton() {
   const question = runner.view.current?.questions[runner.position];
   const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
 
-  useLetterKey(FLAG_KEY, runner.toggleFlag);
+  useShortcut("flag", runner.toggleFlag);
 
   return (
     <Button
-      aria-keyshortcuts={FLAG_KEY.toUpperCase()}
+      aria-keyshortcuts={shortcutKeys("flag")}
       aria-pressed={flagged}
       className={cn(
         "shrink-0",
@@ -101,7 +101,7 @@ function FlagButton() {
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
       {t("Flag")}
-      <ShortcutKbd>{FLAG_KEY.toUpperCase()}</ShortcutKbd>
+      <ShortcutKbd shortcut="flag" />
     </Button>
   );
 }
@@ -127,11 +127,9 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
     runner.go(runner.position + 1);
   }
 
-  const screenKey = { mode: "none", screen: true } as const;
-
   // Enter moves on after a key picked an answer; handing in stays a deliberate click.
-  useKeyboardCallback("ArrowRight", () => !waiting && runner.go(runner.position + 1), screenKey);
-  useKeyboardCallback("ArrowLeft", () => runner.go(runner.position - 1), screenKey);
+  useShortcut("next", () => !waiting && runner.go(runner.position + 1));
+  useShortcut("previous", () => runner.go(runner.position - 1));
 
   const nextLabel = isLastSection ? t("Hand in the mock exam") : t("Hand in this section");
   const handingIn = runner.busy === "submit";
@@ -155,7 +153,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
         ) : (
           <QuestionMainAction
             action="next"
-            aria-keyshortcuts="Enter ArrowRight"
+            aria-keyshortcuts={`${shortcutKeys("main")} ${shortcutKeys("next")}`}
             disabled={runner.pending || waiting}
             onPress={next}
           />
@@ -166,6 +164,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 }
 
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
+  const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);
   const sheet = useMockSheetAside({ deadline, onHandIn: handIn });
@@ -173,6 +172,12 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
   return (
     <MockFrame
       aside={sheet}
+      confirmExit={{
+        cancel: t("Stay"),
+        confirm: t("Leave"),
+        description: t("Your answers are saved. The clock keeps running while you're away."),
+        title: t("Leave the mock exam?"),
+      }}
       footer={<RunnerFooter onHandIn={handIn} />}
       headerEnd={<MockAnswerSheet onHandIn={handIn} />}
       headerTitle={<ClockTitle clockBeside deadline={deadline} />}

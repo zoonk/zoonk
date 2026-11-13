@@ -3,6 +3,7 @@
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
@@ -76,7 +77,7 @@ function PlacementOptions({
     <AnswerOptionGroup aria-label={label}>
       {choices.map((choice, index) => (
         <AnswerOption
-          aria-keyshortcuts={String(index + 1)}
+          aria-keyshortcuts={shortcutKeys("pick", index)}
           key={choice.value}
           marker={index + 1}
           onClick={() => onChange(choice.value)}

@@ -3,6 +3,7 @@
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -86,7 +87,7 @@ export function TimeSelect({
 
   return (
     <NativeSelect
-      aria-keyshortcuts={waiting ? "Enter" : undefined}
+      aria-keyshortcuts={waiting ? shortcutKeys("main") : undefined}
       aria-label={label}
       disabled={disabled}
       focusableWhenDisabled
@@ -157,12 +158,12 @@ function DailyTimeReadout({
       <span aria-hidden="true" className="flex items-baseline gap-2">
         <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
         <ChevronDownIcon className="text-muted-foreground size-5 shrink-0 translate-y-1" />
-        {waiting && <ShortcutKbd>⏎</ShortcutKbd>}
+        {waiting && <ShortcutKbd shortcut="main" />}
       </span>
 
       <select
         aria-disabled={disabled || undefined}
-        aria-keyshortcuts={waiting ? "Enter" : undefined}
+        aria-keyshortcuts={waiting ? shortcutKeys("main") : undefined}
         aria-label={label}
         className="absolute inset-0 size-full cursor-pointer appearance-none text-base opacity-0 aria-disabled:pointer-events-none"
         {...choice}

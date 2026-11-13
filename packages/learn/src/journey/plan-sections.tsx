@@ -1,16 +1,9 @@
 "use client";
 
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon, HistoryIcon, LibraryIcon, NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import {
   ListGroup,
   ListRowChevron,
@@ -21,6 +14,7 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { SheetHeader } from "../_components/sheet-header";
 import { type AlphabetLink, AlphabetRow } from "../language/units/alphabet-row";
 import { LearnLink } from "../learn-link";
 import { type JourneyPathLinks } from "./journey-links";
@@ -181,11 +175,10 @@ export function PhasesSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("Your path")}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
-        <DrawerContent>
+        <SheetHeader>
+          <DrawerTitle>{t("Your path")}</DrawerTitle>
+        </SheetHeader>
+        <DrawerContent className="pt-2">
           <JourneyPath links={links} />
         </DrawerContent>
       </DrawerPopup>
