@@ -43,10 +43,14 @@ type Shown = { answered: number; spent: number };
 
 const NOTHING_SHOWN: Shown = { answered: 0, spent: 0 };
 
+function isOver(outcome: ReadyOutcome): boolean {
+  return !outcome.next || outcome.complete;
+}
+
 function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
   const answered = Math.max(outcome.answered, shown.answered);
 
-  return outcome.next && !outcome.complete
+  return outcome.next && !isOver(outcome)
     ? {
         answered,
         failures: 0,
@@ -172,16 +176,20 @@ export function PlacementStep({
   const [isPending, startTransition] = useTransition();
   const [isStarting, startStarting] = useTransition();
 
+  // Finishing is one save to the learner: it goes through once the step's save does too.
+  const saveFinish = async (fromScratch: boolean): Promise<boolean> => {
+    const { data: finished } = await safeAsync(() =>
+      actions.finishPlacement({ fromScratch, goalId }),
+    );
+
+    return Boolean(finished) && (await onDone().catch(() => false));
+  };
+
   const finish = (fromScratch: boolean) =>
     startTransition(async () => {
       onFinishFailed(false);
 
-      const { data: finished } = await safeAsync(() =>
-        actions.finishPlacement({ fromScratch, goalId }),
-      );
-
-      // Finishing is one save to the learner: it goes through once the step's save does too.
-      const saved = Boolean(finished) && (await onDone().catch(() => false));
+      const saved = await saveFinish(fromScratch);
 
       // `phase` is the screen the finish started on: a Stop on a question fails on that question's
       // line, counted with its answers; another screen's finish says so in the top notice.
@@ -237,7 +245,16 @@ export function PlacementStep({
           return;
         }
 
-        showReady(outcome);
+        if (!isOver(outcome)) {
+          showReady(outcome);
+          return;
+        }
+
+        // The last answer goes straight on; only a finish that didn't save stops on a screen.
+        if (!(await saveFinish(false))) {
+          onFinishFailed(true);
+          setPhase({ kind: "done" });
+        }
       });
 
   switch (phase.kind) {

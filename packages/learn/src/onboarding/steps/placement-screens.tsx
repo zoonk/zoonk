@@ -63,6 +63,7 @@ export function PlacementIntro({
   );
 }
 
+/** A test that's over and not saved yet: the learner came back to it, or its last save failed. */
 export function PlacementDone({
   onContinue,
   pending,
@@ -72,13 +73,7 @@ export function PlacementDone({
 }) {
   const t = useExtracted();
 
-  return (
-    <TestOutcome
-      busy={pending}
-      onContinue={onContinue}
-      title={t("Your plan skips what you already know")}
-    />
-  );
+  return <TestOutcome busy={pending} onContinue={onContinue} title={t("Your answers are saved")} />;
 }
 
 export function PlacementUnavailable({
@@ -96,8 +91,15 @@ export function PlacementUnavailable({
     <TestOutcome
       busy={pending}
       failed={failed}
+      lead={
+        <OnboardingDescription>
+          {t(
+            "There's no test for this goal yet. Your first few days show us what you already know.",
+          )}
+        </OnboardingDescription>
+      }
       onContinue={onContinue}
-      title={t("We couldn't make a test for this goal")}
+      title={t("We'll find your level as you study")}
     />
   );
 }
