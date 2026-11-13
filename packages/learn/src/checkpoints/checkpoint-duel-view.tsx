@@ -1,18 +1,18 @@
 "use client";
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
-import { BrainIcon, CheckIcon } from "lucide-react";
+import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
+import { QuestionTitle } from "../_components/question-title";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
-import { TaskActions } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { TypedAnswerField } from "../questions/typed-answer-field";
-import { type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { type TaskFrameAside } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getCurrentQuestion, getDuelScore } from "./checkpoint-duel-state";
 import { DuelOver, Verdict } from "./checkpoint-duel-verdict";
@@ -119,9 +119,7 @@ function QuestionCard({ question }: { question: CheckpointQuestion }) {
   return (
     <div className="flex flex-col gap-4" data-slot="checkpoint-question">
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={question.question} heading="h2" />
-      </div>
+      <QuestionTitle text={question.question} />
 
       <DuelAnswer question={question} verdict={verdict} />
       {verdict && <Verdict decision={decision} isCorrect={verdict.isCorrect} />}
@@ -154,22 +152,19 @@ function DuelRecording({ question }: { question: CheckpointQuestion }) {
 }
 
 function DuelAction() {
-  const t = useExtracted();
   const { duel } = useCheckpointScreen();
   const { question, score } = useDuelNumbers();
   const { feedback, pending, selected } = duel.state;
   const answered = !question || feedback !== null;
-  const nextLabel = score.done ? t("See result") : t("Next");
+  const nextAction = score.done ? "seeResult" : "next";
 
   return (
-    <TaskMainButton
+    <QuestionMainAction
+      action={answered ? nextAction : "confirm"}
       busy={pending}
       disabled={!answered && !selected}
-      onClick={() => void (answered ? duel.next() : duel.confirm())}
-      {...(answered ? FORWARD_ICON : { icon: <CheckIcon aria-hidden="true" /> })}
-    >
-      {answered ? nextLabel : t("Confirm")}
-    </TaskMainButton>
+      onPress={() => void (answered ? duel.next() : duel.confirm())}
+    />
   );
 }
 
@@ -298,9 +293,9 @@ export function CheckpointDuelView() {
       footer={
         <>
           <CheckpointError />
-          <TaskActions>
+          <QuestionActions>
             <DuelAction />
-          </TaskActions>
+          </QuestionActions>
         </>
       }
       headerTitle={<TaskHeaderTitle title={name} />}

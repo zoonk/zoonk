@@ -82,7 +82,7 @@ export function TricksterShield({
         locale={getFormattingLocale(locale)}
         value={Math.min(100, Math.max(0, value))}
       />
-      <Trickster className="size-5 shrink-0" />
+      <Trickster className="size-4 shrink-0" view="face" />
 
       <ShieldMeter
         broken={broken}

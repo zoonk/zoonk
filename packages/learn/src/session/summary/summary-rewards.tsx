@@ -3,7 +3,6 @@
 import { BRAIN_POWER_BONUS } from "@zoonk/core/sessions/brain-power";
 import { isFullMeal } from "@zoonk/core/sessions/missions";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
-import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
@@ -12,6 +11,7 @@ import { BeltTicks } from "../../_components/belt-ticks";
 import { BrainPowerReadout } from "../../_components/moment-readouts";
 import { StepRow, StepRows } from "../../_components/step-card";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
+import { BuddyArt } from "../../buddies/buddy-art";
 import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
 import { type StudySessionSummary } from "../session-types";
 import { useSessionSummary } from "./summary-context";
@@ -31,17 +31,13 @@ function hasMissionsDone(summary: StudySessionSummary): boolean {
 function RewardsArt() {
   const t = useExtracted();
   const { buddy: learnerBuddy } = useSessionSummary();
-  const buddy = resolveLearnBuddy(learnerBuddy);
-  const name = useBuddyName(buddy);
+  const name = useBuddyName(resolveLearnBuddy(learnerBuddy));
 
   return (
-    <BuddyActor
-      beltColor={buddy.beltColor}
-      className="size-24"
-      energy={buddy.energy}
+    <BuddyArt
+      buddy={learnerBuddy}
+      className="h-28"
       expression="happy"
-      glasses={buddy.glasses}
-      kind={buddy.kind}
       label={t({
         description: "Image description: the buddy is happy with what the learner studied today.",
         message: "{buddy}, happy with today",
