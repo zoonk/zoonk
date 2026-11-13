@@ -3246,9 +3246,12 @@ msgid ", missing"
 msgstr ", eksik"
 
 #: src/essay/essay-feedback.tsx
-msgctxt "l44-_n"
-msgid "Skip the rewrite"
-msgstr "Yeniden yazmayı atla"
+#: src/essay/essay-screen.tsx
+#: src/onboarding/steps/step-form.tsx
+#: src/plan/plan-bases-choices.tsx
+msgctxt "_4tOwT"
+msgid "Skip"
+msgstr "Atla"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "scAuEr"
@@ -3388,13 +3391,6 @@ msgstr "Notunu gör"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Geliştirmen gereken yerleri yeniden yaz"
-
-#: src/essay/essay-screen.tsx
-#: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-choices.tsx
-msgctxt "_4tOwT"
-msgid "Skip"
-msgstr "Atla"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"

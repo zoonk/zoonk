@@ -3246,9 +3246,12 @@ msgid ", missing"
 msgstr "、なし"
 
 #: src/essay/essay-feedback.tsx
-msgctxt "l44-_n"
-msgid "Skip the rewrite"
-msgstr "書き直しをスキップする"
+#: src/essay/essay-screen.tsx
+#: src/onboarding/steps/step-form.tsx
+#: src/plan/plan-bases-choices.tsx
+msgctxt "_4tOwT"
+msgid "Skip"
+msgstr "スキップ"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "scAuEr"
@@ -3388,13 +3391,6 @@ msgstr "採点結果を見る"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "改善が必要な部分を書き直す"
-
-#: src/essay/essay-screen.tsx
-#: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-choices.tsx
-msgctxt "_4tOwT"
-msgid "Skip"
-msgstr "スキップ"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"

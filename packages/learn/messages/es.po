@@ -3246,9 +3246,12 @@ msgid ", missing"
 msgstr ", ausente"
 
 #: src/essay/essay-feedback.tsx
-msgctxt "l44-_n"
-msgid "Skip the rewrite"
-msgstr "Saltar la reescritura"
+#: src/essay/essay-screen.tsx
+#: src/onboarding/steps/step-form.tsx
+#: src/plan/plan-bases-choices.tsx
+msgctxt "_4tOwT"
+msgid "Skip"
+msgstr "Saltar"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "scAuEr"
@@ -3388,13 +3391,6 @@ msgstr "Ver la calificación"
 msgctxt "othn-n"
 msgid "Rewrite what needs work"
 msgstr "Reescribe lo que necesite ajustes"
-
-#: src/essay/essay-screen.tsx
-#: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-choices.tsx
-msgctxt "_4tOwT"
-msgid "Skip"
-msgstr "Saltar"
 
 #: src/essay/essay-screen.tsx
 msgctxt "Wleedk"
