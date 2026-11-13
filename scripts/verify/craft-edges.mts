@@ -6,8 +6,15 @@ type Side = "left" | "right";
 
 const SIDE_RULES = { left: "E1", right: "E3" } as const;
 
-function edge(item: Ink, side: Side) {
-  return side === "left" ? item.left : item.right;
+/** Where an item starts or ends. Beside a glyph, a text is where its letters are drawn (E2). */
+function edge(item: Ink, side: Side, beside?: Ink) {
+  const letters = beside?.kind === "icon" && item.kind === "text";
+
+  if (side === "left") {
+    return letters ? (item.inkLeft ?? item.left) : item.left;
+  }
+
+  return letters ? (item.inkRight ?? item.right) : item.right;
 }
 
 function middle(item: Ink) {
@@ -33,13 +40,78 @@ function outermost(item: Ink, ink: Ink[], side: Side) {
   );
 }
 
-/** Craft's "Within": a glyph's ink sits inside its canvas by a different amount for each icon. */
+/** Craft's "Within": text and boxes, or a glyph's ink against letters or a box. */
 function tolerance(one: Ink, other: Ink) {
   return one.kind === "icon" || other.kind === "icon" ? CRAFT_LINES.glyph : CRAFT_LINES.aligned;
 }
 
 function sameEdge(one: Ink, other: Ink, side: Side) {
-  return Math.abs(edge(one, side) - edge(other, side)) <= tolerance(one, other);
+  return Math.abs(edge(one, side, other) - edge(other, side, one)) <= tolerance(one, other);
+}
+
+/**
+ * A glyph on an edge that texts or boxes share (E2): never outside the box, and with the letters of
+ * the nearest text there, since the eye compares the arrow with the letter under it. Null when it
+ * is on no such edge.
+ */
+function glyphLeads(item: Ink, others: Ink[], side: Side): Finding[] | null {
+  const at = edge(item, side);
+
+  const drawn = others.filter((other) => other.kind !== "icon");
+
+  // One text alone isn't a column's edge: something else starts or ends where it does.
+  const near = drawn
+    .filter(
+      (other) =>
+        Math.abs(at - edge(other, side)) <= CRAFT_LINES.lettersNear &&
+        drawn.some((third) => third !== other && sameEdge(third, other, side)),
+    )
+    .toSorted(
+      (one, other) => Math.abs(middle(one) - middle(item)) - Math.abs(middle(other) - middle(item)),
+    );
+
+  // The letters of the nearest text there; a box is the line only where no text is.
+  const neighbor = near.find((other) => other.kind === "text") ?? near[0];
+
+  if (!neighbor) {
+    return null;
+  }
+
+  const crossed = near
+    .map((other) => ({
+      other,
+      past: side === "left" ? edge(other, side) - at : at - edge(other, side),
+    }))
+    .toSorted((one, other) => other.past - one.past)[0];
+
+  const verb = side === "left" ? "starts" : "ends";
+
+  if (crossed && crossed.past > CRAFT_LINES.crossed) {
+    return [
+      lead(
+        "E2",
+        `${item.label} ${verb} ${px(crossed.past)} outside the ${side} edge of ${crossed.other.label}: no part of a glyph crosses its column's edge`,
+        crossed.past,
+      ),
+    ];
+  }
+
+  const off = at - edge(neighbor, side, item);
+  const inside = side === "left" ? off : -off;
+
+  if (inside >= -CRAFT_LINES.glyph && inside <= CRAFT_LINES.glyphInside) {
+    return [];
+  }
+
+  const what = neighbor.kind === "text" ? "the letters of" : "the edge of";
+
+  return [
+    lead(
+      "E2",
+      `${item.label} ${verb} ${px(Math.abs(off))} ${off > 0 ? "right" : "left"} of ${what} ${neighbor.label}, the nearest thing on that edge`,
+      Math.abs(off),
+    ),
+  ];
 }
 
 function counts(item: Ink, side: Side) {
@@ -89,19 +161,33 @@ function sideLeads(ink: Ink[], items: Ink[], side: Side): Finding[] {
     const bleeds = frame !== undefined && Math.abs(edge(item, side) - edge(frame, side)) <= 1;
 
     // Icons agreeing with each other are their canvases' blank sides, not an edge.
-    const aligned =
-      counted.some(
-        (other) =>
-          other !== item &&
-          sameEdge(item, other, side) &&
-          (item.kind !== "icon" || other.kind !== "icon"),
-      ) ||
+    const aligned = counted.some(
+      (other) =>
+        other !== item &&
+        sameEdge(item, other, side) &&
+        (item.kind !== "icon" || other.kind !== "icon"),
+    );
+
+    const onAxis =
       items.filter(
         (other) =>
           other !== item && Math.abs(center(other) - center(item)) <= tolerance(item, other),
       ).length >= 2;
 
-    if (bleeds || aligned || (item.kind === "box" && placedByContents(item))) {
+    const glyph =
+      item.kind === "icon" && !bleeds && !onAxis
+        ? glyphLeads(
+            item,
+            counted.filter((other) => other !== item),
+            side,
+          )
+        : null;
+
+    if (glyph) {
+      return glyph;
+    }
+
+    if (bleeds || aligned || onAxis || (item.kind === "box" && placedByContents(item))) {
       return [];
     }
 

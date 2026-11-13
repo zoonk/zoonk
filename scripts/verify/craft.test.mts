@@ -40,6 +40,9 @@ const column = [
   ink('"Card"', 16, 240, { kind: "box", right: 374, rightCounts: true }),
 ];
 
+/** The same page as the probe reports it: the title's "S" starts 1.6 px inside its box. */
+const lettered = [ink('"Settings"', 16, 100, { inkLeft: 17.6 }), ...column.slice(1)];
+
 const backArrow = ink('chevron-left icon in "Back"', 34.7, 30, {
   bare: true,
   kind: "icon",
@@ -88,8 +91,23 @@ describe("edges", () => {
     );
   });
 
-  it("stays quiet when the arrow's ink is within 2 px of the edge", () => {
-    assert.deepEqual(edgeLeads([...column, { ...backArrow, left: 17.5, right: 24 }]), []);
+  it("stays quiet when the arrow starts within 1 px of the title's first letter", () => {
+    assert.deepEqual(edgeLeads([...lettered, { ...backArrow, left: 17.7, right: 24 }]), []);
+  });
+
+  it("leads to an arrow on the box's edge, 1.6 px left of the letter under it", () => {
+    const [arrow] = edgeLeads([...lettered, { ...backArrow, left: 16, right: 22.7 }]);
+
+    assert.equal(arrow?.check, "E2 a bare glyph sits on the edge by its ink");
+    assert.equal(arrow?.value, 1.6);
+    assert.match(arrow?.message ?? "", /starts 1\.6 px left of the letters of "Settings"/u);
+  });
+
+  it("leads to any part of a glyph outside its column's edge", () => {
+    const [arrow] = edgeLeads([...column, { ...backArrow, left: 15.7, right: 22.4 }]);
+
+    assert.equal(arrow?.value, 0.3);
+    assert.match(arrow?.message ?? "", /starts 0\.3 px outside the left edge of "Settings"/u);
   });
 
   it("leaves a row's leading mark to its axis, and leads to a trailing chevron short of the edge", () => {
