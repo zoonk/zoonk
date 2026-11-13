@@ -39,7 +39,7 @@ function TaskHeaderActions({ canRunBattle, taskId }: { canRunBattle: boolean; ta
 
       <form action={runBattleModeAction}>
         <input name="taskId" type="hidden" value={taskId} />
-        <SubmitButton disabled={!canRunBattle} size="sm">
+        <SubmitButton disabled={!canRunBattle} size="sm" variant="outline">
           Run battle
         </SubmitButton>
       </form>
