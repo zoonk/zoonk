@@ -3397,30 +3397,25 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Pomoc do tego ekranu"
 
-#: src/lesson/lesson-leave.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "Przerwać lekcję?"
-
-#: src/lesson/lesson-leave.tsx
-msgctxt "evHhXy"
-msgid "Your answer hasn't been checked, so it won't be kept."
-msgstr "Twoja odpowiedź nie została jeszcze sprawdzona, więc jej nie zapiszemy."
-
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "Pisz dalej"
 
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "Wyjdź"
 
 #: src/lesson/lesson-player-header.tsx
-msgctxt "fp5tEg"
-msgid "Close lesson"
-msgstr "Zamknij lekcję"
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "Twoja odpowiedź nie została jeszcze sprawdzona, więc jej nie zapiszemy."
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "Przerwać lekcję?"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "0WZ-rc"
