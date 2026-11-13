@@ -137,9 +137,10 @@ private struct OverviewTiles: View {
       if let level {
         TileLink(section: .level) {
           StatTile(
-            label: Text(level.belt.localizedTitle),
+            label: Text(StatsSection.level.title),
             value: Text(level.level, format: .number),
-            icon: { BeltDot(belt: level.belt) }
+            icon: { BeltDot(belt: level.belt) },
+            detail: Text(level.belt.localizedTitle)
           )
         }
       }
@@ -214,16 +215,16 @@ private struct ScoreTrend: View {
   var body: some View {
     StatsBlock(
       title: Text(
-        "Right answers\u{00A0}· 90 days", tableName: "Progress",
-        comment: "Title of the right answers trend on the overview"),
+        "Score\u{00A0}· 90 days", tableName: "Progress",
+        comment: "Title of the Score trend on the overview"),
       trailing: number
     ) {
       if let score {
         ScoreTrendChart(score: score)
       } else {
         Text(
-          "Shows after your first answers.", tableName: "Progress",
-          comment: "In place of the right answers trend before the learner has answers"
+          "Your score shows after your first answers.", tableName: "Progress",
+          comment: "In place of the Score trend before the learner has answers"
         )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)

@@ -12,7 +12,7 @@ enum StatsSection: Hashable {
     switch self {
     case .level:
       LocalizedStringResource(
-        "Belt", table: "Progress", comment: "Title of the stat with the learner's belt and level")
+        "Level", table: "Progress", comment: "Title of the stat with the learner's belt and level")
     case .energy:
       LocalizedStringResource(
         "Energy", table: "Progress", comment: "Title of the stat with the learner's Energy")
@@ -22,7 +22,7 @@ enum StatsSection: Hashable {
         comment: "Title of the stat with the learner's study days, lessons and time")
     case .score:
       LocalizedStringResource(
-        "Right answers", table: "Progress",
+        "Score", table: "Progress",
         comment: "Title of the stat with the learner's right answers over 90 days")
     case .patterns:
       LocalizedStringResource(
