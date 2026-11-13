@@ -274,17 +274,11 @@ async function readAdmittedToday({
   ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
-  const proposalsOpen = !studySession.examAccess.trialEnded;
   const insight = around.insight.status === "ready" ? around.insight.insight : null;
 
   const lessonsToday = around.lessons
     ? await countLessonsLeftToday({ selectedItems: day.selection?.items, session: studySession })
     : 0;
-
-  const shownChange = !proposalsOpen && planChange?.status === "proposed" ? null : planChange;
-
-  const shownInsight =
-    !proposalsOpen && insight?.planChange?.status === "proposed" ? null : insight;
 
   const pattern = selectDayPattern({ day: studySession, pattern: noticedPattern });
   const uploadRequest = toGoalUploadRequest(owned.goal);
@@ -300,8 +294,8 @@ async function readAdmittedToday({
       exam,
       examChoice,
       focusTest,
-      insight: shownInsight,
-      planChange: shownChange,
+      insight,
+      planChange,
       session: studySession,
       studiedToday,
       suggestedGoal,
@@ -324,14 +318,14 @@ async function readAdmittedToday({
         targetDate,
         title,
       },
-      insight: shownInsight,
+      insight,
       lessonStatus: Object.fromEntries(
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
       notice,
       pattern,
-      planChange: shownChange,
+      planChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,
       shortPlan,

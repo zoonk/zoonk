@@ -8,6 +8,7 @@ import {
   CommandGroupLabel,
   CommandItem,
 } from "@zoonk/ui/components/command";
+import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { BookOpenIcon, LibraryIcon, type LucideIcon } from "lucide-react";
 import { getPaletteItemHref } from "./command-palette-href";
 import {
@@ -130,6 +131,8 @@ function SimpleOptionContent({
       </span>
 
       {meta && <span className="text-muted-foreground max-w-[45%] truncate text-xs">{meta}</span>}
+
+      {item.kind === "shortcuts" && <ShortcutKbd shortcut="shortcuts" />}
 
       {Boolean(count) && (
         <span className="text-muted-foreground font-mono text-xs tabular-nums">{count}</span>

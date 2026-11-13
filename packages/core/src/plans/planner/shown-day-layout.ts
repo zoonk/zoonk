@@ -6,7 +6,12 @@ import { getOneDayStudy, toDayMinutes } from "./interval-study-minutes";
 import { toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
-import { type PlanDay, type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
+import {
+  type FixedEvent,
+  type PlanDay,
+  type ScheduledEvent,
+  type ScheduledUnit,
+} from "./schedule-units";
 import { type layOutAfterThisWeek } from "./week-after";
 
 type DayLayout = ReturnType<typeof layOutAfterThisWeek<ReturnType<typeof scheduleCarriedAndRest>>>;
@@ -177,9 +182,26 @@ function holdOpenedDay({
     ),
   );
 
+  const events = day.shape.events.filter((event) => opened.has(event.key) || mocks.has(event.key));
+  const eventKeys = new Set(events.map((event) => event.key));
+
+  const reviews: FixedEvent[] = input.items.flatMap((item) =>
+    item.kind === "review" && opened.has(getItemKey(item)) && !eventKeys.has(getItemKey(item))
+      ? [
+          {
+            key: getItemKey(item),
+            kind: "review",
+            minutes: readSelectedItemFacts(item.facts)?.minutes ?? day.shape.minutes,
+            replacesDay: false,
+            title: item.titleSnapshot,
+          },
+        ]
+      : [],
+  );
+
   const shape = {
     ...day.shape,
-    events: day.shape.events.filter((event) => opened.has(event.key) || mocks.has(event.key)),
+    events: [...events, ...reviews],
     reserved: (day.shape.reserved ?? 0) + held.reduce((total, unit) => total + unit.minutes, 0),
   };
 

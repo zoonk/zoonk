@@ -38,7 +38,10 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
 }
 
-/** The end side offers the sidebar's toggle on a task that has one. */
+/**
+ * The end side closes with the sidebar's toggle on a task that has one, so the toggle holds the
+ * bar's edge on every task, with or without a "…" before it.
+ */
 export function TaskHeaderSide({
   align,
   children,
@@ -50,6 +53,7 @@ export function TaskHeaderSide({
 
   return (
     <div className={TASK_HEADER_SIDE_CLASS[align]}>
+      {children}
       {align === "end" && (
         <SidebarToggle
           className="hidden lg:group-data-aside/task:inline-flex"
@@ -58,7 +62,6 @@ export function TaskHeaderSide({
           side="end"
         />
       )}
-      {children}
     </div>
   );
 }

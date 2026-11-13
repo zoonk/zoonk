@@ -164,9 +164,7 @@ async function loadGoalTest({
     return { kind: "mockExams", mocksOnly: true, plusRequired: false };
   }
 
-  return access.trialEnded
-    ? { kind: "mockExams", mocksOnly: false, plusRequired: true }
-    : { kind: "fullReviews", mocksOnly: false, plusRequired: false };
+  return { kind: "fullReviews", mocksOnly: false, plusRequired: false };
 }
 
 function getTestEvents(kind: PreparationTestKind) {

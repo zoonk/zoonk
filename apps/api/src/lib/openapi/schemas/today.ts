@@ -81,7 +81,7 @@ export const todayResponseSchema = z
       .default(null)
       .meta({
         description:
-          "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `examAccess` (a free exam plan's first week ended), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
+          "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
       }),
     pattern: noticedPatternSchema
       .nullable()

@@ -26,6 +26,8 @@ export const CRAFT_LINES = {
   aligned: 1,
   /** Any more of a glyph's ink outside its column's edge is a lead (E2's bound). */
   crossed: 0.05,
+  /** A panel's sides may differ by this, a line box's rounding (S4). */
+  evenRoom: 2,
   /** A glyph's ink past the letters of the text on its edge, toward the edge. */
   glyph: 1,
   /**
@@ -61,6 +63,7 @@ const RULES = {
   I3: "I3 one weight",
   S1: "S1 gaps come from the scale",
   S2: "S2 the same things sit the same distance apart",
+  S4: "S4 padding is even",
   T1: "T1 sizes come from the roles",
   X3: "X3 a state change moves nothing",
   Z1: "Z1 heights from the set, one height per row",

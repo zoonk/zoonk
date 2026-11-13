@@ -166,11 +166,12 @@ function registerToggle(button: HTMLButtonElement, side: SidebarSide) {
 }
 
 const TOGGLE = {
+  // Its glyph's ink ends on the bar's edge.
   end: {
     Icon: PanelRightIcon,
     className: cn(
-      buttonVariants({ size: "icon", variant: "ghost" }),
-      "shrink-0 [--icon-size:--spacing(5)]",
+      buttonVariants({ edge: "end", size: "icon", variant: "ghost" }),
+      "shrink-0 [--glyph-blank:2] [--icon-size:--spacing(5)]",
     ),
     tooltipSide: "bottom",
   },

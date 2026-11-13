@@ -27,5 +27,5 @@ export const catchUpSchema = z
   .nullable()
   .meta({
     description:
-      "Catching up on lessons earlier days left, which the day opens with; null when the learner is on pace, on a fresh start (a fresh start carries no backlog) and when a free exam plan's first week has ended",
+      "Catching up on lessons earlier days left, which the day opens with; null when the learner is on pace, on a fresh start (a fresh start carries no backlog)",
   });

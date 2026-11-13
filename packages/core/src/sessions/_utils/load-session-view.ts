@@ -20,7 +20,6 @@ import { type LessonStatesReader } from "./lesson-screens";
 import { loadSessionBlockViews } from "./load-session-block-views";
 import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
-import { loadDayPlusLessons } from "./plus-only-lessons";
 import { hasSessionLessonReservation } from "./session-lesson-reservation";
 import { type SessionPlanItem } from "./session-plan-item";
 import { EMPTY_WEEK, type StudySessionView, toStudySessionView } from "./session-view";
@@ -172,7 +171,7 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true, trialEnded: false };
 
-  const [outlines, missions, plusLessons, reserved] = await Promise.all([
+  const [outlines, missions, reserved] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
     getDayMissions({
       displayBlocks,
@@ -180,12 +179,6 @@ export async function loadStudySessionView({
       session,
       timeZone,
       ...(current && { through: new Date() }),
-    }),
-    loadDayPlusLessons({
-      access: examAccess,
-      goalId: session.goalId,
-      localDate: session.localDate,
-      userId,
     }),
     loadLessonReservation({ access: examAccess, current, plan, session }),
   ]);
@@ -200,7 +193,7 @@ export async function loadStudySessionView({
     lessonRoom: reserved,
     missions,
     outlines: reserved ? (outlines ?? "idle") : null,
-    plusLessons,
+    plusLessons: [],
     session,
     timeZone,
     week,
@@ -215,7 +208,6 @@ export async function loadStudySessionView({
       freshStart: session.freshStart,
       goalId: session.goalId,
       readItems: readCatchUp,
-      trialEnded: examAccess.trialEnded,
     }),
   ]);
 
