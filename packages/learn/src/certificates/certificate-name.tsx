@@ -182,7 +182,7 @@ function NameDialogForm({
       />
 
       {/* The line is always there, so the buttons don't move when the name is too long. */}
-      <p className="text-muted-foreground -mt-2 text-sm" id={`${id}-hint`}>
+      <p className="text-muted-foreground -mt-2 text-xs leading-snug" id={`${id}-hint`}>
         <NameHint isTooLong={isTooLong} />
       </p>
 

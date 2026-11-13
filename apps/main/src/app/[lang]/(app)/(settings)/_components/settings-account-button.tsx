@@ -5,8 +5,8 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { LogInIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-/** A gated page already ends in this same button, so the bar leaves it out there. */
-const GATED_PAGE_CLASS = "in-[body:has([data-auth-gate])]:hidden";
+/** A page that already asks for an account in its own words (a gate, Reminders' email row) doesn't repeat the button in the bar. */
+const GATED_PAGE_CLASS = "in-[body:has([data-account-ask])]:hidden";
 
 export function SettingsAccountButton({ status }: { status: "guest" | "visitor" }) {
   const t = useExtracted();

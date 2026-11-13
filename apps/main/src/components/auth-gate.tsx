@@ -38,7 +38,7 @@ export async function AuthGate({
 
   if (session?.user.isAnonymous) {
     return (
-      <Empty className={className} data-auth-gate>
+      <Empty className={className} data-account-ask>
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <LockIcon aria-hidden="true" />
@@ -62,7 +62,7 @@ export async function AuthGate({
   }
 
   return (
-    <Empty className={className} data-auth-gate>
+    <Empty className={className} data-account-ask>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <LockIcon aria-hidden="true" />

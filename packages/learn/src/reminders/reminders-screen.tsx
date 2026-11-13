@@ -76,6 +76,7 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
     <SettingRow description={t("Create an account to get email reminders")} label={t("Email")}>
       <PendingLink
         className={buttonVariants({ size: "sm", variant: "outline" })}
+        data-account-ask
         href={signUpHref}
         icon={<UserPlusIcon aria-hidden="true" />}
       >
