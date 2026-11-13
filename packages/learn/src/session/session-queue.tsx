@@ -32,7 +32,7 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
           key={block.position}
           role="listitem"
         >
-          <ListRowLeading className="w-3 justify-center">
+          <ListRowLeading>
             <BlockMark block={block} done={state === "done"} />
           </ListRowLeading>
           <ListRowBody>
