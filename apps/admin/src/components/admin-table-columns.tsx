@@ -49,8 +49,8 @@ const SIZES = {
 const FIXED_TABLE_CLASS =
   "table-fixed min-w-[calc(var(--facts-width)+14rem)] md:min-w-[calc(var(--facts-width)+6rem)] [&_:is(td,th)]:overflow-hidden [&_:is(td,th)]:text-ellipsis [&_td:has(button,input,select)]:overflow-visible";
 
-// A 30 px control sits in a 44 px row, like a row of text.
-const CONTROL_CELL_CLASS = "[&_td:has(button,input,select)]:py-1.5";
+// A control keeps the row at 44 px, like a row of text: a 30 px one centers in it, a 44 px hit area fills it.
+const CONTROL_CELL_CLASS = "[&_td:has(button,input,select)]:py-0";
 
 function fillIndexOf(columns: AdminTableColumn[]) {
   return Math.max(

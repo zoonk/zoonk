@@ -69,7 +69,9 @@ export default function CourseMockPage() {
                           key={lesson.title}
                         >
                           <span className="flex items-baseline gap-2">
-                            <a href="#">{lesson.title}</a>
+                            <a className="hit-area relative" href="#">
+                              {lesson.title}
+                            </a>
                             {lesson.shared ? (
                               <span className="text-muted-foreground text-xs">Shared lesson</span>
                             ) : null}

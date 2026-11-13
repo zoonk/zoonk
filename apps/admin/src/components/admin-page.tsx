@@ -39,9 +39,6 @@ export function AdminPageBody({ children, className }: React.ComponentProps<"sec
   return <ContainerBody className={className}>{children}</ContainerBody>;
 }
 
-/** Alone on its row on a phone, the search keeps a field's height; in the toolbar it takes the toolbar's. */
-export const ADMIN_TOOLBAR_SEARCH_CLASS = "pl-9 md:h-7.5 md:rounded-md md:pl-8 md:text-compact";
-
 /**
  * The one row above a table: its search first, then its views and filters. Its controls share one
  * height. A current view's fill hangs 10 px into the gap, so the gap is wide enough to keep it

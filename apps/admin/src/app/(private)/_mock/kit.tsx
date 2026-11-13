@@ -1,21 +1,15 @@
-import {
-  ADMIN_TOOLBAR_SEARCH_CLASS,
-  AdminPage,
-  AdminPageBody,
-  AdminPageHeader,
-  AdminToolbar,
-} from "@/components/admin-page";
+import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
+import { AdminSearchField } from "@/components/admin-search";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
-import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminTableRow, TABLE_ROW_LINK_CLASS } from "@/components/admin-table-row";
 // Review-pack mocks only: static pictures of proposed pages, built from the shared components and
 // from the records today's pages show (`data/*.json`). Remove with the rest of `_mock`.
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { Button } from "@zoonk/ui/components/button";
-import { Input } from "@zoonk/ui/components/input";
 import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, Search } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 
 export type Cell = { href?: string; img?: string; text: string };
 export type Dump = {
@@ -56,7 +50,7 @@ export function field(dump: Dump, label: string, section?: string): string {
 /** A row's first cell: what it is, then one quiet line that tells it from its neighbors. */
 export function Lead({ second, title }: { second?: React.ReactNode; title: React.ReactNode }) {
   return (
-    <a className="block" data-slot="table-row-link" href="#">
+    <a className={cn("block", TABLE_ROW_LINK_CLASS)} data-slot="table-row-link" href="#">
       <span className="line-clamp-2 max-w-xl font-medium">{title}</span>
       {second ? (
         <span className="text-muted-foreground block truncate text-xs">{second}</span>
@@ -70,20 +64,7 @@ export function Quiet({ children }: { children: React.ReactNode }) {
 }
 
 export function MockSearch({ placeholder, value }: { placeholder: string; value?: string }) {
-  return (
-    <div className="relative w-full sm:max-w-md">
-      <Search
-        aria-hidden="true"
-        className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 md:left-2.5 md:size-3.5"
-      />
-      <Input
-        className={ADMIN_TOOLBAR_SEARCH_CLASS}
-        defaultValue={value}
-        placeholder={placeholder}
-        type="search"
-      />
-    </div>
-  );
+  return <AdminSearchField defaultValue={value} placeholder={placeholder} />;
 }
 
 export function MockSelect({ children, field }: { children: React.ReactNode; field?: boolean }) {

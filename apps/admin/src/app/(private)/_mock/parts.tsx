@@ -84,7 +84,7 @@ export function MockTable({
 
 export function MockLink({ children }: { children: React.ReactNode }) {
   return (
-    <a className="underline decoration-1 underline-offset-3" href="#">
+    <a className="hit-area relative underline decoration-1 underline-offset-3" href="#">
       {children}
     </a>
   );
@@ -92,7 +92,10 @@ export function MockLink({ children }: { children: React.ReactNode }) {
 
 export function MockMore({ children }: { children: React.ReactNode }) {
   return (
-    <a className="text-muted-foreground hover:text-foreground text-compact font-medium" href="#">
+    <a
+      className="text-muted-foreground hover:text-foreground text-compact hit-area relative font-medium"
+      href="#"
+    >
       {children}
     </a>
   );

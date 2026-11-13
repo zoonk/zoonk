@@ -21,18 +21,15 @@ export function AdminTableRow({ className, ...props }: ComponentProps<"tr">) {
   );
 }
 
+/** The link that opens a row's record: it stretches over the whole row. */
+export const TABLE_ROW_LINK_CLASS =
+  "focus-visible:after:ring-ring after:absolute after:inset-0 after:z-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset";
+
 export function AdminTableRowLink<Href extends string>({
   className,
   ...props
 }: Omit<ComponentProps<typeof Link>, "href"> & { href: Route<Href> | URL }) {
   return (
-    <Link
-      className={cn(
-        "focus-visible:after:ring-ring after:absolute after:inset-0 after:z-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset",
-        className,
-      )}
-      data-slot="table-row-link"
-      {...props}
-    />
+    <Link className={cn(TABLE_ROW_LINK_CLASS, className)} data-slot="table-row-link" {...props} />
   );
 }

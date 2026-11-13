@@ -93,10 +93,10 @@ export default async function ContentFixMockPage({
               </div>
             </div>
             <span className="flex gap-4">
-              <a className="text-muted-foreground text-xs font-medium" href="#">
+              <a className="text-muted-foreground hit-area relative text-xs font-medium" href="#">
                 Whole screen before
               </a>
-              <a className="text-muted-foreground text-xs font-medium" href="#">
+              <a className="text-muted-foreground hit-area relative text-xs font-medium" href="#">
                 Whole screen after
               </a>
             </span>
