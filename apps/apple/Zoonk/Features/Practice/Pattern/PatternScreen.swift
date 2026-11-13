@@ -114,10 +114,7 @@ struct PatternScreen: View {
               ? LocalizedStringResource(
                 "You've got this rule.", table: "Practice",
                 comment: "End of a pattern drill, all right.")
-              : LocalizedStringResource(
-                "Knowing the rule is the first step. It gets easier each time you use it.",
-                table: "Practice",
-                comment: "End of a pattern drill with misses."))
+              : nil)
           PracticeResultNumbers(
             correct: result.correct, total: result.total, brainPower: result.brainPower,
             day: DayResult(result))
