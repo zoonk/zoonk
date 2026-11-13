@@ -39,7 +39,7 @@ function BuddyOption({
       <RadioGroupItem className="absolute top-3 right-3" value={kind} />
       <Buddy
         beltColor={look.beltColor}
-        className="size-20"
+        className="size-23"
         energy={look.energy}
         expression="happy"
         glasses={choice.kind === kind ? choice.glasses : "round"}

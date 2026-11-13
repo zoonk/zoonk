@@ -141,7 +141,7 @@ function RoadmapLegend() {
       )}
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
-          <Trickster className="size-3.5" />
+          <Trickster className="size-3.5" view="face" />
           {t("Phase challenge")}
         </span>
       )}

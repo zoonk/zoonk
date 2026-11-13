@@ -64,7 +64,7 @@ export function CheckpointRow({
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
       <span className={PATH_ROW_LEADING_CLASS}>
-        <Trickster className="-m-1 size-5" />
+        <Trickster className="size-4" view="face" />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <MarkedText

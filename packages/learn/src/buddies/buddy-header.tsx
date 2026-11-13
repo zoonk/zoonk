@@ -29,7 +29,7 @@ export function BuddyHeader({
 
   return (
     <header className="flex items-center gap-2.5">
-      <BuddyArt buddy={buddy} className="size-8" ref={faceRef} />
+      <BuddyArt buddy={buddy} className="size-8" ref={faceRef} view="face" />
       <div className="flex min-w-0 flex-1 flex-col items-start">
         <h1 className="max-w-full truncate text-sm leading-snug font-semibold">{name}</h1>
         {children ?? (
