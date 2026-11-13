@@ -112,7 +112,7 @@ describe("exact standalone bank mistake practice", () => {
     );
   });
 
-  it("matches with the number keys its entries show, and a matched entry answers none", async () => {
+  it("matches with the number keys its entries show, one run across both columns, and a matched entry answers none", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
       .mockResolvedValue({ ...bankFeedback(), correctAnswer: { matches: [0, 1] } });
@@ -125,18 +125,19 @@ describe("exact standalone bank mistake practice", () => {
 
     await userEvent.keyboard("1");
     await expect.element(electron).toHaveAttribute("aria-pressed", "true");
-    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "1");
+    await expect.element(negative).toHaveAttribute("aria-keyshortcuts", "3");
 
-    await userEvent.keyboard("1");
+    await userEvent.keyboard("3");
     const matched = page.getByRole("button", { name: "Negative charge, matched with Electron" });
     await expect.element(matched).toBeVisible();
-
-    await userEvent.keyboard("2");
     await expect.element(matched).not.toHaveAttribute("aria-keyshortcuts");
+
+    await userEvent.keyboard("3");
     await userEvent.keyboard("1");
     await expect.element(matched).toBeVisible();
 
     await userEvent.keyboard("2");
+    await userEvent.keyboard("4");
     await page.getByRole("button", { name: /^Check/u }).click();
 
     expect(answer).toHaveBeenCalledWith(

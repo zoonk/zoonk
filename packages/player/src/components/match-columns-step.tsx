@@ -5,7 +5,6 @@ import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer"
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { MatchEntry } from "@zoonk/learn/match-entry";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { MAX_PICK_KEYS } from "@zoonk/ui/lib/shortcuts";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -21,9 +20,7 @@ import {
   buildMatchAttempt,
   buildRightMatchItems,
   buildSolvedMatchBoard,
-  getActiveKeyboardSide,
   getEntryState,
-  getKeyboardItems,
   getPairIndex,
   isItemMatched,
   restoreMatches,
@@ -72,9 +69,6 @@ export function MatchColumnsStep({
   const board = isSolved
     ? buildSolvedMatchBoard(content.pairs)
     : { matches: correctMatches, rightItems };
-
-  const activeKeyboardSide = getActiveKeyboardSide(selected);
-  const keyboardItems = getKeyboardItems({ activeKeyboardSide, leftItems, rightItems });
 
   const handleTap = useCallback(
     (item: MatchItemData) => {
@@ -133,14 +127,16 @@ export function MatchColumnsStep({
   );
 
   useNumberKeys({
-    count: Math.min(keyboardItems.length, MAX_PICK_KEYS),
+    count: leftItems.length + rightItems.length,
     enabled: !isSolved && flashingMatch === null && interactionState !== "paused",
     onPick: (index) => {
-      const item = keyboardItems[index];
+      const item = leftItems[index] ?? rightItems[index - leftItems.length];
 
-      if (item) {
-        handleTap(item);
+      if (!item || isItemMatched({ correctMatches, item })) {
+        return false;
       }
+
+      handleTap(item);
     },
   });
 
@@ -157,8 +153,7 @@ export function MatchColumnsStep({
     return (
       <MatchEntry
         disabled={state === "wrong"}
-        index={index}
-        keyActive={activeKeyboardSide === side}
+        index={side === "left" ? index : leftItems.length + index}
         onClick={() => handleTap(item)}
         pair={getPairIndex({ correctMatches: board.matches, item, leftItems })}
         state={state}

@@ -51,18 +51,18 @@ function EntryMarker({
 }
 
 /**
- * One side of a pair on every screen that asks to match these with those. `index` is its place in
- * its own column, which is also its number key; `pair` is the place of its pair's left entry.
- * `keyActive` says its key acts now: keys pick from one column at a time. `label` is what a screen
- * reader hears when that isn't the text drawn, such as "pregnant, matched". Its text takes the size
- * of the board it sits in, which also decides when the board's columns stack.
+ * One side of a pair on every screen that asks to match these with those. `index` is its place on
+ * the board, the left column first and then the right, so no two entries show the same number key;
+ * `pair` is the place of its pair's left entry, whose key both of them then show. An entry answers
+ * its key only while it shows it. `label` is what a screen reader hears when that isn't the text
+ * drawn, such as "pregnant, matched". Its text takes the size of the board it sits in, which also
+ * decides when the board's columns stack.
  */
 export function MatchEntry({
   children,
   className,
   disabled,
   index,
-  keyActive = false,
   label,
   onKeyDown,
   pair,
@@ -70,17 +70,17 @@ export function MatchEntry({
   ...props
 }: React.ComponentProps<"button"> & {
   index: number;
-  keyActive?: boolean;
   label?: string;
   pair?: number;
   state?: MatchEntryState;
 }) {
   const settled = SETTLED.has(state);
   const locked = disabled || settled;
+  const keyed = !locked && !PAIRED.has(state);
 
   return (
     <button
-      aria-keyshortcuts={keyActive && !locked ? shortcutKeys("pick", index) : undefined}
+      aria-keyshortcuts={keyed ? shortcutKeys("pick", index) : undefined}
       aria-pressed={settled ? undefined : state === "selected"}
       className={cn(
         ANSWER_BOX_CLASS,

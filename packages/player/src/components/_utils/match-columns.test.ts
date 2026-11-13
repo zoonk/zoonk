@@ -3,7 +3,6 @@ import {
   buildLeftMatchItems,
   buildMatchAttempt,
   buildRightMatchItems,
-  getActiveKeyboardSide,
   getEntryState,
   getPairIndex,
 } from "./match-columns";
@@ -73,11 +72,5 @@ describe("match columns", () => {
     );
 
     expect(states).toStrictEqual(["idle", "wrong", "idle", "wrong"]);
-  });
-
-  it("points number keys at the column the next tap belongs to", () => {
-    expect(getActiveKeyboardSide(null)).toBe("left");
-    expect(getActiveKeyboardSide(left[0]!)).toBe("right");
-    expect(getActiveKeyboardSide(right[0]!)).toBe("left");
   });
 });

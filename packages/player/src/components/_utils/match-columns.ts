@@ -125,23 +125,3 @@ export function getEntryState({
 
   return "idle";
 }
-
-export function getActiveKeyboardSide(selected: MatchSelection | null): MatchSide {
-  if (!selected) {
-    return "left";
-  }
-
-  return selected.side === "left" ? "right" : "left";
-}
-
-export function getKeyboardItems({
-  activeKeyboardSide,
-  leftItems,
-  rightItems,
-}: {
-  activeKeyboardSide: MatchSide;
-  leftItems: MatchItemData[];
-  rightItems: MatchItemData[];
-}): MatchItemData[] {
-  return activeKeyboardSide === "left" ? leftItems : rightItems;
-}

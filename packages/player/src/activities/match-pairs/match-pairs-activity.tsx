@@ -4,7 +4,6 @@ import { useSentenceSpace } from "@zoonk/learn/locale";
 import { MatchEntry, type MatchEntryState } from "@zoonk/learn/match-entry";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { MAX_PICK_KEYS } from "@zoonk/ui/lib/shortcuts";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -199,23 +198,21 @@ export function MatchPairsActivity({
     return state === "none" ? t("{text}, no match", { text }) : text;
   }
 
-  const keySide: Side = selection.left ? "right" : "left";
-  const keyCards = keySide === "left" ? left : right;
-
   const stateOf = (side: Side, card: MatchCard) =>
     cardState({ card, isComplete, miss, progress, selection, side });
 
   useNumberKeys({
-    count: Math.min(keyCards.length, MAX_PICK_KEYS),
+    count: left.length + right.length,
     enabled: !isChecked && !isComplete && interactionState !== "paused",
     onPick: (index) => {
-      const card = keyCards[index];
+      const side: Side = index < left.length ? "left" : "right";
+      const card = side === "left" ? left[index] : right[index - left.length];
 
-      if (!card || SETTLED.has(stateOf(keySide, card))) {
+      if (!card || SETTLED.has(stateOf(side, card))) {
         return false;
       }
 
-      pick(keySide, card);
+      pick(side, card);
     },
   });
 
@@ -226,8 +223,7 @@ export function MatchPairsActivity({
       <MatchEntry
         className={state === "idle" ? "bg-background" : undefined}
         disabled={isChecked}
-        index={index}
-        keyActive={keySide === side}
+        index={side === "left" ? index : left.length + index}
         label={cardLabel(card, state)}
         onClick={() => pick(side, card)}
         pair={left.findIndex((other) => !other.isTrap && other.id === card.id)}

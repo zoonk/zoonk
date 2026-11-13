@@ -73,20 +73,25 @@ export function MatchPairsQuestion({
   };
 
   useNumberKeys({
-    count: selected === null ? left.length : right.length,
+    count: left.length + right.length,
     enabled: !disabled,
     onPick: (index) => {
-      if (selected === null) {
+      if (index < left.length) {
+        if (matches[index] !== UNMATCHED) {
+          return false;
+        }
+
         pickLeft(index);
         return;
       }
 
-      // A matched entry on this side shows its pair's number, not a key.
-      if (matches.includes(index)) {
+      const rightIndex = index - left.length;
+
+      if (selected === null || matches.includes(rightIndex)) {
         return false;
       }
 
-      pickRight(index);
+      pickRight(rightIndex);
     },
   });
 
@@ -98,7 +103,6 @@ export function MatchPairsQuestion({
             <MatchEntry
               disabled={disabled}
               index={index}
-              keyActive={selected === null}
               onClick={() => pickLeft(index)}
               pair={index}
               state={getLeftState({
@@ -129,8 +133,7 @@ export function MatchPairsQuestion({
                     : toPlainItemLine(entry)
                 }
                 disabled={disabled || (selected === null && !matched)}
-                index={index}
-                keyActive={selected !== null && !matched}
+                index={left.length + index}
                 onClick={() => pickRight(index)}
                 pair={owner}
                 state={matched ? "matched" : "idle"}
