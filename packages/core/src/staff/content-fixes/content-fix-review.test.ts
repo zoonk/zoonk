@@ -163,7 +163,68 @@ describe("content fix regressions", () => {
     });
   });
 
-  it.each(["unpublished", "private", "lessons", "name"])(
+  it("fixes and reverts a graph whose generated skill name differs from its Skill row", async () => {
+    const course = await courseFixture({ isPublished: true });
+    const skill = await skillFixture({ name: "Photosynthesis" });
+
+    const graph = {
+      phases: [{ milestone: null, name: "Learn" }],
+      skills: [
+        {
+          area: null,
+          courseIds: [course.id],
+          lessons: 1,
+          name: "How plants make food",
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        },
+      ],
+    };
+
+    const row = await prisma.languageSkillGraph.create({
+      data: {
+        generatedAt: new Date(),
+        graph,
+        model: "test",
+        promptKey: randomUUID(),
+        promptVersion: "test",
+        runId: "test",
+      },
+    });
+
+    const withLessons = (name: string) => ({
+      ...graph,
+      skills: graph.skills.map((entry) => ({ ...entry, lessons: 2, name })),
+    });
+
+    await signInProposer();
+
+    const lessonsOnly = await proposeContentFix({
+      changes: [
+        {
+          id: row.id,
+          model: "LanguageSkillGraph",
+          setGraph: { graph: withLessons("How plants make food") },
+        },
+      ],
+      reason: "Two lessons.",
+    });
+
+    const { fix } = await apply([
+      { id: row.id, model: "LanguageSkillGraph", setGraph: { graph: withLessons(skill.name) } },
+    ]);
+
+    await signInProposer();
+    const inverse = await revertFix({ fixId: fix.id, reason: "Restore graph." });
+
+    expect({ inverse: inverse.status, lessonsOnly: lessonsOnly.status }).toStrictEqual({
+      inverse: "proposed",
+      lessonsOnly: "proposed",
+    });
+  });
+
+  it.each(["unpublished", "private", "lessons"])(
     "rejects an invalid graph %s independently",
     async (problem) => {
       const draft = await courseFixture({
@@ -209,13 +270,7 @@ describe("content fix regressions", () => {
             setGraph: {
               graph: {
                 ...graph,
-                skills: [
-                  {
-                    ...graph.skills[0],
-                    lessons: problem === "lessons" ? 32_768 : 2,
-                    name: problem === "name" ? "Not this skill" : skill.name,
-                  },
-                ],
+                skills: [{ ...graph.skills[0], lessons: problem === "lessons" ? 32_768 : 2 }],
               },
               primaryCourseId: draft.id,
             },

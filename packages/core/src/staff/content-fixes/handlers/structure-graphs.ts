@@ -73,10 +73,6 @@ async function graphProblem(
     return "The primary course must be published.";
   }
 
-  if (skills.some((skill) => rows.find((row) => row.id === skill.skillId)?.name !== skill.name)) {
-    return "Every graph skill name must match its Skill row.";
-  }
-
   if (await changedLanguage(db, previous, rows)) {
     return "A graph keeps its language and target language.";
   }
