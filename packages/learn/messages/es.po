@@ -535,6 +535,7 @@ msgid "See the answer"
 msgstr ""
 
 #: src/_components/question-actions.tsx
+#: src/challenge/challenge-footer.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-screen.tsx
 msgctxt "zDR51u"
@@ -2228,11 +2229,6 @@ msgstr "Plus incluye simulacros: cuando quieras y cada semana en tu plan."
 msgctxt "L_nv1C"
 msgid "After today's lessons"
 msgstr ""
-
-#: src/challenge/challenge-footer.tsx
-msgctxt "4tdaRm"
-msgid "See result"
-msgstr "Ver resultado"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "X_k-eo"
