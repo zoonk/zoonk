@@ -34,7 +34,7 @@ struct LessonVerdictView: View {
       if case .typedAnswer(let content) = step.content, !result.isCorrect {
         if !result.checked {
           Text(
-            "Each question is checked a few times a day. Compare your answer with this one:",
+            "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:",
             tableName: "Player",
             comment: "A typed answer that wasn't graded, before the sample answer"
           )

@@ -38,18 +38,6 @@ struct LessonWaysOut: View {
             }
           }
         }
-
-        Button {
-          store.skipWriting()
-        } label: {
-          Label {
-            Text(
-              "Can't write now", tableName: "Player",
-              comment: "Leaves writing out for the rest of today")
-          } icon: {
-            Image(systemName: "pencil.slash")
-          }
-        }
       }
     }
     .buttonStyle(.borderless)

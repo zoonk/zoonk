@@ -2,6 +2,7 @@ import SwiftUI
 
 struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
+  @Environment(RecordInBar.self) private var bar: RecordInBar?
   @State private var recorder = VoiceRecorder()
   @State private var checking = false
   @State private var isSlow = false
@@ -10,7 +11,6 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
   let onGraded: @MainActor (Grade) -> Void
-  var asksToSpeak = true
   /// A microphone that's off hands over to the screen's other way to answer instead of showing how
   /// to turn it on.
   var onBlocked: (() -> Void)?
@@ -31,11 +31,17 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       ) {}
     } else {
       VStack(alignment: .leading, spacing: 12) {
-        RecordButton(recorder: recorder, isDisabled: checking) {
-          Task { await record() }
+        if bar == nil {
+          RecordButton(recorder: recorder, isDisabled: checking) {
+            Task { await record() }
+          }
+          .controlSize(.large)
         }
 
         status
+      }
+      .recordsInBar(bar, recorder: recorder, isChecking: checking) {
+        Task { await record() }
       }
       .announcesStatus(announcement)
       .onChange(of: checking) { _, value in onCheckingChanged?(value) }
@@ -111,11 +117,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
         localized: "We couldn't check your answer this time. Try again.", table: "Voice",
         comment: "Grading a spoken answer failed")
     case .limit, nil:
-      return asksToSpeak
-        ? String(
-          localized: "Tap and say it out loud", table: "Voice",
-          comment: "Asks the learner to record their answer")
-        : nil
+      return String(
+        localized: "Tap Record and say it out loud", table: "Voice",
+        comment: "Asks the learner to record their answer")
     }
   }
 

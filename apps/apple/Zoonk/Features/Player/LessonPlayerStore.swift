@@ -487,7 +487,7 @@ final class LessonPlayerStore {
 
     leaveOutUnplayable(&state)
 
-    // "Can't write now" lasts the rest of the learner's day on this device.
+    // "Skip writing questions today" lasts the rest of the learner's day on this device.
     if choices.isChosenToday(.cantWrite) {
       state.skipWriting(opening: true)
     }

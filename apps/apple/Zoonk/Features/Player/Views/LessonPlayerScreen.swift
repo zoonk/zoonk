@@ -221,7 +221,7 @@ private struct LessonPlayerContent: View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
       WaitHold(
         surface: .lessonWait, isReady: writing == .written,
-        announcement: LessonWaitingView.lessonReady
+        announcement: LessonWaitingView.ready
       ) { stage in
         switch stage {
         case .waiting(let holding):
@@ -374,6 +374,20 @@ private struct LessonPlayerContent: View {
           comment: "In the lesson's menu")
       } icon: {
         Image(systemName: "sparkles")
+      }
+    }
+
+    if state.canSkipWriting {
+      Button {
+        store.skipWriting()
+      } label: {
+        Label {
+          Text(
+            "Skip writing questions today", tableName: "Player",
+            comment: "In the lesson's menu: leaves written answers out for the rest of today")
+        } icon: {
+          Image(systemName: "pencil.slash")
+        }
       }
     }
 

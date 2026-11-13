@@ -384,9 +384,6 @@ private struct RhythmCalibrationView: View {
   let onDone: (Double) -> Void
   let onSkip: () -> Void
 
-  /// A reading this close to zero is a device with no delay worth mentioning.
-  private static let onTimeMs = 20.0
-
   var body: some View {
     TimelineView(.animation(paused: !calibration.isRunning)) { _ in
       let phase = calibration.phase(at: CACurrentMediaTime())
@@ -452,7 +449,7 @@ private struct RhythmCalibrationView: View {
             comment: "Runs the rhythm or the sound check again")
         } else {
           Text(
-            "Start the sound check", tableName: "ActivitiesMusic",
+            "Start", tableName: "ActivitiesMusic",
             comment: "Starts the clicks to tap along with")
         }
       }
@@ -489,19 +486,14 @@ private struct RhythmCalibrationView: View {
         localized:
           "We couldn't match enough taps to the clicks. Try again, tapping with each one.",
         table: "ActivitiesMusic", comment: "The sound check got too few taps")
-    case .done(let delay?) where delay < Self.onTimeMs:
+    case .done:
       String(
-        localized: "Sound on this device arrives on time.", table: "ActivitiesMusic",
-        comment: "The sound check found no delay")
-    case .done(let delay?):
-      String(
-        localized:
-          "Sound on this device arrives about \(Int(delay)) ms late. Rhythms here take that out.",
-        table: "ActivitiesMusic", comment: "The sound check's reading, in milliseconds")
+        localized: "All set.", table: "ActivitiesMusic",
+        comment: "The sound check measured the device's sound delay")
     case .idle:
       String(
         localized:
-          "Headphones can play sound a little late. Tap along with \(Rhythm.calibrationClicks) clicks once, and rhythms on this device are timed fairly.",
+          "Tap along with \(Rhythm.calibrationClicks) clicks, so your taps are timed right.",
         table: "ActivitiesMusic", comment: "Why the sound check runs, before it starts")
     }
   }

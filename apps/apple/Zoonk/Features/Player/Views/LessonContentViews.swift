@@ -54,22 +54,6 @@ struct LessonTextBlocks: View {
   }
 }
 
-/// Main's `LessonEyebrow`: what kind of screen this is, as a chip over its question.
-struct LessonEyebrow: View {
-  let title: Text
-  let systemImage: String
-
-  var body: some View {
-    HStack(alignment: .firstTextBaseline, spacing: 6) {
-      Image(systemName: systemImage)
-        .imageScale(.small)
-        .accessibilityHidden(true)
-      title
-    }
-    .chip(wraps: true)
-  }
-}
-
 /// A question as a VoiceOver heading, with any table of data above it as a check's context.
 struct LessonQuestionText: View {
   let text: String

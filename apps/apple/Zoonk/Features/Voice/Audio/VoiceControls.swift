@@ -1,17 +1,19 @@
 import SwiftUI
 import UIKit
 
+/// Main's `RecordButton`: a screen's main action, in its bottom bar. "Record" until the microphone
+/// is on (busy while it's acquired), then "Stop" with the time.
 struct RecordButton: View {
   let recorder: VoiceRecorder
   var isDisabled = false
   let onStart: () -> Void
 
   var body: some View {
-    if case .recording(let startedAt) = recorder.status {
-      Button {
-        recorder.stop()
-      } label: {
-        Label {
+    Group {
+      if case .recording(let startedAt) = recorder.status {
+        Button {
+          recorder.stop()
+        } label: {
           HStack(spacing: 8) {
             Text("Stop", tableName: "Voice", comment: "Button that stops recording the learner")
             // The clock moves every second, so it stays out of the button's name.
@@ -20,44 +22,57 @@ struct RecordButton: View {
               countsDown: false
             )
             .monospacedDigit()
-            .foregroundStyle(.mutedForeground)
+            .opacity(0.7)
             .accessibilityHidden(true)
           }
-        } icon: {
-          Image(systemName: "stop.fill")
         }
-        .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.outline)
-      .controlSize(.large)
-      .overlay(alignment: .trailing) {
-        LevelMeter(level: recorder.level)
-          .padding(.trailing)
-      }
-    } else {
-      Button(action: onStart) {
-        Label {
+        .accessibilityAddTraits(.isSelected)
+      } else {
+        BusyButton(isBusy: recorder.status == .acquiring, action: onStart) {
           Text("Record", tableName: "Voice", comment: "Button that starts recording the learner")
-        } icon: {
-          Image(systemName: "mic.fill")
         }
-        .frame(maxWidth: .infinity)
+        .disabled(isDisabled)
       }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .disabled(isDisabled || recorder.status == .acquiring)
     }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
   }
 }
 
-struct LevelMeter: View {
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  let level: Double
+/// A screen whose step records puts its Record button in the screen's bottom bar: the step hands
+/// its recorder here, and the bar draws `RecordButton` in its main action's place.
+@MainActor
+@Observable
+final class RecordInBar {
+  fileprivate(set) var recorder: VoiceRecorder?
+  fileprivate(set) var isChecking = false
+  @ObservationIgnored fileprivate var start: (() -> Void)?
 
-  var body: some View {
-    Image(systemName: "waveform", variableValue: reduceMotion ? 1 : level)
-      .foregroundStyle(.mutedForeground)
-      .accessibilityHidden(true)
+  var button: RecordButton? {
+    guard let recorder, let start else {
+      return nil
+    }
+
+    return RecordButton(recorder: recorder, isDisabled: isChecking, onStart: start)
+  }
+}
+
+extension View {
+  /// Hands `recorder` to the screen's bottom bar while this view shows.
+  func recordsInBar(
+    _ bar: RecordInBar?, recorder: VoiceRecorder, isChecking: Bool, start: @escaping () -> Void
+  ) -> some View {
+    onAppear {
+      bar?.recorder = recorder
+      bar?.start = start
+    }
+    .onChange(of: isChecking, initial: true) { _, value in bar?.isChecking = value }
+    .onDisappear {
+      if bar?.recorder === recorder {
+        bar?.recorder = nil
+        bar?.start = nil
+      }
+    }
   }
 }
 

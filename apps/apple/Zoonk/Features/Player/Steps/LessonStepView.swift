@@ -148,8 +148,8 @@ private struct HookStepView: View {
   @ViewBuilder
   private var screen: some View {
     if content.asksGuess, let question = content.question {
-      LessonEyebrow(
-        title: Text(
+      Chip(
+        Text(
           "Just a guess, it doesn't count", tableName: "Player",
           comment:
             "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored."
@@ -262,8 +262,8 @@ private struct WorkedExampleStepView: View {
 
   @ViewBuilder
   private var problem: some View {
-    LessonEyebrow(
-      title: Text("Worked example", tableName: "Player", comment: "Label above a worked example"),
+    Chip(
+      Text("Worked example", tableName: "Player", comment: "Label above a worked example"),
       systemImage: "list.number")
 
     LessonScreenText(title: content.title, text: content.problem, marks: step.marks)
@@ -360,8 +360,8 @@ private struct TypedAnswerStepView: View {
       }
 
       if content.isOwnWords {
-        LessonEyebrow(
-          title: Text(
+        Chip(
+          Text(
             "In your own words", tableName: "Player",
             comment: "Above a question answered in a few sentences"),
           systemImage: "pencil.line")
@@ -497,12 +497,6 @@ private struct SpokenAnswerStepView: View {
 
   @ViewBuilder
   private var screen: some View {
-    if mode == .speak {
-      Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
-        .typeStyle(.data)
-        .foregroundStyle(.mutedForeground)
-    }
-
     LessonQuestionText(text: content.prompt)
     VStack(alignment: .leading, spacing: 4) {
       Text(content.targetText)

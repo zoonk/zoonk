@@ -38,14 +38,6 @@ struct LanguageStepView: View {
   }
 }
 
-private struct ScreenChip: View {
-  let text: Text
-
-  var body: some View {
-    text.chip()
-  }
-}
-
 /// Main's prompt audio: a recording the screen is about (a word, a letter, a sentence to hear).
 struct LessonAudioButton: View {
   enum Style {
@@ -220,8 +212,7 @@ private struct VocabularyView: View {
     if let word = exercise.word {
       switch part {
       case .screen:
-        ScreenChip(
-          text: Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
+        Chip(Text("Vocabulary", tableName: "Player", comment: "Label above a word to learn"))
 
         VStack(alignment: .leading, spacing: 4) {
           AccessibilityStack(spacing: 8) {
@@ -291,8 +282,7 @@ private struct AlphabetView: View {
   private var content: LanguageExercise.Content { exercise.content }
 
   var body: some View {
-    ScreenChip(
-      text: Text("Alphabet", tableName: "Player", comment: "Label above a letter to learn"))
+    Chip(Text("Alphabet", tableName: "Player", comment: "Label above a letter to learn"))
 
     HStack(alignment: .center, spacing: 16) {
       Text(content.symbol ?? "")
@@ -372,8 +362,8 @@ private struct TranslationView: View {
     if let word = exercise.word {
       switch part {
       case .screen:
-        ScreenChip(
-          text: Text(
+        Chip(
+          Text(
             "Translate", tableName: "Player",
             comment: "Label above a word or sentence to translate"))
         LessonQuestionText(text: word.translation)
@@ -582,10 +572,12 @@ private struct ArrangeWordsView: View {
   @ViewBuilder
   private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
     if isListening {
-      ScreenChip(
-        text: Text(
-          "What do you hear?", tableName: "Player",
-          comment: "Above a sentence to listen to and arrange"))
+      Text(
+        "What do you hear?", tableName: "Player",
+        comment: "The question over a sentence to listen to and arrange"
+      )
+      .typeStyle(.question)
+      .accessibilityAddTraits(.isHeader)
       HStack(spacing: 12) {
         LessonAudioButton(url: exercise.promptAudio)
         if exercise.promptAudio == nil {
@@ -593,8 +585,8 @@ private struct ArrangeWordsView: View {
         }
       }
     } else {
-      ScreenChip(
-        text: Text(
+      Chip(
+        Text(
           "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
         ))
       ReadingPromptText(
