@@ -160,7 +160,7 @@ export function PatternTesterActivity({
             autoCapitalize="off"
             autoComplete="off"
             autoCorrect="off"
-            className="placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent outline-none"
+            className="placeholder:text-muted-foreground h-11 min-w-0 flex-1 bg-transparent outline-none"
             id={inputId}
             onChange={(event) => change(event.target.value)}
             placeholder={isRegex ? undefined : "=A1*B1"}

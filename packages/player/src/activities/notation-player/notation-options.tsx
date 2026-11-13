@@ -39,7 +39,7 @@ export function ViewToggle({
         <label className={cn(TAB_CLASS, "cursor-pointer")} key={option.value}>
           <input
             checked={view === option.value}
-            className="absolute inset-0 m-0 cursor-pointer opacity-0"
+            className="absolute top-1/2 left-1/2 m-0 size-full min-h-11 min-w-11 -translate-1/2 cursor-pointer opacity-0"
             name={name}
             onChange={() => onChange(option.value)}
             type="radio"
