@@ -373,61 +373,257 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld von %2$lld Missionen"
+            "value" : "%1$lld von %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Missionen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$lld of %2$lld missions"
+            "value" : "%1$lld of %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld misiones"
+            "value" : "%1$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misión"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misiones"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld missions"
+            "value" : "%1$lld sur %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld missioni su %2$lld"
+            "value" : "%1$lld su %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missione"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missioni"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld/%2$lldミッション完了"
+            "value" : "ミッションを%1$lld件達成（全%#@missions@）"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg件"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "미션 %1$lld/%2$lld개 완료"
+            "value" : "미션 %1$lld개 완료, 총 %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg개"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld z %2$lld misji"
+            "value" : "%1$lld z %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misji"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld missões"
+            "value" : "%1$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missão"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missões"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld / %2$lld görev"
+            "value" : "%1$lld / %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg görev"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1624,61 +1820,257 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energie %1$@, %2$lld von %3$lld Missionen"
+            "value" : "Energie %1$@, %2$lld von %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Missionen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Energy %1$@, %2$lld of %3$lld missions"
+            "value" : "Energy %1$@, %2$lld of %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energía %1$@, %2$lld de %3$lld misiones"
+            "value" : "Energía %1$@, %2$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misión"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misiones"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Énergie %1$@, %2$lld missions sur %3$lld"
+            "value" : "Énergie %1$@, %2$lld sur %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia %1$@, %2$lld missioni su %3$lld"
+            "value" : "Energia %1$@, %2$lld su %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missione"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missioni"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エネルギー：%1$@、ミッション達成数：%2$lld／%3$lld"
+            "value" : "エネルギー%1$@、ミッションを%2$lld件達成（全%#@missions@）"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg件"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "에너지 %1$@, 미션 %2$lld개 완료, 전체 %3$lld개"
+            "value" : "에너지 %1$@, 미션 %2$lld개 완료, 총 %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg개"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia %1$@, %2$lld z %3$lld misji"
+            "value" : "Energia %1$@, %2$lld z %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misji"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia %1$@, %2$lld de %3$lld missões"
+            "value" : "Energia %1$@, %2$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missão"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missões"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enerji %1$@, %2$lld / %3$lld görev"
+            "value" : "Enerji %1$@, %2$lld / %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg görev"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
