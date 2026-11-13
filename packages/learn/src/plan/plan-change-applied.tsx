@@ -5,7 +5,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { DrawerContent } from "@zoonk/ui/components/drawer";
 import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useAppliedLine, usePlanChangeSentence } from "./use-change-sentence";
@@ -58,7 +57,7 @@ export function PlanChangeApplied({
   onDone: () => void;
 }) {
   const t = useExtracted();
-  const { failed, isPending, undo } = useUndoChange({ change, onUndone: onDone });
+  const { isPending, undo } = useUndoChange({ change, onUndone: onDone });
 
   return (
     <>
@@ -78,7 +77,6 @@ export function PlanChangeApplied({
             {t("Undo")}
           </Button>
         )}
-        {failed && <ChangeSaveError />}
       </div>
     </>
   );

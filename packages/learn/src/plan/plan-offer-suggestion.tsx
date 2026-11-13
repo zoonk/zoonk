@@ -33,7 +33,7 @@ export function PlanOfferSuggestion({
 }) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const { setResult } = usePlanSuggestionSlot();
 
   const apply = () => {
@@ -53,7 +53,7 @@ export function PlanOfferSuggestion({
   };
 
   return (
-    <PlanChangeSuggestion failed={failed} item={item} title={title}>
+    <PlanChangeSuggestion item={item} title={title}>
       {offer && <PlanEffectDiff effect={offer.effect} said={said} />}
 
       <SuggestionActions>

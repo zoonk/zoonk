@@ -4,7 +4,6 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { useDifficultySentence } from "./use-operation-statement";
 import { usePlanChange } from "./use-plan-change";
@@ -66,7 +65,7 @@ function useSteers({ difficultyBias, practiceBias }: Steering): Steer[] {
 export function PlanSteering() {
   const t = useExtracted();
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const asked = useTappedChoice<SteerOperation | null>(null);
   const steering = asked.shown ? applySteer(plan.steering, asked.shown) : plan.steering;
   const steers = useSteers(steering);
@@ -104,8 +103,6 @@ export function PlanSteering() {
           {difficultySentence(difficultyBias)}
         </p>
       )}
-
-      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }

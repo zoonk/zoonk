@@ -6,9 +6,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { CircleMinusIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { NoticeCard } from "../_components/notice-card";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { useSentenceSpace } from "../_utils/locale";
 import { LearnLink } from "../learn-link";
 
@@ -26,7 +26,7 @@ function RestoreButton({
   restore: SubjectActions["restore"];
 }) {
   const t = useExtracted();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -35,7 +35,10 @@ function RestoreButton({
         action={() =>
           startTransition(async () => {
             const { data: restored } = await safeAsync(() => restore(areas));
-            setFailed(!restored);
+
+            if (!restored) {
+              saveFailed();
+            }
           })
         }
         className="contents"
@@ -50,7 +53,6 @@ function RestoreButton({
           {t("Add it back")}
         </Button>
       </form>
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

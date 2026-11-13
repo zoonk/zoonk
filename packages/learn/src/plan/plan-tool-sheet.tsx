@@ -15,7 +15,6 @@ import { Toggle } from "@zoonk/ui/components/toggle";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { WritingWait } from "../generation/writing-wait";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import { useSystemName } from "./use-system-name";
@@ -75,7 +74,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   const choices = useToolChoices();
   const [choice, setChoice] = useState<ToolChoice | null>(tool.choice);
   const [system, setSystem] = useState<ToolSystem | null>(tool.system);
-  const { choose, failed, isPending, writing } = useToolChoice();
+  const { choose, isPending, writing } = useToolChoice();
   const needsSystem = choice === "setup" && system === null;
   const canSave = Boolean(choice) && !needsSystem && !isPending;
   const saveRef = useEnterClick<HTMLButtonElement>({ enabled: canSave });
@@ -115,7 +114,6 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
         />
 
         {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
-        {failed && <ChangeSaveError />}
 
         <div className="grid grid-cols-2 gap-2">
           <Button onClick={onClose} size="lg" type="button" variant="outline">

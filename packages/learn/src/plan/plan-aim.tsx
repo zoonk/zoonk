@@ -2,7 +2,6 @@
 
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useId } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { AimChoices } from "../language-aim/aim-picker";
 import { useAimEnds } from "../language-aim/use-aim-ends";
 import { useAimWords } from "../language-aim/use-aim-words";
@@ -44,7 +43,7 @@ export function PlanAim() {
   const labelId = useId();
   const words = useAimWords();
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const languageAim = plan.languageAim;
   const choice = useTappedChoice(languageAim?.aim ?? null);
   const ends = useAimFinishes();
@@ -76,8 +75,6 @@ export function PlanAim() {
         pending={isPending}
         value={choice.shown}
       />
-
-      {failed && <ChangeSaveError />}
     </section>
   );
 }

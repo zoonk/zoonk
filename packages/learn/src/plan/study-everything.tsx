@@ -14,7 +14,6 @@ import { LibraryBigIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
-import { ChangeSaveError } from "../_components/save-error";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
@@ -54,7 +53,7 @@ function useFullCourseEnd({ asking, course }: { asking: boolean; course: FullCou
 function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () => void }) {
   const t = useExtracted();
   const text = useFullCourseText();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
   const end = useFullCourseEnd({ asking: !isPending && outcome === null, course });
   const finish = text.finish({ ...course, endDate: end.endDate });
@@ -95,7 +94,6 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
           {t("Study everything")}
         </Button>
         <DrawerClose render={<Button variant="outline" />}>{t("Cancel")}</DrawerClose>
-        {failed && <ChangeSaveError />}
       </div>
     </>
   );

@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { DailyTimePicker, TimeSelect } from "../_components/daily-time-picker";
-import { ChangeSaveError } from "../_components/save-error";
 import { TimeAnswer } from "../_components/time-answer";
 import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
@@ -336,7 +335,6 @@ export function PlanSchedule() {
         />
         <FullCourseSwitch />
       </div>
-      {planChange.failed && <ChangeSaveError />}
     </>
   );
 }

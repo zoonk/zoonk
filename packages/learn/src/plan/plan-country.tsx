@@ -14,7 +14,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { type CountryChoice } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
 import { useLessonLanguageLine } from "../country/use-country-lines";
@@ -78,12 +78,10 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
   const lessonLanguage = useLessonLanguageLine()(country.lessonVariety);
   const [open, setOpen] = useState(false);
   const [asking, setAsking] = useState<CountryChoice | null>(null);
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [saving, startSaving] = useTransition();
 
   const pick = (picked: CountryChoice | null) => {
-    setFailed(false);
-
     if (!picked || picked.code === country.code) {
       setOpen(false);
       return;
@@ -105,7 +103,11 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
       // Updates after an `await` join the transition only when started in one again.
       startSaving(() => {
         setAsking(null);
-        setFailed(!saved);
+
+        if (!saved) {
+          saveFailed();
+        }
+
         setOpen(!saved);
       });
     });
@@ -119,7 +121,6 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
         aria-haspopup="dialog"
         className="h-auto min-h-9 justify-between py-1.5 text-left whitespace-normal"
         onClick={() => {
-          setFailed(false);
           setOpen(true);
         }}
         type="button"
@@ -140,9 +141,7 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
         suggested={country.suggested}
         title={t("Country")}
         value={country.code}
-      >
-        {failed && <ChangeSaveError />}
-      </CountryPicker>
+      />
 
       <ChangeCountryDialog
         country={asking}

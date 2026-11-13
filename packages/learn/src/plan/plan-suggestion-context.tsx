@@ -18,7 +18,6 @@ import {
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
-  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { type PlanCertificates } from "../journey/course-certificate";
@@ -129,7 +128,7 @@ export function SlotUndo({ item }: { item: SlotItem }) {
   const { setResult } = usePlanSuggestionSlot();
   const change = useSlotAnswer(item)?.change ?? null;
 
-  const { failed, isPending, undo } = useUndoChange({
+  const { isPending, undo } = useUndoChange({
     change: { id: change?.id ?? "" },
     onUndone: () => setResult(null),
   });
@@ -139,29 +138,24 @@ export function SlotUndo({ item }: { item: SlotItem }) {
   }
 
   return (
-    <>
-      <SuggestionAction
-        action={undo}
-        busy={isPending}
-        icon={<Undo2Icon aria-hidden="true" />}
-        variant="outline"
-      >
-        {t("Undo")}
-      </SuggestionAction>
-      {failed && <SuggestionSaveError />}
-    </>
+    <SuggestionAction
+      action={undo}
+      busy={isPending}
+      icon={<Undo2Icon aria-hidden="true" />}
+      variant="outline"
+    >
+      {t("Undo")}
+    </SuggestionAction>
   );
 }
 
 export function PlanChangeSuggestion({
   children,
-  failed,
   item,
   mark,
   title,
 }: {
   children: React.ReactNode;
-  failed: boolean;
   item: SlotItem;
   mark?: React.ReactNode;
   title: string;
@@ -199,10 +193,7 @@ export function PlanChangeSuggestion({
             <SuggestionActions>{undo}</SuggestionActions>
           </>
         ) : (
-          <>
-            {children}
-            {failed && <SuggestionSaveError />}
-          </>
+          children
         )}
       </SlotContent>
     </Suggestion>

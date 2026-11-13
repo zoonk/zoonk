@@ -44,7 +44,7 @@ const EFFECT_ROOM_CLASS = "in-data-[slot=suggestion-panel]:min-h-16";
 export function useApplyPreview(item: SlotItem) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const { setPreview, setResult } = usePlanSuggestionSlot();
 
   const apply = (preview: SlotPreview) => {
@@ -69,7 +69,7 @@ export function useApplyPreview(item: SlotItem) {
     });
   };
 
-  return { apply, failed, isPending };
+  return { apply, isPending };
 }
 
 export function OfferPreview({

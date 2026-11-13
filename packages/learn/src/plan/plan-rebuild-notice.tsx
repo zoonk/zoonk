@@ -14,7 +14,7 @@ import {
   NoticeCardLeading,
   NoticeCardTitle,
 } from "../_components/notice-card";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { type PlanContentCountry, usePlanScreen } from "./plan-context";
 
@@ -43,16 +43,16 @@ function FailedNotice({
 }) {
   const t = useExtracted();
   const [retrying, startRetry] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
 
   const retry = () => {
-    setFailed(false);
-
     startRetry(async () => {
       const { data: started } = await safeAsync(onRetry);
 
       startRetry(() => {
-        setFailed(!started);
+        if (!started) {
+          saveFailed();
+        }
 
         if (started) {
           onRetried();
@@ -82,7 +82,6 @@ function FailedNotice({
             </Button>
           </form>
         </NoticeCardActions>
-        {failed && <ChangeSaveError />}
       </NoticeCardContent>
     </NoticeCard>
   );

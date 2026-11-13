@@ -6,7 +6,6 @@ import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { CalculatorIcon, CodeIcon, SheetIcon, TerminalIcon, WrenchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { PlanToolSheet } from "./plan-tool-sheet";
 import { useSystemName } from "./use-system-name";
@@ -119,26 +118,23 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
           )}
         </p>
       ) : (
-        <>
-          <Button
-            busy={isPending}
-            className="self-start"
-            onClick={() => {
-              chose.current = true;
-              holderRef.current?.focus();
-              choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) });
-            }}
-            ref={buttonRef}
-            variant="link"
-          >
-            {t({
-              description:
-                "A link that switches the plan to learning from examples, without installing tools.",
-              message: "No tools? You can do it all with examples.",
-            })}
-          </Button>
-          {failed && <ChangeSaveError />}
-        </>
+        <Button
+          busy={isPending}
+          className="self-start"
+          onClick={() => {
+            chose.current = true;
+            holderRef.current?.focus();
+            choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) });
+          }}
+          ref={buttonRef}
+          variant="link"
+        >
+          {t({
+            description:
+              "A link that switches the plan to learning from examples, without installing tools.",
+            message: "No tools? You can do it all with examples.",
+          })}
+        </Button>
       )}
     </div>
   );

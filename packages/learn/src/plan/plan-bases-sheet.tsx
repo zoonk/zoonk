@@ -15,7 +15,6 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { QUIET_ACTION_CLASS } from "../_components/quiet-disclosure";
-import { ChangeSaveError } from "../_components/save-error";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
@@ -80,14 +79,12 @@ function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
 
 function BasesFooter({
   changed,
-  failed,
   isPending,
   onSave,
   onRetry,
   preview,
 }: {
   changed: { choice: BaseChoice; skillId: string }[];
-  failed: boolean;
   isPending: boolean;
   onSave: () => void;
   onRetry: () => void;
@@ -143,15 +140,13 @@ function BasesFooter({
       >
         {t("Save")}
       </Button>
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }
 
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
   const advice = useBasesAdvice();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
   const choiceOf = (item: PlanBaseView) => draft.get(item.skillId) ?? item.choice;
@@ -232,7 +227,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
 
       <BasesFooter
         changed={changed}
-        failed={failed}
         isPending={isPending}
         onRetry={retry}
         onSave={save}

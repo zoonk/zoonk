@@ -56,7 +56,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   const finder = useTimeToCover();
   const { goal, plan } = usePlanScreen();
   const { dismiss, host, preview: storedPreview, requestPreview } = usePlanSuggestionSlot();
-  const { apply, failed, isPending } = useApplyPreview(item);
+  const { apply, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
   const [search, setSearch] = useState<DateSearch>(null);
   // The search the learner waits for (0 for none), so one put off or superseded shows nothing.
@@ -181,7 +181,6 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
 
   return (
     <PlanChangeSuggestion
-      failed={failed}
       item={item}
       mark={<CalendarClockIcon />}
       title={previewing ? question : title}
