@@ -193,7 +193,7 @@ export function GoalStartEntry({
 }: React.ComponentProps<typeof AttachableGoalEntry> & { atGoalLimit: boolean }) {
   return atGoalLimit ? (
     <OnboardingColumn>
-      <GoalLimitNotice reason="activeGoals" upFront />
+      <GoalLimitNotice reason="activeGoals" />
     </OnboardingColumn>
   ) : (
     <AttachableGoalEntry {...entry} />
