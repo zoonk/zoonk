@@ -1,3 +1,4 @@
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { getScoreClassName } from "@/lib/score";
 import { type EvalResult, type ScoreStep } from "@/lib/types";
 import {
@@ -34,7 +35,7 @@ function IssueGroup({ issues, label }: { issues: Issue[]; label: string }) {
   return (
     <AccordionItem value={label}>
       <AccordionTrigger className="hover:no-underline">
-        {label} ({issues.length})
+        <FoldRowTitle title={label}>{issues.length}</FoldRowTitle>
       </AccordionTrigger>
 
       <AccordionContent>
