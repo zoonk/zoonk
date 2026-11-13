@@ -11,7 +11,7 @@ type PlotPadding = { bottom: number; left: number; right: number; top: number };
 type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScale };
 
 const FALLBACK_WIDTH = 318;
-const HALF_PIXEL = 0.5;
+export const PLOT_LINE_WIDTH = 3;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: 44, right: 12, top: 12 };
 const LABEL_GAP = 6;
 const X_LABEL_OFFSET = 18;
@@ -118,17 +118,21 @@ export function ActivityPlotAxisX({
 
   return (
     <g aria-hidden="true">
-      {ticks.map((tick) => (
-        <text
-          className="fill-muted-foreground"
-          key={tick}
-          textAnchor={x.toPixel(tick) >= width - HALF_PIXEL ? "end" : "middle"}
-          x={x.toPixel(tick)}
-          y={bottom + X_LABEL_OFFSET}
-        >
-          {format(tick)}
-        </text>
-      ))}
+      {ticks.map((tick) => {
+        const atEnd = x.toPixel(tick) >= width - PLOT_LINE_WIDTH;
+
+        return (
+          <text
+            className="fill-muted-foreground"
+            key={tick}
+            textAnchor={atEnd ? "end" : "middle"}
+            x={atEnd ? width : x.toPixel(tick)}
+            y={bottom + X_LABEL_OFFSET}
+          >
+            {format(tick)}
+          </text>
+        );
+      })}
     </g>
   );
 }
@@ -153,7 +157,7 @@ export function ActivityPlotLine({
       d={linePath(toPixels(points, scales))}
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth={3}
+      strokeWidth={PLOT_LINE_WIDTH}
     />
   );
 }
