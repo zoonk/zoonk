@@ -521,6 +521,26 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["skill.update"],
     },
   ],
+
+  "staff/content-fixes/handlers/structure-placements.ts": [
+    {
+      verdict: "marks",
+      why: "whole collection edits resolve old and new dependents before deletion",
+      writes: ["courseChapter.deleteMany", "raw:course_chapters"],
+    },
+  ],
+  "staff/content-fixes/handlers/structure-skills.ts": [
+    {
+      verdict: "marks",
+      why: "skill memberships resolve old and new dependents before deletion",
+      writes: [
+        "chapterSkill.deleteMany",
+        "chapterSkill.createMany",
+        "lessonSkill.deleteMany",
+        "lessonSkill.createMany",
+      ],
+    },
+  ],
   "staff/content-fixes/handlers/text-rows.ts": [
     {
       verdict: "marks",
@@ -1956,13 +1976,96 @@ async function sharedFixCase(model: "Skill" | "ExamBlueprint" | "ItemSet"): Prom
   };
 }
 
+async function structureFixCase(
+  operation: "setSkills" | "setPrerequisites" | "setLessons" | "setChapters",
+): Promise<WriterCase> {
+  const [skill, other, lesson, chapter, course] = await Promise.all([
+    skillFixture(),
+    skillFixture(),
+    libraryLessonFixture({ contentStatus: "completed" }),
+    libraryChapterFixture(),
+    courseFixture(),
+  ]);
+
+  await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
+  await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+  const addedLesson = await libraryLessonFixture();
+
+  const proposals = {
+    setChapters: {
+      id: course.id,
+      model: "Course",
+      setChapters: [{ area: null, chapterId: chapter.id, level: "beginner" }],
+    },
+    setLessons: { id: chapter.id, model: "Chapter", setLessons: [lesson.id, addedLesson.id] },
+    setPrerequisites: { id: skill.id, model: "Skill", setPrerequisites: [other.id] },
+    setSkills: { id: lesson.id, model: "Lesson", setSkills: [other.id] },
+  };
+
+  const resolved = await prepareProposedChange(prisma, proposals[operation]);
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([resolved.stored]);
+
+  return {
+    expectWritten: async () => {},
+    plan,
+    root: skillRoot(skill.id),
+    write: () => writeFix({ changes, unit: resolved.unit }),
+  };
+}
+
+async function graphFixCase(): Promise<WriterCase> {
+  const blueprint = await examBlueprintFixture();
+  const skill = await skillFixture({ language: blueprint.language });
+  const plan = await examPlan(blueprint.id);
+
+  const graph = {
+    phases: [{ milestone: null, name: "Learn" }],
+    skills: [
+      { area: null, lessons: 1, name: skill.name, phase: 0, skillId: skill.id, weight: null },
+    ],
+  };
+
+  const row = await prisma.examSkillGraph.create({
+    data: { ...DATED_PROVENANCE, examBlueprintId: blueprint.id, graph },
+  });
+
+  const resolved = await prepareProposedChange(prisma, {
+    id: row.id,
+    model: "ExamSkillGraph",
+    setGraph: {
+      graph: { ...graph, skills: graph.skills.map((entry) => ({ ...entry, lessons: 2 })) },
+    },
+  });
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  return {
+    expectWritten: async () => {},
+    plan,
+    root: blueprintRoot(blueprint.id),
+    write: () =>
+      writeFix({ changes: contentFixChangesSchema.parse([resolved.stored]), unit: resolved.unit }),
+  };
+}
+
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
   "library/curriculum/exam-graph-repair.ts": { addMissingExamGraphSkills: graphRepairCase },
   "library/curriculum/exam-skill-graph-reset.ts": { resetExamSkillGraphForAdmin: graphResetCase },
   "library/curriculum/place-chapters-after.ts": { placeChaptersAfter: continuationsCase },
-  "library/curriculum/reusable-curriculum.ts": { saveExamSkillGraph: sharedGraphCase },
+  "library/curriculum/reusable-curriculum.ts": {
+    saveExamSkillGraph: sharedGraphCase,
+    staffGraph: graphFixCase,
+  },
   "library/curriculum/save-lesson-specs.ts": { saveLessonSpecs: lessonSpecsCase },
   "library/curriculum/save-outline-chapter.ts": { saveOutlineChapter: outlineCase },
   "library/curriculum/teaching-chapters.ts": { tagTeachingChapters: teachingChaptersCase },
@@ -2000,6 +2103,15 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
     "retire item": () => itemFixCase("retire"),
   },
   "staff/content-fixes/handlers/shared-text.ts": { skillSet: () => sharedFixCase("Skill") },
+
+  "staff/content-fixes/handlers/structure-placements.ts": {
+    chapters: () => structureFixCase("setChapters"),
+    lessons: () => structureFixCase("setLessons"),
+  },
+  "staff/content-fixes/handlers/structure-skills.ts": {
+    memberships: () => structureFixCase("setSkills"),
+    prerequisites: () => structureFixCase("setPrerequisites"),
+  },
   "staff/content-fixes/handlers/text-rows.ts": {
     "chapter title": () => textFixCase("chapter", "title"),
     "lesson title": () => textFixCase("lesson", "title"),

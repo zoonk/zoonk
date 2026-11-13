@@ -94,7 +94,13 @@ function copiedFieldProblem({
     : null;
 }
 
-function contentProblem({ content, kind }: { content: Json; kind: StepKind }): string | null {
+export function screenContentProblem({
+  content,
+  kind,
+}: {
+  content: Json;
+  kind: StepKind;
+}): string | null {
   const parsed = safeParseStepContent(kind, content);
 
   if (!parsed.success) {
@@ -134,7 +140,7 @@ function resolveContent<Model extends ScreenModel>({
   step: ScreenRow;
 }): Resolution<ContentStored<Model>> {
   const after = toJson(normalizeStepContentValue(sent));
-  const invalid = contentProblem({ content: after, kind: step.kind });
+  const invalid = screenContentProblem({ content: after, kind: step.kind });
 
   if (invalid) {
     return refuse(invalid);

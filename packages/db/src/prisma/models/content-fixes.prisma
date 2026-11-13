@@ -11,15 +11,17 @@ enum ContentFixUnit {
   chapter
   lesson
   item
-  levelTest     @map("level_test")
+  levelTest          @map("level_test")
   skill
-  warmUp        @map("warm_up")
+  warmUp             @map("warm_up")
   source
-  mediaAsset    @map("media_asset")
-  examBlueprint @map("exam_blueprint")
-  itemSet       @map("item_set")
+  mediaAsset         @map("media_asset")
+  examBlueprint      @map("exam_blueprint")
+  itemSet            @map("item_set")
   word
   sentence
+  examSkillGraph     @map("exam_skill_graph")
+  languageSkillGraph @map("language_skill_graph")
 }
 
 /// A reviewed change to shared Library content. Staff propose it from the CLI, and a staff person

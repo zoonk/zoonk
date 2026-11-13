@@ -103,6 +103,13 @@ function shapeOf(value: unknown): string {
 }
 
 function diffArrays({ after, before, path }: { after: unknown[]; before: unknown[]; path: Path }) {
+  if (
+    path.at(-1) === "distractors" &&
+    [...before, ...after].every((value) => typeof value === "string")
+  ) {
+    return { changed: JSON.stringify(before) === JSON.stringify(after) ? [] : [path] };
+  }
+
   if (before.length !== after.length) {
     return {
       problem: `${describePath(path)} must keep its ${String(before.length)} entries in order`,

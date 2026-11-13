@@ -55,6 +55,12 @@ function describeEffect({
   rowLabels: ReadonlyMap<string, string>;
 }): string {
   switch (effect.kind) {
+    case "structureAddressKept":
+      return "The removed lesson keeps its home address.";
+    case "existingPlanGraphsKept":
+      return "Future plans use the corrected graph. Existing plans keep their own graph copies.";
+    case "optionPicturesUnlinked":
+      return `${String(effect.count)} option pictures are unlinked; the assets are kept for revert.`;
     case "itemSetReplaced":
       return "Future practice uses a corrected copy of the whole set. Open sessions keep the original passage and questions.";
     case "itemSetRestored":

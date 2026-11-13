@@ -238,7 +238,20 @@ export async function loadContentFixLocations(units: readonly Unit[]) {
     loadVocabulary(units),
   ]);
 
+  const graphs: [string, ContentFixLocation][] = units
+    .filter((unit) => unit.unit === "examSkillGraph" || unit.unit === "languageSkillGraph")
+    .map((unit) => [
+      unit.unitId,
+      {
+        adminHref: null,
+        language: null,
+        mainUrl: null,
+        trail: [unit.unit === "examSkillGraph" ? "Exam skill graph" : "Language skill graph"],
+      },
+    ]);
+
   const locations = new Map([
+    ...graphs,
     ...lessons,
     ...chapters,
     ...courses,

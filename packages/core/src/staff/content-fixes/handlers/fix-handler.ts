@@ -18,6 +18,7 @@ export const setFieldsSchema = z
 export type FixTarget = { id: string; model: string; part: string };
 
 export type PlanRoots = {
+  courseIds?: string[];
   skillIds?: string[];
   blueprintIds?: string[];
   chapterIds?: string[];

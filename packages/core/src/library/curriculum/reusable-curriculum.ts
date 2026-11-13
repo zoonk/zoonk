@@ -1,7 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
-import { type LanguageSkillGraph, prisma } from "@zoonk/db";
+import { type LanguageSkillGraph, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { loadCourseOutline } from "../../goals/_utils/course-outline";
@@ -102,14 +102,7 @@ export async function saveExamSkillGraph({
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 
-    const { count } = await tx.examSkillGraph.createMany({
-      data: [{ ...kept, examBlueprintId, graph }],
-      skipDuplicates: true,
-    });
-
-    if (count === 0) {
-      await tx.examSkillGraph.updateMany({ data: { ...kept, graph }, where: current });
-    }
+    await writeSharedExamGraph(tx, { examBlueprintId, graph, ...kept });
   });
 }
 
@@ -268,4 +261,32 @@ export async function claimLanguageSkillGraph({
 
   const stored = await prisma.languageSkillGraph.findUniqueOrThrow({ where: { promptKey } });
   return stored.runId === provenance.runId ? null : toReusableCurriculum({ inputs, stored });
+}
+
+export async function writeSharedExamGraph(
+  tx: TransactionClient,
+  {
+    examBlueprintId,
+    graph,
+    ...kept
+  }: {
+    examBlueprintId: string;
+    graph: PlanGraph;
+    primaryCourseId: string | null;
+    generatedAt: Date;
+    model: string;
+    promptVersion: string;
+    runId: string;
+  },
+): Promise<void> {
+  const current = { examBlueprintId, runId: kept.runId };
+
+  const { count } = await tx.examSkillGraph.createMany({
+    data: [{ ...kept, examBlueprintId, graph }],
+    skipDuplicates: true,
+  });
+
+  if (count === 0) {
+    await tx.examSkillGraph.updateMany({ data: { ...kept, graph }, where: current });
+  }
 }

@@ -20,9 +20,11 @@ const MODEL_LABELS: Record<StoredChange["model"], string> = {
   Course: "Course",
   ExamBlueprint: "Exam blueprint",
   ExamCourseWeights: "Exam course weights",
+  ExamSkillGraph: "Exam skill graph",
   Item: "Practice question",
   ItemSet: "Question set",
   LanguageLevelTest: "Level test",
+  LanguageSkillGraph: "Language skill graph",
   Lesson: "Lesson",
   LessonSentence: "Lesson sentence",
   LessonSource: "Lesson citations",
@@ -226,6 +228,12 @@ function ChangeBody({ change, compact }: { change: StoredChange; compact: boolea
   }
 
   switch (change.op) {
+    case "setChapters":
+    case "setLessons":
+    case "setSkills":
+    case "setPrerequisites":
+    case "setGraph":
+    case "setOptions":
     case "setCitation":
     case "set":
       return change.fields.map((field) => (

@@ -99,3 +99,15 @@ A login made before fixes existed can only read: the CLI says so, and the user r
 ## Local development
 
 `--api <url>` or `ZOONK_API_URL` points the CLI at another API, such as your checkout's local API URL from `pnpm dev`. Each API keeps its own login. Log in there as a seeded admin such as `owner@zoonk.test`, with the code from the local mailbox ([development guide](../../guides/development.md#local-development-and-sign-in)).
+
+### Replacing answer option collections
+
+Use `{ model: "Step" | "StepVariant", id, setOptions: { content } }` with the whole screen for hook guesses, checks, multiple-choice exercises, activity choices and challenge branches. Retained options keep their id and every field except `isCorrect`. New options omit `id`; core mints it at proposal. Include every screen variant with `setOptions` in the same fix. Only option collections change; schema, correct-answer and challenge reachability rules still apply. Adding picture options is unsupported because every option needs a generated picture.
+
+Approval deletes saved explanations and shared tutor answers, unlinks removed options' pictures while keeping their assets for revert, keeps marks and bumps the lesson version. Answers made wrong or invalid during an open run are neutral and unrecorded. Recorded answers keep their verdicts. Revert restores the prior collections and detached picture links, subject to staleness checks.
+
+### Correcting shared curriculum structure
+
+Send the final collection, never positions or identity fields: `Course.setChapters: [{ chapterId, level, area }]`, `Chapter.setLessons: [lessonId, ...]`, `Chapter.setSkills: [skillId, ...]`, `Lesson.setSkills: [skillId, ...]`, or `Skill.setPrerequisites: [skillId, ...]`. Core derives positions from list order (per level for chapters). A chapter keeps at least one lesson. A move includes both chapters' final lesson lists in one fix. Every referenced child must exist, be public with no owner, and share the container's language and target language. Duplicates and merged skills are refused with the survivor named. Only newly added prerequisite edges that create a cycle are refused; existing cycles can be repaired.
+
+For `ExamSkillGraph` or `LanguageSkillGraph`, send `setGraph: { graph, primaryCourseId? }`. Core checks the plan graph schema, skill and course references, phases, weights and option-skill ordering references. The graph keeps its language scope. Existing plans keep their graph copies; corrected graphs serve future plans. Curriculum edits mark dependent plans from both old and new relationships before deleting anything, so they re-plan at their next planning write. Retained skill memberships keep their timestamps. Learner history, mastery, attempts, sessions, open runs and home addresses stay. Revert proposes the prior whole collection and refuses a superseded correction.
