@@ -1319,11 +1319,6 @@ msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Criar meu plano"
 
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "Seu parceiro de estudos"
-
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
 msgid "Brain with legs"
