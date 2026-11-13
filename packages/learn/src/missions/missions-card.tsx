@@ -193,11 +193,11 @@ export function MissionsCard({
       )}
       data-slot="missions-card"
     >
-      <div className="flex items-center gap-3">
-        {/* Hangs 4px out each side, so it centers on the rows' marks and the title starts with their names. */}
-        {showBuddy && <BuddyArt buddy={buddy} className="-mx-1 size-6" view="face" />}
-
-        <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 items-start gap-y-1")}>
+      <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-1")}>
+        {/* Centers on the title and its count, whatever the reward beside them takes. */}
+        <div className="flex items-center gap-3 *:last:min-w-0">
+          {/* Hangs 4px out each side, so it centers on the rows' marks and the title starts with their names. */}
+          {showBuddy && <BuddyArt buddy={buddy} className="-mx-1 size-6" view="face" />}
           <MissionsHeading
             fold={
               foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null
@@ -206,8 +206,8 @@ export function MissionsCard({
             titleId={titleId}
             won={won}
           />
-          <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
         </div>
+        <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
       </div>
 
       <MissionTrack className="mt-3.5" missions={missions} />
