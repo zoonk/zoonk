@@ -1,12 +1,12 @@
 import { type ContentFix } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
-import { batchOf, getContentFixReviewUrl } from "../batches";
+import { getContentFixReviewUrl } from "../batches";
 import { contentFixChangesSchema, contentFixEffectsSchema } from "../contract";
 import { contentFixVoiceSchema } from "../voice-schema";
 
 export function toContentFixView(fix: ContentFix) {
   return {
-    batchId: batchOf(fix),
+    batchId: fix.batchId,
     changes: contentFixChangesSchema.parse(fix.changes),
     effects: contentFixEffectsSchema.parse(fix.effects),
     feedbackId: fix.feedbackId,

@@ -29,13 +29,13 @@ function ContentFixRow({ fix, withDecision }: { fix: ContentFixListItem; withDec
             {fix.reason}
           </span>
         </AdminTableRowLink>
-        {fix.batch.size > 1 && (
+        {fix.batchSize > 1 && (
           <Link
             className="text-muted-foreground relative text-xs hover:underline"
-            href={`/content-fixes/batches/${fix.batch.id}`}
+            href={`/content-fixes/batches/${fix.batchId}`}
             prefetch
           >
-            One of {fix.batch.size} proposed together
+            One of {fix.batchSize} proposed together
           </Link>
         )}
       </TableCell>

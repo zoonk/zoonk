@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { type ContentFixUnit, prisma } from "@zoonk/db";
 import { type Json } from "../_utils/resolved-change";
 
@@ -15,6 +16,7 @@ export function appliedFixFixture({
 }) {
   return prisma.contentFix.create({
     data: {
+      batchId: randomUUID(),
       changes,
       decidedAt,
       effects: [],

@@ -15,7 +15,7 @@ import { logContentFix } from "./_utils/content-fix-view";
 import { cacheUnits } from "./_utils/fix-cache-units";
 import { type FixUnit } from "./_utils/resolved-change";
 import { type StaffSessionRefusal, getStaffSessionUser } from "./_utils/staff-session";
-import { MAX_BATCH_FIXES, batchWhere } from "./batches";
+import { MAX_BATCH_FIXES } from "./batches";
 
 type Refused = StaffSessionRefusal | { status: "notFound" };
 
@@ -37,7 +37,7 @@ function readOutcomes(batchId: string): Promise<ContentFixOutcome[]> {
   return prisma.contentFix.findMany({
     orderBy: { id: "asc" },
     select: { id: true, staleReason: true, status: true },
-    where: batchWhere(batchId),
+    where: { batchId },
   });
 }
 
@@ -100,7 +100,7 @@ export async function getContentFixApprovalOptions({
 
   const challenged = await prisma.$transaction(async (tx) => {
     const cleared = { approvalChallenge: null, approvalExpiresAt: null };
-    const proposed = { ...batchWhere(batchId), status: "proposed" as const };
+    const proposed = { batchId, status: "proposed" as const };
 
     await tx.contentFix.updateMany({ data: cleared, where: proposed });
 
@@ -196,7 +196,7 @@ async function applyApproved({
   const approved = await prisma.contentFix.findMany({
     orderBy: { id: "asc" },
     select: { id: true },
-    where: { ...batchWhere(batchId), deciderId, status: "approved" },
+    where: { batchId, deciderId, status: "approved" },
   });
 
   const units = await applyInOrder({ batchId, deciderId, fixIds: approved.map((fix) => fix.id) });
@@ -220,7 +220,7 @@ async function approve({
   const [pending] = await prisma.contentFix.findMany({
     select: { approvalChallenge: true, approvalExpiresAt: true },
     take: 1,
-    where: { ...batchWhere(batchId), approvalChallenge: { not: null }, status: "proposed" },
+    where: { approvalChallenge: { not: null }, batchId, status: "proposed" },
   });
 
   if (!pending?.approvalChallenge) {
@@ -246,9 +246,9 @@ async function approve({
   await prisma.contentFix.updateMany({
     data: { approvalChallenge: null, approvalExpiresAt: null, deciderId, status: "approved" },
     where: {
-      ...batchWhere(batchId),
       approvalChallenge: pending.approvalChallenge,
       approvalExpiresAt: { gt: now },
+      batchId,
       status: "proposed",
     },
   });

@@ -34,8 +34,7 @@ model ContentFix {
   id                String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   status            ContentFixStatus @default(proposed)
   /// The fixes proposed together, reviewed and approved on one page.
-  /// Required once released.
-  batchId           String?          @map("batch_id") @db.Uuid
+  batchId           String           @map("batch_id") @db.Uuid
   unit              ContentFixUnit
   unitId            String           @map("unit_id") @db.Uuid
   reason            String
