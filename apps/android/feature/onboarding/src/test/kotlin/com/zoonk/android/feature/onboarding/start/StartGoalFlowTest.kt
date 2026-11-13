@@ -162,7 +162,7 @@ class StartGoalFlowTest {
         rule.onNodeWithText("Looks right").performClick()
 
         rule.onNodeWithText("Looks right").assertDoesNotExist()
-        rule.onNodeWithText("See Plus").assertIsDisplayed()
+        rule.onNodeWithText("Subscribe").assertIsDisplayed()
         assertEquals(listOf(listOf("Pass the bar exam")), api.created.map { input -> input.goals.map { it.title } })
 
         api.refusal = null
@@ -173,10 +173,10 @@ class StartGoalFlowTest {
     }
 
     @Test
-    fun aFullCardOpensEveryGoalOnceTheLearnerGetsPlus() {
+    fun aFullCardOpensEveryGoalOnceTheLearnerSubscribes() {
         api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = 0)
         show(AppRoute.StartGoal(draftId = DRAFT_ID))
-        rule.onNodeWithText("See Plus").assertIsDisplayed()
+        rule.onNodeWithText("Subscribe").assertIsDisplayed()
         rule.onNodeWithText("Looks right").assertDoesNotExist()
 
         api.draft = understoodDraft(understanding = twoGoals(), activeGoalsLeft = null)

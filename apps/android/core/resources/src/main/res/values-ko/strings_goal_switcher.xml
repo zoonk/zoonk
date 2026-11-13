@@ -11,7 +11,7 @@
   "goal_switcher_new_goal": "a5209bf492acdaf56c077a03bec5522ccaa32846ad87d15e0c22354c43b413bb",
   "goal_switcher_pause": "f51acec5fdea104301c50bc3927f6b3653a1eb586daf5b3b80f6855b76067b41",
   "goal_switcher_pause_goal": "6b0e10aa05f1f2ac978e9d508be5abfc5bd67310ed119ce6b1a17cb577335939",
-  "goal_switcher_pause_or_plus": "18b463520741be0db9412773120dc32400fe179c729b7a9e539dba44cd3105ee",
+  "goal_switcher_pause_to_start": "f7c70903627e27e491574ff6f9abbf1fe826d576de5fd15c79bc980f4a917110",
   "goal_switcher_paused": "d652798bbcb1b22361ad8a10187f49a4172ba096129303b441bbde06483b6488",
   "goal_switcher_quick_explanations": "d8615c6ab8afd1d26588b16125c4fde0e14514097b848701a48f7cbefa69cc6b",
   "goal_switcher_ready_to_start": "d9a390cb49631755bb2b1aace580fa5745bd611642e2cbe791452fcea78d4b39",
@@ -39,8 +39,8 @@
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">바로 시작 가능</string>
     <string name="goal_switcher_start_failed">이 목표를 시작하지 못했어요. 다시 시도해 보세요.</string>
-    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_pause_or_plus">목표 일시 중지 또는 Plus 구독하기</string>
+    <!-- Under a typed goal that waits because the learner already studies as many goals at once as they can. -->
+    <string name="goal_switcher_pause_to_start">이 목표를 시작하려면 다른 목표를 일시 중지하세요</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">%1$s 목표를 위한 자리 만들기</string>
     <!-- %1$s is the name of the goal waiting to start. -->

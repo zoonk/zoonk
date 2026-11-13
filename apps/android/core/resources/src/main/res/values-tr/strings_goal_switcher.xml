@@ -11,7 +11,7 @@
   "goal_switcher_new_goal": "fbdf292145fb8dc6d39ac8b953d81049580ae9c183981281cae161da2dd0d6d0",
   "goal_switcher_pause": "b48ab03d40c28333eac60d8eba0db9582c1b41b17a45c7601dba04b23e06871b",
   "goal_switcher_pause_goal": "892801efa6d1b19778ea706bf2860caa87cfafa6f46dc16522fb5406ed22d989",
-  "goal_switcher_pause_or_plus": "3754a51f4b353e5162eee378f2368f9f32f35b4b5468e234498101f0b0d5a580",
+  "goal_switcher_pause_to_start": "a0e0cbbbfb23c038bac2a71917ac8bf31f4828fbf6387055c5204185cf18f5ab",
   "goal_switcher_paused": "f8c7eda102710b4d91cc8f614fdb353bc9438a50f746d2c12cbebf3686a0134e",
   "goal_switcher_quick_explanations": "b8752c7ae4d3085793773cbe2fbf89344fd93998fd789dcaa1f52b10c251b9ae",
   "goal_switcher_ready_to_start": "8db9438c16f8f2aa21862edbc6130030413508547674c030e2c09bb7c24a07e1",
@@ -39,8 +39,8 @@
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Başlamaya hazır</string>
     <string name="goal_switcher_start_failed">Bu hedefi başlatamadık. Tekrar dene.</string>
-    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_pause_or_plus">Bir hedefi duraklat veya Plus’a geç</string>
+    <!-- Under a typed goal that waits because the learner already studies as many goals at once as they can. -->
+    <string name="goal_switcher_pause_to_start">Bu hedefe başlamak için başka bir hedefi duraklat</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">%1$s için yer aç</string>
     <!-- %1$s is the name of the goal waiting to start. -->

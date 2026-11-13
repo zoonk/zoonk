@@ -17,8 +17,8 @@
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Ready to start</string>
     <string name="goal_switcher_start_failed">We couldn\'t start this goal. Try again.</string>
-    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_pause_or_plus">Pause a goal or get Plus</string>
+    <!-- Under a typed goal that waits because the learner already studies as many goals at once as they can. -->
+    <string name="goal_switcher_pause_to_start">Pause a goal to start it</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Make room for %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->

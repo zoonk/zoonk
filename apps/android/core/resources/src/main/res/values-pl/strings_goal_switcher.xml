@@ -11,7 +11,7 @@
   "goal_switcher_new_goal": "3e738cfd98cff0f552646bcf36179c8c3e06ab5f3a46d0f1253ade714cac9d76",
   "goal_switcher_pause": "a137c7b728bd310a066980b379c538c742e22fb4c7880da96263f51be3731c3f",
   "goal_switcher_pause_goal": "9e28a400c4db6c01f28062d563e2b29d03a726e753d45a72a3c20f61b9bb7f79",
-  "goal_switcher_pause_or_plus": "73300def82a66b2e82072ede432a41955eef0734dda2ea1b9c752853e1cfd115",
+  "goal_switcher_pause_to_start": "6fda42f67df991e97544d63b1700aa0303d40fe1a31b9d00aa4564f2a5359055",
   "goal_switcher_paused": "72d09741d36687aec1ab6fbc3e2f331ac8b584131a77089c3ec901c4652e938a",
   "goal_switcher_quick_explanations": "0ff14f269bde13b0ebb7773f754a998a49a2c11b03b5a535094889d48b517bea",
   "goal_switcher_ready_to_start": "4e810a4ce5094384edc4e71079a04b6a636451f187cff473738f7d04b2e1270e",
@@ -39,8 +39,8 @@
     <!-- Under a goal the learner typed with their goals that they can start now with a tap. -->
     <string name="goal_switcher_ready_to_start">Możesz zacząć</string>
     <string name="goal_switcher_start_failed">Nie udało się rozpocząć pracy nad tym celem. Spróbuj ponownie.</string>
-    <!-- Under a goal the learner typed with their goals that the free plan has no room for: pausing a goal they follow, or subscribing to Plus, starts it. Plus is the name of Zoonk's paid plan. -->
-    <string name="goal_switcher_pause_or_plus">Wstrzymaj realizację celu lub przejdź na Plus</string>
+    <!-- Under a typed goal that waits because the learner already studies as many goals at once as they can. -->
+    <string name="goal_switcher_pause_to_start">Wstrzymaj inny cel, żeby zacząć realizować ten</string>
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Miejsce na cel: %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->

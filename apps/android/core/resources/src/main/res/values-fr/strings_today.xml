@@ -103,7 +103,7 @@
   "today_rest_welcome_back": "accc35917bc621d2b94795a322675e41e8fa0ae392b08582ff58f539ac3880e1",
   "today_resume_effect": "05aef9964c6ae48f51af66c44073a1097569307c244ace52b20a98f4b28f87de",
   "today_resume_goal": "303cbb431e60126e808fcce4f280eea725a643f8c617954f7a344cba2a19bbd8",
-  "today_resume_goal_limit": "5a114c6ddc2f4b372e9287ba1dd7c2ee7dd3da5e23422cfc283ca4d4872d5a1d",
+  "today_resume_goal_limit": "f64711c49a3a5f0329744a4bc230467ef88046a300fd5da984dbfd6b7c89bc0f",
   "today_save_failed": "5ad9213e7f58485c60d91ab901ffa5abc8b40c6fbfd2141730ff68d1ff093a0d",
   "today_see_day_challenge": "683107ca0e41f535d221198954012d8cc0461f6a47b153d705313e36a0915700",
   "today_see_day_mock": "4cb7beaa9f26cc127486d200ca09f18439b18f4657ece5a22e996fc16ea06a05",
@@ -299,8 +299,8 @@
     <string name="today_resume_goal">Reprendre %1$s</string>
     <string name="today_new_goal">Nouvel objectif</string>
     <string name="today_resume_effect">Ton plan reprend aujourd’hui, en commençant par les leçons prévues pendant ta pause.</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="today_resume_goal_limit">Tu suis déjà autant d’objectifs que la formule gratuite le permet. Mets un autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="today_resume_goal_limit">Tu ne peux pas étudier plus d’objectifs en même temps. Mets-en un en pause ou abonne-toi pour en étudier plus.</string>
     <string name="today_setting_up_goal">Il manque encore quelques réponses pour ton plan %1$s.</string>
     <string name="today_setting_up_detail">Il est préparé à partir de ce que tu nous dis.</string>
     <string name="today_continue_setting_up">Continuer la configuration</string>

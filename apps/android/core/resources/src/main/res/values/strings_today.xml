@@ -113,8 +113,8 @@
     <string name="today_resume_goal">Resume %1$s</string>
     <string name="today_new_goal">New goal</string>
     <string name="today_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="today_resume_goal_limit">You\'re following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="today_resume_goal_limit">That\'s all the goals you can study at once. Pause one, or subscribe to study more.</string>
     <string name="today_setting_up_goal">Your %1$s plan needs a few more answers.</string>
     <string name="today_setting_up_detail">It\'s built from what you tell us.</string>
     <string name="today_continue_setting_up">Continue setting up</string>

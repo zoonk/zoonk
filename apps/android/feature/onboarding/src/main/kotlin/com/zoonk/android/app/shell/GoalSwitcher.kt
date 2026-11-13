@@ -217,7 +217,7 @@ private fun MenuItems(
                                 stringResource(
                                     when {
                                         !goal.locked -> R.string.goal_switcher_ready_to_start
-                                        hasAccount -> R.string.goal_switcher_pause_or_plus
+                                        hasAccount -> R.string.goal_switcher_pause_to_start
                                         else -> R.string.goal_switcher_starts_with_free_account
                                     },
                                 ),

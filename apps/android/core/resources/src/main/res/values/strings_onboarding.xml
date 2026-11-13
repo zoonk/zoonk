@@ -22,20 +22,19 @@
     <!-- Stands for pasted text without a title. -->
     <string name="onboarding_your_text">Your text</string>
 
-    <string name="onboarding_limit_daily_explanations">You\'ve asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_daily_explanations">No more quick explanations today. More tomorrow, or subscribe to keep going.</string>
     <string name="onboarding_limit_daily_goals">You\'ve started as many new goals as your plan allows today. Try again tomorrow.</string>
     <string name="onboarding_limit_guest">Without an account, you can follow one goal. Create a free account to keep going.</string>
-    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_monthly_explanations">You\'ve asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
-    <string name="onboarding_limit_monthly_goals">You\'ve started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
-    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_limit_active_goals">You\'re following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus.</string>
+    <string name="onboarding_limit_monthly_explanations">No more quick explanations this month. More next month, or subscribe to keep going.</string>
+    <string name="onboarding_limit_monthly_goals">No more new goals this month. More next month, or subscribe to keep going.</string>
+    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="onboarding_limit_active_goals">That\'s all the goals you can study at once. Pause one, or subscribe to study more.</string>
     <string name="onboarding_limit_sign_up_required">Create your free account to continue.</string>
     <string name="onboarding_limit_slow_down">You\'re starting goals quickly. Try again in a few minutes.</string>
     <string name="onboarding_read_limit_guest">Without an account, you can send a few new goals a day. Create a free account to keep going.</string>
     <string name="onboarding_read_limit_plus">You\'ve sent as many new goals as your plan allows today. Try again tomorrow.</string>
-    <string name="onboarding_read_limit_free_month">You\'ve sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
-    <string name="onboarding_read_limit_free_day">You\'ve sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_read_limit_free_month">No more new goals this month. More next month, or subscribe to keep going.</string>
+    <string name="onboarding_read_limit_free_day">No more new goals today. More tomorrow, or subscribe to keep going.</string>
     <string name="onboarding_error_one_moment">One moment. Try again in a few seconds.</string>
     <string name="onboarding_error_could_not_read">We couldn\'t read your goal. Try again in a moment.</string>
     <string name="onboarding_error_could_not_save">We couldn\'t save your goal. Try again in a moment.</string>
@@ -46,12 +45,12 @@
         <item quantity="other">Choose at least %1$s a day for your %2$d goals.</item>
     </plurals>
 
-    <!-- Plus notice before typing, for a free learner who already follows a goal. -->
-    <string name="onboarding_plus_more_goals">More goals at once with Plus</string>
-    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
-    <string name="onboarding_plus_more_goals_up_front">You\'re following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime.</string>
     <string name="onboarding_go_to_plan">Go to your Plan</string>
-    <string name="onboarding_see_plus">See Plus</string>
+    <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
+    <string name="onboarding_goals_at_once_title">That\'s all the goals you can study at once</string>
+    <string name="onboarding_goals_at_once_line">Pause one in your Plan, or subscribe to study more at once.</string>
+    <string name="onboarding_month_goals_title">No more new goals this month</string>
+    <string name="onboarding_month_goals_line">More next month, or subscribe to keep going.</string>
     <string name="onboarding_create_account">Create a free account</string>
     <string name="onboarding_create_account_short">Create an account</string>
     <string name="onboarding_guest_gate_title">Create a free account to start another goal</string>
@@ -66,16 +65,14 @@
     <string name="onboarding_understood_description">You can change all of this later.</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">These goals share your daily time. You can change all of this later.</string>
-    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_understood_locked_goal">Following more goals at once comes with Plus. Until then, this goal waits in your goals.</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Following more goals at once comes with Plus. Until then, these goals wait in your goals.</string>
-    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
-    <string name="onboarding_understood_free_account_title">Available with a free account</string>
-    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
-    <string name="onboarding_understood_locked_goal_guest">Following more goals at once comes with a free account. Until then, this goal waits in your goals.</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals_guest">Following more goals at once comes with a free account. Until then, these goals wait in your goals.</string>
+    <!-- Under the goals a guest typed past the one they can start: a free account studies more goals at once. -->
+    <string name="onboarding_understood_free_account_title">More goals at once come with a free account</string>
+    <!-- Under the goals typed past the ones the learner can study at once. -->
+    <string name="onboarding_understood_locked_title">More goals at once need a subscription</string>
+    <plurals name="onboarding_understood_locked_line">
+        <item quantity="one">Pause another goal to start this one.</item>
+        <item quantity="other">Pause another goal to start these.</item>
+    </plurals>
     <string name="onboarding_looks_right">Looks right</string>
     <string name="onboarding_fix_something">Fix something</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -177,9 +174,9 @@
     <string name="onboarding_adding_material">Adding your material…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Remove %1$s</string>
-    <string name="onboarding_attach_limit_plus">You\'ve added as much material as your plan allows today. Try again tomorrow.</string>
-    <string name="onboarding_attach_limit_month">You\'ve added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
-    <string name="onboarding_attach_limit_day">You\'ve added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_attach_limit_plus">No more material today. More tomorrow.</string>
+    <string name="onboarding_attach_limit_month">No more material this month. More next month, or subscribe to keep going.</string>
+    <string name="onboarding_attach_limit_day">No more material today. More tomorrow, or subscribe to keep going.</string>
     <string name="onboarding_attach_slow_down">You\'re adding material quickly. Try again in a few minutes.</string>
     <string name="onboarding_attach_unsupported">We can\'t read this file. Try a PDF, a photo, Word, PowerPoint or text.</string>
     <string name="onboarding_attach_sign_in">Create an account to add your own material.</string>
@@ -204,9 +201,9 @@
     <string name="onboarding_question_failed">We couldn\'t answer that. Try again in a moment.</string>
     <string name="onboarding_question_sign_in">Create an account to ask about your material.</string>
     <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
-    <string name="onboarding_question_limit_plus">You\'ve asked as many questions as your plan allows today.</string>
-    <string name="onboarding_question_limit_month">You\'ve asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.</string>
-    <string name="onboarding_question_limit_day">You\'ve asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_question_limit_plus">No more questions today. More tomorrow.</string>
+    <string name="onboarding_question_limit_month">No more questions this month. More next month, or subscribe to keep going.</string>
+    <string name="onboarding_question_limit_day">No more questions today. More tomorrow, or subscribe to keep going.</string>
 
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Let\'s see what you already know</string>
@@ -645,11 +642,11 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">Country</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">Your buddy and practice calls use the country you choose. Lessons and their audio use %1$s.</string>
+    <string name="onboarding_variety_description">Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use %1$s.</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">No preference</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
-    <string name="onboarding_variety_note">Your buddy and practice calls use %1$s. Lessons and their audio use %2$s.</string>
+    <string name="onboarding_variety_note">Your practice calls and our answers to your questions use %1$s. Lessons and their audio use %2$s.</string>
     <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
     <string name="onboarding_country_title">Which country should your lessons be about?</string>
     <!-- Under that question's title. -->

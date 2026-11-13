@@ -5,11 +5,11 @@
   "profile_questions_activities_placeholder": "a3cd2e6d1cc8e8edce74257deeb42fb66da1a92242917dfc4918e9000a6b31c0",
   "profile_questions_activities_title": "13d0d9dea7eb40469c744db0a1549722b8306bd7323f9f31bfae56d6d1a34a4f",
   "profile_questions_add": "a4834ff8cdd6ef4db326f67bf4717fdefbbc98906054c9663d63122f92ec0347",
-  "profile_questions_address_description": "aa861c8fa8c2913d594e019f600e7c9eb9e2f37645c1b00c9c18c5a78d8db604",
+  "profile_questions_address_description": "ef41bf5ceca94e29a7b3feb13a9ea3e5a3feb1116b84ed04a98819e4d71044fb",
   "profile_questions_address_title": "5f7568b4c765600ad83992072af199c844a63823330daa0f30ff1c1bcaa96e46",
   "profile_questions_cap": "676dac0fdd74598ea0f78b435fe5b730bd9f4693888bddc24a9d3fcf0e5a9e2b",
   "profile_questions_condition_note": "3755ca4e26ecc66304955e5ac8b631939a662645b59b3861896f4b6875c93337",
-  "profile_questions_conditions_description": "495b707a386d3d5100e4d9649f9e0eb89542e8719ea591d8b08901b820e6df03",
+  "profile_questions_conditions_description": "0f89d6ad434ae591347825a0af11fbbd9200a6f196585d88c1e3d52a006bf6f0",
   "profile_questions_conditions_saved": "aab2c5c87dbcceadc28c28fb26535f0905f5a37d283e8cff168f332fb5c2ee37",
   "profile_questions_conditions_title": "ef93abd7458af85bb6ece2f06c99891f0ac6f1978bbaf78f068268f5536d0ac4",
   "profile_questions_description": "95cd7e28d4db70e734b891dfbe1edc8545e2572a9e865856c55111d1fde15748",
@@ -21,7 +21,7 @@
   "profile_questions_job_placeholder": "f31c294ff10703e5829bcfdcc830076778c1221fc0105c45d052b44f071fc63c",
   "profile_questions_lesson_ready": "09c57911df36f76abd882619e0e268dc939f42d112d7ce3b642373a6bc2f8e71",
   "profile_questions_listen_favorites": "608f484f99afe3a1dcead7b95b36389d3207db88f99edcb6bf895f55cf887eb9",
-  "profile_questions_listen_placeholder": "94e5eaceb548b85b7ecccf0a455ce36018c0039fd5035320748572a64e4b0ce2",
+  "profile_questions_listen_placeholder": "6ab1ae903f3678200098b4f55d124cd327f1427ee848ef706204ce5710fe50a0",
   "profile_questions_listen_title": "a44dba3e664410b6d61bf7d4ef8db34efb84bade1a230c9a4fa007a2ce853dee",
   "profile_questions_memory_off": "bd981a9a37661546d20a778f44e6ab0b0e82aec0e271be2b404c6d1d2876c250",
   "profile_questions_never_ask": "772c6cb4f3ffac6f98b3928fcce0977bb32d1c4fc1770ec7c27a83f8ddb9b5d6",
@@ -63,7 +63,7 @@
   "profile_questions_suggested": "c88326b7f2786214637147fce1bdfe437032e5b77e362baa7c46551f601abe82",
   "profile_questions_support_description": "9be1166affb2bbdadd12345149bdb26f7cccbbaafe2d413352c920ced19897ed",
   "profile_questions_support_note": "161b8732645bf83560dc535bd1cdb9ef24555ab6e65cf5fd24be8b71506fd50c",
-  "profile_questions_support_note_help": "87e1276e2d5c0ae93db120f73b35bd0a88a760571e13b393298e01ea1b68faa3",
+  "profile_questions_support_note_help": "38784c1431563834cc242e87bb669ade8f522dd6a2d0ecdc21014725d463f87e",
   "profile_questions_support_placeholder": "f814c6e1f8338711779b6b02dcb0b36cde55f6a2c2f3b77824a90275931ab019",
   "profile_questions_support_title": "d9adff91a5aa5f936ecebb283d52038176d5d837e367f44e1e1db76b43a43a22",
   "profile_questions_title": "8cd801dd98a3e7a5d9c61eb3fe475262ec465d3817dcad7b987756392da79631",
@@ -72,7 +72,7 @@
   "profile_questions_tools_placeholder": "80a8acd563dab04323a7103a55c3c9bf05db5384ce127c54a020e0719a475e92",
   "profile_questions_tools_title": "0edf75255d4dd9dadfb1f92c6f4ae5fccf0778b7d8324df24546409e5f611bca",
   "profile_questions_watch_favorites": "dee4a044cd749d101f75d95d4be5de10502d62f9d5fa5f7b8da63a8411460284",
-  "profile_questions_watch_placeholder": "2022602433b5595399e3815d85fc96e3185c3027a5ab0d1ecc1cc30457499d3c",
+  "profile_questions_watch_placeholder": "09e7d13deb651f1cd2f13c5f915804b65b81643751395f34fe0f86801835d5be",
   "profile_questions_watch_title": "405af5c476a278d953b0e1a5e6e641ab7c9a06f122ff5c173479aea5f1647909",
   "profile_questions_which_field": "6bf9fb1c6ebe353b86c0fa3cc6b48d26a7c567ed16c09716f2c82185b17b2fcc",
   "profile_questions_work_description": "e4d645e2bd8248e751fcb6e7c13b69c79eaf4c6767eee7e57800d29a7aafa7f1",
@@ -110,10 +110,10 @@
     <string name="profile_questions_interest_description">Wähl bis zu 3 aus. Wir nutzen sie für Beispiele in deinen Lektionen.</string>
     <string name="profile_questions_watch_title">Was schaust du gern?</string>
     <string name="profile_questions_watch_favorites">Deine liebsten Serien, Filme, Teams oder Kanäle (optional)</string>
-    <string name="profile_questions_watch_placeholder">Z. B. Star Trek, Flamengo</string>
+    <string name="profile_questions_watch_placeholder">Z. B. Star Trek, Formula 1</string>
     <string name="profile_questions_listen_title">Was hörst du gern?</string>
     <string name="profile_questions_listen_favorites">Deine liebsten Künstler oder Podcasts (optional)</string>
-    <string name="profile_questions_listen_placeholder">Z. B. Coldplay, Radiolab</string>
+    <string name="profile_questions_listen_placeholder">Z. B. Coldplay, TED Talks Daily</string>
     <string name="profile_questions_play_title">Was spielst du gern?</string>
     <string name="profile_questions_play_favorites">Lieblingsspiele (optional)</string>
     <string name="profile_questions_play_placeholder">Z. B. Catan, Valorant</string>
@@ -124,19 +124,19 @@
     <string name="profile_questions_activities_favorites">Was interessiert dich sonst noch? (optional)</string>
     <string name="profile_questions_activities_placeholder">Z. B. Brot backen, Autos, Astronomie</string>
     <string name="profile_questions_conditions_title">Trifft etwas davon auf dich zu?</string>
-    <string name="profile_questions_conditions_description">Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich dein Kumpel auf dich einstellen kann. Du kannst sie jederzeit in den Einstellungen entfernen.</string>
+    <string name="profile_questions_conditions_description">Optional. Wir nutzen deine Auswahl, um die Inhalte an deine Bedürfnisse anzupassen. Du kannst sie jederzeit in den Einstellungen entfernen.</string>
     <string name="profile_questions_condition_note">Was sollten wir wissen?</string>
     <string name="profile_questions_support_title">Was hilft dir beim Lernen?</string>
     <string name="profile_questions_support_description">Wähl alles aus, was dir hilft. Du brauchst dafür keine Einordnung oder Diagnose.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Wie sollen wir dich ansprechen?</string>
-    <string name="profile_questions_address_description">Dein Kumpel spricht dich so an. Auch die Rückmeldungen sind so formuliert. Die Lektionen bleiben gleich.</string>
+    <string name="profile_questions_address_description">So sprechen wir dich an.</string>
     <string name="profile_questions_suggested">Wir haben geprüft, was bei deiner Auswahl oft hilft. Pass alles so an, wie du möchtest.</string>
     <string name="profile_questions_nothing_particular">Nichts Bestimmtes</string>
     <string name="profile_questions_something_else">+ Etwas anderes, das dir hilft</string>
     <string name="profile_questions_support_note">Was dir hilft, in deinen eigenen Worten (optional)</string>
     <string name="profile_questions_support_placeholder">Z. B.: Ich verstehe Diagramme besser als Texte</string>
-    <string name="profile_questions_support_note_help">Wir merken uns das für deinen Kumpel. Du kannst es unter „Erinnerungen“ löschen.</string>
+    <string name="profile_questions_support_note_help">Das merken wir uns. Du kannst es jederzeit in den Einstellungen löschen.</string>
     <string name="profile_questions_lesson_ready">Lektion 1 ist bereit.</string>
     <string name="profile_questions_start_lesson">Lektion 1 starten</string>
     <string name="profile_questions_save_start_lesson">Speichern und Lektion 1 starten</string>
