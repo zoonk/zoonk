@@ -9,7 +9,7 @@ export type DiffLine = {
   tone?: DiffTone;
 };
 
-export type DiffTone = "bad" | "good" | "neutral";
+type DiffTone = "bad" | "good" | "neutral";
 
 const LINE_CLASS: Readonly<Record<DiffLine["kind"], string>> = {
   added: "bg-success/12 text-success-text",

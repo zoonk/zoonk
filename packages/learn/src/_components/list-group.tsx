@@ -48,7 +48,7 @@ export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
  * every glyph keeps a 16px slot, so the value before a ">" ends where the value before a fold arrow
  * does.
  */
-export const ROW_CHEVRON_CLASS =
+const ROW_CHEVRON_CLASS =
   "text-faint edge ms-(--edge-pull) -me-(--edge-pull) size-4 shrink-0 self-center";
 
 export function ListRowChevron() {

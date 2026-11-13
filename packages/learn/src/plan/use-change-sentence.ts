@@ -183,7 +183,7 @@ export function usePlanDateKind(): GoalDateKind {
 }
 
 /** On the Plan, where the goal's kind is known. */
-export function usePlanChangeWords() {
+function usePlanChangeWords() {
   return useChangeWords({ dateKind: usePlanDateKind() });
 }
 
