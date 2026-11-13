@@ -461,6 +461,11 @@ msgid "Search or ask…"
 msgstr "검색 또는 질문…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "닫기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "3ATcmQ"
 msgid "move"
 msgstr "이동"
@@ -469,11 +474,6 @@ msgstr "이동"
 msgctxt "-9qP4Y"
 msgid "open"
 msgstr "열기"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-msgctxt "BSij1a"
-msgid "close"
-msgstr "닫기"
 
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -758,6 +758,7 @@ msgstr "문제가 생겼어요. 다시 시도해 보세요."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -874,9 +875,9 @@ msgid "No answer was saved."
 msgstr "저장된 답변이 없어요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "코스를 새로 만들기 전에 했던 질문이에요. 레슨 내용이 바뀌어서 다시 읽을 수 있도록 여기에 남겨 뒀어요."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "레슨 내용이 바뀌기 전에 했던 질문이에요."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -1888,7 +1889,7 @@ msgstr "최근 90일 동안 정답률이 가장 높았던 때를 확인해 보�
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
-msgstr "최근 90일 동안 정답률이 가장 높았던 때예요."
+msgstr "최근 90일 동안 문제를 가장 잘 풀었던 요일과 시간대예요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1902,7 +1903,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, other {응답 #개}}, 패턴 파악에 {minimum, number}개 필요"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1914,7 +1914,6 @@ msgid "Throughout the week"
 msgstr "요일별"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1971,29 +1970,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "요일이나 시간대별로 {count, plural, other {#번 이상 답해야}} 분석에 반영하니, 우연히 한 번 맞힌 답으로 경향이 정해지지는 않아요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "{points, plural, =0 {#점 차이} other {#점 이내}}"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "{day}에 문제를 가장 잘 풀어요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "아직 답변이 부족해요"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "어느 요일에 풀든 결과가 비슷해요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, other {답변 #개}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "{time}에 문제를 가장 잘 풀어요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "최근 90일간"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "시간대에 따른 차이는 없어요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "답변 수"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "언제 가장 잘 푸는지 확인하려면 문제를 더 풀어 보세요."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2766,26 +2765,21 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "레슨을 열고 있어요"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "지금 시작할 수 있어요"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, other {개념 #개 복습하기}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "레슨 소개"
-
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "대신 바로 할 수 있는 학습"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "기다리는 동안 할 수 있는 학습"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, other {개념 #개 복습하기}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
@@ -2793,24 +2787,29 @@ msgid "Your lesson is ready"
 msgstr "레슨이 준비됐어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "레슨이 준비됐어요. 편할 때 시작하세요."
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "레슨을 준비하고 있어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "보통 몇 분 정도 걸려요. 준비되면 여기서 바로 레슨이 열려요."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "이 레슨은 아직 준비되지 않았어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "아직 만들지 않은 레슨이에요"
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "이 레슨을 준비하지 못했어요"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "시작하면 Zoonk가 레슨을 만들어요. 몇 분 정도 걸려요."
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "준비하는 데 몇 분 정도 걸리고, 화면을 나가도 계속 진행돼요."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "레슨 준비하기"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"
@@ -2951,9 +2950,9 @@ msgid "Terms of Use"
 msgstr "이용약관"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "테스트로 챕터 건너뛰기"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "챕터 테스트"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx

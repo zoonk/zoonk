@@ -30,9 +30,9 @@ import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
-import { PlanEyebrow, PlanHeader } from "./plan-header";
+import { PlanGoalLine, PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
-import { MoreSection, PathSection, PhasesSheet, PlanPlaceRows } from "./plan-sections";
+import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 
 export type { PlanEnd } from "../plan/plan-suggestion-context";
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
@@ -138,7 +138,7 @@ function JourneyBody({
           <>
             {numbers("stats", IN_ASIDE_GRID_CLASS)}
             <PlanSuggestionSlot className="hidden min-[72rem]:block" />
-            <NextOnPath links={links} />
+            <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
             <MoreSection links={links} />
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>
@@ -147,7 +147,7 @@ function JourneyBody({
         asideLabel={t("Your plan at a glance")}
       >
         <Page data-slot="journey">
-          <PlanHeader eyebrow={<PlanEyebrow />}>
+          <PlanHeader subtitle={<PlanGoalLine />}>
             <AdjustPlanButton onAdjust={() => editor.open()} />
             <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>
@@ -167,7 +167,6 @@ function JourneyBody({
           {structure ? (
             <SyllabusSection subjectHref={links.subject} syllabus={structure}>
               {focusTest}
-              <PlanPlaceRows links={links} />
               {/* Unpicked choices are the suggestion's; from 72rem the aside's properties name the pick. */}
               <PlanChoiceLines
                 choices={plan.examChoices.filter((choice) => choice.subjects.length > 0)}

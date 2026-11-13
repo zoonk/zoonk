@@ -2,6 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_BOX_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { type GridCell, type GridFill, sameCell } from "./grid-model";
 import { CellValue, GridHeader, type GridTraits, Trait } from "./grid-parts";
 
@@ -30,7 +31,8 @@ function CheckedCell({
   return (
     <div
       className={cn(
-        "bg-background flex flex-col items-center justify-center gap-0.5 rounded-xl border px-1",
+        ACTIVITY_BOX_CLASS,
+        "flex flex-col items-center justify-center gap-0.5 px-1",
         isCompact ? "min-h-11 py-1" : "min-h-18 py-2",
         learner !== null && !isWrong && "border-success/60",
         isWrong && "border-destructive/60 bg-destructive/5",
@@ -81,10 +83,11 @@ function CellButton({
       aria-label={value ? undefined : t("Square {number}, {row} and {column}: empty", place)}
       aria-pressed={isActive}
       className={cn(
-        "bg-background focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 rounded-xl border outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
+        ACTIVITY_BOX_CLASS,
+        "focus-visible:ring-ring/50 hover:bg-accent flex flex-col items-center justify-center gap-0.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow]",
         isCompact ? "min-h-11" : "min-h-18",
-        !value && "border-dashed",
-        isActive && "border-viz-accent ring-viz-accent/25 ring-4",
+        !value && !isActive && "border-dashed",
+        isActive && ACTIVITY_LINE_CLASS.active,
       )}
       onClick={onSelect}
       type="button"

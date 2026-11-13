@@ -1,12 +1,7 @@
 "use client";
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
-import {
-  BAR_PADDING_CLASS,
-  TASK_ASIDE_PLACE_CLASS,
-  TASK_WRAPPING_ACTION_CLASS,
-  TaskActionLabel,
-} from "@zoonk/learn/task-layout";
+import { BAR_PADDING_CLASS, TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -148,7 +143,7 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
           size="sm"
           variant="ghost"
         >
-          <ChevronLeftIcon aria-hidden="true" />
+          <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
           {buddy.context.kind === "item"
             ? t("Back")
             : t({
@@ -221,7 +216,7 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
         count,
         name: buddy.identity.name,
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-solid"
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area edge relative -me-(--edge-pull) inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none select-none [--edge-text-end:--spacing(1)] [--icon-size:--spacing(3.5)] focus-visible:outline-2 focus-visible:outline-solid"
       onClick={() => buddy.open()}
       type="button"
     >
@@ -242,7 +237,8 @@ export function TutorConversationLink({ fallback }: { fallback: React.ReactNode 
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }
 
-export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
+/** One size in every state, so a miss never resizes the main action beside it. */
+export function TutorAskButton() {
   const t = useExtracted();
   const buddy = useTutorBuddy();
 
@@ -251,21 +247,6 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
   }
 
   const label = t("Ask {name}", { name: buddy.identity.name });
-
-  if (buddy.missed && !quiet) {
-    return (
-      <Button
-        className={cn(TASK_WRAPPING_ACTION_CLASS, "with-aside:hidden ml-auto lg:ml-0")}
-        onClick={() => buddy.open()}
-        size="xl"
-        type="button"
-        variant="outline"
-      >
-        <MessageCircleQuestionIcon aria-hidden="true" />
-        <TaskActionLabel>{label}</TaskActionLabel>
-      </Button>
-    );
-  }
 
   return (
     <Tooltip>
@@ -281,7 +262,13 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
           />
         }
       >
-        <MessageCircleQuestionIcon aria-hidden="true" />
+        {buddy.identity.avatar ? (
+          <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
+            {buddy.identity.avatar}
+          </span>
+        ) : (
+          <MessageCircleQuestionIcon aria-hidden="true" />
+        )}
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>

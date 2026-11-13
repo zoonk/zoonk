@@ -163,7 +163,7 @@ const savedMindMapSchema = z
 const mindMapAllowanceStopSchema = z
   .object({
     period: z
-      .enum(["day", "month", "total"])
+      .enum(["day", "month", "rolling30Days", "total"])
       .nullable()
       .meta({
         description:
@@ -183,7 +183,7 @@ const mindMapAllowanceStopSchema = z
           "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
       }),
     resource: z
-      .enum(["aiSpend", "mindMap"])
+      .enum(["aiSpend", "lessonStart", "mindMap"])
       .nullable()
       .meta({ description: "What ran out: the learner's mind maps, or the day's AI budget" }),
   })
@@ -218,7 +218,7 @@ const mindMapCreateOfferSchema = z
       .nullable()
       .meta({
         description:
-          "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A chapter offers to create its map only while this is null, or when its map failed (the retry is free)",
+          "What stops a new map now: one the learner hasn't claimed yet. Null while the allowance has room for one more; set once it hasn't, however many chapters are `eligible`, even while a failed map's free retry still counts in `startable`. A new map can start only while this is null, or when the chapter's map failed (the retry is free)",
       }),
   })
   .meta({ id: "MindMapCreateOffer" });

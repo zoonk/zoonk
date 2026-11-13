@@ -291,7 +291,7 @@ describe("music activities", () => {
 
     await page.getByRole("button", { name: "Check the sound delay again" }).click();
     await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Start the sound check" })).toBeVisible();
+    await expect.element(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
   });
 
   it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {

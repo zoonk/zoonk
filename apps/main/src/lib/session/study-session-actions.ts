@@ -1,6 +1,7 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
+import { type MemoryInsightView } from "@zoonk/core/memory/contract";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { catchUpToday } from "@zoonk/core/sessions/catch-up";
 import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-contract";
@@ -201,11 +202,11 @@ const insightAnswerSchema = z.object({
 export async function answerMemoryInsightAction(input: {
   insightId: string;
   status: "accepted" | "dismissed";
-}): Promise<boolean> {
+}): Promise<MemoryInsightView | null> {
   const parsed = insightAnswerSchema.safeParse(input);
 
   if (!parsed.success) {
-    return false;
+    return null;
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -217,8 +218,8 @@ export async function answerMemoryInsightAction(input: {
 
   if (error) {
     logError("[answerMemoryInsightAction] Failed to answer an insight:", error);
-    return false;
+    return null;
   }
 
-  return result.status === "updated";
+  return result.status === "updated" ? result.insight : null;
 }

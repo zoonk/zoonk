@@ -25,7 +25,7 @@ export async function HomeFaq() {
     {
       answer: t(
         "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month across all your goals, exams included, with {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed.",
-        { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPerMonth ?? 0 },
+        { goals: limits.activeGoals ?? 0, lessons: limits.lessonsPer30Days ?? 0 },
       ),
       id: "free",
       question: t("Is Zoonk free?"),

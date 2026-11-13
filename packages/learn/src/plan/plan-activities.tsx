@@ -6,7 +6,6 @@ import {
 } from "@zoonk/core/language/activities";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
@@ -28,7 +27,7 @@ export function PlanActivities() {
   const t = useExtracted();
   const activityName = useActivityName();
   const { goal, plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const tapped = useTappedChoice<{ activity: LanguageActivityType; isOn: boolean } | null>(null);
 
   if (goal.kind !== "language") {
@@ -65,8 +64,6 @@ export function PlanActivities() {
           );
         })}
       </div>
-
-      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }

@@ -25,7 +25,7 @@ describe(getAllowance, () => {
     await expect(getAllowance()).resolves.toBeNull();
   });
 
-  it("shows a free learner's lessons today and this month with when they reset", async () => {
+  it("shows rolling lesson usage and next eligibility alongside unchanged calendar resets", async () => {
     const user = await userFixture();
 
     await Promise.all([
@@ -46,13 +46,14 @@ describe(getAllowance, () => {
     });
 
     expect(allowance?.items.find((item) => item.kind === "lessonStart")).toStrictEqual({
+      availableAt: new Date("2026-10-03T09:00:00Z"),
       dailyLimit: null,
       fairUseDailyLimit: null,
       kind: "lessonStart",
-      monthlyLimit: 20,
       remaining: 0,
+      rollingLimit: 20,
       totalLimit: null,
-      usedThisMonth: 33,
+      usedLast30Days: 33,
       usedToday: 3,
       usedTotal: 33,
     });

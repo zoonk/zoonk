@@ -16,10 +16,13 @@ import { BrowserCanvas } from "./browser-canvas";
 
 function ActivityCheckArea({
   answer,
+  className,
   content,
   onAnswerChange,
   phase,
-}: Pick<ActivityStepProps, "answer" | "content" | "onAnswerChange" | "phase">) {
+}: Pick<ActivityStepProps, "answer" | "content" | "onAnswerChange" | "phase"> & {
+  className?: string;
+}) {
   const { check } = content;
 
   if (check.kind === "choice") {
@@ -27,6 +30,7 @@ function ActivityCheckArea({
       <ActivityChoiceCheck
         answer={answer}
         check={check}
+        className={className}
         onAnswerChange={onAnswerChange}
         phase={phase}
       />
@@ -38,6 +42,7 @@ function ActivityCheckArea({
       <ActivityNumericCheck
         answer={answer}
         check={check}
+        className={className}
         onAnswerChange={onAnswerChange}
         phase={phase}
       />
@@ -61,10 +66,12 @@ export function ActivityStep({
   const { badge, checkFirst } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
   const isCheckFirst = checkFirst(content);
+  const badgeKind = badge(content);
 
   const checkArea = (
     <ActivityCheckArea
       answer={answer}
+      className={isCheckFirst ? undefined : "pt-2"}
       content={content}
       onAnswerChange={onAnswerChange}
       phase={phase}
@@ -74,7 +81,7 @@ export function ActivityStep({
   return (
     <InteractiveStepLayout data-slot="activity-step">
       <div className="flex flex-col gap-3">
-        <ActivityBadge kind={badge(content)} />
+        {badgeKind && <ActivityBadge kind={badgeKind} />}
         <LessonQuestion id={labelId}>{content.prompt}</LessonQuestion>
       </div>
 

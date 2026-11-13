@@ -23,7 +23,7 @@ import {
   ChapterScreenProvider,
   useChapterScreen,
 } from "./chapter-context";
-import { ChapterBar, ChapterHeader } from "./chapter-header";
+import { ChapterBar, ChapterBottomBar, ChapterHeader } from "./chapter-header";
 import {
   ChapterMapAside,
   ChapterMapProvider,
@@ -80,7 +80,7 @@ function ChapterSummary({
           >
             {chapter.skills.length > 0 && (
               <section aria-labelledby="chapter-skills-title" className="flex flex-col gap-1">
-                <SectionLabel id="chapter-skills-title">{t("Skills")}</SectionLabel>
+                <SectionLabel id="chapter-skills-title">{t("Topics")}</SectionLabel>
                 <SkillList skills={chapter.skills} />
               </section>
             )}
@@ -108,13 +108,7 @@ function ChapterPractice() {
       </PageSectionHeader>
 
       <ListGroup>
-        {canTestOut && (
-          <TestOutStartRow
-            onStart={actions.startTestOut}
-            plusRequired={chapter.testOut.plusRequired}
-            scope="chapter"
-          />
-        )}
+        {canTestOut && <TestOutStartRow onStart={actions.startTestOut} scope="chapter" />}
         <ChapterMistakes />
       </ListGroup>
     </PageSection>
@@ -162,6 +156,7 @@ function ChapterBody({
       }
       asideLabel={t("About this chapter")}
       bar={<ChapterBar />}
+      bottomBar={<ChapterBottomBar />}
       data-slot="chapter"
     >
       <DetailAside>

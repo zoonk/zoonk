@@ -21,6 +21,7 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
+  anchor,
   collisionPadding = PAGE_GUTTER,
   keepMounted,
   side = "bottom",
@@ -31,13 +32,14 @@ function DropdownMenuContent({
   Pick<MenuPrimitive.Portal.Props, "keepMounted"> &
   Pick<
     MenuPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "collisionPadding" | "side" | "sideOffset"
+    "align" | "alignOffset" | "anchor" | "collisionPadding" | "side" | "sideOffset"
   >) {
   return (
     <MenuPrimitive.Portal keepMounted={keepMounted}>
       <MenuPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
+        anchor={anchor}
         className="isolate z-50 outline-none"
         collisionPadding={collisionPadding}
         side={side}

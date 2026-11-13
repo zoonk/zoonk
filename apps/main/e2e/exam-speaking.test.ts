@@ -77,7 +77,7 @@ test.describe("Exam speaking tasks", () => {
     const task = speaking.getByRole("button", { name: new RegExp(TASK_ONE, "u") });
     await expectHydrated(task);
     await task.click();
-    await speaking.getByRole("button", { name: "Start this task" }).click();
+    await speaking.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}\\?from=exam$`, "u"));
 
     await page.getByRole("button", { name: "Start the call" }).click();
@@ -102,7 +102,7 @@ test.describe("Exam speaking tasks", () => {
       prisma.languageConversation.findUniqueOrThrow({ where: { id: waiting.id } }),
     ).resolves.toMatchObject({ objectivesMet: [TASK_ONE], status: "completed" });
 
-    await page.getByRole("link", { name: "Go to task 2" }).click();
+    await page.getByRole("link", { name: "Next task" }).click();
     await expect(page).toHaveURL(/\/exam\?task=t2$/u);
 
     await expect(page.getByRole("button", { name: /Tarea 2: Describir/u })).toHaveAttribute(
@@ -110,7 +110,7 @@ test.describe("Exam speaking tasks", () => {
       "true",
     );
 
-    await expect(page.getByRole("button", { name: "Start this task" })).toBeEnabled();
+    await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeEnabled();
 
     await expect(
       prisma.languageConversation.count({ where: { goalId: goal.id, kind: "examSpeaking" } }),

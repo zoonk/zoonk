@@ -1,10 +1,9 @@
 import { AuthGatePage, GatedPage } from "@/components/auth-gate";
-import { Link } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { EnterLink } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -53,12 +52,13 @@ export async function LearnNoGoal({
               {t("Tell us what you want to learn, and we'll plan every day until you get there.")}
             </EmptyDescription>
           </EmptyHeader>
-          <EmptyContent>
-            <Link className={buttonVariants()} href="/today">
-              {t("Start a goal")}
-            </Link>
-          </EmptyContent>
         </Empty>
+
+        <BottomBar>
+          <BottomBarActions>
+            <EnterLink href="/today">{t("Start a goal")}</EnterLink>
+          </BottomBarActions>
+        </BottomBar>
       </GatedPage>
     </>
   );

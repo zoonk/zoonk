@@ -65,7 +65,7 @@ export const certificateFactsShape = {
     .string()
     .meta({
       description:
-        'The public verification code, 12 characters; show it in groups of four ("K7QF-2M9X-HD4P")',
+        'The public verification code, 12 characters, written in groups of four on the certificate ("K7QF-2M9X-HD4P")',
     }),
   completedOn: z.iso.date().meta({ description: "The learner-local day it was earned" }),
   courseId: uuidSchema()
@@ -123,7 +123,7 @@ export const ownedCertificateShape = {
     .boolean()
     .meta({
       description:
-        "True when the learner earned it without Plus: show it locked, with the Plus notice, and no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends",
+        "True when the learner earned it without Plus: it's locked, with no code, link, picture or share. It unlocks when they subscribe and stays unlocked after Plus ends",
     }),
   shownAt: z.iso
     .datetime()
@@ -144,5 +144,5 @@ export const unshownCertificatesSchema = z
   .array(ownedCertificateFactsSchema)
   .meta({
     description:
-      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. Show them before any milestone `ceremony`, a locked one as the same moment with the Plus notice, then POST /me/certificates/{code}/views for each once its moment closes. Pictures of an unlocked one: GET /certificates/{code}",
+      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}",
   });

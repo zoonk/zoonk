@@ -461,6 +461,11 @@ msgid "Search or ask…"
 msgstr "Suchen oder fragen…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "schließen"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "3ATcmQ"
 msgid "move"
 msgstr "bewegen"
@@ -469,11 +474,6 @@ msgstr "bewegen"
 msgctxt "-9qP4Y"
 msgid "open"
 msgstr "öffnen"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-msgctxt "BSij1a"
-msgid "close"
-msgstr "schließen"
 
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -758,6 +758,7 @@ msgstr "Etwas ist schiefgelaufen. Versuch es bitte noch einmal."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -874,9 +875,9 @@ msgid "No answer was saved."
 msgstr "Es wurde keine Antwort gespeichert."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "Hier findest du deine Fragen aus der Zeit, bevor wir deine Kurse überarbeitet haben. Die Lektionen haben sich geändert, aber du kannst deine Fragen hier noch einmal lesen."
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "Deine Fragen aus Lektionen, die sich inzwischen geändert haben."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -1902,7 +1903,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, one {# Antwort} other {# Antworten}}, mindestens {minimum, number} nötig"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1914,7 +1914,6 @@ msgid "Throughout the week"
 msgstr "Im Laufe der Woche"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1971,29 +1970,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "Ein Tag oder eine Tageszeit wird erst ab {count, plural, one {# Antwort} other {# Antworten}} berücksichtigt. So entsteht kein Muster durch eine einzelne Antwort, die zufällig richtig war."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "Unterschied von höchstens {points, plural, =0 {# Punkten} one {# Punkt} other {# Punkten}}"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "Dein bester Tag ist {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Noch nicht genug Antworten"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Du antwortest jeden Tag etwa gleich gut."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, one {# Antwort} other {# Antworten}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "Am besten schneidest du {time} ab."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "In den letzten 90 Tagen"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "Die Tageszeit macht keinen Unterschied."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Antworten"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "Beantworte mehr Fragen, um zu sehen, wann du am besten abschneidest."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2766,26 +2765,21 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Wir öffnen deine Lektion"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "Jetzt startbereit"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, one {# Idee wiederholen} other {# Ideen wiederholen}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Über diese Lektion"
-
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "Das kannst du stattdessen machen"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "Bereit für deine Wartezeit"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, one {# Idee wiederholen} other {# Ideen wiederholen}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
@@ -2793,24 +2787,29 @@ msgid "Your lesson is ready"
 msgstr "Deine Lektion ist bereit"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "Deine Lektion ist bereit. Leg los, wann du möchtest."
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "Wir bereiten deine Lektion vor"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "Das dauert normalerweise ein paar Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "Diese Lektion ist noch nicht fertig"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "Diese Lektion ist noch nicht erstellt"
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "Wir konnten diese Lektion nicht vorbereiten"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "Zoonk erstellt sie, wenn du startest. Das dauert ein paar Minuten."
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "Das dauert ein paar Minuten und läuft auch weiter, wenn du die Seite verlässt."
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "Lektion vorbereiten"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"
@@ -2951,9 +2950,9 @@ msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Kapitel durch einen Test überspringen"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "Kapiteltest"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx

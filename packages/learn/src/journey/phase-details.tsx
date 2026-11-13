@@ -1,10 +1,9 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { PopoverDescription, PopoverTitle } from "@zoonk/ui/components/popover";
+import { DrawerContent, DrawerDescription, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText } from "../_components/title-row";
+import { SheetHeader } from "../_components/sheet-header";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -49,7 +48,6 @@ function usePhaseLessons() {
 }
 
 function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks } = phase;
 
@@ -61,20 +59,13 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
     <ul className="flex flex-col">
       {mocks.nextDate && (
         <li>
-          <MockRow
-            challengeHref={links.challenge}
-            date={mocks.nextDate}
-            examHref={links.exam}
-            locked={plan.access.mocksRequirePlus}
-          />
+          <MockRow challengeHref={links.challenge} date={mocks.nextDate} examHref={links.exam} />
         </li>
       )}
 
       {!mocks.nextDate && mocks.count > 0 && (
         <li className="text-muted-foreground py-1.5 text-xs">
-          <MarkedText mark={plan.access.mocksRequirePlus && <PlusMark />}>
-            {mocksLine({ count: mocks.count, forNextSitting: false, nextSitting: null })}
-          </MarkedText>
+          {mocksLine({ count: mocks.count, forNextSitting: false, nextSitting: null })}
         </li>
       )}
 
@@ -98,20 +89,22 @@ export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase:
 
   return (
     <>
-      <div className="flex flex-col gap-0.5">
-        <PopoverTitle>
+      <SheetHeader>
+        <DrawerTitle>
           {phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus })}
-        </PopoverTitle>
-        <PopoverDescription className="font-mono text-xs tabular-nums">
+        </DrawerTitle>
+        <DrawerDescription className="font-mono text-xs tabular-nums">
           {[range, phaseLessons(phase)].filter(Boolean).join(" · ")}
-        </PopoverDescription>
-      </div>
+        </DrawerDescription>
+      </SheetHeader>
 
-      {listsChapters ? (
-        <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
-      ) : (
-        <ExamPhaseEvents links={links} phase={phase} />
-      )}
+      <DrawerContent className="pt-2">
+        {listsChapters ? (
+          <JourneyChapters chapters={phase.chapters} checkpoint={phase.checkpoint} links={links} />
+        ) : (
+          <ExamPhaseEvents links={links} phase={phase} />
+        )}
+      </DrawerContent>
     </>
   );
 }

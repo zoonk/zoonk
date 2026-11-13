@@ -67,7 +67,7 @@ export function MockBreak({ until }: { until: string }) {
               disabled={runner.pending}
               onClick={() => void runner.endBreak()}
             >
-              {t("Start the next section")}
+              {t("Start now")}
             </TaskMainButton>
           </TaskActions>
         </>

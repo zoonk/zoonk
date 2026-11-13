@@ -20,12 +20,18 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine } from "../plan/use-change-sentence";
-import { useProposalEffectText } from "../plan/use-effect-text";
+import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";
-type InsightState = { answer: InsightAnswer } | { failed: true } | null;
+
+type InsightState =
+  | { answer: InsightAnswer }
+  | { failed: true }
+  | { repriced: MemoryInsightView }
+  | null;
 
 function insightMark(insight: MemoryInsightView): React.ReactNode {
   if (insight.kind === "tip") {
@@ -76,23 +82,6 @@ function useAnsweredText(insight: MemoryInsightView) {
   };
 }
 
-function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["planChange"] }) {
-  const proposalEffectText = useProposalEffectText();
-  const { planEnd, today } = useTodayScreen();
-  const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
-
-  const effect =
-    planChange?.status === "proposed"
-      ? proposalEffectText(planChange, { endDate: planEnd, targetDate })
-      : null;
-
-  if (!effect) {
-    return null;
-  }
-
-  return <SuggestionDescription>{effect}</SuggestionDescription>;
-}
-
 function useInsightAnswer(insight: MemoryInsightView) {
   const { actions } = useTodayScreen();
   const [state, setState] = useState<InsightState>(null);
@@ -104,7 +93,17 @@ function useInsightAnswer(insight: MemoryInsightView) {
         actions.answerInsight({ insightId: insight.id, status }),
       );
 
-      setState(saved ? { answer: status } : { failed: true });
+      if (!saved) {
+        setState({ failed: true });
+        return;
+      }
+
+      // Accepted, and still waiting: its plan change's numbers moved, so it asks again.
+      setState(
+        status === "accepted" && saved.status === "pending"
+          ? { repriced: saved }
+          : { answer: status },
+      );
     });
   };
 
@@ -151,10 +150,13 @@ function InsightActions({
   );
 }
 
-function InsightNotice({ insight }: { insight: MemoryInsightView }) {
+function InsightNotice({ insight: opened }: { insight: MemoryInsightView }) {
   const t = useExtracted();
+  const dateKind = useTodayDateKind();
+  const { answer, isPending, state } = useInsightAnswer(opened);
+  const repriced = state !== null && "repriced" in state;
+  const insight = repriced ? state.repriced : opened;
   const answeredText = useAnsweredText(insight);
-  const { answer, isPending, state } = useInsightAnswer(insight);
   const result = state && "answer" in state ? answeredText(state.answer) : null;
 
   return (
@@ -177,7 +179,13 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
       <SuggestionContent>
         <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
         <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
-        <InsightPlanEffect planChange={insight.planChange} />
+        {insight.planChange?.status === "proposed" && (
+          <PlanEffectDiff
+            dateKind={dateKind}
+            effect={insight.planChange.effect}
+            repriced={repriced}
+          />
+        )}
 
         {result ? (
           <SuggestionResult>{result}</SuggestionResult>

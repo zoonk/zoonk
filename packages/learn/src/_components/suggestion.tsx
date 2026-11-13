@@ -48,12 +48,6 @@ const FRAME_CLASS = SURFACE_CLASS;
 const LINE_CLASS = "min-[72rem]:hidden";
 const PANEL_CLASS = "hidden min-[72rem]:flex";
 
-const MARK_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "[&>svg]:size-4",
-  panel: "[&>svg]:size-3.5",
-  sheet: "[&>svg]:size-5",
-};
-
 export function Suggestion({
   answered = false,
   children,
@@ -110,15 +104,13 @@ export function Suggestion({
 
 function SuggestionMark() {
   const { mark } = useSuggestion();
-  const presentation = use(PresentationContext);
 
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "flex shrink-0 items-center justify-center",
+        "flex shrink-0 items-center justify-center [&>svg]:size-4",
         mark ? "text-muted-foreground" : "text-warning",
-        MARK_SIZE[presentation],
       )}
       data-slot="suggestion-mark"
     >
@@ -150,14 +142,20 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
 export function SuggestionSummary({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn(
-        "text-muted-foreground stacked:line-clamp-none text-compact line-clamp-2 min-w-0 flex-1 leading-snug",
-        className,
-      )}
+      className={cn("min-w-0 flex-1 text-sm leading-snug font-medium text-pretty", className)}
       data-slot="suggestion-summary"
       {...props}
     />
   );
+}
+
+/**
+ * A suggestion's main action on a page that has its own (Today's "Start session"): filled in the
+ * sheet, which covers the page, and outline in the panel beside it, so the page keeps one filled
+ * button.
+ */
+export function useMainActionVariant(): "default" | "outline" {
+  return use(PresentationContext) === "panel" ? "outline" : "default";
 }
 
 export function useCloseSuggestionSheet(): () => void {
@@ -211,14 +209,17 @@ export function SuggestionContent({
   );
 }
 
+/**
+ * The title starts on the edge the lines and buttons under it start on: the kind's mark stays with
+ * the one-line form, where it leads the row.
+ */
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
   const presentation = use(PresentationContext);
 
   if (presentation === "sheet") {
     return (
-      <div className="flex items-center gap-2.5" data-slot="suggestion-header">
-        <SuggestionMark />
+      <div className="flex items-start gap-3" data-slot="suggestion-header">
         <DrawerTitle className="min-w-0 flex-1 text-pretty">{children}</DrawerTitle>
         <DrawerCloseButton label={t("Close")} />
       </div>
@@ -226,10 +227,12 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex items-center gap-2" data-slot="suggestion-header">
-      <SuggestionMark />
-      <h2 className="text-compact leading-snug font-semibold text-pretty">{children}</h2>
-    </div>
+    <h2
+      className="text-compact leading-snug font-semibold text-pretty"
+      data-slot="suggestion-header"
+    >
+      {children}
+    </h2>
   );
 }
 
@@ -274,12 +277,13 @@ export function SuggestionSaveError({ className }: { className?: string }) {
   return <ChangeSaveError className={cn("text-compact leading-snug", className)} />;
 }
 
+/** In the panel each button fills its share of a row, so buttons that wrap stack at one width. */
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
   panel:
-    "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
+    "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
   sheet:
-    "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-center [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3)]:flex-col",
+    "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-center [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3_of_a,button)]:flex-col",
 };
 
 export function SuggestionActions({ className, ...props }: React.ComponentProps<"form">) {
