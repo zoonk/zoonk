@@ -43,11 +43,19 @@ export function DocSection({
   );
 }
 
+/** A list's mark sits in a 16px box on the column's edge and its text starts 28px in, as `ListRow`'s does. */
+const LIST_ITEM = "flex gap-3";
+
 export function DocRules({ rules }: { rules: readonly string[] }) {
   return (
-    <ul className={cn(DOC_MEASURE, "flex list-disc flex-col gap-1.5 pl-5 text-sm leading-5.5")}>
+    <ul className={cn(DOC_MEASURE, "flex flex-col gap-1.5 text-sm leading-5.5")}>
       {rules.map((rule) => (
-        <li key={rule}>{renderCode(rule)}</li>
+        <li className={LIST_ITEM} key={rule}>
+          <span aria-hidden="true" className="flex h-5.5 w-4 shrink-0 items-center justify-center">
+            <span className="size-1 rounded-full bg-current" />
+          </span>
+          <span>{renderCode(rule)}</span>
+        </li>
       ))}
     </ul>
   );
@@ -83,7 +91,7 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
     <div className="grid gap-4 text-sm leading-5.5 sm:grid-cols-2">
       <ul className="flex flex-col gap-1.5">
         {follow.map((item) => (
-          <li className="flex gap-2" key={item}>
+          <li className={LIST_ITEM} key={item}>
             <CheckIcon aria-hidden="true" className="text-success mt-1 size-4 shrink-0" />
             <span>
               <span className="sr-only">Do: </span>
@@ -94,7 +102,7 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
       </ul>
       <ul className="flex flex-col gap-1.5">
         {avoid.map((item) => (
-          <li className="flex gap-2" key={item}>
+          <li className={LIST_ITEM} key={item}>
             <XIcon aria-hidden="true" className="text-destructive mt-1 size-4 shrink-0" />
             <span>
               <span className="sr-only">Don&apos;t: </span>

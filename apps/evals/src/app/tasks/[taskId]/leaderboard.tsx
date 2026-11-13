@@ -5,12 +5,13 @@ import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages"
 import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
 import { formatDollars, formatLatencyVerdict, formatPercent, formatSeconds } from "@/lib/format";
 import { type LeaderboardEntry } from "@/lib/leaderboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { LeaderboardExport } from "./leaderboard-export";
 import { type LeaderboardColumn, LeaderboardTable, ModelLink } from "./leaderboard-table";
 
 type Column = LeaderboardColumn<LeaderboardEntry>;
 
-/** How much of the task a model's score rests on, with failed runs called out. */
+/** How much of the task a model's score rests on; "Failed runs" under "More columns" says why. */
 function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns: number }) {
   const failed = FAILURE_REASONS.reduce(
     (total, reason) => total + entry.summary.failures[reason].count,
@@ -18,15 +19,12 @@ function CasesScored({ entry, totalRuns }: { entry: LeaderboardEntry; totalRuns:
   );
 
   return (
-    <>
+    <span
+      className={cn(failed > 0 && "text-destructive-text")}
+      title={failed > 0 ? `${failed} ${failed === 1 ? "run" : "runs"} failed` : undefined}
+    >
       {entry.summary.scored}/{totalRuns}
-      {failed > 0 && (
-        <span className="text-destructive-text">
-          {" "}
-          · {failed} {failed === 1 ? "run" : "runs"} failed
-        </span>
-      )}
-    </>
+    </span>
   );
 }
 

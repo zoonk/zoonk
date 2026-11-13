@@ -100,7 +100,7 @@ function ModelItem({
   return (
     <AccordionItem value={model.modelId}>
       <AccordionTrigger className="hover:no-underline">
-        <div className="flex items-center gap-3">
+        <div className="flex items-baseline gap-3">
           <span className="font-medium">{model.modelName}</span>
           <span className="font-semibold tabular-nums">{model.averageScore.toFixed(1)}</span>
           <span className="text-muted-foreground text-xs font-normal">
@@ -150,7 +150,7 @@ export function BattleMatchupList({
     <div className="flex flex-col gap-10">
       {judgeViews.map((judge) => (
         <section key={judge.judgeId}>
-          <h2 className="mb-4 text-lg font-semibold">Judged by {judge.judgeName}</h2>
+          <h2 className="mb-2 text-lg font-semibold">Judged by {judge.judgeName}</h2>
 
           <Accordion>
             {judge.models.map((model) => (

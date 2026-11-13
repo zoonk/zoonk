@@ -69,7 +69,7 @@ export function ControlSizes() {
     <div className="flex flex-col">
       {CONTROL_SIZES.map((control) => (
         <div
-          className="border-border grid items-center gap-x-6 gap-y-4 border-t py-5 lg:grid-cols-[14rem_minmax(0,1fr)]"
+          className="border-border grid items-start gap-x-6 gap-y-4 border-t py-5 lg:grid-cols-[14rem_minmax(0,1fr)]"
           key={control.size}
         >
           <div className="flex flex-col gap-1">
@@ -94,7 +94,7 @@ export function ControlSizes() {
         </div>
       ))}
 
-      <div className="border-border grid items-center gap-x-6 gap-y-4 border-t py-5 lg:grid-cols-[14rem_minmax(0,1fr)]">
+      <div className="border-border grid items-start gap-x-6 gap-y-4 border-t py-5 lg:grid-cols-[14rem_minmax(0,1fr)]">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold">22px</p>
           <code className="text-muted-foreground font-mono text-xs">{"<Badge>"}</code>

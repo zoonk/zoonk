@@ -49,7 +49,7 @@ export function SummaryCard({ summary, stats }: { summary: EvalSummary; stats: T
       </dl>
 
       <Fold title="Details">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-4 pt-2 md:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-4">
           <Detail label="Latency p95" value={formatSeconds(stats.latencyP95)} />
           <Detail label="Average input tokens" value={Math.round(stats.averageInputTokens)} />
           <Detail label="Average output tokens" value={Math.round(stats.averageOutputTokens)} />

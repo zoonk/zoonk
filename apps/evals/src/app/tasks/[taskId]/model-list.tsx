@@ -26,7 +26,7 @@ export function ModelList({
 
   return (
     <Fold
-      className="border-t pt-2"
+      className="pt-4"
       isOpen={!hasResults}
       title={hasResults ? "Run another model" : "Run a model"}
     >
@@ -46,7 +46,10 @@ export function ModelList({
 
               {pricing && (
                 <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                  {formatPrice(pricing.input)} / {formatPrice(pricing.output)}
+                  {formatPrice(pricing.input)} /{" "}
+                  <span className="inline-block min-w-[7ch] text-right">
+                    {formatPrice(pricing.output)}
+                  </span>
                 </span>
               )}
             </Link>

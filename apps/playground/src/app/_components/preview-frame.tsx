@@ -19,7 +19,7 @@ export function PreviewFrame({
   const isFullSize = frame.scale === 1;
 
   return (
-    <div className="border-border w-fit max-w-full overflow-x-auto rounded-xl border shadow-sm">
+    <div className="border-border w-fit max-w-full overflow-x-auto rounded-xl border">
       <div
         className={cn("overflow-hidden", isFullSize && "max-w-full")}
         style={{ height: frame.height * frame.scale, width: frame.width * frame.scale }}

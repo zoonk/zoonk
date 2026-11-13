@@ -27,7 +27,7 @@ export function GalleryNav({
                 <Link
                   aria-current={entry.id === current ? "page" : undefined}
                   className={cn(
-                    "hover:bg-muted -mx-2.5 block truncate rounded-lg px-2.5 py-1 text-sm max-lg:py-3",
+                    "hover:bg-muted -mx-2.5 block truncate rounded-lg px-2.5 py-1.25 text-sm max-lg:py-3",
                     entry.id === current && "bg-muted",
                   )}
                   href={galleryHref({ device, entry: entry.id })}
