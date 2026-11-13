@@ -1,4 +1,5 @@
 import { BusyIcon } from "@zoonk/ui/components/button";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
@@ -52,6 +53,19 @@ export const SMALL_CHEVRON_CLASS =
 
 export function ListRowChevron() {
   return <ChevronRightIcon aria-hidden="true" className={ROW_CHEVRON_CLASS} />;
+}
+
+/**
+ * The chevron's place, empty, at the end of a row that can't be opened: the value before it ends
+ * where the other rows' values do. It is the hidden glyph itself, so its box can't drift from the
+ * chevron's; `fold` stands in for a fold arrow.
+ */
+export function ListRowChevronSpace({ fold = false }: { fold?: boolean }) {
+  return fold ? (
+    <FoldChevron className="invisible" />
+  ) : (
+    <ChevronRightIcon aria-hidden="true" className={cn(ROW_CHEVRON_CLASS, "invisible")} />
+  );
 }
 
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
@@ -190,7 +204,10 @@ export function ListRowTitle({ className, ...props }: React.ComponentProps<"span
   );
 }
 
-/** The number hangs before the title, and a `description` starts under the title's words, not the number. */
+/**
+ * The number is the title's first word, so a numbered row's text starts on the edge every other
+ * row's does, and a `description` starts there too.
+ */
 export function ListRowNumberedTitle({
   children,
   className,
@@ -205,14 +222,14 @@ export function ListRowNumberedTitle({
   textClassName?: string;
 }) {
   return (
-    <span className={cn("grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-1.5", className)}>
-      <span className="text-muted-foreground font-mono text-xs leading-snug tabular-nums">
-        {`${number}.`}
-      </span>
-      <ListRowTitle className={textClassName}>{children}</ListRowTitle>
-      {description && (
-        <span className="col-start-2 flex flex-col pt-px empty:hidden">{description}</span>
-      )}
+    <span className={cn("flex flex-col", className)}>
+      <ListRowTitle className={textClassName}>
+        <span className="text-muted-foreground me-1.5 font-mono text-xs font-normal tabular-nums">
+          {`${number}.`}
+        </span>
+        {children}
+      </ListRowTitle>
+      {description && <span className="flex flex-col pt-px empty:hidden">{description}</span>}
     </span>
   );
 }

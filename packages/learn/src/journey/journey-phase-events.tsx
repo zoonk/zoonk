@@ -5,7 +5,7 @@ import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
-import { ListRowChevron } from "../_components/list-group";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -30,7 +30,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
     return (
       <div className={PATH_ROW_CLASS}>
         {children}
-        <span aria-hidden="true" className="size-4 shrink-0" />
+        <ListRowChevronSpace />
       </div>
     );
   }

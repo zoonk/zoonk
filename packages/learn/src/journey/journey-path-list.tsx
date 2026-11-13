@@ -11,7 +11,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { ListRowChevron } from "../_components/list-group";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -128,7 +128,7 @@ function ChaptersPhase({
       <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
         <div className={PHASE_ROW_CLASS}>
           {header}
-          <span aria-hidden="true" className="size-4 shrink-0" />
+          <ListRowChevronSpace fold />
         </div>
       </li>
     );
@@ -210,7 +210,7 @@ function FinishItem() {
             />
           )}
         </span>
-        <span aria-hidden="true" className="size-4 shrink-0" />
+        <ListRowChevronSpace fold />
       </div>
     </li>
   );

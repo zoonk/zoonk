@@ -9,6 +9,7 @@ import {
   ListRow,
   ListRowBody,
   ListRowButton,
+  ListRowChevronSpace,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -117,8 +118,7 @@ export function SyllabusChapterRow({
     return (
       <ListRow className={className}>
         {content}
-        {/* Keeps this row's date under the dates of the rows that end in a chevron. */}
-        <span aria-hidden="true" className="size-4 shrink-0" />
+        <ListRowChevronSpace />
       </ListRow>
     );
   }

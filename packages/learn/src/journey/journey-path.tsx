@@ -4,7 +4,7 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ListRowChevron } from "../_components/list-group";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
@@ -93,10 +93,6 @@ const HEADER_CLASS = "flex min-h-11 w-full items-baseline gap-3 py-3 text-left";
 const HEADER_INTERACTIVE_CLASS =
   "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 w-[calc(100%+1.25rem)] rounded-lg px-2.5 outline-none transition-colors focus-visible:ring-[3px]";
 
-function ChevronSpace() {
-  return <span aria-hidden="true" className="size-4 shrink-0" />;
-}
-
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
@@ -117,7 +113,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
       <div className="flex min-w-0 flex-1 flex-col">
         <div className={HEADER_CLASS}>
           <PhaseTitle phase={phase} />
-          <ChevronSpace />
+          <ListRowChevronSpace />
         </div>
 
         {state === "upcoming" && mocks.count > 0 && (
@@ -180,7 +176,7 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
       ) : (
         <div className={HEADER_CLASS}>
           {content}
-          <ChevronSpace />
+          <ListRowChevronSpace />
         </div>
       )}
     </li>
