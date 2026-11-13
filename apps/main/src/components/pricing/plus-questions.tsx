@@ -113,7 +113,7 @@ export async function PlusQuestions({
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
             {t.rich(
-              "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
+              "Almost. Lessons, goals and the AI study buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
             )}
           </p>
