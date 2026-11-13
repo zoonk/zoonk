@@ -92,7 +92,7 @@ final class ExamStore {
   }
 
   /// Only from a learner's tap. A mock that can ask only part of its questions comes back `short`
-  /// for the learner to start it knowingly (`acceptFewer`).
+  /// for the learner to start it knowingly (`acceptFewer`), also after the questions were written.
   func startMock(
     goalId: String, shape: MockShape, acceptFewer: Bool,
     onWriting: @escaping @MainActor () -> Void
@@ -124,7 +124,7 @@ final class ExamStore {
       }
 
       return try await api.startMock(
-        token: token, goalId: goalId, shape: shape, acceptFewer: true)
+        token: token, goalId: goalId, shape: shape, acceptFewer: acceptFewer, afterWriting: true)
     }
   }
 }

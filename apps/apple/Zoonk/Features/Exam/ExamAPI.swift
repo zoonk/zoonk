@@ -104,11 +104,12 @@ struct ExamAPI {
     }
   }
 
-  func startMock(token: String, goalId: String, shape: MockShape, acceptFewer: Bool)
-    async throws -> MockStartOutcome
-  {
+  /// `afterWriting` on the start that follows a questions run, so the server never asks for more.
+  func startMock(
+    token: String, goalId: String, shape: MockShape, acceptFewer: Bool, afterWriting: Bool = false
+  ) async throws -> MockStartOutcome {
     let body: Components.Schemas.AnytimeMockInput = try PracticeJSON.recode(
-      MockStartRequest(shape: shape, acceptFewer: acceptFewer))
+      MockStartRequest(shape: shape, acceptFewer: acceptFewer, afterWriting: afterWriting))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let started: Components.Schemas.AnytimeMock
@@ -145,7 +146,7 @@ struct ExamAPI {
     -> MockQuestionsStart
   {
     let body: Components.Schemas.MockQuestionsInput = try PracticeJSON.recode(
-      MockStartRequest(shape: shape, acceptFewer: nil))
+      MockStartRequest(shape: shape, acceptFewer: nil, afterWriting: nil))
 
     return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let generation: Components.Schemas.MockQuestionsGeneration
@@ -375,14 +376,16 @@ struct ExamAPI {
 private struct MockStartRequest: Encodable {
   let shape: MockShape
   let acceptFewer: Bool?
+  let afterWriting: Bool?
 
   private enum CodingKeys: String, CodingKey {
-    case acceptFewer, shape
+    case acceptFewer, afterWriting, shape
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encodeIfPresent(acceptFewer, forKey: .acceptFewer)
+    try container.encodeIfPresent(afterWriting == true ? true : nil, forKey: .afterWriting)
     try container.encode(ShapeBody(shape), forKey: .shape)
   }
 
