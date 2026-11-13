@@ -1,10 +1,12 @@
 #if DEBUG
   import SwiftUI
 
+  /// `ZOONK_DEBUG_LINK` opens an app path as a link to it would (`/learn/{id}`,
+  /// `/conversation/{id}`), since the simulator sends a local universal link to Safari.
   /// `ZOONK_DEBUG_SIGN_IN_EMAIL` and `ZOONK_DEBUG_SIGN_IN_CODE` (a code from the local mailbox)
-  /// sign in first. The lesson waits for that sign-in, since switching from a restored account
+  /// sign in first. The link waits for that sign-in, since switching from a restored account
   /// closes every task the previous one had open.
-  struct DebugLessonLaunch: ViewModifier {
+  struct DebugLaunch: ViewModifier {
     @Environment(AppRouter.self) private var router
     @Environment(SessionStore.self) private var session
     @State private var signInFinished = false
@@ -25,9 +27,11 @@
         }
         .onChange(of: signInFinished && session.authenticatedSession != nil, initial: true) {
           _, isReady in
-          if isReady, !didOpen, let lessonId = environment["ZOONK_DEBUG_LESSON_ID"] {
+          if isReady, !didOpen, let path = environment["ZOONK_DEBUG_LINK"],
+            let url = URL(string: "https://zoonk.com\(path)")
+          {
             didOpen = true
-            router.open(.lesson(lessonId: lessonId))
+            router.open(url: url)
           }
         }
     }
