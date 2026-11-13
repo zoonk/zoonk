@@ -21,7 +21,7 @@ The [deliberate choices](#deliberate-choices) at the end are neither.
 
 ### E1. One start edge per column
 
-In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap). A panel's content starts at the panel's padding.
+In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap; 32px where the mark is a number keycap, which is 20px wide, as in answer options and lists that number keys answer). A panel's content starts at the panel's padding.
 
 - **Check.** Hold a ruler down the left side and count where text and boxes begin: the edge, the text-after-mark edge and one indent at most. In the page, each block's ink left minus the column's start edge is 0, 28 or the panel's padding.
 - **Usual break.** One row with a leading icon among rows without one. A chart or calendar with its own inner padding. An icon whose gap to its text differs from the rows above it.
@@ -165,7 +165,7 @@ Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no
 
 ### Z1. Heights from the set, one height per row
 
-A control's height is one of `Button`'s, and each height has one label size: 44px for a screen's action (`lg`) and for inputs, with a 15px label; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. No call site sets a button's height, label size or weight. A top bar's button is 44px and 40px from `lg` (a 14px label there); a bottom bar's buttons are 44px at every width; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
+A control's height is one of `Button`'s, and each height has one label size: 44px for a screen's action (`lg`) and for inputs, with a 15px label; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. No call site sets a button's height, label size or weight. A top bar's button is 44px and 40px from `lg` (a 14px label there); a bottom bar's buttons are 44px at every width, and so are the buttons in a sheet's, a dialog's or a confirm's footer, its own bottom bar (`AlertDialogAction` and `AlertDialogCancel` are; a `DrawerFooter`'s buttons take `size="lg"`); chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
 
 - **Check.** In any row of controls, visible heights are equal within 0.5px, and each is in the set.
 - **Usual break.** A 44px select beside 36px buttons in a toolbar.

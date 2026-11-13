@@ -634,11 +634,6 @@ msgid "Collapse sidebar"
 msgstr "Collapse sidebar"
 
 #: src/_components/task-header.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Screen options"
-
-#: src/_components/task-header.tsx
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Expand sidebar"
@@ -1118,23 +1113,6 @@ msgstr "Share usage data"
 msgctxt "T9w4Km"
 msgid "Glasses"
 msgstr "Glasses"
-
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
-#: src/journey/goal-actions.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/language/conversation/call-control.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/onboarding/start-over-menu.tsx
-#: src/onboarding/understood/understood-row.tsx
-#: src/onboarding/understood/understood-words.tsx
-#: src/plan/plan-country.tsx
-#: src/plan/plan-tool-sheet.tsx
-#: src/plan/study-everything.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Cancel"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
@@ -1973,6 +1951,22 @@ msgstr "Your name, as it should appear"
 msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "Your full name"
+
+#: src/certificates/certificate-name.tsx
+#: src/country/country-picker.tsx
+#: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/language/conversation/call-control.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/onboarding/start-over-menu.tsx
+#: src/onboarding/understood/understood-row.tsx
+#: src/onboarding/understood/understood-words.tsx
+#: src/plan/plan-country.tsx
+#: src/plan/plan-tool-sheet.tsx
+#: src/plan/study-everything.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancel"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"

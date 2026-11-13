@@ -1,4 +1,3 @@
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ComponentProps } from "react";
 
@@ -14,56 +13,23 @@ export function Mailbox({ className, ...props }: ComponentProps<"main">) {
   );
 }
 
-export function MailboxHeader({ className, ...props }: ComponentProps<"header">) {
+/** The page's top over the panes, on the shared page top: the status and Clear inbox in its bar. */
+export function MailboxTop({ className, ...props }: ComponentProps<"div">) {
   return (
-    <header
+    <div
       className={cn(
-        "border-border bg-background/90 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur-lg sm:flex-nowrap sm:px-6 sm:py-4",
+        "border-border bg-background border-b px-(--page-gutter) pb-4 [--page-gutter:1rem] md:[--page-gutter:1.5rem]",
         className,
       )}
       {...props}
     />
-  );
-}
-
-export function MailboxIdentity({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("flex items-center gap-3.5", className)} {...props} />;
-}
-
-export function MailboxTitle({ children, className, ...props }: ComponentProps<"h1">) {
-  return (
-    <h1 className={cn("text-lg font-semibold tracking-tight", className)} {...props}>
-      {children}
-    </h1>
   );
 }
 
 export function MailboxStatus({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
-      className={cn(
-        "text-muted-foreground text-2xs inline-flex items-center gap-2 font-mono tracking-[0.06em] uppercase",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-export function MailboxActions({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("flex items-center gap-2.5 sm:gap-4", className)} {...props} />;
-}
-
-export function MailboxButton({
-  className,
-  variant = "outline",
-  ...props
-}: ComponentProps<typeof Button>) {
-  return (
-    <Button
-      className={cn("text-compact rounded-lg motion-reduce:transition-none", className)}
-      type="button"
-      variant={variant}
+      className={cn("text-muted-foreground inline-flex items-center gap-2 text-sm", className)}
       {...props}
     />
   );
@@ -95,14 +61,16 @@ export function MailboxList({ className, ...props }: ComponentProps<"ol">) {
 }
 
 export function MailboxListItem({ className, ...props }: ComponentProps<"li">) {
-  return <li className={cn("border-border border-b", className)} {...props} />;
+  return (
+    <li className={cn("border-border border-b max-md:last:border-b-0", className)} {...props} />
+  );
 }
 
 export function MailboxMessageButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
       className={cn(
-        "focus-visible:ring-ring aria-pressed:bg-muted hover:bg-muted aria-pressed:before:bg-foreground relative grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 border-0 bg-transparent py-4 pr-4 pl-5 text-left transition-colors outline-none before:absolute before:inset-y-3 before:left-0 before:w-0.5 before:bg-transparent focus-visible:ring-2 focus-visible:ring-inset motion-reduce:transition-none",
+        "focus-visible:ring-ring aria-pressed:bg-muted hover:bg-muted grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-2 border-0 bg-transparent px-4 py-4 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset motion-reduce:transition-none md:px-6",
         className,
       )}
       type="button"
@@ -116,5 +84,13 @@ export function MailboxPreview({ className, ...props }: ComponentProps<"article"
 }
 
 export function MailboxEmpty({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("text-muted-foreground", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "text-muted-foreground bg-background flex flex-col items-center justify-center gap-1.5 px-6 py-16 text-center",
+        className,
+      )}
+      {...props}
+    />
+  );
 }

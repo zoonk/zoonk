@@ -20,6 +20,24 @@ export const CHARACTER_RULES: readonly string[] = [
   "With reduced motion an act draws its expression at once (the face, and the Trickster's pose), and nothing moves.",
 ];
 
+export const CHARACTER_SIZE_RULES: readonly string[] = [
+  'A character is never cut by its own picture. Under about 64px it is drawn as its face (`view="face"`), above that as its whole body (`view="body"`): no crop and no negative margin.',
+  "Each view's picture holds everything that view draws, in every expression, stage and Energy, so a change of state moves nothing.",
+  "The learner's own buddy is `BuddyArt` wherever it shows. Another buddy (a picker's options, a ceremony's new belt) is `Buddy` with the same `view`, and the Trickster is `Trickster` with the same two views.",
+  "A face is square. A body is 6 wide by 7 tall, so give it a height.",
+];
+
+export type CharacterSize = { className: string; size: string; view: "body" | "face" };
+
+export const CHARACTER_SIZES: readonly CharacterSize[] = [
+  { className: "size-4", size: "16px", view: "face" },
+  { className: "size-6", size: "24px", view: "face" },
+  { className: "size-8", size: "32px", view: "face" },
+  { className: "size-12", size: "48px", view: "face" },
+  { className: "h-23", size: "92px tall", view: "body" },
+  { className: "h-35", size: "140px tall", view: "body" },
+];
+
 export type CharacterMoment = { act: string; beat: string; character: string; moment: string };
 
 export const CHARACTER_MOMENTS: readonly CharacterMoment[] = [

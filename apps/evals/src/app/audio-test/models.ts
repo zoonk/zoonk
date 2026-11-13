@@ -4,7 +4,7 @@ export const DEFAULT_AUDIO_MODEL_VALUE = "default";
 
 export const AUDIO_MODEL_OPTIONS = [
   {
-    label: "Default (Gemini 3.8 Flash, then Flash Lite, then MAI-Voice, then OpenAI)",
+    label: "Default (Gemini first, then fallbacks)",
     value: DEFAULT_AUDIO_MODEL_VALUE,
   },
   { label: "Gemini 3.8 Flash TTS", value: speechModels.geminiFlash },

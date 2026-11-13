@@ -75,7 +75,7 @@ export type KeyFacts = {
   sidebarsWithoutToggle: string[];
 };
 
-export type PanelFacts = NonNullable<ReturnType<typeof readPanel>> & { focusBack: boolean };
+export type PanelFacts = NonNullable<ReturnType<typeof readPanel>> & { focusBack: boolean | null };
 
 const PRESS_SETTLE_MS = 150;
 const SIDEBAR_SETTLE_MS = 400;
@@ -186,15 +186,15 @@ export function panelFindings(panel: PanelFacts): Finding[] {
     ...(panel.centered === false
       ? [behavior("panels", `${panel.label} isn't centered on a laptop, or shows its handle`, true)]
       : []),
-    ...(panel.focusBack
-      ? []
-      : [
+    ...(panel.focusBack === false
+      ? [
           behavior(
             "panels",
             `${panel.label} didn't close on Esc and give focus back to what opened it`,
             true,
           ),
-        ]),
+        ]
+      : []),
     ...(panel.sheet === false
       ? [
           behavior(
