@@ -5,7 +5,7 @@
     <string name="goal_switcher_current_goal">%1$s, current goal. Switch goal</string>
     <string name="goal_switcher_your_goals">Your goals</string>
     <string name="goal_switcher_quick_explanations">Quick explanations</string>
-    <string name="goal_switcher_new_goal">Start a new goal</string>
+    <string name="goal_switcher_new_goal">New goal</string>
     <string name="goal_switcher_explore_courses">Explore courses</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="goal_switcher_daily">%1$s a day</string>
@@ -22,7 +22,7 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Make room for %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">You\'re following as many goals as the free plan allows. Pause one to start %1$s. You can resume it later.</string>
+    <string name="goal_switcher_make_room_description">That\'s as many goals as you can study at once. Pause one to start this one.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Pause</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

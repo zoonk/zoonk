@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "a3230b8b04399c04b4b8e41efc97a2287aee795c3936ad483820cd91bbf705d1",
   "plan_pace_win_challenge": "e45d3a0b4e836a78fffb4fd5fa9235ead215d8fffa5ce955fad4878a0f232987",
   "plan_pace_win_challenges": "20c3906994e979e6e53864d9d4a6f16142c8c1a07420988fbef607bf24a5db8c",
-  "plan_past_date_exam_sentence": "ef71baae0c07d1eca360206a146a7732967d9bf6f657bcda5abe3693e169fa4c",
+  "plan_past_date_exam_sentence": "a47537ddc8a4741f012e34453aead0d914b0091cb99f7a1be8fbffb1dbceab3c",
   "plan_past_date_exam_title": "fabaffa26cf73ab06eb7e320e13c91175736069bb136279bb98836d509692767",
-  "plan_past_date_goal_sentence": "2c21f69506ff929d8959042f3f725b56076deb1c1df31c0750948c9c1c223bb3",
+  "plan_past_date_goal_sentence": "3fc06076b014f6003a7ca6da2f3c4e9d6f8a17fa55d8036eae28c6fe3c63a0e0",
   "plan_past_date_goal_title": "a8734231b6c0547a316c60bbc62f9281c97d44bc3c37f6420392094ada50bb9e",
   "plan_pause_goal": "66b668dd2fbe26b03a122cd6e8be75f6e6a8ec93fc061110d2936db7c5df98c2",
   "plan_phase_after_exam": "0b8723d3d79bfb8aeb6e4e6ea02764f1be4c4f6855756c6d2196539526085f16",
@@ -926,16 +926,16 @@
         <item quantity="other">O %1$d minut więcej nauki dziennie przez %2$s i znów uczysz się zgodnie z planem.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Przed egzaminem pozostała %d lekcja.</item>
-        <item quantity="few">Przed egzaminem pozostały %d lekcje.</item>
-        <item quantity="many">Przed egzaminem pozostało %d lekcji.</item>
-        <item quantity="other">Przed egzaminem pozostało %d lekcji.</item>
+        <item quantity="one">Termin egzaminu minął, a została jeszcze %d lekcja.</item>
+        <item quantity="few">Termin egzaminu minął, a zostały jeszcze %d lekcje.</item>
+        <item quantity="many">Termin egzaminu minął, a zostało jeszcze %d lekcji.</item>
+        <item quantity="other">Termin egzaminu minął, a zostało jeszcze %d lekcji.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Termin minął, a do ukończenia pozostała %d lekcja.</item>
-        <item quantity="few">Termin minął, a do ukończenia pozostały %d lekcje.</item>
-        <item quantity="many">Termin minął, a do ukończenia pozostało %d lekcji.</item>
-        <item quantity="other">Termin minął, a do ukończenia pozostało %d lekcji.</item>
+        <item quantity="one">Termin zakończenia minął, a została jeszcze %d lekcja.</item>
+        <item quantity="few">Termin zakończenia minął, a zostały jeszcze %d lekcje.</item>
+        <item quantity="many">Termin zakończenia minął, a zostało jeszcze %d lekcji.</item>
+        <item quantity="other">Termin zakończenia minął, a zostało jeszcze %d lekcji.</item>
     </plurals>
     <string name="plan_this_week">W tym tygodniu</string>
     <string name="plan_week_time">%1$s z %2$s</string>

@@ -6,9 +6,9 @@
   "goal_switcher_explore_courses": "564073b74c7ede48cf28252815e4621a8b30eef1fe5ab83999e941379e59241d",
   "goal_switcher_failed": "aa2af97d6a278c8670141c140173c5c3a78a94b88ff81dbe554b3ec87ee22257",
   "goal_switcher_finished": "ed7b54c512cebf4759a6c4767ebeb10799a59a63065f5bcc590abfc3b28c7397",
-  "goal_switcher_make_room_description": "2a5d06c5072cc570db0a3e1c9e578646f2209c44a00da6dbdf5a406311341d36",
+  "goal_switcher_make_room_description": "349ac101bc9bf18a8f80b1afd6fd90725fed8c81c09d210b603f5c91dfc38ffd",
   "goal_switcher_make_room_title": "120faf0e3ab4644cc7bc8dd487ad300806f9cd0a29e17682d5d3770eda3cd5b2",
-  "goal_switcher_new_goal": "ba9cda1997221ce841a26408813c5efcb3dc7c5ff7234de75a73f525a09063b7",
+  "goal_switcher_new_goal": "6b641a1025841fa373ecdd1f56078d4539029db85f882f2550d669a3dd343906",
   "goal_switcher_pause": "f135b71f4b41ae0aa67b28744c26f94f31efe57544b7c36d32c94242759fee3e",
   "goal_switcher_pause_goal": "d67c4a4cbc7a3d3b0287b258aee625082ac29b6133a6cd1234e2a02be10658a6",
   "goal_switcher_pause_to_start": "936b1ba6568f981aef135263869876842f3b95bda5d4c47ef3323857ec3bab0c",
@@ -27,7 +27,7 @@
     <string name="goal_switcher_current_goal">%1$s, objetivo actual. Cambiar de objetivo</string>
     <string name="goal_switcher_your_goals">Tus objetivos</string>
     <string name="goal_switcher_quick_explanations">Explicaciones rápidas</string>
-    <string name="goal_switcher_new_goal">Crear un nuevo objetivo</string>
+    <string name="goal_switcher_new_goal">Nuevo objetivo</string>
     <string name="goal_switcher_explore_courses">Explorar cursos</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="goal_switcher_daily">%1$s al día</string>
@@ -44,7 +44,7 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Haz espacio para %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">Ya estás siguiendo el máximo de objetivos que permite el plan gratis. Pausa uno para activar %1$s. Puedes reanudarlo más adelante.</string>
+    <string name="goal_switcher_make_room_description">Llegaste al límite de objetivos que puedes estudiar a la vez. Pausa uno para crear este.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Pausar</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

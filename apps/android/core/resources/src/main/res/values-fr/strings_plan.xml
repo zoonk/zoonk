@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "7a7003a9e1cb69af55de73dfab2d415f131494c6139a50996d0f84f1381abc2c",
   "plan_pace_win_challenge": "d49fe8af8b6776c2cf3ea4e1450d61fc9f9306cc2383fcb2522dc96828b850c6",
   "plan_pace_win_challenges": "5229f642cfd0bfbf9c0512f039d5bb788f607ae154d41b62f73c5d6c325ec469",
-  "plan_past_date_exam_sentence": "dcf2bfa85ded1a90069d6b98d05fbefecd1047e9c57d82d58bf0108374054853",
+  "plan_past_date_exam_sentence": "ccdf07a8888d03e184471ac81a971b9f21a29883881d96dd1a7171890ba87348",
   "plan_past_date_exam_title": "f0a0c95001212d198d582c59456eec387be4c6e0415f09675c5afc1c5c457dd2",
-  "plan_past_date_goal_sentence": "ab95134614c08f850df24af858afe11ae959fd7776e6909d118b5cc27c0276f3",
+  "plan_past_date_goal_sentence": "ecb4c8b6e92b5115975315743e8abcc70cc35442f84a56f22281cff4a99b94b9",
   "plan_past_date_goal_title": "a5981748a4709266749001564603ed125d964a2866df8bc031d69a6666ea9e55",
   "plan_pause_goal": "d1ffaa7bba74eba8880e12a73d2dc58ee803f52ccccaca3a33c423d152a1e3bd",
   "plan_phase_after_exam": "5d88a3f55504bb36a48e628e68be238a016f63ac5a1b31842c49f825d94fd6ec",
@@ -903,14 +903,14 @@
         <item quantity="other">%1$d minutes de plus par jour pendant %2$s et tu seras de nouveau dans les temps.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Il te restait %d leçon avant ton examen.</item>
-        <item quantity="many">Il te restait %d leçons avant ton examen.</item>
-        <item quantity="other">Il te restait %d leçons avant ton examen.</item>
+        <item quantity="one">La date de ton examen est passée et il te reste %d leçon.</item>
+        <item quantity="many">La date de ton examen est passée et il te reste %d leçons.</item>
+        <item quantity="other">La date de ton examen est passée et il te reste %d leçons.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">À la date prévue, il te restait %d leçon.</item>
-        <item quantity="many">À la date prévue, il te restait %d leçons.</item>
-        <item quantity="other">À la date prévue, il te restait %d leçons.</item>
+        <item quantity="one">La date de fin de ton plan est passée et il te reste %d leçon.</item>
+        <item quantity="many">La date de fin de ton plan est passée et il te reste %d leçons.</item>
+        <item quantity="other">La date de fin de ton plan est passée et il te reste %d leçons.</item>
     </plurals>
     <string name="plan_this_week">Cette semaine</string>
     <string name="plan_week_time">%1$s sur %2$s</string>

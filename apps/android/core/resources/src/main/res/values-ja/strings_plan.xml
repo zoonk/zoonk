@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "99537d565c3929828fdcdfa7c284faa8848c29c6eb94140986bd3f0b4873b6ca",
   "plan_pace_win_challenge": "1c45d9a5e90c144631fae72f85e84a07309d8eb73c65eba55d3eb3f708a7f27a",
   "plan_pace_win_challenges": "793e9da97a2ec35082f6be4e8405385328279222b8432376b4b16582a010bda5",
-  "plan_past_date_exam_sentence": "f60c41fb9d2cb12c6081e810bfbbee5851eb3217580042b3d995fb17c6c47f1a",
+  "plan_past_date_exam_sentence": "9a1a0c925be5af3126552b5fd0e2975d34e2d27a5ef964e13fca6b74300e5660",
   "plan_past_date_exam_title": "ed06f60cf5f6c3cec1097293f9bea8f8e63f9fb03dac053aa0ee2cccd029bf01",
-  "plan_past_date_goal_sentence": "eec283d7aac3c5c8f1db71ae6e75c5a81a2db40b608899d9f906c4c4d03996c3",
+  "plan_past_date_goal_sentence": "e184ac6c4ff99a5e4c12de5c21de5d1855de5b272adf7bae6d9cd0ca229b36c4",
   "plan_past_date_goal_title": "62cf3fd7c516686943704136b62b189bf489ed7b63cefd8947125e9c88f0e49f",
   "plan_pause_goal": "72706ccaf7949d6b0873a17bf73a959c2fce44bb214165d07c8dcf8b5a4b4359",
   "plan_phase_after_exam": "45db19d76d5e81d2ca259c0fd7e834fde6d8a03584462b7004736fb5d2b98104",
@@ -857,10 +857,10 @@
         <item quantity="other">1日の学習時間を%1$d分増やして%2$s続けると、また順調なペースに戻れます。</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="other">試験日を迎えた時点で、%dレッスンが残っていました。</item>
+        <item quantity="other">%dレッスンが残ったまま、試験日を過ぎました。</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="other">目標日を迎えた時点で、%dレッスンが残っていました。</item>
+        <item quantity="other">%dレッスンが残ったまま、終了予定日を過ぎました。</item>
     </plurals>
     <string name="plan_this_week">今週</string>
     <string name="plan_week_time">%1$s / %2$s</string>

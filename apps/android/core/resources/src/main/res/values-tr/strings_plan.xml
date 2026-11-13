@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "e5b1080e68f1933f936b7c33c43a870155bfc9064454e03995ca7b0372d05bc6",
   "plan_pace_win_challenge": "389db363d6d8502aec58611636485cfb081b4c7e2c3f78ff9e138f4d69c25be2",
   "plan_pace_win_challenges": "0dff3a5a01c7e5677920d5198f10ba69811d1bce567211de9460ad7ff3607214",
-  "plan_past_date_exam_sentence": "c23398e29a1f03d1b892870294c967bb08a0d999cd1b254a442f12929ae6b9ba",
+  "plan_past_date_exam_sentence": "b503c79c380dd6412a3078be93749fdd0a46bec82ceb08dcc48a0b32150a0b45",
   "plan_past_date_exam_title": "be6f3990708661824ba151b7e51b6137d8292a86f33858863bf8b010a54b3c33",
-  "plan_past_date_goal_sentence": "1b09adb56d1923305ab0799cbab60db513639d7ed171f4254db26a7347799fd0",
+  "plan_past_date_goal_sentence": "6dc34ca564b58ea7f37b36530fc473fbba7fbecc1ff7dafc08ae6d6e1e8cc442",
   "plan_past_date_goal_title": "32cfa4cfaf66ff5dfb6ffa04ac75bc1ba249cb56093c353450a654fc7f441e9d",
   "plan_pause_goal": "011cf29bbb96f964309ce4da56fd1ead9ec05375d03543056c764085a132ac79",
   "plan_phase_after_exam": "48874c600df93fadf3e5de26286e312d0a1b42ad9699e3d602aa6ece0fd5ff00",
@@ -880,12 +880,12 @@
         <item quantity="other">Günde %1$d dakika daha çalışırsan %2$s sonra planın yeniden yoluna girer.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Sınav tarihi geldiğinde %d ders kalmıştı.</item>
-        <item quantity="other">Sınav tarihi geldiğinde %d ders kalmıştı.</item>
+        <item quantity="one">Sınav tarihin geçti, geriye %d ders kaldı.</item>
+        <item quantity="other">Sınav tarihin geçti, geriye %d ders kaldı.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Hedeflediğin tarih geldiğinde %d ders kalmıştı.</item>
-        <item quantity="other">Hedeflediğin tarih geldiğinde %d ders kalmıştı.</item>
+        <item quantity="one">Bitiş tarihin geçti, geriye %d ders kaldı.</item>
+        <item quantity="other">Bitiş tarihin geçti, geriye %d ders kaldı.</item>
     </plurals>
     <string name="plan_this_week">Bu hafta</string>
     <string name="plan_week_time">%1$s / %2$s</string>

@@ -283,12 +283,12 @@
         <item quantity="other">%1$d more minutes a day for %2$s and you\'re keeping pace again.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">%d lesson was left before your exam.</item>
-        <item quantity="other">%d lessons were left before your exam.</item>
+        <item quantity="one">Your exam date has passed with %d lesson left.</item>
+        <item quantity="other">Your exam date has passed with %d lessons left.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Your date came with %d lesson left.</item>
-        <item quantity="other">Your date came with %d lessons left.</item>
+        <item quantity="one">Your end date has passed with %d lesson left.</item>
+        <item quantity="other">Your end date has passed with %d lessons left.</item>
     </plurals>
     <string name="plan_this_week">This week</string>
     <string name="plan_week_time">%1$s of %2$s</string>

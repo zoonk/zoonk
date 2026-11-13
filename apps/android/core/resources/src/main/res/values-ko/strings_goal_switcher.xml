@@ -6,9 +6,9 @@
   "goal_switcher_explore_courses": "e8e7eb866134c1764f0239481cd1d9a870505de8431454cba13e7263a65f9b5d",
   "goal_switcher_failed": "35b8b7b5eb0403df6631f4557848ebeb3f8eebbe5c88356702076d9fb89ed610",
   "goal_switcher_finished": "a4975bfd831f6ec0cfff927cf2daf13b807e013ecf61ac8ce1e2d3cceed1511c",
-  "goal_switcher_make_room_description": "e4c3ec563b548973f86d51e172f67c69a128917e80f029a297644969080ee142",
+  "goal_switcher_make_room_description": "968bbf1be97232b3fd533dabb8e04356422872beff65dd4996ba264913d98dac",
   "goal_switcher_make_room_title": "010df4274e5d3e40e64d0edae0ae08190fae2b565fd931f48df0e8e03a627dc6",
-  "goal_switcher_new_goal": "a5209bf492acdaf56c077a03bec5522ccaa32846ad87d15e0c22354c43b413bb",
+  "goal_switcher_new_goal": "134561d48407695cc799ca4899627b2174b0ed962ab266c4fde1e65aac0ffada",
   "goal_switcher_pause": "f51acec5fdea104301c50bc3927f6b3653a1eb586daf5b3b80f6855b76067b41",
   "goal_switcher_pause_goal": "6b0e10aa05f1f2ac978e9d508be5abfc5bd67310ed119ce6b1a17cb577335939",
   "goal_switcher_pause_to_start": "f7c70903627e27e491574ff6f9abbf1fe826d576de5fd15c79bc980f4a917110",
@@ -27,7 +27,7 @@
     <string name="goal_switcher_current_goal">%1$s, 현재 목표. 목표 바꾸기</string>
     <string name="goal_switcher_your_goals">내 목표</string>
     <string name="goal_switcher_quick_explanations">간단한 설명</string>
-    <string name="goal_switcher_new_goal">새 목표 시작하기</string>
+    <string name="goal_switcher_new_goal">새 목표</string>
     <string name="goal_switcher_explore_courses">코스 둘러보기</string>
     <!-- %1$s is a duration, such as "30 min". -->
     <string name="goal_switcher_daily">하루 %1$s</string>
@@ -44,7 +44,7 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">%1$s 목표를 위한 자리 만들기</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. %1$s 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요.</string>
+    <string name="goal_switcher_make_room_description">동시에 학습할 수 있는 목표 수를 다 채웠어요. 이 목표를 시작하려면 다른 목표 하나를 일시 중지하세요.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">일시 정지</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

@@ -212,7 +212,6 @@
   "onboarding_placement_wrong": "9dac2cd945f8db2f79a2fae9697c8177984ae0214d5a6227982da4730fc69841",
   "onboarding_placement_your_answer": "ee0aaf17d6f50fc01ad37b2cb7d50ca8f4708325ca8fd875e542f20449c95117",
   "onboarding_plan_answers_saved": "b6f37737c87f7172fdd252e757c0637ce71805d49413d95063bac85b3f7cbabb",
-  "onboarding_plan_look_over": "b74a39acfbb7d47ba063b571c7662ad719e3c1d3d81d2ddb2e2986cfe32616ba",
   "onboarding_plan_not_started": "41be047e213a1a6b1a1d0f853f753e4df9426c457bd90c70a83d2f407a39d3ac",
   "onboarding_plan_ready_goal": "4cdde6bf6e199f097695525ffe075f74ed9d97e7ea0b86615e5d1e754a85bca8",
   "onboarding_plan_so_far": "8176186c9167ae3ef30b5c30e287c9b70fc9efa627dca4b78b4fd8dbad6b12be",
@@ -1054,7 +1053,6 @@
     <string name="onboarding_reveal_reading_line_fit">Intégration à ton plan…</string>
     <string name="onboarding_see_plan">Voir ton plan</string>
     <string name="onboarding_plan_ready_goal">Ton plan %1$s est prêt.</string>
-    <string name="onboarding_plan_look_over">Jette-y un œil avant de commencer.</string>
     <string name="onboarding_reveal_start_here">Commence ici</string>
     <string name="onboarding_reveal_up_next">À suivre</string>
     <string name="onboarding_reveal_first_week">Ta première semaine</string>

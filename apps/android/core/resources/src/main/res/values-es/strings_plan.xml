@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "7aaa4673d97ba8035ecd94987b513532955d59a3d2b552a4b0ee0a5e4d53f993",
   "plan_pace_win_challenge": "bed0e72dad3554123623352b6dc50aaa9730dd23c544f054a2f3e64069ba15a8",
   "plan_pace_win_challenges": "7be11f7f8537f0f6810c122dd3bf67175ce09b9b69b39309cd19cec3058f0d0f",
-  "plan_past_date_exam_sentence": "7507d78e1604b78f7da77e5af1c4512a879c095e3086b1379c480f186fc898d2",
+  "plan_past_date_exam_sentence": "8169abc7270ac2aa7e7c3c2398ac3b2e33e249140821551fd92d55d28ee68ef2",
   "plan_past_date_exam_title": "7fb0ad294374114339cab15d01f747578b919112cfc33aeca682fa581df1bd11",
-  "plan_past_date_goal_sentence": "1d224312d07d231b8f1330bd0f9dc4ae37f014d262b2edefd43c42d198115538",
+  "plan_past_date_goal_sentence": "6d7f96bda0b125ae81c6a95dfc929cec8d303615d413d2f3bf78afd67009683b",
   "plan_past_date_goal_title": "44ae84f20ddb998aa0915e5e7b24ba7a9ecb4bc379c4758b700e51ea45e6bac7",
   "plan_pause_goal": "7f74c047f9f4d448dbe4fc73c72417717a0f9c99f712cb6a5ff2bb118d337468",
   "plan_phase_after_exam": "884b9433dd28f8bbc6be7dcb07255af7abac4821cb88b43a2b2cde53152f43ce",
@@ -903,14 +903,14 @@
         <item quantity="other">Con %1$d minutos más al día durante %2$s, vuelves a estar al día.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Llegó tu examen con %d lección pendiente.</item>
-        <item quantity="many">Llegó tu examen con %d lecciones pendientes.</item>
-        <item quantity="other">Llegó tu examen con %d lecciones pendientes.</item>
+        <item quantity="one">Ya pasó la fecha de tu examen y aún te queda %d lección.</item>
+        <item quantity="many">Ya pasó la fecha de tu examen y aún te quedan %d lecciones.</item>
+        <item quantity="other">Ya pasó la fecha de tu examen y aún te quedan %d lecciones.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Llegó la fecha de tu objetivo con %d lección pendiente.</item>
-        <item quantity="many">Llegó la fecha de tu objetivo con %d lecciones pendientes.</item>
-        <item quantity="other">Llegó la fecha de tu objetivo con %d lecciones pendientes.</item>
+        <item quantity="one">Ya pasó la fecha para terminar tu plan y aún te queda %d lección.</item>
+        <item quantity="many">Ya pasó la fecha para terminar tu plan y aún te quedan %d lecciones.</item>
+        <item quantity="other">Ya pasó la fecha para terminar tu plan y aún te quedan %d lecciones.</item>
     </plurals>
     <string name="plan_this_week">Esta semana</string>
     <string name="plan_week_time">%1$s de %2$s</string>

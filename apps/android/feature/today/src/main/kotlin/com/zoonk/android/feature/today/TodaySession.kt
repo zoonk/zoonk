@@ -4,9 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,15 +13,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +30,6 @@ import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -48,42 +40,27 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
-import com.zoonk.android.feature.session.FreshStart
-import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.SessionBar
 import com.zoonk.android.feature.session.StepOpenFailed
-import com.zoonk.android.feature.session.blockDetail
-import com.zoonk.android.feature.session.blockTitle
-import com.zoonk.android.feature.session.challengePhase
 import com.zoonk.android.feature.session.drawsDayProgress
-import com.zoonk.android.feature.session.practisesTopics
-import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
-import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.components.statusLink
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.api.models.PlanStatus
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyExtraTimeLessonsInner
 import com.zoonk.api.models.StudySession
-import kotlinx.datetime.toJavaLocalDate
 
 internal fun LazyListScope.todaySession(
     model: TodayDayModel,
@@ -137,7 +114,6 @@ private fun LazyListScope.sessionQueue(
                 label = doneFoldLabel(queue.done),
                 done = true,
                 open = viewModel.doneOpen,
-                minutes = null,
                 onToggle = { viewModel.doneOpen = !viewModel.doneOpen },
                 modifier = Modifier.pageItem(),
             )
@@ -185,10 +161,6 @@ private fun LazyListScope.sessionQueue(
                     },
                 done = false,
                 open = moreOpen,
-                minutes =
-                    model.day
-                        .minutesAfter(queue.before + listOfNotNull(next) + queue.after.take(UPCOMING_ROWS))
-                        .takeIf { !moreOpen && queue.after.size + coming > UPCOMING_ROWS },
                 onToggle = {
                     if (moreOpen) list.keepFoldInView(hidden = more)
                     viewModel.moreOpen = !moreOpen
@@ -249,11 +221,8 @@ private fun ComingLessonsLine(
     }
 
     Column {
-        FlowRow(itemVerticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.today_coming_not_written))
-            TextButton(onClick = actions.prepare, enabled = viewModel.pending != TodayTap.Prepare) {
-                Text(stringResource(R.string.today_get_lessons))
-            }
+        TextButton(onClick = actions.prepare, enabled = viewModel.pending != TodayTap.Prepare) {
+            Text(stringResource(R.string.today_get_them_now))
         }
         if (viewModel.failed == TodayTap.Prepare) {
             Text(
@@ -332,7 +301,7 @@ private fun TestOutLink(
     chapterId: java.util.UUID,
     onNavigate: (AppRoute) -> Unit,
 ) {
-    val take = stringResource(R.string.today_take_the_test)
+    val take = stringResource(R.string.test_out_skip_chapter)
     val text =
         buildAnnotatedString {
             val already = stringResource(R.string.today_already_know_this)
@@ -360,13 +329,11 @@ private fun RowMark(content: @Composable () -> Unit) {
     Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
 }
 
-/** Only time still ahead says its minutes: a done row's are the plan's estimate. */
 @Composable
 private fun FoldRow(
     label: String,
     done: Boolean,
     open: Boolean,
-    minutes: Double?,
     onToggle: () -> Unit,
     modifier: Modifier,
 ) {
@@ -395,7 +362,6 @@ private fun FoldRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (minutes != null && minutes > 0) DayMinutes(minutes)
     }
 }
 
@@ -436,17 +402,16 @@ private fun TodayDayStatus(
     if (pastDate != null) {
         val sentence =
             if (model.today.goal.kind == com.zoonk.api.models.TodayGoal.Kind.EXAM) {
-                pluralStringResource(R.plurals.today_past_date_exam, pastDate, pastDate)
+                pluralStringResource(R.plurals.plan_past_date_exam_sentence, pastDate, pastDate)
             } else {
-                pluralStringResource(R.plurals.today_past_date, pastDate, pastDate)
+                pluralStringResource(R.plurals.plan_past_date_goal_sentence, pastDate, pastDate)
             }
-        TodayStatusLine(R.drawable.ic_event_upcoming, sentence, stringResource(R.string.today_past_date_detail), modifier)
+        TodayStatusLine(R.drawable.ic_event_upcoming, sentence, null, modifier)
         return
     }
 
     when (model.state) {
         StudySession.State.DONE -> {
-            val studied = day.studiedToday()
             val link =
                 if (model.keepLearning) {
                     statusLink(stringResource(R.string.today_see_summary)) {
@@ -458,7 +423,7 @@ private fun TodayDayStatus(
             TodayStatusLine(
                 icon = null,
                 sentence = stringResource(if (day.minutes.dailyGoal == 0.0) R.string.today_done_day_off else R.string.today_done),
-                clause = if (studied > 0) formatMinutes(studied.toInt(), currentLocale()) else null,
+                clause = null,
                 modifier = modifier,
                 leading = { DoneMark() },
                 link = link,
@@ -477,7 +442,7 @@ private fun TodayDayStatus(
                 TodayStatusLine(
                     icon = null,
                     sentence = stringResource(R.string.today_waiting),
-                    clause = stringResource(R.string.today_waiting_detail),
+                    clause = null,
                     modifier = modifier,
                     leading = { CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) },
                 )
@@ -489,22 +454,16 @@ private fun TodayDayStatus(
         }
 
         StudySession.State.REST -> {
-            val welcomeBack = day.freshStart == FreshStart.WelcomeBack
-            val clause =
-                when {
-                    model.keepLearning && welcomeBack -> R.string.today_rest_next_lessons_welcome_back
-                    model.keepLearning -> R.string.today_rest_next_lessons
-                    welcomeBack -> R.string.today_rest_welcome_back
-                    else -> R.string.today_rest_enjoy
-                }
+            val clause = if (model.keepLearning) R.string.today_rest_next_lessons else R.string.today_rest_enjoy
             TodayStatusLine(R.drawable.ic_dark_mode, stringResource(R.string.today_rest), stringResource(clause), modifier)
         }
 
         StudySession.State.AHEAD -> {
+            val finished = model.today.progress?.status is PlanStatus.PlanStatusOneOf4Value
             TodayStatusLine(
                 R.drawable.ic_auto_awesome,
-                stringResource(R.string.today_nothing_new),
-                stringResource(R.string.today_nothing_new_detail),
+                stringResource(if (finished) R.string.today_plan_finished else R.string.today_nothing_new),
+                null,
                 modifier,
             )
         }

@@ -6,9 +6,9 @@
   "goal_switcher_explore_courses": "07e41a45a97e3c5c2c434d1b9bdd744eef64020bd93fff3f78ed29c1b91faa88",
   "goal_switcher_failed": "7b447eae81a99bce62fe640742c269ad752a5e6e79638fb97df541a4986b64a7",
   "goal_switcher_finished": "9294791c7d81b8a8e67ced31eef129631225820dd78011a6432aeaf66e14c3d4",
-  "goal_switcher_make_room_description": "88b1bb87995397057ff26bd1b6298dd078603f5c55795260d9efb57f4c076e16",
+  "goal_switcher_make_room_description": "d19dbf501ae709ba26968decf8c26624fe4200ea9c22fc3a1db7f7becc957f9e",
   "goal_switcher_make_room_title": "723efdaf092907f388dfacc3c00ec560225114252d15ab43edd03df0a0651b98",
-  "goal_switcher_new_goal": "3e738cfd98cff0f552646bcf36179c8c3e06ab5f3a46d0f1253ade714cac9d76",
+  "goal_switcher_new_goal": "bb4e833ea1e1f5501a3223543d52aac2dcd922600a457a0a551efb66f396117d",
   "goal_switcher_pause": "a137c7b728bd310a066980b379c538c742e22fb4c7880da96263f51be3731c3f",
   "goal_switcher_pause_goal": "9e28a400c4db6c01f28062d563e2b29d03a726e753d45a72a3c20f61b9bb7f79",
   "goal_switcher_pause_to_start": "6fda42f67df991e97544d63b1700aa0303d40fe1a31b9d00aa4564f2a5359055",
@@ -44,7 +44,7 @@
     <!-- The title of the sheet that lists the goals the learner can pause; %1$s is the name of the goal waiting to start. -->
     <string name="goal_switcher_make_room_title">Miejsce na cel: %1$s</string>
     <!-- %1$s is the name of the goal waiting to start. -->
-    <string name="goal_switcher_make_room_description">Masz już maksymalną liczbę aktywnych celów w pakiecie Free. Wstrzymaj jeden z nich, aby zacząć realizować cel: %1$s. Do wstrzymanego celu możesz wrócić później.</string>
+    <string name="goal_switcher_make_room_description">To maksymalna liczba celów, które możesz realizować naraz. Wstrzymaj jeden z nich, aby rozpocząć ten.</string>
     <!-- Button beside a goal the learner follows: it pauses that goal. -->
     <string name="goal_switcher_pause">Wstrzymaj</string>
     <!-- Read by TalkBack on a goal's Pause button; %1$s is the goal's name. -->

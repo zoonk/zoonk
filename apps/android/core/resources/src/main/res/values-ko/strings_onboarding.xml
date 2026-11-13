@@ -212,7 +212,6 @@
   "onboarding_placement_wrong": "c9bac29490f4a2bfff337fb88ff62813dc9877064e0169aa2e3e966e652898e6",
   "onboarding_placement_your_answer": "9d229aa7c2ea1ef86af59768e33ebf67265c2cc5beb3aa69db0d06574a4a26df",
   "onboarding_plan_answers_saved": "f7014a1763398a9a20426781bd023da07fd3ec5c9ef26fcc2b03d0e2bf538557",
-  "onboarding_plan_look_over": "1dc9a16654ad08028e7ab226321715911727c26f3b8cf1297a1baf8588feb04d",
   "onboarding_plan_not_started": "1ece6cce4ab56ca956fd9480675d9d58bfc5b6925ce147a93ea9950cbe093eb5",
   "onboarding_plan_ready_goal": "7447e9739ff7efa0642250c791de81b0941d7b8f874df8410b665185b68215c4",
   "onboarding_plan_so_far": "45ef9bfb4b69424b1a695cc97ab4d71689b411a403bec09de54fe89660b1f239",
@@ -1008,7 +1007,6 @@
     <string name="onboarding_reveal_reading_line_fit">계획에 반영하고 있어요…</string>
     <string name="onboarding_see_plan">내 계획 보기</string>
     <string name="onboarding_plan_ready_goal">%1$s 계획이 준비됐어요.</string>
-    <string name="onboarding_plan_look_over">시작하기 전에 계획을 살펴보세요.</string>
     <string name="onboarding_reveal_start_here">여기서 시작</string>
     <string name="onboarding_reveal_up_next">다음 레슨</string>
     <string name="onboarding_reveal_first_week">첫 주</string>

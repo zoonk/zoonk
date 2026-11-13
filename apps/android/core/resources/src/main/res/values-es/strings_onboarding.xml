@@ -212,7 +212,6 @@
   "onboarding_placement_wrong": "314527b4b34958fff6b1fd150849fbfb939045cd76755ca2d51cde6acf7cc0c0",
   "onboarding_placement_your_answer": "340d86c24b34c48b42a9d1a28cd2b1bfa75e1ac50154af04a433d137715999ae",
   "onboarding_plan_answers_saved": "3210c04386487e2000da60301bd4208a7fcb6b053d932c361f0d298dce5cb9c3",
-  "onboarding_plan_look_over": "a9e2ef7904c173a5a6677d3c859c8048b356d13acc7de889996808fb9e5cb1a6",
   "onboarding_plan_not_started": "fd3c110dc9a86bb901b71556186ea5ef2701f89ac2f3265fc52f063eba8ac200",
   "onboarding_plan_ready_goal": "6821745a65ad46c0cae519eb35edeffb471f7b65ecfef31b2bc751b284d806b3",
   "onboarding_plan_so_far": "309afd33d283710a3e18240863a54c5e95f8bf0f78fa99f3e5c8302ea78bee8e",
@@ -1054,7 +1053,6 @@
     <string name="onboarding_reveal_reading_line_fit">Integrándolos en tu plan…</string>
     <string name="onboarding_see_plan">Ver tu plan</string>
     <string name="onboarding_plan_ready_goal">Tu plan de %1$s está listo.</string>
-    <string name="onboarding_plan_look_over">Revísalo antes de empezar.</string>
     <string name="onboarding_reveal_start_here">Empieza aquí</string>
     <string name="onboarding_reveal_up_next">A continuación</string>
     <string name="onboarding_reveal_first_week">Tu primera semana</string>

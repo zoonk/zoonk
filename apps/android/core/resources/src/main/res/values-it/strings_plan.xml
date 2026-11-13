@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "b52baddcb3e0e2af308c22a2a7eb3bf882219f9a848420d558d39b7faae654bd",
   "plan_pace_win_challenge": "72263d3f7850a2d76d9c2b493f3f1ab59c1ba11765d46c3735f05f6234a4c054",
   "plan_pace_win_challenges": "8d74522a2316d2a0dd7b8f8d383e785e4796b3d62f24651aeb0e939e81bb9ca8",
-  "plan_past_date_exam_sentence": "1cd13053fba35f892f2385a79698db605a16bcb6dbb742e3303d6b2920ef4717",
+  "plan_past_date_exam_sentence": "68a56adf9a1ea675ce5b2bd2c4310a8cd28a6fa392a8ee1a4d474f119e4baf14",
   "plan_past_date_exam_title": "068b017a270e3c82acc10948ae2e868493a40fdab65f7dbec6c51940ed1420b3",
-  "plan_past_date_goal_sentence": "00b0c086a1bc98ce18471a2d44b53883e3ce0c8e221491d7c8e39da10d308e33",
+  "plan_past_date_goal_sentence": "247bfefd36c4ec9b632abc18333f8e2b3e3e4208838b8cb64af0f11aa12da6d9",
   "plan_past_date_goal_title": "04252d931632ac530107bb37335b18e583c5a01677a4feb581f08959e21021c7",
   "plan_pause_goal": "d938c3727afd8871a3dd68b81eee0489e004eef7b1fc1e3e153da57468513772",
   "plan_phase_after_exam": "4517fd91e3a34b76dfb626c988b13b6ba4312f0c855f9234f9e33cad66c5ded1",
@@ -903,14 +903,14 @@
         <item quantity="other">%1$d minuti in più al giorno per %2$s e sei di nuovo al passo.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Prima dell’esame restava ancora %d lezione da completare.</item>
-        <item quantity="many">Prima dell’esame restavano ancora %d lezioni da completare.</item>
-        <item quantity="other">Prima dell’esame restavano ancora %d lezioni da completare.</item>
+        <item quantity="one">La data dell’esame è passata e hai ancora %d lezione da completare.</item>
+        <item quantity="many">La data dell’esame è passata e hai ancora %d lezioni da completare.</item>
+        <item quantity="other">La data dell’esame è passata e hai ancora %d lezioni da completare.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Alla data scelta restava ancora %d lezione da completare.</item>
-        <item quantity="many">Alla data scelta restavano ancora %d lezioni da completare.</item>
-        <item quantity="other">Alla data scelta restavano ancora %d lezioni da completare.</item>
+        <item quantity="one">La data di fine è passata e hai ancora %d lezione da completare.</item>
+        <item quantity="many">La data di fine è passata e hai ancora %d lezioni da completare.</item>
+        <item quantity="other">La data di fine è passata e hai ancora %d lezioni da completare.</item>
     </plurals>
     <string name="plan_this_week">Questa settimana</string>
     <string name="plan_week_time">%1$s su %2$s</string>

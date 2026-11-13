@@ -139,7 +139,7 @@ fun GoalSwitcher(
                     navigator.open(AppRoute.GoalSetup(it))
                 }
             },
-            onGetPlus = {
+            onSubscribe = {
                 close()
                 navigator.open(AppRoute.Subscription)
             },

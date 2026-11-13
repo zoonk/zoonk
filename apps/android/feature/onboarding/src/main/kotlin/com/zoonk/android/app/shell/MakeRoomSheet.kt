@@ -47,11 +47,11 @@ internal fun MakeRoomSheet(
     pausing: UUID?,
     failed: Boolean,
     onPause: (UUID) -> Unit,
-    onGetPlus: () -> Unit,
+    onSubscribe: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        MakeRoomContent(waitingName, active, pausing, failed, onPause, onGetPlus)
+        MakeRoomContent(waitingName, active, pausing, failed, onPause, onSubscribe)
     }
 }
 
@@ -62,7 +62,7 @@ internal fun MakeRoomContent(
     pausing: UUID?,
     failed: Boolean,
     onPause: (UUID) -> Unit,
-    onGetPlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     val title = stringResource(R.string.goal_switcher_make_room_title, waitingName)
 
@@ -98,8 +98,8 @@ internal fun MakeRoomContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            OutlinedButton(onClick = onGetPlus, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
-                Text(stringResource(R.string.subscription_get_plus))
+            OutlinedButton(onClick = onSubscribe, modifier = Modifier.fillMaxWidth(), size = ButtonSize.Large) {
+                Text(stringResource(R.string.subscription_subscribe))
             }
         }
     }

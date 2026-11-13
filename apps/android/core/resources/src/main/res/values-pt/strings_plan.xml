@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "5b8379b4992a29870fce3733c76cc86ef56a4a2191eed882fe6a1bf5f2a1a676",
   "plan_pace_win_challenge": "ddb45813aef30d942d6f1bb3243e9db4ab8a1c19cccfcaf0133698415c6c89be",
   "plan_pace_win_challenges": "6c76e24771d6d762ca094fc6f9aa81d7e94ec28b9e839c744aa81875182d2061",
-  "plan_past_date_exam_sentence": "42f8b9510469b6c0ba22690d54bf601e934dba9de7e3b1c8312ba58ea1d424bc",
+  "plan_past_date_exam_sentence": "4120d3c17aaf97fa2eeb4cfcd72956f4849fad55ea9a161306b27d2550a721bb",
   "plan_past_date_exam_title": "a8ee37f0ecb92e77bd8b9d2415f7d795ed9ceaa892f93a06cf9903b8bc2f0329",
-  "plan_past_date_goal_sentence": "f9e41d47e41068c9eed787c2a74d4801626f36fabfc8c70e65dfcc827e9262d4",
+  "plan_past_date_goal_sentence": "7d802201e279a664a372734be88b042823077a6fb603803898ba66a6392a4587",
   "plan_past_date_goal_title": "4757f3245ee0ef874743fe9d7e56e618740fbf4e08f504f27af8aa27486ab60b",
   "plan_pause_goal": "eba872f8a008c676f2f5e6e41f7e4d2c5742fb12378997d7e34a8fff4e2ba9d0",
   "plan_phase_after_exam": "d1d530e46d975184ac4ad5cec0d096a6408e0853f877637afaf247d8723e01dd",
@@ -903,14 +903,14 @@
         <item quantity="other">Com mais %1$d minutos por dia durante %2$s, você estará no ritmo de novo.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Faltou %d aula antes da sua prova.</item>
-        <item quantity="many">Faltaram %d aulas antes da sua prova.</item>
-        <item quantity="other">Faltaram %d aulas antes da sua prova.</item>
+        <item quantity="one">A data da sua prova passou e ainda falta %d aula.</item>
+        <item quantity="many">A data da sua prova passou e ainda faltam %d aulas.</item>
+        <item quantity="other">A data da sua prova passou e ainda faltam %d aulas.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Sua data chegou com %d aula restante.</item>
-        <item quantity="many">Sua data chegou com %d aulas restantes.</item>
-        <item quantity="other">Sua data chegou com %d aulas restantes.</item>
+        <item quantity="one">A data de término passou e ainda falta %d aula.</item>
+        <item quantity="many">A data de término passou e ainda faltam %d aulas.</item>
+        <item quantity="other">A data de término passou e ainda faltam %d aulas.</item>
     </plurals>
     <string name="plan_this_week">Esta semana</string>
     <string name="plan_week_time">%1$s de %2$s</string>

@@ -212,7 +212,6 @@
   "onboarding_placement_wrong": "ef28abd1857c6f2b3360f10748df2de15432293930a589d04b1a972946d8d4ca",
   "onboarding_placement_your_answer": "50ae3e13d5b747c7bd384f70927d2649ab10e85920e001a709bbf7c68ac94671",
   "onboarding_plan_answers_saved": "3e850aff7c53a5910893dd6877f66ad063448733c504ca1d429147140084237a",
-  "onboarding_plan_look_over": "c7e7ef5639c4f8c0f8fb26ea21b7bd6c552a638643f8b91e01decdf980b31cc7",
   "onboarding_plan_not_started": "a56fda34d86aa7ab10acc862fd3a3b2dd5e263492eb3c6d578f0c46326ab9610",
   "onboarding_plan_ready_goal": "22fe08f81a24a1ac819cf1a84b3884d24448660252a04d7a5756c9ce2c57d1dd",
   "onboarding_plan_so_far": "fa363d8876049adb3d950c8f10ff75aab6b5354ceaa9f7f861f660194397d163",
@@ -1031,7 +1030,6 @@
     <string name="onboarding_reveal_reading_line_fit">Bunları planına yerleştiriyoruz…</string>
     <string name="onboarding_see_plan">Planını gör</string>
     <string name="onboarding_plan_ready_goal">%1$s planın hazır.</string>
-    <string name="onboarding_plan_look_over">Başlamadan önce gözden geçir.</string>
     <string name="onboarding_reveal_start_here">Buradan başla</string>
     <string name="onboarding_reveal_up_next">Sıradaki</string>
     <string name="onboarding_reveal_first_week">İlk haftan</string>
