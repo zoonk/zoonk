@@ -7872,7 +7872,7 @@ msgstr "Diese Mindmap konnte nicht entfernt werden. Versuch es noch einmal."
 #: src/missions/brain-power-reward.tsx
 msgctxt "HCrEOP"
 msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Punkte für das, was du lernst. Sie bringen dich zum nächsten Gürtel und lassen deinen Kumpel wachsen."
+msgstr "Punkte für alles, was du lernst. Sie bringen dich zum nächsten Gürtel und lassen deinen Kumpel wachsen."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -7935,7 +7935,7 @@ msgstr "Erste Schritte"
 #: src/missions/first-steps.tsx
 msgctxt "584gds"
 msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
-msgstr "{count, plural, one {# weiterer Schritt wird nach und nach freigeschaltet} other {# weitere Schritte werden nach und nach freigeschaltet}}"
+msgstr "{count, plural, one {Beim Lernen schaltest du # weitere Aufgabe frei} other {Beim Lernen schaltest du # weitere Aufgaben frei}}"
 
 #: src/missions/first-steps.tsx
 msgctxt "kNlVEU"
@@ -7985,7 +7985,7 @@ msgstr "Wöchentliche Herausforderung"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.LIsld3"
 msgid "Take the mock exam"
-msgstr "Probeprüfung ablegen"
+msgstr "Die Probeprüfung ablegen"
 
 #. A mission to practice an essay.
 #: src/missions/mission-copy.tsx
@@ -8550,12 +8550,12 @@ msgstr "verbleibende Zeit"
 #: src/mock/mock-entry.tsx
 msgctxt "CfczSe"
 msgid "The full exam, half of it or one subject"
-msgstr "Die ganze Prüfung, die Hälfte oder ein Fach"
+msgstr "Die ganze Prüfung, die Hälfte davon oder ein Fach"
 
 #: src/mock/mock-entry.tsx
 msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
-msgstr "Die ganze Prüfung oder die Hälfte"
+msgstr "Die ganze Prüfung oder die Hälfte davon"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -14231,7 +14231,7 @@ msgstr "Platz für {goal} schaffen"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier eines, um dieses zu starten."
+msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier eins, um dieses zu starten."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14684,7 +14684,7 @@ msgstr "Was sich geändert hat"
 #: src/today/today-coming-lessons.tsx
 msgctxt "4bemPv"
 msgid "Get them now"
-msgstr "Jetzt erstellen lassen"
+msgstr "Jetzt erstellen"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -14727,7 +14727,7 @@ msgstr "Du hast an deinem freien Tag gelernt."
 #: src/today/today-day-status.tsx
 msgctxt "CZ9Ql4"
 msgid "You're done for today."
-msgstr "Für heute bist du fertig."
+msgstr "Für heute hast du alles geschafft."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -14762,7 +14762,7 @@ msgstr "Wir bereiten die heutigen Lektionen vor…"
 #: src/today/today-day-status.tsx
 msgctxt "DI5PCI"
 msgid "Today's lessons aren't ready yet."
-msgstr "Die Lektionen für heute sind noch nicht fertig."
+msgstr "Die heutigen Lektionen sind noch nicht fertig."
 
 #: src/today/today-day-status.tsx
 msgctxt "bGbW_K"
@@ -14777,12 +14777,12 @@ msgstr "Du hast alles aufgeholt."
 #: src/today/today-earlier-lessons.tsx
 msgctxt "JMtLiG"
 msgid "{lessons, plural, one {# lesson from earlier days} other {# lessons from earlier days}}"
-msgstr "{lessons, plural, one {# Lektion aus den Vortagen} other {# Lektionen aus den Vortagen}}"
+msgstr "{lessons, plural, one {# Lektion von den Vortagen} other {# Lektionen von den Vortagen}}"
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "dlS9NH"
 msgid "Add to today"
-msgstr "Für heute einplanen"
+msgstr "Für heute hinzufügen"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
@@ -14850,12 +14850,12 @@ msgstr "Deine Lernzeit bis zur Prüfung reicht nicht für alles. In etwa {time} 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
-msgstr "Die Zeit reicht nicht mehr für alle deine Lektionen."
+msgstr "Es bleibt nicht genug Zeit für alle deine Lektionen."
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Willkommen zurück. Heute steht wenig an, damit du leicht wieder einsteigen kannst."
+msgstr "Willkommen zurück. Heute steht nur wenig an, so fällt dir der Wiedereinstieg leicht."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
@@ -14948,7 +14948,7 @@ msgstr "Wir erstellen deinen Plan für „{goal}“"
 #: src/today/today-preparing.tsx
 msgctxt "Xu-pMI"
 msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Das dauert ein bis zwei Minuten. Sobald alles fertig ist, siehst du hier deinen ersten Lerntag."
+msgstr "Wir brauchen ein bis zwei Minuten. Sobald alles bereit ist, erscheint hier dein erster Lerntag."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
@@ -15071,7 +15071,7 @@ msgstr "Prüfungstag"
 #: src/today/today-week-day.tsx
 msgctxt "WcEyrI"
 msgid "end date"
-msgstr "Endtermin"
+msgstr "Zieldatum"
 
 #: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
@@ -15086,7 +15086,7 @@ msgstr "nach deiner Prüfung"
 #: src/today/today-week-day.tsx
 msgctxt "coog-B"
 msgid "after your end date"
-msgstr "nach deinem Endtermin"
+msgstr "nach deinem Zieldatum"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

@@ -7935,7 +7935,7 @@ msgstr "Primeiros passos"
 #: src/missions/first-steps.tsx
 msgctxt "584gds"
 msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
-msgstr "Mais {count, plural, one {# passo fica disponível conforme você avança} other {# passos ficam disponíveis conforme você avança}}"
+msgstr "{count, plural, one {Mais # fica disponível conforme você avança} other {Mais # ficam disponíveis conforme você avança}}"
 
 #: src/missions/first-steps.tsx
 msgctxt "kNlVEU"
@@ -8550,12 +8550,12 @@ msgstr "tempo restante"
 #: src/mock/mock-entry.tsx
 msgctxt "CfczSe"
 msgid "The full exam, half of it or one subject"
-msgstr "A prova completa, metade dela ou uma matéria"
+msgstr "A prova inteira, metade dela ou uma matéria"
 
 #: src/mock/mock-entry.tsx
 msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
-msgstr "A prova completa ou metade dela"
+msgstr "A prova inteira ou metade dela"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -13562,7 +13562,7 @@ msgstr "vetor {base}"
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
-msgstr "Praticar mais {minutes} min"
+msgstr "Praticar por mais {minutes} min"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14128,7 +14128,7 @@ msgstr ", {variety}"
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.J0jAqm"
 msgid "Pause a goal to start it"
-msgstr "Pause um objetivo para começar esse"
+msgstr "Pause um objetivo para começar este"
 
 #. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
@@ -14231,7 +14231,7 @@ msgstr "Abra espaço para {goal}"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr "Você já tem o máximo de objetivos que pode estudar ao mesmo tempo. Pause um para começar esse."
+msgstr "Esse é o máximo de objetivos que você pode estudar ao mesmo tempo. Pause um para começar este."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14646,7 +14646,7 @@ msgstr "{count, plural, one {# aula pulada porque você já sabe o conteúdo} ot
 #: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
-msgstr "Praticar {minutes} min"
+msgstr "Praticar por {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
@@ -14737,7 +14737,7 @@ msgstr "Nenhum estudo planejado para hoje."
 #: src/today/today-day-status.tsx
 msgctxt "RC22zo"
 msgid "Your next lessons are below if you want to study."
-msgstr "Suas próximas aulas estão abaixo se quiser estudar."
+msgstr "Se quiser estudar, suas próximas aulas estão logo abaixo."
 
 #: src/today/today-day-status.tsx
 msgctxt "MdRa2K"
@@ -14850,12 +14850,12 @@ msgstr "Não dá tempo de estudar tudo antes da sua prova. Em cerca de {time}, o
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
-msgstr "Não resta tempo suficiente para todas as suas aulas."
+msgstr "Não dá tempo de fazer todas as suas aulas."
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Que bom ter você de volta. Hoje tem pouca coisa para estudar, então fica fácil recomeçar."
+msgstr "Bom ter você de volta. Hoje tem pouco para estudar, então fica fácil recomeçar."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
@@ -14875,7 +14875,7 @@ msgstr "Manter"
 #: src/today/today-insight.tsx
 msgctxt "5cDa2C"
 msgid "Move it"
-msgstr "Remarcar"
+msgstr "Mudar"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -14948,7 +14948,7 @@ msgstr "Criando seu plano de {goal}"
 #: src/today/today-preparing.tsx
 msgctxt "Xu-pMI"
 msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Leva um ou dois minutos. Seu primeiro dia aparece aqui assim que estiver pronto."
+msgstr "Leva um ou dois minutos. Seu primeiro dia de estudo aparece aqui assim que estiver pronto."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
@@ -15071,7 +15071,7 @@ msgstr "dia da prova"
 #: src/today/today-week-day.tsx
 msgctxt "WcEyrI"
 msgid "end date"
-msgstr "data de término"
+msgstr "data final"
 
 #: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
@@ -15086,7 +15086,7 @@ msgstr "depois da sua prova"
 #: src/today/today-week-day.tsx
 msgctxt "coog-B"
 msgid "after your end date"
-msgstr "depois da sua data de término"
+msgstr "depois da sua data final"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

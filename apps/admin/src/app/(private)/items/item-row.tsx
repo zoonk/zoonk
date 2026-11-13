@@ -1,49 +1,30 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
-import { ProvenanceLine } from "@/components/provenance";
+import { AdminNameCell } from "@/components/admin-name-cell";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { type ItemAnswerStats, getItemAccuracy } from "@/data/items/get-item-answer-stats";
 import { type ListedItem } from "@/data/items/list-items";
-import { formatDate, formatPercent } from "@/lib/format";
+import { formatPercent } from "@/lib/format";
 import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
+import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
-import Link from "next/link";
 
 export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; item: ListedItem }) {
   return (
     <AdminTableRow>
-      <TableCell className="max-w-80 min-w-64 whitespace-normal">
-        <AdminTableRowLink className="font-medium" href={`/items/${item.id}`} prefetch>
-          <span className="line-clamp-2">{getItemLabel(item)}</span>
-        </AdminTableRowLink>
-      </TableCell>
-      <TableCell className="max-w-56 min-w-40 whitespace-normal">
-        <Link className="hover:underline" href={`/skills/${item.skill.id}`} prefetch={false}>
-          <span className="line-clamp-2">{item.skill.name}</span>
-        </Link>
+      <AdminNameCell
+        href={`/items/${item.id}`}
+        note={[languageName(item.language), item.examBlueprint?.name].filter(Boolean).join(" · ")}
+        title={getItemLabel(item)}
+      />
+      <TableCell className="whitespace-normal">
+        <span className="line-clamp-2">{item.skill.name}</span>
       </TableCell>
       <TableCell>{ITEM_FORMAT_LABELS[item.format]}</TableCell>
-      <TableCell className="uppercase">{item.language}</TableCell>
-      <TableCell>{item.field ?? "—"}</TableCell>
-      <TableCell>
-        {item.examBlueprint ? (
-          <Link
-            className="hover:underline"
-            href={`/exams/${item.examBlueprint.id}`}
-            prefetch={false}
-          >
-            {item.examBlueprint.name}
-          </Link>
-        ) : (
-          "—"
-        )}
-      </TableCell>
-      <TableCell className="text-right tabular-nums">{answerStats.attempts}</TableCell>
-      <TableCell className="text-right tabular-nums">
-        {formatPercent(getItemAccuracy(answerStats))}
-      </TableCell>
-      <TableCell>
-        <ProvenanceLine provenance={item} />
-      </TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(item.createdAt)}</TableCell>
+      <TableCell numeric>{answerStats.attempts.toLocaleString("en")}</TableCell>
+      {answerStats.attempts > 0 ? (
+        <TableCell numeric>{formatPercent(getItemAccuracy(answerStats))}</TableCell>
+      ) : (
+        <TableCell className="text-right">No answers yet</TableCell>
+      )}
     </AdminTableRow>
   );
 }

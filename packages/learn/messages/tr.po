@@ -7872,7 +7872,7 @@ msgstr "Bu harita kaldırılamadı. Tekrar dene."
 #: src/missions/brain-power-reward.tsx
 msgctxt "HCrEOP"
 msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Öğrendikçe puan kazanırsın. Bu puanlar kuşağını yükseltir ve ders arkadaşını büyütür."
+msgstr "Öğrendikçe puan kazanırsın. Bu puanlarla kuşağın yükselir, ders arkadaşın büyür."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -7940,7 +7940,7 @@ msgstr "{count, plural, other {İlerledikçe # görev daha açılır}}"
 #: src/missions/first-steps.tsx
 msgctxt "kNlVEU"
 msgid "You've tried everything."
-msgstr "Hepsini denedin."
+msgstr "Her şeyi denedin."
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.QZSmDQ"
@@ -8001,7 +8001,7 @@ msgstr "{count, plural, one {Bir hatayı düzelt} other {# hatayı düzelt}}"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
-msgstr "Telaffuz pratiği yap"
+msgstr "Telaffuz alıştırması yap"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.x_ozmd"
@@ -13562,7 +13562,7 @@ msgstr "{base} vektörü"
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
-msgstr "{minutes} dk. daha pratik yap"
+msgstr "{minutes} dk. daha çalış"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14231,7 +14231,7 @@ msgstr "{goal} için yer aç"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr "Aynı anda en fazla bu kadar hedef üzerinde çalışabilirsin. Bu hedefe başlamak için birini duraklat."
+msgstr "Aynı anda çalışabileceğin hedef sayısına ulaştın. Bu hedefe başlamak için birini duraklat."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14646,7 +14646,7 @@ msgstr "{count, plural, other {Zaten bildiğin # ders atlandı}}"
 #: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
-msgstr "{minutes} dk. pratik yap"
+msgstr "{minutes} dk. çalış"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
@@ -14762,7 +14762,7 @@ msgstr "Bugünkü dersleri hazırlıyoruz…"
 #: src/today/today-day-status.tsx
 msgctxt "DI5PCI"
 msgid "Today's lessons aren't ready yet."
-msgstr "Bugünkü derslerin henüz hazır değil."
+msgstr "Bugünkü dersler henüz hazır değil."
 
 #: src/today/today-day-status.tsx
 msgctxt "bGbW_K"
@@ -14772,12 +14772,12 @@ msgstr "Planını tamamladın."
 #: src/today/today-day-status.tsx
 msgctxt "brhjJ2"
 msgid "You're all caught up."
-msgstr "Yetişmen gereken ders kalmadı."
+msgstr "Planın yolunda."
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "JMtLiG"
 msgid "{lessons, plural, one {# lesson from earlier days} other {# lessons from earlier days}}"
-msgstr "{lessons, plural, other {Önceki günlerden kalan # ders}}"
+msgstr "{lessons, plural, other {Önceki günlerden # ders}}"
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "dlS9NH"
@@ -14850,12 +14850,12 @@ msgstr "Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık {time} 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
-msgstr "Tüm derslerini bitirecek kadar zaman kalmadı."
+msgstr "Tüm derslerini bitirmek için yeterli zaman kalmadı."
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Tekrar hoş geldin. Bugünkü çalışma kısa, o yüzden yeniden başlamak kolay."
+msgstr "Tekrar hoş geldin. Bugünkü çalışma kısa, bu yüzden yeniden başlamak kolay."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
@@ -14875,7 +14875,7 @@ msgstr "Böyle bırak"
 #: src/today/today-insight.tsx
 msgctxt "5cDa2C"
 msgid "Move it"
-msgstr "Taşı"
+msgstr "Değiştir"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -14948,7 +14948,7 @@ msgstr "{goal} planını hazırlıyoruz"
 #: src/today/today-preparing.tsx
 msgctxt "Xu-pMI"
 msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Bir iki dakika sürer. İlk çalışma günün hazır olur olmaz burada açılacak."
+msgstr "Bir iki dakika sürer. İlk günün hazır olur olmaz burada açılacak."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

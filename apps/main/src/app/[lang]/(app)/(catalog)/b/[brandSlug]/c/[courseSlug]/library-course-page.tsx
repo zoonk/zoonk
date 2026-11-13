@@ -6,7 +6,7 @@ import {
   PlanLine,
 } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
-import { CourseExamEyebrow } from "@/components/catalog/course-exam-eyebrow";
+import { CourseExamDate } from "@/components/catalog/course-exam-date";
 import { CourseMark } from "@/components/catalog/course-mark";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseGoalSwitch, CourseProgressScope } from "@/components/catalog/course-progress";
@@ -20,10 +20,13 @@ import { Link } from "@/i18n/navigation";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import { getCourseUrl } from "@/lib/public/public-canonical";
-import { getIsoDayFormatter, getLevelLabels } from "@/lib/public/public-labels";
+import { getLevelLabels } from "@/lib/public/public-labels";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { getCoursePlanExample } from "@zoonk/core/catalog/course-plan-example";
-import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
+import {
+  type CoursePlanExample,
+  isDatedEstimate,
+} from "@zoonk/core/catalog/course-plan-example-contract";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
@@ -32,9 +35,10 @@ import { Page } from "@zoonk/learn/page";
 import { Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { type Subject, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
-import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
+import { ChevronRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ContentCountryLine } from "./content-country-line";
@@ -69,7 +73,7 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
         {t("This course is also available in your language.")}
       </span>
       <LineMarker>
-        <ArrowRightIcon aria-hidden="true" className="size-4" />
+        <ChevronRightIcon aria-hidden="true" className="size-4" />
       </LineMarker>
     </Link>
   );
@@ -99,14 +103,14 @@ function CourseHero({
   const titleId = `course-title-${course.id}`;
 
   return (
-    <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
+    <section aria-labelledby={titleId} className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}>
       {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
       <CourseMark course={course} loading="eager" locale={locale} />
 
       <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
         <CourseSubjectLabel subject={subject} />
-        {exam && <CourseExamEyebrow exam={exam} />}
+        {exam && <CourseExamDate exam={exam} />}
       </div>
 
       <h1 className={cn(COURSE_TITLE_CLASS, "relative mt-3")} id={titleId}>
@@ -118,7 +122,7 @@ function CourseHero({
 
       <ContentCountryLine country={contentCountry} />
 
-      <PlanLine />
+      <PlanLine start={exam ? "exam" : "known"} />
 
       <CourseStart courseId={course.id} pace={pace} tryId={tryId} />
     </section>
@@ -138,7 +142,14 @@ function CourseFirstScreen({
 
   return (
     <RouteStop className={STOP_CLASS}>
-      <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
+      <div
+        className={cn(
+          COURSE_HERO_CLASS,
+          side && COURSE_HERO_PAIR_CLASS,
+          // Stacked, the plan is the route's next stop: it takes a stop's gap and its mark.
+          !tryCard && plan && "gap-16 sm:gap-24",
+        )}
+      >
         {hero}
         {side}
       </div>
@@ -180,7 +191,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
         }
       />
 
-      <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} />
+      <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} pricing />
     </RouteStop>
   );
 }
@@ -204,7 +215,6 @@ export async function LibraryCoursePage({
 
   const t = await getExtracted();
   const levelLabels = await getLevelLabels();
-  const formatDay = await getIsoDayFormatter();
 
   const [tryLesson, plan] = await Promise.all([
     pickTryLesson(outline.levels.flatMap((band) => band.chapters)),
@@ -213,20 +223,21 @@ export async function LibraryCoursePage({
 
   const subject = getSubject(course.categories);
   const tryId = getTryLessonId(course.id);
-  const examDay = plan.exam?.days[0];
-  const examDate = examDay ? formatDay(examDay) : null;
   const pace = plan.pace?.minutes ?? null;
+  const estimate = plan.pace?.estimate;
+  const weeks = estimate && !isDatedEstimate(estimate) ? estimate : null;
+  const areas = estimate && isDatedEstimate(estimate) ? estimate : null;
 
   const planTitleId = `course-plan-${course.id}`;
 
   const planWindow = (onRoute: boolean) =>
-    plan.pace && (
+    weeks &&
+    pace && (
       <CoursePlanWindow
         chapterTitles={getChapterTitles(outline)}
-        examDate={examDate}
-        isExam={course.format === "exam"}
+        estimate={weeks}
+        minutes={pace}
         onRoute={onRoute}
-        plan={plan}
         titleId={planTitleId}
       />
     );
@@ -237,7 +248,7 @@ export async function LibraryCoursePage({
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col gap-8" data-subject={subject}>
+      <div className="flex flex-col" data-subject={subject}>
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
@@ -251,7 +262,7 @@ export async function LibraryCoursePage({
           title={course.title}
         />
 
-        <Page className="gap-0 pt-2 sm:pt-4">
+        <Page className="gap-0">
           <PublicViewTracker contentId={course.id} page="course" />
 
           <JsonLd
@@ -293,7 +304,7 @@ export async function LibraryCoursePage({
               tryCard={tryCard}
             />
 
-            {tryCard && plan.pace && (
+            {tryCard && weeks && (
               <RouteStop aria-labelledby={planTitleId} className={STOP_CLASS}>
                 {planWindow(true)}
               </RouteStop>
@@ -308,7 +319,7 @@ export async function LibraryCoursePage({
               lead={outlineLead}
               outline={outline}
               params={params}
-              plan={{ examDate, pace: plan.pace }}
+              areas={areas}
             />
 
             <CourseClosing courseId={course.id} pace={pace} />

@@ -49,7 +49,7 @@ function PageTopBar({
   back,
   ref,
 }: {
-  /** The page's own actions, at the bar's end. */
+  /** The page's own actions, at the bar's end, 8px apart: `Button size="bar"`, or `"icon-bar"` for a glyph alone. */
   actions?: React.ReactNode;
   /** A `BackLink` to the parent page; a page with no parent has none. */
   back?: React.ReactNode;
@@ -71,7 +71,7 @@ function PageTopBar({
           {back}
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-1" data-slot="page-top-end">
+        <div className="flex shrink-0 items-center justify-end gap-2" data-slot="page-top-end">
           {actions}
         </div>
       </div>

@@ -63,12 +63,10 @@ export function ContentFeedbackMenu({
 
 /** `place="bar"` is the page bar's borderless icon; the default is the bordered one beside a page's main button. */
 export function ReportProblemMenu({
-  className,
   label,
   place = "detail",
   screen,
 }: {
-  className?: string;
   label: string;
   place?: "bar" | "detail";
   screen: string;
@@ -97,7 +95,7 @@ export function ReportProblemMenu({
   }
 
   return (
-    <DetailMenu className={className} label={label}>
+    <DetailMenu label={label}>
       <ReportProblemItem screen={screen} />
     </DetailMenu>
   );

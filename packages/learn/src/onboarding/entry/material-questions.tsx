@@ -199,7 +199,7 @@ export function MaterialQuestions({
         <Button
           aria-label={t("Ask")}
           busy={isPending}
-          className="size-11 shrink-0 rounded-full"
+          className="shrink-0 rounded-full"
           disabled={!trimmed}
           focusableWhenDisabled
           icon={<ArrowUpIcon aria-hidden="true" className="size-5" />}

@@ -1,13 +1,7 @@
+import { AdminTableRow } from "@/components/admin-table-row";
 import { countLearnerSkillsByState, getMasteryTrend } from "@/data/stats/get-mastery-trend";
 import { formatPercent } from "@/lib/format";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@zoonk/ui/components/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader } from "@zoonk/ui/components/table";
 import { AdminAnalysisTrend } from "../_components/admin-analysis-trend";
 import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
 import { buildMetricTrend, sumRows, toPercent } from "../_utils/metric-trend";
@@ -64,32 +58,30 @@ function MasteryStateTable({
   return (
     <Table>
       <TableHeader>
-        <TableRow>
+        <AdminTableRow>
           <TableHead>Current state (all time)</TableHead>
-          <TableHead className="text-right">Learner skills</TableHead>
-          <TableHead className="text-right">Share</TableHead>
-        </TableRow>
+          <TableHead numeric>Learner skills</TableHead>
+          <TableHead numeric>Share</TableHead>
+        </AdminTableRow>
       </TableHeader>
 
       <TableBody>
         {states.length > 0 ? (
           states.map((row) => (
-            <TableRow key={row.state}>
+            <AdminTableRow key={row.state}>
               <TableCell className="font-medium">{STATE_LABELS[row.state]}</TableCell>
-              <TableCell className="text-right tabular-nums">
-                {row.count.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
+              <TableCell numeric>{row.count.toLocaleString()}</TableCell>
+              <TableCell numeric>
                 {formatPercent(toPercent({ denominator: total, numerator: row.count }))}
               </TableCell>
-            </TableRow>
+            </AdminTableRow>
           ))
         ) : (
-          <TableRow>
+          <AdminTableRow>
             <TableCell className="text-muted-foreground" colSpan={3}>
               No learner skills yet.
             </TableCell>
-          </TableRow>
+          </AdminTableRow>
         )}
       </TableBody>
     </Table>

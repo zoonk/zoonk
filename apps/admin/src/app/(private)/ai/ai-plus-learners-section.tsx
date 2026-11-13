@@ -1,17 +1,19 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
-import { Stats } from "@/components/stats";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
+import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
-import { formatUsd } from "@/lib/ai-format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { formatDollars, formatUsd } from "@/lib/ai-format";
+import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CpuIcon, CrownIcon, TrendingUpIcon, TriangleAlertIcon } from "lucide-react";
 
 type PlusLearners = Awaited<ReturnType<typeof listPlusLearnerCosts>>;
 type PlusLearner = PlusLearners["learners"][number];
 
 const PLAN_LABELS: Record<PlusBilling, string> = {
-  granted: "Granted",
+  granted: "Given by Zoonk",
   monthly: "Monthly",
   trial: "Trial",
   yearly: "Yearly",
@@ -31,13 +33,13 @@ const planColumns: AdminTableColumn[] = [
   { align: "right", label: "Cost" },
   { align: "right", label: "Average" },
   { align: "right", label: "Most" },
-  { align: "right", label: "Above plan" },
+  { align: "right", label: "Cost more" },
 ];
 
 const learnerColumns: AdminTableColumn[] = [
-  { label: "Learner" },
-  { label: "Plan" },
-  { label: "Goals" },
+  { label: "Learner", twoLines: true },
+  { label: "Plan", size: "wide" },
+  { label: "Goals", size: "long" },
   { align: "right", label: "Calls" },
   { align: "right", label: "Cost" },
   { align: "right", label: "Pays a month" },
@@ -57,7 +59,7 @@ function sumCost(learners: readonly PlusLearner[]): number {
 
 function formatPays(paysUsd: number | null, billing: PlusBilling): string {
   if (billing === "trial" || billing === "granted") {
-    return "Nothing";
+    return formatUsd(0);
   }
 
   return paysUsd === null ? "—" : formatUsd(paysUsd);
@@ -68,30 +70,37 @@ function Summary({ learners, prices }: Pick<PlusLearners, "learners" | "prices">
   const total = sumCost(learners);
   const [most] = learners;
 
+  const above = learners.filter((learner) => isAbovePlan(learner)).length;
+
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-      <Stats
-        description={`${paying.length.toLocaleString()} paying`}
+    <div className={STAT_TILES_CLASS}>
+      <StatTile
+        detail={`${paying.length.toLocaleString("en")} paying`}
+        icon={<CrownIcon />}
         title="Plus learners"
-        value={learners.length.toLocaleString()}
+        value={learners.length.toLocaleString("en")}
       />
-      <Stats
-        description={`${formatUsd(learners.length > 0 ? total / learners.length : 0)} a learner on average`}
+      <StatTile
+        detail={`${formatUsd(learners.length > 0 ? total / learners.length : 0)} a learner on average`}
+        icon={<CpuIcon />}
         title="Cost this month"
-        value={formatUsd(total)}
+        value={formatDollars(total)}
       />
-      <Stats
-        description={
+      <StatTile
+        detail={
           prices
-            ? `of ${paying.length.toLocaleString()} paying`
+            ? `of ${paying.length.toLocaleString("en")} paying`
             : "Stripe's prices couldn't be read"
         }
         help={PRICE_HELP}
-        title="Above their plan"
-        value={prices ? learners.filter((learner) => isAbovePlan(learner)).length : "—"}
+        icon={<TriangleAlertIcon />}
+        title="Cost more than they pay"
+        tone={prices && above > 0 ? "danger" : "neutral"}
+        value={prices ? above.toLocaleString("en") : "—"}
       />
-      <Stats
-        description={most?.user?.email ?? "Nobody yet"}
+      <StatTile
+        detail={most?.user?.email ?? "Nobody yet"}
+        icon={<TrendingUpIcon />}
         title="Most expensive"
         value={formatUsd(most?.costUsd ?? 0)}
       />
@@ -112,21 +121,21 @@ function PlanRow({
   const [first] = learners;
 
   return (
-    <TableRow>
-      <TableCell>{PLAN_LABELS[billing]}</TableCell>
-      <TableCell className="text-right tabular-nums">{learners.length.toLocaleString()}</TableCell>
-      <TableCell className="text-right tabular-nums">{formatPays(paysUsd, billing)}</TableCell>
-      <TableCell className="text-right font-medium tabular-nums">{formatUsd(total)}</TableCell>
-      <TableCell className="text-right tabular-nums">
-        {formatUsd(total / Math.max(learners.length, 1))}
+    <AdminTableRow>
+      <TableCell className="text-foreground font-medium">{PLAN_LABELS[billing]}</TableCell>
+      <TableCell numeric>{learners.length.toLocaleString()}</TableCell>
+      <TableCell numeric>{formatPays(paysUsd, billing)}</TableCell>
+      <TableCell numeric className="font-medium">
+        {formatUsd(total)}
       </TableCell>
-      <TableCell className="text-right tabular-nums">{formatUsd(first?.costUsd ?? 0)}</TableCell>
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>{formatUsd(total / Math.max(learners.length, 1))}</TableCell>
+      <TableCell numeric>{formatUsd(first?.costUsd ?? 0)}</TableCell>
+      <TableCell numeric>
         {billing === "trial" || billing === "granted"
           ? "—"
           : learners.filter((learner) => isAbovePlan(learner)).length.toLocaleString()}
       </TableCell>
-    </TableRow>
+    </AdminTableRow>
   );
 }
 
@@ -156,15 +165,17 @@ function ByPlan({ learners, prices }: Pick<PlusLearners, "learners" | "prices">)
 
 function LearnerGoals({ goals }: { goals: PlusLearner["goals"] }) {
   if (goals.length === 0) {
-    return <span className="text-muted-foreground">—</span>;
+    return null;
   }
 
   return (
-    <ul className="flex flex-col gap-0.5">
+    <ul className="flex flex-col gap-1">
       {goals.map((goal) => (
-        <li className="text-xs" key={goal.id}>
-          {goal.title} <span className="text-muted-foreground">({goal.kind})</span>{" "}
-          <span className="tabular-nums">{formatUsd(goal.costUsd)}</span>
+        <li className="flex items-baseline justify-between gap-3" key={goal.id}>
+          <span className="truncate">{goal.title}</span>
+          <span className="text-muted-foreground font-mono text-xs tabular-nums">
+            {formatUsd(goal.costUsd)}
+          </span>
         </li>
       ))}
     </ul>
@@ -174,30 +185,19 @@ function LearnerGoals({ goals }: { goals: PlusLearner["goals"] }) {
 function LearnerRow({ learner }: { learner: PlusLearner }) {
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink href={`/users/${learner.id}`} prefetch>
-          {learner.user?.name ?? learner.user?.email ?? "Deleted"}
-        </AdminTableRowLink>
-        {learner.user ? (
-          <span className="text-muted-foreground block text-xs">{learner.user.email}</span>
-        ) : null}
-      </TableCell>
+      <AdminUserCell user={learner.user} userId={learner.id} />
       <TableCell>{PLAN_LABELS[learner.billing]}</TableCell>
       <TableCell>
         <LearnerGoals goals={learner.goals} />
       </TableCell>
-      <TableCell className="text-right tabular-nums">{learner.calls.toLocaleString()}</TableCell>
+      <TableCell numeric>{learner.calls.toLocaleString()}</TableCell>
       <TableCell
-        className={cn(
-          "text-right font-medium tabular-nums",
-          isAbovePlan(learner) && "text-destructive-text",
-        )}
+        className={cn("font-medium", isAbovePlan(learner) && "text-destructive-text")}
+        numeric
       >
         {formatUsd(learner.costUsd)}
       </TableCell>
-      <TableCell className="text-right tabular-nums">
-        {formatPays(learner.paysUsd, learner.billing)}
-      </TableCell>
+      <TableCell numeric>{formatPays(learner.paysUsd, learner.billing)}</TableCell>
     </AdminTableRow>
   );
 }
@@ -214,19 +214,18 @@ export async function AiPlusLearnersSection() {
 
   return (
     <>
+      <Summary learners={learners} prices={prices} />
+
       <AdminSection
-        description={`Everyone with Plus now, AI calls since ${sinceLabel} (UTC), the shared content they caused included.`}
-        title="Plus learners this month"
+        description={`Everyone with Plus now. AI calls since ${sinceLabel}, with the shared lessons they caused.`}
+        title="By plan"
       >
-        <div className="flex flex-col gap-6">
-          <Summary learners={learners} prices={prices} />
-          <ByPlan learners={learners} prices={prices} />
-        </div>
+        <ByPlan learners={learners} prices={prices} />
       </AdminSection>
 
       <AdminSection
-        description={`Up to ${LEARNER_ROWS} who made AI calls this month, most expensive first, with the goals that cost the most. Red costs more than the plan pays.`}
-        title="Plus learners by cost"
+        description="Who made AI calls this month, most expensive first. A cost in red is more than the plan pays."
+        title="By learner"
       >
         <AdminTableColumns
           columns={learnerColumns}

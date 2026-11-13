@@ -1,21 +1,25 @@
 import {
   AdminDetailBody,
+  AdminDetailColumns,
   AdminDetailHeader,
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
+import { STAT_TILES_CLASS, StatTileSkeleton } from "@/components/stat-tile";
 import { getSource } from "@/data/sources/get-source";
 import { capitalize } from "@/lib/format";
+import { languageName } from "@/lib/language-filter";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { FreshnessCommandForm } from "../freshness-command-form";
+import { FreshnessActions } from "../freshness-actions";
 import { SourceChangeNotices } from "./source-change-notices";
 import { SourceCitations } from "./source-citations";
+import { SourceChecking, SourceDetails, SourceText, SourceTotals } from "./source-overview";
 import { SourcePrivateDetails } from "./source-private-details";
-import { SourcePublicDetails } from "./source-public-details";
 
 export async function generateMetadata({ params }: PageProps<"/sources/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -35,19 +39,25 @@ export async function generateMetadata({ params }: PageProps<"/sources/[id]">): 
 
 const SOURCE_PARENTS = [{ href: "/sources", label: "Sources" }];
 
-export default function SourceDetailPage({ params }: PageProps<"/sources/[id]">) {
+const SOURCE_TABS = [
+  { label: "Overview", value: "overview" },
+  { label: "Text", value: "text" },
+  { label: "Details", value: "details" },
+] as const;
+
+export default function SourceDetailPage({ params, searchParams }: PageProps<"/sources/[id]">) {
   return (
     <AdminDetailPage>
       <Suspense fallback={<SourceDetailSkeleton />}>
-        <SourceDetailContent params={params} />
+        <SourceDetailContent params={params} searchParams={searchParams} />
       </Suspense>
     </AdminDetailPage>
   );
 }
 
 /** A private upload is personal data, so it gets a metadata-only view. */
-async function SourceDetailContent({ params }: Pick<PageProps<"/sources/[id]">, "params">) {
-  const { id } = await params;
+async function SourceDetailContent({ params, searchParams }: PageProps<"/sources/[id]">) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   if (!isUuid(id)) {
     notFound();
@@ -59,37 +69,65 @@ async function SourceDetailContent({ params }: Pick<PageProps<"/sources/[id]">, 
     notFound();
   }
 
-  const facts = [capitalize(source.kind), source.language.toUpperCase()];
+  const facts = [capitalize(source.kind), languageName(source.language)];
+
+  if (source.visibility === "private") {
+    return (
+      <>
+        <AdminDetailHeader facts={facts} parents={SOURCE_PARENTS} title="Private upload" />
+
+        <AdminDetailBody>
+          <SourcePrivateDetails source={source} />
+        </AdminDetailBody>
+      </>
+    );
+  }
+
+  const tab = readAdminTab({ tabs: SOURCE_TABS, value: query.tab });
 
   return (
     <>
-      {source.visibility === "private" ? (
-        <AdminDetailHeader facts={facts} parents={SOURCE_PARENTS} title="Private upload" />
-      ) : (
-        <AdminDetailHeader
-          actions={
-            source.url ? <FreshnessCommandForm targetId={source.id} targetKind="source" /> : null
-          }
-          facts={[source.publisher, ...facts]}
-          parents={SOURCE_PARENTS}
-          title={source.title}
-        />
-      )}
+      <AdminDetailHeader
+        actions={
+          source.url ? (
+            <FreshnessActions
+              targetId={source.id}
+              targetKind="source"
+              targetName={source.title ?? "this source"}
+            />
+          ) : null
+        }
+        facts={[source.publisher, ...facts]}
+        parents={SOURCE_PARENTS}
+        title={source.title ?? "Untitled source"}
+      />
 
       <AdminDetailBody>
-        {source.visibility === "private" ? (
-          <SourcePrivateDetails source={source} />
-        ) : (
-          <SourcePublicDetails source={source} />
-        )}
+        <AdminRecordTabs
+          current={tab}
+          label="Source"
+          path={`/sources/${source.id}`}
+          tabs={SOURCE_TABS}
+        />
 
-        <Suspense fallback={<AdminSectionSkeleton description />}>
-          <SourceChangeNotices sourceId={source.id} />
-        </Suspense>
+        {tab === "overview" ? (
+          <>
+            <SourceTotals source={source} />
 
-        <Suspense fallback={<AdminSectionSkeleton description />}>
-          <SourceCitations sourceId={source.id} />
-        </Suspense>
+            <AdminDetailColumns aside={<SourceChecking source={source} />}>
+              <Suspense fallback={<AdminSectionSkeleton />}>
+                <SourceCitations sourceId={source.id} />
+              </Suspense>
+
+              <Suspense fallback={<AdminSectionSkeleton description />}>
+                <SourceChangeNotices sourceId={source.id} />
+              </Suspense>
+            </AdminDetailColumns>
+          </>
+        ) : null}
+
+        {tab === "text" ? <SourceText source={source} /> : null}
+        {tab === "details" ? <SourceDetails source={source} /> : null}
       </AdminDetailBody>
     </>
   );
@@ -101,7 +139,11 @@ function SourceDetailSkeleton() {
       <AdminDetailHeaderSkeleton actions="buttons" parents={SOURCE_PARENTS} />
 
       <AdminDetailBody>
-        <AdminSectionSkeleton rows={7} />
+        <div className={STAT_TILES_CLASS}>
+          {Array.from({ length: 4 }, (_, index) => (
+            <StatTileSkeleton key={index} />
+          ))}
+        </div>
         <AdminSectionSkeleton />
       </AdminDetailBody>
     </>
