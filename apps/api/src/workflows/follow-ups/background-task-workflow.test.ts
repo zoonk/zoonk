@@ -30,6 +30,7 @@ async function owedWordFix() {
 
   const fix = await prisma.contentFix.create({
     data: {
+      batchId: randomUUID(),
       changes: [
         {
           clip: {
