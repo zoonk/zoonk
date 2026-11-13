@@ -93,7 +93,7 @@ export function TaskFinder({ groups }: { groups: TaskFinderGroup[] }) {
         <Input
           aria-label="Find a task"
           autoFocus
-          className="max-w-md"
+          className="max-w-md [&::-webkit-search-cancel-button]:appearance-none"
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Find a task…"
           type="search"
