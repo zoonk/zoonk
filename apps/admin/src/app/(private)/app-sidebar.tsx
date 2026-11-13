@@ -27,39 +27,6 @@ function isActive(pathname: string, url: string) {
 /** How many wait in each Inbox queue, drawn after its label. */
 export type AdminNavCounts = Record<InboxQueueName, React.ReactNode>;
 
-/** Review pack only: five places, with each place's pages as tabs inside it. */
-function ShortNav({ inboxTotal }: { inboxTotal?: React.ReactNode }) {
-  const pathname = usePathname();
-
-  return (
-    <SidebarSection aria-label="Places">
-      {adminNavigation.map((group) => {
-        const first = group.items[0];
-
-        if (!first) {
-          return null;
-        }
-
-        const Icon = first.icon;
-        const active = group.items.some((item) => isActive(pathname, item.url));
-
-        return (
-          <Link
-            aria-current={active ? "page" : undefined}
-            className={SIDEBAR_ITEM_CLASS}
-            href={first.url}
-            key={group.label ?? "home"}
-          >
-            <Icon aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate">{group.label ?? "Home"}</span>
-            {group.label === "Inbox" ? inboxTotal : null}
-          </Link>
-        );
-      })}
-    </SidebarSection>
-  );
-}
-
 function AdminNav({ counts, onNavigate }: { counts: AdminNavCounts; onNavigate?: () => void }) {
   const pathname = usePathname();
 
@@ -100,28 +67,16 @@ function AdminNav({ counts, onNavigate }: { counts: AdminNavCounts; onNavigate?:
   ));
 }
 
-type AdminSidebarProps = {
-  account: AdminAccount;
-  counts: AdminNavCounts;
-  inboxTotal?: React.ReactNode;
-  short?: boolean;
-};
+type AdminSidebarProps = { account: AdminAccount; counts: AdminNavCounts };
 
 function AdminSidebarContent({
   account,
   counts,
-  inboxTotal,
   onNavigate,
-  short,
 }: AdminSidebarProps & { onNavigate?: () => void }) {
   return (
     <>
-      {short ? (
-        <ShortNav inboxTotal={inboxTotal} />
-      ) : (
-        <AdminNav counts={counts} onNavigate={onNavigate} />
-      )}
-      {short ? <span className="flex-1" /> : null}
+      <AdminNav counts={counts} onNavigate={onNavigate} />
 
       {/* Pinned: on a short window the navigation scrolls under it. */}
       <SidebarFooter className="bg-background sticky bottom-0 -mb-3 pb-3">
@@ -131,7 +86,7 @@ function AdminSidebarContent({
   );
 }
 
-export function AppSidebar({ account, counts, inboxTotal, short }: AdminSidebarProps) {
+export function AppSidebar({ account, counts }: AdminSidebarProps) {
   return (
     <Sidebar aria-label="Sidebar" className="gap-3">
       {/* One row, so the whole navigation fits a laptop's height; collapsed, the toggle sits over the search. */}
@@ -140,12 +95,7 @@ export function AppSidebar({ account, counts, inboxTotal, short }: AdminSidebarP
         <SidebarToggle collapseLabel="Collapse sidebar" expandLabel="Expand sidebar" />
       </SidebarHeader>
 
-      <AdminSidebarContent
-        account={account}
-        counts={counts}
-        inboxTotal={inboxTotal}
-        short={short}
-      />
+      <AdminSidebarContent account={account} counts={counts} />
     </Sidebar>
   );
 }
