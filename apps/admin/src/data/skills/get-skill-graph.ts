@@ -2,10 +2,10 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type Skill, prisma } from "@zoonk/db";
 
-export const MAX_PREREQUISITE_DEPTH = 4;
+const MAX_PREREQUISITE_DEPTH = 4;
 
 /** Upper bound on skills per side of the graph, so a hub skill can't render hundreds of nodes. */
-export const MAX_GRAPH_SKILLS = 60;
+const MAX_GRAPH_SKILLS = 60;
 
 const graphSkillSelect = { id: true, level: true, mergedIntoId: true, name: true } as const;
 

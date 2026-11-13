@@ -8,10 +8,8 @@ export function ActionsSpecimen() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
-        <EnterButton enter="host" size="lg">
-          Continue session
-        </EnterButton>
-        <EnterButton busy enter="host" size="lg">
+        <EnterButton enter="host">Continue session</EnterButton>
+        <EnterButton busy enter="host">
           Continue session
         </EnterButton>
         <Button size="lg" variant="outline" {...FORWARD_ICON}>
@@ -57,19 +55,16 @@ export function BottomBarSpecimen() {
     <div className="grid gap-4 sm:grid-cols-2">
       {[false, true].map((failed) => (
         <div
-          className="ring-border flex h-48 flex-col overflow-hidden rounded-lg ring-1"
+          className="ring-border flex h-48 flex-col overflow-hidden rounded-lg px-(--page-gutter) ring-1 [--page-gutter:--spacing(4)]"
           key={String(failed)}
         >
-          <p className="text-muted-foreground flex-1 px-4 pt-4 text-sm">The screen scrolls here.</p>
-          <BottomBar
-            className="px-4"
-            note={failed ? "We couldn't save that. Try again." : undefined}
-          >
+          <p className="text-muted-foreground flex-1 pt-4 text-sm">The screen scrolls here.</p>
+          <BottomBar note={failed ? "We couldn't save that. Try again." : undefined}>
             <BottomBarActions>
               <Button size="xl" variant="outline">
                 Skip
               </Button>
-              <EnterButton className="grow lg:grow-0" enter="host" size="xl">
+              <EnterButton enter="host" size="xl">
                 Continue
               </EnterButton>
             </BottomBarActions>

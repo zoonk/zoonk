@@ -9,12 +9,11 @@ import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId } from "@/components/catalog/try-lesson";
-import { CheckMark } from "@/components/public/check-mark";
+import { CheckItem } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
-import { NoAccountStartNote } from "@/components/public/no-account-note";
-import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { StartBlock } from "@/components/public/public-start";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
+import { StartFreeNote } from "@/components/public/start-free-note";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { type LibraryChapterRoute } from "@/data/catalog/resolve-catalog-route";
 import { getCourseHref } from "@/data/courses/course-href";
@@ -26,8 +25,8 @@ import { getExamChapterAreas } from "@zoonk/core/catalog/course-plan-example";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
-import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { getSubject } from "@zoonk/learn/subject-label";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -39,11 +38,13 @@ async function ChapterStart({
   className,
   courseId,
   hasLesson,
+  pricing = false,
   startChapterId,
 }: {
   className?: string;
   courseId: string;
   hasLesson: boolean;
+  pricing?: boolean;
   startChapterId: string | null;
 }) {
   const t = await getExtracted();
@@ -52,11 +53,7 @@ async function ChapterStart({
     <StartBlock
       className={className}
       note={
-        hasLesson ? (
-          <NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>
-        ) : (
-          t("Start here and Zoonk writes its lessons for your level.")
-        )
+        hasLesson ? <StartFreeNote pricing={pricing} /> : t("Its lessons get ready when you start.")
       }
     >
       <StartPlanLink chapterId={startChapterId} courseId={courseId} />
@@ -85,14 +82,11 @@ async function ChapterObjectives({
         {t("What you'll learn")}
       </h2>
 
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col">
         {objectives.map((objective) => (
-          <li className="text-reading flex gap-3 leading-snug" key={objective}>
-            <LineMarker>
-              <CheckMark size="sm" />
-            </LineMarker>
-            <span className="text-pretty">{objective}</span>
-          </li>
+          <CheckItem className="text-reading py-3 leading-5 last:pb-0" key={objective}>
+            {objective}
+          </CheckItem>
         ))}
       </ul>
     </section>
@@ -114,10 +108,10 @@ async function ChapterClosing({
   const titleId = `chapter-closing-${chapterId}`;
 
   return (
-    <PageSection aria-labelledby={titleId} className="gap-1.5 border-t pt-12 sm:pt-16">
+    <PageSection aria-labelledby={titleId} className="gap-1.5">
       <h2 className="text-section" id={titleId}>
         {startChapterId
-          ? t("Your plan from this chapter")
+          ? t("Start from this chapter")
           : t({
               description:
                 "Heading over the ways to start a plan. “your level” is what the learner already knows.",
@@ -127,7 +121,7 @@ async function ChapterClosing({
 
       <p className="text-muted-foreground max-w-column text-reading leading-relaxed text-pretty">
         {startChapterId
-          ? t("It follows the course from here, at your pace, with reviews before you forget.")
+          ? t("You get a plan for each day, from this chapter to the end of the course.")
           : t("A few quick questions, then your plan and your first lesson.")}
       </p>
 
@@ -135,6 +129,7 @@ async function ChapterClosing({
         className="mt-5 sm:mt-6"
         courseId={courseId}
         hasLesson={hasLesson}
+        pricing
         startChapterId={startChapterId}
       />
     </PageSection>
@@ -167,12 +162,11 @@ export async function LibraryChapterPage({
   ]);
 
   const hasObjectives = chapter.objectives.length > 0;
-  const area = areas?.get(chapter.id) ?? null;
   const titleId = `chapter-title-${chapter.id}`;
   const subject = getSubject(course.categories);
 
   return (
-    <div className="flex flex-col gap-8" data-subject={subject}>
+    <div className="flex flex-col" data-subject={subject}>
       <CatalogPageBar
         back={{ href: getCourseHref(params), label: course.title }}
         options={
@@ -186,7 +180,7 @@ export async function LibraryChapterPage({
         title={chapter.title}
       />
 
-      <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
+      <Page className="gap-16 sm:gap-24">
         <PublicViewTracker contentId={chapter.id} page="chapter" />
 
         <JsonLd
@@ -214,20 +208,17 @@ export async function LibraryChapterPage({
         />
 
         <div className={cn(COURSE_HERO_CLASS, tryLesson && COURSE_HERO_PAIR_CLASS)}>
-          <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
-            <p className="text-muted-foreground sm:text-reading flex flex-wrap items-center gap-x-2 text-sm">
-              <SubjectGlyph subject={subject} />
-              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-              {area && <span>{`· ${area}`}</span>}
-            </p>
-
-            <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
+          <section
+            aria-labelledby={titleId}
+            className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}
+          >
+            <h1 className={COURSE_TITLE_CLASS} id={titleId}>
               {chapter.title}
             </h1>
 
             <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
 
-            <PlanLine startsHere={Boolean(startChapterId)} />
+            <PlanLine start={startChapterId ? "chapter" : "known"} />
 
             <ChapterStart
               courseId={course.id}
@@ -248,12 +239,10 @@ export async function LibraryChapterPage({
           )}
         </div>
 
-        <ChapterStrip areas={areas} chapterId={chapter.id} outline={outline} params={params} />
-
         {(hasLesson || hasObjectives) && (
           <div
             className={cn(
-              "grid grid-cols-1 gap-12",
+              "grid grid-cols-1 gap-16 sm:gap-24",
               hasLesson &&
                 hasObjectives &&
                 "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-16",
@@ -263,6 +252,14 @@ export async function LibraryChapterPage({
             <ChapterObjectives chapterId={chapter.id} objectives={chapter.objectives} />
           </div>
         )}
+
+        <ChapterStrip
+          areas={areas}
+          chapterId={chapter.id}
+          course={course.title}
+          outline={outline}
+          params={params}
+        />
 
         <ChapterClosing
           chapterId={chapter.id}

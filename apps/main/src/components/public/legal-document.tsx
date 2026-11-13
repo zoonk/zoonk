@@ -1,5 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
+import { FIRST_SCREEN_TOP_CLASS } from "./landing-styles";
 import { PUBLIC_COLUMN_CLASS, PublicPage } from "./public-page";
 
 /**
@@ -21,7 +22,8 @@ export function LegalDocument({
       <article
         className={cn(
           PUBLIC_COLUMN_CLASS,
-          "prose prose-neutral dark:prose-invert prose-code:before:content-none prose-code:after:content-none prose-headings:scroll-mt-20 prose-headings:tracking-[-0.015em] prose-h1:text-3xl prose-h1:leading-[1.1] prose-h1:font-semibold prose-h1:tracking-[-0.035em] prose-h2:text-lg prose-h1:text-balance max-w-[704px] pt-6 pb-24 sm:pt-10 [&:is(:lang(ja),:lang(ko))_:is(h1,h2,h3)]:tracking-normal [&:lang(ja)_:is(h1,h2,h3)]:[word-break:auto-phrase]",
+          FIRST_SCREEN_TOP_CLASS.page,
+          "prose prose-neutral dark:prose-invert prose-code:before:content-none prose-code:after:content-none prose-headings:scroll-mt-20 prose-headings:tracking-[-0.015em] prose-h1:text-3xl prose-h1:leading-[1.1] prose-h1:font-semibold prose-h1:tracking-[-0.035em] prose-h2:text-xl prose-h1:text-balance prose-p:leading-[1.6] prose-li:leading-[1.6] prose-li:marker:text-muted-foreground prose-ul:ps-5 prose-ol:ps-5 prose-li:ps-2 max-w-[704px] pb-24 [&:is(:lang(ja),:lang(ko))_:is(h1,h2,h3)]:tracking-normal [&:lang(ja)_:is(h1,h2,h3)]:[word-break:auto-phrase]",
         )}
         lang={lang}
       >

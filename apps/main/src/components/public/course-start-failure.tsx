@@ -43,7 +43,7 @@ function FailureAction({
     return (
       <>
         <Link className={className} href="/subscription" prefetch={false}>
-          {t("See Plus")}
+          {t("Subscribe")}
         </Link>
         <Link className={secondaryClassName} href="/plan" prefetch>
           {t("Go to your Plan")}

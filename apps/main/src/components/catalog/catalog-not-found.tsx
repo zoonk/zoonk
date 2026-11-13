@@ -2,7 +2,6 @@ import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { NotFoundMessage } from "@/components/public/not-found-message";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { ArrowRightIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 
@@ -21,7 +20,6 @@ export async function CatalogNotFound() {
       <NotFoundMessage>
         <Link className={buttonVariants({ size: "lg" })} href="/courses" prefetch>
           {t("Explore courses")}
-          <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
         </Link>
       </NotFoundMessage>
     </>
