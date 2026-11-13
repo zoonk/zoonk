@@ -64,7 +64,7 @@ function ExpressionGrid() {
               <Cell key={expression.name} label={expression.label}>
                 <Buddy
                   beltColor="orange"
-                  className="size-20"
+                  className="h-23"
                   energy={ENERGY}
                   expression={expression.name}
                   kind={kind}
@@ -101,7 +101,7 @@ function EnergyGrid() {
               <Cell key={state.energy} label={state.label}>
                 <Buddy
                   beltColor="orange"
-                  className="size-20"
+                  className="h-23"
                   energy={state.energy}
                   kind={kind}
                   studiedToday={state.studiedToday}
