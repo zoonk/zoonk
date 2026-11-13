@@ -9,8 +9,7 @@
         <item quantity="one">It came up once in your recent answers.</item>
         <item quantity="other">It came up %d times in your recent answers.</item>
     </plurals>
-    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
-    <string name="pattern_practice">Practice this · %1$s</string>
+    <string name="pattern_practice">Practice</string>
     <!-- Heads the learner's other sentences that show the same mistake. -->
     <string name="pattern_also_came_up">Also came up in</string>
     <!-- A sentence the learner said or wrote, in quotation marks. -->
@@ -24,7 +23,7 @@
     <string name="pattern_where_you_slipped">Where you slipped</string>
     <string name="pattern_see_rule">See the rule</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_you_did">See how you did</string>
+    <string name="pattern_see_how_it_went">See how it went</string>
     <string name="pattern_got_it">You\'ve got this rule.</string>
     <string name="pattern_keep_going">Knowing the rule is the first step. It gets easier each time you use it.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

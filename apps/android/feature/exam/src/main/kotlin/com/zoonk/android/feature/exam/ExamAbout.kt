@@ -51,7 +51,7 @@ import java.net.URI
 import java.time.LocalDate
 
 /** What main's aside says about the exam, beside the page or after it. */
-internal enum class AboutSection { Format, Scoring, DateNote }
+internal enum class AboutSection { Format, Scoring }
 
 internal fun aboutSections(exam: ExamView): List<AboutSection> =
     listOfNotNull(
@@ -59,7 +59,6 @@ internal fun aboutSections(exam: ExamView): List<AboutSection> =
         AboutSection.Scoring.takeIf {
             exam.scoring.rule != null || exam.cutoff != null || exam.passMarks != null || exam.scoring.noticeScale != null
         },
-        AboutSection.DateNote.takeIf { exam.dateNote != null },
     )
 
 @Composable
@@ -74,12 +73,6 @@ internal fun AboutSection(
 
         AboutSection.Scoring -> {
             ExamScoringSection(exam)
-        }
-
-        AboutSection.DateNote -> {
-            exam.dateNote?.let {
-                Text(stringResource(it), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-            }
         }
     }
 }
@@ -118,48 +111,34 @@ private fun FormatDayRow(
     numbered: Boolean,
 ) {
     val locale = currentLocale()
-    val dayName = stringResource(R.string.exam_format_day, day.day.toInt())
+    val number = stringResource(R.string.exam_format_day, day.day.toInt())
+    val date = day.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), locale) }
+    val title =
+        when {
+            date == null -> number
+            numbered -> listOf(number, date).factsLine()
+            else -> date
+        }
     val questions =
         day.parts
             .filterNot { it.written }
             .sumOf { it.questions ?: 0L }
             .toInt()
     val names = ListFormatter.getInstance(locale).format(day.parts.map { it.name })
-    val parts =
-        if (questions > 0) {
-            stringResource(
-                R.string.exam_format_parts_questions,
-                names,
-                pluralStringResource(R.plurals.exam_questions, questions, questions),
-            )
-        } else {
-            names
-        }
+    // Unbroken from " ·" on, so a wrapped line never starts or ends on the dot.
+    val count = questions.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.exam_questions, it, it) }
+    val parts = if (count != null) listOf(names, count.replace(' ', NO_BREAK_SPACE)).factsLine() else names
     val numbers = MaterialTheme.typography.labelMedium.withTabularFigures()
 
     Column(
-        Modifier.fillMaxWidth().padding(vertical = 10.dp).semantics(mergeDescendants = true) {
-        },
+        Modifier.fillMaxWidth().padding(vertical = 10.dp).semantics(mergeDescendants = true) {},
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        if (numbered && day.date != null) Text(dayName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = numbers)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                day.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), locale) } ?: dayName,
-                Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
-            )
+            Text(title, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
             day.minutes
-                ?.takeIf {
-                    it > 0
-                }?.let {
-                    Text(
-                        formatDuration(it * SECONDS_PER_MINUTE, locale),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = numbers,
-                    )
-                }
+                ?.takeIf { it > 0 }
+                ?.let { Text(formatDuration(it * SECONDS_PER_MINUTE, locale), color = MaterialTheme.colorScheme.onSurfaceVariant, style = numbers) }
         }
         Text(parts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
@@ -264,7 +243,6 @@ private fun Calibration(calibration: NetCalibration) {
             pluralStringResource(R.plurals.exam_calibration_right, sure.right.toInt(), sure.right.toInt(), sure.answered.toInt()),
             pluralStringResource(R.plurals.exam_calibration_right, unsure.right.toInt(), unsure.right.toInt(), unsure.answered.toInt()),
         ),
-        Modifier.padding(top = 4.dp),
         style = MaterialTheme.typography.bodyMedium,
     )
     when (calibration.advice) {
@@ -361,3 +339,4 @@ private fun Line(text: AnnotatedString) {
 }
 
 private const val SECONDS_PER_MINUTE = 60L
+private const val NO_BREAK_SPACE = '\u00A0'

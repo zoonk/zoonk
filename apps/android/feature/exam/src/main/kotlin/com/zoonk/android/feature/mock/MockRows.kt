@@ -17,7 +17,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.ButtonPlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
@@ -31,7 +30,7 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockOptions
 
-/** A finished mock: its number, when and what it covered, and how it went; [onOpen] opens its result. [stacked] puts how it went under the line. */
+/** A finished mock exam: its number, when (and its subject when it had one), and how it went; [onOpen] opens its result. [stacked] puts how it went under the line. */
 @Composable
 fun MockSummaryRow(
     mock: ExamMockSummary,
@@ -39,12 +38,12 @@ fun MockSummaryRow(
     stacked: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val label = mockSummaryLabel(mock)
+    val subject = mockSubject(mock.shape)
     val date = mockDate(mock.finishedAt)
 
     MockListRow(
         headline = { Text(mockTitle(mock.number)) },
-        supporting = if (label.isEmpty()) date else stringResource(R.string.mock_row_detail, date, label),
+        supporting = if (subject.isEmpty()) date else stringResource(R.string.mock_row_detail, date, subject),
         trailing = mockMeasure(mock),
         leading = { StatusMark(MarkStatus.Done) },
         onClick = onOpen,
@@ -109,7 +108,7 @@ private fun factStyle() = MaterialTheme.zoonkType.data
 fun mockEntryRoute(options: MockOptions): AppRoute? =
     options.running?.let { AppRoute.Mock(it.id.toString()) } ?: AppRoute.MockChooser.takeIf { options.options.isNotEmpty() }
 
-/** The page's main action: take a mock, or go back to the one running. Free learners see it marked Plus. */
+/** The page's main action: take a mock exam, or go back to the one running. */
 @Composable
 fun MockEntryButton(
     options: MockOptions,
@@ -126,9 +125,6 @@ fun MockEntryButton(
             text = stringResource(if (running) R.string.mock_continue else R.string.mock_take),
             modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
         )
-        if (!running && options.access == MockOptions.Access.PLUS_REQUIRED) {
-            ButtonPlusMark()
-        }
     }
 }
 

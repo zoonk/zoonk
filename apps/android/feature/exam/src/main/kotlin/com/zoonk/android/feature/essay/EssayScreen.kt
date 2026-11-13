@@ -594,7 +594,7 @@ internal fun EssayGradeSteps(
                     RunColumn(modifier, stepScroll) {
                         when {
                             tooShort -> TooShort(closed)
-                            shown == 0 -> EssayGradeCard(grade, rubric)
+                            shown == 0 -> EssayGradeCard(grade, rubric, onComments = { comments = true }.takeUnless { beside })
                             else -> NextStep(grade)
                         }
                     }
@@ -635,11 +635,6 @@ internal fun EssayGradeSteps(
                                     liveRegion = LiveRegionMode.Assertive,
                                     onReport = onReportSaveFailure,
                                 )
-                            }
-                            if (!tooShort && !beside) {
-                                TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
-                                    Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
-                                }
                             }
                         }
                     }

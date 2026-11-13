@@ -8,10 +8,10 @@
   "pattern_just_typos": "b6b3fef5c28fae32ccbf40be3f932ace50802819701d1be00da835f7765c9ebb",
   "pattern_keep_going": "eeb24b524cbe65709e11a093001b7f0c6cc000cb086b6eb648a5019e4827b257",
   "pattern_noticed": "755b75be0dd96cec5cac12980f71a1ff48fa214f26883c06f462f3fba01bf625",
-  "pattern_practice": "8325c9826d92faad6f597a45b1292586e1028b5512c0a04661533312cd896244",
+  "pattern_practice": "fb6b7f79c6a00761579c020e7c4820c2e4a5ea06ff301ffc586ead07ffd591fc",
   "pattern_quoted": "e3d9c92fe98756d4e6a256964deafd9b7a8308716698a5b46c33570e45a06910",
   "pattern_rule": "d85eb41fdba3988bad1fde2a47688e4e6eac2234f8703ac569c80a286390fa0b",
-  "pattern_see_how_you_did": "c457efede4199c8e3a06de2e94a522d003135af374593336d146cdcf9fc7063b",
+  "pattern_see_how_it_went": "148fe7b740953cea914ac40700501a47bc51717288a4db78d3c7b06ad2cc39c3",
   "pattern_see_rule": "4ee33b2e49fa5d12fbc149e9f65874d5d0e1e0ad9dd7eb0342d95773cf3b2686",
   "pattern_seen": "0c61234307065a683409c942524ecec55c43554456a43103e035b117bb01bafb",
   "pattern_seen_times": "2f1e753d8764524fe5b5e2ba2e99ded17d56470203d8f27f2bf8365258bc48f4",
@@ -31,8 +31,7 @@
         <item quantity="one">Das kam %d Mal in deinen letzten Antworten vor.</item>
         <item quantity="other">Das kam %d Mal in deinen letzten Antworten vor.</item>
     </plurals>
-    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
-    <string name="pattern_practice">Diese Regel üben · %1$s</string>
+    <string name="pattern_practice">Üben</string>
     <!-- Heads the learner's other sentences that show the same mistake. -->
     <string name="pattern_also_came_up">Auch in diesen Sätzen</string>
     <!-- A sentence the learner said or wrote, in quotation marks. -->
@@ -46,7 +45,7 @@
     <string name="pattern_where_you_slipped">Hier lag der Fehler</string>
     <string name="pattern_see_rule">Regel ansehen</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_you_did">Ergebnis ansehen</string>
+    <string name="pattern_see_how_it_went">Ergebnis ansehen</string>
     <string name="pattern_got_it">Du beherrschst diese Regel.</string>
     <string name="pattern_keep_going">Die Regel zu kennen, ist der erste Schritt. Mit jeder Anwendung wird es leichter.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

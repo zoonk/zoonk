@@ -81,7 +81,7 @@ class TestOutScreenshots {
             Question("00000000-0000-4000-8000-000000000003", QuestionFormat.MultipleChoice, "Q3", listOf("a", "b")),
         )
 
-    private val page = TestOutPage("Test out: Porcentagem", "Porcentagem", lessonsLeft = 4)
+    private val page = TestOutPage("Test: Porcentagem", "Porcentagem", lessonsLeft = 4)
 
     private fun viewModel(passed: Boolean = true): TestOutViewModel {
         val api =

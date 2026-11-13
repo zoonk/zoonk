@@ -13,43 +13,39 @@
   "mindmaps_chapter_map": "8c6a917a3c15b123ab44c5588bfe8412ace2951ca3b1c3348fb5932e39513ed0",
   "mindmaps_chapter_number": "88f66f8334224abb9ba90a434570380461fe279255fb4b449f3609eb5073d51d",
   "mindmaps_create": "f2197ba6a2dd540a535203bb23992f3c302705c9c90715a9f95593a9b5883781",
-  "mindmaps_create_count": "852c4595ace26fb7fe6e7698d3f5900861db2234cb871060bb2783500a951a6d",
+  "mindmaps_create_all": "7aed6ed81b114ab2ef4c40d8bfbbc84d7ab90eb31745f7fe9f4b2373b59e66db",
   "mindmaps_create_spoken": "38a534b0409033bda1223d489efdeaff2bbd7dcee171e4665bb887889775c838",
   "mindmaps_didnt_finish": "c587a5c5bc8a08acc7f2b1dda00167d2d4df9bdc93241c740c1145102bc1ff53",
   "mindmaps_done": "cae7ff65cbf7a10d8357fe404f699b9dfe5377205387969b1e69ac81423808fd",
   "mindmaps_download": "b5d542bc091862ff63e3550d54c70f5599e32d92b4707565ae0f5132317ef467",
   "mindmaps_drawing": "f6d62f32023ac72540524b6db2918ccba5ec2a2b2895c4e0c2b7cc8a63962c10",
   "mindmaps_drawing_wait": "eeae842d8aee121cc6b9230e41ffada49871b9458ac58e5c0db129542f98c654",
-  "mindmaps_empty_description": "cd204e857242e32fa3581673b6f0b115c8cb3dc534972849929172f80fc7b5fa",
-  "mindmaps_empty_title": "b95a93fd53fc17b8b9ecc0952d21b313d73a4c280dbf494646bbfdea7ad57d49",
+  "mindmaps_empty_description": "09b568462fe05a5bc2897b5bb11bb878f753b5e84dbdb2c0c66098524b25322b",
+  "mindmaps_empty_title": "806324dc3119b3095114e5e4c3989edbe945937560db0fc723e2c8a943e2f8a3",
   "mindmaps_failed": "f07c06a153090b6ea847c197813e4d0e0ff99b24d06ecd8b77be441aab8d0d28",
   "mindmaps_fit": "3f91b91c817f76ae407b94fc49afcc196ad499e9cf544af3a271f1ef5e0fc18b",
   "mindmaps_in_short": "e2d3882f2bac2ce645ffcb2c96f779d79ca2d2f6c8fbf1e207187dd96c007c18",
   "mindmaps_keep_studying": "267911c89379b5fd5553b5a56f276e34497960d06bdf1cec89284ab48f84f28f",
   "mindmaps_lesson_map": "730e16bdacfb718e3edcefa69f5950b9d6008aacc139c446c895080e88da42e3",
   "mindmaps_lesson_maps": "f00f2b5b8bdb1971c821ee220a9bcb306a0cae53f7fde0bfa097ff6fbe139680",
-  "mindmaps_lessons_count_free": "3011d8f50f98412ec9571f4cf9a4d0d69fd8e4b0fc2db81a7e4c57f983af794a",
-  "mindmaps_lessons_empty_description": "9b898cc421e861d4f6db208bdf5fd67c56140a0a4c8ef404c0f5a1e4c0a6e55f",
+  "mindmaps_lessons_empty_description": "4ca7aa64d865286db68b2f33ec69fa62cc2fa1d33c5dfb2e876bef36e0cf42eb",
   "mindmaps_lessons_empty_title": "215282957758e4cdf2c51533c8a5b8e2e22f9857d9519cc214332997ba924b8b",
   "mindmaps_lessons_first_free": "236ca94ca533059b99b8867482f402eb30230dd419b2c64ccc616b829db23182",
-  "mindmaps_lessons_first_plus": "8c4b767d4e39c441f762f20c9b942cefafdd0749850395bc161774663289ad07",
-  "mindmaps_lessons_to_write": "ac1a522ba744bea4f0cdad520b5ecab91db9ebceb22ca7f78d939cdaced24c65",
-  "mindmaps_locked_count": "6760aa69adafe021c68c835afbda4a74632935c4040acdae464084d675aa6452",
   "mindmaps_map_gone": "bde2c4165f25174db9a5c333c207a0f8a969b033458008ce788e9d42ace3d298",
-  "mindmaps_need_lessons": "0a7f7d7d5754bb02792bb51175f2b5ca68089c00592f8d305a5a7173b01955e2",
   "mindmaps_next": "ed04ada3de3e40253b256eb6858e45f79cc83d90b352e064b9acfab713d1aa39",
   "mindmaps_no_longer_available": "9b7cf79d282a578610102033bd69c7064d74ac2a2ebcebba61f722c9c1bb12fc",
-  "mindmaps_not_made_yet": "959ae27ad54143574c6cd15f46138ab77c59bfc5506fa205b19ce3ad6fd19fbb",
   "mindmaps_open": "78acb676fb8be25ace92286db2413560884d5623485b995197a482e67a4c79d4",
   "mindmaps_open_chapter": "6b67260c1f6e082b9c282814c0592ded1183f276b455e0856dc7ced42d2b4400",
   "mindmaps_open_lesson": "be36b13fea4f624589e86832c33f9e289385e7d1d2689d0eac6a256a9319b705",
   "mindmaps_open_spoken": "a020af4aef6cf91b8adb9db9b7501f2e849ea56f9e6a4c865799dafecf8dd3bb",
   "mindmaps_options": "8d9af59d2bab11d9ec77a30caeb4bd5dab44598368ad683f7c99662c5c8be67c",
+  "mindmaps_other_chapters": "b859831ba445665ebeb17ef7088c1bb66c23b9b50fcc769b7e5ea50bf54bccfa",
   "mindmaps_previous": "9d0fba823ff9721db1c9e0af6353d1371bee8a5afd6024c53c996c4135accc18",
   "mindmaps_ready": "f66e6e7bed92ff6ce91621b5e7a6507bbe43e857b76dec41f90226f50b9f241e",
   "mindmaps_remove": "2d28f831d0be6253041c12f977e9e3c7b5437d28a377e3cd9cd78996ccf8793c",
   "mindmaps_remove_spoken": "11706463dadcc5ae1dc97eaee57485276f502c8b6f44315dd1a2a6ae6c50bb56",
   "mindmaps_row_description": "443d623d0605411026499d81dce5bdd697ba69bf13f1550d27e2e641c54d54f3",
+  "mindmaps_row_description_finish": "729a2ad945578edcaa26ddea344723e9c14993fdac0f75082c984b8ab8ff5eab",
   "mindmaps_row_title": "9646c5603d66f99b8c793ae7c246bd115d30af4ffdb4af7259231cf12d14ac88",
   "mindmaps_save": "4abdff6818189cf654674ff11057a0d6d4a0f68cf5afe20a1ffed5fe2a30bc27",
   "mindmaps_save_failed": "bd3abe0f108ef4f213e0a32d48c58914657a1212879b84d411bbb7a08fb02532",
@@ -59,7 +55,7 @@
   "mindmaps_saved_empty_title": "e1fc5579d9e2cdef99124cb12090a5ab44a27d7453f523aeaf1b82ecf192f09d",
   "mindmaps_saved_state": "09200c9c85102e569963a393e29c29a4981100752bd6955a89891d5ab2d9d76c",
   "mindmaps_show_all": "a85512e49fe7f0a37e772fb2256801be4d6806ac9b272fbc4df38a93cae41947",
-  "mindmaps_show_chapters": "74b0aaf9930fcbd5a5987172808deef9c2684a0c7d124b6b8145a7e212b167e0",
+  "mindmaps_shown_as_text": "7a3c16c4fe0d0ac8b04fdf3090cf7e5e429a8e3700d0c82f00bbcf1699980317",
   "mindmaps_start_from_first": "9770b5936add74b23105f23fb0aefd8d924e358a4a18534258c30a253c74acca",
   "mindmaps_study": "52a1a8003fcc319e74323233b5486ab5e25a1bbed4c014f22f53737da42a21af",
   "mindmaps_tab_chapters": "a14ebe4c80519d4cd0316ca09ad317332f4d00dc9d75b0a69826df155b44860f",
@@ -86,8 +82,8 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapitre %1$s</string>
-    <string name="mindmaps_empty_title">Pas encore de carte mentale</string>
-    <string name="mindmaps_empty_description">Les chapitres de ton plan apparaissent ici au fur et à mesure que tu les abordes.</string>
+    <string name="mindmaps_empty_title">Pas encore de carte mentale pour tes chapitres</string>
+    <string name="mindmaps_empty_description">Chaque chapitre que tu termines a sa carte mentale.</string>
     <string name="mindmaps_keep_studying">Continuer à étudier</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Carte mentale de %1$s</string>
@@ -101,23 +97,15 @@
     <string name="mindmaps_row_title">Carte mentale</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Ses idées principales en une image</string>
+    <!-- Under a finished chapter's name at a lesson's end. -->
+    <string name="mindmaps_row_description_finish">Une carte mentale de ses idées principales</string>
+    <!-- A mind map whose picture failed, so it opens as text. -->
+    <string name="mindmaps_shown_as_text">Affichée sous forme de texte</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
         <item quantity="one">On prépare d’abord %1$s leçon, qui est décomptée de tes leçons gratuites.</item>
         <item quantity="many">On prépare d’abord %1$s leçons, qui sont décomptées de tes leçons gratuites.</item>
         <item quantity="other">On prépare d’abord %1$s leçons, qui sont décomptées de tes leçons gratuites.</item>
-    </plurals>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
-    <plurals name="mindmaps_lessons_first_plus">
-        <item quantity="one">On prépare d’abord %1$s leçon, ce qui prend quelques minutes.</item>
-        <item quantity="many">On prépare d’abord %1$s leçons, ce qui prend quelques minutes.</item>
-        <item quantity="other">On prépare d’abord %1$s leçons, ce qui prend quelques minutes.</item>
-    </plurals>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">%1$s leçon à préparer</item>
-        <item quantity="many">%1$s leçons à préparer</item>
-        <item quantity="other">%1$s leçons à préparer</item>
     </plurals>
     <string name="mindmaps_writing_lessons">Préparation des leçons, puis de la carte mentale…</string>
     <string name="mindmaps_writing_lessons_wait">Ça prend quelques minutes. Tu peux quitter la page ; tu retrouveras la carte ici.</string>
@@ -153,6 +141,9 @@
     <string name="mindmaps_viewer_hint">Pince, fais défiler ou utilise + et - pour zoomer ; fais glisser ou utilise les flèches pour te déplacer.</string>
     <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
     <string name="mindmaps_study">Étudier</string>
+    <string name="mindmaps_create_all">Tout créer</string>
+    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
+    <string name="mindmaps_other_chapters">Autres chapitres</string>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Chapitres</string>
     <string name="mindmaps_tab_lessons">Leçons</string>
@@ -169,12 +160,6 @@
         <item quantity="many">%1$s cartes mentales de leçons</item>
         <item quantity="other">%1$s cartes mentales de leçons</item>
     </plurals>
-    <!-- How many of a chapter's lesson maps are for Plus, after how many there are: "6 lesson maps · 2 locked". -->
-    <plurals name="mindmaps_locked_count">
-        <item quantity="one">%1$s verrouillée</item>
-        <item quantity="many">%1$s verrouillées</item>
-        <item quantity="other">%1$s verrouillées</item>
-    </plurals>
     <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
     <string name="mindmaps_chapter_map">Carte mentale du chapitre</string>
     <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
@@ -182,7 +167,7 @@
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Tout afficher (%1$s)</string>
     <string name="mindmaps_lessons_empty_title">Pas encore de cartes mentales de leçons</string>
-    <string name="mindmaps_lessons_empty_description">Chaque leçon se termine par une petite carte mentale qui résume les idées abordées. Ces cartes s’affichent ici une fois tes leçons préparées.</string>
+    <string name="mindmaps_lessons_empty_description">Chaque leçon se termine par une carte mentale.</string>
     <string name="mindmaps_saved_empty_title">Rien d’enregistré pour l’instant</string>
     <string name="mindmaps_saved_empty_description">Appuie sur le marque-page d’une carte mentale pour la garder ici.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
@@ -191,14 +176,6 @@
     <string name="mindmaps_remove">Retirer</string>
     <!-- What screen readers say for Remove, naming the map. -->
     <string name="mindmaps_remove_spoken">Retirer %1$s des cartes mentales enregistrées</string>
-    <!-- Over the chapters whose mind maps aren't made yet, at the end of the Chapters tab. -->
-    <string name="mindmaps_not_made_yet">Pas encore créées</string>
-    <!-- Starts every chapter map that can start now, in course order. %1$s is how many. -->
-    <plurals name="mindmaps_create_count">
-        <item quantity="one">Créer %1$s carte mentale de chapitre</item>
-        <item quantity="many">Créer %1$s cartes mentales de chapitre</item>
-        <item quantity="other">Créer %1$s cartes mentales de chapitre</item>
-    </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
         <item quantity="one">%1$s en préparation. Tu peux quitter la page en attendant.</item>
@@ -217,16 +194,6 @@
         <item quantity="many">Tu peux en créer %1$s de plus dès maintenant.</item>
         <item quantity="other">Tu peux en créer %1$s de plus dès maintenant.</item>
     </plurals>
-    <!-- Chapters whose maps can't be made all at once because their lessons aren't written yet. %1$s is how many. -->
-    <plurals name="mindmaps_need_lessons">
-        <item quantity="one">Il faut d’abord préparer les leçons de %1$s chapitre.</item>
-        <item quantity="many">Il faut d’abord préparer les leçons de %1$s chapitres.</item>
-        <item quantity="other">Il faut d’abord préparer les leçons de %1$s chapitres.</item>
-    </plurals>
-    <!-- Opens and closes the list of chapters whose maps aren't made yet. -->
-    <string name="mindmaps_show_chapters">Afficher les chapitres</string>
-    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Les leçons préparées comptent dans ton quota de leçons gratuites.</string>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Enregistrer</string>
     <!-- A map the learner saved; tapping it again removes it. -->

@@ -39,9 +39,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -193,8 +191,8 @@ internal fun ConnectedMindMapRow(
 
 /**
  * One map's row, the same on the chapter's page, where a chapter ends and on the Mind maps page:
- * its thumbnail once ready, otherwise a dashed slot with the map's mark, a spinner while it's on its
- * way or a lock while it's Plus-only; then what to do about it. A plan out of new maps ([cap]) or a
+ * its thumbnail once ready, otherwise a dashed slot with the map's mark or a spinner while it's on its
+ * way; then what to do about it. A plan out of new maps ([cap]) or a
  * refused tap shows why under the row instead of Create; the Mind maps page says the cap once, above
  * its rows, and puts the chapter's number before its line where the row is [numbered].
  */
@@ -220,11 +218,7 @@ internal fun MindMapRow(
     val toggleSave = actions.toggleSave?.takeIf { shown == MindMapShown.Ready }
     var menu by remember { mutableStateOf(false) }
     val rowClick =
-        when (shown) {
-            MindMapShown.PlusRequired -> ({ actions.navigate(AppRoute.Subscription) })
-            MindMapShown.Ready -> actions.open.takeIf { library }
-            else -> null
-        }
+        actions.open.takeIf { library && shown == MindMapShown.Ready }
 
     Column(modifier) {
         Box {
@@ -236,12 +230,7 @@ internal fun MindMapRow(
                 onLongClick = toggleSave?.let { { menu = true } },
                 leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
                 supporting = supporting?.let { { Text(it) } },
-                meta =
-                    when {
-                        shown == MindMapShown.PlusRequired && !library -> ({ PlusMark() })
-                        saved -> ({ SavedMark() })
-                        else -> null
-                    },
+                meta = if (saved) ({ SavedMark() }) else null,
                 trailing = rowAction(map, place, shown, local, cap, actions),
             )
             if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
@@ -272,7 +261,7 @@ private fun MapFacts.rowTitle(
 
 /**
  * What the row says about its map; the chapter's page spells out the wait under a title that names
- * it. The Mind maps page says once, in its intro, what writing a chapter's lessons first means.
+ * it. The Mind maps page says once, above its rows, what writing a chapter's lessons first means.
  */
 @Composable
 private fun MapFacts.statusLine(
@@ -282,21 +271,15 @@ private fun MapFacts.statusLine(
 ): String? {
     val library = place == MindMapPlace.Library
     val chapter = place == MindMapPlace.Chapter
-    val described = if (library) null else stringResource(R.string.mindmaps_row_description)
+    val offer = stringResource(if (place == MindMapPlace.Finish) R.string.mindmaps_row_description_finish else R.string.mindmaps_row_description)
 
     return when (shown) {
         MindMapShown.Available, MindMapShown.Refused -> {
-            val toWrite =
-                when {
-                    library -> R.plurals.mindmaps_lessons_to_write
-                    plus -> R.plurals.mindmaps_lessons_first_plus
-                    else -> R.plurals.mindmaps_lessons_first_free
-                }
-            if (lessonsToWrite == 0L) {
-                described
-            } else {
-                val count = lessonsToWrite.toInt()
-                pluralStringResource(toWrite, count, formatNumber(count.toDouble(), currentLocale()))
+            val count = lessonsToWrite.toInt()
+            when {
+                library -> null
+                count > 0 && !plus -> pluralStringResource(R.plurals.mindmaps_lessons_first_free, count, formatNumber(count.toDouble(), currentLocale()))
+                else -> offer
             }
         }
 
@@ -310,9 +293,10 @@ private fun MapFacts.statusLine(
 
         MindMapShown.Ready -> {
             when {
-                image == null -> stringResource(if (library) R.string.mindmaps_as_text else R.string.mindmaps_as_text_note)
+                image == null -> stringResource(if (library) R.string.mindmaps_as_text else R.string.mindmaps_shown_as_text)
                 place == MindMapPlace.Finish -> stringResource(R.string.mindmaps_ready)
-                else -> described
+                library -> null
+                else -> offer
             }
         }
 
@@ -322,10 +306,6 @@ private fun MapFacts.statusLine(
 
         MindMapShown.Unreachable -> {
             stringResource(R.string.mindmaps_unreachable)
-        }
-
-        MindMapShown.PlusRequired -> {
-            if (library) stringResource(R.string.subscription_plus) else described
         }
 
         MindMapShown.Unavailable -> {
@@ -340,8 +320,8 @@ private fun chapterNumber(position: Long) =
 
 /**
  * The row's button: Create, Try again or Open; none while the map is on its way, while a cap or a
- * refusal stops it, or where the whole row opens it (a locked map, which opens Plus like the screen's
- * locked lessons, or a ready one on the Mind maps page). A refusal that only asks to wait keeps Create.
+ * refusal stops it, or where the whole row opens it (a ready one on the Mind maps page). A refusal
+ * that only asks to wait keeps Create.
  */
 private fun rowAction(
     map: MapFacts,
@@ -392,7 +372,7 @@ private fun RowButton(
     ) { Text(stringResource(label)) }
 }
 
-/** The map's thumbnail, or a dashed slot holding its mark, a spinner while it's on its way, or a lock while it's Plus-only. */
+/** The map's thumbnail, or a dashed slot holding its mark, or a spinner while it's on its way. */
 @Composable
 internal fun MapMark(
     thumbnail: String?,
@@ -422,15 +402,6 @@ internal fun MapMark(
         when {
             shown.onItsWay -> {
                 CircularProgressIndicator(Modifier.size(16.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
-            }
-
-            shown == MindMapShown.PlusRequired -> {
-                Icon(
-                    painterResource(R.drawable.ic_lock),
-                    contentDescription = null,
-                    Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
             }
 
             else -> {

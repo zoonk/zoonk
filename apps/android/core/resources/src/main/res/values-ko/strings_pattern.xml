@@ -8,10 +8,10 @@
   "pattern_just_typos": "7540ccaadca76233360568518e9ff141acd153d60e7ae80215b8e8ed88afd4bc",
   "pattern_keep_going": "cf01442fe2d162d0db933b93ec498f2e17dc55eb5593375968a60ea022810e7f",
   "pattern_noticed": "6836cd2e87a83e4d9dbdc74911854c6f7dfda44617544cdb0d060e45e6f52d27",
-  "pattern_practice": "d86d67aa9630b4811da1e2c421fd3aa7f70da559c12fe404f39f885a9490980c",
+  "pattern_practice": "fe23709d3abf4f389074ff598abf81a3a296ce529bd65bd4c590e5fe226b5c8b",
   "pattern_quoted": "46c7393873e52a4e3e83df568fe68a2fac545946a7bbed55798d8532c3693619",
   "pattern_rule": "c8e732a8ddde5903a26c8ec200bcf38834775b34dad5645987921370c9db0413",
-  "pattern_see_how_you_did": "065965317f0960cf861d1165906dd6633d6f9f4fd9af2c1c2bd85c24265ed9d7",
+  "pattern_see_how_it_went": "af70094ba53d3b731c79053bda99842152fc49f97872e400ff7627586b0851ba",
   "pattern_see_rule": "10b785e4b29debc04d837efc2e0ee6289b245ab56a06b3e53f68f465f9fb9386",
   "pattern_seen": "442524fcdb7c379e6e1223c29fe8649e593734f2fd571d089f317d3f517e9c76",
   "pattern_seen_times": "ca0c390ae73e8dfeb53e010d28f6beb573a836663f1671a100230911eec21b07",
@@ -30,8 +30,7 @@
     <plurals name="pattern_seen_times">
         <item quantity="other">최근 답변에서 %d번 나타났어요.</item>
     </plurals>
-    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
-    <string name="pattern_practice">이 규칙 연습하기 · %1$s</string>
+    <string name="pattern_practice">연습하기</string>
     <!-- Heads the learner's other sentences that show the same mistake. -->
     <string name="pattern_also_came_up">같은 실수가 나온 다른 문장</string>
     <!-- A sentence the learner said or wrote, in quotation marks. -->
@@ -45,7 +44,7 @@
     <string name="pattern_where_you_slipped">실수한 부분</string>
     <string name="pattern_see_rule">규칙 보기</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_you_did">결과 보기</string>
+    <string name="pattern_see_how_it_went">결과 보기</string>
     <string name="pattern_got_it">이 규칙을 잘 익혔어요.</string>
     <string name="pattern_keep_going">규칙을 아는 게 첫걸음이에요. 써 볼수록 더 쉬워져요.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

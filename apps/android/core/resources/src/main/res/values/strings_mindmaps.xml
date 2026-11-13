@@ -6,8 +6,8 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapter %1$s</string>
-    <string name="mindmaps_empty_title">No mind maps yet</string>
-    <string name="mindmaps_empty_description">Your plan\'s chapters show up here as you get to them.</string>
+    <string name="mindmaps_empty_title">No chapter maps yet</string>
+    <string name="mindmaps_empty_description">Every chapter you finish gets one.</string>
     <string name="mindmaps_keep_studying">Keep studying</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mind map of %1$s</string>
@@ -21,20 +21,14 @@
     <string name="mindmaps_row_title">Mind map</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Its main ideas in one picture</string>
+    <!-- Under a finished chapter's name at a lesson's end. -->
+    <string name="mindmaps_row_description_finish">A mind map of its main ideas</string>
+    <!-- A mind map whose picture failed, so it opens as text. -->
+    <string name="mindmaps_shown_as_text">Shown as text</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
         <item quantity="one">%1$s lesson gets written first and counts toward your free lessons.</item>
         <item quantity="other">%1$s lessons get written first and count toward your free lessons.</item>
-    </plurals>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
-    <plurals name="mindmaps_lessons_first_plus">
-        <item quantity="one">%1$s lesson gets written first, so it takes a few minutes.</item>
-        <item quantity="other">%1$s lessons get written first, so it takes a few minutes.</item>
-    </plurals>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">%1$s lesson to write</item>
-        <item quantity="other">%1$s lessons to write</item>
     </plurals>
     <string name="mindmaps_writing_lessons">Writing the lessons, then the mind map…</string>
     <string name="mindmaps_writing_lessons_wait">This takes a few minutes. You can leave; it\'ll be here.</string>
@@ -70,6 +64,9 @@
     <string name="mindmaps_viewer_hint">Pinch, scroll or use + and - to zoom; drag or use the arrows to move.</string>
     <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
     <string name="mindmaps_study">Study</string>
+    <string name="mindmaps_create_all">Create all</string>
+    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
+    <string name="mindmaps_other_chapters">Other chapters</string>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Chapters</string>
     <string name="mindmaps_tab_lessons">Lessons</string>
@@ -84,11 +81,6 @@
         <item quantity="one">%1$s lesson map</item>
         <item quantity="other">%1$s lesson maps</item>
     </plurals>
-    <!-- How many of a chapter's lesson maps are for Plus, after how many there are: "6 lesson maps · 2 locked". -->
-    <plurals name="mindmaps_locked_count">
-        <item quantity="one">%1$s locked</item>
-        <item quantity="other">%1$s locked</item>
-    </plurals>
     <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
     <string name="mindmaps_chapter_map">Chapter map</string>
     <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
@@ -96,7 +88,7 @@
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Show all %1$s</string>
     <string name="mindmaps_lessons_empty_title">No lesson maps yet</string>
-    <string name="mindmaps_lessons_empty_description">Each lesson ends with a small map of its ideas. They show here once your lessons are written.</string>
+    <string name="mindmaps_lessons_empty_description">Every lesson ends with one.</string>
     <string name="mindmaps_saved_empty_title">Nothing saved yet</string>
     <string name="mindmaps_saved_empty_description">Tap the bookmark on a map to keep it here.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
@@ -105,13 +97,6 @@
     <string name="mindmaps_remove">Remove</string>
     <!-- What screen readers say for Remove, naming the map. -->
     <string name="mindmaps_remove_spoken">Remove %1$s from saved maps</string>
-    <!-- Over the chapters whose mind maps aren't made yet, at the end of the Chapters tab. -->
-    <string name="mindmaps_not_made_yet">Not made yet</string>
-    <!-- Starts every chapter map that can start now, in course order. %1$s is how many. -->
-    <plurals name="mindmaps_create_count">
-        <item quantity="one">Create %1$s chapter map</item>
-        <item quantity="other">Create %1$s chapter maps</item>
-    </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
         <item quantity="one">%1$s on the way. You can leave while it\'s made.</item>
@@ -127,15 +112,6 @@
         <item quantity="one">You can make %1$s more right now.</item>
         <item quantity="other">You can make %1$s more right now.</item>
     </plurals>
-    <!-- Chapters whose maps can't be made all at once because their lessons aren't written yet. %1$s is how many. -->
-    <plurals name="mindmaps_need_lessons">
-        <item quantity="one">%1$s chapter needs its lessons written first.</item>
-        <item quantity="other">%1$s chapters need their lessons written first.</item>
-    </plurals>
-    <!-- Opens and closes the list of chapters whose maps aren't made yet. -->
-    <string name="mindmaps_show_chapters">Show chapters</string>
-    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Writing lessons counts toward your free lessons.</string>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Save</string>
     <!-- A map the learner saved; tapping it again removes it. -->

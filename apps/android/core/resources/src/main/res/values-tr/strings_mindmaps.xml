@@ -13,43 +13,39 @@
   "mindmaps_chapter_map": "d3b9a3717e10688d8d38d9309eb3b9994f9eab4bf5d5c94b996bac789b9ce9ae",
   "mindmaps_chapter_number": "c5cc22be9a5cb6fcbb06499c047a87f7dac8cc9d5e982ce13f95cea9c4d67e6c",
   "mindmaps_create": "03191730764d64d8b6a55a0688d1329343d34b7435d02efb7e37a15f5919c385",
-  "mindmaps_create_count": "6dd70b9f5c26b786a781277645407f55ac5e640c95e87412458f81c958b3af59",
+  "mindmaps_create_all": "5ffa65390045d120111c95785eb1acedf660f1c164c8aa185e7b04ec79eee8b2",
   "mindmaps_create_spoken": "ca96a4020ef46f6f29ff2eca9e73ba5ceb0c797b662d80225a9454127ee5ef91",
   "mindmaps_didnt_finish": "e55a50da1ac3344a394b83090816ecbed0d7f2e381178340aa9c868061911a58",
   "mindmaps_done": "96e6fd7c9a675d813a82ea29a68c84b67cb29264270a2e7d5b0967ef789c0dda",
   "mindmaps_download": "b333b45450d635eedd4efa549fd4caa8e85650846a62884b7d00f505a9097d64",
   "mindmaps_drawing": "80ed264a9a7f6d48626aa45683a9a21b23c5666b703d125baf29cb1a7ae3d5a6",
   "mindmaps_drawing_wait": "bd6efb602cbe1b94f02cf083a25f7ce53ced54d2f0910b77f679fdfa1ffc0f21",
-  "mindmaps_empty_description": "7bda2ac4061d3424a17d4f8f81bff23b96d9f54af07ab56a56b4557c8b7a408a",
-  "mindmaps_empty_title": "4d322cfa95f53c93ea848dd1236b314dc3311559298f0a02688a27faad3f3567",
+  "mindmaps_empty_description": "5e4ca8ead3d095811aa9fa933294a9e17f99a68835d84ba46d250de996dfeb1e",
+  "mindmaps_empty_title": "94f08c0c5fb01c9d9103f44830ac09f4e2bea91641a3844e4ce2cd349a23df71",
   "mindmaps_failed": "292f458295f824ff1bf48df0f01e304a7ec450d6b281e84feda205e843980f40",
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
   "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
   "mindmaps_lesson_map": "5bb30d0f45ecfde2b8e0f03f070e7671246641fbaf58a83675ef2e4e0b52df30",
   "mindmaps_lesson_maps": "f4c611dc71251ad1457882b1bd26d88a105f9b0f4deb3a81c5f80d628387c997",
-  "mindmaps_lessons_count_free": "76d3852bf2ed41cc4db29468c516344d3e6762d4831feec2582a6b593d119f2f",
-  "mindmaps_lessons_empty_description": "985fd0067ce141043f9b115c523a8333980535680e5ee681be859d04fde979f6",
+  "mindmaps_lessons_empty_description": "38d595518d5a20e85e7ffd1c6bb482d3d14cd509e56bb427c26c3734b9a83a97",
   "mindmaps_lessons_empty_title": "bda7f9ea6d0385439a92e98791a76f3bf96112c51fc729ff55d205a495d714c6",
   "mindmaps_lessons_first_free": "f8acb4b7c9cfc88677fdc0f592652df92ec8273a5c5a1b57cef1b616502381c3",
-  "mindmaps_lessons_first_plus": "d387162e42ccd430f715ef8357d08e51576f2f917ba779ff9ed18e49ddd93153",
-  "mindmaps_lessons_to_write": "7faee3711fb245b146e9ad6aa4a118e7374b2467c82147cdf977ec33cf7ff818",
-  "mindmaps_locked_count": "be178ab30f638db4a6443afe00741145b7dc30ea776be621a62d164d6a8656f5",
   "mindmaps_map_gone": "c82ece4765be89a798eac8121630990a9c39669386139a510bdfb2e278279a9b",
-  "mindmaps_need_lessons": "30648bec62562edad3a2cd7410159d4aa5da1db52b1a2ffbeab0324a3abf8f59",
   "mindmaps_next": "0e5c421137a192f89eeb8f88728cfb2a2ad68139913e09bf5e14579fafd57e04",
   "mindmaps_no_longer_available": "dcfa4384b77018cb710abbab311c9f945f7d378032403f8c9e22df1229276248",
-  "mindmaps_not_made_yet": "4b8279b9864a32823f96ba6fdc584c4a089f9f146cba330bce794213acffe3d7",
   "mindmaps_open": "05b2a0f112825e7ec7a811acb736d631928d5267cf66260c1679a741ed978d1c",
   "mindmaps_open_chapter": "85da9e6e46c7b6d7e46e0bd35096858e8831d18cdab3cc7a5185cf38567ed38a",
   "mindmaps_open_lesson": "b60ffdccd84df718f19f4e7dbc8db3089788570b08e3f91b3223ca1db604b0c4",
   "mindmaps_open_spoken": "2472b797493afc3cf1b597cf027e762285ca43667a94a3f4d7e1205f6ab27802",
   "mindmaps_options": "60040835e843ca097696da1ccecaebd104f911d28a6d16718db973c8cf1f41d8",
+  "mindmaps_other_chapters": "dc59029032cd0501f04a89247d6fd4472de8c30ff80638f2821e29e38bc0aeb8",
   "mindmaps_previous": "30004dfa1f9fe9ebc3a6853b2106605ef441d040f4be3838ebdd4dcbaa51b54b",
   "mindmaps_ready": "0516c9487d72f6a40140ff66a33990435286e2ab0b8a5d77c4678075d236231d",
   "mindmaps_remove": "9d85b1552e2be2eecbab1dfee4d1f260aaaf4485abe734084081006be37f6956",
   "mindmaps_remove_spoken": "32ef42f7fdc03b64f0a365cff21dd3d7cbe44d0c02d7be0bf1f73474e165951e",
   "mindmaps_row_description": "1a17dd7ecf16e28c7b84a140b687fd8fa171bb72b9753a8e3c85f4667422002f",
+  "mindmaps_row_description_finish": "33bba190b67b3bec6061869bb3e51752874de4fddbb1ce4d618a2d10e8d6c87e",
   "mindmaps_row_title": "66858ed33aa31d5d49a19b4bae7e37ede863966cfc751847b8e3a66eb67bf318",
   "mindmaps_save": "10a84a5b5d7c489b2475721d25fa111249b0463e674e8c0cbe2420405ef409cc",
   "mindmaps_save_failed": "2be82fcc902724856b6c4488a3f0b35c50e6df79da37f9f83919293e512babd7",
@@ -59,7 +55,7 @@
   "mindmaps_saved_empty_title": "478e407523bb32c2e0fe14b17580e40c1cb4502d11e6e9e7f0cb765be9114dee",
   "mindmaps_saved_state": "73bc22257a6bebf97060e7fdbea6b7a89017b52d0dfe0eeb2d2099c9c99632f9",
   "mindmaps_show_all": "0262aff550f5e46b29563b87e3819506ad6e76d07828edb0f9f6fd2c1a665c01",
-  "mindmaps_show_chapters": "4ce2b305ea43e86707d5415a1c8f9891f08d0ae6977608076da3ce05b325f911",
+  "mindmaps_shown_as_text": "c20e11075bcf89d5789416048f1f1c6ca2588b78c7dc151383081192a5486278",
   "mindmaps_start_from_first": "f5882c2245618314aa0275bdf9c1641d3554740debd6effc9aa105f344efc658",
   "mindmaps_study": "3cff15e310d1bb39ffae7f4d1371b1f87914e1bc1e3a366132edad37b80c4733",
   "mindmaps_tab_chapters": "b6441aabcb4d88c1623cc9c02c56e6ce091237dce08d9488312a6b180aafe8df",
@@ -85,8 +81,8 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Ünite %1$s</string>
-    <string name="mindmaps_empty_title">Henüz zihin haritan yok</string>
-    <string name="mindmaps_empty_description">Planındaki üniteler sırası geldikçe burada görünür.</string>
+    <string name="mindmaps_empty_title">Henüz ünite haritası yok</string>
+    <string name="mindmaps_empty_description">Bitirdiğin her ünite için bir zihin haritası hazırlanır.</string>
     <string name="mindmaps_keep_studying">Çalışmaya devam et</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">%1$s için zihin haritası</string>
@@ -100,20 +96,14 @@
     <string name="mindmaps_row_title">Zihin haritası</string>
     <!-- A mind map that can be made, or that's ready, on the chapter's page. -->
     <string name="mindmaps_row_description">Ana kavramları tek bir görselde</string>
+    <!-- Under a finished chapter's name at a lesson's end. -->
+    <string name="mindmaps_row_description_finish">Ana kavramlarını gösteren bir zihin haritası</string>
+    <!-- A mind map whose picture failed, so it opens as text. -->
+    <string name="mindmaps_shown_as_text">Metin olarak gösteriliyor</string>
     <!-- A chapter whose lessons aren't written yet, for a free learner or a guest. %1$s is how many. -->
     <plurals name="mindmaps_lessons_first_free">
         <item quantity="one">Önce %1$s ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.</item>
         <item quantity="other">Önce %1$s ders hazırlıyoruz ve ücretsiz ders hakkından düşüyoruz.</item>
-    </plurals>
-    <!-- A chapter whose lessons aren't written yet, for a Plus learner. %1$s is how many. -->
-    <plurals name="mindmaps_lessons_first_plus">
-        <item quantity="one">Önce %1$s ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.</item>
-        <item quantity="other">Önce %1$s ders hazırlıyoruz, bu yüzden birkaç dakika sürüyor.</item>
-    </plurals>
-    <!-- A chapter on the Mind maps page whose lessons aren't written yet, after its number: "Chapter 4 · 2 lessons to write". %1$s is how many. -->
-    <plurals name="mindmaps_lessons_to_write">
-        <item quantity="one">Hazırlanacak %1$s ders</item>
-        <item quantity="other">Hazırlanacak %1$s ders</item>
     </plurals>
     <string name="mindmaps_writing_lessons">Önce dersleri, sonra zihin haritasını hazırlıyoruz…</string>
     <string name="mindmaps_writing_lessons_wait">Birkaç dakika sürer. Sayfadan ayrılabilirsin; haritan hazır olduğunda burada olacak.</string>
@@ -149,6 +139,9 @@
     <string name="mindmaps_viewer_hint">Yakınlaştırıp uzaklaştırmak için iki parmağını açıp kapat, kaydır veya + ve - tuşlarını kullan; hareket ettirmek için sürükle veya ok tuşlarını kullan.</string>
     <!-- The Mind maps page's main action: reads the open tab's maps one at a time, full screen. -->
     <string name="mindmaps_study">Çalış</string>
+    <string name="mindmaps_create_all">Tümünü oluştur</string>
+    <!-- A folded list of the chapters whose mind maps can't be made right now. -->
+    <string name="mindmaps_other_chapters">Diğer üniteler</string>
     <!-- The Mind maps page's tabs: chapters' maps, lessons' maps, and the maps the learner saved. -->
     <string name="mindmaps_tab_chapters">Üniteler</string>
     <string name="mindmaps_tab_lessons">Dersler</string>
@@ -163,11 +156,6 @@
         <item quantity="one">%1$s ders haritası</item>
         <item quantity="other">%1$s ders haritası</item>
     </plurals>
-    <!-- How many of a chapter's lesson maps are for Plus, after how many there are: "6 lesson maps · 2 locked". -->
-    <plurals name="mindmaps_locked_count">
-        <item quantity="one">%1$s kilitli</item>
-        <item quantity="other">%1$s kilitli</item>
-    </plurals>
     <!-- A kind of mind map, under a saved map's title: one for a whole chapter. -->
     <string name="mindmaps_chapter_map">Ünite haritası</string>
     <!-- A kind of mind map, under a saved map's title: a small diagram of one lesson's main ideas, not the chapter's mind map. -->
@@ -175,7 +163,7 @@
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Tümünü göster (%1$s)</string>
     <string name="mindmaps_lessons_empty_title">Henüz ders haritası yok</string>
-    <string name="mindmaps_lessons_empty_description">Her ders, içindeki kavramları gösteren küçük bir haritayla biter. Derslerin hazırlandığında bu haritalar burada görünür.</string>
+    <string name="mindmaps_lessons_empty_description">Her ders bir zihin haritasıyla biter.</string>
     <string name="mindmaps_saved_empty_title">Henüz kayıtlı harita yok</string>
     <string name="mindmaps_saved_empty_description">Bir haritayı buraya kaydetmek için üzerindeki yer imi simgesine dokun.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
@@ -184,13 +172,6 @@
     <string name="mindmaps_remove">Kaldır</string>
     <!-- What screen readers say for Remove, naming the map. -->
     <string name="mindmaps_remove_spoken">%1$s haritasını kaydedilenlerden kaldır</string>
-    <!-- Over the chapters whose mind maps aren't made yet, at the end of the Chapters tab. -->
-    <string name="mindmaps_not_made_yet">Henüz hazırlanmadı</string>
-    <!-- Starts every chapter map that can start now, in course order. %1$s is how many. -->
-    <plurals name="mindmaps_create_count">
-        <item quantity="one">%1$s ünite haritası oluştur</item>
-        <item quantity="other">%1$s ünite haritası oluştur</item>
-    </plurals>
     <!-- Under "Not made yet", while chapter maps are being made. %1$s is how many. -->
     <plurals name="mindmaps_being_made">
         <item quantity="one">%1$s harita hazırlıyoruz. Bu sırada buradan ayrılabilirsin.</item>
@@ -206,15 +187,6 @@
         <item quantity="one">Şu an %1$s harita daha oluşturabilirsin.</item>
         <item quantity="other">Şu an %1$s harita daha oluşturabilirsin.</item>
     </plurals>
-    <!-- Chapters whose maps can't be made all at once because their lessons aren't written yet. %1$s is how many. -->
-    <plurals name="mindmaps_need_lessons">
-        <item quantity="one">Önce %1$s ünitenin dersleri hazırlanmalı.</item>
-        <item quantity="other">Önce %1$s ünitenin dersleri hazırlanmalı.</item>
-    </plurals>
-    <!-- Opens and closes the list of chapters whose maps aren't made yet. -->
-    <string name="mindmaps_show_chapters">Üniteleri göster</string>
-    <!-- Above the chapters whose maps aren't made yet, for a free learner or a guest, when some need their lessons written first. -->
-    <string name="mindmaps_lessons_count_free">Hazırladığımız dersler ücretsiz ders hakkından düşülür.</string>
     <!-- Saves a map to study again. -->
     <string name="mindmaps_save">Kaydet</string>
     <!-- A map the learner saved; tapping it again removes it. -->

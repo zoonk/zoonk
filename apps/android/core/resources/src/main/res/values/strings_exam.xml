@@ -1,30 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="exam_final_stretch">The final stretch</string>
-    <string name="exam_final_stretch_detail">The last days before the exam go to mixed review and mock exams. New topics wait, unless they weigh a lot and are quick.</string>
+    <string name="exam_final_stretch_detail">From now on, review and mock exams.</string>
     <!-- %1$s is the exam's name, such as ENEM. -->
     <string name="exam_tomorrow">%1$s is tomorrow</string>
     <!-- %1$s is the exam's name, such as ENEM. -->
     <string name="exam_today">%1$s is today</string>
     <string name="exam_how_did_it_go">How did it go?</string>
-    <string name="exam_add_result_detail">When your official result comes out, add it here. It helps make estimates more accurate for everyone.</string>
-    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
-    <string name="exam_day_before_mock">Today is your short mock, then a look at what it finds. Then rest. %1$s</string>
-    <string name="exam_day_before_learn_and_mock">Today goes to the topics that come up most, then a short mock. Then rest.</string>
-    <string name="exam_day_before_learn">Today goes to the topics that come up most. Then rest.</string>
-    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
-    <string name="exam_day_before_review">Today is a full review of every topic, in your test\'s format, your weakest first. Then rest. %1$s</string>
-    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
-    <string name="exam_day_before_light">Today is a short, light review. Then rest. %1$s</string>
-    <plurals name="exam_work_sessions">
-        <item quantity="one">You did %d session.</item>
-        <item quantity="other">You did %d sessions.</item>
+    <string name="exam_add_result_detail">Add your official result when it comes out.</string>
+    <plurals name="exam_work_days">
+        <item quantity="one">%d day of study done.</item>
+        <item quantity="other">%d days of study done.</item>
     </plurals>
-    <!-- %1$s is a count of sessions, %2$s a count of mock exams. -->
-    <string name="exam_work_sessions_and_mocks">You did %1$s and %2$s.</string>
-    <plurals name="exam_sessions">
-        <item quantity="one">%d session</item>
-        <item quantity="other">%d sessions</item>
+    <!-- %1$s is a count of days, such as "12 days"; %2$s a count of mock exams, such as "3 mock exams". -->
+    <string name="exam_work_days_and_mocks">%1$s of study and %2$s done.</string>
+    <plurals name="exam_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
     </plurals>
     <plurals name="exam_mocks">
         <item quantity="one">%d mock exam</item>
@@ -51,21 +43,12 @@
         <item quantity="one">Exam · %d day left</item>
         <item quantity="other">Exam · %d days left</item>
     </plurals>
-    <!-- The exam's date is estimated, so the days left are approximate ("~"). -->
-    <plurals name="exam_eyebrow_days_left_estimated">
-        <item quantity="one">Exam · ~%d day left</item>
-        <item quantity="other">Exam · ~%d days left</item>
-    </plurals>
-    <!-- What screen readers say for exam_eyebrow_days_left_estimated. -->
-    <plurals name="exam_eyebrow_days_left_about">
-        <item quantity="one">Exam · About %d day left</item>
-        <item quantity="other">Exam · About %d days left</item>
-    </plurals>
-    <string name="exam_estimated_from_past">estimated from past editions</string>
-    <string name="exam_named_month_note_notice">The month you told us. We\'ll tell you the day once the notice sets it.</string>
-    <string name="exam_named_month_note_guide">The month you told us. We\'ll tell you the day once the official calendar sets it.</string>
-    <string name="exam_estimated_note_notice">Estimated from past editions. We\'ll tell you when the official notice is out.</string>
-    <string name="exam_estimated_note_guide">Estimated from past editions. We\'ll tell you when the official dates are out.</string>
+    <!-- A tappable label under the exam's dates; tapping it shows exam_date_tag_estimated_detail. -->
+    <string name="exam_date_tag_estimated">Estimated dates</string>
+    <string name="exam_date_tag_estimated_detail">From past editions. We\'ll tell you when the official dates are out.</string>
+    <!-- A tappable label under the exam's month; tapping it shows exam_date_tag_day_not_set_detail. -->
+    <string name="exam_date_tag_day_not_set">Day not set yet</string>
+    <string name="exam_date_tag_day_not_set_detail">We\'ll tell you the day once it\'s set.</string>
     <string name="exam_use_this_date">Use this date</string>
     <!-- %1$s is a month and year, such as "November 2027". -->
     <string name="exam_no_sitting_title">No exam date in %1$s</string>
@@ -93,11 +76,7 @@
     <string name="exam_passed_unknown">Not yet</string>
     <string name="exam_save_result">Save my result</string>
     <string name="exam_mocks_title">Mock exams</string>
-    <plurals name="exam_mocks_taken">
-        <item quantity="one">%d taken</item>
-        <item quantity="other">%d taken</item>
-    </plurals>
-    <string name="exam_mocks_plus">Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.</string>
+    <string name="exam_next_mock">Next mock exam</string>
     <!-- How far into a running mock: "12 of 45 answered". -->
     <string name="exam_mock_answered">%1$s of %2$s answered</string>
     <!-- A running mock's status on the exam page once every part of it is handed in. -->
@@ -109,28 +88,23 @@
         <item quantity="one">%d question</item>
         <item quantity="other">%d questions</item>
     </plurals>
-    <string name="exam_progress_title">How your mocks went</string>
-    <string name="exam_latest_mock">Latest mock</string>
+    <string name="exam_progress_title">Your progress</string>
+    <string name="exam_latest_mock">Latest mock exam</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
-    <string name="exam_net_score_in">Net score in %1$s</string>
+    <string name="exam_net_score_in">Score in %1$s</string>
     <!-- %1$s names the mock, such as "Mock exam 3". -->
     <string name="exam_right_answers_in">Right answers in %1$s</string>
     <!-- %1$s is a change in percentage points, such as +12. -->
     <string name="exam_since_first">%1$s since the first</string>
-    <string name="exam_best_area">Best area</string>
     <!-- %1$s and %2$s are the first and latest scores, such as 45%. -->
     <string name="exam_progress_chart_label">Your mock exam scores, from %1$s to %2$s</string>
     <string name="exam_by_subject">By subject</string>
     <!-- Read before a subject's change in percentage points, such as "+12". -->
     <string name="exam_since_first_mock">Since the first mock: %1$s</string>
-    <string name="exam_progress_take_another">Take another mock exam to see how your score changes.</string>
     <!-- %1$s and %2$s are lists of subjects. -->
-    <string name="exam_progress_better_and_needs_work">Better in %1$s. Still needs work: %2$s.</string>
+    <string name="exam_progress_better_and_needs_work">Better in %1$s. Work on %2$s.</string>
     <string name="exam_progress_better">Better in %1$s.</string>
-    <string name="exam_progress_needs_work">Still needs work: %1$s.</string>
-    <string name="exam_progress_no_change">No subject has changed much yet.</string>
-    <string name="exam_progress_trends_later">Trends by subject show once your mocks ask enough new questions of each one.</string>
-    <string name="exam_progress_locked">Each mock\'s score over time, and how each subject is going.</string>
+    <string name="exam_progress_needs_work">Work on %1$s.</string>
     <string name="exam_format_one_day">The exam day</string>
     <string name="exam_format_two_days">The two days</string>
     <!-- The title over an exam's days, for three or more: "The 3 days". -->
@@ -139,8 +113,6 @@
         <item quantity="other">The %d days</item>
     </plurals>
     <string name="exam_format_day">Day %1$d</string>
-    <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
-    <string name="exam_format_parts_questions">%1$s · %2$s</string>
     <string name="exam_about">About the exam</string>
     <!-- Said by screen readers on the mock the learner is on or is next. -->
     <string name="exam_current">Current</string>
@@ -154,14 +126,14 @@
     <string name="exam_rule_irt">Missing an easy question costs more than missing a hard one, so solve the easy ones first.</string>
     <string name="exam_rule_raw_title">Each right answer counts one point</string>
     <string name="exam_rule_raw">Answer every question.</string>
-    <!-- How the learner did on the answers they marked as sure and on those they marked as unsure. %1$s and %2$s are counts like "8 of 10 right". -->
-    <string name="exam_calibration">In your mock exams: sure, %1$s. Unsure, %2$s.</string>
+    <!-- How the learner did on the answers they didn't flag and on those they flagged. %1$s and %2$s are counts like "8 of 10 right". -->
+    <string name="exam_calibration">In your mock exams: %1$s when not flagged, %2$s when flagged.</string>
     <plurals name="exam_calibration_right">
         <item quantity="one">%1$d of %2$d right</item>
         <item quantity="other">%1$d of %2$d right</item>
     </plurals>
-    <string name="exam_calibration_blank_unsure">Your unsure answers cost more than they earn: leave those blank.</string>
-    <string name="exam_calibration_keep_answering">Your unsure answers still earn points: keep answering them.</string>
+    <string name="exam_calibration_blank_unsure">Your flagged answers cost more than they earn: leave those blank.</string>
+    <string name="exam_calibration_keep_answering">Your flagged answers still earn points: keep answering them.</string>
     <string name="exam_to_pass">To pass</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">In %1$s, as the exam\'s documents say it.</string>

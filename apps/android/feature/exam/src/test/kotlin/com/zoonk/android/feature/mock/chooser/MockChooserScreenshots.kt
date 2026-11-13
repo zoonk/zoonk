@@ -73,7 +73,10 @@ class MockChooserScreenshots {
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
     fun phoneShort() {
         starts.starts = listOf { short() }
-        capture("chooser-phone-short") { compose.onNodeWithText("Start").performClick() }
+        capture("chooser-phone-short") {
+            compose.onNodeWithText("Day 1").performClick()
+            compose.onNodeWithText("Start").performClick()
+        }
     }
 
     @Test
@@ -117,6 +120,7 @@ class MockChooserScreenshots {
             ZoonkTheme {
                 Surface {
                     MockWriting(
+                        eyebrow = "ENEM",
                         run =
                             GenerationRun(
                                 status = GenerationRun.Status.Following,

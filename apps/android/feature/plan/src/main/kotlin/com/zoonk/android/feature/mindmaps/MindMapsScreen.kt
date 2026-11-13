@@ -45,14 +45,11 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
@@ -300,7 +297,7 @@ internal class TabActions(
     ) = state.saves[target] ?: server
 }
 
-/** The goal over the title, then Study, which opens the tab's maps where this device stopped; and why rows are locked for Plus. */
+/** The title with the goal under it, then Study, which opens the tab's maps where this device stopped. */
 @Composable
 private fun MindMapsHeader(
     mindMaps: GoalMindMaps,
@@ -308,22 +305,13 @@ private fun MindMapsHeader(
     navigate: (AppRoute) -> Unit,
 ) {
     Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Eyebrow(mindMaps.goal.displayName)
         Text(stringResource(R.string.navigation_mind_maps), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
+        Text(mindMaps.goal.displayName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         if (study != null) {
             Button(
                 onClick = study,
                 modifier = Modifier.padding(top = 12.dp),
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) { Text(stringResource(R.string.mindmaps_study)) }
-        }
-        if (mindMaps.chapters.any { it.status == GoalMindMap.Status.PLUS_REQUIRED }) {
-            PlusNotice(
-                onSeePlus = { navigate(AppRoute.Subscription) },
-                modifier = Modifier.padding(top = 12.dp),
-                title = stringResource(R.string.subscription_free_week_over_title),
-                description = stringResource(R.string.subscription_free_week_over_description),
-            )
         }
     }
 }

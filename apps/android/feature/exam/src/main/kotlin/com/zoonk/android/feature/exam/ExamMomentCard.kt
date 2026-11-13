@@ -31,7 +31,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -40,7 +43,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatTimeOfDay
-import com.zoonk.android.ui.format.joinSentences
+import com.zoonk.android.ui.format.spaceAfterSentence
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDay
 import com.zoonk.api.models.ExamMoment
@@ -61,8 +64,9 @@ fun ExamMomentCard(
 ) {
     val body = momentBody(moment) ?: return
     val afterExam = moment.stage == ExamMoment.Stage.AFTER_EXAM
+    val lead = stringResource(R.string.exam_prepared).takeIf { moment.prepared && moment.stage.isLastDays }
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(
                 painter = painterResource(moment.stage.icon),
@@ -75,7 +79,14 @@ fun ExamMomentCard(
                 moment.day?.takeUnless { afterExam }?.let {
                     Text(examDayText(it), style = MaterialTheme.typography.bodyMedium.withTabularFigures())
                 }
-                Text(body, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    buildAnnotatedString {
+                        lead?.let { withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) { append(it + spaceAfterSentence(it)) } }
+                        append(body)
+                    },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
 
@@ -118,48 +129,31 @@ fun examDayText(day: ExamDay): String {
     return stringResource(R.string.exam_day_time, date, time)
 }
 
+private val ExamMoment.Stage.isLastDays: Boolean
+    get() = this == ExamMoment.Stage.DAY_BEFORE || this == ExamMoment.Stage.EXAM_DAY
+
 @Composable
 private fun momentBody(moment: ExamMoment): String? =
     when (moment.stage) {
-        ExamMoment.Stage.FINAL_STRETCH -> {
-            stringResource(R.string.exam_final_stretch_detail)
-        }
-
-        ExamMoment.Stage.DAY_BEFORE -> {
-            val work = workLine(moment)
-            when (moment.dayBefore) {
-                ExamMoment.DayBefore.MOCK -> stringResource(R.string.exam_day_before_mock, work)
-                ExamMoment.DayBefore.LEARN_AND_MOCK -> stringResource(R.string.exam_day_before_learn_and_mock)
-                ExamMoment.DayBefore.LEARN -> stringResource(R.string.exam_day_before_learn)
-                ExamMoment.DayBefore.REVIEW -> stringResource(R.string.exam_day_before_review, work)
-                ExamMoment.DayBefore.LIGHT -> stringResource(R.string.exam_day_before_light, work)
-            }
-        }
-
-        ExamMoment.Stage.EXAM_DAY -> {
-            workLine(moment)
-        }
-
-        ExamMoment.Stage.AFTER_EXAM -> {
-            if (moment.resultReported) null else stringResource(R.string.exam_add_result_detail)
-        }
+        ExamMoment.Stage.FINAL_STRETCH -> stringResource(R.string.exam_final_stretch_detail)
+        ExamMoment.Stage.DAY_BEFORE, ExamMoment.Stage.EXAM_DAY -> workLine(moment)
+        ExamMoment.Stage.AFTER_EXAM -> if (moment.resultReported) null else stringResource(R.string.exam_add_result_detail)
     }
 
+/** "12 days of study and 3 mock exams done." */
 @Composable
 private fun workLine(moment: ExamMoment): String {
-    val sessions = moment.sessionsDone.toInt()
+    val days = moment.sessionsDone.toInt()
     val mocks = moment.mocksTaken.toInt()
-    val done =
-        if (mocks > 0) {
-            stringResource(
-                R.string.exam_work_sessions_and_mocks,
-                pluralStringResource(R.plurals.exam_sessions, sessions, sessions),
-                pluralStringResource(R.plurals.exam_mocks, mocks, mocks),
-            )
-        } else {
-            pluralStringResource(R.plurals.exam_work_sessions, sessions, sessions)
-        }
-    return if (moment.prepared) joinSentences(done, stringResource(R.string.exam_prepared)) else done
+    return if (mocks > 0) {
+        stringResource(
+            R.string.exam_work_days_and_mocks,
+            pluralStringResource(R.plurals.exam_days, days, days),
+            pluralStringResource(R.plurals.exam_mocks, mocks, mocks),
+        )
+    } else {
+        pluralStringResource(R.plurals.exam_work_days, days, days)
+    }
 }
 
 /** Nothing is saved: it's a calm reminder, never a test. */

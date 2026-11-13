@@ -2,6 +2,7 @@ package com.zoonk.android.feature.exam
 
 import android.icu.text.ListFormatter
 import android.text.format.DateFormat
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -10,16 +11,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,12 +38,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -52,11 +62,11 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatTimeOfDay
 import com.zoonk.android.ui.format.parseLocalizedNumber
-import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.ExamResult
 import com.zoonk.api.models.ExamView
 import com.zoonk.api.models.ExamViewScoring
+import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.time.LocalTime
@@ -65,28 +75,12 @@ import kotlin.math.floor
 
 @Composable
 internal fun ExamEyebrow(exam: ExamView) {
-    val days = exam.daysLeft?.takeIf { it > 0 }?.toInt()
-
-    when {
-        days == null -> {
-            Eyebrow(stringResource(R.string.exam_eyebrow))
-        }
-
-        exam.daysEstimated -> {
-            val spoken = pluralStringResource(R.plurals.exam_eyebrow_days_left_about, days, days)
-            Eyebrow(
-                pluralStringResource(R.plurals.exam_eyebrow_days_left_estimated, days, days),
-                Modifier.semantics { contentDescription = spoken },
-            )
-        }
-
-        else -> {
-            Eyebrow(pluralStringResource(R.plurals.exam_eyebrow_days_left, days, days))
-        }
-    }
+    // The day before, the card under the title says "tomorrow": the count would say it twice.
+    val days = exam.daysLeft?.takeIf { it > 0 && exam.stage != ExamView.Stage.DAY_BEFORE }?.toInt()
+    Eyebrow(days?.let { pluralStringResource(R.plurals.exam_eyebrow_days_left, it, it) } ?: stringResource(R.string.exam_eyebrow))
 }
 
-/** Main's `useExamDays`: the exam's days with their start time, and whether they're estimated. */
+/** Main's `useExamDays`: the exam's days with their start time. */
 @Composable
 internal fun examFacts(exam: ExamView): List<String> {
     val locale = currentLocale()
@@ -114,9 +108,40 @@ internal fun examFacts(exam: ExamView): List<String> {
             if (start != null) stringResource(R.string.exam_day_time, text, time(start)) else text
         }
     val dates = if (startTimes.size <= 1 && days.size > 1) listOf(ListFormatter.getInstance(locale).format(days)) else days
-    val withTime = if (sharedTime != null) dates + time(sharedTime) else dates
-    val estimated = stringResource(R.string.exam_estimated_from_past).takeIf { exam.daysEstimated }
-    return withTime + listOfNotNull(estimated)
+    return if (sharedTime != null) dates + time(sharedTime) else dates
+}
+
+/** Why the dates may change, behind a tap: the page says once that they're estimated. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ExamDateTag(exam: ExamView) {
+    val (label, text) =
+        when {
+            exam.days.isEmpty() -> return
+            exam.namedMonth && (exam.noticeDay != null || exam.noSitting != null) -> return
+            exam.namedMonth -> R.string.exam_date_tag_day_not_set to R.string.exam_date_tag_day_not_set_detail
+            exam.daysEstimated -> R.string.exam_date_tag_estimated to R.string.exam_date_tag_estimated_detail
+            else -> return
+        }
+    val tooltip = rememberTooltipState(isPersistent = true)
+    val scope = rememberCoroutineScope()
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = { RichTooltip { Text(stringResource(text)) } },
+        state = tooltip,
+    ) {
+        Text(
+            stringResource(label),
+            modifier =
+                Modifier
+                    .minimumInteractiveComponentSize()
+                    .clickable(role = Role.Button) { scope.launch { tooltip.show() } },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+            textDecoration = TextDecoration.Underline,
+        )
+    }
 }
 
 /** "Sat, Nov 8": main's `useExamDayDate`. */
@@ -125,19 +150,6 @@ internal fun examDayDate(
     today: LocalDate,
     locale: Locale,
 ): String = "${formatDate(date, locale, DateStyle.WeekdayShort)}, ${formatPlanDate(date, today, locale)}"
-
-/** Main's date note under the aside: where the date comes from while it isn't official. */
-internal val ExamView.dateNote: Int?
-    get() {
-        val notice = examDocument == ExamDocument.NOTICE
-        return when {
-            days.isEmpty() -> null
-            namedMonth && (noticeDay != null || noSitting != null) -> null
-            namedMonth -> if (notice) R.string.exam_named_month_note_notice else R.string.exam_named_month_note_guide
-            daysEstimated -> if (notice) R.string.exam_estimated_note_notice else R.string.exam_estimated_note_guide
-            else -> null
-        }
-    }
 
 internal val ExamView.showsMoment: Boolean
     get() = stage == ExamView.Stage.FINAL_STRETCH || stage == ExamView.Stage.DAY_BEFORE || stage == ExamView.Stage.EXAM_DAY
@@ -152,7 +164,8 @@ internal val ExamView.moment: ExamMoment
                 } else {
                     emptyList()
                 },
-            day = days.firstOrNull(),
+            // The date is under the page's title already.
+            day = null,
             dayBefore = ExamMoment.DayBefore.entries.first { it.value == dayBefore.value },
             examName = examName,
             mocksTaken = mocks.size.toLong(),

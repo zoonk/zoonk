@@ -48,10 +48,10 @@ import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
-import com.zoonk.android.feature.practice.UndoAction
+import com.zoonk.android.feature.practice.UndoButton
+import com.zoonk.android.feature.practice.UndoFailed
 import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.session.DayMoment
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -59,8 +59,11 @@ import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
@@ -295,17 +298,13 @@ private fun StartActions(
     val replacementModifier = Modifier.focusRequester(replacementFocus).semantics(mergeDescendants = true) {}.focusable()
     when {
         plusRequired -> {
-            PlusNotice(
-                onSeePlus = null,
-                title = stringResource(R.string.subscription_free_week_over_title),
-                description = stringResource(R.string.subscription_free_week_over_description),
+            LimitNotice(
+                Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                LimitSubject.Lessons,
+                onCreateAccount = { navigator.open(AppRoute.Login) },
+                onSeePlus = { navigator.open(AppRoute.Subscription) },
                 modifier = replacementModifier,
             )
-            TaskActions { width ->
-                Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = width) {
-                    Text(stringResource(R.string.testout_see_plus))
-                }
-            }
         }
 
         refused != null -> {
@@ -362,7 +361,8 @@ internal fun TestOutQuestions(
         onAnswer = { question, answer -> viewModel.answer(test.questions, question, answer) },
         onSend = viewModel::retrySend,
         onClose = onClose,
-        hint = { rule },
+        // The rule shows over the first question only; the others keep its line so the count never moves.
+        hint = { question -> rule.takeIf { question == test.questions.first() } },
         aside = { TestOutAside(page, rule) },
     )
 }
@@ -415,18 +415,14 @@ internal fun TestOutResult(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),
             saving = false,
-            actionTrailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             onClose = onClose,
             detail = detail,
             actions = {
+                UndoFailed(ui.undo)
                 TaskActions { width ->
-                    Button(
-                        onClick = onClose,
-                        modifier = width,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-                    ) { Text(stringResource(R.string.testout_continue)) }
+                    if (canUndo) UndoButton(ui.undo, viewModel::undo)
+                    Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) }
                 }
-                if (canUndo) UndoAction(ui.undo, viewModel::undo)
             },
         ) {
             MomentReadouts(brainPower = 0, facts = listOf(scoreLine(outcome)))

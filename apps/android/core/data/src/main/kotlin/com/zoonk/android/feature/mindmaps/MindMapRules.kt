@@ -22,7 +22,6 @@ enum class MindMapShown {
     Drawing,
     Ready,
     Failed,
-    PlusRequired,
     Refused,
     Unreachable,
     ;
@@ -49,14 +48,14 @@ data class MindMapLocal(
 
 /**
  * The reads decide, but for a refusal or a lost connection no newer read has replaced yet; a drawn
- * map or a Plus lock leaves nothing for either to be about.
+ * map leaves nothing for either to be about.
  */
 fun shownMindMap(
     server: MindMapShown,
     local: MindMapLocal?,
 ): MindMapShown =
     when {
-        server == MindMapShown.Ready || server == MindMapShown.PlusRequired -> server
+        server == MindMapShown.Ready -> server
         local?.unreachable == true -> MindMapShown.Unreachable
         local?.limit != null -> MindMapShown.Refused
         else -> server
@@ -70,7 +69,7 @@ val GoalMindMap.Status.shown: MindMapShown
             GoalMindMap.Status.DRAWING -> MindMapShown.Drawing
             GoalMindMap.Status.READY -> MindMapShown.Ready
             GoalMindMap.Status.FAILED -> MindMapShown.Failed
-            GoalMindMap.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
+            GoalMindMap.Status.PLUS_REQUIRED -> MindMapShown.Unavailable
         }
 
 val ChapterMindMap.Status.shown: MindMapShown
@@ -82,7 +81,7 @@ val ChapterMindMap.Status.shown: MindMapShown
             ChapterMindMap.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMap.Status.READY -> MindMapShown.Ready
             ChapterMindMap.Status.FAILED -> MindMapShown.Failed
-            ChapterMindMap.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
+            ChapterMindMap.Status.PLUS_REQUIRED -> MindMapShown.Unavailable
         }
 
 val ChapterMindMapStatus.Status.shown: MindMapShown
@@ -94,7 +93,7 @@ val ChapterMindMapStatus.Status.shown: MindMapShown
             ChapterMindMapStatus.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMapStatus.Status.READY -> MindMapShown.Ready
             ChapterMindMapStatus.Status.FAILED -> MindMapShown.Failed
-            ChapterMindMapStatus.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
+            ChapterMindMapStatus.Status.PLUS_REQUIRED -> MindMapShown.Unavailable
         }
 
 val MindMapGeneration.Status.shown: MindMapShown

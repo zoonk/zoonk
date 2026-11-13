@@ -62,15 +62,45 @@ private fun testRows(points: MockPoints): List<TestRow> {
     return rows.filter { it.met == false } + rows.filter { it.met != false }
 }
 
-/** Main's `MockResultPoints`: the verdict a full mock can give, each test against its minimum, and the minimums it couldn't check. */
+internal fun hasTestRows(points: MockPoints?): Boolean = points != null && (testRows(points).isNotEmpty() || points.unjudged.isNotEmpty())
+
+/** True when the mock exam checked at least one minimum and every one was reached. */
+internal fun reachedEveryMinimum(points: MockPoints?): Boolean {
+    val rows = points?.let(::testRows).orEmpty()
+    return rows.any { it.met == true } && rows.none { it.met == false }
+}
+
+/** What the result leads with when a test's minimum is missed, instead of the score. */
+internal class MissedMinimum(
+    val title: String,
+    val line: String,
+)
+
+@Composable
+internal fun missedMinimum(points: MockPoints?): MissedMinimum? {
+    val first = points?.let(::testRows)?.firstOrNull() ?: return null
+    val minimum = first.minimum?.takeIf { first.met == false } ?: return null
+    val needed = minimumText(minimum)
+    val name = first.name
+    return MissedMinimum(
+        title = name?.let { stringResource(R.string.mock_result_below_minimum_named, it) } ?: stringResource(R.string.mock_result_below_minimum),
+        line =
+            if (minimum.unit == PointsMinimum.Unit.PERCENT) {
+                stringResource(R.string.mock_result_below_minimum_percent, percent(scorePercent(first)), needed)
+            } else {
+                val short = first.short ?: 0.0
+                pointsText(R.plurals.mock_result_below_minimum_points, R.string.mock_result_below_minimum_points_decimal, short, points(short), needed)
+            },
+    )
+}
+
+/** Main's `MockResultPoints`: each test against its minimum, the whole exam's projection and the minimums it couldn't check. */
 @Composable
 internal fun PointsByTest(points: MockPoints) {
     val rows = testRows(points)
     if (rows.isEmpty() && points.unjudged.isEmpty()) return
 
     ResultSection(stringResource(R.string.mock_result_by_test)) {
-        Verdict(rows)
-        NoteLines(listOfNotNull(projectedLine(points)))
         if (rows.isNotEmpty()) {
             Column {
                 rows.forEachIndexed { index, row ->
@@ -79,7 +109,7 @@ internal fun PointsByTest(points: MockPoints) {
                 }
             }
         }
-        NoteLines(points.unjudged.map { unjudgedLine(it) })
+        NoteLines(listOfNotNull(projectedLine(points)) + points.unjudged.map { unjudgedLine(it) })
     }
 }
 
@@ -115,28 +145,11 @@ private fun TestRowItem(row: TestRow) {
                 )
             }
         }
+        val total = points(row.max ?: row.asked)
         Text(
-            stringResource(R.string.mock_result_points_of, points(row.projected ?: row.earned), points(row.max ?: row.asked)),
+            row.projected?.let { stringResource(R.string.mock_result_about_points, points(it.roundToLong().toDouble()), total) }
+                ?: stringResource(R.string.mock_result_points_of, points(row.earned), total),
             style = MaterialTheme.typography.labelLarge.withTabularFigures(),
-        )
-    }
-}
-
-@Composable
-private fun Verdict(rows: List<TestRow>) {
-    if (rows.none { it.met != null }) return
-    val first = rows.first()
-    val minimum = first.minimum
-    val style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-
-    if (first.met == false && minimum != null) {
-        MarkedLine(missSentence(first, minimum), met = false, color = MaterialTheme.colorScheme.error, style = style)
-    } else {
-        MarkedLine(
-            stringResource(R.string.mock_result_meets_minimums),
-            met = true,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = style,
         )
     }
 }
@@ -198,55 +211,10 @@ private fun requirementLine(
 }
 
 @Composable
-private fun missSentence(
-    row: TestRow,
-    minimum: PointsMinimum,
-): String {
-    val needed = minimumText(minimum)
-    val inPercent = minimum.unit == PointsMinimum.Unit.PERCENT
-    val short = row.short ?: 0.0
-    val name = row.name
-
-    return when {
-        name == null && inPercent -> {
-            stringResource(R.string.mock_result_eliminated_together_percent, percent(scorePercent(row)), needed)
-        }
-
-        name == null -> {
-            pluralPoints(
-                R.plurals.mock_result_eliminated_together_points,
-                R.string.mock_result_eliminated_together_points_decimal,
-                short,
-                needed,
-            )
-        }
-
-        inPercent -> {
-            stringResource(R.string.mock_result_eliminated_percent, name, percent(scorePercent(row)), needed)
-        }
-
-        else -> {
-            pointsText(
-                R.plurals.mock_result_eliminated_points,
-                R.string.mock_result_eliminated_points_decimal,
-                short,
-                name,
-                points(short),
-                needed,
-            )
-        }
-    }
-}
-
-@Composable
 private fun projectedLine(points: MockPoints): String? {
-    val projected = points.projected
-    val max = points.max
-    return when {
-        projected != null && max != null -> stringResource(R.string.mock_result_projected_total, points(projected), points(max))
-        projected != null || points.parts.any { it.projected != null } -> stringResource(R.string.mock_result_projected_tests)
-        else -> null
-    }
+    val projected = points.projected ?: return null
+    val max = points.max ?: return null
+    return stringResource(R.string.mock_result_projected_total, points(projected.roundToLong().toDouble()), points(max))
 }
 
 @Composable

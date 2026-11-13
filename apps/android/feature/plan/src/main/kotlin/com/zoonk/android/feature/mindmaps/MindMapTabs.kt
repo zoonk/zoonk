@@ -32,7 +32,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
@@ -42,6 +41,7 @@ import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
@@ -58,10 +58,10 @@ import kotlinx.coroutines.launch
 private val NOT_MADE =
     setOf(GoalMindMap.Status.AVAILABLE, GoalMindMap.Status.WRITING_LESSONS, GoalMindMap.Status.DRAWING, GoalMindMap.Status.FAILED)
 
-/** The Chapters tab's index: the ready maps and the Plus-locked ones, by subject. */
+/** The Chapters tab's index: the ready maps, by subject. */
 internal fun GoalMindMaps.chapterIndex(): List<IndexGroup<GoalMindMap>> =
     chapters
-        .filter { it.status == GoalMindMap.Status.READY || it.status == GoalMindMap.Status.PLUS_REQUIRED }
+        .filter { it.status == GoalMindMap.Status.READY }
         .groupBy { it.subject?.key.orEmpty() }
         .map { (key, maps) -> IndexGroup(key, maps.first().subject?.name, maps) }
 
@@ -84,7 +84,7 @@ internal fun GoalMindMaps.lessonIndex(): List<IndexGroup<Pair<LessonMapGroup, Go
         }
 }
 
-/** Chapters: the ready maps and the Plus-locked ones by subject, then the maps not made yet. */
+/** Chapters: the ready maps by subject, then the maps not made yet. */
 internal fun LazyListScope.chaptersTab(
     mindMaps: GoalMindMaps,
     shown: IndexState,
@@ -147,11 +147,15 @@ private fun ChapterRow(
     }
 }
 
+/** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
+private fun GoalMindMap.canMakeNow(): Boolean =
+    lessonsToWrite == 0L &&
+        (status == GoalMindMap.Status.AVAILABLE || status == GoalMindMap.Status.DRAWING || status == GoalMindMap.Status.FAILED)
+
 /**
- * Main's "Not made yet": a button that starts as many maps as can start now, one line (the first
- * that applies), and those chapters folded under Show chapters, each with its Create while a new
- * map can start (a failed one keeps Try again, which is free). The list mixes subjects without
- * their headers, so its rows go without their number.
+ * Main's `NotMadeYet`, after the chapters that have a map: each chapter whose map can be made now as
+ * its own row, Create all when two or more can start, one line about the rest, and the rest folded
+ * under Other chapters. The rows mix subjects without their headers, so they go without their number.
  */
 private fun LazyListScope.notMadeBlock(
     mindMaps: GoalMindMaps,
@@ -159,32 +163,28 @@ private fun LazyListScope.notMadeBlock(
     open: Boolean,
     actions: TabActions,
 ) {
-    item(key = "not-made", contentType = "not-made") {
-        NotMadeSummary(mindMaps, actions)
+    val now = notMade.filter { it.canMakeNow() }
+    val later = notMade.filterNot { it.canMakeNow() }
+    val stop = mindMaps.createOffer.stop?.limit(actions.state.tier)
+
+    items(now, key = { "now-${it.chapterId}" }, contentType = { "map" }) { map ->
+        Divided(map != now.first()) { ChapterRow(map, actions, stop = stop, numbered = false) }
     }
+    item(key = "not-made", contentType = "not-made") {
+        NotMadeSummary(mindMaps, later, actions)
+    }
+    if (later.isEmpty()) return
     item(key = "not-made-toggle", contentType = "toggle") {
         ListRow(
-            headline = { Text(stringResource(R.string.mindmaps_show_chapters)) },
+            headline = { Text(stringResource(R.string.mindmaps_other_chapters)) },
             modifier = Modifier.bleed(LIST_ITEM_INSET).padding(top = 4.dp),
             onClick = actions.toggleNotMade,
             expanded = open,
-            meta = { Text(formatNumber(notMade.size.toDouble(), currentLocale())) },
+            meta = { Text(formatNumber(later.size.toDouble(), currentLocale()), style = MaterialTheme.zoonkType.data) },
         )
     }
     if (open) {
-        val stop = mindMaps.createOffer.stop?.limit(actions.state.tier)
-        // On Plus, a row says its lessons take a few minutes once it starts; the free plans' cost is said once, here.
-        if (stop == null && actions.state.tier != LimitTier.Plus && notMade.any { it.lessonsToWrite > 0 }) {
-            item(key = "not-made-note", contentType = "note") {
-                Text(
-                    stringResource(R.string.mindmaps_lessons_count_free),
-                    Modifier.padding(vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-        items(notMade, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
+        items(later, key = { "not-made-${it.chapterId}" }, contentType = { "map" }) { map ->
             Divided(true) { ChapterRow(map, actions, stop = stop, numbered = false) }
         }
     }
@@ -193,42 +193,37 @@ private fun LazyListScope.notMadeBlock(
 @Composable
 private fun NotMadeSummary(
     mindMaps: GoalMindMaps,
+    later: List<GoalMindMap>,
     actions: TabActions,
 ) {
-    val offer = mindMaps.createOffer
-
-    Column(Modifier.padding(top = 24.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.mindmaps_not_made_yet))
-
-        if (offer.startable > 0) {
-            val count = offer.startable.toInt()
+    Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (mindMaps.createOffer.startable > 1) {
             OutlinedButton(
                 onClick = actions.page.createAll,
                 busy = actions.state.createAll == CreateAll.Pending,
                 leadingIcon = { ButtonIcon(R.drawable.ic_add) },
-            ) { Text(pluralStringResource(R.plurals.mindmaps_create_count, count, formatNumber(count.toDouble(), currentLocale()))) }
+            ) { Text(stringResource(R.string.mindmaps_create_all)) }
         }
 
-        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, actions) }
+        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, actions) }
     }
 }
 
 /**
- * The block's one line, the first that applies: the tap didn't reach the server, maps on their way,
- * maps the button tries again, what stops every map from starting, how many more fit now, or
- * chapters whose lessons come first. Maps the learner just started come before the limit, which
- * read first looks like a refusal.
+ * The block's one line about [later], the first that applies: the tap didn't reach the server, maps
+ * on their way, maps that didn't finish, what stops every map from starting, or how many more fit
+ * now. Maps the learner just started come before the limit, which read first looks like a refusal.
  */
 @Composable
 private fun NotMadeLine(
     mindMaps: GoalMindMaps,
+    later: List<GoalMindMap>,
     actions: TabActions,
 ) {
     val offer = mindMaps.createOffer
     val locale = currentLocale()
-    val onTheWay = mindMaps.chapters.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
-    // A failed chapter that still needs lessons isn't the button's to retry; its own row says so.
-    val retried = mindMaps.chapters.count { it.status == GoalMindMap.Status.FAILED && it.lessonsToWrite == 0L }
+    val onTheWay = later.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
+    val failed = later.count { it.status == GoalMindMap.Status.FAILED }
     // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
     val limit = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
@@ -243,8 +238,8 @@ private fun NotMadeLine(
                 counted(R.plurals.mindmaps_being_made, onTheWay.toLong())
             }
 
-            retried > 0 -> {
-                counted(R.plurals.mindmaps_didnt_finish, retried.toLong())
+            failed > 0 -> {
+                counted(R.plurals.mindmaps_didnt_finish, failed.toLong())
             }
 
             limit != null -> {
@@ -254,10 +249,6 @@ private fun NotMadeLine(
 
             offer.startable in 1..<offer.eligible -> {
                 counted(R.plurals.mindmaps_can_make_more, offer.startable)
-            }
-
-            offer.needLessons > 0 -> {
-                counted(R.plurals.mindmaps_need_lessons, offer.needLessons)
             }
 
             else -> {
@@ -323,32 +314,17 @@ private fun LessonGroupRow(
     actions: TabActions,
 ) {
     val locale = currentLocale()
-    val allLocked = group.locked >= group.count
     val count = group.count.toInt()
-    val locked = group.locked.toInt()
 
     ListRow(
         headline = { Text(chapter.title) },
-        onClick = {
-            if (allLocked) {
-                actions.page.navigate(AppRoute.Subscription)
-            } else {
-                actions.page.study(StudyTab.Lessons, MapPlace(group.chapterId.toString()))
-            }
-        },
-        leading = { MapMark(null, if (allLocked) MindMapShown.PlusRequired else MindMapShown.Available) },
+        onClick = { actions.page.study(StudyTab.Lessons, MapPlace(group.chapterId.toString())) },
+        leading = { MapMark(null, MindMapShown.Available) },
         supporting = {
             Text(
                 factsLine(
                     stringResource(R.string.mindmaps_chapter_number, formatNumber(chapter.position.toDouble(), locale)),
                     pluralStringResource(R.plurals.mindmaps_lesson_maps, count, formatNumber(count.toDouble(), locale)),
-                    if (locked >
-                        0
-                    ) {
-                        pluralStringResource(R.plurals.mindmaps_locked_count, locked, formatNumber(locked.toDouble(), locale))
-                    } else {
-                        null
-                    },
                 ),
             )
         },

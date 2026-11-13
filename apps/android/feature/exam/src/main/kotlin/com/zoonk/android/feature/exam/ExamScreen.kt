@@ -39,17 +39,18 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mock.MockEntryButton
 import com.zoonk.android.feature.mock.MockStore
-import com.zoonk.android.feature.mock.mockEntryRoute
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPaperSection
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -165,9 +166,9 @@ private fun ExamPage(
         listState = listState,
     ) { aboutBeside ->
         item(key = "hero", contentType = "hero") {
-            ExamHero(exam, options, viewModel, navigator) { ReportProblemMenu(app, FeedbackTarget("exam"), inPage = true) }
+            ExamHero(exam, options, navigator) { ReportProblemMenu(app, FeedbackTarget("exam"), inPage = true) }
         }
-        examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, app, navigator)
+        examSections(exam, options, viewModel, app, navigator)
         if (!aboutBeside) {
             about.forEach { section ->
                 item(key = "about-$section", contentType = section) { AboutSection(section, exam) }
@@ -178,11 +179,14 @@ private fun ExamPage(
 
 private fun LazyListScope.examSections(
     exam: ExamView,
-    mockOffered: Boolean,
+    options: MockOptions?,
     viewModel: ExamViewModel,
     app: AppContainer,
     navigator: AppNavigator,
 ) {
+    if (exam.noticeDay != null || exam.noSitting != null) {
+        item(key = "notice-day", contentType = "notice-day") { NoticeDatesCard(exam, viewModel) }
+    }
     if (exam.showsMoment) {
         item(key = "moment", contentType = "moment") {
             ExamMomentCard(exam.moment, onOpen = null, titleStyle = MaterialTheme.typography.titleMedium)
@@ -191,11 +195,20 @@ private fun LazyListScope.examSections(
     if (exam.takesResult) {
         item(key = "result", contentType = "result") { ExamResultSection(exam, viewModel) }
     }
-    if (exam.showsMocks(mockOffered)) {
-        item(key = "mocks", contentType = "mocks") { ExamMocksSection(exam, mockOffered, navigator) }
+    // The day before, on the day and after it, the exam leads the page and a mock exam is one small button.
+    val entry: (@Composable () -> Unit)? =
+        options?.takeIf { exam.isLastDays && it.options.isNotEmpty() }?.let {
+            {
+                OutlinedButton(onClick = { navigator.open(AppRoute.MockChooser) }, size = ButtonSize.Small) {
+                    Text(stringResource(R.string.mock_take))
+                }
+            }
+        }
+    if (exam.showsMocks(entry != null)) {
+        item(key = "mocks", contentType = "mocks") { ExamMocksSection(exam, entry, navigator) }
     }
-    if (exam.mocksRequirePlus || exam.progress != null) {
-        item(key = "progress", contentType = "progress") { ExamMockProgressSection(exam) }
+    exam.progress?.let { progress ->
+        item(key = "progress", contentType = "progress") { ExamMockProgressSection(progress, exam.scoring.method) }
     }
     val paper = exam.speaking
     val speakingMock = exam.speakingMock
@@ -226,12 +239,11 @@ private fun LazyListScope.examSections(
     }
 }
 
-/** Main's hero: the eyebrow, the exam, its days, the main action with the page's [menu], and a date the notice set under them. */
+/** Main's hero: the eyebrow, the exam, its days, and the main action with the page's [menu]. */
 @Composable
 private fun ExamHero(
     exam: ExamView,
     options: MockOptions?,
-    viewModel: ExamViewModel,
     navigator: AppNavigator,
     menu: @Composable () -> Unit,
 ) {
@@ -242,9 +254,10 @@ private fun ExamHero(
             ExamEyebrow(exam)
             Text(exam.examName, Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
             if (facts.isNotEmpty()) Facts(facts)
+            ExamDateTag(exam)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            options?.let {
+            options?.takeUnless { exam.isLastDays }?.let {
                 MockEntryButton(
                     it,
                     onOpen = navigator::open,
@@ -254,8 +267,11 @@ private fun ExamHero(
             }
             menu()
         }
-        if (exam.noticeDay != null || exam.noSitting != null) NoticeDatesCard(exam, viewModel)
     }
 }
+
+/** The day before, on the day and after it, a mock exam isn't the page's main action. */
+private val ExamView.isLastDays: Boolean
+    get() = stage == ExamView.Stage.DAY_BEFORE || stage == ExamView.Stage.EXAM_DAY || stage == ExamView.Stage.AFTER_EXAM
 
 private const val FROM_EXAM = "exam"

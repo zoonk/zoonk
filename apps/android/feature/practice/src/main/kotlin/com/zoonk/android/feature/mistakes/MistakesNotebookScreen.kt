@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
@@ -72,8 +71,6 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.DoneMark
-import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.Facts
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -85,6 +82,7 @@ import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -499,25 +497,12 @@ private fun NotebookHero(
     val availability = page.head.availability
     val ready = availability.ready.toInt()
     val tomorrow = availability.tomorrow.toInt()
-    val fixedCount =
-        page.head.counts.fixed
-            .toInt()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Eyebrow(page.goalTitle)
             PageTitleRow(stringResource(R.string.mistakes_notebook_title))
-        }
-        Facts(
-            listOfNotNull(
-                pluralStringResource(R.plurals.mistakes_ready, ready, ready).takeIf { ready > 0 || tomorrow == 0 },
-                pluralStringResource(R.plurals.mistakes_tomorrow, tomorrow, tomorrow).takeIf { tomorrow > 0 },
-                pluralStringResource(R.plurals.mistakes_fixed_count, fixedCount, fixedCount),
-            ),
-        )
-        if (ready == 0 && tomorrow > 0) {
             Text(
-                stringResource(R.string.mistakes_come_back_tomorrow),
+                factsLine(page.goalTitle, stringResource(R.string.mistakes_opens_tomorrow).takeIf { ready == 0 && tomorrow > 0 }),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -648,7 +633,7 @@ private fun MistakeEntry(
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            CauseLabel(mistake.cause, fixed, Modifier.weight(1f))
+            Box(Modifier.weight(1f)) { mistake.cause?.let { CauseLabel(it) } }
             Text(
                 formatDate(date, currentLocale(), DateStyle.Day),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -680,10 +665,16 @@ private fun MistakeEntry(
                 skillId?.let {
                     OutlinedButton(
                         onClick = { actions.onPracticeSkill(it) },
-                    ) { Text(stringResource(R.string.mistakes_practice_skill)) }
+                    ) { Text(stringResource(R.string.mistakes_practice_topic)) }
                 }
                 mistake.lesson?.let { lesson ->
-                    TextButton(onClick = { actions.onLesson(lesson.id) }) { Text(stringResource(R.string.mistakes_open_lesson)) }
+                    val open = @Composable { Text(stringResource(R.string.mistakes_open_lesson)) }
+                    // The entry always ends in a button: alone, Open the lesson is the outline one.
+                    if (skillId == null) {
+                        OutlinedButton(onClick = { actions.onLesson(lesson.id) }) { open() }
+                    } else {
+                        TextButton(onClick = { actions.onLesson(lesson.id) }) { open() }
+                    }
                 }
             }
         }
@@ -692,8 +683,7 @@ private fun MistakeEntry(
 
 @Composable
 private fun CauseLabel(
-    cause: MistakeCause?,
-    fixed: Boolean,
+    cause: MistakeCause,
     modifier: Modifier = Modifier,
 ) {
     val label = causeLabel(cause)
@@ -711,7 +701,7 @@ private fun CauseLabel(
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            if (fixed) stringResource(R.string.mistakes_cause_fixed, label) else label,
+            label,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelMedium,
         )
@@ -719,7 +709,7 @@ private fun CauseLabel(
 }
 
 @Composable
-internal fun causeLabel(cause: MistakeCause?): String =
+private fun causeLabel(cause: MistakeCause): String =
     stringResource(
         when (cause) {
             MistakeCause.GAP -> R.string.mistakes_cause_gap
@@ -727,12 +717,11 @@ internal fun causeLabel(cause: MistakeCause?): String =
             MistakeCause.TRAP -> R.string.mistakes_cause_trap
             MistakeCause.TIME -> R.string.mistakes_cause_time
             MistakeCause.GUESS -> R.string.mistakes_cause_guess
-            null -> R.string.mistakes_cause_unsorted
         },
     )
 
 @get:DrawableRes
-private val MistakeCause?.icon: Int
+private val MistakeCause.icon: Int
     get() =
         when (this) {
             MistakeCause.GAP -> R.drawable.ic_lightbulb
@@ -740,7 +729,6 @@ private val MistakeCause?.icon: Int
             MistakeCause.TRAP -> R.drawable.ic_warning
             MistakeCause.TIME -> R.drawable.ic_timer
             MistakeCause.GUESS -> R.drawable.ic_back_hand
-            null -> R.drawable.ic_radio_button_partial
         }
 
 @Composable

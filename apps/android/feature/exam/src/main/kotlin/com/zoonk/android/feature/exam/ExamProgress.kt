@@ -2,7 +2,6 @@ package com.zoonk.android.feature.exam
 
 import android.icu.text.ListFormatter
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,49 +28,58 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockDate
-import com.zoonk.android.feature.mock.mockShapeLabel
+import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.mockTitle
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
-import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockProgress
-import com.zoonk.api.models.ExamMockProgressMocksInner
 import com.zoonk.api.models.ExamMockProgressSubjectsInner
-import com.zoonk.api.models.ExamView
 import com.zoonk.api.models.ExamViewScoring
 import com.zoonk.api.models.MockShape
 
-/** Main's `ExamMockProgress`: how the mocks went over time, or a sample of it behind Plus. */
+/** Main's `ExamMockProgress`: how the mock exams went over time, shown once one is finished. */
 @Composable
-internal fun ExamMockProgressSection(exam: ExamView) {
+internal fun ExamMockProgressSection(
+    progress: ExamMockProgress,
+    method: ExamViewScoring.Method,
+) {
+    val latest = latestMock(progress, method)
+
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SectionHeader(stringResource(R.string.exam_progress_title))
-        val progress = exam.progress
-        if (progress != null) ProgressCard(progress, exam.scoring.method) else LockedProgress()
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            SectionHeader(stringResource(R.string.exam_progress_title))
+            // With one mock exam, what the rows measure is the section's own line.
+            if (latest != null && latest.change == null) {
+                Text(latest.measure, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        ProgressCard(progress, latest)
     }
 }
 
 @Composable
 private fun ProgressCard(
     progress: ExamMockProgress,
-    method: ExamViewScoring.Method,
+    latest: LatestMock?,
 ) {
-    val locale = currentLocale()
     val first = progress.mocks.firstOrNull()
-    val latest = progress.mocks.lastOrNull()
+    val last = progress.mocks.lastOrNull()
     val trends = progress.subjects.any { it.change != null }
 
-    ProgressTiles(progress, method)
+    progressLine(progress, currentLocale())?.let {
+        Text(it, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+    }
 
-    if (first != null && latest != null && progress.mocks.size > 1) {
+    if (latest?.change != null) LatestMockTile(latest)
+
+    if (first != null && last != null && progress.mocks.size > 1) {
         val points =
             progress.mocks.map { mock ->
                 ProgressPoint(
@@ -80,16 +88,16 @@ private fun ProgressCard(
                         listOf(
                             mockTitle(mock.number),
                             mockDate(mock.finishedAt),
-                            mock.shapeLabel,
+                            mockSubject(mock.shape),
                         ).filter(String::isNotEmpty).factsLine(),
                     value = mock.percent.toInt(),
                 )
             }
         ProgressLineChart(
             points = points,
-            label = stringResource(R.string.exam_progress_chart_label, percent(first.percent), percent(latest.percent)),
+            label = stringResource(R.string.exam_progress_chart_label, percent(first.percent), percent(last.percent)),
             first = mockDate(first.finishedAt),
-            latest = mockDate(latest.finishedAt),
+            latest = mockDate(last.finishedAt),
         )
     }
 
@@ -102,92 +110,56 @@ private fun ProgressCard(
             }
         }
     }
+}
 
-    Text(progressLine(progress, locale), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+/** The latest full or half mock exam: its score, what it measures and its change since the first. */
+private class LatestMock(
+    val percent: Long,
+    val measure: String,
+    val change: Long?,
+)
+
+@Composable
+private fun latestMock(
+    progress: ExamMockProgress,
+    method: ExamViewScoring.Method,
+): LatestMock? {
+    val first = progress.mocks.firstOrNull()
+    val latest = progress.mocks.lastOrNull { it.shape?.kind != MockShape.Kind.AREA } ?: progress.mocks.lastOrNull() ?: return null
+    val name = listOf(mockTitle(latest.number), mockSubject(latest.shape)).filter(String::isNotEmpty).factsLine()
+    val measure =
+        stringResource(if (method == ExamViewScoring.Method.NET) R.string.exam_net_score_in else R.string.exam_right_answers_in, name)
+    return LatestMock(
+        percent = latest.percent,
+        measure = measure,
+        change = if (first != null && progress.mocks.size > 1) latest.percent - first.percent else null,
+    )
 }
 
 @Composable
-private fun ProgressTiles(
-    progress: ExamMockProgress,
-    method: ExamViewScoring.Method,
-) {
-    val first = progress.mocks.firstOrNull()
-    val latest = progress.mocks.lastOrNull { it.shape?.kind != MockShape.Kind.AREA } ?: progress.mocks.lastOrNull() ?: return
-    val best = findBestArea(progress.subjects)
-    val name =
-        listOfNotNull(mockTitle(latest.number), latest.shapeLabel.takeIf { latest.shape?.kind == MockShape.Kind.AREA }).factsLine()
-    val change = if (first != null && progress.mocks.size > 1) latest.percent - first.percent else null
-    val since = change?.let { stringResource(R.string.exam_since_first, signedChange(it)) }
+private fun LatestMockTile(latest: LatestMock) {
+    val change = latest.change ?: return
 
-    // Two tiles side by side keep their labels whole only while each has room for them.
-    BoxWithConstraints {
-        StatTiles(
-            columns = if (maxWidth.value / LocalDensity.current.fontScale < TWO_TILES_MIN_WIDTH) 1 else 2,
-            tiles =
-                listOfNotNull(
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.exam_latest_mock),
-                            value = percent(latest.percent),
-                            modifier = modifier,
-                            detail =
-                                stringResource(
-                                    if (method ==
-                                        ExamViewScoring.Method.NET
-                                    ) {
-                                        R.string.exam_net_score_in
-                                    } else {
-                                        R.string.exam_right_answers_in
-                                    },
-                                    name,
-                                ),
-                            icon = {
-                                Icon(
-                                    painterResource(R.drawable.ic_timer),
-                                    contentDescription = null,
-                                    modifier = it,
-                                )
-                            },
-                            footer =
-                                since?.let {
-                                    {
-                                        Text(
-                                            it,
-                                            color =
-                                                if (change >
-                                                    0
-                                                ) {
-                                                    MaterialTheme.colorScheme.onTertiaryContainer
-                                                } else {
-                                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                                },
-                                            style = MaterialTheme.typography.bodySmall,
-                                        )
-                                    }
-                                },
+    StatTiles(
+        columns = 1,
+        tiles =
+            listOf { modifier ->
+                StatTile(
+                    label = stringResource(R.string.exam_latest_mock),
+                    value = percent(latest.percent),
+                    modifier = modifier,
+                    detail = latest.measure,
+                    icon = { Icon(painterResource(R.drawable.ic_timer), contentDescription = null, modifier = it) },
+                    footer = {
+                        Text(
+                            stringResource(R.string.exam_since_first, signedChange(change)),
+                            color = if (change > 0) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall,
                         )
                     },
-                    best?.let { area ->
-                        { modifier: Modifier ->
-                            StatTile(
-                                label = stringResource(R.string.exam_best_area),
-                                value = percent(area.percent.toLong()),
-                                modifier = modifier,
-                                detail = area.name,
-                                tone = StatTone.Success,
-                                icon = {
-                                    Icon(
-                                        painterResource(R.drawable.ic_trophy),
-                                        contentDescription = null,
-                                        modifier = it,
-                                    )
-                                },
-                            )
-                        }
-                    },
-                ),
-        )
-    }
+                )
+            },
+    )
 }
 
 @Composable
@@ -252,63 +224,22 @@ private fun SubjectChange(change: Long?) {
     }
 }
 
-@Composable
-private fun LockedProgress() {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-            Text(
-                stringResource(R.string.exam_progress_locked),
-                Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            PlusMark()
-        }
-        SampleProgressChart(SAMPLE)
-    }
-}
-
+/** What changed between mock exams, in one sentence, or nothing when no subject moved. */
 @Composable
 private fun progressLine(
     progress: ExamMockProgress,
     locale: java.util.Locale,
-): String {
+): String? {
     val list = { names: List<String> -> ListFormatter.getInstance(locale).format(names) }
     val improved = progress.improved
     val needsWork = progress.needsWork
     return when {
-        progress.mocks.size < 2 -> {
-            stringResource(R.string.exam_progress_take_another)
-        }
-
-        improved.isNotEmpty() && needsWork.isNotEmpty() -> {
-            stringResource(
-                R.string.exam_progress_better_and_needs_work,
-                list(improved),
-                list(needsWork),
-            )
-        }
-
-        improved.isNotEmpty() -> {
-            stringResource(R.string.exam_progress_better, list(improved))
-        }
-
-        needsWork.isNotEmpty() -> {
-            stringResource(R.string.exam_progress_needs_work, list(needsWork))
-        }
-
-        progress.subjects.any { it.change != null } -> {
-            stringResource(R.string.exam_progress_no_change)
-        }
-
-        else -> {
-            stringResource(R.string.exam_progress_trends_later)
-        }
+        improved.isNotEmpty() && needsWork.isNotEmpty() -> stringResource(R.string.exam_progress_better_and_needs_work, list(improved), list(needsWork))
+        improved.isNotEmpty() -> stringResource(R.string.exam_progress_better, list(improved))
+        needsWork.isNotEmpty() -> stringResource(R.string.exam_progress_needs_work, list(needsWork))
+        else -> null
     }
 }
-
-private val ExamMockProgressMocksInner.shapeLabel: String
-    @Composable get() = mockShapeLabel(purpose == ExamMockProgressMocksInner.Purpose.PLACEMENT, shape)
 
 @Composable
 private fun percent(value: Long): String = formatPercent(value / PERCENT, currentLocale())
@@ -316,22 +247,6 @@ private fun percent(value: Long): String = formatPercent(value / PERCENT, curren
 @Composable
 private fun signedChange(change: Long): String = formatNumber(change.toDouble(), currentLocale(), signed = true)
 
-internal data class BestArea(
-    val name: String,
-    val percent: Int,
-)
-
-/** None with one subject or a tie at the top: the page says nothing rather than pick one. */
-internal fun findBestArea(subjects: List<ExamMockProgressSubjectsInner>): BestArea? {
-    val latest = subjects.mapNotNull { subject -> subject.percents.lastOrNull()?.let { BestArea(subject.name, it.toInt()) } }
-    val sorted = latest.sortedByDescending { it.percent }
-    val best = sorted.getOrNull(0) ?: return null
-    val next = sorted.getOrNull(1) ?: return null
-    return best.takeIf { next.percent != best.percent }
-}
-
 private const val PERCENT = 100.0
-private const val TWO_TILES_MIN_WIDTH = 300
 private const val NO_CHANGE = "–"
 private val SUBJECT_METER_WIDTH = 80.dp
-private val SAMPLE = List(6) { 30 + it * 7 }
