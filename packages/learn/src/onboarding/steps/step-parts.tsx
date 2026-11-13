@@ -2,7 +2,6 @@
 
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
 import {
@@ -64,11 +63,7 @@ export function StepLoadFailed({ onRetry }: { onRetry: () => Promise<void> }) {
       </OnboardingHeading>
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton
-          busy={retrying}
-          icon={<RotateCwIcon aria-hidden="true" />}
-          onClick={() => startRetrying(onRetry)}
-        >
+        <OnboardingPrimaryButton busy={retrying} onClick={() => startRetrying(onRetry)}>
           {t("Try again")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>

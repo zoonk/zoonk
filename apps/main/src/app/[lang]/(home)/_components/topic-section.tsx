@@ -33,7 +33,7 @@ async function TopicCourse() {
         ))}
       </ListGroup>
 
-      <p className="text-muted-foreground pt-2.5 text-[0.8125rem]">
+      <p className="text-muted-foreground text-compact pt-2.5">
         {t("{count, plural, one {And # more chapter} other {And # more chapters}}", {
           count: topic.laterChapters,
         })}

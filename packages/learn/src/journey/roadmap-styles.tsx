@@ -13,7 +13,7 @@ export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
 };
 
 export const BAND_CLASS =
-  "relative flex min-h-8 min-w-min items-center gap-1 rounded-md px-2.5 py-1 text-left text-[0.78125rem] font-medium";
+  "relative flex min-h-8 min-w-min items-center gap-1 rounded-md px-2.5 py-1 text-left text-xs font-medium";
 
 export const BAND_NAME_CLASS = "min-w-0 leading-4 text-balance hyphens-auto";
 
@@ -45,7 +45,7 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
 export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap gap-x-2";
 
 export const AXIS_TEXT_CLASS =
-  "text-faint max-w-[100cqw] shrink-0 font-mono text-[0.6875rem] leading-4 text-balance whitespace-normal tabular-nums";
+  "text-faint max-w-[100cqw] shrink-0 font-mono text-2xs leading-4 text-balance whitespace-normal tabular-nums";
 
 const MIDDLE_SHARE = 0.5;
 

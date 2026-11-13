@@ -177,12 +177,12 @@ export async function ChapterStrip({
                 </span>
 
                 {isHere ? (
-                  <span className="text-[0.9375rem] leading-snug font-semibold text-pretty">
+                  <span className="text-reading leading-snug font-semibold text-pretty">
                     {item.title}
                   </span>
                 ) : (
                   <Link
-                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area relative self-start rounded-md text-[0.9375rem] leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
+                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area text-reading relative self-start rounded-md leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
                     href={getChapterHref({ ...params, chapterSlug: item.slug })}
                     prefetch
                   >

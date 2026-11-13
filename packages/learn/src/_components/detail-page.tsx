@@ -1,13 +1,10 @@
 "use client";
 
-import { BusyContent, buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
+import { EnterLink } from "./enter-button";
 import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
 export function DetailLayout({
@@ -23,7 +20,7 @@ export function DetailLayout({
   bar?: React.ReactNode;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-col gap-8" {...props}>
+    <article className="flex min-w-0 flex-col gap-2 sm:gap-8" {...props}>
       {bar}
       <div
         className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}
@@ -80,21 +77,17 @@ export function DetailContinueLink({
   started: boolean;
 }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
+    <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={href}
       lessonWritten={lessonWritten}
       prefetch={lessonWritten === false ? "auto" : true}
-      ref={ref}
+      size="lg"
     >
-      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
-        {started ? t("Continue") : t("Start")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+      {started ? t("Continue") : t("Start")}
+    </EnterLink>
   );
 }
 
@@ -145,7 +138,7 @@ export function DetailProperty({
   mono?: boolean;
 }) {
   return (
-    <div className="flex min-h-8.5 items-center justify-between gap-3 text-[0.8125rem]">
+    <div className="text-compact flex min-h-8.5 items-center justify-between gap-3">
       <dt className="text-muted-foreground min-w-0 truncate">{label}</dt>
       <dd className={cn("min-w-0 text-right", mono && "font-mono tabular-nums")}>{children}</dd>
     </div>

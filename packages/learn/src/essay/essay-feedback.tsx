@@ -3,15 +3,15 @@
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowLeftIcon, CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
+import { CheckIcon, CircleIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { Eyebrow } from "../_components/eyebrow";
 import { Meter, MeterFill } from "../_components/meter";
 import { PageSectionTitle } from "../_components/page";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
@@ -157,7 +157,7 @@ function NothingLeftComment() {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("Next step")}</StepEyebrow>
+        <Eyebrow>{t("Next step")}</Eyebrow>
         <StepTitle>{t("Nothing left to work on")}</StepTitle>
         <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
       </StepHeader>
@@ -179,7 +179,7 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <StepEyebrow>{t("Next step")}</StepEyebrow>
+        <Eyebrow>{t("Next step")}</Eyebrow>
         <StepTitle>{criterion ? criterionName(criterion) : t("What to rewrite")}</StepTitle>
       </StepHeader>
 
@@ -300,9 +300,7 @@ export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite?
         onRewrite ? (
           <TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>
         ) : (
-          <TaskMainLink href={hrefs.exit} icon={<ArrowLeftIcon aria-hidden="true" />}>
-            {t("Back to Today")}
-          </TaskMainLink>
+          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
         )
       }
       finalOptions={

@@ -7,7 +7,7 @@ import { LearnSectionBar } from "@zoonk/learn/bar";
 import { PendingAccountAvatar } from "./user-avatar";
 import { UserAvatarMenu } from "./user-avatar-menu";
 
-const CATALOG_BAR_CLASS = "-mx-4 -mt-4 mb-6 sm:-mx-8 sm:-mt-6 lg:hidden";
+const CATALOG_BAR_CLASS = "-mx-4 -mt-2 mb-2 sm:-mx-8 sm:-mt-6 sm:mb-6 lg:hidden";
 
 export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
   const learner = useLearnerSummary();

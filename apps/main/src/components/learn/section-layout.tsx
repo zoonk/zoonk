@@ -47,7 +47,7 @@ export function SectionParentLink(places: SectionPlaces) {
 
   return (
     <LearnBackLink
-      className="-ml-2 hidden self-start md:inline-flex"
+      className="hidden self-start md:inline-flex"
       crumb
       href={parent.href}
       label={parent.title}

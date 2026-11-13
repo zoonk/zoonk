@@ -1,5 +1,6 @@
 "use client";
 
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Hand } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -29,7 +30,7 @@ export function RhythmTapPad({
   return (
     <button
       aria-disabled={!isActive}
-      aria-keyshortcuts="Space"
+      aria-keyshortcuts={shortcutKeys("tap")}
       className={cn(
         "bg-muted flex h-32 w-full touch-none flex-col items-center justify-center gap-1 rounded-2xl outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -9,16 +8,13 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@zoonk/ui/components/sheet";
+  SidePanel,
+  SidePanelContent,
+  SidePanelHeader,
+  SidePanelTitle,
+} from "@zoonk/ui/components/side-panel";
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
@@ -80,21 +76,17 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   const t = useExtracted();
 
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent
+    <SidePanel onOpenChange={onOpenChange} open={open}>
+      <SidePanelContent
         className="gap-0 shadow-none data-[side=right]:w-full data-[side=right]:sm:max-w-104"
         initialFocus={initialFocus}
         overlayClassName="bg-black/20 supports-backdrop-filter:backdrop-blur-none dark:bg-black/25"
         side="right"
       >
         <PlanEditorChangeProvider>
-          <SheetHeader className="flex-row items-center justify-between gap-3 px-6 pt-5 pb-3">
-            <SheetTitle className="text-xl font-semibold">{t("Adjust your plan")}</SheetTitle>
-            <SheetClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-              <XIcon aria-hidden="true" />
-              <span className="sr-only">{t("Close")}</span>
-            </SheetClose>
-          </SheetHeader>
+          <SidePanelHeader closeLabel={t("Close")}>
+            <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
+          </SidePanelHeader>
 
           <PlanEditorChange className="border-t-0 border-b pt-0 pb-4" />
 
@@ -102,8 +94,8 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
             <EditorSections />
           </div>
         </PlanEditorChangeProvider>
-      </SheetContent>
-    </Sheet>
+      </SidePanelContent>
+    </SidePanel>
   );
 }
 
@@ -114,9 +106,8 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup initialFocus={initialFocus}>
         <PlanEditorChangeProvider>
-          <DrawerHeader className="flex-row items-center justify-between gap-3">
-            <DrawerTitle className="text-xl font-semibold">{t("Adjust your plan")}</DrawerTitle>
-            <DrawerCloseButton />
+          <DrawerHeader closeLabel={t("Close")}>
+            <DrawerTitle>{t("Adjust your plan")}</DrawerTitle>
           </DrawerHeader>
 
           <DrawerContent className="flex flex-col gap-7 pt-2">

@@ -29,13 +29,13 @@ export function SectionPage({
     <div
       className={cn(
         PAGE_COLUMN_CLASS,
-        "flex flex-1 flex-col gap-6 md:**:data-[slot=page-header-content]:pt-0",
+        "flex flex-1 flex-col gap-2 sm:gap-6 md:**:data-[slot=page-header-content]:pt-0",
       )}
       data-slot="section-page"
     >
       <SectionBarFrame
         backHref="/today"
-        className="-mx-4 -mt-4 sm:-mx-8 sm:-mt-6 md:hidden"
+        className="-mx-4 -mt-2 sm:-mx-8 sm:-mt-6 md:hidden"
         end={end}
         hub={hub}
         parents={parents}

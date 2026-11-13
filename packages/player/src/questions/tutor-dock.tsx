@@ -2,6 +2,7 @@
 
 import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
 import {
+  BAR_PADDING_CLASS,
   TASK_ASIDE_PLACE_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
   TaskActionLabel,
@@ -89,7 +90,7 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <a
-      className="bg-card ring-input rounded-option text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 px-2.5 text-sm ring-1 transition-colors ring-inset"
+      className="bg-card ring-input text-muted-foreground hover:text-foreground flex min-h-11 items-center gap-2.5 rounded-xl px-2.5 text-sm ring-1 transition-colors ring-inset"
       href={loginHref}
     >
       <span
@@ -115,7 +116,7 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <TutorSuggestions
-      className="bg-background px-5 pb-3"
+      className="bg-background px-6 pb-3"
       onSelect={(suggestion) => buddy.ask(suggestion)}
       suggestions={suggestions}
     />
@@ -139,9 +140,10 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
       )}
       data-slot="tutor-docked-conversation"
     >
-      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
+      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-6 xl:h-15">
         <Button
-          className="text-muted-foreground -ml-1 px-2"
+          className="text-muted-foreground"
+          edge="start"
           onClick={back}
           size="sm"
           variant="ghost"
@@ -192,7 +194,7 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
       >
         {suggests && <DockSuggestions buddy={buddy} />}
 
-        <div className="bg-background px-5 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className={cn("bg-background px-6", BAR_PADDING_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
         </div>
       </div>
@@ -255,7 +257,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
       <Button
         className={cn(TASK_WRAPPING_ACTION_CLASS, "with-aside:hidden ml-auto lg:ml-0")}
         onClick={() => buddy.open()}
-        size="lg"
+        size="xl"
         type="button"
         variant="outline"
       >

@@ -70,10 +70,6 @@ export function showsFreshStart(today: Pick<NoticeTodayView, "session" | "studie
   return today.session.freshStart !== null && !today.studiedToday && !started;
 }
 
-/**
- * One notice at most, the most pressing first. A free exam plan's ended week goes before anything
- * that asks more of the plan, and a fresh start is the session's own words, never a notice.
- */
 export function pickTodayNotice({
   host,
   today,
@@ -81,13 +77,12 @@ export function pickTodayNotice({
   host: TodayHostNoticeState;
   today: NoticeTodayView;
 }): TodayNoticeKind | null {
-  const { exam, insight, session } = today;
+  const { exam, insight } = today;
   const insightChange = getInsightChange(insight);
   const planChange = getPlanChangeStatus(today);
 
   const candidates: [TodayNoticeKind, boolean][] = [
     ["exam", isExamDay(exam)],
-    ["examAccess", session.examAccess.trialEnded],
     ["planChange", planChange === "proposed"],
     ["insight", insightChange === "proposed"],
     ["sourceChange", host.sourceChange],

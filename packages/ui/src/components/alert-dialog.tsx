@@ -18,11 +18,13 @@ function AlertDialogPortal({ ...props }: AlertDialogPrimitive.Portal.Props) {
   return <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />;
 }
 
+/** Drawn for a nested overlay too, which Base UI skips, so whatever it opened from dims under it. */
 function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdrop.Props) {
   return (
     <AlertDialogPrimitive.Backdrop
+      forceRender
       className={cn(
-        "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 isolate z-50 bg-black/80 duration-100 supports-backdrop-filter:backdrop-blur-xs",
+        "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 isolate z-50 bg-black/50 duration-100 dark:bg-black/70",
         className,
       )}
       data-slot="alert-dialog-overlay"
@@ -31,23 +33,22 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
   );
 }
 
-/** `overNested` draws the backdrop Base UI skips for a dialog opened inside another one. */
-function AlertDialogContent({
-  children,
-  className,
-  overNested,
-  size = "default",
-  ...props
-}: AlertDialogPrimitive.Popup.Props & { overNested?: boolean; size?: "default" | "sm" }) {
+/**
+ * A question that needs an answer before anything else: it doesn't close on a press outside. On a
+ * phone it rises from the bottom like every sheet, with the answers stacked under the thumb and no
+ * grab handle, since it doesn't leave by a swipe. From `sm` it is centered, like `Drawer`.
+ */
+function AlertDialogContent({ children, className, ...props }: AlertDialogPrimitive.Popup.Props) {
   return (
     <AlertDialogPortal>
-      <AlertDialogOverlay forceRender={overNested} />
+      <AlertDialogOverlay />
       <AlertDialogPrimitive.Popup
         className={cn(
-          "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 group/alert-dialog-content bg-background ring-foreground/10 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl p-6 ring-1 duration-100 outline-none data-[size=default]:max-w-xs data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-md",
+          "bg-background data-closed:animate-out data-open:animate-in fixed z-50 grid w-full gap-6 p-6 outline-none",
+          "max-sm:data-closed:slide-out-to-bottom max-sm:data-open:slide-in-from-bottom max-sm:inset-x-0 max-sm:bottom-0 max-sm:rounded-t-2xl max-sm:border-t max-sm:duration-300",
+          "sm:data-closed:fade-out-0 sm:data-open:fade-in-0 sm:data-closed:zoom-out-95 sm:data-open:zoom-in-95 sm:ring-foreground/10 sm:top-1/2 sm:left-1/2 sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:ring-1 sm:duration-100 sm:ring-inset",
           className,
         )}
-        data-size={size}
         data-slot="alert-dialog-content"
         {...props}
       >
@@ -60,10 +61,7 @@ function AlertDialogContent({
 function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-6 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
-        className,
-      )}
+      className={cn("flex flex-col gap-1.5", className)}
       data-slot="alert-dialog-header"
       {...props}
     />
@@ -73,10 +71,7 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">)
 function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex flex-col-reverse gap-2 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
-        className,
-      )}
+      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
       data-slot="alert-dialog-footer"
       {...props}
     />
@@ -89,10 +84,7 @@ function AlertDialogTitle({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
   return (
     <AlertDialogPrimitive.Title
-      className={cn(
-        "text-lg font-medium sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
-        className,
-      )}
+      className={cn("text-lg leading-tight font-semibold", className)}
       data-slot="alert-dialog-title"
       {...props}
     />
@@ -106,7 +98,7 @@ function AlertDialogDescription({
   return (
     <AlertDialogPrimitive.Description
       className={cn(
-        "text-muted-foreground *:[a]:hover:text-foreground text-sm text-balance md:text-pretty *:[a]:underline *:[a]:underline-offset-3",
+        "text-muted-foreground *:[a]:hover:text-foreground text-sm text-balance *:[a]:underline *:[a]:underline-offset-3",
         className,
       )}
       data-slot="alert-dialog-description"

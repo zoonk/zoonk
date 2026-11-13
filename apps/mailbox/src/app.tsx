@@ -64,7 +64,7 @@ export function App() {
         </MailboxIdentity>
 
         <MailboxActions>
-          <span className="text-muted-foreground font-mono text-[11px]">
+          <span className="text-muted-foreground text-2xs font-mono">
             {getMessageCountLabel(emails.length)}
           </span>
           <MailboxButton disabled={emails.length === 0} onClick={handleClear}>
@@ -93,7 +93,7 @@ export function App() {
               {copy.emptyMark}
             </span>
             <p className="text-foreground mb-1.5 text-sm font-semibold">{copy.previewEmptyTitle}</p>
-            <span className="text-[13px]">{copy.previewEmptyDescription}</span>
+            <span className="text-compact">{copy.previewEmptyDescription}</span>
           </MailboxEmpty>
         )}
       </MailboxBody>
@@ -114,7 +114,7 @@ function EmailList({
     return (
       <MailboxEmpty className="px-5.5 py-7">
         <p className="text-foreground mb-1.5 text-sm font-semibold">{copy.inboxEmptyTitle}</p>
-        <span className="text-[13px]">{copy.inboxEmptyDescription}</span>
+        <span className="text-compact">{copy.inboxEmptyDescription}</span>
       </MailboxEmpty>
     );
   }
@@ -148,11 +148,11 @@ function EmailListMessage({
         <span className="overflow-hidden text-sm font-semibold tracking-[-0.01em] text-ellipsis whitespace-nowrap">
           {email.subject}
         </span>
-        <span className="text-muted-foreground overflow-hidden font-mono text-[10px] text-ellipsis whitespace-nowrap">
+        <span className="text-muted-foreground text-2xs overflow-hidden font-mono text-ellipsis whitespace-nowrap">
           {`${copy.to} ${email.to}`}
         </span>
         <time
-          className="text-muted-foreground col-start-2 row-start-1 font-mono text-[10px]"
+          className="text-muted-foreground text-2xs col-start-2 row-start-1 font-mono"
           dateTime={email.receivedAt}
         >
           {timeFormatter.format(new Date(email.receivedAt))}
@@ -166,13 +166,13 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
   return (
     <MailboxPreview>
       <header className="border-border border-b px-5 pt-7 pb-6 md:px-[clamp(1.5rem,5vw,4.5rem)] md:pt-10.5 md:pb-7">
-        <p className="text-muted-foreground mb-3 font-mono text-[10px] tracking-widest uppercase">
+        <p className="text-muted-foreground text-2xs mb-3 font-mono tracking-widest uppercase">
           {copy.message}
         </p>
         <h2 className="max-w-225 text-3xl leading-[1.04] font-semibold tracking-[-0.045em] md:text-[clamp(1.75rem,4vw,3.125rem)]">
           {email.subject}
         </h2>
-        <dl className="text-muted-foreground mt-6 grid gap-3.5 font-mono text-[11px] md:mt-8 md:flex md:flex-wrap md:gap-x-8 md:gap-y-4">
+        <dl className="text-muted-foreground text-2xs mt-6 grid gap-3.5 font-mono md:mt-8 md:flex md:flex-wrap md:gap-x-8 md:gap-y-4">
           <div className="grid gap-1">
             <dt className="text-muted-foreground/70 tracking-[0.08em] uppercase">{copy.to}</dt>
             <dd className="text-foreground m-0">{email.to}</dd>
@@ -199,14 +199,14 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
       <div className="p-5 md:p-[clamp(1.5rem,5vw,4.5rem)]">
         {email.htmlBody ? (
           <iframe
-            className="border-border block min-h-95 w-full rounded-[3px] border bg-white md:min-h-105"
+            className="border-border rounded-meter block min-h-95 w-full border bg-white md:min-h-105"
             referrerPolicy="no-referrer"
             sandbox=""
             srcDoc={email.htmlBody}
             title={`${email.subject} email body`}
           />
         ) : (
-          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-[3px] border p-7 font-mono text-sm leading-[1.65] whitespace-pre-wrap md:min-h-105">
+          <pre className="border-border bg-background rounded-meter m-0 min-h-95 w-full overflow-auto border p-7 font-mono text-sm leading-[1.65] whitespace-pre-wrap md:min-h-105">
             {email.textBody || copy.noBody}
           </pre>
         )}

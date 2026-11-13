@@ -170,13 +170,11 @@ export async function loadSessionBuildInput(
     loadAlphabetIntro({ goal, userId }),
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
-      practiceLocked: access.trialEnded,
       readClaims: context.readClaims,
       review,
     }),
     dayLessons.then((loaded) =>
       loadDayBosses({
-        access,
         ahead: listFittingLessons({
           items: plan.items,
           lessons: [...loaded.lessons, ...loaded.fillLessons],
@@ -210,8 +208,7 @@ export async function loadSessionBuildInput(
   ]);
 
   const lessons = [...toAlphabetLessons(alphabet), ...planLessons];
-
-  const checkpoints = listDayCheckpoints({ access, boss, items: plan.items, weekly });
+  const checkpoints = listDayCheckpoints({ boss, items: plan.items, weekly });
 
   // A Plus-only mock day gives free learners a full review of every test topic instead.
   const fullReview = weekly.plusRequired;
@@ -242,7 +239,7 @@ export async function loadSessionBuildInput(
   const base: Omit<SessionBuildInput, keyof DayWork> = {
     checkpoints,
     dailyMinutes: dayMinutes,
-    examTrialEnded: access.trialEnded,
+
     fillLessons,
     freshStart: getDayFreshStart({ plan, today: localDate }),
     fullReviewSkillIds: fullReview ? testSkillIds : null,

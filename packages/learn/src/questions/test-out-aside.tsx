@@ -43,7 +43,7 @@ export function useTestOutAside({
           </StepRow>
         </StepRows>
 
-        <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">{rule}</p>
+        <p className="text-muted-foreground text-compact leading-5 text-pretty">{rule}</p>
       </>
     ),
     label: t("What a pass skips"),

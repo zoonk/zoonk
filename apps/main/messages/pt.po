@@ -87,6 +87,18 @@ msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "Enviar feedback"
 
+#. Words people type to find Keyboard shortcuts in the search, never shown. Add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zK0l0A"
+msgid "keys, hotkeys, keyboard"
+msgstr "teclas, atalhos, teclas de atalho, teclado"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "vzYPVX"
+msgid "Keyboard shortcuts"
+msgstr "Atalhos de teclado"
+
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "tv5FG3"
 msgid "Blog"
@@ -375,6 +387,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "Não conseguimos trocar de objetivo. Tente de novo."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "Busque ou pergunte"
@@ -1325,6 +1338,7 @@ msgid "Passkey"
 msgstr "Chave de acesso"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Fechar"
@@ -2626,6 +2640,71 @@ msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Sua conta foi excluída."
 
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "e6UnhT"
+msgid "Play or pause the audio"
+msgstr "Reproduzir ou pausar o áudio"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "PpAjCi"
+msgid "Flag a question in a mock exam"
+msgstr "Marcar uma questão no simulado"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "uY3Caj"
+msgid "Close or leave"
+msgstr "Fechar ou sair"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ofKpWV"
+msgid "Press the main button"
+msgstr "Pressionar o botão principal"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Próximo"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "fMeAJ8"
+msgid "Pick an answer"
+msgstr "Escolher uma resposta"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "Voltar"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "eUyM74"
+msgid "Save a mind map"
+msgstr "Salvar um mapa mental"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "odxPY5"
+msgid "Show this list"
+msgstr "Mostrar esta lista"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "KYN6t2"
+msgid "Show or hide the sidebar"
+msgstr "Mostrar ou ocultar a barra lateral"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "GvB3Jb"
+msgid "Tap the beat"
+msgstr "Marcar o ritmo"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "FVLl2T"
+msgid "Anywhere"
+msgstr "Em qualquer lugar"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ugxven"
+msgid "While you study"
+msgstr "Enquanto você estuda"
+
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
 msgctxt "kgqbTN"
@@ -2801,11 +2880,6 @@ msgstr "Não foi possível abrir a aula. Tente de novo ou entre na sua conta par
 msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Abrindo sua aula"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Voltar"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"

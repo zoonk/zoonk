@@ -8,7 +8,6 @@ import { findOwnedGoal } from "../_utils/owned-goal";
 import { type SavedPlan, readSavedPlan } from "../facts/saved-plan";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
-import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
@@ -90,10 +89,6 @@ export async function loadChapterTestOut({
 
   if (skippable === 0) {
     return { status: "nothingToSkip" };
-  }
-
-  if (await isTestOutPlusOnly(goal)) {
-    return { status: "plusRequired" };
   }
 
   const sampled = pickTestOutSkills(chapterSkills);

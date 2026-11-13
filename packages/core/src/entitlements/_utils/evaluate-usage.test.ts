@@ -26,7 +26,7 @@ function counts(overrides: Partial<UsageCounts>): UsageCounts {
 }
 
 describe(evaluateUsage, () => {
-  it("reports the first cap a learner hits, the daily one before the monthly one", () => {
+  it("reports the monthly lesson cap even when all starts happened today", () => {
     expect(
       evaluateUsage({
         costMicros: 0,
@@ -37,7 +37,7 @@ describe(evaluateUsage, () => {
         tier: "free",
       }),
     ).toStrictEqual({
-      limit: { limit: 20, period: "day", resource: "lessonStart", tier: "free" },
+      limit: { limit: 20, period: "month", resource: "lessonStart", tier: "free" },
       status: "limitReached",
     });
   });

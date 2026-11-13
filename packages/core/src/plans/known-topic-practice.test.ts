@@ -112,7 +112,6 @@ async function setup(
   const [missed, frequent, ordinary, studied] = library.skills as [Skill, Skill, Skill, Skill];
 
   const { goal, plan } = await unplannedGoalFixture({
-    // PostgreSQL's default clock is real; the free week must start on this fixture's frozen day.
     createdAt: TODAY,
     dailyMinutes,
     details: { placementDeclined: true },
@@ -526,7 +525,7 @@ describe("a known topic a week after its test-out", () => {
   });
 });
 
-describe("a free learner's known topic after the exam plan's first week", () => {
+describe("a free learner's known topic on an older exam goal", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     setClock(0);
@@ -536,7 +535,7 @@ describe("a free learner's known topic after the exam plan's first week", () => 
     vi.useRealTimers();
   });
 
-  it("asks it in the day's quick review", async () => {
+  it("keeps confirming it in practice after seven days", async () => {
     const { goal, itemsOf, ordinary, user } = await setup(PUBLIC_EXAM);
 
     await prisma.learnerSkill.updateMany({
@@ -546,29 +545,13 @@ describe("a free learner's known topic after the exam plan's first week", () => 
 
     setClock(8);
 
-    const result = await getTodayStudySession({ goalId: goal.id });
+    const { payload } = await startPractice(goal.id);
+    const asked = new Set(payload.itemIds);
 
-    if (result.status !== "ready") {
-      throw new Error(`Expected the day's session, got ${result.status}`);
-    }
-
-    const kinds = result.session.blocks.map((block) => block.kind);
-    const review = result.session.blocks.find((block) => block.kind === "review");
-
-    const row = review
-      ? await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: review.id } })
-      : null;
-
-    const asked = new Set(
-      row ? readBlockPayload(row).capsules.flatMap((capsule) => capsule.itemIds) : [],
-    );
-
-    expect(kinds).not.toContain("practice");
-    expect(kinds).not.toContain("checkpoint");
     expect(itemsOf(ordinary).some((item) => asked.has(item.id))).toBe(true);
 
     await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
-      syllabus: { knownTopicsReturn: "reviews" },
+      syllabus: { knownTopicsReturn: "practice" },
     });
   });
 });

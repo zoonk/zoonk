@@ -52,7 +52,7 @@ export function UnderstoodWords({
       <textarea
         aria-describedby={hintId}
         autoFocus
-        className="field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-[17px] leading-snug outline-none"
+        className="field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-lg leading-snug outline-none"
         id={inputId}
         maxLength={MAX_GOAL_PROMPT_LENGTH}
         onChange={(event) => setValue(event.target.value)}

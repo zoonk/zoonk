@@ -40,7 +40,7 @@ function LearnTopBar() {
 
         <LearnBarEnd visitor={<VisitorBarLinks />} />
 
-        <LearnSidebarSearch className="col-span-2 mt-1.5" placement="bar" />
+        <LearnSidebarSearch className="col-span-2 mt-2" placement="bar" />
       </LearnShellHeader>
     </TabRootOnly>
   );

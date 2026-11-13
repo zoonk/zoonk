@@ -25,7 +25,7 @@ export function CoverageBar({
   return (
     <span
       aria-hidden="true"
-      className={cn("bg-surface-3 flex h-1.5 w-full overflow-hidden rounded-[3px]", className)}
+      className={cn("bg-surface-3 rounded-meter flex h-1.5 w-full overflow-hidden", className)}
       data-slot="coverage-bar"
     >
       <span className="bg-success h-full" style={{ width: `${studiedShare * PERCENT}%` }} />
@@ -69,7 +69,7 @@ export function CoverageLegend({
   return (
     <span
       aria-hidden="true"
-      className={cn("text-muted-foreground flex items-center gap-3 text-[0.71875rem]", className)}
+      className={cn("text-muted-foreground text-2xs flex items-center gap-3", className)}
       data-slot="coverage-legend"
     >
       {states.map((state) => (
