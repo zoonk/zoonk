@@ -2,22 +2,17 @@
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
-import {
-  MockAnswerSheet,
-  MockQuestionMap,
-  SheetLegend,
-  useMockSheetAside,
-} from "./mock-answer-sheet";
+import { MockAnswerSheet, MockQuestionMap, useMockSheetAside } from "./mock-answer-sheet";
 import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
@@ -51,18 +46,18 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
       <div
         className={cn(
           TASK_COLUMN_CLASS,
-          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1 font-mono text-xs tabular-nums",
+          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1",
         )}
         data-slot="mock-meta"
       >
-        <span aria-hidden="true" className="min-w-0 truncate">
+        <Eyebrow aria-hidden="true" className={cn(!question.area && "with-aside:hidden")}>
           <span className="with-aside:hidden">
             {title(runner.view)}
             {question.area && " · "}
           </span>
           {question.area}
-        </span>
-        <span className="flex shrink-0 items-center gap-3">
+        </Eyebrow>
+        <span className="flex shrink-0 items-center gap-3 font-mono text-xs tabular-nums">
           <ItemClock />
           <span aria-hidden="true">
             {inSection
@@ -93,7 +88,8 @@ function FlagButton() {
       aria-pressed={flagged}
       className={cn(
         "shrink-0",
-        flagged && "border-warning text-warning-text hover:text-warning-text",
+        flagged &&
+          "border-warning bg-warning/10 text-warning-text hover:bg-warning/15 hover:text-warning-text",
       )}
       onClick={runner.toggleFlag}
       size="xl"
@@ -101,7 +97,6 @@ function FlagButton() {
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
       {t("Flag")}
-      <ShortcutKbd shortcut="flag" />
     </Button>
   );
 }
@@ -131,12 +126,14 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   useShortcut("next", () => !waiting && runner.go(runner.position + 1));
   useShortcut("previous", () => runner.go(runner.position - 1));
 
-  const nextLabel = isLastSection ? t("Hand in the mock exam") : t("Hand in this section");
+  const nextLabel = isLastSection ? t("Hand in") : t("Hand in section");
   const handingIn = runner.busy === "submit";
 
   return (
     <>
       <MockStepStatus />
+      {/* In the bar, so the numbers stay in one place whatever a question's length. */}
+      <MockQuestionMap className="with-aside:hidden w-full" />
       <QuestionActions>
         <FlagButton />
         {isLastQuestion ? (
@@ -162,6 +159,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   );
 }
 
+/** What the flag is for, said once: where the learner first meets the button. */
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
   const t = useExtracted();
   const [confirming, setConfirming] = useState(false);
@@ -184,12 +182,8 @@ function RunnerScreen({ deadline, question }: { deadline: string; question: Mock
     >
       <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
-      <div className="flex flex-col gap-2.5">
-        <MockQuestionMap className="with-aside:hidden" />
-        <div className="text-muted-foreground flex flex-col gap-1 text-xs">
-          <SheetLegend className="with-aside:hidden" />
-          <MovesNote />
-        </div>
+      <div className="text-muted-foreground text-xs empty:hidden">
+        <MovesNote />
       </div>
       <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
     </MockFrame>

@@ -6,6 +6,7 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
+import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 /**
  * A "…" with no action beside it sits on the title's first line, at the column's end, at every
@@ -15,7 +16,8 @@ export function DetailHero({ className, ...props }: React.ComponentProps<"header
   return (
     <header
       className={cn(
-        "group/detail-hero flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
+        PAGE_HEADER_CLASS,
+        "group/detail-hero gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
         "has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid-cols-[minmax(0,1fr)_auto] has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-x-4 has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-y-1",
         className,
       )}

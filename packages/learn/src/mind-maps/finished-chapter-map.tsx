@@ -4,6 +4,7 @@ import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type FinishedChapter } from "@zoonk/core/sessions/completion-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ComponentType, createContext, use, useEffect, useId, useState } from "react";
 import {
@@ -15,7 +16,7 @@ import {
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
 import { type MindMapActions } from "./mind-map-actions";
-import { MindMapRow } from "./mind-map-row";
+import { MIND_MAP_ROW_CLASS, MindMapRow } from "./mind-map-row";
 
 type FinishedChapterMapProps = { chapter: FinishedChapter };
 
@@ -50,8 +51,8 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
   const t = useExtracted();
 
   return (
-    <div className={LIST_ROW_CLASS}>
-      <ListRowContent>
+    <div className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
+      <ListRowContent className="justify-start">
         <ListRowTitle>{title}</ListRowTitle>
         <ListRowDescription>
           {t("We couldn't reach the server. Check your connection.")}
@@ -66,11 +67,11 @@ function Unreachable({ onRetry, title }: { onRetry: () => void; title: string })
 
 function RowSkeleton({ title }: { title: string }) {
   return (
-    <div aria-busy="true" className={LIST_ROW_CLASS}>
-      <ListRowLeading className="py-2">
-        <Skeleton className="size-12 rounded-lg" />
+    <div aria-busy="true" className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
+      <ListRowLeading>
+        <Skeleton className="size-4 rounded-sm" />
       </ListRowLeading>
-      <ListRowContent>
+      <ListRowContent className="justify-start">
         <ListRowTitle>{title}</ListRowTitle>
         <span className="flex h-4 items-center">
           <Skeleton className="h-3 w-28 rounded-sm" />
@@ -114,7 +115,7 @@ function ReadChapterMap({
   }
 
   return (
-    <section aria-labelledby={labelId} className="flex flex-col gap-2" data-slot="finished-chapter">
+    <section aria-labelledby={labelId} className="flex flex-col gap-1" data-slot="finished-chapter">
       <PageSectionLabel id={labelId}>{t("Chapter finished")}</PageSectionLabel>
       {view === null && <RowSkeleton title={chapter.title} />}
       {view === "unreachable" && <Unreachable onRetry={onRetry} title={chapter.title} />}

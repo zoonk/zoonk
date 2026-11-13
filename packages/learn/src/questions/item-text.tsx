@@ -72,7 +72,7 @@ function ItemTableView({ table }: { table: ItemTable }) {
 
 export function ItemText({ className, text }: { className?: string; text: string }) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-3", className)} data-slot="item-text">
+    <div className={cn("flex min-w-0 flex-col gap-3 text-pretty", className)} data-slot="item-text">
       {parseItemText(text).map((block, index) => {
         const key = `${block.kind}-${index}`;
 
@@ -109,7 +109,7 @@ export function ItemSupport({
   return (
     <>
       {context && (
-        <ItemText className={cn("text-base leading-relaxed", className)} text={context} />
+        <ItemText className={cn("text-reading leading-relaxed", className)} text={context} />
       )}
       {image && <ItemPicture image={image} />}
       <LessonVisual visual={visual} />

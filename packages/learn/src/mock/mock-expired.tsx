@@ -16,7 +16,7 @@ export function MockExpired() {
     <MockFrame
       footer={
         <TaskActions>
-          <TaskMainLink href={hrefs.again}>{t("Take a new mock exam")}</TaskMainLink>
+          <TaskMainLink href={hrefs.again}>{t("Take another")}</TaskMainLink>
         </TaskActions>
       }
     >
@@ -26,9 +26,7 @@ export function MockExpired() {
         <StepHeader>
           <MockEyebrow />
           <StepTitle>{t("Time ran out while you were away")}</StepTitle>
-          <StepDetail>
-            {t("With most of it unanswered, it isn't scored and doesn't change your preparation.")}
-          </StepDetail>
+          <StepDetail>{t("This one doesn't count.")}</StepDetail>
         </StepHeader>
       </StepCard>
     </MockFrame>

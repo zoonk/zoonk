@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { Disclosure } from "../_components/disclosure";
@@ -38,7 +39,7 @@ function SubjectSection({
   const titleId = useId();
 
   return (
-    <PageSection aria-labelledby={titleId} className={LANDING_CLASS} ref={ref}>
+    <PageSection aria-labelledby={titleId} className={cn(LANDING_CLASS, "gap-0")} ref={ref}>
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{group.name}</PageSectionTitle>
         <PageSectionDetail>{group.rows.length}</PageSectionDetail>

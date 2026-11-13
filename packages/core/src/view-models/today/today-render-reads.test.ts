@@ -248,8 +248,9 @@ describe("Today's render reads", () => {
     );
 
     expect(reads.result[0].status).toBe("ready");
-    // One call kind: a row each from the all-time, this month's and today's counts.
-    expect(reads.rows).toBe(3);
+    // One call kind supplies all-time, this-month and today aggregate rows; the rolling lesson
+    // count supplies the fourth. No lesson claims means the bounded timestamp read returns no rows.
+    expect(reads.rows).toBe(4);
   });
 
   it.each(["exam", "language"] as const)(

@@ -20,7 +20,7 @@ import { MoveFailed } from "./challenge-move-failed";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground flex min-h-11 items-start gap-2 py-3 text-sm">
+    <p className="text-muted-foreground flex min-h-11 items-start gap-3 py-3 text-sm">
       <LineMarker aria-hidden="true">{icon}</LineMarker>
       <span className="text-pretty">{children}</span>
     </p>
@@ -265,13 +265,27 @@ export function ChallengeFooter() {
   const movable = useMovable();
   const { actions, line } = useStatusFooter();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
+  const moves = !startShows && movable;
+
+  // With nothing else to press, a computer reads the status and the move as one line.
+  if (moves && !actions) {
+    return (
+      <>
+        <MoveFailed />
+        <TaskActions className="max-lg:flex-col max-lg:items-stretch max-lg:gap-0 lg:gap-4">
+          <StatusRegion>{line}</StatusRegion>
+          <MoveToMondayButton />
+        </TaskActions>
+      </>
+    );
+  }
 
   return (
     <>
       <StatusRegion>{line}</StatusRegion>
       {actions}
       {!startShows && <MoveFailed />}
-      {!startShows && movable && (
+      {moves && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />
         </TaskActions>

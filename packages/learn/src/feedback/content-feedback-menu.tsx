@@ -45,11 +45,28 @@ export function ContentFeedbackMenu({
   );
 }
 
-export function ReportProblemMenu({ label, screen }: { label: string; screen: string }) {
+/** `place="bar"` is the page bar's borderless icon; the default is the bordered one beside a page's main button. */
+export function ReportProblemMenu({
+  label,
+  place = "detail",
+  screen,
+}: {
+  label: string;
+  place?: "bar" | "detail";
+  screen: string;
+}) {
   const feedback = useContentFeedback();
 
   if (!feedback) {
     return null;
+  }
+
+  if (place === "bar") {
+    return (
+      <TaskHeaderMenu className="w-60" label={label}>
+        <ReportProblemItem screen={screen} />
+      </TaskHeaderMenu>
+    );
   }
 
   return (

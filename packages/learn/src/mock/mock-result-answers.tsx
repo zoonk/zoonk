@@ -26,12 +26,16 @@ function getAnswerCounts(result: MockResult): AnswerCounts | null {
 
 const ANSWER_TILES_CLASS = "flex flex-wrap [&>li]:min-w-max [&>li]:flex-1";
 
+export function hasAnswerCounts(result: MockResult): boolean {
+  return getAnswerCounts(result) !== null || (!result.net && result.blank > 0);
+}
+
 export function MockResultAnswers({ result }: { result: MockResult }) {
   const t = useExtracted();
   const format = useFormatter();
   const counts = getAnswerCounts(result);
 
-  if (!counts && (result.net || result.blank === 0)) {
+  if (!hasAnswerCounts(result)) {
     return null;
   }
 
@@ -62,11 +66,7 @@ export function MockResultAnswers({ result }: { result: MockResult }) {
         </StatTiles>
       )}
       {!result.net && result.blank > 0 && (
-        <p className="text-muted-foreground text-xs">
-          {result.irt
-            ? t("Blank answers count as wrong, as on exam day.")
-            : t("Blank answers count as wrong in this score.")}
-        </p>
+        <p className="text-muted-foreground text-xs">{t("Blank answers count as wrong.")}</p>
       )}
     </div>
   );
