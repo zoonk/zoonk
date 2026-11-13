@@ -226,7 +226,7 @@ function TopicGroupRow({
       </CollapsibleTrigger>
 
       <CollapsibleContent>
-        <div className="flex flex-col pr-4 pb-2 pl-13">
+        <div className="flex flex-col pb-2 pl-7">
           {group.children.length > 0 && (
             <ul className="flex flex-col">
               {group.children.map((child) => (
