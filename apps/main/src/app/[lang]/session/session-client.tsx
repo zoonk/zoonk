@@ -31,6 +31,7 @@ import {
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
 import { type SessionPageView } from "@zoonk/core/sessions/page";
+import { type LessonKind } from "@zoonk/learn/generation/kinds";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
 import { QuestionBlock } from "@zoonk/learn/session/block";
 import { NextStop, type NextStopLesson, type NextStopTap } from "@zoonk/learn/session/next-stop";
@@ -169,6 +170,7 @@ export function SessionNextStopClient({
   generationId,
   goalId,
   lesson,
+  lessonKind,
   notWritten,
   step,
   stepRef,
@@ -180,6 +182,7 @@ export function SessionNextStopClient({
   generationId: string | null;
   goalId: string;
   lesson: NextStopLesson;
+  lessonKind: LessonKind;
   notWritten: LessonNotWritten | null;
   step: DayStep;
   stepRef: DayBlockRef | null;
@@ -227,6 +230,7 @@ export function SessionNextStopClient({
       exitHref={EXIT_HREF}
       generationId={tapped ? null : generationId}
       lesson={tapped ? "ready" : lesson}
+      lessonKind={lessonKind}
       lessonsComing={day.lessonsComing}
       minutesLeft={day.minutes.left}
       notWritten={tapped ? null : notWritten}

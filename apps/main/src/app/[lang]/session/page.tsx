@@ -21,6 +21,7 @@ import {
 } from "@/lib/session/session-stopped-param";
 import { withQuery } from "@/lib/with-query";
 import { getFirstLessonWarmUp } from "@zoonk/core/lookahead/first-lesson-warm-up";
+import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { findAlternativeStudyBlock } from "@zoonk/core/sessions/alternative";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
 import {
@@ -161,9 +162,10 @@ async function NextStepView({
     lesson !== "ready" && !notWritten && step.kind === "learn" ? step.lessonId : null;
 
   // The card is optional: a deck that can't be read leaves the wait without it.
-  const { data: warmUp } = waitedId
-    ? await safeAsync(() => getFirstLessonWarmUp({ lessonId: waitedId }))
-    : { data: null };
+  const [{ data: warmUp }, waited] = await Promise.all([
+    waitedId ? safeAsync(() => getFirstLessonWarmUp({ lessonId: waitedId })) : { data: null },
+    waitedId ? getLessonWaitingState({ lessonId: waitedId }) : null,
+  ]);
 
   return (
     <SessionMain>
@@ -174,6 +176,7 @@ async function NextStepView({
         goalId={facts.goal.id}
         key={`${facts.goal.id}:${facts.localDate.toISOString()}:${step.position}`}
         lesson={lesson}
+        lessonKind={waited?.status === "ready" ? waited.state.kind : "lesson"}
         notWritten={notWritten}
         step={step}
         stepRef={next?.ref.position === step.position ? next.ref : null}

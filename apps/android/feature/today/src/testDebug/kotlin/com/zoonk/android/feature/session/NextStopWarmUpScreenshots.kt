@@ -231,6 +231,7 @@ class NextStopWarmUpScreenshots {
                     LessonReadiness(
                         alternative = null,
                         generationId = "run-1",
+                        kind = LessonReadiness.Kind.LESSON,
                         setAside = false,
                         status = status,
                         warmUpId = UUID.fromString(WARM_UP_ID),

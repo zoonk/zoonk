@@ -105,7 +105,7 @@ describe("lesson content redrafts", () => {
       model: OPUS,
     });
 
-    expect(writeSteps()).toStrictEqual(["started", "completed", "started", "completed"]);
+    expect(writeSteps()).toStrictEqual(["started", "started", "completed"]);
 
     await expect(
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),

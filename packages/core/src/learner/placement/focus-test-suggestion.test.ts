@@ -4,7 +4,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import * as proposals from "../../plans/propose-plan-change";
@@ -69,8 +69,6 @@ async function chooseFocus(goalId: string, areas: string[]) {
 }
 
 describe("the checkpoint's focus, read from the plan and the test's proposals", () => {
-  afterEach(() => vi.useRealTimers());
-
   it("keeps a returning learner's first answer suggested until the sitting closes", async () => {
     const { goal } = await shortPlanExamGoalFixture({
       goal: { ...SHOWN, details: { ...SHOWN.details, placementDeclined: true } },
@@ -114,7 +112,6 @@ describe("the checkpoint's focus, read from the plan and the test's proposals", 
 
     await expect(sit(goal.id, 1)).resolves.toMatchObject({ proposal: null, state: "suggested" });
 
-    vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(Date.now() + 3 * MS_PER_DAY);
     const now = new Date();
 

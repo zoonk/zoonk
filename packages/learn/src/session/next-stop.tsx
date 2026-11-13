@@ -15,11 +15,18 @@ import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSlowWait } from "../_utils/use-slow-wait";
+import { type LessonKind } from "../generation/generation-kinds";
 import { useVisibleWait } from "../generation/use-visible-wait";
 import { useLearnAnalytics } from "../learn-context";
 import { useReadyHold } from "../wait/use-ready-hold";
 import { WaitScreen, WaitSlot, useWaitScreen } from "../wait/wait-screen";
-import { AlternativeButton, NotWritten, Waiting } from "./next-stop-wait";
+import {
+  AlternativeButton,
+  NotWritten,
+  Waiting,
+  useKeptDeck,
+  useWrittenWhileWaiting,
+} from "./next-stop-wait";
 import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
@@ -83,27 +90,6 @@ function StartButton({
       </EnterButton>
     </form>
   );
-}
-
-/**
- * A lesson written while the learner waited is offered, never opened on its own: the learner may be
- * reading, or doing what "While you wait" offered.
- */
-function useWrittenWhileWaiting({
-  block,
-  lesson,
-}: {
-  block: DayStep;
-  lesson: NextStopLesson;
-}): boolean {
-  const ready = lesson === "ready";
-  const [waitedFor, setWaitedFor] = useState(ready ? null : block.position);
-
-  if (!ready && waitedFor !== block.position) {
-    setWaitedFor(block.position);
-  }
-
-  return ready && waitedFor === block.position;
 }
 
 function useStartState({
@@ -223,20 +209,6 @@ function NextStopActionBar({
   );
 }
 
-/**
- * The page reads the goal's first lesson's deck only while it waits, so the screen keeps it: a
- * learner who guessed finishes the card after the lesson is written, as on every wait.
- */
-function useKeptDeck(deck: WarmUpDeck | null): WarmUpDeck | null {
-  const [kept, setKept] = useState(deck);
-
-  if (deck && deck.id !== kept?.id) {
-    setKept(deck);
-  }
-
-  return kept;
-}
-
 export function NextStop({
   goalId,
   actions,
@@ -246,6 +218,7 @@ export function NextStop({
   exitHref,
   generationId,
   lesson,
+  lessonKind = "lesson",
   lessonsComing = false,
   minutesLeft,
   notWritten,
@@ -261,6 +234,7 @@ export function NextStop({
   exitHref: string;
   generationId: string | null;
   lesson: NextStopLesson;
+  lessonKind?: LessonKind;
   lessonsComing?: boolean;
   minutesLeft: number;
   notWritten: LessonNotWritten | null;
@@ -321,7 +295,13 @@ export function NextStop({
           )}
 
           {showsWait && (
-            <Waiting actions={actions} block={block} generationId={generationId} lesson={lesson} />
+            <Waiting
+              actions={actions}
+              block={block}
+              generationId={generationId}
+              kind={lessonKind}
+              lesson={lesson}
+            />
           )}
         </TaskBody>
 

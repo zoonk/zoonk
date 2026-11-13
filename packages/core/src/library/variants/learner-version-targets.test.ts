@@ -146,6 +146,42 @@ describe(listLearnerVersionTargets, () => {
     });
   });
 
+  it("skips exhausted reservations and held-back drafts for tools and fields", async () => {
+    const { goal, plan, chapter } = await planWith({
+      choice: "have",
+      details: { field: "nursing", purpose: "work", role: "Nurse" },
+    });
+
+    const { lesson, steps } = await playableLessonFixture({
+      steps: ["explanation", "check", "challenge"],
+    });
+
+    await planItemFixture({ chapterId: chapter.id, lessonId: lesson.id, planId: plan.id });
+
+    await prisma.stepVariantGeneration.createMany({
+      data: steps.map((step, index) => ({
+        claimedRunIds:
+          index === 1 ? ["a", "b", "c"] : Array.from({ length: 8 }, (_, i) => `run-${i}`),
+        heldBackDrafts:
+          index === 1
+            ? ["a", "b", "c"].map((runId) => ({
+                heldBackAt: new Date().toISOString(),
+                model: "test",
+                problems: [{ problem: "Invalid draft", screen: null }],
+                runId,
+              }))
+            : [],
+        key: index === 2 ? "nursing" : "python",
+        kind: index === 2 ? "field" : "tool",
+        stepId: step.id,
+      })),
+    });
+
+    await expect(
+      listLearnerVersionTargets({ goalId: goal.id, lessonIds: [lesson.id] }),
+    ).resolves.toStrictEqual({ challenges: [], tools: [] });
+  });
+
   it("lists nothing for a learner without a tool choice or a field", async () => {
     const { chapter, goal, plan } = await planWith({ choice: null });
     const { lesson } = await playableLessonFixture({ steps: ["explanation", "challenge"] });

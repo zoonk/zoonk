@@ -10,6 +10,8 @@ import {
   loadChapterToolsById,
   pickToolVersion,
 } from "./learner-versions";
+import { isVariantGenerationExhausted } from "./variant-generation";
+import { toVariantKey } from "./variant-keys";
 
 const MAX_TOOL_VERSIONS = 40;
 
@@ -68,6 +70,7 @@ async function loadVersionSteps(lessonIds: readonly string[]) {
       kind: true,
       lesson: { select: { ownerId: true } },
       lessonId: true,
+      variantGenerations: { where: { kind: { in: ["field", "tool"] } } },
       variants: { select: { key: true, kind: true }, where: { kind: { in: ["field", "tool"] } } },
     },
     where: {
@@ -83,8 +86,18 @@ async function loadVersionSteps(lessonIds: readonly string[]) {
 
 type VersionStep = Awaited<ReturnType<typeof loadVersionSteps>>[number];
 
-function hasVersion({ key, kind, step }: { key: string; kind: string; step: VersionStep }) {
-  return step.variants.some((variant) => variant.kind === kind && variant.key === key);
+function shouldSkipVersion({ key, kind, step }: { key: string; kind: string; step: VersionStep }) {
+  const normalizedKey = toVariantKey(key);
+
+  return (
+    step.variants.some((variant) => variant.kind === kind && variant.key === normalizedKey) ||
+    isVariantGenerationExhausted({
+      generation: step.variantGenerations.find(
+        (generation) => generation.kind === kind && generation.key === normalizedKey,
+      ),
+      ownerId: step.lesson.ownerId,
+    })
+  );
 }
 
 function toToolTarget({
@@ -100,7 +113,7 @@ function toToolTarget({
     !tool ||
     step.kind === "challenge" ||
     step.itemId ||
-    hasVersion({ ...tool, kind: "tool", step })
+    shouldSkipVersion({ ...tool, kind: "tool", step })
   ) {
     return [];
   }
@@ -119,7 +132,7 @@ function toChallengeTarget({
     !field ||
     step.kind !== "challenge" ||
     step.lesson.ownerId ||
-    hasVersion({ key: field, kind: "field", step })
+    shouldSkipVersion({ key: field, kind: "field", step })
   ) {
     return [];
   }

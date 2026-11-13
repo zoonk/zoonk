@@ -4619,6 +4619,54 @@ msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "정답을 확인하고 있어요…"
 
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
+msgctxt "VLjmPG"
+msgid "Writing your challenge"
+msgstr "챌린지를 만들고 있어요"
+
+#. A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "V6oGV2"
+msgid "Fixing what the check found"
+msgstr "검토 중 발견한 문제를 고치고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "411Jv_"
+msgid "Rewriting the parts that didn't add up…"
+msgstr "앞뒤가 맞지 않는 부분을 다시 만들고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "IxN_H4"
+msgid "Checking every path…"
+msgstr "모든 경로를 확인하고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "mpnHDw"
+msgid "Planning the challenge"
+msgstr "챌린지를 구상하고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "OvsNse"
+msgid "Picking the situation…"
+msgstr "상황을 고르고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "VNxpbu"
+msgid "Mapping the choices you'll face…"
+msgstr "선택지를 정리하고 있어요…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "wFWjvX"
+msgid "Writing the challenge"
+msgstr "챌린지를 만들고 있어요"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "ZM7ACn"
+msgid "Writing what each choice leads to…"
+msgstr "각 선택에 따른 결과를 만들고 있어요…"
+
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
@@ -4864,11 +4912,6 @@ msgstr "내용이 사실과 맞는지 확인하고 있어요…"
 msgctxt "84wriC"
 msgid "Writing questions on this chapter"
 msgstr "이 챕터의 문제를 만들고 있어요"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "VLjmPG"
-msgid "Writing your challenge"
-msgstr "챌린지를 만들고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"

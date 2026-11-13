@@ -1,5 +1,6 @@
 "use client";
 
+import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlayIcon } from "lucide-react";
@@ -12,6 +13,7 @@ import {
 } from "../_components/lesson-not-written-notice";
 import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
+import { type LessonKind } from "../generation/generation-kinds";
 import { type GenerationRun, toHeldRun } from "../generation/generation-run";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
@@ -110,17 +112,19 @@ function useHeldRunId({ generationId, held }: { generationId: string | null; hel
 
 function WritingProgress({
   held,
+  kind,
   run,
   since,
 }: {
   held: boolean;
+  kind: LessonKind;
   run: GenerationRun;
   since: number;
 }) {
   const t = useExtracted();
 
   return (
-    <GenerationWait kind="lesson" run={held ? toHeldRun(run) : run} since={since}>
+    <GenerationWait kind={kind} run={held ? toHeldRun(run) : run} since={since}>
       {!held && (
         <GenerationTimelineDescription className="text-sm">
           {t("It takes a few minutes.")}
@@ -135,11 +139,13 @@ export function Waiting({
   actions,
   block,
   generationId,
+  kind,
   lesson,
 }: {
   actions: NextStopActions;
   block: DayStep;
   generationId: string | null;
+  kind: LessonKind;
   lesson: NextStopLesson;
 }) {
   const held = lesson === "ready";
@@ -167,18 +173,18 @@ export function Waiting({
     <FollowedRun
       generationId={runId}
       key={runId ?? "notStarted"}
-      kind="lesson"
+      kind={kind}
       onReady={actions.refresh}
       restart={async () => ((await actions.start(block)) ? undefined : null)}
     >
       {(run) => (
         <WaitContent
-          progress={<WritingProgress held={held} run={run} since={since} />}
+          progress={<WritingProgress held={held} kind={kind} run={run} since={since} />}
           status={
             run.status === "failed" ? (
               <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
             ) : (
-              <LessonWaitStatus holding={held} run={run} since={since} />
+              <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
             )
           }
         />
@@ -252,4 +258,39 @@ export function AlternativeButton({
       </EnterButton>
     </form>
   );
+}
+
+/**
+ * A lesson written while the learner waited is offered, never opened on its own: the learner may be
+ * reading, or doing what "While you wait" offered.
+ */
+export function useWrittenWhileWaiting({
+  block,
+  lesson,
+}: {
+  block: DayStep;
+  lesson: NextStopLesson;
+}): boolean {
+  const ready = lesson === "ready";
+  const [waitedFor, setWaitedFor] = useState(ready ? null : block.position);
+
+  if (!ready && waitedFor !== block.position) {
+    setWaitedFor(block.position);
+  }
+
+  return ready && waitedFor === block.position;
+}
+
+/**
+ * The page reads the goal's first lesson's deck only while it waits, so the screen keeps it: a
+ * learner who guessed finishes the card after the lesson is written, as on every wait.
+ */
+export function useKeptDeck(deck: WarmUpDeck | null): WarmUpDeck | null {
+  const [kept, setKept] = useState(deck);
+
+  if (deck && deck.id !== kept?.id) {
+    setKept(deck);
+  }
+
+  return kept;
 }

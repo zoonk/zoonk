@@ -194,6 +194,6 @@ struct FirstLessonSection: View {
       return 0
     }
 
-    return 0.95 * (1 - exp(-seconds / (GenerationWait.lessonSeconds / 2)))
+    return 0.95 * (1 - exp(-seconds / (GenerationWait.usualSeconds(.lesson) / 2)))
   }
 }
