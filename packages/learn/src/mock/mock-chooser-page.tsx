@@ -16,7 +16,7 @@ import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS, PAGE_ARTICLE_CLASS } from "../_components/detail-page";
-import { EnterButton, EnterLink } from "../_components/enter-button";
+import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
@@ -80,17 +80,15 @@ function ChooserLine({ detail, status }: { detail: string; status: MockChooserSt
   );
 }
 
-/** `actionOnPhone` is false when the phone's bottom bar carries the action instead. */
+/** On a phone the bottom bar carries the action instead. */
 export function ChooserHeader({
   action,
-  actionOnPhone = true,
   detail,
   eyebrow,
   status,
   title,
 }: {
   action: ReactNode;
-  actionOnPhone?: boolean;
   detail: string;
   eyebrow: string;
   status: MockChooserStatus;
@@ -104,7 +102,7 @@ export function ChooserHeader({
         <ChooserLine detail={detail} status={status} />
       </DetailHeroText>
 
-      <DetailActions className={cn(!actionOnPhone && "max-md:hidden")}>{action}</DetailActions>
+      <DetailActions className="max-md:hidden">{action}</DetailActions>
     </DetailHero>
   );
 }
@@ -148,16 +146,6 @@ export function ChooserStartButton({
     >
       {children}
     </EnterButton>
-  );
-}
-
-export function ChooserPlusLink({ href }: { href: string }) {
-  const t = useExtracted();
-
-  return (
-    <EnterLink className={DETAIL_PRIMARY_CLASS} href={href} icon={null} size="lg">
-      {t("See Plus")}
-    </EnterLink>
   );
 }
 

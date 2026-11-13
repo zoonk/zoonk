@@ -172,7 +172,7 @@ export function MockChooserClient({
   const screen = {
     bar,
     busy,
-    hrefs: { mock: MOCK_ENTRY_HREFS.mock, plus: "/subscription" },
+    hrefs: { mock: MOCK_ENTRY_HREFS.mock },
     onStart: begin,
     onStartShort: beginShort,
     onStayChoosing: () => setStatus({ kind: "choosing" }),

@@ -6,12 +6,12 @@ import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
+import { SubscribeGate } from "../_components/subscribe-gate";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import {
   ChooserBottomBar,
   ChooserHeader,
   ChooserLayout,
-  ChooserPlusLink,
   ChooserRefusal,
   ChooserStartButton,
   MockWriting,
@@ -121,7 +121,8 @@ function PracticeChooser({
   const [picked, setPicked] = useState<string | null>(null);
   const option = view.options.find((candidate) => getMockOptionKey(candidate) === picked) ?? null;
   const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
-  const open = view.access === "open";
+  // A free learner sees the chooser as a subscriber does; Start is where the gate shows.
+  const [gated, setGated] = useState(false);
   const short = status.kind === "short" ? status : null;
   const shown: MockChooserStatus = short ? { kind: "choosing" } : status;
 
@@ -129,8 +130,22 @@ function PracticeChooser({
     ? view.options.find((candidate) => getMockOptionKey(candidate) === short.optionKey)
     : undefined;
 
-  const start = (
-    <ChooserStartButton busy={busy} disabled={!option} onClick={() => option && onStart(option)}>
+  const start = () => {
+    if (!option) {
+      return;
+    }
+
+    if (view.access === "open") {
+      onStart(option);
+    } else {
+      setGated(true);
+    }
+  };
+
+  const action = gated ? (
+    <SubscribeGate title={t("Mock exams need a subscription")} />
+  ) : (
+    <ChooserStartButton busy={busy} disabled={!option} onClick={start}>
       {t("Start")}
     </ChooserStartButton>
   );
@@ -147,13 +162,8 @@ function PracticeChooser({
       bar={bar}
     >
       <ChooserHeader
-        action={open ? start : <ChooserPlusLink href={hrefs.plus} />}
-        actionOnPhone={!open}
-        detail={
-          open
-            ? t("Timed like the real exam. You see your result at the end.")
-            : t("Mock exams are part of Plus.")
-        }
+        action={action}
+        detail={t("Timed like the real exam. You see your result at the end.")}
         eyebrow={view.examName}
         status={shown}
         title={t("Take a mock exam")}
@@ -162,7 +172,7 @@ function PracticeChooser({
       <DetailContent>
         <ChooserRefusal busy={busy} status={shown} />
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
-        {open && <ChooserBottomBar>{start}</ChooserBottomBar>}
+        <ChooserBottomBar>{action}</ChooserBottomBar>
       </DetailContent>
 
       <MockShortDialog

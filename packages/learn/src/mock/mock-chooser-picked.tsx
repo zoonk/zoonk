@@ -14,7 +14,7 @@ import { PageSectionLabel } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { useMockOptionName } from "./mock-option-labels";
 
-export type MockChooserHrefs = { mock: (id: string) => string; plus: string };
+export type MockChooserHrefs = { mock: (id: string) => string };
 
 const NO_WRITTEN_PARTS: readonly string[] = [];
 
