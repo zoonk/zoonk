@@ -1,5 +1,6 @@
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { prisma } from "@zoonk/db";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { describe, expect, it, vi } from "vitest";
@@ -366,6 +367,44 @@ describe("word and sentence fixes", () => {
 
     expect(revertedStep.content).toMatchObject({ targetText: sentence.sentence });
     expect(revertedLink).toMatchObject({ ordersOwedAt: expect.any(Date), otherSentenceOrders: [] });
+  });
+
+  it("carries every lesson's row of a word, however many lessons teach it", async () => {
+    const { lesson, word } = await languageLessonFixture();
+
+    const others = await Promise.all(
+      Array.from({ length: 11 }, () =>
+        libraryLessonFixture({ contentStatus: "completed", language: "pt", targetLanguage: "en" }),
+      ),
+    );
+
+    await prisma.lessonWord.createMany({
+      data: others.map((other) => ({
+        lessonId: other.id,
+        model: "test",
+        position: 0,
+        promptVersion: "test",
+        runId: "test",
+        translation: "aluguel",
+        wordId: word.id,
+      })),
+    });
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        { id: word.id, model: "Word", set: { romanization: "rent" } },
+        ...[lesson, ...others].map((shown) => ({
+          id: { lessonId: shown.id, wordId: word.id },
+          model: "LessonWord",
+          set: { translation: "o aluguel" },
+        })),
+      ],
+      reason: "Every lesson teaches the noun with its article.",
+    });
+
+    expect(fix.changes).toHaveLength(13);
   });
 
   it("fixes one lesson's rows of a word and a sentence by their key", async () => {

@@ -55,7 +55,7 @@ pnpm zoonk staff count <Model> --where "userId eq <id>" --where "createdAt gte 2
 When shared Library content is wrong (a lesson, screen, question, word, sentence, title, answer key, structure or exam fact), propose a fix. You can only propose it; a staff person reviews and approves it in Admin with their passkey, and nothing changes before that.
 
 1. Investigate: read the rows with `staff get` and `staff list`, and confirm what's wrong and where it comes from.
-2. Check what a fix may change: `pnpm zoonk staff models` lists the `fixable` models, and `pnpm zoonk staff models <Model>` lists under `fixable` each operation it takes (`set`, `replace`, `setOptions`, `setLessons`…) with its fields, payload and rules. Those rules are the source of truth; this skill is the map. One fix changes one thing with up to 10 changes: a lesson with its screens, a word or sentence with the lesson rows that use it, or one row of another model.
+2. Check what a fix may change: `pnpm zoonk staff models` lists the `fixable` models, and `pnpm zoonk staff models <Model>` lists under `fixable` each operation it takes (`set`, `replace`, `setOptions`, `setLessons`…) with its fields, payload and rules. Those rules are the source of truth; this skill is the map. One fix changes one thing: a lesson with its screens, a word or sentence with the rows of every lesson that uses it, or one row of another model. It holds up to 10 changes, not counting a word's or sentence's lesson rows.
 3. Write the fix to a file and propose it with `pnpm zoonk staff fixes propose fix.json`:
 
    ```json
