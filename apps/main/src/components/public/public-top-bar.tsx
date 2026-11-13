@@ -21,11 +21,20 @@ export function PublicHomeLink() {
 }
 
 /** Pages that never show the account menu use it directly, so its code never ships to them. */
-export function PublicTopBar({ actions, start }: { actions: ReactNode; start?: ReactNode }) {
+export function PublicTopBar({
+  actions,
+  nav,
+  start,
+}: {
+  actions: ReactNode;
+  nav?: ReactNode;
+  start?: ReactNode;
+}) {
   return (
     <PublicTopBarSurface>
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "flex h-14 items-center gap-8 sm:h-[72px]")}>
+      <div className={cn(PUBLIC_CONTAINER_CLASS, "flex h-14 items-center gap-4 sm:h-[72px]")}>
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>
+        {nav && <nav className="flex shrink-0 items-center">{nav}</nav>}
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
       </div>
     </PublicTopBarSurface>

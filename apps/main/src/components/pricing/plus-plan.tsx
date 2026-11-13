@@ -1,9 +1,5 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import {
-  Variant,
-  VariantSwitch,
-  VariantSwitchOption,
-} from "@/components/public/variant-switch";
+import { Variant, VariantSwitch, VariantSwitchOption } from "@/components/public/variant-switch";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";

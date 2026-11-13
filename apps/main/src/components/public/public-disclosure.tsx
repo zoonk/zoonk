@@ -25,12 +25,12 @@ export function PublicDisclosure({
 }) {
   return (
     <details className={cn("group not-first:border-t", className)} open={open}>
-      <summary className="hover:text-foreground focus-visible:ring-ring/50 flex cursor-pointer list-none gap-4 rounded-md py-4 text-reading leading-snug font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
+      <summary className="hover:text-foreground focus-visible:ring-ring/50 text-reading flex cursor-pointer list-none gap-4 rounded-md py-4 leading-snug font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
           <span className="text-pretty">{summary}</span>
 
           {aside && (
-            <span className="text-muted-foreground flex-none text-compact font-normal tabular-nums sm:text-sm">
+            <span className="text-muted-foreground text-compact flex-none font-normal tabular-nums sm:text-sm">
               {aside}
             </span>
           )}

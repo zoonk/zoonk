@@ -1,4 +1,6 @@
+import { FREE_PLAN_START_ID } from "@/components/pricing/free-plan";
 import {
+  PRICING_CLOSE_ID,
   PricingClose,
   PricingHero,
   PricingPlans,
@@ -32,7 +34,10 @@ export async function PricingPage({ currency }: { currency: string }) {
   const { monthlyPrice, yearlyPrice } = await getPlusPrices(readCurrency(currency));
 
   return (
-    <PublicPage pathname="/pricing">
+    <PublicPage
+      ownStart={{ againIds: [PRICING_CLOSE_ID], id: FREE_PLAN_START_ID }}
+      pathname="/pricing"
+    >
       <PricingHero />
       <PricingPlans monthlyPrice={monthlyPrice} yearlyPrice={yearlyPrice} />
       <PricingCovers />

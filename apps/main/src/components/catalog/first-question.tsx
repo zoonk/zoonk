@@ -1,4 +1,5 @@
 import { NoSessionNote } from "@/components/public/no-account-note";
+import { DISCLOSURE_ANSWER_CLASS } from "@/components/public/public-disclosure";
 import { StartLink, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { getAppLocale } from "@/i18n/locale";
 import { withOrigin } from "@/lib/public/public-hrefs";
@@ -102,7 +103,7 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
 
   return (
     <>
-      <p className="text-muted-foreground text-reading mb-5 leading-relaxed text-pretty sm:text-base">
+      <p className={cn(DISCLOSURE_ANSWER_CLASS, "mb-5")}>
         {t("You've started this lesson. It picks up where you left off.")}
       </p>
 

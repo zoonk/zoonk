@@ -674,21 +674,11 @@ msgctxt "g3A2Pq"
 msgid "No courses here yet"
 msgstr "Qui non ci sono ancora corsi"
 
+#. Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "oqFLr_"
-msgid "Tell Zoonk what you want to learn and get a plan for it."
-msgstr "Di’ a Zoonk cosa vuoi imparare e avrai un piano per farlo."
-
-#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/(home)/_components/home-header.tsx
-#: src/app/[lang]/(home)/page.tsx
-#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
-#: src/components/public/goal-form.tsx
-#: src/components/public/start-plan-link.tsx
-msgctxt "UTU-oM"
-msgid "Build my plan"
-msgstr "Crea il mio piano"
+msgctxt "ARz6VZ"
+msgid "Write what you want to learn in the box above, and Zoonk builds a plan for it."
+msgstr ""
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
@@ -1078,6 +1068,16 @@ msgstr "Il tuo piano segue questo corso e si adatta al tempo che hai ogni giorno
 msgctxt "6CVLNb"
 msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
 msgstr "Per ora, {minutes, plural, one {# minuto} other {# minuti}} al giorno. Puoi modificare il tempo nei prossimi passaggi."
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/(home)/_components/home-header.tsx
+#: src/app/[lang]/(home)/page.tsx
+#: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/public/goal-form.tsx
+#: src/components/public/start-plan-link.tsx
+msgctxt "UTU-oM"
+msgid "Build my plan"
+msgstr "Crea il mio piano"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
@@ -2503,9 +2503,9 @@ msgstr "{subjects}. Scrivi cosa vuoi capire e il tuo piano lo organizza in capit
 
 #. In Brazilian Portuguese: “Por curiosidade, um curso do zero.”
 #: src/app/[lang]/(home)/_components/topic-section.tsx
-msgctxt "90-P9S"
-msgid "Just curious? A course from scratch."
-msgstr "Solo per curiosità? Un corso da zero."
+msgctxt "Sb5-4T"
+msgid "Just curious? A course from scratch."
+msgstr ""
 
 #. The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”
 #: src/app/[lang]/(home)/page.tsx
@@ -2788,9 +2788,9 @@ msgid "Someone shared their study plan with you"
 msgstr "Qualcuno ha condiviso il suo piano con te"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "sbVo7o"
-msgid "You get your own plan for the same subject. Start free, no account needed."
-msgstr "Avrai un piano tutto tuo per la stessa materia. Inizia gratis, non serve un account."
+msgctxt "Gi84AL"
+msgid "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed."
+msgstr ""
 
 #. Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.
 #: src/app/[lang]/plan-link/[planId]/page.tsx
@@ -3293,9 +3293,9 @@ msgstr "Inizia gratis. <rest>Passa a Plus quando vuoi tutto.</rest>"
 
 #. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals a learner without Plus can study at once, not how many new goals they start per day or month.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "HaJ_aJ"
-msgid "Free: {goals, plural, one {one goal} other {# goals}} at a time. Plus: every goal and every lesson, all the way to the big day."
-msgstr "Free: {goals, plural, one {un obiettivo} other {# obiettivi}} alla volta. Plus: tutti gli obiettivi e tutte le lezioni, fino al grande giorno."
+msgctxt "0DBdrT"
+msgid "Zoonk builds a study plan for each goal you set: an exam, a language, a new career. Free: {goals, plural, one {one goal} other {# goals}} at a time. Plus: every goal and every lesson."
+msgstr ""
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"

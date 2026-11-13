@@ -53,13 +53,16 @@ function useShowAfterScrollingPast({
   return isShown;
 }
 
-export function StickyStartBar({
+/** Keeps its room while hidden, so nothing beside it moves when it shows. */
+export function ShownAfterScrollingPast({
   afterId,
   children,
+  className,
   hideWhileVisibleIds = NO_IDS,
 }: {
   afterId: string;
   children: ReactNode;
+  className?: string;
   hideWhileVisibleIds?: string[];
 }) {
   const isShown = useShowAfterScrollingPast({
@@ -71,12 +74,26 @@ export function StickyStartBar({
     <div
       aria-hidden={!isShown}
       className={cn(
-        "bg-background/90 supports-backdrop-filter:bg-background/75 fixed inset-x-0 bottom-0 z-30 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md transition-opacity duration-150 ease-out motion-reduce:transition-none sm:hidden",
+        "transition-opacity duration-150 ease-out motion-reduce:transition-none",
         isShown ? "opacity-100" : "pointer-events-none opacity-0",
+        className,
       )}
       inert={!isShown}
     >
       {children}
     </div>
+  );
+}
+
+export function StickyStartBar(props: {
+  afterId: string;
+  children: ReactNode;
+  hideWhileVisibleIds?: string[];
+}) {
+  return (
+    <ShownAfterScrollingPast
+      className="bg-background/90 supports-backdrop-filter:bg-background/75 fixed inset-x-0 bottom-0 z-30 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:hidden"
+      {...props}
+    />
   );
 }

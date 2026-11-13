@@ -1,10 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  EYEBROW_CLASS,
-  PUBLIC_BAND_CLASS,
-  PUBLIC_CONTAINER_CLASS,
-  STOP_TITLE_CLASS,
-} from "./landing-styles";
+import { EYEBROW_CLASS, PUBLIC_BAND_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 
 const RAIL_LINE_CLASS = cn(
   "min-[88rem]:before:bg-border min-[88rem]:before:absolute min-[88rem]:before:inset-y-0 min-[88rem]:before:left-[calc((100%-84rem)/2-0.75rem)] min-[88rem]:before:w-px",
@@ -62,7 +57,7 @@ export function StopEyebrow({ className, ...props }: React.ComponentProps<"p">) 
 
 export function StopTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
-    <h2 className={cn(STOP_TITLE_CLASS, className)} data-slot="stop-title" {...props}>
+    <h2 className={cn("text-section", className)} data-slot="stop-title" {...props}>
       {children}
     </h2>
   );

@@ -127,7 +127,7 @@ export async function CoursePlanWindow({
             })}
           </p>
 
-          <p className="text-muted-foreground max-w-120 text-reading leading-relaxed text-pretty">
+          <p className="text-muted-foreground text-reading max-w-120 leading-relaxed text-pretty">
             {t({
               description:
                 "Under a big number of weeks (“~32 weeks”): how long the course takes when studying this many minutes a day.",

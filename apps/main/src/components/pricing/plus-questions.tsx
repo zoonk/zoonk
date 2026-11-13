@@ -87,9 +87,11 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
 /** Speaking calls have daily and monthly limits, said honestly but never in minutes, on any plan. */
 export async function PlusQuestions({
   className,
+  titleClassName = "text-base font-semibold tracking-[-0.015em]",
   viewerState,
 }: {
   className?: string;
+  titleClassName?: string;
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
@@ -100,7 +102,7 @@ export async function PlusQuestions({
   return (
     <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-[-0.015em]" id={PLUS_QUESTIONS_ID}>
+        <h2 className={titleClassName} id={PLUS_QUESTIONS_ID}>
           {t("Common questions")}
         </h2>
         <p className="text-muted-foreground text-sm">

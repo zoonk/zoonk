@@ -79,7 +79,7 @@ export async function LibraryCourseOutline({
         {lead && <p className="text-reading leading-relaxed text-pretty">{lead}</p>}
 
         {stats.chapterCount === 0 && (
-          <p className="flex gap-2.5 text-reading leading-relaxed text-pretty">
+          <p className="text-reading flex gap-2.5 leading-relaxed text-pretty">
             <LineMarker>
               <SparklesIcon aria-hidden="true" className="text-muted-foreground size-4" />
             </LineMarker>

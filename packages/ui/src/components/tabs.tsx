@@ -1,8 +1,8 @@
 "use client";
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
-import { cn } from "@zoonk/ui/lib/utils";
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
+import { cn } from "@zoonk/ui/lib/utils";
 
 function Tabs({ className, orientation = "horizontal", ...props }: TabsPrimitive.Root.Props) {
   return (
@@ -44,4 +44,4 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   );
 }
 
-export { TAB_CLASS, TAB_LIST_CLASS, Tabs, TabsContent, TabsList, TabsTrigger };
+export { Tabs, TabsContent, TabsList, TabsTrigger };

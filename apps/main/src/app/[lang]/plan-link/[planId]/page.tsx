@@ -75,7 +75,7 @@ async function PlanLinkBody({ params }: Props) {
         <PlanLinkTracker planId={planId} />
 
         <div className="min-w-0">
-          <p className="text-muted-foreground text-sm font-medium sm:text-reading">
+          <p className="text-muted-foreground sm:text-reading text-sm font-medium">
             {t("Someone shared their study plan with you")}
           </p>
 

@@ -50,10 +50,10 @@ export async function HomeHero({ startPath }: { startPath: string }) {
         "pt-3 pb-28 sm:pt-8 lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-center lg:gap-16 lg:pt-14 lg:pb-37 xl:grid-cols-[minmax(0,1fr)_26rem]",
       )}
     >
-      <div className="@container min-w-0">
+      <div className="min-w-0">
         <h1
           // Display letters sit inside their own box: the pull puts their ink on the column's edge.
-          className="ml-[-0.05em] text-[min(10.6cqi,5.25rem)] leading-none font-[680] tracking-[-0.045em]"
+          className="text-display ml-[-0.05em]"
           id={TITLE_ID}
         >
           {await getHomeHeadline({ line: renderLine, locale, more: renderMore })}

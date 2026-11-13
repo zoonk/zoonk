@@ -21,6 +21,9 @@ import { type PlusViewerState } from "./plus-plan";
 
 const FREE_PLAN_ID = "free-plan";
 
+/** The Free card's button, which the pricing page's bar waits for before it shows its own. */
+export const FREE_PLAN_START_ID = "free-plan-start";
+
 async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState }) {
   const t = await getExtracted();
 
@@ -29,6 +32,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
       <Link
         className={cn(buttonVariants({ size: "lg", variant: "outline" }), PLUS_CTA_CLASS)}
         href="/start"
+        id={FREE_PLAN_START_ID}
       >
         {t("Start free")}
       </Link>
@@ -39,6 +43,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
     return (
       <CurrentPageLoginLink
         className={cn(buttonVariants({ size: "lg", variant: "outline" }), PLUS_CTA_CLASS)}
+        id={FREE_PLAN_START_ID}
       >
         {t("Create a free account")}
       </CurrentPageLoginLink>

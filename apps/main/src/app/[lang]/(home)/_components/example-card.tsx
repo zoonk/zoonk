@@ -66,16 +66,14 @@ export async function ExampleDay({ detail, steps }: { detail?: string; steps: Da
   return (
     <div className="flex flex-col">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-xl leading-6 font-semibold tracking-[-0.02em]">
-          {t("Today")}
-        </span>
+        <span className="text-xl leading-6 font-semibold tracking-[-0.02em]">{t("Today")}</span>
         <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-compact")}>
           {minutesText(minutes)}
         </span>
       </p>
 
       {detail && (
-        <p className="text-muted-foreground mt-0.5 text-compact">{`${t("Example")} · ${detail}`}</p>
+        <p className="text-muted-foreground text-compact mt-0.5">{`${t("Example")} · ${detail}`}</p>
       )}
 
       <DaySegments className="mt-3 mb-1" steps={steps} />

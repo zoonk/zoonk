@@ -1,6 +1,5 @@
 import {
   EYEBROW_CLASS,
-  LEAD_CLASS,
   PUBLIC_BAND_CLASS,
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
@@ -51,7 +50,7 @@ export async function PricingHero() {
         {t.rich("Start free. <rest>Plus when you want everything.</rest>", { rest: renderRest })}
       </h1>
 
-      <p className={cn(LEAD_CLASS, "mt-4.5")}>
+      <p className="text-lead mt-4 max-w-152">
         {t({
           description:
             "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals a learner without Plus can study at once, not how many new goals they start per day or month.",
@@ -65,6 +64,8 @@ export async function PricingHero() {
 }
 
 const PRICING_BILLING_SWITCH = "pricing-billing";
+
+export const PRICING_CLOSE_ID = "pricing-close";
 
 /** Side by side once each card fits its name and the billing switch on one row (`@3xl` in `plan-includes`). */
 const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
@@ -114,7 +115,10 @@ function PlanCardSkeleton() {
 export function PricingQuestions() {
   return (
     <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-14 sm:pt-20 lg:pt-24")}>
-      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-baseline lg:gap-12" />
+      <PlusQuestions
+        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-baseline lg:gap-12"
+        titleClassName="text-section"
+      />
     </div>
   );
 }
@@ -124,17 +128,14 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
 
   return (
     <section
-      aria-labelledby="pricing-close"
+      aria-labelledby={PRICING_CLOSE_ID}
       className={cn(
         PUBLIC_CONTAINER_CLASS,
         PUBLIC_BAND_CLASS,
         "flex flex-col items-center text-center",
       )}
     >
-      <h2
-        className="max-w-[14em] text-3xl leading-[1.08] font-semibold tracking-[-0.04em] text-balance lg:text-5xl"
-        id="pricing-close"
-      >
+      <h2 className="text-headline max-w-[14em]" id={PRICING_CLOSE_ID}>
         {t("Start free, no account needed.")}
       </h2>
 

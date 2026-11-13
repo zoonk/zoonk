@@ -148,6 +148,7 @@ msgid "Time a day"
 msgstr "Tägliche Lernzeit"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment-parts.tsx
@@ -160,7 +161,6 @@ msgstr "Tägliche Lernzeit"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
@@ -174,7 +174,6 @@ msgstr "Tägliche Lernzeit"
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
 #: src/session/question-block/block-body.tsx
-#: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
 msgctxt "acrOoz"
@@ -182,6 +181,7 @@ msgid "Continue"
 msgstr "Weiter"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/level-test/level-test-screens.tsx
@@ -488,6 +488,58 @@ msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "Das hat nicht geklappt. Versuch es gleich noch einmal."
 
+#: src/_components/question-actions.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "Prüfen"
+
+#: src/_components/question-actions.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/block-finish-ready.tsx
+#: src/session/summary/summary-actions.tsx
+msgctxt "2O2sfp"
+msgid "Finish"
+msgstr "Abschließen"
+
+#: src/_components/question-actions.tsx
+#: src/plan/plan-suggestion-context.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Weiter"
+
+#: src/_components/question-actions.tsx
+msgctxt "BkQAJw"
+msgid "Show the next step"
+msgstr ""
+
+#: src/_components/question-actions.tsx
+msgctxt "ZLtyTD"
+msgid "See the answer"
+msgstr ""
+
+#: src/_components/question-actions.tsx
+#: src/challenge/challenge-footer.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mock/mock-screen.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "Ergebnis ansehen"
+
+#: src/_components/question-actions.tsx
+msgctxt "QriCsD"
+msgid "Previous screen"
+msgstr ""
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/question-feedback.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Das weiß ich noch nicht"
+
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
@@ -564,6 +616,11 @@ msgstr "Zurück"
 msgctxt "FgydNe"
 msgid "View"
 msgstr "Ansehen"
+
+#: src/_components/task-header.tsx
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "Seitenoptionen"
 
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
@@ -2157,14 +2214,6 @@ msgid "Mock exams come with Plus: whenever you want, and every week in your plan
 msgstr "Mit Plus kannst du Probeprüfungen machen, wann immer du möchtest, und jede Woche in deinem Plan."
 
 #: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "Ergebnis ansehen"
-
-#: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "a2N2Lk"
 msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
@@ -2513,20 +2562,6 @@ msgstr "Am Ende erfährst du, warum."
 msgctxt "e-k3Hd"
 msgid "Every question is answered."
 msgstr "Alle Fragen sind beantwortet."
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/plan/plan-suggestion-context.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "Weiter"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "Bestätigen"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "v5U-vD"
@@ -6988,12 +7023,6 @@ msgid "Mistake pattern"
 msgstr "Fehlermuster"
 
 #: src/language/pattern/language-pattern-screen.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Seitenoptionen"
-
-#: src/language/pattern/language-pattern-screen.tsx
 msgctxt "ZZjlNy"
 msgid "See the rule"
 msgstr "Regel ansehen"
@@ -7008,17 +7037,6 @@ msgstr "Das üben · {time}"
 msgctxt "uhjTvw"
 msgid "The rule"
 msgstr "Die Regel"
-
-#: src/language/pattern/language-pattern-screen.tsx
-msgctxt "q56JGx"
-msgid "See how you did"
-msgstr "Ergebnis ansehen"
-
-#: src/language/pattern/language-pattern-screen.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Prüfen"
 
 #: src/language/pattern/pattern-drill.tsx
 msgctxt "27c7dl"
@@ -8311,11 +8329,6 @@ msgctxt "AmTEu0"
 msgid "The trap:"
 msgstr "Die Falle:"
 
-#: src/mistakes/drill/drill-controls.tsx
-msgctxt "XUx7zX"
-msgid "I'm not sure"
-msgstr "Ich bin mir nicht sicher"
-
 #: src/mistakes/drill/drill-countdown.tsx
 msgctxt "XYckgX"
 msgid "{seconds, plural, one {# second left} other {# seconds left}}"
@@ -8518,13 +8531,10 @@ msgid "The rest are still ready to practice."
 msgstr "Den Rest kannst du weiterhin üben."
 
 #: src/mistakes/practice-step.tsx
-#: src/onboarding/steps/placement-question.tsx
-#: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Das weiß ich noch nicht"
+msgctxt "XUx7zX"
+msgid "I'm not sure"
+msgstr "Ich bin mir nicht sicher"
 
 #. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
@@ -13471,13 +13481,6 @@ msgstr "Wir haben ausgewählt, was bei deinen Angaben oft hilft. Pass alles an, 
 msgctxt "-HTKTB"
 msgid "{current, number} of {total, number}"
 msgstr "{current, number} von {total, number}"
-
-#: src/questions/choice-questions-run.tsx
-#: src/session/question-block/block-finish-ready.tsx
-#: src/session/summary/summary-actions.tsx
-msgctxt "2O2sfp"
-msgid "Finish"
-msgstr "Abschließen"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"

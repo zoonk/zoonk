@@ -21,10 +21,7 @@ export async function FinalCall({ startPath }: { startPath: string }) {
           "flex flex-col items-center py-26 text-center lg:py-34",
         )}
       >
-        <h2
-          className="text-[clamp(2.5rem,7vw,5.25rem)] leading-[0.98] font-[680] tracking-tighter text-balance"
-          id={TITLE_ID}
-        >
+        <h2 className="text-display" id={TITLE_ID}>
           {t({
             description: "In Brazilian Portuguese: “Qual é o seu objetivo?”",
             message: "What's your goal?",

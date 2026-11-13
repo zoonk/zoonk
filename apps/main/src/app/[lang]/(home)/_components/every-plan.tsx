@@ -18,9 +18,7 @@ function EveryPlanItem({ mark, name, text }: { mark: ReactNode; name: string; te
         <p className="text-base leading-5.75 font-semibold tracking-[-0.015em] text-balance sm:text-lg">
           {name}
         </p>
-        <p className="text-muted-foreground mt-1 text-reading leading-5.75 text-pretty">
-          {text}
-        </p>
+        <p className="text-muted-foreground text-reading mt-1 leading-5.75 text-pretty">{text}</p>
       </div>
     </li>
   );

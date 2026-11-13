@@ -69,7 +69,7 @@ async function MockResult() {
         })}
       </div>
 
-      <ul className="divided-rows mt-6 border-t text-reading leading-snug">
+      <ul className="divided-rows text-reading mt-6 border-t leading-snug">
         <li className="flex min-h-12 items-center gap-3 py-2.5">
           <DoneMark />
           <span>

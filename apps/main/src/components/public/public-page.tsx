@@ -5,22 +5,25 @@ import { type ReactNode } from "react";
 import { HERO_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PublicFooter } from "./public-footer";
 import { PublicHeader } from "./public-header";
+import { type PageStart } from "./public-visitor-actions";
 
 export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-4 sm:px-6";
 
 export function PublicPage({
   children,
   className,
+  ownStart,
   pathname,
 }: {
   children: ReactNode;
   className?: string;
+  ownStart?: PageStart;
   pathname?: string;
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
-      <PublicHeader />
+      <PublicHeader ownStart={ownStart} />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
     </div>
