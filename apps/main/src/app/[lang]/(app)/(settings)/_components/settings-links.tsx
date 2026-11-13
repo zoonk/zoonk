@@ -13,7 +13,6 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "@zoonk/learn/list";
-import { PlusMark } from "@zoonk/learn/plus-lock";
 import { useFormatTimeOfDay } from "@zoonk/learn/time-format";
 import { useExtracted } from "next-intl";
 
@@ -53,7 +52,7 @@ function useSettingsPages({
   ].filter((item) => item !== false);
 
   const plan = [
-    toPage("subscription", t("Subscription"), plus ? <PlusMark label={t("Plus")} /> : undefined),
+    toPage("subscription", t("Subscription"), plus ? t("Plus") : undefined),
     toPage("support", t("Help")),
   ];
 
@@ -126,7 +125,7 @@ function useRemindersSummary(reminders: HubReminders | null | undefined): string
       });
 }
 
-/** Only Reminders shows a value: its time is the one setting worth reading without opening it. */
+/** Two rows show a value: Reminders its time, and a subscriber's Subscription the plan they have. */
 export function SettingsHubLists({
   reminders,
   ...shown
