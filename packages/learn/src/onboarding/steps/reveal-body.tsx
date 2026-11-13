@@ -31,9 +31,10 @@ import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
 import { PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
-import { RevealDayOpener, RevealToday, RevealWeek, findRevealStart } from "./reveal-days";
+import { RevealDayOpener, RevealToday, findRevealStart } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
+import { RevealWeek } from "./reveal-week";
 
 /** Zu cheers on the moment's last beat, after the check and "Start here". */
 function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
