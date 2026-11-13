@@ -70,7 +70,7 @@ export function MockSearch({ placeholder, value }: { placeholder: string; value?
 export function MockSelect({ children, field }: { children: React.ReactNode; field?: boolean }) {
   return (
     <Button
-      className={field ? "w-full justify-between font-normal" : undefined}
+      className={field ? "w-full justify-between px-3 font-normal" : undefined}
       size={field ? "lg" : "sm"}
       variant="outline"
     >
@@ -98,6 +98,27 @@ export function MockViews({ label, views }: { label: string; views: MockView[] }
 
 export type MockColumn = AdminTableColumn;
 
+const AMOUNT = /^\$[\d,]+\.(?<decimals>\d+)$/u;
+
+function decimalsOf(cell: React.ReactNode): number {
+  return typeof cell === "string" ? (AMOUNT.exec(cell)?.groups?.decimals?.length ?? 0) : 0;
+}
+
+/** A column's amounts share one number of decimals, so their points stack ("$1.4500" over "$0.7756"). */
+function alignAmounts(rows: React.ReactNode[][]): React.ReactNode[][] {
+  const widest = (index: number) => Math.max(0, ...rows.map((row) => decimalsOf(row[index])));
+
+  return rows.map((row) =>
+    row.map((cell, index) => {
+      const pad = widest(index) - decimalsOf(cell);
+
+      return typeof cell === "string" && pad > 0 && AMOUNT.test(cell)
+        ? cell + "0".repeat(pad)
+        : cell;
+    }),
+  );
+}
+
 export function MockRows({
   columns,
   empty = "",
@@ -109,7 +130,7 @@ export function MockRows({
 }) {
   return (
     <AdminTableColumns columns={columns} emptyLabel={empty} isEmpty={rows.length === 0}>
-      {rows.map((row, rowIndex) => (
+      {alignAmounts(rows).map((row, rowIndex) => (
         // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
         <AdminTableRow key={rowIndex}>
           {row.map((cell, index) => (
@@ -163,13 +184,21 @@ export function MockList({
 }
 
 /** Label and value rows, each `[label, value]`; rows with no value are left out. */
+/** A count, an amount, an id or a hash: data, set in mono like a table's numbers. */
+const DATA_VALUE =
+  /^(?:\$?[\d,]+(?:\.\d+)?%?|[\da-f]{8}-[\da-f-]{27}|[\da-f]{7,}(?:\s·\s[\da-f]{7,})*)$/iu;
+
 export function Facts({ rows }: { rows: [string, React.ReactNode][] }) {
   return (
     <DetailFields>
       {rows
         .filter(([, value]) => value !== "" && value !== null && value !== undefined)
         .map(([label, value]) => (
-          <DetailField key={label} label={label}>
+          <DetailField
+            key={label}
+            label={label}
+            mono={typeof value === "string" && DATA_VALUE.test(value.trim())}
+          >
             {value}
           </DetailField>
         ))}

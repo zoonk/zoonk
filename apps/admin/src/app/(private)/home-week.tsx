@@ -1,4 +1,4 @@
-import { Stats, StatsSkeleton } from "@/components/stats";
+import { STATS_GRID_CLASS, Stats, StatsSkeleton } from "@/components/stats";
 import { getAiSpendBetween } from "@/data/ai/get-ai-spend-between";
 import { countActiveLearners } from "@/data/stats/count-active-learners";
 import { getNewSignups } from "@/data/stats/get-new-signups";
@@ -8,7 +8,6 @@ import { formatDuration } from "@/lib/format-duration";
 import { getRollingUtcDateWindowStarts } from "@/lib/rolling-date-windows";
 
 const DAYS = 7;
-const GRID_CLASS = "grid grid-cols-2 gap-2 lg:grid-cols-4";
 
 /** One comparison for every tile: the same number over the 7 days before. */
 function change({
@@ -55,7 +54,7 @@ export async function HomeWeek() {
     ]);
 
   return (
-    <div className={GRID_CLASS}>
+    <div className={STATS_GRID_CLASS}>
       <Stats
         description={change({
           current: activeLearners.currentPeriod,
@@ -95,7 +94,7 @@ export async function HomeWeek() {
 
 export function HomeWeekSkeleton() {
   return (
-    <div className={GRID_CLASS}>
+    <div className={STATS_GRID_CLASS}>
       {Array.from({ length: 4 }, (_, index) => (
         <StatsSkeleton key={index} />
       ))}

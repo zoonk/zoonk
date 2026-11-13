@@ -2,7 +2,7 @@ import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminUserCell } from "@/components/admin-user-cell";
-import { Stats } from "@/components/stats";
+import { STATS_GRID_CLASS, Stats } from "@/components/stats";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
 import { formatUsd } from "@/lib/ai-format";
 import { TableCell } from "@zoonk/ui/components/table";
@@ -70,7 +70,7 @@ function Summary({ learners, prices }: Pick<PlusLearners, "learners" | "prices">
   const [most] = learners;
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+    <div className={STATS_GRID_CLASS}>
       <Stats
         description={`${paying.length.toLocaleString()} paying`}
         title="Plus learners"

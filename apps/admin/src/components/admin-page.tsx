@@ -29,7 +29,7 @@ export function AdminPageHeader({
   return (
     <AdminHeader actions={actions} title={<ContainerTitle>{title}</ContainerTitle>}>
       {children ? (
-        <ContainerDescription className="max-w-2xl">{children}</ContainerDescription>
+        <ContainerDescription className="max-w-column">{children}</ContainerDescription>
       ) : null}
     </AdminHeader>
   );

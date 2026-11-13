@@ -3,6 +3,9 @@ import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/comp
 import Link from "next/link";
 import { StatsTitle } from "./stats-title";
 
+/** A row of numbers: two across on a phone, four across from a laptop, 8 px apart. */
+export const STATS_GRID_CLASS = "grid grid-cols-2 gap-2 lg:grid-cols-4";
+
 function StatsContent({
   title,
   value,

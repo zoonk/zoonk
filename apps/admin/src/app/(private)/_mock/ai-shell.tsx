@@ -5,7 +5,7 @@ import { MockLink } from "./parts";
 
 const TABS = [
   { label: "Spend", value: "spend" },
-  { label: "Failed or stuck (40)", value: "failed" },
+  { count: 40, label: "Failed or stuck", value: "failed" },
   { label: "Plus learners", value: "plus" },
   { label: "Written by", value: "written" },
 ] as const;

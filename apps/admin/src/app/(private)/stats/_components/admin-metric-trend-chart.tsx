@@ -219,7 +219,7 @@ export function AdminMetricTrendChart({
                 }
                 tickLine={false}
                 ticks={ticks}
-                width={48}
+                width="auto"
               />
               <Tooltip
                 content={<AdminMetricTrendTooltip valueFormat={valueFormat} />}

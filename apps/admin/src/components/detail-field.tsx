@@ -1,4 +1,5 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 
 const FIELD_ROW_CLASS =
   "grid grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-4 py-3 text-sm @lg:grid-cols-[11rem_minmax(0,1fr)]";
@@ -7,11 +8,27 @@ export function DetailFields({ children }: { children: React.ReactNode }) {
   return <dl className="@container divide-y">{children}</dl>;
 }
 
-export function DetailField({ label, children }: { label: string; children: React.ReactNode }) {
+/** `mono` is for a value that is data, not words: a count, an amount, an id or a hash. */
+export function DetailField({
+  children,
+  label,
+  mono,
+}: {
+  children: React.ReactNode;
+  label: string;
+  mono?: boolean;
+}) {
   return (
     <div className={FIELD_ROW_CLASS}>
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="[&_a]:hit-area min-w-0 wrap-break-word [&_a]:relative">{children}</dd>
+      <dd
+        className={cn(
+          "[&_a]:hit-area min-w-0 wrap-break-word [&_a]:relative",
+          mono && "text-compact font-mono tabular-nums",
+        )}
+      >
+        {children}
+      </dd>
     </div>
   );
 }

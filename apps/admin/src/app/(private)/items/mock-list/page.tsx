@@ -50,7 +50,13 @@ export default async function ItemsMockPage({ searchParams }: PageProps<"/items/
         row[1]?.text,
         row[2]?.text,
         row[6]?.text,
-        row[7]?.text,
+        row[7]?.text === "—" ? (
+          <span className="text-muted-foreground font-sans" key="accuracy">
+            No answers yet
+          </span>
+        ) : (
+          row[7]?.text
+        ),
       ])}
       title="Practice questions"
       toolbar={

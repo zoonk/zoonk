@@ -199,14 +199,17 @@ function SkillGraph() {
 
 function WrittenBy() {
   return (
-    <div className="grid gap-8 md:grid-cols-2">
+    <AdminDetailColumns
+      aside={
+        <AdminSection title="Skill graph">
+          <FactsFrom dump={exam} omit={["Skills"]} section="Skill graph" />
+        </AdminSection>
+      }
+    >
       <AdminSection title="Blueprint">
         <FactsFrom dump={exam} section="Provenance" />
       </AdminSection>
-      <AdminSection title="Skill graph">
-        <FactsFrom dump={exam} omit={["Skills"]} section="Skill graph" />
-      </AdminSection>
-    </div>
+    </AdminDetailColumns>
   );
 }
 

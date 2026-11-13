@@ -1,7 +1,7 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
-import { Stats } from "@/components/stats";
+import { STATS_GRID_CLASS, Stats } from "@/components/stats";
 import { getAiSpendSummary } from "@/data/ai/get-ai-spend-summary";
 import { listAiSpendByModel } from "@/data/ai/list-ai-spend-by-model";
 import { listAiSpendByTask } from "@/data/ai/list-ai-spend-by-task";
@@ -38,7 +38,7 @@ async function SpendSummary({ days }: { days: number }) {
   const summary = await getAiSpendSummary(days);
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+    <div className={STATS_GRID_CLASS}>
       <Stats
         description={`${summary.calls.toLocaleString()} calls`}
         title="Spend"

@@ -1,8 +1,8 @@
 "use client";
 
+import { AdminGateScreen } from "@/components/admin-gate-screen";
 import { OneTimeTokenLoginRedirect } from "@zoonk/core/auth/ott/login";
 import { Button } from "@zoonk/ui/components/button";
-import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { DEFAULT_LOCALE } from "@zoonk/utils/locale";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -16,23 +16,19 @@ export function LoginScreen() {
   const [started, setStarted] = useState(!failed);
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 p-6 text-center">
-      <ZoonkLogo className="size-10" />
-
-      <div className="flex flex-col gap-1">
-        <h1 className="text-lg font-semibold">Zoonk Admin</h1>
-        <p aria-live="polite" className="text-muted-foreground text-sm">
-          {started ? "Taking you to sign in…" : "That sign-in didn't work."}
-        </p>
-      </div>
-
-      {started ? (
-        <OneTimeTokenLoginRedirect callbackPath="/auth/callback" locale={DEFAULT_LOCALE} />
-      ) : (
-        <Button onClick={() => setStarted(true)} size="lg">
-          Try again
-        </Button>
-      )}
-    </main>
+    <AdminGateScreen
+      action={
+        started ? (
+          <OneTimeTokenLoginRedirect callbackPath="/auth/callback" locale={DEFAULT_LOCALE} />
+        ) : (
+          <Button onClick={() => setStarted(true)} size="lg">
+            Try again
+          </Button>
+        )
+      }
+      title="Zoonk Admin"
+    >
+      {started ? "Taking you to sign in…" : "That sign-in didn't work."}
+    </AdminGateScreen>
   );
 }

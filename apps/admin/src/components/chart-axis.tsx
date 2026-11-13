@@ -24,19 +24,21 @@ export function getEvenTicks(maximumValue: number): number[] {
 export const CHART_TICK_FONT_SIZE = 11.5;
 
 /**
- * A value axis's label, starting on the chart's left edge so it lines up with the text above and
- * below the chart. Recharts ends its labels on the plot instead, which indents them by their width.
+ * A value axis's label, ending on one edge like a column of numbers. Its axis takes `width="auto"`,
+ * so the widest label starts on the chart's left edge, in line with the text above and below it.
  */
 export function ChartValueTick({
   format,
   payload,
+  x,
   y,
 }: {
   format: (value: number) => string;
   payload?: { value: number };
+  x?: number;
   y?: number;
 }) {
-  if (!payload || y === undefined) {
+  if (!payload || x === undefined || y === undefined) {
     return null;
   }
 
@@ -44,9 +46,10 @@ export function ChartValueTick({
     <text
       dy="0.32em"
       fill="var(--muted-foreground)"
+      fontFamily="var(--font-mono)"
       fontSize={CHART_TICK_FONT_SIZE}
-      textAnchor="start"
-      x={0}
+      textAnchor="end"
+      x={x}
       y={y}
     >
       {format(payload.value)}

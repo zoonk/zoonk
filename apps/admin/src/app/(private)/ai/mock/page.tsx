@@ -4,7 +4,7 @@ import { type Cell, type Dump, MockRows, parts, readView } from "@/app/(private)
 import { AdminToolbar } from "@/components/admin-page";
 import { AdminSection } from "@/components/admin-section";
 import { AdminTabs } from "@/components/admin-tabs";
-import { Stats } from "@/components/stats";
+import { STATS_GRID_CLASS, Stats } from "@/components/stats";
 import { AiMockShell } from "../../_mock/ai-shell";
 import { MockLink, MockMore } from "../../_mock/parts";
 import { AiDailySpendChart } from "../ai-daily-spend-chart";
@@ -125,7 +125,7 @@ function Spend({ by }: { by: By }) {
         />
       </AdminToolbar>
 
-      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+      <div className={STATS_GRID_CLASS}>
         <Stats description="Gateway estimates $81.22" title="Spend" value="$81.09" />
         <Stats title="Calls" value="24,744" />
         <Stats title="Cost per call" value="$0.0033" />
@@ -214,7 +214,7 @@ function Failed() {
 function Plus() {
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+      <div className={STATS_GRID_CLASS}>
         <Stats description="1 paying" title="Plus learners" value="83" />
         <Stats description="$0.0095 a learner on average" title="Cost this month" value="$0.785" />
         <Stats description="of 1 paying" title="Above their plan" value="0" />

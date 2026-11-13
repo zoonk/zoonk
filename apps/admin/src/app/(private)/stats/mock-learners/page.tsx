@@ -1,6 +1,6 @@
 import dump from "@/app/(private)/_mock/data/stats-learner-milestones.json";
 import { type Dump, Lead, MockList, day, parts } from "@/app/(private)/_mock/kit";
-import { Input } from "@zoonk/ui/components/input";
+import { AdminSmallInput } from "@/components/admin-small-input";
 
 const COLUMNS = [
   { label: "Learner" },
@@ -29,7 +29,12 @@ export default function LearnersByLessonsMockPage() {
       toolbar={
         <label className="flex items-center gap-2 text-sm">
           At least
-          <Input className="w-20" defaultValue={10} inputMode="numeric" />
+          <AdminSmallInput
+            className="md:text-compact px-2.5"
+            defaultValue={10}
+            frameClassName="w-16"
+            inputMode="numeric"
+          />
           lessons
         </label>
       }

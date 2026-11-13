@@ -10,7 +10,7 @@ export type AdminTabOption = {
   label: string;
 };
 
-type RecordTab<Value extends string> = { label: string; value: Value };
+type RecordTab<Value extends string> = { count?: number; label: string; value: Value };
 
 /** The tab an address asks for, or the first one. */
 export function readAdminTab<Value extends string>({
@@ -44,6 +44,7 @@ export function AdminRecordTabs<Value extends string>({
       <AdminTabs
         label={label}
         options={tabs.map((tab, index) => ({
+          count: tab.count,
           href: index === 0 ? path : `${path}?tab=${tab.value}`,
           isActive: tab.value === current,
           label: tab.label,

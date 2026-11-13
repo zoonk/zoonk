@@ -62,7 +62,7 @@ export function AiDailySpendChart({ points }: { points: DailySpendPoint[] }) {
             tick={<ChartValueTick format={formatDollars} />}
             tickLine={false}
             ticks={ticks}
-            width={44}
+            width="auto"
           />
           <Tooltip content={<DailySpendTooltip />} cursor={{ fill: "var(--muted)" }} />
           <Bar dataKey="costUsd" fill="var(--primary)" maxBarSize={32} radius={BAR_RADIUS} />

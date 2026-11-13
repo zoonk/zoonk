@@ -38,8 +38,8 @@ function AnalysisChange({
   }).format(percentageChange);
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm tabular-nums", className)}>
-      <Icon aria-hidden className="size-4" />
+    <div className={cn("flex items-baseline gap-1 text-sm tabular-nums", className)}>
+      <Icon aria-hidden className="size-4 self-center" />
       <span>
         {formattedChange}% {comparisonLabel}
       </span>

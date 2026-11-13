@@ -117,14 +117,17 @@ function UsedIn() {
 
 function Details() {
   return (
-    <div className="grid gap-8 md:grid-cols-2">
+    <AdminDetailColumns
+      aside={
+        <AdminSection title="Written by">
+          <FactsFrom dump={skill} section="Provenance" />
+        </AdminSection>
+      }
+    >
       <AdminSection title="Details">
         <FactsFrom dump={skill} omit={["Card front"]} section="Details" />
       </AdminSection>
-      <AdminSection title="Written by">
-        <FactsFrom dump={skill} section="Provenance" />
-      </AdminSection>
-    </div>
+    </AdminDetailColumns>
   );
 }
 

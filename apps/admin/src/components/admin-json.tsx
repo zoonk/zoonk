@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "lucide-react";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 
 const JSON_INDENT = 2;
 
@@ -12,13 +12,10 @@ export function AdminDisclosure({
   open?: boolean;
 }) {
   return (
-    <details className="group text-xs" open={open}>
-      <summary className="text-muted-foreground hover:text-foreground flex min-h-11 cursor-pointer list-none items-center gap-1.5 select-none [&::-webkit-details-marker]:hidden">
-        <ChevronRightIcon
-          aria-hidden="true"
-          className="size-3.5 shrink-0 transition-transform group-open:rotate-90 motion-reduce:transition-none"
-        />
+    <details className="text-xs" open={open}>
+      <summary className="text-muted-foreground hover:text-foreground flex min-h-11 w-fit cursor-pointer list-none items-center gap-1 select-none [&::-webkit-details-marker]:hidden">
         {label}
+        <FoldChevron inline className="size-3.5" />
       </summary>
       {children}
     </details>

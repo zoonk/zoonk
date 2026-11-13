@@ -1,4 +1,5 @@
 import { AdminSectionEmpty } from "@/components/admin-section";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
@@ -110,8 +111,8 @@ function AdminTableColumnHead({ column, sized }: { column: AdminTableColumn; siz
       <Link
         aria-current={sort.isActive ? "page" : undefined}
         className={cn(
-          "hover:text-foreground hit-area relative inline-flex w-full items-center gap-1 text-inherit transition-colors",
-          align === "right" ? "justify-end" : "justify-start",
+          "hover:text-foreground hit-area relative inline-block w-full text-inherit transition-colors [&>svg]:inline [&>svg]:align-[-0.125em]",
+          align === "right" ? "text-right [&>svg]:me-1" : "text-left [&>svg]:ms-1",
         )}
         href={sort.href}
         prefetch
@@ -183,7 +184,7 @@ export function AdminTableColumns({
 
 function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[] }) {
   return (
-    <TableRow>
+    <AdminTableRow>
       {columns.map((column) => (
         <TableCell key={column.label}>
           {column.twoLines ? (
@@ -196,7 +197,7 @@ function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[]
           )}
         </TableCell>
       ))}
-    </TableRow>
+    </AdminTableRow>
   );
 }
 

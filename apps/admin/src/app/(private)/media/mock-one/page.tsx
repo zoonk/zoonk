@@ -43,17 +43,20 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
         />
 
         {tab === "written" ? (
-          <div className="grid gap-8 md:grid-cols-2">
+          <AdminDetailColumns
+            aside={
+              <AdminSection title="Written by">
+                <FactsFrom dump={asset} section="Provenance" />
+              </AdminSection>
+            }
+          >
             <AdminSection title="Prompt">
               <p className="text-sm leading-6">{prompt}</p>
-              <a className="text-muted-foreground text-xs font-medium" href="#">
+              <a className="text-muted-foreground hit-area relative text-xs font-medium" href="#">
                 Scene
               </a>
             </AdminSection>
-            <AdminSection title="Written by">
-              <FactsFrom dump={asset} section="Provenance" />
-            </AdminSection>
-          </div>
+          </AdminDetailColumns>
         ) : null}
 
         {tab === "details" ? (

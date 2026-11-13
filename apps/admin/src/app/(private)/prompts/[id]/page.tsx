@@ -49,7 +49,9 @@ function PromptDetails({ prompt }: { prompt: AdminPrompt }) {
         {email && <span className="text-muted-foreground block">{email}</span>}
       </DetailField>
       <DetailField label="Time zone">{prompt.timeZone}</DetailField>
-      <DetailField label="Run">{prompt.runId ?? "—"}</DetailField>
+      <DetailField label="Run" mono>
+        {prompt.runId ?? "—"}
+      </DetailField>
       <DetailField label="Updated">{formatDateTime(prompt.updatedAt)}</DetailField>
     </DetailFields>
   );
