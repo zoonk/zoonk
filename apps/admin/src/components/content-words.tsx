@@ -112,7 +112,7 @@ export function ContentWords({ content }: { content: unknown }) {
           {steps.map((step) => (
             <li key={String(step.text)}>
               <Prose quiet>
-                {[text(step.text), text(step.math) && `$${String(step.math)}$`]
+                {[text(step.text), text(step.math) && `$$${String(step.math)}$$`]
                   .filter(Boolean)
                   .join(" ")}
               </Prose>

@@ -136,7 +136,7 @@ export function ExamDetails({ exam }: { exam: AdminExam }) {
       <DetailFields>
         <DetailField label="Identity key">{exam.identityKey}</DetailField>
         <DetailField label="Board">{exam.board}</DetailField>
-        <DetailField label="Role">{exam.role}</DetailField>
+        <DetailField label="Role">{exam.role || "—"}</DetailField>
         <DetailField label="Country">{countryName(exam.country)}</DetailField>
         <DetailField label="Language">{languageName(exam.language)}</DetailField>
         <DetailField label="Good until" mono={false}>

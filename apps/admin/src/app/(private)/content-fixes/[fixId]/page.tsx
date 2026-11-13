@@ -96,6 +96,11 @@ function Where({ fix }: { fix: ContentFixDetail }) {
               {capitalize(getEnvironment())} · {new URL(MAIN_URL).host}
             </DetailField>
             <DetailField label="Fix id">{fix.id}</DetailField>
+            {fix.changes.map((change) => (
+              <DetailField key={`${change.id}:${change.op}`} label="Changed row id">
+                {change.id}
+              </DetailField>
+            ))}
           </DetailFields>
         </div>
       </AdminDisclosure>

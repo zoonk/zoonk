@@ -7,5 +7,5 @@ export function formatExamDate(date: Date | null): string {
         timeZone: "UTC",
         year: "numeric",
       })
-    : "";
+    : "—";
 }

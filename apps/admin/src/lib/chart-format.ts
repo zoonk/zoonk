@@ -39,6 +39,10 @@ export function formatChartTick({
   format: ChartValueFormat;
   value: number;
 }): string {
+  if (value === 0) {
+    return "0";
+  }
+
   if (format === "duration" && value < SECONDS_PER_MINUTE) {
     return `${Math.round(value)}s`;
   }

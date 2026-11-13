@@ -22,6 +22,7 @@ import {
   FieldLabel,
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
+import { PencilIcon } from "lucide-react";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { updateCourseAction } from "./_actions/update-course";
@@ -93,6 +94,7 @@ export function CourseEditButton({ course }: { course: EditedCourse }) {
       <DrawerTrigger
         render={
           <Button size="sm" variant="outline">
+            <PencilIcon aria-hidden="true" />
             Edit
           </Button>
         }

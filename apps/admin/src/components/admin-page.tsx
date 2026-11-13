@@ -40,11 +40,14 @@ export function AdminPageBody({ children, className }: React.ComponentProps<"sec
 
 /**
  * The one row above a table: its search first, then its views and filters. Its controls share one
- * height. A current view's fill hangs 10 px into the gap, so the gap is wide enough to keep it
- * clear of the control beside it.
+ * height, and the row is as tall as a search box's 44 px even when it holds only views, so every
+ * list's table starts at one height. A current view's fill hangs 10 px into the gap, so the gap is
+ * wide enough to keep it clear of the control beside it.
  */
 export function AdminToolbar({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-x-6 gap-y-2", className)}>{children}</div>
+    <div className={cn("flex min-h-11 flex-wrap items-center gap-x-6 gap-y-2", className)}>
+      {children}
+    </div>
   );
 }

@@ -14,10 +14,11 @@ export default function LeaderboardPage({ searchParams }: PageProps<"/leaderboar
       <AdminPageHeader title="Leaderboard" />
 
       <AdminPageBody>
-        <AdminToolbar>
+        <AdminToolbar className="justify-between">
           <Suspense fallback={<Skeleton className="h-7.5 w-52 rounded-md" />}>
             <LeaderboardFilters searchParams={searchParams} />
           </Suspense>
+          <span className="text-muted-foreground text-compact">Brain Power earned</span>
         </AdminToolbar>
 
         <Suspense fallback={<BrainPowerLeaderboardSkeleton />}>

@@ -29,9 +29,9 @@ export function SourceRow({ source }: { source: ListedSource }) {
         title={source.title ?? "Private upload"}
       />
       <TableCell>{capitalize(source.kind)}</TableCell>
-      <TableCell>{source.fetchedAt ? formatDate(source.fetchedAt) : null}</TableCell>
+      <TableCell>{formatDate(source.fetchedAt)}</TableCell>
       <TableCell>{source.validUntil ? formatDate(source.validUntil) : "No end date"}</TableCell>
-      <TableCell>{usedBy(source._count)}</TableCell>
+      <TableCell>{usedBy(source._count) || "—"}</TableCell>
     </AdminTableRow>
   );
 }

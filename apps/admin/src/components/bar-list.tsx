@@ -22,7 +22,7 @@ export function BarList({ className, rows }: { className?: string; rows: BarList
     <ul className={cn("@container divide-y", className)} data-slot="bar-list">
       {rows.map((row) => (
         <li
-          className="grid min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 py-2.5 text-sm @md:grid-cols-[minmax(0,1fr)_40%_6rem]"
+          className="grid min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 py-2.5 text-sm @md:grid-cols-[minmax(0,1fr)_40%_7.5rem]"
           key={row.key}
         >
           <span className="flex min-w-0 flex-col">
@@ -34,7 +34,9 @@ export function BarList({ className, rows }: { className?: string; rows: BarList
           <Meter className="order-last col-span-2 @md:order-0 @md:col-span-1">
             <MeterFill share={largest > 0 ? row.value / largest : 0} />
           </Meter>
-          <span className="text-compact text-right font-mono tabular-nums">{row.display}</span>
+          <span className="text-compact text-right font-mono whitespace-nowrap tabular-nums">
+            {row.display}
+          </span>
         </li>
       ))}
     </ul>

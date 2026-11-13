@@ -84,10 +84,7 @@ function FactGroups({ facts, userId }: { facts: MemoryFactRow[]; userId: string 
           <section className="flex flex-col" key={category}>
             <h3 className="flex items-center gap-2.5 border-b pb-2 text-sm font-medium">
               <Icon aria-hidden="true" className="text-muted-foreground size-4" />
-              {label}
-              <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
-                {rows.length}
-              </span>
+              {label} ({rows.length})
             </h3>
             <ul className="flex flex-col divide-y ps-6.5">
               {rows.map((fact) => (

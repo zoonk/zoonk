@@ -88,7 +88,7 @@ function ExamSubjects({ subjects }: { subjects: ExamStructure["subjects"] }) {
       {subjects.length > 0 ? (
         <BarList
           rows={ranked.map((subject) => ({
-            display: subject.questions === null ? "" : formatCount(subject.questions, "question"),
+            display: subject.questions === null ? "—" : formatCount(subject.questions, "question"),
             key: subject.name,
             name: subject.name,
             note: formatCount(subject.topics.length, "topic"),

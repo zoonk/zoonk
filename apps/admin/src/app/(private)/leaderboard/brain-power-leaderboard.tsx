@@ -35,6 +35,8 @@ export async function BrainPowerLeaderboard({
 
 /** A learner's place, photo and name; the row opens their page. */
 function LeaderName({ leader }: { leader: BrainPowerLeader }) {
+  const label = getLearnerLabel(leader.user);
+
   return (
     <Link
       className="hit-area relative flex min-w-0 items-center gap-3"
@@ -45,7 +47,12 @@ function LeaderName({ leader }: { leader: BrainPowerLeader }) {
         {leader.rank.toLocaleString("en")}
       </span>
       <AdminUserAvatar user={leader.user} />
-      <span className="truncate font-medium">{getLearnerLabel(leader.user)}</span>
+      <span className="flex min-w-0 flex-col">
+        <span className="truncate font-medium">{label}</span>
+        {label === leader.user.email ? null : (
+          <span className="text-muted-foreground truncate text-xs">{leader.user.email}</span>
+        )}
+      </span>
     </Link>
   );
 }
@@ -110,10 +117,13 @@ export function BrainPowerLeaderboardSkeleton() {
   return (
     <div aria-hidden="true" className="divide-y">
       {Array.from({ length: SKELETON_ROWS }, (_, index) => (
-        <div className="flex h-11 items-center gap-3" key={index}>
+        <div className="flex h-14 items-center gap-3" key={index}>
           <Skeleton className="h-3.5 w-6" />
           <Skeleton className="size-6 rounded-full" />
-          <Skeleton className="h-3.5 w-40" />
+          <span className="flex flex-col gap-1.5">
+            <Skeleton className="h-3.5 w-40" />
+            <Skeleton className="h-3 w-52" />
+          </span>
         </div>
       ))}
     </div>

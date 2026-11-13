@@ -62,7 +62,7 @@ export function DetailField({
 }) {
   return (
     <div className={FIELD_ROW_CLASS}>
-      <dt className="text-muted-foreground flex items-center gap-2.5 [&>svg]:size-4 [&>svg]:shrink-0">
+      <dt className="text-muted-foreground flex items-baseline gap-2.5 [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:self-center">
         {icon}
         {label}
       </dt>
