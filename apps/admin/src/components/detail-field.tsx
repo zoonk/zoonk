@@ -11,11 +11,12 @@ export function DetailFields({ children }: { children: React.ReactNode }) {
 
 /**
  * Data, not words: a count (with its unit), an amount, a size, an id, a key, a hash or an address. A
- * model's name ("openai/gpt-6.1-sol") reads as a name and stays in the text face.
+ * model's name ("openai/gpt-6.1-sol") and an email read as names and stay in the text face, as an
+ * email does under a name in every table.
  */
 const DATA_VALUE = /^(?:\$?[\d,]+(?:\.\d+)?%?(?: [a-z]+)?|\d+ × \d+|(?=\S*[\d._:/-])\S+)$/u;
 
-const MODEL_NAME = /^[a-z-]+\/[\w.-]+$/u;
+const NAME_LIKE = /^(?:[a-z-]+\/[\w.-]+|[^\s@]+@[^\s@]+)$/u;
 
 /** A field that names an identifier holds one, whatever it looks like ("enem"). */
 const ID_LABEL = /\b(?:id|key|hash|slug)$/iu;
@@ -40,7 +41,7 @@ function isData({ children, label }: { children: React.ReactNode; label: string 
     return false;
   }
 
-  return ID_LABEL.test(label) || (DATA_VALUE.test(text) && !MODEL_NAME.test(text));
+  return ID_LABEL.test(label) || (DATA_VALUE.test(text) && !NAME_LIKE.test(text));
 }
 
 /** A value that is data is set in mono, digit under digit; `mono` says so where the value isn't a plain string. */

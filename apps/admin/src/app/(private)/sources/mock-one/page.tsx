@@ -68,7 +68,7 @@ export default async function SourceMockPage({ searchParams }: PageProps<"/sourc
 
         {tab === "text" ? (
           <AdminSection title="What Zoonk read from it (1,237 characters)">
-            <p className="max-w-column text-sm leading-6 whitespace-pre-line">{text}</p>
+            <p className="max-w-prose text-sm leading-6 whitespace-pre-line">{text}</p>
           </AdminSection>
         ) : null}
 

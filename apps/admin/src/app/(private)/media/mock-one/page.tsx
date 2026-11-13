@@ -51,7 +51,7 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
             }
           >
             <AdminSection title="Prompt">
-              <p className="max-w-column text-sm leading-6">{prompt}</p>
+              <p className="max-w-prose text-sm leading-6">{prompt}</p>
               <a className="text-muted-foreground hit-area relative text-xs font-medium" href="#">
                 Scene
               </a>

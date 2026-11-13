@@ -256,7 +256,12 @@ function WrittenBy() {
         </span>
       </AdminSection>
       <AdminSection title="Versions">
-        <TableFrom dump={lesson} section="Versions" sizes={{ Model: "wide" }} />
+        <TableFrom
+          dump={lesson}
+          mono={["Prompt version", "Step contract"]}
+          section="Versions"
+          sizes={{ Model: "wide" }}
+        />
       </AdminSection>
     </div>
   );

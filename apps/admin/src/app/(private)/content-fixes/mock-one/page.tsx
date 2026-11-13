@@ -79,7 +79,7 @@ export default async function ContentFixMockPage({
             <div className="grid gap-4 md:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <span className="text-muted-foreground text-xs font-medium">Before</span>
-                <p className="bg-muted rounded-lg p-3 text-sm leading-6">
+                <p className="bg-muted rounded-xl p-3 text-sm leading-6">
                   {BEFORE.split("just ")[0]}
                   <span className="bg-destructive/15 text-destructive-text rounded px-0.5">
                     just
@@ -95,7 +95,7 @@ export default async function ContentFixMockPage({
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-muted-foreground text-xs font-medium">After</span>
-                <p className="bg-muted rounded-lg p-3 text-sm leading-6">{AFTER}</p>
+                <p className="bg-muted rounded-xl p-3 text-sm leading-6">{AFTER}</p>
                 <a
                   className="text-muted-foreground hit-area relative self-start text-xs font-medium"
                   href="#"

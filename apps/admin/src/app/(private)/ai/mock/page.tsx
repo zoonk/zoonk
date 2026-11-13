@@ -190,24 +190,42 @@ function Failed() {
         />
       </AdminToolbar>
 
-      <MockRows
-        columns={[
-          { label: "What was being written" },
-          { label: "Kind", size: "wide" as const },
-          { label: "State", size: "wide" as const },
-          { label: "Updated", size: "wide" as const },
-        ]}
-        rows={runs.slice(0, 10).map((row) => [
-          <span className="text-foreground" key="what">
-            <MockLink>{row[1]?.text}</MockLink>
-          </span>,
-          row[0]?.text,
-          state(row),
-          row[3]?.text,
-        ])}
-      />
-      <MockMore>Show all 40</MockMore>
+      <div className="flex flex-col gap-3">
+        <MockRows
+          columns={[
+            { label: "What was being written" },
+            { label: "Kind", size: "wide" as const },
+            { label: "State", size: "wide" as const },
+            { label: "Updated", size: "wide" as const },
+          ]}
+          rows={runs.slice(0, 10).map((row) => [
+            <span className="text-foreground" key="what">
+              <MockLink>{row[1]?.text}</MockLink>
+            </span>,
+            row[0]?.text,
+            state(row),
+            row[3]?.text,
+          ])}
+        />
+        <MockMore>Show all 40</MockMore>
+      </div>
     </>
+  );
+}
+
+/** "Master quantum physics (learn) $0.2567": the goal on one line, its cost in mono under it. */
+function GoalCost({ text = "" }: { text?: string }) {
+  const match = /^(?<goal>.*?)\s*(?<cost>\$[\d.,]+)?$/u.exec(text);
+
+  return (
+    <span className="block">
+      <span className="block truncate">{match?.groups?.goal || text}</span>
+      {match?.groups?.cost ? (
+        <span className="text-muted-foreground block font-mono text-xs tabular-nums">
+          {match.groups.cost}
+        </span>
+      ) : null}
+    </span>
   );
 }
 
@@ -262,9 +280,7 @@ function Plus() {
               <span className="text-muted-foreground block text-xs">{parts(row[0])[1]}</span>
             </span>,
             row[1]?.text.replace("Granted", "Given by Zoonk"),
-            <span className="block whitespace-normal" key="goal">
-              {row[2]?.text}
-            </span>,
+            <GoalCost key="goal" text={row[2]?.text} />,
             row[3]?.text,
             row[4]?.text,
             money(row[5]?.text),

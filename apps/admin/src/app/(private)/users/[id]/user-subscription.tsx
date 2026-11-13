@@ -63,28 +63,6 @@ function ActiveSubscriptionFields({
   );
 }
 
-function SubscriptionAction({
-  subscription,
-  userId,
-  userName,
-}: {
-  subscription: UserSubscriptions["active"];
-  userId: string;
-  userName: string;
-}) {
-  const store = subscription ? getSubscriptionStore(subscription.provider) : null;
-
-  if (store) {
-    return (
-      <p className="text-muted-foreground text-compact">
-        Billed by {store.name}. Change it in {store.where}.
-      </p>
-    );
-  }
-
-  return <ChangePlanButton hasPlus={Boolean(subscription)} userId={userId} userName={userName} />;
-}
-
 export async function UserSubscription({ userId }: { userId: string }) {
   "use cache: private";
 
@@ -97,15 +75,20 @@ export async function UserSubscription({ userId }: { userId: string }) {
     return null;
   }
 
+  const store = active ? getSubscriptionStore(active.provider) : null;
+
   return (
     <AdminSection
       action={
-        <SubscriptionAction
-          subscription={active}
-          userId={userId}
-          userName={getLearnerLabel(user)}
-        />
+        store ? null : (
+          <ChangePlanButton
+            hasPlus={Boolean(active)}
+            userId={userId}
+            userName={getLearnerLabel(user)}
+          />
+        )
       }
+      description={store ? `Billed by ${store.name}. Change it in ${store.where}.` : undefined}
       title="Subscription"
     >
       {active || canceled || incomplete ? (

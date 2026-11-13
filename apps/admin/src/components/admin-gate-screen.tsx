@@ -19,7 +19,7 @@ export function AdminGateScreen({
 
       <div className="flex max-w-sm flex-col gap-1">
         <h1 className="text-lg font-semibold">{title}</h1>
-        <p aria-live="polite" className="text-muted-foreground text-sm text-pretty">
+        <p aria-live="polite" className="text-muted-foreground text-sm text-balance">
           {children}
         </p>
       </div>

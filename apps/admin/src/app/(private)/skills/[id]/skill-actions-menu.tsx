@@ -136,11 +136,11 @@ function MergeTargetPicker({
       >
         {targets.map((option) => (
           <RadioGroupOption
-            className="flex items-start gap-3 border-b py-2.5 font-normal last:border-b-0"
+            className="flex items-start gap-3 border-b py-3 font-normal last:border-b-0"
             key={option.id}
           >
             <RadioGroupItem value={option.id} />
-            <span className="flex min-w-0 flex-col gap-0.5">
+            <span className="flex min-w-0 flex-col">
               <span className="wrap-break-word">{option.name}</span>
               <span className="text-muted-foreground text-xs">
                 {formatCount(option.learners, "learner")}

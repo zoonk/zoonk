@@ -200,28 +200,8 @@ export function MockList({
   );
 }
 
-/** Label and value rows, each `[label, value]`; rows with no value are left out. */
-export function Facts({ rows }: { rows: [string, React.ReactNode][] }) {
-  return (
-    <DetailFields>
-      {rows
-        .filter(([, value]) => value !== "" && value !== null && value !== undefined)
-        .map(([label, value]) => (
-          <DetailField key={label} label={label}>
-            {value}
-          </DetailField>
-        ))}
-    </DetailFields>
-  );
-}
-
-export function readView(value: string | string[] | undefined): string {
-  return (Array.isArray(value) ? value[0] : value) ?? "";
-}
-
 const NONE = <span className="text-faint">None</span>;
 
-/** Every field of one section of today's page, renamed where the proposal renames it. */
 const NUMERIC_DATE_TIME = /^\d{1,2}\/\d{1,2}\/\d{4}, /u;
 
 /** Today's pages print some times as "10/26/2026, 4:02:36 PM"; the proposal says them one way. */
@@ -233,6 +213,26 @@ function factValue(value: string): React.ReactNode {
   return NUMERIC_DATE_TIME.test(value) ? formatDateTime(value) : value;
 }
 
+/** Label and value rows, each `[label, value]`; rows with no value are left out. */
+export function Facts({ rows }: { rows: [string, React.ReactNode][] }) {
+  return (
+    <DetailFields>
+      {rows
+        .filter(([, value]) => value !== "" && value !== null && value !== undefined)
+        .map(([label, value]) => (
+          <DetailField key={label} label={label}>
+            {typeof value === "string" ? factValue(value) : value}
+          </DetailField>
+        ))}
+    </DetailFields>
+  );
+}
+
+export function readView(value: string | string[] | undefined): string {
+  return (Array.isArray(value) ? value[0] : value) ?? "";
+}
+
+/** Every field of one section of today's page, renamed where the proposal renames it. */
 export function FactsFrom({
   dump,
   omit = [],
@@ -251,20 +251,39 @@ export function FactsFrom({
     <Facts
       rows={dump.fields
         .filter((item) => item.section === section && !omit.includes(item.label))
-        .map((item) => [rename[item.label] ?? item.label, factValue(item.value)])}
+        .map((item) => [rename[item.label] ?? item.label, item.value])}
     />
   );
+}
+
+function tableCell({ isLead, isMono, text }: { isLead: boolean; isMono: boolean; text?: string }) {
+  if (isLead) {
+    return <Lead key="lead" title={text} />;
+  }
+
+  if (isMono) {
+    return (
+      <span className="text-compact font-mono" key="mono">
+        {text}
+      </span>
+    );
+  }
+
+  return language(text);
 }
 
 /** One table of today's page, with its headers renamed and some columns left out. */
 export function TableFrom({
   dump,
+  mono = [],
   omit = [],
   rename = {},
   section,
   sizes = {},
 }: {
   dump: Dump;
+  /** Columns of ids and versions, set in mono. */
+  mono?: string[];
   omit?: string[];
   rename?: Record<string, string>;
   section: string;
@@ -285,12 +304,12 @@ export function TableFrom({
         size: sizes[rename[label] ?? label],
       }))}
       rows={rows.map((row) =>
-        keep.map(({ index }, position) =>
-          position === 0 ? (
-            <Lead key="lead" title={row[index]?.text} />
-          ) : (
-            language(row[index]?.text)
-          ),
+        keep.map(({ index, label }, position) =>
+          tableCell({
+            isLead: position === 0,
+            isMono: mono.includes(label),
+            text: row[index]?.text,
+          }),
         ),
       )}
     />

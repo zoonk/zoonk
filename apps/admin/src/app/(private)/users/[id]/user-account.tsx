@@ -29,7 +29,7 @@ export async function UserAccount({ userId }: { userId: string }) {
             </Avatar>
           </DetailField>
         )}
-        <DetailField label="Email" mono>
+        <DetailField label="Email">
           {user.email}
           {user.emailVerified ? null : <span className="text-warning-text"> · not verified</span>}
         </DetailField>

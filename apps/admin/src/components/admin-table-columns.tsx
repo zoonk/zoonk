@@ -50,11 +50,12 @@ const SIZES = {
 const FIXED_TABLE_CLASS =
   "table-fixed min-w-[calc(var(--facts-width)+14rem)] md:min-w-[calc(var(--facts-width)+6rem)] [&_:is(td,th)]:overflow-hidden [&_:is(td,th)]:text-ellipsis [&_td:has(button,input,select)]:overflow-visible";
 
-// A control keeps the row at 44 px and centers on its first line, like the text beside it: a 44 px
-// field or select fills that line, a 30 px button sits 7 px down. (A button's baseline is its icon's
-// bottom, so baseline alignment would lift its label 5 px.)
+// A control keeps the row at 44 px and sits on its first line, like the text beside it: a 44 px
+// field or select fills that line, and a 30 px button sits 9 px down, where its 13 px label shares
+// the 14 px text's baseline. (A button's baseline is its icon's bottom, so baseline alignment would
+// lift its label 5 px.)
 const CONTROL_CELL_CLASS =
-  "[&_td:has(button,input,select)]:py-0 [&_td:has(button,input,select)]:align-top [&_td:has(button):not(:has(input:not([type=hidden]),select))]:pt-[0.4375rem]";
+  "[&_td:has(button,input,select)]:py-0 [&_td:has(button,input,select)]:align-top [&_td:has(button):not(:has(input:not([type=hidden]),select))]:pt-[0.5625rem]";
 
 function fillIndexOf(columns: AdminTableColumn[]) {
   return Math.max(
