@@ -76,7 +76,7 @@ function MemorySwitch({
     <ListGroup>
       <SettingRow
         // Always there, so the rows under the switch don't move when it flips.
-        description={t("When off, nothing new is saved and these notes aren't used.")}
+        description={t("When off, notes aren't saved or used.")}
         descriptionId={descriptionId}
         label={<span id={labelId}>{t("Use memory")}</span>}
       >

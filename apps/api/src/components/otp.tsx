@@ -29,7 +29,7 @@ export function OTPLinks({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-muted-foreground mt-2.5 flex flex-wrap items-center justify-center gap-x-1 text-sm",
+        "text-muted-foreground mt-2 flex flex-wrap items-center justify-center gap-x-1 text-sm",
         className,
       )}
     >
@@ -49,7 +49,7 @@ export const OTP_LENGTH = 6;
 
 export function OTPFormSkeleton() {
   return (
-    <div aria-hidden="true" className="flex w-full flex-col items-center gap-1.5">
+    <div aria-hidden="true" className="flex w-full flex-col items-center gap-2">
       <div className="flex justify-center gap-2">
         {Array.from({ length: OTP_LENGTH }, (_, index) => (
           <Skeleton className="h-13 w-12 rounded-lg" key={index} />
@@ -58,7 +58,7 @@ export function OTPFormSkeleton() {
 
       <div className="h-5" />
       <Skeleton className="h-11 w-full rounded-lg" />
-      <Skeleton className="mt-2.5 mb-3 h-5 w-52 rounded-md" />
+      <Skeleton className="mt-2 mb-3 h-5 w-52 rounded-md" />
     </div>
   );
 }

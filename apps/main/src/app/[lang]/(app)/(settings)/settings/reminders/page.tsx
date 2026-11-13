@@ -59,7 +59,15 @@ export default async function RemindersPage() {
 
   return (
     <Page className="max-w-form">
-      <SectionPageHeader description={<RemindersLine />} title={t("Reminders")} />
+      <SectionPageHeader
+        description={
+          // One phrase: the subtitle lays its children out as separate facts.
+          <span>
+            <RemindersLine />
+          </span>
+        }
+        title={t("Reminders")}
+      />
 
       {/* A computer hides the line under a settings title, and this page reads wrong without it. */}
       <p className="text-muted-foreground hidden text-sm text-pretty md:block">

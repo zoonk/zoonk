@@ -38,7 +38,7 @@ export function AuthDescription({ children, className, ...props }: React.Compone
 
 export function AuthForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
-    <form className={cn("flex w-full flex-col gap-1.5", className)} {...props}>
+    <form className={cn("flex w-full flex-col gap-2", className)} {...props}>
       {children}
     </form>
   );

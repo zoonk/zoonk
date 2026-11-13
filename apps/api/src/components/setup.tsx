@@ -7,7 +7,7 @@ export function Setup({ children, className }: React.ComponentProps<"div">) {
 
 export function SetupFormSkeleton() {
   return (
-    <div aria-hidden="true" className="flex flex-col gap-1.5">
+    <div aria-hidden="true" className="flex flex-col gap-2">
       <div className="grid gap-3">
         <Skeleton className="h-4 w-16 rounded-md" />
         <Skeleton className="h-11 w-full rounded-lg" />
