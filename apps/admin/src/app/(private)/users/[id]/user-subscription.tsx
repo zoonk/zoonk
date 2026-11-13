@@ -76,7 +76,7 @@ function SubscriptionAction({
 
   if (store) {
     return (
-      <p className="text-muted-foreground text-[0.8125rem]">
+      <p className="text-muted-foreground text-compact">
         Billed by {store.name}. Change it in {store.where}.
       </p>
     );

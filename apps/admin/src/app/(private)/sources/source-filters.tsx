@@ -1,5 +1,6 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminToolbar } from "@/components/admin-page";
 import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
+import { AdminTabs } from "@/components/admin-tabs";
 import { VISIBILITY_FILTER_OPTIONS, buildEnumFilterOptions } from "@/lib/enum-filter-options";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildSourceListHref, parseSourceListFilters } from "./_utils/source-list-params";
@@ -17,8 +18,8 @@ export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">
     <div className="flex flex-col gap-3">
       <AdminSearch placeholder="Search public sources by title…" />
 
-      <div className="flex flex-wrap items-center gap-3">
-        <AdminFilterNav
+      <AdminToolbar>
+        <AdminTabs
           label="Kind"
           options={buildEnumFilterOptions({
             allLabel: "All kinds",
@@ -28,7 +29,7 @@ export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">
           })}
         />
 
-        <AdminFilterNav
+        <AdminTabs
           label="Visibility"
           options={buildEnumFilterOptions({
             allLabel: "All",
@@ -37,7 +38,7 @@ export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">
             options: VISIBILITY_FILTER_OPTIONS,
           })}
         />
-      </div>
+      </AdminToolbar>
     </div>
   );
 }

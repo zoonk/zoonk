@@ -1,4 +1,4 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminTabs } from "@/components/admin-tabs";
 import {
   type LeaderboardPeriod,
   leaderboardPeriodLabels,
@@ -7,7 +7,7 @@ import {
 
 export function LeaderboardPeriodFilter({ period }: { period: LeaderboardPeriod }) {
   return (
-    <AdminFilterNav
+    <AdminTabs
       label="Leaderboard period filter"
       options={leaderboardPeriods.map((item) => ({
         href: getLeaderboardPeriodHref(item),

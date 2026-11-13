@@ -1,4 +1,5 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminToolbar } from "@/components/admin-page";
+import { AdminTabs } from "@/components/admin-tabs";
 import { VISIBILITY_FILTER_OPTIONS, buildEnumFilterOptions } from "@/lib/enum-filter-options";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildMediaListHref, parseMediaListFilters } from "./_utils/media-list-params";
@@ -12,8 +13,8 @@ export async function MediaFilters({ searchParams }: Pick<PageProps<"/media">, "
   const filters = parseMediaListFilters(await searchParams);
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <AdminFilterNav
+    <AdminToolbar>
+      <AdminTabs
         label="Kind"
         options={buildEnumFilterOptions({
           allLabel: "All media",
@@ -23,7 +24,7 @@ export async function MediaFilters({ searchParams }: Pick<PageProps<"/media">, "
         })}
       />
 
-      <AdminFilterNav
+      <AdminTabs
         label="Visibility"
         options={buildEnumFilterOptions({
           allLabel: "All",
@@ -32,7 +33,7 @@ export async function MediaFilters({ searchParams }: Pick<PageProps<"/media">, "
           options: VISIBILITY_FILTER_OPTIONS,
         })}
       />
-    </div>
+    </AdminToolbar>
   );
 }
 

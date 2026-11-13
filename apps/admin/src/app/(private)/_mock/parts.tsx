@@ -26,9 +26,7 @@ export function MockOptions({ options }: { options: MockOption[] }) {
           <span className="flex min-w-0 flex-col">
             <span className={option.right ? "font-medium" : undefined}>{option.text}</span>
             {option.reason ? (
-              <span className="text-muted-foreground text-[0.8125rem] leading-5">
-                {option.reason}
-              </span>
+              <span className="text-muted-foreground text-compact leading-5">{option.reason}</span>
             ) : null}
           </span>
           {option.share ? (
@@ -94,10 +92,7 @@ export function MockLink({ children }: { children: React.ReactNode }) {
 
 export function MockMore({ children }: { children: React.ReactNode }) {
   return (
-    <a
-      className="text-muted-foreground hover:text-foreground text-[0.8125rem] font-medium"
-      href="#"
-    >
+    <a className="text-muted-foreground hover:text-foreground text-compact font-medium" href="#">
       {children}
     </a>
   );

@@ -1,5 +1,5 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
 import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
+import { AdminTabs } from "@/components/admin-tabs";
 import { buildAdminHref } from "@/lib/admin-href";
 import {
   parseSubscriptionFilter,
@@ -40,7 +40,7 @@ async function SubscriptionFilter({
   const current = parseSubscriptionFilter(params.status);
 
   return (
-    <AdminFilterNav
+    <AdminTabs
       label="Subscription state"
       options={subscriptionFilters.map((filter) => ({
         href: buildAdminHref({

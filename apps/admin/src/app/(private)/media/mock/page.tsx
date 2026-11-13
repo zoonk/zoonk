@@ -20,7 +20,7 @@ export default function MediaMockPage() {
   return (
     <MockList
       actions={
-        <Button size="lg" variant="outline">
+        <Button size="sm" variant="outline">
           <AudioLinesIcon aria-hidden="true" />
           Missing audio
           <span className="text-muted-foreground font-mono text-xs tabular-nums">9</span>

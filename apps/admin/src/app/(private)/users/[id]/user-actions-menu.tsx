@@ -37,7 +37,7 @@ export function UserActionsMenu({
 
   return (
     <>
-      <DetailMenu label="User actions">
+      <DetailMenu label="User actions" size="sm">
         <DropdownMenuItem onClick={() => setDialog("signOut")}>
           <LogOutIcon aria-hidden="true" />
           Sign out everywhere

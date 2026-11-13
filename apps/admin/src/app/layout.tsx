@@ -1,5 +1,6 @@
 import { geistMono, geistSans } from "@/lib/fonts";
 import { SidebarStateScript } from "@zoonk/ui/components/sidebar";
+import { Toaster } from "@zoonk/ui/components/toast";
 import { type Metadata } from "next";
 import "./globals.css";
 
@@ -18,7 +19,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <SidebarStateScript />
       </head>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <Toaster />
+        {children}
+      </body>
     </html>
   );
 }

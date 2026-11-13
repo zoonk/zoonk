@@ -33,7 +33,7 @@ export function MessageActions({
   messageId: string;
   status: FeedbackStatus;
 }) {
-  const [state, formAction] = useAdminActionState({
+  const [, formAction] = useAdminActionState({
     action: updateMessageStatusAction,
     initialState: INITIAL_STATE,
   });
@@ -53,14 +53,13 @@ export function MessageActions({
   };
 
   return (
-    <div className="flex flex-col gap-1 md:items-end">
-      <div className="flex flex-wrap items-center gap-2">
+    <>
         {email ? (
           <Button
             icon={<ReplyIcon aria-hidden="true" />}
             nativeButton={false}
             render={<a href={`mailto:${email}?subject=${encodeURIComponent("Your message to Zoonk")}`} />}
-            size="lg"
+            size="sm"
           >
             Reply by email
           </Button>
@@ -70,13 +69,13 @@ export function MessageActions({
           <form action={formAction}>
             <input name="messageId" type="hidden" value={messageId} />
             <input name="status" type="hidden" value={closing} />
-            <Button icon={STATUS_ACTIONS[closing].icon} size="lg" type="submit" variant="outline">
+            <Button icon={STATUS_ACTIONS[closing].icon} size="sm" type="submit" variant="outline">
               {STATUS_ACTIONS[closing].label}
             </Button>
           </form>
         ) : null}
 
-        <DetailMenu label="Message actions">
+        <DetailMenu label="Message actions" size="sm">
           {menuStatuses.map((option) => (
             <DropdownMenuItem key={option} onClick={() => setStatus(option)}>
               {STATUS_ACTIONS[option].icon}
@@ -84,15 +83,7 @@ export function MessageActions({
             </DropdownMenuItem>
           ))}
         </DetailMenu>
-      </div>
+    </>
 
-      <span
-        aria-live="polite"
-        className="text-destructive-text text-xs empty:hidden md:text-right"
-        key={state.submissionId}
-      >
-        {state.error}
-      </span>
-    </div>
   );
 }

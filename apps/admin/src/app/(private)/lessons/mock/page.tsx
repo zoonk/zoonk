@@ -7,7 +7,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection } from "@/components/admin-section";
-import { AdminTabs } from "@/components/admin-tabs";
+import { AdminTabs, recordTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
 
@@ -71,7 +71,7 @@ const CHECK_THREE: MockOption[] = [
 ];
 
 function Sum({ children }: { children: string }) {
-  return <span className="font-mono text-[0.8125rem]">{children}</span>;
+  return <span className="text-compact font-mono">{children}</span>;
 }
 
 function Screens({ json }: { json: boolean }) {
@@ -282,7 +282,10 @@ export default async function LessonMockPage({ searchParams }: PageProps<"/lesso
       />
 
       <AdminDetailBody>
-        <AdminTabs current={tab as "screens"} label="Lesson" path="/lessons/mock" tabs={TABS} />
+        <AdminTabs
+          label="Lesson"
+          options={recordTabs({ current: tab as "screens", path: "/lessons/mock", tabs: TABS })}
+        />
 
         <Body json={json} />
       </AdminDetailBody>

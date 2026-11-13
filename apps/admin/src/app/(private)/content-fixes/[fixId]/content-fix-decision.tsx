@@ -63,28 +63,18 @@ async function approve(fixId: string): Promise<ApprovalNotice | null> {
 const INITIAL_STATE = { error: null, submissionId: 0 };
 
 function RejectForm({ fixId }: { fixId: string }) {
-  const [state, formAction] = useAdminActionState({
+  const [, formAction] = useAdminActionState({
     action: rejectContentFixAction,
     initialState: INITIAL_STATE,
   });
 
   return (
-    <>
-      <form action={formAction}>
-        <input name="fixId" type="hidden" value={fixId} />
-        <AdminActionSubmitButton icon={<XIcon />} size="lg">
-          Reject
-        </AdminActionSubmitButton>
-      </form>
-
-      <span
-        aria-live="polite"
-        className="text-destructive-text basis-full text-sm empty:hidden"
-        key={state.submissionId}
-      >
-        {state.error}
-      </span>
-    </>
+    <form action={formAction}>
+      <input name="fixId" type="hidden" value={fixId} />
+      <AdminActionSubmitButton icon={<XIcon />} size="lg">
+        Reject
+      </AdminActionSubmitButton>
+    </form>
   );
 }
 
@@ -152,7 +142,7 @@ export function ReviewDecision({
 export function RevertForm({ fixId }: { fixId: string }) {
   const reasonId = useId();
 
-  const [state, formAction] = useAdminActionState({
+  const [, formAction] = useAdminActionState({
     action: revertContentFixAction,
     initialState: INITIAL_STATE,
   });
@@ -176,14 +166,6 @@ export function RevertForm({ fixId }: { fixId: string }) {
         A revert is a new fix that puts back what this one replaced. It opens for review and changes
         nothing until it&apos;s approved with a passkey.
       </p>
-
-      <span
-        aria-live="polite"
-        className="text-destructive-text text-sm empty:hidden"
-        key={state.submissionId}
-      >
-        {state.error}
-      </span>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { AdminTabs } from "@/components/admin-tabs";
+import { AdminTabs, recordTabs } from "@/components/admin-tabs";
 import { MockLink } from "../../_mock/parts";
 
 const asset = dump as Dump;
@@ -35,7 +35,10 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
       />
 
       <AdminDetailBody>
-        <AdminTabs current={tab as "overview"} label="Picture" path="/media/mock-one" tabs={TABS} />
+        <AdminTabs
+          label="Picture"
+          options={recordTabs({ current: tab as "overview", path: "/media/mock-one", tabs: TABS })}
+        />
 
         {tab === "written" ? (
           <div className="grid gap-8 md:grid-cols-2">

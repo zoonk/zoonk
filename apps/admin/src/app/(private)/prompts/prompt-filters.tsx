@@ -1,5 +1,5 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
 import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
+import { AdminTabs } from "@/components/admin-tabs";
 import { PROMPT_OUTCOMES, type PromptOutcome } from "@/data/prompts/_utils/prompt-outcomes";
 import { buildAdminHref } from "@/lib/admin-href";
 import { buildEnumFilterOptions } from "@/lib/enum-filter-options";
@@ -15,7 +15,7 @@ export async function PromptFilters({ searchParams }: Pick<PageProps<"/prompts">
     <div className="flex flex-col gap-3">
       <AdminSearch placeholder="Search prompts, names, or emails…" />
 
-      <AdminFilterNav
+      <AdminTabs
         label="Outcome"
         options={buildEnumFilterOptions<PromptOutcome>({
           allLabel: "All",

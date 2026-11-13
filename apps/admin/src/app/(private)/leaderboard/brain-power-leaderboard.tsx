@@ -1,5 +1,6 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { AdminPagination } from "@/components/pagination";
 import {
   type BrainPowerLeader,
@@ -148,12 +149,7 @@ function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
       <TableCell className="text-muted-foreground text-right tabular-nums">
         {leader.rank.toLocaleString()}
       </TableCell>
-      <TableCell>
-        <AdminTableRowLink className="block" href={`/users/${leader.user.id}`} prefetch>
-          <span className="font-medium">{leader.user.name || "—"}</span>
-          <span className="text-muted-foreground block text-xs">{leader.user.email}</span>
-        </AdminTableRowLink>
-      </TableCell>
+      <AdminUserCell user={leader.user} userId={leader.user.id} />
       <TableCell>{leader.user.username || "—"}</TableCell>
       <TableCell className="text-right font-medium tabular-nums">
         {leader.brainPower.toLocaleString()}

@@ -4,10 +4,10 @@ import {
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { listCliLoginsByPerson } from "@/data/cli-logins/list-cli-logins-by-person";
 import { formatCount, formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
-import Link from "next/link";
 import { RevokeCliLoginsForm } from "./revoke-cli-logins-form";
 
 const COLUMNS: AdminTableColumn[] = [
@@ -28,16 +28,7 @@ export async function CliLoginList() {
     >
       {people.map((person) => (
         <AdminTableRow key={person.user.id}>
-          <TableCell>
-            <Link
-              className="font-medium underline-offset-3 hover:underline"
-              href={`/users/${person.user.id}`}
-              prefetch
-            >
-              {person.user.name}
-            </Link>
-            <div className="text-muted-foreground text-xs">{person.user.email}</div>
-          </TableCell>
+          <AdminUserCell user={person.user} userId={person.user.id} />
           <TableCell>{formatCount(person.machines, "machine")}</TableCell>
           <TableCell className="text-muted-foreground">{formatDate(person.lastUsedAt)}</TableCell>
           <TableCell className="text-right">

@@ -45,7 +45,7 @@ function NoticeFacts({ notice }: { notice: AdminReviewFlag["notice"] }) {
   const changed = notice.fields.map((field) => toWords(field).toLowerCase()).join(", ");
 
   return (
-    <p className="text-muted-foreground text-[0.8125rem]">
+    <p className="text-muted-foreground text-compact">
       <Link
         className={`${LINK_CLASS} text-foreground`}
         href={exam ? `/exams/${exam.id}` : `/sources/${notice.source.id}`}

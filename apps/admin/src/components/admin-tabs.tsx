@@ -1,54 +1,64 @@
 import { readQueryParam } from "@/lib/query-param";
-import { cn } from "@zoonk/ui/lib/utils";
+import { TabLink, TabLinkCount, TabLinks } from "@zoonk/ui/components/tab-links";
 import Link from "next/link";
 
-type AdminTab<Value extends string> = { label: string; value: Value };
+export type AdminTabOption = {
+  /** How many wait in this view. Only for the view that is a to-do list. */
+  count?: number;
+  href: string;
+  isActive: boolean;
+  label: string;
+};
+
+type RecordTab<Value extends string> = { label: string; value: Value };
 
 /** The tab an address asks for, or the first one. */
 export function readAdminTab<Value extends string>({
   tabs,
   value,
 }: {
-  tabs: readonly AdminTab<Value>[];
+  tabs: readonly RecordTab<Value>[];
   value: string | string[] | undefined;
 }): Value | undefined {
   const requested = readQueryParam(value);
   return (tabs.find((tab) => tab.value === requested) ?? tabs[0])?.value;
 }
 
-/**
- * A detail page's parts, one per `?tab=`. They are links, so a tab has an address, the server
- * draws only the open one, and only that one's data loads. The first tab is the page's own address.
- */
-export function AdminTabs<Value extends string>({
+/** A record's parts, one per `?tab=`. The first tab is the record's own address. */
+export function recordTabs<Value extends string>({
   current,
-  label,
   path,
   tabs,
 }: {
   current: Value | undefined;
-  label: string;
   path: string;
-  tabs: readonly AdminTab<Value>[];
-}) {
+  tabs: readonly RecordTab<Value>[];
+}): AdminTabOption[] {
+  return tabs.map((tab, index) => ({
+    href: index === 0 ? path : `${path}?tab=${tab.value}`,
+    isActive: tab.value === current,
+    label: tab.label,
+  }));
+}
+
+/**
+ * A record's parts and a list's views. They are links, so each has an address, the server draws
+ * only the open one, and only that one's data loads. A list's view that narrows it to what's
+ * waiting comes first.
+ */
+export function AdminTabs({ label, options }: { label: string; options: AdminTabOption[] }) {
   return (
-    <nav aria-label={label} className="-mb-2 flex gap-5 overflow-x-auto border-b">
-      {tabs.map((tab, index) => (
-        <Link
-          aria-current={tab.value === current ? "page" : undefined}
-          className={cn(
-            "text-muted-foreground hover:text-foreground hit-area relative flex h-10 shrink-0 items-center text-sm font-medium transition-colors",
-            "aria-[current=page]:text-foreground aria-[current=page]:after:bg-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5",
-            "focus-visible:ring-ring/50 rounded-sm outline-none focus-visible:ring-[3px]",
-          )}
-          href={index === 0 ? path : `${path}?tab=${tab.value}`}
-          key={tab.value}
-          prefetch
-          scroll={false}
+    <TabLinks label={label}>
+      {options.map((option) => (
+        <TabLink
+          current={option.isActive}
+          key={option.href}
+          render={<Link href={option.href} prefetch scroll={false} />}
         >
-          {tab.label}
-        </Link>
+          {option.label}
+          {option.count ? <TabLinkCount>{option.count.toLocaleString("en")}</TabLinkCount> : null}
+        </TabLink>
       ))}
-    </nav>
+    </TabLinks>
   );
 }

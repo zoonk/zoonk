@@ -36,6 +36,7 @@ export function CourseForm({ course }: { course: Pick<Course, "id" | "slug" | "t
       status: "error",
       title: parseFormField(formData, "title") ?? previous.title,
     }),
+    report: "inline",
   });
 
   return (

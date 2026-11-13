@@ -23,7 +23,7 @@ export function SkillActionsMenu({ skillId, skillName }: { skillId: string; skil
 
   return (
     <>
-      <DetailMenu label="Skill actions">
+      <DetailMenu label="Skill actions" size="sm">
         <DropdownMenuItem onClick={() => setOpen(true)} variant="destructive">
           <MergeIcon aria-hidden="true" />
           Merge into another skill

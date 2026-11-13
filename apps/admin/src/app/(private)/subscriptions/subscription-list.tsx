@@ -3,7 +3,8 @@ import {
   AdminTableColumns,
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { AdminPagination } from "@/components/pagination";
 import { type AdminSubscription, listSubscriptions } from "@/data/subscriptions/list-subscriptions";
 import { formatDate } from "@/lib/format";
@@ -92,12 +93,7 @@ export function SubscriptionListSkeleton() {
 function SubscriptionRow({ subscription }: { subscription: AdminSubscription }) {
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink className="block" href={`/users/${subscription.user.id}`} prefetch>
-          <span className="font-medium">{subscription.user.name || "No name"}</span>
-          <span className="text-muted-foreground block text-xs">{subscription.user.email}</span>
-        </AdminTableRowLink>
-      </TableCell>
+      <AdminUserCell user={subscription.user} userId={subscription.user.id} />
 
       <TableCell>{getPlanLabel(subscription.plan)}</TableCell>
 

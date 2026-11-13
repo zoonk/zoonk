@@ -11,13 +11,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { FieldError } from "@zoonk/ui/components/field";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useState } from "react";
 
 /**
- * A Server Action that throws when it fails, or one that answers `{ error }` to say why in the
- * dialog. No error closes it.
+ * A Server Action that throws when it fails, or one that answers `{ error }` to say why. No error
+ * closes the dialog; an error leaves it open under a toast that says why.
  */
 type AdminConfirmAction =
   | ((formData: FormData) => Promise<void>)
@@ -88,7 +87,7 @@ function ConfirmForm({
   destructive = false,
   onConfirmed,
 }: ConfirmFormProps & { onConfirmed: () => void }) {
-  const [state, formAction] = useAdminActionState<AdminActionState>({
+  const [, formAction] = useAdminActionState<AdminActionState>({
     action: async (previous, formData) => {
       const result = await action(formData);
       const error = typeof result === "object" ? result.error : null;
@@ -105,8 +104,6 @@ function ConfirmForm({
   return (
     <form action={formAction} className="flex flex-col gap-6">
       {children}
-      <FieldError key={state.submissionId}>{state.error}</FieldError>
-
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <SubmitButton

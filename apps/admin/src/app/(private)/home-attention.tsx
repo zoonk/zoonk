@@ -96,11 +96,11 @@ export async function HomeAttention() {
             </span>
             <span className="flex min-w-0 flex-1 flex-col">
               <span className="text-sm font-medium">{row.title}</span>
-              <span className="text-muted-foreground truncate text-[0.8125rem]">{row.detail}</span>
+              <span className="text-muted-foreground text-compact truncate">{row.detail}</span>
             </span>
             <ChevronRightIcon
               aria-hidden="true"
-              className="text-faint group-hover:text-foreground -mr-[5px] size-4 shrink-0"
+              className="text-faint group-hover:text-foreground edge -me-(--edge-pull) size-4 shrink-0"
             />
           </Link>
         </li>

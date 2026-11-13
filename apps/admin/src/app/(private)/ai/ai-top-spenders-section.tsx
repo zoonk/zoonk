@@ -1,6 +1,7 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { listTopAiSpenders } from "@/data/ai/list-top-ai-spenders";
 import { formatUsd } from "@/lib/ai-format";
 import { TableCell } from "@zoonk/ui/components/table";
@@ -60,14 +61,7 @@ function LearnerSpenders({ learners }: { learners: TopSpenders["learners"] }) {
     >
       {learners.map((row) => (
         <AdminTableRow key={row.id}>
-          <TableCell>
-            <AdminTableRowLink href={`/users/${row.id}`} prefetch>
-              {row.user?.isAnonymous ? "Guest" : (row.user?.name ?? row.user?.email ?? "Deleted")}
-            </AdminTableRowLink>
-            {row.user && !row.user.isAnonymous ? (
-              <span className="text-muted-foreground block text-xs">{row.user.email}</span>
-            ) : null}
-          </TableCell>
+          <AdminUserCell user={row.user} userId={row.id} />
           <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
           <TableCell className="text-right font-medium tabular-nums">
             {formatUsd(row.costUsd)}

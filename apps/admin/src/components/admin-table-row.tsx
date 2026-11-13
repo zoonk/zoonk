@@ -5,14 +5,13 @@ import Link from "next/link";
 import { type ComponentProps } from "react";
 
 /**
- * Every row of an Admin table, so one-line rows are one height whether or not they open a record.
+ * Every row of an Admin table: one that holds a row link opens its record from anywhere on it.
  * A transform contains the stretched link on Safari: https://bugs.webkit.org/show_bug.cgi?id=240961
  */
 export function AdminTableRow({ className, ...props }: ComponentProps<"tr">) {
   return (
     <TableRow
       className={cn(
-        "[&>td]:h-11",
         "has-data-[slot=table-row-link]:hover:bg-muted/50 has-data-[slot=table-row-link]:transform-gpu has-data-[slot=table-row-link]:cursor-pointer",
         "has-data-[slot=table-row-link]:[&_a:not([data-slot=table-row-link])]:hit-area has-data-[slot=table-row-link]:[&_:is(a,button,form,input,select,textarea,summary,audio,video):not([data-slot=table-row-link])]:relative has-data-[slot=table-row-link]:[&_:is(a,button,form,input,select,textarea,summary,audio,video):not([data-slot=table-row-link])]:z-10",
         className,

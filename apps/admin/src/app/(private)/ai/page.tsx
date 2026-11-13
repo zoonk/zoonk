@@ -1,5 +1,5 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
 import { AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminTabs } from "@/components/admin-tabs";
 import {
   Container,
   ContainerBody,
@@ -21,7 +21,7 @@ export const metadata: Metadata = { title: "AI" };
 
 function PeriodFilter({ days }: { days: number }) {
   return (
-    <AdminFilterNav
+    <AdminTabs
       label="Period"
       options={aiPeriodDays.map((period) => ({
         href: `/ai?days=${period}`,

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
+import { TabLink, TabLinks } from "@zoonk/ui/components/tab-links";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { adminNavigation } from "./admin-navigation";
@@ -14,29 +14,24 @@ export function ShortNavTabs({ counts }: { counts: AdminNavCounts }) {
     (item) => item.label && item.items.some(({ url }) => pathname.startsWith(url)),
   );
 
-  if (!group) {
+  if (!group?.label) {
     return null;
   }
 
   return (
-    <nav
-      aria-label={group.label}
-      className="flex gap-5 overflow-x-auto border-b px-4 pt-3 sm:px-8 lg:px-10"
-    >
-      {group.items.map((item) => (
-        <Link
-          aria-current={pathname.startsWith(item.url) ? "page" : undefined}
-          className={cn(
-            "text-muted-foreground hover:text-foreground -mb-px flex h-10 shrink-0 items-center gap-1.5 border-b-2 border-transparent text-sm font-medium",
-            "aria-[current=page]:border-foreground aria-[current=page]:text-foreground",
-          )}
-          href={item.url}
-          key={item.url}
-        >
-          {item.label}
-          {item.queue ? counts[item.queue] : null}
-        </Link>
-      ))}
-    </nav>
+    <div className="border-b px-4 py-2 sm:px-8 lg:px-10">
+      <TabLinks label={group.label}>
+        {group.items.map((item) => (
+          <TabLink
+            current={pathname.startsWith(item.url)}
+            key={item.url}
+            render={<Link href={item.url} />}
+          >
+            {item.label}
+            {item.queue ? counts[item.queue] : null}
+          </TabLink>
+        ))}
+      </TabLinks>
+    </div>
   );
 }

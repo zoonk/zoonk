@@ -8,7 +8,7 @@ import {
 } from "@/components/admin-detail";
 import { AdminNotice } from "@/components/admin-notice";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { AdminTabs } from "@/components/admin-tabs";
+import { AdminTabs, recordTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
 
@@ -116,10 +116,8 @@ export default async function ItemMockPage({ searchParams }: PageProps<"/items/m
         </AdminNotice>
 
         <AdminTabs
-          current={tab as "question"}
           label="Practice question"
-          path="/items/mock"
-          tabs={TABS}
+          options={recordTabs({ current: tab as "question", path: "/items/mock", tabs: TABS })}
         />
 
         <Body />

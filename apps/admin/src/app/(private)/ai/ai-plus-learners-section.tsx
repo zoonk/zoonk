@@ -1,6 +1,7 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { Stats } from "@/components/stats";
 import { type PlusBilling, listPlusLearnerCosts } from "@/data/ai/list-plus-learner-costs";
 import { formatUsd } from "@/lib/ai-format";
@@ -174,14 +175,7 @@ function LearnerGoals({ goals }: { goals: PlusLearner["goals"] }) {
 function LearnerRow({ learner }: { learner: PlusLearner }) {
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink href={`/users/${learner.id}`} prefetch>
-          {learner.user?.name ?? learner.user?.email ?? "Deleted"}
-        </AdminTableRowLink>
-        {learner.user ? (
-          <span className="text-muted-foreground block text-xs">{learner.user.email}</span>
-        ) : null}
-      </TableCell>
+      <AdminUserCell user={learner.user} userId={learner.id} />
       <TableCell>{PLAN_LABELS[learner.billing]}</TableCell>
       <TableCell>
         <LearnerGoals goals={learner.goals} />

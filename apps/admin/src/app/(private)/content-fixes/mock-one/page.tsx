@@ -26,10 +26,10 @@ export default async function ContentFixMockPage({
       <AdminDetailHeader
         actions={
           <>
-            <Button size="lg" variant="outline">
+            <Button size="sm" variant="outline">
               Reject
             </Button>
-            <Button size="lg">Add a passkey to approve</Button>
+            <Button size="sm">Add a passkey to approve</Button>
           </>
         }
         facts={["Waiting for review", "Proposed Nov 12, 2026, 4:16 AM by Admin User in the CLI"]}
@@ -109,7 +109,7 @@ export default async function ContentFixMockPage({
             </ul>
           </AdminSection>
 
-          <p className="text-muted-foreground max-w-2xl text-[0.8125rem]">
+          <p className="text-muted-foreground text-compact max-w-2xl">
             Approving takes a passkey, so only you can apply a fix. Add one in your Zoonk settings,
             then come back to this page.
           </p>

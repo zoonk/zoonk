@@ -1,59 +1,21 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@zoonk/ui/components/breadcrumb";
-import Link from "next/link";
-import { Fragment } from "react";
+import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
 
 export type StatsBreadcrumbItem = { href?: string; label: string };
-const EMPTY_STATS_BREADCRUMB_ITEMS: StatsBreadcrumbItem[] = [];
 
-export function StatsBreadcrumb({
-  items = EMPTY_STATS_BREADCRUMB_ITEMS,
-}: {
-  items?: StatsBreadcrumbItem[];
-}) {
-  const isStatsPage = items.length === 0;
+const ROOT: StatsBreadcrumbItem[] = [
+  { href: "/", label: "Home" },
+  { href: "/stats", label: "Stats" },
+];
+
+export function StatsBreadcrumb({ items }: { items?: StatsBreadcrumbItem[] }) {
+  const trail = [...ROOT, ...(items ?? [])];
 
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/" prefetch />}>Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          {isStatsPage ? (
-            <BreadcrumbPage>Stats</BreadcrumbPage>
-          ) : (
-            <BreadcrumbLink render={<Link href="/stats" prefetch />}>Stats</BreadcrumbLink>
-          )}
-        </BreadcrumbItem>
-
-        {items.map((item, index) => {
-          const isLastItem = index === items.length - 1;
-          const itemKey = item.href ?? item.label;
-
-          return (
-            <Fragment key={itemKey}>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                {isLastItem || !item.href ? (
-                  <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink render={<Link href={item.href} prefetch />}>
-                    {item.label}
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </Fragment>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
+    <AdminBreadcrumb
+      current={trail.at(-1)?.label}
+      parents={trail
+        .slice(0, -1)
+        .flatMap((item) => (item.href ? [{ href: item.href, label: item.label }] : []))}
+    />
   );
 }

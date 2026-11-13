@@ -1,4 +1,4 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminTabs } from "@/components/admin-tabs";
 import {
   type AdminTableColumn,
   AdminTableColumns,
@@ -57,7 +57,7 @@ export async function MessageFilter({
   const current = parseFeedbackFilter(params);
 
   return (
-    <AdminFilterNav
+    <AdminTabs
       label="Messages"
       options={FEEDBACK_FILTERS.map((filter) => ({
         count: filter === "new" ? inbox.feedback.count : undefined,

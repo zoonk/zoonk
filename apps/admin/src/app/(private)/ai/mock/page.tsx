@@ -1,9 +1,9 @@
 import daily from "@/app/(private)/_mock/data/ai-daily.json";
 import dump from "@/app/(private)/_mock/data/ai.json";
 import { type Cell, type Dump, MockRows, parts, readView } from "@/app/(private)/_mock/kit";
-import { AdminFilterNav } from "@/components/admin-filter-nav";
 import { AdminToolbar } from "@/components/admin-page";
 import { AdminSection } from "@/components/admin-section";
+import { AdminTabs } from "@/components/admin-tabs";
 import { Stats } from "@/components/stats";
 import { AiMockShell } from "../../_mock/ai-shell";
 import { MockLink, MockMore } from "../../_mock/parts";
@@ -110,7 +110,7 @@ function Spend({ by }: { by: By }) {
   return (
     <>
       <AdminToolbar>
-        <AdminFilterNav
+        <AdminTabs
           label="Period"
           options={[
             { href: "#7", isActive: false, label: "7 days" },
@@ -131,7 +131,7 @@ function Spend({ by }: { by: By }) {
 
       <AdminSection
         action={
-          <AdminFilterNav
+          <AdminTabs
             label="Spend by"
             options={(["task", "model", "goal", "learner"] as const).map((key) => ({
               href: `/ai/mock?by=${key}`,
@@ -169,7 +169,7 @@ function Failed() {
   return (
     <>
       <AdminToolbar>
-        <AdminFilterNav
+        <AdminTabs
           label="Kind"
           options={[
             { count: 40, href: "#all", isActive: true, label: "All" },

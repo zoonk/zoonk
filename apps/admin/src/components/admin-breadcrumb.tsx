@@ -12,19 +12,21 @@ import { Fragment } from "react";
 export type AdminBreadcrumbParent = { href: string; label: string };
 
 export function AdminBreadcrumb({
+  className,
   current,
   parents,
 }: {
+  className?: string;
   current: React.ReactNode;
   parents: AdminBreadcrumbParent[];
 }) {
   return (
-    // It sits over a page's title. A list's title is 20 px under the header's top; this line and its gap are 24, so it gives 4 back and every title is at one height.
-    <Breadcrumb className="-mt-1">
-      <BreadcrumbList>
+    // The line over a page's title: 16 px and the header's 4 px gap, so every title starts 20 px down.
+    <Breadcrumb className={className} data-slot="page-eyebrow">
+      <BreadcrumbList className="text-compact flex-nowrap gap-1.5 leading-4 sm:gap-1.5">
         {parents.map((parent) => (
           <Fragment key={parent.href}>
-            <BreadcrumbItem>
+            <BreadcrumbItem className="shrink-0">
               <BreadcrumbLink
                 className="hit-area relative"
                 render={<Link href={parent.href} prefetch />}
@@ -36,7 +38,7 @@ export function AdminBreadcrumb({
           </Fragment>
         ))}
         <BreadcrumbItem className="min-w-0 flex-1">
-          <BreadcrumbPage className="max-w-sm truncate">{current}</BreadcrumbPage>
+          <BreadcrumbPage className="max-w-sm truncate font-medium">{current}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

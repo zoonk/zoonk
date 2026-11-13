@@ -1,4 +1,5 @@
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
 import {
   getAdminQuestionLessonContext,
@@ -7,7 +8,6 @@ import {
 import { Badge } from "@zoonk/ui/components/badge";
 import { TableCell } from "@zoonk/ui/components/table";
 import { markdownToPlainText } from "@zoonk/utils/markdown-text";
-import Link from "next/link";
 
 function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
   const context = getAdminQuestionLessonContext(question.thread);
@@ -41,12 +41,7 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
           {question.answer ? markdownToPlainText(question.answer) : "No answer yet"}
         </span>
       </TableCell>
-      <TableCell className="max-w-48 min-w-40">
-        <Link className="block hover:underline" href={`/users/${user.id}`} prefetch>
-          <span className="block truncate font-medium">{user.name || user.username || "—"}</span>
-          <span className="text-muted-foreground block truncate text-xs">{user.email}</span>
-        </Link>
-      </TableCell>
+      <AdminUserCell className="max-w-48 min-w-40" opensRow={false} user={user} userId={user.id} />
       <TableCell className="max-w-56 min-w-48 whitespace-normal">
         <QuestionLessonCell question={question} />
       </TableCell>

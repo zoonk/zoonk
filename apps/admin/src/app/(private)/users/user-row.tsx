@@ -1,4 +1,5 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { AdminUserCell } from "@/components/admin-user-cell";
 import { type listUsers } from "@/data/users/list-users";
 import { capitalize, formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
@@ -10,13 +11,7 @@ export function UserRow({
 }) {
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink className="block" href={`/users/${user.id}`} prefetch>
-          <span className="font-medium">{user.name || user.username || "No name"}</span>
-          {user.banned ? <span className="text-destructive-text text-xs"> · Banned</span> : null}
-          <span className="text-muted-foreground block text-xs">{user.email}</span>
-        </AdminTableRowLink>
-      </TableCell>
+      <AdminUserCell note={user.banned && "Banned"} user={user} userId={user.id} />
 
       <TableCell className={user.plan === "free" ? "text-muted-foreground" : ""}>
         {capitalize(user.plan)}

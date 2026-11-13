@@ -1,6 +1,7 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminToolbar } from "@/components/admin-page";
 import { AdminQuerySelect } from "@/components/admin-query-select";
 import { AdminSearch } from "@/components/admin-search";
+import { AdminTabs } from "@/components/admin-tabs";
 import { countLessonsForRegeneration } from "@/data/lessons/count-lessons-for-regeneration";
 import {
   type StepProvenanceOption,
@@ -63,8 +64,8 @@ export async function LibraryLessonFilters({
     <div className="flex flex-col gap-3">
       <AdminSearch placeholder="Search by lesson, chapter, or course…" />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <AdminFilterNav
+      <AdminToolbar>
+        <AdminTabs
           label="Writing status"
           options={libraryLessonStatuses.map((item) => ({
             href: buildAdminHref({
@@ -89,7 +90,7 @@ export async function LibraryLessonFilters({
           name="promptVersion"
           options={toPromptVersionOptions(options, model)}
         />
-      </div>
+      </AdminToolbar>
 
       {hasProvenanceFilter ? (
         <RewriteLessonsBar

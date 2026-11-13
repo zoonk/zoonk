@@ -1,6 +1,3 @@
-// Review-pack mocks only: static pictures of proposed pages, built from the shared components and
-// from the records today's pages show (`data/*.json`). Remove with the rest of `_mock`.
-import { AdminFilterNav } from "@/components/admin-filter-nav";
 import {
   ADMIN_TOOLBAR_SEARCH_CLASS,
   AdminPage,
@@ -10,6 +7,9 @@ import {
 } from "@/components/admin-page";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
+// Review-pack mocks only: static pictures of proposed pages, built from the shared components and
+// from the records today's pages show (`data/*.json`). Remove with the rest of `_mock`.
+import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
@@ -103,7 +103,7 @@ export type MockView = { active?: boolean; count?: number; label: string };
 
 export function MockViews({ label, views }: { label: string; views: MockView[] }) {
   return (
-    <AdminFilterNav
+    <AdminTabs
       label={label}
       options={views.map((view) => ({
         count: view.count,

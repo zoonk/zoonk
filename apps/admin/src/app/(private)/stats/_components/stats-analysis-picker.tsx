@@ -44,7 +44,8 @@ export function StatsAnalysisPicker({
         render={
           <Button
             aria-label={`Choose analysis. Current: ${selectedView.label}`}
-            className="-ml-2 h-auto w-full max-w-full justify-start border-transparent px-2 py-1 text-left text-2xl font-semibold tracking-tight sm:w-auto sm:text-3xl"
+            className="h-auto w-full max-w-full justify-start border-transparent px-2 py-1 text-left text-2xl font-semibold tracking-tight [--edge-text:calc(--spacing(2)+1px)] sm:w-auto sm:text-3xl"
+            edge="start"
             variant="ghost"
           />
         }

@@ -18,7 +18,7 @@ export default async function LeaderboardMockPage({
       columns={COLUMNS}
       empty="No Brain Power earned today."
       rows={rows.map((row) => [
-        <span className="font-mono text-[0.8125rem]" key="rank">
+        <span className="text-compact font-mono" key="rank">
           {row[0]?.text}
         </span>,
         <span className="text-foreground block" key="lead">

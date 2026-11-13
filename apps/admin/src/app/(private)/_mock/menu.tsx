@@ -23,7 +23,7 @@ export function MockMenu({ actions, label }: { actions: MockAction[]; label: str
 
   return (
     <>
-      <DetailMenu label={label}>
+      <DetailMenu label={label} size="sm">
         {actions.map((action) => (
           <DropdownMenuItem
             key={action.label}
@@ -78,7 +78,7 @@ export function MockConfirmButton({
       destructive={destructive}
       title={title}
       trigger={
-        <Button size="lg" variant="outline">
+        <Button size="sm" variant="outline">
           {label}
         </Button>
       }

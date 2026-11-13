@@ -8,7 +8,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection } from "@/components/admin-section";
-import { AdminTabs } from "@/components/admin-tabs";
+import { AdminTabs, recordTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { MockLink } from "../../_mock/parts";
 
@@ -138,7 +138,10 @@ export default async function SkillMockPage({ searchParams }: PageProps<"/skills
       />
 
       <AdminDetailBody>
-        <AdminTabs current={tab as "overview"} label="Skill" path="/skills/mock" tabs={TABS} />
+        <AdminTabs
+          label="Skill"
+          options={recordTabs({ current: tab as "overview", path: "/skills/mock", tabs: TABS })}
+        />
 
         <Body />
       </AdminDetailBody>

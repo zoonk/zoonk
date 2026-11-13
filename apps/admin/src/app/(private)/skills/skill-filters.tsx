@@ -1,6 +1,7 @@
-import { AdminFilterNav } from "@/components/admin-filter-nav";
+import { AdminToolbar } from "@/components/admin-page";
 import { AdminQuerySelect } from "@/components/admin-query-select";
 import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
+import { AdminTabs } from "@/components/admin-tabs";
 import { VISIBILITY_FILTER_OPTIONS, buildEnumFilterOptions } from "@/lib/enum-filter-options";
 import { LANGUAGE_FILTER_OPTIONS } from "@/lib/language-filter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -13,7 +14,7 @@ export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, 
     <div className="flex flex-col gap-3">
       <AdminSearch placeholder="Search skills by name…" />
 
-      <div className="flex flex-wrap items-center gap-3">
+      <AdminToolbar>
         <AdminQuerySelect
           allLabel="All languages"
           label="Language"
@@ -21,7 +22,7 @@ export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, 
           options={LANGUAGE_FILTER_OPTIONS}
         />
 
-        <AdminFilterNav
+        <AdminTabs
           label="Visibility"
           options={buildEnumFilterOptions({
             allLabel: "All",
@@ -31,7 +32,7 @@ export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, 
           })}
         />
 
-        <AdminFilterNav
+        <AdminTabs
           label="Merged skills"
           options={[
             {
@@ -46,7 +47,7 @@ export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, 
             },
           ]}
         />
-      </div>
+      </AdminToolbar>
     </div>
   );
 }
