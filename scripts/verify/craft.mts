@@ -12,6 +12,7 @@ import {
   CRAFT_LINES,
   ICON_SIZES,
   ICON_STROKE,
+  PAGE_TITLE_TOP,
   RADIUS_STEPS,
   SAME_WITHIN,
   SMALL_RADII,
@@ -207,6 +208,20 @@ export function iconLeads(icons: Icon[]): Finding[] {
   return [...off, ...restroked];
 }
 
+export function titleLeads(titleTop: number | null): Finding[] {
+  if (titleTop === null || Math.abs(titleTop - PAGE_TITLE_TOP) <= CRAFT_LINES.aligned) {
+    return [];
+  }
+
+  return [
+    lead(
+      "E8",
+      `the page's title starts ${px(titleTop)} under its frame's top, not ${px(PAGE_TITLE_TOP)}: padding over the title or the frame, or a hidden bar`,
+      titleTop,
+    ),
+  ];
+}
+
 /** One lead per message: a heatmap's every row with the same gap is one finding. */
 export function craftFindings(page: CraftPage, typeScale: number[]): Finding[] {
   const findings = [
@@ -217,6 +232,7 @@ export function craftFindings(page: CraftPage, typeScale: number[]): Finding[] {
     ...spacingLeads(page.gaps),
     ...typeLeads(page.texts, typeScale),
     ...iconLeads(page.icons),
+    ...titleLeads(page.titleTop),
   ];
 
   return [

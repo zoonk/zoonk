@@ -77,7 +77,7 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 
 A page's title is close to the top and at the same y on every page, on a phone and a computer: 12px, the 44px bar with the way back and the page's actions, its hairline, then 12px to the title (`PageTop`, or `PageTopBar` in a layout and `PAGE_HEADER_CLASS` in the page). The bar keeps its room when it holds nothing, the frame has no top padding, and no page pads or pushes its own title ([titles at one height](app-patterns.md#what-every-page-shares)). A task keeps its own header with ✕.
 
-- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px.
+- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px. `verify:pages` measures it on every page that draws the shared page top and leads when it is off.
 - **Usual break.** `pt-5` on a header, top padding on the frame, or a bar hidden on a computer, so one page's title sits higher or lower.
 
 ### E9. Start-aligned or centered, never both
