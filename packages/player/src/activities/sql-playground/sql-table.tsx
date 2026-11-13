@@ -2,8 +2,9 @@
 
 import { type ActivityCell } from "@zoonk/core/library/activities/expected-answer";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDown, Table2 } from "lucide-react";
+import { Table2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { keyedByPosition } from "../_utils/position-keys";
 
@@ -127,10 +128,7 @@ export function SqlTableViewer({ table }: { table: Table }) {
         <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
           {t("{count, plural, one {# row} other {# rows}}", { count: table.rows.length })}
         </span>
-        <ChevronDown
-          aria-hidden="true"
-          className="text-muted-foreground size-4 shrink-0 group-open:rotate-180 motion-safe:transition-transform"
-        />
+        <FoldChevron />
       </summary>
 
       <div className="px-2 pb-2">

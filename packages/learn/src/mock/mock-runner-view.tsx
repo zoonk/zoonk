@@ -1,15 +1,16 @@
 "use client";
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterKey, useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
+import { useKeyboardCallback, useLetterKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
-import { TASK_COLUMN_CLASS, TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 import {
   MockAnswerSheet,
   MockQuestionMap,
@@ -129,10 +130,6 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   const screenKey = { mode: "none", screen: true } as const;
 
   // Enter moves on after a key picked an answer; handing in stays a deliberate click.
-  useEnterKey(() => runner.go(runner.position + 1), {
-    enabled: !isLastQuestion && !runner.pending && !waiting,
-  });
-
   useKeyboardCallback("ArrowRight", () => !waiting && runner.go(runner.position + 1), screenKey);
   useKeyboardCallback("ArrowLeft", () => runner.go(runner.position - 1), screenKey);
 
@@ -142,28 +139,28 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   return (
     <>
       <MockStepStatus />
-      <TaskActions>
+      <QuestionActions>
         <FlagButton />
-        <Button
-          aria-keyshortcuts={isLastQuestion ? undefined : "Enter ArrowRight"}
-          busy={handingIn}
-          className={TASK_MAIN_ACTION_CLASS}
-          disabled={runner.pending || waiting}
-          focusableWhenDisabled
-          onClick={next}
-          size="xl"
-          {...(isLastQuestion ? { icon: <SendIcon aria-hidden="true" /> } : FORWARD_ICON)}
-        >
-          {isLastQuestion ? (
-            nextLabel
-          ) : (
-            <>
-              {t("Next")}
-              <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-            </>
-          )}
-        </Button>
-      </TaskActions>
+        {isLastQuestion ? (
+          <QuestionMainAction
+            action="finish"
+            busy={handingIn}
+            disabled={runner.pending || waiting}
+            enter="off"
+            icon={<SendIcon aria-hidden="true" />}
+            onPress={next}
+          >
+            {nextLabel}
+          </QuestionMainAction>
+        ) : (
+          <QuestionMainAction
+            action="next"
+            aria-keyshortcuts="Enter ArrowRight"
+            disabled={runner.pending || waiting}
+            onPress={next}
+          />
+        )}
+      </QuestionActions>
     </>
   );
 }
