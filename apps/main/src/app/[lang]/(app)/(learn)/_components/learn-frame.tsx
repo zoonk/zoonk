@@ -16,7 +16,7 @@ import { getExtracted } from "next-intl/server";
 import { LearnBarEnd } from "./learn-bar-end";
 import { LearnGoalMenu } from "./learn-goal-menu";
 import { LearnAppSidebar } from "./learn-sidebar";
-import { LearnSidebarSearch } from "./learn-sidebar-links";
+import { LearnBarSearch } from "./learn-sidebar-links";
 import {
   AppPageHistory,
   LearnBottomTabs,
@@ -35,12 +35,10 @@ function LearnTopBar() {
     <TabRootOnly>
       <LearnShellHeader className="lg:hidden">
         <LearnShellStart>
-          <LearnGoalMenu />
+          <LearnGoalMenu visitor={<LearnBarSearch edge="start" />} />
         </LearnShellStart>
 
-        <LearnBarEnd visitor={<VisitorBarLinks />} />
-
-        <LearnSidebarSearch className="col-span-2 mt-2" placement="bar" />
+        <LearnBarEnd search={<LearnBarSearch />} visitor={<VisitorBarLinks />} />
       </LearnShellHeader>
     </TabRootOnly>
   );

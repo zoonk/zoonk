@@ -3,29 +3,37 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useContentFeedback } from "@zoonk/learn/feedback";
+import { Button } from "@zoonk/ui/components/button";
 import { SIDEBAR_COUNT_CLASS, SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
 import { SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
-import { MessageSquareIcon } from "lucide-react";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
+import { MessageSquareIcon, SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
-export function LearnSidebarSearch({
-  className,
-  placement,
-}: {
-  className?: string;
-  placement?: "bar" | "sidebar";
-}) {
+export function LearnSidebarSearch() {
+  const t = useExtracted();
+  return <SidebarSearch label={t("Search or ask…")} onClick={openCommandPalette} />;
+}
+
+/** Under `lg` there is no sidebar, so the bar's icon opens the same palette. */
+export function LearnBarSearch({ edge }: { edge?: "start" }) {
   const t = useExtracted();
 
   return (
-    <SidebarSearch
-      className={className}
-      label={t("Search or ask…")}
+    <Button
+      aria-haspopup="dialog"
+      aria-keyshortcuts={shortcutKeys("search")}
+      className="text-muted-foreground"
+      edge={edge}
       onClick={openCommandPalette}
-      placement={placement}
-    />
+      size="icon-bar"
+      variant="ghost"
+    >
+      <SearchIcon aria-hidden="true" />
+      <span className="sr-only">{t("Search")}</span>
+    </Button>
   );
 }
 

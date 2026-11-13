@@ -51,16 +51,23 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   );
 }
 
-function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
+type BarEndProps = {
+  /** A learner's way to the command palette; a visitor's is at the bar's start. */
+  search: React.ReactNode;
+  visitor: React.ReactNode;
+};
+
+function PendingBarEnd({ search, visitor }: BarEndProps) {
   return (
     <LearnShellEnd>
       <VisitorLook>{visitor}</VisitorLook>
+      <div className="signed-in:contents hidden">{search}</div>
       <PendingAccountAvatar className="size-7" />
     </LearnShellEnd>
   );
 }
 
-function BarEnd({ visitor }: { visitor: React.ReactNode }) {
+function BarEnd({ search, visitor }: BarEndProps) {
   const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
@@ -68,23 +75,24 @@ function BarEnd({ visitor }: { visitor: React.ReactNode }) {
   }
 
   if (learner.status !== "ready") {
-    return <PendingBarEnd visitor={visitor} />;
+    return <PendingBarEnd search={search} visitor={visitor} />;
   }
 
   const { level } = learner.summary;
 
   return (
     <LearnShellEnd>
+      {search}
       {level && <LevelLink level={level} />}
       <UserAvatarMenu />
     </LearnShellEnd>
   );
 }
 
-export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
+export function LearnBarEnd(props: BarEndProps) {
   return (
-    <Suspense fallback={<PendingBarEnd visitor={visitor} />}>
-      <BarEnd visitor={visitor} />
+    <Suspense fallback={<PendingBarEnd {...props} />}>
+      <BarEnd {...props} />
     </Suspense>
   );
 }
