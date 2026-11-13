@@ -2,10 +2,10 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useMemo } from "react";
+import { QuestionTitle } from "../_components/question-title";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 import { useSpokenText } from "../rich-text/use-spoken-text";
-import { QuestionTitle } from "../session/question-block/question-title";
 import { QuestionInputs } from "../session/question-block/question-view";
 import { type PracticeStep as Step } from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";

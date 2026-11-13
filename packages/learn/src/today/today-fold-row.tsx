@@ -1,7 +1,6 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { DoneMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
 import { SESSION_LIST_ID } from "./today-ids";
@@ -33,15 +32,12 @@ export function FoldRow({
       onClick={onToggle}
       type="button"
     >
-      <span aria-hidden="true" className="flex w-3 shrink-0 justify-center">
+      <span aria-hidden="true" className="flex w-4 shrink-0 justify-center">
         {done && <DoneMark className="size-3.5" />}
       </span>
       <span className="flex min-w-0 flex-1 items-center gap-1.5 font-medium">
         {label}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-180")}
-        />
+        <FoldChevron inline />
       </span>
       {minutes ? (
         <span className="shrink-0 font-mono text-xs tabular-nums">{formatDuration(minutes)}</span>
