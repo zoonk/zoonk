@@ -34,11 +34,7 @@ function DoneLink({ href, saving }: { href: string; saving: boolean }) {
     return <PendingMainAction>{t("Done")}</PendingMainAction>;
   }
 
-  return (
-    <EnterLink href={href} icon={null}>
-      {t("Done")}
-    </EnterLink>
-  );
+  return <EnterLink href={href}>{t("Done")}</EnterLink>;
 }
 
 function QuestionRow({ href, question }: { href: string; question: string }) {

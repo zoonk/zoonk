@@ -116,6 +116,7 @@ msgstr "Çalışıldı"
 #: src/today/today-lessons-card.tsx
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
+#: src/today/today-subject-rows.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Bugün"
@@ -175,7 +176,6 @@ msgstr "Günlük çalışma süresi"
 #: src/session/question-block/block-body.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
-#: src/today/today-action.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Devam et"
@@ -190,8 +190,6 @@ msgstr "Devam et"
 #: src/onboarding/steps/placement-screens.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/session/next-stop.tsx
-#: src/today/today-action.tsx
-#: src/today/today-suggested-goal.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Başla"
@@ -1316,6 +1314,7 @@ msgstr "Öğrenmek istediğin şey"
 #: src/buddies/buddy-goal-start.tsx
 #: src/language/level-test/level-test-screens.tsx
 #: src/onboarding/entry/goal-entry.tsx
+#: src/today/today-suggested-goal.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Planımı oluştur"
@@ -2239,7 +2238,6 @@ msgstr "{lessons, plural, =0 {Yarın yeniden deneyebilirsin. Hiçbir şey kaybet
 #: src/syllabus/syllabus-section.tsx
 #: src/syllabus/syllabus-summary.tsx
 #: src/today/today-week-challenge.tsx
-#: src/today/use-row-label.ts
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {# soru}}"
@@ -2794,6 +2792,11 @@ msgstr "Bir sonraki çalışmanda yeniden deneyebilirsin"
 msgctxt "odE1Ih"
 msgid "Completed lessons"
 msgstr "Tamamlanan dersler"
+
+#: src/completed-lessons/completed-lessons-row.tsx
+msgctxt "Sr-Gso"
+msgid "Go back to any lesson you've finished"
+msgstr "Tamamladığın derslerden istediğine geri dön"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "6dIxDP"
@@ -4549,7 +4552,6 @@ msgstr "hazırlanıyor"
 
 #: src/generation/generation-wait.tsx
 #: src/journey/pace-details.tsx
-#: src/today/today-week-day.tsx
 msgctxt "B7ijKz"
 msgid "done"
 msgstr "tamamlandı"
@@ -4811,6 +4813,7 @@ msgstr "Sınav mı, dil mi yoksa konu mu olduğunu kontrol ediyoruz…"
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
+#: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
 msgstr "Planını hazırlıyoruz"
@@ -5449,6 +5452,7 @@ msgid "Ahead"
 msgstr "Önde"
 
 #: src/journey/pace-details.tsx
+#: src/today/today-heading.tsx
 msgctxt "RlWvYP"
 msgid "Behind"
 msgstr "Geride"
@@ -5561,11 +5565,13 @@ msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of #
 msgstr "{total, plural, =0 {{done, number} / # ders} other {{done, number} / # ders}}"
 
 #: src/journey/plan-header.tsx
+#: src/today/today-heading.tsx
 msgctxt "8PP61v"
 msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
 msgstr "{days, plural, =0 {Beklenen gün geldi} other {# gün kaldı}}"
 
 #: src/journey/plan-header.tsx
+#: src/today/today-heading.tsx
 msgctxt "vjhiy6"
 msgid "{days, plural, one {~# day left} other {~# days left}}"
 msgstr "{days, plural, other {~# gün kaldı}}"
@@ -7977,9 +7983,9 @@ msgid "Couldn't remove this map. Try again."
 msgstr "Bu harita kaldırılamadı. Tekrar dene."
 
 #: src/missions/brain-power-reward.tsx
-msgctxt "HCrEOP"
-msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Öğrendikçe puan kazanırsın. Bu puanlarla kuşak atlarsın ve ders arkadaşın büyür."
+msgctxt "b3Jpo7"
+msgid "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +{points}."
+msgstr "Öğrendiklerinin puan karşılığı: kuşak atlamanı ve ders arkadaşının büyümesini sağlar. Cevaplar, dersler ve meydan okumalar puan kazandırır; bugünkü görevleri bitirince de +{points} kazanırsın."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -8024,15 +8030,75 @@ msgid "Have your first call"
 msgstr "İlk sohbetini yap"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ePGEKw"
-msgid "Take your first mock exam"
+msgctxt "missions.BUTJD4"
+msgid "Take your first mock"
 msgstr "İlk deneme sınavına gir"
 
 #: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
-msgctxt "missions._N9GlC"
-msgid "Beat the Trickster"
-msgstr "Hilebaz’ı yen"
+msgctxt "missions.9qOzm_"
+msgid "Take on the Trickster"
+msgstr "Hilebaz’a meydan oku"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "bz2BN8"
+msgid "With your first challenge, <mono>{date}</mono>"
+msgstr "İlk meydan okumanda, <mono>{date}</mono> tarihinde"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "BgUc01"
+msgid "With your first challenge"
+msgstr "İlk meydan okumanda"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "-DJ5Y5"
+msgid "On your first essay day"
+msgstr "İlk kompozisyon gününde"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "RBXnZe"
+msgid "The day after your first mistake"
+msgstr "İlk hatandan sonraki gün"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "xyUK7Y"
+msgid "When your first review is due"
+msgstr "İlk tekrarının zamanı geldiğinde"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "cGp3F-"
+msgid "When your mistakes show a pattern"
+msgstr "Hataların tekrarlamaya başladığında"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "RGbEQY"
+msgid "When you have call time again"
+msgstr "Yeniden sohbet süren olduğunda"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "YGZZ9y"
+msgid "When you can ask again"
+msgstr "Tekrar soru sorabildiğinde"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "RkPz67"
+msgid "On your next lesson day"
+msgstr "Bir sonraki ders gününde"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "0rP6q7"
+msgid "When your plan has a mock"
+msgstr "Planında deneme sınavı olduğunda"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "FNSnUK"
+msgid "One of today's missions"
+msgstr "Bugünkü görevlerden biri"
+
+#: src/missions/first-step-copy.tsx
+msgctxt "AwhX1o"
+msgid "Anytime"
+msgstr "İstediğin zaman"
 
 #: src/missions/first-steps.tsx
 msgctxt "3_YJkO"
@@ -8040,14 +8106,9 @@ msgid "First steps"
 msgstr "İlk adımlar"
 
 #: src/missions/first-steps.tsx
-msgctxt "584gds"
-msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
-msgstr "{count, plural, other {İlerledikçe # tanesi daha açılır}}"
-
-#: src/missions/first-steps.tsx
-msgctxt "kNlVEU"
-msgid "You've tried everything."
-msgstr "Hepsini denedin."
+msgctxt "0HCcI5"
+msgid "You've tried everything your plan uses."
+msgstr "Planındaki her tür etkinliği denedin."
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.QZSmDQ"
@@ -8090,8 +8151,8 @@ msgid "Weekly challenge"
 msgstr "Haftalık meydan okumaya katıl"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.LIsld3"
-msgid "Take the mock exam"
+msgctxt "missions.T8ny0q"
+msgid "Take the mock"
 msgstr "Deneme sınavına gir"
 
 #. A mission to practice an essay.
@@ -8106,8 +8167,8 @@ msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
 msgstr "{count, plural, one {Bir hatayı düzelt} other {# hatayı düzelt}}"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.YahrnI"
-msgid "Practice pronunciation"
+msgctxt "missions.vuwclE"
+msgid "Pronunciation"
 msgstr "Telaffuz alıştırması yap"
 
 #: src/missions/mission-copy.tsx
@@ -8186,15 +8247,60 @@ msgid ", choose a call"
 msgstr ", bir sohbet seç"
 
 #: src/missions/mission-copy.tsx
-msgctxt "J8WnXZ"
-msgid ", after today's lessons"
-msgstr ", bugünkü derslerden sonra"
+msgctxt "mQmNzY"
+msgid ", after this phase's lessons"
+msgstr ", bu aşamanın derslerinden sonra"
 
 #: src/missions/mission-copy.tsx
-#: src/today/use-row-label.ts
-msgctxt "L_nv1C"
-msgid "After today's lessons"
-msgstr "Bugünkü derslerden sonra"
+msgctxt "-d7MNH"
+msgid "After this phase's lessons"
+msgstr "Bu aşamanın derslerinden sonra"
+
+#: src/missions/mission-copy.tsx
+msgctxt "teh3kP"
+msgid "From your mistakes notebook"
+msgstr "Yanlış defterinden"
+
+#: src/missions/mission-copy.tsx
+msgctxt "QUXFCm"
+msgid "Due today"
+msgstr "Bugün yapılacak"
+
+#: src/missions/mission-copy.tsx
+msgctxt "2-8mko"
+msgid "Quick call · {unit}"
+msgstr "Kısa sohbet · {unit}"
+
+#: src/missions/mission-copy.tsx
+msgctxt "M62Zd9"
+msgid "A quick call"
+msgstr "Kısa bir sohbet"
+
+#: src/missions/mission-copy.tsx
+msgctxt "DBrHAL"
+msgid "Anything about today's lessons"
+msgstr "Bugünkü derslerle ilgili her şey"
+
+#: src/missions/mission-copy.tsx
+msgctxt "8zl1aR"
+msgid "{count, plural, one {The last lesson is in today's plan} other {The last # lessons are in today's plan}}"
+msgstr "{count, plural, one {Son ders bugünkü planda} other {Son # ders bugünkü planda}}"
+
+#: src/missions/mission-copy.tsx
+msgctxt "76vDAi"
+msgid "{title} (+{count, plural, one {# lesson} other {# lessons}})"
+msgstr "{title} (+{count, plural, other {# ders}})"
+
+#: src/missions/mission-copy.tsx
+msgctxt "tbs1gZ"
+msgid "Finish today's new lesson"
+msgstr "Bugünkü yeni dersi bitir"
+
+#. A mission to practice the area where the learner can improve the most.
+#: src/missions/mission-copy.tsx
+msgctxt "YiVZjK"
+msgid "Most room to grow"
+msgstr "En çok gelişebileceğin alan"
 
 #: src/missions/mission-list.tsx
 msgctxt "l8GXmx"
@@ -8222,6 +8328,7 @@ msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for 
 msgstr "{count, plural, other {# görev daha tamamlayınca +{points} Beyin Gücü kazanırsın}}"
 
 #: src/missions/mission-moment.tsx
+#: src/missions/missions-card.tsx
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "+{points} Beyin Gücü kazandın."
@@ -8232,14 +8339,24 @@ msgid "Just done"
 msgstr "Az önce tamamlandı"
 
 #: src/missions/missions-card.tsx
-msgctxt "deISVW"
-msgid "{done} of {total} done"
-msgstr "{done} / {total} tamamlandı"
+msgctxt "3-ihlA"
+msgid "{count, plural, one {# mission} other {# missions}}"
+msgstr "{count, plural, other {# görev}}"
+
+#: src/missions/missions-card.tsx
+msgctxt "4JBtJN"
+msgid "{count, plural, one {# left} other {# left}}"
+msgstr "{count, plural, other {# görev kaldı}}"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Görevler tamamlandı"
+
+#: src/missions/missions-card.tsx
+msgctxt "agm7r8"
+msgid "Today's missions start with today's session."
+msgstr "Bugünkü görevler bugünkü çalışmanla birlikte başlar."
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -8687,19 +8804,24 @@ msgid "time left"
 msgstr "kalan süre"
 
 #: src/mock/mock-entry.tsx
-msgctxt "CfczSe"
-msgid "The full exam, half of it or one subject"
-msgstr ""
+msgctxt "gaCKXR"
+msgid "Whenever you want: a full exam day, half a day or one subject"
+msgstr "İstediğin zaman: tam gün, yarım gün veya tek branş"
 
 #: src/mock/mock-entry.tsx
-msgctxt "fWOwxQ"
-msgid "The full exam or half of it"
-msgstr ""
+msgctxt "HVwCpv"
+msgid "Whenever you want: a full exam day or half a day"
+msgstr "İstediğin zaman: tam gün veya yarım gün"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
 msgstr "Deneme sınavına devam et"
+
+#: src/mock/mock-entry.tsx
+msgctxt "QJQ0Nr"
+msgid "It's where you left it"
+msgstr "Bıraktığın yerde duruyor"
 
 #: src/mock/mock-expired.tsx
 msgctxt "2E0g32"
@@ -10875,7 +10997,6 @@ msgid "Done. Your plan now covers your whole goal."
 msgstr "Tamam. Planın artık hedefinin tamamını kapsıyor."
 
 #: src/onboarding/steps/reveal-days.tsx
-#: src/today/today-week-challenge.tsx
 msgctxt "R-J5ox"
 msgid "Review"
 msgstr "Tekrar yap"
@@ -12868,6 +12989,7 @@ msgstr "Deneme sınavı ve alıştırma"
 
 #: src/plan/use-short-plan.ts
 #: src/session/use-block-copy.ts
+#: src/today/today-week-challenge.tsx
 msgctxt "ZBDAJ7"
 msgid "Full review"
 msgstr "Genel tekrar"
@@ -13781,9 +13903,10 @@ msgid "vector {base}"
 msgstr "{base} vektörü"
 
 #: src/session/extra-time-button.tsx
-msgctxt "dWsizD"
-msgid "Practice {minutes} more min"
-msgstr "{minutes} dk. daha çalış"
+#: src/today/today-extra-time.tsx
+msgctxt "a8JHBW"
+msgid "Study {minutes} more minutes"
+msgstr "{minutes} dakika daha çalış"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -13878,6 +14001,7 @@ msgid "Stop for today"
 msgstr "Bugünlük bitir"
 
 #: src/session/next-stop.tsx
+#: src/today/use-row-label.ts
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Sınavlarda sık çıkar"
@@ -14130,6 +14254,7 @@ msgstr "{completed, plural, =0 {# / {total} tamamlandı} other {# / {total} tama
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
+#: src/today/today-screen.tsx
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Bugünkü çalışma"
@@ -14346,7 +14471,7 @@ msgctxt "goalSwitcher._G_fp6"
 msgid "Pause a goal or get Plus"
 msgstr "Bir hedefi duraklat veya Plus’a geç"
 
-#. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
+#. Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.VX7VBg"
 msgid "Starts with a free account"
@@ -14410,8 +14535,8 @@ msgid "Quick explanations"
 msgstr "Kısa açıklamalar"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.Q25Oon"
-msgid "New goal"
+msgctxt "goalSwitcher.QTg-WT"
+msgid "Start a new goal"
 msgstr "Yeni bir hedefe başla"
 
 #: src/shell/goal-switcher.tsx
@@ -14445,14 +14570,14 @@ msgid "Make room for {goal}"
 msgstr "{goal} için yer aç"
 
 #: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.ivx3YV"
-msgid "That's as many goals as you can study at once without Plus. Pause one to start this one."
-msgstr "Plus olmadan aynı anda en fazla bu kadar hedef üzerinde çalışabilirsin. Bu hedefe başlamak için birini duraklat."
+msgctxt "goalSwitcher.92OYJm"
+msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
+msgstr "Ücretsiz paketteki hedef sınırına ulaştın. {goal} hedefine başlamak için birini duraklat. Duraklattığın hedefe daha sonra devam edebilirsin."
 
 #: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.xANHtD"
-msgid "See Plus"
-msgstr "Plus’ı incele"
+msgctxt "goalSwitcher.0I_Rwu"
+msgid "Get Plus"
+msgstr "Plus’a geç"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
@@ -14854,13 +14979,23 @@ msgid "{count, plural, one {# lesson skipped because you already know it} other 
 msgstr "{count, plural, other {Zaten bildiğin # ders atlandı}}"
 
 #: src/today/today-action.tsx
-#: src/today/today-more.tsx
-msgctxt "6Jd28t"
-msgid "Practice {minutes} min"
-msgstr "{minutes} dk. çalış"
+msgctxt "AstaIr"
+msgid "Continue session"
+msgstr "Çalışmaya devam et"
 
-#. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
+msgctxt "J9JF-p"
+msgid "Start session"
+msgstr "Çalışmaya başla"
+
+#: src/today/today-action.tsx
+msgctxt "AFqHlU"
+msgid "Practice for {minutes} minutes"
+msgstr "{minutes} dakika pratik yap"
+
+#. Button that has Zoonk write today's lessons.
+#: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "Nb8Jg7"
 msgid "Get today's lessons"
 msgstr "Bugünkü dersleri hazırlat"
@@ -14871,6 +15006,11 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "Sıradaki derslerini açamadık. Tekrar dene."
 
 #: src/today/today-block-row.tsx
+msgctxt "pPB2tF"
+msgid "{phase} · after this phase's lessons"
+msgstr "{phase} · bu aşamanın derslerinden sonra"
+
+#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", atlandı"
@@ -14878,9 +15018,29 @@ msgstr ", atlandı"
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
-msgctxt "2LhxfA"
-msgid "Getting ready…"
-msgstr "Hazırlıyoruz…"
+msgctxt "FAa3OD"
+msgid "Being written for you…"
+msgstr "Senin için hazırlıyoruz…"
+
+#: src/today/today-catch-up.tsx
+msgctxt "46XG_j"
+msgid "{lessons, plural, one {Your next days start with the # lesson left to catch up.} other {Your next days start with the # lessons left to catch up.}}"
+msgstr "{lessons, plural, other {Önümüzdeki günlerde önce eksik kalan # dersi tamamlayacaksın.}}"
+
+#: src/today/today-catch-up.tsx
+msgctxt "KieifK"
+msgid "{lessons, plural, one {You can still catch up on # lesson today, if you have time.} other {You can still catch up on # lessons today, if you have time.}}"
+msgstr "{lessons, plural, other {Vaktin varsa bugün eksik kalan # dersi de tamamlayabilirsin.}}"
+
+#: src/today/today-catch-up.tsx
+msgctxt "3aXO5g"
+msgid "{lessons, plural, one {# more lesson to catch up comes first tomorrow.} other {# more lessons to catch up come first tomorrow.}}"
+msgstr "{lessons, plural, other {Yarın ilk iş eksik kalan # dersi daha tamamlayacaksın.}}"
+
+#: src/today/today-catch-up.tsx
+msgctxt "HK8HHp"
+msgid "Catch up today · +{time}"
+msgstr "Kalanları bugün tamamla · +{time}"
 
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
@@ -14888,21 +15048,16 @@ msgid "What changed"
 msgstr "Neler değişti"
 
 #: src/today/today-coming-lessons.tsx
-msgctxt "4bemPv"
-msgid "Get them now"
-msgstr "Şimdi hazırla"
+#: src/today/today-segment-popover.tsx
+msgctxt "Ay_6I8"
+msgid "Not written yet."
+msgstr "Henüz hazırlanmadı."
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Sıradaki derslerin"
-
-#: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "5CkyMG"
-msgid "Not ready yet"
-msgstr "Henüz hazır değil"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -14915,25 +15070,15 @@ msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# / {total, number} tamamlandı} other {# / {total, number} tamamlandı}}"
 
-#: src/today/today-day-progress.tsx
-msgctxt "OFFVnK"
-msgid "A shorter day"
-msgstr "Daha kısa bir gün"
-
-#: src/today/today-day-progress.tsx
-msgctxt "73UHV8"
-msgid "Your plan keeps time for the mock exam on {date}."
-msgstr "Planın {date} tarihindeki deneme sınavı için zaman ayırıyor."
-
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
 msgid "You studied on your day off."
 msgstr "Dinlenme gününde çalıştın."
 
 #: src/today/today-day-status.tsx
-msgctxt "CZ9Ql4"
-msgid "You're done for today."
-msgstr "Bugünkü çalışmanı bitirdin."
+msgctxt "QPZgh9"
+msgid "Today's session is complete."
+msgstr "Bugünkü çalışman tamamlandı."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -14941,9 +15086,19 @@ msgid "No study planned today."
 msgstr "Bugün planında çalışma yok."
 
 #: src/today/today-day-status.tsx
-msgctxt "RC22zo"
-msgid "Your next lessons are below if you want to study."
-msgstr "Çalışmak istersen sıradaki derslerin aşağıda."
+msgctxt "n6t3BM"
+msgid "Welcome back! Your next lessons are here if you'd like to study."
+msgstr "Tekrar hoş geldin! Çalışmak istersen sıradaki derslerin burada."
+
+#: src/today/today-day-status.tsx
+msgctxt "lx6WCd"
+msgid "Your next lessons are here if you'd like to study."
+msgstr "Çalışmak istersen sıradaki derslerin burada."
+
+#: src/today/today-day-status.tsx
+msgctxt "xzdcrh"
+msgid "Welcome back! Today is a rest day in your plan, so enjoy it."
+msgstr "Tekrar hoş geldin! Planına göre bugün dinlenme günü, tadını çıkar."
 
 #: src/today/today-day-status.tsx
 msgctxt "MdRa2K"
@@ -14966,9 +15121,19 @@ msgid "Getting today's lessons ready…"
 msgstr "Bugünkü dersleri hazırlıyoruz…"
 
 #: src/today/today-day-status.tsx
-msgctxt "DI5PCI"
-msgid "Today's lessons aren't ready yet."
-msgstr "Bugünkü dersler henüz hazır değil."
+msgctxt "JpvthH"
+msgid "They show up here on their own."
+msgstr "Hazır olunca burada otomatik olarak görünecekler."
+
+#: src/today/today-day-status.tsx
+msgctxt "OX1Nok"
+msgid "Adjust your plan to keep going."
+msgstr "Devam etmek için planını ayarla."
+
+#: src/today/today-day-status.tsx
+msgctxt "FyQP44"
+msgid "Today's lessons aren't written yet."
+msgstr "Bugünkü dersler henüz hazırlanmadı."
 
 #: src/today/today-day-status.tsx
 msgctxt "2PMQ3_"
@@ -14976,29 +15141,25 @@ msgid "Nothing to review today."
 msgstr "Bugün tekrar edilecek bir şey yok."
 
 #: src/today/today-day-status.tsx
-msgctxt "bGbW_K"
-msgid "You finished your plan."
-msgstr "Planını tamamladın."
+msgctxt "wqqp3S"
+msgid "Nothing new for today."
+msgstr "Bugün yeni ders yok."
 
 #: src/today/today-day-status.tsx
-msgctxt "brhjJ2"
-msgid "You're all caught up."
-msgstr "Geride kalan dersin yok."
+msgctxt "vzcvDF"
+msgid "You've done every lesson in your plan, or already know it."
+msgstr "Planındaki tüm dersleri ya tamamladın ya da zaten biliyordun."
 
-#: src/today/today-earlier-lessons.tsx
-msgctxt "JMtLiG"
-msgid "{lessons, plural, one {# lesson from earlier days} other {# lessons from earlier days}}"
-msgstr "{lessons, plural, other {Önceki günlerden kalan # ders}}"
-
-#: src/today/today-earlier-lessons.tsx
-msgctxt "dlS9NH"
-msgid "Add to today"
-msgstr "Bugüne ekle"
+#. Study left over, not a job: lessons left unfinished on earlier days. {count} is how many.
+#: src/today/today-earlier-work.tsx
+msgctxt "ylqDtY"
+msgid "Earlier unfinished work · {count}"
+msgstr "Önceki günlerden yarım kalan dersler · {count}"
 
 #: src/today/today-exam-access.tsx
-msgctxt "HdcXO9"
-msgid "Exam prep without Plus"
-msgstr "Plus olmadan sınava hazırlık"
+msgctxt "6cgB9d"
+msgid "Exam prep on the free plan"
+msgstr "Ücretsiz pakette sınava hazırlık"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
@@ -15064,19 +15225,24 @@ msgid "Your time can't cover everything before your exam. In about {time}, the F
 msgstr "Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık {time} içinde en çok neye çalışman gerektiğini gösterir."
 
 #: src/today/today-heading.tsx
-msgctxt "X60Sb_"
-msgid "Your plan doesn't fit"
-msgstr "Planın süreye sığmıyor"
+msgctxt "FR3uzc"
+msgid "{exam} tomorrow"
+msgstr "{exam} yarın"
 
 #: src/today/today-heading.tsx
-msgctxt "Viq1rs"
-msgid "{exam} in {days, plural, one {# day} other {# days}}"
-msgstr "{exam} için {days, plural, other {# gün kaldı}}"
+msgctxt "hKmRFY"
+msgid "{exam} today"
+msgstr "{exam} bugün"
 
 #: src/today/today-heading.tsx
-msgctxt "RxQWR_"
-msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Tekrar hoş geldin. Bugünkü çalışma kısa, yeniden başlamak kolay."
+msgctxt "Ld_YBu"
+msgid "Saving time for {date}'s mock exam"
+msgstr "{date} tarihindeki deneme sınavı için zaman ayırıyoruz"
+
+#: src/today/today-heading.tsx
+msgctxt "dYEY9n"
+msgid "Lighter day: saving time for {date}'s mock exam"
+msgstr "Bugün daha hafif: {date} tarihindeki deneme sınavı için zaman ayırıyoruz"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
@@ -15088,10 +15254,11 @@ msgctxt "xNg7nj"
 msgid "Keep it"
 msgstr "Böyle bırak"
 
+#. Study time is the time of day the learner studies. {time} is a time of day, like "20:00".
 #: src/today/today-insight.tsx
-msgctxt "5cDa2C"
-msgid "Move it"
-msgstr "Taşı"
+msgctxt "YSLbSf"
+msgid "Move my study time to {time}"
+msgstr "Çalışma saatimi {time} yap"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -15120,6 +15287,11 @@ msgstr "Not aldık."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Son cevaplarına göre"
+
+#: src/today/today-more.tsx
+msgctxt "4wC4V5"
+msgid "Study for {minutes} minutes"
+msgstr "{minutes} dakika çalış"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
@@ -15162,9 +15334,14 @@ msgid "Building your {goal} plan"
 msgstr "{goal} planını hazırlıyoruz"
 
 #: src/today/today-preparing.tsx
-msgctxt "Xu-pMI"
-msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır."
+msgctxt "YIDCBU"
+msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
+msgstr "Genellikle bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır."
+
+#: src/today/today-row-open.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", bir görevde ilerleme sağlar"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
@@ -15172,45 +15349,40 @@ msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Haftan"
 
-#: src/today/today-screen.tsx
-msgctxt "cBjaVC"
-msgid "Today's lessons"
-msgstr "Bugünkü dersler"
-
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"
 msgid "Checks what you've learned so far."
-msgstr ""
+msgstr "Şimdiye kadar öğrendiklerini kontrol eder."
 
 #: src/today/today-segment-popover.tsx
 msgctxt "jIBu7R"
 msgid "You put what you learned into your own words."
-msgstr ""
+msgstr "Öğrendiklerini kendi cümlelerinle anlatırsın."
 
 #: src/today/today-segment-popover.tsx
 msgctxt "LjCPIV"
 msgid "Another try at questions you missed."
-msgstr ""
+msgstr "Yanlış yaptığın soruları bir kez daha denersin."
 
 #: src/today/today-segment-popover.tsx
 msgctxt "hm2fwy"
 msgid "A practice exam, like the real one."
-msgstr ""
+msgstr "Gerçek sınava benzeyen bir deneme sınavı."
 
 #: src/today/today-segment-popover.tsx
 msgctxt "1zNtC7"
 msgid "New questions that mix what you've learned."
-msgstr ""
+msgstr "Öğrendiklerini bir araya getiren yeni sorular."
 
 #: src/today/today-segment-popover.tsx
 msgctxt "LHmG9j"
 msgid "Brings back what you studied before you forget it."
-msgstr ""
+msgstr "Çalıştığın konuları unutmadan önce hatırlatır."
 
 #: src/today/today-segment-popover.tsx
 msgctxt "G-gCWb"
 msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
-msgstr ""
+msgstr "{answered, number} / {count, plural, other {#}}"
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
@@ -15255,9 +15427,9 @@ msgid "Up next in your plan"
 msgstr "Planında sıradakiler"
 
 #: src/today/today-week-challenge.tsx
-msgctxt "bJtf06"
-msgid "review"
-msgstr "tekrar"
+msgctxt "tfN79H"
+msgid "full review"
+msgstr "genel tekrar"
 
 #: src/today/today-week-challenge.tsx
 msgctxt "VNs9hR"
@@ -15270,9 +15442,14 @@ msgid "weekly challenge"
 msgstr "haftalık meydan okuma"
 
 #: src/today/today-week-challenge.tsx
-msgctxt "J3eMtx"
-msgid "every topic"
-msgstr "tüm konular"
+msgctxt "MuwOz5"
+msgid "every topic, your weakest first"
+msgstr "tüm konular, önce en çok zorlandıkların"
+
+#: src/today/today-week-day.tsx
+msgctxt "VlCnpE"
+msgid "daily time met"
+msgstr "günlük çalışma süresi tamamlandı"
 
 #: src/today/today-week-day.tsx
 msgctxt "F8phHs"
@@ -15285,9 +15462,9 @@ msgid "exam day"
 msgstr "sınav günü"
 
 #: src/today/today-week-day.tsx
-msgctxt "WcEyrI"
-msgid "end date"
-msgstr "bitiş tarihi"
+msgctxt "ndZ3YE"
+msgid "your goal's date"
+msgstr "hedef tarihin"
 
 #: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
@@ -15295,14 +15472,9 @@ msgid "before your plan"
 msgstr "planının başlangıcından önce"
 
 #: src/today/today-week-day.tsx
-msgctxt "1RBuve"
-msgid "after your exam"
-msgstr "sınavından sonra"
-
-#: src/today/today-week-day.tsx
-msgctxt "coog-B"
-msgid "after your end date"
-msgstr "bitiş tarihinden sonra"
+msgctxt "fy2sc9"
+msgid "after your date"
+msgstr "hedef tarihinden sonra"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
@@ -15324,10 +15496,42 @@ msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time} planlandı"
 
+#. A lesson left from an earlier day.
 #: src/today/use-row-label.ts
-msgctxt "OUc_Xr"
-msgid "Every topic"
-msgstr "Tüm konular"
+msgctxt "afsNpC"
+msgid "Catching up · {subject}"
+msgstr "Önceki günden kalan · {subject}"
+
+#. A lesson left from an earlier day.
+#: src/today/use-row-label.ts
+msgctxt "tj4pFE"
+msgid "Catching up"
+msgstr "Önceki günden kalan"
+
+#: src/today/use-row-label.ts
+msgctxt "4qsWr2"
+msgid "{label} · often tested"
+msgstr "{label} · sınavlarda sık çıkar"
+
+#: src/today/use-today-copy.ts
+msgctxt "QyI7sJ"
+msgid "Welcome back! Today takes about {time}, so it's easy to pick up again."
+msgstr "Tekrar hoş geldin! Bugünkü çalışma yaklaşık {time} sürüyor, böylece kolayca devam edebilirsin."
+
+#: src/today/use-today-copy.ts
+msgctxt "x6Er4-"
+msgid "Welcome back! Today is lighter, about {time}, so it's easy to pick up again."
+msgstr "Tekrar hoş geldin! Bugünkü çalışma daha hafif ve yaklaşık {time} sürüyor, böylece kolayca devam edebilirsin."
+
+#: src/today/use-today-copy.ts
+msgctxt "d8NWNt"
+msgid "A new phase starts today, with an easy warm-up first."
+msgstr "Bugün yeni bir aşama başlıyor, ilk adım kolay bir ısınma."
+
+#: src/today/use-today-copy.ts
+msgctxt "RlVM-g"
+msgid "A fresh week. Today starts with an easy warm-up."
+msgstr "Yeni bir hafta. Bugün kolay bir ısınmayla başlıyorsun."
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "OA9N1Z"

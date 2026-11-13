@@ -1,5 +1,6 @@
 "use client";
 
+import { type NoGlyph } from "@zoonk/ui/components/enter-button";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useRef } from "react";
@@ -135,7 +136,7 @@ export function TaskFrame({
       </main>
 
       {footer && (
-        <TaskActionBar className="outline-none" ref={bar} tabIndex={-1}>
+        <TaskActionBar ref={bar} tabIndex={-1}>
           {footer}
         </TaskActionBar>
       )}
@@ -154,10 +155,8 @@ export function TaskMainButton({
   children,
   className,
   disabled = false,
-  icon,
-  iconPosition,
   onClick,
-}: Pick<React.ComponentProps<typeof EnterButton>, "icon" | "iconPosition"> & {
+}: NoGlyph & {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -171,8 +170,6 @@ export function TaskMainButton({
       busy={busy}
       className={className}
       disabled={disabled || !mounted}
-      icon={icon}
-      iconPosition={iconPosition}
       onClick={onClick}
     >
       {children}
@@ -180,15 +177,13 @@ export function TaskMainButton({
   );
 }
 
-/** It moves on, with the trailing forward arrow, unless it's given another `icon`. */
 export function TaskMainLink({
   children,
   className,
   href,
   steadyMs = 0,
   toApp = false,
-  ...iconProps
-}: Pick<React.ComponentProps<typeof EnterButton>, "icon" | "iconPosition"> & {
+}: NoGlyph & {
   children: React.ReactNode;
   className?: string;
   href: string;
@@ -212,7 +207,7 @@ export function TaskMainLink({
   };
 
   return (
-    <EnterLink className={className} href={href} onClick={onClick} {...iconProps}>
+    <EnterLink className={className} href={href} onClick={onClick}>
       {children}
     </EnterLink>
   );

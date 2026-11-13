@@ -4,7 +4,6 @@ import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal
 import { EnterButton } from "@zoonk/learn/enter-button";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 import { ChangeSaveError } from "@zoonk/learn/save-error";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 
@@ -43,13 +42,7 @@ export function ResumeGoalButton({ goalId }: { goalId: string }) {
   return (
     <div className="flex min-w-0 flex-col items-stretch gap-2 sm:items-start">
       <form action={() => resume()} className="contents">
-        <EnterButton
-          busy={isPending}
-          disabled={outcome === "saved"}
-          icon={<PlayIcon aria-hidden="true" />}
-          size="lg"
-          type="submit"
-        >
+        <EnterButton busy={isPending} disabled={outcome === "saved"} size="lg" type="submit">
           {t("Resume")}
         </EnterButton>
       </form>

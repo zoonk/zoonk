@@ -41,7 +41,7 @@ export async function TodayOnboardingLeft({
       <TodayAtRest
         banner={banner}
         actions={
-          <EnterLink href={href} icon={null} size="lg">
+          <EnterLink href={href} size="lg">
             {t("See your plan")}
           </EnterLink>
         }
@@ -56,7 +56,7 @@ export async function TodayOnboardingLeft({
     <TodayAtRest
       banner={banner}
       actions={
-        <EnterLink href={href} icon={null} size="lg">
+        <EnterLink href={href} size="lg">
           {t("Continue")}
         </EnterLink>
       }
