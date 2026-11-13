@@ -2803,11 +2803,6 @@ msgid "Opening your lesson"
 msgstr "Dersini açıyoruz"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Geri dön"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Bu ders hakkında"
