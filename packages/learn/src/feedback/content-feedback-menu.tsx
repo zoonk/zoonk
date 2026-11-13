@@ -8,10 +8,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useId } from "react";
-import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
+import { TaskHeaderMenu } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
 import { ReportProblemItem } from "./report-problem-item";
 
@@ -36,18 +35,24 @@ export function ContentFeedbackMenu({
     return null;
   }
 
+  const onOpenChange = (open: boolean) => feedback.setMenuOpen({ menuId, open });
+
+  if (size === "task") {
+    return (
+      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange}>
+        <ReportProblemItem screen={screen} target={target} />
+      </TaskHeaderMenu>
+    );
+  }
+
   return (
-    <DropdownMenu onOpenChange={(open) => feedback.setMenuOpen({ menuId, open })}>
+    <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         render={
           size === "detail" ? (
             <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
           ) : (
-            <Button
-              className={cn("shrink-0", size === "task" && TASK_HEADER_ICON_CLASS.end)}
-              size={size === "task" ? "icon" : size}
-              variant="ghost"
-            />
+            <Button className="shrink-0" size={size} variant="ghost" />
           )
         }
       >

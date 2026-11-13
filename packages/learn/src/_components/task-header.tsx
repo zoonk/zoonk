@@ -1,13 +1,18 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY } from "@zoonk/ui/components/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
-import { PanelRightIcon } from "lucide-react";
+import { EllipsisIcon, PanelRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useSyncExternalStore } from "react";
 import { deviceStorage } from "../_utils/device-storage";
@@ -51,6 +56,41 @@ export function TaskHeaderSide({
 }
 
 export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
+
+/** A task's "…" at its header's end. `label` names the menu when it isn't about the screen. */
+export function TaskHeaderMenu({
+  children,
+  label,
+  onOpenChange,
+  ...content
+}: Pick<React.ComponentProps<typeof DropdownMenuContent>, "className" | "finalFocus"> & {
+  children: React.ReactNode;
+  label?: string;
+  onOpenChange?: (open: boolean) => void;
+}) {
+  const t = useExtracted();
+
+  return (
+    <DropdownMenu onOpenChange={onOpenChange}>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
+            size="icon"
+            variant="ghost"
+          />
+        }
+      >
+        <EllipsisIcon aria-hidden="true" />
+        <span className="sr-only">{label ?? t("Screen options")}</span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" {...content}>
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 /** A task's title, wherever its header shows one: the Study view's and its zoom alike. */
 export const TASK_TITLE_CLASS = "text-foreground text-sm leading-5 font-medium";
