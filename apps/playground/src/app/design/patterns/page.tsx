@@ -25,8 +25,8 @@ import { SubjectGlyph, SubjectLabel } from "@zoonk/learn/subject-label";
 import { Surface } from "@zoonk/learn/surface";
 import { Button } from "@zoonk/ui/components/button";
 import { type Metadata } from "next";
-import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
-import { DevOnlySpecimen, DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { NextIntlClientProvider } from "next-intl";
+import { DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
 import { CurrentSpecimen } from "./current-specimen";
 import { WordsSpecimen } from "./words-specimen";
 
@@ -51,25 +51,23 @@ function ActionsSpecimen() {
 
 function AnswersSpecimen() {
   return (
-    <DevOnlySpecimen>
-      <AnswerOptionGroup className="max-w-column">
-        <AnswerOption marker={1} picked={false}>
-          At rest
-        </AnswerOption>
-        <AnswerOption marker={2} picked>
-          Picked, before it&apos;s checked
-        </AnswerOption>
-        <AnswerOption marker={3} picked result="right">
-          Checked right
-        </AnswerOption>
-        <AnswerOption marker={4} picked result="wrong">
-          Checked wrong
-        </AnswerOption>
-        <AnswerOption marker={5} picked={false} result="right">
-          The right answer the learner didn&apos;t pick
-        </AnswerOption>
-      </AnswerOptionGroup>
-    </DevOnlySpecimen>
+    <AnswerOptionGroup className="max-w-column">
+      <AnswerOption marker={1} picked={false}>
+        At rest
+      </AnswerOption>
+      <AnswerOption marker={2} picked>
+        Picked, before it&apos;s checked
+      </AnswerOption>
+      <AnswerOption marker={3} picked result="right">
+        Checked right
+      </AnswerOption>
+      <AnswerOption marker={4} picked result="wrong">
+        Checked wrong
+      </AnswerOption>
+      <AnswerOption marker={5} picked={false} result="right">
+        The right answer the learner didn&apos;t pick
+      </AnswerOption>
+    </AnswerOptionGroup>
   );
 }
 
@@ -289,7 +287,7 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
 
 export default function PatternsPage() {
   return (
-    <PreviewIntlProvider>
+    <NextIntlClientProvider>
       <DocHeader title="Components and patterns">
         One way to draw each thing, from the shared components. Specimens are the real components,
         in this device&apos;s mode.
@@ -314,6 +312,6 @@ export default function PatternsPage() {
           </DocSection>
         );
       })}
-    </PreviewIntlProvider>
+    </NextIntlClientProvider>
   );
 }

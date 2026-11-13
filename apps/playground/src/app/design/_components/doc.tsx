@@ -69,23 +69,6 @@ export function Specimen({ children, className }: React.PropsWithChildren<{ clas
   );
 }
 
-/**
- * Only the dev server runs next-intl's `useExtracted` without its compiler, so a production build
- * shows a note here instead of failing.
- */
-export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
-  if (process.env.NODE_ENV !== "production") {
-    return children;
-  }
-
-  return (
-    <p className="text-muted-foreground text-sm">
-      This specimen&apos;s components speak through next-intl; run the playground with `pnpm dev` to
-      see them.
-    </p>
-  );
-}
-
 export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: readonly string[] }) {
   return (
     <div className="grid gap-4 text-sm leading-5.5 sm:grid-cols-2">

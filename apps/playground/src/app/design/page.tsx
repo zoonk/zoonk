@@ -6,8 +6,8 @@ import { StatusMark } from "@zoonk/learn/status-mark";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
-import { PreviewIntlProvider } from "../preview/preview-intl-provider";
-import { DevOnlySpecimen, DocHeader, DocRules, DocSection } from "./_components/doc";
+import { NextIntlClientProvider } from "next-intl";
+import { DocHeader, DocRules, DocSection } from "./_components/doc";
 import { MODES, modeClass } from "./_components/modes";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -28,7 +28,7 @@ const MODE_CHECKS = [
 
 function AtAGlance() {
   return (
-    <PreviewIntlProvider>
+    <NextIntlClientProvider>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {MODES.map((mode) => (
           <div
@@ -65,7 +65,7 @@ function AtAGlance() {
           </div>
         ))}
       </div>
-    </PreviewIntlProvider>
+    </NextIntlClientProvider>
   );
 }
 
@@ -86,9 +86,7 @@ export default function DesignOverviewPage() {
         intro="The day's meter (done, the block in progress, practice), a pick in the text color, right in blue, wrong in pink-red, the status marks and a reward, in every mode."
         title="At a glance"
       >
-        <DevOnlySpecimen>
-          <AtAGlance />
-        </DevOnlySpecimen>
+        <AtAGlance />
       </DocSection>
 
       <DocSection title="Where it lives">
