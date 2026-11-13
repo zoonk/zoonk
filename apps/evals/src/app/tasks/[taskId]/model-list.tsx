@@ -37,7 +37,7 @@ export function ModelList({
         {models.map(({ model, pricing, status }) => (
           <li key={model.id}>
             <Link
-              className="hover:bg-muted -mx-2 flex min-h-11 items-center justify-between gap-3 rounded-md px-2 text-sm"
+              className="hover:bg-muted -mx-2.5 flex min-h-11 items-center justify-between gap-3 rounded-lg px-2.5 text-sm"
               href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
             >
               <span className="flex min-w-0 items-center gap-2">

@@ -14,7 +14,7 @@ export function LeaderboardTabsSkeleton() {
   return (
     <div aria-hidden="true" className="flex flex-col divide-y">
       {LEADERBOARD_SKELETON_ROWS.map((rowId) => (
-        <div className="flex h-12 items-center gap-6 px-2" key={rowId}>
+        <div className="flex h-11 items-center gap-6 px-2" key={rowId}>
           <Skeleton className="h-5 flex-1 rounded" />
           <Skeleton className="h-5 w-24 rounded" />
           <Skeleton className="h-5 w-20 rounded" />
@@ -63,7 +63,7 @@ export function LeaderboardTabs({
 
   return (
     <Tabs onValueChange={handleTabChange} value={currentTab}>
-      <TabsList>
+      <TabsList className="-mx-2.5">
         <TabsTrigger value="battle">Judged side by side</TabsTrigger>
         <TabsTrigger value="regular">Scored one by one</TabsTrigger>
       </TabsList>

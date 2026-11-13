@@ -17,7 +17,7 @@ export function RankingItem({
   testCaseId: string;
 }) {
   return (
-    <div className="bg-muted rounded-lg p-3">
+    <div className="bg-muted rounded-xl p-3">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">{testCaseId}</span>

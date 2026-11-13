@@ -49,7 +49,7 @@ function TaskRow({ showDescription, task }: { showDescription: boolean; task: Ta
   return (
     <li>
       <Link
-        className="hover:bg-muted -mx-2 flex min-h-11 items-center justify-between gap-4 rounded-md px-2 py-2 text-sm"
+        className="hover:bg-muted -mx-2.5 flex min-h-11 items-center justify-between gap-4 rounded-lg px-2.5 py-2 text-sm"
         href={`/tasks/${task.id}`}
         title={showDescription ? undefined : task.description}
       >

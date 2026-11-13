@@ -105,7 +105,7 @@ function OutputSection({ output }: { output: string }) {
         </Button>
       </div>
 
-      <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-sm">{output}</pre>
+      <pre className="bg-muted overflow-x-auto rounded-xl p-4 text-sm">{output}</pre>
     </div>
   );
 }
@@ -116,7 +116,7 @@ function EvaluationStepsSection({ steps }: { steps: ScoreStep[] }) {
       <p className="text-muted-foreground mb-2 text-sm">Evaluation steps</p>
       <div className="flex flex-col gap-2">
         {steps.map((step) => (
-          <div className="rounded-lg border p-3" key={step.kind}>
+          <div className="rounded-xl border p-3" key={step.kind}>
             <p className="mb-1 text-sm font-medium capitalize">{step.kind.replaceAll("_", " ")}</p>
             <p className="text-muted-foreground text-sm">{step.conclusion}</p>
             <p className="text-muted-foreground mt-1 text-sm">Score: {step.score}</p>
@@ -137,7 +137,7 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
       <p className="text-muted-foreground mb-2 text-sm">Category scores</p>
       <div className="grid gap-2 md:grid-cols-2">
         {categoryScores.map((category) => (
-          <div className="rounded-lg border p-3" key={category.categoryId}>
+          <div className="rounded-xl border p-3" key={category.categoryId}>
             <div className="mb-1 flex items-center justify-between gap-2">
               <p className="text-sm font-medium">{category.label}</p>
               <p className="text-sm font-medium">{category.score.toFixed(1)}</p>
@@ -208,7 +208,7 @@ function KeyFlawsSection({ flaws }: { flaws?: KeyFlaw[] }) {
         Judge-flagged key flaws: {flaws === undefined ? "not recorded" : flaws.length}
       </p>
       {flaws?.map((flaw) => (
-        <div className="mb-2 rounded-lg border p-3 text-sm" key={flaw.itemLocator}>
+        <div className="mb-2 rounded-xl border p-3 text-sm" key={flaw.itemLocator}>
           <p className="font-medium">
             {flaw.itemLocator}: {flaw.kind}
           </p>
@@ -231,7 +231,7 @@ export function FailedTestCase({
 }) {
   return (
     <section
-      className="rounded-lg border p-4 wrap-anywhere"
+      className="rounded-xl border p-4 wrap-anywhere"
       id={anchored ? `case-${caseId}` : undefined}
     >
       <h3 className="font-medium">
