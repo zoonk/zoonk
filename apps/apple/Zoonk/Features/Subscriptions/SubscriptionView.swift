@@ -894,7 +894,7 @@ private struct FreePlanCard: View {
           EmptyView()
         }
 
-        if let goals = limits.activeGoals, let lessons = limits.lessonsPerMonth {
+        if let goals = limits.activeGoals, let lessons = limits.lessonsPer30Days {
           Text(
             verbatim: [
               String(
@@ -1049,7 +1049,7 @@ private struct PlusQuestions: View {
             comment: "Free plan: goals at a time"))
       }
 
-      if let month = limits.lessonsPerMonth {
+      if let month = limits.lessonsPer30Days {
         bullet(
           Text(
             "\(month) lessons a month", tableName: "Account",
