@@ -20,7 +20,6 @@ import { EnterButton, EnterLink } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
-import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
@@ -28,8 +27,6 @@ import { LearnLink } from "../learn-link";
 import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
 import { PageWithAside } from "../shell/learn-shell";
 import { type MockChooserStatus } from "./mock-chooser-parts";
-
-type MockShortStatus = Extract<MockChooserStatus, { kind: "short" }>;
 
 export function ChooserLayout({
   aside,
@@ -67,17 +64,6 @@ function useFailureText() {
       : t("We couldn't start the mock exam. Try again.");
 }
 
-function ShortText({ status }: { status: MockShortStatus }) {
-  const t = useExtracted();
-  const duration = useFormatDuration();
-
-  return t("Today it has {count, number} of its {total, number} questions, about {time}.", {
-    count: status.questions,
-    time: duration(status.minutes),
-    total: status.examQuestions,
-  });
-}
-
 function ChooserLine({ detail, status }: { detail: string; status: MockChooserStatus }) {
   const failureText = useFailureText();
 
@@ -89,9 +75,7 @@ function ChooserLine({ detail, status }: { detail: string; status: MockChooserSt
       )}
       role="status"
     >
-      {status.kind === "short" && <ShortText status={status} />}
-      {status.kind === "failed" && failureText(status.reason)}
-      {status.kind !== "short" && status.kind !== "failed" && detail}
+      {status.kind === "failed" ? failureText(status.reason) : detail}
     </p>
   );
 }

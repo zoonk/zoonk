@@ -19,6 +19,7 @@ import {
 import { type MockChooserStatus } from "./mock-chooser-parts";
 import { type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
 import { useMockOptionDetail, useMockOptionName, useMockOptionSize } from "./mock-option-labels";
+import { MockShortDialog } from "./mock-short-dialog";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
 
@@ -93,31 +94,40 @@ function MockOptionLists({
   );
 }
 
+type MockChooserProps = {
+  bar: ReactNode;
+  busy: boolean;
+  hrefs: MockChooserHrefs;
+  onStart: (option: MockOptionView) => void;
+  /** The learner agreed to the `short` status's numbers. */
+  onStartShort: (option: MockOptionView) => void;
+  onStayChoosing: () => void;
+  status: MockChooserStatus;
+  view: MockOptionsView;
+};
+
 function PracticeChooser({
   bar,
   busy,
   hrefs,
   onStart,
+  onStartShort,
+  onStayChoosing,
   status,
   view,
-}: {
-  bar: ReactNode;
-  busy: boolean;
-  hrefs: MockChooserHrefs;
-  onStart: (option: MockOptionView) => void;
-  status: MockChooserStatus;
-  view: MockOptionsView;
-}) {
+}: MockChooserProps) {
   const t = useExtracted();
   // Nothing is picked as the page opens, so a first tap on Start can't begin an hours-long exam.
   const [picked, setPicked] = useState<string | null>(null);
   const option = view.options.find((candidate) => getMockOptionKey(candidate) === picked) ?? null;
   const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
   const open = view.access === "open";
-  const short = status.kind === "short" && status.optionKey === picked ? status : null;
+  const short = status.kind === "short" ? status : null;
+  const shown: MockChooserStatus = short ? { kind: "choosing" } : status;
 
-  const shown: MockChooserStatus =
-    status.kind === "short" && !short ? { kind: "choosing" } : status;
+  const shortOption = short
+    ? view.options.find((candidate) => getMockOptionKey(candidate) === short.optionKey)
+    : undefined;
 
   const start = (
     <ChooserStartButton busy={busy} disabled={!option} onClick={() => option && onStart(option)}>
@@ -154,37 +164,20 @@ function PracticeChooser({
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
         {open && <ChooserBottomBar>{start}</ChooserBottomBar>}
       </DetailContent>
+
+      <MockShortDialog
+        onCancel={onStayChoosing}
+        onStart={() => shortOption && onStartShort(shortOption)}
+        status={short}
+      />
     </ChooserLayout>
   );
 }
 
-export function MockChooserScreen({
-  bar,
-  busy,
-  hrefs,
-  onStart,
-  status,
-  view,
-}: {
-  bar: ReactNode;
-  busy: boolean;
-  hrefs: MockChooserHrefs;
-  onStart: (option: MockOptionView) => void;
-  status: MockChooserStatus;
-  view: MockOptionsView;
-}) {
-  if (status.kind === "writing") {
-    return <MockWriting bar={bar} eyebrow={view.examName} run={status.run} />;
+export function MockChooserScreen(props: MockChooserProps) {
+  if (props.status.kind === "writing") {
+    return <MockWriting bar={props.bar} eyebrow={props.view.examName} run={props.status.run} />;
   }
 
-  return (
-    <PracticeChooser
-      bar={bar}
-      busy={busy}
-      hrefs={hrefs}
-      onStart={onStart}
-      status={status}
-      view={view}
-    />
-  );
+  return <PracticeChooser {...props} />;
 }

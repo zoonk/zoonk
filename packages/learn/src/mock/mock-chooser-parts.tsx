@@ -3,7 +3,7 @@
 import { type HelpLimit } from "../_components/help-limit-notice";
 import { type GenerationRun } from "../generation/generation-run";
 
-type MockShortStatus = {
+export type MockShortStatus = {
   examQuestions: number;
   kind: "short";
   limit: "day" | "month" | "total" | null;
