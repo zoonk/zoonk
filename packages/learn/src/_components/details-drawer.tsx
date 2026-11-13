@@ -21,11 +21,14 @@ const TRIGGER: Record<"link" | "option" | "secondary" | "small", React.ReactElem
   small: <Button className="shrink-0" size="sm" variant="outline" />,
 };
 
+/** Takes only the title's line height, so it centers on the title even with a subtitle under it. */
 export function DrawerCloseButton() {
   const t = useExtracted();
 
   return (
-    <DrawerClose render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}>
+    <DrawerClose
+      render={<Button className="-my-1 shrink-0" edge="end" size="icon" variant="ghost" />}
+    >
       <XIcon aria-hidden="true" />
       <span className="sr-only">{t("Close")}</span>
     </DrawerClose>

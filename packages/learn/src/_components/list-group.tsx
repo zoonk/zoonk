@@ -125,6 +125,9 @@ export function ListRowButton({
   );
 }
 
+/** For a row of three or more lines: its mark sits on the title's own line box, not the row's middle. */
+export const LIST_ROW_FIRST_LINE_CLASS = "mt-2.75 h-5 self-start";
+
 export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

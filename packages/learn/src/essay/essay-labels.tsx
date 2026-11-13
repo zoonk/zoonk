@@ -2,6 +2,9 @@
 
 import { useExtracted, useFormatter } from "next-intl";
 
+/** A quoted passage: a rule at its start, then the text, the same gap wherever the essay quotes. */
+export const ESSAY_QUOTE_CLASS = "border-l-2 pl-3";
+
 export function useCriterionName() {
   const t = useExtracted();
 

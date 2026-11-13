@@ -4,6 +4,7 @@ import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import {
+  LIST_ROW_FIRST_LINE_CLASS,
   ListRow,
   ListRowBody,
   ListRowContent,
@@ -53,8 +54,7 @@ export function MockSummaryRow({
 
   const content = (
     <>
-      {/* Stacked, the row has three lines, so its mark sits on the first: the title's own line box. */}
-      <ListRowLeading className={cn(stacked && "mt-2.75 h-5 self-start")}>
+      <ListRowLeading className={cn(stacked && LIST_ROW_FIRST_LINE_CLASS)}>
         <StatusMark status="done" />
       </ListRowLeading>
       <ListRowBody>

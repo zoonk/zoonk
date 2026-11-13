@@ -10,6 +10,9 @@ import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
 import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
+/** A page under its bar: the bar's title and the page's sit closer on a phone. */
+export const PAGE_ARTICLE_CLASS = "flex min-w-0 flex-col gap-2 sm:gap-8";
+
 export function DetailLayout({
   aside,
   asideLabel = "",
@@ -23,7 +26,7 @@ export function DetailLayout({
   bar?: React.ReactNode;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-col gap-2 sm:gap-8" {...props}>
+    <article className={PAGE_ARTICLE_CLASS} {...props}>
       {bar}
       <div
         className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}

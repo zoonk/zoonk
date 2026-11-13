@@ -141,7 +141,7 @@ export function MockReviewSection() {
   }
 
   return (
-    <ResultSection title={t("Questions to review")}>
+    <ResultSection rows title={t("Questions to review")}>
       <MockReviewList />
     </ResultSection>
   );

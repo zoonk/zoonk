@@ -5,6 +5,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { LearnLink } from "../learn-link";
 import { ExamChecklist } from "./exam-checklist";
 import { useExamDayText } from "./exam-labels";
@@ -92,7 +93,7 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
           <Icon className="text-muted-foreground size-4" />
         </span>
         <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="text-reading font-medium">{copy.title}</h2>
+          <h2 className={PAGE_SECTION_TITLE_CLASS}>{copy.title}</h2>
           {showDay && moment.day && (
             <p className="text-compact font-mono font-medium tabular-nums">{dayText(moment.day)}</p>
           )}

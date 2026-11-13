@@ -35,7 +35,7 @@ const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
  * Room for a title and the two lines a map being made shows, so pressing Create, or a row a
  * lesson's end reads in late, moves nothing under it.
  */
-export const MIND_MAP_ROW_CLASS = "min-h-19";
+export const MIND_MAP_ROW_CLASS = "min-h-20";
 
 function SlotMark({ shown }: { shown: MindMapShown }) {
   if (shown === "drawing" || shown === "writingLessons") {

@@ -10,6 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { ChangeSaveError } from "../_components/save-error";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { useExamScreen } from "./exam-context";
@@ -111,7 +112,7 @@ export function ExamResultSection() {
   return (
     <section aria-labelledby="exam-result-title" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-reading font-medium" id="exam-result-title">
+        <h2 className={PAGE_SECTION_TITLE_CLASS} id="exam-result-title">
           {t("How did it go?")}
         </h2>
         <p className="text-muted-foreground text-sm">
@@ -160,7 +161,7 @@ export function ExamResultSection() {
         </div>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-sm font-medium">{t("Did you pass?")}</legend>
+          <legend className="mb-2 text-sm leading-none font-medium">{t("Did you pass?")}</legend>
           <RadioGroup
             className="flex flex-wrap gap-2"
             onValueChange={(value) =>

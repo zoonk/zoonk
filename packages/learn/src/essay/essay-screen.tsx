@@ -176,6 +176,12 @@ function EssayWriteScreen({ onSeeGrade, writer }: { onSeeGrade: () => void; writ
   const { drafts, essay, hrefs } = useEssayScreen();
   const label = usePromptLabel(essay.rubric);
   const textsLabel = useTextsLabel(essay.rubric);
+
+  const lastGradeLabel = t({
+    description: "The grade of the learner's last essay draft.",
+    message: "Your last grade",
+  });
+
   const lastGrade = drafts[0]?.grade;
   const criteria = Boolean(lastGrade) && lastGrade?.zeroReason !== "tooShort";
   const texts = isLongText(essay.context) ? essay.context : null;
@@ -194,13 +200,8 @@ function EssayWriteScreen({ onSeeGrade, writer }: { onSeeGrade: () => void; writ
       aside={
         texts || criteria
           ? {
-              label: texts
-                ? textsLabel
-                : t({
-                    description: "The grade of the learner's last essay draft.",
-                    message: "Your last grade",
-                  }),
-              title: texts ? textsLabel : undefined,
+              label: texts ? textsLabel : lastGradeLabel,
+              title: texts ? textsLabel : lastGradeLabel,
             }
           : null
       }

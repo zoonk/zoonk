@@ -20,7 +20,7 @@ import {
 import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PageTab, PageTabs } from "../_components/page-tabs";
+import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
@@ -292,7 +292,9 @@ export function MindMapsScreen({
 
           <DetailActions className="max-md:hidden">{study}</DetailActions>
         </DetailHero>
+      </DetailAside>
 
+      <PageTabsGroup>
         <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
           {MIND_MAP_TABS.map((name) => (
             <PageTab
@@ -309,15 +311,17 @@ export function MindMapsScreen({
 
         {/* Under the tabs on a phone: a tab with no maps has no Study, and the tabs must not move for it. */}
         <div className="flex empty:hidden md:hidden">{study}</div>
-      </DetailAside>
 
-      <DetailContent>
-        {current === "chapters" && (
-          <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
-        )}
-        {current === "lessons" && <LessonsTab hrefs={hrefs} library={library} subject={subject} />}
-        {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
-      </DetailContent>
+        <DetailContent>
+          {current === "chapters" && (
+            <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
+          )}
+          {current === "lessons" && (
+            <LessonsTab hrefs={hrefs} library={library} subject={subject} />
+          )}
+          {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
+        </DetailContent>
+      </PageTabsGroup>
     </DetailLayout>
   );
 }

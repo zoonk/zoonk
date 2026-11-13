@@ -18,11 +18,13 @@ import {
   StepTitle,
   StepTitleLabel,
   StepTitleNumber,
+  renderStepNumber,
 } from "../_components/step-card";
 import { Steps, type StepsItem } from "../_components/steps";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useEssayScreen } from "./essay-context";
 import {
+  ESSAY_QUOTE_CLASS,
   useCriterionName,
   useFormatScore,
   useInterventionElementName,
@@ -40,10 +42,6 @@ function hasMissingElements(grade: Grade): boolean {
 }
 
 type Criterion = Grade["criteria"][number];
-
-function renderNumber(chunks: React.ReactNode) {
-  return <span className="tabular-nums">{chunks}</span>;
-}
 
 /**
  * A custom rubric's criteria each show on the total's scale, so three read "10 of 10", never "3.34
@@ -136,7 +134,7 @@ export function EssayGradeCard({
         <StepDetail className="text-sm">
           {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
             max: formatScore(grade.total.maxScore),
-            mono: renderNumber,
+            mono: renderStepNumber,
           })}
         </StepDetail>
       </StepHeader>
@@ -195,7 +193,9 @@ export function NextStepComment({ grade }: { grade: Grade }) {
       </StepHeader>
 
       {criterion?.quote && (
-        <blockquote className="border-warning border-l-2 pl-3 italic">{criterion.quote}</blockquote>
+        <blockquote className={cn(ESSAY_QUOTE_CLASS, "border-warning italic")}>
+          {criterion.quote}
+        </blockquote>
       )}
       <p>{nextStep.text}</p>
       {criterion?.example && (
@@ -256,7 +256,9 @@ function CriterionComments({ grade }: { grade: Grade }) {
         <li className="flex flex-col gap-1 text-sm" key={criterion.id}>
           <p className="font-semibold">{criterionName(criterion)}</p>
           {criterion.quote && (
-            <blockquote className="text-muted-foreground border-border border-l-2 pl-3 italic">
+            <blockquote
+              className={cn(ESSAY_QUOTE_CLASS, "text-muted-foreground border-border italic")}
+            >
               {criterion.quote}
             </blockquote>
           )}

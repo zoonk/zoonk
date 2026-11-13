@@ -17,6 +17,11 @@ export function PageTabs({
   );
 }
 
+/** The tabs and the views they switch, nearer each other than to the page's header. */
+export function PageTabsGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("flex min-w-0 flex-col gap-4", className)} {...props} />;
+}
+
 export function PageTab({
   children,
   count,

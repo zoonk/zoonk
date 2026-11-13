@@ -4,6 +4,7 @@ import { getBreakEven } from "@zoonk/core/exams/net-score";
 import { FlagIcon, GaugeIcon, ScaleIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import {
+  LIST_ROW_FIRST_LINE_CLASS,
   ListGroup,
   ListRow,
   ListRowContent,
@@ -109,7 +110,7 @@ function PassMarksRow() {
 
   return (
     <ListRow role="note">
-      <ListRowLeading>
+      <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
         <ListRowIcon>
           <FlagIcon />
         </ListRowIcon>
@@ -139,7 +140,7 @@ function NoticeScaleRow() {
 
   return (
     <ListRow role="note">
-      <ListRowLeading>
+      <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
         <ListRowIcon>
           <GaugeIcon />
         </ListRowIcon>
@@ -169,7 +170,7 @@ function NoticeScaleRow() {
 function ScoringRuleRow({ rule }: { rule: { rule: string; title: string } }) {
   return (
     <ListRow role="note">
-      <ListRowLeading>
+      <ListRowLeading className={LIST_ROW_FIRST_LINE_CLASS}>
         <ListRowIcon>
           <ScaleIcon />
         </ListRowIcon>

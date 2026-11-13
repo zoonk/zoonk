@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Callout } from "../_components/callout";
@@ -10,7 +11,8 @@ import { CriteriaRows } from "./essay-feedback";
 import { useCriterionName } from "./essay-labels";
 import { rewriteStep } from "./essay-rewrite-step";
 
-export function CriteriaInView() {
+/** `headed` when the aside's own header already names the grade. */
+export function CriteriaInView({ headed = false }: { headed?: boolean }) {
   const t = useExtracted();
   const { drafts, essay } = useEssayScreen();
   const grade = drafts[0]?.grade;
@@ -21,7 +23,7 @@ export function CriteriaInView() {
 
   return (
     <section className="hidden flex-col gap-1 lg:flex">
-      <PageSectionTitle>
+      <PageSectionTitle className={cn(headed && "with-aside:group-data-aside/task:sr-only")}>
         {t({
           description: "The grade of the learner's last essay draft.",
           message: "Your last grade",

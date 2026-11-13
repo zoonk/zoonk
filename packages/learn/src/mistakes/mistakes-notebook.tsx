@@ -33,7 +33,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { INBOX_PAGE_CLASS, PageEyebrow } from "../_components/page";
-import { PageTab, PageTabs } from "../_components/page-tabs";
+import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
@@ -278,41 +278,44 @@ export function MistakesNotebook({
     >
       <DetailAside>
         <NotebookHero goalTitle={goalTitle} hrefs={hrefs} notebook={notebook} />
-        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
       </DetailAside>
 
-      <DetailContent>
-        {pattern && !showingFixed && (
-          <ListGroup>
-            <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
-          </ListGroup>
-        )}
+      <PageTabsGroup>
+        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
 
-        {groups.length > 0 ? (
-          <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
-            <MistakesInbox
-              groups={groups}
-              hrefs={hrefs}
-              trueFalseLabels={notebook.trueFalseLabels}
-            />
-          </section>
-        ) : (
-          <EmptyNotebook showingFixed={showingFixed} />
-        )}
+        <DetailContent>
+          {pattern && !showingFixed && (
+            <ListGroup>
+              <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
+            </ListGroup>
+          )}
 
-        {filters.nextOffset !== null && (
-          <LearnLink
-            className={buttonVariants({ className: "self-start", variant: "outline" })}
-            href={buildNotebookHref({
-              ...filters,
-              notebook: hrefs.notebook,
-              offset: filters.nextOffset,
-            })}
-          >
-            {t("Show more")}
-          </LearnLink>
-        )}
-      </DetailContent>
+          {groups.length > 0 ? (
+            <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
+              <MistakesInbox
+                groups={groups}
+                hrefs={hrefs}
+                trueFalseLabels={notebook.trueFalseLabels}
+              />
+            </section>
+          ) : (
+            <EmptyNotebook showingFixed={showingFixed} />
+          )}
+
+          {filters.nextOffset !== null && (
+            <LearnLink
+              className={buttonVariants({ className: "self-start", variant: "outline" })}
+              href={buildNotebookHref({
+                ...filters,
+                notebook: hrefs.notebook,
+                offset: filters.nextOffset,
+              })}
+            >
+              {t("Show more")}
+            </LearnLink>
+          )}
+        </DetailContent>
+      </PageTabsGroup>
     </DetailLayout>
   );
 }

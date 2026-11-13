@@ -27,12 +27,9 @@ import { isDraftAnswered } from "./use-mock-drafts";
 
 function useSheetCountLine(): string {
   const t = useExtracted();
-  const { answered, flagged } = useSectionCounts();
+  const { answered } = useSectionCounts();
 
-  return t(
-    "{answered, plural, =0 {# answered} one {# answered} other {# answered}} · {flagged, plural, =0 {# flagged} one {# flagged} other {# flagged}}",
-    { answered, flagged },
-  );
+  return t("{answered, plural, =0 {# answered} one {# answered} other {# answered}}", { answered });
 }
 
 const CELL_SIZE = {
@@ -123,7 +120,7 @@ export function MockQuestionMap({ className }: { className?: string }) {
   return (
     <ol
       aria-label={t("Questions")}
-      className={cn("grid grid-cols-9 gap-1.5", className)}
+      className={cn("grid grid-cols-9 gap-2", className)}
       data-slot="mock-question-map"
     >
       {questions.slice(start, start + MAP_ROW).map((question, offset) => (
@@ -149,7 +146,7 @@ function SheetLegend({ className }: { className?: string }) {
         aria-hidden="true"
         className="ring-warning mt-1 size-2 shrink-0 rounded-xs ring-[1.5px] ring-inset"
       />
-      {t("Flagged")}
+      {t("{flagged, plural, one {# flagged} other {# flagged}}", { flagged })}
     </p>
   );
 }

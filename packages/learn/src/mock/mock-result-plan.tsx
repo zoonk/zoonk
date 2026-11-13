@@ -182,7 +182,7 @@ export function MockPlanChange({
         >
           <div className="flex flex-col gap-1">
             {showTitle && (
-              <p className="text-reading font-medium text-pretty" id={titleId}>
+              <p className="text-sm font-medium text-pretty" id={titleId}>
                 {copy.title}
               </p>
             )}

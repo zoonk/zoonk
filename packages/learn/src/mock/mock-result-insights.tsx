@@ -34,7 +34,7 @@ function Insight({
     <StepRow className="items-start">
       <Icon aria-hidden="true" className="text-muted-foreground mt-0.5" />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <h3 className="font-semibold">{title}</h3>
+        <h3 className="font-medium">{title}</h3>
         <div className="text-muted-foreground flex flex-col gap-1">{children}</div>
       </div>
     </StepRow>
@@ -157,7 +157,7 @@ export function MockResultInsights() {
   }
 
   return (
-    <ResultSection title={t("What stood out")}>
+    <ResultSection rows title={t("What stood out")}>
       <StepRows>
         <TimingInsight result={result} />
         <ConsistencyInsight result={result} />

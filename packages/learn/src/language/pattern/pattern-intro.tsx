@@ -104,8 +104,8 @@ function AlsoCameUp({ examples }: { examples: PatternExample[] }) {
           const Icon = example.format.startsWith("spoken") ? MicIcon : PenLineIcon;
 
           return (
-            <li className="flex items-start gap-2" key={example.answer}>
-              <Icon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+            <li className="flex items-start gap-3" key={example.answer}>
+              <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
               {t("“{sentence}”", { sentence: example.answer })}
             </li>
           );

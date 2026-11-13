@@ -175,7 +175,11 @@ export function NotMadeYet({
       </StatusRegion>
 
       <ListGroup>
-        <Disclosure aside={later.length} icon={null} title={t("Other chapters")}>
+        <Disclosure
+          aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
+          icon={null}
+          title={t("Other chapters")}
+        >
           <ul className={LIST_GROUP_CLASS}>
             {later.map((chapter) => (
               <li key={chapter.chapterId}>
