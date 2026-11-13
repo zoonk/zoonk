@@ -282,6 +282,27 @@ msgid "You've reached today's limit"
 msgstr "Bugünkü kullanım sınırına ulaştın"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "Bir sonraki ücretsiz dersin bugün ilerleyen saatlerde açılacak. Abone olup hemen devam edebilirsin."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "Bir sonraki ücretsiz dersin yarın açılacak. Abone olup hemen devam edebilirsin."
+
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/help-limit-notice.tsx
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "Bir sonraki ücretsiz dersin {date} tarihinde açılacak. Abone olup hemen devam edebilirsin."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "Ücretsiz derslerini kullandın"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
 msgstr "Bugün yeni ders hakkın kalmadı"
@@ -290,11 +311,6 @@ msgstr "Bugün yeni ders hakkın kalmadı"
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Daha fazla ders için bir hesap gerekiyor"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "2XtwRD"
-msgid "You've used this month's free lessons"
-msgstr "Bu ayki ücretsiz ders haklarını kullandın"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"

@@ -152,11 +152,8 @@ export function LessonAccessScreen({ refusal }: { refusal: LessonRunRefusal }) {
   }
 
   if (refusal.reason === "limitReached") {
-    return (
-      <LimitReached
-        limit={{ period: refusal.period, status: "limitReached", tier: refusal.tier }}
-      />
-    );
+    const { reason: _reason, ...limit } = refusal;
+    return <LimitReached limit={{ ...limit, status: "limitReached" }} />;
   }
 
   return <Unavailable refusal={refusal} />;
