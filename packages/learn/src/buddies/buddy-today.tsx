@@ -159,7 +159,7 @@ export function BuddyToday({
       <button
         aria-haspopup="dialog"
         className={cn(
-          "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative -ms-2 flex min-h-7 flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md px-2 py-1 font-mono text-xs tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
+          "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area stacked:-ms-2 relative flex min-h-7 flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md px-2 py-1 font-mono text-xs tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
           className,
         )}
         data-slot="buddy-today"
@@ -171,8 +171,8 @@ export function BuddyToday({
       >
         <span className="flex items-center gap-1">
           <ZapIcon aria-hidden="true" className="text-energy size-3.5" />
+          <span className="sr-only">{`${t("Energy")} `}</span>
           {current === null ? <NotYet /> : formatShare(current / PERCENT)}
-          <span>{t("Energy")}</span>
         </span>
 
         <span className={cn("flex items-center gap-1.5", today?.missions.length === 0 && "hidden")}>
@@ -186,8 +186,8 @@ export function BuddyToday({
           ) : (
             <CheckIcon aria-hidden="true" className="size-3.5" />
           )}
-          {!today && <NotYet />}
-          <span>{missionsLabel}</span>
+          <span aria-hidden="true">{today ? `${done}/${today.missions.length}` : DASH}</span>
+          <span className="sr-only">{missionsLabel}</span>
         </span>
       </button>
 
