@@ -561,6 +561,23 @@
         }
       ],
       "text": "Display $$x﻿$$ trims like JavaScript"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Match `^a$|^b$` against "
+        },
+        {
+          "kind": "math",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": ", but not `$y$`"
+        }
+      ],
+      "text": "Match `^a$|^b$` against $x$, but not `$y$`"
     }
   ]
 }

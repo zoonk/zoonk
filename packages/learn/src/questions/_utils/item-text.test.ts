@@ -159,4 +159,14 @@ describe("math in item text", () => {
       { kind: "math", text: "a_1 * b_2" },
     ]);
   });
+
+  it("keeps a dollar inside inline code as code", () => {
+    expect(parseItemLine("Match `^a$|^b$` against $x$.")).toStrictEqual([
+      { kind: "text", text: "Match " },
+      { kind: "code", text: "^a$|^b$" },
+      { kind: "text", text: " against " },
+      { kind: "math", text: "x" },
+      { kind: "text", text: "." },
+    ]);
+  });
 });

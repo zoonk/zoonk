@@ -147,7 +147,7 @@ private val BRACKETS =
         Delimiters("\\[", "\\]", display = true),
     )
 
-private fun findMath(text: String): MathSpan? {
+private fun findMathOutsideCode(text: String): MathSpan? {
     val brackets =
         BRACKETS.mapNotNull { (open, close, display) ->
             val start = text.indexOf(open)
@@ -156,6 +156,14 @@ private fun findMath(text: String): MathSpan? {
         }
 
     return (listOfNotNull(findDollarMath(text)) + brackets).minByOrNull { it.start }
+}
+
+/** Inline code comes first, as in CommonMark, so a `$` inside it is code, never a delimiter. */
+private fun findMath(text: String): MathSpan? {
+    val code = findCode(text) ?: return findMathOutsideCode(text)
+
+    return findMathOutsideCode(text.substring(0, code.start))
+        ?: findMath(text.substring(code.end))?.let { it.copy(start = it.start + code.end, end = it.end + code.end) }
 }
 
 private fun MarkupKind.toSegmentKind(): SegmentKind =
@@ -178,7 +186,7 @@ fun toOneLine(text: String): String = text.replace(LINE_BREAK, " ")
 /** Lesson text without its markup, for TalkBack to read out. */
 fun plainText(text: String): String = parseRichInline(text).joinToString("") { it.text }
 
-/** Math first, so emphasis markers never touch LaTeX. */
+/** Math first, so emphasis markers never touch LaTeX; `findMath` leaves inline code whole. */
 fun parseRichInline(text: String): List<RichSegment> =
     splitLessonMath(text).flatMap { if (it.kind == SegmentKind.Text) parseMarkup(it.text) else listOf(it) }
 
