@@ -116,25 +116,44 @@ function Palette({ currentUrl }: { currentUrl: string }) {
           </div>
           <CommandList>
             {groups.map((group) => (
-              <CommandGroup items={group.items} key={group.label}>
-                <CommandGroupLabel>{group.label}</CommandGroupLabel>
-                <CommandCollection>
-                  {(item: PaletteItem) => (
-                    <PaletteOption
-                      closePalette={closePalette}
-                      currentUrl={currentUrl}
-                      item={item}
-                      key={item.href}
-                    />
-                  )}
-                </CommandCollection>
-              </CommandGroup>
+              <PaletteResults
+                closePalette={closePalette}
+                currentUrl={currentUrl}
+                group={group}
+                key={group.label}
+              />
             ))}
           </CommandList>
         </div>
       </Command>
       <CommandKeyHints close="close" move="move" open="open" />
     </CommandDialog>
+  );
+}
+
+function PaletteResults({
+  closePalette,
+  currentUrl,
+  group,
+}: {
+  closePalette: () => void;
+  currentUrl: string;
+  group: PaletteGroup;
+}) {
+  return (
+    <CommandGroup items={group.items}>
+      <CommandGroupLabel>{group.label}</CommandGroupLabel>
+      <CommandCollection>
+        {(item: PaletteItem) => (
+          <PaletteOption
+            closePalette={closePalette}
+            currentUrl={currentUrl}
+            item={item}
+            key={item.href}
+          />
+        )}
+      </CommandCollection>
+    </CommandGroup>
   );
 }
 
