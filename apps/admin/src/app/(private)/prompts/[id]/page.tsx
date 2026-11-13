@@ -22,9 +22,9 @@ import {
 import { PromptGoals } from "./prompt-goals";
 import { PromptReading } from "./prompt-reading";
 
-export const metadata: Metadata = { title: "Prompt" };
+export const metadata: Metadata = { title: "Goal request" };
 
-const PROMPT_PARENTS = [{ href: "/prompts", label: "Prompts" }];
+const PROMPT_PARENTS = [{ href: "/prompts", label: "Goal requests" }];
 
 export default function PromptDetailPage({ params }: PageProps<"/prompts/[id]">) {
   return (
@@ -86,17 +86,17 @@ async function PromptDetail({ id }: { id: string }) {
           `Typed ${formatDateTime(prompt.createdAt)}`,
         ]}
         parents={PROMPT_PARENTS}
-        title={`Prompt from ${getPromptLearnerLabel(prompt.user)}`}
+        title={`Goal request from ${getPromptLearnerLabel(prompt.user)}`}
       />
 
       <AdminDetailBody>
-        <AdminSection title="Prompt">
+        <AdminSection title="They typed">
           <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{prompt.prompt}</p>
         </AdminSection>
 
         <AdminSection
           description="What Zoonk read in the words, with any fixes the learner made to the card."
-          title="Read as"
+          title="Zoonk read it as"
         >
           <PromptReading prompt={prompt} />
         </AdminSection>
