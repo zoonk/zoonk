@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
@@ -25,13 +26,8 @@ export function FrequencyChip({
   }
 
   return (
-    <span
-      className={cn(
-        "bg-warning/15 text-foreground shrink-0 rounded-md px-1.5 py-0.5 font-sans text-xs font-medium whitespace-nowrap",
-        className,
-      )}
-    >
+    <Badge className={cn("bg-warning/15 text-foreground font-sans", className)}>
       {t({ description: "Marks a topic that comes up often in the exam.", message: "Asked a lot" })}
-    </span>
+    </Badge>
   );
 }
