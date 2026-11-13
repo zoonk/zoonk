@@ -6,11 +6,34 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { AdminHeader, type AdminParent } from "./admin-header";
 
 export function AdminDetailPage({ children }: { children: React.ReactNode }) {
-  return <Container className="gap-8">{children}</Container>;
+  return <Container className="flex-1 gap-8">{children}</Container>;
 }
 
-export function AdminDetailBody({ children }: { children: React.ReactNode }) {
-  return <ContainerBody className="gap-8">{children}</ContainerBody>;
+/** What the shared bottom bar reads to reach the frame's edges: the body's own side and bottom room. */
+const BAR_FRAME_CLASS =
+  "flex-1 sm:flex-1 [--page-bottom:--spacing(12)] [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-bottom:--spacing(16)] lg:[--page-gutter:--spacing(10)]";
+
+/**
+ * A record's body. A record whose page is one decision passes its `bar` (the shared `BottomBar`):
+ * the body then fills the window, so the bar rests at the bottom whether the page is short or long.
+ */
+export function AdminDetailBody({
+  bar,
+  children,
+}: {
+  bar?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  if (!bar) {
+    return <ContainerBody className="gap-8">{children}</ContainerBody>;
+  }
+
+  return (
+    <ContainerBody className={cn("gap-8", BAR_FRAME_CLASS)}>
+      <div className="flex flex-1 flex-col gap-8">{children}</div>
+      {bar}
+    </ContainerBody>
+  );
 }
 
 /**

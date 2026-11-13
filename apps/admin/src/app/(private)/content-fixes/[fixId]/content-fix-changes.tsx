@@ -1,11 +1,11 @@
 import { AdminJson } from "@/components/admin-json";
+import { StateMark } from "@/components/state-mark";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import {
   type ContentValueChange,
   listContentValueChanges,
 } from "@zoonk/core/staff/content-fixes/screen-content-rules";
-import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
 import { diffWordsWithSpace } from "diff";
@@ -75,7 +75,11 @@ function ValueChange({ change }: { change: ShownChange }) {
       <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <code className="text-xs font-medium">{change.path}</code>
         {change.about && <span className="text-muted-foreground text-xs">of “{change.about}”</span>}
-        {change.isAnswerKey && <Badge variant="destructive">Changes the right answer</Badge>}
+        {change.isAnswerKey && (
+          <StateMark className="text-xs" state="answerKey" tone="attention">
+            Changes the right answer
+          </StateMark>
+        )}
       </span>
 
       <div className="grid gap-3 md:grid-cols-2">

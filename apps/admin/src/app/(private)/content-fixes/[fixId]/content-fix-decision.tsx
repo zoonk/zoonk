@@ -3,11 +3,13 @@
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { signWithPasskey } from "@zoonk/auth/passkey-browser";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { safeAsync } from "@zoonk/utils/error";
-import { FingerprintIcon, KeyRoundIcon, Undo2Icon, XIcon } from "lucide-react";
+import { FingerprintIcon, Undo2Icon } from "lucide-react";
 import { useActionState, useId } from "react";
+import { useFormStatus } from "react-dom";
 import {
   approveContentFixAction,
   rejectContentFixAction,
@@ -69,25 +71,28 @@ function RejectForm({ fixId }: { fixId: string }) {
   });
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className="contents">
       <input name="fixId" type="hidden" value={fixId} />
-      <AdminActionSubmitButton icon={<XIcon />} size="lg">
-        Reject
-      </AdminActionSubmitButton>
+      <RejectButton />
     </form>
   );
 }
 
-function PasskeySetupLink({ settingsUrl }: { settingsUrl: string }) {
+function RejectButton() {
+  const status = useFormStatus();
+
   return (
-    <a className={buttonVariants({ size: "lg" })} href={settingsUrl}>
-      <KeyRoundIcon aria-hidden="true" />
-      Add a passkey to approve
-    </a>
+    <Button busy={status.pending} size="xl" type="submit" variant="outline">
+      Reject
+    </Button>
   );
 }
 
-export function ReviewDecision({
+/**
+ * The page's one decision, in the shared bottom bar: reject, or approve with a passkey. Without a
+ * passkey the main action is the way to add one. What an approval couldn't do shows over the bar.
+ */
+export function ReviewBar({
   fixId,
   hasPasskey,
   settingsUrl,
@@ -104,38 +109,36 @@ export function ReviewDecision({
   const needsPasskey = !hasPasskey || notice === "needsPasskey";
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
+    <BottomBar
+      note={
+        notice ? (
+          <p className="text-destructive-text" role="alert">
+            {NOTICES[notice]}
+          </p>
+        ) : null
+      }
+    >
+      <BottomBarActions>
+        <RejectForm fixId={fixId} />
+
         {needsPasskey ? (
-          <PasskeySetupLink settingsUrl={settingsUrl} />
+          <a className={buttonVariants({ size: "xl" })} href={settingsUrl}>
+            Add a passkey to approve
+          </a>
         ) : (
-          <form action={approveAction}>
+          <form action={approveAction} className="contents">
             <Button
               busy={isApproving}
               icon={<FingerprintIcon aria-hidden="true" />}
-              size="lg"
+              size="xl"
               type="submit"
             >
               Approve with passkey
             </Button>
           </form>
         )}
-
-        <RejectForm fixId={fixId} />
-      </div>
-
-      <p className="text-muted-foreground max-w-2xl text-sm text-pretty">
-        {needsPasskey
-          ? "Approving takes a passkey, so only you can apply a fix. Add one in your Zoonk settings, then come back to this page."
-          : "Approving applies exactly the changes above, once you confirm with your passkey. Rejecting changes nothing."}
-      </p>
-
-      {notice && notice !== "needsPasskey" && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {NOTICES[notice]}
-        </p>
-      )}
-    </div>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -158,12 +161,12 @@ export function RevertForm({ fixId }: { fixId: string }) {
           <Input id={reasonId} maxLength={2000} name="reason" required />
         </div>
         <AdminActionSubmitButton icon={<Undo2Icon />} size="lg">
-          Propose a revert
+          Propose undoing it
         </AdminActionSubmitButton>
       </form>
 
       <p className="text-muted-foreground text-sm text-pretty">
-        A revert is a new fix that puts back what this one replaced. It opens for review and changes
+        Undoing is a new fix that puts back what this one replaced. It waits for review and changes
         nothing until it&apos;s approved with a passkey.
       </p>
     </div>
