@@ -1,7 +1,9 @@
 "use client";
 
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ignoreHeldEnter, useEnterKey } from "@zoonk/ui/hooks/keyboard";
+import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
+import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronLeftIcon, EyeIcon, HelpCircleIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -70,24 +72,31 @@ export function QuestionActions({ className, ...props }: React.ComponentProps<ty
   );
 }
 
+/** A task's way back one screen (←), at the start of its bar; `label` names what it goes back to. */
 export function QuestionBack({
   className,
+  label,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "children" | "size" | "variant">) {
+}: Omit<React.ComponentProps<typeof Button>, "children" | "size" | "variant"> & {
+  label?: string;
+}) {
   const t = useExtracted();
+  const name = label ?? t("Previous screen");
 
   return (
-    <Button
-      aria-keyshortcuts="ArrowLeft"
-      className={cn(TASK_BACK_ACTION_CLASS, className)}
-      data-slot="question-back"
-      size="icon"
-      variant="outline"
-      {...props}
-    >
-      <ChevronLeftIcon aria-hidden="true" />
-      <span className="sr-only">{t("Previous screen")}</span>
-    </Button>
+    <ShortcutTooltip align="start" label={name} shortcut="previous" side="top">
+      <Button
+        aria-keyshortcuts={shortcutKeys("previous")}
+        className={cn(TASK_BACK_ACTION_CLASS, className)}
+        data-slot="question-back"
+        size="icon"
+        variant="outline"
+        {...props}
+      >
+        <ChevronLeftIcon aria-hidden="true" />
+        <span className="sr-only">{name}</span>
+      </Button>
+    </ShortcutTooltip>
   );
 }
 
@@ -127,8 +136,8 @@ export function QuestionDontKnow({
  * pressed elsewhere moves focus to it, since an answer option locks while it's checked, and a held
  * Enter acts once, so it can't check and then skip the verdict.
  *
- * `enter`: `host` when the screen binds Enter itself, `off` when Enter must not press it (handing
- * in). The ⏎ hint shows whenever Enter works.
+ * `enter` is `EnterButton`'s: `host` when the screen binds Enter itself, `off` when Enter must not
+ * press it (handing in).
  */
 export function QuestionMainAction({
   action,
@@ -140,36 +149,21 @@ export function QuestionMainAction({
   id = QUESTION_MAIN_ACTION_ID,
   onPress,
   ...props
-}: Omit<React.ComponentProps<typeof EnterButton>, "iconPosition" | "shortcut"> & {
+}: Omit<React.ComponentProps<typeof EnterButton>, "iconPosition" | "size"> & {
   action: QuestionAction;
-  enter?: "bound" | "host" | "off";
   onPress?: () => void;
 }) {
-  const ref = useRef<HTMLButtonElement>(null);
   const label = useActionLabel(action);
-
-  useEnterKey(
-    () => {
-      if (!onPress || !ref.current || ref.current.getClientRects().length === 0) {
-        return false;
-      }
-
-      ref.current.focus();
-      onPress();
-    },
-    { enabled: enter === "bound" && !disabled && !busy },
-  );
 
   return (
     <EnterButton
       busy={busy}
       data-slot="question-main-action"
       disabled={disabled}
+      enter={enter}
       id={id}
       onClick={onPress}
       onKeyDown={ignoreHeldEnter}
-      ref={ref}
-      shortcut={enter !== "off"}
       {...(icon ? { icon } : ICONS[action])}
       {...props}
     >

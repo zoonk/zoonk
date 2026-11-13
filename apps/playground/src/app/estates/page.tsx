@@ -117,12 +117,11 @@ function States() {
   return (
     <SpeechPlayerProvider voice={noVoice}>
       <LessonPlayerProvider
-        adapters={adapters as any}
+        adapters={adapters}
         firstAnswer={null}
         key={state}
         lesson={lesson}
         linkComponent={Link}
-        onExit={() => null}
         routes={ROUTES}
         viewer={{ learnerId: PREVIEW_LEARNER_ID }}
       >

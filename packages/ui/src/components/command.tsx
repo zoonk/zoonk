@@ -179,7 +179,7 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
 }
 
 const COMMAND_GROUP_LABEL_CLASS =
-  "text-faint pt-3.5 pb-1.5 text-2xs font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
+  "text-faint pt-3.5 pb-1.5 text-2xs font-medium tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
 
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (

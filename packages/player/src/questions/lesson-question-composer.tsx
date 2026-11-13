@@ -232,7 +232,6 @@ export function QuestionComposer({
           <InputGroupButton
             aria-label={submitLabel}
             busy={state.creating !== null}
-            className="size-7.5 rounded-md"
             disabled={!canSend || createNavigationError}
             focusableWhenDisabled
             icon={<SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />}

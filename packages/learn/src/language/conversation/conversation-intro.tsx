@@ -145,7 +145,6 @@ function CallIntro({
   return (
     <TaskFrame
       aside={{ label: t("What to get across"), title: t("What to get across") }}
-      closeOnEscape
       exitHref={exitHref}
       footer={footer}
       headerTitle={eyebrow}

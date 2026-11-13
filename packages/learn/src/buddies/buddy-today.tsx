@@ -5,7 +5,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -13,7 +12,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
+import { SheetHeader } from "../_components/sheet-header";
 import { useFormatShare } from "../_utils/percent";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
@@ -69,15 +68,12 @@ function BuddyTodaySheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup finalFocus={!asked}>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">
-              {t("{buddy} today", { buddy: name })}
-            </DrawerTitle>
+            <DrawerTitle>{t("{buddy} today", { buddy: name })}</DrawerTitle>
             <DrawerDescription>{growth}</DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
           <BuddyEnergy className="-mb-2" href={energyHref} name={name} status={status} />

@@ -1,10 +1,8 @@
 "use client";
 
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -12,7 +10,6 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
@@ -64,7 +61,10 @@ function LessonQuestionPanelHeader({
   const t = useExtracted();
 
   return (
-    <DrawerHeader className={cn(THREAD_SIDE_CLASS, "border-border gap-0 border-b pt-2.5 pb-3")}>
+    <DrawerHeader
+      className={cn(THREAD_SIDE_CLASS, "border-border items-center border-b pt-2.5 pb-3")}
+      closeLabel={t("Close questions")}
+    >
       <div className="flex items-center gap-2.5">
         <span
           aria-hidden="true"
@@ -78,13 +78,6 @@ function LessonQuestionPanelHeader({
             <LessonQuestionPanelDescription context={controller.state.context} />
           </DrawerDescription>
         </div>
-        <DrawerClose
-          render={
-            <Button aria-label={t("Close questions")} edge="end" size="icon-sm" variant="ghost" />
-          }
-        >
-          <XIcon aria-hidden="true" />
-        </DrawerClose>
       </div>
     </DrawerHeader>
   );

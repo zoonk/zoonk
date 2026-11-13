@@ -85,10 +85,7 @@ export function BuddyEnergy({
         <span className={PAGE_SECTION_TITLE_CLASS}>{t("{buddy}'s Energy", { buddy: name })}</span>
         <span className="text-compact flex items-center gap-0.5 font-mono font-medium tabular-nums">
           {formatShare(share)}
-          <ChevronRightIcon
-            aria-hidden="true"
-            className={cn(SMALL_CHEVRON_CLASS, "text-muted-foreground/60")}
-          />
+          <ChevronRightIcon aria-hidden="true" className={cn(SMALL_CHEVRON_CLASS, "text-faint")} />
         </span>
       </span>
 

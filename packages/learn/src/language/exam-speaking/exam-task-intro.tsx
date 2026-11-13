@@ -49,7 +49,6 @@ export function ExamTaskIntro({
   return (
     <TaskFrame
       aside={{ label: t("Your card") }}
-      closeOnEscape
       exitHref={exitHref}
       footer={footer}
       headerTitle={title(examTask)}

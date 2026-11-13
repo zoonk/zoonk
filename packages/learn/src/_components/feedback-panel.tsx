@@ -53,7 +53,7 @@ export function FeedbackVerdict({
     <div className={cn("flex items-start justify-between gap-3", className)}>
       <p
         className={cn(
-          "text-reading flex items-start gap-2 leading-6 font-[550] [&_svg]:size-4",
+          "text-reading flex items-start gap-2 leading-6 font-medium [&_svg]:size-4",
           TONE_CLASS[tone],
         )}
         data-slot="feedback-verdict"

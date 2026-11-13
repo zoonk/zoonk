@@ -17,7 +17,6 @@ import { LessonCompletionReady } from "./completion/lesson-completion-ready";
 import { useCompletionProps } from "./completion/use-completion-props";
 import { LessonActionBar } from "./lesson-action-bar";
 import { LessonAside } from "./lesson-aside";
-import { LessonLeaveProvider } from "./lesson-leave";
 import { LessonMapScreen } from "./lesson-map-screen";
 import {
   LessonPlayerRuntimeContext,
@@ -139,11 +138,7 @@ function LessonScreen({
 }
 
 export function LessonPlayerShell() {
-  return (
-    <LessonLeaveProvider>
-      <LessonPlayerFrame />
-    </LessonLeaveProvider>
-  );
+  return <LessonPlayerFrame />;
 }
 
 /** Reading screens and the map sit on a teacher's dotted paper; questions keep a plain ground for their answers. */

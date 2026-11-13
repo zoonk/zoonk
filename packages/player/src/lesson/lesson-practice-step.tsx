@@ -168,7 +168,6 @@ export function LessonPracticeStep(props: Props) {
           title: "",
         },
         linkComponent: PlainLink,
-        onExit: idle,
         outline: false,
         routes: {
           exit: "/mistakes",

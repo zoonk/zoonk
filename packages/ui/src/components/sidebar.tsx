@@ -1,19 +1,20 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { TooltipProvider } from "./tooltip";
 
-export const SIDEBAR_COLLAPSED_ATTRIBUTE = "data-sidebar-collapsed";
-export const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
+export type SidebarSide = "end" | "start";
 
-/** The task screens' right sidebar (`TaskAside` in `@zoonk/learn`), for the screens that let the person collapse it. */
-export const ASIDE_COLLAPSED_ATTRIBUTE = "data-aside-collapsed";
-export const ASIDE_COLLAPSED_KEY = "aside-collapsed";
+/**
+ * `start` is the app's sidebar (`Sidebar`); `end` is a task screen's side column (`TaskAside` in
+ * `@zoonk/learn`). Each keeps whether the person collapsed it, on this device.
+ */
+export const SIDEBAR_STATE = {
+  end: { attribute: "data-aside-collapsed", key: "aside-collapsed" },
+  start: { attribute: "data-sidebar-collapsed", key: "sidebar-collapsed" },
+} as const satisfies Record<SidebarSide, { attribute: string; key: string }>;
 
-const RESTORED = [
-  [SIDEBAR_COLLAPSED_ATTRIBUTE, SIDEBAR_COLLAPSED_KEY],
-  [ASIDE_COLLAPSED_ATTRIBUTE, ASIDE_COLLAPSED_KEY],
-]
+const RESTORED = Object.values(SIDEBAR_STATE)
   .map(
-    ([attribute, key]) =>
+    ({ attribute, key }) =>
       `document.documentElement.toggleAttribute(${JSON.stringify(attribute)},localStorage.getItem(${JSON.stringify(key)})==="true")`,
   )
   .join(";");

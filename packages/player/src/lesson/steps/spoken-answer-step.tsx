@@ -36,7 +36,7 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   return (
     <div className="flex flex-col gap-1">
       <p
-        className="text-2xl leading-tight font-[560] tracking-[-0.02em]"
+        className="text-2xl leading-tight font-semibold tracking-[-0.02em]"
         lang={step.content.language}
       >
         {targetText}
