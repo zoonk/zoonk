@@ -24,7 +24,7 @@ export function PageBarSurface({ children, className, ...props }: React.Componen
     <div
       className={cn(
         BAR_SURFACE_CLASS,
-        "sticky top-0 z-30 -mx-4 -mt-4 sm:-mx-8 sm:-mt-6 lg:-mx-10 lg:-mt-8",
+        "sticky top-0 z-30 -mx-4 -mt-2 sm:-mx-8 sm:-mt-6 lg:-mx-10 lg:-mt-8",
         scrolled ? "border-border" : "border-transparent",
         className,
       )}
