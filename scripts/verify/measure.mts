@@ -14,7 +14,8 @@ import {
 import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from "./checks.mts";
 import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
-import { type CraftCounts, countCraft, craftFindings } from "./craft.mts";
+import { craftFindings } from "./craft.mts";
+import { type Shortcuts } from "./keys.mts";
 import {
   findOverflow,
   findTruncated,
@@ -31,10 +32,18 @@ import {
   redactQuery,
   summarizePrefetches,
 } from "./requests.mts";
+import { readRoleFacts, roleFindings } from "./role-checks.mts";
 import { readCpuMs } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
-import { type PageWords, pageKind, readWords, summarizeWords, wordFindings } from "./words.mts";
+import {
+  type PageWords,
+  pageKind,
+  placeFindings,
+  readWords,
+  summarizeWords,
+  wordFindings,
+} from "./words.mts";
 
 export const NETWORK_IDLE_MS = 15_000;
 
@@ -46,6 +55,7 @@ export type Target = {
   browser: Browser;
   out: string;
   serverPid: number | null;
+  shortcuts: Shortcuts | null;
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
   typeScale: number[];
@@ -53,7 +63,6 @@ export type Target = {
 
 export type LoadReport = LoadMeasurement & {
   bytes: { html: number; scripts: number; total: number };
-  craft: CraftCounts;
   mainThreadMs: number;
   database: { count: number; ms: number } | null;
   findings: Finding[];
@@ -117,6 +126,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
     production: !(await page.evaluate(isNextDev)),
+    roles: await page.evaluate(readRoleFacts),
     shifts: probe?.shifts ?? [],
     skeletonLastMs: probe?.skeletonFrames.at(-1) ?? null,
     skeletonSeenMs: probe?.skeletonFrames[0] ?? null,
@@ -176,7 +186,7 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, craft, timeOrigin: _, words: text, ...measured } = loaded;
+    const { bytes, craft, roles, timeOrigin: _, words: text, ...measured } = loaded;
     const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
@@ -198,7 +208,6 @@ export async function measureLoad(
     return {
       ...measurement,
       bytes,
-      craft: countCraft(craft),
       database: statements && {
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
@@ -206,7 +215,9 @@ export async function measureLoad(
       findings: [
         ...judgeLoad(measurement),
         ...wordFindings(words),
+        ...placeFindings(words),
         ...craftFindings(craft, target.typeScale),
+        ...roleFindings(roles),
       ],
       frames: paints,
       framesDirectory: `${name}-frames`,
