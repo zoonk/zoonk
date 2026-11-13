@@ -1,11 +1,12 @@
 import { AdminJson } from "@/components/admin-json";
+import { StateMark } from "@/components/state-mark";
 import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
+import { toWords } from "@/lib/format";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import {
   type ContentValueChange,
   listContentValueChanges,
 } from "@zoonk/core/staff/content-fixes/screen-content-rules";
-import { Badge } from "@zoonk/ui/components/badge";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
 import { diffWordsWithSpace } from "diff";
@@ -69,13 +70,27 @@ function ValueSide({ after, before, side }: { after: unknown; before: unknown; s
 
 type ShownChange = ContentValueChange & { about: string | null };
 
+/** Where a value sits in a screen, in words: `content.options.2.reason` reads "Options › 3 › Reason". */
+function pathInWords(path: string): string {
+  const keys = path.split(".");
+  const inside = keys.length > 1 && keys[0] === "content" ? keys.slice(1) : keys;
+
+  return inside
+    .map((key) => (/^\d+$/u.test(key) ? String(Number(key) + 1) : toWords(key)))
+    .join(" › ");
+}
+
 function ValueChange({ change }: { change: ShownChange }) {
   return (
     <li className="flex flex-col gap-2 py-3">
       <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <code className="text-xs font-medium">{change.path}</code>
+        <span className="text-xs font-medium">{pathInWords(change.path)}</span>
         {change.about && <span className="text-muted-foreground text-xs">of “{change.about}”</span>}
-        {change.isAnswerKey && <Badge variant="destructive">Changes the right answer</Badge>}
+        {change.isAnswerKey && (
+          <StateMark className="text-xs" state="answerKey" tone="attention">
+            Changes the right answer
+          </StateMark>
+        )}
       </span>
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -216,9 +231,8 @@ export async function ContentFixChanges({ fix }: { fix: ContentFixDetail }) {
     <ul className="flex flex-col gap-6">
       {fix.changes.map((change) => (
         <li className="flex flex-col gap-1" key={`${change.id}:${change.op}`}>
-          <h3 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
+          <h3 className="text-sm font-medium">
             {fix.rowLabels.get(change.id) ?? MODEL_LABELS[change.model]}
-            <span className="text-muted-foreground font-mono text-xs font-normal">{change.id}</span>
           </h3>
           <ChangeBody change={change} />
         </li>

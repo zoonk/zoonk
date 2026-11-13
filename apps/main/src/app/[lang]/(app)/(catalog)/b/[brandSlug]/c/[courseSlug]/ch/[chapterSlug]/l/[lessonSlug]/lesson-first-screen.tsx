@@ -1,15 +1,12 @@
-import {
-  type FirstChoiceScreen,
-  FirstQuestion,
-  StartNote,
-} from "@/components/catalog/first-question";
+import { type FirstChoiceScreen, FirstQuestion } from "@/components/catalog/first-question";
 import { NoSessionNote } from "@/components/public/no-account-note";
 import { StartBlock, StartLink } from "@/components/public/public-start";
 import { StartLessonButton } from "@/components/public/start-lesson-button";
 import { getAppLocale } from "@/i18n/locale";
 import { withOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { LESSON_BODY_CLASS, RichTextBlocks } from "@zoonk/learn/rich-text";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
@@ -84,16 +81,11 @@ export async function LessonFirstScreen({
   if (screen?.kind === "text") {
     return (
       <FirstScreenSection>
-        <RichTextBlocks
-          className="mb-6 text-lg leading-relaxed text-pretty sm:text-xl"
-          text={screen.text}
-        />
+        <RichTextBlocks className={cn(LESSON_BODY_CLASS, "mb-6 text-pretty")} text={screen.text} />
 
-        <StartLink className="w-full sm:w-auto" href={startHref}>
-          {t("Start the lesson")}
-        </StartLink>
-
-        <StartNote>{note}</StartNote>
+        <StartBlock className="mt-0 sm:mt-0" note={note}>
+          <StartLink href={startHref}>{t("Start the lesson")}</StartLink>
+        </StartBlock>
       </FirstScreenSection>
     );
   }

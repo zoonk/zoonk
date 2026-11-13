@@ -26,10 +26,19 @@ function toMissingAudioResource({
   return { id, lessonCount, lessons: lessonLinks.map((link) => link.lesson), targetLanguage, text };
 }
 
-const cachedListMissingAudio = cacheAdminData(async () => {
-  const wordWhere = { audioUrl: null, lessonWords: { some: {} } };
-  const sentenceWhere = { audioUrl: null, lessonSentences: { some: {} } };
+const wordWhere = { audioUrl: null, lessonWords: { some: {} } };
+const sentenceWhere = { audioUrl: null, lessonSentences: { some: {} } };
 
+export const countMissingAudio = cacheAdminData(async () => {
+  const [words, sentences] = await Promise.all([
+    prisma.word.count({ where: wordWhere }),
+    prisma.sentence.count({ where: sentenceWhere }),
+  ]);
+
+  return words + sentences;
+});
+
+const cachedListMissingAudio = cacheAdminData(async () => {
   const [words, wordTotal, sentences, sentenceTotal] = await Promise.all([
     prisma.word.findMany({
       include: {

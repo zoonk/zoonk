@@ -2,7 +2,6 @@ import { AdminPagination } from "@/components/pagination";
 import { listLearnerMilestoneUsers } from "@/data/stats/get-learner-milestones";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { parseSearchParams } from "@/lib/parse-search-params";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import {
   LearnerMilestoneUsersTable,
   LearnerMilestoneUsersTableSkeleton,
@@ -56,8 +55,6 @@ async function CachedLearnerMilestoneUsers({
 
   return (
     <>
-      <p className="text-muted-foreground text-sm">{total.toLocaleString()} matching users.</p>
-
       <LearnerMilestoneUsersTable emptyMessage={emptyMessage} users={users} />
 
       <AdminPagination
@@ -72,10 +69,5 @@ async function CachedLearnerMilestoneUsers({
 }
 
 export function LearnerMilestoneUsersSkeleton() {
-  return (
-    <div className="flex flex-col gap-4">
-      <Skeleton className="h-4 w-32" />
-      <LearnerMilestoneUsersTableSkeleton />
-    </div>
-  );
+  return <LearnerMilestoneUsersTableSkeleton />;
 }

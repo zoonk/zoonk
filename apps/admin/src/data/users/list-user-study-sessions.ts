@@ -7,10 +7,7 @@ const RECENT_SESSIONS = 14;
 export const listUserStudySessions = cacheAdminData((userId: string) =>
   prisma.studySession.findMany({
     include: {
-      blocks: {
-        orderBy: { position: "asc" },
-        select: { brainPower: true, kind: true, status: true },
-      },
+      blocks: { orderBy: { position: "asc" }, select: { kind: true, status: true } },
       goal: { select: { id: true, title: true } },
     },
     omit: { endSnapshot: true, startSnapshot: true },

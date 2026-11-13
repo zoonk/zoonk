@@ -571,6 +571,7 @@
     "./plans/own-level": "./src/plans/change-own-level.ts",
     "./plans/own-level-contract": "./src/plans/own-level-contract.ts",
     "./plans/plan-error-contract": "./src/plans/plan-error-contract.ts",
+    "./plans/plan-state": "./src/plans/planner/plan-state.ts",
     "./plans/preview": "./src/plans/preview-plan-change.ts",
     "./plans/preview-contract": "./src/plans/plan-preview-contract.ts",
     "./plans/resume-preview": "./src/plans/get-goal-resume-preview.ts",

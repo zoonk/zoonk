@@ -1,46 +1,41 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { listProvenanceCounts } from "@/data/ai/list-provenance-counts";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { TableCell } from "@zoonk/ui/components/table";
 import { provenanceTableLabels } from "./_utils/ai-labels";
 
 const columns: AdminTableColumn[] = [
-  { label: "Table" },
-  { label: "Model" },
-  { label: "Prompt version" },
-  { align: "right", label: "Rows" },
+  { label: "What" },
+  { label: "Model", size: "text" },
+  { label: "Prompt version", size: "wide" },
+  { align: "right", label: "How many" },
 ];
 
-async function ProvenanceTable({ days }: { days: number }) {
+/** Which model and prompt version wrote what is in the Library and in learners' plans. */
+export async function ProvenanceSection({ days }: { days: number }) {
   "use cache: private";
 
   const rows = await listProvenanceCounts(days);
 
   return (
-    <AdminTableColumns
-      columns={columns}
-      emptyLabel={`No AI-written rows in the last ${days} days.`}
-      isEmpty={rows.length === 0}
-    >
-      {rows.map((row) => (
-        <TableRow key={`${row.table}|${row.model}|${row.promptVersion}`}>
-          <TableCell>{provenanceTableLabels[row.table]}</TableCell>
-          <TableCell className="font-mono text-xs">{row.model}</TableCell>
-          <TableCell className="font-mono text-xs">{row.promptVersion ?? "—"}</TableCell>
-          <TableCell className="text-right tabular-nums">{row.rows.toLocaleString()}</TableCell>
-        </TableRow>
-      ))}
-    </AdminTableColumns>
-  );
-}
-
-export async function ProvenanceSection({ days }: { days: number }) {
-  return (
-    <AdminSection
-      description="Rows each model and prompt version wrote, per table."
-      title="What each model wrote"
-    >
-      <ProvenanceTable days={days} />
+    <AdminSection title={`What each model wrote, last ${days} days`}>
+      <AdminTableColumns
+        columns={columns}
+        emptyLabel="Nothing was written by a model."
+        isEmpty={rows.length === 0}
+      >
+        {rows.map((row) => (
+          <AdminTableRow key={`${row.table}|${row.model}|${row.promptVersion}`}>
+            <TableCell className="text-foreground font-medium">
+              {provenanceTableLabels[row.table]}
+            </TableCell>
+            <TableCell>{row.model}</TableCell>
+            <TableCell className="text-compact font-mono">{row.promptVersion}</TableCell>
+            <TableCell numeric>{row.rows.toLocaleString("en")}</TableCell>
+          </AdminTableRow>
+        ))}
+      </AdminTableColumns>
     </AdminSection>
   );
 }
