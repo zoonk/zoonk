@@ -1,10 +1,15 @@
 "use client";
 
 import { useAppLocale } from "@zoonk/learn/locale";
+import { cn } from "@zoonk/ui/lib/utils";
 import { Pencil } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
+import {
+  ACTIVITY_BOX_CLASS,
+  ActivityCanvas,
+  ActivityTextAlternative,
+} from "../_components/activity-canvas";
 import {
   ActivityCodeBlock,
   ActivityCodeLine,
@@ -107,7 +112,7 @@ export function CodeRunnerActivity({
 
   return (
     <ActivityCanvas className="gap-3" labelId={labelId}>
-      <div className="bg-background flex flex-col gap-2 rounded-2xl border px-3 pt-3 pb-3.5">
+      <div className={cn(ACTIVITY_BOX_CLASS, "flex flex-col gap-2 px-3 pt-3 pb-3.5")}>
         <div className="flex items-center justify-between gap-3 px-1.5">
           <p className="text-muted-foreground font-mono text-xs">
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}

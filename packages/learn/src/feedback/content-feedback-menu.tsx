@@ -1,14 +1,7 @@
 "use client";
 
 import { type FeedbackTarget } from "@zoonk/core/feedback/contract";
-import { Button } from "@zoonk/ui/components/button";
-import { DETAIL_MENU_TRIGGER_CLASS, DetailMenu } from "@zoonk/ui/components/detail";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { EllipsisIcon } from "lucide-react";
+import { DetailMenu } from "@zoonk/ui/components/detail";
 import { useEffect, useId } from "react";
 import { TaskHeaderMenu } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
@@ -46,18 +39,9 @@ export function ContentFeedbackMenu({
   }
 
   return (
-    <DropdownMenu onOpenChange={onOpenChange}>
-      <DropdownMenuTrigger
-        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
-      >
-        <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{label}</span>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="end" className="w-60">
-        <ReportProblemItem screen={screen} target={target} />
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <DetailMenu label={label} onOpenChange={onOpenChange}>
+      <ReportProblemItem screen={screen} target={target} />
+    </DetailMenu>
   );
 }
 

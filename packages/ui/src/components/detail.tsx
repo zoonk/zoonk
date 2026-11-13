@@ -82,9 +82,17 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
 export const DETAIL_MENU_TRIGGER_CLASS =
   "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
 
-export function DetailMenu({ children, label }: { children: React.ReactNode; label: string }) {
+export function DetailMenu({
+  children,
+  label,
+  onOpenChange,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onOpenChange?: (open: boolean) => void;
+}) {
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
       >

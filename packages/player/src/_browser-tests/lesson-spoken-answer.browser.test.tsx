@@ -74,8 +74,8 @@ describe("spoken answers", () => {
     });
 
     await sayIt();
-    admission.resolve({ reason: "plusRequired" });
-    await expect.element(page.getByRole("link", { name: /Plus/u })).toBeVisible();
+    admission.resolve({ period: "month", reason: "limitReached", tier: "free" });
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
 
@@ -238,15 +238,9 @@ describe("spoken answers", () => {
     openSpokenLesson({ gradeSpokenAnswer });
     await sayIt();
 
-    await expect
-      .element(
-        page.getByText(
-          "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
-        ),
-      )
-      .toBeVisible();
+    await expect.element(page.getByText("You've reached today's limit")).toBeVisible();
 
-    await expect.element(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
   });
 

@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Check, GripVertical, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type Ref } from "react";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type TimelineAxis } from "./use-timeline-axis";
 
 export const CARD_LEFT = 96;
@@ -123,7 +124,8 @@ export function EventCard({
           : formatYear(event.isRevealed ? event.year : event.guess)
       }
       className={cn(
-        "bg-background focus-visible:ring-ring/50 absolute right-0 flex min-h-11 -translate-y-1/2 items-center gap-2 rounded-xl border px-3 py-1.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[top] motion-safe:duration-300",
+        ACTIVITY_BOX_CLASS,
+        "focus-visible:ring-ring/50 absolute right-0 flex min-h-11 -translate-y-1/2 items-center gap-2 px-3 py-1.5 outline-none select-none focus-visible:ring-[3px] motion-safe:transition-[top] motion-safe:duration-300",
         isMovable && "border-viz-accent cursor-grab touch-none shadow-sm active:cursor-grabbing",
         event.result === "incorrect" && "border-destructive/60",
         event.result === "correct" && "border-success/60",

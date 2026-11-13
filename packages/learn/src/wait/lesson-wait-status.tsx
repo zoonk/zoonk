@@ -19,13 +19,15 @@ export function LessonWaitStatus({
   since: number;
 }) {
   const t = useExtracted();
-  const writing = kind === "challenge" ? t("Writing your challenge") : t("Writing your lesson");
+
+  const gettingReady =
+    kind === "challenge" ? t("Getting your challenge ready") : t("Getting your lesson ready");
 
   const value = useGenerationProgress({ kind, run: holding ? toHeldRun(run) : run, since });
 
   return (
     <WaitStatus done={holding} value={value}>
-      {holding ? t("Your lesson is ready") : writing}
+      {holding ? t("Your lesson is ready") : gettingReady}
     </WaitStatus>
   );
 }

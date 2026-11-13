@@ -3,7 +3,6 @@
 import { Button } from "@zoonk/ui/components/button";
 import { EarIcon, EarOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { COLUMN_GHOST_ACTION_CLASS } from "../../components/step-layouts";
 import { CANT_LISTEN_TODAY, useTodayChoice } from "../../lesson/use-today-choice";
 import { useNoteNames } from "../_utils/use-music-labels";
 
@@ -45,7 +44,8 @@ export function SoundAsText({
 
       {isAnswering && (cantListen || !soundUnavailable) && (
         <Button
-          className={COLUMN_GHOST_ACTION_CLASS}
+          className="w-fit"
+          edge="start"
           onClick={() => onCantListenChange(!cantListen)}
           size="sm"
           variant="ghost"
