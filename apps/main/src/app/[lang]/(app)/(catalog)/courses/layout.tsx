@@ -54,7 +54,7 @@ export default async function CoursesLayout({ children }: LayoutProps<"/[lang]/c
   const categoryTitles = await getCategoryTitles();
 
   return (
-    <div className="flex flex-1 flex-col [--catalog-bar:4rem] lg:[--catalog-bar:0rem]">
+    <div className="flex flex-1 flex-col [--catalog-bar:calc(4rem+1px)]">
       <div aria-hidden="true" className="scroll-mt-24" id={CATALOG_TOP_TARGET_ID} />
       <CatalogBar />
 

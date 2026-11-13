@@ -68,6 +68,20 @@ export function SidebarHeaderRow({ className, ...props }: React.ComponentProps<"
   );
 }
 
+/**
+ * What sits between the header and the footer. It scrolls by itself when the window is short, so
+ * the footer stays in reach; its padding keeps a row's focus ring inside what scrolls.
+ */
+export function SidebarBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("-m-3 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-3", className)}
+      data-slot="sidebar-body"
+      {...props}
+    />
+  );
+}
+
 export function SidebarSection({
   children,
   className,
@@ -78,7 +92,9 @@ export function SidebarSection({
     <nav className={cn("flex flex-col gap-0.5", className)} data-slot="sidebar-section" {...props}>
       {/* Collapsed, the label keeps its one line of room, so the icons under it stay put. */}
       {label && (
-        <span className="text-label sidebar-collapsed:invisible truncate px-2 pb-1">{label}</span>
+        <span className="text-faint sidebar-collapsed:invisible truncate px-2 pb-1 text-xs leading-4 font-medium">
+          {label}
+        </span>
       )}
       {children}
     </nav>
@@ -92,8 +108,9 @@ export function SidebarSection({
 export const SIDEBAR_ICON_ONLY_CLASS =
   "sidebar-collapsed:justify-center sidebar-collapsed:*:not-first:sr-only";
 
+/** Under `lg` the sidebar is hidden, so an item there is a row of a phone's menu sheet: 44px to press. */
 export const SIDEBAR_ITEM_CLASS = cn(
-  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press text-compact relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0",
+  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press text-compact relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 font-medium outline-none focus-visible:ring-[3px] max-lg:h-11 [&>svg]:size-4 [&>svg]:shrink-0",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 

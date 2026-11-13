@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useRef, useState } from "react";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import { useTodayScreen } from "./today-context";
-import { TodayExamAccess } from "./today-exam-access";
 import { TodayExamChoice } from "./today-exam-choice";
 import { TodayExamMoment } from "./today-exam-moment";
 import { TodayFocusTest } from "./today-focus-test";
@@ -38,8 +37,6 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
   switch (kind) {
     case "exam":
       return <TodayExamMoment />;
-    case "examAccess":
-      return <TodayExamAccess />;
     case "examChoice":
       return <TodayExamChoice />;
     case "focusTest":
@@ -56,6 +53,8 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
       return <TodaySuggestedGoal />;
     case "uploadRequest":
       return notices.uploadRequest;
+    // The free week it announced is gone; core keeps the kind for clients that still read it.
+    case "examAccess":
     case null:
       return null;
     default:
@@ -82,9 +81,11 @@ export function TodayNotice({
 
   useFocusOnRemovedControl(slot, () => fallbackFocus.current);
 
+  // Hidden while all it holds is the `<template>` a streaming card leaves until it arrives, so an
+  // empty slot never takes the column's gap and then gives it back.
   return (
     <div
-      className={cn("flex flex-col gap-3 empty:hidden", className)}
+      className={cn("flex flex-col gap-3 not-has-[>:not(template)]:hidden", className)}
       data-slot="today-notice"
       onClickCapture={hold}
       ref={slot}
