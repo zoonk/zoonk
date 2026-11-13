@@ -62,6 +62,96 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testAChallengeKeepsWritingWhileItsScriptIsReviewed() {
+    var wait = GenerationWait(kind: .challenge).started
+
+    for (status, step) in [
+      ("started", "planChallenge"), ("completed", "planChallenge"), ("started", "writeChallenge"),
+      ("completed", "writeChallenge"), ("started", "reviewChallenge"),
+    ] {
+      wait.apply(GenerationEvent(status: status, step: step))
+    }
+
+    let run = FollowedRun(
+      wait: wait, failure: nil, warmUpID: nil, isRestarting: false, retry: nil)
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .working])
+    XCTAssertLessThan(wait.progress.share, 1)
+    XCTAssertEqual(run.workingLabel, "Writing the challenge")
+
+    wait.apply(GenerationEvent(status: "completed", step: "reviewChallenge"))
+
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done])
+    XCTAssertFalse(wait.isDone, "the challenge opens on lessonReady")
+  }
+
+  func testAHeldBackChallengeKeepsFixingUntilItIsReady() {
+    var wait = GenerationWait(kind: .challenge)
+
+    XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write"])
+
+    for (status, step) in [
+      ("completed", "planChallenge"), ("completed", "writeChallenge"),
+      ("completed", "reviewChallenge"), ("started", "fixChallenge"),
+    ] {
+      wait.apply(GenerationEvent(status: status, step: step))
+    }
+
+    let run = FollowedRun(
+      wait: wait, failure: nil, warmUpID: nil, isRestarting: false, retry: nil)
+    XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write", "fix"])
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .working])
+    XCTAssertEqual(run.workingLabel, "Fixing what the check found")
+    XCTAssertEqual(wait.progress.share, 125.0 / 150.0, accuracy: 0.0001)
+
+    for (status, step) in [
+      ("completed", "fixChallenge"), ("started", "recheckChallenge"),
+      ("completed", "recheckChallenge"),
+    ] {
+      wait.apply(GenerationEvent(status: status, step: step))
+    }
+
+    XCTAssertEqual(
+      wait.visiblePhases.map(\.state), [.done, .done, .working],
+      "the fix keeps working until the challenge is ready")
+    XCTAssertFalse(wait.isDone)
+
+    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+    XCTAssertTrue(wait.isDone)
+  }
+
+  func testAFreshDraftAfterAFailedFixStaysInTheFix() {
+    var wait = GenerationWait(kind: .challenge)
+    let start = Date(timeIntervalSince1970: 1_000)
+
+    for (second, status, step) in [
+      (0, "started", "writeLesson"), (75, "completed", "planChallenge"),
+      (115, "completed", "writeChallenge"), (125, "completed", "reviewChallenge"),
+      (125, "started", "fixChallenge"), (140, "completed", "fixChallenge"),
+      (140, "started", "recheckChallenge"), (146, "completed", "recheckChallenge"),
+      (146, "started", "redraftChallenge"), (146, "started", "writeLesson"),
+      (146, "started", "planChallenge"), (220, "completed", "planChallenge"),
+      (220, "started", "writeChallenge"),
+    ] {
+      wait.apply(
+        GenerationEvent(
+          at: start.addingTimeInterval(TimeInterval(second)), status: status, step: step))
+    }
+
+    XCTAssertEqual(wait.visiblePhases.map(\.id), ["plan", "write", "fix"])
+    XCTAssertEqual(
+      wait.visiblePhases.map(\.state), [.done, .done, .working],
+      "the redraft's own steps never send the wait back")
+    XCTAssertEqual(
+      wait.visiblePhases[0].endedAt, start.addingTimeInterval(75),
+      "planning keeps the time the first plan finished")
+    XCTAssertFalse(wait.isDone)
+
+    wait.apply(GenerationEvent(status: "completed", step: "lessonReady"))
+
+    XCTAssertTrue(wait.isDone)
+  }
+
   func testALessonsMarksAndPicturesEachFinishOnTheirOwnStepInEitherOrder() {
     for (first, second) in [("markLesson", "drawPictures"), ("drawPictures", "markLesson")] {
       var wait = GenerationWait(kind: .lesson)
@@ -129,6 +219,11 @@ final class GenerationWaitTests: XCTestCase {
 
     XCTAssertEqual(wait.progress.share, 1)
     XCTAssertEqual(wait.visiblePhases.map(\.state), [.done, .done, .done, .done])
+  }
+
+  func testAChallengesUsualTimeLeavesOutTheFixOnlySomeChallengesNeed() {
+    XCTAssertEqual(GenerationWait.usualSeconds(.challenge), 75 + 50)
+    XCTAssertEqual(GenerationWait.usualSeconds(.lesson), 145)
   }
 
   func testWritingALessonCountsItsScreensWithAChecksBetweenThenKeepsChecking() {

@@ -8,10 +8,10 @@ import {
   listenForCommandPaletteRequest,
   openCommandPalette,
 } from "@zoonk/ui/lib/command-palette-event";
-import { Suspense, lazy, useEffect, useState, useSyncExternalStore } from "react";
+import { createOnDemand } from "@zoonk/ui/lib/on-demand";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
-const loadPalette = () => import("./app-command-palette-dialog");
-const AppCommandPaletteDialog = lazy(loadPalette);
+const paletteDialog = createOnDemand(() => import("./app-command-palette-dialog"));
 
 const frameScopes = { count: 0, listeners: new Set<() => void>() };
 
@@ -54,14 +54,15 @@ function usePreloadOnIdle() {
       return;
     }
 
-    return runWhenIdle(() => void loadPalette());
+    return runWhenIdle(() => void paletteDialog.load());
   }, []);
 }
 
 export function AppCommandPalette() {
   const [requested, setRequested] = useState(false);
   const allowed = usePaletteAllowed();
-  const mounted = requested && allowed;
+  const Dialog = paletteDialog.useModule({ enabled: requested && allowed })?.default;
+  const mounted = Boolean(Dialog);
 
   usePreloadOnIdle();
 
@@ -75,16 +76,11 @@ export function AppCommandPalette() {
       return;
     }
 
-    return listenForCommandPaletteRequest(() => setRequested(true));
+    return listenForCommandPaletteRequest(() => {
+      void paletteDialog.load();
+      setRequested(true);
+    });
   }, [mounted]);
 
-  if (!mounted) {
-    return null;
-  }
-
-  return (
-    <Suspense fallback={null}>
-      <AppCommandPaletteDialog />
-    </Suspense>
-  );
+  return Dialog ? <Dialog /> : null;
 }

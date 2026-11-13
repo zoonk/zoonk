@@ -46,6 +46,7 @@ export type GenerateStepVariantParams = {
   lessonTitle: string;
   level: CourseLevel;
   language: string;
+  problems?: string[];
   /** The country the screen's lesson is set in; null is the language's own. */
   country: string | null;
   model?: string;
@@ -70,6 +71,7 @@ ${formatLocalContext({ country: params.country, language: params.language })}
     LEVEL: ${params.level}
     LESSON_TITLE: ${params.lessonTitle}
     SCREEN: ${JSON.stringify(params.screen.content)}
+    PROBLEMS_TO_AVOID: ${JSON.stringify(params.problems ?? [])}
 ${formatTool(params)}  `;
 }
 

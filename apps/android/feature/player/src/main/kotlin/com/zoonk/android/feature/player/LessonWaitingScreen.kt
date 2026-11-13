@@ -75,6 +75,7 @@ fun LessonWaitingScreen(
     val run by viewModel.run.collectAsStateWithLifecycle()
     val alternative by viewModel.alternative.collectAsStateWithLifecycle()
     val warmUpId by viewModel.warmUpId.collectAsStateWithLifecycle()
+    val kind by viewModel.kind.collectAsStateWithLifecycle()
     var late by remember { mutableStateOf(false) }
     val current = writing
     val waits = current == LessonWriting.Writing || current == LessonWriting.Ready
@@ -153,12 +154,12 @@ fun LessonWaitingScreen(
                     quiz.open()
                     val share =
                         com.zoonk.android.ui.components
-                            .rememberGenerationProgress(GenerationKind.Lesson, shown)
+                            .rememberGenerationProgress(kind, shown)
                     WaitContent(
                         quiz,
                         hold,
                         AnalyticsEvent.WarmUpSurface.LessonWait,
-                        GenerationKind.Lesson,
+                        kind,
                         shown,
                         stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
                         goalId = goalId,
@@ -166,6 +167,7 @@ fun LessonWaitingScreen(
                         onRetry = viewModel::retry,
                     ) {
                         LessonWritingProgress(
+                            kind,
                             shown,
                             viewModel::retry,
                             stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
@@ -177,7 +179,7 @@ fun LessonWaitingScreen(
 
                 LessonWriting.Failed -> {
                     GenerationWait(
-                        GenerationKind.Lesson,
+                        kind,
                         GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.NotStarted),
                         onRetry = viewModel::start,
                     )
@@ -209,12 +211,13 @@ fun LessonWaitingScreen(
 /** A lesson's run while it's written, and what that takes, on the lesson page and the session's next stop. */
 @Composable
 fun LessonWritingProgress(
+    kind: GenerationKind,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
     note: String?,
     progressShare: Float? = null,
 ) {
-    GenerationWait(GenerationKind.Lesson, run, onRetry, share = progressShare)
+    GenerationWait(kind, run, onRetry, share = progressShare)
     if (note != null && run.status != GenerationRun.Status.Failed) {
         Text(
             note,

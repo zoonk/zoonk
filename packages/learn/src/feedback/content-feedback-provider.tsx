@@ -1,13 +1,12 @@
 "use client";
 
-import { Suspense, lazy, useCallback, useMemo, useState } from "react";
+import { createOnDemand } from "@zoonk/ui/lib/on-demand";
+import { useCallback, useMemo, useState } from "react";
 import { ContentFeedbackContext } from "./feedback-context";
 import { type ContentFeedbackAdapters, type FeedbackFormRequest } from "./feedback-contract";
 import { useScreenKeysPause } from "./use-screen-keys-pause";
 
-const FeedbackFormDialog = lazy(() =>
-  import("./feedback-form-dialog").then((module) => ({ default: module.FeedbackFormDialog })),
-);
+const feedbackForm = createOnDemand(() => import("./feedback-form-dialog"));
 
 export type { ContentFeedbackAdapters } from "./feedback-contract";
 export { useContentFeedback } from "./feedback-context";
@@ -26,6 +25,10 @@ function useOpenMenus() {
   const [openMenus, setOpenMenus] = useState<readonly string[]>([]);
 
   const setMenuOpen = useCallback(({ menuId, open }: { menuId: string; open: boolean }) => {
+    if (open) {
+      void feedbackForm.load();
+    }
+
     setOpenMenus((current) => {
       const others = current.filter((id) => id !== menuId);
       return open ? [...others, menuId] : others;
@@ -47,27 +50,33 @@ export function ContentFeedbackProvider({
   children: React.ReactNode;
 }) {
   const [formRequest, setFormRequest] = useState<FeedbackFormRequest | null>(null);
-  const showFeedbackForm = useOpenedOnce(formRequest !== null);
+  const opened = useOpenedOnce(formRequest !== null);
+  const FeedbackFormDialog = feedbackForm.useModule({ enabled: opened })?.FeedbackFormDialog;
   const { anyMenuOpen, setMenuOpen } = useOpenMenus();
 
   useScreenKeysPause(anyMenuOpen || formRequest !== null);
 
   const value = useMemo(
-    () => ({ adapters, openFeedbackForm: setFormRequest, setMenuOpen }),
+    () => ({
+      adapters,
+      openFeedbackForm: (request: FeedbackFormRequest) => {
+        void feedbackForm.load();
+        setFormRequest(request);
+      },
+      setMenuOpen,
+    }),
     [adapters, setMenuOpen],
   );
 
   return (
     <ContentFeedbackContext value={value}>
       {children}
-      {showFeedbackForm && (
-        <Suspense fallback={null}>
-          {/* A slow send can finish after its form was closed and another opened: it closes only its own. */}
-          <FeedbackFormDialog
-            onClose={(closed) => setFormRequest((current) => (current === closed ? null : current))}
-            request={formRequest}
-          />
-        </Suspense>
+      {FeedbackFormDialog && (
+        // A slow send can finish after its form was closed and another opened: it closes only its own.
+        <FeedbackFormDialog
+          onClose={(closed) => setFormRequest((current) => (current === closed ? null : current))}
+          request={formRequest}
+        />
       )}
     </ContentFeedbackContext>
   );

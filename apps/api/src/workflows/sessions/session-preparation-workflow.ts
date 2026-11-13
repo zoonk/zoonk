@@ -23,12 +23,10 @@ import { endLessonsAskStep, readGoalLookaheadStep } from "../goals/steps/goal-lo
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { startChallengeQuestions } from "./challenge-question-starts";
+import { prepareFieldChallenge } from "./prepare-field-challenge";
+import { prepareToolVersion } from "./prepare-tool-version";
 import { writeLanguageCalls } from "./steps/language-call-steps";
-import {
-  listLearnerVersionTargetsStep,
-  prepareFieldChallengeStep,
-  prepareToolVersionStep,
-} from "./steps/personal-versions-steps";
+import { listLearnerVersionTargetsStep } from "./steps/personal-versions-steps";
 import {
   type ClaimQuestions,
   type SessionPreparationRequest,
@@ -75,8 +73,8 @@ async function preparePersonalLayer({
 
   await Promise.allSettled([
     ...fieldItems.map((target) => prepareSkillFieldItems({ ...context, target })),
-    ...versions.tools.map((target) => prepareToolVersionStep({ ...context, target })),
-    ...versions.challenges.map((target) => prepareFieldChallengeStep({ ...context, target })),
+    ...versions.tools.map((target) => prepareToolVersion({ ...context, target })),
+    ...versions.challenges.map((target) => prepareFieldChallenge({ ...context, target })),
   ]);
 }
 
@@ -133,7 +131,19 @@ async function startLessonWork({
     ...outlines.map((outline) => startPlanOutline({ analytics, outline, started })),
   ]);
 
-  return { conflict: false, value: preparation };
+  const requested = new Set([...lessonIds, ...laterLessonIds]);
+
+  return {
+    conflict: false,
+    value: {
+      ...preparation,
+      laterLessonIds: laterLessonIds.filter((id) => admitted.has(id)),
+      lessonIds: lessonIds.filter((id) => admitted.has(id)),
+      plannedLessonIds: preparation.plannedLessonIds.filter(
+        (id) => !requested.has(id) || admitted.has(id),
+      ),
+    },
+  };
 }
 
 function waitForWrittenLessons(lessonIds: string[]): Promise<number> {
