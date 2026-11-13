@@ -9,7 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { LIST_GROUP_CLASS, ListRowChevron } from "../_components/list-group";
+import { LIST_GROUP_CLASS, ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
 import { TRUNCATED_TITLE_CLASS } from "../_components/title-row";
@@ -103,8 +103,13 @@ function FinishRow({ examHref }: { examHref: string | null }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="truncate font-medium">{goal.displayName}</span>
+      <span className={PATH_ROW_BODY_CLASS}>
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-medium">{goal.displayName}</span>
+          {!finish && goal.kind === "exam" && (
+            <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
+          )}
+        </span>
         {finish && (
           <PlanDateText
             className="text-muted-foreground text-xs"
@@ -113,15 +118,17 @@ function FinishRow({ examHref }: { examHref: string | null }) {
             month={finish.month}
           />
         )}
-        {!finish && goal.kind === "exam" && (
-          <span className="text-muted-foreground text-xs">{t("Date to be confirmed")}</span>
-        )}
       </span>
     </>
   );
 
   if (!examHref) {
-    return <div className={PATH_ROW_CLASS}>{content}</div>;
+    return (
+      <div className={PATH_ROW_CLASS}>
+        {content}
+        <ListRowChevronSpace />
+      </div>
+    );
   }
 
   return (
