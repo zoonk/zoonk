@@ -80,7 +80,7 @@ const STATE_TONES: Record<string, StateTone> = {
   unpaid: "attention",
 };
 
-export function getStateTone(state: string): StateTone {
+function getStateTone(state: string): StateTone {
   return STATE_TONES[state] ?? "waiting";
 }
 

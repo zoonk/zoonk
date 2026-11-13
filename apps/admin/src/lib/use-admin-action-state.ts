@@ -43,14 +43,3 @@ export function useAdminActionState<State extends AdminActionState>({
     return next;
   }, initialState);
 }
-
-/** For a Server Action that returns nothing and throws when it fails. */
-export function useAdminFormAction(action: (formData: FormData) => Promise<void>) {
-  return useAdminActionState({
-    action: async (previous: AdminActionState, formData: FormData) => {
-      await action(formData);
-      return { error: null, submissionId: previous.submissionId + 1 };
-    },
-    initialState: { error: null, submissionId: 0 },
-  });
-}

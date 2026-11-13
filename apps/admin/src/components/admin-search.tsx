@@ -8,7 +8,7 @@ import { parseAsString, throttle, useQueryStates } from "nuqs";
 import { type ComponentProps } from "react";
 
 /** Alone on its row on a phone, the search is a whole field; in the toolbar it takes the toolbar's height. */
-export function AdminSearchField(props: ComponentProps<"input">) {
+function AdminSearchField(props: ComponentProps<"input">) {
   return (
     <AdminSmallInput
       className="md:text-compact pl-9 md:pl-8"

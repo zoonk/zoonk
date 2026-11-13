@@ -19,7 +19,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
 import { UserActionsMenu } from "./user-actions-menu";
-import { UserActivity } from "./user-activity";
+import { UserActivity, UserActivitySkeleton } from "./user-activity";
 import { UserAiSpend } from "./user-ai-spend";
 import { UserGoals, UserPlans } from "./user-goals";
 import { UserLearnerSkills } from "./user-learner-skills";
@@ -102,7 +102,13 @@ function UserTabContent({ tab, userId }: { tab: UserTab | undefined; userId: str
         <Suspense fallback={<AdminSectionSkeleton />}>
           <UserLearnerSkills userId={userId} />
         </Suspense>
-        <Suspense fallback={<AdminSectionSkeleton />}>
+        <Suspense
+          fallback={
+            <AdminSectionSkeleton>
+              <UserActivitySkeleton />
+            </AdminSectionSkeleton>
+          }
+        >
           <UserActivity userId={userId} />
         </Suspense>
         <Suspense fallback={<AdminSectionSkeleton rows={2} />}>

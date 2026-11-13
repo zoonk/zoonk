@@ -3,7 +3,7 @@ import { getLearnerLabel } from "@/lib/learner-label";
 import { type FeedbackReportType } from "@zoonk/core/feedback/contract";
 import { type FeedbackContentKind, type FeedbackStatus, type User } from "@zoonk/db";
 
-export const feedbackContentKindLabels: Record<FeedbackContentKind, string> = {
+const feedbackContentKindLabels: Record<FeedbackContentKind, string> = {
   answerExplanation: "Answer explanation",
   chapter: "Chapter",
   course: "Course",
