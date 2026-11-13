@@ -101,7 +101,7 @@ function BeltRow({ belt }: { belt: SummaryBelt }) {
         <BeltIndicator color={color} label={beltName(color)} />
         <span className="min-w-0 flex-1 font-medium">{beltStep(belt.after)}</span>
         <RewardValue tone="progress">
-          {t("+{bonus}", { bonus: String(belt.stripesGained) })}
+          {t("{count, plural, one {+# level} other {+# levels}}", { count: belt.stripesGained })}
         </RewardValue>
       </span>
 

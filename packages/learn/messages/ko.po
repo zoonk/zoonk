@@ -977,11 +977,10 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "흰띠"
 
-#. A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt's name, such as "White belt".
 #: src/_utils/use-belt-name.ts
-msgctxt "belts.mg0hRn"
-msgid "{belt} {level}"
-msgstr "{belt} {level}"
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, 레벨 {level}"
 
 #. {name} is a part of the exam, such as a specialty's own test or a foreign language, that the learner's plan skips until they pick an option. {count} and {total} are points of the exam's score.
 #: src/_utils/use-choice-left-out.ts
@@ -14096,11 +14095,11 @@ msgctxt "ICrWm9"
 msgid "A wrong answer cancels a right one. Not sure? Leave it blank."
 msgstr "하나 틀리면 정답 하나가 차감돼요. 확신이 없나요? 답을 비워 두세요."
 
-#. Under a belt and its number, such as "White belt 4": which belt comes next, and after which number. {next} and {belt} are belt names, such as "Yellow belt" and "White belt".
+#. Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt's name, such as "Yellow belt"; {count} is a belt's last level, 10.
 #: src/session/reached-moment.tsx
-msgctxt "JxJr5v"
-msgid "{next} comes after {belt} {count}"
-msgstr "{next}: {belt} {count} 다음"
+msgctxt "9a-zrf"
+msgid "{next} comes after level {count}"
+msgstr "{next}은(는) 레벨 {count} 다음이에요"
 
 #: src/session/review-intro.tsx
 msgctxt "6UUFQv"
@@ -14213,6 +14212,11 @@ msgstr "{count, plural, other {#개 모두 완료}}"
 msgctxt "4VMsuw"
 msgid "+{bonus}"
 msgstr "+{bonus}"
+
+#: src/session/summary/summary-rewards.tsx
+msgctxt "DhH9Oq"
+msgid "{count, plural, one {+# level} other {+# levels}}"
+msgstr "{count, plural, other {+#레벨}}"
 
 #: src/session/summary/summary-steps.tsx
 msgctxt "Hlc1zt"

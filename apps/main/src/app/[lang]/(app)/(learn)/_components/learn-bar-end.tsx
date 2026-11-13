@@ -45,12 +45,7 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
     >
       <BeltLevel belt={belt} color={level.color} level={levelNumber} />
       <span className="sr-only">
-        {t({
-          description:
-            'Read aloud for a link. {belt} is a belt\'s name and {level} its number from 1 to 10, such as "White belt 4".',
-          message: "{belt} {level}. Statistics",
-          values: { belt, level: levelNumber },
-        })}
+        {t("{belt}, level {level}. Statistics", { belt, level: levelNumber })}
       </span>
     </Link>
   );

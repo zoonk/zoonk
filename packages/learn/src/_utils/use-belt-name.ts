@@ -39,16 +39,11 @@ export function useBeltName() {
   };
 }
 
-/** A belt with its number from 1 to 10, the one way the game's step is said: "White belt 4". */
+/** A level with the belt it shows as, the one way the game's level is said: "White belt, level 4". */
 export function useBeltStep() {
-  const t = useExtracted("belts");
+  const t = useExtracted();
   const beltName = useBeltName();
 
   return ({ color, level }: { color: BeltColor; level: number }): string =>
-    t({
-      description:
-        'A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt\'s name, such as "White belt".',
-      message: "{belt} {level}",
-      values: { belt: beltName(color), level: String(level) },
-    });
+    t("{belt}, level {level}", { belt: beltName(color), level: String(level) });
 }

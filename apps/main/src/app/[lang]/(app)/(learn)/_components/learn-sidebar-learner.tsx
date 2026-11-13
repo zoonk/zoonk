@@ -101,15 +101,7 @@ function AccountTriggerWithLevel({
   const belt = useBeltLabel(level.color);
   const levelNumber = String(level.level);
 
-  const said = [
-    t({
-      description:
-        'A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt\'s name, such as "White belt".',
-      message: "{belt} {level}",
-      values: { belt, level: levelNumber },
-    }),
-    t("User menu"),
-  ];
+  const said = [t("{belt}, level {level}", { belt, level: levelNumber }), t("User menu")];
 
   return (
     <AccountTrigger name={name} said={said}>

@@ -807,11 +807,10 @@ msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
 msgstr "Zoonk의 모든 코스를 둘러보고 AI와 함께 무엇이든 배워 보세요. 과학, 수학, 기술 등 다양한 과목을 다루는 참여형 레슨을 찾아보세요."
 
-#. Read aloud for a link. {belt} is a belt's name and {level} its number from 1 to 10, such as "White belt 4".
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "-KM9XT"
-msgid "{belt} {level}. Statistics"
-msgstr "{belt} {level}. 통계"
+msgctxt "yAw6p8"
+msgid "{belt}, level {level}. Statistics"
+msgstr "{belt}, 레벨 {level}. 통계"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
@@ -829,12 +828,11 @@ msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
 msgstr "배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요."
 
-#. A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt's name, such as "White belt".
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "mg0hRn"
-msgid "{belt} {level}"
-msgstr "{belt} {level}"
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, 레벨 {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -1714,9 +1712,10 @@ msgstr "개요"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "띠"
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "레벨"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
@@ -1734,9 +1733,11 @@ msgstr "활동"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "정답"
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "점수"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
@@ -1851,7 +1852,7 @@ msgstr "일별 에너지"
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "bPZR0t"
 msgid "Days at 100%"
-msgstr ""
+msgstr "100% 달성 일수"
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
@@ -1889,32 +1890,31 @@ msgctxt "mixXPJ"
 msgid "<mono>{points}</mono> Brain Power to {belt}"
 msgstr "두뇌력 <mono>{points}</mono> 더 모으면 {belt} 달성"
 
-#. The points still needed for the belt's next number. {belt} {level} is a belt and its number from 1 to 10, such as "White belt 4".
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "dIDLQF"
-msgid "<mono>{points}</mono> Brain Power to {belt} {level}"
-msgstr "두뇌력 <mono>{points}</mono> 더 모으면 {belt} {level} 달성"
+msgctxt "kWRGGq"
+msgid "<mono>{points}</mono> Brain Power to level {level}"
+msgstr "두뇌력 <mono>{points}</mono> 더 모으면 레벨 {level}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "2Zh-AP"
 msgid "{points} Brain Power"
 msgstr "두뇌력 {points}"
 
-#. {next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt's last number, 10.
+#. {next} is a belt's name, such as "Yellow belt". {count} is a belt's last level, 10.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "aFJB29"
-msgid "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power"
-msgstr ""
+msgctxt "7StCko"
+msgid "{next} comes after level {count}, at <mono>{points}</mono> Brain Power"
+msgstr "{next}: 레벨 {count} 이후, 두뇌력이 <mono>{points}</mono>에 도달하면 받아요"
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "h06pGR"
-msgid "Your belt and Brain Power."
-msgstr "내 띠와 두뇌력."
+msgctxt "Wzw2i9"
+msgid "Your belt, level and Brain Power."
+msgstr "띠와 레벨, 두뇌력을 확인해 보세요."
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "IxxQzi"
 msgid "You earn Brain Power for everything you study, and it never goes down."
-msgstr ""
+msgstr "무엇을 공부하든 두뇌력이 쌓이고, 쌓인 두뇌력은 줄어들지 않아요."
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
@@ -2057,14 +2057,9 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {응답 #개}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "3YnSzO"
-msgid "{correct} of {total}"
-msgstr ""
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "AprlUR"
-msgid "Last {days} days"
-msgstr ""
+msgctxt "ElicHU"
+msgid "{correct} of {total} right in the last {days} days"
+msgstr "정답 {correct}개 / 전체 {total}개 (최근 {days}일)"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2110,11 +2105,6 @@ msgid "Your belt, Energy, study days, right answers and when you do best."
 msgstr "내 띠, 에너지, 학습 일수, 정답 수와 점수가 가장 높은 때를 확인해 보세요."
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "레벨"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "AezvZG"
 msgid "Average {value}"
 msgstr "평균 {value}"
@@ -2123,11 +2113,6 @@ msgstr "평균 {value}"
 msgctxt "I5Pid5"
 msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
 msgstr "{lessons, plural, =0 {레슨 #개} other {레슨 #개}} · {time}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "점수"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "_qHKLY"

@@ -807,11 +807,10 @@ msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
 msgstr "Entdecke alle Kurse von Zoonk und lerne mit KI, was immer du möchtest. Finde interaktive Lektionen zu Naturwissenschaften, Mathematik, Technik und vielem mehr."
 
-#. Read aloud for a link. {belt} is a belt's name and {level} its number from 1 to 10, such as "White belt 4".
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-msgctxt "-KM9XT"
-msgid "{belt} {level}. Statistics"
-msgstr "{belt} {level}. Statistiken"
+msgctxt "yAw6p8"
+msgid "{belt}, level {level}. Statistics"
+msgstr "{belt}, Level {level}. Statistik"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-frame.tsx
 msgctxt "ZKtRoA"
@@ -829,12 +828,11 @@ msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
 msgstr "Sag uns, was du lernen möchtest, und wir planen jeden Tag bis zu deinem Ziel."
 
-#. A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt's name, such as "White belt".
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "mg0hRn"
-msgid "{belt} {level}"
-msgstr "{belt} {level}"
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, Level {level}"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "zF7Cth"
@@ -1714,9 +1712,10 @@ msgstr "Überblick"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Gürtel"
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Level"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
@@ -1734,9 +1733,11 @@ msgstr "Aktivität"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Richtige Antworten"
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Score"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
@@ -1851,7 +1852,7 @@ msgstr "Energie nach Tag"
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "bPZR0t"
 msgid "Days at 100%"
-msgstr ""
+msgstr "Tage mit 100 %"
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
@@ -1889,32 +1890,31 @@ msgctxt "mixXPJ"
 msgid "<mono>{points}</mono> Brain Power to {belt}"
 msgstr "Noch <mono>{points}</mono> Brain Power bis „{belt}“"
 
-#. The points still needed for the belt's next number. {belt} {level} is a belt and its number from 1 to 10, such as "White belt 4".
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "dIDLQF"
-msgid "<mono>{points}</mono> Brain Power to {belt} {level}"
-msgstr "Noch <mono>{points}</mono> Brain Power bis „{belt} {level}“"
+msgctxt "kWRGGq"
+msgid "<mono>{points}</mono> Brain Power to level {level}"
+msgstr "<mono>{points}</mono> Brain Power bis Level {level}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "2Zh-AP"
 msgid "{points} Brain Power"
 msgstr "{points} Brain Power"
 
-#. {next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt's last number, 10.
+#. {next} is a belt's name, such as "Yellow belt". {count} is a belt's last level, 10.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "aFJB29"
-msgid "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power"
-msgstr ""
+msgctxt "7StCko"
+msgid "{next} comes after level {count}, at <mono>{points}</mono> Brain Power"
+msgstr "{next} gibt es nach Level {count}, ab <mono>{points}</mono> Brain Power"
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "h06pGR"
-msgid "Your belt and Brain Power."
-msgstr "Dein Gürtel und Brain Power."
+msgctxt "Wzw2i9"
+msgid "Your belt, level and Brain Power."
+msgstr "Dein Gürtel, dein Level und deine Brain Power."
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "IxxQzi"
 msgid "You earn Brain Power for everything you study, and it never goes down."
-msgstr ""
+msgstr "Du sammelst Brain Power mit allem, was du lernst, und verlierst sie nie."
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
@@ -2057,14 +2057,9 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# Antwort} other {# Antworten}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "3YnSzO"
-msgid "{correct} of {total}"
-msgstr ""
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "AprlUR"
-msgid "Last {days} days"
-msgstr ""
+msgctxt "ElicHU"
+msgid "{correct} of {total} right in the last {days} days"
+msgstr "{correct} von {total} richtig in den letzten {days} Tagen"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2110,11 +2105,6 @@ msgid "Your belt, Energy, study days, right answers and when you do best."
 msgstr "Dein Gürtel, deine Energie, deine Lerntage, deine richtigen Antworten und wann du am besten abschneidest."
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Level"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "AezvZG"
 msgid "Average {value}"
 msgstr "Durchschnitt {value}"
@@ -2123,11 +2113,6 @@ msgstr "Durchschnitt {value}"
 msgctxt "I5Pid5"
 msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
 msgstr "{lessons, plural, =0 {# Lektionen} one {# Lektion} other {# Lektionen}} · {time}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Score"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "_qHKLY"

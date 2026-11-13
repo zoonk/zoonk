@@ -1,4 +1,4 @@
-import { type BeltColorOption, getBeltColors, getBeltLabel } from "@/lib/belt-colors";
+import { type BeltColorOption, getBeltColors } from "@/lib/belt-colors";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
@@ -121,7 +121,6 @@ async function NextStep({
 }) {
   const t = await getExtracted();
   const format = await getFormatter();
-  const belt = await getBeltLabel({ color: level.color });
 
   if (level.isMaxLevel) {
     return (
@@ -142,11 +141,10 @@ async function NextStep({
             mono: renderNumber,
             points,
           })
-        : t.rich({
-            description:
-              'The points still needed for the belt\'s next number. {belt} {level} is a belt and its number from 1 to 10, such as "White belt 4".',
-            message: "<mono>{points}</mono> Brain Power to {belt} {level}",
-            values: { belt, level: String(level.level + 1), mono: renderNumber, points },
+        : t.rich("<mono>{points}</mono> Brain Power to level {level}", {
+            level: String(level.level + 1),
+            mono: renderNumber,
+            points,
           })}
     </p>
   );
@@ -184,12 +182,7 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
         <div className="relative flex flex-col gap-4">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
             <p className="text-lg font-semibold tracking-tight">
-              {t({
-                description:
-                  'A belt and its number from 1 to 10, such as "White belt 4". {belt} is the belt\'s name, such as "White belt".',
-                message: "{belt} {level}",
-                values: { belt: belt.label, level: String(currentBelt.level) },
-              })}
+              {t("{belt}, level {level}", { belt: belt.label, level: String(currentBelt.level) })}
             </p>
 
             <p className="text-brain-text text-sm font-medium tabular-nums">
@@ -224,10 +217,9 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           <span className="text-pretty">
             {t.rich({
               description:
-                '{next} and {belt} are belt names, such as "Yellow belt" and "White belt". {count} is a belt\'s last number, 10.',
-              message: "{next} comes after {belt} {count}, at <mono>{points}</mono> Brain Power",
+                "{next} is a belt's name, such as \"Yellow belt\". {count} is a belt's last level, 10.",
+              message: "{next} comes after level {count}, at <mono>{points}</mono> Brain Power",
               values: {
-                belt: belt.label,
                 count: String(LEVELS_PER_COLOR),
                 mono: renderNumber,
                 next: nextBelt.label,

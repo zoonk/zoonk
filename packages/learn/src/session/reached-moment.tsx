@@ -89,9 +89,9 @@ function useNextBeltLine() {
 
     return t({
       description:
-        'Under a belt and its number, such as "White belt 4": which belt comes next, and after which number. {next} and {belt} are belt names, such as "Yellow belt" and "White belt".',
-      message: "{next} comes after {belt} {count}",
-      values: { belt: beltName(color), count: String(LEVELS_PER_COLOR), next: beltName(next) },
+        'Under a level and its belt, such as "White belt, level 4": which belt comes next. {next} is a belt\'s name, such as "Yellow belt"; {count} is a belt\'s last level, 10.',
+      message: "{next} comes after level {count}",
+      values: { count: String(LEVELS_PER_COLOR), next: beltName(next) },
     });
   }
 

@@ -7,7 +7,7 @@ import { LevelContent, LevelContentSkeleton } from "./level-content";
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return { description: t("Your belt and Brain Power."), title: t("Belt") };
+  return { description: t("Your belt, level and Brain Power."), title: t("Level") };
 }
 
 export default async function LevelPage() {
@@ -16,7 +16,7 @@ export default async function LevelPage() {
   return (
     <StatsPage
       description={t("You earn Brain Power for everything you study, and it never goes down.")}
-      title={t("Belt")}
+      title={t("Level")}
     >
       <Suspense fallback={<LevelContentSkeleton />}>
         <LevelContent />
