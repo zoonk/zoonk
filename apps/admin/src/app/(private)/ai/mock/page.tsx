@@ -290,7 +290,7 @@ function WrittenBy() {
         rows={rows.slice(0, SHOWN).map((row) => [
           strong(row[0]?.text),
           row[1]?.text,
-          <span className="font-mono text-xs" key="version">
+          <span className="text-compact font-mono" key="version">
             {row[2]?.text}
           </span>,
           row[3]?.text,

@@ -9,7 +9,7 @@ export function AdminSection({
 }: {
   action?: React.ReactNode;
   children: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   title: string;
 }) {
   return (

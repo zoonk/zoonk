@@ -45,7 +45,7 @@ function NoticeFacts({ notice }: { notice: AdminReviewFlag["notice"] }) {
   const changed = notice.fields.map((field) => toWords(field).toLowerCase()).join(", ");
 
   return (
-    <p className="text-muted-foreground text-compact">
+    <>
       <Link
         className={`${LINK_CLASS} text-foreground`}
         href={exam ? `/exams/${exam.id}` : `/sources/${notice.source.id}`}
@@ -56,7 +56,7 @@ function NoticeFacts({ notice }: { notice: AdminReviewFlag["notice"] }) {
       {" · "}
       {formatDate(notice.createdAt)}
       {changed ? ` · changed ${changed}` : ""}
-    </p>
+    </>
   );
 }
 
@@ -74,9 +74,11 @@ export async function ReviewFlagList() {
         const [first] = group;
 
         return first ? (
-          <AdminSection key={first.noticeId} title={first.notice.message}>
-            <NoticeFacts notice={first.notice} />
-
+          <AdminSection
+            description={<NoticeFacts notice={first.notice} />}
+            key={first.noticeId}
+            title={first.notice.message}
+          >
             <ul className="divide-y border-t">
               {group.map((flag) => (
                 <li

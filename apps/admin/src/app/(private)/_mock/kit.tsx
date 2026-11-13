@@ -119,6 +119,20 @@ function alignAmounts(rows: React.ReactNode[][]): React.ReactNode[][] {
   );
 }
 
+const NUMBER = /^(?:\$?[\d,]+(?:\.\d+)?%?|—)$/u;
+
+/** A column that holds only numbers ends them on one edge, whichever table it is in. */
+function alignNumbers(columns: MockColumn[], rows: React.ReactNode[][]): MockColumn[] {
+  return columns.map((column, index) => {
+    const numbers =
+      rows.length > 0 &&
+      rows.every((row) => typeof row[index] === "string" && NUMBER.test(row[index].trim())) &&
+      rows.some((row) => row[index] !== "—");
+
+    return column.align || !numbers ? column : { ...column, align: "right" as const };
+  });
+}
+
 export function MockRows({
   columns,
   empty = "",
@@ -128,8 +142,10 @@ export function MockRows({
   empty?: string;
   rows: React.ReactNode[][];
 }) {
+  const aligned = alignNumbers(columns, rows);
+
   return (
-    <AdminTableColumns columns={columns} emptyLabel={empty} isEmpty={rows.length === 0}>
+    <AdminTableColumns columns={aligned} emptyLabel={empty} isEmpty={rows.length === 0}>
       {alignAmounts(rows).map((row, rowIndex) => (
         // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
         <AdminTableRow key={rowIndex}>
@@ -137,7 +153,7 @@ export function MockRows({
             <TableCell
               className={cn(
                 index === 0 && "whitespace-normal",
-                columns[index]?.align === "right" && "text-right tabular-nums",
+                aligned[index]?.align === "right" && "text-right tabular-nums",
                 index > 0 && "text-muted-foreground",
               )}
               // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
@@ -184,21 +200,13 @@ export function MockList({
 }
 
 /** Label and value rows, each `[label, value]`; rows with no value are left out. */
-/** A count, an amount, an id or a hash: data, set in mono like a table's numbers. */
-const DATA_VALUE =
-  /^(?:\$?[\d,]+(?:\.\d+)?%?|[\da-f]{8}-[\da-f-]{27}|[\da-f]{7,}(?:\s·\s[\da-f]{7,})*)$/iu;
-
 export function Facts({ rows }: { rows: [string, React.ReactNode][] }) {
   return (
     <DetailFields>
       {rows
         .filter(([, value]) => value !== "" && value !== null && value !== undefined)
         .map(([label, value]) => (
-          <DetailField
-            key={label}
-            label={label}
-            mono={typeof value === "string" && DATA_VALUE.test(value.trim())}
-          >
+          <DetailField key={label} label={label}>
             {value}
           </DetailField>
         ))}
@@ -258,13 +266,9 @@ export function TableFrom({
 
   const rows = table?.rows ?? [];
 
-  const isNumbers = (index: number) =>
-    rows.length > 0 && rows.every((row) => /^[\d,.]+$/u.test(row[index]?.text ?? ""));
-
   return (
     <MockRows
-      columns={keep.map(({ index, label }) => ({
-        align: isNumbers(index) ? ("right" as const) : undefined,
+      columns={keep.map(({ label }) => ({
         label: rename[label] ?? label,
         size: sizes[rename[label] ?? label],
       }))}

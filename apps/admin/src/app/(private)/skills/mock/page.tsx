@@ -34,7 +34,7 @@ function SkillList({ skills }: { skills: readonly (readonly [string, string])[] 
   return (
     <ul className="divide-y">
       {skills.map(([name, level]) => (
-        <li className="flex items-baseline justify-between gap-4 py-2 text-sm" key={name}>
+        <li className="flex min-h-11 items-center justify-between gap-4 text-sm" key={name}>
           <MockLink>{name}</MockLink>
           <span className="text-muted-foreground shrink-0 text-xs">{level}</span>
         </li>

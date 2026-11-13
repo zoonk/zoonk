@@ -8,7 +8,27 @@ export function DetailFields({ children }: { children: React.ReactNode }) {
   return <dl className="@container divide-y">{children}</dl>;
 }
 
-/** `mono` is for a value that is data, not words: a count, an amount, an id or a hash. */
+/**
+ * Data, not words: a count (with its unit), an amount, a size, an id, a key, a hash or an address. A
+ * model's name ("openai/gpt-6.1-sol") reads as a name and stays in the text face.
+ */
+const DATA_VALUE = /^(?:\$?[\d,]+(?:\.\d+)?%?(?: [a-z]+)?|\d+ × \d+|(?=\S*[\d._:/-])\S+)$/u;
+
+const MODEL_NAME = /^[a-z-]+\/[\w.-]+$/u;
+
+function isData(children: React.ReactNode): boolean {
+  if (typeof children === "number") {
+    return true;
+  }
+
+  return (
+    typeof children === "string" &&
+    DATA_VALUE.test(children.trim()) &&
+    !MODEL_NAME.test(children.trim())
+  );
+}
+
+/** A value that is data is set in mono, digit under digit; `mono` says so where the value isn't a plain string. */
 export function DetailField({
   children,
   label,
@@ -24,7 +44,7 @@ export function DetailField({
       <dd
         className={cn(
           "[&_a]:hit-area min-w-0 wrap-break-word [&_a]:relative",
-          mono && "text-compact font-mono tabular-nums",
+          (mono ?? isData(children)) && "text-compact font-mono tabular-nums",
         )}
       >
         {children}

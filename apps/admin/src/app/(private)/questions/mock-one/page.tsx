@@ -33,7 +33,7 @@ export default async function BuddyQuestionMockPage({
         facts={["Will", "Asked Oct 26, 2026, 4:02 PM"]}
         parents={[{ href: "/questions", label: "Buddy questions" }]}
         title={title}
-        titleClassName="max-w-3xl text-xl leading-7 font-semibold"
+        titleClassName="max-w-3xl"
       />
 
       <AdminDetailBody>

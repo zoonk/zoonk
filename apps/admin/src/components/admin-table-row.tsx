@@ -13,7 +13,7 @@ export function AdminTableRow({ className, ...props }: ComponentProps<"tr">) {
   return (
     <TableRow
       className={cn(
-        "has-data-[slot=table-row-link]:hover:bg-muted/50 has-data-[slot=table-row-link]:transform-gpu has-data-[slot=table-row-link]:cursor-pointer [&>td]:py-3 [&>td]:align-baseline",
+        "has-data-[slot=table-row-link]:hover:bg-muted/50 has-data-[slot=table-row-link]:transform-gpu has-data-[slot=table-row-link]:cursor-pointer [&:has(img)>td]:align-middle [&>td]:py-3 [&>td]:align-baseline",
         "has-data-[slot=table-row-link]:[&_a:not([data-slot=table-row-link])]:hit-area has-data-[slot=table-row-link]:[&_:is(a,button,form,input,select,textarea,summary,audio,video):not([data-slot=table-row-link])]:relative has-data-[slot=table-row-link]:[&_:is(a,button,form,input,select,textarea,summary,audio,video):not([data-slot=table-row-link])]:z-10",
         className,
       )}

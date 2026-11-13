@@ -86,20 +86,24 @@ export default async function ContentFixMockPage({
                   </span>{" "}
                   {BEFORE.split("just ")[1]}
                 </p>
+                <a
+                  className="text-muted-foreground hit-area relative self-start text-xs font-medium"
+                  href="#"
+                >
+                  Whole screen before
+                </a>
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-muted-foreground text-xs font-medium">After</span>
                 <p className="bg-muted rounded-lg p-3 text-sm leading-6">{AFTER}</p>
+                <a
+                  className="text-muted-foreground hit-area relative self-start text-xs font-medium"
+                  href="#"
+                >
+                  Whole screen after
+                </a>
               </div>
             </div>
-            <span className="flex gap-4">
-              <a className="text-muted-foreground hit-area relative text-xs font-medium" href="#">
-                Whole screen before
-              </a>
-              <a className="text-muted-foreground hit-area relative text-xs font-medium" href="#">
-                Whole screen after
-              </a>
-            </span>
           </AdminSection>
 
           <AdminSection title="What else approving does">
