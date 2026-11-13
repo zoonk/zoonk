@@ -13,6 +13,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getFormattingLocale } from "@zoonk/utils/locale";
 import { EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useRef } from "react";
 import { useAppLocale } from "../_utils/locale";
 import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
 
@@ -28,6 +29,7 @@ export function TaskHeader({ className, ...props }: React.ComponentProps<"div">)
       )}
       data-slot="task-header"
       {...props}
+      data-task-header=""
     />
   );
 }
@@ -61,6 +63,25 @@ export function TaskHeaderSide({
   );
 }
 
+const MAIN_ACTION_SELECTOR = "[data-enter]:not(:disabled, [aria-disabled='true'])";
+
+/**
+ * In a task's header, a closed "…" sends focus to the task's main action when it can be pressed,
+ * or to the task's body: left on "…", Enter would open the menu again when the learner means "go
+ * on". Anywhere else focus returns to "…", as after every menu.
+ */
+function getFocusAfterMenu(trigger: HTMLElement | null): HTMLElement | true {
+  if (!trigger?.closest("[data-task-header]")) {
+    return true;
+  }
+
+  const main = [...document.querySelectorAll<HTMLElement>(MAIN_ACTION_SELECTOR)].find(
+    (action) => action.getClientRects().length > 0,
+  );
+
+  return main ?? document.querySelector<HTMLElement>("[data-slot='task-frame-body']") ?? true;
+}
+
 /**
  * The bare "…" that ends a task's header, a bar or a line. `label` names the menu when it isn't
  * about the screen.
@@ -78,17 +99,23 @@ export function TaskHeaderMenu({
   size?: "icon" | "icon-bar";
 }) {
   const t = useExtracted();
+  const trigger = useRef<HTMLButtonElement>(null);
 
   return (
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
+        ref={trigger}
         render={<Button className="shrink-0" edge="end" size={size} variant="ghost" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label ?? t("Screen options")}</span>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" {...content}>
+      <DropdownMenuContent
+        align="end"
+        finalFocus={() => getFocusAfterMenu(trigger.current)}
+        {...content}
+      >
         {children}
       </DropdownMenuContent>
     </DropdownMenu>

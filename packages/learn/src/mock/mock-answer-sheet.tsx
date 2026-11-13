@@ -6,7 +6,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
@@ -15,7 +14,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { HistoryIcon, PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
+import { SheetHeader } from "../_components/sheet-header";
 import { BAR_PADDING_CLASS } from "../_components/task-layout";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { SectionClock } from "./mock-clock";
@@ -263,15 +262,14 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
       </DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-col gap-1">
             <DrawerTitle className="text-xl font-semibold">{t("Answer sheet")}</DrawerTitle>
             <DrawerDescription className="font-mono text-xs tabular-nums">
               {counts}
             </DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         <DrawerContent className="pt-2">
           <MockSheetContent

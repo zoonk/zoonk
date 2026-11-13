@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import {
   Sheet,
   SheetClose,
@@ -18,7 +12,6 @@ import {
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
@@ -114,10 +107,9 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup initialFocus={initialFocus}>
         <PlanEditorChangeProvider>
-          <DrawerHeader className="flex-row items-center justify-between gap-3">
+          <SheetHeader>
             <DrawerTitle className="text-xl font-semibold">{t("Adjust your plan")}</DrawerTitle>
-            <DrawerCloseButton />
-          </DrawerHeader>
+          </SheetHeader>
 
           <DrawerContent className="flex flex-col gap-7 pt-2">
             <EditorSections />

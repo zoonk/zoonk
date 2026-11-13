@@ -3,15 +3,12 @@
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { SheetHeader } from "./sheet-header";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
 const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
@@ -19,17 +16,6 @@ const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
   option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
 };
-
-export function DrawerCloseButton() {
-  const t = useExtracted();
-
-  return (
-    <DrawerClose render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}>
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Close")}</span>
-    </DrawerClose>
-  );
-}
 
 export function DetailsDrawer({
   children,
@@ -47,10 +33,9 @@ export function DetailsDrawer({
       <DrawerTrigger render={TRIGGER[trigger]}>{label}</DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
+        <SheetHeader>
           <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>
       </DrawerPopup>
     </Drawer>

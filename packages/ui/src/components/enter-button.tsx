@@ -4,7 +4,7 @@ import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/com
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { cn } from "@zoonk/ui/lib/utils";
+import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 
 /**
  * `bound`: Enter presses it while it's drawn, enabled and not busy. `host`: the screen binds Enter
@@ -12,18 +12,6 @@ import { cn } from "@zoonk/ui/lib/utils";
  * it Enter. `off`: Enter must not press it (handing in), so it shows no ⏎ either.
  */
 export type Enter = "bound" | "host" | "off";
-
-function mergeRefs<Target>(...refs: (React.Ref<Target> | undefined)[]) {
-  return (node: Target | null) => {
-    for (const ref of refs) {
-      if (typeof ref === "function") {
-        ref(node);
-      } else if (ref) {
-        ref.current = node;
-      }
-    }
-  };
-}
 
 /**
  * A screen's main action, and the one home of Enter, the ⏎ hint and the busy look: a screen gets

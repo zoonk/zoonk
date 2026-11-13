@@ -32,7 +32,7 @@ export const SHORTCUTS = {
   pick: { cap: "1 to 9", does: "Pick the option with that number", keys: NUMBER_KEYS },
   previous: { cap: "←", does: "Go to the previous screen, question or map", keys: ["ArrowLeft"] },
   save: { cap: "S", does: "Save this mind map", keys: ["s", "S"] },
-  search: { cap: "K", does: "Search or ask, on every page", keys: ["k"], mod: true },
+  search: { cap: "K", does: "Search or ask, on every page", keys: ["k", "K"], mod: true },
   sidebar: { cap: "B", does: "Collapse or expand the sidebar on screen", keys: ["b"], mod: true },
   tap: { cap: "Space", does: "Tap the beat", keys: [" "] },
 } as const satisfies Record<string, Shortcut>;

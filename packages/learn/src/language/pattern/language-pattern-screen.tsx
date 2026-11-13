@@ -1,20 +1,14 @@
 "use client";
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { BookOpenIcon, CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { DrawerCloseButton } from "../../_components/details-drawer";
 import { QuestionActions, QuestionMainAction } from "../../_components/question-actions";
 import { AnswersSaveError } from "../../_components/save-error";
+import { SheetHeader } from "../../_components/sheet-header";
 import { TaskHeaderMenu, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -94,10 +88,9 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
 
       <Drawer onOpenChange={setOpen} open={open}>
         <DrawerPopup>
-          <DrawerHeader className="flex-row items-start justify-between gap-3">
+          <SheetHeader>
             <DrawerTitle className="text-xl font-semibold">{pattern.title}</DrawerTitle>
-            <DrawerCloseButton />
-          </DrawerHeader>
+          </SheetHeader>
 
           <DrawerContent className="flex flex-col gap-6 pt-2">
             <PatternRule pattern={pattern} />

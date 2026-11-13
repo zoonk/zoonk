@@ -308,7 +308,7 @@ export function WaitQuizCard({
         </QuestionTitle>
       </div>
 
-      <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId}>
+      <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId} arrows="move">
         {card.options.map((option, index) => {
           const picked = option.id === pickedId;
 

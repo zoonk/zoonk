@@ -7,7 +7,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -15,9 +14,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import { ListRowChevron } from "../_components/list-group";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { FactSegments } from "../_components/task-meta";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
 import { LearnLink } from "../learn-link";
@@ -235,15 +234,14 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
 
       <Drawer onOpenChange={setOpened} open={open}>
         <DrawerPopup>
-          <DrawerHeader className="flex-row items-start justify-between gap-3">
+          <SheetHeader>
             <div className="flex flex-col gap-1">
               <DrawerTitle className="text-xl font-semibold">{t("Where to focus")}</DrawerTitle>
               <DrawerDescription>
                 {t("The subjects you pick come first and get more depth.")}
               </DrawerDescription>
             </div>
-            <DrawerCloseButton />
-          </DrawerHeader>
+          </SheetHeader>
 
           {open && <FocusChoices onSaved={() => setOpened(false)} />}
         </DrawerPopup>
