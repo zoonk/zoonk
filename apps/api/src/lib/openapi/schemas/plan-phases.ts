@@ -109,7 +109,7 @@ export const planPhaseSchema = z
           .enum(["date", "nextSession", "queued"])
           .meta({
             description:
-              "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week.",
+              "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked.",
           }),
       })
       .nullable()

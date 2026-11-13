@@ -165,7 +165,7 @@ export const libraryLessonPaths = {
   "/library/lessons/{lessonId}/starts": {
     post: {
       description:
-        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later. A new lesson of a free exam plan past its first week (shown with `plusRequired` on its chapter) answers 402 `PLUS_REQUIRED`: Plus opens the rest of the plan, while lessons done or begun, lessons outside the plan, reviews and mistakes stay open.",
+        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later.",
       operationId: "createLibraryLessonStart",
       requestBody: {
         content: { "application/json": { schema: libraryLessonStartInputSchema } },
@@ -186,8 +186,7 @@ export const libraryLessonPaths = {
         "401": unauthorizedResponse,
         "402": {
           ...paymentRequiredResponse,
-          description:
-            "The free plan's lessons are used up (`USAGE_LIMIT_REACHED`; Plus has more), or a free exam plan past its first week holds this new lesson for Plus (`PLUS_REQUIRED`)",
+          description: "The free plan's lessons are used up (`USAGE_LIMIT_REACHED`; Plus has more)",
         },
         "403": {
           ...forbiddenResponse,

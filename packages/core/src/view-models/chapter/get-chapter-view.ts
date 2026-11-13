@@ -3,11 +3,9 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
-import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import { loadExamPrepAccess, loadPlusOnlyLessonIds } from "../../sessions/_utils/plus-only-lessons";
 import { loadGoalMap } from "../_utils/goal-map";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../syllabus/_utils/chapter-numbers";
@@ -76,21 +74,12 @@ export async function getChapterView({
     ]),
   ];
 
-  // Subscribing opens the lessons a free exam plan held for Plus.
   cacheTag(getUserSubscriptionCacheTag(goal.userId));
 
-  const access = await loadExamPrepAccess({ goal, readViewer: readEntitlementViewer });
-
-  const [studied, openMistakes, plusOnlyLessonIds, blockedTestOutChapters] = await Promise.all([
+  const [studied, openMistakes, blockedTestOutChapters] = await Promise.all([
     loadStudiedSkills({ skillIds, userId: goal.userId }),
     prisma.mistake.count({
       where: { skillId: { in: skillIds }, status: "open", userId: goal.userId },
-    }),
-    loadPlusOnlyLessonIds({
-      access,
-      goalId: goal.id,
-      lessonIds: lessons.map((lesson) => lesson.id),
-      userId: goal.userId,
     }),
     loadBlockedTestOutChapters({
       chapterIds: [chapterId],
@@ -106,7 +95,7 @@ export async function getChapterView({
     chapterId,
     items: map.items,
     lessons,
-    plusOnlyLessonIds,
+    plusOnlyLessonIds: new Set(),
     sessionLessonIds: map.todayBlocks.flatMap((block) => block.lessonId ?? []),
     studied,
   });
@@ -131,7 +120,7 @@ export async function getChapterView({
       summaries: buildChapterSummaries({ lessons, states: lessonStates }),
       testOut: {
         available: area.state !== "done" && !blockedTestOutChapters.has(chapterId),
-        plusRequired: access.trialEnded,
+        plusRequired: false,
       },
     },
     status: "ready",

@@ -2,7 +2,6 @@
 
 import { Badge } from "@zoonk/ui/components/badge";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
-import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { CHOICE_ROW_CLASS } from "../onboarding/choice-list";
@@ -26,7 +25,6 @@ export type RowChoice<Value extends string> = {
 export function ChoiceRows<Value extends string>({
   choices,
   label,
-  numberKeys = true,
   onChange,
   readOnly = false,
   stackOnPhone = true,
@@ -34,7 +32,6 @@ export function ChoiceRows<Value extends string>({
 }: {
   choices: readonly RowChoice<Value>[];
   label: string;
-  numberKeys?: boolean;
   onChange: (value: Value) => void;
   readOnly?: boolean;
   stackOnPhone?: boolean;
@@ -47,8 +44,6 @@ export function ChoiceRows<Value extends string>({
       onChange(choice.value);
     }
   };
-
-  useNumberKeys({ count: choices.length, enabled: numberKeys, onPick: pickAt });
 
   return (
     <RadioGroup

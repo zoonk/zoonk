@@ -4,7 +4,9 @@ import {
   type PageWords,
   countWords,
   pageKind,
+  placeFindings,
   summarizeWords,
+  titleGapFindings,
   wordFindings,
   wordGrowth,
 } from "./words.mts";
@@ -16,8 +18,10 @@ function page(overrides: Partial<PageWords> = {}): PageWords {
   return {
     aboveAction: 2,
     action: "Start",
+    actionPinned: null,
     kind: "app",
     longestButton: "Start",
+    titleGap: null,
     words: 40,
     ...overrides,
   };
@@ -39,8 +43,10 @@ describe("counting a page's words", () => {
       {
         aboveAction: 1,
         action: "Continue",
+        actionPinned: true,
         buttons: ["Continue", "Continue to daily time", "Skip"],
         text: "Pick a time",
+        titleGap: 16,
       },
       "app",
     );
@@ -100,5 +106,26 @@ describe("judging a page's words", () => {
     assert.deepEqual(wordGrowth(page({ words: 50 }), page({ words: 60 })), []);
     assert.equal(wordGrowth(page({ words: 50 }), page({ words: 61 }))[0]?.value, GROWTH_PERCENT);
     assert.deepEqual(wordGrowth(undefined, page({ words: 61 })), []);
+  });
+});
+
+describe("where the title and the main action sit (the founder's rules 3 and 4)", () => {
+  it("leads to an app screen's one main action that isn't pinned", () => {
+    assert.deepEqual(
+      [
+        page({ actionPinned: false }),
+        page({ actionPinned: true }),
+        page({ actionPinned: null }),
+        page({ actionPinned: false, kind: "marketing" }),
+      ].map((each) => placeFindings(each).length),
+      [1, 0, 0, 0],
+    );
+  });
+
+  it("leads to a title with more room above it on one screen than the other", () => {
+    const [finding] = titleGapFindings(page({ titleGap: 40 }), page({ titleGap: 16 }));
+    assert.equal(finding?.value, 24);
+    assert.deepEqual(titleGapFindings(page({ titleGap: 18 }), page({ titleGap: 16 })), []);
+    assert.deepEqual(titleGapFindings(page({ titleGap: null }), page({ titleGap: 16 })), []);
   });
 });

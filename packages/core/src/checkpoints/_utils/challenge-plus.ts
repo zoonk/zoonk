@@ -1,5 +1,5 @@
 import "server-only";
-import { loadExamPrepAccess } from "../../sessions/_utils/plus-only-lessons";
+import { loadExamPrepAccess } from "../../sessions/_utils/load-exam-access";
 import { type OwnedChallenge } from "./owned-challenge";
 import { arePhaseChallengesRequired } from "./phase-challenge-access";
 
@@ -19,5 +19,5 @@ export async function needsPlus({
   }
 
   const access = await loadExamPrepAccess({ goal, timeZone, today });
-  return item.kind === "mock" ? !access.includesMockExams : access.trialEnded;
+  return item.kind === "mock" ? !access.includesMockExams : false;
 }

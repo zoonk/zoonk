@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
+import { openKeyboardShortcuts } from "@/lib/keyboard-shortcuts-event";
 import { logout } from "@/lib/logout";
 import { openStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useOpenDestination } from "@/lib/session/use-study-navigation";
@@ -204,6 +205,11 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
         isReport: false,
       });
 
+      return;
+    }
+
+    if (item.kind === "shortcuts") {
+      openKeyboardShortcuts();
       return;
     }
 

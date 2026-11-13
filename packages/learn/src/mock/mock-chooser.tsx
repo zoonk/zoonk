@@ -76,7 +76,6 @@ function MockOptionLists({
           <ChoiceRows
             choices={subjectChoices}
             label={t("One subject")}
-            numberKeys={false}
             onChange={onPick}
             value={subjectChoices.some((choice) => choice.value === picked) ? picked : null}
           />

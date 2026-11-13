@@ -87,6 +87,18 @@ msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "Wyślij opinię"
 
+#. Words people type to find Keyboard shortcuts in the search, never shown. Add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zK0l0A"
+msgid "keys, hotkeys, keyboard"
+msgstr "klawisze, skróty, skróty klawiszowe, klawiatura"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "vzYPVX"
+msgid "Keyboard shortcuts"
+msgstr "Skróty klawiszowe"
+
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "tv5FG3"
 msgid "Blog"
@@ -375,6 +387,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "Nie udało się zmienić celu. Spróbuj ponownie."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "Szukaj lub zapytaj"
@@ -1325,6 +1338,7 @@ msgid "Passkey"
 msgstr "Klucz dostępu"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Zamknij"
@@ -2623,6 +2637,71 @@ msgstr "Zacznij za darmo"
 msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "Usunięto twoje konto."
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "e6UnhT"
+msgid "Play or pause the audio"
+msgstr "Odtwórz lub wstrzymaj dźwięk"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "PpAjCi"
+msgid "Flag a question in a mock exam"
+msgstr "Oznacz pytanie na egzaminie próbnym"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "uY3Caj"
+msgid "Close or leave"
+msgstr "Zamknij lub wyjdź"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ofKpWV"
+msgid "Press the main button"
+msgstr "Naciśnij główny przycisk"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Przejdź dalej"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "fMeAJ8"
+msgid "Pick an answer"
+msgstr "Wybierz odpowiedź"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "Wróć"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "eUyM74"
+msgid "Save a mind map"
+msgstr "Zapisz mapę myśli"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "odxPY5"
+msgid "Show this list"
+msgstr "Pokaż tę listę"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "KYN6t2"
+msgid "Show or hide the sidebar"
+msgstr "Pokaż lub ukryj panel boczny"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "GvB3Jb"
+msgid "Tap the beat"
+msgstr "Stukaj w rytm"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "FVLl2T"
+msgid "Anywhere"
+msgstr "Wszędzie"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ugxven"
+msgid "While you study"
+msgstr "Podczas nauki"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
