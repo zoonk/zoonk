@@ -50,6 +50,7 @@ const RULES = {
   S1: "S1 gaps come from the scale",
   S2: "S2 the same things sit the same distance apart",
   T1: "T1 sizes come from the roles",
+  X3: "X3 a state change moves nothing",
   Z1: "Z1 heights from the set, one height per row",
 };
 

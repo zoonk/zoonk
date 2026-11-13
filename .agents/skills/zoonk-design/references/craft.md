@@ -317,8 +317,10 @@ A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`
 
 Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors.
 
-- **Check.** Between two state screenshots nothing else moves.
-- **Usual break.** A heavier weight or a thicker border on the selected item.
+A screen that changes height or moves a neighbor when data, a picture or a font arrives after the first paint breaks it too.
+
+- **Check.** Between two state screenshots nothing else moves. `verify:pages` measures it on the phone and the laptop: it types in each field, picks each choice, opens and closes each fold, tab, menu and dialog, hovers and presses each control, and leads to anything that moved or a control that changed size, with the pixels (it blocks every save, so a pick that saves shows what a failed save shows, and the lead says so); it also leads to any layout shift while the page loads. States it can't reach without submitting (saving, a check that calls the server, a busy button, a lesson's result) stay with the craft read: put their screenshots side by side.
+- **Usual break.** A heavier weight or a thicker border on the selected item. A hint that appears and pushes the form down. A spinner larger than the icon it replaces. A picture with no reserved size.
 
 ## The craft read
 
