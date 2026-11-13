@@ -1,45 +1,55 @@
 import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import { AdminSection } from "@/components/admin-section";
 import { type Metadata } from "next";
-import { cookies } from "next/headers";
 import { Suspense } from "react";
-import { HomeAttention, HomeAttentionSkeleton } from "./home-attention";
-import { HomeWeek, HomeWeekSkeleton } from "./home-week";
+import { loadAttention, loadWeek } from "./home-data";
+import { AttentionTiles, AttentionTilesSkeleton, WeekTiles, WeekTilesSkeleton } from "./home-parts";
 
 export const metadata: Metadata = { title: "Zoonk Admin" };
 
-function AttentionSection({ loading = false }: { loading?: boolean }) {
-  return (
-    <AdminSection title="Needs attention">
-      {loading ? <HomeAttentionSkeleton /> : <HomeAttention />}
-    </AdminSection>
-  );
+async function HomeAttention() {
+  return <AttentionTiles items={await loadAttention()} />;
 }
 
-export default async function Home() {
-  // Review pack only: the Home decision's second option, switched on by a cookie.
-  const numbersFirst = (await cookies()).get("adm-home")?.value === "numbers";
+async function HomeWeek() {
+  "use cache: private";
 
-  const week = (
-    <AdminSection description="Compared with the 7 days before" title="Last 7 days">
-      <Suspense fallback={<HomeWeekSkeleton />}>
+  // oxlint-disable-next-line react/purity -- A cached Server Component reads the time once per cache entry and never re-renders on the client.
+  return <WeekTiles week={await loadWeek(new Date())} />;
+}
+
+function Week() {
+  return (
+    <AdminSection
+      description="Compared with the 7 days before, the gray part of each line"
+      title="Last 7 days"
+    >
+      <Suspense fallback={<WeekTilesSkeleton />}>
         <HomeWeek />
       </Suspense>
     </AdminSection>
   );
+}
 
+export default function Home() {
   return (
     <AdminPage>
       <AdminPageHeader title="Home" />
 
       <AdminPageBody className="gap-10">
-        {numbersFirst ? week : null}
-
-        {/* What follows the list arrives with it: how many rows it has isn't known before, so
-            anything drawn under its skeleton would jump when it loads. */}
-        <Suspense fallback={<AttentionSection loading />}>
-          <AttentionSection />
-          {numbersFirst ? null : week}
+        {/* What follows the tiles arrives with them: how many there are isn't known before, so
+            anything drawn under their skeleton would jump when they load. */}
+        <Suspense
+          fallback={
+            <AdminSection title="Needs attention">
+              <AttentionTilesSkeleton />
+            </AdminSection>
+          }
+        >
+          <AdminSection title="Needs attention">
+            <HomeAttention />
+          </AdminSection>
+          <Week />
         </Suspense>
       </AdminPageBody>
     </AdminPage>
