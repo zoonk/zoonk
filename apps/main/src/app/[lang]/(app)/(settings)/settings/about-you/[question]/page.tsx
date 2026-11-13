@@ -61,7 +61,7 @@ function QuestionSkeleton() {
 
 export default function AboutYouQuestionPage(props: Props) {
   return (
-    <Page className="max-w-form">
+    <Page className="max-w-form flex-1">
       <Suspense fallback={<QuestionSkeleton />}>
         <QuestionContent {...props} />
       </Suspense>

@@ -40,7 +40,7 @@ export function AboutYouQuestionScreen({
 
   return (
     <form
-      className="flex flex-col gap-6"
+      className="flex flex-1 flex-col gap-6"
       onSubmit={(event) => {
         event.preventDefault();
 
@@ -56,7 +56,7 @@ export function AboutYouQuestionScreen({
         });
       }}
     >
-      <div className={cn("contents", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
+      <div className={cn("flex flex-1 flex-col gap-6", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>{title}</PageTitle>
