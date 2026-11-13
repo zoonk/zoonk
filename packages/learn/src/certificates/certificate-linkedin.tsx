@@ -69,7 +69,6 @@ export function CertificateLinkedInDialog({
       <DialogContent
         className="max-h-[calc(100dvh-2rem)] gap-5 overflow-y-auto sm:max-w-[540px]"
         closeLabel={t("Close")}
-        overNested
       >
         <DialogHeader>
           <DialogTitle>{t("Add to your LinkedIn profile")}</DialogTitle>

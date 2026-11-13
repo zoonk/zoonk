@@ -199,20 +199,6 @@ msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent}% 완료"
 
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "닫기"
-
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
 msgid "Nothing left to answer"
@@ -413,6 +399,7 @@ msgstr "{done, number}/{total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -514,12 +501,12 @@ msgstr "다음"
 #: src/_components/question-actions.tsx
 msgctxt "BkQAJw"
 msgid "Show the next step"
-msgstr ""
+msgstr "다음 풀이 과정 보기"
 
 #: src/_components/question-actions.tsx
 msgctxt "ZLtyTD"
 msgid "See the answer"
-msgstr ""
+msgstr "정답 보기"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
@@ -532,7 +519,7 @@ msgstr "결과 보기"
 #: src/_components/question-actions.tsx
 msgctxt "QriCsD"
 msgid "Previous screen"
-msgstr ""
+msgstr "이전 화면"
 
 #: src/_components/question-actions.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -562,6 +549,21 @@ msgstr "전송하지 못했어요. 답은 그대로 남아 있어요."
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "저장하지 못했어요. 다시 시도해 보세요."
+
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "닫기"
 
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
@@ -607,6 +609,7 @@ msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -617,10 +620,17 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "보기"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "나가기"
+
 #: src/_components/task-header.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "화면 옵션"
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
 
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
@@ -628,9 +638,9 @@ msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "사이드바 접기"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "화면 옵션"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1308,11 +1318,6 @@ msgstr "배우고 싶은 것"
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "내 계획 만들기"
-
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "내 공부 짝꿍"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
@@ -2395,7 +2400,6 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "오늘로 돌아가기"
@@ -3419,13 +3423,6 @@ msgstr "채점 요청하기"
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "계속 쓰기"
-
-#: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "나가기"
 
 #: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
@@ -8449,14 +8446,9 @@ msgid "Open the lesson"
 msgstr "레슨 열기"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "오답 노트로 돌아가기"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "연습 끝내기. 지금까지 푼 문제는 반영돼요."
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr "나가기. 지금까지 푼 문제는 반영돼요."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8845,11 +8837,6 @@ msgstr "답하지 않은 문제가 대부분이라 채점하지 않고 준비도
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "아직 저장되지 않았어요 · 다시 시도하고 있어요"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "다시 시도"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9566,6 +9553,21 @@ msgstr "모의고사 제출하기"
 msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "이 파트 제출하기"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr "계속 풀기"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr "답한 내용은 저장되어 있어요. 나가 있는 동안에도 남은 시간은 계속 줄어들어요."
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr "모의고사에서 나갈까요?"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -14065,9 +14067,14 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "몇 문제 연속으로 틀렸어요. 잠깐 쉬어 가면 도움이 될 때가 많아요. 오늘 한 공부는 모두 의미가 있어요."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "계획을 다듬고 있어요. 여기서 틀려도 오답 노트에 저장되지 않아요."
+msgctxt "l8gWNH"
+msgid "Fine-tuning your plan"
+msgstr "계획을 다듬고 있어요"
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "yHidq9"
+msgid "A miss here is never saved as a mistake."
+msgstr "여기서 틀린 문제는 오답 노트에 저장되지 않아요."
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14075,9 +14082,9 @@ msgid "Not today"
 msgstr "오늘은 건너뛰기"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "닫기. 답은 저장되어 있어요."
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr "나가기. 답한 내용은 저장되어 있어요."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14566,11 +14573,6 @@ msgstr "{goal} 목표를 위한 자리 만들기"
 msgctxt "goalSwitcher.92OYJm"
 msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
 msgstr "무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. {goal} 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요."
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "닫기"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.0I_Rwu"

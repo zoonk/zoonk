@@ -3,7 +3,6 @@
 import { useRouter } from "@/i18n/navigation";
 import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
 import { EnterButton } from "@zoonk/learn/enter-button";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
@@ -44,7 +43,7 @@ export function StartPlanForm({
         {t("How much time a day?")}
       </p>
       <DailyTimeField defaultMinutes={DEFAULT_MINUTES} name="dailyMinutes" />
-      <EnterButton busy={isPending} className="mt-1" size="lg" type="submit" {...FORWARD_ICON}>
+      <EnterButton busy={isPending} className="mt-1" size="lg" type="submit">
         {t({
           description:
             "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",

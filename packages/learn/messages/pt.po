@@ -199,20 +199,6 @@ msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent}% concluído"
 
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Fechar"
-
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
 msgid "Nothing left to answer"
@@ -413,6 +399,7 @@ msgstr "{done, number} de {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -514,12 +501,12 @@ msgstr "Próximo"
 #: src/_components/question-actions.tsx
 msgctxt "BkQAJw"
 msgid "Show the next step"
-msgstr ""
+msgstr "Mostrar o próximo passo"
 
 #: src/_components/question-actions.tsx
 msgctxt "ZLtyTD"
 msgid "See the answer"
-msgstr ""
+msgstr "Ver a resposta"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
@@ -532,7 +519,7 @@ msgstr "Ver como foi"
 #: src/_components/question-actions.tsx
 msgctxt "QriCsD"
 msgid "Previous screen"
-msgstr ""
+msgstr "Tela anterior"
 
 #: src/_components/question-actions.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -562,6 +549,21 @@ msgstr "Não deu certo. Suas respostas foram mantidas."
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "Não foi possível salvar. Tente de novo."
+
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fechar"
 
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
@@ -607,6 +609,7 @@ msgstr "A gente não conseguiu abrir este passo. Tente de novo."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -617,10 +620,17 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "Ver"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "Sair"
+
 #: src/_components/task-header.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Opções da tela"
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "Recolher barra lateral"
 
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
@@ -628,9 +638,9 @@ msgid "Expand sidebar"
 msgstr "Expandir barra lateral"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "Recolher barra lateral"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "Opções da tela"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1308,11 +1318,6 @@ msgstr "O que você quer aprender"
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Criar meu plano"
-
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "Seu parceiro de estudos"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
@@ -2395,7 +2400,6 @@ msgstr "Seu plano não consegue abrir espaço para este simulado de {duration} e
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "Voltar para Hoje"
@@ -3419,13 +3423,6 @@ msgstr "Enviar para correção"
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "Continuar escrevendo"
-
-#: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "Sair"
 
 #: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
@@ -8449,14 +8446,9 @@ msgid "Open the lesson"
 msgstr "Abrir a aula"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "Voltar ao caderno"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "Encerrar a prática. Suas respostas contam."
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr "Sair. Suas respostas continuam valendo."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8845,11 +8837,6 @@ msgstr "Com a maioria das questões sem resposta, o simulado não recebe pontua�
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "Ainda não foi salvo · tentando de novo"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "Tentar de novo"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9566,6 +9553,21 @@ msgstr "Entregar o simulado"
 msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "Entregar esta seção"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr "Ficar"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr "Suas respostas estão salvas. O tempo continua correndo enquanto você estiver fora."
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr "Sair do simulado?"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -14065,9 +14067,14 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "Alguns erros seguidos. Uma pausa curta costuma ajudar, e tudo o que você fez hoje conta."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "Ajustando seu plano. Se você errar aqui, o erro não será salvo."
+msgctxt "l8gWNH"
+msgid "Fine-tuning your plan"
+msgstr "Ajustando seu plano"
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "yHidq9"
+msgid "A miss here is never saved as a mistake."
+msgstr "Se você errar aqui, isso não fica salvo como erro."
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14075,9 +14082,9 @@ msgid "Not today"
 msgstr "Hoje não"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "Fechar. Suas respostas estão salvas."
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr "Sair. Suas respostas estão salvas."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14566,11 +14573,6 @@ msgstr "Abra espaço para {goal}"
 msgctxt "goalSwitcher.92OYJm"
 msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
 msgstr "Você já está no limite de objetivos do plano grátis. Pause um para começar {goal}. Você pode retomar o objetivo pausado depois."
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "Fechar"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.0I_Rwu"

@@ -44,9 +44,11 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
+/** Drawn for a nested overlay too, which Base UI skips, so whatever it opened from dims under it. */
 function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
   return (
     <DialogPrimitive.Backdrop
+      forceRender
       className={cn(
         "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 isolate z-50 bg-black/80 duration-100 supports-backdrop-filter:backdrop-blur-xs",
         className,
@@ -57,20 +59,15 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
-/**
- * Base UI draws no backdrop for a dialog opened inside another one; `overNested` draws it anyway,
- * for a dialog over a full-screen dialog that has no backdrop of its own.
- */
 function DialogContent({
   className,
   children,
   closeLabel,
-  overNested,
   ...props
-}: DialogPrimitive.Popup.Props & { closeLabel?: string; overNested?: boolean }) {
+}: DialogPrimitive.Popup.Props & { closeLabel?: string }) {
   return (
     <DialogPortal>
-      <DialogOverlay forceRender={overNested} />
+      <DialogOverlay />
       <DialogPrimitive.Popup
         className={cn(
           "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 bg-background ring-foreground/10 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-2xl p-6 text-sm ring-1 duration-100 outline-none ring-inset sm:max-w-md",
