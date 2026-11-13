@@ -609,6 +609,11 @@ msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Back"
 
+#: src/_components/subscribe-gate.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Subscribe"
+
 #: src/_components/suggestion.tsx
 msgctxt "FgydNe"
 msgid "View"
@@ -4127,11 +4132,6 @@ msgid "{count, plural, one {Your plan also skips # lesson you already know.} oth
 msgstr "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
 
 #: src/focus-test/focus-test-screens.tsx
-msgctxt "VDQxvD"
-msgid "A short test on your exam's subjects."
-msgstr "A short test on your exam's subjects."
-
-#: src/focus-test/focus-test-screens.tsx
 msgctxt "G9nQHt"
 msgid "Continue your test"
 msgstr "Continue your test"
@@ -4143,6 +4143,7 @@ msgid "{count, plural, one {Your # answer is saved.} other {Your # answers are s
 msgstr "{count, plural, one {Your # answer is saved.} other {Your # answers are saved.}}"
 
 #: src/focus-test/focus-test-screens.tsx
+#: src/onboarding/steps/placement-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "Your answers are saved"
@@ -4189,6 +4190,22 @@ msgstr "Find what to study most"
 msgctxt "LW1Em4"
 msgid "Skip what you already know"
 msgstr "Skip what you already know"
+
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "-nbx59"
+msgid "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject."
+msgstr "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject."
+
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "lcq8ee"
+msgid "This test shows what you already know, so your plan can skip it."
+msgstr "This test shows what you already know, so your plan can skip it."
+
+#. {time} is a duration with its unit, such as “15 min”.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "upCPiN"
+msgid "A {time} test shows what you already know, so more of your time goes to what you need most. It never removes a subject."
+msgstr "A {time} test shows what you already know, so more of your time goes to what you need most. It never removes a subject."
 
 #. Button that ends the Focus test with the answers given so far and shows its result.
 #: src/focus-test/use-focus-test-texts.ts
@@ -4926,7 +4943,7 @@ msgid "{count, plural, one {# skill you already know} other {# skills you alread
 msgstr "{count, plural, one {# skill you already know} other {# skills you already know}}"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "More lessons"
@@ -5138,7 +5155,7 @@ msgstr "Mock exam for the next sitting"
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
-#: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-week.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -5773,15 +5790,15 @@ msgstr "No preference"
 
 #. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/language-variety/country-field.tsx
-msgctxt "7XSTa1"
-msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
-msgstr "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgctxt "uvGkyf"
+msgid "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use {taughtVariety}."
 
 #. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
 #: src/language-variety/use-variety-words.ts
-msgctxt "fryHAC"
-msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
-msgstr "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgctxt "ydYyFm"
+msgid "Your practice calls and our answers to your questions use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "Your practice calls and our answers to your questions use {variety}. Lessons and their audio use {taughtVariety}."
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -9503,19 +9520,19 @@ msgid "You picked {answer}"
 msgstr "You picked {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "PA4cyJ"
-msgid "You've added as much material as your plan allows today. Try again tomorrow."
-msgstr "You've added as much material as your plan allows today. Try again tomorrow."
+msgctxt "lBAN40"
+msgid "No more material today. More tomorrow."
+msgstr "No more material today. More tomorrow."
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "68q-5-"
-msgid "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now."
-msgstr "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now."
+msgctxt "OZTZJj"
+msgid "No more material this month. More next month, or subscribe to keep going."
+msgstr "No more material this month. More next month, or subscribe to keep going."
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "OQMTqa"
-msgid "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
-msgstr "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
+msgctxt "fKoONz"
+msgid "No more material today. More tomorrow, or subscribe to keep going."
+msgstr "No more material today. More tomorrow, or subscribe to keep going."
 
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
@@ -9626,20 +9643,9 @@ msgid "Added to your material: {title}"
 msgstr "Added to your material: {title}"
 
 #: src/onboarding/entry/goal-entry.tsx
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "n-6wcY"
-msgid "Explain it"
-msgstr "Explain it"
-
-#: src/onboarding/entry/goal-entry.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
 msgstr "Start a goal"
-
-#: src/onboarding/entry/goal-entry.tsx
-msgctxt "Qfv3l2"
-msgid "Get a quick explanation"
-msgstr "Get a quick explanation"
 
 #: src/onboarding/entry/goal-entry.tsx
 #: src/onboarding/onboarding-skeletons.tsx
@@ -9658,39 +9664,16 @@ msgctxt "oOAMKL"
 msgid "Tell us in your own words. We'll build the plan."
 msgstr "Tell us in your own words. We'll build the plan."
 
-#. Label of the field where the learner types a question.
-#: src/onboarding/entry/goal-entry.tsx
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "LIVM_k"
-msgid "Your question"
-msgstr "Your question"
-
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "lnZvgd"
 msgid "I want to"
 msgstr "I want to"
-
-#: src/onboarding/entry/goal-entry.tsx
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "_g7xra"
-msgid "How does inflation work?"
-msgstr "How does inflation work?"
 
 #. Each branch names its own exam as people there call it (共通テスト, 수능): keep that exam in it, never another country's.
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "MBg8CD"
 msgid "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
 msgstr "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} exani {pass the EXANI-II, speak {language}…} kyotsu {do well on the Common Test, speak {language}…} matura {pass the matura, speak {language}…} maturita {pass the maturità, speak {language}…} suneung {do well on the CSAT, speak {language}…} yks {do well on the YKS, speak {language}…} other {pass the SAT, speak {language}…}}"
-
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "wwX9Mu"
-msgid "Why is the sky blue?"
-msgstr "Why is the sky blue?"
-
-#: src/onboarding/entry/goal-examples.tsx
-msgctxt "Uu9gGU"
-msgid "What is compound interest?"
-msgstr "What is compound interest?"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "rsoIT2"
@@ -9707,6 +9690,11 @@ msgctxt "PSyWa0"
 msgid "Learn music from scratch"
 msgstr "Learn music from scratch"
 
+#: src/onboarding/entry/goal-examples.tsx
+msgctxt "_g7xra"
+msgid "How does inflation work?"
+msgstr "How does inflation work?"
+
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
@@ -9722,6 +9710,11 @@ msgstr "More goals at once with Plus"
 msgctxt "tqq0xx"
 msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
 msgstr "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
+
+#: src/onboarding/entry/goal-outcomes.tsx
+msgctxt "n-6wcY"
+msgid "Explain it"
+msgstr "Explain it"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9859,19 +9852,19 @@ msgid "What you want to do with your material"
 msgstr "What you want to do with your material"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "aS4jzc"
-msgid "You've asked as many questions as your plan allows today."
-msgstr "You've asked as many questions as your plan allows today."
+msgctxt "maqtwk"
+msgid "No more questions today. More tomorrow."
+msgstr "No more questions today. More tomorrow."
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "RvifHu"
-msgid "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now."
-msgstr "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now."
+msgctxt "Iadu3J"
+msgid "No more questions this month. More next month, or subscribe to keep going."
+msgstr "No more questions this month. More next month, or subscribe to keep going."
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "O1ZAsk"
-msgid "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now."
-msgstr "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now."
+msgctxt "Z_xQgo"
+msgid "No more questions today. More tomorrow, or subscribe to keep going."
+msgstr "No more questions today. More tomorrow, or subscribe to keep going."
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
@@ -9907,6 +9900,12 @@ msgstr "Answers come from your pages and show where they came from."
 msgctxt "Se8ZuD"
 msgid "Reading your material…"
 msgstr "Reading your material…"
+
+#. Label of the field where the learner types a question.
+#: src/onboarding/entry/material-questions.tsx
+msgctxt "LIVM_k"
+msgid "Your question"
+msgstr "Your question"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "uLIbj1"
@@ -10379,14 +10378,14 @@ msgid "A short test finds the lessons you don't need."
 msgstr "A short test finds the lessons you don't need."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "1BWRyR"
-msgid "Your plan skips what you already know"
-msgstr "Your plan skips what you already know"
+msgctxt "252ZEd"
+msgid "There's no test for this goal yet. Your first few days show us what you already know."
+msgstr "There's no test for this goal yet. Your first few days show us what you already know."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "SVTWAE"
-msgid "We couldn't make a test for this goal"
-msgstr "We couldn't make a test for this goal"
+msgctxt "TxdYgo"
+msgid "We'll find your level as you study"
+msgstr "We'll find your level as you study"
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
@@ -10626,35 +10625,9 @@ msgid "Add time"
 msgstr "Add time"
 
 #: src/onboarding/steps/reveal-days.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Review"
-
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Challenge"
-
-#: src/onboarding/steps/reveal-days.tsx
 msgctxt "xmtnm9"
 msgid "Start here"
 msgstr "Start here"
-
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "Rest day"
-
-#: src/onboarding/steps/reveal-days.tsx
-msgctxt "tWAtPK"
-msgid "Your first week"
-msgstr "Your first week"
-
-#: src/onboarding/steps/reveal-days.tsx
-#: src/onboarding/steps/reveal-readouts.tsx
-msgctxt "UA5qaX"
-msgid "{days, plural, one {# day} other {# days}}"
-msgstr "{days, plural, one {# day} other {# days}}"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
@@ -10687,6 +10660,12 @@ msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {About # day} other {About # days}}"
 
+#: src/onboarding/steps/reveal-readouts.tsx
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "UA5qaX"
+msgid "{days, plural, one {# day} other {# days}}"
+msgstr "{days, plural, one {# day} other {# days}}"
+
 #. Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "XvWNP2"
@@ -10697,6 +10676,26 @@ msgstr "by {month}"
 msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "estimated finish"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Review"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Challenge"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "Gg5U7i"
+msgid "Rest day"
+msgstr "Rest day"
+
+#: src/onboarding/steps/reveal-week.tsx
+msgctxt "tWAtPK"
+msgid "Your first week"
+msgstr "Your first week"
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -11308,12 +11307,6 @@ msgctxt "2NB2XO"
 msgid "Content country"
 msgstr "Content country"
 
-#: src/plan/plan-coverage-suggestion.tsx
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "TJo5E6"
-msgid "Preview"
-msgstr "Preview"
-
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
@@ -11503,14 +11496,33 @@ msgid "Study everything"
 msgstr "Study everything"
 
 #: src/plan/plan-past-date-suggestion.tsx
-msgctxt "0kaP6f"
-msgid "Every topic, even after the exam, at your own pace."
-msgstr "Every topic, even after the exam, at your own pace."
+#: src/today/today-day-status.tsx
+msgctxt "y7l0FJ"
+msgid "Keep studying them, or archive this goal?"
+msgstr "Keep studying them, or archive this goal?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "oNLSka"
 msgid "Move your date so your time covers what's left."
 msgstr "Move your date so your time covers what's left."
+
+#: src/plan/plan-past-date-suggestion.tsx
+#: src/plan/study-everything.tsx
+#: src/today/today-exam-over.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Keep studying"
+
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "TJo5E6"
+msgid "Preview"
+msgstr "Preview"
+
+#: src/plan/plan-past-date-suggestion.tsx
+#: src/today/today-exam-over.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "Archive goal"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11801,11 +11813,6 @@ msgstr "More later: {tools}"
 msgctxt "z1Z_Hg"
 msgid "You'll use"
 msgstr "You'll use"
-
-#: src/plan/study-everything.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Keep studying"
 
 #: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
@@ -12604,19 +12611,19 @@ msgid "We couldn't work out the time needed."
 msgstr "We couldn't work out the time needed."
 
 #: src/plan/use-time-to-cover.ts
-msgctxt "8bQ4-P"
-msgid "Find the time"
-msgstr "Find the time"
-
-#: src/plan/use-time-to-cover.ts
-msgctxt "fgq47T"
-msgid "Finding the time…"
-msgstr "Finding the time…"
+msgctxt "sshiAK"
+msgid "Finding the time that covers everything…"
+msgstr "Finding the time that covers everything…"
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "We couldn't find a date that covers everything."
+
+#: src/plan/use-time-to-cover.ts
+msgctxt "OgCCUY"
+msgid "See what changes"
+msgstr "See what changes"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"
@@ -12806,22 +12813,6 @@ msgctxt "AYPOzn"
 msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
 msgstr "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
 
-#. An option that declines a question: none of the listed options apply.
-#: src/profile-questions/profile-body-parts.ts
-msgctxt "hqA0RV"
-msgid "None of these"
-msgstr "None of these"
-
-#: src/profile-questions/profile-body-parts.ts
-msgctxt "7BKHN3"
-msgid "Nothing to add"
-msgstr "Nothing to add"
-
-#: src/profile-questions/profile-body-parts.ts
-msgctxt "IhuLNc"
-msgid "Nothing in particular"
-msgstr "Nothing in particular"
-
 #: src/profile-questions/profile-body-parts.ts
 msgctxt "Tc5eNs"
 msgid "I'd rather not say"
@@ -12843,9 +12834,9 @@ msgid "Favorite shows, films, teams or channels (optional)"
 msgstr "Favorite shows, films, teams or channels (optional)"
 
 #: src/profile-questions/profile-chip-bodies.tsx
-msgctxt "uL1Shr"
-msgid "E.g., Star Trek, Flamengo"
-msgstr "E.g., Star Trek, Flamengo"
+msgctxt "fuvkra"
+msgid "E.g., Star Trek, Formula 1"
+msgstr "E.g., Star Trek, Formula 1"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "YRYwsW"
@@ -12853,9 +12844,9 @@ msgid "Favorite artists or podcasts (optional)"
 msgstr "Favorite artists or podcasts (optional)"
 
 #: src/profile-questions/profile-chip-bodies.tsx
-msgctxt "B1opZE"
-msgid "E.g., Coldplay, Radiolab"
-msgstr "E.g., Coldplay, Radiolab"
+msgctxt "X5qfRF"
+msgid "E.g., Coldplay, TED Talks Daily"
+msgstr "E.g., Coldplay, TED Talks Daily"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "kY8drg"
@@ -12990,9 +12981,9 @@ msgid "Past or present, finished or not. Pick up to 3."
 msgstr "Past or present, finished or not. Pick up to 3."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "yqwphC"
-msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
-msgstr "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgctxt "zJoq3-"
+msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
+msgstr "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "FfWAhT"
@@ -13005,9 +12996,9 @@ msgid "Pick up to 3."
 msgstr "Pick up to 3."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "2423hY"
-msgid "Your buddy and your feedback will talk to you this way."
-msgstr "Your buddy and your feedback will talk to you this way."
+msgctxt "xI6I3Q"
+msgid "We'll talk to you this way."
+msgstr "We'll talk to you this way."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
@@ -13030,9 +13021,9 @@ msgid "E.g., I understand diagrams better than text"
 msgstr "E.g., I understand diagrams better than text"
 
 #: src/profile-questions/profile-row-bodies.tsx
-msgctxt "Wl4TYP"
-msgid "We'll remember this for your buddy. You can delete it in Memory."
-msgstr "We'll remember this for your buddy. You can delete it in Memory."
+msgctxt "mM7GRS"
+msgid "We'll remember this. You can delete it anytime in Settings."
+msgstr "We'll remember this. You can delete it anytime in Settings."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "opT2q1"
@@ -14690,12 +14681,6 @@ msgstr "Noted. You can take the test from your plan."
 msgctxt "KYliMN"
 msgid "The Focus test shows what to study most."
 msgstr "The Focus test shows what to study most."
-
-#. {time} is a duration with its unit, such as “15 min”.
-#: src/today/today-focus-test.tsx
-msgctxt "52QaoX"
-msgid "A {time} test on your exam's subjects."
-msgstr "A {time} test on your exam's subjects."
 
 #: src/today/today-heading.tsx
 msgctxt "FR3uzc"
